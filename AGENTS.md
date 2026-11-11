@@ -1,8 +1,13 @@
 # Agent entry point
 
 This repository is a Vue-first, headless-first UI library built primarily with
-AI assistance and reviewed by experienced engineers. During the foundation
-phase, do not add production UI components.
+AI assistance and reviewed by experienced engineers. The foundation phase is
+over. Production components are allowed only when they pass the
+[component gate](./docs/agents/COMPONENT_WORKFLOW.md) (approved spec, tests,
+docs, machine-readable manifest, and a Changeset when publishable behavior
+changes). See [ADR 0002](./docs/adr/0002-exit-foundation-phase.md). [PR
+#21](https://github.com/zprue743/slop-ui/pull/21) ADR 0001 records why the
+moratorium ended; this gate is the remaining SLO-8 contract.
 
 ## Read before editing
 
@@ -10,8 +15,9 @@ phase, do not add production UI components.
 2. Read [the architecture overview](./docs/architecture/overview.md) and the
    standards relevant to the subsystem being changed.
 3. Inspect related code and documentation before introducing a pattern.
-4. When implementing a future component, read its approved specification and
-   [the component workflow](./docs/agents/COMPONENT_WORKFLOW.md) first.
+4. When implementing a component, confirm the
+   [component gate](./docs/agents/COMPONENT_WORKFLOW.md) and read the approved
+   specification before writing production markup.
 
 Canonical rules live under `docs/`. Tool-specific files such as `CLAUDE.md` and
 `.cursor/rules/*` are adapters, not competing sources of truth.

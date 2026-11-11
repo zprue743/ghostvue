@@ -10,8 +10,10 @@ links here for canonical detail.
 2. Inspect existing related code, tests, exports, and docs before proposing a
    pattern.
 3. Confirm the package boundary and public API impact.
-4. For component work, read or write an approved component specification before
-   production implementation.
+4. For component work, satisfy the
+   [component gate](./COMPONENT_WORKFLOW.md) (approved spec, tests, docs,
+   manifest) before treating the change as complete. Do not start production
+   markup before the specification resolves behavior and accessibility.
 5. Reuse existing utilities and capabilities when their responsibility matches.
 6. Add behavior-focused tests with the implementation. Include regression tests
    for bug fixes whenever practical.

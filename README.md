@@ -15,10 +15,12 @@ The intended product direction combines:
 
 ## Status
 
-The repository is in its **foundation/bootstrap phase**. It is not ready for
-production and currently exports no UI components. The current code establishes
-tooling, package boundaries, tests, documentation, and contribution rules for
-future implementation work.
+The repository is **pre-release** and not ready for production. Tooling,
+package boundaries, tests, documentation, and contribution rules are in
+place. Production components may be added only when they pass the
+[component gate](./docs/agents/COMPONENT_WORKFLOW.md) (approved spec, tests,
+docs, and a machine-readable manifest). See
+[ADR 0002](./docs/adr/0002-exit-foundation-phase.md).
 
 The likely product directions described in the documentation are context, not a
 committed roadmap.
