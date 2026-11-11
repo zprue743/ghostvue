@@ -24,4 +24,7 @@ practical.
 
 Run `pnpm test` for unit/integration checks and `pnpm test:e2e` for browser checks.
 The normal `pnpm verify` gate excludes browser tests to keep routine local and CI
-feedback fast; CI runs the browser job separately after installing Chromium.
+feedback fast; CI runs the browser job separately after installing Chromium. That
+job caches `~/.cache/ms-playwright` by Playwright version and does not run
+`playwright install --with-deps`, because GitHub-hosted Ubuntu images already
+include Chromium's libraries and apt is a frequent stall.
