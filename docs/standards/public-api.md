@@ -23,3 +23,55 @@ even when a prop name is unchanged.
 
 Use one public entry point per package by default. Internal files should not be
 reachable through sprawling barrels or undocumented deep imports.
+
+## Vue component conventions
+
+These rules implement [ADR 0003](../adr/0003-public-component-api-conventions.md).
+They apply to public components in `@slop-ui/vue` and themed wrappers in
+`@slop-ui/themes`.
+
+### Names
+
+- Component exports use the `Sl` prefix (`SlButton`, `SlDialog`,
+  `SlVisuallyHidden`).
+- Public composables use `useSl*` (`useSlButton`, `useSlDialog`) so the
+  library has one searchable namespace.
+- CSS classes, custom properties, and documented hooks use the `slop-`
+  prefix (`slop-button`, `--slop-button-radius`) and do not use Shoelace's
+  `sl-` CSS namespace.
+- Compound parts are flattened named exports (`SlDialogTrigger`), not
+  `SlDialog.Trigger` namespaces.
+
+### Registration
+
+- Named, tree-shakeable ESM imports are the primary API:
+  `import { SlButton, useSlButton } from '@slop-ui/vue'`.
+- An optional `app.use(SlopUi)` plugin may register those same `Sl*`
+  components globally and apply documented defaults. It is never required
+  for a component to work.
+- `GlobalComponents` types ship on an intended subpath
+  `@slop-ui/vue/components` for plugin and auto-import users. The main
+  entry must not augment globals.
+- `unplugin-vue-components` support, when implemented, is `SlopUiResolver()`
+  from `@slop-ui/vue/resolver`, resolving `SlButton` to `@slop-ui/vue`.
+  Do not add that dependency until a consumer in this repo needs auto-import.
+
+### Props, events, and slots
+
+- Props are camelCase. Boolean props omit `is`/`has` (`disabled`, `loading`,
+  `open`).
+- Native HTML and ARIA attributes fall through. Do not redeclare `aria-*` as
+  camelCase props.
+- Headless components expose behavioral props only. Visual `variant`,
+  `tone`, and `size` belong on themed wrappers. Do not add PrimeVue-style
+  `pt` / passthrough objects or per-part style-object props.
+- Prefer native listeners on a native root. Component emits use
+  `update:modelValue` or named `update:open` for v-models, and semantic
+  verbs (`select`, `close`) otherwise.
+- `default` is the primary content slot. Named slots are semantic structure.
+  Styling parts use `data-part` and `data-state`, not Vue slots invented
+  only to target CSS.
+
+Documented classes, custom properties, and `data-part` / `data-state` hooks
+are public styling APIs. Changing them requires the same compatibility
+review as a renamed prop.
