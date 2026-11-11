@@ -2,9 +2,7 @@ import { readdir, readFile, stat } from 'node:fs/promises'
 import { resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
-// Run after `pnpm build`. Vite empties `dist` before writing the Vue bundle,
-// so declaration emit that happens first would otherwise vanish without
-// failing verify.
+// Run after `pnpm build`; Vite empties dist before writing the Vue bundle.
 
 const repositoryRoot = new URL('..', import.meta.url)
 const packagesRoot = new URL('packages/', repositoryRoot)
@@ -14,8 +12,6 @@ const packageDirectories = await readdir(packagesRoot, {
 
 const violations = []
 
-// Nested export conditions and fallback arrays are included so a missing
-// `exports["."].types` file cannot hide behind a valid `import` path.
 function collectRelativeTargets(value, acc = []) {
   if (typeof value === 'string') {
     if (value.startsWith('./') || value.startsWith('../')) {
@@ -63,8 +59,6 @@ for (const directory of packageDirectories) {
     continue
   }
 
-  // Library packages advertise TypeScript entry points. A missing `.d.ts`
-  // target would make `exports.types` easy to delete instead of fixing emit.
   if (!targets.some((target) => target.endsWith('.d.ts'))) {
     violations.push(`${packageJson.name} has no .d.ts types/exports target`)
   }

@@ -4,9 +4,7 @@ import { defineConfig } from 'vite'
 export default defineConfig({
   plugins: [vue()],
   build: {
-    // Vite empties `dist` before writing the JS bundle. Keep this true so stale
-    // artifacts cannot ship, and emit declarations in the package build script
-    // after `vite build` so vue-tsc output is not deleted.
+    // Vite empties dist first, so vue-tsc must run after this build.
     emptyOutDir: true,
     lib: {
       entry: 'src/index.ts',
