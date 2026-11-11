@@ -136,15 +136,7 @@
       },
       {
         "name": "--sl-action-primary-bg",
-        "description": "Solid background and outline/ghost foreground for the accent tone."
-      },
-      {
-        "name": "--sl-action-primary-bg-hover",
-        "description": "Solid hover background for the accent tone."
-      },
-      {
-        "name": "--sl-action-primary-bg-active",
-        "description": "Solid active background for the accent tone."
+        "description": "Solid background fallback and outline/ghost foreground for the accent tone."
       },
       {
         "name": "--sl-action-primary-fg",
@@ -155,16 +147,16 @@
         "description": "Border color on the solid accent treatment."
       },
       {
+        "name": "--sl-action-primary-gradient-from",
+        "description": "Accent solid gradient start. Contrast-gated against accent foreground."
+      },
+      {
+        "name": "--sl-action-primary-gradient-to",
+        "description": "Accent solid gradient end. Contrast-gated against accent foreground."
+      },
+      {
         "name": "--sl-action-neutral-bg",
-        "description": "Solid background and outline/ghost foreground for the neutral tone."
-      },
-      {
-        "name": "--sl-action-neutral-bg-hover",
-        "description": "Solid hover background for the neutral tone."
-      },
-      {
-        "name": "--sl-action-neutral-bg-active",
-        "description": "Solid active background for the neutral tone."
+        "description": "Solid background fallback and outline/ghost foreground for the neutral tone."
       },
       {
         "name": "--sl-action-neutral-fg",
@@ -176,15 +168,7 @@
       },
       {
         "name": "--sl-action-danger-bg",
-        "description": "Solid background and outline/ghost foreground for the danger tone."
-      },
-      {
-        "name": "--sl-action-danger-bg-hover",
-        "description": "Solid hover background for the danger tone."
-      },
-      {
-        "name": "--sl-action-danger-bg-active",
-        "description": "Solid active background for the danger tone."
+        "description": "Solid background fallback and outline/ghost foreground for the danger tone."
       },
       {
         "name": "--sl-action-danger-fg",
@@ -195,8 +179,56 @@
         "description": "Border color on the solid danger treatment."
       },
       {
+        "name": "--sl-action-disabled-bg",
+        "description": "Desaturated unavailable background. Used instead of fading the rest tone."
+      },
+      {
+        "name": "--sl-action-disabled-fg",
+        "description": "Unavailable foreground. Reduced emphasis, still legible."
+      },
+      {
+        "name": "--sl-action-disabled-border",
+        "description": "Unavailable border."
+      },
+      {
         "name": "--sl-action-disabled-opacity",
-        "description": "Shared unavailable-state opacity."
+        "description": "Shared unavailable-state opacity. SlButton uses dedicated disabled colors instead."
+      },
+      {
+        "name": "--sl-gradient-action-primary",
+        "description": "Oklch gradient fill for solid accent actions."
+      },
+      {
+        "name": "--sl-gradient-action-neutral",
+        "description": "Oklch gradient fill for solid neutral actions."
+      },
+      {
+        "name": "--sl-gradient-action-danger",
+        "description": "Oklch gradient fill for solid danger actions."
+      },
+      {
+        "name": "--sl-state-layer-hover",
+        "description": "Hover overlay opacity on the current tone."
+      },
+      {
+        "name": "--sl-state-layer-press",
+        "description": "Pressed overlay opacity on the current tone."
+      },
+      {
+        "name": "--sl-state-layer-selected",
+        "description": "Selected overlay opacity, used when aria-pressed is true."
+      },
+      {
+        "name": "--sl-state-layer-dragged",
+        "description": "Dragged overlay opacity, used when aria-grabbed is true."
+      },
+      {
+        "name": "--sl-motion-press-scale",
+        "description": "Pressed scale. 1 under reduced motion."
+      },
+      {
+        "name": "--sl-focus-ring-duration",
+        "description": "Focus-ring entrance duration. Instant under reduced motion."
       },
       {
         "name": "--sl-action-duration",

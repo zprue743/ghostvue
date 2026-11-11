@@ -48,6 +48,13 @@
       "$type": "color",
       "$value": "oklch(0.254 0.028 257.5 / 0.18)",
       "$description": "Alpha hairline border tinted with the neutral hue."
+    },
+    "highlight": {
+      "inset": {
+        "$type": "color",
+        "$value": "oklch(1 0.012 258 / 0.28)",
+        "$description": "Inset top sheen for raised actions in light mode."
+      }
     }
   },
   "asset": {
@@ -72,6 +79,43 @@
       "$type": "number",
       "$value": 0.08,
       "$description": "Grain material noise overlay opacity."
+    },
+    "hover": {
+      "$type": "number",
+      "$value": 0.08,
+      "$description": "Hover state-layer overlay opacity. Applied on the current tone."
+    },
+    "press": {
+      "$type": "number",
+      "$value": 0.12,
+      "$description": "Pressed state-layer overlay opacity. Applied on the current tone."
+    },
+    "selected": {
+      "$type": "number",
+      "$value": 0.1,
+      "$description": "Selected state-layer overlay opacity. Applied on the current tone."
+    },
+    "dragged": {
+      "$type": "number",
+      "$value": 0.16,
+      "$description": "Dragged state-layer overlay opacity. Applied on the current tone."
+    },
+    "spinner": {
+      "$type": "number",
+      "$value": 0.35,
+      "$description": "Reduced-motion spinner pulse trough opacity."
+    },
+    "mix": {
+      "soft": {
+        "$type": "number",
+        "$value": 0.12,
+        "$description": "Soft-treatment rest mix of tone into the surface."
+      },
+      "border": {
+        "$type": "number",
+        "$value": 0.4,
+        "$description": "Soft-treatment border mix of tone into the surface."
+      }
     }
   },
   "saturate": {
@@ -458,6 +502,11 @@
       "$type": "number",
       "$value": 0.96,
       "$description": "Default enter scale. 1 means no scale motion."
+    },
+    "press": {
+      "$type": "number",
+      "$value": 0.98,
+      "$description": "Pressed control scale. 1 under reduced motion."
     }
   }
 }

@@ -83,9 +83,15 @@ tokens that alias them.
 | `action.danger.bg.hover` | `--sl-action-danger-bg-hover` | color | `#900009` | `#ff908d` | Solid danger action background on hover. |
 | `action.danger.border` | `--sl-action-danger-border` | color | `#b91c1c` | `#f87171` | Border on a solid danger action. |
 | `action.danger.fg` | `--sl-action-danger-fg` | color | `#ffffff` | `#0f172a` | Content color on a solid danger action. |
-| `action.disabled.opacity` | `--sl-action-disabled-opacity` | number | `0.55` | `0.55` | Shared unavailable-state opacity. |
+| `action.danger.gradient.from` | `--sl-action-danger-gradient-from` | color | `#b91c1c` | `#f87171` | Danger action gradient start. Must meet WCAG AA with action.danger.fg. |
+| `action.danger.gradient.to` | `--sl-action-danger-gradient-to` | color | `#900009` | `#ff908d` | Danger action gradient end. Must meet WCAG AA with action.danger.fg. |
+| `action.disabled.bg` | `--sl-action-disabled-bg` | color | `#d9dee6` | `#464b50` | Unavailable action background. Desaturated; still meets WCAG AA with action.disabled.fg. |
+| `action.disabled.border` | `--sl-action-disabled-border` | color | `#bcc4d1` | `#60666e` | Unavailable action border. |
+| `action.disabled.fg` | `--sl-action-disabled-fg` | color | `#334155` | `#d3dce7` | Unavailable action foreground. Reduced emphasis, still legible. |
+| `action.disabled.opacity` | `--sl-action-disabled-opacity` | number | `0.55` | `0.55` | Shared unavailable-state opacity. SlButton uses dedicated disabled colors instead of fading the rest tone. |
 | `action.duration` | `--sl-action-duration` | duration | `120ms` | `120ms` | Action color and opacity transition duration. |
 | `action.gap` | `--sl-action-gap` | dimension | `0.5rem` | `0.5rem` | Space between action label and icon content. |
+| `action.highlight` | `--sl-action-highlight` | shadow | `inset 0px 1px 0px 0px oklch(1 0.012 258 / 0.28)` | `inset 0px 1px 0px 0px oklch(1 0.005 258 / 0.12)` | Inset top sheen on solid actions. |
 | `action.icon.size` | `--sl-action-icon-size` | dimension | `1.1em` | `1.1em` | Action icon size. |
 | `action.info.bg` | `--sl-action-info-bg` | color | `#0369a1` | `#38bdf8` | Solid info action background. |
 | `action.info.bg.active` | `--sl-action-info-bg-active` | color | `#003454` | `#99dbff` | Solid info action background on press. |
@@ -102,12 +108,20 @@ tokens that alias them.
 | `action.neutral.bg.hover` | `--sl-action-neutral-bg-hover` | color | `#263243` | `#d3dce7` | Solid neutral action background on hover. |
 | `action.neutral.border` | `--sl-action-neutral-border` | color | `#334155` | `#cbd5e1` | Border on a solid neutral action. |
 | `action.neutral.fg` | `--sl-action-neutral-fg` | color | `#ffffff` | `#0f172a` | Content color on a solid neutral action. |
+| `action.neutral.gradient.from` | `--sl-action-neutral-gradient-from` | color | `#334155` | `#cbd5e1` | Neutral action gradient start. Must meet WCAG AA with action.neutral.fg. |
+| `action.neutral.gradient.to` | `--sl-action-neutral-gradient-to` | color | `#263243` | `#d3dce7` | Neutral action gradient end. Must meet WCAG AA with action.neutral.fg. |
 | `action.primary.bg` | `--sl-action-primary-bg` | color | `#1d4ed8` | `#60a5fa` | Solid primary action background. Maps to SlButton tone accent. |
 | `action.primary.bg.active` | `--sl-action-primary-bg-active` | color | `#05217d` | `#a8ceff` | Solid primary action background on press. |
 | `action.primary.bg.hover` | `--sl-action-primary-bg-hover` | color | `#0d35ae` | `#80b8ff` | Solid primary action background on hover. |
 | `action.primary.border` | `--sl-action-primary-border` | color | `#1d4ed8` | `#60a5fa` | Border on a solid primary action. |
 | `action.primary.fg` | `--sl-action-primary-fg` | color | `#ffffff` | `#0f172a` | Content color on a solid primary action. |
+| `action.primary.gradient.from` | `--sl-action-primary-gradient-from` | color | `#1d4ed8` | `#60a5fa` | Primary action gradient start. Must meet WCAG AA with action.primary.fg. |
+| `action.primary.gradient.to` | `--sl-action-primary-gradient-to` | color | `#004e7a` | `#38bdf8` | Primary action gradient end. Subtle hue shift; must meet WCAG AA with action.primary.fg. |
 | `action.radius` | `--sl-action-radius` | dimension | `0.5rem` | `0.5rem` | Action corner radius. Follows --sl-roundness. |
+| `action.shadow` | `--sl-action-shadow` | shadow | `0px 2px 4px 0px oklch(0.254 0.028 257.5 / 0.08), 0px 4px 10px 0px oklch(0.254 0.028 257.5 / 0.14)` | `0px 2px 4px 0px oklch(0.08 0.02 258 / 0.3), 0px 3px 8px 0px oklch(0.08 0.02 258 / 0.18)` | Rest elevation on solid actions. |
+| `action.shadow.press` | `--sl-action-shadow-press` | shadow | `0px 1px 2px 0px oklch(0.254 0.028 257.5 / 0.08), 0px 1px 3px 0px oklch(0.254 0.028 257.5 / 0.14)` | `0px 1px 2px 0px oklch(0.08 0.02 258 / 0.28), 0px 1px 2px 0px oklch(0.08 0.02 258 / 0.16)` | Compressed elevation on a pressed solid action. |
+| `action.spinner.duration` | `--sl-action-spinner-duration` | duration | `700ms` | `700ms` | Default action spinner rotation period. The reduced-motion pulse uses the same period so it does not flicker. |
+| `action.spinner.opacity` | `--sl-action-spinner-opacity` | number | `0.35` | `0.35` | Reduced-motion spinner pulse trough opacity. |
 | `action.spinner.size` | `--sl-action-spinner-size` | dimension | `1.1em` | `1.1em` | Action loading-indicator size. |
 | `action.spinner.width` | `--sl-action-spinner-width` | dimension | `2px` | `2px` | Default action spinner stroke width. |
 | `action.success.bg` | `--sl-action-success-bg` | color | `#15803d` | `#4ade80` | Solid success action background. |
@@ -190,6 +204,7 @@ tokens that alias them.
 | --- | --- | --- | --- | --- | --- |
 | `focus.ring.color` | `--sl-focus-ring-color` | color | `#0f172a` | `#ffffff` | Outer color of the two-color keyboard focus indicator. |
 | `focus.ring.contrast` | `--sl-focus-ring-contrast` | color | `#ffffff` | `#0f172a` | Inner color of the two-color keyboard focus indicator. |
+| `focus.ring.duration` | `--sl-focus-ring-duration` | duration | `120ms` | `120ms` | Focus-ring entrance duration. Instant under reduced motion. |
 | `focus.ring.offset` | `--sl-focus-ring-offset` | dimension | `2px` | `2px` | Gap between a control and its focus ring. |
 | `focus.ring.width` | `--sl-focus-ring-width` | dimension | `3px` | `3px` | Focus outline thickness. |
 
@@ -198,6 +213,9 @@ tokens that alias them.
 | Token | CSS | Type | Light | Dark | Description |
 | --- | --- | --- | --- | --- | --- |
 | `gradient.accent` | `--sl-gradient-accent` | gradient | `linear-gradient(135deg in oklch, #356af3 0%, #579dd1 100%)` | `linear-gradient(135deg in oklch, #60a5fa 0%, #38bdf8 100%)` | Accent gradient interpolated in oklch. |
+| `gradient.action.danger` | `--sl-gradient-action-danger` | gradient | `linear-gradient(165deg in oklch, #b91c1c 0%, #900009 100%)` | `linear-gradient(165deg in oklch, #f87171 0%, #ff908d 100%)` | Solid danger action fill. Interpolated in oklch; both stops meet WCAG AA with action.danger.fg. |
+| `gradient.action.neutral` | `--sl-gradient-action-neutral` | gradient | `linear-gradient(165deg in oklch, #334155 0%, #263243 100%)` | `linear-gradient(165deg in oklch, #cbd5e1 0%, #d3dce7 100%)` | Solid neutral action fill. Interpolated in oklch; both stops meet WCAG AA with action.neutral.fg. |
+| `gradient.action.primary` | `--sl-gradient-action-primary` | gradient | `linear-gradient(165deg in oklch, #1d4ed8 0%, #004e7a 100%)` | `linear-gradient(165deg in oklch, #60a5fa 0%, #38bdf8 100%)` | Solid primary action fill. Interpolated in oklch; both stops meet WCAG AA with action.primary.fg. |
 | `gradient.aurora` | `--sl-gradient-aurora` | gradient | `radial-gradient(in oklch at 14% 18%, #d6e3ff 0%, transparent 52%), radial-gradient(in oklch at 86% 12%, #cfe7fc 0%, transparent 48%), radial-gradient(in oklch at 62% 92%, #e8f6ea 0%, transparent 55%)` | `radial-gradient(in oklch at 14% 18%, #235187 0%, transparent 52%), radial-gradient(in oklch at 86% 12%, #005d80 0%, transparent 48%), radial-gradient(in oklch at 62% 92%, #045227 0%, transparent 55%)` | Layered radial aurora background interpolated in oklch. |
 | `gradient.border` | `--sl-gradient-border` | gradient | `linear-gradient(135deg in oklch, #356af3 0%, #579dd1 100%)` | `linear-gradient(135deg in oklch, #60a5fa 0%, #38bdf8 100%)` | Gradient used by the gradient-border mask recipe. |
 
@@ -235,6 +253,7 @@ tokens that alias them.
 | `motion.exit.easing` | `--sl-motion-exit-easing` | cubicBezier | `cubic-bezier(0.3, 0, 1, 1)` | `cubic-bezier(0.3, 0, 1, 1)` | Exit easing. Accelerate out. |
 | `motion.fade.duration` | `--sl-motion-fade-duration` | duration | `120ms` | `120ms` | Opacity-only duration. Kept under reduced motion so state changes stay visible. |
 | `motion.intensity` | `--sl-motion-intensity` | number | `1` | `1` | Unitless 0–1 duration scale. Set --sl-motion-intensity on any subtree to slow or freeze motion. |
+| `motion.press.scale` | `--sl-motion-press-scale` | number | `0.98` | `0.98` | Pressed control scale. 1 under reduced motion so only color feedback remains. |
 | `motion.scale` | `--sl-motion-scale` | number | `0.96` | `0.96` | Enter scale. 1 under reduced motion so only opacity remains. |
 | `motion.spring.bouncy` | `--sl-motion-spring-bouncy` | spring | `linear(0, 0.0336 1.3841%, 0.1536 3.1142%, 1.0771 11.7647%, 1.2198 14.1869%, 1.2801 16.609%, 1.2822 17.9931%, 1.259 19.7232%, 0.9889 28.7197%, 0.9437 31.1419%, 0.9209 33.91%, 0.9278 37.3702%, 1.0023 46.0208%, 1.0219 50.8651%, 1.0207 54.6713%, 0.9938 68.1661%, 1.0016 84.7751%, 1)` | `linear(0, 0.0336 1.3841%, 0.1536 3.1142%, 1.0771 11.7647%, 1.2198 14.1869%, 1.2801 16.609%, 1.2822 17.9931%, 1.259 19.7232%, 0.9889 28.7197%, 0.9437 31.1419%, 0.9209 33.91%, 0.9278 37.3702%, 1.0023 46.0208%, 1.0219 50.8651%, 1.0207 54.6713%, 0.9938 68.1661%, 1.0016 84.7751%, 1)` | Bouncy spring compiled to CSS linear(). |
 | `motion.spring.bouncy.duration` | `--sl-motion-spring-bouncy-duration` | duration | `1204ms` | `1204ms` | Settle duration for the bouncy spring. |
@@ -277,6 +296,17 @@ tokens that alias them.
 | `space.stack.lg` | `--sl-space-stack-lg` | dimension | `1.5rem` | `1.5rem` | Large stack gap. 24px at comfortable density. |
 | `space.stack.md` | `--sl-space-stack-md` | dimension | `1rem` | `1rem` | Medium stack gap. 16px at comfortable density. |
 | `space.stack.sm` | `--sl-space-stack-sm` | dimension | `0.5rem` | `0.5rem` | Small stack gap. 8px at comfortable density. |
+
+### state
+
+| Token | CSS | Type | Light | Dark | Description |
+| --- | --- | --- | --- | --- | --- |
+| `state.layer.dragged` | `--sl-state-layer-dragged` | number | `0.16` | `0.16` | Dragged overlay opacity on the current tone. Used when aria-grabbed is true. |
+| `state.layer.hover` | `--sl-state-layer-hover` | number | `0.08` | `0.08` | Hover overlay opacity on the current tone. Works across every tone and mode. |
+| `state.layer.press` | `--sl-state-layer-press` | number | `0.12` | `0.12` | Pressed overlay opacity on the current tone. |
+| `state.layer.selected` | `--sl-state-layer-selected` | number | `0.1` | `0.1` | Selected overlay opacity on the current tone. Used when aria-pressed is true. |
+| `state.mix.border` | `--sl-state-mix-border` | number | `0.4` | `0.4` | Border mix of tone into the surface for soft treatments. |
+| `state.mix.soft` | `--sl-state-mix-soft` | number | `0.12` | `0.12` | Rest mix of tone into the surface for soft treatments. |
 
 ### status
 
@@ -380,6 +410,7 @@ tokens can alias a stable OKLCH scale.
 | `color.danger.dark.900` | color | `#441919` | Danger 900 (dark-tuned). |
 | `color.danger.dark.950` | color | `#2b0f0f` | Danger 950 (dark-tuned). |
 | `color.hairline` | color | `oklch(0.254 0.028 257.5 / 0.18)` | Alpha hairline border tinted with the neutral hue. |
+| `color.highlight.inset` | color | `oklch(1 0.012 258 / 0.28)` | Inset top sheen for raised actions in light mode. |
 | `color.info.100` | color | `#e7f3fd` | Info 100 (light-tuned). |
 | `color.info.1000` | color | `#000c19` | Info 1000 (light-tuned). |
 | `color.info.200` | color | `#cfe7fc` | Info 200 (light-tuned). |
@@ -548,8 +579,15 @@ tokens can alias a stable OKLCH scale.
 | `font.weight.regular` | fontWeight | `400` | Regular font weight. |
 | `font.weight.semibold` | fontWeight | `600` | Semibold font weight. |
 | `opacity.disabled` | number | `0.55` | Unavailable-state opacity. |
+| `opacity.dragged` | number | `0.16` | Dragged state-layer overlay opacity. Applied on the current tone. |
 | `opacity.glass` | number | `0.04` | Glass material noise overlay opacity. |
 | `opacity.grain` | number | `0.08` | Grain material noise overlay opacity. |
+| `opacity.hover` | number | `0.08` | Hover state-layer overlay opacity. Applied on the current tone. |
+| `opacity.mix.border` | number | `0.4` | Soft-treatment border mix of tone into the surface. |
+| `opacity.mix.soft` | number | `0.12` | Soft-treatment rest mix of tone into the surface. |
+| `opacity.press` | number | `0.12` | Pressed state-layer overlay opacity. Applied on the current tone. |
+| `opacity.selected` | number | `0.1` | Selected state-layer overlay opacity. Applied on the current tone. |
+| `opacity.spinner` | number | `0.35` | Reduced-motion spinner pulse trough opacity. |
 | `radius.scale.lg` | dimension | `0.75rem` | Large corner radius. 12px at roundness 1. |
 | `radius.scale.md` | dimension | `0.5rem` | Medium corner radius. 8px at roundness 1. |
 | `radius.scale.none` | dimension | `0px` | Sharp corner. Roundness 0. |
@@ -558,6 +596,7 @@ tokens can alias a stable OKLCH scale.
 | `radius.scale.xl` | dimension | `1rem` | Extra-large corner radius. 16px at roundness 1. |
 | `saturate.glass` | number | `1.45` | Glass material backdrop saturation boost. |
 | `scale.motion` | number | `0.96` | Default enter scale. 1 means no scale motion. |
+| `scale.press` | number | `0.98` | Pressed control scale. 1 under reduced motion. |
 | `size.blur.glass` | dimension | `1.25rem` | Glass material backdrop blur. |
 | `size.focus.offset` | dimension | `2px` | Gap between a control and its focus ring. |
 | `size.focus.width` | dimension | `3px` | Focus outline thickness. |

@@ -358,6 +358,16 @@
       "fg": {
         "$type": "color",
         "$value": "{color.ink}"
+      },
+      "gradient": {
+        "from": {
+          "$type": "color",
+          "$value": "{color.primary.dark.400}"
+        },
+        "to": {
+          "$type": "color",
+          "$value": "{color.info.dark.400}"
+        }
       }
     },
     "neutral": {
@@ -376,6 +386,16 @@
       "fg": {
         "$type": "color",
         "$value": "{color.ink}"
+      },
+      "gradient": {
+        "from": {
+          "$type": "color",
+          "$value": "{color.neutral.dark.400}"
+        },
+        "to": {
+          "$type": "color",
+          "$value": "{color.neutral.dark.300}"
+        }
       }
     },
     "success": {
@@ -430,6 +450,16 @@
       "fg": {
         "$type": "color",
         "$value": "{color.ink}"
+      },
+      "gradient": {
+        "from": {
+          "$type": "color",
+          "$value": "{color.danger.dark.400}"
+        },
+        "to": {
+          "$type": "color",
+          "$value": "{color.danger.dark.300}"
+        }
       }
     },
     "info": {
@@ -448,6 +478,31 @@
       "fg": {
         "$type": "color",
         "$value": "{color.ink}"
+      }
+    },
+    "disabled": {
+      "bg": {
+        "$type": "color",
+        "$value": "{color.neutral.dark.800}"
+      },
+      "fg": {
+        "$type": "color",
+        "$value": "{color.neutral.dark.300}"
+      },
+      "border": {
+        "$type": "color",
+        "$value": "{color.neutral.dark.700}"
+      }
+    },
+    "highlight": {
+      "$type": "shadow",
+      "$value": {
+        "offsetX": "0px",
+        "offsetY": "1px",
+        "blur": "0px",
+        "spread": "0px",
+        "color": "{color.shadow.highlight}",
+        "inset": true
       }
     }
   },

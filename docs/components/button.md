@@ -82,6 +82,35 @@ roundness tokens. Comfortable `md` is 40px tall with an 8px radius at
 coarse pointers floor heights to 44px. See
 [density, type, and roundness](../themes/density.md).
 
+Solid accent (the default), neutral, and danger fills use oklch gradients
+(`--sl-gradient-action-*`) with an inset highlight and elevation-2 shadow.
+Hover, press, selected, and dragged are **state-layer overlays**
+(`--sl-state-layer-*`) mixed onto the current tone, so they work in every
+mode without per-tone hover colors. There are no per-component tokens.
+
+### State matrix
+
+Headless `SlButton` has no `pressed` model. The theme still styles
+`aria-pressed` and `aria-grabbed` when a consumer sets them, so later
+toggle and drag controls can reuse the same overlay tokens.
+
+| State                 | How it appears        | Overlay                     | Motion                                                                     | Notes                                                                                            |
+| --------------------- | --------------------- | --------------------------- | -------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| Rest                  | Default               | none                        | —                                                                          | Solid: gradient fill, inner highlight, elevation 2.                                              |
+| Hover                 | `:hover`              | `--sl-state-layer-hover`    | color                                                                      | Not applied while disabled or loading.                                                           |
+| Focus-visible         | `:focus-visible`      | two-tone ring               | ring entrance (`--sl-focus-ring-duration`)                                 | Inner `--sl-focus-ring-contrast`, outer `--sl-focus-ring-color`. Instant under reduced motion.   |
+| Hover + focus-visible | both                  | hover overlay + ring        | ring entrance                                                              | Overlay and ring compose.                                                                        |
+| Pressed               | `:active`             | `--sl-state-layer-press`    | scale `--sl-motion-press-scale` (0.98), elevation 1, snappy spring release | No scale under reduced motion; color overlay stays.                                              |
+| Pressed + focus       | both                  | press overlay + ring        | press + ring                                                               |                                                                                                  |
+| Loading               | `loading`             | none                        | spinner                                                                    | Fixed width, `aria-busy`, focusable. Focus-visible still draws the ring.                         |
+| Loading + focus       | both                  | ring                        | spinner + ring                                                             | Activation stays cancelled.                                                                      |
+| Disabled              | `disabled`            | none                        | none                                                                       | Desaturated `--sl-action-disabled-*` colors, `cursor: not-allowed`. Not a low-opacity rest tone. |
+| Selected              | `aria-pressed="true"` | `--sl-state-layer-selected` | —                                                                          | CSS hook only; not a headless API.                                                               |
+| Dragged               | `aria-grabbed="true"` | `--sl-state-layer-dragged`  | —                                                                          | CSS hook for later drag controls.                                                                |
+
+Docs and visual snapshots freeze hover/press/focus with `data-visual-state`.
+That attribute is not a component prop.
+
 You can also import the stylesheet and wrap unstyled buttons in `.slop-theme`
 when you want a region of headless components to pick up the defaults. See the
 [default theme guide](../themes/default.md) for tokens and overrides.

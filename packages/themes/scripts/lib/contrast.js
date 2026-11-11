@@ -51,6 +51,11 @@ export function contrastPairs(tokens) {
       add(name, `${stem}.bg.active`, 'fg/bg')
     }
 
+    if (name.endsWith('.gradient.from') || name.endsWith('.gradient.to')) {
+      const stem = name.replace(/\.gradient\.(from|to)$/, '')
+      add(`${stem}.fg`, name, 'fg/gradient stop')
+    }
+
     if (/^elevation\.\d+\.bg$/.test(name)) {
       add('surface.fg', name, 'text on elevation')
       add('text.default', name, 'text on elevation')
