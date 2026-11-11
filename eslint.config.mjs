@@ -72,6 +72,7 @@ export default tseslint.config(
       // Prettier owns Vue template layout; these recommended rules fight it.
       'vue/max-attributes-per-line': 'off',
       'vue/singleline-html-element-content-newline': 'off',
+      'vue/html-self-closing': 'off',
       // Hyphenated ARIA attrs stay fallthrough; camel-casing would redeclare them as props.
       'vue/prop-name-casing': [
         'warn',

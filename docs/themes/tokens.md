@@ -5,10 +5,14 @@
 Compiled from DTCG JSON in `@slop-ui/themes`. Semantic tokens are the
 public CSS custom properties (`--sl-<role>-<part>-<state>`). Primitive
 tokens are aliases for those values and are not published as CSS.
-Override a semantic custom property on any subtree; `data-sl-theme` and
-`data-sl-mode` nest. Unset `data-sl-mode` follows `prefers-color-scheme`.
+Override a semantic custom property on any subtree; `data-sl-theme`,
+`data-sl-mode`, and `data-sl-density` nest. Unset `data-sl-mode` follows
+`prefers-color-scheme`. Unset `data-sl-density` is `comfortable`.
+`--sl-roundness` (0–1) scales every radius token from sharp to its
+designed value (pill for `radius.pill`).
 
-Default theme: `default`. Modes: `light`, `dark`.
+Default theme: `default`. Modes: `light`, `dark`. Densities: `compact`,
+`comfortable` (default), `spacious`.
 
 See [design tokens](../architecture/tokens.md) and
 [ADR 0007](../adr/0007-token-pipeline.md).
@@ -88,6 +92,10 @@ tokens that alias them.
 | `action.info.bg.hover` | `--sl-action-info-bg-hover` | color | `#004e7a` | `#65ccff` | Solid info action background on hover. |
 | `action.info.border` | `--sl-action-info-border` | color | `#0369a1` | `#38bdf8` | Border on a solid info action. |
 | `action.info.fg` | `--sl-action-info-fg` | color | `#ffffff` | `#0f172a` | Content color on a solid info action. |
+| `action.label.family` | `--sl-action-label-family` | fontFamily | `ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji"` | `ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji"` | Action label font family. |
+| `action.label.letter` | `--sl-action-label-letter` | letterSpacing | `0em` | `0em` | Action label letter-spacing. |
+| `action.label.line` | `--sl-action-label-line` | number | `1.2` | `1.2` | Action label line-height. |
+| `action.label.size` | `--sl-action-label-size` | fontSize | `clamp(0.9375rem, 0.9167rem + 0.1042vw, 1rem)` | `clamp(0.9375rem, 0.9167rem + 0.1042vw, 1rem)` | Default action label size. Size variants use control.size.*.font. |
 | `action.label.weight` | `--sl-action-label-weight` | fontWeight | `600` | `600` | Action label font weight. |
 | `action.neutral.bg` | `--sl-action-neutral-bg` | color | `#334155` | `#cbd5e1` | Solid neutral action background. |
 | `action.neutral.bg.active` | `--sl-action-neutral-bg-active` | color | `#1a2330` | `#dee4eb` | Solid neutral action background on press. |
@@ -99,7 +107,7 @@ tokens that alias them.
 | `action.primary.bg.hover` | `--sl-action-primary-bg-hover` | color | `#0d35ae` | `#80b8ff` | Solid primary action background on hover. |
 | `action.primary.border` | `--sl-action-primary-border` | color | `#1d4ed8` | `#60a5fa` | Border on a solid primary action. |
 | `action.primary.fg` | `--sl-action-primary-fg` | color | `#ffffff` | `#0f172a` | Content color on a solid primary action. |
-| `action.radius` | `--sl-action-radius` | dimension | `0.5rem` | `0.5rem` | Action corner radius. |
+| `action.radius` | `--sl-action-radius` | dimension | `0.5rem` | `0.5rem` | Action corner radius. Follows --sl-roundness. |
 | `action.spinner.size` | `--sl-action-spinner-size` | dimension | `1.1em` | `1.1em` | Action loading-indicator size. |
 | `action.spinner.width` | `--sl-action-spinner-width` | dimension | `2px` | `2px` | Default action spinner stroke width. |
 | `action.success.bg` | `--sl-action-success-bg` | color | `#15803d` | `#4ade80` | Solid success action background. |
@@ -133,15 +141,19 @@ tokens that alias them.
 
 | Token | CSS | Type | Light | Dark | Description |
 | --- | --- | --- | --- | --- | --- |
-| `control.size.lg.min` | `--sl-control-size-lg-min` | dimension | `3.25rem` | `3.25rem` | Large control minimum block size. |
-| `control.size.lg.padding.block` | `--sl-control-size-lg-padding-block` | dimension | `0.875rem` | `0.875rem` | Large control block padding. |
+| `control.size.lg.font` | `--sl-control-size-lg-font` | fontSize | `clamp(1.0625rem, 1.0417rem + 0.1042vw, 1.125rem)` | `clamp(1.0625rem, 1.0417rem + 0.1042vw, 1.125rem)` | Large control font size. |
+| `control.size.lg.min` | `--sl-control-size-lg-min` | dimension | `3rem` | `3rem` | Large control minimum block size. Comfortable and spacious 48px; compact 40. |
+| `control.size.lg.padding.block` | `--sl-control-size-lg-padding-block` | dimension | `1rem` | `1rem` | Large control block padding. |
 | `control.size.lg.padding.inline` | `--sl-control-size-lg-padding-inline` | dimension | `1.25rem` | `1.25rem` | Large control inline padding. |
-| `control.size.md.min` | `--sl-control-size-md-min` | dimension | `2.75rem` | `2.75rem` | Medium control minimum block size. |
+| `control.size.md.font` | `--sl-control-size-md-font` | fontSize | `clamp(0.9375rem, 0.9167rem + 0.1042vw, 1rem)` | `clamp(0.9375rem, 0.9167rem + 0.1042vw, 1rem)` | Medium control font size. |
+| `control.size.md.min` | `--sl-control-size-md-min` | dimension | `2.5rem` | `2.5rem` | Medium control minimum block size. Comfortable 40px; compact 32; spacious 48. |
 | `control.size.md.padding.block` | `--sl-control-size-md-padding-block` | dimension | `0.75rem` | `0.75rem` | Medium control block padding. |
 | `control.size.md.padding.inline` | `--sl-control-size-md-padding-inline` | dimension | `1rem` | `1rem` | Medium control inline padding. |
-| `control.size.sm.min` | `--sl-control-size-sm-min` | dimension | `2.25rem` | `2.25rem` | Small control minimum block size. |
+| `control.size.sm.font` | `--sl-control-size-sm-font` | fontSize | `clamp(0.8125rem, 0.7917rem + 0.1042vw, 0.875rem)` | `clamp(0.8125rem, 0.7917rem + 0.1042vw, 0.875rem)` | Small control font size. |
+| `control.size.sm.min` | `--sl-control-size-sm-min` | dimension | `2rem` | `2rem` | Small control minimum block size. Comfortable 32px; compact 28; spacious 36. |
 | `control.size.sm.padding.block` | `--sl-control-size-sm-padding-block` | dimension | `0.5rem` | `0.5rem` | Small control block padding. |
 | `control.size.sm.padding.inline` | `--sl-control-size-sm-padding-inline` | dimension | `0.75rem` | `0.75rem` | Small control inline padding. |
+| `control.touch.min` | `--sl-control-touch-min` | dimension | `2.75rem` | `2.75rem` | Coarse-pointer floor applied to control heights. |
 
 ### elevation
 
@@ -233,6 +245,39 @@ tokens that alias them.
 | `motion.stagger` | `--sl-motion-stagger` | duration | `40ms` | `40ms` | Delay between staggered items. Zero under reduced motion. |
 | `motion.translate` | `--sl-motion-translate` | dimension | `0.5rem` | `0.5rem` | Enter/exit translation distance. 0 under reduced motion. |
 
+### radius
+
+| Token | CSS | Type | Light | Dark | Description |
+| --- | --- | --- | --- | --- | --- |
+| `radius.lg` | `--sl-radius-lg` | dimension | `0.75rem` | `0.75rem` | Large radius. 12px at comfortable density and roundness 1. |
+| `radius.md` | `--sl-radius-md` | dimension | `0.5rem` | `0.5rem` | Medium radius. 8px at comfortable density and roundness 1. |
+| `radius.none` | `--sl-radius-none` | dimension | `0px` | `0px` | Sharp corner. Stays 0 at every roundness. |
+| `radius.pill` | `--sl-radius-pill` | dimension | `999px` | `999px` | Pill radius. Capsule at roundness 1; sharp at 0. |
+| `radius.sm` | `--sl-radius-sm` | dimension | `0.25rem` | `0.25rem` | Small radius. 4px at comfortable density and roundness 1. |
+| `radius.xl` | `--sl-radius-xl` | dimension | `1rem` | `1rem` | Extra-large radius. 16px at comfortable density and roundness 1. |
+
+### roundness
+
+| Token | CSS | Type | Light | Dark | Description |
+| --- | --- | --- | --- | --- | --- |
+| `roundness.amount` | `--sl-roundness` | number | `1` | `1` | Unitless 0–1 corner scale compiled as --sl-roundness. 0 is sharp; 1 is the designed radius. Set on any subtree. |
+
+### space
+
+| Token | CSS | Type | Light | Dark | Description |
+| --- | --- | --- | --- | --- | --- |
+| `space.gap.lg` | `--sl-space-gap-lg` | dimension | `1rem` | `1rem` | Large gap. 16px at comfortable density. |
+| `space.gap.md` | `--sl-space-gap-md` | dimension | `0.75rem` | `0.75rem` | Medium gap. 12px at comfortable density. |
+| `space.gap.sm` | `--sl-space-gap-sm` | dimension | `0.5rem` | `0.5rem` | Small gap. 8px at comfortable density. |
+| `space.gap.xs` | `--sl-space-gap-xs` | dimension | `0.25rem` | `0.25rem` | Extra-small gap. 4px at comfortable density. |
+| `space.inset.lg` | `--sl-space-inset-lg` | dimension | `1.25rem` | `1.25rem` | Large inset. 20px at comfortable density. |
+| `space.inset.md` | `--sl-space-inset-md` | dimension | `1rem` | `1rem` | Medium inset. 16px at comfortable density. |
+| `space.inset.sm` | `--sl-space-inset-sm` | dimension | `0.75rem` | `0.75rem` | Small inset. 12px at comfortable density. |
+| `space.inset.xs` | `--sl-space-inset-xs` | dimension | `0.5rem` | `0.5rem` | Extra-small inset. 8px at comfortable density. |
+| `space.stack.lg` | `--sl-space-stack-lg` | dimension | `1.5rem` | `1.5rem` | Large stack gap. 24px at comfortable density. |
+| `space.stack.md` | `--sl-space-stack-md` | dimension | `1rem` | `1rem` | Medium stack gap. 16px at comfortable density. |
+| `space.stack.sm` | `--sl-space-stack-sm` | dimension | `0.5rem` | `0.5rem` | Small stack gap. 8px at comfortable density. |
+
 ### status
 
 | Token | CSS | Type | Light | Dark | Description |
@@ -274,6 +319,33 @@ tokens that alias them.
 | `text.subtle` | `--sl-text-subtle` | color | `#4f5d72` | `#cbd5e1` | Tertiary text on the canvas. Still meets WCAG 2 AA. |
 | `text.success` | `--sl-text-success` | color | `#15803d` | `#4ade80` | Success-colored text on the canvas. |
 | `text.warning` | `--sl-text-warning` | color | `#b45309` | `#fbbf24` | Warning-colored text on the canvas. |
+
+### type
+
+| Token | CSS | Type | Light | Dark | Description |
+| --- | --- | --- | --- | --- | --- |
+| `type.family.sans` | `--sl-type-family-sans` | fontFamily | `ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji"` | `ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji"` | System UI sans stack. No web font. |
+| `type.feature.default` | `--sl-type-feature-default` | fontFeature | `"kern" 1, "liga" 1, "calt" 1` | `"kern" 1, "liga" 1, "calt" 1` | Default OpenType features. |
+| `type.feature.tabular` | `--sl-type-feature-tabular` | fontFeature | `"tnum" 1, "kern" 1, "liga" 1` | `"tnum" 1, "kern" 1, "liga" 1` | Tabular-number OpenType features. |
+| `type.letter.normal` | `--sl-type-letter-normal` | letterSpacing | `0em` | `0em` | Default letter-spacing. |
+| `type.letter.tight` | `--sl-type-letter-tight` | letterSpacing | `-0.02em` | `-0.02em` | Tight letter-spacing. |
+| `type.letter.wide` | `--sl-type-letter-wide` | letterSpacing | `0.04em` | `0.04em` | Wide letter-spacing. |
+| `type.line.normal` | `--sl-type-line-normal` | number | `1.5` | `1.5` | Default body line-height. |
+| `type.line.snug` | `--sl-type-line-snug` | number | `1.375` | `1.375` | Snug line-height. |
+| `type.line.tight` | `--sl-type-line-tight` | number | `1.2` | `1.2` | Tight line-height. |
+| `type.numeric.proportional` | `--sl-type-numeric-proportional` | fontVariant | `proportional-nums` | `proportional-nums` | Proportional numbers. Apply as font-variant-numeric. |
+| `type.numeric.tabular` | `--sl-type-numeric-tabular` | fontVariant | `tabular-nums` | `tabular-nums` | Tabular lining numbers. Apply as font-variant-numeric. |
+| `type.size.2xl` | `--sl-type-size-2xl` | fontSize | `clamp(1.5rem, 1.3333rem + 0.8333vw, 2rem)` | `clamp(1.5rem, 1.3333rem + 0.8333vw, 2rem)` | Fluid 2xl type. |
+| `type.size.3xl` | `--sl-type-size-3xl` | fontSize | `clamp(1.875rem, 1.6667rem + 1.0417vw, 2.5rem)` | `clamp(1.875rem, 1.6667rem + 1.0417vw, 2.5rem)` | Fluid 3xl type. |
+| `type.size.lg` | `--sl-type-size-lg` | fontSize | `clamp(1.0625rem, 1.0417rem + 0.1042vw, 1.125rem)` | `clamp(1.0625rem, 1.0417rem + 0.1042vw, 1.125rem)` | Fluid large type. |
+| `type.size.md` | `--sl-type-size-md` | fontSize | `clamp(0.9375rem, 0.9167rem + 0.1042vw, 1rem)` | `clamp(0.9375rem, 0.9167rem + 0.1042vw, 1rem)` | Fluid body type. |
+| `type.size.sm` | `--sl-type-size-sm` | fontSize | `clamp(0.8125rem, 0.7917rem + 0.1042vw, 0.875rem)` | `clamp(0.8125rem, 0.7917rem + 0.1042vw, 0.875rem)` | Fluid small type. |
+| `type.size.xl` | `--sl-type-size-xl` | fontSize | `clamp(1.25rem, 1.1667rem + 0.4167vw, 1.5rem)` | `clamp(1.25rem, 1.1667rem + 0.4167vw, 1.5rem)` | Fluid extra-large type. |
+| `type.size.xs` | `--sl-type-size-xs` | fontSize | `clamp(0.75rem, 0.7292rem + 0.1042vw, 0.8125rem)` | `clamp(0.75rem, 0.7292rem + 0.1042vw, 0.8125rem)` | Fluid extra-small type. |
+| `type.weight.bold` | `--sl-type-weight-bold` | fontWeight | `700` | `700` | Bold font weight. |
+| `type.weight.medium` | `--sl-type-weight-medium` | fontWeight | `500` | `500` | Medium font weight. |
+| `type.weight.regular` | `--sl-type-weight-regular` | fontWeight | `400` | `400` | Regular font weight. |
+| `type.weight.semibold` | `--sl-type-weight-semibold` | fontWeight | `600` | `600` | Semibold font weight. |
 
 ## Primitive tokens
 
@@ -436,9 +508,12 @@ tokens can alias a stable OKLCH scale.
 | `color.warning.dark.900` | color | `#3e2c00` | Warning 900 (dark-tuned). |
 | `color.warning.dark.950` | color | `#261a00` | Warning 950 (dark-tuned). |
 | `color.white` | color | `#ffffff` | Canvas white. Not part of a generated hue ramp. |
-| `control.min.lg` | dimension | `3.25rem` | Large control minimum size. |
-| `control.min.md` | dimension | `2.75rem` | Medium control minimum size. |
-| `control.min.sm` | dimension | `2.25rem` | Small control minimum size. |
+| `control.height.28` | dimension | `1.75rem` | Control height 28px. |
+| `control.height.32` | dimension | `2rem` | Control height 32px. |
+| `control.height.36` | dimension | `2.25rem` | Control height 36px. |
+| `control.height.40` | dimension | `2.5rem` | Control height 40px. |
+| `control.height.48` | dimension | `3rem` | Control height 48px. |
+| `control.touch` | dimension | `2.75rem` | 44px minimum used as a coarse-pointer floor. |
 | `duration.expressive` | duration | `700ms` | Longest emphasized duration. |
 | `duration.fast` | duration | `120ms` | Fast interaction duration. |
 | `duration.feedback` | duration | `80ms` | Short color and opacity feedback used under reduced motion. Not zero so state changes stay visible. |
@@ -449,11 +524,38 @@ tokens can alias a stable OKLCH scale.
 | `easing.accelerate` | cubicBezier | `cubic-bezier(0.3, 0, 1, 1)` | Ease-in. Use for exits. |
 | `easing.decelerate` | cubicBezier | `cubic-bezier(0, 0, 0, 1)` | Ease-out. Use for enters. |
 | `easing.standard` | cubicBezier | `cubic-bezier(0.2, 0, 0, 1)` | Default symmetric easing. |
+| `font.family.sans` | fontFamily | `ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji"` | System UI sans stack. No web font. |
+| `font.feature.default` | fontFeature | `"kern" 1, "liga" 1, "calt" 1` | Default OpenType features. Kerning, ligatures, contextual alternates. |
+| `font.feature.none` | fontFeature | `normal` | No OpenType feature settings. |
+| `font.feature.tabular` | fontFeature | `"tnum" 1, "kern" 1, "liga" 1` | Tabular-number OpenType features. |
+| `font.letter.normal` | letterSpacing | `0em` | Default letter-spacing. |
+| `font.letter.tight` | letterSpacing | `-0.02em` | Tight letter-spacing. |
+| `font.letter.wide` | letterSpacing | `0.04em` | Wide letter-spacing. |
+| `font.line.normal` | number | `1.5` | Default body line-height. |
+| `font.line.snug` | number | `1.375` | Snug line-height. |
+| `font.line.tight` | number | `1.2` | Tight line-height. Matches SlButton. |
+| `font.numeric.proportional` | fontVariant | `proportional-nums` | Proportional numbers. font-variant-numeric. |
+| `font.numeric.tabular` | fontVariant | `tabular-nums` | Tabular lining numbers. font-variant-numeric. |
+| `font.size.2xl` | fontSize | `clamp(1.5rem, 1.3333rem + 0.8333vw, 2rem)` | Fluid 2xl type. 24–32px from 320–1280px. |
+| `font.size.3xl` | fontSize | `clamp(1.875rem, 1.6667rem + 1.0417vw, 2.5rem)` | Fluid 3xl type. 30–40px from 320–1280px. |
+| `font.size.lg` | fontSize | `clamp(1.0625rem, 1.0417rem + 0.1042vw, 1.125rem)` | Fluid large type. 17–18px from 320–1280px. |
+| `font.size.md` | fontSize | `clamp(0.9375rem, 0.9167rem + 0.1042vw, 1rem)` | Fluid body type. 15–16px from 320–1280px. |
+| `font.size.sm` | fontSize | `clamp(0.8125rem, 0.7917rem + 0.1042vw, 0.875rem)` | Fluid small type. 13–14px from 320–1280px. |
+| `font.size.xl` | fontSize | `clamp(1.25rem, 1.1667rem + 0.4167vw, 1.5rem)` | Fluid extra-large type. 20–24px from 320–1280px. |
+| `font.size.xs` | fontSize | `clamp(0.75rem, 0.7292rem + 0.1042vw, 0.8125rem)` | Fluid extra-small type. 12–13px from 320–1280px. |
+| `font.weight.bold` | fontWeight | `700` | Bold font weight. |
+| `font.weight.medium` | fontWeight | `500` | Medium font weight. |
+| `font.weight.regular` | fontWeight | `400` | Regular font weight. |
 | `font.weight.semibold` | fontWeight | `600` | Semibold font weight. |
 | `opacity.disabled` | number | `0.55` | Unavailable-state opacity. |
 | `opacity.glass` | number | `0.04` | Glass material noise overlay opacity. |
 | `opacity.grain` | number | `0.08` | Grain material noise overlay opacity. |
-| `radius.md` | dimension | `0.5rem` | Medium corner radius. |
+| `radius.scale.lg` | dimension | `0.75rem` | Large corner radius. 12px at roundness 1. |
+| `radius.scale.md` | dimension | `0.5rem` | Medium corner radius. 8px at roundness 1. |
+| `radius.scale.none` | dimension | `0px` | Sharp corner. Roundness 0. |
+| `radius.scale.pill` | dimension | `999px` | Pill radius. Capsule at roundness 1. |
+| `radius.scale.sm` | dimension | `0.25rem` | Small corner radius. 4px at roundness 1. |
+| `radius.scale.xl` | dimension | `1rem` | Extra-large corner radius. 16px at roundness 1. |
 | `saturate.glass` | number | `1.45` | Glass material backdrop saturation boost. |
 | `scale.motion` | number | `0.96` | Default enter scale. 1 means no scale motion. |
 | `size.blur.glass` | dimension | `1.25rem` | Glass material backdrop blur. |
@@ -463,11 +565,17 @@ tokens can alias a stable OKLCH scale.
 | `size.icon` | dimension | `1.1em` | Icon size relative to the label. |
 | `size.motion.translate` | dimension | `0.5rem` | Default enter/exit translation distance. |
 | `size.spinner.width` | dimension | `2px` | Default spinner stroke width. |
-| `space.2` | dimension | `0.5rem` | Space 2. |
-| `space.3` | dimension | `0.75rem` | Space 3. |
-| `space.3-5` | dimension | `0.875rem` | Space 3.5. |
-| `space.4` | dimension | `1rem` | Space 4. |
-| `space.5` | dimension | `1.25rem` | Space 5. |
+| `space.0` | dimension | `0px` | Space 0. 4px grid. |
+| `space.1` | dimension | `0.25rem` | Space 1. 4px. |
+| `space.10` | dimension | `2.5rem` | Space 10. 40px. |
+| `space.12` | dimension | `3rem` | Space 12. 48px. |
+| `space.16` | dimension | `4rem` | Space 16. 64px. |
+| `space.2` | dimension | `0.5rem` | Space 2. 8px. |
+| `space.3` | dimension | `0.75rem` | Space 3. 12px. |
+| `space.4` | dimension | `1rem` | Space 4. 16px. |
+| `space.5` | dimension | `1.25rem` | Space 5. 20px. |
+| `space.6` | dimension | `1.5rem` | Space 6. 24px. |
+| `space.8` | dimension | `2rem` | Space 8. 32px. |
 | `spring.bouncy` | spring | `linear(0, 0.0336 1.3841%, 0.1536 3.1142%, 1.0771 11.7647%, 1.2198 14.1869%, 1.2801 16.609%, 1.2822 17.9931%, 1.259 19.7232%, 0.9889 28.7197%, 0.9437 31.1419%, 0.9209 33.91%, 0.9278 37.3702%, 1.0023 46.0208%, 1.0219 50.8651%, 1.0207 54.6713%, 0.9938 68.1661%, 1.0016 84.7751%, 1)` | Underdamped spring that overshoots before settling. |
 | `spring.gentle` | spring | `linear(0, 0.0191 2.1429%, 0.0866 5%, 0.4534 15.7143%, 0.6359 22.1429%, 0.767 28.5714%, 0.8204 32.1429%, 0.8698 36.4286%, 0.9065 40.7143%, 0.9369 45.7143%, 0.9751 57.1429%, 0.9934 72.8571%, 1)` | Critically damped spring. No overshoot. |
 | `spring.snappy` | spring | `linear(0, 0.0043 0.8264%, 0.036 2.4793%, 0.1271 4.9587%, 0.6578 14.876%, 0.8392 19.0083%, 0.9867 23.9669%, 1.0328 26.4463%, 1.063 28.9256%, 1.0832 32.2314%, 1.0853 36.3636%, 1.0164 52.8926%, 0.9952 62.8099%, 1)` | Underdamped spring with a short settle. |

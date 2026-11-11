@@ -19,6 +19,8 @@ packages/themes/tokens/generated/ramps.json
 packages/themes/tokens/primitives.json
 packages/themes/tokens/semantic.json
 packages/themes/tokens/semantic.dark.json
+packages/themes/tokens/semantic.compact.json
+packages/themes/tokens/semantic.spacious.json
 ```
 
 `seeds.json` holds brand hex values. The compiler generates 12-step OKLCH
@@ -42,12 +44,14 @@ of `pnpm verify`) checks WCAG 2 AA on semantic text/background pairs.
 
 1. **Primitive** — raw palette and dimension literals. No product intent
    (`color.primary.700`). Color ramps, elevation shadow tints, duration,
-   easing, and spring parameters live here; density belongs to SLO-66.
+   easing, spring parameters, the 4px spacing scale, control heights, and
+   type primitives live here.
 2. **Semantic** — product intent as `role.part.state` across `action`,
    `surface`, `text`, `border`, `status`, `focus`, `control`,
-   `elevation`, `material`, `gradient`, and `motion` (`action.primary.bg`,
-   `elevation.2.shadow`, `motion.duration.fast`). Components consume
-   semantic tokens only.
+   `elevation`, `material`, `gradient`, `motion`, `space`, `radius`,
+   `type`, and `roundness` (`action.primary.bg`,
+   `elevation.2.shadow`, `motion.duration.fast`, `space.gap.sm`).
+   Components consume semantic tokens only.
 
 Semantic tokens may reference primitives or other semantic tokens.
 Primitive tokens may only reference primitives. There are no per-component
@@ -74,15 +78,19 @@ the TS or JSON public catalog.
 
 ## Theme and mode switching
 
-`data-sl-theme` and `data-sl-mode` nest on any subtree. The default theme
-name is `default`; `.slop-theme` implies it. Unset `data-sl-mode` follows
-`prefers-color-scheme`. `data-sl-mode="light"` or `"dark"` overrides the
-preference, including inside a parent with a different mode.
+`data-sl-theme`, `data-sl-mode`, and `data-sl-density` nest on any subtree.
+The default theme name is `default`; `.slop-theme` implies it. Unset
+`data-sl-mode` follows `prefers-color-scheme`. Unset `data-sl-density` is
+`comfortable`. `data-sl-mode="light"` or `"dark"` overrides the preference,
+including inside a parent with a different mode. Compact, comfortable, and
+spacious density attributes work the same way.
 
 ```vue
 <main class="slop-theme">...</main>
 <section data-sl-mode="dark">...</section>
-<aside data-sl-theme="default" data-sl-mode="light">...</aside>
+<aside data-sl-theme="default" data-sl-mode="light" data-sl-density="compact">
+  ...
+</aside>
 ```
 
 Override a semantic custom property on the same subtree:
@@ -131,8 +139,17 @@ nested `--sl-motion-intensity` re-evaluates. Under
 or 80ms feedback so state changes stay visible. See
 [motion](../themes/motion.md).
 
+Density, fluid type, and roundness are SLO-66. Default density is
+comfortable. Compact and spacious overlay spacing, control heights, and
+radius through `data-sl-density`. `--sl-roundness` (0 sharp → 1 designed,
+including pill) scales every radius token via `calc()`. Type uses a system
+font stack and `clamp()` sizes; letter-spacing, tabular numbers, and
+OpenType feature tokens are semantic `--sl-type-*` variables. Coarse
+pointers floor control heights to 44px. See
+[density, type, and roundness](../themes/density.md).
+
 Flagship themes (calm enterprise, vibrant expressive, minimal monochrome)
-are SLO-68. Default density is comfortable (SLO-66).
+are SLO-68.
 
 ## Authoring rules
 
@@ -148,7 +165,10 @@ are SLO-68. Default density is comfortable (SLO-66).
 - Hairline width may set `$extensions.slop.ui.highDpr` so 2dppx screens
   paint one device pixel. Motion tokens may set
   `$extensions.slop.ui.reducedMotion` for the `prefers-reduced-motion:
-reduce` override.
+reduce` override. Control minima may set `$extensions.slop.ui.touchMin`
+  so `@media (pointer: coarse)` floors mapped heights to 44px.
+- Density overlays live in `semantic.compact.json` and
+  `semantic.spacious.json`, mirroring `semantic.dark.json`.
 - cubicBezier values are four numbers. Spring values are
   `{ stiffness, damping, mass }` and may be aliased from a duration token
   to emit the settle time.

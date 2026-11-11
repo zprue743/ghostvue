@@ -82,56 +82,128 @@
     }
   },
   "space": {
+    "0": {
+      "$type": "dimension",
+      "$value": "0px",
+      "$description": "Space 0. 4px grid."
+    },
+    "1": {
+      "$type": "dimension",
+      "$value": "0.25rem",
+      "$description": "Space 1. 4px."
+    },
     "2": {
       "$type": "dimension",
       "$value": "0.5rem",
-      "$description": "Space 2."
+      "$description": "Space 2. 8px."
     },
     "3": {
       "$type": "dimension",
       "$value": "0.75rem",
-      "$description": "Space 3."
-    },
-    "3-5": {
-      "$type": "dimension",
-      "$value": "0.875rem",
-      "$description": "Space 3.5."
+      "$description": "Space 3. 12px."
     },
     "4": {
       "$type": "dimension",
       "$value": "1rem",
-      "$description": "Space 4."
+      "$description": "Space 4. 16px."
     },
     "5": {
       "$type": "dimension",
       "$value": "1.25rem",
-      "$description": "Space 5."
+      "$description": "Space 5. 20px."
+    },
+    "6": {
+      "$type": "dimension",
+      "$value": "1.5rem",
+      "$description": "Space 6. 24px."
+    },
+    "8": {
+      "$type": "dimension",
+      "$value": "2rem",
+      "$description": "Space 8. 32px."
+    },
+    "10": {
+      "$type": "dimension",
+      "$value": "2.5rem",
+      "$description": "Space 10. 40px."
+    },
+    "12": {
+      "$type": "dimension",
+      "$value": "3rem",
+      "$description": "Space 12. 48px."
+    },
+    "16": {
+      "$type": "dimension",
+      "$value": "4rem",
+      "$description": "Space 16. 64px."
     }
   },
   "control": {
-    "min": {
-      "sm": {
+    "height": {
+      "28": {
+        "$type": "dimension",
+        "$value": "1.75rem",
+        "$description": "Control height 28px."
+      },
+      "32": {
+        "$type": "dimension",
+        "$value": "2rem",
+        "$description": "Control height 32px."
+      },
+      "36": {
         "$type": "dimension",
         "$value": "2.25rem",
-        "$description": "Small control minimum size."
+        "$description": "Control height 36px."
       },
-      "md": {
+      "40": {
         "$type": "dimension",
-        "$value": "2.75rem",
-        "$description": "Medium control minimum size."
+        "$value": "2.5rem",
+        "$description": "Control height 40px."
       },
-      "lg": {
+      "48": {
         "$type": "dimension",
-        "$value": "3.25rem",
-        "$description": "Large control minimum size."
+        "$value": "3rem",
+        "$description": "Control height 48px."
       }
+    },
+    "touch": {
+      "$type": "dimension",
+      "$value": "2.75rem",
+      "$description": "44px minimum used as a coarse-pointer floor."
     }
   },
   "radius": {
-    "md": {
-      "$type": "dimension",
-      "$value": "0.5rem",
-      "$description": "Medium corner radius."
+    "scale": {
+      "none": {
+        "$type": "dimension",
+        "$value": "0px",
+        "$description": "Sharp corner. Roundness 0."
+      },
+      "sm": {
+        "$type": "dimension",
+        "$value": "0.25rem",
+        "$description": "Small corner radius. 4px at roundness 1."
+      },
+      "md": {
+        "$type": "dimension",
+        "$value": "0.5rem",
+        "$description": "Medium corner radius. 8px at roundness 1."
+      },
+      "lg": {
+        "$type": "dimension",
+        "$value": "0.75rem",
+        "$description": "Large corner radius. 12px at roundness 1."
+      },
+      "xl": {
+        "$type": "dimension",
+        "$value": "1rem",
+        "$description": "Extra-large corner radius. 16px at roundness 1."
+      },
+      "pill": {
+        "$type": "dimension",
+        "$value": "999px",
+        "$description": "Pill radius. Capsule at roundness 1."
+      }
     }
   },
   "duration": {
@@ -206,11 +278,133 @@
     }
   },
   "font": {
+    "family": {
+      "sans": {
+        "$type": "fontFamily",
+        "$value": "ui-sans-serif, system-ui, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\"",
+        "$description": "System UI sans stack. No web font."
+      }
+    },
+    "size": {
+      "xs": {
+        "$type": "fontSize",
+        "$value": "clamp(0.75rem, 0.7292rem + 0.1042vw, 0.8125rem)",
+        "$description": "Fluid extra-small type. 12–13px from 320–1280px."
+      },
+      "sm": {
+        "$type": "fontSize",
+        "$value": "clamp(0.8125rem, 0.7917rem + 0.1042vw, 0.875rem)",
+        "$description": "Fluid small type. 13–14px from 320–1280px."
+      },
+      "md": {
+        "$type": "fontSize",
+        "$value": "clamp(0.9375rem, 0.9167rem + 0.1042vw, 1rem)",
+        "$description": "Fluid body type. 15–16px from 320–1280px."
+      },
+      "lg": {
+        "$type": "fontSize",
+        "$value": "clamp(1.0625rem, 1.0417rem + 0.1042vw, 1.125rem)",
+        "$description": "Fluid large type. 17–18px from 320–1280px."
+      },
+      "xl": {
+        "$type": "fontSize",
+        "$value": "clamp(1.25rem, 1.1667rem + 0.4167vw, 1.5rem)",
+        "$description": "Fluid extra-large type. 20–24px from 320–1280px."
+      },
+      "2xl": {
+        "$type": "fontSize",
+        "$value": "clamp(1.5rem, 1.3333rem + 0.8333vw, 2rem)",
+        "$description": "Fluid 2xl type. 24–32px from 320–1280px."
+      },
+      "3xl": {
+        "$type": "fontSize",
+        "$value": "clamp(1.875rem, 1.6667rem + 1.0417vw, 2.5rem)",
+        "$description": "Fluid 3xl type. 30–40px from 320–1280px."
+      }
+    },
     "weight": {
+      "regular": {
+        "$type": "fontWeight",
+        "$value": 400,
+        "$description": "Regular font weight."
+      },
+      "medium": {
+        "$type": "fontWeight",
+        "$value": 500,
+        "$description": "Medium font weight."
+      },
       "semibold": {
         "$type": "fontWeight",
         "$value": 600,
         "$description": "Semibold font weight."
+      },
+      "bold": {
+        "$type": "fontWeight",
+        "$value": 700,
+        "$description": "Bold font weight."
+      }
+    },
+    "letter": {
+      "tight": {
+        "$type": "letterSpacing",
+        "$value": "-0.02em",
+        "$description": "Tight letter-spacing."
+      },
+      "normal": {
+        "$type": "letterSpacing",
+        "$value": "0em",
+        "$description": "Default letter-spacing."
+      },
+      "wide": {
+        "$type": "letterSpacing",
+        "$value": "0.04em",
+        "$description": "Wide letter-spacing."
+      }
+    },
+    "line": {
+      "tight": {
+        "$type": "number",
+        "$value": 1.2,
+        "$description": "Tight line-height. Matches SlButton."
+      },
+      "snug": {
+        "$type": "number",
+        "$value": 1.375,
+        "$description": "Snug line-height."
+      },
+      "normal": {
+        "$type": "number",
+        "$value": 1.5,
+        "$description": "Default body line-height."
+      }
+    },
+    "numeric": {
+      "tabular": {
+        "$type": "fontVariant",
+        "$value": "tabular-nums",
+        "$description": "Tabular lining numbers. font-variant-numeric."
+      },
+      "proportional": {
+        "$type": "fontVariant",
+        "$value": "proportional-nums",
+        "$description": "Proportional numbers. font-variant-numeric."
+      }
+    },
+    "feature": {
+      "default": {
+        "$type": "fontFeature",
+        "$value": "\"kern\" 1, \"liga\" 1, \"calt\" 1",
+        "$description": "Default OpenType features. Kerning, ligatures, contextual alternates."
+      },
+      "tabular": {
+        "$type": "fontFeature",
+        "$value": "\"tnum\" 1, \"kern\" 1, \"liga\" 1",
+        "$description": "Tabular-number OpenType features."
+      },
+      "none": {
+        "$type": "fontFeature",
+        "$value": "normal",
+        "$description": "No OpenType feature settings."
       }
     }
   },

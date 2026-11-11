@@ -38,6 +38,8 @@ Authored tokens remain **DTCG JSON** (`$type`, `$value`, `$description`,
 packages/themes/tokens/primitives.json
 packages/themes/tokens/semantic.json
 packages/themes/tokens/semantic.dark.json
+packages/themes/tokens/semantic.compact.json
+packages/themes/tokens/semantic.spacious.json
 ```
 
 `semantic.json` is the default (light, and any token that does not change by
@@ -110,9 +112,9 @@ A docs page listing the catalog is generated from the JSON manifest.
   function. `culori` is a devDependency of `@slop-ui/themes`.
 - **Flagship themes (SLO-68):** calm enterprise, vibrant expressive, and
   minimal monochrome. This pipeline emits `default` only.
-- **Density (SLO-66):** default density is comfortable. Size tokens in the
-  seed set are the values SlButton already used, not a density system.
-- Motion (SLO-65) remains out of scope of this pipeline ADR.
+- **Density (SLO-66):** default density is comfortable. Implemented as
+  nestable `data-sl-density` overlays plus `--sl-roundness`; see the
+  SLO-66 amendment.
 
 ## Alternatives considered
 
@@ -144,11 +146,11 @@ and JSON so ramps can land without renaming the runtime API.
   authoring reference and no longer describes a future pipeline.
 - ADR 0005 remains the record that DTCG and the three compile outputs were
   chosen; CSS prefix, component tokens, and mode switching follow this ADR.
-- Follow-ups: SLO-66 density, SLO-68 flagship themes, MCP `get_tokens`.
-  SLO-63 (ramps, semantic text/border/status, contrast CI, forced-colors
-  mapping), SLO-64 (elevation, hairline, materials, gradients), and
-  SLO-65 (motion durations, easing, springs, reduced motion) landed on
-  this pipeline.
+- Follow-ups: SLO-68 flagship themes, MCP `get_tokens`. SLO-63 (ramps,
+  semantic text/border/status, contrast CI, forced-colors mapping),
+  SLO-64 (elevation, hairline, materials, gradients), SLO-65 (motion
+  durations, easing, springs, reduced motion), and SLO-66 (density, type,
+  roundness) landed on this pipeline.
 
 ## Amendments
 
@@ -169,6 +171,13 @@ and JSON so ramps can land without renaming the runtime API.
   `--sl-motion-intensity`. `$extensions.slop.ui.reducedMotion` overlays
   values under `prefers-reduced-motion: reduce`. Density (SLO-66) is
   still out of scope.
+- 2026-11-11: SLO-66 adds a 4px spacing scale, nestable
+  `data-sl-density` (`compact` / `comfortable` / `spacious`; default
+  comfortable) via overlay files, fluid `clamp()` type with a system
+  font stack, and `--sl-roundness` (0–1) that scales every radius
+  token through `calc()`. Control heights use 28/32/36/40/48px with a
+  44px coarse-pointer floor. Density (this amendment) is no longer out
+  of scope.
 
 ## Compatibility implications
 

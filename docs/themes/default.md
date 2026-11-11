@@ -148,7 +148,9 @@ Elevation, materials, and gradients are semantic `--sl-*` variables plus
 documented `data-elevation`, `data-material`, and `data-gradient` recipes.
 See [elevation, materials, and gradients](./elevation.md). Motion durations,
 easing, and springs are `--sl-motion-*` plus `data-motion` recipes; see
-[motion](./motion.md).
+[motion](./motion.md). Density, type, and roundness nest through
+`data-sl-density` and `--sl-roundness`; see
+[density, type, and roundness](./density.md).
 
 Authored DTCG lives in `packages/themes/tokens/` and is compiled by
 `@slop-ui/themes` ([ADR 0007](../adr/0007-token-pipeline.md)).
@@ -157,9 +159,10 @@ Authored DTCG lives in `packages/themes/tokens/` and is compiled by
 
 The defaults include contrast-tested light and dark treatments (WCAG 2 AA
 is gated in `pnpm contrast`; APCA Lc is advisory), a two-color keyboard
-focus indicator, minimum control sizes, forced-colors mapping to system
-colors, disabled and loading cursors, and reduced-motion handling that
-keeps short color and opacity feedback instead of removing transitions.
+focus indicator, density-aware control sizes with a 44px coarse-pointer
+floor, forced-colors mapping to system colors, disabled and loading
+cursors, and reduced-motion handling that keeps short color and opacity
+feedback instead of removing transitions.
 Unset `data-sl-mode` follows `prefers-color-scheme` from CSS alone, so
 server rendering does not flash the opposite palette. Applications remain
 responsible for testing token overrides for contrast, focus visibility,

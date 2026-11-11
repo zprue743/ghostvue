@@ -2,8 +2,10 @@
  * Generated from packages/themes/tokens. Do not edit.
  * Semantic custom properties use --sl-<role>-<part>-<state>.
  * Unset data-sl-mode follows prefers-color-scheme; data-sl-mode overrides
- * on any subtree, including nested theme hosts. No JavaScript is required
- * to pick the initial mode, so SSR does not flash the opposite palette.
+ * on any subtree, including nested theme hosts. Unset data-sl-density is
+ * comfortable; data-sl-density and --sl-roundness nest the same way.
+ * No JavaScript is required to pick the initial mode, so SSR does not
+ * flash the opposite palette.
  */
 @layer slop-ui-theme {
   :where(.slop-theme, .slop-themed-scope, [data-sl-theme='default']):not([data-sl-mode]):not(:where([data-sl-mode] *)) {
@@ -20,6 +22,10 @@
     --sl-action-info-bg-hover: #004e7a;
     --sl-action-info-border: #0369a1;
     --sl-action-info-fg: #ffffff;
+    --sl-action-label-family: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+    --sl-action-label-letter: 0em;
+    --sl-action-label-line: 1.2;
+    --sl-action-label-size: clamp(0.9375rem, 0.9167rem + 0.1042vw, 1rem);
     --sl-action-label-weight: 600;
     --sl-action-neutral-bg: #334155;
     --sl-action-neutral-bg-active: #1a2330;
@@ -31,7 +37,6 @@
     --sl-action-primary-bg-hover: #0d35ae;
     --sl-action-primary-border: #1d4ed8;
     --sl-action-primary-fg: #ffffff;
-    --sl-action-radius: 0.5rem;
     --sl-action-spinner-size: 1.1em;
     --sl-action-spinner-width: 2px;
     --sl-action-success-bg: #15803d;
@@ -55,15 +60,19 @@
     --sl-border-strong: #707e92;
     --sl-border-success: #15803d;
     --sl-border-warning: #b45309;
-    --sl-control-size-lg-min: 3.25rem;
-    --sl-control-size-lg-padding-block: 0.875rem;
+    --sl-control-size-lg-font: clamp(1.0625rem, 1.0417rem + 0.1042vw, 1.125rem);
+    --sl-control-size-lg-min: 3rem;
+    --sl-control-size-lg-padding-block: 1rem;
     --sl-control-size-lg-padding-inline: 1.25rem;
-    --sl-control-size-md-min: 2.75rem;
+    --sl-control-size-md-font: clamp(0.9375rem, 0.9167rem + 0.1042vw, 1rem);
+    --sl-control-size-md-min: 2.5rem;
     --sl-control-size-md-padding-block: 0.75rem;
     --sl-control-size-md-padding-inline: 1rem;
-    --sl-control-size-sm-min: 2.25rem;
+    --sl-control-size-sm-font: clamp(0.8125rem, 0.7917rem + 0.1042vw, 0.875rem);
+    --sl-control-size-sm-min: 2rem;
     --sl-control-size-sm-padding-block: 0.5rem;
     --sl-control-size-sm-padding-inline: 0.75rem;
+    --sl-control-touch-min: 2.75rem;
     --sl-elevation-0-bg: #ffffff;
     --sl-elevation-0-border: transparent;
     --sl-elevation-0-highlight: inset 0px 1px 0px 0px transparent;
@@ -117,6 +126,18 @@
     --sl-motion-spring-gentle: linear(0, 0.0191 2.1429%, 0.0866 5%, 0.4534 15.7143%, 0.6359 22.1429%, 0.767 28.5714%, 0.8204 32.1429%, 0.8698 36.4286%, 0.9065 40.7143%, 0.9369 45.7143%, 0.9751 57.1429%, 0.9934 72.8571%, 1);
     --sl-motion-spring-snappy: linear(0, 0.0043 0.8264%, 0.036 2.4793%, 0.1271 4.9587%, 0.6578 14.876%, 0.8392 19.0083%, 0.9867 23.9669%, 1.0328 26.4463%, 1.063 28.9256%, 1.0832 32.2314%, 1.0853 36.3636%, 1.0164 52.8926%, 0.9952 62.8099%, 1);
     --sl-motion-translate: 0.5rem;
+    --sl-roundness: 1;
+    --sl-space-gap-lg: 1rem;
+    --sl-space-gap-md: 0.75rem;
+    --sl-space-gap-sm: 0.5rem;
+    --sl-space-gap-xs: 0.25rem;
+    --sl-space-inset-lg: 1.25rem;
+    --sl-space-inset-md: 1rem;
+    --sl-space-inset-sm: 0.75rem;
+    --sl-space-inset-xs: 0.5rem;
+    --sl-space-stack-lg: 1.5rem;
+    --sl-space-stack-md: 1rem;
+    --sl-space-stack-sm: 0.5rem;
     --sl-status-danger-bg: #fff8f7;
     --sl-status-danger-border: #ffdad5;
     --sl-status-danger-fg: #900009;
@@ -144,6 +165,28 @@
     --sl-text-subtle: #4f5d72;
     --sl-text-success: #15803d;
     --sl-text-warning: #b45309;
+    --sl-type-family-sans: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+    --sl-type-feature-default: "kern" 1, "liga" 1, "calt" 1;
+    --sl-type-feature-tabular: "tnum" 1, "kern" 1, "liga" 1;
+    --sl-type-letter-normal: 0em;
+    --sl-type-letter-tight: -0.02em;
+    --sl-type-letter-wide: 0.04em;
+    --sl-type-line-normal: 1.5;
+    --sl-type-line-snug: 1.375;
+    --sl-type-line-tight: 1.2;
+    --sl-type-numeric-proportional: proportional-nums;
+    --sl-type-numeric-tabular: tabular-nums;
+    --sl-type-size-2xl: clamp(1.5rem, 1.3333rem + 0.8333vw, 2rem);
+    --sl-type-size-3xl: clamp(1.875rem, 1.6667rem + 1.0417vw, 2.5rem);
+    --sl-type-size-lg: clamp(1.0625rem, 1.0417rem + 0.1042vw, 1.125rem);
+    --sl-type-size-md: clamp(0.9375rem, 0.9167rem + 0.1042vw, 1rem);
+    --sl-type-size-sm: clamp(0.8125rem, 0.7917rem + 0.1042vw, 0.875rem);
+    --sl-type-size-xl: clamp(1.25rem, 1.1667rem + 0.4167vw, 1.5rem);
+    --sl-type-size-xs: clamp(0.75rem, 0.7292rem + 0.1042vw, 0.8125rem);
+    --sl-type-weight-bold: 700;
+    --sl-type-weight-medium: 500;
+    --sl-type-weight-regular: 400;
+    --sl-type-weight-semibold: 600;
   }
 
   :where(.slop-theme, .slop-themed-scope, [data-sl-theme='default']):not([data-sl-mode]):not(:where([data-sl-mode] *)), :where(.slop-theme, .slop-themed-scope, [data-sl-theme='default']):not([data-sl-mode]):not(:where([data-sl-mode] *)) :where(*) {
@@ -160,6 +203,13 @@
     --sl-motion-spring-gentle-duration: calc(583ms * var(--sl-motion-intensity, 1));
     --sl-motion-spring-snappy-duration: calc(504ms * var(--sl-motion-intensity, 1));
     --sl-motion-stagger: calc(40ms * var(--sl-motion-intensity, 1));
+    --sl-action-radius: calc(0.5rem * var(--sl-roundness, 1));
+    --sl-radius-lg: calc(0.75rem * var(--sl-roundness, 1));
+    --sl-radius-md: calc(0.5rem * var(--sl-roundness, 1));
+    --sl-radius-none: calc(0px * var(--sl-roundness, 1));
+    --sl-radius-pill: calc(999px * var(--sl-roundness, 1));
+    --sl-radius-sm: calc(0.25rem * var(--sl-roundness, 1));
+    --sl-radius-xl: calc(1rem * var(--sl-roundness, 1));
   }
 
   @media (prefers-color-scheme: dark) {
@@ -177,6 +227,10 @@
       --sl-action-info-bg-hover: #65ccff;
       --sl-action-info-border: #38bdf8;
       --sl-action-info-fg: #0f172a;
+      --sl-action-label-family: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+      --sl-action-label-letter: 0em;
+      --sl-action-label-line: 1.2;
+      --sl-action-label-size: clamp(0.9375rem, 0.9167rem + 0.1042vw, 1rem);
       --sl-action-label-weight: 600;
       --sl-action-neutral-bg: #cbd5e1;
       --sl-action-neutral-bg-active: #dee4eb;
@@ -188,7 +242,6 @@
       --sl-action-primary-bg-hover: #80b8ff;
       --sl-action-primary-border: #60a5fa;
       --sl-action-primary-fg: #0f172a;
-      --sl-action-radius: 0.5rem;
       --sl-action-spinner-size: 1.1em;
       --sl-action-spinner-width: 2px;
       --sl-action-success-bg: #4ade80;
@@ -212,15 +265,19 @@
       --sl-border-strong: #a3adb9;
       --sl-border-success: #4ade80;
       --sl-border-warning: #fbbf24;
-      --sl-control-size-lg-min: 3.25rem;
-      --sl-control-size-lg-padding-block: 0.875rem;
+      --sl-control-size-lg-font: clamp(1.0625rem, 1.0417rem + 0.1042vw, 1.125rem);
+      --sl-control-size-lg-min: 3rem;
+      --sl-control-size-lg-padding-block: 1rem;
       --sl-control-size-lg-padding-inline: 1.25rem;
-      --sl-control-size-md-min: 2.75rem;
+      --sl-control-size-md-font: clamp(0.9375rem, 0.9167rem + 0.1042vw, 1rem);
+      --sl-control-size-md-min: 2.5rem;
       --sl-control-size-md-padding-block: 0.75rem;
       --sl-control-size-md-padding-inline: 1rem;
-      --sl-control-size-sm-min: 2.25rem;
+      --sl-control-size-sm-font: clamp(0.8125rem, 0.7917rem + 0.1042vw, 0.875rem);
+      --sl-control-size-sm-min: 2rem;
       --sl-control-size-sm-padding-block: 0.5rem;
       --sl-control-size-sm-padding-inline: 0.75rem;
+      --sl-control-touch-min: 2.75rem;
       --sl-elevation-0-bg: #0f172a;
       --sl-elevation-0-border: transparent;
       --sl-elevation-0-highlight: inset 0px 1px 0px 0px transparent;
@@ -274,6 +331,18 @@
       --sl-motion-spring-gentle: linear(0, 0.0191 2.1429%, 0.0866 5%, 0.4534 15.7143%, 0.6359 22.1429%, 0.767 28.5714%, 0.8204 32.1429%, 0.8698 36.4286%, 0.9065 40.7143%, 0.9369 45.7143%, 0.9751 57.1429%, 0.9934 72.8571%, 1);
       --sl-motion-spring-snappy: linear(0, 0.0043 0.8264%, 0.036 2.4793%, 0.1271 4.9587%, 0.6578 14.876%, 0.8392 19.0083%, 0.9867 23.9669%, 1.0328 26.4463%, 1.063 28.9256%, 1.0832 32.2314%, 1.0853 36.3636%, 1.0164 52.8926%, 0.9952 62.8099%, 1);
       --sl-motion-translate: 0.5rem;
+      --sl-roundness: 1;
+      --sl-space-gap-lg: 1rem;
+      --sl-space-gap-md: 0.75rem;
+      --sl-space-gap-sm: 0.5rem;
+      --sl-space-gap-xs: 0.25rem;
+      --sl-space-inset-lg: 1.25rem;
+      --sl-space-inset-md: 1rem;
+      --sl-space-inset-sm: 0.75rem;
+      --sl-space-inset-xs: 0.5rem;
+      --sl-space-stack-lg: 1.5rem;
+      --sl-space-stack-md: 1rem;
+      --sl-space-stack-sm: 0.5rem;
       --sl-status-danger-bg: #2b0f0f;
       --sl-status-danger-border: #632425;
       --sl-status-danger-fg: #ffb4b0;
@@ -301,6 +370,28 @@
       --sl-text-subtle: #cbd5e1;
       --sl-text-success: #4ade80;
       --sl-text-warning: #fbbf24;
+      --sl-type-family-sans: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+      --sl-type-feature-default: "kern" 1, "liga" 1, "calt" 1;
+      --sl-type-feature-tabular: "tnum" 1, "kern" 1, "liga" 1;
+      --sl-type-letter-normal: 0em;
+      --sl-type-letter-tight: -0.02em;
+      --sl-type-letter-wide: 0.04em;
+      --sl-type-line-normal: 1.5;
+      --sl-type-line-snug: 1.375;
+      --sl-type-line-tight: 1.2;
+      --sl-type-numeric-proportional: proportional-nums;
+      --sl-type-numeric-tabular: tabular-nums;
+      --sl-type-size-2xl: clamp(1.5rem, 1.3333rem + 0.8333vw, 2rem);
+      --sl-type-size-3xl: clamp(1.875rem, 1.6667rem + 1.0417vw, 2.5rem);
+      --sl-type-size-lg: clamp(1.0625rem, 1.0417rem + 0.1042vw, 1.125rem);
+      --sl-type-size-md: clamp(0.9375rem, 0.9167rem + 0.1042vw, 1rem);
+      --sl-type-size-sm: clamp(0.8125rem, 0.7917rem + 0.1042vw, 0.875rem);
+      --sl-type-size-xl: clamp(1.25rem, 1.1667rem + 0.4167vw, 1.5rem);
+      --sl-type-size-xs: clamp(0.75rem, 0.7292rem + 0.1042vw, 0.8125rem);
+      --sl-type-weight-bold: 700;
+      --sl-type-weight-medium: 500;
+      --sl-type-weight-regular: 400;
+      --sl-type-weight-semibold: 600;
     }
 
     :where(.slop-theme, .slop-themed-scope, [data-sl-theme='default']):not([data-sl-mode]):not(:where([data-sl-mode] *)), :where(.slop-theme, .slop-themed-scope, [data-sl-theme='default']):not([data-sl-mode]):not(:where([data-sl-mode] *)) :where(*) {
@@ -317,6 +408,13 @@
       --sl-motion-spring-gentle-duration: calc(583ms * var(--sl-motion-intensity, 1));
       --sl-motion-spring-snappy-duration: calc(504ms * var(--sl-motion-intensity, 1));
       --sl-motion-stagger: calc(40ms * var(--sl-motion-intensity, 1));
+      --sl-action-radius: calc(0.5rem * var(--sl-roundness, 1));
+      --sl-radius-lg: calc(0.75rem * var(--sl-roundness, 1));
+      --sl-radius-md: calc(0.5rem * var(--sl-roundness, 1));
+      --sl-radius-none: calc(0px * var(--sl-roundness, 1));
+      --sl-radius-pill: calc(999px * var(--sl-roundness, 1));
+      --sl-radius-sm: calc(0.25rem * var(--sl-roundness, 1));
+      --sl-radius-xl: calc(1rem * var(--sl-roundness, 1));
     }
   }
 
@@ -335,6 +433,10 @@
     --sl-action-info-bg-hover: #004e7a;
     --sl-action-info-border: #0369a1;
     --sl-action-info-fg: #ffffff;
+    --sl-action-label-family: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+    --sl-action-label-letter: 0em;
+    --sl-action-label-line: 1.2;
+    --sl-action-label-size: clamp(0.9375rem, 0.9167rem + 0.1042vw, 1rem);
     --sl-action-label-weight: 600;
     --sl-action-neutral-bg: #334155;
     --sl-action-neutral-bg-active: #1a2330;
@@ -346,7 +448,6 @@
     --sl-action-primary-bg-hover: #0d35ae;
     --sl-action-primary-border: #1d4ed8;
     --sl-action-primary-fg: #ffffff;
-    --sl-action-radius: 0.5rem;
     --sl-action-spinner-size: 1.1em;
     --sl-action-spinner-width: 2px;
     --sl-action-success-bg: #15803d;
@@ -370,15 +471,19 @@
     --sl-border-strong: #707e92;
     --sl-border-success: #15803d;
     --sl-border-warning: #b45309;
-    --sl-control-size-lg-min: 3.25rem;
-    --sl-control-size-lg-padding-block: 0.875rem;
+    --sl-control-size-lg-font: clamp(1.0625rem, 1.0417rem + 0.1042vw, 1.125rem);
+    --sl-control-size-lg-min: 3rem;
+    --sl-control-size-lg-padding-block: 1rem;
     --sl-control-size-lg-padding-inline: 1.25rem;
-    --sl-control-size-md-min: 2.75rem;
+    --sl-control-size-md-font: clamp(0.9375rem, 0.9167rem + 0.1042vw, 1rem);
+    --sl-control-size-md-min: 2.5rem;
     --sl-control-size-md-padding-block: 0.75rem;
     --sl-control-size-md-padding-inline: 1rem;
-    --sl-control-size-sm-min: 2.25rem;
+    --sl-control-size-sm-font: clamp(0.8125rem, 0.7917rem + 0.1042vw, 0.875rem);
+    --sl-control-size-sm-min: 2rem;
     --sl-control-size-sm-padding-block: 0.5rem;
     --sl-control-size-sm-padding-inline: 0.75rem;
+    --sl-control-touch-min: 2.75rem;
     --sl-elevation-0-bg: #ffffff;
     --sl-elevation-0-border: transparent;
     --sl-elevation-0-highlight: inset 0px 1px 0px 0px transparent;
@@ -432,6 +537,18 @@
     --sl-motion-spring-gentle: linear(0, 0.0191 2.1429%, 0.0866 5%, 0.4534 15.7143%, 0.6359 22.1429%, 0.767 28.5714%, 0.8204 32.1429%, 0.8698 36.4286%, 0.9065 40.7143%, 0.9369 45.7143%, 0.9751 57.1429%, 0.9934 72.8571%, 1);
     --sl-motion-spring-snappy: linear(0, 0.0043 0.8264%, 0.036 2.4793%, 0.1271 4.9587%, 0.6578 14.876%, 0.8392 19.0083%, 0.9867 23.9669%, 1.0328 26.4463%, 1.063 28.9256%, 1.0832 32.2314%, 1.0853 36.3636%, 1.0164 52.8926%, 0.9952 62.8099%, 1);
     --sl-motion-translate: 0.5rem;
+    --sl-roundness: 1;
+    --sl-space-gap-lg: 1rem;
+    --sl-space-gap-md: 0.75rem;
+    --sl-space-gap-sm: 0.5rem;
+    --sl-space-gap-xs: 0.25rem;
+    --sl-space-inset-lg: 1.25rem;
+    --sl-space-inset-md: 1rem;
+    --sl-space-inset-sm: 0.75rem;
+    --sl-space-inset-xs: 0.5rem;
+    --sl-space-stack-lg: 1.5rem;
+    --sl-space-stack-md: 1rem;
+    --sl-space-stack-sm: 0.5rem;
     --sl-status-danger-bg: #fff8f7;
     --sl-status-danger-border: #ffdad5;
     --sl-status-danger-fg: #900009;
@@ -459,6 +576,28 @@
     --sl-text-subtle: #4f5d72;
     --sl-text-success: #15803d;
     --sl-text-warning: #b45309;
+    --sl-type-family-sans: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+    --sl-type-feature-default: "kern" 1, "liga" 1, "calt" 1;
+    --sl-type-feature-tabular: "tnum" 1, "kern" 1, "liga" 1;
+    --sl-type-letter-normal: 0em;
+    --sl-type-letter-tight: -0.02em;
+    --sl-type-letter-wide: 0.04em;
+    --sl-type-line-normal: 1.5;
+    --sl-type-line-snug: 1.375;
+    --sl-type-line-tight: 1.2;
+    --sl-type-numeric-proportional: proportional-nums;
+    --sl-type-numeric-tabular: tabular-nums;
+    --sl-type-size-2xl: clamp(1.5rem, 1.3333rem + 0.8333vw, 2rem);
+    --sl-type-size-3xl: clamp(1.875rem, 1.6667rem + 1.0417vw, 2.5rem);
+    --sl-type-size-lg: clamp(1.0625rem, 1.0417rem + 0.1042vw, 1.125rem);
+    --sl-type-size-md: clamp(0.9375rem, 0.9167rem + 0.1042vw, 1rem);
+    --sl-type-size-sm: clamp(0.8125rem, 0.7917rem + 0.1042vw, 0.875rem);
+    --sl-type-size-xl: clamp(1.25rem, 1.1667rem + 0.4167vw, 1.5rem);
+    --sl-type-size-xs: clamp(0.75rem, 0.7292rem + 0.1042vw, 0.8125rem);
+    --sl-type-weight-bold: 700;
+    --sl-type-weight-medium: 500;
+    --sl-type-weight-regular: 400;
+    --sl-type-weight-semibold: 600;
   }
 
   :where([data-sl-mode='light']), :where([data-sl-mode='light']) :where(*) {
@@ -475,6 +614,13 @@
     --sl-motion-spring-gentle-duration: calc(583ms * var(--sl-motion-intensity, 1));
     --sl-motion-spring-snappy-duration: calc(504ms * var(--sl-motion-intensity, 1));
     --sl-motion-stagger: calc(40ms * var(--sl-motion-intensity, 1));
+    --sl-action-radius: calc(0.5rem * var(--sl-roundness, 1));
+    --sl-radius-lg: calc(0.75rem * var(--sl-roundness, 1));
+    --sl-radius-md: calc(0.5rem * var(--sl-roundness, 1));
+    --sl-radius-none: calc(0px * var(--sl-roundness, 1));
+    --sl-radius-pill: calc(999px * var(--sl-roundness, 1));
+    --sl-radius-sm: calc(0.25rem * var(--sl-roundness, 1));
+    --sl-radius-xl: calc(1rem * var(--sl-roundness, 1));
   }
 
   :where([data-sl-mode='dark']) {
@@ -492,6 +638,10 @@
     --sl-action-info-bg-hover: #65ccff;
     --sl-action-info-border: #38bdf8;
     --sl-action-info-fg: #0f172a;
+    --sl-action-label-family: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+    --sl-action-label-letter: 0em;
+    --sl-action-label-line: 1.2;
+    --sl-action-label-size: clamp(0.9375rem, 0.9167rem + 0.1042vw, 1rem);
     --sl-action-label-weight: 600;
     --sl-action-neutral-bg: #cbd5e1;
     --sl-action-neutral-bg-active: #dee4eb;
@@ -503,7 +653,6 @@
     --sl-action-primary-bg-hover: #80b8ff;
     --sl-action-primary-border: #60a5fa;
     --sl-action-primary-fg: #0f172a;
-    --sl-action-radius: 0.5rem;
     --sl-action-spinner-size: 1.1em;
     --sl-action-spinner-width: 2px;
     --sl-action-success-bg: #4ade80;
@@ -527,15 +676,19 @@
     --sl-border-strong: #a3adb9;
     --sl-border-success: #4ade80;
     --sl-border-warning: #fbbf24;
-    --sl-control-size-lg-min: 3.25rem;
-    --sl-control-size-lg-padding-block: 0.875rem;
+    --sl-control-size-lg-font: clamp(1.0625rem, 1.0417rem + 0.1042vw, 1.125rem);
+    --sl-control-size-lg-min: 3rem;
+    --sl-control-size-lg-padding-block: 1rem;
     --sl-control-size-lg-padding-inline: 1.25rem;
-    --sl-control-size-md-min: 2.75rem;
+    --sl-control-size-md-font: clamp(0.9375rem, 0.9167rem + 0.1042vw, 1rem);
+    --sl-control-size-md-min: 2.5rem;
     --sl-control-size-md-padding-block: 0.75rem;
     --sl-control-size-md-padding-inline: 1rem;
-    --sl-control-size-sm-min: 2.25rem;
+    --sl-control-size-sm-font: clamp(0.8125rem, 0.7917rem + 0.1042vw, 0.875rem);
+    --sl-control-size-sm-min: 2rem;
     --sl-control-size-sm-padding-block: 0.5rem;
     --sl-control-size-sm-padding-inline: 0.75rem;
+    --sl-control-touch-min: 2.75rem;
     --sl-elevation-0-bg: #0f172a;
     --sl-elevation-0-border: transparent;
     --sl-elevation-0-highlight: inset 0px 1px 0px 0px transparent;
@@ -589,6 +742,18 @@
     --sl-motion-spring-gentle: linear(0, 0.0191 2.1429%, 0.0866 5%, 0.4534 15.7143%, 0.6359 22.1429%, 0.767 28.5714%, 0.8204 32.1429%, 0.8698 36.4286%, 0.9065 40.7143%, 0.9369 45.7143%, 0.9751 57.1429%, 0.9934 72.8571%, 1);
     --sl-motion-spring-snappy: linear(0, 0.0043 0.8264%, 0.036 2.4793%, 0.1271 4.9587%, 0.6578 14.876%, 0.8392 19.0083%, 0.9867 23.9669%, 1.0328 26.4463%, 1.063 28.9256%, 1.0832 32.2314%, 1.0853 36.3636%, 1.0164 52.8926%, 0.9952 62.8099%, 1);
     --sl-motion-translate: 0.5rem;
+    --sl-roundness: 1;
+    --sl-space-gap-lg: 1rem;
+    --sl-space-gap-md: 0.75rem;
+    --sl-space-gap-sm: 0.5rem;
+    --sl-space-gap-xs: 0.25rem;
+    --sl-space-inset-lg: 1.25rem;
+    --sl-space-inset-md: 1rem;
+    --sl-space-inset-sm: 0.75rem;
+    --sl-space-inset-xs: 0.5rem;
+    --sl-space-stack-lg: 1.5rem;
+    --sl-space-stack-md: 1rem;
+    --sl-space-stack-sm: 0.5rem;
     --sl-status-danger-bg: #2b0f0f;
     --sl-status-danger-border: #632425;
     --sl-status-danger-fg: #ffb4b0;
@@ -616,6 +781,28 @@
     --sl-text-subtle: #cbd5e1;
     --sl-text-success: #4ade80;
     --sl-text-warning: #fbbf24;
+    --sl-type-family-sans: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+    --sl-type-feature-default: "kern" 1, "liga" 1, "calt" 1;
+    --sl-type-feature-tabular: "tnum" 1, "kern" 1, "liga" 1;
+    --sl-type-letter-normal: 0em;
+    --sl-type-letter-tight: -0.02em;
+    --sl-type-letter-wide: 0.04em;
+    --sl-type-line-normal: 1.5;
+    --sl-type-line-snug: 1.375;
+    --sl-type-line-tight: 1.2;
+    --sl-type-numeric-proportional: proportional-nums;
+    --sl-type-numeric-tabular: tabular-nums;
+    --sl-type-size-2xl: clamp(1.5rem, 1.3333rem + 0.8333vw, 2rem);
+    --sl-type-size-3xl: clamp(1.875rem, 1.6667rem + 1.0417vw, 2.5rem);
+    --sl-type-size-lg: clamp(1.0625rem, 1.0417rem + 0.1042vw, 1.125rem);
+    --sl-type-size-md: clamp(0.9375rem, 0.9167rem + 0.1042vw, 1rem);
+    --sl-type-size-sm: clamp(0.8125rem, 0.7917rem + 0.1042vw, 0.875rem);
+    --sl-type-size-xl: clamp(1.25rem, 1.1667rem + 0.4167vw, 1.5rem);
+    --sl-type-size-xs: clamp(0.75rem, 0.7292rem + 0.1042vw, 0.8125rem);
+    --sl-type-weight-bold: 700;
+    --sl-type-weight-medium: 500;
+    --sl-type-weight-regular: 400;
+    --sl-type-weight-semibold: 600;
   }
 
   :where([data-sl-mode='dark']), :where([data-sl-mode='dark']) :where(*) {
@@ -632,10 +819,139 @@
     --sl-motion-spring-gentle-duration: calc(583ms * var(--sl-motion-intensity, 1));
     --sl-motion-spring-snappy-duration: calc(504ms * var(--sl-motion-intensity, 1));
     --sl-motion-stagger: calc(40ms * var(--sl-motion-intensity, 1));
+    --sl-action-radius: calc(0.5rem * var(--sl-roundness, 1));
+    --sl-radius-lg: calc(0.75rem * var(--sl-roundness, 1));
+    --sl-radius-md: calc(0.5rem * var(--sl-roundness, 1));
+    --sl-radius-none: calc(0px * var(--sl-roundness, 1));
+    --sl-radius-pill: calc(999px * var(--sl-roundness, 1));
+    --sl-radius-sm: calc(0.25rem * var(--sl-roundness, 1));
+    --sl-radius-xl: calc(1rem * var(--sl-roundness, 1));
   }
 
   :where(.slop-theme):not([data-sl-mode]):not(:where([data-sl-mode] *)) {
     color-scheme: light dark;
+  }
+
+  :where([data-sl-density='compact']) {
+    --sl-action-gap: 0.25rem;
+    --sl-control-size-lg-min: 2.5rem;
+    --sl-control-size-lg-padding-block: 0.75rem;
+    --sl-control-size-lg-padding-inline: 1rem;
+    --sl-control-size-md-min: 2rem;
+    --sl-control-size-md-padding-block: 0.5rem;
+    --sl-control-size-md-padding-inline: 0.75rem;
+    --sl-control-size-sm-min: 1.75rem;
+    --sl-control-size-sm-padding-block: 0.25rem;
+    --sl-control-size-sm-padding-inline: 0.5rem;
+    --sl-space-gap-lg: 0.75rem;
+    --sl-space-gap-md: 0.5rem;
+    --sl-space-gap-sm: 0.25rem;
+    --sl-space-gap-xs: 0px;
+    --sl-space-inset-lg: 1rem;
+    --sl-space-inset-md: 0.75rem;
+    --sl-space-inset-sm: 0.5rem;
+    --sl-space-inset-xs: 0.25rem;
+    --sl-space-stack-lg: 1rem;
+    --sl-space-stack-md: 0.75rem;
+    --sl-space-stack-sm: 0.25rem;
+  }
+
+  :where([data-sl-density='compact']), :where([data-sl-density='compact']) :where(*) {
+    --sl-action-radius: calc(0.25rem * var(--sl-roundness, 1));
+    --sl-radius-lg: calc(0.5rem * var(--sl-roundness, 1));
+    --sl-radius-md: calc(0.25rem * var(--sl-roundness, 1));
+    --sl-radius-sm: calc(0px * var(--sl-roundness, 1));
+    --sl-radius-xl: calc(0.75rem * var(--sl-roundness, 1));
+  }
+
+  :where([data-sl-density='comfortable']) {
+    --sl-action-gap: 0.5rem;
+    --sl-control-size-lg-min: 3rem;
+    --sl-control-size-lg-padding-block: 1rem;
+    --sl-control-size-lg-padding-inline: 1.25rem;
+    --sl-control-size-md-min: 2.5rem;
+    --sl-control-size-md-padding-block: 0.75rem;
+    --sl-control-size-md-padding-inline: 1rem;
+    --sl-control-size-sm-min: 2rem;
+    --sl-control-size-sm-padding-block: 0.5rem;
+    --sl-control-size-sm-padding-inline: 0.75rem;
+    --sl-space-gap-lg: 1rem;
+    --sl-space-gap-md: 0.75rem;
+    --sl-space-gap-sm: 0.5rem;
+    --sl-space-gap-xs: 0.25rem;
+    --sl-space-inset-lg: 1.25rem;
+    --sl-space-inset-md: 1rem;
+    --sl-space-inset-sm: 0.75rem;
+    --sl-space-inset-xs: 0.5rem;
+    --sl-space-stack-lg: 1.5rem;
+    --sl-space-stack-md: 1rem;
+    --sl-space-stack-sm: 0.5rem;
+  }
+
+  :where([data-sl-density='comfortable']), :where([data-sl-density='comfortable']) :where(*) {
+    --sl-action-radius: calc(0.5rem * var(--sl-roundness, 1));
+    --sl-radius-lg: calc(0.75rem * var(--sl-roundness, 1));
+    --sl-radius-md: calc(0.5rem * var(--sl-roundness, 1));
+    --sl-radius-sm: calc(0.25rem * var(--sl-roundness, 1));
+    --sl-radius-xl: calc(1rem * var(--sl-roundness, 1));
+  }
+
+  :where([data-sl-density='spacious']) {
+    --sl-action-gap: 0.75rem;
+    --sl-control-size-lg-min: 3rem;
+    --sl-control-size-lg-padding-block: 1.25rem;
+    --sl-control-size-lg-padding-inline: 1.5rem;
+    --sl-control-size-md-min: 3rem;
+    --sl-control-size-md-padding-block: 1rem;
+    --sl-control-size-md-padding-inline: 1.25rem;
+    --sl-control-size-sm-min: 2.25rem;
+    --sl-control-size-sm-padding-block: 0.75rem;
+    --sl-control-size-sm-padding-inline: 1rem;
+    --sl-space-gap-lg: 1.25rem;
+    --sl-space-gap-md: 1rem;
+    --sl-space-gap-sm: 0.75rem;
+    --sl-space-gap-xs: 0.5rem;
+    --sl-space-inset-lg: 1.5rem;
+    --sl-space-inset-md: 1.25rem;
+    --sl-space-inset-sm: 1rem;
+    --sl-space-inset-xs: 0.75rem;
+    --sl-space-stack-lg: 2rem;
+    --sl-space-stack-md: 1.25rem;
+    --sl-space-stack-sm: 0.75rem;
+  }
+
+  :where([data-sl-density='spacious']), :where([data-sl-density='spacious']) :where(*) {
+    --sl-action-radius: calc(0.75rem * var(--sl-roundness, 1));
+    --sl-radius-lg: calc(1rem * var(--sl-roundness, 1));
+    --sl-radius-md: calc(0.75rem * var(--sl-roundness, 1));
+    --sl-radius-sm: calc(0.5rem * var(--sl-roundness, 1));
+    --sl-radius-xl: calc(1rem * var(--sl-roundness, 1));
+  }
+
+  @media (pointer: coarse) {
+    :where(.slop-theme, .slop-themed-scope, [data-sl-theme='default']):not([data-sl-density]):not(:where([data-sl-density] *)) {
+      --sl-control-size-lg-min: 3rem;
+      --sl-control-size-md-min: 2.75rem;
+      --sl-control-size-sm-min: 2.75rem;
+    }
+
+    :where([data-sl-density='compact']) {
+      --sl-control-size-lg-min: 2.75rem;
+      --sl-control-size-md-min: 2.75rem;
+      --sl-control-size-sm-min: 2.75rem;
+    }
+
+    :where([data-sl-density='comfortable']) {
+      --sl-control-size-lg-min: 3rem;
+      --sl-control-size-md-min: 2.75rem;
+      --sl-control-size-sm-min: 2.75rem;
+    }
+
+    :where([data-sl-density='spacious']) {
+      --sl-control-size-lg-min: 3rem;
+      --sl-control-size-md-min: 3rem;
+      --sl-control-size-sm-min: 2.75rem;
+    }
   }
 
   @media (min-resolution: 2dppx), (-webkit-min-device-pixel-ratio: 2) {

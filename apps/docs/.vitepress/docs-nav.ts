@@ -26,6 +26,10 @@ export const docsSidebar: LlmsSidebarGroup[] = [
         link: '/themes/elevation',
       },
       { text: 'Motion', link: '/themes/motion' },
+      {
+        text: 'Density, type, roundness',
+        link: '/themes/density',
+      },
     ],
   },
   {

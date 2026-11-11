@@ -214,7 +214,7 @@ test('SlButton supports native activation, focus, and unavailable states', async
     await expect(neutral).toHaveAttribute('data-tone', 'neutral')
 
     const danger = themedGroup.getByRole('button', { name: 'Delete item' })
-    await expect(danger).toHaveCSS('min-height', '52px')
+    await expect(danger).toHaveCSS('min-height', '48px')
 
     const overridden = themedGroup.getByRole('button', {
       name: 'Product action',
