@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { ref, useTemplateRef } from 'vue'
 
-import { SlVisuallyHidden, useFocusScope, useRovingFocus } from '@slop-ui/vue'
+import { SlButton as SlButtonThemed } from '@slop-ui/themes'
+import { SlButton, SlVisuallyHidden, useFocusScope, useRovingFocus } from '@slop-ui/vue'
 
 interface Report {
   name: string
@@ -14,10 +15,19 @@ const reports = ref<Report[]>([
 ])
 
 const status = ref('')
+const activations = ref(0)
+const submissions = ref(0)
+const pendingActivations = ref(0)
+const isPending = ref(false)
 
 function remove(name: string) {
   reports.value = reports.value.filter((report) => report.name !== name)
   status.value = `Deleted ${name}`
+}
+
+function startPending() {
+  pendingActivations.value += 1
+  isPending.value = true
 }
 
 const trapOpen = ref(false)
@@ -96,7 +106,7 @@ function closeNested(): void {
             <td>{{ report.name }}</td>
             <td>{{ report.owner }}</td>
             <td>
-              <button type="button" @click="remove(report.name)">
+              <SlButton @click="remove(report.name)">
                 <svg
                   aria-hidden="true"
                   viewBox="0 0 16 16"
@@ -106,7 +116,7 @@ function closeNested(): void {
                   <path d="M3 3l10 10M13 3L3 13" stroke="currentColor" />
                 </svg>
                 <SlVisuallyHidden>Delete {{ report.name }}</SlVisuallyHidden>
-              </button>
+              </SlButton>
             </td>
           </tr>
         </tbody>
@@ -118,6 +128,128 @@ function closeNested(): void {
       <SlVisuallyHidden role="status" aria-live="polite">
         {{ status }}
       </SlVisuallyHidden>
+    </section>
+
+    <section aria-labelledby="button-heading">
+      <h2 id="button-heading">SlButton</h2>
+      <p>Activations: {{ activations }}</p>
+      <div class="comparison">
+        <fieldset>
+          <legend>Headless</legend>
+          <p>No theme styles are applied to these buttons.</p>
+          <div class="examples">
+            <SlButton @click="activations += 1"> Run action </SlButton>
+            <SlButton disabled @click="activations += 1">
+              Disabled action
+            </SlButton>
+          </div>
+          <form class="form-example" @submit.prevent="submissions += 1">
+            <span>Form submissions: {{ submissions }}</span>
+            <div class="examples">
+              <SlButton>Default form action</SlButton>
+              <SlButton type="submit">Submit form</SlButton>
+            </div>
+          </form>
+        </fieldset>
+
+        <fieldset class="slop-theme" data-color-scheme="light">
+          <legend>Default theme</legend>
+          <p>The same actions with the themed wrapper enabled.</p>
+          <div class="examples">
+            <div class="example">
+              <span>Icon with text</span>
+              <SlButtonThemed @click="activations += 1">
+                <span data-part="icon">
+                  <svg aria-hidden="true" viewBox="0 0 16 16">
+                    <path d="M8 3v10M3 8h10" stroke="currentColor" />
+                  </svg>
+                </span>
+                Add item
+              </SlButtonThemed>
+            </div>
+            <div class="example">
+              <span>Neutral soft</span>
+              <SlButtonThemed
+                variant="soft"
+                tone="neutral"
+                size="sm"
+                @click="activations += 1"
+              >
+                Neutral action
+              </SlButtonThemed>
+            </div>
+            <div class="example">
+              <span>Outline</span>
+              <SlButtonThemed variant="outline" @click="activations += 1">
+                Outline action
+              </SlButtonThemed>
+            </div>
+            <div class="example">
+              <span>Danger solid</span>
+              <SlButtonThemed tone="danger" size="lg" @click="activations += 1">
+                Delete item
+              </SlButtonThemed>
+            </div>
+            <div class="example">
+              <span>Loading (activations: {{ pendingActivations }})</span>
+              <div class="examples">
+                <SlButtonThemed :loading="isPending" @click="startPending">
+                  Save changes
+                </SlButtonThemed>
+                <SlButtonThemed
+                  variant="ghost"
+                  tone="neutral"
+                  @click="isPending = false"
+                >
+                  Reset
+                </SlButtonThemed>
+              </div>
+            </div>
+            <div class="example">
+              <span>Custom loading indicator</span>
+              <SlButtonThemed loading>
+                <svg
+                  data-part="loading-indicator"
+                  aria-hidden="true"
+                  viewBox="0 0 16 16"
+                >
+                  <circle
+                    cx="8"
+                    cy="8"
+                    r="5"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  />
+                </svg>
+                Publishing
+              </SlButtonThemed>
+            </div>
+            <div class="example">
+              <span>Icon only</span>
+              <SlButtonThemed
+                icon-only
+                aria-label="Close playground"
+                @click="activations += 1"
+              >
+                <svg data-part="icon" aria-hidden="true" viewBox="0 0 16 16">
+                  <path d="M3 3l10 10M13 3L3 13" stroke="currentColor" />
+                </svg>
+              </SlButtonThemed>
+            </div>
+            <div class="example block-example">
+              <span>Consumer override</span>
+              <SlButtonThemed
+                class="product-button"
+                block
+                @click="activations += 1"
+              >
+                Product action
+              </SlButtonThemed>
+            </div>
+          </div>
+        </fieldset>
+      </div>
     </section>
 
     <section aria-labelledby="trap-heading">
@@ -265,6 +397,7 @@ td {
   text-align: start;
 }
 
+/* Headless buttons get a playground-owned target; themed instances size themselves. */
 button {
   min-block-size: 2.75rem;
   min-inline-size: 2.75rem;
@@ -279,5 +412,45 @@ button {
 .skip-link {
   display: inline-block;
   margin: 0.5rem;
+}
+
+.comparison {
+  display: grid;
+  gap: 1rem;
+  /* One shrinking column at 320px; side-by-side only when 18rem tracks fit. */
+  grid-template-columns: minmax(0, 1fr);
+}
+
+@media (min-width: 44rem) {
+  .comparison {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+fieldset {
+  min-inline-size: 0;
+}
+
+.examples {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.form-example {
+  display: grid;
+  gap: 0.5rem;
+  margin-block-start: 1rem;
+}
+
+.example {
+  align-items: flex-start;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.block-example {
+  flex: 1 1 100%;
 }
 </style>

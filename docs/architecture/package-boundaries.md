@@ -16,9 +16,10 @@ shared <- core <- vue
   `themes`.
 - `themes` is optional. Headless packages must not require it. It **may**
   depend on `vue` so themed wrappers can import unstyled components and
-  composables. That edge is recorded here and in
-  [ADR 0004](../adr/0004-headless-styled-layering.md); the boundary checker
-  still lists `themes` as independent until the first wrapper lands.
+  composables. That edge is recorded here, in
+  [ADR 0004](../adr/0004-headless-styled-layering.md), and in
+  `scripts/workspace-packages.mjs` now that themed `SlButton` is the first
+  wrapper.
 
 Themed Vue components belong in `themes`. Headless composables and thin
 unstyled components belong in `vue`. Do not add a third package merely to

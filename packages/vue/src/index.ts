@@ -13,6 +13,14 @@ export {
   type TextDirection,
   type UseRovingFocusOptions,
 } from './use-roving-focus'
+export { default as SlButton } from './SlButton.vue'
+export { useSlButton, type SlButtonRootProps } from './use-sl-button'
+export type {
+  SlButtonExposed,
+  SlButtonProps,
+  SlButtonType,
+  UseSlButtonOptions,
+} from './sl-button'
 export { default as SlVisuallyHidden } from './SlVisuallyHidden.vue'
 export {
   useSlVisuallyHidden,

@@ -9,6 +9,13 @@
     "sourceMap": true,
     "jsx": "preserve"
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.vue", "vite.config.ts"],
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "src/**/*.vue",
+    "type-tests/**/*.ts",
+    "type-tests/**/*.vue",
+    "vite.config.ts"
+  ],
   "references": [{ "path": "../core" }, { "path": "../shared" }]
 }

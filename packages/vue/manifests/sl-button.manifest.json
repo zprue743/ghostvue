@@ -37,7 +37,7 @@
     {
       "name": "default",
       "props": [],
-      "description": "Button label and optional decorative content such as an icon. Icon-only use requires aria-label or aria-labelledby."
+      "description": "Button label and optional decorative content such as an icon. Icon-only use requires aria-label, aria-labelledby, or hidden text."
     }
   ],
   "exposed": [
@@ -69,28 +69,23 @@
       {
         "name": "icon",
         "description": "Optional decorative icon content inside the default slot."
+      },
+      {
+        "name": "loading-indicator",
+        "description": "Optional decorative pending indicator inside the default slot. Replaces the themed default spinner when present."
       }
     ],
     "states": [
       {
         "name": "loading",
-        "description": "Pending action. Used when native disabled is the wrong focus model."
+        "description": "Pending action. Used when native disabled is the wrong focus model. Wins over disabled when both props are true."
       },
       {
         "name": "disabled",
-        "description": "Unavailable action. Prefer the native disabled attribute when both apply."
+        "description": "Unavailable action. Prefer the native disabled attribute when both apply. Omitted while loading."
       }
     ],
-    "cssProperties": [
-      {
-        "name": "--slop-button-accent-color",
-        "description": "Accent color for the themed wrapper. Headless SlButton does not require it."
-      },
-      {
-        "name": "--slop-button-radius",
-        "description": "Corner radius for the themed wrapper. Headless SlButton does not require it."
-      }
-    ]
+    "cssProperties": []
   },
   "accessibility": {
     "role": "button",

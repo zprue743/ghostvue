@@ -10,6 +10,12 @@ export default defineConfig({
     // Vue package to source instead of a possibly missing dist bundle. Keep
     // tsconfig.app.json `paths` in sync with this alias.
     alias: {
+      '@slop-ui/themes/default.css': fileURLToPath(
+        new URL('../../packages/themes/src/default.css', import.meta.url),
+      ),
+      '@slop-ui/themes': fileURLToPath(
+        new URL('../../packages/themes/src/index.ts', import.meta.url),
+      ),
       '@slop-ui/vue': fileURLToPath(
         new URL('../../packages/vue/src/index.ts', import.meta.url),
       ),
