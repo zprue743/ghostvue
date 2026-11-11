@@ -40,8 +40,10 @@ that look like URLs use `pattern`. Manifests are not loaded at runtime by
 **Instance location.** One file per component:
 `packages/<dir>/manifests/<kebab-name>.manifest.json`. Headless `SlButton`
 is `packages/vue/manifests/sl-button.manifest.json`. Themed wrappers get a
-separate themes manifest when they add visual props. Until SLO-13 generates
-files from source, checked-in manifests set `"source": "handwritten"`.
+separate themes manifest when they add visual props. Until an `Sl*.vue`
+file exists for a component, checked-in manifests may set
+`"source": "handwritten"`. SLO-13 generates `"source": "generated"` files
+from Vue sources with `pnpm manifests:write`.
 
 **Shape.** Every component records `name` (`Sl*`), `package`, `status`
 (`experimental` / `beta` / `stable` / `deprecated`), `description`, `props`
@@ -78,8 +80,10 @@ dependency.
 - The component gate's manifest item is this schema, not the spec prose.
 - `pnpm test` validates every `*.manifest.json` and rejects fixtures that are
   not named `*.manifest.json`.
-- SLO-13 may generate manifests; it must emit `source: "generated"` and stay
-  valid against this schema.
+- SLO-13 generates manifests with `source: "generated"` via
+  `pnpm manifests:write`. Check mode (`pnpm manifests`) is part of
+  `pnpm verify`. Output must stay valid against this schema. Prose fields
+  stay in the same file and are preserved on regeneration.
 - Changing a documented `data-part`, `data-state`, or `--slop-*` name is
   breaking, same as a renamed prop.
 

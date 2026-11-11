@@ -45,6 +45,8 @@ pnpm docs:dev
 pnpm test
 pnpm test:e2e
 pnpm typecheck
+pnpm manifests
+pnpm manifests:write
 ```
 
 See [CONTRIBUTING.md](./CONTRIBUTING.md) before submitting a change. Engineering

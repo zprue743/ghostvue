@@ -33,10 +33,24 @@ packages/vue/manifests/sl-button.manifest.json
 packages/themes/manifests/sl-button.manifest.json  // when a themed wrapper adds visual props
 ```
 
-`SlButton` today is hand-written (`"source": "handwritten"`) from ADR 0004
-and the approved Button contract, with `Sl*` names from ADR 0003. SLO-13
-will generate manifests from source; do not invent a second shape in the
-meantime.
+`pnpm manifests:write` generates `"source": "generated"` files from every
+`packages/vue/src/**/Sl*.vue` and `packages/themes/src/**/Sl*.vue` using
+`vue-component-meta`. New `Sl*` SFCs are picked up automatically; do not
+register them in a list. `pnpm manifests` (part of `pnpm verify`) fails when
+a generated file is stale versus the SFC.
+
+Machine-derived fields are names and TypeScript types for `props`, `models`
+(`update:*` emits paired with a prop), `events`, `slots`, and `exposed`. Native
+HTML/ARIA fallthrough (`global` props such as `class` and `key`) is omitted.
+Humans maintain prose in the same JSON file: component `description`, `status`,
+member descriptions, `styling`, `accessibility`, and `examples`. Regeneration
+overwrites types and membership from source and keeps that prose. JSDoc on the
+SFC fills a description only when the manifest does not already have one.
+
+Handwritten manifests (`"source": "handwritten"`) remain valid only when no
+matching SFC exists yet. `SlButton` on master is in that state until the
+component source lands. Once an `Sl*.vue` file exists, the manifest must be
+generated.
 
 ## Required contents
 

@@ -73,4 +73,5 @@ They must remain thin pointers into `docs/` and the root `AGENTS.md` rather than
 copying those rules. Edit `scripts/agent-adapter-catalog.mjs` or
 `scripts/workspace-packages.mjs`, then run `pnpm adapters:write` to regenerate
 them. `pnpm adapters` is part of `pnpm verify` and fails when an adapter drifts
-from that catalog.
+from that catalog. `pnpm manifests` is also part of `pnpm verify`; regenerate
+SFC-backed manifests with `pnpm manifests:write`.

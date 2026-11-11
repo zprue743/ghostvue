@@ -45,6 +45,8 @@ pnpm install
 pnpm lint
 pnpm boundaries
 pnpm adapters
+pnpm manifests
+pnpm manifests:write
 pnpm typecheck
 pnpm test
 pnpm test:e2e
