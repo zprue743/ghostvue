@@ -5,9 +5,7 @@ AI assistance and reviewed by experienced engineers. The foundation phase is
 over. Production components are allowed only when they pass the
 [component gate](./docs/agents/COMPONENT_WORKFLOW.md) (approved spec, tests,
 docs, machine-readable manifest, and a Changeset when publishable behavior
-changes). See [ADR 0002](./docs/adr/0002-exit-foundation-phase.md). [PR
-#21](https://github.com/zprue743/slop-ui/pull/21) ADR 0001 records why the
-moratorium ended; this gate is the remaining SLO-8 contract.
+changes). See [ADR 0002](./docs/adr/0002-exit-foundation-phase.md).
 
 ## Read before editing
 

@@ -1,0 +1,65 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "generated",
+  "name": "SlVisuallyHidden",
+  "package": "@slop-ui/vue",
+  "status": "experimental",
+  "description": "Renders content assistive technology can reach but sighted users do not see. useSlVisuallyHidden owns the clip technique and focus-driven reveal; SlVisuallyHidden is the thin unstyled element. There is no themed wrapper.",
+  "props": [
+    {
+      "name": "as",
+      "type": "SlVisuallyHiddenElement",
+      "default": "span",
+      "required": false,
+      "description": "Rendered root element. Choose the tag that is valid in the parent context. Interactive and void elements are excluded.",
+      "deprecated": false
+    },
+    {
+      "name": "focusable",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Reveals the content while focus is inside the subtree and hides it again when focus leaves. Required whenever the slot contains anything focusable, such as a skip link.",
+      "deprecated": false
+    }
+  ],
+  "models": [],
+  "events": [],
+  "slots": [
+    {
+      "name": "default",
+      "props": [],
+      "description": "Content that must exist in the accessibility tree without a visual box. Keep it short; the text is announced in full."
+    }
+  ],
+  "exposed": [],
+  "styling": {
+    "parts": [
+      {
+        "name": "root",
+        "description": "The single rendered element selected by as."
+      }
+    ],
+    "states": [
+      {
+        "name": "hidden",
+        "description": "Clip-technique hiding is applied. Omitted while focusable content is revealed."
+      }
+    ],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "generic",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/practices/names-and-descriptions/",
+    "keyboard": {
+      "Tab": "Moves focus to focusable descendants in document order. The component adds no key handling; with focusable, focusin reveals the content."
+    },
+    "requiredAriaAttributes": []
+  },
+  "examples": [
+    "visually-hidden-icon-name",
+    "visually-hidden-table-header",
+    "visually-hidden-skip-link",
+    "visually-hidden-live-region"
+  ]
+}

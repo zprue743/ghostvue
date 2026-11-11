@@ -68,6 +68,9 @@ export default tseslint.config(
       'vue/block-lang': ['error', { script: { lang: 'ts' } }],
       'vue/component-api-style': ['error', ['script-setup']],
       'vue/multi-word-component-names': 'off',
+      // Prettier owns Vue template layout; these recommended rules fight it.
+      'vue/max-attributes-per-line': 'off',
+      'vue/singleline-html-element-content-newline': 'off',
     },
   },
 )

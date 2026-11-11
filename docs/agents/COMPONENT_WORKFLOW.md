@@ -26,8 +26,6 @@ predecessor. Do not start markup to stand in for an unresolved design.
 
 [ADR 0002](../adr/0002-exit-foundation-phase.md) records why the
 foundation-phase moratorium ended and why this list is the replacement.
-[PR #21](https://github.com/zprue743/slop-ui/pull/21) ADR 0001 is the
-companion decision that first lifted the ban.
 
 ## Spec and implementation sequence
 

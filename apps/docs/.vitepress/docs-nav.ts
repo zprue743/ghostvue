@@ -15,6 +15,10 @@ export const docsSidebar: LlmsSidebarGroup[] = [
     ],
   },
   {
+    text: 'Components',
+    items: [{ text: 'SlVisuallyHidden', link: '/components/visually-hidden' }],
+  },
+  {
     text: 'Architecture',
     items: [
       { text: 'Overview', link: '/architecture/overview' },
@@ -59,6 +63,10 @@ export const docsSidebar: LlmsSidebarGroup[] = [
       { text: 'Workflow', link: '/contributing/workflow' },
       { text: 'Releases', link: '/contributing/releases' },
       { text: 'Component specs', link: '/components/spec-template' },
+      {
+        text: 'SlVisuallyHidden specification',
+        link: '/components/visually-hidden-spec',
+      },
       { text: 'ADRs', link: '/adr/' },
     ],
   },
