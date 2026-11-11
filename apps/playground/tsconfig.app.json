@@ -1,0 +1,17 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "composite": true,
+    "jsx": "preserve",
+    // Keep Node's process.env index signature out of Vue sources reached via
+    // `paths`. Those files declare `process` in packages/vue/src/env.d.ts.
+    "types": [],
+    // Match vite.config.ts: playground typecheck runs before dist types exist.
+    "paths": {
+      "@slop-ui/vue": ["../../packages/vue/src/index.ts"]
+    }
+  },
+  // Composite projects must list files reached through `paths`.
+  "include": ["src/**/*.ts", "src/**/*.vue", "../../packages/vue/src/**/*.ts"],
+  "exclude": ["../../packages/vue/src/**/*.test.ts"]
+}

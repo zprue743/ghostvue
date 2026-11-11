@@ -6,7 +6,7 @@
   "scripts": {
     "build": "vite build",
     "dev": "vite --port 4173",
-    "typecheck": "vue-tsc -p tsconfig.json --noEmit"
+    "typecheck": "vue-tsc -p tsconfig.app.json --noEmit && tsc -p tsconfig.node.json --noEmit"
   },
   "dependencies": {
     "@slop-ui/vue": "workspace:*",
