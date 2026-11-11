@@ -30,6 +30,7 @@ One file per component, next to the package that exports it:
 
 ```text
 packages/vue/manifests/sl-button.manifest.json
+packages/vue/manifests/sl-visually-hidden.manifest.json
 packages/themes/manifests/sl-button.manifest.json  // when a themed wrapper adds visual props
 ```
 

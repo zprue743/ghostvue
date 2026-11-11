@@ -261,8 +261,8 @@ dynamic-root contracts are Vue-specific. Per
 `core`: no non-Vue consumer exists, and being framework-independent is explicitly
 not sufficient justification.
 
-Until a component-manifest schema lands (SLO-12), this Public API section is the
-interim machine-facing contract.
+The machine-readable contract is
+`packages/vue/manifests/sl-visually-hidden.manifest.json`.
 
 ## Test plan
 
@@ -353,11 +353,8 @@ attribute the component currently leaves to fallthrough.
 
 ## Open architectural questions
 
-None blocking. Two deferrals remain:
+None blocking. One deferral remains:
 
-- **Component manifest file.** ADR 0002 requires a machine-readable manifest once
-  a schema exists. SLO-12 has not landed; this spec's Public API section is the
-  interim contract.
 - **A `:focus-within` implementation.** It would close the pre-hydration reveal
   gap and lower specificity, but it requires a CSS delivery pipeline and would
   make consumers import a stylesheet. Revisit only if the library adopts one for
