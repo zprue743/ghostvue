@@ -26,14 +26,8 @@ jobs:
 
   browser:
     runs-on: ubuntu-latest
-    # Healthy runs finish in about a minute. Keep this well under the previous
-    # 10+ minute apt hang so a stalled Playwright/CDN fetch fails the job
-    # instead of blocking every PR.
+    # Fail faster than the previous 10+ minute apt hang; healthy runs are ~1 minute.
     timeout-minutes: 10
-    permissions:
-      contents: read
-      # Cache save needs this once the workflow-level token is contents:read.
-      actions: write
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -53,12 +47,7 @@ jobs:
         with:
           path: ~/.cache/ms-playwright
           key: ${{ runner.os }}-playwright-${{ steps.playwright.outputs.version }}
-      # Install only Chromium: the smoke project has one browser target.
-      # Skip `--with-deps`. GitHub-hosted Ubuntu already has Chromium's runtime
-      # libraries (confirmed on the hanging runs: apt only wanted extra fonts).
-      # `install --with-deps` still runs apt, which stalled 10+ minutes then
-      # failed DNS for azure.archive.ubuntu.com on PR #22 run 43043698597
-      # (actions/runner-images#14823). Cache the browser; do not call apt.
+      # Skip --with-deps: GitHub Ubuntu already has Chromium libs, and apt hangs on mirror DNS.
       - name: Install Playwright Chromium
         timeout-minutes: 5
         run: pnpm exec playwright install chromium
