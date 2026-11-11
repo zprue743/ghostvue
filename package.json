@@ -15,6 +15,7 @@
     "adapters:write": "node scripts/check-agent-adapters.mjs --write",
     "boundaries": "node scripts/check-package-boundaries.mjs",
     "build": "pnpm --filter @slop-ui/* --filter !@slop-ui/docs --if-present build",
+    "published-exports": "node scripts/check-published-exports.mjs",
     "changeset": "changeset",
     "changeset:status": "changeset status",
     "dev": "pnpm --filter @slop-ui/playground dev",
@@ -27,7 +28,7 @@
     "test:e2e": "pnpm --filter @slop-ui/playground build && playwright test",
     "test:watch": "vitest",
     "typecheck": "pnpm -r --if-present typecheck",
-    "verify": "pnpm lint && pnpm boundaries && pnpm adapters && pnpm typecheck && pnpm test && pnpm build && pnpm docs:build"
+    "verify": "pnpm lint && pnpm boundaries && pnpm adapters && pnpm typecheck && pnpm test && pnpm build && pnpm published-exports && pnpm docs:build"
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",

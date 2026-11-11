@@ -35,9 +35,13 @@ dependency direction and encourage cycles.
 ## Tooling choices
 
 Vite builds the Vue library and development apps. TypeScript emits the small
-framework-neutral packages directly. Vitest, Vue Test Utils, Playwright, and axe
-cover complementary test levels. VitePress publishes the same canonical Markdown
-that contributors and agents read.
+framework-neutral packages directly, including their `.d.ts` files. The Vue
+package runs `vue-tsc` after `vite build` because Vite empties `dist` before
+writing the bundle. `pnpm published-exports` then asserts that each library
+package's `types` and `exports` targets exist on disk so a missing
+`dist/index.d.ts` cannot pass `pnpm verify`. Vitest, Vue Test Utils, Playwright,
+and axe cover complementary test levels. VitePress publishes the same canonical
+Markdown that contributors and agents read.
 
 Storybook is deferred. Before real components exist, it would duplicate the
 playground and documentation responsibilities without providing meaningful

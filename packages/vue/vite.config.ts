@@ -4,6 +4,8 @@ import { defineConfig } from 'vite'
 export default defineConfig({
   plugins: [vue()],
   build: {
+    // Vite empties dist first, so vue-tsc must run after this build.
+    emptyOutDir: true,
     lib: {
       entry: 'src/index.ts',
       formats: ['es'],
