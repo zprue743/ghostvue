@@ -12,7 +12,7 @@ apps/docs          VitePress command wrapper for canonical docs
 apps/playground    manual development and browser-test host
 tests              cross-package integration and browser tests
 docs               canonical product and engineering documentation
-scripts            repository invariants that CI and local checks share
+scripts            repository invariants (`pnpm adapters`, `pnpm manifests`)
 ```
 
 Directories exist only when they serve current tooling or express a real
