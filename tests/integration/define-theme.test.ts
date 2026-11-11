@@ -52,6 +52,78 @@ describe('defineTheme', () => {
     expect(() =>
       defineTheme({ name: 'acme', primary: 200, roundness: 2 }),
     ).toThrow(/roundness/)
+    expect(() =>
+      defineTheme({
+        name: 'acme',
+        primary: 200,
+        interactivity: 'loud',
+      } as never),
+    ).toThrow(/interactivity/)
+  })
+
+  it('maps interactivity flavors onto spotlight tokens', () => {
+    const subtle = defineTheme({ name: 'acme', primary: '#0f766e' })
+    expect(
+      subtle.tokens.find((token) => token.name === 'interactive.spotlight.size')
+        ?.value.light,
+    ).toBe('10rem')
+    expect(
+      subtle.tokens.find(
+        (token) => token.name === 'interactive.spotlight.opacity',
+      )?.value.light,
+    ).toBe('0.28')
+
+    const none = defineTheme({
+      name: 'quiet',
+      primary: '#0f766e',
+      interactivity: 'none',
+    })
+    expect(
+      none.tokens.find((token) => token.name === 'interactive.spotlight.size')
+        ?.value.light,
+    ).toBe('0px')
+    expect(
+      none.tokens.find(
+        (token) => token.name === 'interactive.spotlight.opacity',
+      )?.value.light,
+    ).toBe('0')
+
+    const expressive = defineTheme({
+      name: 'loud',
+      primary: '#0f766e',
+      interactivity: 'expressive',
+    })
+    expect(
+      expressive.tokens.find(
+        (token) => token.name === 'interactive.spotlight.size',
+      )?.value.light,
+    ).toBe('20rem')
+    expect(
+      expressive.tokens.find(
+        (token) => token.name === 'interactive.spotlight.opacity',
+      )?.value.light,
+    ).toBe('0.75')
+  })
+
+  it('assigns flagship interactivity recipes', () => {
+    const byName = Object.fromEntries(
+      FLAGSHIP_THEME_INPUTS.map((input) => [input.name, input]),
+    )
+    expect(byName.calm?.interactivity).toBe('subtle')
+    expect(byName.mono?.interactivity).toBe('subtle')
+    expect(byName.vibrant?.interactivity).toBe('expressive')
+
+    const vibrantInput = FLAGSHIP_THEME_INPUTS.find(
+      (input) => input.name === 'vibrant',
+    )
+    expect(vibrantInput).toBeDefined()
+    if (!vibrantInput) return
+    const vibrant = defineTheme(vibrantInput)
+    expect(
+      vibrant.tokens.find(
+        (token) => token.name === 'interactive.spotlight.opacity',
+      )?.value.light,
+    ).toBe('0.75')
   })
 
   it('auto-adjusts action fills so a light brand seed still meets AA', () => {

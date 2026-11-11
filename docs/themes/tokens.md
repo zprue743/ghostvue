@@ -219,6 +219,16 @@ tokens that alias them.
 | `gradient.aurora` | `--sl-gradient-aurora` | gradient | `radial-gradient(in oklch at 14% 18%, #d6e3ff 0%, transparent 52%), radial-gradient(in oklch at 86% 12%, #cfe7fc 0%, transparent 48%), radial-gradient(in oklch at 62% 92%, #e8f6ea 0%, transparent 55%)` | `radial-gradient(in oklch at 14% 18%, #235187 0%, transparent 52%), radial-gradient(in oklch at 86% 12%, #005d80 0%, transparent 48%), radial-gradient(in oklch at 62% 92%, #045227 0%, transparent 55%)` | Layered radial aurora background interpolated in oklch. |
 | `gradient.border` | `--sl-gradient-border` | gradient | `linear-gradient(135deg in oklch, #356af3 0%, #579dd1 100%)` | `linear-gradient(135deg in oklch, #60a5fa 0%, #38bdf8 100%)` | Gradient used by the gradient-border mask recipe. |
 
+### interactive
+
+| Token | CSS | Type | Light | Dark | Description |
+| --- | --- | --- | --- | --- | --- |
+| `interactive.leave.spring` | `--sl-interactive-leave-spring` | spring | `linear(0, 0.0043 0.8264%, 0.036 2.4793%, 0.1271 4.9587%, 0.6578 14.876%, 0.8392 19.0083%, 0.9867 23.9669%, 1.0328 26.4463%, 1.063 28.9256%, 1.0832 32.2314%, 1.0853 36.3636%, 1.0164 52.8926%, 0.9952 62.8099%, 1)` | `linear(0, 0.0043 0.8264%, 0.036 2.4793%, 0.1271 4.9587%, 0.6578 14.876%, 0.8392 19.0083%, 0.9867 23.9669%, 1.0328 26.4463%, 1.063 28.9256%, 1.0832 32.2314%, 1.0853 36.3636%, 1.0164 52.8926%, 0.9952 62.8099%, 1)` | Leave-settle easing for pointer-reactive surfaces. |
+| `interactive.leave.spring.duration` | `--sl-interactive-leave-spring-duration` | duration | `504ms` | `504ms` | Settle duration when a pointer-reactive surface returns to rest. |
+| `interactive.spotlight.color` | `--sl-interactive-spotlight-color` | color | `#1d4ed8` | `#60a5fa` | Spotlight glow color. Mono hairline uses chroma-0 primary through this alias. |
+| `interactive.spotlight.opacity` | `--sl-interactive-spotlight-opacity` | number | `0.28` | `0.28` | Peak spotlight opacity before --sl-motion-intensity. 0 hides the glow. |
+| `interactive.spotlight.size` | `--sl-interactive-spotlight-size` | dimension | `10rem` | `10rem` | Spotlight glow diameter. Subtle default; defineTheme interactivity resizes it. |
+
 ### material
 
 | Token | CSS | Type | Light | Dark | Description |

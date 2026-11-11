@@ -9,69 +9,88 @@ import {
   type MaybeRefOrGetter,
 } from 'vue'
 
-export type InteractiveEffect = 'spotlight' | 'tilt' | 'magnetic'
+import type {
+  InteractiveEffect,
+  InteractiveStateAttribute,
+  InteractiveSurfaceState,
+  UseSlInteractiveSurfaceOptions,
+} from './sl-interactive-surface'
 
-export type InteractiveSurfaceState = 'off' | 'idle' | 'tracking'
-
-export interface UseInteractiveSurfaceOptions {
-  /** Space-separated recipes advertised on `data-interactive`. Default spotlight. */
-  effects?: MaybeRefOrGetter<readonly InteractiveEffect[]>
-}
-
-export interface InteractiveSurfaceRootProps {
+export interface SlInteractiveSurfaceRootProps {
   'data-part': 'root'
   'data-interactive': string
-  'data-state': InteractiveSurfaceState
+  'data-state'?: InteractiveSurfaceState
+  'data-interactive-state'?: InteractiveSurfaceState
 }
 
 /**
- * Playground spike of the SLO-62 composable. Not a published export.
+ * Pointer tracking for ambient surfaces (ADR 0009).
  *
- * Pointer samples are rAF-batched and written as CSS variables so Vue does
- * not re-render every move. Layout is measured on a static host, not the
- * transformed face, so magnetic travel cannot feedback into the rect.
- * Reduced motion and coarse pointers leave `data-state="off"` with no
- * listeners. Offscreen and hidden-tab paths cancel the frame loop.
+ * Samples are rAF-batched and written as CSS variables so Vue does not
+ * re-render every move. Layout is cached on enter / resize / scroll-dirty,
+ * never per `pointermove`. Reduced motion and coarse pointers leave the
+ * host `off` with no pointer listeners. Offscreen and hidden-tab paths
+ * cancel the frame loop. One tracking surface is a documented budget, not
+ * a singleton.
  */
-export function useInteractiveSurface(
+export function useSlInteractiveSurface(
   target: MaybeRefOrGetter<HTMLElement | null | undefined>,
-  options?: UseInteractiveSurfaceOptions,
+  options?: UseSlInteractiveSurfaceOptions,
 ): {
-  rootProps: ComputedRef<InteractiveSurfaceRootProps>
+  rootProps: ComputedRef<SlInteractiveSurfaceRootProps>
 } {
   const state = ref<InteractiveSurfaceState>('off')
-  const effects = computed(
-    (): readonly InteractiveEffect[] =>
-      toValue(options?.effects) ?? ['spotlight'],
+  const effects = computed((): readonly InteractiveEffect[] => {
+    const value = toValue(options?.effects)
+    // `undefined` means the dedicated surface default. An empty list is an
+    // explicit off (themed SlButton with no interactive prop).
+    return value ?? ['spotlight']
+  })
+  const stateAttribute = computed(
+    (): InteractiveStateAttribute =>
+      toValue(options?.stateAttribute) ?? 'data-state',
   )
 
-  const rootProps = computed((): InteractiveSurfaceRootProps => ({
-    'data-part': 'root',
-    'data-interactive': effects.value.join(' '),
-    'data-state': state.value,
-  }))
+  const rootProps = computed((): SlInteractiveSurfaceRootProps => {
+    const status = state.value
+    const interactive = effects.value.join(' ')
+    if (stateAttribute.value === 'data-interactive-state') {
+      return {
+        'data-part': 'root',
+        'data-interactive': interactive,
+        ...(interactive ? { 'data-interactive-state': status } : {}),
+      }
+    }
+    return {
+      'data-part': 'root',
+      'data-interactive': interactive,
+      'data-state': status,
+    }
+  })
 
   let stopWatch: (() => void) | undefined
 
   onMounted(() => {
     stopWatch = watch(
-      () => toValue(target),
-      (element, _previous, onCleanup) => {
-        if (!element) {
+      () => [toValue(target), effects.value.join(' ')] as const,
+      ([element], _previous, onCleanup) => {
+        if (!element || !effects.value.includes('spotlight')) {
           state.value = 'off'
           return
         }
 
-        // Nested listeners do not keep the watch callback's null narrowing.
         const host = element
-
         const reducedMotion = window.matchMedia(
           '(prefers-reduced-motion: reduce)',
         )
         const coarsePointer = window.matchMedia('(pointer: coarse)')
 
         function canTrack(): boolean {
-          return !reducedMotion.matches && !coarsePointer.matches
+          return (
+            effects.value.includes('spotlight') &&
+            !reducedMotion.matches &&
+            !coarsePointer.matches
+          )
         }
 
         let rect: DOMRect | null = null
@@ -82,8 +101,7 @@ export function useInteractiveSurface(
         let pendingX = 0
         let pendingY = 0
         let hasSample = false
-        const tiltMax = 10
-        const magneticMax = 12
+        let pointerBound = false
 
         function measure(): DOMRect {
           if (!rectDirty && rect) return rect
@@ -101,10 +119,6 @@ export function useInteractiveSurface(
           )
           host.style.setProperty('--sl-pointer-nx', '0')
           host.style.setProperty('--sl-pointer-ny', '0')
-          host.style.setProperty('--sl-tilt-x', '0')
-          host.style.setProperty('--sl-tilt-y', '0')
-          host.style.setProperty('--sl-magnetic-x', '0')
-          host.style.setProperty('--sl-magnetic-y', '0')
         }
 
         function writeSample(clientX: number, clientY: number): void {
@@ -117,16 +131,6 @@ export function useInteractiveSurface(
           host.style.setProperty('--sl-pointer-y', `${String(localY)}px`)
           host.style.setProperty('--sl-pointer-nx', String(nx))
           host.style.setProperty('--sl-pointer-ny', String(ny))
-          host.style.setProperty('--sl-tilt-x', String(-ny * 2 * tiltMax))
-          host.style.setProperty('--sl-tilt-y', String(nx * 2 * tiltMax))
-          host.style.setProperty(
-            '--sl-magnetic-x',
-            String(nx * 2 * magneticMax),
-          )
-          host.style.setProperty(
-            '--sl-magnetic-y',
-            String(ny * 2 * magneticMax),
-          )
         }
 
         function cancelFrame(): void {
@@ -140,21 +144,12 @@ export function useInteractiveSurface(
           frame = 0
           if (!hasSample) return
           hasSample = false
-          if (
-            state.value !== 'tracking' ||
-            !intersecting ||
-            !pageVisible ||
-            !canTrack()
-          ) {
-            return
-          }
+          if (state.value !== 'tracking' || !pageVisible) return
           writeSample(pendingX, pendingY)
         }
 
         function onPointerMove(event: PointerEvent): void {
           if (!canTrack()) return
-          // A real pointer event means the host is hittable, even if IO has
-          // not yet flipped after scroll-into-view (Playwright, below-the-fold).
           intersecting = true
           if (state.value !== 'tracking') {
             rectDirty = true
@@ -184,8 +179,6 @@ export function useInteractiveSurface(
           writeRest()
           if (canTrack()) state.value = 'idle'
         }
-
-        let pointerBound = false
 
         function bindPointer(): void {
           if (pointerBound) return

@@ -2,6 +2,7 @@ import { defineComponent, h, ref, type PropType } from 'vue'
 
 import {
   SlButton as SlUnstyledButton,
+  useSlInteractiveSurface,
   type SlButtonExposed,
   type SlButtonType,
 } from '@slop-ui/vue'
@@ -14,6 +15,9 @@ export type SlButtonTone = 'accent' | 'neutral' | 'danger'
 
 /** Visual size. Omitting it selects `md`. */
 export type SlButtonSize = 'sm' | 'md' | 'lg'
+
+/** Opt-in pointer spotlight. Omitting it leaves the button inert. */
+export type SlButtonInteractive = 'spotlight'
 
 /**
  * Themed wrapper: visual props as `data-*`, instance-scoped CSS. Behavior stays
@@ -31,6 +35,10 @@ export const SlButton = defineComponent({
     size: { type: String as PropType<SlButtonSize>, default: 'md' },
     block: { type: Boolean, default: false },
     iconOnly: { type: Boolean, default: false },
+    interactive: {
+      type: String as PropType<SlButtonInteractive>,
+      default: undefined,
+    },
   },
   setup(props, { attrs, slots, expose }) {
     const inner = ref<SlButtonExposed | null>(null)
@@ -46,6 +54,11 @@ export const SlButton = defineComponent({
         inner.value?.blur()
       },
     } satisfies SlButtonExposed)
+
+    const { rootProps } = useSlInteractiveSurface(() => inner.value?.element, {
+      effects: () => (props.interactive === 'spotlight' ? ['spotlight'] : []),
+      stateAttribute: 'data-interactive-state',
+    })
 
     return () =>
       h('span', { class: 'slop-themed-scope' }, [
@@ -64,8 +77,18 @@ export const SlButton = defineComponent({
             'data-size': props.size === 'md' ? undefined : props.size,
             'data-block': props.block ? '' : undefined,
             'data-icon-only': props.iconOnly ? '' : undefined,
+            'data-interactive':
+              props.interactive === 'spotlight' ? 'spotlight' : undefined,
+            'data-interactive-state': rootProps.value['data-interactive-state'],
           },
-          slots,
+          props.interactive === 'spotlight'
+            ? {
+                default: () => [
+                  h('span', { 'data-part': 'glow', 'aria-hidden': 'true' }),
+                  slots['default']?.(),
+                ],
+              }
+            : slots,
         ),
       ])
   },

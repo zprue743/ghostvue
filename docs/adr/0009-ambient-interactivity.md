@@ -1,13 +1,15 @@
 # ADR 0009: Ambient interactivity for 'alive' surfaces
 
-- Status: proposed
+- Status: accepted
 - Date: 2026-11-11
 - Decision owners: Zac Pruett, repository maintainers
 - Relates to: [ADR 0004](./0004-headless-styled-layering.md) (layering),
   [ADR 0007](./0007-token-pipeline.md) (tokens, `--sl-motion-intensity`),
   [ADR 0008](./0008-define-theme.md) (flagships); SLO-62
 
-This is a design spike. Nothing here is a published API.
+Accepted 2026-11-11 with the answers in
+[Decision record](#decision-record-zac-2026-11-11). v1 ships **spotlight
+only**; tilt and magnetic are follow-ups.
 
 ## Context
 
@@ -167,9 +169,11 @@ not a second API:
 | **vibrant** (`1`, aurora)         | Strong, large           | Expressive | Strong   |
 | **mono** (`0.45`, no chroma)      | Neutral hairline glow   | `0`        | `0`      |
 
-`defineTheme` does not need a new knob in v1. Flagship configs override the
-semantic tokens. A future `interactivity: 'none' \| 'subtle' \| 'expressive'`
-flavor is optional, parallel to `elevation` / `gradient`.
+`defineTheme` grows `interactivity: 'none' | 'subtle' | 'expressive'`
+alongside `elevation` and `gradient`. Authored `default` matches **subtle**.
+**none** zeros size and opacity. **expressive** enlarges the glow. Flagships:
+calm and mono use subtle (mono’s chroma-0 primary is the hairline color);
+vibrant uses expressive. Tilt and magnetic stay follow-ups.
 
 ## Alternatives considered
 
@@ -189,23 +193,33 @@ belong in `vue`; `vue` must not import `themes`.
 
 ## Consequences
 
-- Playground prototypes (`apps/playground`) prove spotlight and
-  tilt/magnetic against the budget. They are not exports.
-- A follow-up that productizes this needs a spec, tests, docs, a manifest,
-  token JSON, recipes in `recipes.css`, and a Changeset. This ADR stays
-  `proposed` until Zac answers the questions below.
+- `@slop-ui/vue` exports `useSlInteractiveSurface` and unstyled
+  `SlInteractiveSurface`. `@slop-ui/themes` exports a themed wrapper and a
+  `data-interactive='spotlight'` recipe. Themed `SlButton` opts in with
+  `interactive="spotlight"` (`data-interactive`), off by default.
+- Magnetic/tilt and any particle/WebGL background are follow-ups (tilt on
+  the same composable; particles only in a separate opt-in package).
 - `--sl-motion-intensity: 0` already freezes amplitudes via `calc()`.
 
 ## Compatibility implications
 
-Docs and playground only. No published API, no Changeset. Headless `@slop-ui/vue`
-is unchanged. Introducing `useSlInteractiveSurface` later is additive.
+Additive. Package is unpublished (`0.0.0`). Headless `SlButton` is unchanged.
+Themed `SlButton` gains an optional `interactive` prop; omitting it leaves
+markup and snapshots identical. No new runtime dependency.
 
-## Open questions for Zac
+## Decision record (Zac, 2026-11-11)
 
-1. Should pointer-reactive effects ever ship on `SlButton` itself, or only as an opt-in surface wrapper?
-2. Is a JS spring integrator (reading authored mass/stiffness/damping) in scope later, or is CSS-var tracking plus `linear()` settle-on-leave enough?
-3. Coarse-pointer: fully off, or a static centered glow?
-4. One tracking surface at a time as a hard library invariant, or a documented budget?
-5. Should `defineTheme` grow an `interactivity` flavor knob (`none` | `subtle` | `expressive`) alongside elevation/gradient, or only tokens that flagships override?
-6. Canvas/WebGL ambient backgrounds: never in the library, or a documented playground-only experiment?
+1. **`SlButton` opt-in.** Themed `SlButton` may set `data-interactive="spotlight"`.
+   Off by default. Not a global button treatment.
+2. **CSS vars + existing springs in v1.** Pointer tracking writes CSS
+   variables; leave uses `--sl-interactive-leave-spring` (`linear()` from
+   SLO-65). A JS spring integrator is a follow-up only if tracking feels
+   weightless.
+3. **Coarse pointers are fully off.** No static centered glow.
+4. **Budget, not invariant.** One active tracking surface is documented.
+   The library does not enforce a singleton.
+5. **`defineTheme` knob.** `interactivity: 'none' | 'subtle' | 'expressive'`
+   maps onto the spotlight tokens, parallel to `elevation` / `gradient`.
+6. **Canvas/WebGL stay playground-only.** A future particle background would
+   be a separate opt-in package, not part of `@slop-ui/vue` or
+   `@slop-ui/themes`.

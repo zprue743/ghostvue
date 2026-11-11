@@ -39,17 +39,19 @@ attributes, are included in the public type and fall through to the root
 Themed `@slop-ui/themes` `SlButton` wraps the unstyled component and adds visual
 props. Same behavioral props; these exist only on the themed wrapper:
 
-| Prop       | Type                                        | Default    | Contract                                          |
-| ---------- | ------------------------------------------- | ---------- | ------------------------------------------------- |
-| `variant`  | `'solid' \| 'soft' \| 'outline' \| 'ghost'` | `'solid'`  | Visual treatment.                                 |
-| `tone`     | `'accent' \| 'neutral' \| 'danger'`         | `'accent'` | Semantic color intent, independent of `variant`.  |
-| `size`     | `'sm' \| 'md' \| 'lg'`                      | `'md'`     | Control size.                                     |
-| `block`    | `boolean`                                   | `false`    | Stretch to the available inline size.             |
-| `iconOnly` | `boolean`                                   | `false`    | Square icon-button treatment; still needs a name. |
+| Prop          | Type                                        | Default    | Contract                                                                                           |
+| ------------- | ------------------------------------------- | ---------- | -------------------------------------------------------------------------------------------------- |
+| `variant`     | `'solid' \| 'soft' \| 'outline' \| 'ghost'` | `'solid'`  | Visual treatment.                                                                                  |
+| `tone`        | `'accent' \| 'neutral' \| 'danger'`         | `'accent'` | Semantic color intent, independent of `variant`.                                                   |
+| `size`        | `'sm' \| 'md' \| 'lg'`                      | `'md'`     | Control size.                                                                                      |
+| `block`       | `boolean`                                   | `false`    | Stretch to the available inline size.                                                              |
+| `iconOnly`    | `boolean`                                   | `false`    | Square icon-button treatment; still needs a name.                                                  |
+| `interactive` | `'spotlight'`                               | omitted    | Opt-in pointer spotlight (`data-interactive`). Off by default. Tracks on `data-interactive-state`. |
 
 The themed wrapper sets matching `data-variant`, `data-tone`, `data-size`,
-`data-block`, and `data-icon-only` attributes on the inner button. Defaults omit
-the attribute so CSS can treat a missing hook as the default. It also wraps the
+`data-block`, `data-icon-only`, and optional `data-interactive` attributes on
+the inner button. Defaults omit the attribute so CSS can treat a missing hook
+as the default. It also wraps the
 button in `.slop-themed-scope` (`display: contents`) so default CSS can style
 that instance without forcing every `.slop-button` on the page.
 

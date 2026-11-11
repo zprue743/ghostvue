@@ -21,6 +21,20 @@ export type {
   SlButtonType,
   UseSlButtonOptions,
 } from './sl-button'
+export { default as SlInteractiveSurface } from './SlInteractiveSurface.vue'
+export {
+  useSlInteractiveSurface,
+  type SlInteractiveSurfaceRootProps,
+} from './use-sl-interactive-surface'
+export type {
+  InteractiveEffect,
+  InteractiveStateAttribute,
+  InteractiveSurfaceElement,
+  InteractiveSurfaceState,
+  SlInteractiveSurfaceExposed,
+  SlInteractiveSurfaceProps,
+  UseSlInteractiveSurfaceOptions,
+} from './sl-interactive-surface'
 export { default as SlVisuallyHidden } from './SlVisuallyHidden.vue'
 export {
   useSlVisuallyHidden,

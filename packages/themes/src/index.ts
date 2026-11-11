@@ -21,8 +21,16 @@ export {
 export {
   SlButton,
   type SlButtonExposed,
+  type SlButtonInteractive,
   type SlButtonSize,
   type SlButtonTone,
   type SlButtonType,
   type SlButtonVariant,
 } from './sl-button'
+
+export {
+  SlInteractiveSurface,
+  type InteractiveEffect,
+  type InteractiveSurfaceElement,
+  type SlInteractiveSurfaceExposed,
+} from './sl-interactive-surface'

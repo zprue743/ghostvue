@@ -20,4 +20,3 @@ new context rather than rewriting history.
 - [0007 — Token compile pipeline and public CSS names](./0007-token-pipeline.md)
 - [0008 — Brand-input theme generator and flagship themes](./0008-define-theme.md)
 - [0009 — Ambient interactivity for 'alive' surfaces](./0009-ambient-interactivity.md)
-  (proposed)

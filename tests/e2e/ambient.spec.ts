@@ -2,20 +2,25 @@ import { expect, test } from '@playwright/test'
 
 import { startStaticServer } from './static-server'
 
-test.describe('ambient interactivity spike', () => {
-  test('spotlight and tilt write pointer CSS variables on hover', async ({
-    page,
-  }) => {
+const screenshotOptions = {
+  animations: 'disabled' as const,
+  maxDiffPixelRatio: 0.03,
+}
+
+test.describe('ambient interactivity', () => {
+  test.use({
+    viewport: { width: 1280, height: 900 },
+    deviceScaleFactor: 1,
+  })
+
+  test('spotlight writes pointer CSS variables on hover', async ({ page }) => {
     const playground = await startStaticServer('apps/playground/dist')
 
     try {
       await page.goto(playground.url)
 
       const spotlight = page.getByTestId('ambient-spotlight')
-      const tilt = page.getByTestId('ambient-tilt')
-
       await expect(spotlight).toHaveAttribute('data-state', 'idle')
-      await expect(tilt).toHaveAttribute('data-state', 'idle')
       await spotlight.scrollIntoViewIfNeeded()
 
       const spotlightBox = await spotlight.boundingBox()
@@ -41,18 +46,56 @@ test.describe('ambient interactivity spike', () => {
           }),
         )
         .toBeGreaterThan(0)
+    } finally {
+      await playground.close()
+    }
+  })
 
-      await tilt.scrollIntoViewIfNeeded()
-      const tiltBox = await tilt.boundingBox()
-      if (!tiltBox) throw new Error('tilt has no box')
-      await page.mouse.move(tiltBox.x + 80, tiltBox.y + 24)
-      await expect(tilt).toHaveAttribute('data-state', 'tracking')
-      const faceTransform = await tilt.evaluate((element) => {
-        const face = element.querySelector('[data-part="face"]')
-        return face ? getComputedStyle(face).transform : 'none'
+  test('opted-in SlButton tracks on data-interactive-state', async ({
+    page,
+  }) => {
+    const playground = await startStaticServer('apps/playground/dist')
+
+    try {
+      await page.goto(playground.url)
+
+      const button = page.getByTestId('ambient-button-spotlight')
+      await expect(button).toHaveAttribute('data-interactive', 'spotlight')
+      await expect(button).toHaveAttribute('data-interactive-state', 'idle')
+      await button.scrollIntoViewIfNeeded()
+
+      const box = await button.boundingBox()
+      if (!box) throw new Error('opt-in button has no box')
+      await page.mouse.move(box.x + 24, box.y + 12)
+      await expect(button).toHaveAttribute('data-interactive-state', 'tracking')
+      await expect
+        .poll(async () =>
+          button.evaluate((element) => {
+            const glow = element.querySelector('[data-part="glow"]')
+            return glow ? Number(getComputedStyle(glow).opacity) : 0
+          }),
+        )
+        .toBeGreaterThan(0)
+    } finally {
+      await playground.close()
+    }
+  })
+
+  test('snapshots the opted-in spotlight button', async ({ page }) => {
+    const playground = await startStaticServer('apps/playground/dist')
+
+    try {
+      await page.goto(playground.url)
+      await page.evaluate(() => document.fonts.ready)
+
+      const host = page.getByTestId('ambient-button-host')
+      const button = page.getByTestId('ambient-button-spotlight')
+      await host.scrollIntoViewIfNeeded()
+      await button.hover({ position: { x: 28, y: 12 } })
+      await expect(button).toHaveAttribute('data-interactive-state', 'tracking')
+      await expect(host).toHaveScreenshot('button-spotlight-opt-in.png', {
+        ...screenshotOptions,
       })
-      expect(faceTransform).not.toBe('none')
-      expect(faceTransform).not.toBe('matrix(1, 0, 0, 1, 0, 0)')
     } finally {
       await playground.close()
     }
@@ -68,10 +111,10 @@ test.describe('ambient interactivity spike', () => {
       await page.goto(playground.url)
 
       const spotlight = page.getByTestId('ambient-spotlight')
-      const tilt = page.getByTestId('ambient-tilt')
+      const button = page.getByTestId('ambient-button-spotlight')
 
       await expect(spotlight).toHaveAttribute('data-state', 'off')
-      await expect(tilt).toHaveAttribute('data-state', 'off')
+      await expect(button).toHaveAttribute('data-interactive-state', 'off')
 
       await spotlight.hover({ position: { x: 48, y: 36 } })
       await expect(spotlight).toHaveAttribute('data-state', 'off')
@@ -82,21 +125,8 @@ test.describe('ambient interactivity spike', () => {
         }),
       ).toBe('0')
 
-      await tilt.hover({ position: { x: 80, y: 24 } })
-      await expect(tilt).toHaveAttribute('data-state', 'off')
-      expect(
-        await tilt.evaluate((element) =>
-          getComputedStyle(element).getPropertyValue('--sl-tilt-x').trim(),
-        ),
-      ).toBe('0')
-      const faceTransform = await tilt.evaluate((element) => {
-        const face = element.querySelector('[data-part="face"]')
-        return face ? getComputedStyle(face).transform : 'missing'
-      })
-      expect(
-        faceTransform === 'none' ||
-          faceTransform === 'matrix(1, 0, 0, 1, 0, 0)',
-      ).toBe(true)
+      await button.hover({ position: { x: 24, y: 12 } })
+      await expect(button).toHaveAttribute('data-interactive-state', 'off')
     } finally {
       await playground.close()
     }

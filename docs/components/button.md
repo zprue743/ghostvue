@@ -68,13 +68,14 @@ import { SlButton } from '@slop-ui/themes'
 Importing the themed component loads the default stylesheet. Visual props exist
 only on this wrapper:
 
-| Prop       | Type                                        | Default    | Description                     |
-| ---------- | ------------------------------------------- | ---------- | ------------------------------- |
-| `variant`  | `'solid' \| 'soft' \| 'outline' \| 'ghost'` | `'solid'`  | Visual treatment.               |
-| `tone`     | `'accent' \| 'neutral' \| 'danger'`         | `'accent'` | Semantic color intent.          |
-| `size`     | `'sm' \| 'md' \| 'lg'`                      | `'md'`     | Control size.                   |
-| `block`    | `boolean`                                   | `false`    | Stretch to the available width. |
-| `iconOnly` | `boolean`                                   | `false`    | Square icon-button treatment.   |
+| Prop          | Type                                        | Default    | Description                               |
+| ------------- | ------------------------------------------- | ---------- | ----------------------------------------- |
+| `variant`     | `'solid' \| 'soft' \| 'outline' \| 'ghost'` | `'solid'`  | Visual treatment.                         |
+| `tone`        | `'accent' \| 'neutral' \| 'danger'`         | `'accent'` | Semantic color intent.                    |
+| `size`        | `'sm' \| 'md' \| 'lg'`                      | `'md'`     | Control size.                             |
+| `block`       | `boolean`                                   | `false`    | Stretch to the available width.           |
+| `iconOnly`    | `boolean`                                   | `false`    | Square icon-button treatment.             |
+| `interactive` | `'spotlight'`                               | omitted    | Opt-in pointer spotlight. Off by default. |
 
 Themed size, padding, gap, radius, and type come from density, spacing, and
 roundness tokens. Comfortable `md` is 40px tall with an 8px radius at
