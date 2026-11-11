@@ -10,10 +10,12 @@
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
-    }
+    },
+    "./manifest.schema.json": "./manifest.schema.json"
   },
   "files": [
-    "dist"
+    "dist",
+    "manifest.schema.json"
   ],
   "scripts": {
     "build": "tsc -p tsconfig.build.json",

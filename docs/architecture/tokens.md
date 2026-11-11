@@ -41,8 +41,8 @@ A follow-up pipeline must emit all three:
 | TypeScript types      | Typed public token names for Vue, docs, and codegen  |
 | JSON manifest         | Resolved values for MCP and agents                   |
 
-The JSON token manifest is not the per-component gate manifest in ADR 0002
-(SLO-8).
+The JSON token manifest is not the per-component gate manifest in
+[ADR 0006](../adr/0006-component-manifest-schema.md).
 
 Public CSS names use the `slop-` prefix (`--slop-button-accent-color`). Vue
 components are `SlButton` (ADR 0003); CSS does not use Shoelace's `sl-`

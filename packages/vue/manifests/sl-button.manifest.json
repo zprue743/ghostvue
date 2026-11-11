@@ -1,0 +1,105 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "handwritten",
+  "name": "SlButton",
+  "package": "@slop-ui/vue",
+  "status": "experimental",
+  "description": "Headless native action control. useSlButton owns behavior; SlButton is the thin unstyled element. Themed visual props live on @slop-ui/themes. Hand-written until SLO-13 generates manifests.",
+  "props": [
+    {
+      "name": "type",
+      "type": "'button' | 'submit' | 'reset'",
+      "default": "button",
+      "required": false,
+      "description": "Native button behavior. Defaults to button so a control inside a form does not submit unless the consumer opts in.",
+      "deprecated": false
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Applies native disabled semantics, prevents activation, and removes the button from sequential focus order.",
+      "deprecated": false
+    },
+    {
+      "name": "loading",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Consumer-owned pending state. Prevents activation while remaining focusable, sets aria-disabled and aria-busy, and preserves slot content so the accessible name does not change.",
+      "deprecated": false
+    }
+  ],
+  "models": [],
+  "events": [],
+  "slots": [
+    {
+      "name": "default",
+      "props": [],
+      "description": "Button label and optional decorative content such as an icon. Icon-only use requires aria-label or aria-labelledby."
+    }
+  ],
+  "exposed": [
+    {
+      "name": "element",
+      "kind": "property",
+      "type": "HTMLButtonElement | null",
+      "description": "The native button after mount; null before mount and after unmount."
+    },
+    {
+      "name": "focus",
+      "kind": "method",
+      "type": "(options?: FocusOptions) => void",
+      "description": "Focuses the native button when it is mounted and enabled. No-op before mount."
+    },
+    {
+      "name": "blur",
+      "kind": "method",
+      "type": "() => void",
+      "description": "Removes focus from the native button when it is mounted. No-op before mount."
+    }
+  ],
+  "styling": {
+    "parts": [
+      {
+        "name": "root",
+        "description": "The native button element."
+      },
+      {
+        "name": "icon",
+        "description": "Optional decorative icon content inside the default slot."
+      }
+    ],
+    "states": [
+      {
+        "name": "loading",
+        "description": "Pending action. Used when native disabled is the wrong focus model."
+      },
+      {
+        "name": "disabled",
+        "description": "Unavailable action. Prefer the native disabled attribute when both apply."
+      }
+    ],
+    "cssProperties": [
+      {
+        "name": "--slop-button-accent-color",
+        "description": "Accent color for the themed wrapper. Headless SlButton does not require it."
+      },
+      {
+        "name": "--slop-button-radius",
+        "description": "Corner radius for the themed wrapper. Headless SlButton does not require it."
+      }
+    ]
+  },
+  "accessibility": {
+    "role": "button",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/button/",
+    "keyboard": {
+      "Enter": "Activate the button when it is enabled and not loading.",
+      "Space": "Activate the button when it is enabled and not loading."
+    },
+    "requiredAriaAttributes": []
+  },
+  "examples": ["button-basic", "button-loading", "button-icon-only"]
+}

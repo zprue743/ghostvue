@@ -34,6 +34,10 @@ export default defineConfig({
           },
           { text: 'Styling', link: '/architecture/styling' },
           { text: 'Design tokens', link: '/architecture/tokens' },
+          {
+            text: 'Component manifests',
+            link: '/architecture/component-manifest',
+          },
         ],
       },
       {

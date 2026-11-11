@@ -19,3 +19,4 @@ component moratorium.
 - [0003 — Public component API conventions](./0003-public-component-api-conventions.md)
 - [0004 — Headless and styled layering](./0004-headless-styled-layering.md)
 - [0005 — Design token taxonomy and source format](./0005-design-token-taxonomy.md)
+- [0006 — Component manifest JSON Schema](./0006-component-manifest-schema.md)

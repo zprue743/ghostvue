@@ -1,0 +1,366 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://unpkg.com/@slop-ui/core@1/manifest.schema.json",
+  "title": "slop-ui component manifest",
+  "description": "Machine-readable public contract for one slop-ui component. Docs, the future @slop-ui/mcp server, codegen, and evals all read this shape. Instance documents set schemaVersion; breaking schema changes bump the $id major version.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "source",
+    "name",
+    "package",
+    "status",
+    "description",
+    "props",
+    "models",
+    "events",
+    "slots",
+    "exposed",
+    "styling",
+    "accessibility",
+    "examples"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "type": "string",
+      "description": "Semver of this manifest document's schema. Start at 1.0.0. Bump when the instance shape this file uses changes; a major bump also requires a new $id URL.",
+      "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$"
+    },
+    "source": {
+      "type": "string",
+      "description": "How this file was produced. handwritten is a stand-in until SLO-13 generates manifests from source; generated files must not be edited by hand.",
+      "enum": ["handwritten", "generated"]
+    },
+    "name": {
+      "type": "string",
+      "description": "Public Vue component export name. Must use the Sl prefix from ADR 0003 (SlButton, SlDialog).",
+      "pattern": "^Sl[A-Z][A-Za-z0-9]*$"
+    },
+    "package": {
+      "type": "string",
+      "description": "npm package that exports this component. Headless unstyled components live in @slop-ui/vue; themed wrappers live in @slop-ui/themes.",
+      "enum": ["@slop-ui/vue", "@slop-ui/themes"]
+    },
+    "status": {
+      "type": "string",
+      "description": "Stability of the public contract. experimental is the pre-release default; deprecated remains available with a documented replacement.",
+      "enum": ["experimental", "beta", "stable", "deprecated"]
+    },
+    "description": {
+      "type": "string",
+      "description": "One-paragraph summary of what the component is for, enough for an agent to decide whether to use it.",
+      "minLength": 1
+    },
+    "props": {
+      "type": "array",
+      "description": "Declared component props. Native HTML and ARIA fallthrough is not listed; only props the component owns.",
+      "items": { "$ref": "#/$defs/prop" }
+    },
+    "models": {
+      "type": "array",
+      "description": "v-model bindings. Each entry is a prop plus its update:* emit, using the names in docs/architecture/component-state.md.",
+      "items": { "$ref": "#/$defs/model" }
+    },
+    "events": {
+      "type": "array",
+      "description": "Component-emitted events and payload types. Native listeners that fall through to a native root are omitted.",
+      "items": { "$ref": "#/$defs/event" }
+    },
+    "slots": {
+      "type": "array",
+      "description": "Public slots and the props each slot receives. default is the primary content slot; named slots are semantic structure, not CSS hooks.",
+      "items": { "$ref": "#/$defs/slot" }
+    },
+    "exposed": {
+      "type": "array",
+      "description": "Template-ref surface: methods and properties returned by defineExpose.",
+      "items": { "$ref": "#/$defs/exposed" }
+    },
+    "styling": {
+      "type": "object",
+      "description": "Stable styling hooks. Changing these is a breaking public API change, same as renaming a prop.",
+      "additionalProperties": false,
+      "required": ["parts", "states", "cssProperties"],
+      "properties": {
+        "parts": {
+          "type": "array",
+          "description": "data-part values that name structure (root, icon, indicator). Not Vue slots invented only to target CSS.",
+          "items": { "$ref": "#/$defs/namedHook" }
+        },
+        "states": {
+          "type": "array",
+          "description": "data-state values that name state (loading, open, disabled) when a native attribute is not already sufficient.",
+          "items": { "$ref": "#/$defs/namedHook" }
+        },
+        "cssProperties": {
+          "type": "array",
+          "description": "Public CSS custom properties consumers may set. Must use the slop- namespace. Private --_slop-* properties are unpublished and must not appear here.",
+          "items": { "$ref": "#/$defs/cssProperty" }
+        }
+      }
+    },
+    "accessibility": {
+      "type": "object",
+      "description": "Accessibility contract an agent can implement without reading the human spec.",
+      "additionalProperties": false,
+      "required": ["role", "apgPattern", "keyboard", "requiredAriaAttributes"],
+      "properties": {
+        "role": {
+          "type": "string",
+          "description": "ARIA role of the primary widget, or the native implicit role when no ARIA role is set (for example button on a native <button>).",
+          "minLength": 1
+        },
+        "apgPattern": {
+          "type": "string",
+          "description": "WAI-ARIA Authoring Practices pattern URL this widget follows.",
+          "pattern": "^https://www\\.w3\\.org/WAI/ARIA/apg/"
+        },
+        "keyboard": {
+          "type": "object",
+          "description": "Map of keyboard key names to the action they perform. Keys use event.key values (Enter, Escape, ArrowDown). Native-only widgets still list the keys the contract depends on.",
+          "additionalProperties": {
+            "type": "string",
+            "description": "Action performed when this key is pressed in the relevant state.",
+            "minLength": 1
+          }
+        },
+        "requiredAriaAttributes": {
+          "type": "array",
+          "description": "ARIA attributes the component always sets, or that consumers must supply for a valid instance (for example aria-label on icon-only buttons). Native disabled is not listed here.",
+          "items": {
+            "type": "string",
+            "description": "Hyphenated ARIA attribute name.",
+            "pattern": "^aria-[a-z0-9-]+$"
+          },
+          "uniqueItems": true
+        }
+      }
+    },
+    "examples": {
+      "type": "array",
+      "description": "Stable example identifiers corresponding to docs or playground snippets (button-basic, button-loading). Not file paths.",
+      "items": {
+        "type": "string",
+        "description": "Kebab-case example id.",
+        "pattern": "^[a-z][a-z0-9-]*$"
+      },
+      "uniqueItems": true
+    }
+  },
+  "$defs": {
+    "prop": {
+      "type": "object",
+      "description": "One declared component prop.",
+      "additionalProperties": false,
+      "required": ["name", "type", "required", "description", "deprecated"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "CamelCase prop name. Boolean props omit is/has (disabled, loading, open).",
+          "pattern": "^[a-z][A-Za-z0-9]*$"
+        },
+        "type": {
+          "type": "string",
+          "description": "TypeScript type as a string, for example boolean or 'button' | 'submit' | 'reset'.",
+          "minLength": 1
+        },
+        "default": {
+          "description": "Literal default used when the consumer omits the prop. Omit this field when the prop is required or has no default.",
+          "anyOf": [
+            {
+              "type": "string",
+              "description": "String default, including string-literal unions such as button."
+            },
+            {
+              "type": "number",
+              "description": "Numeric default."
+            },
+            {
+              "type": "boolean",
+              "description": "Boolean default."
+            },
+            {
+              "type": "null",
+              "description": "Null default, used when null is a real controlled value rather than unset."
+            }
+          ]
+        },
+        "required": {
+          "type": "boolean",
+          "description": "True when the consumer must pass the prop. False when it has a default or may be omitted."
+        },
+        "description": {
+          "type": "string",
+          "description": "What the prop controls, including interaction with other props.",
+          "minLength": 1
+        },
+        "deprecated": {
+          "type": "boolean",
+          "description": "True when the prop is still accepted but should not be used in new code."
+        }
+      }
+    },
+    "model": {
+      "type": "object",
+      "description": "One v-model binding: the readable prop and the update event that writes it.",
+      "additionalProperties": false,
+      "required": ["prop", "event", "type", "description"],
+      "properties": {
+        "prop": {
+          "type": "string",
+          "description": "Prop that holds the current value (modelValue, open, pressed).",
+          "pattern": "^[a-z][A-Za-z0-9]*$"
+        },
+        "event": {
+          "type": "string",
+          "description": "Emit that writes the value. Must be update:<prop> (update:modelValue, update:open, update:pressed).",
+          "pattern": "^update:[a-z][A-Za-z0-9]*$"
+        },
+        "type": {
+          "type": "string",
+          "description": "TypeScript type of the bound value.",
+          "minLength": 1
+        },
+        "description": {
+          "type": "string",
+          "description": "Controlled versus uncontrolled behavior, including the matching default* prop when one exists.",
+          "minLength": 1
+        }
+      }
+    },
+    "event": {
+      "type": "object",
+      "description": "One component-emitted event.",
+      "additionalProperties": false,
+      "required": ["name", "payloadType", "description"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Emit name. Semantic verbs (select, close) except for update:* v-model events, which belong in models.",
+          "pattern": "^[a-z][A-Za-z0-9:]*$"
+        },
+        "payloadType": {
+          "type": "string",
+          "description": "TypeScript type of the emit payload. Use void when the event carries no payload.",
+          "minLength": 1
+        },
+        "description": {
+          "type": "string",
+          "description": "When the event fires and whether it is cancelable.",
+          "minLength": 1
+        }
+      }
+    },
+    "slotProp": {
+      "type": "object",
+      "description": "One prop passed into a slot.",
+      "additionalProperties": false,
+      "required": ["name", "type", "description"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Slot prop name as received by the slot function.",
+          "pattern": "^[a-z][A-Za-z0-9]*$"
+        },
+        "type": {
+          "type": "string",
+          "description": "TypeScript type of the slot prop.",
+          "minLength": 1
+        },
+        "description": {
+          "type": "string",
+          "description": "What the slot prop is for.",
+          "minLength": 1
+        }
+      }
+    },
+    "slot": {
+      "type": "object",
+      "description": "One public slot.",
+      "additionalProperties": false,
+      "required": ["name", "props", "description"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Slot name. default is the primary content slot; other names are camelCase semantic structure (icon, title).",
+          "pattern": "^(default|[a-z][A-Za-z0-9]*)$"
+        },
+        "props": {
+          "type": "array",
+          "description": "Props passed to this slot. Empty when the slot receives no scoped props.",
+          "items": { "$ref": "#/$defs/slotProp" }
+        },
+        "description": {
+          "type": "string",
+          "description": "What content belongs in the slot.",
+          "minLength": 1
+        }
+      }
+    },
+    "exposed": {
+      "type": "object",
+      "description": "One template-ref member.",
+      "additionalProperties": false,
+      "required": ["name", "kind", "type", "description"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Exposed member name.",
+          "pattern": "^[a-z][A-Za-z0-9]*$"
+        },
+        "kind": {
+          "type": "string",
+          "description": "Whether the member is a method or a readable property.",
+          "enum": ["method", "property"]
+        },
+        "type": {
+          "type": "string",
+          "description": "TypeScript type or call signature, for example HTMLButtonElement | null or (options?: FocusOptions) => void.",
+          "minLength": 1
+        },
+        "description": {
+          "type": "string",
+          "description": "What the member does, including no-op behavior before mount.",
+          "minLength": 1
+        }
+      }
+    },
+    "namedHook": {
+      "type": "object",
+      "description": "A documented data-part or data-state value.",
+      "additionalProperties": false,
+      "required": ["name", "description"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Hook token written to the attribute (root, loading).",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "description": {
+          "type": "string",
+          "description": "What this part or state represents.",
+          "minLength": 1
+        }
+      }
+    },
+    "cssProperty": {
+      "type": "object",
+      "description": "A public CSS custom property.",
+      "additionalProperties": false,
+      "required": ["name", "description"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Custom property name in the slop- namespace, for example --slop-button-radius.",
+          "pattern": "^--slop-[a-z0-9-]+$"
+        },
+        "description": {
+          "type": "string",
+          "description": "What the property controls. Do not list private --_slop-* names.",
+          "minLength": 1
+        }
+      }
+    }
+  }
+}
