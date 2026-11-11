@@ -153,9 +153,11 @@ Consumers may also set `data-variant`, `data-tone`, `data-size`, `data-block`,
 and `data-icon-only` on the unstyled button when they style it themselves. The
 themed wrapper sets those from visual props.
 
-Default theme CSS applies only under `.slop-theme` or `.slop-themed-scope`, so a
+Recipe CSS applies under `.slop-theme` or `.slop-themed-scope`, so a
 headless `SlButton` on the same page stays unstyled when the stylesheet is
-loaded. There is no `pt` passthrough object.
+loaded. Token values inherit from the nearest `.slop-theme` /
+`[data-sl-theme]`; `.slop-themed-scope` is not a token host. There is no
+`pt` passthrough object.
 
 ## Environment behavior
 
@@ -221,6 +223,6 @@ dragged overlays use semantic `state.layer.*` tokens. `aria-pressed` and
 
 ## Open architectural questions
 
-None blocking. Token pipeline, ramps, elevation, motion, density, and the
-SlButton reference theme have landed (ADR 0007, SLO-63–SLO-67). Flagship
-themes remain SLO-68.
+None blocking. Token pipeline, ramps, elevation, motion, density, the
+SlButton reference theme, and flagship `defineTheme` generation have landed
+(ADR 0007, ADR 0008, SLO-63–SLO-68).

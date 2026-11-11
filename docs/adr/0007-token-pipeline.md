@@ -105,13 +105,14 @@ been published; no compatibility aliases ship.
 
 A docs page listing the catalog is generated from the JSON manifest.
 
-### Contrast, ramps, and flagship themes (recorded, not built)
+### Contrast, ramps, and flagship themes
 
 - **CI contrast (SLO-63):** WCAG AA is required; APCA is advisory. Implemented
   in `pnpm contrast` with `culori.wcagContrast` and a local APCA 0.0.98G-4g
   function. `culori` is a devDependency of `@slop-ui/themes`.
 - **Flagship themes (SLO-68):** calm enterprise, vibrant expressive, and
-  minimal monochrome. This pipeline emits `default` only.
+  minimal monochrome. This pipeline still emits authored `default`; flagships
+  are `defineTheme` output ([ADR 0008](./0008-define-theme.md)).
 - **Density (SLO-66):** default density is comfortable. Implemented as
   nestable `data-sl-density` overlays plus `--sl-roundness`; see the
   SLO-66 amendment.
@@ -146,12 +147,13 @@ and JSON so ramps can land without renaming the runtime API.
   authoring reference and no longer describes a future pipeline.
 - ADR 0005 remains the record that DTCG and the three compile outputs were
   chosen; CSS prefix, component tokens, and mode switching follow this ADR.
-- Follow-ups: SLO-68 flagship themes, MCP `get_tokens`. SLO-63 (ramps,
-  semantic text/border/status, contrast CI, forced-colors mapping),
-  SLO-64 (elevation, hairline, materials, gradients), SLO-65 (motion
-  durations, easing, springs, reduced motion), SLO-66 (density, type,
-  roundness), and SLO-67 (state layers and the SlButton reference theme)
-  landed on this pipeline.
+- Follow-ups: MCP `get_tokens`. SLO-63 (ramps, semantic
+  text/border/status, contrast CI, forced-colors mapping), SLO-64
+  (elevation, hairline, materials, gradients), SLO-65 (motion durations,
+  easing, springs, reduced motion), SLO-66 (density, type, roundness),
+  SLO-67 (state layers and the SlButton reference theme), and SLO-68
+  (`defineTheme` and flagships; [ADR 0008](./0008-define-theme.md)) landed
+  on this pipeline.
 
 ## Amendments
 
@@ -184,6 +186,9 @@ and JSON so ramps can land without renaming the runtime API.
   disabled `action.disabled.bg` / `fg` / `border`, and press/focus
   motion tokens. SlButton is the reference consumer: token-only CSS,
   two-tone focus ring, spring press, and a documented state matrix.
+- 2026-11-11: SLO-68 (`defineTheme`, flagship CSS, `.slop-themed-scope`
+  token-host change) is [ADR 0008](./0008-define-theme.md). This pipeline
+  still compiles authored `default`; flagships are generated token sheets.
 
 ## Compatibility implications
 

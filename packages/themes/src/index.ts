@@ -12,6 +12,13 @@ export {
 export { startThemeTransition } from './start-theme-transition'
 
 export {
+  flagshipThemes,
+  themeNames,
+  type FlagshipThemeName,
+  type ThemeName,
+} from './flagship-themes'
+
+export {
   SlButton,
   type SlButtonExposed,
   type SlButtonSize,

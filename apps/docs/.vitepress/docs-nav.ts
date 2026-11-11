@@ -20,6 +20,10 @@ export const docsSidebar: LlmsSidebarGroup[] = [
       { text: 'SlButton', link: '/components/button' },
       { text: 'SlVisuallyHidden', link: '/components/visually-hidden' },
       { text: 'Default theme', link: '/themes/default' },
+      {
+        text: 'defineTheme and flagships',
+        link: '/themes/define-theme',
+      },
       { text: 'Token catalog', link: '/themes/tokens' },
       {
         text: 'Elevation, materials, gradients',

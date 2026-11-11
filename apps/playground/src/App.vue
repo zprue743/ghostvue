@@ -14,6 +14,9 @@ import {
   useRovingFocus,
 } from '@slop-ui/vue'
 
+const flagships = ['calm', 'vibrant', 'mono'] as const
+const flagshipDensities = ['comfortable'] as const
+
 interface Report {
   name: string
   owner: string
@@ -144,6 +147,12 @@ function closeNested(): void {
     <MotionReference />
     <DensityReference />
     <ButtonStateMatrix />
+    <ButtonStateMatrix
+      v-for="flagship in flagships"
+      :key="flagship"
+      :theme="flagship"
+      :density-filter="flagshipDensities"
+    />
 
     <section aria-labelledby="button-heading">
       <h2 id="button-heading">SlButton</h2>

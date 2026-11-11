@@ -71,13 +71,26 @@ export function densityCssValue(
 ): string
 export function dimensionToPx(value: string): number | null
 export function maxCssDimension(value: string, floor: string): string
+export interface CompileTokenOptions {
+  themeName?: string
+  defaultDensity?: 'compact' | 'comfortable' | 'spacious'
+}
+
 export function compileTokenDocuments(
   documents: TokenDocument[],
+  options?: CompileTokenOptions,
 ): CompiledTokens
 export function forcedColorForToken(token: CompiledToken): string | null
-export function renderTokenCss(tokens: CompiledToken[]): string
+export function themeHostSelector(themeName?: string): string
+export function renderTokenCss(
+  tokens: CompiledToken[],
+  options?: CompileTokenOptions,
+): string
 export function renderTokenTypescript(tokens: CompiledToken[]): string
-export function renderTokenManifest(tokens: CompiledToken[]): TokenManifest
+export function renderTokenManifest(
+  tokens: CompiledToken[],
+  options?: CompileTokenOptions,
+): TokenManifest
 export function renderTokenDocs(tokens: CompiledToken[]): string
 export function serializeJson(value: unknown): string
 export function loadTokenDocuments(

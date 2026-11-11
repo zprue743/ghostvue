@@ -4,6 +4,16 @@ import { defineConfig } from 'vitepress'
 
 import { docsDescription, docsSidebar, docsTitle } from './docs-nav'
 import { writeLlmsTxtFiles } from './generate-llms-txt'
+import {
+  applyDocsThemeHost,
+  restoreDocsThemeScript,
+} from './theme/restore-theme'
+
+function themeCss(name: string): string {
+  return fileURLToPath(
+    new URL(`../../../packages/themes/src/${name}`, import.meta.url),
+  )
+}
 
 export default defineConfig({
   // Canonical markdown lives in /docs; this app is only the VitePress wrapper.
@@ -11,13 +21,27 @@ export default defineConfig({
   title: docsTitle,
   description: docsDescription,
   cleanUrls: true,
+  // Restore a persisted theme before paint; first paint dogfoods calm (ADR 0008).
+  head: [['script', { id: 'slop-docs-theme-restore' }, restoreDocsThemeScript]],
+  transformHtml(code) {
+    return applyDocsThemeHost(code)
+  },
   vite: {
+    plugins: [
+      {
+        name: 'slop-docs-theme-host',
+        transformIndexHtml(html) {
+          return applyDocsThemeHost(html)
+        },
+      },
+    ],
     resolve: {
       alias: {
         // Visual token pages import the source stylesheet, not a built dist.
-        '@slop-ui/themes/default.css': fileURLToPath(
-          new URL('../../../packages/themes/src/default.css', import.meta.url),
-        ),
+        '@slop-ui/themes/default.css': themeCss('default.css'),
+        '@slop-ui/themes/calm.css': themeCss('generated/calm.css'),
+        '@slop-ui/themes/vibrant.css': themeCss('generated/vibrant.css'),
+        '@slop-ui/themes/mono.css': themeCss('generated/mono.css'),
       },
     },
   },

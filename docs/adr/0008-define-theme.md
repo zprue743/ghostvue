@@ -1,13 +1,12 @@
 # ADR 0008: Brand-input theme generator and flagship themes
 
-- Status: proposed
+- Status: accepted
 - Date: 2026-11-11
 - Decision owners: Zac Pruett, repository maintainers
 - Relates to: [ADR 0007](./0007-token-pipeline.md) (pipeline, `data-sl-*`,
   CSS names); SLO-68 / SLO-61f
 
-This is a **public-API proposal**. Do not implement `defineTheme` or ship
-flagship CSS until Zac signs off.
+Accepted 2026-11-11 with the answers in [Decision record](#decision-record-zac-2026-11-11).
 
 ## Context
 
@@ -267,12 +266,13 @@ into the brand color.
 
 ## Consequences
 
-- Follow-up implementation (after acceptance): Node `defineTheme`, CSS
-  host selector fix, flagship configs + published CSS, contrast on those
-  sheets, docs switcher dogfooding `calm`, Changeset when publishable.
+- Node `defineTheme` lives at `@slop-ui/themes/define` (not the main
+  entry). Flagship CSS is compiled at package build. `pnpm contrast`
+  gates `default`, `calm`, `vibrant`, and `mono`. Docs chrome dogfoods
+  `calm` and restores a persisted choice with a blocking inline script.
 - `default` DTCG pipeline is unchanged.
-- Nested themed wrappers inherit the nearest `data-sl-theme` once
-  `.slop-themed-scope` is not a token host.
+- Nested themed wrappers inherit the nearest `data-sl-theme` because
+  `.slop-themed-scope` is no longer a token host.
 
 ## Compatibility implications
 
@@ -283,18 +283,14 @@ emitting the same variables. Headless `@slop-ui/vue` is unchanged. No
 browser dependency added. Accessibility: AA remains a hard fail for every
 generated theme.
 
-## Open questions for Zac
+## Decision record (Zac, 2026-11-11)
 
-1. Confirm Node-only `defineTheme` (no browser `culori`) versus an
-   isomorphic runtime generator, which would be a new runtime dependency
-   and needs explicit approval.
-2. Confirm flagship `data-sl-theme` values `calm`, `vibrant`, and `mono`.
-3. Confirm docs chrome dogfoods `calm` on first paint, with `default`
-   still the published baseline theme.
-4. Keep `default` as hand-authored DTCG, or regenerate it through
-   `defineTheme` once the generator exists?
-5. Ship `elevation` and `gradient` flavor knobs in v1, or only `primary` /
-   `neutralTint` / `status` / `roundness` / `density` / `motionIntensity`?
-6. Is a blocking inline script in docs acceptable to restore a persisted
-   theme before paint, or should first paint always use `calm` until
-   hydrate?
+1. **Node-only.** `defineTheme` runs in Node. `culori` stays a
+   `devDependency` of `@slop-ui/themes`. No new runtime dependency.
+2. **Flagship names:** `calm`, `vibrant`, and `mono`.
+3. **Docs chrome dogfoods `calm` on first paint.** `default` stays the
+   published baseline theme.
+4. **`default` stays hand-authored DTCG** for now.
+5. **Ship `elevation` and `gradient` flavor knobs in v1.**
+6. **A small blocking inline script in the docs is acceptable** to restore
+   a persisted theme before paint.

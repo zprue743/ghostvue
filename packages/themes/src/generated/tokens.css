@@ -1,14 +1,16 @@
 /*
  * Generated from packages/themes/tokens. Do not edit.
  * Semantic custom properties use --sl-<role>-<part>-<state>.
- * Unset data-sl-mode follows prefers-color-scheme; data-sl-mode overrides
- * on any subtree, including nested theme hosts. Unset data-sl-density is
- * comfortable; data-sl-density and --sl-roundness nest the same way.
+ * Theme host: default. Unset data-sl-mode follows prefers-color-scheme;
+ * data-sl-mode overrides on any subtree, including nested theme hosts.
+ * Unset data-sl-density is comfortable; data-sl-density and
+ * --sl-roundness nest the same way. Token hosts exclude .slop-themed-scope
+ * so nested data-sl-theme values inherit into themed wrappers.
  * No JavaScript is required to pick the initial mode, so SSR does not
  * flash the opposite palette.
  */
 @layer slop-ui-theme {
-  :where(.slop-theme, .slop-themed-scope, [data-sl-theme='default']):not([data-sl-mode]):not(:where([data-sl-mode] *)) {
+  :where(.slop-theme:not([data-sl-theme]), [data-sl-theme='default']):not([data-sl-mode]):not(:where([data-sl-mode] *)) {
     --sl-action-danger-bg: #b91c1c;
     --sl-action-danger-bg-active: #640004;
     --sl-action-danger-bg-hover: #900009;
@@ -212,7 +214,7 @@
     --sl-type-weight-semibold: 600;
   }
 
-  :where(.slop-theme, .slop-themed-scope, [data-sl-theme='default']):not([data-sl-mode]):not(:where([data-sl-mode] *)), :where(.slop-theme, .slop-themed-scope, [data-sl-theme='default']):not([data-sl-mode]):not(:where([data-sl-mode] *)) :where(*) {
+  :where(.slop-theme:not([data-sl-theme]), [data-sl-theme='default']):not([data-sl-mode]):not(:where([data-sl-mode] *)), :where(.slop-theme:not([data-sl-theme]), [data-sl-theme='default']):not([data-sl-mode]):not(:where([data-sl-mode] *)) :where(*) {
     --sl-action-duration: calc(120ms * var(--sl-motion-intensity, 1));
     --sl-action-spinner-duration: calc(700ms * var(--sl-motion-intensity, 1));
     --sl-focus-ring-duration: calc(120ms * var(--sl-motion-intensity, 1));
@@ -238,7 +240,7 @@
   }
 
   @media (prefers-color-scheme: dark) {
-    :where(.slop-theme, .slop-themed-scope, [data-sl-theme='default']):not([data-sl-mode]):not(:where([data-sl-mode] *)) {
+    :where(.slop-theme:not([data-sl-theme]), [data-sl-theme='default']):not([data-sl-mode]):not(:where([data-sl-mode] *)) {
       --sl-action-danger-bg: #f87171;
       --sl-action-danger-bg-active: #ffb4b0;
       --sl-action-danger-bg-hover: #ff908d;
@@ -442,7 +444,7 @@
       --sl-type-weight-semibold: 600;
     }
 
-    :where(.slop-theme, .slop-themed-scope, [data-sl-theme='default']):not([data-sl-mode]):not(:where([data-sl-mode] *)), :where(.slop-theme, .slop-themed-scope, [data-sl-theme='default']):not([data-sl-mode]):not(:where([data-sl-mode] *)) :where(*) {
+    :where(.slop-theme:not([data-sl-theme]), [data-sl-theme='default']):not([data-sl-mode]):not(:where([data-sl-mode] *)), :where(.slop-theme:not([data-sl-theme]), [data-sl-theme='default']):not([data-sl-mode]):not(:where([data-sl-mode] *)) :where(*) {
       --sl-action-duration: calc(120ms * var(--sl-motion-intensity, 1));
       --sl-action-spinner-duration: calc(700ms * var(--sl-motion-intensity, 1));
       --sl-focus-ring-duration: calc(120ms * var(--sl-motion-intensity, 1));
@@ -468,7 +470,7 @@
     }
   }
 
-  :where([data-sl-mode='light']) {
+  :where(:where(.slop-theme:not([data-sl-theme]), [data-sl-theme='default']):where([data-sl-mode='light']), :where(.slop-theme:not([data-sl-theme]), [data-sl-theme='default']) :where([data-sl-mode='light'])) {
     color-scheme: light;
     --sl-action-danger-bg: #b91c1c;
     --sl-action-danger-bg-active: #640004;
@@ -673,7 +675,7 @@
     --sl-type-weight-semibold: 600;
   }
 
-  :where([data-sl-mode='light']), :where([data-sl-mode='light']) :where(*) {
+  :where(:where(.slop-theme:not([data-sl-theme]), [data-sl-theme='default']):where([data-sl-mode='light']), :where(.slop-theme:not([data-sl-theme]), [data-sl-theme='default']) :where([data-sl-mode='light'])), :where(:where(.slop-theme:not([data-sl-theme]), [data-sl-theme='default']):where([data-sl-mode='light']), :where(.slop-theme:not([data-sl-theme]), [data-sl-theme='default']) :where([data-sl-mode='light'])) :where(*) {
     --sl-action-duration: calc(120ms * var(--sl-motion-intensity, 1));
     --sl-action-spinner-duration: calc(700ms * var(--sl-motion-intensity, 1));
     --sl-focus-ring-duration: calc(120ms * var(--sl-motion-intensity, 1));
@@ -698,7 +700,7 @@
     --sl-radius-xl: calc(1rem * var(--sl-roundness, 1));
   }
 
-  :where([data-sl-mode='dark']) {
+  :where(:where(.slop-theme:not([data-sl-theme]), [data-sl-theme='default']):where([data-sl-mode='dark']), :where(.slop-theme:not([data-sl-theme]), [data-sl-theme='default']) :where([data-sl-mode='dark'])) {
     color-scheme: dark;
     --sl-action-danger-bg: #f87171;
     --sl-action-danger-bg-active: #ffb4b0;
@@ -903,7 +905,7 @@
     --sl-type-weight-semibold: 600;
   }
 
-  :where([data-sl-mode='dark']), :where([data-sl-mode='dark']) :where(*) {
+  :where(:where(.slop-theme:not([data-sl-theme]), [data-sl-theme='default']):where([data-sl-mode='dark']), :where(.slop-theme:not([data-sl-theme]), [data-sl-theme='default']) :where([data-sl-mode='dark'])), :where(:where(.slop-theme:not([data-sl-theme]), [data-sl-theme='default']):where([data-sl-mode='dark']), :where(.slop-theme:not([data-sl-theme]), [data-sl-theme='default']) :where([data-sl-mode='dark'])) :where(*) {
     --sl-action-duration: calc(120ms * var(--sl-motion-intensity, 1));
     --sl-action-spinner-duration: calc(700ms * var(--sl-motion-intensity, 1));
     --sl-focus-ring-duration: calc(120ms * var(--sl-motion-intensity, 1));
@@ -928,11 +930,11 @@
     --sl-radius-xl: calc(1rem * var(--sl-roundness, 1));
   }
 
-  :where(.slop-theme):not([data-sl-mode]):not(:where([data-sl-mode] *)) {
+  :where(.slop-theme:not([data-sl-theme]), [data-sl-theme='default']):not([data-sl-mode]):not(:where([data-sl-mode] *)) {
     color-scheme: light dark;
   }
 
-  :where([data-sl-density='compact']) {
+  :where(:where(.slop-theme:not([data-sl-theme]), [data-sl-theme='default']):where([data-sl-density='compact']), :where(.slop-theme:not([data-sl-theme]), [data-sl-theme='default']) :where([data-sl-density='compact'])) {
     --sl-action-gap: 0.25rem;
     --sl-control-size-lg-min: 2.5rem;
     --sl-control-size-lg-padding-block: 0.75rem;
@@ -956,7 +958,7 @@
     --sl-space-stack-sm: 0.25rem;
   }
 
-  :where([data-sl-density='compact']), :where([data-sl-density='compact']) :where(*) {
+  :where(:where(.slop-theme:not([data-sl-theme]), [data-sl-theme='default']):where([data-sl-density='compact']), :where(.slop-theme:not([data-sl-theme]), [data-sl-theme='default']) :where([data-sl-density='compact'])), :where(:where(.slop-theme:not([data-sl-theme]), [data-sl-theme='default']):where([data-sl-density='compact']), :where(.slop-theme:not([data-sl-theme]), [data-sl-theme='default']) :where([data-sl-density='compact'])) :where(*) {
     --sl-action-radius: calc(0.25rem * var(--sl-roundness, 1));
     --sl-radius-lg: calc(0.5rem * var(--sl-roundness, 1));
     --sl-radius-md: calc(0.25rem * var(--sl-roundness, 1));
@@ -964,7 +966,7 @@
     --sl-radius-xl: calc(0.75rem * var(--sl-roundness, 1));
   }
 
-  :where([data-sl-density='comfortable']) {
+  :where(:where(.slop-theme:not([data-sl-theme]), [data-sl-theme='default']):where([data-sl-density='comfortable']), :where(.slop-theme:not([data-sl-theme]), [data-sl-theme='default']) :where([data-sl-density='comfortable'])) {
     --sl-action-gap: 0.5rem;
     --sl-control-size-lg-min: 3rem;
     --sl-control-size-lg-padding-block: 1rem;
@@ -988,7 +990,7 @@
     --sl-space-stack-sm: 0.5rem;
   }
 
-  :where([data-sl-density='comfortable']), :where([data-sl-density='comfortable']) :where(*) {
+  :where(:where(.slop-theme:not([data-sl-theme]), [data-sl-theme='default']):where([data-sl-density='comfortable']), :where(.slop-theme:not([data-sl-theme]), [data-sl-theme='default']) :where([data-sl-density='comfortable'])), :where(:where(.slop-theme:not([data-sl-theme]), [data-sl-theme='default']):where([data-sl-density='comfortable']), :where(.slop-theme:not([data-sl-theme]), [data-sl-theme='default']) :where([data-sl-density='comfortable'])) :where(*) {
     --sl-action-radius: calc(0.5rem * var(--sl-roundness, 1));
     --sl-radius-lg: calc(0.75rem * var(--sl-roundness, 1));
     --sl-radius-md: calc(0.5rem * var(--sl-roundness, 1));
@@ -996,7 +998,7 @@
     --sl-radius-xl: calc(1rem * var(--sl-roundness, 1));
   }
 
-  :where([data-sl-density='spacious']) {
+  :where(:where(.slop-theme:not([data-sl-theme]), [data-sl-theme='default']):where([data-sl-density='spacious']), :where(.slop-theme:not([data-sl-theme]), [data-sl-theme='default']) :where([data-sl-density='spacious'])) {
     --sl-action-gap: 0.75rem;
     --sl-control-size-lg-min: 3rem;
     --sl-control-size-lg-padding-block: 1.25rem;
@@ -1020,7 +1022,7 @@
     --sl-space-stack-sm: 0.75rem;
   }
 
-  :where([data-sl-density='spacious']), :where([data-sl-density='spacious']) :where(*) {
+  :where(:where(.slop-theme:not([data-sl-theme]), [data-sl-theme='default']):where([data-sl-density='spacious']), :where(.slop-theme:not([data-sl-theme]), [data-sl-theme='default']) :where([data-sl-density='spacious'])), :where(:where(.slop-theme:not([data-sl-theme]), [data-sl-theme='default']):where([data-sl-density='spacious']), :where(.slop-theme:not([data-sl-theme]), [data-sl-theme='default']) :where([data-sl-density='spacious'])) :where(*) {
     --sl-action-radius: calc(0.75rem * var(--sl-roundness, 1));
     --sl-radius-lg: calc(1rem * var(--sl-roundness, 1));
     --sl-radius-md: calc(0.75rem * var(--sl-roundness, 1));
@@ -1029,25 +1031,25 @@
   }
 
   @media (pointer: coarse) {
-    :where(.slop-theme, .slop-themed-scope, [data-sl-theme='default']):not([data-sl-density]):not(:where([data-sl-density] *)) {
+    :where(.slop-theme:not([data-sl-theme]), [data-sl-theme='default']):not([data-sl-density]):not(:where([data-sl-density] *)) {
       --sl-control-size-lg-min: 3rem;
       --sl-control-size-md-min: 2.75rem;
       --sl-control-size-sm-min: 2.75rem;
     }
 
-    :where([data-sl-density='compact']) {
+    :where(:where(.slop-theme:not([data-sl-theme]), [data-sl-theme='default']):where([data-sl-density='compact']), :where(.slop-theme:not([data-sl-theme]), [data-sl-theme='default']) :where([data-sl-density='compact'])) {
       --sl-control-size-lg-min: 2.75rem;
       --sl-control-size-md-min: 2.75rem;
       --sl-control-size-sm-min: 2.75rem;
     }
 
-    :where([data-sl-density='comfortable']) {
+    :where(:where(.slop-theme:not([data-sl-theme]), [data-sl-theme='default']):where([data-sl-density='comfortable']), :where(.slop-theme:not([data-sl-theme]), [data-sl-theme='default']) :where([data-sl-density='comfortable'])) {
       --sl-control-size-lg-min: 3rem;
       --sl-control-size-md-min: 2.75rem;
       --sl-control-size-sm-min: 2.75rem;
     }
 
-    :where([data-sl-density='spacious']) {
+    :where(:where(.slop-theme:not([data-sl-theme]), [data-sl-theme='default']):where([data-sl-density='spacious']), :where(.slop-theme:not([data-sl-theme]), [data-sl-theme='default']) :where([data-sl-density='spacious'])) {
       --sl-control-size-lg-min: 3rem;
       --sl-control-size-md-min: 3rem;
       --sl-control-size-sm-min: 2.75rem;
@@ -1055,19 +1057,19 @@
   }
 
   @media (min-resolution: 2dppx), (-webkit-min-device-pixel-ratio: 2) {
-    :where(.slop-theme, .slop-themed-scope, [data-sl-theme='default']) {
+    :where(.slop-theme:not([data-sl-theme]), [data-sl-theme='default']) {
       --sl-border-hairline-width: 0.5px;
     }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    :where(.slop-theme, .slop-themed-scope, [data-sl-theme='default']) {
+    :where(.slop-theme:not([data-sl-theme]), [data-sl-theme='default']) {
       --sl-motion-press-scale: 1;
       --sl-motion-scale: 1;
       --sl-motion-translate: 0px;
     }
 
-    :where(.slop-theme, .slop-themed-scope, [data-sl-theme='default']), :where(.slop-theme, .slop-themed-scope, [data-sl-theme='default']) :where(*) {
+    :where(.slop-theme:not([data-sl-theme]), [data-sl-theme='default']), :where(.slop-theme:not([data-sl-theme]), [data-sl-theme='default']) :where(*) {
       --sl-action-duration: calc(80ms * var(--sl-motion-intensity, 1));
       --sl-focus-ring-duration: calc(0ms * var(--sl-motion-intensity, 1));
       --sl-motion-duration-expressive: calc(80ms * var(--sl-motion-intensity, 1));
@@ -1086,7 +1088,7 @@
   }
 
   @media (forced-colors: active) {
-    :where(.slop-theme, .slop-themed-scope, [data-sl-theme='default']) {
+    :where(.slop-theme:not([data-sl-theme]), [data-sl-theme='default']) {
     --sl-action-danger-bg: ButtonFace;
     --sl-action-danger-bg-active: ButtonFace;
     --sl-action-danger-bg-hover: ButtonFace;

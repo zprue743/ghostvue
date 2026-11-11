@@ -1,8 +1,9 @@
 /*
  * Zero-specificity layer so consumer styles win. Two opt-in scopes leave
  * headless `.slop-button` unstyled: `.slop-theme` owns the canvas (not
- * per-instance); `.slop-themed-scope` (`display: contents`) styles one wrapper
- * without participating in layout. Token values come from generated CSS.
+ * per-instance); `.slop-themed-scope` (`display: contents`) is a recipe
+ * scope only so nested `data-sl-theme` inherits into themed wrappers.
+ * Token values come from generated CSS on `.slop-theme` / `[data-sl-theme]`.
  */
 @import './generated/tokens.css';
 @import './recipes.css';
