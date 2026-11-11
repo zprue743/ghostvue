@@ -8,6 +8,8 @@ import {
   type WritableComputedRef,
 } from 'vue'
 
+import { logSlopCode } from './dev-codes'
+
 export interface UseControllableStateOptions<Value> {
   /** Controlled value. `undefined` is uncontrolled; `null` is a defined value. */
   prop: () => Value | undefined
@@ -53,10 +55,7 @@ export function useControllableState<Value>(
     watch(isControlled, (controlled, wasControlled) => {
       const from = wasControlled ? 'controlled' : 'uncontrolled'
       const to = controlled ? 'controlled' : 'uncontrolled'
-      console.warn(
-        `[slop-ui] A component switched from ${from} to ${to}. ` +
-          'Pass the value prop for the lifetime of the instance, or omit it and use default*.',
-      )
+      logSlopCode('SLOP001', { from, to })
     })
   }
 

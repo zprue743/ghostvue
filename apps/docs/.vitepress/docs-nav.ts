@@ -44,6 +44,10 @@ export const docsSidebar: LlmsSidebarGroup[] = [
         text: 'Component manifests',
         link: '/architecture/component-manifest',
       },
+      {
+        text: 'Development diagnostics',
+        link: '/warnings',
+      },
     ],
   },
   {

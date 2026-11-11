@@ -1,6 +1,7 @@
 node_modules
 dist
 coverage
+docs/warnings.md
 .vitepress/cache
 .vitepress/dist
 playwright-report
