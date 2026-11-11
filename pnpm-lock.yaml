@@ -65,6 +65,9 @@ importers:
       vue:
         specifier: 3.5.41
         version: 3.5.41(typescript@6.0.3)
+      vue-component-meta:
+        specifier: 3.3.9
+        version: 3.3.9(typescript@6.0.3)
       vue-tsc:
         specifier: 3.3.9
         version: 3.3.9(typescript@6.0.3)
@@ -2143,6 +2146,14 @@ packages:
   vscode-uri@3.1.0:
     resolution: {integrity: sha512-/BpdSx+yCQGnCvecbyXdxHDkuk55/G3xwnC0GqY4gmQ3j+A+g8kzzgB4Nk/SINjqn6+waqw3EgbVF2QKExkRxQ==}
 
+  vue-component-meta@3.3.9:
+    resolution: {integrity: sha512-4u1VmMVjqs9BbKaISBZD7b+dNdqFteh5BYN8xVaXkjjJ66no1sRtDnS6aSs5/P5AzQQGPw10snHTf/z3HpBn2w==}
+    peerDependencies:
+      typescript: '*'
+    peerDependenciesMeta:
+      typescript:
+        optional: true
+
   vue-component-type-helpers@3.3.9:
     resolution: {integrity: sha512-3c/UfMe0SqyEfcGTyH7mfshHagJ9QTCbppCb0/uGpHZpFug7+If3GeGZN7I0YheKEExemx3xldQPoO7PQSOLQg==}
 
@@ -4197,6 +4208,14 @@ snapshots:
       - msw
 
   vscode-uri@3.1.0: {}
+
+  vue-component-meta@3.3.9(typescript@6.0.3):
+    dependencies:
+      '@volar/typescript': 2.4.28(typescript@6.0.3)
+      '@vue/language-core': 3.3.9
+      path-browserify: 1.0.1
+    optionalDependencies:
+      typescript: 6.0.3
 
   vue-component-type-helpers@3.3.9: {}
 

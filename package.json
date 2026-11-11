@@ -24,11 +24,13 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "lint": "eslint . && pnpm format:check",
+    "manifests": "node scripts/write-component-manifests.mjs",
+    "manifests:write": "node scripts/write-component-manifests.mjs --write",
     "test": "vitest run --passWithNoTests",
     "test:e2e": "pnpm --filter @slop-ui/playground build && playwright test",
     "test:watch": "vitest",
     "typecheck": "pnpm -r --if-present typecheck",
-    "verify": "pnpm lint && pnpm boundaries && pnpm adapters && pnpm typecheck && pnpm test && pnpm build && pnpm published-exports && pnpm docs:build"
+    "verify": "pnpm lint && pnpm boundaries && pnpm adapters && pnpm manifests && pnpm typecheck && pnpm test && pnpm build && pnpm published-exports && pnpm docs:build"
   },
   "devDependencies": {
     "@axe-core/playwright": "4.13.0",
@@ -50,6 +52,7 @@
     "vitepress": "1.6.4",
     "vitest": "4.1.10",
     "vue": "3.5.41",
+    "vue-component-meta": "3.3.9",
     "vue-tsc": "3.3.9"
   }
 }

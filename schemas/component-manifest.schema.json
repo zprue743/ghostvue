@@ -29,7 +29,7 @@
     },
     "source": {
       "type": "string",
-      "description": "How this file was produced. handwritten is a stand-in until SLO-13 generates manifests from source; generated files must not be edited by hand.",
+      "description": "How this file was produced. generated files are written by pnpm manifests:write from the Sl*.vue source; handwritten is allowed only when no matching SFC exists yet. Machine-derived API fields are overwritten on regeneration; descriptions, status, styling, accessibility, and examples are preserved.",
       "enum": ["handwritten", "generated"]
     },
     "name": {

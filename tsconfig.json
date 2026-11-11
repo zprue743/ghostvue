@@ -1,6 +1,11 @@
 {
   "extends": "./tsconfig.base.json",
-  "include": ["*.config.ts", "apps/docs/.vitepress/**/*.ts", "tests/**/*.ts"],
+  "include": [
+    "*.config.ts",
+    "apps/docs/.vitepress/**/*.ts",
+    "tests/**/*.ts",
+    "scripts/lib/**/*.d.ts"
+  ],
   "references": [
     { "path": "./packages/shared" },
     { "path": "./packages/core" },
