@@ -18,3 +18,4 @@ component moratorium.
 - [0002 — Exit the foundation phase under a component gate](./0002-exit-foundation-phase.md)
 - [0003 — Public component API conventions](./0003-public-component-api-conventions.md)
 - [0004 — Headless and styled layering](./0004-headless-styled-layering.md)
+- [0005 — Design token taxonomy and source format](./0005-design-token-taxonomy.md)
