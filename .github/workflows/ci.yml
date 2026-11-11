@@ -26,7 +26,14 @@ jobs:
 
   browser:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    # Healthy runs finish in about a minute. Keep this well under the previous
+    # 10+ minute apt hang so a stalled Playwright/CDN fetch fails the job
+    # instead of blocking every PR.
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      # Cache save needs this once the workflow-level token is contents:read.
+      actions: write
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -37,7 +44,22 @@ jobs:
           node-version: 22
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      # Install only Chromium because the initial smoke project has one explicit
-      # browser target; expand the matrix when component behavior requires it.
-      - run: pnpm exec playwright install --with-deps chromium
+      - name: Resolve Playwright version
+        id: playwright
+        run: |
+          version=$(node -p 'JSON.parse(require("fs").readFileSync("package.json","utf8")).devDependencies["@playwright/test"]')
+          echo "version=${version}" >> "$GITHUB_OUTPUT"
+      - uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ steps.playwright.outputs.version }}
+      # Install only Chromium: the smoke project has one browser target.
+      # Skip `--with-deps`. GitHub-hosted Ubuntu already has Chromium's runtime
+      # libraries (confirmed on the hanging runs: apt only wanted extra fonts).
+      # `install --with-deps` still runs apt, which stalled 10+ minutes then
+      # failed DNS for azure.archive.ubuntu.com on PR #22 run 43043698597
+      # (actions/runner-images#14823). Cache the browser; do not call apt.
+      - name: Install Playwright Chromium
+        timeout-minutes: 5
+        run: pnpm exec playwright install chromium
       - run: pnpm test:e2e
