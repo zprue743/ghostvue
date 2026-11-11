@@ -1,6 +1,7 @@
 # ADR 0005: Design token taxonomy and source format
 
-- Status: accepted
+- Status: accepted (CSS prefix, component tokens, and mode switching
+  superseded by [ADR 0007](./0007-token-pipeline.md))
 - Date: 2026-11-11
 - Decision owners: repository maintainers
 

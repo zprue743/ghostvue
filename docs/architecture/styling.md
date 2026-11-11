@@ -37,7 +37,7 @@ depend on a particular visual treatment.
 
 Tokens are authored as DTCG JSON and compiled to CSS custom properties,
 TypeScript types, and a JSON manifest. See
-[design tokens](./tokens.md) and
-[ADR 0005](../adr/0005-design-token-taxonomy.md). Until that pipeline exists,
-[PR #20](https://github.com/zprue743/slop-ui/pull/20)'s `default.css` is the
-runtime snapshot; do not invent a parallel naming scheme.
+[design tokens](./tokens.md),
+[ADR 0005](../adr/0005-design-token-taxonomy.md), and
+[ADR 0007](../adr/0007-token-pipeline.md). Public custom properties use
+`--sl-<role>-<part>-<state>`. Components consume semantic tokens only.

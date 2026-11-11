@@ -1,0 +1,215 @@
+{
+  "surface": {
+    "bg": {
+      "$type": "color",
+      "$value": "{color.white}",
+      "$description": "Theme canvas background."
+    },
+    "fg": {
+      "$type": "color",
+      "$value": "{color.slate.900}",
+      "$description": "Theme canvas foreground."
+    }
+  },
+  "action": {
+    "primary": {
+      "bg": {
+        "$type": "color",
+        "$value": "{color.blue.700}",
+        "$description": "Solid primary action background. Maps to SlButton tone accent.",
+        "hover": {
+          "$type": "color",
+          "$value": "{color.blue.800}",
+          "$description": "Solid primary action background on hover."
+        },
+        "active": {
+          "$type": "color",
+          "$value": "{color.blue.900}",
+          "$description": "Solid primary action background on press."
+        }
+      },
+      "fg": {
+        "$type": "color",
+        "$value": "{color.white}",
+        "$description": "Content color on a solid primary action."
+      }
+    },
+    "neutral": {
+      "bg": {
+        "$type": "color",
+        "$value": "{color.slate.700}",
+        "$description": "Solid neutral action background.",
+        "hover": {
+          "$type": "color",
+          "$value": "{color.slate.800}",
+          "$description": "Solid neutral action background on hover."
+        },
+        "active": {
+          "$type": "color",
+          "$value": "{color.slate.900}",
+          "$description": "Solid neutral action background on press."
+        }
+      },
+      "fg": {
+        "$type": "color",
+        "$value": "{color.white}",
+        "$description": "Content color on a solid neutral action."
+      }
+    },
+    "danger": {
+      "bg": {
+        "$type": "color",
+        "$value": "{color.red.700}",
+        "$description": "Solid danger action background.",
+        "hover": {
+          "$type": "color",
+          "$value": "{color.red.800}",
+          "$description": "Solid danger action background on hover."
+        },
+        "active": {
+          "$type": "color",
+          "$value": "{color.red.900}",
+          "$description": "Solid danger action background on press."
+        }
+      },
+      "fg": {
+        "$type": "color",
+        "$value": "{color.white}",
+        "$description": "Content color on a solid danger action."
+      }
+    },
+    "disabled": {
+      "opacity": {
+        "$type": "number",
+        "$value": "{opacity.disabled}",
+        "$description": "Shared unavailable-state opacity."
+      }
+    },
+    "gap": {
+      "$type": "dimension",
+      "$value": "{space.2}",
+      "$description": "Space between action label and icon content."
+    },
+    "radius": {
+      "$type": "dimension",
+      "$value": "{radius.md}",
+      "$description": "Action corner radius."
+    },
+    "duration": {
+      "$type": "duration",
+      "$value": "{duration.fast}",
+      "$description": "Action color and opacity transition duration."
+    },
+    "label": {
+      "weight": {
+        "$type": "fontWeight",
+        "$value": "{font.weight.semibold}",
+        "$description": "Action label font weight."
+      }
+    },
+    "icon": {
+      "size": {
+        "$type": "dimension",
+        "$value": "{size.icon}",
+        "$description": "Action icon size."
+      }
+    },
+    "spinner": {
+      "size": {
+        "$type": "dimension",
+        "$value": "{size.icon}",
+        "$description": "Action loading-indicator size."
+      },
+      "width": {
+        "$type": "dimension",
+        "$value": "{size.spinner.width}",
+        "$description": "Default action spinner stroke width."
+      }
+    }
+  },
+  "focus": {
+    "ring": {
+      "color": {
+        "$type": "color",
+        "$value": "{color.slate.900}",
+        "$description": "Outer color of the two-color keyboard focus indicator."
+      },
+      "contrast": {
+        "$type": "color",
+        "$value": "{color.white}",
+        "$description": "Inner color of the two-color keyboard focus indicator."
+      },
+      "offset": {
+        "$type": "dimension",
+        "$value": "{size.focus.offset}",
+        "$description": "Gap between a control and its focus ring."
+      },
+      "width": {
+        "$type": "dimension",
+        "$value": "{size.focus.width}",
+        "$description": "Focus outline thickness."
+      }
+    }
+  },
+  "control": {
+    "size": {
+      "sm": {
+        "min": {
+          "$type": "dimension",
+          "$value": "{control.min.sm}",
+          "$description": "Small control minimum block size."
+        },
+        "padding": {
+          "block": {
+            "$type": "dimension",
+            "$value": "{space.2}",
+            "$description": "Small control block padding."
+          },
+          "inline": {
+            "$type": "dimension",
+            "$value": "{space.3}",
+            "$description": "Small control inline padding."
+          }
+        }
+      },
+      "md": {
+        "min": {
+          "$type": "dimension",
+          "$value": "{control.min.md}",
+          "$description": "Medium control minimum block size."
+        },
+        "padding": {
+          "block": {
+            "$type": "dimension",
+            "$value": "{space.3}",
+            "$description": "Medium control block padding."
+          },
+          "inline": {
+            "$type": "dimension",
+            "$value": "{space.4}",
+            "$description": "Medium control inline padding."
+          }
+        }
+      },
+      "lg": {
+        "min": {
+          "$type": "dimension",
+          "$value": "{control.min.lg}",
+          "$description": "Large control minimum block size."
+        },
+        "padding": {
+          "block": {
+            "$type": "dimension",
+            "$value": "{space.3-5}",
+            "$description": "Large control block padding."
+          },
+          "inline": {
+            "$type": "dimension",
+            "$value": "{space.5}",
+            "$description": "Large control inline padding."
+          }
+        }
+      }
+    }
+  }
+}

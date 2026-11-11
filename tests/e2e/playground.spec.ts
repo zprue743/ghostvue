@@ -303,7 +303,7 @@ test('default theme adapts to accessibility and color preferences', async ({
     ).toBe('none')
 
     await themedGroup.evaluate((element) => {
-      element.setAttribute('data-color-scheme', 'dark')
+      element.setAttribute('data-sl-mode', 'dark')
     })
     await expect(themedGroup).toHaveCSS('color-scheme', 'dark')
     await expect(themedGroup).toHaveCSS('background-color', 'rgb(15, 23, 42)')

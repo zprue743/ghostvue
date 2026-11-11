@@ -157,7 +157,7 @@ function closeNested(): void {
           </form>
         </fieldset>
 
-        <fieldset class="slop-theme" data-color-scheme="light">
+        <fieldset class="slop-theme" data-sl-mode="light">
           <legend>Default theme</legend>
           <p>The same actions with the themed wrapper enabled.</p>
           <div class="examples">

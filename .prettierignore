@@ -2,6 +2,8 @@ node_modules
 dist
 coverage
 docs/warnings.md
+docs/themes/tokens.md
+packages/themes/src/generated
 .vitepress/cache
 .vitepress/dist
 playwright-report

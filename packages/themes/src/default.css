@@ -1,92 +1,47 @@
 /*
  * Zero-specificity layer so consumer styles win. Two opt-in scopes leave
- * headless `.slop-button` unstyled: `.slop-theme` owns `color-scheme` (not
+ * headless `.slop-button` unstyled: `.slop-theme` owns the canvas (not
  * per-instance); `.slop-themed-scope` (`display: contents`) styles one wrapper
- * without participating in layout.
+ * without participating in layout. Token values come from generated CSS.
  */
+@import './generated/tokens.css';
+
 @layer slop-ui-theme {
   :where(.slop-themed-scope) {
     display: contents;
   }
 
-  :where(.slop-theme, .slop-themed-scope) {
-    --slop-theme-surface: light-dark(#ffffff, #0f172a);
-    --slop-theme-color: light-dark(#0f172a, #f8fafc);
-    --slop-button-accent-color: light-dark(#1d4ed8, #60a5fa);
-    --slop-button-accent-color-hover: light-dark(#1e40af, #93c5fd);
-    --slop-button-accent-color-active: light-dark(#1e3a8a, #bfdbfe);
-    --slop-button-accent-contrast: light-dark(#ffffff, #0f172a);
-    --slop-button-neutral-color: light-dark(#334155, #cbd5e1);
-    --slop-button-neutral-color-hover: light-dark(#1e293b, #e2e8f0);
-    --slop-button-neutral-color-active: light-dark(#0f172a, #f1f5f9);
-    --slop-button-neutral-contrast: light-dark(#ffffff, #0f172a);
-    --slop-button-danger-color: light-dark(#b91c1c, #f87171);
-    --slop-button-danger-color-hover: light-dark(#991b1b, #fca5a5);
-    --slop-button-danger-color-active: light-dark(#7f1d1d, #fecaca);
-    --slop-button-danger-contrast: light-dark(#ffffff, #0f172a);
-    --slop-button-disabled-opacity: 0.55;
-    --slop-button-focus-ring: light-dark(#0f172a, #ffffff);
-    --slop-button-focus-ring-contrast: light-dark(#ffffff, #0f172a);
-    --slop-button-focus-ring-offset: 2px;
-    --slop-button-focus-ring-width: 3px;
-    --slop-button-font-weight: 600;
-    --slop-button-gap: 0.5rem;
-    --slop-button-icon-size: 1.1em;
-    --slop-button-loading-indicator-size: 1.1em;
-    --slop-button-loading-indicator-width: 2px;
-    --slop-button-radius: 0.5rem;
-    --slop-button-transition-duration: 120ms;
-    --slop-button-size-sm-min-size: 2.25rem;
-    --slop-button-size-sm-padding-block: 0.5rem;
-    --slop-button-size-sm-padding-inline: 0.75rem;
-    --slop-button-size-md-min-size: 2.75rem;
-    --slop-button-size-md-padding-block: 0.75rem;
-    --slop-button-size-md-padding-inline: 1rem;
-    --slop-button-size-lg-min-size: 3.25rem;
-    --slop-button-size-lg-padding-block: 0.875rem;
-    --slop-button-size-lg-padding-inline: 1.25rem;
-  }
-
   :where(.slop-theme) {
-    color-scheme: light;
-    background-color: var(--slop-theme-surface);
-    color: var(--slop-theme-color);
-  }
-
-  :where(.slop-theme[data-color-scheme='dark']) {
-    color-scheme: dark;
-  }
-
-  :where(.slop-theme[data-color-scheme='system']) {
-    color-scheme: light dark;
+    background-color: var(--sl-surface-bg);
+    color: var(--sl-surface-fg);
   }
 
   :where(.slop-theme .slop-button, .slop-themed-scope .slop-button) {
-    --_slop-button-tone-color: var(--slop-button-accent-color);
-    --_slop-button-tone-color-active: var(--slop-button-accent-color-active);
-    --_slop-button-tone-color-hover: var(--slop-button-accent-color-hover);
-    --_slop-button-tone-contrast: var(--slop-button-accent-contrast);
+    --_slop-button-tone-color: var(--sl-action-primary-bg);
+    --_slop-button-tone-color-active: var(--sl-action-primary-bg-active);
+    --_slop-button-tone-color-hover: var(--sl-action-primary-bg-hover);
+    --_slop-button-tone-contrast: var(--sl-action-primary-fg);
     --_slop-button-background: var(--_slop-button-tone-color);
     --_slop-button-background-active: var(--_slop-button-tone-color-active);
     --_slop-button-background-hover: var(--_slop-button-tone-color-hover);
     --_slop-button-border-color: var(--_slop-button-tone-color);
     --_slop-button-color: var(--_slop-button-tone-contrast);
-    --_slop-button-min-size: var(--slop-button-size-md-min-size);
-    --_slop-button-padding-block: var(--slop-button-size-md-padding-block);
-    --_slop-button-padding-inline: var(--slop-button-size-md-padding-inline);
+    --_slop-button-min-size: var(--sl-control-size-md-min);
+    --_slop-button-padding-block: var(--sl-control-size-md-padding-block);
+    --_slop-button-padding-inline: var(--sl-control-size-md-padding-inline);
 
     align-items: center;
     appearance: none;
     background-color: var(--_slop-button-background);
     border: 1px solid var(--_slop-button-border-color);
-    border-radius: var(--slop-button-radius);
+    border-radius: var(--sl-action-radius);
     box-sizing: border-box;
     color: var(--_slop-button-color);
     cursor: pointer;
     display: inline-flex;
     font: inherit;
-    font-weight: var(--slop-button-font-weight);
-    gap: var(--slop-button-gap);
+    font-weight: var(--sl-action-label-weight);
+    gap: var(--sl-action-gap);
     justify-content: center;
     line-height: 1.2;
     min-block-size: var(--_slop-button-min-size);
@@ -94,30 +49,30 @@
     padding-inline: var(--_slop-button-padding-inline);
     position: relative;
     transition:
-      background-color var(--slop-button-transition-duration) ease,
-      border-color var(--slop-button-transition-duration) ease,
-      color var(--slop-button-transition-duration) ease,
-      opacity var(--slop-button-transition-duration) ease;
+      background-color var(--sl-action-duration) ease,
+      border-color var(--sl-action-duration) ease,
+      color var(--sl-action-duration) ease,
+      opacity var(--sl-action-duration) ease;
   }
 
   :where(
     .slop-theme .slop-button[data-tone='neutral'],
     .slop-themed-scope .slop-button[data-tone='neutral']
   ) {
-    --_slop-button-tone-color: var(--slop-button-neutral-color);
-    --_slop-button-tone-color-active: var(--slop-button-neutral-color-active);
-    --_slop-button-tone-color-hover: var(--slop-button-neutral-color-hover);
-    --_slop-button-tone-contrast: var(--slop-button-neutral-contrast);
+    --_slop-button-tone-color: var(--sl-action-neutral-bg);
+    --_slop-button-tone-color-active: var(--sl-action-neutral-bg-active);
+    --_slop-button-tone-color-hover: var(--sl-action-neutral-bg-hover);
+    --_slop-button-tone-contrast: var(--sl-action-neutral-fg);
   }
 
   :where(
     .slop-theme .slop-button[data-tone='danger'],
     .slop-themed-scope .slop-button[data-tone='danger']
   ) {
-    --_slop-button-tone-color: var(--slop-button-danger-color);
-    --_slop-button-tone-color-active: var(--slop-button-danger-color-active);
-    --_slop-button-tone-color-hover: var(--slop-button-danger-color-hover);
-    --_slop-button-tone-contrast: var(--slop-button-danger-contrast);
+    --_slop-button-tone-color: var(--sl-action-danger-bg);
+    --_slop-button-tone-color-active: var(--sl-action-danger-bg-active);
+    --_slop-button-tone-color-hover: var(--sl-action-danger-bg-hover);
+    --_slop-button-tone-contrast: var(--sl-action-danger-fg);
   }
 
   :where(
@@ -127,22 +82,22 @@
     --_slop-button-background: color-mix(
       in srgb,
       var(--_slop-button-tone-color) 12%,
-      var(--slop-theme-surface)
+      var(--sl-surface-bg)
     );
     --_slop-button-background-active: color-mix(
       in srgb,
       var(--_slop-button-tone-color) 24%,
-      var(--slop-theme-surface)
+      var(--sl-surface-bg)
     );
     --_slop-button-background-hover: color-mix(
       in srgb,
       var(--_slop-button-tone-color) 18%,
-      var(--slop-theme-surface)
+      var(--sl-surface-bg)
     );
     --_slop-button-border-color: color-mix(
       in srgb,
       var(--_slop-button-tone-color) 40%,
-      var(--slop-theme-surface)
+      var(--sl-surface-bg)
     );
     --_slop-button-color: var(--_slop-button-tone-color);
   }
@@ -155,12 +110,12 @@
     --_slop-button-background-active: color-mix(
       in srgb,
       var(--_slop-button-tone-color) 18%,
-      var(--slop-theme-surface)
+      var(--sl-surface-bg)
     );
     --_slop-button-background-hover: color-mix(
       in srgb,
       var(--_slop-button-tone-color) 10%,
-      var(--slop-theme-surface)
+      var(--sl-surface-bg)
     );
     --_slop-button-border-color: var(--_slop-button-tone-color);
     --_slop-button-color: var(--_slop-button-tone-color);
@@ -174,12 +129,12 @@
     --_slop-button-background-active: color-mix(
       in srgb,
       var(--_slop-button-tone-color) 18%,
-      var(--slop-theme-surface)
+      var(--sl-surface-bg)
     );
     --_slop-button-background-hover: color-mix(
       in srgb,
       var(--_slop-button-tone-color) 10%,
-      var(--slop-theme-surface)
+      var(--sl-surface-bg)
     );
     --_slop-button-border-color: transparent;
     --_slop-button-color: var(--_slop-button-tone-color);
@@ -189,18 +144,18 @@
     .slop-theme .slop-button[data-size='sm'],
     .slop-themed-scope .slop-button[data-size='sm']
   ) {
-    --_slop-button-min-size: var(--slop-button-size-sm-min-size);
-    --_slop-button-padding-block: var(--slop-button-size-sm-padding-block);
-    --_slop-button-padding-inline: var(--slop-button-size-sm-padding-inline);
+    --_slop-button-min-size: var(--sl-control-size-sm-min);
+    --_slop-button-padding-block: var(--sl-control-size-sm-padding-block);
+    --_slop-button-padding-inline: var(--sl-control-size-sm-padding-inline);
   }
 
   :where(
     .slop-theme .slop-button[data-size='lg'],
     .slop-themed-scope .slop-button[data-size='lg']
   ) {
-    --_slop-button-min-size: var(--slop-button-size-lg-min-size);
-    --_slop-button-padding-block: var(--slop-button-size-lg-padding-block);
-    --_slop-button-padding-inline: var(--slop-button-size-lg-padding-inline);
+    --_slop-button-min-size: var(--sl-control-size-lg-min);
+    --_slop-button-padding-block: var(--sl-control-size-lg-padding-block);
+    --_slop-button-padding-inline: var(--sl-control-size-lg-padding-inline);
   }
 
   :where(
@@ -223,11 +178,9 @@
     .slop-theme .slop-button:focus-visible,
     .slop-themed-scope .slop-button:focus-visible
   ) {
-    box-shadow: 0 0 0 var(--slop-button-focus-ring-offset)
-      var(--slop-button-focus-ring-contrast);
-    outline: var(--slop-button-focus-ring-width) solid
-      var(--slop-button-focus-ring);
-    outline-offset: var(--slop-button-focus-ring-offset);
+    box-shadow: 0 0 0 var(--sl-focus-ring-offset) var(--sl-focus-ring-contrast);
+    outline: var(--sl-focus-ring-width) solid var(--sl-focus-ring-color);
+    outline-offset: var(--sl-focus-ring-offset);
   }
 
   :where(
@@ -235,7 +188,7 @@
     .slop-themed-scope .slop-button:is(:disabled, [aria-disabled='true'])
   ) {
     cursor: not-allowed;
-    opacity: var(--slop-button-disabled-opacity);
+    opacity: var(--sl-action-disabled-opacity);
   }
 
   :where(
@@ -251,14 +204,13 @@
     .slop-themed-scope .slop-button[data-state='loading']
   )::before {
     animation: slop-button-spin 800ms linear infinite;
-    block-size: var(--slop-button-loading-indicator-size);
-    border: var(--slop-button-loading-indicator-width) solid
-      var(--_slop-button-color);
+    block-size: var(--sl-action-spinner-size);
+    border: var(--sl-action-spinner-width) solid var(--_slop-button-color);
     border-inline-end-color: transparent;
     border-radius: 50%;
     box-sizing: border-box;
     content: '';
-    inline-size: var(--slop-button-loading-indicator-size);
+    inline-size: var(--sl-action-spinner-size);
     inset-block-start: 50%;
     inset-inline-start: 50%;
     position: absolute;
@@ -280,10 +232,10 @@
       .slop-button[data-state='loading']
       [data-part='loading-indicator']
   ) {
-    block-size: var(--slop-button-loading-indicator-size);
+    block-size: var(--sl-action-spinner-size);
     color: var(--_slop-button-color);
     display: block;
-    inline-size: var(--slop-button-loading-indicator-size);
+    inline-size: var(--sl-action-spinner-size);
     inset-block-start: 50%;
     inset-inline-start: 50%;
     position: absolute;
@@ -318,9 +270,9 @@
     .slop-theme .slop-button [data-part='icon'],
     .slop-themed-scope .slop-button [data-part='icon']
   ) {
-    block-size: var(--slop-button-icon-size);
+    block-size: var(--sl-action-icon-size);
     flex: none;
-    inline-size: var(--slop-button-icon-size);
+    inline-size: var(--sl-action-icon-size);
   }
 
   :where(

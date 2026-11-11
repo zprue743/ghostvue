@@ -2,6 +2,14 @@
 import './default.css'
 
 export {
+  tokens,
+  tokenModes,
+  type DesignToken,
+  type TokenMode,
+  type TokenName,
+} from './generated/tokens'
+
+export {
   SlButton,
   type SlButtonExposed,
   type SlButtonSize,

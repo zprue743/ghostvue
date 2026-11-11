@@ -12,6 +12,7 @@ export default tseslint.config(
       '**/.vitepress/dist/**',
       'playwright-report/**',
       'test-results/**',
+      'packages/themes/src/generated/**',
     ],
   },
   eslint.configs.recommended,

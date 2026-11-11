@@ -1,9 +1,10 @@
 # Design tokens
 
-Token taxonomy and source format are accepted in
-[ADR 0005](../adr/0005-design-token-taxonomy.md). This page is the working
-reference for authors and agents. The compile pipeline is not built yet;
-do not treat this as a runnable emit graph.
+Token taxonomy and source format were accepted in
+[ADR 0005](../adr/0005-design-token-taxonomy.md). Public CSS names, nested
+theme/mode attributes, and the compile pipeline are
+[ADR 0007](../adr/0007-token-pipeline.md). This page is the working
+authoring reference.
 
 ## Source of truth
 
@@ -12,68 +13,90 @@ Authored tokens are **DTCG JSON** (W3C Design Tokens Community Group):
 and design tools read and write this format. CSS is a compile output, not
 the source.
 
-Intended layout, once the pipeline lands:
-
 ```text
 packages/themes/tokens/primitives.json
 packages/themes/tokens/semantic.json
-packages/themes/tokens/components/button.json
+packages/themes/tokens/semantic.dark.json
 ```
+
+`semantic.json` is the default (light, and any token that does not change
+by mode). `semantic.dark.json` overlays dark `$value`s onto existing
+semantic tokens. A rest-state token may nest interaction states on the same
+node (`bg` plus `bg.hover`). There is no `tokens/components/` tree.
+
+`pnpm --filter @slop-ui/themes build` compiles these files to CSS custom
+properties, TypeScript constants, a JSON catalog, and
+[the token catalog docs page](../themes/tokens.md).
 
 ## Tiers
 
-1. **Primitive** — raw palette, type, space, radius, duration. No product
-   intent (`color.blue.700`).
-2. **Semantic** — product intent (`color.accent` → `{color.blue.700}`).
-3. **Component** — one component's defaults (`button.accent.color` →
-   `{color.accent}`).
+1. **Primitive** — raw palette and dimension literals. No product intent
+   (`color.blue.700`). Color ramps, elevation, motion, and density scales
+   belong to SLO-63–SLO-66; this pipeline only seeds values SlButton needs.
+2. **Semantic** — product intent as `role.part.state`
+   (`action.primary.bg`, `action.primary.bg.hover`). Components consume
+   semantic tokens only.
 
-Component tokens may only reference semantic or primitive tokens. Semantic
-tokens may only reference primitives.
+Semantic tokens may reference primitives or other semantic tokens.
+Primitive tokens may only reference primitives. There are no per-component
+tokens.
 
 ## Compile outputs
 
-A follow-up pipeline must emit all three:
+| Output                     | Role                                                 |
+| -------------------------- | ---------------------------------------------------- |
+| CSS custom properties      | Runtime for themed components and consumer overrides |
+| TypeScript constants/types | Typed public token names for Vue, docs, and codegen  |
+| JSON manifest              | Resolved values for MCP `get_tokens` and agents      |
 
-| Output                | Role                                                 |
-| --------------------- | ---------------------------------------------------- |
-| CSS custom properties | Runtime for themed components and consumer overrides |
-| TypeScript types      | Typed public token names for Vue, docs, and codegen  |
-| JSON manifest         | Resolved values for MCP and agents                   |
+The JSON token catalog is not the per-component gate manifest in
+[ADR 0006](../adr/0006-component-manifest-schema.md). It is published as
+`@slop-ui/themes/tokens.json`. Semantic CSS is `@slop-ui/themes/tokens.css`
+and is concatenated into `@slop-ui/themes/default.css`.
 
-The JSON token manifest is not the per-component gate manifest in
-[ADR 0006](../adr/0006-component-manifest-schema.md).
+Public CSS names are `--sl-<role>-<part>-<state>`
+(`--sl-action-primary-bg`, `--sl-action-primary-bg-hover`). Vue components
+are `SlButton` (ADR 0003); class names stay `slop-*`. Primitive tokens are
+not published as CSS. Private derived properties (`--_slop-*`) are not in
+the TS or JSON public catalog.
 
-Public CSS names use the `slop-` prefix (`--slop-button-accent-color`). Vue
-components are `SlButton` (ADR 0003); CSS does not use Shoelace's `sl-`
-namespace. Private derived properties (`--_slop-*`) are not in the TS or
-JSON public catalog.
+## Theme and mode switching
 
-## Mapping from PR #20 `default.css`
+`data-sl-theme` and `data-sl-mode` nest on any subtree. The default theme
+name is `default`; `.slop-theme` implies it. Unset `data-sl-mode` follows
+`prefers-color-scheme`. `data-sl-mode="light"` or `"dark"` overrides the
+preference, including inside a parent with a different mode.
 
-Until DTCG files exist, `packages/themes/src/default.css` is the runtime
-snapshot the pipeline must be able to reproduce:
+```vue
+<main class="slop-theme">...</main>
+<section data-sl-mode="dark">...</section>
+<aside data-sl-theme="default" data-sl-mode="light">...</aside>
+```
 
-| CSS custom property                              | Tier      | Authored token                      |
-| ------------------------------------------------ | --------- | ----------------------------------- |
-| `--slop-theme-surface`, `--slop-theme-color`     | semantic  | `color.surface`, `color.foreground` |
-| `--slop-button-*` (tone, size, focus, radius, …) | component | `button.*`                          |
-| `light-dark(#1d4ed8, #60a5fa)` literals          | primitive | `color.blue.700` / `color.blue.400` |
-| `--_slop-button-*`                               | private   | not a public token                  |
+Override a semantic custom property on the same subtree:
 
-Do not rename `--slop-theme-*` in #20. Aliases such as `--slop-color-surface`
-may land with the pipeline. Light and dark stay one public name via CSS
-`light-dark()`.
+```css
+.product-theme {
+  --sl-action-primary-bg: #7c3aed;
+  --sl-action-primary-bg-hover: #6d28d9;
+}
+```
 
-Primitives may be authored in DTCG before they are published as CSS. CSS
-publication of a primitive still waits until two components share it.
+Token selectors use `:where()` inside `@layer slop-ui-theme`, so unlayered
+consumer styles win.
+
+## Contrast and follow-ups
+
+WCAG AA is required and APCA is advisory. That CI gate is SLO-63, not this
+pipeline. Flagship themes (calm enterprise, vibrant expressive, minimal
+monochrome) are SLO-68. Default density is comfortable (SLO-66).
 
 ## Authoring rules
 
-- Prefer aliases (`{color.accent}`) over copied hex values in component
+- Prefer aliases (`{color.blue.700}`) over copied hex values in semantic
   files.
 - Do not put the tier word in the token name.
-- New theme CSS must not invent a parallel naming scheme next to
-  `--slop-button-*` / `--slop-theme-*`.
+- Do not add per-component tokens; map component tones onto semantic roles
+  (`accent` → `action.primary`).
 - Headless `@slop-ui/vue` components must not require these tokens to
-  function. Themed wrappers consume them as in ADR 0004 (SLO-10).
+  function. Themed wrappers consume them as in ADR 0004.
