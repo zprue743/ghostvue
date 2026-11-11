@@ -1,0 +1,24 @@
+# Hard-block Agent/Tab/@ reads. Cursor also respects .gitignore; these
+# patterns stay explicit so secrets and junk stay out of context even if
+# gitignore changes. Use .cursorindexingignore for files that must remain
+# readable on an explicit open (lockfiles, snapshots, generated outputs).
+
+node_modules/
+**/node_modules/
+.pnpm-store/
+dist/
+
+coverage/
+playwright-report/
+test-results/
+.vitepress/cache/
+.vitepress/dist/
+
+*.tsbuildinfo
+.turbo/
+.cache/
+.eslintcache
+**/.vite/
+
+.env*
+!.env.example

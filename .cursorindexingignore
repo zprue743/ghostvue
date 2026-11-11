@@ -1,0 +1,17 @@
+# Indexing-only skip. Agents may still open these files explicitly (tests and
+# reviews do). Do not list DTCG token JSON or other source of truth here.
+
+pnpm-lock.yaml
+
+**/*.spec.ts-snapshots/
+*.png
+*.jpg
+*.jpeg
+*.webp
+*.gif
+*.woff
+*.woff2
+
+packages/themes/src/generated/
+packages/themes/tokens/generated/
+docs/themes/tokens.md
