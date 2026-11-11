@@ -49,7 +49,9 @@ pnpm typecheck
 
 See [CONTRIBUTING.md](./CONTRIBUTING.md) before submitting a change. Engineering
 standards and architecture decisions live in [docs](./docs/index.md); coding
-agents must begin with [AGENTS.md](./AGENTS.md).
+agents must begin with [AGENTS.md](./AGENTS.md). `pnpm docs:build` also writes
+[`llms.txt`](https://llmstxt.org/) and `llms-full.txt` into the VitePress output
+so published docs are served at `/llms.txt` and `/llms-full.txt`.
 
 ## Philosophy
 

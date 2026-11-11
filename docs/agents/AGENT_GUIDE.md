@@ -58,6 +58,14 @@ release behavior.
 - [Public API standard](../standards/public-api.md)
 - [Contribution workflow](../contributing/workflow.md)
 
+## LLM-readable published docs
+
+The VitePress build writes `/llms.txt` (a concise index of every sidebar page)
+and `/llms-full.txt` (those pages concatenated as plain markdown, in sidebar
+order) into the docs output. They follow the
+[llms.txt](https://llmstxt.org/) convention. Generate them with
+`pnpm docs:build`.
+
 ## Tool adapters
 
 `CLAUDE.md`, `.cursor/rules/*.mdc`, and each package `AGENTS.md` are adapters.
