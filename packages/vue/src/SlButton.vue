@@ -1,14 +1,22 @@
 <script setup lang="ts">
 import { useTemplateRef } from 'vue'
 
-import type { SlButtonExposed, SlButtonProps } from './sl-button'
+import type { SlButtonExposed, SlButtonType } from './sl-button'
 import { useSlButton } from './use-sl-button'
 
-const props = withDefaults(defineProps<SlButtonProps>(), {
-  disabled: false,
-  loading: false,
-  type: 'button',
-})
+// Declared props only; native HTML/ARIA stay fallthrough so the generator omits them.
+const props = withDefaults(
+  defineProps<{
+    disabled?: boolean
+    loading?: boolean
+    type?: SlButtonType
+  }>(),
+  {
+    disabled: false,
+    loading: false,
+    type: 'button',
+  },
+)
 
 const { rootProps } = useSlButton({
   disabled: () => props.disabled,

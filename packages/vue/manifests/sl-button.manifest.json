@@ -1,19 +1,11 @@
 {
   "schemaVersion": "1.0.0",
-  "source": "handwritten",
+  "source": "generated",
   "name": "SlButton",
   "package": "@slop-ui/vue",
   "status": "experimental",
-  "description": "Headless native action control. useSlButton owns behavior; SlButton is the thin unstyled element. Themed visual props live on @slop-ui/themes. Hand-written until SLO-13 generates manifests.",
+  "description": "Headless native action control. useSlButton owns behavior; SlButton is the thin unstyled element. Themed visual props live on @slop-ui/themes.",
   "props": [
-    {
-      "name": "type",
-      "type": "'button' | 'submit' | 'reset'",
-      "default": "button",
-      "required": false,
-      "description": "Native button behavior. Defaults to button so a control inside a form does not submit unless the consumer opts in.",
-      "deprecated": false
-    },
     {
       "name": "disabled",
       "type": "boolean",
@@ -28,6 +20,14 @@
       "default": false,
       "required": false,
       "description": "Consumer-owned pending state. Prevents activation while remaining focusable, sets aria-disabled and aria-busy, and preserves slot content so the accessible name does not change.",
+      "deprecated": false
+    },
+    {
+      "name": "type",
+      "type": "SlButtonType",
+      "default": "button",
+      "required": false,
+      "description": "Native button behavior. Defaults to button so a control inside a form does not submit unless the consumer opts in.",
       "deprecated": false
     }
   ],
@@ -96,5 +96,10 @@
     },
     "requiredAriaAttributes": []
   },
-  "examples": ["button-basic", "button-loading", "button-icon-only"]
+  "examples": [
+    "button-basic",
+    "button-loading",
+    "button-icon-only",
+    "button-themed"
+  ]
 }

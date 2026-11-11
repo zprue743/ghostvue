@@ -2,7 +2,12 @@
 import { ref, useTemplateRef } from 'vue'
 
 import { SlButton as SlButtonThemed } from '@slop-ui/themes'
-import { SlButton, SlVisuallyHidden, useFocusScope, useRovingFocus } from '@slop-ui/vue'
+import {
+  SlButton,
+  SlVisuallyHidden,
+  useFocusScope,
+  useRovingFocus,
+} from '@slop-ui/vue'
 
 interface Report {
   name: string

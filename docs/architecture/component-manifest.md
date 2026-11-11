@@ -49,9 +49,8 @@ overwrites types and membership from source and keeps that prose. JSDoc on the
 SFC fills a description only when the manifest does not already have one.
 
 Handwritten manifests (`"source": "handwritten"`) remain valid only when no
-matching SFC exists yet. `SlButton` on master is in that state until the
-component source lands. Once an `Sl*.vue` file exists, the manifest must be
-generated.
+matching SFC exists yet. The themed wrapper lives in `sl-button.ts`, so its
+manifest stays handwritten until it is an `Sl*.vue` file.
 
 ## Required contents
 
