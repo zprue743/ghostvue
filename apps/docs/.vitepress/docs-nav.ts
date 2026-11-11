@@ -11,6 +11,7 @@ export const docsSidebar: LlmsSidebarGroup[] = [
     items: [
       { text: 'Overview', link: '/' },
       { text: 'Philosophy', link: '/philosophy' },
+      { text: 'Component roadmap', link: '/roadmap' },
     ],
   },
   {
