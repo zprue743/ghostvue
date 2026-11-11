@@ -49,8 +49,9 @@ of `pnpm verify`) checks WCAG 2 AA on semantic text/background pairs.
 2. **Semantic** — product intent as `role.part.state` across `action`,
    `surface`, `text`, `border`, `status`, `focus`, `control`,
    `elevation`, `material`, `gradient`, `motion`, `space`, `radius`,
-   `type`, and `roundness` (`action.primary.bg`,
-   `elevation.2.shadow`, `motion.duration.fast`, `space.gap.sm`).
+   `type`, `roundness`, and `state` (`action.primary.bg`,
+   `elevation.2.shadow`, `motion.duration.fast`, `space.gap.sm`,
+   `state.layer.hover`).
    Components consume semantic tokens only.
 
 Semantic tokens may reference primitives or other semantic tokens.
@@ -147,6 +148,12 @@ font stack and `clamp()` sizes; letter-spacing, tabular numbers, and
 OpenType feature tokens are semantic `--sl-type-*` variables. Coarse
 pointers floor control heights to 44px. See
 [density, type, and roundness](../themes/density.md).
+
+State-layer overlay opacities (`state.layer.hover` / `press` /
+`selected` / `dragged`) and action gradient stops are SLO-67. SlButton
+applies those overlays with a pseudo-element so they work on every tone
+and mode, including gradient fills. `pnpm contrast` checks
+`action.*.fg` against both gradient end stops.
 
 Flagship themes (calm enterprise, vibrant expressive, minimal monochrome)
 are SLO-68.

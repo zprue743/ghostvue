@@ -215,8 +215,12 @@ themed visual props plus CSS custom properties.
 Future changes to event timing, native semantics, loading behavior, exposed refs,
 semantic attributes, or styling hooks require compatibility review.
 
+Themed visual states (SLO-67) are CSS-only. Hover, press, selected, and
+dragged overlays use semantic `state.layer.*` tokens. `aria-pressed` and
+`aria-grabbed` are native fallthrough hooks, not headless props.
+
 ## Open architectural questions
 
-None blocking. One deferral remains:
-
-- **DTCG token pipeline.** ADR 0005; `default.css` remains the runtime snapshot.
+None blocking. Token pipeline, ramps, elevation, motion, density, and the
+SlButton reference theme have landed (ADR 0007, SLO-63–SLO-67). Flagship
+themes remain SLO-68.

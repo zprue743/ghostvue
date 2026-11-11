@@ -412,6 +412,47 @@
       "$type": "gradient",
       "$value": "{gradient.accent}",
       "$description": "Gradient used by the gradient-border mask recipe."
+    },
+    "action": {
+      "primary": {
+        "$type": "gradient",
+        "$value": {
+          "style": "linear",
+          "interpolation": "oklch",
+          "angle": "165deg",
+          "stops": [
+            { "color": "{action.primary.gradient.from}", "position": 0 },
+            { "color": "{action.primary.gradient.to}", "position": 1 }
+          ]
+        },
+        "$description": "Solid primary action fill. Interpolated in oklch; both stops meet WCAG AA with action.primary.fg."
+      },
+      "neutral": {
+        "$type": "gradient",
+        "$value": {
+          "style": "linear",
+          "interpolation": "oklch",
+          "angle": "165deg",
+          "stops": [
+            { "color": "{action.neutral.gradient.from}", "position": 0 },
+            { "color": "{action.neutral.gradient.to}", "position": 1 }
+          ]
+        },
+        "$description": "Solid neutral action fill. Interpolated in oklch; both stops meet WCAG AA with action.neutral.fg."
+      },
+      "danger": {
+        "$type": "gradient",
+        "$value": {
+          "style": "linear",
+          "interpolation": "oklch",
+          "angle": "165deg",
+          "stops": [
+            { "color": "{action.danger.gradient.from}", "position": 0 },
+            { "color": "{action.danger.gradient.to}", "position": 1 }
+          ]
+        },
+        "$description": "Solid danger action fill. Interpolated in oklch; both stops meet WCAG AA with action.danger.fg."
+      }
     }
   },
   "text": {
@@ -549,6 +590,18 @@
         "$type": "color",
         "$value": "{action.primary.bg}",
         "$description": "Border on a solid primary action."
+      },
+      "gradient": {
+        "from": {
+          "$type": "color",
+          "$value": "{color.primary.700}",
+          "$description": "Primary action gradient start. Must meet WCAG AA with action.primary.fg."
+        },
+        "to": {
+          "$type": "color",
+          "$value": "{color.info.800}",
+          "$description": "Primary action gradient end. Subtle hue shift; must meet WCAG AA with action.primary.fg."
+        }
       }
     },
     "neutral": {
@@ -576,6 +629,18 @@
         "$type": "color",
         "$value": "{action.neutral.bg}",
         "$description": "Border on a solid neutral action."
+      },
+      "gradient": {
+        "from": {
+          "$type": "color",
+          "$value": "{color.neutral.700}",
+          "$description": "Neutral action gradient start. Must meet WCAG AA with action.neutral.fg."
+        },
+        "to": {
+          "$type": "color",
+          "$value": "{color.neutral.800}",
+          "$description": "Neutral action gradient end. Must meet WCAG AA with action.neutral.fg."
+        }
       }
     },
     "success": {
@@ -657,6 +722,18 @@
         "$type": "color",
         "$value": "{action.danger.bg}",
         "$description": "Border on a solid danger action."
+      },
+      "gradient": {
+        "from": {
+          "$type": "color",
+          "$value": "{color.danger.700}",
+          "$description": "Danger action gradient start. Must meet WCAG AA with action.danger.fg."
+        },
+        "to": {
+          "$type": "color",
+          "$value": "{color.danger.800}",
+          "$description": "Danger action gradient end. Must meet WCAG AA with action.danger.fg."
+        }
       }
     },
     "info": {
@@ -687,10 +764,47 @@
       }
     },
     "disabled": {
+      "bg": {
+        "$type": "color",
+        "$value": "{color.neutral.200}",
+        "$description": "Unavailable action background. Desaturated; still meets WCAG AA with action.disabled.fg."
+      },
+      "fg": {
+        "$type": "color",
+        "$value": "{color.neutral.700}",
+        "$description": "Unavailable action foreground. Reduced emphasis, still legible."
+      },
+      "border": {
+        "$type": "color",
+        "$value": "{color.neutral.300}",
+        "$description": "Unavailable action border."
+      },
       "opacity": {
         "$type": "number",
         "$value": "{opacity.disabled}",
-        "$description": "Shared unavailable-state opacity."
+        "$description": "Shared unavailable-state opacity. SlButton uses dedicated disabled colors instead of fading the rest tone."
+      }
+    },
+    "highlight": {
+      "$type": "shadow",
+      "$value": {
+        "offsetX": "0px",
+        "offsetY": "1px",
+        "blur": "0px",
+        "spread": "0px",
+        "color": "{color.highlight.inset}",
+        "inset": true
+      },
+      "$description": "Inset top sheen on solid actions."
+    },
+    "shadow": {
+      "$type": "shadow",
+      "$value": "{elevation.2.shadow}",
+      "$description": "Rest elevation on solid actions.",
+      "press": {
+        "$type": "shadow",
+        "$value": "{elevation.1.shadow}",
+        "$description": "Compressed elevation on a pressed solid action."
       }
     },
     "gap": {
@@ -757,6 +871,52 @@
         "$type": "dimension",
         "$value": "{size.spinner.width}",
         "$description": "Default action spinner stroke width."
+      },
+      "duration": {
+        "$type": "duration",
+        "$value": "{motion.duration.expressive}",
+        "$description": "Default action spinner rotation period. The reduced-motion pulse uses the same period so it does not flicker."
+      },
+      "opacity": {
+        "$type": "number",
+        "$value": "{opacity.spinner}",
+        "$description": "Reduced-motion spinner pulse trough opacity."
+      }
+    }
+  },
+  "state": {
+    "layer": {
+      "hover": {
+        "$type": "number",
+        "$value": "{opacity.hover}",
+        "$description": "Hover overlay opacity on the current tone. Works across every tone and mode."
+      },
+      "press": {
+        "$type": "number",
+        "$value": "{opacity.press}",
+        "$description": "Pressed overlay opacity on the current tone."
+      },
+      "selected": {
+        "$type": "number",
+        "$value": "{opacity.selected}",
+        "$description": "Selected overlay opacity on the current tone. Used when aria-pressed is true."
+      },
+      "dragged": {
+        "$type": "number",
+        "$value": "{opacity.dragged}",
+        "$description": "Dragged overlay opacity on the current tone. Used when aria-grabbed is true."
+      }
+    },
+    "mix": {
+      "soft": {
+        "$type": "number",
+        "$value": "{opacity.mix.soft}",
+        "$description": "Rest mix of tone into the surface for soft treatments."
+      },
+      "border": {
+        "$type": "number",
+        "$value": "{opacity.mix.border}",
+        "$description": "Border mix of tone into the surface for soft treatments."
       }
     }
   },
@@ -851,6 +1011,16 @@
         "$type": "dimension",
         "$value": "{size.focus.width}",
         "$description": "Focus outline thickness."
+      },
+      "duration": {
+        "$type": "duration",
+        "$value": "{motion.duration.fast}",
+        "$description": "Focus-ring entrance duration. Instant under reduced motion.",
+        "$extensions": {
+          "slop.ui": {
+            "reducedMotion": "0ms"
+          }
+        }
       }
     }
   },
@@ -1147,6 +1317,18 @@
       "$extensions": {
         "slop.ui": {
           "reducedMotion": "1"
+        }
+      }
+    },
+    "press": {
+      "scale": {
+        "$type": "number",
+        "$value": "{scale.press}",
+        "$description": "Pressed control scale. 1 under reduced motion so only color feedback remains.",
+        "$extensions": {
+          "slop.ui": {
+            "reducedMotion": "1"
+          }
         }
       }
     }

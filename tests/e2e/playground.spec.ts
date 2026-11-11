@@ -4,56 +4,46 @@ import type { Locator } from '@playwright/test'
 
 import { startStaticServer } from './static-server'
 
-function parseColor(value: string) {
-  const channels = value.match(/[\d.]+/g)?.map(Number)
-  if (!channels || channels.length < 3) {
-    throw new Error(`Unsupported computed color: ${value}`)
-  }
-
-  if (value.startsWith('color(')) {
-    return channels.slice(-3).map((channel) => channel * 255)
-  }
-
-  return channels.slice(0, 3)
-}
-
-function luminance(value: string) {
-  const [red, green, blue] = parseColor(value).map((channel) => {
-    const normalized = channel / 255
-    return normalized <= 0.04045
-      ? normalized / 12.92
-      : ((normalized + 0.055) / 1.055) ** 2.4
-  })
-
-  return 0.2126 * red + 0.7152 * green + 0.0722 * blue
-}
-
-function contrast(first: string, second: string) {
-  const firstLuminance = luminance(first)
-  const secondLuminance = luminance(second)
-  return (
-    (Math.max(firstLuminance, secondLuminance) + 0.05) /
-    (Math.min(firstLuminance, secondLuminance) + 0.05)
-  )
-}
-
 async function textContrast(button: Locator, surface: Locator) {
-  const colors = await button.evaluate((element) => {
-    const style = getComputedStyle(element)
-    return {
-      background: style.backgroundColor,
-      color: style.color,
-    }
-  })
-  const surfaceBackground = await surface.evaluate(
-    (element) => getComputedStyle(element).backgroundColor,
-  )
-  const background =
-    colors.background === 'rgba(0, 0, 0, 0)'
-      ? surfaceBackground
-      : colors.background
+  const surfaceElement = await surface.elementHandle()
 
-  return contrast(colors.color, background)
+  return button.evaluate((element, surfaceNode) => {
+    function rgb(color: string) {
+      const canvas = document.createElement('canvas')
+      canvas.width = 1
+      canvas.height = 1
+      const context = canvas.getContext('2d')
+      if (!context) {
+        throw new Error('Missing 2d canvas context')
+      }
+      context.fillStyle = color
+      context.fillRect(0, 0, 1, 1)
+      const [red, green, blue, alpha] = context.getImageData(0, 0, 1, 1).data
+      return { red, green, blue, alpha }
+    }
+
+    function luminance(red: number, green: number, blue: number) {
+      const channel = (value: number) => {
+        const normalized = value / 255
+        return normalized <= 0.04045
+          ? normalized / 12.92
+          : ((normalized + 0.055) / 1.055) ** 2.4
+      }
+      return (
+        0.2126 * channel(red) + 0.7152 * channel(green) + 0.0722 * channel(blue)
+      )
+    }
+
+    const style = getComputedStyle(element)
+    let background = rgb(style.backgroundColor)
+    const foreground = rgb(style.color)
+    if (background.alpha === 0) {
+      background = rgb(getComputedStyle(surfaceNode).backgroundColor)
+    }
+    const first = luminance(foreground.red, foreground.green, foreground.blue)
+    const second = luminance(background.red, background.green, background.blue)
+    return (Math.max(first, second) + 0.05) / (Math.min(first, second) + 0.05)
+  }, surfaceElement)
 }
 
 test('playground shell loads without detectable accessibility violations', async ({
@@ -296,20 +286,27 @@ test('default theme adapts to accessibility and color preferences', async ({
 
     await expect(action).toHaveCSS(
       'transition-duration',
-      '0.12s, 0.12s, 0.12s, 0.12s',
+      '0.12s, 0.12s, 0.12s, 0.12s, 0.12s, 0.504s',
     )
 
     await page.emulateMedia({ reducedMotion: 'reduce' })
-    // Color/opacity feedback stays; it just becomes the short 80ms token.
+    // Color feedback stays at 80ms; press scale is 1 and springs collapse.
     await expect(action).toHaveCSS(
       'transition-duration',
-      '0.08s, 0.08s, 0.08s, 0.08s',
+      '0.08s, 0.08s, 0.08s, 0.08s, 0.08s, 0.08s',
     )
     expect(
       await loading.evaluate(
         (element) => getComputedStyle(element, '::before').animationName,
       ),
     ).toBe('slop-button-pulse')
+    expect(
+      await action.evaluate((element) =>
+        getComputedStyle(element)
+          .getPropertyValue('--sl-motion-press-scale')
+          .trim(),
+      ),
+    ).toBe('1')
 
     await themedGroup.evaluate((element) => {
       element.setAttribute('data-sl-mode', 'dark')

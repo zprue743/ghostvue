@@ -68,8 +68,12 @@ descendants of an explicitly marked icon wrapper fill that wrapper.
 
 Loading overlays the preserved content, so the accessible name and button width
 do not change. The default spinner is replaced when slot content provides a
-decorative `data-part="loading-indicator"` element. Loading and disabled
-appearances follow the component's semantic attributes.
+decorative `data-part="loading-indicator"` element. Loading keeps the rest
+fill and a wait cursor; disabled uses dedicated desaturated
+`--sl-action-disabled-*` colors (not a faded rest tone) and
+`cursor: not-allowed`. Hover and press overlays are suppressed in both
+cases. Loading remains focusable, so `:focus-visible` still draws the
+two-tone ring.
 
 ## Variants, sizes, and layout
 
@@ -94,6 +98,17 @@ keep visual decisions off the headless API:
 Supported values are `solid`, `soft`, `outline`, and `ghost`; omitting it selects
 `solid`. `tone` accepts `accent`, `neutral`, and `danger`; omitting it selects
 `accent`. Supported sizes are `sm`, `md`, and `lg`; omitting it selects `md`.
+
+Solid treatments paint an oklch gradient (`--sl-gradient-action-primary`,
+`--sl-gradient-action-neutral`, `--sl-gradient-action-danger`), an inset
+highlight, and the elevation-2 shadow. Hover, press, selected, and dragged
+are state-layer overlays (`--sl-state-layer-*`) on the current tone. Press
+scales to `--sl-motion-press-scale` and drops to the elevation-1 shadow,
+then releases with the snappy spring. The keyboard focus ring is two-tone
+and eases in with `--sl-focus-ring-duration` (instant under reduced
+motion). Soft, outline, and ghost rest fills use `--sl-state-mix-*` instead
+of a gradient. The full combination table lives on
+[SlButton](../components/button.md#state-matrix).
 
 ## Light, dark, and nested modes
 
@@ -128,9 +143,10 @@ scope. SlButton maps `tone="accent"` to `action.primary`, `neutral` to
 ```css
 .product-theme {
   --sl-action-primary-bg: #7c3aed;
-  --sl-action-primary-bg-hover: #6d28d9;
-  --sl-action-primary-bg-active: #5b21b6;
   --sl-action-primary-fg: #ffffff;
+  --sl-action-primary-gradient-from: #7c3aed;
+  --sl-action-primary-gradient-to: #5b21b6;
+  --sl-state-layer-hover: 0.08;
   --sl-focus-ring-color: #111827;
   --sl-focus-ring-contrast: #ffffff;
   --sl-action-radius: 999px;
@@ -139,10 +155,13 @@ scope. SlButton maps `tone="accent"` to `action.primary`, `neutral` to
 }
 ```
 
-Soft, outline, and ghost state colors are derived from the selected action
-tone and `--sl-surface-bg` with `color-mix()`, so overriding a tone remains
-coherent across every treatment. Internal `--_slop-*` properties are
-implementation details and are not supported theme APIs.
+Soft, outline, and ghost rest colors mix the selected action tone into
+`--sl-surface-bg` with `color-mix(in oklch, …)` using `--sl-state-mix-*`.
+Hover and press then apply the same state-layer overlay as solid, so
+overriding a tone remains coherent across every treatment. Internal
+`--_slop-*` properties are implementation details and are not supported
+theme APIs. `data-visual-state` is a docs/snapshot preview hook, not a
+component prop.
 
 Elevation, materials, and gradients are semantic `--sl-*` variables plus
 documented `data-elevation`, `data-material`, and `data-gradient` recipes.
@@ -158,11 +177,12 @@ Authored DTCG lives in `packages/themes/tokens/` and is compiled by
 ## Accessibility and motion
 
 The defaults include contrast-tested light and dark treatments (WCAG 2 AA
-is gated in `pnpm contrast`; APCA Lc is advisory), a two-color keyboard
-focus indicator, density-aware control sizes with a 44px coarse-pointer
-floor, forced-colors mapping to system colors, disabled and loading
-cursors, and reduced-motion handling that keeps short color and opacity
-feedback instead of removing transitions.
+is gated in `pnpm contrast`, including each solid gradient end stop against
+its `*.fg`; APCA Lc is advisory), a two-color keyboard focus indicator
+with a short entrance, density-aware control sizes with a 44px
+coarse-pointer floor, forced-colors mapping to system colors, disabled
+and loading cursors, and reduced-motion handling that keeps short color
+and opacity feedback, drops press scale, and makes the focus ring instant.
 Unset `data-sl-mode` follows `prefers-color-scheme` from CSS alone, so
 server rendering does not flash the opposite palette. Applications remain
 responsible for testing token overrides for contrast, focus visibility,

@@ -46,6 +46,30 @@ describe('semantic contrast gate', () => {
     expect(pairs.some((pair) => pair.fg === 'action.radius')).toBe(false)
   })
 
+  it('pairs action foreground with each gradient end stop', () => {
+    const pairs = contrastPairs([
+      { name: 'action.primary.fg', tier: 'semantic', type: 'color' },
+      { name: 'action.primary.bg', tier: 'semantic', type: 'color' },
+      { name: 'action.primary.gradient.from', tier: 'semantic', type: 'color' },
+      { name: 'action.primary.gradient.to', tier: 'semantic', type: 'color' },
+    ])
+
+    expect(pairs).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          fg: 'action.primary.fg',
+          bg: 'action.primary.gradient.from',
+          reason: 'fg/gradient stop',
+        }),
+        expect.objectContaining({
+          fg: 'action.primary.fg',
+          bg: 'action.primary.gradient.to',
+          reason: 'fg/gradient stop',
+        }),
+      ]),
+    )
+  })
+
   it('pairs canvas text with each elevation fill and glass fallback', () => {
     const pairs = contrastPairs([
       { name: 'surface.fg', tier: 'semantic', type: 'color' },

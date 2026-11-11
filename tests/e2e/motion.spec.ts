@@ -17,7 +17,7 @@ test.describe('motion tokens', () => {
 
       await expect(action).toHaveCSS(
         'transition-duration',
-        '0.12s, 0.12s, 0.12s, 0.12s',
+        '0.12s, 0.12s, 0.12s, 0.12s, 0.12s, 0.504s',
       )
       expect(
         await stage.evaluate((element) =>
@@ -47,7 +47,7 @@ test.describe('motion tokens', () => {
       })
       await expect(action).toHaveCSS(
         'transition-duration',
-        '0.06s, 0.06s, 0.06s, 0.06s',
+        '0.06s, 0.06s, 0.06s, 0.06s, 0.06s, 0.252s',
       )
       await action.evaluate((element) => {
         element.style.removeProperty('--sl-motion-intensity')
@@ -56,7 +56,7 @@ test.describe('motion tokens', () => {
       await page.emulateMedia({ reducedMotion: 'reduce' })
       await expect(action).toHaveCSS(
         'transition-duration',
-        '0.08s, 0.08s, 0.08s, 0.08s',
+        '0.08s, 0.08s, 0.08s, 0.08s, 0.08s, 0.08s',
       )
       expect(
         await stage.evaluate((element) =>

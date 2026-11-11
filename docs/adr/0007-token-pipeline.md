@@ -149,8 +149,9 @@ and JSON so ramps can land without renaming the runtime API.
 - Follow-ups: SLO-68 flagship themes, MCP `get_tokens`. SLO-63 (ramps,
   semantic text/border/status, contrast CI, forced-colors mapping),
   SLO-64 (elevation, hairline, materials, gradients), SLO-65 (motion
-  durations, easing, springs, reduced motion), and SLO-66 (density, type,
-  roundness) landed on this pipeline.
+  durations, easing, springs, reduced motion), SLO-66 (density, type,
+  roundness), and SLO-67 (state layers and the SlButton reference theme)
+  landed on this pipeline.
 
 ## Amendments
 
@@ -178,6 +179,11 @@ and JSON so ramps can land without renaming the runtime API.
   token through `calc()`. Control heights use 28/32/36/40/48px with a
   44px coarse-pointer floor. Density (this amendment) is no longer out
   of scope.
+- 2026-11-11: SLO-67 adds semantic `state.layer.*` overlay opacities,
+  `state.mix.*` rest mixes, action gradient stops gated against `*.fg`,
+  disabled `action.disabled.bg` / `fg` / `border`, and press/focus
+  motion tokens. SlButton is the reference consumer: token-only CSS,
+  two-tone focus ring, spring press, and a documented state matrix.
 
 ## Compatibility implications
 

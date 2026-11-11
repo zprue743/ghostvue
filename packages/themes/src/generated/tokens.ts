@@ -63,12 +63,67 @@ export const tokens = {
       dark: "#0f172a",
     },
   },
+  "action.danger.gradient.from": {
+    name: "action.danger.gradient.from",
+    cssVar: "--sl-action-danger-gradient-from",
+    type: "color",
+    tier: "semantic",
+    description: "Danger action gradient start. Must meet WCAG AA with action.danger.fg.",
+    value: {
+      light: "#b91c1c",
+      dark: "#f87171",
+    },
+  },
+  "action.danger.gradient.to": {
+    name: "action.danger.gradient.to",
+    cssVar: "--sl-action-danger-gradient-to",
+    type: "color",
+    tier: "semantic",
+    description: "Danger action gradient end. Must meet WCAG AA with action.danger.fg.",
+    value: {
+      light: "#900009",
+      dark: "#ff908d",
+    },
+  },
+  "action.disabled.bg": {
+    name: "action.disabled.bg",
+    cssVar: "--sl-action-disabled-bg",
+    type: "color",
+    tier: "semantic",
+    description: "Unavailable action background. Desaturated; still meets WCAG AA with action.disabled.fg.",
+    value: {
+      light: "#d9dee6",
+      dark: "#464b50",
+    },
+  },
+  "action.disabled.border": {
+    name: "action.disabled.border",
+    cssVar: "--sl-action-disabled-border",
+    type: "color",
+    tier: "semantic",
+    description: "Unavailable action border.",
+    value: {
+      light: "#bcc4d1",
+      dark: "#60666e",
+    },
+  },
+  "action.disabled.fg": {
+    name: "action.disabled.fg",
+    cssVar: "--sl-action-disabled-fg",
+    type: "color",
+    tier: "semantic",
+    description: "Unavailable action foreground. Reduced emphasis, still legible.",
+    value: {
+      light: "#334155",
+      dark: "#d3dce7",
+    },
+  },
   "action.disabled.opacity": {
     name: "action.disabled.opacity",
     cssVar: "--sl-action-disabled-opacity",
     type: "number",
     tier: "semantic",
-    description: "Shared unavailable-state opacity.",
+    description: "Shared unavailable-state opacity. SlButton uses dedicated disabled colors instead of fading the rest tone.",
     value: {
       light: "0.55",
       dark: "0.55",
@@ -99,6 +154,17 @@ export const tokens = {
     value: {
       light: "0.5rem",
       dark: "0.5rem",
+    },
+  },
+  "action.highlight": {
+    name: "action.highlight",
+    cssVar: "--sl-action-highlight",
+    type: "shadow",
+    tier: "semantic",
+    description: "Inset top sheen on solid actions.",
+    value: {
+      light: "inset 0px 1px 0px 0px oklch(1 0.012 258 / 0.28)",
+      dark: "inset 0px 1px 0px 0px oklch(1 0.005 258 / 0.12)",
     },
   },
   "action.icon.size": {
@@ -277,6 +343,28 @@ export const tokens = {
       dark: "#0f172a",
     },
   },
+  "action.neutral.gradient.from": {
+    name: "action.neutral.gradient.from",
+    cssVar: "--sl-action-neutral-gradient-from",
+    type: "color",
+    tier: "semantic",
+    description: "Neutral action gradient start. Must meet WCAG AA with action.neutral.fg.",
+    value: {
+      light: "#334155",
+      dark: "#cbd5e1",
+    },
+  },
+  "action.neutral.gradient.to": {
+    name: "action.neutral.gradient.to",
+    cssVar: "--sl-action-neutral-gradient-to",
+    type: "color",
+    tier: "semantic",
+    description: "Neutral action gradient end. Must meet WCAG AA with action.neutral.fg.",
+    value: {
+      light: "#263243",
+      dark: "#d3dce7",
+    },
+  },
   "action.primary.bg": {
     name: "action.primary.bg",
     cssVar: "--sl-action-primary-bg",
@@ -332,6 +420,28 @@ export const tokens = {
       dark: "#0f172a",
     },
   },
+  "action.primary.gradient.from": {
+    name: "action.primary.gradient.from",
+    cssVar: "--sl-action-primary-gradient-from",
+    type: "color",
+    tier: "semantic",
+    description: "Primary action gradient start. Must meet WCAG AA with action.primary.fg.",
+    value: {
+      light: "#1d4ed8",
+      dark: "#60a5fa",
+    },
+  },
+  "action.primary.gradient.to": {
+    name: "action.primary.gradient.to",
+    cssVar: "--sl-action-primary-gradient-to",
+    type: "color",
+    tier: "semantic",
+    description: "Primary action gradient end. Subtle hue shift; must meet WCAG AA with action.primary.fg.",
+    value: {
+      light: "#004e7a",
+      dark: "#38bdf8",
+    },
+  },
   "action.radius": {
     name: "action.radius",
     cssVar: "--sl-action-radius",
@@ -345,6 +455,50 @@ export const tokens = {
     value: {
       light: "0.5rem",
       dark: "0.5rem",
+    },
+  },
+  "action.shadow": {
+    name: "action.shadow",
+    cssVar: "--sl-action-shadow",
+    type: "shadow",
+    tier: "semantic",
+    description: "Rest elevation on solid actions.",
+    value: {
+      light: "0px 2px 4px 0px oklch(0.254 0.028 257.5 / 0.08), 0px 4px 10px 0px oklch(0.254 0.028 257.5 / 0.14)",
+      dark: "0px 2px 4px 0px oklch(0.08 0.02 258 / 0.3), 0px 3px 8px 0px oklch(0.08 0.02 258 / 0.18)",
+    },
+  },
+  "action.shadow.press": {
+    name: "action.shadow.press",
+    cssVar: "--sl-action-shadow-press",
+    type: "shadow",
+    tier: "semantic",
+    description: "Compressed elevation on a pressed solid action.",
+    value: {
+      light: "0px 1px 2px 0px oklch(0.254 0.028 257.5 / 0.08), 0px 1px 3px 0px oklch(0.254 0.028 257.5 / 0.14)",
+      dark: "0px 1px 2px 0px oklch(0.08 0.02 258 / 0.28), 0px 1px 2px 0px oklch(0.08 0.02 258 / 0.16)",
+    },
+  },
+  "action.spinner.duration": {
+    name: "action.spinner.duration",
+    cssVar: "--sl-action-spinner-duration",
+    type: "duration",
+    tier: "semantic",
+    description: "Default action spinner rotation period. The reduced-motion pulse uses the same period so it does not flicker.",
+    value: {
+      light: "700ms",
+      dark: "700ms",
+    },
+  },
+  "action.spinner.opacity": {
+    name: "action.spinner.opacity",
+    cssVar: "--sl-action-spinner-opacity",
+    type: "number",
+    tier: "semantic",
+    description: "Reduced-motion spinner pulse trough opacity.",
+    value: {
+      light: "0.35",
+      dark: "0.35",
     },
   },
   "action.spinner.size": {
@@ -859,6 +1013,16 @@ export const tokens = {
     value: {
       light: "oklch(0.254 0.028 257.5 / 0.18)",
       dark: "oklch(0.254 0.028 257.5 / 0.18)",
+    },
+  },
+  "color.highlight.inset": {
+    name: "color.highlight.inset",
+    type: "color",
+    tier: "primitive",
+    description: "Inset top sheen for raised actions in light mode.",
+    value: {
+      light: "oklch(1 0.012 258 / 0.28)",
+      dark: "oklch(1 0.012 258 / 0.28)",
     },
   },
   "color.info.100": {
@@ -2769,6 +2933,18 @@ export const tokens = {
       dark: "#0f172a",
     },
   },
+  "focus.ring.duration": {
+    name: "focus.ring.duration",
+    cssVar: "--sl-focus-ring-duration",
+    reducedMotion: "0ms",
+    type: "duration",
+    tier: "semantic",
+    description: "Focus-ring entrance duration. Instant under reduced motion.",
+    value: {
+      light: "120ms",
+      dark: "120ms",
+    },
+  },
   "focus.ring.offset": {
     name: "focus.ring.offset",
     cssVar: "--sl-focus-ring-offset",
@@ -3030,6 +3206,39 @@ export const tokens = {
     value: {
       light: "linear-gradient(135deg in oklch, #356af3 0%, #579dd1 100%)",
       dark: "linear-gradient(135deg in oklch, #60a5fa 0%, #38bdf8 100%)",
+    },
+  },
+  "gradient.action.danger": {
+    name: "gradient.action.danger",
+    cssVar: "--sl-gradient-action-danger",
+    type: "gradient",
+    tier: "semantic",
+    description: "Solid danger action fill. Interpolated in oklch; both stops meet WCAG AA with action.danger.fg.",
+    value: {
+      light: "linear-gradient(165deg in oklch, #b91c1c 0%, #900009 100%)",
+      dark: "linear-gradient(165deg in oklch, #f87171 0%, #ff908d 100%)",
+    },
+  },
+  "gradient.action.neutral": {
+    name: "gradient.action.neutral",
+    cssVar: "--sl-gradient-action-neutral",
+    type: "gradient",
+    tier: "semantic",
+    description: "Solid neutral action fill. Interpolated in oklch; both stops meet WCAG AA with action.neutral.fg.",
+    value: {
+      light: "linear-gradient(165deg in oklch, #334155 0%, #263243 100%)",
+      dark: "linear-gradient(165deg in oklch, #cbd5e1 0%, #d3dce7 100%)",
+    },
+  },
+  "gradient.action.primary": {
+    name: "gradient.action.primary",
+    cssVar: "--sl-gradient-action-primary",
+    type: "gradient",
+    tier: "semantic",
+    description: "Solid primary action fill. Interpolated in oklch; both stops meet WCAG AA with action.primary.fg.",
+    value: {
+      light: "linear-gradient(165deg in oklch, #1d4ed8 0%, #004e7a 100%)",
+      dark: "linear-gradient(165deg in oklch, #60a5fa 0%, #38bdf8 100%)",
     },
   },
   "gradient.aurora": {
@@ -3337,6 +3546,18 @@ export const tokens = {
       dark: "1",
     },
   },
+  "motion.press.scale": {
+    name: "motion.press.scale",
+    cssVar: "--sl-motion-press-scale",
+    reducedMotion: "1",
+    type: "number",
+    tier: "semantic",
+    description: "Pressed control scale. 1 under reduced motion so only color feedback remains.",
+    value: {
+      light: "0.98",
+      dark: "0.98",
+    },
+  },
   "motion.scale": {
     name: "motion.scale",
     cssVar: "--sl-motion-scale",
@@ -3452,6 +3673,16 @@ export const tokens = {
       dark: "0.55",
     },
   },
+  "opacity.dragged": {
+    name: "opacity.dragged",
+    type: "number",
+    tier: "primitive",
+    description: "Dragged state-layer overlay opacity. Applied on the current tone.",
+    value: {
+      light: "0.16",
+      dark: "0.16",
+    },
+  },
   "opacity.glass": {
     name: "opacity.glass",
     type: "number",
@@ -3470,6 +3701,66 @@ export const tokens = {
     value: {
       light: "0.08",
       dark: "0.08",
+    },
+  },
+  "opacity.hover": {
+    name: "opacity.hover",
+    type: "number",
+    tier: "primitive",
+    description: "Hover state-layer overlay opacity. Applied on the current tone.",
+    value: {
+      light: "0.08",
+      dark: "0.08",
+    },
+  },
+  "opacity.mix.border": {
+    name: "opacity.mix.border",
+    type: "number",
+    tier: "primitive",
+    description: "Soft-treatment border mix of tone into the surface.",
+    value: {
+      light: "0.4",
+      dark: "0.4",
+    },
+  },
+  "opacity.mix.soft": {
+    name: "opacity.mix.soft",
+    type: "number",
+    tier: "primitive",
+    description: "Soft-treatment rest mix of tone into the surface.",
+    value: {
+      light: "0.12",
+      dark: "0.12",
+    },
+  },
+  "opacity.press": {
+    name: "opacity.press",
+    type: "number",
+    tier: "primitive",
+    description: "Pressed state-layer overlay opacity. Applied on the current tone.",
+    value: {
+      light: "0.12",
+      dark: "0.12",
+    },
+  },
+  "opacity.selected": {
+    name: "opacity.selected",
+    type: "number",
+    tier: "primitive",
+    description: "Selected state-layer overlay opacity. Applied on the current tone.",
+    value: {
+      light: "0.1",
+      dark: "0.1",
+    },
+  },
+  "opacity.spinner": {
+    name: "opacity.spinner",
+    type: "number",
+    tier: "primitive",
+    description: "Reduced-motion spinner pulse trough opacity.",
+    value: {
+      light: "0.35",
+      dark: "0.35",
     },
   },
   "radius.lg": {
@@ -3643,6 +3934,16 @@ export const tokens = {
     value: {
       light: "0.96",
       dark: "0.96",
+    },
+  },
+  "scale.press": {
+    name: "scale.press",
+    type: "number",
+    tier: "primitive",
+    description: "Pressed control scale. 1 under reduced motion.",
+    value: {
+      light: "0.98",
+      dark: "0.98",
     },
   },
   "size.blur.glass": {
@@ -4018,6 +4319,72 @@ export const tokens = {
     value: {
       light: "linear(0, 0.0043 0.8264%, 0.036 2.4793%, 0.1271 4.9587%, 0.6578 14.876%, 0.8392 19.0083%, 0.9867 23.9669%, 1.0328 26.4463%, 1.063 28.9256%, 1.0832 32.2314%, 1.0853 36.3636%, 1.0164 52.8926%, 0.9952 62.8099%, 1)",
       dark: "linear(0, 0.0043 0.8264%, 0.036 2.4793%, 0.1271 4.9587%, 0.6578 14.876%, 0.8392 19.0083%, 0.9867 23.9669%, 1.0328 26.4463%, 1.063 28.9256%, 1.0832 32.2314%, 1.0853 36.3636%, 1.0164 52.8926%, 0.9952 62.8099%, 1)",
+    },
+  },
+  "state.layer.dragged": {
+    name: "state.layer.dragged",
+    cssVar: "--sl-state-layer-dragged",
+    type: "number",
+    tier: "semantic",
+    description: "Dragged overlay opacity on the current tone. Used when aria-grabbed is true.",
+    value: {
+      light: "0.16",
+      dark: "0.16",
+    },
+  },
+  "state.layer.hover": {
+    name: "state.layer.hover",
+    cssVar: "--sl-state-layer-hover",
+    type: "number",
+    tier: "semantic",
+    description: "Hover overlay opacity on the current tone. Works across every tone and mode.",
+    value: {
+      light: "0.08",
+      dark: "0.08",
+    },
+  },
+  "state.layer.press": {
+    name: "state.layer.press",
+    cssVar: "--sl-state-layer-press",
+    type: "number",
+    tier: "semantic",
+    description: "Pressed overlay opacity on the current tone.",
+    value: {
+      light: "0.12",
+      dark: "0.12",
+    },
+  },
+  "state.layer.selected": {
+    name: "state.layer.selected",
+    cssVar: "--sl-state-layer-selected",
+    type: "number",
+    tier: "semantic",
+    description: "Selected overlay opacity on the current tone. Used when aria-pressed is true.",
+    value: {
+      light: "0.1",
+      dark: "0.1",
+    },
+  },
+  "state.mix.border": {
+    name: "state.mix.border",
+    cssVar: "--sl-state-mix-border",
+    type: "number",
+    tier: "semantic",
+    description: "Border mix of tone into the surface for soft treatments.",
+    value: {
+      light: "0.4",
+      dark: "0.4",
+    },
+  },
+  "state.mix.soft": {
+    name: "state.mix.soft",
+    cssVar: "--sl-state-mix-soft",
+    type: "number",
+    tier: "semantic",
+    description: "Rest mix of tone into the surface for soft treatments.",
+    value: {
+      light: "0.12",
+      dark: "0.12",
     },
   },
   "status.danger.bg": {
