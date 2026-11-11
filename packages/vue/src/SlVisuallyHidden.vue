@@ -7,8 +7,7 @@ const props = withDefaults(defineProps<SlVisuallyHiddenProps>(), {
   focusable: false,
 })
 
-// Listeners live on rootProps. Template comments become real nodes in
-// development and would break the single-root fallthrough this API needs.
+// Template comments become nodes in development and break single-root fallthrough.
 const { rootProps } = useSlVisuallyHidden({
   focusable: () => props.focusable,
 })

@@ -8,12 +8,7 @@ import type { SlVisuallyHiddenElement } from './sl-visually-hidden'
 
 const SKIP_LINK = '<a href="#main">Skip to content</a>'
 
-/**
- * jsdom applies no CSS layout and computes no accessible names, so these tests
- * assert the style contract and the accessibility-tree invariants that produce
- * conformance. Perception, real accessible-name computation, and keyboard
- * behavior in a browser are covered by `tests/e2e/playground.spec.ts`.
- */
+// jsdom has no layout or accessible-name computation; perception lives in e2e.
 describe('SlVisuallyHidden', () => {
   describe('WCAG 1.3.1 Info and Relationships', () => {
     it('keeps content in the accessibility tree', () => {
@@ -22,8 +17,6 @@ describe('SlVisuallyHidden', () => {
       })
       const root = wrapper.get('span').element
 
-      // Each of these would remove the content from assistive technology, which
-      // would invert the component's purpose rather than degrade it.
       expect(root.getAttribute('aria-hidden')).toBeNull()
       expect(root.hasAttribute('hidden')).toBe(false)
       expect(root.style.display).not.toBe('none')
@@ -56,8 +49,7 @@ describe('SlVisuallyHidden', () => {
       const root = wrapper.get('span').element
 
       expect(root.style.fontSize).toBe('')
-      // 1px rather than 0: zero-area elements are dropped from the
-      // accessibility tree by some browser and screen-reader combinations.
+      // 1px not 0: some engines drop zero-area boxes from the accessibility tree.
       expect(root.style.width).toBe('1px')
       expect(root.style.height).toBe('1px')
     })
@@ -99,8 +91,7 @@ describe('SlVisuallyHidden', () => {
       expect(root.style.position).toBe('absolute')
       expect(root.getAttribute('data-state')).toBe('hidden')
 
-      // The event is dispatched on the descendant, not the root, because the
-      // skip-link pattern depends on `focusin` bubbling from the anchor.
+      // Skip-link reveal depends on `focusin` bubbling from the descendant.
       await wrapper.get('a').trigger('focusin')
 
       expect(root.style.position).toBe('')
@@ -139,9 +130,7 @@ describe('SlVisuallyHidden', () => {
       await wrapper.get('a').trigger('focusin')
       expect(root.style.position).toBe('absolute')
 
-      // Focus presence is tracked even while hidden, so enabling the prop with
-      // focus already inside reveals immediately instead of waiting for the
-      // subtree to be refocused.
+      // Tracking while hidden means enabling `focusable` with focus inside reveals now.
       await wrapper.setProps({ focusable: true })
       expect(root.style.position).toBe('')
 
@@ -188,8 +177,6 @@ describe('SlVisuallyHidden', () => {
       expect(root.getAttribute('aria-live')).toBe('polite')
       expect(root.getAttribute('aria-atomic')).toBe('true')
 
-      // A live region must already exist in the document before its text
-      // changes, so server-rendered markup has to carry these attributes too.
       const html = await renderToString(h(SlVisuallyHidden, attrs))
       expect(html).toContain('role="status"')
       expect(html).toContain('aria-live="polite"')
@@ -205,8 +192,6 @@ describe('SlVisuallyHidden', () => {
           slots: { default: 'Delete row 3' },
         })
 
-        // Asserting on the serialized markup proves the component renders that
-        // tag as its single root, which selecting by tag name could not.
         const html = wrapper.html()
         expect(html.startsWith(`<${as} `)).toBe(true)
         expect(html.endsWith(`</${as}>`)).toBe(true)
@@ -219,9 +204,7 @@ describe('SlVisuallyHidden', () => {
 
       expect(root.style.margin).toBe('-1px')
       expect(root.style.clipPath).toBe('inset(50%)')
-      // Read through `getPropertyValue` because the `clip` accessor is
-      // deprecated. jsdom also re-serializes `rect(0 0 0 0)`, so assert the
-      // legacy fallback is present rather than pinning a rewritten value.
+      // `clip` accessor is deprecated; jsdom rewrites `rect(0 0 0 0)`.
       expect(root.style.getPropertyValue('clip')).not.toBe('')
       expect(root.style.textIndent).toBe('')
     })
@@ -239,11 +222,7 @@ describe('SlVisuallyHidden', () => {
       })
       const root = wrapper.get('span').element
 
-      // Vue merges fallthrough style after the component's own, which is the
-      // documented escape hatch from inline-style specificity.
       expect(root.style.position).toBe('static')
-      // Only the conflicting declaration is replaced. The rest still apply, so
-      // overriding one property does not reveal the content.
       expect(root.style.width).toBe('1px')
       expect(root.style.overflow).toBe('hidden')
     })
@@ -282,8 +261,6 @@ describe('SlVisuallyHidden', () => {
     })
 
     it('renders focusable content hidden on the server', async () => {
-      // Nothing is focused before hydration, so the hidden state is the correct
-      // server output. Reveal begins working once listeners are attached.
       const html = await renderToString(
         h(SlVisuallyHidden, { focusable: true }, { default: () => 'Skip' }),
       )
@@ -304,8 +281,6 @@ describe('SlVisuallyHidden', () => {
       wrapper.unmount()
 
       expect(document.body.contains(root)).toBe(false)
-      // Listeners are template-bound, so Vue detaches them with the element and
-      // a late focus event is inert rather than a leak.
       expect(() => {
         root.dispatchEvent(new FocusEvent('focusin', { bubbles: true }))
       }).not.toThrow()

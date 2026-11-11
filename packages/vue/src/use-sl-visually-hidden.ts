@@ -9,31 +9,8 @@ import {
 import type { UseSlVisuallyHiddenOptions } from './sl-visually-hidden'
 
 /**
- * The clip technique keeps content in the accessibility tree while removing it
- * from visual presentation. Every declaration is load-bearing:
- *
- * - `position: absolute` with `margin: -1px` takes the box out of layout flow so
- *   surrounding content does not shift around it.
- * - The dimensions are `1px` rather than `0` because some browser and
- *   screen-reader combinations drop zero-area elements from the accessibility
- *   tree, which would defeat the entire purpose of the component.
- * - `clip-path: inset(50%)` is the modern clip; `clip: rect(0 0 0 0)` is
- *   deprecated but retained for engines that never implemented `clip-path` for
- *   this case.
- * - `overflow: hidden` with `white-space: nowrap` stops a long string from
- *   wrapping inside the 1px box and producing scrollable overflow.
- *
- * Four alternatives are deliberately rejected: `display: none` and
- * `visibility: hidden` remove content from assistive technology entirely, zero
- * dimensions risk the same accessibility-tree removal, and
- * `text-indent: -9999px` breaks in right-to-left writing modes.
- *
- * The style also sets no `font-size`, `line-height`, `letter-spacing`, or
- * `word-spacing`. Their absence is part of the contract rather than an
- * oversight: setting any of them would conflict with the WCAG text-resize and
- * text-spacing criteria, so a test asserts they stay absent.
- *
- * Module-level so the object is created once rather than per instance.
+ * Clip technique: 1px not 0 so some engines keep the node in the accessibility
+ * tree. No font/spacing declarations (WCAG 1.4.4 / 1.4.12).
  */
 const visuallyHiddenStyle = Object.freeze({
   position: 'absolute',
@@ -57,28 +34,13 @@ export interface SlVisuallyHiddenRootProps {
   onFocusout: () => void
 }
 
-/**
- * Headless visually-hidden behavior: clip-technique styles, `data-part` /
- * `data-state` hooks, and focus-driven reveal. No generated id — consumers that
- * need `id` pass it as a native attribute. Reveal is derived from real focus,
- * so controllable state does not apply.
- */
+/** Clip hiding, `data-part` / `data-state`, and focus-driven reveal. */
 export function useSlVisuallyHidden(options: UseSlVisuallyHiddenOptions = {}): {
   isRevealed: ComputedRef<boolean>
   rootProps: ComputedRef<SlVisuallyHiddenRootProps>
 } {
-  // `focusin` / `focusout` stand in for `:focus-within`, which inline styles
-  // cannot express. Both events bubble, so a skip-link anchor drives reveal
-  // without the root itself ever becoming focusable.
-  //
-  // Focus presence is tracked whatever `focusable` is set to, and `focusable`
-  // only gates whether that presence reveals anything. Skipping the tracking
-  // while hidden would strand a stale reading if `focusable` changed while the
-  // subtree held focus.
-  //
-  // Moving focus between two descendants fires `focusout` then `focusin`
-  // synchronously. Vue coalesces the resulting render, so the content does not
-  // flicker between the two events.
+  // Bubbling stand-in for `:focus-within`. Always track so toggling `focusable`
+  // while focused cannot go stale.
   const hasFocusWithin = ref(false)
 
   const isRevealed = computed(

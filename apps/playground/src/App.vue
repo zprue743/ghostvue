@@ -67,11 +67,7 @@ function closeNested(): void {
 
 <template>
   <header>
-    <!--
-      The skip link is the first focusable element in the document, so it must
-      reveal itself on focus. Without `focusable` it would be reachable by
-      keyboard while staying invisible.
-    -->
+    <!-- Skip link must reveal on focus; without `focusable` it stays invisible. -->
     <SlVisuallyHidden focusable>
       <a class="skip-link" href="#main">Skip to content</a>
     </SlVisuallyHidden>
@@ -95,11 +91,7 @@ function closeNested(): void {
           <tr>
             <th scope="col">Report</th>
             <th scope="col">Owner</th>
-            <!--
-              The actions column header is obvious to a sighted reader and
-              missing entirely for a screen reader, so it renders as a real
-              `th` that only assistive technology encounters.
-            -->
+            <!-- Real `th` for AT; sighted users infer the column from context. -->
             <SlVisuallyHidden as="th" scope="col"> Actions </SlVisuallyHidden>
           </tr>
         </thead>
@@ -126,11 +118,7 @@ function closeNested(): void {
 
       <p v-if="reports.length === 0">Every report was deleted.</p>
 
-      <!--
-        A visually hidden live region announces an outcome that is otherwise
-        conveyed only by a row disappearing. The element is present from first
-        render so the region exists before its text changes.
-      -->
+      <!-- Live region must exist before its text changes. -->
       <SlVisuallyHidden role="status" aria-live="polite">
         {{ status }}
       </SlVisuallyHidden>
@@ -265,11 +253,7 @@ main {
   margin: 2rem;
 }
 
-/*
- * The skip link moves focus here, so `main` needs `tabindex="-1"` to be a valid
- * target. It is not an interactive control, and the `:focus-visible` rule below
- * still covers every control a keyboard user actually operates.
- */
+/* Skip-link target; not an interactive control. */
 main:focus {
   outline: none;
 }

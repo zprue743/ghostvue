@@ -11,7 +11,7 @@ new context rather than rewriting history.
 
 ## Decisions
 
-- [0001 — Begin component implementation](./0001-begin-component-implementation.md)
+- 0001 — withdrawn in favor of [0002](./0002-exit-foundation-phase.md)
 - [0002 — Exit the foundation phase under a component gate](./0002-exit-foundation-phase.md)
 - [0003 — Public component API conventions](./0003-public-component-api-conventions.md)
 - [0004 — Headless and styled layering](./0004-headless-styled-layering.md)
