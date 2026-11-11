@@ -12,13 +12,23 @@
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
-    }
+    },
+    "./default.css": "./dist/default.css"
   },
   "files": [
     "dist"
   ],
   "scripts": {
-    "build": "tsc -p tsconfig.build.json",
-    "typecheck": "tsc -p tsconfig.json --noEmit"
+    "build": "tsc -p tsconfig.build.json && node scripts/copy-css.mjs",
+    "typecheck": "vue-tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@slop-ui/vue": "workspace:*"
+  },
+  "peerDependencies": {
+    "vue": "^3.5.0"
+  },
+  "devDependencies": {
+    "vue": "3.5.41"
   }
 }

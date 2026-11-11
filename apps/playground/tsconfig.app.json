@@ -8,6 +8,7 @@
     "types": [],
     // Match vite.config.ts: playground typecheck runs before dist types exist.
     "paths": {
+      "@slop-ui/themes": ["../../packages/themes/src/index.ts"],
       "@slop-ui/vue": ["../../packages/vue/src/index.ts"]
     }
   },
@@ -16,7 +17,11 @@
     "src/**/*.ts",
     "src/**/*.vue",
     "../../packages/vue/src/**/*.ts",
-    "../../packages/vue/src/**/*.vue"
+    "../../packages/vue/src/**/*.vue",
+    "../../packages/themes/src/**/*.ts"
   ],
-  "exclude": ["../../packages/vue/src/**/*.test.ts"]
+  "exclude": [
+    "../../packages/vue/src/**/*.test.ts",
+    "../../packages/themes/src/**/*.test.ts"
+  ]
 }

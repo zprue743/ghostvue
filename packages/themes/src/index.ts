@@ -1,5 +1,11 @@
-/**
- * Public entry point for optional themes. No tokens or visual opinions are
- * exported until real components provide evidence for a coherent theme API.
- */
-export {}
+/** Themed wrappers and default CSS. One `SlButton` import loads the stylesheet. */
+import './default.css'
+
+export {
+  SlButton,
+  type SlButtonExposed,
+  type SlButtonSize,
+  type SlButtonTone,
+  type SlButtonType,
+  type SlButtonVariant,
+} from './sl-button'

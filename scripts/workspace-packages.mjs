@@ -28,6 +28,6 @@ export const workspacePackages = [
     directory: 'themes',
     name: '@slop-ui/themes',
     responsibility: 'Optional theme and design-token infrastructure.',
-    allowedDependencies: [],
+    allowedDependencies: ['@slop-ui/vue'],
   },
 ]

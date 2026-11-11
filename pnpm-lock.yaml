@@ -76,6 +76,9 @@ importers:
 
   apps/playground:
     dependencies:
+      '@slop-ui/themes':
+        specifier: workspace:*
+        version: link:../../packages/themes
       '@slop-ui/vue':
         specifier: workspace:*
         version: link:../../packages/vue
@@ -91,7 +94,15 @@ importers:
 
   packages/shared: {}
 
-  packages/themes: {}
+  packages/themes:
+    dependencies:
+      '@slop-ui/vue':
+        specifier: workspace:*
+        version: link:../vue
+    devDependencies:
+      vue:
+        specifier: 3.5.41
+        version: 3.5.41(typescript@6.0.3)
 
   packages/vue:
     dependencies:

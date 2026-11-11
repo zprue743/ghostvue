@@ -1,0 +1,286 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "handwritten",
+  "name": "SlButton",
+  "package": "@slop-ui/themes",
+  "status": "experimental",
+  "description": "Themed wrapper around headless SlButton. Same behavioral props plus variant, tone, size, block, and iconOnly. Importing it loads the default stylesheet and scopes styles to this instance. Hand-written until SLO-13 generates manifests.",
+  "props": [
+    {
+      "name": "type",
+      "type": "'button' | 'submit' | 'reset'",
+      "default": "button",
+      "required": false,
+      "description": "Native button behavior, forwarded to the unstyled SlButton.",
+      "deprecated": false
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Forwards native disabled semantics to the unstyled SlButton.",
+      "deprecated": false
+    },
+    {
+      "name": "loading",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Forwards consumer-owned pending state to the unstyled SlButton.",
+      "deprecated": false
+    },
+    {
+      "name": "variant",
+      "type": "'solid' | 'soft' | 'outline' | 'ghost'",
+      "default": "solid",
+      "required": false,
+      "description": "Visual treatment. The default omits data-variant so CSS can treat a missing hook as solid.",
+      "deprecated": false
+    },
+    {
+      "name": "tone",
+      "type": "'accent' | 'neutral' | 'danger'",
+      "default": "accent",
+      "required": false,
+      "description": "Semantic color intent, independent of variant. The default omits data-tone.",
+      "deprecated": false
+    },
+    {
+      "name": "size",
+      "type": "'sm' | 'md' | 'lg'",
+      "default": "md",
+      "required": false,
+      "description": "Control size. The default omits data-size so CSS can treat a missing hook as md.",
+      "deprecated": false
+    },
+    {
+      "name": "block",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Stretch to the available inline size via data-block.",
+      "deprecated": false
+    },
+    {
+      "name": "iconOnly",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Square icon-button treatment via data-icon-only. Still requires an accessible name.",
+      "deprecated": false
+    }
+  ],
+  "models": [],
+  "events": [],
+  "slots": [
+    {
+      "name": "default",
+      "props": [],
+      "description": "Button label and optional decorative content such as an icon. Icon-only use requires aria-label, aria-labelledby, or hidden text."
+    }
+  ],
+  "exposed": [
+    {
+      "name": "element",
+      "kind": "property",
+      "type": "HTMLButtonElement | null",
+      "description": "The native button after mount; null before mount and after unmount. Delegates to the unstyled SlButton."
+    },
+    {
+      "name": "focus",
+      "kind": "method",
+      "type": "(options?: FocusOptions) => void",
+      "description": "Focuses the native button when it is mounted and enabled. Delegates to the unstyled SlButton."
+    },
+    {
+      "name": "blur",
+      "kind": "method",
+      "type": "() => void",
+      "description": "Removes focus from the native button when it is mounted. Delegates to the unstyled SlButton."
+    }
+  ],
+  "styling": {
+    "parts": [
+      {
+        "name": "root",
+        "description": "The native button element inside the display:contents themed scope."
+      },
+      {
+        "name": "icon",
+        "description": "Optional decorative icon content inside the default slot."
+      },
+      {
+        "name": "loading-indicator",
+        "description": "Optional decorative pending indicator. Replaces the default spinner when present."
+      }
+    ],
+    "states": [
+      {
+        "name": "loading",
+        "description": "Pending action. Overlay spinner and wait cursor. Wins over disabled for data-state."
+      },
+      {
+        "name": "disabled",
+        "description": "Unavailable appearance. Prefer the native disabled attribute when both apply."
+      }
+    ],
+    "cssProperties": [
+      {
+        "name": "--slop-theme-surface",
+        "description": "Background applied to a .slop-theme scope and used as the mix surface for soft, outline, and ghost treatments."
+      },
+      {
+        "name": "--slop-theme-color",
+        "description": "Foreground applied to a .slop-theme scope."
+      },
+      {
+        "name": "--slop-button-accent-color",
+        "description": "Solid background and outline/ghost foreground for the accent tone."
+      },
+      {
+        "name": "--slop-button-accent-color-hover",
+        "description": "Solid hover background for the accent tone."
+      },
+      {
+        "name": "--slop-button-accent-color-active",
+        "description": "Solid active background for the accent tone."
+      },
+      {
+        "name": "--slop-button-accent-contrast",
+        "description": "Content color on the solid accent treatment."
+      },
+      {
+        "name": "--slop-button-neutral-color",
+        "description": "Solid background and outline/ghost foreground for the neutral tone."
+      },
+      {
+        "name": "--slop-button-neutral-color-hover",
+        "description": "Solid hover background for the neutral tone."
+      },
+      {
+        "name": "--slop-button-neutral-color-active",
+        "description": "Solid active background for the neutral tone."
+      },
+      {
+        "name": "--slop-button-neutral-contrast",
+        "description": "Content color on the solid neutral treatment."
+      },
+      {
+        "name": "--slop-button-danger-color",
+        "description": "Solid background and outline/ghost foreground for the danger tone."
+      },
+      {
+        "name": "--slop-button-danger-color-hover",
+        "description": "Solid hover background for the danger tone."
+      },
+      {
+        "name": "--slop-button-danger-color-active",
+        "description": "Solid active background for the danger tone."
+      },
+      {
+        "name": "--slop-button-danger-contrast",
+        "description": "Content color on the solid danger treatment."
+      },
+      {
+        "name": "--slop-button-disabled-opacity",
+        "description": "Shared unavailable-state opacity."
+      },
+      {
+        "name": "--slop-button-focus-ring",
+        "description": "Outer color of the two-color keyboard focus indicator."
+      },
+      {
+        "name": "--slop-button-focus-ring-contrast",
+        "description": "Inner color of the two-color keyboard focus indicator."
+      },
+      {
+        "name": "--slop-button-focus-ring-offset",
+        "description": "Gap between the button edge and the focus ring."
+      },
+      {
+        "name": "--slop-button-focus-ring-width",
+        "description": "Thickness of the focus outline."
+      },
+      {
+        "name": "--slop-button-font-weight",
+        "description": "Button label font weight."
+      },
+      {
+        "name": "--slop-button-gap",
+        "description": "Space between label and icon content."
+      },
+      {
+        "name": "--slop-button-icon-size",
+        "description": "Size of content marked data-part=icon."
+      },
+      {
+        "name": "--slop-button-loading-indicator-size",
+        "description": "Size of the default and custom loading indicators."
+      },
+      {
+        "name": "--slop-button-loading-indicator-width",
+        "description": "Stroke width of the default loading spinner."
+      },
+      {
+        "name": "--slop-button-radius",
+        "description": "Corner radius of the themed button."
+      },
+      {
+        "name": "--slop-button-transition-duration",
+        "description": "Duration of color and opacity transitions."
+      },
+      {
+        "name": "--slop-button-size-sm-min-size",
+        "description": "Minimum block size for size sm."
+      },
+      {
+        "name": "--slop-button-size-sm-padding-block",
+        "description": "Block padding for size sm."
+      },
+      {
+        "name": "--slop-button-size-sm-padding-inline",
+        "description": "Inline padding for size sm."
+      },
+      {
+        "name": "--slop-button-size-md-min-size",
+        "description": "Minimum block size for size md."
+      },
+      {
+        "name": "--slop-button-size-md-padding-block",
+        "description": "Block padding for size md."
+      },
+      {
+        "name": "--slop-button-size-md-padding-inline",
+        "description": "Inline padding for size md."
+      },
+      {
+        "name": "--slop-button-size-lg-min-size",
+        "description": "Minimum block size for size lg."
+      },
+      {
+        "name": "--slop-button-size-lg-padding-block",
+        "description": "Block padding for size lg."
+      },
+      {
+        "name": "--slop-button-size-lg-padding-inline",
+        "description": "Inline padding for size lg."
+      }
+    ]
+  },
+  "accessibility": {
+    "role": "button",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/button/",
+    "keyboard": {
+      "Enter": "Activate the button when it is enabled and not loading.",
+      "Space": "Activate the button when it is enabled and not loading."
+    },
+    "requiredAriaAttributes": []
+  },
+  "examples": [
+    "button-basic",
+    "button-loading",
+    "button-icon-only",
+    "button-variants"
+  ]
+}

@@ -51,8 +51,7 @@ JSON public catalog.
 
 ## Mapping from PR #20 `default.css`
 
-Until DTCG files exist, `packages/themes/src/default.css` on
-[PR #20](https://github.com/zprue743/slop-ui/pull/20) is the runtime
+Until DTCG files exist, `packages/themes/src/default.css` is the runtime
 snapshot the pipeline must be able to reproduce:
 
 | CSS custom property                              | Tier      | Authored token                      |
