@@ -151,6 +151,10 @@
         "description": "Content color on the solid accent treatment."
       },
       {
+        "name": "--sl-action-primary-border",
+        "description": "Border color on the solid accent treatment."
+      },
+      {
         "name": "--sl-action-neutral-bg",
         "description": "Solid background and outline/ghost foreground for the neutral tone."
       },
@@ -167,6 +171,10 @@
         "description": "Content color on the solid neutral treatment."
       },
       {
+        "name": "--sl-action-neutral-border",
+        "description": "Border color on the solid neutral treatment."
+      },
+      {
         "name": "--sl-action-danger-bg",
         "description": "Solid background and outline/ghost foreground for the danger tone."
       },
@@ -181,6 +189,10 @@
       {
         "name": "--sl-action-danger-fg",
         "description": "Content color on the solid danger treatment."
+      },
+      {
+        "name": "--sl-action-danger-border",
+        "description": "Border color on the solid danger treatment."
       },
       {
         "name": "--sl-action-disabled-opacity",

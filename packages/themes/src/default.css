@@ -21,10 +21,11 @@
     --_slop-button-tone-color-active: var(--sl-action-primary-bg-active);
     --_slop-button-tone-color-hover: var(--sl-action-primary-bg-hover);
     --_slop-button-tone-contrast: var(--sl-action-primary-fg);
+    --_slop-button-tone-border: var(--sl-action-primary-border);
     --_slop-button-background: var(--_slop-button-tone-color);
     --_slop-button-background-active: var(--_slop-button-tone-color-active);
     --_slop-button-background-hover: var(--_slop-button-tone-color-hover);
-    --_slop-button-border-color: var(--_slop-button-tone-color);
+    --_slop-button-border-color: var(--_slop-button-tone-border);
     --_slop-button-color: var(--_slop-button-tone-contrast);
     --_slop-button-min-size: var(--sl-control-size-md-min);
     --_slop-button-padding-block: var(--sl-control-size-md-padding-block);
@@ -63,6 +64,7 @@
     --_slop-button-tone-color-active: var(--sl-action-neutral-bg-active);
     --_slop-button-tone-color-hover: var(--sl-action-neutral-bg-hover);
     --_slop-button-tone-contrast: var(--sl-action-neutral-fg);
+    --_slop-button-tone-border: var(--sl-action-neutral-border);
   }
 
   :where(
@@ -73,6 +75,7 @@
     --_slop-button-tone-color-active: var(--sl-action-danger-bg-active);
     --_slop-button-tone-color-hover: var(--sl-action-danger-bg-hover);
     --_slop-button-tone-contrast: var(--sl-action-danger-fg);
+    --_slop-button-tone-border: var(--sl-action-danger-border);
   }
 
   :where(
@@ -117,7 +120,7 @@
       var(--_slop-button-tone-color) 10%,
       var(--sl-surface-bg)
     );
-    --_slop-button-border-color: var(--_slop-button-tone-color);
+    --_slop-button-border-color: var(--_slop-button-tone-border);
     --_slop-button-color: var(--_slop-button-tone-color);
   }
 

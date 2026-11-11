@@ -47,6 +47,7 @@ pnpm manifests
 pnpm manifests:write
 pnpm typecheck
 pnpm test
+pnpm contrast
 pnpm test:e2e
 pnpm build
 pnpm published-exports

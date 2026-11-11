@@ -7,24 +7,144 @@
     },
     "fg": {
       "$type": "color",
-      "$value": "{color.slate.900}",
+      "$value": "{color.ink}",
       "$description": "Theme canvas foreground."
+    },
+    "muted": {
+      "bg": {
+        "$type": "color",
+        "$value": "{color.neutral.100}",
+        "$description": "Muted surface fill behind grouped content."
+      }
+    },
+    "subtle": {
+      "bg": {
+        "$type": "color",
+        "$value": "{color.neutral.50}",
+        "$description": "Subtle surface fill for inset regions."
+      }
+    },
+    "inverse": {
+      "bg": {
+        "$type": "color",
+        "$value": "{color.ink}",
+        "$description": "Inverted surface background."
+      },
+      "fg": {
+        "$type": "color",
+        "$value": "{color.white}",
+        "$description": "Foreground on an inverted surface."
+      }
+    }
+  },
+  "text": {
+    "default": {
+      "$type": "color",
+      "$value": "{surface.fg}",
+      "$description": "Default body text on the canvas."
+    },
+    "muted": {
+      "$type": "color",
+      "$value": "{color.neutral.700}",
+      "$description": "Secondary text on the canvas."
+    },
+    "subtle": {
+      "$type": "color",
+      "$value": "{color.neutral.600}",
+      "$description": "Tertiary text on the canvas. Still meets WCAG 2 AA."
+    },
+    "inverse": {
+      "$type": "color",
+      "$value": "{surface.inverse.fg}",
+      "$description": "Text on an inverted surface."
+    },
+    "primary": {
+      "$type": "color",
+      "$value": "{color.primary.700}",
+      "$description": "Primary-colored text on the canvas."
+    },
+    "success": {
+      "$type": "color",
+      "$value": "{color.success.700}",
+      "$description": "Success-colored text on the canvas."
+    },
+    "warning": {
+      "$type": "color",
+      "$value": "{color.warning.700}",
+      "$description": "Warning-colored text on the canvas."
+    },
+    "danger": {
+      "$type": "color",
+      "$value": "{color.danger.700}",
+      "$description": "Danger-colored text on the canvas."
+    },
+    "info": {
+      "$type": "color",
+      "$value": "{color.info.700}",
+      "$description": "Info-colored text on the canvas."
+    }
+  },
+  "border": {
+    "default": {
+      "$type": "color",
+      "$value": "{color.neutral.300}",
+      "$description": "Default structural border."
+    },
+    "muted": {
+      "$type": "color",
+      "$value": "{color.neutral.200}",
+      "$description": "Low-emphasis border."
+    },
+    "strong": {
+      "$type": "color",
+      "$value": "{color.neutral.500}",
+      "$description": "High-emphasis border."
+    },
+    "primary": {
+      "$type": "color",
+      "$value": "{color.primary.700}",
+      "$description": "Primary-accent border."
+    },
+    "success": {
+      "$type": "color",
+      "$value": "{color.success.700}",
+      "$description": "Success-accent border."
+    },
+    "warning": {
+      "$type": "color",
+      "$value": "{color.warning.700}",
+      "$description": "Warning-accent border."
+    },
+    "danger": {
+      "$type": "color",
+      "$value": "{color.danger.700}",
+      "$description": "Danger-accent border."
+    },
+    "info": {
+      "$type": "color",
+      "$value": "{color.info.700}",
+      "$description": "Info-accent border."
+    },
+    "focus": {
+      "$type": "color",
+      "$value": "{focus.ring.color}",
+      "$description": "Focus-indicator border."
     }
   },
   "action": {
     "primary": {
       "bg": {
         "$type": "color",
-        "$value": "{color.blue.700}",
+        "$value": "{color.primary.700}",
         "$description": "Solid primary action background. Maps to SlButton tone accent.",
         "hover": {
           "$type": "color",
-          "$value": "{color.blue.800}",
+          "$value": "{color.primary.800}",
           "$description": "Solid primary action background on hover."
         },
         "active": {
           "$type": "color",
-          "$value": "{color.blue.900}",
+          "$value": "{color.primary.900}",
           "$description": "Solid primary action background on press."
         }
       },
@@ -32,21 +152,26 @@
         "$type": "color",
         "$value": "{color.white}",
         "$description": "Content color on a solid primary action."
+      },
+      "border": {
+        "$type": "color",
+        "$value": "{action.primary.bg}",
+        "$description": "Border on a solid primary action."
       }
     },
     "neutral": {
       "bg": {
         "$type": "color",
-        "$value": "{color.slate.700}",
+        "$value": "{color.neutral.700}",
         "$description": "Solid neutral action background.",
         "hover": {
           "$type": "color",
-          "$value": "{color.slate.800}",
+          "$value": "{color.neutral.800}",
           "$description": "Solid neutral action background on hover."
         },
         "active": {
           "$type": "color",
-          "$value": "{color.slate.900}",
+          "$value": "{color.neutral.900}",
           "$description": "Solid neutral action background on press."
         }
       },
@@ -54,21 +179,80 @@
         "$type": "color",
         "$value": "{color.white}",
         "$description": "Content color on a solid neutral action."
+      },
+      "border": {
+        "$type": "color",
+        "$value": "{action.neutral.bg}",
+        "$description": "Border on a solid neutral action."
+      }
+    },
+    "success": {
+      "bg": {
+        "$type": "color",
+        "$value": "{color.success.700}",
+        "$description": "Solid success action background.",
+        "hover": {
+          "$type": "color",
+          "$value": "{color.success.800}",
+          "$description": "Solid success action background on hover."
+        },
+        "active": {
+          "$type": "color",
+          "$value": "{color.success.900}",
+          "$description": "Solid success action background on press."
+        }
+      },
+      "fg": {
+        "$type": "color",
+        "$value": "{color.white}",
+        "$description": "Content color on a solid success action."
+      },
+      "border": {
+        "$type": "color",
+        "$value": "{action.success.bg}",
+        "$description": "Border on a solid success action."
+      }
+    },
+    "warning": {
+      "bg": {
+        "$type": "color",
+        "$value": "{color.warning.800}",
+        "$description": "Solid warning action background. Uses 800 so white label text meets WCAG AA.",
+        "hover": {
+          "$type": "color",
+          "$value": "{color.warning.900}",
+          "$description": "Solid warning action background on hover."
+        },
+        "active": {
+          "$type": "color",
+          "$value": "{color.warning.950}",
+          "$description": "Solid warning action background on press."
+        }
+      },
+      "fg": {
+        "$type": "color",
+        "$value": "{color.white}",
+        "$description": "Content color on a solid warning action."
+      },
+      "border": {
+        "$type": "color",
+        "$value": "{action.warning.bg}",
+        "$description": "Border on a solid warning action."
       }
     },
     "danger": {
       "bg": {
         "$type": "color",
-        "$value": "{color.red.700}",
+        "$value": "{color.danger.700}",
         "$description": "Solid danger action background.",
         "hover": {
           "$type": "color",
-          "$value": "{color.red.800}",
+          "$value": "{color.danger.800}",
           "$description": "Solid danger action background on hover."
         },
         "active": {
           "$type": "color",
-          "$value": "{color.red.900}",
+          "$value": "{color.danger.900}",
           "$description": "Solid danger action background on press."
         }
       },
@@ -76,6 +260,38 @@
         "$type": "color",
         "$value": "{color.white}",
         "$description": "Content color on a solid danger action."
+      },
+      "border": {
+        "$type": "color",
+        "$value": "{action.danger.bg}",
+        "$description": "Border on a solid danger action."
+      }
+    },
+    "info": {
+      "bg": {
+        "$type": "color",
+        "$value": "{color.info.700}",
+        "$description": "Solid info action background.",
+        "hover": {
+          "$type": "color",
+          "$value": "{color.info.800}",
+          "$description": "Solid info action background on hover."
+        },
+        "active": {
+          "$type": "color",
+          "$value": "{color.info.900}",
+          "$description": "Solid info action background on press."
+        }
+      },
+      "fg": {
+        "$type": "color",
+        "$value": "{color.white}",
+        "$description": "Content color on a solid info action."
+      },
+      "border": {
+        "$type": "color",
+        "$value": "{action.info.bg}",
+        "$description": "Border on a solid info action."
       }
     },
     "disabled": {
@@ -127,11 +343,81 @@
       }
     }
   },
+  "status": {
+    "success": {
+      "bg": {
+        "$type": "color",
+        "$value": "{color.success.50}",
+        "$description": "Success status background."
+      },
+      "fg": {
+        "$type": "color",
+        "$value": "{color.success.800}",
+        "$description": "Success status foreground."
+      },
+      "border": {
+        "$type": "color",
+        "$value": "{color.success.200}",
+        "$description": "Success status border."
+      }
+    },
+    "warning": {
+      "bg": {
+        "$type": "color",
+        "$value": "{color.warning.50}",
+        "$description": "Warning status background."
+      },
+      "fg": {
+        "$type": "color",
+        "$value": "{color.warning.800}",
+        "$description": "Warning status foreground."
+      },
+      "border": {
+        "$type": "color",
+        "$value": "{color.warning.200}",
+        "$description": "Warning status border."
+      }
+    },
+    "danger": {
+      "bg": {
+        "$type": "color",
+        "$value": "{color.danger.50}",
+        "$description": "Danger status background."
+      },
+      "fg": {
+        "$type": "color",
+        "$value": "{color.danger.800}",
+        "$description": "Danger status foreground."
+      },
+      "border": {
+        "$type": "color",
+        "$value": "{color.danger.200}",
+        "$description": "Danger status border."
+      }
+    },
+    "info": {
+      "bg": {
+        "$type": "color",
+        "$value": "{color.info.50}",
+        "$description": "Info status background."
+      },
+      "fg": {
+        "$type": "color",
+        "$value": "{color.info.800}",
+        "$description": "Info status foreground."
+      },
+      "border": {
+        "$type": "color",
+        "$value": "{color.info.200}",
+        "$description": "Info status border."
+      }
+    }
+  },
   "focus": {
     "ring": {
       "color": {
         "$type": "color",
-        "$value": "{color.slate.900}",
+        "$value": "{color.ink}",
         "$description": "Outer color of the two-color keyboard focus indicator."
       },
       "contrast": {

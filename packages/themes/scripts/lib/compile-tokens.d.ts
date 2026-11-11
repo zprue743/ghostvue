@@ -54,6 +54,7 @@ export function cssVariableName(tokenName: string): string
 export function compileTokenDocuments(
   documents: TokenDocument[],
 ): CompiledTokens
+export function forcedColorForToken(token: CompiledToken): string | null
 export function renderTokenCss(tokens: CompiledToken[]): string
 export function renderTokenTypescript(tokens: CompiledToken[]): string
 export function renderTokenManifest(tokens: CompiledToken[]): TokenManifest
@@ -63,13 +64,17 @@ export function loadTokenDocuments(
   tokensDir: string,
   sources?: readonly TokenSource[],
 ): Promise<TokenDocument[]>
-export function compileThemeTokens(
-  tokensDir: string,
-): Promise<CompiledTokens & { manifestJson: string }>
+export function compileThemeTokens(tokensDir: string): Promise<
+  CompiledTokens & {
+    manifestJson: string
+    rampsJson: string | null
+  }
+>
 export function themeTokenOutputPaths(
   packageRoot: string,
   docsPath: string,
 ): {
+  ramps: string
   css: string
   typescript: string
   manifest: string
@@ -79,6 +84,6 @@ export function writeThemeTokenOutputs(options: {
   packageRoot: string
   docsPath: string
 }): Promise<{
-  compiled: CompiledTokens & { manifestJson: string }
+  compiled: CompiledTokens & { manifestJson: string; rampsJson: string | null }
   paths: ReturnType<typeof themeTokenOutputPaths>
 }>

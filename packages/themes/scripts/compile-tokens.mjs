@@ -7,6 +7,7 @@ const packageRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const docsPath = resolve(packageRoot, '../../docs/themes/tokens.md')
 
 const { paths } = await writeThemeTokenOutputs({ packageRoot, docsPath })
+if (paths.ramps) console.log(`Wrote ${paths.ramps}`)
 console.log(`Wrote ${paths.css}`)
 console.log(`Wrote ${paths.typescript}`)
 console.log(`Wrote ${paths.manifest}`)

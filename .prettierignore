@@ -4,6 +4,7 @@ coverage
 docs/warnings.md
 docs/themes/tokens.md
 packages/themes/src/generated
+packages/themes/tokens/generated
 .vitepress/cache
 .vitepress/dist
 playwright-report

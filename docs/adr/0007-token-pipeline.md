@@ -105,10 +105,9 @@ A docs page listing the catalog is generated from the JSON manifest.
 
 ### Contrast, ramps, and flagship themes (recorded, not built)
 
-- **CI contrast (SLO-63):** WCAG AA is required; APCA is advisory. That gate
-  is not implemented in this pipeline. `culori` is approved as a dev
-  dependency for ramp generation in SLO-63 and is not added until that work
-  needs it.
+- **CI contrast (SLO-63):** WCAG AA is required; APCA is advisory. Implemented
+  in `pnpm contrast` with `culori.wcagContrast` and a local APCA 0.0.98G-4g
+  function. `culori` is a devDependency of `@slop-ui/themes`.
 - **Flagship themes (SLO-68):** calm enterprise, vibrant expressive, and
   minimal monochrome. This pipeline emits `default` only.
 - **Density (SLO-66):** default density is comfortable. Size tokens in the
@@ -145,8 +144,17 @@ and JSON so ramps can land without renaming the runtime API.
   authoring reference and no longer describes a future pipeline.
 - ADR 0005 remains the record that DTCG and the three compile outputs were
   chosen; CSS prefix, component tokens, and mode switching follow this ADR.
-- Follow-ups: SLO-63 ramps and contrast CI, SLO-64 elevation, SLO-65 motion,
-  SLO-66 density, SLO-68 flagship themes, MCP `get_tokens`.
+- Follow-ups: SLO-64 elevation, SLO-65 motion, SLO-66 density, SLO-68
+  flagship themes, MCP `get_tokens`. SLO-63 (ramps, semantic text/border/status,
+  contrast CI, forced-colors mapping) landed on this pipeline.
+
+## Amendments
+
+- 2026-11-11: SLO-63 generates 12-step OKLCH ramps from `seeds.json` with
+  `culori`, expands semantic `text` / `border` / `status` / `action` roles,
+  maps `--sl-*` variables under `forced-colors`, and gates WCAG 2 AA in
+  `pnpm verify`. Dark palettes are tuned separately, not inverted from
+  light. APCA Lc is advisory.
 
 ## Compatibility implications
 
