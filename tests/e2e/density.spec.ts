@@ -61,7 +61,16 @@ test.describe('density, type, and roundness', () => {
           ).toHaveCSS('min-height', heights[density].lg)
         }
 
-        await expect(row).toHaveScreenshot(
+        const shot = page.getByTestId(`density-shot-${density}`)
+        // Pin the clip so system-font metrics cannot change snapshot dimensions
+        // between this VM and GitHub-hosted Ubuntu.
+        await shot.evaluate((element) => {
+          element.style.boxSizing = 'border-box'
+          element.style.height = '88px'
+          element.style.overflow = 'hidden'
+          element.style.width = '1168px'
+        })
+        await expect(shot).toHaveScreenshot(
           `density-${density}.png`,
           screenshotOptions,
         )

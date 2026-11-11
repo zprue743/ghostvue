@@ -67,7 +67,7 @@ const roundness = ref(1)
         :data-testid="`density-row-${mode}`"
       >
         <h3>{{ mode }}</h3>
-        <div class="roundness-grid">
+        <div class="roundness-grid" :data-testid="`density-shot-${mode}`">
           <div
             v-for="amount in roundnesses"
             :key="`${mode}-${amount}`"
@@ -107,6 +107,25 @@ const roundness = ref(1)
   padding: 1rem;
 }
 
+.density-row h3,
+.roundness-cell > span {
+  overflow: hidden;
+}
+
+.density-row h3 {
+  font-size: 16px;
+  height: 24px;
+  line-height: 24px;
+  margin: 0;
+}
+
+.roundness-cell > span {
+  display: block;
+  font-size: 12px;
+  height: 16px;
+  line-height: 16px;
+}
+
 .controls {
   align-items: center;
   grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
@@ -114,9 +133,11 @@ const roundness = ref(1)
 
 .preview,
 .buttons {
+  align-items: center;
   display: flex;
   flex-wrap: wrap;
   gap: 0.75rem;
+  min-height: 48px;
 }
 
 .roundness-grid {
@@ -127,6 +148,6 @@ const roundness = ref(1)
 
 .roundness-cell {
   display: grid;
-  gap: 0.5rem;
+  gap: 8px;
 }
 </style>
