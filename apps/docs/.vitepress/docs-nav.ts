@@ -15,9 +15,7 @@ export const docsSidebar: LlmsSidebarGroup[] = [
   },
   {
     text: 'Components',
-    items: [
-      { text: 'SlVisuallyHidden', link: '/components/visually-hidden' },
-    ],
+    items: [{ text: 'SlVisuallyHidden', link: '/components/visually-hidden' }],
   },
   {
     text: 'Architecture',

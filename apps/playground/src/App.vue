@@ -1,11 +1,7 @@
 <script setup lang="ts">
 import { ref, useTemplateRef } from 'vue'
 
-import {
-  SlVisuallyHidden,
-  useFocusScope,
-  useRovingFocus,
-} from '@slop-ui/vue'
+import { SlVisuallyHidden, useFocusScope, useRovingFocus } from '@slop-ui/vue'
 
 interface Report {
   name: string
