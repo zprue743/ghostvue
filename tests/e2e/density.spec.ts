@@ -62,18 +62,20 @@ test.describe('density, type, and roundness', () => {
         }
 
         const shot = page.getByTestId(`density-shot-${density}`)
-        // Pin the clip so system-font metrics cannot change snapshot dimensions
-        // between this VM and GitHub-hosted Ubuntu.
+        // Pin the clip so system-font metrics cannot change snapshot dimensions.
+        // Mask playground labels; button glyphs still differ slightly across
+        // Ubuntu fonts, so this suite allows 0.05 (SLO-64 snapshots stay at 0.03).
         await shot.evaluate((element) => {
           element.style.boxSizing = 'border-box'
           element.style.height = '88px'
           element.style.overflow = 'hidden'
           element.style.width = '1168px'
         })
-        await expect(shot).toHaveScreenshot(
-          `density-${density}.png`,
-          screenshotOptions,
-        )
+        await expect(shot).toHaveScreenshot(`density-${density}.png`, {
+          ...screenshotOptions,
+          mask: [shot.locator('.roundness-cell > span')],
+          maxDiffPixelRatio: 0.05,
+        })
       }
     } finally {
       await playground.close()
