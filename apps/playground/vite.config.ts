@@ -13,6 +13,24 @@ export default defineConfig({
       '@slop-ui/themes/default.css': fileURLToPath(
         new URL('../../packages/themes/src/default.css', import.meta.url),
       ),
+      '@slop-ui/themes/calm.css': fileURLToPath(
+        new URL(
+          '../../packages/themes/src/generated/calm.css',
+          import.meta.url,
+        ),
+      ),
+      '@slop-ui/themes/vibrant.css': fileURLToPath(
+        new URL(
+          '../../packages/themes/src/generated/vibrant.css',
+          import.meta.url,
+        ),
+      ),
+      '@slop-ui/themes/mono.css': fileURLToPath(
+        new URL(
+          '../../packages/themes/src/generated/mono.css',
+          import.meta.url,
+        ),
+      ),
       '@slop-ui/themes': fileURLToPath(
         new URL('../../packages/themes/src/index.ts', import.meta.url),
       ),

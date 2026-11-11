@@ -13,15 +13,25 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
     },
+    "./define": {
+      "types": "./dist/define.d.ts",
+      "node": "./dist/define.js",
+      "import": "./dist/define.js",
+      "default": "./dist/define.js"
+    },
     "./default.css": "./dist/default.css",
     "./tokens.css": "./dist/tokens.css",
-    "./tokens.json": "./dist/tokens.json"
+    "./tokens.json": "./dist/tokens.json",
+    "./calm.css": "./dist/calm.css",
+    "./vibrant.css": "./dist/vibrant.css",
+    "./mono.css": "./dist/mono.css"
   },
   "files": [
     "dist"
   ],
   "scripts": {
     "build": "node scripts/compile-tokens.mjs && tsc -p tsconfig.build.json && node scripts/copy-css.mjs",
+    "define-theme": "node scripts/define-theme.mjs",
     "typecheck": "node scripts/compile-tokens.mjs && vue-tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {

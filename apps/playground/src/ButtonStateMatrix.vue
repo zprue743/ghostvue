@@ -2,8 +2,17 @@
 import { SlButton as SlButtonThemed } from '@slop-ui/themes'
 
 const modes = ['light', 'dark'] as const
-const densities = ['compact', 'comfortable', 'spacious'] as const
 const tones = ['accent', 'neutral', 'danger'] as const
+
+type DensityName = 'compact' | 'comfortable' | 'spacious'
+
+const props = withDefaults(
+  defineProps<{
+    theme?: string
+    densityFilter?: readonly DensityName[]
+  }>(),
+  { densityFilter: () => ['compact', 'comfortable', 'spacious'] as const },
+)
 
 const states = [
   { id: 'rest', label: 'Rest' },
@@ -35,12 +44,13 @@ function visualState(stateId: string) {
 
 function stateAttrs(
   mode: (typeof modes)[number],
-  density: (typeof densities)[number],
+  density: DensityName,
   tone: (typeof tones)[number],
   stateId: string,
 ) {
+  const prefix = props.theme ? `${props.theme}-` : ''
   const attrs: Record<string, string> = {
-    'data-testid': `matrix-${mode}-${density}-${tone}-${stateId}`,
+    'data-testid': `matrix-${prefix}${mode}-${density}-${tone}-${stateId}`,
   }
   const visual = visualState(stateId)
   if (visual) attrs['data-visual-state'] = visual
@@ -52,10 +62,24 @@ function stateAttrs(
 <template>
   <section
     class="button-state-matrix"
-    aria-labelledby="button-state-matrix-heading"
-    data-testid="button-state-matrix"
+    :aria-labelledby="
+      theme
+        ? `button-state-matrix-${theme}-heading`
+        : 'button-state-matrix-heading'
+    "
+    :data-testid="
+      theme ? `button-state-matrix-${theme}` : 'button-state-matrix'
+    "
   >
-    <h2 id="button-state-matrix-heading">SlButton state matrix</h2>
+    <h2
+      :id="
+        theme
+          ? `button-state-matrix-${theme}-heading`
+          : 'button-state-matrix-heading'
+      "
+    >
+      SlButton state matrix{{ theme ? ` (${theme})` : '' }}
+    </h2>
     <p>
       Frozen interaction states for visual regression. Hover, press, and focus
       use <code>data-visual-state</code>; loading and disabled use the public
@@ -69,19 +93,20 @@ function stateAttrs(
       :key="mode"
       class="mode-block slop-theme"
       :data-sl-mode="mode"
+      :data-sl-theme="theme"
     >
       <h3>{{ mode }}</h3>
       <div
-        v-for="density in densities"
+        v-for="density in densityFilter"
         :key="`${mode}-${density}`"
         class="density-block"
         :data-sl-density="density"
-        :data-testid="`button-matrix-${mode}-${density}`"
+        :data-testid="`button-matrix-${theme ? `${theme}-` : ''}${mode}-${density}`"
       >
         <h4>{{ density }}</h4>
         <div
           class="shot"
-          :data-testid="`button-matrix-shot-${mode}-${density}`"
+          :data-testid="`button-matrix-shot-${theme ? `${theme}-` : ''}${mode}-${density}`"
         >
           <div
             v-for="tone in tones"

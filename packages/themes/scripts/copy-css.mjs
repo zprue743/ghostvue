@@ -6,9 +6,16 @@ const packageRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const sourcePath = resolve(packageRoot, 'src/default.css')
 const tokensPath = resolve(packageRoot, 'src/generated/tokens.css')
 const manifestPath = resolve(packageRoot, 'src/generated/tokens.json')
+const defineTypesPath = resolve(
+  packageRoot,
+  'scripts/lib/define-theme-public.d.ts',
+)
 const outputCssPath = resolve(packageRoot, 'dist/default.css')
 const outputTokensPath = resolve(packageRoot, 'dist/tokens.css')
 const outputManifestPath = resolve(packageRoot, 'dist/tokens.json')
+const outputDefineJsPath = resolve(packageRoot, 'dist/define.js')
+const outputDefineTypesPath = resolve(packageRoot, 'dist/define.d.ts')
+const flagshipNames = ['calm', 'vibrant', 'mono']
 
 const localImport = /@import\s+['"](\.\/[^'"]+)['"]\s*;\s*/g
 
@@ -39,3 +46,18 @@ await mkdir(dirname(outputCssPath), { recursive: true })
 await writeFile(outputCssPath, concatenated)
 await copyFile(tokensPath, outputTokensPath)
 await copyFile(manifestPath, outputManifestPath)
+
+for (const name of flagshipNames) {
+  await copyFile(
+    resolve(packageRoot, `src/generated/${name}.css`),
+    resolve(packageRoot, `dist/${name}.css`),
+  )
+}
+
+// Node-only public entry. Re-exports the generator from scripts so the main
+// tsc graph never sees culori.
+await writeFile(
+  outputDefineJsPath,
+  `export {\n  defineTheme,\n  FLAGSHIP_THEME_INPUTS,\n  flagshipThemes,\n  DefineThemeError,\n} from '../scripts/lib/define-theme.js'\n`,
+)
+await copyFile(defineTypesPath, outputDefineTypesPath)

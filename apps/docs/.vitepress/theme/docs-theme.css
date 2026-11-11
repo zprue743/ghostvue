@@ -1,0 +1,87 @@
+/*
+ * Map VitePress chrome onto slop-ui tokens so the docs dogfood the selected
+ * flagship (calm on first paint). Unlayered so they win over the VP theme.
+ */
+html.slop-theme {
+  --vp-c-bg: var(--sl-surface-bg);
+  --vp-c-bg-alt: var(--sl-surface-subtle-bg);
+  --vp-c-bg-elv: var(--sl-surface-muted-bg);
+  --vp-c-bg-soft: var(--sl-surface-subtle-bg);
+  --vp-c-text-1: var(--sl-surface-fg);
+  --vp-c-text-2: var(--sl-text-muted);
+  --vp-c-text-3: var(--sl-text-subtle);
+  --vp-c-border: var(--sl-border-default);
+  --vp-c-divider: var(--sl-border-muted);
+  --vp-c-gutter: var(--sl-border-muted);
+  --vp-c-brand-1: var(--sl-action-primary-bg);
+  --vp-c-brand-2: var(--sl-action-primary-bg-hover);
+  --vp-c-brand-3: var(--sl-action-primary-bg-active);
+  --vp-c-brand-soft: color-mix(
+    in oklch,
+    var(--sl-action-primary-bg) 16%,
+    var(--sl-surface-bg)
+  );
+  --vp-button-brand-bg: var(--sl-action-primary-bg);
+  --vp-button-brand-hover-bg: var(--sl-action-primary-bg-hover);
+  --vp-button-brand-active-bg: var(--sl-action-primary-bg-active);
+  --vp-button-brand-text: var(--sl-action-primary-fg);
+  --vp-c-danger-1: var(--sl-action-danger-bg);
+  --vp-c-warning-1: var(--sl-status-warning-fg);
+  --vp-c-success-1: var(--sl-status-success-fg);
+  --vp-c-tip-1: var(--sl-action-primary-bg);
+  --vp-sidebar-bg-color: var(--sl-surface-bg);
+  --vp-nav-bg-color: color-mix(in oklch, var(--sl-surface-bg) 88%, transparent);
+  --vp-code-bg: var(--sl-surface-muted-bg);
+}
+
+html.slop-theme[data-sl-theme='vibrant'] {
+  background-color: var(--sl-surface-bg);
+  background-image: var(--sl-gradient-aurora);
+  background-attachment: fixed;
+}
+
+html.slop-theme[data-sl-theme='mono'] {
+  --vp-c-brand-1: var(--sl-action-primary-bg);
+  letter-spacing: var(--sl-type-letter-tight);
+}
+
+.slop-docs-theme-switcher {
+  display: inline-flex;
+  gap: 0.15rem;
+  margin-inline-start: 0.75rem;
+  padding: 0.15rem;
+  border: 1px solid var(--sl-border-default);
+  border-radius: calc(0.75rem * var(--sl-roundness, 1));
+  background: color-mix(in oklch, var(--sl-surface-bg) 82%, transparent);
+}
+
+.slop-docs-theme-switcher__option {
+  appearance: none;
+  margin: 0;
+  padding: 0.25rem 0.55rem;
+  border: 0;
+  border-radius: calc(0.55rem * var(--sl-roundness, 1));
+  background: transparent;
+  color: var(--sl-text-muted);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  line-height: 1.2;
+}
+
+.slop-docs-theme-switcher__option:hover,
+.slop-docs-theme-switcher__option:focus-visible {
+  color: var(--sl-surface-fg);
+}
+
+.slop-docs-theme-switcher__option:focus-visible {
+  outline: 2px solid var(--sl-focus-ring-color);
+  outline-offset: 2px;
+}
+
+.slop-docs-theme-switcher__option[data-active] {
+  background: var(--sl-action-primary-bg);
+  color: var(--sl-action-primary-fg);
+}

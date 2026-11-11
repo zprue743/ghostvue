@@ -56,6 +56,10 @@ describe('token pipeline', () => {
     expect(compiled.css).toContain('--sl-action-primary-bg: #1d4ed8;')
     expect(compiled.css).toContain('--sl-action-primary-bg: #60a5fa;')
     expect(compiled.css).toContain("[data-sl-mode='dark']")
+    expect(compiled.css).toContain('.slop-theme:not([data-sl-theme])')
+    expect(compiled.css).not.toMatch(
+      /:where\(\.slop-theme, \.slop-themed-scope/,
+    )
     expect(compiled.css).toContain('prefers-color-scheme: dark')
     expect(compiled.css).toContain('forced-colors: active')
     expect(compiled.css).toContain('--sl-surface-bg: Canvas;')

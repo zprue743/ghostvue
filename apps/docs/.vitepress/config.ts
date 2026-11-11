@@ -4,6 +4,16 @@ import { defineConfig } from 'vitepress'
 
 import { docsDescription, docsSidebar, docsTitle } from './docs-nav'
 import { writeLlmsTxtFiles } from './generate-llms-txt'
+import {
+  applyDocsThemeHost,
+  restoreDocsThemeScript,
+} from './theme/restore-theme'
+
+function packageSrc(relative: string): string {
+  return fileURLToPath(
+    new URL(`../../../packages/${relative}`, import.meta.url),
+  )
+}
 
 export default defineConfig({
   // Canonical markdown lives in /docs; this app is only the VitePress wrapper.
@@ -11,13 +21,33 @@ export default defineConfig({
   title: docsTitle,
   description: docsDescription,
   cleanUrls: true,
+  // Restore a persisted theme before paint; first paint dogfoods calm (ADR 0008).
+  head: [['script', { id: 'slop-docs-theme-restore' }, restoreDocsThemeScript]],
+  transformHtml(code) {
+    return applyDocsThemeHost(code)
+  },
   vite: {
+    plugins: [
+      {
+        name: 'slop-docs-theme-host',
+        transformIndexHtml(html) {
+          return applyDocsThemeHost(html)
+        },
+      },
+    ],
     resolve: {
       alias: {
-        // Visual token pages import the source stylesheet, not a built dist.
-        '@slop-ui/themes/default.css': fileURLToPath(
-          new URL('../../../packages/themes/src/default.css', import.meta.url),
+        // Browser CI builds docs without `pnpm build`, so resolve workspace
+        // packages to source. CSS aliases must stay above `@slop-ui/themes`
+        // because Vite prefix-matches the package name.
+        '@slop-ui/themes/default.css': packageSrc('themes/src/default.css'),
+        '@slop-ui/themes/calm.css': packageSrc('themes/src/generated/calm.css'),
+        '@slop-ui/themes/vibrant.css': packageSrc(
+          'themes/src/generated/vibrant.css',
         ),
+        '@slop-ui/themes/mono.css': packageSrc('themes/src/generated/mono.css'),
+        '@slop-ui/themes': packageSrc('themes/src/index.ts'),
+        '@slop-ui/vue': packageSrc('vue/src/index.ts'),
       },
     },
   },

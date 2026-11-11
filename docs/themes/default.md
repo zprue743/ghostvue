@@ -34,9 +34,10 @@ import '@slop-ui/themes/default.css'
 ```
 
 Buttons outside `.slop-theme` and `.slop-themed-scope` remain unstyled even when
-the stylesheet is loaded. This makes it possible to compare the headless
-primitive with the default theme or combine slop-ui with another design system
-incrementally.
+the stylesheet is loaded. `.slop-themed-scope` is a recipe scope only; token
+values come from `.slop-theme` / `[data-sl-theme]`. This makes it possible to
+compare the headless primitive with the default theme or nest a flagship around
+themed wrappers.
 
 ## Button examples
 
@@ -115,7 +116,9 @@ of a gradient. The full combination table lives on
 Unset `data-sl-mode` follows `prefers-color-scheme`. Set `data-sl-mode` on any
 subtree to override the preference; nested attributes win. `.slop-theme`
 implies the `default` theme; `data-sl-theme="default"` selects it on any
-element.
+element. Flagship sheets (`calm`, `vibrant`, `mono`) match
+`data-sl-theme` only — see
+[defineTheme and flagship themes](./define-theme.md).
 
 ```vue
 <div class="slop-theme">Uses the operating-system preference.</div>

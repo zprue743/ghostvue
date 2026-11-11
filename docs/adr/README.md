@@ -18,3 +18,4 @@ new context rather than rewriting history.
 - [0005 — Design token taxonomy and source format](./0005-design-token-taxonomy.md)
 - [0006 — Component manifest JSON Schema](./0006-component-manifest-schema.md)
 - [0007 — Token compile pipeline and public CSS names](./0007-token-pipeline.md)
+- [0008 — Brand-input theme generator and flagship themes](./0008-define-theme.md)

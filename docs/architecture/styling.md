@@ -38,6 +38,9 @@ depend on a particular visual treatment.
 Tokens are authored as DTCG JSON and compiled to CSS custom properties,
 TypeScript types, and a JSON manifest. See
 [design tokens](./tokens.md),
-[ADR 0005](../adr/0005-design-token-taxonomy.md), and
-[ADR 0007](../adr/0007-token-pipeline.md). Public custom properties use
+[ADR 0005](../adr/0005-design-token-taxonomy.md),
+[ADR 0007](../adr/0007-token-pipeline.md), and
+[ADR 0008](../adr/0008-define-theme.md). Public custom properties use
 `--sl-<role>-<part>-<state>`. Components consume semantic tokens only.
+Brand themes are generated in Node (`@slop-ui/themes/define`) and applied
+with `data-sl-theme`.

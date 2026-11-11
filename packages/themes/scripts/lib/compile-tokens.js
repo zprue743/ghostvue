@@ -38,8 +38,44 @@ export const ROUNDNESS_VAR = `${CSS_PREFIX}roundness`
 
 const ALIAS = /^\{([a-z0-9]+(?:\.[a-z0-9-]+)*)\}$/i
 const TOKEN_NAME = /^[a-z][a-z0-9]*(?:\.[a-z0-9][a-z0-9-]*)+$/
-const CSS_HOST = `:where(.slop-theme, .slop-themed-scope, [data-sl-theme='default'])`
-const SYSTEM_HOST = `${CSS_HOST}:not([data-sl-mode]):not(:where([data-sl-mode] *))`
+
+/**
+ * Token hosts. `.slop-themed-scope` is a recipe scope only — putting it here
+ * would pin themed wrappers to `default` inside a nested `data-sl-theme`.
+ * `.slop-theme` without the attribute is `default`; named themes match the
+ * attribute only, including on the same element as `.slop-theme`.
+ */
+export function themeHostSelector(themeName = DEFAULT_THEME_NAME) {
+  if (themeName === DEFAULT_THEME_NAME) {
+    return `:where(.slop-theme:not([${THEME_ATTRIBUTE}]), [${THEME_ATTRIBUTE}='default'])`
+  }
+  return `:where([${THEME_ATTRIBUTE}='${themeName}'])`
+}
+
+function systemHostSelector(cssHost) {
+  return `${cssHost}:not([${MODE_ATTRIBUTE}]):not(:where([${MODE_ATTRIBUTE}] *))`
+}
+
+function wrapSelectorList(selectors) {
+  return `:where(${selectors})`
+}
+
+function modeHostSelector(cssHost, mode) {
+  // One :where() so withDescendants can append ` :where(*)` to the whole list.
+  return wrapSelectorList(
+    `${cssHost}:where([${MODE_ATTRIBUTE}='${mode}']), ${cssHost} :where([${MODE_ATTRIBUTE}='${mode}'])`,
+  )
+}
+
+function unsetDensityHost(cssHost) {
+  return `${cssHost}:not([${DENSITY_ATTRIBUTE}]):not(:where([${DENSITY_ATTRIBUTE}] *))`
+}
+
+function densityHostSelector(cssHost, density) {
+  return wrapSelectorList(
+    `${cssHost}:where([${DENSITY_ATTRIBUTE}='${density}']), ${cssHost} :where([${DENSITY_ATTRIBUTE}='${density}'])`,
+  )
+}
 
 export const TOKEN_SOURCES = [
   { file: 'primitives.json', tier: 'primitive' },
@@ -267,7 +303,7 @@ function aliasTarget(authored) {
   return typeof authored === 'string' ? parseAlias(authored) : null
 }
 
-export function compileTokenDocuments(documents) {
+export function compileTokenDocuments(documents, options = {}) {
   /** @type {Map<string, { name: string, type: string, description: string, tier: string, authored: { light: string, dark: string } }>} */
   const tokensByName = new Map()
 
@@ -395,11 +431,14 @@ export function compileTokenDocuments(documents) {
     })
     .sort((left, right) => left.name.localeCompare(right.name))
 
+  const themeName = options.themeName ?? DEFAULT_THEME_NAME
+  const defaultDensity = options.defaultDensity ?? DEFAULT_DENSITY
+
   return {
     tokens,
-    css: renderTokenCss(tokens),
+    css: renderTokenCss(tokens, { themeName, defaultDensity }),
     typescript: renderTokenTypescript(tokens),
-    manifest: renderTokenManifest(tokens),
+    manifest: renderTokenManifest(tokens, { themeName, defaultDensity }),
     docsMarkdown: renderTokenDocs(tokens),
   }
 }
@@ -486,11 +525,32 @@ function renderCustomProperties(tokens, mode, indent = '    ') {
     .join('\n')
 }
 
+function splitTopLevelSelectors(selector) {
+  const parts = []
+  let current = ''
+  let depth = 0
+  for (const char of selector) {
+    if (char === '(') depth += 1
+    if (char === ')') depth -= 1
+    if (char === ',' && depth === 0) {
+      parts.push(current.trim())
+      current = ''
+      continue
+    }
+    current += char
+  }
+  if (current.trim() !== '') parts.push(current.trim())
+  return parts
+}
+
 function withDescendants(selector) {
-  // Duration calc() must be declared on descendants, not only the host.
-  // Custom properties otherwise substitute --sl-motion-intensity on the host
-  // and inherit a resolved time, so a nested intensity would do nothing.
-  return `${selector}, ${selector} :where(*)`
+  // Duration/radius calc() must be declared on descendants, not only the host.
+  // Custom properties otherwise substitute --sl-motion-intensity / --sl-roundness
+  // on the host and inherit a resolved value, so a nested knob would do nothing.
+  // Split only on top-level commas so `:where(a, b)` stays one selector.
+  return splitTopLevelSelectors(selector)
+    .map((part) => `${part}, ${part} :where(*)`)
+    .join(', ')
 }
 
 export function forcedColorForToken(token) {
@@ -557,10 +617,6 @@ function renderReducedMotionProperties(tokens, indent = '    ') {
     .join('\n')
 }
 
-function densitySelector(density) {
-  return `:where([${DENSITY_ATTRIBUTE}='${density}'])`
-}
-
 function renderDensityProperties(tokens, density, indent = '    ') {
   return tokens
     .map((token) => {
@@ -570,13 +626,13 @@ function renderDensityProperties(tokens, density, indent = '    ') {
     .join('\n')
 }
 
-function renderDensityCss(tokens) {
+function renderDensityCss(tokens, cssHost) {
   const sensitive = densitySensitiveTokens(tokens)
   if (sensitive.length === 0) return ''
   const rest = sensitive.filter((token) => !usesRoundness(token))
   const round = sensitive.filter(usesRoundness)
   return TOKEN_DENSITIES.map((density) => {
-    const selector = densitySelector(density)
+    const selector = densityHostSelector(cssHost, density)
     const restVars = renderDensityProperties(rest, density)
     const roundVars = renderDensityProperties(round, density)
     const restBlock = restVars
@@ -597,13 +653,39 @@ ${roundVars}
   }).join('')
 }
 
-function renderCoarsePointerCss(tokens) {
+function renderUnsetDensityCss(tokens, cssHost, defaultDensity) {
+  if (defaultDensity === DEFAULT_DENSITY) return ''
+  const sensitive = densitySensitiveTokens(tokens)
+  if (sensitive.length === 0) return ''
+  const rest = sensitive.filter((token) => !usesRoundness(token))
+  const round = sensitive.filter(usesRoundness)
+  const selector = unsetDensityHost(cssHost)
+  const restVars = renderDensityProperties(rest, defaultDensity)
+  const roundVars = renderDensityProperties(round, defaultDensity)
+  const restBlock = restVars
+    ? `
+  ${selector} {
+${restVars}
+  }
+`
+    : ''
+  const roundBlock = roundVars
+    ? `
+  ${withDescendants(selector)} {
+${roundVars}
+  }
+`
+    : ''
+  return `${restBlock}${roundBlock}`
+}
+
+function renderCoarsePointerCss(tokens, cssHost, defaultDensity) {
   const touchTokens = semanticTokens(tokens).filter(
     (token) => token.touchMin && token.cssVar,
   )
   if (touchTokens.length === 0) return ''
 
-  const unsetHost = `${CSS_HOST}:not([${DENSITY_ATTRIBUTE}]):not(:where([${DENSITY_ATTRIBUTE}] *))`
+  const unsetHost = unsetDensityHost(cssHost)
 
   function floorBlock(density, indent = '    ') {
     return touchTokens
@@ -615,9 +697,9 @@ function renderCoarsePointerCss(tokens) {
       .join('\n')
   }
 
-  const unsetVars = floorBlock(DEFAULT_DENSITY, '      ')
+  const unsetVars = floorBlock(defaultDensity, '      ')
   const densityBlocks = TOKEN_DENSITIES.map((density) => {
-    const selector = densitySelector(density)
+    const selector = densityHostSelector(cssHost, density)
     return `
     ${selector} {
 ${floorBlock(density, '      ')}
@@ -634,7 +716,13 @@ ${densityBlocks}  }
 `
 }
 
-export function renderTokenCss(tokens) {
+export function renderTokenCss(tokens, options = {}) {
+  const themeName = options.themeName ?? DEFAULT_THEME_NAME
+  const defaultDensity = options.defaultDensity ?? DEFAULT_DENSITY
+  const cssHost = themeHostSelector(themeName)
+  const systemHost = systemHostSelector(cssHost)
+  const lightModeHost = modeHostSelector(cssHost, 'light')
+  const darkModeHost = modeHostSelector(cssHost, 'dark')
   const rest = restSemanticTokens(tokens)
   const durations = durationTokens(tokens)
   const radii = roundnessTokens(tokens)
@@ -651,14 +739,14 @@ export function renderTokenCss(tokens) {
   const lightRadii = renderCustomProperties(radii, 'light')
   const darkRadii = renderCustomProperties(radii, 'dark')
   const nestedDarkRadii = renderCustomProperties(radii, 'dark', '      ')
-  const densityBlock = renderDensityCss(tokens)
-  const coarseBlock = renderCoarsePointerCss(tokens)
+  const densityBlock = `${renderUnsetDensityCss(tokens, cssHost, defaultDensity)}${renderDensityCss(tokens, cssHost)}`
+  const coarseBlock = renderCoarsePointerCss(tokens, cssHost, defaultDensity)
   const forcedVars = renderForcedColors(tokens)
   const highDprVars = renderHighDprProperties(tokens, '      ')
   const highDprBlock = highDprVars
     ? `
   @media (min-resolution: 2dppx), (-webkit-min-device-pixel-ratio: 2) {
-    ${CSS_HOST} {
+    ${cssHost} {
 ${highDprVars}
     }
   }
@@ -676,7 +764,7 @@ ${highDprVars}
   const reducedRadii = renderReducedMotionProperties(radii, '      ')
   const reducedRestBlock = reducedRest
     ? `
-    ${CSS_HOST} {
+    ${cssHost} {
 ${reducedRest}
     }
 `
@@ -686,7 +774,7 @@ ${reducedRest}
     .join('\n')
   const reducedDurationBlock = reducedDescendant
     ? `
-    ${withDescendants(CSS_HOST)} {
+    ${withDescendants(cssHost)} {
 ${reducedDescendant}
     }
 `
@@ -697,58 +785,64 @@ ${reducedDescendant}
   @media (prefers-reduced-motion: reduce) {${reducedRestBlock}${reducedDurationBlock}  }
 `
       : ''
+  const densityLabel =
+    defaultDensity === DEFAULT_DENSITY
+      ? 'comfortable'
+      : `${defaultDensity} under this theme, comfortable globally for default`
   return `/*
  * Generated from packages/themes/tokens. Do not edit.
  * Semantic custom properties use --sl-<role>-<part>-<state>.
- * Unset data-sl-mode follows prefers-color-scheme; data-sl-mode overrides
- * on any subtree, including nested theme hosts. Unset data-sl-density is
- * comfortable; data-sl-density and --sl-roundness nest the same way.
+ * Theme host: ${themeName}. Unset data-sl-mode follows prefers-color-scheme;
+ * data-sl-mode overrides on any subtree, including nested theme hosts.
+ * Unset data-sl-density is ${densityLabel}; data-sl-density and
+ * --sl-roundness nest the same way. Token hosts exclude .slop-themed-scope
+ * so nested data-sl-theme values inherit into themed wrappers.
  * No JavaScript is required to pick the initial mode, so SSR does not
  * flash the opposite palette.
  */
 @layer slop-ui-theme {
-  ${SYSTEM_HOST} {
+  ${systemHost} {
 ${lightVars}
   }
 
-  ${withDescendants(SYSTEM_HOST)} {
+  ${withDescendants(systemHost)} {
 ${descendantLight}
   }
 
   @media (prefers-color-scheme: dark) {
-    ${SYSTEM_HOST} {
+    ${systemHost} {
 ${nestedDarkVars}
     }
 
-    ${withDescendants(SYSTEM_HOST)} {
+    ${withDescendants(systemHost)} {
 ${nestedDescendantDark}
     }
   }
 
-  :where([data-sl-mode='light']) {
+  ${lightModeHost} {
     color-scheme: light;
 ${lightVars}
   }
 
-  ${withDescendants(":where([data-sl-mode='light'])")} {
+  ${withDescendants(lightModeHost)} {
 ${descendantLight}
   }
 
-  :where([data-sl-mode='dark']) {
+  ${darkModeHost} {
     color-scheme: dark;
 ${darkVars}
   }
 
-  ${withDescendants(":where([data-sl-mode='dark'])")} {
+  ${withDescendants(darkModeHost)} {
 ${descendantDark}
   }
 
-  :where(.slop-theme):not([data-sl-mode]):not(:where([data-sl-mode] *)) {
+  ${systemHost} {
     color-scheme: light dark;
   }
 ${densityBlock}${coarseBlock}${highDprBlock}${reducedMotionBlock}
   @media (forced-colors: active) {
-    ${CSS_HOST} {
+    ${cssHost} {
 ${forcedVars}
     }
   }
@@ -801,15 +895,15 @@ export type DesignToken = (typeof tokens)[TokenName]
 `
 }
 
-export function renderTokenManifest(tokens) {
+export function renderTokenManifest(tokens, options = {}) {
   return {
     schemaVersion: TOKEN_SCHEMA_VERSION,
     source: 'generated',
     package: TOKEN_PACKAGE_NAME,
-    theme: DEFAULT_THEME_NAME,
+    theme: options.themeName ?? DEFAULT_THEME_NAME,
     modes: [...TOKEN_MODES],
     densities: [...TOKEN_DENSITIES],
-    defaultDensity: DEFAULT_DENSITY,
+    defaultDensity: options.defaultDensity ?? DEFAULT_DENSITY,
     attributes: {
       theme: THEME_ATTRIBUTE,
       mode: MODE_ATTRIBUTE,

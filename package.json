@@ -28,7 +28,7 @@
     "manifests:write": "node scripts/write-component-manifests.mjs --write",
     "contrast": "node packages/themes/scripts/check-contrast.mjs",
     "test": "vitest run --passWithNoTests",
-    "test:e2e": "pnpm --filter @slop-ui/playground build && playwright test",
+    "test:e2e": "pnpm --filter @slop-ui/playground build && pnpm --filter @slop-ui/docs build && playwright test",
     "test:watch": "vitest",
     "typecheck": "pnpm -r --if-present typecheck",
     "verify": "pnpm lint && pnpm boundaries && pnpm adapters && pnpm manifests && pnpm typecheck && pnpm test && pnpm contrast && pnpm build && pnpm published-exports && pnpm docs:build"
