@@ -14,6 +14,7 @@
 import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import { dirname, join } from 'node:path'
 
+import { isCompositeValue, serializeComposite } from './composite-tokens.js'
 import {
   RAMP_HUES,
   RAMP_STEPS,
@@ -52,11 +53,27 @@ function isTokenNode(value) {
   return isPlainObject(value) && Object.hasOwn(value, '$value')
 }
 
-function authoredText(value, label) {
+function authoredValue(value, label) {
   if (typeof value === 'string' || typeof value === 'number') {
-    return String(value)
+    return value
   }
-  throw new Error(`${label} must be a string or number $value`)
+  if (isCompositeValue(value)) {
+    return value
+  }
+  throw new Error(
+    `${label} must be a string, number, shadow, or gradient $value`,
+  )
+}
+
+function readHighDpr(node) {
+  const extensions = node.$extensions
+  if (!isPlainObject(extensions)) return undefined
+  const slop = extensions['slop.ui']
+  if (!isPlainObject(slop)) return undefined
+  if (typeof slop.highDpr !== 'string' || slop.highDpr.trim() === '') {
+    return undefined
+  }
+  return slop.highDpr.trim()
 }
 
 function parseAlias(value) {
@@ -90,7 +107,8 @@ function flattenTokens(node, path, file) {
       name,
       type: type.trim(),
       description,
-      authored: authoredText(node.$value, `${file} token "${name}"`),
+      authored: authoredValue(node.$value, `${file} token "${name}"`),
+      highDpr: readHighDpr(node),
     })
     // A rest-state token may nest interaction states (bg + bg.hover).
     for (const [key, child] of Object.entries(node)) {
@@ -117,6 +135,17 @@ function flattenTokens(node, path, file) {
   return tokens
 }
 
+function assertPrimitiveAlias(tokensByName, fromName, alias) {
+  const token = tokensByName.get(fromName)
+  if (!token || token.tier !== 'primitive') return
+  const target = tokensByName.get(alias)
+  if (target && target.tier !== 'primitive') {
+    throw new Error(
+      `Primitive token "${fromName}" may not alias semantic token "${alias}"`,
+    )
+  }
+}
+
 function resolveAuthored(tokensByName, name, mode, stack) {
   const token = tokensByName.get(name)
   if (!token) {
@@ -126,22 +155,83 @@ function resolveAuthored(tokensByName, name, mode, stack) {
   if (stack.includes(`${name}:${mode}`)) {
     throw new Error(`Cyclic token alias: ${nextStack.join(' -> ')}`)
   }
-  const authored = token.authored[mode]
-  const alias = parseAlias(authored)
-  if (!alias) return authored
-  if (token.tier === 'primitive') {
-    const target = tokensByName.get(alias)
-    if (target && target.tier !== 'primitive') {
+  return resolveTokenValue(
+    tokensByName,
+    token.authored[mode],
+    mode,
+    nextStack,
+    name,
+  )
+}
+
+function interpolateEmbeddedAliases(
+  tokensByName,
+  value,
+  mode,
+  stack,
+  fromName,
+) {
+  return value.replace(/\{([a-z0-9]+(?:\.[a-z0-9-]+)*)\}/gi, (match, alias) => {
+    if (!tokensByName.has(alias)) {
+      throw new Error(`Unknown token "${alias}"`)
+    }
+    assertPrimitiveAlias(tokensByName, fromName, alias)
+    const resolved = resolveAuthored(tokensByName, alias, mode, stack)
+    if (typeof resolved === 'object') {
       throw new Error(
-        `Primitive token "${name}" may not alias semantic token "${alias}"`,
+        `Token "${fromName}" cannot interpolate composite alias "${alias}"`,
       )
     }
+    return String(resolved)
+  })
+}
+
+function resolveTokenValue(tokensByName, value, mode, stack, fromName) {
+  if (typeof value === 'number' || typeof value === 'boolean') {
+    return value
   }
-  return resolveAuthored(tokensByName, alias, mode, nextStack)
+  if (typeof value === 'string') {
+    const alias = parseAlias(value)
+    if (alias) {
+      assertPrimitiveAlias(tokensByName, fromName, alias)
+      return resolveAuthored(tokensByName, alias, mode, stack)
+    }
+    if (value.includes('{')) {
+      return interpolateEmbeddedAliases(
+        tokensByName,
+        value,
+        mode,
+        stack,
+        fromName,
+      )
+    }
+    return value
+  }
+  if (Array.isArray(value)) {
+    return value.map((item) =>
+      resolveTokenValue(tokensByName, item, mode, stack, fromName),
+    )
+  }
+  if (isPlainObject(value)) {
+    const resolved = {}
+    for (const [key, child] of Object.entries(value)) {
+      resolved[key] = resolveTokenValue(
+        tokensByName,
+        child,
+        mode,
+        stack,
+        fromName,
+      )
+    }
+    return resolved
+  }
+  throw new Error(
+    `Unsupported $value for token "${fromName}": ${JSON.stringify(value)}`,
+  )
 }
 
 function aliasTarget(authored) {
-  return parseAlias(authored)
+  return typeof authored === 'string' ? parseAlias(authored) : null
 }
 
 export function compileTokenDocuments(documents) {
@@ -181,6 +271,7 @@ export function compileTokenDocuments(documents) {
         description: entry.description,
         tier: document.tier,
         authored: { light: entry.authored, dark: entry.authored },
+        highDpr: entry.highDpr,
       })
     }
   }
@@ -188,8 +279,14 @@ export function compileTokenDocuments(documents) {
   const tokens = [...tokensByName.values()]
     .map((token) => {
       const value = {
-        light: resolveAuthored(tokensByName, token.name, 'light', []),
-        dark: resolveAuthored(tokensByName, token.name, 'dark', []),
+        light: serializeComposite(
+          token.type,
+          resolveAuthored(tokensByName, token.name, 'light', []),
+        ),
+        dark: serializeComposite(
+          token.type,
+          resolveAuthored(tokensByName, token.name, 'dark', []),
+        ),
       }
       const aliases = {
         light: aliasTarget(token.authored.light),
@@ -204,6 +301,9 @@ export function compileTokenDocuments(documents) {
       }
       if (token.tier === 'semantic') {
         compiled.cssVar = cssVariableName(token.name)
+      }
+      if (token.highDpr) {
+        compiled.highDpr = token.highDpr
       }
       if (aliases.light || aliases.dark) {
         compiled.aliases = {
@@ -251,14 +351,22 @@ export function forcedColorForToken(token) {
   if (name === 'text.muted' || name === 'text.subtle') return 'GrayText'
   if (
     (name.startsWith('surface.') && name.includes('.bg')) ||
-    (name.startsWith('status.') && name.includes('.bg'))
+    (name.startsWith('status.') && name.includes('.bg')) ||
+    (name.startsWith('elevation.') && name.includes('.bg')) ||
+    (name.startsWith('material.') && name.includes('.bg'))
   ) {
     return 'Canvas'
   }
   if (name.startsWith('surface.fg') || name.startsWith('text.'))
     return 'CanvasText'
-  if (name.startsWith('border.') || name.startsWith('status.'))
+  if (
+    name.startsWith('border.') ||
+    name.startsWith('status.') ||
+    (name.startsWith('elevation.') && name.includes('.border')) ||
+    (name.startsWith('material.') && name.includes('.border'))
+  ) {
     return 'CanvasText'
+  }
   return 'CanvasText'
 }
 
@@ -273,11 +381,28 @@ function renderForcedColors(tokens, indent = '    ') {
     .join('\n')
 }
 
+function renderHighDprProperties(tokens, indent = '    ') {
+  return semanticTokens(tokens)
+    .filter((token) => token.highDpr && token.cssVar)
+    .map((token) => `${indent}${token.cssVar}: ${token.highDpr};`)
+    .join('\n')
+}
+
 export function renderTokenCss(tokens) {
   const lightVars = renderCustomProperties(tokens, 'light')
   const darkVars = renderCustomProperties(tokens, 'dark')
   const nestedDarkVars = renderCustomProperties(tokens, 'dark', '      ')
   const forcedVars = renderForcedColors(tokens)
+  const highDprVars = renderHighDprProperties(tokens, '      ')
+  const highDprBlock = highDprVars
+    ? `
+  @media (min-resolution: 2dppx), (-webkit-min-device-pixel-ratio: 2) {
+    ${CSS_HOST} {
+${highDprVars}
+    }
+  }
+`
+    : ''
   return `/*
  * Generated from packages/themes/tokens. Do not edit.
  * Semantic custom properties use --sl-<role>-<part>-<state>.
@@ -309,7 +434,7 @@ ${darkVars}
   :where(.slop-theme):not([data-sl-mode]):not(:where([data-sl-mode] *)) {
     color-scheme: light dark;
   }
-
+${highDprBlock}
   @media (forced-colors: active) {
     ${CSS_HOST} {
 ${forcedVars}
@@ -323,6 +448,7 @@ function renderTokenObject(token) {
   const lines = [
     `    name: ${JSON.stringify(token.name)},`,
     token.cssVar ? `    cssVar: ${JSON.stringify(token.cssVar)},` : null,
+    token.highDpr ? `    highDpr: ${JSON.stringify(token.highDpr)},` : null,
     `    type: ${JSON.stringify(token.type)},`,
     `    tier: ${JSON.stringify(token.tier)},`,
     `    description: ${JSON.stringify(token.description)},`,

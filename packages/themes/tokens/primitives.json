@@ -14,6 +14,47 @@
       "$type": "color",
       "$value": "#f8fafc",
       "$description": "Near-white canvas foreground used in dark mode."
+    },
+    "raised": {
+      "2": {
+        "$type": "color",
+        "$value": "#24272b",
+        "$description": "Dark-mode elevation 2 fill between neutral 950 and 900."
+      },
+      "4": {
+        "$type": "color",
+        "$value": "#3a3e43",
+        "$description": "Dark-mode elevation 4 fill between neutral 900 and 800."
+      }
+    },
+    "shadow": {
+      "ambient": {
+        "$type": "color",
+        "$value": "oklch(0.254 0.028 257.5 / 0.08)",
+        "$description": "Neutral-hue ambient shadow tint. Alpha is the light-mode rest value."
+      },
+      "key": {
+        "$type": "color",
+        "$value": "oklch(0.254 0.028 257.5 / 0.14)",
+        "$description": "Neutral-hue key-light shadow tint. Alpha is the light-mode rest value."
+      },
+      "highlight": {
+        "$type": "color",
+        "$value": "oklch(1 0.005 258 / 0.12)",
+        "$description": "Inset top highlight used by dark-mode elevation."
+      }
+    },
+    "hairline": {
+      "$type": "color",
+      "$value": "oklch(0.254 0.028 257.5 / 0.18)",
+      "$description": "Alpha hairline border tinted with the neutral hue."
+    }
+  },
+  "asset": {
+    "noise": {
+      "$type": "image",
+      "$value": "url(\"data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20160%20160%22%3E%3Cfilter%20id%3D%22n%22%3E%3CfeTurbulence%20type%3D%22fractalNoise%22%20baseFrequency%3D%220.8%22%20numOctaves%3D%224%22%20seed%3D%222%22%20stitchTiles%3D%22stitch%22%2F%3E%3C%2Ffilter%3E%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20filter%3D%22url(%23n)%22%2F%3E%3C%2Fsvg%3E\")",
+      "$description": "Tiled fractal-noise SVG for glass and grain overlays. Inline data URI; no network asset."
     }
   },
   "opacity": {
@@ -21,6 +62,23 @@
       "$type": "number",
       "$value": 0.55,
       "$description": "Unavailable-state opacity."
+    },
+    "glass": {
+      "$type": "number",
+      "$value": 0.04,
+      "$description": "Glass material noise overlay opacity."
+    },
+    "grain": {
+      "$type": "number",
+      "$value": 0.08,
+      "$description": "Grain material noise overlay opacity."
+    }
+  },
+  "saturate": {
+    "glass": {
+      "$type": "number",
+      "$value": 1.45,
+      "$description": "Glass material backdrop saturation boost."
     }
   },
   "space": {
@@ -115,6 +173,18 @@
         "$type": "dimension",
         "$value": "2px",
         "$description": "Default spinner stroke width."
+      }
+    },
+    "hairline": {
+      "$type": "dimension",
+      "$value": "1px",
+      "$description": "Hairline border width at 1x. High-DPR screens use 0.5px via the compiler."
+    },
+    "blur": {
+      "glass": {
+        "$type": "dimension",
+        "$value": "1.25rem",
+        "$description": "Glass material backdrop blur."
       }
     }
   }

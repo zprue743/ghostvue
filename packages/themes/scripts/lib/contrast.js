@@ -50,7 +50,23 @@ export function contrastPairs(tokens) {
       add(name, `${stem}.bg.hover`, 'fg/bg')
       add(name, `${stem}.bg.active`, 'fg/bg')
     }
+
+    if (/^elevation\.\d+\.bg$/.test(name)) {
+      add('surface.fg', name, 'text on elevation')
+      add('text.default', name, 'text on elevation')
+      add('text.muted', name, 'text on elevation')
+      add('text.subtle', name, 'text on elevation')
+    }
   }
+
+  add('surface.fg', 'material.glass.fallback.bg', 'text on glass fallback')
+  add('text.default', 'material.glass.fallback.bg', 'text on glass fallback')
+  add('text.muted', 'material.glass.fallback.bg', 'text on glass fallback')
+  add('text.subtle', 'material.glass.fallback.bg', 'text on glass fallback')
+  add('surface.fg', 'material.solid.bg', 'text on solid material')
+  add('text.default', 'material.solid.bg', 'text on solid material')
+  add('surface.fg', 'material.grain.bg', 'text on grain')
+  add('text.default', 'material.grain.bg', 'text on grain')
 
   return pairs.sort(
     (left, right) =>

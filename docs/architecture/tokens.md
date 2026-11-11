@@ -41,12 +41,13 @@ of `pnpm verify`) checks WCAG 2 AA on semantic text/background pairs.
 ## Tiers
 
 1. **Primitive** — raw palette and dimension literals. No product intent
-   (`color.primary.700`). Color ramps are generated here; elevation, motion,
-   and density scales belong to SLO-64–SLO-66.
+   (`color.primary.700`). Color ramps and elevation shadow tints live
+   here; motion and density scales belong to SLO-65–SLO-66.
 2. **Semantic** — product intent as `role.part.state` across `action`,
-   `surface`, `text`, `border`, `status`, `focus`, and `control`
-   (`action.primary.bg`, `text.muted`, `status.danger.fg`). Components
-   consume semantic tokens only.
+   `surface`, `text`, `border`, `status`, `focus`, `control`,
+   `elevation`, `material`, and `gradient` (`action.primary.bg`,
+   `elevation.2.shadow`, `material.glass.bg`). Components consume
+   semantic tokens only.
 
 Semantic tokens may reference primitives or other semantic tokens.
 Primitive tokens may only reference primitives. There are no per-component
@@ -113,9 +114,16 @@ Unset `data-sl-mode` follows `prefers-color-scheme` in CSS. No JavaScript
 is required to pick the initial mode, so SSR does not flash the opposite
 palette.
 
+Elevation 0–5, hairline borders, solid/glass/grain materials, and oklch
+gradients are SLO-64. Each elevation level is a surface, a layered
+shadow (DTCG `shadow` composites), and a hairline. Glass uses an inline
+SVG noise overlay and an `@supports` fallback; forced-colors maps the
+new color roles to system colors. Visual recipes use `data-elevation`,
+`data-material`, and `data-gradient` in theme CSS — not per-component
+tokens. See [elevation, materials, and gradients](../themes/elevation.md).
+
 Flagship themes (calm enterprise, vibrant expressive, minimal monochrome)
-are SLO-68. Default density is comfortable (SLO-66). Elevation and motion
-are SLO-64 and SLO-65.
+are SLO-68. Default density is comfortable (SLO-66). Motion is SLO-65.
 
 ## Authoring rules
 
@@ -124,5 +132,11 @@ are SLO-64 and SLO-65.
 - Do not put the tier word in the token name.
 - Do not add per-component tokens; map component tones onto semantic roles
   (`accent` → `action.primary`).
+- Shadow tokens use the DTCG `shadow` composite (`offsetX`, `offsetY`,
+  `blur`, `spread`, `color`, optional `inset`). Gradients use stop lists
+  or layered `{ style, interpolation, stops }` objects and compile to
+  CSS `in oklch`.
+- Hairline width may set `$extensions.slop.ui.highDpr` so 2dppx screens
+  paint one device pixel.
 - Headless `@slop-ui/vue` components must not require these tokens to
   function. Themed wrappers consume them as in ADR 0004.

@@ -1,3 +1,5 @@
+import { fileURLToPath } from 'node:url'
+
 import { defineConfig } from 'vitepress'
 
 import { docsDescription, docsSidebar, docsTitle } from './docs-nav'
@@ -9,6 +11,16 @@ export default defineConfig({
   title: docsTitle,
   description: docsDescription,
   cleanUrls: true,
+  vite: {
+    resolve: {
+      alias: {
+        // Visual token pages import the source stylesheet, not a built dist.
+        '@slop-ui/themes/default.css': fileURLToPath(
+          new URL('../../../packages/themes/src/default.css', import.meta.url),
+        ),
+      },
+    },
+  },
   themeConfig: {
     nav: [
       { text: 'Philosophy', link: '/philosophy' },
