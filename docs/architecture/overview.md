@@ -32,6 +32,10 @@ Public package entry points are intentional contracts. Internal files should be
 imported directly within a package; networks of nested `index.ts` barrels hide
 dependency direction and encourage cycles.
 
+SSR-safe ids and controlled/uncontrolled v-model behavior live in
+[`component-state.md`](./component-state.md) (`useSlId`,
+`useControllableState`).
+
 ## Tooling choices
 
 Vite builds the Vue library and development apps. TypeScript emits the small

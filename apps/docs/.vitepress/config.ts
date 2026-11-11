@@ -28,6 +28,10 @@ export default defineConfig({
             text: 'Package boundaries',
             link: '/architecture/package-boundaries',
           },
+          {
+            text: 'IDs and controllable state',
+            link: '/architecture/component-state',
+          },
           { text: 'Styling', link: '/architecture/styling' },
           { text: 'Design tokens', link: '/architecture/tokens' },
         ],
