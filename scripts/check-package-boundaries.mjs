@@ -2,21 +2,22 @@ import { readFile, readdir } from 'node:fs/promises'
 import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
+import { workspacePackages } from './workspace-packages.mjs'
+
 const repositoryRoot = new URL('..', import.meta.url)
 const packageDirectories = await readdir(new URL('packages/', repositoryRoot), {
   withFileTypes: true,
 })
 
-// These rules encode the dependency graph in executable form so a package
-// cannot acquire a convenient but architecturally invalid dependency unnoticed.
-const allowedWorkspaceDependencies = new Map([
-  ['@slop-ui/shared', new Set()],
-  ['@slop-ui/core', new Set(['@slop-ui/shared'])],
-  ['@slop-ui/themes', new Set()],
-  ['@slop-ui/vue', new Set(['@slop-ui/core', '@slop-ui/shared'])],
-])
+const catalogByName = new Map(
+  workspacePackages.map((workspacePackage) => [
+    workspacePackage.name,
+    workspacePackage,
+  ]),
+)
 
 const violations = []
+const seenPackageNames = new Set()
 
 for (const directory of packageDirectories) {
   if (!directory.isDirectory()) continue
@@ -27,13 +28,23 @@ for (const directory of packageDirectories) {
     'package.json',
   )
   const packageJson = JSON.parse(await readFile(packageJsonPath, 'utf8'))
-  const allowedDependencies = allowedWorkspaceDependencies.get(packageJson.name)
+  const catalogedPackage = catalogByName.get(packageJson.name)
+  seenPackageNames.add(packageJson.name)
 
-  if (!allowedDependencies) {
+  if (!catalogedPackage) {
     violations.push(`Unregistered package boundary: ${packageJson.name}`)
     continue
   }
 
+  // Package AGENTS.md paths and docs are derived from the catalog directory,
+  // so a renamed folder with a stable package name would otherwise pass.
+  if (catalogedPackage.directory !== directory.name) {
+    violations.push(
+      `${packageJson.name} must live in packages/${catalogedPackage.directory}, found packages/${directory.name}`,
+    )
+  }
+
+  const allowedDependencies = new Set(catalogedPackage.allowedDependencies)
   const dependencyGroups = [
     packageJson.dependencies ?? {},
     packageJson.peerDependencies ?? {},
@@ -47,6 +58,14 @@ for (const directory of packageDirectories) {
     ) {
       violations.push(`${packageJson.name} may not depend on ${dependencyName}`)
     }
+  }
+}
+
+for (const workspacePackage of workspacePackages) {
+  if (!seenPackageNames.has(workspacePackage.name)) {
+    violations.push(
+      `Cataloged package missing from packages/: ${workspacePackage.name}`,
+    )
   }
 }
 

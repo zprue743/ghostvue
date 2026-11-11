@@ -55,3 +55,12 @@ release behavior.
 - [Commenting standard](../standards/commenting.md)
 - [Public API standard](../standards/public-api.md)
 - [Contribution workflow](../contributing/workflow.md)
+
+## Tool adapters
+
+`CLAUDE.md`, `.cursor/rules/*.mdc`, and each package `AGENTS.md` are adapters.
+They must remain thin pointers into `docs/` and the root `AGENTS.md` rather than
+copying those rules. Edit `scripts/agent-adapter-catalog.mjs` or
+`scripts/workspace-packages.mjs`, then run `pnpm adapters:write` to regenerate
+them. `pnpm adapters` is part of `pnpm verify` and fails when an adapter drifts
+from that catalog.
