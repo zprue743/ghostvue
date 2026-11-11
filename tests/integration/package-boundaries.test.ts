@@ -16,4 +16,16 @@ describe('workspace metadata', () => {
     // runtime, which would break identity-sensitive reactivity behavior.
     expect(packageJson.peerDependencies?.['vue']).toBeDefined()
   })
+
+  it('keeps Cursor from reading node_modules and env files', async () => {
+    const cursorignore = await readFile(
+      resolve(process.cwd(), '.cursorignore'),
+      'utf8',
+    )
+
+    // .cursorignore is the hard block. Lockfiles and generated outputs stay
+    // readable via .cursorindexingignore because tests and reviews open them.
+    expect(cursorignore).toMatch(/node_modules/)
+    expect(cursorignore).toMatch(/\.env/)
+  })
 })

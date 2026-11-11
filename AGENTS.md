@@ -55,6 +55,29 @@ pnpm docs:build
 pnpm verify
 ```
 
+## Context and token efficiency
+
+- Search with `rg` or symbol search before opening files. Read only the line
+  ranges you need.
+- Never read `node_modules`, `dist`, lockfiles, or generated files to learn
+  APIs. Read package source, published `.d.ts`, or `docs/architecture/` instead.
+- Do not dump full test or CI logs. Prefer `pnpm test --reporter=dot` and
+  `pnpm exec playwright test --reporter=dot`, or pipe through
+  `rg -i 'fail|error'`.
+- Use `gh pr checks` for CI status instead of fetching full logs.
+- Do not paste large diffs or Playwright snapshots into context.
+- Prefer `pnpm --filter @slop-ui/<package>` to scope typecheck, build, and docs.
+- Scope Vitest with `pnpm test path/to/file.test.ts` (root script; packages
+  have no `test` script).
+- Use `packages/*/manifests/*.manifest.json` as the cheap component API map.
+- Prefer `docs/` over built `llms.txt`. `pnpm docs:build` writes `/llms.txt`
+  into `.vitepress/dist`, which is not for agent reading.
+- Edit DTCG JSON under `packages/themes/tokens/`. Do not learn tokens from
+  `packages/themes/src/generated/` or `docs/themes/tokens.md`.
+- Generated outputs and `pnpm-lock.yaml` are indexing-ignored, not blocked.
+  Open them only when a review or lockfile diagnosis requires it.
+- Keep PR descriptions and comments concise.
+
 ## Prohibited shortcuts
 
 - Do not use `any`, unsafe assertions, disabled checks, or weakened rules merely
