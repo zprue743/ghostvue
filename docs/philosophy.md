@@ -31,6 +31,6 @@ paths, typed accessors, identity callbacks, and adapters for unusual sources.
 - Composition over slightly different copies of existing capabilities.
 - Evidence before abstraction; predictability before cleverness.
 
-Likely early primitives, future data table/query tooling, and possible scheduling
-features are directional context only. They are not a committed roadmap and no
-generic architecture should be invented solely to anticipate them.
+GitHub issues #1–#19 are sequenced toward DataTable in the
+[component roadmap](./roadmap.md). Query tooling and scheduling remain
+directional; do not invent generic architecture solely to anticipate them.

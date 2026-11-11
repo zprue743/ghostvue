@@ -22,8 +22,8 @@ place. Production components may be added only when they pass the
 docs, and a machine-readable manifest). See
 [ADR 0002](./docs/adr/0002-exit-foundation-phase.md).
 
-The likely product directions described in the documentation are context, not a
-committed roadmap.
+Component sequencing toward DataTable is in
+[docs/roadmap.md](./docs/roadmap.md).
 
 ## Requirements
 
