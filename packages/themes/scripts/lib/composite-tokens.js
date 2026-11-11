@@ -1,15 +1,39 @@
 /**
- * DTCG composite $value helpers for shadow and gradient tokens.
+ * DTCG composite $value helpers for shadow, gradient, cubicBezier, and spring
+ * tokens.
  *
  * Shadows follow the Design Tokens Community Group `shadow` type (a layer or
  * an array of layers). Gradients accept DTCG color-stop lists plus a small
  * layered extension so aurora can be several `radial-gradient(in oklch, …)`
- * functions in one token. Resolved composites serialize to CSS strings so the
- * public catalog stays string-valued like scalar tokens.
+ * functions in one token. cubicBezier is the DTCG array of four numbers.
+ * Springs are mass-spring-damper params compiled to CSS `linear()`. Resolved
+ * composites serialize to CSS strings so the public catalog stays
+ * string-valued like scalar tokens.
  */
+
+import {
+  isSpringValue,
+  serializeSpringDuration,
+  serializeSpringEasing,
+} from './spring.js'
 
 function isPlainObject(value) {
   return typeof value === 'object' && value !== null && !Array.isArray(value)
+}
+
+export function isCubicBezierValue(value) {
+  return (
+    Array.isArray(value) &&
+    value.length === 4 &&
+    value.every((entry) => typeof entry === 'number' && Number.isFinite(entry))
+  )
+}
+
+export function serializeCubicBezier(value) {
+  if (!isCubicBezierValue(value)) {
+    throw new Error('cubicBezier tokens require four finite numbers')
+  }
+  return `cubic-bezier(${value.join(', ')})`
 }
 
 export function isShadowLayer(value) {
@@ -51,7 +75,12 @@ export function isGradientValue(value) {
 }
 
 export function isCompositeValue(value) {
-  return isShadowValue(value) || isGradientValue(value)
+  return (
+    isShadowValue(value) ||
+    isGradientValue(value) ||
+    isCubicBezierValue(value) ||
+    isSpringValue(value)
+  )
 }
 
 function serializeShadowLayer(layer) {
@@ -120,6 +149,12 @@ export function serializeGradient(value) {
 export function serializeComposite(type, value) {
   if (type === 'shadow') return serializeShadow(value)
   if (type === 'gradient') return serializeGradient(value)
+  if (type === 'cubicBezier') return serializeCubicBezier(value)
+  if (type === 'spring') return serializeSpringEasing(value)
+  // A duration token may alias a spring; emit that spring's settle time.
+  if (type === 'duration' && isSpringValue(value)) {
+    return serializeSpringDuration(value)
+  }
   if (typeof value === 'number' || typeof value === 'boolean') {
     return String(value)
   }

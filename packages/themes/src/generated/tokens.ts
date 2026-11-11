@@ -77,6 +77,7 @@ export const tokens = {
   "action.duration": {
     name: "action.duration",
     cssVar: "--sl-action-duration",
+    reducedMotion: "80ms",
     type: "duration",
     tier: "semantic",
     description: "Action color and opacity transition duration.",
@@ -2217,6 +2218,16 @@ export const tokens = {
       dark: "0.75rem",
     },
   },
+  "duration.expressive": {
+    name: "duration.expressive",
+    type: "duration",
+    tier: "primitive",
+    description: "Longest emphasized duration.",
+    value: {
+      light: "700ms",
+      dark: "700ms",
+    },
+  },
   "duration.fast": {
     name: "duration.fast",
     type: "duration",
@@ -2225,6 +2236,86 @@ export const tokens = {
     value: {
       light: "120ms",
       dark: "120ms",
+    },
+  },
+  "duration.feedback": {
+    name: "duration.feedback",
+    type: "duration",
+    tier: "primitive",
+    description: "Short color and opacity feedback used under reduced motion. Not zero so state changes stay visible.",
+    value: {
+      light: "80ms",
+      dark: "80ms",
+    },
+  },
+  "duration.instant": {
+    name: "duration.instant",
+    type: "duration",
+    tier: "primitive",
+    description: "No delay. Used for snappings that should not interpolate.",
+    value: {
+      light: "0ms",
+      dark: "0ms",
+    },
+  },
+  "duration.moderate": {
+    name: "duration.moderate",
+    type: "duration",
+    tier: "primitive",
+    description: "Default enter and shared-element duration.",
+    value: {
+      light: "250ms",
+      dark: "250ms",
+    },
+  },
+  "duration.slow": {
+    name: "duration.slow",
+    type: "duration",
+    tier: "primitive",
+    description: "Large-surface duration.",
+    value: {
+      light: "400ms",
+      dark: "400ms",
+    },
+  },
+  "duration.stagger": {
+    name: "duration.stagger",
+    type: "duration",
+    tier: "primitive",
+    description: "Delay between successive items in a staggered sequence.",
+    value: {
+      light: "40ms",
+      dark: "40ms",
+    },
+  },
+  "easing.accelerate": {
+    name: "easing.accelerate",
+    type: "cubicBezier",
+    tier: "primitive",
+    description: "Ease-in. Use for exits.",
+    value: {
+      light: "cubic-bezier(0.3, 0, 1, 1)",
+      dark: "cubic-bezier(0.3, 0, 1, 1)",
+    },
+  },
+  "easing.decelerate": {
+    name: "easing.decelerate",
+    type: "cubicBezier",
+    tier: "primitive",
+    description: "Ease-out. Use for enters.",
+    value: {
+      light: "cubic-bezier(0, 0, 0, 1)",
+      dark: "cubic-bezier(0, 0, 0, 1)",
+    },
+  },
+  "easing.standard": {
+    name: "easing.standard",
+    type: "cubicBezier",
+    tier: "primitive",
+    description: "Default symmetric easing.",
+    value: {
+      light: "cubic-bezier(0.2, 0, 0, 1)",
+      dark: "cubic-bezier(0.2, 0, 0, 1)",
     },
   },
   "elevation.0.bg": {
@@ -2699,6 +2790,273 @@ export const tokens = {
       dark: "#0f172a",
     },
   },
+  "motion.duration.expressive": {
+    name: "motion.duration.expressive",
+    cssVar: "--sl-motion-duration-expressive",
+    reducedMotion: "80ms",
+    type: "duration",
+    tier: "semantic",
+    description: "Emphasized duration for hero or springy motion.",
+    value: {
+      light: "700ms",
+      dark: "700ms",
+    },
+  },
+  "motion.duration.fast": {
+    name: "motion.duration.fast",
+    cssVar: "--sl-motion-duration-fast",
+    reducedMotion: "80ms",
+    type: "duration",
+    tier: "semantic",
+    description: "Fast color, opacity, and control transitions.",
+    value: {
+      light: "120ms",
+      dark: "120ms",
+    },
+  },
+  "motion.duration.instant": {
+    name: "motion.duration.instant",
+    cssVar: "--sl-motion-duration-instant",
+    reducedMotion: "0ms",
+    type: "duration",
+    tier: "semantic",
+    description: "No interpolation.",
+    value: {
+      light: "0ms",
+      dark: "0ms",
+    },
+  },
+  "motion.duration.moderate": {
+    name: "motion.duration.moderate",
+    cssVar: "--sl-motion-duration-moderate",
+    reducedMotion: "80ms",
+    type: "duration",
+    tier: "semantic",
+    description: "Default enter duration. Exits should use fast instead.",
+    value: {
+      light: "250ms",
+      dark: "250ms",
+    },
+  },
+  "motion.duration.slow": {
+    name: "motion.duration.slow",
+    cssVar: "--sl-motion-duration-slow",
+    reducedMotion: "80ms",
+    type: "duration",
+    tier: "semantic",
+    description: "Large-surface duration.",
+    value: {
+      light: "400ms",
+      dark: "400ms",
+    },
+  },
+  "motion.easing.accelerate": {
+    name: "motion.easing.accelerate",
+    cssVar: "--sl-motion-easing-accelerate",
+    type: "cubicBezier",
+    tier: "semantic",
+    description: "Ease-in for exits.",
+    value: {
+      light: "cubic-bezier(0.3, 0, 1, 1)",
+      dark: "cubic-bezier(0.3, 0, 1, 1)",
+    },
+  },
+  "motion.easing.decelerate": {
+    name: "motion.easing.decelerate",
+    cssVar: "--sl-motion-easing-decelerate",
+    type: "cubicBezier",
+    tier: "semantic",
+    description: "Ease-out for enters.",
+    value: {
+      light: "cubic-bezier(0, 0, 0, 1)",
+      dark: "cubic-bezier(0, 0, 0, 1)",
+    },
+  },
+  "motion.easing.standard": {
+    name: "motion.easing.standard",
+    cssVar: "--sl-motion-easing-standard",
+    type: "cubicBezier",
+    tier: "semantic",
+    description: "Default symmetric easing.",
+    value: {
+      light: "cubic-bezier(0.2, 0, 0, 1)",
+      dark: "cubic-bezier(0.2, 0, 0, 1)",
+    },
+  },
+  "motion.enter.duration": {
+    name: "motion.enter.duration",
+    cssVar: "--sl-motion-enter-duration",
+    reducedMotion: "80ms",
+    type: "duration",
+    tier: "semantic",
+    description: "Enter duration. Longer than exit so arrivals read clearly.",
+    value: {
+      light: "250ms",
+      dark: "250ms",
+    },
+  },
+  "motion.enter.easing": {
+    name: "motion.enter.easing",
+    cssVar: "--sl-motion-enter-easing",
+    type: "cubicBezier",
+    tier: "semantic",
+    description: "Enter easing. Decelerate into rest.",
+    value: {
+      light: "cubic-bezier(0, 0, 0, 1)",
+      dark: "cubic-bezier(0, 0, 0, 1)",
+    },
+  },
+  "motion.exit.duration": {
+    name: "motion.exit.duration",
+    cssVar: "--sl-motion-exit-duration",
+    reducedMotion: "80ms",
+    type: "duration",
+    tier: "semantic",
+    description: "Exit duration. Faster than enter so departures get out of the way.",
+    value: {
+      light: "120ms",
+      dark: "120ms",
+    },
+  },
+  "motion.exit.easing": {
+    name: "motion.exit.easing",
+    cssVar: "--sl-motion-exit-easing",
+    type: "cubicBezier",
+    tier: "semantic",
+    description: "Exit easing. Accelerate out.",
+    value: {
+      light: "cubic-bezier(0.3, 0, 1, 1)",
+      dark: "cubic-bezier(0.3, 0, 1, 1)",
+    },
+  },
+  "motion.fade.duration": {
+    name: "motion.fade.duration",
+    cssVar: "--sl-motion-fade-duration",
+    reducedMotion: "80ms",
+    type: "duration",
+    tier: "semantic",
+    description: "Opacity-only duration. Kept under reduced motion so state changes stay visible.",
+    value: {
+      light: "120ms",
+      dark: "120ms",
+    },
+  },
+  "motion.intensity": {
+    name: "motion.intensity",
+    cssVar: "--sl-motion-intensity",
+    type: "number",
+    tier: "semantic",
+    description: "Unitless 0–1 duration scale. Set --sl-motion-intensity on any subtree to slow or freeze motion.",
+    value: {
+      light: "1",
+      dark: "1",
+    },
+  },
+  "motion.scale": {
+    name: "motion.scale",
+    cssVar: "--sl-motion-scale",
+    reducedMotion: "1",
+    type: "number",
+    tier: "semantic",
+    description: "Enter scale. 1 under reduced motion so only opacity remains.",
+    value: {
+      light: "0.96",
+      dark: "0.96",
+    },
+  },
+  "motion.spring.bouncy": {
+    name: "motion.spring.bouncy",
+    cssVar: "--sl-motion-spring-bouncy",
+    type: "spring",
+    tier: "semantic",
+    description: "Bouncy spring compiled to CSS linear().",
+    value: {
+      light: "linear(0, 0.0336 1.3841%, 0.1536 3.1142%, 1.0771 11.7647%, 1.2198 14.1869%, 1.2801 16.609%, 1.2822 17.9931%, 1.259 19.7232%, 0.9889 28.7197%, 0.9437 31.1419%, 0.9209 33.91%, 0.9278 37.3702%, 1.0023 46.0208%, 1.0219 50.8651%, 1.0207 54.6713%, 0.9938 68.1661%, 1.0016 84.7751%, 1)",
+      dark: "linear(0, 0.0336 1.3841%, 0.1536 3.1142%, 1.0771 11.7647%, 1.2198 14.1869%, 1.2801 16.609%, 1.2822 17.9931%, 1.259 19.7232%, 0.9889 28.7197%, 0.9437 31.1419%, 0.9209 33.91%, 0.9278 37.3702%, 1.0023 46.0208%, 1.0219 50.8651%, 1.0207 54.6713%, 0.9938 68.1661%, 1.0016 84.7751%, 1)",
+    },
+  },
+  "motion.spring.bouncy.duration": {
+    name: "motion.spring.bouncy.duration",
+    cssVar: "--sl-motion-spring-bouncy-duration",
+    reducedMotion: "80ms",
+    type: "duration",
+    tier: "semantic",
+    description: "Settle duration for the bouncy spring.",
+    value: {
+      light: "1204ms",
+      dark: "1204ms",
+    },
+  },
+  "motion.spring.gentle": {
+    name: "motion.spring.gentle",
+    cssVar: "--sl-motion-spring-gentle",
+    type: "spring",
+    tier: "semantic",
+    description: "Gentle spring compiled to CSS linear().",
+    value: {
+      light: "linear(0, 0.0191 2.1429%, 0.0866 5%, 0.4534 15.7143%, 0.6359 22.1429%, 0.767 28.5714%, 0.8204 32.1429%, 0.8698 36.4286%, 0.9065 40.7143%, 0.9369 45.7143%, 0.9751 57.1429%, 0.9934 72.8571%, 1)",
+      dark: "linear(0, 0.0191 2.1429%, 0.0866 5%, 0.4534 15.7143%, 0.6359 22.1429%, 0.767 28.5714%, 0.8204 32.1429%, 0.8698 36.4286%, 0.9065 40.7143%, 0.9369 45.7143%, 0.9751 57.1429%, 0.9934 72.8571%, 1)",
+    },
+  },
+  "motion.spring.gentle.duration": {
+    name: "motion.spring.gentle.duration",
+    cssVar: "--sl-motion-spring-gentle-duration",
+    reducedMotion: "80ms",
+    type: "duration",
+    tier: "semantic",
+    description: "Settle duration for the gentle spring.",
+    value: {
+      light: "583ms",
+      dark: "583ms",
+    },
+  },
+  "motion.spring.snappy": {
+    name: "motion.spring.snappy",
+    cssVar: "--sl-motion-spring-snappy",
+    type: "spring",
+    tier: "semantic",
+    description: "Snappy spring compiled to CSS linear().",
+    value: {
+      light: "linear(0, 0.0043 0.8264%, 0.036 2.4793%, 0.1271 4.9587%, 0.6578 14.876%, 0.8392 19.0083%, 0.9867 23.9669%, 1.0328 26.4463%, 1.063 28.9256%, 1.0832 32.2314%, 1.0853 36.3636%, 1.0164 52.8926%, 0.9952 62.8099%, 1)",
+      dark: "linear(0, 0.0043 0.8264%, 0.036 2.4793%, 0.1271 4.9587%, 0.6578 14.876%, 0.8392 19.0083%, 0.9867 23.9669%, 1.0328 26.4463%, 1.063 28.9256%, 1.0832 32.2314%, 1.0853 36.3636%, 1.0164 52.8926%, 0.9952 62.8099%, 1)",
+    },
+  },
+  "motion.spring.snappy.duration": {
+    name: "motion.spring.snappy.duration",
+    cssVar: "--sl-motion-spring-snappy-duration",
+    reducedMotion: "80ms",
+    type: "duration",
+    tier: "semantic",
+    description: "Settle duration for the snappy spring.",
+    value: {
+      light: "504ms",
+      dark: "504ms",
+    },
+  },
+  "motion.stagger": {
+    name: "motion.stagger",
+    cssVar: "--sl-motion-stagger",
+    reducedMotion: "0ms",
+    type: "duration",
+    tier: "semantic",
+    description: "Delay between staggered items. Zero under reduced motion.",
+    value: {
+      light: "40ms",
+      dark: "40ms",
+    },
+  },
+  "motion.translate": {
+    name: "motion.translate",
+    cssVar: "--sl-motion-translate",
+    reducedMotion: "0px",
+    type: "dimension",
+    tier: "semantic",
+    description: "Enter/exit translation distance. 0 under reduced motion.",
+    value: {
+      light: "0.5rem",
+      dark: "0.5rem",
+    },
+  },
   "opacity.disabled": {
     name: "opacity.disabled",
     type: "number",
@@ -2749,6 +3107,16 @@ export const tokens = {
       dark: "1.45",
     },
   },
+  "scale.motion": {
+    name: "scale.motion",
+    type: "number",
+    tier: "primitive",
+    description: "Default enter scale. 1 means no scale motion.",
+    value: {
+      light: "0.96",
+      dark: "0.96",
+    },
+  },
   "size.blur.glass": {
     name: "size.blur.glass",
     type: "dimension",
@@ -2797,6 +3165,16 @@ export const tokens = {
     value: {
       light: "1.1em",
       dark: "1.1em",
+    },
+  },
+  "size.motion.translate": {
+    name: "size.motion.translate",
+    type: "dimension",
+    tier: "primitive",
+    description: "Default enter/exit translation distance.",
+    value: {
+      light: "0.5rem",
+      dark: "0.5rem",
     },
   },
   "size.spinner.width": {
@@ -2857,6 +3235,36 @@ export const tokens = {
     value: {
       light: "1.25rem",
       dark: "1.25rem",
+    },
+  },
+  "spring.bouncy": {
+    name: "spring.bouncy",
+    type: "spring",
+    tier: "primitive",
+    description: "Underdamped spring that overshoots before settling.",
+    value: {
+      light: "linear(0, 0.0336 1.3841%, 0.1536 3.1142%, 1.0771 11.7647%, 1.2198 14.1869%, 1.2801 16.609%, 1.2822 17.9931%, 1.259 19.7232%, 0.9889 28.7197%, 0.9437 31.1419%, 0.9209 33.91%, 0.9278 37.3702%, 1.0023 46.0208%, 1.0219 50.8651%, 1.0207 54.6713%, 0.9938 68.1661%, 1.0016 84.7751%, 1)",
+      dark: "linear(0, 0.0336 1.3841%, 0.1536 3.1142%, 1.0771 11.7647%, 1.2198 14.1869%, 1.2801 16.609%, 1.2822 17.9931%, 1.259 19.7232%, 0.9889 28.7197%, 0.9437 31.1419%, 0.9209 33.91%, 0.9278 37.3702%, 1.0023 46.0208%, 1.0219 50.8651%, 1.0207 54.6713%, 0.9938 68.1661%, 1.0016 84.7751%, 1)",
+    },
+  },
+  "spring.gentle": {
+    name: "spring.gentle",
+    type: "spring",
+    tier: "primitive",
+    description: "Critically damped spring. No overshoot.",
+    value: {
+      light: "linear(0, 0.0191 2.1429%, 0.0866 5%, 0.4534 15.7143%, 0.6359 22.1429%, 0.767 28.5714%, 0.8204 32.1429%, 0.8698 36.4286%, 0.9065 40.7143%, 0.9369 45.7143%, 0.9751 57.1429%, 0.9934 72.8571%, 1)",
+      dark: "linear(0, 0.0191 2.1429%, 0.0866 5%, 0.4534 15.7143%, 0.6359 22.1429%, 0.767 28.5714%, 0.8204 32.1429%, 0.8698 36.4286%, 0.9065 40.7143%, 0.9369 45.7143%, 0.9751 57.1429%, 0.9934 72.8571%, 1)",
+    },
+  },
+  "spring.snappy": {
+    name: "spring.snappy",
+    type: "spring",
+    tier: "primitive",
+    description: "Underdamped spring with a short settle.",
+    value: {
+      light: "linear(0, 0.0043 0.8264%, 0.036 2.4793%, 0.1271 4.9587%, 0.6578 14.876%, 0.8392 19.0083%, 0.9867 23.9669%, 1.0328 26.4463%, 1.063 28.9256%, 1.0832 32.2314%, 1.0853 36.3636%, 1.0164 52.8926%, 0.9952 62.8099%, 1)",
+      dark: "linear(0, 0.0043 0.8264%, 0.036 2.4793%, 0.1271 4.9587%, 0.6578 14.876%, 0.8392 19.0083%, 0.9867 23.9669%, 1.0328 26.4463%, 1.063 28.9256%, 1.0832 32.2314%, 1.0853 36.3636%, 1.0164 52.8926%, 0.9952 62.8099%, 1)",
     },
   },
   "status.danger.bg": {

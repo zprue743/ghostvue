@@ -25,6 +25,7 @@ export const docsSidebar: LlmsSidebarGroup[] = [
         text: 'Elevation, materials, gradients',
         link: '/themes/elevation',
       },
+      { text: 'Motion', link: '/themes/motion' },
     ],
   },
   {

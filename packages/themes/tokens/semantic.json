@@ -705,8 +705,13 @@
     },
     "duration": {
       "$type": "duration",
-      "$value": "{duration.fast}",
-      "$description": "Action color and opacity transition duration."
+      "$value": "{motion.duration.fast}",
+      "$description": "Action color and opacity transition duration.",
+      "$extensions": {
+        "slop.ui": {
+          "reducedMotion": "80ms"
+        }
+      }
     },
     "label": {
       "weight": {
@@ -886,6 +891,205 @@
             "$value": "{space.5}",
             "$description": "Large control inline padding."
           }
+        }
+      }
+    }
+  },
+  "motion": {
+    "intensity": {
+      "$type": "number",
+      "$value": 1,
+      "$description": "Unitless 0–1 duration scale. Set --sl-motion-intensity on any subtree to slow or freeze motion."
+    },
+    "duration": {
+      "instant": {
+        "$type": "duration",
+        "$value": "{duration.instant}",
+        "$description": "No interpolation.",
+        "$extensions": {
+          "slop.ui": {
+            "reducedMotion": "0ms"
+          }
+        }
+      },
+      "fast": {
+        "$type": "duration",
+        "$value": "{duration.fast}",
+        "$description": "Fast color, opacity, and control transitions.",
+        "$extensions": {
+          "slop.ui": {
+            "reducedMotion": "80ms"
+          }
+        }
+      },
+      "moderate": {
+        "$type": "duration",
+        "$value": "{duration.moderate}",
+        "$description": "Default enter duration. Exits should use fast instead.",
+        "$extensions": {
+          "slop.ui": {
+            "reducedMotion": "80ms"
+          }
+        }
+      },
+      "slow": {
+        "$type": "duration",
+        "$value": "{duration.slow}",
+        "$description": "Large-surface duration.",
+        "$extensions": {
+          "slop.ui": {
+            "reducedMotion": "80ms"
+          }
+        }
+      },
+      "expressive": {
+        "$type": "duration",
+        "$value": "{duration.expressive}",
+        "$description": "Emphasized duration for hero or springy motion.",
+        "$extensions": {
+          "slop.ui": {
+            "reducedMotion": "80ms"
+          }
+        }
+      }
+    },
+    "easing": {
+      "standard": {
+        "$type": "cubicBezier",
+        "$value": "{easing.standard}",
+        "$description": "Default symmetric easing."
+      },
+      "decelerate": {
+        "$type": "cubicBezier",
+        "$value": "{easing.decelerate}",
+        "$description": "Ease-out for enters."
+      },
+      "accelerate": {
+        "$type": "cubicBezier",
+        "$value": "{easing.accelerate}",
+        "$description": "Ease-in for exits."
+      }
+    },
+    "spring": {
+      "gentle": {
+        "$type": "spring",
+        "$value": "{spring.gentle}",
+        "$description": "Gentle spring compiled to CSS linear().",
+        "duration": {
+          "$type": "duration",
+          "$value": "{spring.gentle}",
+          "$description": "Settle duration for the gentle spring.",
+          "$extensions": {
+            "slop.ui": {
+              "reducedMotion": "80ms"
+            }
+          }
+        }
+      },
+      "snappy": {
+        "$type": "spring",
+        "$value": "{spring.snappy}",
+        "$description": "Snappy spring compiled to CSS linear().",
+        "duration": {
+          "$type": "duration",
+          "$value": "{spring.snappy}",
+          "$description": "Settle duration for the snappy spring.",
+          "$extensions": {
+            "slop.ui": {
+              "reducedMotion": "80ms"
+            }
+          }
+        }
+      },
+      "bouncy": {
+        "$type": "spring",
+        "$value": "{spring.bouncy}",
+        "$description": "Bouncy spring compiled to CSS linear().",
+        "duration": {
+          "$type": "duration",
+          "$value": "{spring.bouncy}",
+          "$description": "Settle duration for the bouncy spring.",
+          "$extensions": {
+            "slop.ui": {
+              "reducedMotion": "80ms"
+            }
+          }
+        }
+      }
+    },
+    "enter": {
+      "duration": {
+        "$type": "duration",
+        "$value": "{motion.duration.moderate}",
+        "$description": "Enter duration. Longer than exit so arrivals read clearly.",
+        "$extensions": {
+          "slop.ui": {
+            "reducedMotion": "80ms"
+          }
+        }
+      },
+      "easing": {
+        "$type": "cubicBezier",
+        "$value": "{motion.easing.decelerate}",
+        "$description": "Enter easing. Decelerate into rest."
+      }
+    },
+    "exit": {
+      "duration": {
+        "$type": "duration",
+        "$value": "{motion.duration.fast}",
+        "$description": "Exit duration. Faster than enter so departures get out of the way.",
+        "$extensions": {
+          "slop.ui": {
+            "reducedMotion": "80ms"
+          }
+        }
+      },
+      "easing": {
+        "$type": "cubicBezier",
+        "$value": "{motion.easing.accelerate}",
+        "$description": "Exit easing. Accelerate out."
+      }
+    },
+    "fade": {
+      "duration": {
+        "$type": "duration",
+        "$value": "{motion.duration.fast}",
+        "$description": "Opacity-only duration. Kept under reduced motion so state changes stay visible.",
+        "$extensions": {
+          "slop.ui": {
+            "reducedMotion": "80ms"
+          }
+        }
+      }
+    },
+    "stagger": {
+      "$type": "duration",
+      "$value": "{duration.stagger}",
+      "$description": "Delay between staggered items. Zero under reduced motion.",
+      "$extensions": {
+        "slop.ui": {
+          "reducedMotion": "0ms"
+        }
+      }
+    },
+    "translate": {
+      "$type": "dimension",
+      "$value": "{size.motion.translate}",
+      "$description": "Enter/exit translation distance. 0 under reduced motion.",
+      "$extensions": {
+        "slop.ui": {
+          "reducedMotion": "0px"
+        }
+      }
+    },
+    "scale": {
+      "$type": "number",
+      "$value": "{scale.motion}",
+      "$description": "Enter scale. 1 under reduced motion so only opacity remains.",
+      "$extensions": {
+        "slop.ui": {
+          "reducedMotion": "1"
         }
       }
     }

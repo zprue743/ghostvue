@@ -41,12 +41,12 @@ of `pnpm verify`) checks WCAG 2 AA on semantic text/background pairs.
 ## Tiers
 
 1. **Primitive** — raw palette and dimension literals. No product intent
-   (`color.primary.700`). Color ramps and elevation shadow tints live
-   here; motion and density scales belong to SLO-65–SLO-66.
+   (`color.primary.700`). Color ramps, elevation shadow tints, duration,
+   easing, and spring parameters live here; density belongs to SLO-66.
 2. **Semantic** — product intent as `role.part.state` across `action`,
    `surface`, `text`, `border`, `status`, `focus`, `control`,
-   `elevation`, `material`, and `gradient` (`action.primary.bg`,
-   `elevation.2.shadow`, `material.glass.bg`). Components consume
+   `elevation`, `material`, `gradient`, and `motion` (`action.primary.bg`,
+   `elevation.2.shadow`, `motion.duration.fast`). Components consume
    semantic tokens only.
 
 Semantic tokens may reference primitives or other semantic tokens.
@@ -122,8 +122,17 @@ new color roles to system colors. Visual recipes use `data-elevation`,
 `data-material`, and `data-gradient` in theme CSS — not per-component
 tokens. See [elevation, materials, and gradients](../themes/elevation.md).
 
+Motion durations, cubic-bezier easing, and spring presets are SLO-65.
+Springs are authored as stiffness / damping / mass and compile to CSS
+`linear()` plus a settle duration. Every duration CSS value is
+`calc(<ms> * var(--sl-motion-intensity, 1))`, redeclared on descendants so a
+nested `--sl-motion-intensity` re-evaluates. Under
+`prefers-reduced-motion: reduce`, movement tokens collapse to opacity-only
+or 80ms feedback so state changes stay visible. See
+[motion](../themes/motion.md).
+
 Flagship themes (calm enterprise, vibrant expressive, minimal monochrome)
-are SLO-68. Default density is comfortable (SLO-66). Motion is SLO-65.
+are SLO-68. Default density is comfortable (SLO-66).
 
 ## Authoring rules
 
@@ -137,6 +146,11 @@ are SLO-68. Default density is comfortable (SLO-66). Motion is SLO-65.
   or layered `{ style, interpolation, stops }` objects and compile to
   CSS `in oklch`.
 - Hairline width may set `$extensions.slop.ui.highDpr` so 2dppx screens
-  paint one device pixel.
+  paint one device pixel. Motion tokens may set
+  `$extensions.slop.ui.reducedMotion` for the `prefers-reduced-motion:
+reduce` override.
+- cubicBezier values are four numbers. Spring values are
+  `{ stiffness, damping, mass }` and may be aliased from a duration token
+  to emit the settle time.
 - Headless `@slop-ui/vue` components must not require these tokens to
   function. Themed wrappers consume them as in ADR 0004.

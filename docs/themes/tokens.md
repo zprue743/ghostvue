@@ -205,6 +205,34 @@ tokens that alias them.
 | `material.grain.noise.opacity` | `--sl-material-grain-noise-opacity` | number | `0.08` | `0.08` | Grain noise overlay opacity. |
 | `material.solid.bg` | `--sl-material-solid-bg` | color | `#ffffff` | `#0f172a` | Opaque solid material fill. |
 
+### motion
+
+| Token | CSS | Type | Light | Dark | Description |
+| --- | --- | --- | --- | --- | --- |
+| `motion.duration.expressive` | `--sl-motion-duration-expressive` | duration | `700ms` | `700ms` | Emphasized duration for hero or springy motion. |
+| `motion.duration.fast` | `--sl-motion-duration-fast` | duration | `120ms` | `120ms` | Fast color, opacity, and control transitions. |
+| `motion.duration.instant` | `--sl-motion-duration-instant` | duration | `0ms` | `0ms` | No interpolation. |
+| `motion.duration.moderate` | `--sl-motion-duration-moderate` | duration | `250ms` | `250ms` | Default enter duration. Exits should use fast instead. |
+| `motion.duration.slow` | `--sl-motion-duration-slow` | duration | `400ms` | `400ms` | Large-surface duration. |
+| `motion.easing.accelerate` | `--sl-motion-easing-accelerate` | cubicBezier | `cubic-bezier(0.3, 0, 1, 1)` | `cubic-bezier(0.3, 0, 1, 1)` | Ease-in for exits. |
+| `motion.easing.decelerate` | `--sl-motion-easing-decelerate` | cubicBezier | `cubic-bezier(0, 0, 0, 1)` | `cubic-bezier(0, 0, 0, 1)` | Ease-out for enters. |
+| `motion.easing.standard` | `--sl-motion-easing-standard` | cubicBezier | `cubic-bezier(0.2, 0, 0, 1)` | `cubic-bezier(0.2, 0, 0, 1)` | Default symmetric easing. |
+| `motion.enter.duration` | `--sl-motion-enter-duration` | duration | `250ms` | `250ms` | Enter duration. Longer than exit so arrivals read clearly. |
+| `motion.enter.easing` | `--sl-motion-enter-easing` | cubicBezier | `cubic-bezier(0, 0, 0, 1)` | `cubic-bezier(0, 0, 0, 1)` | Enter easing. Decelerate into rest. |
+| `motion.exit.duration` | `--sl-motion-exit-duration` | duration | `120ms` | `120ms` | Exit duration. Faster than enter so departures get out of the way. |
+| `motion.exit.easing` | `--sl-motion-exit-easing` | cubicBezier | `cubic-bezier(0.3, 0, 1, 1)` | `cubic-bezier(0.3, 0, 1, 1)` | Exit easing. Accelerate out. |
+| `motion.fade.duration` | `--sl-motion-fade-duration` | duration | `120ms` | `120ms` | Opacity-only duration. Kept under reduced motion so state changes stay visible. |
+| `motion.intensity` | `--sl-motion-intensity` | number | `1` | `1` | Unitless 0–1 duration scale. Set --sl-motion-intensity on any subtree to slow or freeze motion. |
+| `motion.scale` | `--sl-motion-scale` | number | `0.96` | `0.96` | Enter scale. 1 under reduced motion so only opacity remains. |
+| `motion.spring.bouncy` | `--sl-motion-spring-bouncy` | spring | `linear(0, 0.0336 1.3841%, 0.1536 3.1142%, 1.0771 11.7647%, 1.2198 14.1869%, 1.2801 16.609%, 1.2822 17.9931%, 1.259 19.7232%, 0.9889 28.7197%, 0.9437 31.1419%, 0.9209 33.91%, 0.9278 37.3702%, 1.0023 46.0208%, 1.0219 50.8651%, 1.0207 54.6713%, 0.9938 68.1661%, 1.0016 84.7751%, 1)` | `linear(0, 0.0336 1.3841%, 0.1536 3.1142%, 1.0771 11.7647%, 1.2198 14.1869%, 1.2801 16.609%, 1.2822 17.9931%, 1.259 19.7232%, 0.9889 28.7197%, 0.9437 31.1419%, 0.9209 33.91%, 0.9278 37.3702%, 1.0023 46.0208%, 1.0219 50.8651%, 1.0207 54.6713%, 0.9938 68.1661%, 1.0016 84.7751%, 1)` | Bouncy spring compiled to CSS linear(). |
+| `motion.spring.bouncy.duration` | `--sl-motion-spring-bouncy-duration` | duration | `1204ms` | `1204ms` | Settle duration for the bouncy spring. |
+| `motion.spring.gentle` | `--sl-motion-spring-gentle` | spring | `linear(0, 0.0191 2.1429%, 0.0866 5%, 0.4534 15.7143%, 0.6359 22.1429%, 0.767 28.5714%, 0.8204 32.1429%, 0.8698 36.4286%, 0.9065 40.7143%, 0.9369 45.7143%, 0.9751 57.1429%, 0.9934 72.8571%, 1)` | `linear(0, 0.0191 2.1429%, 0.0866 5%, 0.4534 15.7143%, 0.6359 22.1429%, 0.767 28.5714%, 0.8204 32.1429%, 0.8698 36.4286%, 0.9065 40.7143%, 0.9369 45.7143%, 0.9751 57.1429%, 0.9934 72.8571%, 1)` | Gentle spring compiled to CSS linear(). |
+| `motion.spring.gentle.duration` | `--sl-motion-spring-gentle-duration` | duration | `583ms` | `583ms` | Settle duration for the gentle spring. |
+| `motion.spring.snappy` | `--sl-motion-spring-snappy` | spring | `linear(0, 0.0043 0.8264%, 0.036 2.4793%, 0.1271 4.9587%, 0.6578 14.876%, 0.8392 19.0083%, 0.9867 23.9669%, 1.0328 26.4463%, 1.063 28.9256%, 1.0832 32.2314%, 1.0853 36.3636%, 1.0164 52.8926%, 0.9952 62.8099%, 1)` | `linear(0, 0.0043 0.8264%, 0.036 2.4793%, 0.1271 4.9587%, 0.6578 14.876%, 0.8392 19.0083%, 0.9867 23.9669%, 1.0328 26.4463%, 1.063 28.9256%, 1.0832 32.2314%, 1.0853 36.3636%, 1.0164 52.8926%, 0.9952 62.8099%, 1)` | Snappy spring compiled to CSS linear(). |
+| `motion.spring.snappy.duration` | `--sl-motion-spring-snappy-duration` | duration | `504ms` | `504ms` | Settle duration for the snappy spring. |
+| `motion.stagger` | `--sl-motion-stagger` | duration | `40ms` | `40ms` | Delay between staggered items. Zero under reduced motion. |
+| `motion.translate` | `--sl-motion-translate` | dimension | `0.5rem` | `0.5rem` | Enter/exit translation distance. 0 under reduced motion. |
+
 ### status
 
 | Token | CSS | Type | Light | Dark | Description |
@@ -411,22 +439,36 @@ tokens can alias a stable OKLCH scale.
 | `control.min.lg` | dimension | `3.25rem` | Large control minimum size. |
 | `control.min.md` | dimension | `2.75rem` | Medium control minimum size. |
 | `control.min.sm` | dimension | `2.25rem` | Small control minimum size. |
+| `duration.expressive` | duration | `700ms` | Longest emphasized duration. |
 | `duration.fast` | duration | `120ms` | Fast interaction duration. |
+| `duration.feedback` | duration | `80ms` | Short color and opacity feedback used under reduced motion. Not zero so state changes stay visible. |
+| `duration.instant` | duration | `0ms` | No delay. Used for snappings that should not interpolate. |
+| `duration.moderate` | duration | `250ms` | Default enter and shared-element duration. |
+| `duration.slow` | duration | `400ms` | Large-surface duration. |
+| `duration.stagger` | duration | `40ms` | Delay between successive items in a staggered sequence. |
+| `easing.accelerate` | cubicBezier | `cubic-bezier(0.3, 0, 1, 1)` | Ease-in. Use for exits. |
+| `easing.decelerate` | cubicBezier | `cubic-bezier(0, 0, 0, 1)` | Ease-out. Use for enters. |
+| `easing.standard` | cubicBezier | `cubic-bezier(0.2, 0, 0, 1)` | Default symmetric easing. |
 | `font.weight.semibold` | fontWeight | `600` | Semibold font weight. |
 | `opacity.disabled` | number | `0.55` | Unavailable-state opacity. |
 | `opacity.glass` | number | `0.04` | Glass material noise overlay opacity. |
 | `opacity.grain` | number | `0.08` | Grain material noise overlay opacity. |
 | `radius.md` | dimension | `0.5rem` | Medium corner radius. |
 | `saturate.glass` | number | `1.45` | Glass material backdrop saturation boost. |
+| `scale.motion` | number | `0.96` | Default enter scale. 1 means no scale motion. |
 | `size.blur.glass` | dimension | `1.25rem` | Glass material backdrop blur. |
 | `size.focus.offset` | dimension | `2px` | Gap between a control and its focus ring. |
 | `size.focus.width` | dimension | `3px` | Focus outline thickness. |
 | `size.hairline` | dimension | `1px` | Hairline border width at 1x. High-DPR screens use 0.5px via the compiler. |
 | `size.icon` | dimension | `1.1em` | Icon size relative to the label. |
+| `size.motion.translate` | dimension | `0.5rem` | Default enter/exit translation distance. |
 | `size.spinner.width` | dimension | `2px` | Default spinner stroke width. |
 | `space.2` | dimension | `0.5rem` | Space 2. |
 | `space.3` | dimension | `0.75rem` | Space 3. |
 | `space.3-5` | dimension | `0.875rem` | Space 3.5. |
 | `space.4` | dimension | `1rem` | Space 4. |
 | `space.5` | dimension | `1.25rem` | Space 5. |
+| `spring.bouncy` | spring | `linear(0, 0.0336 1.3841%, 0.1536 3.1142%, 1.0771 11.7647%, 1.2198 14.1869%, 1.2801 16.609%, 1.2822 17.9931%, 1.259 19.7232%, 0.9889 28.7197%, 0.9437 31.1419%, 0.9209 33.91%, 0.9278 37.3702%, 1.0023 46.0208%, 1.0219 50.8651%, 1.0207 54.6713%, 0.9938 68.1661%, 1.0016 84.7751%, 1)` | Underdamped spring that overshoots before settling. |
+| `spring.gentle` | spring | `linear(0, 0.0191 2.1429%, 0.0866 5%, 0.4534 15.7143%, 0.6359 22.1429%, 0.767 28.5714%, 0.8204 32.1429%, 0.8698 36.4286%, 0.9065 40.7143%, 0.9369 45.7143%, 0.9751 57.1429%, 0.9934 72.8571%, 1)` | Critically damped spring. No overshoot. |
+| `spring.snappy` | spring | `linear(0, 0.0043 0.8264%, 0.036 2.4793%, 0.1271 4.9587%, 0.6578 14.876%, 0.8392 19.0083%, 0.9867 23.9669%, 1.0328 26.4463%, 1.063 28.9256%, 1.0832 32.2314%, 1.0853 36.3636%, 1.0164 52.8926%, 0.9952 62.8099%, 1)` | Underdamped spring with a short settle. |
 

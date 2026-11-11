@@ -51,10 +51,11 @@
     padding-inline: var(--_slop-button-padding-inline);
     position: relative;
     transition:
-      background-color var(--sl-action-duration) ease,
-      border-color var(--sl-action-duration) ease,
-      color var(--sl-action-duration) ease,
-      opacity var(--sl-action-duration) ease;
+      background-color var(--sl-action-duration)
+        var(--sl-motion-easing-standard),
+      border-color var(--sl-action-duration) var(--sl-motion-easing-standard),
+      color var(--sl-action-duration) var(--sl-motion-easing-standard),
+      opacity var(--sl-action-duration) var(--sl-motion-easing-standard);
   }
 
   :where(
@@ -207,7 +208,8 @@
     .slop-theme .slop-button[data-state='loading'],
     .slop-themed-scope .slop-button[data-state='loading']
   )::before {
-    animation: slop-button-spin 800ms linear infinite;
+    animation: slop-button-spin var(--sl-motion-duration-expressive) linear
+      infinite;
     block-size: var(--sl-action-spinner-size);
     border: var(--sl-action-spinner-width) solid var(--_slop-button-color);
     border-inline-end-color: transparent;
@@ -289,15 +291,16 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
-    :where(.slop-theme .slop-button, .slop-themed-scope .slop-button) {
-      transition: none;
-    }
-
+    /* Keep a short color/opacity transition so hover, press, and disabled
+       still change visibly. Movement tokens already collapse under the
+       generated prefers-reduced-motion overrides. */
     :where(
       .slop-theme .slop-button[data-state='loading'],
       .slop-themed-scope .slop-button[data-state='loading']
     )::before {
-      animation: none;
+      animation: slop-button-pulse 1.6s var(--sl-motion-easing-standard)
+        infinite;
+      transform: translate(-50%, -50%);
     }
   }
 
@@ -352,6 +355,12 @@
 
     to {
       transform: translate(-50%, -50%) rotate(1turn);
+    }
+  }
+
+  @keyframes slop-button-pulse {
+    50% {
+      opacity: 0.35;
     }
   }
 }

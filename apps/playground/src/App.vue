@@ -3,6 +3,7 @@ import { ref, useTemplateRef } from 'vue'
 
 import { SlButton as SlButtonThemed } from '@slop-ui/themes'
 
+import MotionReference from './MotionReference.vue'
 import VisualReference from './VisualReference.vue'
 import {
   SlButton,
@@ -138,6 +139,7 @@ function closeNested(): void {
     </section>
 
     <VisualReference />
+    <MotionReference />
 
     <section aria-labelledby="button-heading">
       <h2 id="button-heading">SlButton</h2>

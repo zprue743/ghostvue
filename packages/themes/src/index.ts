@@ -9,6 +9,8 @@ export {
   type TokenName,
 } from './generated/tokens'
 
+export { startThemeTransition } from './start-theme-transition'
+
 export {
   SlButton,
   type SlButtonExposed,

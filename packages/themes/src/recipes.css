@@ -1,8 +1,9 @@
 /*
- * Semantic recipes for elevation, materials, and gradients. Tokens stay the
- * public CSS API; these data attributes are documented utilities, not
+ * Semantic recipes for elevation, materials, gradients, and motion. Tokens
+ * stay the public CSS API; these data attributes are documented utilities, not
  * per-component styles. Forced-colors discards decorative shadows, blur, and
- * noise so system colors remain the only paint.
+ * noise so system colors remain the only paint. Reduced motion swaps travel
+ * recipes for opacity so feedback remains without transform movement.
  */
 @layer slop-ui-theme {
   :where([data-elevation='0']) {
@@ -139,6 +140,78 @@
     :where([data-gradient='border'])::before {
       content: none;
     }
+  }
+
+  @keyframes slop-motion-shift {
+    from {
+      translate: 0;
+    }
+
+    to {
+      translate: 4.5rem;
+    }
+  }
+
+  @keyframes slop-motion-fade {
+    from {
+      opacity: 0.25;
+    }
+
+    to {
+      opacity: 1;
+    }
+  }
+
+  :where([data-motion='standard']) {
+    animation: slop-motion-shift var(--sl-motion-duration-moderate)
+      var(--sl-motion-easing-standard) both;
+  }
+
+  :where([data-motion='decelerate']) {
+    animation: slop-motion-shift var(--sl-motion-enter-duration)
+      var(--sl-motion-easing-decelerate) both;
+  }
+
+  :where([data-motion='accelerate']) {
+    animation: slop-motion-shift var(--sl-motion-exit-duration)
+      var(--sl-motion-easing-accelerate) both;
+  }
+
+  :where([data-motion='spring-gentle']) {
+    animation: slop-motion-shift var(--sl-motion-spring-gentle-duration)
+      var(--sl-motion-spring-gentle) both;
+  }
+
+  :where([data-motion='spring-snappy']) {
+    animation: slop-motion-shift var(--sl-motion-spring-snappy-duration)
+      var(--sl-motion-spring-snappy) both;
+  }
+
+  :where([data-motion='spring-bouncy']) {
+    animation: slop-motion-shift var(--sl-motion-spring-bouncy-duration)
+      var(--sl-motion-spring-bouncy) both;
+  }
+
+  :where([data-motion='enter']) {
+    animation: slop-motion-shift var(--sl-motion-enter-duration)
+      var(--sl-motion-easing-decelerate) both;
+    scale: var(--sl-motion-scale);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    :where([data-motion]) {
+      animation-name: slop-motion-fade;
+      animation-duration: var(--sl-motion-fade-duration);
+      animation-timing-function: var(--sl-motion-easing-standard);
+      scale: 1;
+      translate: 0;
+    }
+  }
+
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation-duration: var(--sl-motion-duration-moderate);
+    animation-timing-function: var(--sl-motion-easing-standard);
   }
 
   @media (forced-colors: active) {
