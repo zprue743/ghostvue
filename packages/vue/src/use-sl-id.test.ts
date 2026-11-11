@@ -27,15 +27,15 @@ describe('useSlId', () => {
   })
 
   it('applies an optional prefix to the generated id', () => {
-    const { result, wrapper } = mountComposable(() => useSlId('sl-checkbox'))
+    const { result, wrapper } = mountComposable(() => useSlId('slop-checkbox'))
 
-    expect(result.value).toMatch(/^sl-checkbox-v-/)
+    expect(result.value).toMatch(/^slop-checkbox-v-/)
     wrapper.unmount()
   })
 
   it('uses a consumer-supplied id instead of generating one', () => {
     const { result, wrapper } = mountComposable(() =>
-      useSlId('sl-checkbox', 'email'),
+      useSlId('slop-checkbox', 'email'),
     )
 
     expect(result.value).toBe('email')

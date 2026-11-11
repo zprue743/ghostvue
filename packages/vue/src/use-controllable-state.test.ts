@@ -184,7 +184,7 @@ describe('useControllableState', () => {
     wrapper.unmount()
   })
 
-  it('warns in development when switching from controlled to uncontrolled', async () => {
+  it('warns once per control-mode switch', async () => {
     const prop = ref<boolean | undefined>(false)
     const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined)
     const { result, wrapper } = mountComposable(() =>
@@ -195,32 +195,19 @@ describe('useControllableState', () => {
     )
 
     expect(result.value).toBe(false)
+
     prop.value = undefined
     await nextTick()
-
-    expect(warn).toHaveBeenCalledWith(
+    expect(warn).toHaveBeenCalledTimes(1)
+    expect(warn).toHaveBeenLastCalledWith(
       expect.stringContaining('controlled to uncontrolled'),
     )
     expect(result.value).toBe(false)
 
-    warn.mockRestore()
-    wrapper.unmount()
-  })
-
-  it('warns in development when switching from uncontrolled to controlled', async () => {
-    const prop = ref<boolean | undefined>(undefined)
-    const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined)
-    const { wrapper } = mountComposable(() =>
-      useControllableState({
-        prop: () => prop.value,
-        defaultValue: false,
-      }),
-    )
-
-    prop.value = true
+    prop.value = false
     await nextTick()
-
-    expect(warn).toHaveBeenCalledWith(
+    expect(warn).toHaveBeenCalledTimes(2)
+    expect(warn).toHaveBeenLastCalledWith(
       expect.stringContaining('uncontrolled to controlled'),
     )
 

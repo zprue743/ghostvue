@@ -6,28 +6,12 @@ import {
   type MaybeRefOrGetter,
 } from 'vue'
 
-/**
- * Default prefix for generated ids. CSS and tokens already use `slop-*`; using
- * the same token here avoids colliding with Shoelace's `sl-` custom elements.
- */
+/** Same token as CSS/tokens; avoids Shoelace's `sl-` custom-element namespace. */
 const DEFAULT_PREFIX = 'slop'
 
 /**
- * Returns a stable DOM id for accessibility wiring (`for`/`id`,
- * `aria-labelledby`, `aria-controls`).
- *
- * Built on Vue 3.5 `useId()`, so a generated value is unique per app and
- * matches across SSR and hydration. Pass `id` when the consumer already chose
- * an identifier; empty string and `undefined` fall back to a generated id.
- *
- * `useId()` is always called, even when an override is present. Skipping it
- * would advance Vue's per-instance counter only on some trees, which can
- * desynchronize later generated ids if the override is missing on one side of
- * an SSR/client render.
- *
- * @param prefix - Namespace prepended to generated ids. Ignored when `id` is a
- *   non-empty string. Default: `'slop'`.
- * @param id - Optional consumer-supplied override.
+ * SSR-stable DOM id from Vue 3.5 `useId()`. A non-empty `id` wins; default prefix is `slop`.
+ * `useId()` always runs so Vue's per-instance counter cannot drift under SSR.
  */
 export function useSlId(
   prefix?: MaybeRefOrGetter<string | undefined>,

@@ -77,6 +77,24 @@ for (const directory of packageDirectories) {
       violations.push(`${packageJson.name} missing published file: ${target}`)
     }
   }
+
+  if (packageJson.name === '@slop-ui/vue') {
+    try {
+      const bundle = await readFile(
+        resolve(packageDirectory, 'dist/slop-ui.js'),
+        'utf8',
+      )
+      // Vite lib mode must leave this identifier so consumer bundlers can DCE
+      // development-only warnings instead of baking true/false at publish time.
+      if (!bundle.includes('process.env.NODE_ENV')) {
+        violations.push(
+          `${packageJson.name} bundle baked away process.env.NODE_ENV`,
+        )
+      }
+    } catch {
+      // Missing bundle is already reported as a published-file violation.
+    }
+  }
 }
 
 if (violations.length > 0) {

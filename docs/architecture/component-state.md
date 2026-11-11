@@ -26,7 +26,7 @@ per-instance counter cannot drift between server and client trees.
 - Do not call `useId()` inside `computed`; `useSlId` calls it at setup.
 
 ```ts
-const id = useSlId('sl-checkbox', () => props.id)
+const id = useSlId('slop-checkbox', () => props.id)
 ```
 
 ## `useControllableState`
@@ -80,6 +80,6 @@ ignores the emit, the getter still returns the prop.
 `defaultValue` is the initial uncontrolled value only. Later changes are
 ignored.
 
-Switching controlled ↔ uncontrolled after setup is unsupported. The
-composable warns and keeps the last rendered value so the UI does not snap
-to `default*`.
+Switching controlled ↔ uncontrolled after setup is unsupported. In
+development the composable warns and keeps the last rendered value so the UI
+does not snap to `default*`.
