@@ -25,9 +25,10 @@ unstyled `SlButton` from `@slop-ui/vue`, or a themed `SlButton` from
 ## Styling hooks
 
 Stable styling hooks are `data-part` (structure) and `data-state` (state),
-plus CSS custom properties from tokens. Internal wrapper nesting is not a
-public contract. Do not add per-part style-object props or a `pt`
-passthrough object.
+plus CSS custom properties from tokens. Pointer-reactive surfaces also use
+`data-interactive` and, on hosts that already own `data-state`,
+`data-interactive-state`. Internal wrapper nesting is not a public contract.
+Do not add per-part style-object props or a `pt` passthrough object.
 
 Consumers must remain able to use normal CSS, utility CSS, CSS Modules, or
 another theme system. Headless semantics, focus behavior, and state must not

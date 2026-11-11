@@ -1428,6 +1428,42 @@
       "$description": "Pill radius. Capsule at roundness 1; sharp at 0."
     }
   },
+  "interactive": {
+    "spotlight": {
+      "size": {
+        "$type": "dimension",
+        "$value": "10rem",
+        "$description": "Spotlight glow diameter. Subtle default; defineTheme interactivity resizes it."
+      },
+      "opacity": {
+        "$type": "number",
+        "$value": 0.28,
+        "$description": "Peak spotlight opacity before --sl-motion-intensity. 0 hides the glow."
+      },
+      "color": {
+        "$type": "color",
+        "$value": "{action.primary.bg}",
+        "$description": "Spotlight glow color. Mono hairline uses chroma-0 primary through this alias."
+      }
+    },
+    "leave": {
+      "spring": {
+        "$type": "spring",
+        "$value": "{spring.snappy}",
+        "$description": "Leave-settle easing for pointer-reactive surfaces.",
+        "duration": {
+          "$type": "duration",
+          "$value": "{spring.snappy}",
+          "$description": "Settle duration when a pointer-reactive surface returns to rest.",
+          "$extensions": {
+            "slop.ui": {
+              "reducedMotion": "80ms"
+            }
+          }
+        }
+      }
+    }
+  },
   "roundness": {
     "amount": {
       "$type": "number",

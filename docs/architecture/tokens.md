@@ -49,9 +49,9 @@ of `pnpm verify`) checks WCAG 2 AA on semantic text/background pairs.
 2. **Semantic** — product intent as `role.part.state` across `action`,
    `surface`, `text`, `border`, `status`, `focus`, `control`,
    `elevation`, `material`, `gradient`, `motion`, `space`, `radius`,
-   `type`, `roundness`, and `state` (`action.primary.bg`,
+   `type`, `roundness`, `interactive`, and `state` (`action.primary.bg`,
    `elevation.2.shadow`, `motion.duration.fast`, `space.gap.sm`,
-   `state.layer.hover`).
+   `state.layer.hover`, `interactive.spotlight.size`).
    Components consume semantic tokens only.
 
 Semantic tokens may reference primitives or other semantic tokens.

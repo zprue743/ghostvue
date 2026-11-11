@@ -3263,6 +3263,62 @@ export const tokens = {
       dark: "linear-gradient(135deg in oklch, #60a5fa 0%, #38bdf8 100%)",
     },
   },
+  "interactive.leave.spring": {
+    name: "interactive.leave.spring",
+    cssVar: "--sl-interactive-leave-spring",
+    type: "spring",
+    tier: "semantic",
+    description: "Leave-settle easing for pointer-reactive surfaces.",
+    value: {
+      light: "linear(0, 0.0043 0.8264%, 0.036 2.4793%, 0.1271 4.9587%, 0.6578 14.876%, 0.8392 19.0083%, 0.9867 23.9669%, 1.0328 26.4463%, 1.063 28.9256%, 1.0832 32.2314%, 1.0853 36.3636%, 1.0164 52.8926%, 0.9952 62.8099%, 1)",
+      dark: "linear(0, 0.0043 0.8264%, 0.036 2.4793%, 0.1271 4.9587%, 0.6578 14.876%, 0.8392 19.0083%, 0.9867 23.9669%, 1.0328 26.4463%, 1.063 28.9256%, 1.0832 32.2314%, 1.0853 36.3636%, 1.0164 52.8926%, 0.9952 62.8099%, 1)",
+    },
+  },
+  "interactive.leave.spring.duration": {
+    name: "interactive.leave.spring.duration",
+    cssVar: "--sl-interactive-leave-spring-duration",
+    reducedMotion: "80ms",
+    type: "duration",
+    tier: "semantic",
+    description: "Settle duration when a pointer-reactive surface returns to rest.",
+    value: {
+      light: "504ms",
+      dark: "504ms",
+    },
+  },
+  "interactive.spotlight.color": {
+    name: "interactive.spotlight.color",
+    cssVar: "--sl-interactive-spotlight-color",
+    type: "color",
+    tier: "semantic",
+    description: "Spotlight glow color. Mono hairline uses chroma-0 primary through this alias.",
+    value: {
+      light: "#1d4ed8",
+      dark: "#60a5fa",
+    },
+  },
+  "interactive.spotlight.opacity": {
+    name: "interactive.spotlight.opacity",
+    cssVar: "--sl-interactive-spotlight-opacity",
+    type: "number",
+    tier: "semantic",
+    description: "Peak spotlight opacity before --sl-motion-intensity. 0 hides the glow.",
+    value: {
+      light: "0.28",
+      dark: "0.28",
+    },
+  },
+  "interactive.spotlight.size": {
+    name: "interactive.spotlight.size",
+    cssVar: "--sl-interactive-spotlight-size",
+    type: "dimension",
+    tier: "semantic",
+    description: "Spotlight glow diameter. Subtle default; defineTheme interactivity resizes it.",
+    value: {
+      light: "10rem",
+      dark: "10rem",
+    },
+  },
   "material.glass.bg": {
     name: "material.glass.bg",
     cssVar: "--sl-material-glass-bg",

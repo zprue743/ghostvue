@@ -122,6 +122,10 @@
     --sl-gradient-action-primary: linear-gradient(165deg in oklch, #1d4ed8 0%, #004e7a 100%);
     --sl-gradient-aurora: radial-gradient(in oklch at 14% 18%, #d6e3ff 0%, transparent 52%), radial-gradient(in oklch at 86% 12%, #cfe7fc 0%, transparent 48%), radial-gradient(in oklch at 62% 92%, #e8f6ea 0%, transparent 55%);
     --sl-gradient-border: linear-gradient(135deg in oklch, #356af3 0%, #579dd1 100%);
+    --sl-interactive-leave-spring: linear(0, 0.0043 0.8264%, 0.036 2.4793%, 0.1271 4.9587%, 0.6578 14.876%, 0.8392 19.0083%, 0.9867 23.9669%, 1.0328 26.4463%, 1.063 28.9256%, 1.0832 32.2314%, 1.0853 36.3636%, 1.0164 52.8926%, 0.9952 62.8099%, 1);
+    --sl-interactive-spotlight-color: #1d4ed8;
+    --sl-interactive-spotlight-opacity: 0.28;
+    --sl-interactive-spotlight-size: 10rem;
     --sl-material-glass-bg: oklch(1 0 0 / 0.64);
     --sl-material-glass-blur: 1.25rem;
     --sl-material-glass-border: oklch(0.254 0.028 257.5 / 0.18);
@@ -218,6 +222,7 @@
     --sl-action-duration: calc(120ms * var(--sl-motion-intensity, 1));
     --sl-action-spinner-duration: calc(700ms * var(--sl-motion-intensity, 1));
     --sl-focus-ring-duration: calc(120ms * var(--sl-motion-intensity, 1));
+    --sl-interactive-leave-spring-duration: calc(504ms * var(--sl-motion-intensity, 1));
     --sl-motion-duration-expressive: calc(700ms * var(--sl-motion-intensity, 1));
     --sl-motion-duration-fast: calc(120ms * var(--sl-motion-intensity, 1));
     --sl-motion-duration-instant: calc(0ms * var(--sl-motion-intensity, 1));
@@ -352,6 +357,10 @@
       --sl-gradient-action-primary: linear-gradient(165deg in oklch, #60a5fa 0%, #38bdf8 100%);
       --sl-gradient-aurora: radial-gradient(in oklch at 14% 18%, #235187 0%, transparent 52%), radial-gradient(in oklch at 86% 12%, #005d80 0%, transparent 48%), radial-gradient(in oklch at 62% 92%, #045227 0%, transparent 55%);
       --sl-gradient-border: linear-gradient(135deg in oklch, #60a5fa 0%, #38bdf8 100%);
+      --sl-interactive-leave-spring: linear(0, 0.0043 0.8264%, 0.036 2.4793%, 0.1271 4.9587%, 0.6578 14.876%, 0.8392 19.0083%, 0.9867 23.9669%, 1.0328 26.4463%, 1.063 28.9256%, 1.0832 32.2314%, 1.0853 36.3636%, 1.0164 52.8926%, 0.9952 62.8099%, 1);
+      --sl-interactive-spotlight-color: #60a5fa;
+      --sl-interactive-spotlight-opacity: 0.28;
+      --sl-interactive-spotlight-size: 10rem;
       --sl-material-glass-bg: oklch(0.27 0.018 258 / 0.55);
       --sl-material-glass-blur: 1.25rem;
       --sl-material-glass-border: oklch(0.96 0.005 250 / 0.16);
@@ -448,6 +457,7 @@
       --sl-action-duration: calc(120ms * var(--sl-motion-intensity, 1));
       --sl-action-spinner-duration: calc(700ms * var(--sl-motion-intensity, 1));
       --sl-focus-ring-duration: calc(120ms * var(--sl-motion-intensity, 1));
+      --sl-interactive-leave-spring-duration: calc(504ms * var(--sl-motion-intensity, 1));
       --sl-motion-duration-expressive: calc(700ms * var(--sl-motion-intensity, 1));
       --sl-motion-duration-fast: calc(120ms * var(--sl-motion-intensity, 1));
       --sl-motion-duration-instant: calc(0ms * var(--sl-motion-intensity, 1));
@@ -583,6 +593,10 @@
     --sl-gradient-action-primary: linear-gradient(165deg in oklch, #1d4ed8 0%, #004e7a 100%);
     --sl-gradient-aurora: radial-gradient(in oklch at 14% 18%, #d6e3ff 0%, transparent 52%), radial-gradient(in oklch at 86% 12%, #cfe7fc 0%, transparent 48%), radial-gradient(in oklch at 62% 92%, #e8f6ea 0%, transparent 55%);
     --sl-gradient-border: linear-gradient(135deg in oklch, #356af3 0%, #579dd1 100%);
+    --sl-interactive-leave-spring: linear(0, 0.0043 0.8264%, 0.036 2.4793%, 0.1271 4.9587%, 0.6578 14.876%, 0.8392 19.0083%, 0.9867 23.9669%, 1.0328 26.4463%, 1.063 28.9256%, 1.0832 32.2314%, 1.0853 36.3636%, 1.0164 52.8926%, 0.9952 62.8099%, 1);
+    --sl-interactive-spotlight-color: #1d4ed8;
+    --sl-interactive-spotlight-opacity: 0.28;
+    --sl-interactive-spotlight-size: 10rem;
     --sl-material-glass-bg: oklch(1 0 0 / 0.64);
     --sl-material-glass-blur: 1.25rem;
     --sl-material-glass-border: oklch(0.254 0.028 257.5 / 0.18);
@@ -679,6 +693,7 @@
     --sl-action-duration: calc(120ms * var(--sl-motion-intensity, 1));
     --sl-action-spinner-duration: calc(700ms * var(--sl-motion-intensity, 1));
     --sl-focus-ring-duration: calc(120ms * var(--sl-motion-intensity, 1));
+    --sl-interactive-leave-spring-duration: calc(504ms * var(--sl-motion-intensity, 1));
     --sl-motion-duration-expressive: calc(700ms * var(--sl-motion-intensity, 1));
     --sl-motion-duration-fast: calc(120ms * var(--sl-motion-intensity, 1));
     --sl-motion-duration-instant: calc(0ms * var(--sl-motion-intensity, 1));
@@ -813,6 +828,10 @@
     --sl-gradient-action-primary: linear-gradient(165deg in oklch, #60a5fa 0%, #38bdf8 100%);
     --sl-gradient-aurora: radial-gradient(in oklch at 14% 18%, #235187 0%, transparent 52%), radial-gradient(in oklch at 86% 12%, #005d80 0%, transparent 48%), radial-gradient(in oklch at 62% 92%, #045227 0%, transparent 55%);
     --sl-gradient-border: linear-gradient(135deg in oklch, #60a5fa 0%, #38bdf8 100%);
+    --sl-interactive-leave-spring: linear(0, 0.0043 0.8264%, 0.036 2.4793%, 0.1271 4.9587%, 0.6578 14.876%, 0.8392 19.0083%, 0.9867 23.9669%, 1.0328 26.4463%, 1.063 28.9256%, 1.0832 32.2314%, 1.0853 36.3636%, 1.0164 52.8926%, 0.9952 62.8099%, 1);
+    --sl-interactive-spotlight-color: #60a5fa;
+    --sl-interactive-spotlight-opacity: 0.28;
+    --sl-interactive-spotlight-size: 10rem;
     --sl-material-glass-bg: oklch(0.27 0.018 258 / 0.55);
     --sl-material-glass-blur: 1.25rem;
     --sl-material-glass-border: oklch(0.96 0.005 250 / 0.16);
@@ -909,6 +928,7 @@
     --sl-action-duration: calc(120ms * var(--sl-motion-intensity, 1));
     --sl-action-spinner-duration: calc(700ms * var(--sl-motion-intensity, 1));
     --sl-focus-ring-duration: calc(120ms * var(--sl-motion-intensity, 1));
+    --sl-interactive-leave-spring-duration: calc(504ms * var(--sl-motion-intensity, 1));
     --sl-motion-duration-expressive: calc(700ms * var(--sl-motion-intensity, 1));
     --sl-motion-duration-fast: calc(120ms * var(--sl-motion-intensity, 1));
     --sl-motion-duration-instant: calc(0ms * var(--sl-motion-intensity, 1));
@@ -1072,6 +1092,7 @@
     :where(.slop-theme:not([data-sl-theme]), [data-sl-theme='default']), :where(.slop-theme:not([data-sl-theme]), [data-sl-theme='default']) :where(*) {
       --sl-action-duration: calc(80ms * var(--sl-motion-intensity, 1));
       --sl-focus-ring-duration: calc(0ms * var(--sl-motion-intensity, 1));
+      --sl-interactive-leave-spring-duration: calc(80ms * var(--sl-motion-intensity, 1));
       --sl-motion-duration-expressive: calc(80ms * var(--sl-motion-intensity, 1));
       --sl-motion-duration-fast: calc(80ms * var(--sl-motion-intensity, 1));
       --sl-motion-duration-instant: calc(0ms * var(--sl-motion-intensity, 1));
@@ -1146,6 +1167,7 @@
     --sl-elevation-5-border: CanvasText;
     --sl-focus-ring-color: Highlight;
     --sl-focus-ring-contrast: Canvas;
+    --sl-interactive-spotlight-color: CanvasText;
     --sl-material-glass-bg: Canvas;
     --sl-material-glass-border: CanvasText;
     --sl-material-glass-fallback-bg: Canvas;

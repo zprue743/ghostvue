@@ -18,6 +18,10 @@ export const docsSidebar: LlmsSidebarGroup[] = [
     text: 'Components',
     items: [
       { text: 'SlButton', link: '/components/button' },
+      {
+        text: 'SlInteractiveSurface',
+        link: '/components/interactive-surface',
+      },
       { text: 'SlVisuallyHidden', link: '/components/visually-hidden' },
       { text: 'Default theme', link: '/themes/default' },
       {
@@ -88,6 +92,10 @@ export const docsSidebar: LlmsSidebarGroup[] = [
       {
         text: 'SlButton specification',
         link: '/components/button-spec',
+      },
+      {
+        text: 'SlInteractiveSurface specification',
+        link: '/components/interactive-surface-spec',
       },
       {
         text: 'SlVisuallyHidden specification',

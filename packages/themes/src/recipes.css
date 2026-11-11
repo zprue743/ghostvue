@@ -1,9 +1,10 @@
 /*
- * Semantic recipes for elevation, materials, gradients, and motion. Tokens
- * stay the public CSS API; these data attributes are documented utilities, not
- * per-component styles. Forced-colors discards decorative shadows, blur, and
- * noise so system colors remain the only paint. Reduced motion swaps travel
- * recipes for opacity so feedback remains without transform movement.
+ * Semantic recipes for elevation, materials, gradients, motion, and
+ * spotlight. Tokens stay the public CSS API; these data attributes are
+ * documented utilities, not per-component styles. Forced-colors discards
+ * decorative shadows, blur, noise, and glow so system colors remain the
+ * only paint. Reduced motion swaps travel recipes for opacity and turns
+ * spotlight fully off.
  */
 @layer slop-ui-theme {
   :where([data-elevation='0']) {
@@ -206,6 +207,53 @@
       scale: 1;
       translate: 0;
     }
+
+    :where([data-interactive~='spotlight'] > [data-part='glow']) {
+      display: none;
+    }
+  }
+
+  /*
+   * Spotlight (ADR 0009). Transform-free overlay so controls keep box-shadow
+   * and focus rings. Opt-in via data-interactive; idle/off stay opacity 0.
+   */
+  :where([data-interactive~='spotlight']) {
+    isolation: isolate;
+    position: relative;
+  }
+
+  :where([data-interactive~='spotlight'] > [data-part='glow']) {
+    background: radial-gradient(
+      circle at var(--sl-pointer-x, 50%) var(--sl-pointer-y, 50%),
+      color-mix(
+        in oklch,
+        var(--sl-interactive-spotlight-color) 100%,
+        transparent
+      ),
+      transparent var(--sl-interactive-spotlight-size)
+    );
+    border-radius: inherit;
+    display: block;
+    inset: 0;
+    opacity: 0;
+    pointer-events: none;
+    position: absolute;
+    transition: opacity var(--sl-interactive-leave-spring-duration)
+      var(--sl-interactive-leave-spring);
+    /* Behind in-flow copy, with the button state layer. Isolation on the host
+       keeps -1 above the fill instead of disappearing behind the canvas. */
+    z-index: -1;
+  }
+
+  :where(
+    [data-interactive~='spotlight'][data-state='tracking'] > [data-part='glow'],
+    [data-interactive~='spotlight'][data-interactive-state='tracking']
+      > [data-part='glow']
+  ) {
+    opacity: calc(
+      var(--sl-interactive-spotlight-opacity) * var(--sl-motion-intensity, 1)
+    );
+    transition-duration: var(--sl-motion-duration-instant);
   }
 
   ::view-transition-old(root),
@@ -245,6 +293,10 @@
       background-color: Canvas;
       background-image: none;
       color: CanvasText;
+    }
+
+    :where([data-interactive~='spotlight'] > [data-part='glow']) {
+      display: none;
     }
   }
 }

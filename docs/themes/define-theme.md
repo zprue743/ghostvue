@@ -32,7 +32,7 @@ the light seed and donate hue/chroma to the independently-tuned dark
 template lightness. Defaults: `neutralTint` from the primary hue at library
 neutral chroma; status seeds from `default`; `roundness = 1`;
 `density = 'comfortable'`; `motionIntensity = 1`; `elevation = 'standard'`;
-`gradient = 'subtle'`.
+`gradient = 'subtle'`; `interactivity = 'subtle'`.
 
 Invalid names, hues, colors, enums, or ranges **throw**. After the generator
 walks `*.fg` / on-color steps (and action fills so white or ink labels can
@@ -67,11 +67,11 @@ inside a nested flagship inherits that flagship. `data-sl-mode` and
 
 ## Flagships
 
-| `data-sl-theme` | Intent              | Knobs                                                                                       |
-| --------------- | ------------------- | ------------------------------------------------------------------------------------------- |
-| `calm`          | Refined enterprise  | hue 215, compact, roundness 0.3, motion 0.6, elevation subtle, gradient none                |
-| `vibrant`       | Striking expressive | hue 292, comfortable, roundness 1, motion 1, elevation dramatic, gradient aurora            |
-| `mono`          | Crisp monochrome    | `#171717`, `neutralTint: 'none'`, roundness 0, motion 0.45, elevation subtle, gradient none |
+| `data-sl-theme` | Intent              | Knobs                                                                                                             |
+| --------------- | ------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| `calm`          | Refined enterprise  | hue 215, compact, roundness 0.3, motion 0.6, elevation subtle, gradient none, interactivity subtle                |
+| `vibrant`       | Striking expressive | hue 292, comfortable, roundness 1, motion 1, elevation dramatic, gradient aurora, interactivity expressive        |
+| `mono`          | Crisp monochrome    | `#171717`, `neutralTint: 'none'`, roundness 0, motion 0.45, elevation subtle, gradient none, interactivity subtle |
 
 `mono` keeps default **status** hues so danger and success stay
 distinguishable. These files are package exports:

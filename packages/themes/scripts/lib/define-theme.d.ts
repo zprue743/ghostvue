@@ -6,6 +6,7 @@ export type ColorSeed = number | string
 export type ThemeDensity = 'compact' | 'comfortable' | 'spacious'
 export type ElevationFlavor = 'subtle' | 'standard' | 'dramatic'
 export type GradientFlavor = 'none' | 'subtle' | 'aurora'
+export type InteractivityFlavor = 'none' | 'subtle' | 'expressive'
 
 export interface DefineThemeInput {
   /** `data-sl-theme` value. Kebab-case. Not `default`. */
@@ -30,6 +31,8 @@ export interface DefineThemeInput {
   elevation?: ElevationFlavor
   /** `gradient.accent` / aurora recipe. Default `'subtle'`. */
   gradient?: GradientFlavor
+  /** Spotlight glow recipe. Default `'subtle'` (authored default tokens). */
+  interactivity?: InteractivityFlavor
 }
 
 export interface DefinedTheme {

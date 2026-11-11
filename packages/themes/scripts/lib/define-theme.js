@@ -33,6 +33,7 @@ const NAME_PATTERN = /^[a-z][a-z0-9]*(-[a-z0-9]+)*$/
 const MAX_NAME_LENGTH = 64
 const ELEVATION_FLAVORS = ['subtle', 'standard', 'dramatic']
 const GRADIENT_FLAVORS = ['none', 'subtle', 'aurora']
+const INTERACTIVITY_FLAVORS = ['none', 'subtle', 'expressive']
 const RELATIVE_COLOR = /\bfrom\b/i
 const KEYWORD_COLORS = new Set([
   'currentcolor',
@@ -81,6 +82,7 @@ export const FLAGSHIP_THEME_INPUTS = [
     motionIntensity: 0.6,
     elevation: 'subtle',
     gradient: 'none',
+    interactivity: 'subtle',
   },
   {
     name: 'vibrant',
@@ -91,6 +93,7 @@ export const FLAGSHIP_THEME_INPUTS = [
     motionIntensity: 1,
     elevation: 'dramatic',
     gradient: 'aurora',
+    interactivity: 'expressive',
   },
   {
     name: 'mono',
@@ -101,6 +104,7 @@ export const FLAGSHIP_THEME_INPUTS = [
     motionIntensity: 0.45,
     elevation: 'subtle',
     gradient: 'none',
+    interactivity: 'subtle',
   },
 ]
 
@@ -282,6 +286,14 @@ function validateInput(input) {
       `gradient must be one of ${GRADIENT_FLAVORS.join(', ')}`,
     )
   }
+  if (
+    input.interactivity !== undefined &&
+    !INTERACTIVITY_FLAVORS.includes(input.interactivity)
+  ) {
+    throw new DefineThemeError(
+      `interactivity must be one of ${INTERACTIVITY_FLAVORS.join(', ')}`,
+    )
+  }
 }
 
 function seedValue(resolved, hueName, mode) {
@@ -396,6 +408,18 @@ function retintOklchString(value, hue) {
     /oklch\(\s*([\d.]+)\s+([\d.]+)\s+[\d.]+\s*(\/[\s\d.]+)?\)/g,
     (_all, l, c, alpha) => `oklch(${l} ${c} ${hue}${alpha ?? ''})`,
   )
+}
+
+function applyInteractivityFlavor(tree, flavor) {
+  // Authored semantic.json is the subtle recipe; skip a rewrite.
+  if (flavor === 'subtle') return
+  if (flavor === 'none') {
+    setTokenValue(tree, 'interactive.spotlight.size', '0px')
+    setTokenValue(tree, 'interactive.spotlight.opacity', 0)
+    return
+  }
+  setTokenValue(tree, 'interactive.spotlight.size', '20rem')
+  setTokenValue(tree, 'interactive.spotlight.opacity', 0.75)
 }
 
 function applyElevationFlavor(tree, flavor) {
@@ -783,6 +807,7 @@ export function defineTheme(input) {
   const motionIntensity = input.motionIntensity ?? 1
   const elevation = input.elevation ?? 'standard'
   const gradient = input.gradient ?? 'subtle'
+  const interactivity = input.interactivity ?? 'subtle'
 
   const seeds = buildSeeds(input)
   const primitives = clone(primitivesTemplate)
@@ -797,6 +822,8 @@ export function defineTheme(input) {
   pinActionGradientStops(semanticDark, 'dark')
   applyGradientFlavor(semantic, gradient, 'light')
   applyGradientFlavor(semanticDark, gradient, 'dark')
+  applyInteractivityFlavor(semantic, interactivity)
+  applyInteractivityFlavor(semanticDark, interactivity)
 
   const compiled = compileTokenDocuments(
     [

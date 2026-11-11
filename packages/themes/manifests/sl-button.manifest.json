@@ -69,6 +69,13 @@
       "required": false,
       "description": "Square icon-button treatment via data-icon-only. Still requires an accessible name.",
       "deprecated": false
+    },
+    {
+      "name": "interactive",
+      "type": "'spotlight'",
+      "required": false,
+      "description": "Opt-in pointer spotlight. Off by default. Sets data-interactive and tracks on data-interactive-state so loading/disabled keep data-state.",
+      "deprecated": false
     }
   ],
   "models": [],
@@ -113,6 +120,10 @@
       {
         "name": "loading-indicator",
         "description": "Optional decorative pending indicator. Replaces the default spinner when present."
+      },
+      {
+        "name": "glow",
+        "description": "Decorative spotlight overlay rendered when interactive is spotlight. aria-hidden."
       }
     ],
     "states": [
@@ -123,6 +134,18 @@
       {
         "name": "disabled",
         "description": "Unavailable appearance. Prefer the native disabled attribute when both apply."
+      },
+      {
+        "name": "off",
+        "description": "data-interactive-state while reduced motion or coarse pointer. Spotlight only."
+      },
+      {
+        "name": "idle",
+        "description": "data-interactive-state while opted in and at rest."
+      },
+      {
+        "name": "tracking",
+        "description": "data-interactive-state while the pointer is over an opted-in button."
       }
     ],
     "cssProperties": [

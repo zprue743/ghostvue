@@ -170,8 +170,10 @@ Elevation, materials, and gradients are semantic `--sl-*` variables plus
 documented `data-elevation`, `data-material`, and `data-gradient` recipes.
 See [elevation, materials, and gradients](./elevation.md). Motion durations,
 easing, and springs are `--sl-motion-*` plus `data-motion` recipes; see
-[motion](./motion.md). Density, type, and roundness nest through
-`data-sl-density` and `--sl-roundness`; see
+[motion](./motion.md). Pointer spotlight is `--sl-interactive-*` plus a
+`data-interactive='spotlight'` recipe; see
+[SlInteractiveSurface](../components/interactive-surface.md). Density, type,
+and roundness nest through `data-sl-density` and `--sl-roundness`; see
 [density, type, and roundness](./density.md).
 
 Authored DTCG lives in `packages/themes/tokens/` and is compiled by
