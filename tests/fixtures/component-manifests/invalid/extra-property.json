@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "handwritten",
+  "name": "SlButton",
+  "package": "@slop-ui/vue",
+  "status": "experimental",
+  "description": "Invalid because passthrough objects are not part of the contract.",
+  "props": [],
+  "models": [],
+  "events": [],
+  "slots": [],
+  "exposed": [],
+  "styling": {
+    "parts": [],
+    "states": [],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "button",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/button/",
+    "keyboard": {
+      "Enter": "Activate"
+    },
+    "requiredAriaAttributes": []
+  },
+  "examples": [],
+  "pt": {}
+}

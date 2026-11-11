@@ -13,10 +13,11 @@ predecessor. Do not start markup to stand in for an unresolved design.
    [TESTING_RULES.md](./TESTING_RULES.md).
 3. **Public documentation.** API reference and examples in `docs/components/`,
    plus a playground exercise of the supported patterns.
-4. **Machine-readable manifest.** A machine-facing description of the public
-   contract for agents, MCP, and codegen. Until a schema ADR lands, the spec's
-   Public API section is the interim contract; add a manifest file once the
-   schema exists rather than shipping a second incomplete shape.
+4. **Machine-readable manifest.** A JSON file that validates against
+   [the component-manifest schema](../architecture/component-manifest.md)
+   ([ADR 0006](../adr/0006-component-manifest-schema.md)). Place it at
+   `packages/<dir>/manifests/<kebab-name>.manifest.json`. Do not invent a
+   parallel shape.
 5. **Changeset.** Required when a publishable package's consumer-visible
    behavior changes.
 

@@ -1,0 +1,27 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "handwritten",
+  "name": "Button",
+  "package": "@slop-ui/vue",
+  "status": "experimental",
+  "description": "Invalid because public component names must use the Sl prefix.",
+  "props": [],
+  "models": [],
+  "events": [],
+  "slots": [],
+  "exposed": [],
+  "styling": {
+    "parts": [],
+    "states": [],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "button",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/button/",
+    "keyboard": {
+      "Enter": "Activate"
+    },
+    "requiredAriaAttributes": []
+  },
+  "examples": []
+}

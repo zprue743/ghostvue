@@ -34,7 +34,9 @@ dependency direction and encourage cycles.
 
 SSR-safe ids and controlled/uncontrolled v-model behavior live in
 [`component-state.md`](./component-state.md) (`useSlId`,
-`useControllableState`).
+`useControllableState`). Per-component public contracts for agents, MCP,
+codegen, and evals live in
+[`component-manifest.md`](./component-manifest.md).
 
 ## Tooling choices
 
