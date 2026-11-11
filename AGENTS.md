@@ -19,8 +19,10 @@ moratorium ended; this gate is the remaining SLO-8 contract.
    [component gate](./docs/agents/COMPONENT_WORKFLOW.md) and read the approved
    specification before writing production markup.
 
-Canonical rules live under `docs/`. Tool-specific files such as `CLAUDE.md` and
-`.cursor/rules/*` are adapters, not competing sources of truth.
+Canonical rules live under `docs/`. Tool-specific files such as `CLAUDE.md`,
+`.cursor/rules/*`, and each package `AGENTS.md` are generated adapters; edit
+`scripts/agent-adapter-catalog.mjs` or `scripts/workspace-packages.mjs` and
+run `pnpm adapters:write` rather than hand-editing them.
 
 ## Required workflow
 
@@ -42,6 +44,7 @@ Canonical rules live under `docs/`. Tool-specific files such as `CLAUDE.md` and
 pnpm install
 pnpm lint
 pnpm boundaries
+pnpm adapters
 pnpm typecheck
 pnpm test
 pnpm test:e2e

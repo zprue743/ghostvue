@@ -4,8 +4,9 @@ globs: ["packages/vue/src/**/*.vue", "docs/components/**/*.md"]
 alwaysApply: false
 ---
 
-No production component may begin without an approved specification based on
-`docs/components/spec-template.md`. Follow
-`docs/agents/COMPONENT_WORKFLOW.md`; define public behavior, accessibility,
-states, data assumptions, escape hatches, tests, and compatibility first.
+Production components must pass the component gate in
+`docs/agents/COMPONENT_WORKFLOW.md` (approved spec from
+`docs/components/spec-template.md`, tests, docs, and a machine-readable
+manifest). Do not start markup before the specification resolves public
+behavior and accessibility.
 
