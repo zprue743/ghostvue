@@ -82,12 +82,14 @@ const flagships = ['calm', 'vibrant', 'mono'] as const
             Off by default. This control sets
             <code>interactive="spotlight"</code>.
           </p>
-          <SlButtonThemed
-            interactive="spotlight"
-            data-testid="ambient-button-spotlight"
-          >
-            Save report
-          </SlButtonThemed>
+          <div data-testid="ambient-button-shot">
+            <SlButtonThemed
+              interactive="spotlight"
+              data-testid="ambient-button-spotlight"
+            >
+              Save report
+            </SlButtonThemed>
+          </div>
         </article>
       </div>
     </div>
