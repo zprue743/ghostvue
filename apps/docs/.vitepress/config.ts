@@ -29,6 +29,7 @@ export default defineConfig({
             link: '/architecture/package-boundaries',
           },
           { text: 'Styling', link: '/architecture/styling' },
+          { text: 'Design tokens', link: '/architecture/tokens' },
         ],
       },
       {

@@ -8,8 +8,8 @@ unstyled `SlButton` from `@slop-ui/vue`, or a themed `SlButton` from
 `@slop-ui/themes` that wraps it. Details, a hard rejection of PrimeVue
 `pt` objects, and worked examples are in
 [ADR 0004](../adr/0004-headless-styled-layering.md). Component names use the
-`Sl` prefix (`SlButton`, `useSlButton`); that convention is ADR 0003
-(SLO-9).
+`Sl` prefix (`SlButton`, `useSlButton`); that convention is
+[ADR 0003](../adr/0003-public-component-api-conventions.md).
 
 ## Layers
 
@@ -33,7 +33,11 @@ Consumers must remain able to use normal CSS, utility CSS, CSS Modules, or
 another theme system. Headless semantics, focus behavior, and state must not
 depend on a particular visual treatment.
 
-Token source format and compile targets are ADR 0005 (SLO-36): DTCG JSON
-compiled to CSS custom properties, TypeScript types, and a JSON manifest.
-Until that document is on master, do not invent a parallel naming scheme in
-theme CSS.
+## Tokens
+
+Tokens are authored as DTCG JSON and compiled to CSS custom properties,
+TypeScript types, and a JSON manifest. See
+[design tokens](./tokens.md) and
+[ADR 0005](../adr/0005-design-token-taxonomy.md). Until that pipeline exists,
+[PR #20](https://github.com/zprue743/slop-ui/pull/20)'s `default.css` is the
+runtime snapshot; do not invent a parallel naming scheme.
