@@ -16,12 +16,8 @@ export type SlButtonTone = 'accent' | 'neutral' | 'danger'
 export type SlButtonSize = 'sm' | 'md' | 'lg'
 
 /**
- * Themed `SlButton` wraps the unstyled primitive, applies visual props as
- * `data-*` hooks, and scopes default CSS to this instance.
- *
- * Behavioral props match `@slop-ui/vue`. Visual props exist only here; they are
- * never on the headless component. Native attributes fall through to the inner
- * button. Toggle `pressed` is out of scope, so controllable state is unused.
+ * Themed wrapper: visual props as `data-*`, instance-scoped CSS. Behavior stays
+ * on the unstyled primitive; native attrs fall through.
  */
 export const SlButton = defineComponent({
   name: 'SlButton',

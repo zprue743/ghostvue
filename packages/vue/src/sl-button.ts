@@ -1,14 +1,11 @@
 import type { ButtonHTMLAttributes, MaybeRefOrGetter } from 'vue'
 
-/** Valid values for the native button `type` attribute. */
+/** Native button `type` values. */
 export type SlButtonType = 'button' | 'submit' | 'reset'
 
 /**
- * Public props for the unstyled {@link SlButton} component.
- *
- * Vue ignores the native base while generating runtime props so those values
- * remain fallthrough attributes, while consumers still receive the complete
- * native button type at development time.
+ * Unstyled {@link SlButton} props. `@vue-ignore` keeps native attributes as
+ * fallthrough at runtime while typing the full button contract for consumers.
  */
 export interface SlButtonProps extends /* @vue-ignore */ ButtonHTMLAttributes {
   /**
@@ -18,15 +15,13 @@ export interface SlButtonProps extends /* @vue-ignore */ ButtonHTMLAttributes {
   disabled?: boolean
 
   /**
-   * Marks the action as pending and prevents duplicate activation. The button's
-   * content remains rendered so its accessible name does not change.
+   * Pending action; content stays so the accessible name does not change.
    * @default false
    */
   loading?: boolean
 
   /**
-   * Native button behavior. Defaults to `button` to avoid accidental form
-   * submission; opt into `submit` or `reset` when intended.
+   * Native behavior. Defaults to `button` so forms are not submitted by accident.
    * @default 'button'
    */
   type?: SlButtonType

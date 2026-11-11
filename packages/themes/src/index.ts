@@ -1,10 +1,4 @@
-/**
- * Optional themed wrappers and the default stylesheet. Behavior stays in
- * `@slop-ui/vue`; importing from this package is the easy styled path.
- *
- * The CSS side-effect import means one `SlButton` import from here loads the
- * default theme. Headless installs never pull this package.
- */
+/** Themed wrappers and default CSS. One `SlButton` import loads the stylesheet. */
 import './default.css'
 
 export {

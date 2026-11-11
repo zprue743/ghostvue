@@ -1,18 +1,8 @@
 /*
- * Theme defaults live in a low-priority layer so ordinary consumer styles win
- * regardless of import order. Every selector is zero-specificity, while public
- * custom properties provide the stable theme configuration surface.
- *
- * Two opt-in scopes keep headless `.slop-button` unstyled when this stylesheet
- * is loaded on a mixed page:
- * - `.slop-theme` is an ancestor consumers apply to a region. It also owns
- *   `color-scheme` and the surface/foreground paint, because putting
- *   `color-scheme: light` on every themed instance would fight a parent dark
- *   scheme.
- * - `.slop-themed-scope` is the wrapper the themed `SlButton` adds so one
- *   import styles that instance. `display: contents` keeps it out of layout so
- *   `data-block` and flex still size the native button; custom properties still
- *   inherit.
+ * Zero-specificity layer so consumer styles win. Two opt-in scopes leave
+ * headless `.slop-button` unstyled: `.slop-theme` owns `color-scheme` (not
+ * per-instance); `.slop-themed-scope` (`display: contents`) styles one wrapper
+ * without participating in layout.
  */
 @layer slop-ui-theme {
   :where(.slop-themed-scope) {

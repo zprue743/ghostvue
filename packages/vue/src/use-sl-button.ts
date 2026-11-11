@@ -13,11 +13,7 @@ export interface SlButtonRootProps {
   onClickCapture: (event: MouseEvent) => void
 }
 
-/**
- * Headless button behavior: native type/disabled, loading that stays focusable,
- * and `data-part` / `data-state` hooks. No generated id — `id` falls through.
- * Toggle `pressed` is out of scope, so controllable state is not used.
- */
+/** Native type/disabled, loading that stays focusable, `data-part` / `data-state`. */
 export function useSlButton(options: UseSlButtonOptions = {}): {
   isDisabled: ComputedRef<boolean>
   isLoading: ComputedRef<boolean>
@@ -29,9 +25,8 @@ export function useSlButton(options: UseSlButtonOptions = {}): {
   function preventLoadingActivation(event: MouseEvent) {
     if (!isLoading.value) return
 
-    // Loading remains focusable so async state changes do not discard the user's
-    // focus position. Capture-phase cancellation prevents consumer listeners and
-    // native form submission without simulating button keyboard behavior.
+    // Stay focusable while loading. Capture-phase cancel stops listeners and form
+    // submit without faking keyboard activation.
     event.preventDefault()
     event.stopImmediatePropagation()
   }
@@ -43,9 +38,8 @@ export function useSlButton(options: UseSlButtonOptions = {}): {
     'aria-disabled': isLoading.value ? 'true' : undefined,
     'aria-busy': isLoading.value ? 'true' : undefined,
     'data-part': 'root',
-    // Loading wins: native `disabled` already covers unavailability, while
-    // loading has no native equivalent and must remain stylable when both
-    // props are true.
+    // Loading wins `data-state` so both-true stays stylable; native `disabled`
+    // already covers unavailability.
     'data-state': isLoading.value
       ? 'loading'
       : isDisabled.value
