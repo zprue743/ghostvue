@@ -40,12 +40,12 @@ a thin CLI wrapper). It returns a CSS string plus catalogs. Flagship
 themes are compiled at `@slop-ui/themes` build and published as `.css`
 files. Runtime switching applies pre-generated CSS with `data-sl-theme`.
 
-| Delivery | Role |
-| --- | --- |
-| `defineTheme(…).css` | Canonical generator output |
-| Published `.css` files | How flagships (and typical apps) ship |
-| CLI that writes that string | Convenience, not a second compiler |
-| Vite plugin | Not v1; `writeFileSync` / a virtual module is enough |
+| Delivery                    | Role                                                 |
+| --------------------------- | ---------------------------------------------------- |
+| `defineTheme(…).css`        | Canonical generator output                           |
+| Published `.css` files      | How flagships (and typical apps) ship                |
+| CLI that writes that string | Convenience, not a second compiler                   |
+| Vite plugin                 | Not v1; `writeFileSync` / a virtual module is enough |
 
 Rejected for v1: generating ramps in the browser (would put `culori` on
 the client and flash unless every SSR response inlined fresh CSS);
@@ -231,12 +231,12 @@ flagships stay in `pnpm contrast`.
 
 Stay in `@slop-ui/themes`. No new package.
 
-| Export | Contents | Runtime |
-| --- | --- | --- |
-| `@slop-ui/themes` | wrappers, `tokens`, `startThemeTransition`, flagship name union | browser; **no `defineTheme`** |
-| `@slop-ui/themes/define` | `defineTheme` + types | **Node only** (`exports.node` / documented Node) |
-| `@slop-ui/themes/calm.css` (and `vibrant`, `mono`) | compiled token sheets | CSS |
-| `@slop-ui/themes/default.css` | recipes + `default` tokens | CSS |
+| Export                                             | Contents                                                        | Runtime                                          |
+| -------------------------------------------------- | --------------------------------------------------------------- | ------------------------------------------------ |
+| `@slop-ui/themes`                                  | wrappers, `tokens`, `startThemeTransition`, flagship name union | browser; **no `defineTheme`**                    |
+| `@slop-ui/themes/define`                           | `defineTheme` + types                                           | **Node only** (`exports.node` / documented Node) |
+| `@slop-ui/themes/calm.css` (and `vibrant`, `mono`) | compiled token sheets                                           | CSS                                              |
+| `@slop-ui/themes/default.css`                      | recipes + `default` tokens                                      | CSS                                              |
 
 Main entry must not re-export `defineTheme`, so app bundles cannot pull
 `culori` by accident. **New browser runtime dependency: none, unless Zac
