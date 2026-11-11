@@ -16,18 +16,21 @@ themes (independent and optional)
 - `themes` must not be required by headless packages and currently remains
   independent.
 
-`scripts/check-package-boundaries.mjs` enforces internal manifest edges through
-`pnpm boundaries`. Source-level circular dependency tooling is intentionally
-deferred until real implementation provides enough graph complexity to justify
-it.
+`scripts/workspace-packages.mjs` is the executable catalog of package
+responsibilities and allowed internal dependencies. Manifest edges are enforced
+by `scripts/check-package-boundaries.mjs` (`pnpm boundaries`). Each package
+`AGENTS.md` is generated from the same catalog and checked by
+`scripts/check-agent-adapters.mjs` (`pnpm adapters`). Source-level circular
+dependency tooling is intentionally deferred until real implementation provides
+enough graph complexity to justify it.
 
 ## Adding a package
 
 A new package requires a responsibility that cannot remain coherent in an
 existing package. Document its purpose and dependency direction, add build and
-typecheck scripts, register it in the root TypeScript project and boundary
-checker, and explain its public entry point. An anticipated future use is not by
-itself sufficient evidence.
+typecheck scripts, register it in `scripts/workspace-packages.mjs` and the root
+TypeScript project, and explain its public entry point. An anticipated future
+use is not by itself sufficient evidence.
 
 Development apps may consume packages to exercise them. They are not published
 and must not become a hidden source of production logic.
