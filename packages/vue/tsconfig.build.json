@@ -7,5 +7,5 @@
   },
   "references": [],
   "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.vue"],
-  "exclude": ["src/**/*.test.ts"]
+  "exclude": ["src/**/*.test.ts", "src/dev-codes-docs.ts"]
 }

@@ -35,7 +35,10 @@ dependency direction and encourage cycles.
 SSR-safe ids and controlled/uncontrolled v-model behavior live in
 [`component-state.md`](./component-state.md) (`useSlId`,
 `useControllableState`). Overlay Tab traps and APG roving tabindex live in
-[`focus.md`](./focus.md) (`useFocusScope`, `useRovingFocus`). Per-component
+[`focus.md`](./focus.md) (`useFocusScope`, `useRovingFocus`). Coded development
+diagnostics (`SLOP0xx`) live in `@slop-ui/vue` and are listed in
+[`warnings.md`](../warnings.md). They stay in `vue` until a second package
+needs to emit them; `@slop-ui/shared` remains empty until then. Per-component
 public contracts for agents, MCP, codegen, and evals live in
 [`component-manifest.md`](./component-manifest.md).
 

@@ -81,5 +81,5 @@ ignores the emit, the getter still returns the prop.
 ignored.
 
 Switching controlled ↔ uncontrolled after setup is unsupported. In
-development the composable warns and keeps the last rendered value so the UI
-does not snap to `default*`.
+development the composable reports [SLOP001](../warnings.md#slop001) and keeps
+the last rendered value so the UI does not snap to `default*`.
