@@ -14,4 +14,5 @@ Examples must represent supported APIs and should not invent features that do no
 exist. Keep canonical engineering guidance in `docs/`; link to it from agent and
 tool integrations rather than copying it. `pnpm adapters` fails when those
 adapters drift from the catalog. Run `pnpm docs:build` to catch broken site
-configuration and invalid Markdown integration before review.
+configuration and invalid Markdown integration before review. The docs build
+also emits `/llms.txt` and `/llms-full.txt` for language-model clients.

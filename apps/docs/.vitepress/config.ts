@@ -1,9 +1,13 @@
 import { defineConfig } from 'vitepress'
 
+import { docsDescription, docsSidebar, docsTitle } from './docs-nav'
+import { writeLlmsTxtFiles } from './generate-llms-txt'
+
 export default defineConfig({
-  title: 'slop-ui',
-  description:
-    'Engineering foundation for a Vue-first, headless-first UI library',
+  // Canonical markdown lives in /docs; this app is only the VitePress wrapper.
+  srcDir: '../../docs',
+  title: docsTitle,
+  description: docsDescription,
   cleanUrls: true,
   themeConfig: {
     nav: [
@@ -12,61 +16,20 @@ export default defineConfig({
       { text: 'Standards', link: '/standards/code-style' },
       { text: 'Contributing', link: '/contributing/workflow' },
     ],
-    sidebar: [
-      {
-        text: 'Project',
-        items: [
-          { text: 'Overview', link: '/' },
-          { text: 'Philosophy', link: '/philosophy' },
-        ],
-      },
-      {
-        text: 'Architecture',
-        items: [
-          { text: 'Overview', link: '/architecture/overview' },
-          {
-            text: 'Package boundaries',
-            link: '/architecture/package-boundaries',
-          },
-          {
-            text: 'IDs and controllable state',
-            link: '/architecture/component-state',
-          },
-          { text: 'Styling', link: '/architecture/styling' },
-          { text: 'Design tokens', link: '/architecture/tokens' },
-          {
-            text: 'Component manifests',
-            link: '/architecture/component-manifest',
-          },
-        ],
-      },
-      {
-        text: 'Standards',
-        items: [
-          { text: 'Code style', link: '/standards/code-style' },
-          { text: 'Comments', link: '/standards/commenting' },
-          { text: 'TypeScript', link: '/standards/typescript' },
-          { text: 'Vue', link: '/standards/vue' },
-          { text: 'Testing', link: '/standards/testing' },
-          { text: 'Accessibility', link: '/standards/accessibility' },
-          { text: 'Public APIs', link: '/standards/public-api' },
-          { text: 'Dependencies', link: '/standards/dependencies' },
-          { text: 'Documentation', link: '/standards/documentation' },
-          { text: 'Performance', link: '/standards/performance' },
-        ],
-      },
-      {
-        text: 'Contributing',
-        items: [
-          { text: 'Workflow', link: '/contributing/workflow' },
-          { text: 'Releases', link: '/contributing/releases' },
-          { text: 'Component specs', link: '/components/spec-template' },
-          { text: 'ADRs', link: '/adr/' },
-        ],
-      },
-    ],
+    sidebar: docsSidebar,
     socialLinks: [
       { icon: 'github', link: 'https://github.com/zprue743/slop-ui' },
     ],
+  },
+  // Emit llmstxt.org files into the static output so they are served at
+  // `/llms.txt` and `/llms-full.txt` without a runtime dependency.
+  async buildEnd(siteConfig) {
+    await writeLlmsTxtFiles({
+      docsRoot: siteConfig.srcDir,
+      outDir: siteConfig.outDir,
+      title: docsTitle,
+      description: docsDescription,
+      sidebar: docsSidebar,
+    })
   },
 })
