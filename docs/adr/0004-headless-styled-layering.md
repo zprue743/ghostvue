@@ -122,8 +122,9 @@ import { SlButton } from '@slop-ui/themes'
 ```
 
 The themed `SlButton` wraps `@slop-ui/vue`'s `SlButton`, sets `data-part` /
-`data-state`, and uses `--slop-button-*` variables. Same behavioral props;
-visual props exist only on the themed wrapper.
+`data-state`, and uses semantic `--sl-*` variables
+([ADR 0007](./0007-token-pipeline.md)). Same behavioral props; visual props
+exist only on the themed wrapper.
 
 ## Alternatives considered
 

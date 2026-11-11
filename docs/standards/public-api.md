@@ -36,9 +36,10 @@ They apply to public components in `@slop-ui/vue` and themed wrappers in
   `SlVisuallyHidden`).
 - Public composables use `useSl*` (`useSlButton`, `useSlDialog`) so the
   library has one searchable namespace.
-- CSS classes, custom properties, and documented hooks use the `slop-`
-  prefix (`slop-button`, `--slop-button-radius`) and do not use Shoelace's
-  `sl-` CSS namespace.
+- CSS classes and documented hooks use the `slop-` prefix (`slop-button`).
+  Semantic custom properties use `--sl-<role>-<part>-<state>`
+  (`--sl-action-primary-bg`) per [ADR 0007](../adr/0007-token-pipeline.md).
+  Class names still avoid Shoelace's `sl-` custom-element namespace.
 - Compound parts are flattened named exports (`SlDialogTrigger`), not
   `SlDialog.Trigger` namespaces.
 

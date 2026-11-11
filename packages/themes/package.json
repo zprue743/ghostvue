@@ -13,14 +13,16 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
     },
-    "./default.css": "./dist/default.css"
+    "./default.css": "./dist/default.css",
+    "./tokens.css": "./dist/tokens.css",
+    "./tokens.json": "./dist/tokens.json"
   },
   "files": [
     "dist"
   ],
   "scripts": {
-    "build": "tsc -p tsconfig.build.json && node scripts/copy-css.mjs",
-    "typecheck": "vue-tsc -p tsconfig.json --noEmit"
+    "build": "node scripts/compile-tokens.mjs && tsc -p tsconfig.build.json && node scripts/copy-css.mjs",
+    "typecheck": "node scripts/compile-tokens.mjs && vue-tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
     "@slop-ui/vue": "workspace:*"

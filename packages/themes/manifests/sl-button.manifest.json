@@ -127,143 +127,143 @@
     ],
     "cssProperties": [
       {
-        "name": "--slop-theme-surface",
-        "description": "Background applied to a .slop-theme scope and used as the mix surface for soft, outline, and ghost treatments."
+        "name": "--sl-surface-bg",
+        "description": "Canvas background on .slop-theme and the mix surface for soft, outline, and ghost treatments."
       },
       {
-        "name": "--slop-theme-color",
-        "description": "Foreground applied to a .slop-theme scope."
+        "name": "--sl-surface-fg",
+        "description": "Canvas foreground on .slop-theme."
       },
       {
-        "name": "--slop-button-accent-color",
+        "name": "--sl-action-primary-bg",
         "description": "Solid background and outline/ghost foreground for the accent tone."
       },
       {
-        "name": "--slop-button-accent-color-hover",
+        "name": "--sl-action-primary-bg-hover",
         "description": "Solid hover background for the accent tone."
       },
       {
-        "name": "--slop-button-accent-color-active",
+        "name": "--sl-action-primary-bg-active",
         "description": "Solid active background for the accent tone."
       },
       {
-        "name": "--slop-button-accent-contrast",
+        "name": "--sl-action-primary-fg",
         "description": "Content color on the solid accent treatment."
       },
       {
-        "name": "--slop-button-neutral-color",
+        "name": "--sl-action-neutral-bg",
         "description": "Solid background and outline/ghost foreground for the neutral tone."
       },
       {
-        "name": "--slop-button-neutral-color-hover",
+        "name": "--sl-action-neutral-bg-hover",
         "description": "Solid hover background for the neutral tone."
       },
       {
-        "name": "--slop-button-neutral-color-active",
+        "name": "--sl-action-neutral-bg-active",
         "description": "Solid active background for the neutral tone."
       },
       {
-        "name": "--slop-button-neutral-contrast",
+        "name": "--sl-action-neutral-fg",
         "description": "Content color on the solid neutral treatment."
       },
       {
-        "name": "--slop-button-danger-color",
+        "name": "--sl-action-danger-bg",
         "description": "Solid background and outline/ghost foreground for the danger tone."
       },
       {
-        "name": "--slop-button-danger-color-hover",
+        "name": "--sl-action-danger-bg-hover",
         "description": "Solid hover background for the danger tone."
       },
       {
-        "name": "--slop-button-danger-color-active",
+        "name": "--sl-action-danger-bg-active",
         "description": "Solid active background for the danger tone."
       },
       {
-        "name": "--slop-button-danger-contrast",
+        "name": "--sl-action-danger-fg",
         "description": "Content color on the solid danger treatment."
       },
       {
-        "name": "--slop-button-disabled-opacity",
+        "name": "--sl-action-disabled-opacity",
         "description": "Shared unavailable-state opacity."
       },
       {
-        "name": "--slop-button-focus-ring",
-        "description": "Outer color of the two-color keyboard focus indicator."
-      },
-      {
-        "name": "--slop-button-focus-ring-contrast",
-        "description": "Inner color of the two-color keyboard focus indicator."
-      },
-      {
-        "name": "--slop-button-focus-ring-offset",
-        "description": "Gap between the button edge and the focus ring."
-      },
-      {
-        "name": "--slop-button-focus-ring-width",
-        "description": "Thickness of the focus outline."
-      },
-      {
-        "name": "--slop-button-font-weight",
-        "description": "Button label font weight."
-      },
-      {
-        "name": "--slop-button-gap",
-        "description": "Space between label and icon content."
-      },
-      {
-        "name": "--slop-button-icon-size",
-        "description": "Size of content marked data-part=icon."
-      },
-      {
-        "name": "--slop-button-loading-indicator-size",
-        "description": "Size of the default and custom loading indicators."
-      },
-      {
-        "name": "--slop-button-loading-indicator-width",
-        "description": "Stroke width of the default loading spinner."
-      },
-      {
-        "name": "--slop-button-radius",
-        "description": "Corner radius of the themed button."
-      },
-      {
-        "name": "--slop-button-transition-duration",
+        "name": "--sl-action-duration",
         "description": "Duration of color and opacity transitions."
       },
       {
-        "name": "--slop-button-size-sm-min-size",
+        "name": "--sl-action-gap",
+        "description": "Space between label and icon content."
+      },
+      {
+        "name": "--sl-action-icon-size",
+        "description": "Size of content marked data-part=icon."
+      },
+      {
+        "name": "--sl-action-label-weight",
+        "description": "Button label font weight."
+      },
+      {
+        "name": "--sl-action-radius",
+        "description": "Corner radius of the themed button."
+      },
+      {
+        "name": "--sl-action-spinner-size",
+        "description": "Size of the default and custom loading indicators."
+      },
+      {
+        "name": "--sl-action-spinner-width",
+        "description": "Stroke width of the default loading spinner."
+      },
+      {
+        "name": "--sl-focus-ring-color",
+        "description": "Outer color of the two-color keyboard focus indicator."
+      },
+      {
+        "name": "--sl-focus-ring-contrast",
+        "description": "Inner color of the two-color keyboard focus indicator."
+      },
+      {
+        "name": "--sl-focus-ring-offset",
+        "description": "Gap between the button edge and the focus ring."
+      },
+      {
+        "name": "--sl-focus-ring-width",
+        "description": "Thickness of the focus outline."
+      },
+      {
+        "name": "--sl-control-size-sm-min",
         "description": "Minimum block size for size sm."
       },
       {
-        "name": "--slop-button-size-sm-padding-block",
+        "name": "--sl-control-size-sm-padding-block",
         "description": "Block padding for size sm."
       },
       {
-        "name": "--slop-button-size-sm-padding-inline",
+        "name": "--sl-control-size-sm-padding-inline",
         "description": "Inline padding for size sm."
       },
       {
-        "name": "--slop-button-size-md-min-size",
+        "name": "--sl-control-size-md-min",
         "description": "Minimum block size for size md."
       },
       {
-        "name": "--slop-button-size-md-padding-block",
+        "name": "--sl-control-size-md-padding-block",
         "description": "Block padding for size md."
       },
       {
-        "name": "--slop-button-size-md-padding-inline",
+        "name": "--sl-control-size-md-padding-inline",
         "description": "Inline padding for size md."
       },
       {
-        "name": "--slop-button-size-lg-min-size",
+        "name": "--sl-control-size-lg-min",
         "description": "Minimum block size for size lg."
       },
       {
-        "name": "--slop-button-size-lg-padding-block",
+        "name": "--sl-control-size-lg-padding-block",
         "description": "Block padding for size lg."
       },
       {
-        "name": "--slop-button-size-lg-padding-inline",
+        "name": "--sl-control-size-lg-padding-inline",
         "description": "Inline padding for size lg."
       }
     ]

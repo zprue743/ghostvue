@@ -51,7 +51,7 @@ from Vue sources with `pnpm manifests:write`.
 (prop + `update:*` event per
 [component-state.md](../architecture/component-state.md)), `events` and
 payload types, `slots` and slot props, `exposed` methods/properties, styling
-hooks (`data-part`, `data-state`, `--slop-*` custom properties), accessibility
+hooks (`data-part`, `data-state`, `--sl-*` custom properties), accessibility
 (role, APG pattern URL, keyboard map, required ARIA attributes), and example
 IDs. Objects use `additionalProperties: false`. Every schema field has a
 `description`. The keyboard map is the one dictionary (`additionalProperties`
@@ -84,8 +84,9 @@ dependency.
   `pnpm manifests:write`. Check mode (`pnpm manifests`) is part of
   `pnpm verify`. Output must stay valid against this schema. Prose fields
   stay in the same file and are preserved on regeneration.
-- Changing a documented `data-part`, `data-state`, or `--slop-*` name is
-  breaking, same as a renamed prop.
+- Changing a documented `data-part`, `data-state`, or `--sl-*` name is
+  breaking, same as a renamed prop. CSS variable names follow
+  [ADR 0007](./0007-token-pipeline.md).
 
 ## Compatibility implications
 

@@ -95,7 +95,7 @@
         },
         "cssProperties": {
           "type": "array",
-          "description": "Public CSS custom properties consumers may set. Must use the slop- namespace. Private --_slop-* properties are unpublished and must not appear here.",
+          "description": "Public CSS custom properties consumers may set. Must use the --sl- prefix from ADR 0007. Private --_slop-* properties are unpublished and must not appear here.",
           "items": { "$ref": "#/$defs/cssProperty" }
         }
       }
@@ -352,8 +352,8 @@
       "properties": {
         "name": {
           "type": "string",
-          "description": "Custom property name in the slop- namespace, for example --slop-button-radius.",
-          "pattern": "^--slop-[a-z0-9-]+$"
+          "description": "Custom property name using the --sl- prefix, for example --sl-action-primary-bg.",
+          "pattern": "^--sl-[a-z0-9-]+$"
         },
         "description": {
           "type": "string",

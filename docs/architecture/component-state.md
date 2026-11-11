@@ -21,7 +21,7 @@ Wraps Vue 3.5 `useId()`. Generated ids are unique per app and stable across
 SSR and hydration. `useId()` always runs, even when `id` is set, so Vue's
 per-instance counter cannot drift between server and client trees.
 
-- Default prefix is `slop` (same namespace as CSS/tokens, not Shoelace `sl-`).
+- Default prefix is `slop` (id namespace, not Shoelace `sl-`).
 - A non-empty `id` wins. `undefined` and `''` fall back to a generated id.
 - Do not call `useId()` inside `computed`; `useSlId` calls it at setup.
 

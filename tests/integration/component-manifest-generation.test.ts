@@ -84,7 +84,7 @@ const prose = {
     states: [{ name: 'open', description: 'Expanded.' }],
     cssProperties: [
       {
-        name: '--slop-widget-gap',
+        name: '--sl-widget-gap',
         description: 'Space between parts.',
       },
     ],

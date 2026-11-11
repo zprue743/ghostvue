@@ -95,75 +95,57 @@ Supported values are `solid`, `soft`, `outline`, and `ghost`; omitting it select
 `solid`. `tone` accepts `accent`, `neutral`, and `danger`; omitting it selects
 `accent`. Supported sizes are `sm`, `md`, and `lg`; omitting it selects `md`.
 
-## Light, dark, and system color schemes
+## Light, dark, and nested modes
 
-The `.slop-theme` wrapper uses a light scheme. Select dark explicitly or follow
-the operating-system preference:
+Unset `data-sl-mode` follows `prefers-color-scheme`. Set `data-sl-mode` on any
+subtree to override the preference; nested attributes win. `.slop-theme`
+implies the `default` theme; `data-sl-theme="default"` selects it on any
+element.
 
 ```vue
-<div class="slop-theme" data-color-scheme="dark">...</div>
-<div class="slop-theme" data-color-scheme="system">...</div>
+<div class="slop-theme">Uses the operating-system preference.</div>
+<div class="slop-theme" data-sl-mode="dark">Forced dark.</div>
+<div class="slop-theme" data-sl-mode="light">
+  Forced light, even inside a dark ancestor.
+</div>
 ```
 
-The wrapper defines and applies `--slop-theme-surface` and
-`--slop-theme-color`, in addition to setting the CSS `color-scheme` property.
-Transparent outline and ghost treatments therefore always have a supported
-surface. The `system` mode selects the light or dark token values using the
-operating-system preference.
+The wrapper applies `--sl-surface-bg` and `--sl-surface-fg` and sets
+`color-scheme` to `light dark` unless `data-sl-mode` pins it. Transparent
+outline and ghost treatments therefore always have a supported surface.
 
-Themed instances inherit `color-scheme` from a `.slop-theme` ancestor when one
-is present. They do not set `color-scheme` themselves, so a dark playground
+Themed instances inherit tokens from a `.slop-theme` or `data-sl-mode`
+ancestor. They do not set `color-scheme` themselves, so a dark playground
 region is not forced back to light.
 
 ## Customize tokens
 
-The initial token surface is deliberately Button-specific. Override tokens on
-the same wrapper or a nested theme scope:
+Override semantic `--sl-*` properties on the same wrapper or a nested theme
+scope. SlButton maps `tone="accent"` to `action.primary`, `neutral` to
+`action.neutral`, and `danger` to `action.danger`. The full catalog is the
+[token catalog](./tokens.md).
 
 ```css
 .product-theme {
-  --slop-button-accent-color: #7c3aed;
-  --slop-button-accent-color-hover: #6d28d9;
-  --slop-button-accent-color-active: #5b21b6;
-  --slop-button-accent-contrast: #ffffff;
-  --slop-button-focus-ring: #111827;
-  --slop-button-focus-ring-contrast: #ffffff;
-  --slop-button-radius: 999px;
-  --slop-button-size-md-min-size: 3rem;
-  --slop-button-size-md-padding-inline: 1.5rem;
+  --sl-action-primary-bg: #7c3aed;
+  --sl-action-primary-bg-hover: #6d28d9;
+  --sl-action-primary-bg-active: #5b21b6;
+  --sl-action-primary-fg: #ffffff;
+  --sl-focus-ring-color: #111827;
+  --sl-focus-ring-contrast: #ffffff;
+  --sl-action-radius: 999px;
+  --sl-control-size-md-min: 3rem;
+  --sl-control-size-md-padding-inline: 1.5rem;
 }
 ```
 
-### Supported token surface
+Soft, outline, and ghost state colors are derived from the selected action
+tone and `--sl-surface-bg` with `color-mix()`, so overriding a tone remains
+coherent across every treatment. Internal `--_slop-*` properties are
+implementation details and are not supported theme APIs.
 
-| Tokens                                                                                | Purpose                                                                             |
-| ------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
-| `--slop-theme-surface`, `--slop-theme-color`                                          | Background and foreground applied to the theme scope.                               |
-| `--slop-button-{tone}-color`                                                          | Solid background and outline/ghost foreground for `accent`, `neutral`, or `danger`. |
-| `--slop-button-{tone}-color-hover`, `--slop-button-{tone}-color-active`               | Solid interaction colors for each tone.                                             |
-| `--slop-button-{tone}-contrast`                                                       | Content color on the solid treatment for each tone.                                 |
-| `--slop-button-disabled-opacity`                                                      | Shared unavailable-state opacity.                                                   |
-| `--slop-button-focus-ring`, `--slop-button-focus-ring-contrast`                       | Two-color focus indicator.                                                          |
-| `--slop-button-focus-ring-offset`, `--slop-button-focus-ring-width`                   | Focus indicator geometry.                                                           |
-| `--slop-button-font-weight`, `--slop-button-gap`, `--slop-button-radius`              | Typography and layout defaults.                                                     |
-| `--slop-button-icon-size`                                                             | Explicit icon-hook size.                                                            |
-| `--slop-button-loading-indicator-size`, `--slop-button-loading-indicator-width`       | Default and custom loading-indicator geometry.                                      |
-| `--slop-button-transition-duration`                                                   | Interaction transition duration.                                                    |
-| `--slop-button-size-{size}-min-size`                                                  | Minimum block size for `sm`, `md`, or `lg`.                                         |
-| `--slop-button-size-{size}-padding-block`, `--slop-button-size-{size}-padding-inline` | Padding for `sm`, `md`, or `lg`.                                                    |
-
-The tone placeholders expand to `accent`, `neutral`, and `danger`; the size
-placeholders expand to `sm`, `md`, and `lg`. Soft, outline, and ghost state
-colors are derived from the selected tone and theme surface with `color-mix()`,
-so overriding a tone remains coherent across every treatment. Internal
-`--_slop-*` properties are implementation details and are not supported theme
-APIs.
-
-Component-scoped tokens avoid prematurely defining a global color or spacing
-system. Shared tokens should be introduced only when later components
-demonstrate a real common responsibility. The DTCG authoring pipeline is
-accepted in [ADR 0005](../adr/0005-design-token-taxonomy.md) but is not built
-yet; this CSS remains the runtime snapshot.
+Authored DTCG lives in `packages/themes/tokens/` and is compiled by
+`@slop-ui/themes` ([ADR 0007](../adr/0007-token-pipeline.md)).
 
 ## Accessibility and motion
 

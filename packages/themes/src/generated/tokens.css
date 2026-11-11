@@ -1,0 +1,167 @@
+/*
+ * Generated from packages/themes/tokens. Do not edit.
+ * Semantic custom properties use --sl-<role>-<part>-<state>.
+ * Unset data-sl-mode follows prefers-color-scheme; data-sl-mode overrides
+ * on any subtree, including nested theme hosts.
+ */
+@layer slop-ui-theme {
+  :where(.slop-theme, .slop-themed-scope, [data-sl-theme='default']):not([data-sl-mode]):not(:where([data-sl-mode] *)) {
+    --sl-action-danger-bg: #b91c1c;
+    --sl-action-danger-bg-active: #7f1d1d;
+    --sl-action-danger-bg-hover: #991b1b;
+    --sl-action-danger-fg: #ffffff;
+    --sl-action-disabled-opacity: 0.55;
+    --sl-action-duration: 120ms;
+    --sl-action-gap: 0.5rem;
+    --sl-action-icon-size: 1.1em;
+    --sl-action-label-weight: 600;
+    --sl-action-neutral-bg: #334155;
+    --sl-action-neutral-bg-active: #0f172a;
+    --sl-action-neutral-bg-hover: #1e293b;
+    --sl-action-neutral-fg: #ffffff;
+    --sl-action-primary-bg: #1d4ed8;
+    --sl-action-primary-bg-active: #1e3a8a;
+    --sl-action-primary-bg-hover: #1e40af;
+    --sl-action-primary-fg: #ffffff;
+    --sl-action-radius: 0.5rem;
+    --sl-action-spinner-size: 1.1em;
+    --sl-action-spinner-width: 2px;
+    --sl-control-size-lg-min: 3.25rem;
+    --sl-control-size-lg-padding-block: 0.875rem;
+    --sl-control-size-lg-padding-inline: 1.25rem;
+    --sl-control-size-md-min: 2.75rem;
+    --sl-control-size-md-padding-block: 0.75rem;
+    --sl-control-size-md-padding-inline: 1rem;
+    --sl-control-size-sm-min: 2.25rem;
+    --sl-control-size-sm-padding-block: 0.5rem;
+    --sl-control-size-sm-padding-inline: 0.75rem;
+    --sl-focus-ring-color: #0f172a;
+    --sl-focus-ring-contrast: #ffffff;
+    --sl-focus-ring-offset: 2px;
+    --sl-focus-ring-width: 3px;
+    --sl-surface-bg: #ffffff;
+    --sl-surface-fg: #0f172a;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :where(.slop-theme, .slop-themed-scope, [data-sl-theme='default']):not([data-sl-mode]):not(:where([data-sl-mode] *)) {
+      --sl-action-danger-bg: #f87171;
+      --sl-action-danger-bg-active: #fecaca;
+      --sl-action-danger-bg-hover: #fca5a5;
+      --sl-action-danger-fg: #0f172a;
+      --sl-action-disabled-opacity: 0.55;
+      --sl-action-duration: 120ms;
+      --sl-action-gap: 0.5rem;
+      --sl-action-icon-size: 1.1em;
+      --sl-action-label-weight: 600;
+      --sl-action-neutral-bg: #cbd5e1;
+      --sl-action-neutral-bg-active: #f1f5f9;
+      --sl-action-neutral-bg-hover: #e2e8f0;
+      --sl-action-neutral-fg: #0f172a;
+      --sl-action-primary-bg: #60a5fa;
+      --sl-action-primary-bg-active: #bfdbfe;
+      --sl-action-primary-bg-hover: #93c5fd;
+      --sl-action-primary-fg: #0f172a;
+      --sl-action-radius: 0.5rem;
+      --sl-action-spinner-size: 1.1em;
+      --sl-action-spinner-width: 2px;
+      --sl-control-size-lg-min: 3.25rem;
+      --sl-control-size-lg-padding-block: 0.875rem;
+      --sl-control-size-lg-padding-inline: 1.25rem;
+      --sl-control-size-md-min: 2.75rem;
+      --sl-control-size-md-padding-block: 0.75rem;
+      --sl-control-size-md-padding-inline: 1rem;
+      --sl-control-size-sm-min: 2.25rem;
+      --sl-control-size-sm-padding-block: 0.5rem;
+      --sl-control-size-sm-padding-inline: 0.75rem;
+      --sl-focus-ring-color: #ffffff;
+      --sl-focus-ring-contrast: #0f172a;
+      --sl-focus-ring-offset: 2px;
+      --sl-focus-ring-width: 3px;
+      --sl-surface-bg: #0f172a;
+      --sl-surface-fg: #f8fafc;
+    }
+  }
+
+  :where([data-sl-mode='light']) {
+    color-scheme: light;
+    --sl-action-danger-bg: #b91c1c;
+    --sl-action-danger-bg-active: #7f1d1d;
+    --sl-action-danger-bg-hover: #991b1b;
+    --sl-action-danger-fg: #ffffff;
+    --sl-action-disabled-opacity: 0.55;
+    --sl-action-duration: 120ms;
+    --sl-action-gap: 0.5rem;
+    --sl-action-icon-size: 1.1em;
+    --sl-action-label-weight: 600;
+    --sl-action-neutral-bg: #334155;
+    --sl-action-neutral-bg-active: #0f172a;
+    --sl-action-neutral-bg-hover: #1e293b;
+    --sl-action-neutral-fg: #ffffff;
+    --sl-action-primary-bg: #1d4ed8;
+    --sl-action-primary-bg-active: #1e3a8a;
+    --sl-action-primary-bg-hover: #1e40af;
+    --sl-action-primary-fg: #ffffff;
+    --sl-action-radius: 0.5rem;
+    --sl-action-spinner-size: 1.1em;
+    --sl-action-spinner-width: 2px;
+    --sl-control-size-lg-min: 3.25rem;
+    --sl-control-size-lg-padding-block: 0.875rem;
+    --sl-control-size-lg-padding-inline: 1.25rem;
+    --sl-control-size-md-min: 2.75rem;
+    --sl-control-size-md-padding-block: 0.75rem;
+    --sl-control-size-md-padding-inline: 1rem;
+    --sl-control-size-sm-min: 2.25rem;
+    --sl-control-size-sm-padding-block: 0.5rem;
+    --sl-control-size-sm-padding-inline: 0.75rem;
+    --sl-focus-ring-color: #0f172a;
+    --sl-focus-ring-contrast: #ffffff;
+    --sl-focus-ring-offset: 2px;
+    --sl-focus-ring-width: 3px;
+    --sl-surface-bg: #ffffff;
+    --sl-surface-fg: #0f172a;
+  }
+
+  :where([data-sl-mode='dark']) {
+    color-scheme: dark;
+    --sl-action-danger-bg: #f87171;
+    --sl-action-danger-bg-active: #fecaca;
+    --sl-action-danger-bg-hover: #fca5a5;
+    --sl-action-danger-fg: #0f172a;
+    --sl-action-disabled-opacity: 0.55;
+    --sl-action-duration: 120ms;
+    --sl-action-gap: 0.5rem;
+    --sl-action-icon-size: 1.1em;
+    --sl-action-label-weight: 600;
+    --sl-action-neutral-bg: #cbd5e1;
+    --sl-action-neutral-bg-active: #f1f5f9;
+    --sl-action-neutral-bg-hover: #e2e8f0;
+    --sl-action-neutral-fg: #0f172a;
+    --sl-action-primary-bg: #60a5fa;
+    --sl-action-primary-bg-active: #bfdbfe;
+    --sl-action-primary-bg-hover: #93c5fd;
+    --sl-action-primary-fg: #0f172a;
+    --sl-action-radius: 0.5rem;
+    --sl-action-spinner-size: 1.1em;
+    --sl-action-spinner-width: 2px;
+    --sl-control-size-lg-min: 3.25rem;
+    --sl-control-size-lg-padding-block: 0.875rem;
+    --sl-control-size-lg-padding-inline: 1.25rem;
+    --sl-control-size-md-min: 2.75rem;
+    --sl-control-size-md-padding-block: 0.75rem;
+    --sl-control-size-md-padding-inline: 1rem;
+    --sl-control-size-sm-min: 2.25rem;
+    --sl-control-size-sm-padding-block: 0.5rem;
+    --sl-control-size-sm-padding-inline: 0.75rem;
+    --sl-focus-ring-color: #ffffff;
+    --sl-focus-ring-contrast: #0f172a;
+    --sl-focus-ring-offset: 2px;
+    --sl-focus-ring-width: 3px;
+    --sl-surface-bg: #0f172a;
+    --sl-surface-fg: #f8fafc;
+  }
+
+  :where(.slop-theme):not([data-sl-mode]):not(:where([data-sl-mode] *)) {
+    color-scheme: light dark;
+  }
+}

@@ -37,9 +37,10 @@ Conventions below are the public Vue component API. They extend
 `SlDialog`, `SlVisuallyHidden`. The prefix is the library's identifier in
 templates, auto-import, and global registration. It is short enough to type
 and distinct from Vuetify's `V`. CSS classes, custom properties, and
-documented hooks keep the `slop-` namespace (`slop-button`,
-`--slop-button-radius`) so they do not collide with Shoelace's `sl-`
-custom-element CSS. Vue name `SlButton` pairs with class `slop-button`.
+documented hooks keep the `slop-` namespace (`slop-button`) so they do
+not collide with Shoelace's `sl-` custom-element CSS. Vue name `SlButton`
+pairs with class `slop-button`. Semantic custom properties later moved to
+`--sl-<role>-<part>-<state>` in [ADR 0007](./0007-token-pipeline.md).
 
 **Composables.** Public composables use `useSl*`: `useSlButton`,
 `useSlDialog`. The `Sl` prefix is the same public namespace as the

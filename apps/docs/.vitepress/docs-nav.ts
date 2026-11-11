@@ -20,6 +20,7 @@ export const docsSidebar: LlmsSidebarGroup[] = [
       { text: 'SlButton', link: '/components/button' },
       { text: 'SlVisuallyHidden', link: '/components/visually-hidden' },
       { text: 'Default theme', link: '/themes/default' },
+      { text: 'Token catalog', link: '/themes/tokens' },
     ],
   },
   {

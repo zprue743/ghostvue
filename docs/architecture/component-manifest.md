@@ -64,7 +64,7 @@ Every manifest lists:
 - `events` and payload types (component emits only)
 - `slots` and slot props
 - `exposed` methods and properties
-- styling hooks — `data-part`, `data-state`, `--slop-*` custom properties
+- styling hooks — `data-part`, `data-state`, `--sl-*` custom properties
 - accessibility — role, APG pattern URL, keyboard map, required ARIA
   attributes
 - `examples` — stable example ids, not file paths
