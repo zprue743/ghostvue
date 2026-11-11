@@ -25,6 +25,10 @@ export const docsSidebar: LlmsSidebarGroup[] = [
         text: 'IDs and controllable state',
         link: '/architecture/component-state',
       },
+      {
+        text: 'Focus scope and roving focus',
+        link: '/architecture/focus',
+      },
       { text: 'Styling', link: '/architecture/styling' },
       { text: 'Design tokens', link: '/architecture/tokens' },
       {
