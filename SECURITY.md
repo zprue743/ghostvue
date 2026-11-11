@@ -1,7 +1,7 @@
 # Security policy
 
-The project is in a pre-release foundation phase. No version is currently
-supported for production use.
+The project is pre-release. No version is currently supported for production
+use.
 
 Please do not disclose suspected vulnerabilities in a public issue. Use GitHub's
 private vulnerability reporting feature when it is enabled. If that channel is

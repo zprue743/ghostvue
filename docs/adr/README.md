@@ -8,3 +8,11 @@ Copy `0000-template.md`, assign the next four-digit number, write a short
 kebab-case title, and set the status. Link superseding ADRs in both directions.
 An ADR records why the decision made sense at the time; later changes should add
 new context rather than rewriting history.
+
+Number **0001** is reserved by [PR #21](https://github.com/zprue743/slop-ui/pull/21)
+(`0001-begin-component-implementation.md`), which records the end of the
+component moratorium. This series continues at 0002.
+
+## Decisions
+
+- [0002 — Exit the foundation phase under a component gate](./0002-exit-foundation-phase.md)

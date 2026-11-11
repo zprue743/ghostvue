@@ -8,7 +8,8 @@ Internal refactors, tests, and documentation that do not affect a package releas
 usually need no Changeset. Pre-1.0 versions still require explicit compatibility
 judgment; zero-major status is not permission for surprise breakage.
 
-Release automation is intentionally not enabled during the foundation phase.
+Release automation is intentionally not enabled while the library is
+pre-release.
 Packages remain private and nothing in CI publishes artifacts. Before the first
 release, maintainers must review package names/ownership, provenance, registry
 access, changelog policy, support matrix, and a least-privilege publication

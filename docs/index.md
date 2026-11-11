@@ -23,5 +23,6 @@ features:
 ---
 
 > [!WARNING]
-> slop-ui is in its foundation phase. It exports no UI components and is not
-> ready for production use.
+> slop-ui is pre-release. First components are experimental and it is not
+> ready for production use. Adding a component requires the
+> [component gate](/agents/COMPONENT_WORKFLOW).
