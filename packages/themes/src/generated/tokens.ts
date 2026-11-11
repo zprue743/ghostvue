@@ -426,6 +426,16 @@ export const tokens = {
       dark: "#0f172a",
     },
   },
+  "asset.noise": {
+    name: "asset.noise",
+    type: "image",
+    tier: "primitive",
+    description: "Tiled fractal-noise SVG for glass and grain overlays. Inline data URI; no network asset.",
+    value: {
+      light: "url(\"data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20160%20160%22%3E%3Cfilter%20id%3D%22n%22%3E%3CfeTurbulence%20type%3D%22fractalNoise%22%20baseFrequency%3D%220.8%22%20numOctaves%3D%224%22%20seed%3D%222%22%20stitchTiles%3D%22stitch%22%2F%3E%3C%2Ffilter%3E%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20filter%3D%22url(%23n)%22%2F%3E%3C%2Fsvg%3E\")",
+      dark: "url(\"data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20160%20160%22%3E%3Cfilter%20id%3D%22n%22%3E%3CfeTurbulence%20type%3D%22fractalNoise%22%20baseFrequency%3D%220.8%22%20numOctaves%3D%224%22%20seed%3D%222%22%20stitchTiles%3D%22stitch%22%2F%3E%3C%2Ffilter%3E%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20filter%3D%22url(%23n)%22%2F%3E%3C%2Fsvg%3E\")",
+    },
+  },
   "border.danger": {
     name: "border.danger",
     cssVar: "--sl-border-danger",
@@ -457,6 +467,29 @@ export const tokens = {
     value: {
       light: "#0f172a",
       dark: "#ffffff",
+    },
+  },
+  "border.hairline": {
+    name: "border.hairline",
+    cssVar: "--sl-border-hairline",
+    type: "color",
+    tier: "semantic",
+    description: "Alpha hairline border color.",
+    value: {
+      light: "oklch(0.254 0.028 257.5 / 0.18)",
+      dark: "oklch(0.96 0.005 250 / 0.16)",
+    },
+  },
+  "border.hairline.width": {
+    name: "border.hairline.width",
+    cssVar: "--sl-border-hairline-width",
+    highDpr: "0.5px",
+    type: "dimension",
+    tier: "semantic",
+    description: "Hairline width. 1px at 1x, 0.5px on high-DPR screens.",
+    value: {
+      light: "1px",
+      dark: "1px",
     },
   },
   "border.info": {
@@ -763,6 +796,16 @@ export const tokens = {
     value: {
       light: "#2b0f0f",
       dark: "#2b0f0f",
+    },
+  },
+  "color.hairline": {
+    name: "color.hairline",
+    type: "color",
+    tier: "primitive",
+    description: "Alpha hairline border tinted with the neutral hue.",
+    value: {
+      light: "oklch(0.254 0.028 257.5 / 0.18)",
+      dark: "oklch(0.254 0.028 257.5 / 0.18)",
     },
   },
   "color.info.100": {
@@ -1505,6 +1548,56 @@ export const tokens = {
       dark: "#0c1a2b",
     },
   },
+  "color.raised.2": {
+    name: "color.raised.2",
+    type: "color",
+    tier: "primitive",
+    description: "Dark-mode elevation 2 fill between neutral 950 and 900.",
+    value: {
+      light: "#24272b",
+      dark: "#24272b",
+    },
+  },
+  "color.raised.4": {
+    name: "color.raised.4",
+    type: "color",
+    tier: "primitive",
+    description: "Dark-mode elevation 4 fill between neutral 900 and 800.",
+    value: {
+      light: "#3a3e43",
+      dark: "#3a3e43",
+    },
+  },
+  "color.shadow.ambient": {
+    name: "color.shadow.ambient",
+    type: "color",
+    tier: "primitive",
+    description: "Neutral-hue ambient shadow tint. Alpha is the light-mode rest value.",
+    value: {
+      light: "oklch(0.254 0.028 257.5 / 0.08)",
+      dark: "oklch(0.254 0.028 257.5 / 0.08)",
+    },
+  },
+  "color.shadow.highlight": {
+    name: "color.shadow.highlight",
+    type: "color",
+    tier: "primitive",
+    description: "Inset top highlight used by dark-mode elevation.",
+    value: {
+      light: "oklch(1 0.005 258 / 0.12)",
+      dark: "oklch(1 0.005 258 / 0.12)",
+    },
+  },
+  "color.shadow.key": {
+    name: "color.shadow.key",
+    type: "color",
+    tier: "primitive",
+    description: "Neutral-hue key-light shadow tint. Alpha is the light-mode rest value.",
+    value: {
+      light: "oklch(0.254 0.028 257.5 / 0.14)",
+      dark: "oklch(0.254 0.028 257.5 / 0.14)",
+    },
+  },
   "color.success.100": {
     name: "color.success.100",
     type: "color",
@@ -2134,6 +2227,270 @@ export const tokens = {
       dark: "120ms",
     },
   },
+  "elevation.0.bg": {
+    name: "elevation.0.bg",
+    cssVar: "--sl-elevation-0-bg",
+    type: "color",
+    tier: "semantic",
+    description: "Level 0 surface. Flush with the canvas.",
+    value: {
+      light: "#ffffff",
+      dark: "#0f172a",
+    },
+  },
+  "elevation.0.border": {
+    name: "elevation.0.border",
+    cssVar: "--sl-elevation-0-border",
+    type: "color",
+    tier: "semantic",
+    description: "Level 0 border. Flush surfaces do not stroke.",
+    value: {
+      light: "transparent",
+      dark: "transparent",
+    },
+  },
+  "elevation.0.highlight": {
+    name: "elevation.0.highlight",
+    cssVar: "--sl-elevation-0-highlight",
+    type: "shadow",
+    tier: "semantic",
+    description: "Level 0 inset highlight. Unused in light mode.",
+    value: {
+      light: "inset 0px 1px 0px 0px transparent",
+      dark: "inset 0px 1px 0px 0px transparent",
+    },
+  },
+  "elevation.0.shadow": {
+    name: "elevation.0.shadow",
+    cssVar: "--sl-elevation-0-shadow",
+    type: "shadow",
+    tier: "semantic",
+    description: "Level 0 shadow. No ambient or key layer.",
+    value: {
+      light: "0px 0px 0px 0px transparent",
+      dark: "0px 0px 0px 0px transparent",
+    },
+  },
+  "elevation.1.bg": {
+    name: "elevation.1.bg",
+    cssVar: "--sl-elevation-1-bg",
+    type: "color",
+    tier: "semantic",
+    description: "Level 1 surface. Resting cards and controls.",
+    value: {
+      light: "#ffffff",
+      dark: "#1b1d1f",
+    },
+  },
+  "elevation.1.border": {
+    name: "elevation.1.border",
+    cssVar: "--sl-elevation-1-border",
+    type: "color",
+    tier: "semantic",
+    description: "Level 1 hairline border.",
+    value: {
+      light: "oklch(0.254 0.028 257.5 / 0.18)",
+      dark: "oklch(0.96 0.005 250 / 0.16)",
+    },
+  },
+  "elevation.1.highlight": {
+    name: "elevation.1.highlight",
+    cssVar: "--sl-elevation-1-highlight",
+    type: "shadow",
+    tier: "semantic",
+    description: "Level 1 inset highlight. Unused in light mode.",
+    value: {
+      light: "inset 0px 1px 0px 0px transparent",
+      dark: "inset 0px 1px 0px 0px oklch(1 0.005 258 / 0.12)",
+    },
+  },
+  "elevation.1.shadow": {
+    name: "elevation.1.shadow",
+    cssVar: "--sl-elevation-1-shadow",
+    type: "shadow",
+    tier: "semantic",
+    description: "Level 1 layered shadow. Ambient plus key light.",
+    value: {
+      light: "0px 1px 2px 0px oklch(0.254 0.028 257.5 / 0.08), 0px 1px 3px 0px oklch(0.254 0.028 257.5 / 0.14)",
+      dark: "0px 1px 2px 0px oklch(0.08 0.02 258 / 0.28), 0px 1px 2px 0px oklch(0.08 0.02 258 / 0.16)",
+    },
+  },
+  "elevation.2.bg": {
+    name: "elevation.2.bg",
+    cssVar: "--sl-elevation-2-bg",
+    type: "color",
+    tier: "semantic",
+    description: "Level 2 surface. Raised cards and menus.",
+    value: {
+      light: "#ffffff",
+      dark: "#24272b",
+    },
+  },
+  "elevation.2.border": {
+    name: "elevation.2.border",
+    cssVar: "--sl-elevation-2-border",
+    type: "color",
+    tier: "semantic",
+    description: "Level 2 hairline border.",
+    value: {
+      light: "oklch(0.254 0.028 257.5 / 0.18)",
+      dark: "oklch(0.96 0.005 250 / 0.16)",
+    },
+  },
+  "elevation.2.highlight": {
+    name: "elevation.2.highlight",
+    cssVar: "--sl-elevation-2-highlight",
+    type: "shadow",
+    tier: "semantic",
+    description: "Level 2 inset highlight. Unused in light mode.",
+    value: {
+      light: "inset 0px 1px 0px 0px transparent",
+      dark: "inset 0px 1px 0px 0px oklch(1 0.005 258 / 0.12)",
+    },
+  },
+  "elevation.2.shadow": {
+    name: "elevation.2.shadow",
+    cssVar: "--sl-elevation-2-shadow",
+    type: "shadow",
+    tier: "semantic",
+    description: "Level 2 layered shadow. Ambient plus key light.",
+    value: {
+      light: "0px 2px 4px 0px oklch(0.254 0.028 257.5 / 0.08), 0px 4px 10px 0px oklch(0.254 0.028 257.5 / 0.14)",
+      dark: "0px 2px 4px 0px oklch(0.08 0.02 258 / 0.3), 0px 3px 8px 0px oklch(0.08 0.02 258 / 0.18)",
+    },
+  },
+  "elevation.3.bg": {
+    name: "elevation.3.bg",
+    cssVar: "--sl-elevation-3-bg",
+    type: "color",
+    tier: "semantic",
+    description: "Level 3 surface. Popovers and floating panels.",
+    value: {
+      light: "#ffffff",
+      dark: "#2e3135",
+    },
+  },
+  "elevation.3.border": {
+    name: "elevation.3.border",
+    cssVar: "--sl-elevation-3-border",
+    type: "color",
+    tier: "semantic",
+    description: "Level 3 hairline border.",
+    value: {
+      light: "oklch(0.254 0.028 257.5 / 0.18)",
+      dark: "oklch(0.96 0.005 250 / 0.16)",
+    },
+  },
+  "elevation.3.highlight": {
+    name: "elevation.3.highlight",
+    cssVar: "--sl-elevation-3-highlight",
+    type: "shadow",
+    tier: "semantic",
+    description: "Level 3 inset highlight. Unused in light mode.",
+    value: {
+      light: "inset 0px 1px 0px 0px transparent",
+      dark: "inset 0px 1px 0px 0px oklch(1 0.005 258 / 0.12)",
+    },
+  },
+  "elevation.3.shadow": {
+    name: "elevation.3.shadow",
+    cssVar: "--sl-elevation-3-shadow",
+    type: "shadow",
+    tier: "semantic",
+    description: "Level 3 layered shadow. Ambient plus key light.",
+    value: {
+      light: "0px 4px 8px 0px oklch(0.254 0.028 257.5 / 0.08), 0px 8px 20px 0px oklch(0.254 0.028 257.5 / 0.14)",
+      dark: "0px 4px 8px 0px oklch(0.08 0.02 258 / 0.32), 0px 6px 16px 0px oklch(0.08 0.02 258 / 0.2)",
+    },
+  },
+  "elevation.4.bg": {
+    name: "elevation.4.bg",
+    cssVar: "--sl-elevation-4-bg",
+    type: "color",
+    tier: "semantic",
+    description: "Level 4 surface. Dialogs and sheets.",
+    value: {
+      light: "#ffffff",
+      dark: "#3a3e43",
+    },
+  },
+  "elevation.4.border": {
+    name: "elevation.4.border",
+    cssVar: "--sl-elevation-4-border",
+    type: "color",
+    tier: "semantic",
+    description: "Level 4 hairline border.",
+    value: {
+      light: "oklch(0.254 0.028 257.5 / 0.18)",
+      dark: "oklch(0.96 0.005 250 / 0.16)",
+    },
+  },
+  "elevation.4.highlight": {
+    name: "elevation.4.highlight",
+    cssVar: "--sl-elevation-4-highlight",
+    type: "shadow",
+    tier: "semantic",
+    description: "Level 4 inset highlight. Unused in light mode.",
+    value: {
+      light: "inset 0px 1px 0px 0px transparent",
+      dark: "inset 0px 1px 0px 0px oklch(1 0.005 258 / 0.12)",
+    },
+  },
+  "elevation.4.shadow": {
+    name: "elevation.4.shadow",
+    cssVar: "--sl-elevation-4-shadow",
+    type: "shadow",
+    tier: "semantic",
+    description: "Level 4 layered shadow. Ambient plus key light.",
+    value: {
+      light: "0px 8px 16px 0px oklch(0.254 0.028 257.5 / 0.08), 0px 16px 32px 0px oklch(0.254 0.028 257.5 / 0.14)",
+      dark: "0px 6px 12px 0px oklch(0.08 0.02 258 / 0.34), 0px 10px 24px 0px oklch(0.08 0.02 258 / 0.22)",
+    },
+  },
+  "elevation.5.bg": {
+    name: "elevation.5.bg",
+    cssVar: "--sl-elevation-5-bg",
+    type: "color",
+    tier: "semantic",
+    description: "Level 5 surface. Highest floating layer.",
+    value: {
+      light: "#ffffff",
+      dark: "#464b50",
+    },
+  },
+  "elevation.5.border": {
+    name: "elevation.5.border",
+    cssVar: "--sl-elevation-5-border",
+    type: "color",
+    tier: "semantic",
+    description: "Level 5 hairline border.",
+    value: {
+      light: "oklch(0.254 0.028 257.5 / 0.18)",
+      dark: "oklch(0.96 0.005 250 / 0.16)",
+    },
+  },
+  "elevation.5.highlight": {
+    name: "elevation.5.highlight",
+    cssVar: "--sl-elevation-5-highlight",
+    type: "shadow",
+    tier: "semantic",
+    description: "Level 5 inset highlight. Unused in light mode.",
+    value: {
+      light: "inset 0px 1px 0px 0px transparent",
+      dark: "inset 0px 1px 0px 0px oklch(1 0.005 258 / 0.12)",
+    },
+  },
+  "elevation.5.shadow": {
+    name: "elevation.5.shadow",
+    cssVar: "--sl-elevation-5-shadow",
+    type: "shadow",
+    tier: "semantic",
+    description: "Level 5 layered shadow. Ambient plus key light.",
+    value: {
+      light: "0px 12px 24px 0px oklch(0.254 0.028 257.5 / 0.08), 0px 24px 48px 0px oklch(0.254 0.028 257.5 / 0.14)",
+      dark: "0px 8px 16px 0px oklch(0.08 0.02 258 / 0.36), 0px 14px 32px 0px oklch(0.08 0.02 258 / 0.24)",
+    },
+  },
   "focus.ring.color": {
     name: "focus.ring.color",
     cssVar: "--sl-focus-ring-color",
@@ -2188,6 +2545,160 @@ export const tokens = {
       dark: "600",
     },
   },
+  "gradient.accent": {
+    name: "gradient.accent",
+    cssVar: "--sl-gradient-accent",
+    type: "gradient",
+    tier: "semantic",
+    description: "Accent gradient interpolated in oklch.",
+    value: {
+      light: "linear-gradient(135deg in oklch, #356af3 0%, #579dd1 100%)",
+      dark: "linear-gradient(135deg in oklch, #60a5fa 0%, #38bdf8 100%)",
+    },
+  },
+  "gradient.aurora": {
+    name: "gradient.aurora",
+    cssVar: "--sl-gradient-aurora",
+    type: "gradient",
+    tier: "semantic",
+    description: "Layered radial aurora background interpolated in oklch.",
+    value: {
+      light: "radial-gradient(in oklch at 14% 18%, #d6e3ff 0%, transparent 52%), radial-gradient(in oklch at 86% 12%, #cfe7fc 0%, transparent 48%), radial-gradient(in oklch at 62% 92%, #e8f6ea 0%, transparent 55%)",
+      dark: "radial-gradient(in oklch at 14% 18%, #235187 0%, transparent 52%), radial-gradient(in oklch at 86% 12%, #005d80 0%, transparent 48%), radial-gradient(in oklch at 62% 92%, #045227 0%, transparent 55%)",
+    },
+  },
+  "gradient.border": {
+    name: "gradient.border",
+    cssVar: "--sl-gradient-border",
+    type: "gradient",
+    tier: "semantic",
+    description: "Gradient used by the gradient-border mask recipe.",
+    value: {
+      light: "linear-gradient(135deg in oklch, #356af3 0%, #579dd1 100%)",
+      dark: "linear-gradient(135deg in oklch, #60a5fa 0%, #38bdf8 100%)",
+    },
+  },
+  "material.glass.bg": {
+    name: "material.glass.bg",
+    cssVar: "--sl-material-glass-bg",
+    type: "color",
+    tier: "semantic",
+    description: "Translucent glass fill. Contrast is gated on the opaque fallback.",
+    value: {
+      light: "oklch(1 0 0 / 0.64)",
+      dark: "oklch(0.27 0.018 258 / 0.55)",
+    },
+  },
+  "material.glass.blur": {
+    name: "material.glass.blur",
+    cssVar: "--sl-material-glass-blur",
+    type: "dimension",
+    tier: "semantic",
+    description: "Glass backdrop blur radius.",
+    value: {
+      light: "1.25rem",
+      dark: "1.25rem",
+    },
+  },
+  "material.glass.border": {
+    name: "material.glass.border",
+    cssVar: "--sl-material-glass-border",
+    type: "color",
+    tier: "semantic",
+    description: "Glass hairline border.",
+    value: {
+      light: "oklch(0.254 0.028 257.5 / 0.18)",
+      dark: "oklch(0.96 0.005 250 / 0.16)",
+    },
+  },
+  "material.glass.fallback.bg": {
+    name: "material.glass.fallback.bg",
+    cssVar: "--sl-material-glass-fallback-bg",
+    type: "color",
+    tier: "semantic",
+    description: "Opaque glass fallback when backdrop-filter is unavailable.",
+    value: {
+      light: "#ffffff",
+      dark: "#24272b",
+    },
+  },
+  "material.glass.noise": {
+    name: "material.glass.noise",
+    cssVar: "--sl-material-glass-noise",
+    type: "image",
+    tier: "semantic",
+    description: "Glass noise overlay image.",
+    value: {
+      light: "url(\"data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20160%20160%22%3E%3Cfilter%20id%3D%22n%22%3E%3CfeTurbulence%20type%3D%22fractalNoise%22%20baseFrequency%3D%220.8%22%20numOctaves%3D%224%22%20seed%3D%222%22%20stitchTiles%3D%22stitch%22%2F%3E%3C%2Ffilter%3E%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20filter%3D%22url(%23n)%22%2F%3E%3C%2Fsvg%3E\")",
+      dark: "url(\"data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20160%20160%22%3E%3Cfilter%20id%3D%22n%22%3E%3CfeTurbulence%20type%3D%22fractalNoise%22%20baseFrequency%3D%220.8%22%20numOctaves%3D%224%22%20seed%3D%222%22%20stitchTiles%3D%22stitch%22%2F%3E%3C%2Ffilter%3E%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20filter%3D%22url(%23n)%22%2F%3E%3C%2Fsvg%3E\")",
+    },
+  },
+  "material.glass.noise.opacity": {
+    name: "material.glass.noise.opacity",
+    cssVar: "--sl-material-glass-noise-opacity",
+    type: "number",
+    tier: "semantic",
+    description: "Glass noise overlay opacity.",
+    value: {
+      light: "0.04",
+      dark: "0.04",
+    },
+  },
+  "material.glass.saturate": {
+    name: "material.glass.saturate",
+    cssVar: "--sl-material-glass-saturate",
+    type: "number",
+    tier: "semantic",
+    description: "Glass backdrop saturation boost.",
+    value: {
+      light: "1.45",
+      dark: "1.45",
+    },
+  },
+  "material.grain.bg": {
+    name: "material.grain.bg",
+    cssVar: "--sl-material-grain-bg",
+    type: "color",
+    tier: "semantic",
+    description: "Grain material fill.",
+    value: {
+      light: "#ffffff",
+      dark: "#0f172a",
+    },
+  },
+  "material.grain.noise": {
+    name: "material.grain.noise",
+    cssVar: "--sl-material-grain-noise",
+    type: "image",
+    tier: "semantic",
+    description: "Grain noise overlay image.",
+    value: {
+      light: "url(\"data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20160%20160%22%3E%3Cfilter%20id%3D%22n%22%3E%3CfeTurbulence%20type%3D%22fractalNoise%22%20baseFrequency%3D%220.8%22%20numOctaves%3D%224%22%20seed%3D%222%22%20stitchTiles%3D%22stitch%22%2F%3E%3C%2Ffilter%3E%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20filter%3D%22url(%23n)%22%2F%3E%3C%2Fsvg%3E\")",
+      dark: "url(\"data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20160%20160%22%3E%3Cfilter%20id%3D%22n%22%3E%3CfeTurbulence%20type%3D%22fractalNoise%22%20baseFrequency%3D%220.8%22%20numOctaves%3D%224%22%20seed%3D%222%22%20stitchTiles%3D%22stitch%22%2F%3E%3C%2Ffilter%3E%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20filter%3D%22url(%23n)%22%2F%3E%3C%2Fsvg%3E\")",
+    },
+  },
+  "material.grain.noise.opacity": {
+    name: "material.grain.noise.opacity",
+    cssVar: "--sl-material-grain-noise-opacity",
+    type: "number",
+    tier: "semantic",
+    description: "Grain noise overlay opacity.",
+    value: {
+      light: "0.08",
+      dark: "0.08",
+    },
+  },
+  "material.solid.bg": {
+    name: "material.solid.bg",
+    cssVar: "--sl-material-solid-bg",
+    type: "color",
+    tier: "semantic",
+    description: "Opaque solid material fill.",
+    value: {
+      light: "#ffffff",
+      dark: "#0f172a",
+    },
+  },
   "opacity.disabled": {
     name: "opacity.disabled",
     type: "number",
@@ -2198,6 +2709,26 @@ export const tokens = {
       dark: "0.55",
     },
   },
+  "opacity.glass": {
+    name: "opacity.glass",
+    type: "number",
+    tier: "primitive",
+    description: "Glass material noise overlay opacity.",
+    value: {
+      light: "0.04",
+      dark: "0.04",
+    },
+  },
+  "opacity.grain": {
+    name: "opacity.grain",
+    type: "number",
+    tier: "primitive",
+    description: "Grain material noise overlay opacity.",
+    value: {
+      light: "0.08",
+      dark: "0.08",
+    },
+  },
   "radius.md": {
     name: "radius.md",
     type: "dimension",
@@ -2206,6 +2737,26 @@ export const tokens = {
     value: {
       light: "0.5rem",
       dark: "0.5rem",
+    },
+  },
+  "saturate.glass": {
+    name: "saturate.glass",
+    type: "number",
+    tier: "primitive",
+    description: "Glass material backdrop saturation boost.",
+    value: {
+      light: "1.45",
+      dark: "1.45",
+    },
+  },
+  "size.blur.glass": {
+    name: "size.blur.glass",
+    type: "dimension",
+    tier: "primitive",
+    description: "Glass material backdrop blur.",
+    value: {
+      light: "1.25rem",
+      dark: "1.25rem",
     },
   },
   "size.focus.offset": {
@@ -2226,6 +2777,16 @@ export const tokens = {
     value: {
       light: "3px",
       dark: "3px",
+    },
+  },
+  "size.hairline": {
+    name: "size.hairline",
+    type: "dimension",
+    tier: "primitive",
+    description: "Hairline border width at 1x. High-DPR screens use 0.5px via the compiler.",
+    value: {
+      light: "1px",
+      dark: "1px",
     },
   },
   "size.icon": {

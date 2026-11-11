@@ -46,6 +46,35 @@ describe('semantic contrast gate', () => {
     expect(pairs.some((pair) => pair.fg === 'action.radius')).toBe(false)
   })
 
+  it('pairs canvas text with each elevation fill and glass fallback', () => {
+    const pairs = contrastPairs([
+      { name: 'surface.fg', tier: 'semantic', type: 'color' },
+      { name: 'text.default', tier: 'semantic', type: 'color' },
+      { name: 'text.muted', tier: 'semantic', type: 'color' },
+      { name: 'text.subtle', tier: 'semantic', type: 'color' },
+      { name: 'elevation.2.bg', tier: 'semantic', type: 'color' },
+      { name: 'material.glass.fallback.bg', tier: 'semantic', type: 'color' },
+      { name: 'material.solid.bg', tier: 'semantic', type: 'color' },
+    ])
+
+    expect(pairs).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          fg: 'text.default',
+          bg: 'elevation.2.bg',
+        }),
+        expect.objectContaining({
+          fg: 'text.subtle',
+          bg: 'elevation.2.bg',
+        }),
+        expect.objectContaining({
+          fg: 'text.default',
+          bg: 'material.glass.fallback.bg',
+        }),
+      ]),
+    )
+  })
+
   it('fails WCAG AA when a semantic text/background pair is identical', () => {
     const compiled = compileTokenDocuments([
       {

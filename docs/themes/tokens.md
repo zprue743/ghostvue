@@ -120,6 +120,8 @@ tokens that alias them.
 | `border.danger` | `--sl-border-danger` | color | `#b91c1c` | `#f87171` | Danger-accent border. |
 | `border.default` | `--sl-border-default` | color | `#bcc4d1` | `#60666e` | Default structural border. |
 | `border.focus` | `--sl-border-focus` | color | `#0f172a` | `#ffffff` | Focus-indicator border. |
+| `border.hairline` | `--sl-border-hairline` | color | `oklch(0.254 0.028 257.5 / 0.18)` | `oklch(0.96 0.005 250 / 0.16)` | Alpha hairline border color. |
+| `border.hairline.width` | `--sl-border-hairline-width` | dimension | `1px` | `1px` | Hairline width. 1px at 1x, 0.5px on high-DPR screens. |
 | `border.info` | `--sl-border-info` | color | `#0369a1` | `#38bdf8` | Info-accent border. |
 | `border.muted` | `--sl-border-muted` | color | `#d9dee6` | `#464b50` | Low-emphasis border. |
 | `border.primary` | `--sl-border-primary` | color | `#1d4ed8` | `#60a5fa` | Primary-accent border. |
@@ -141,6 +143,35 @@ tokens that alias them.
 | `control.size.sm.padding.block` | `--sl-control-size-sm-padding-block` | dimension | `0.5rem` | `0.5rem` | Small control block padding. |
 | `control.size.sm.padding.inline` | `--sl-control-size-sm-padding-inline` | dimension | `0.75rem` | `0.75rem` | Small control inline padding. |
 
+### elevation
+
+| Token | CSS | Type | Light | Dark | Description |
+| --- | --- | --- | --- | --- | --- |
+| `elevation.0.bg` | `--sl-elevation-0-bg` | color | `#ffffff` | `#0f172a` | Level 0 surface. Flush with the canvas. |
+| `elevation.0.border` | `--sl-elevation-0-border` | color | `transparent` | `transparent` | Level 0 border. Flush surfaces do not stroke. |
+| `elevation.0.highlight` | `--sl-elevation-0-highlight` | shadow | `inset 0px 1px 0px 0px transparent` | `inset 0px 1px 0px 0px transparent` | Level 0 inset highlight. Unused in light mode. |
+| `elevation.0.shadow` | `--sl-elevation-0-shadow` | shadow | `0px 0px 0px 0px transparent` | `0px 0px 0px 0px transparent` | Level 0 shadow. No ambient or key layer. |
+| `elevation.1.bg` | `--sl-elevation-1-bg` | color | `#ffffff` | `#1b1d1f` | Level 1 surface. Resting cards and controls. |
+| `elevation.1.border` | `--sl-elevation-1-border` | color | `oklch(0.254 0.028 257.5 / 0.18)` | `oklch(0.96 0.005 250 / 0.16)` | Level 1 hairline border. |
+| `elevation.1.highlight` | `--sl-elevation-1-highlight` | shadow | `inset 0px 1px 0px 0px transparent` | `inset 0px 1px 0px 0px oklch(1 0.005 258 / 0.12)` | Level 1 inset highlight. Unused in light mode. |
+| `elevation.1.shadow` | `--sl-elevation-1-shadow` | shadow | `0px 1px 2px 0px oklch(0.254 0.028 257.5 / 0.08), 0px 1px 3px 0px oklch(0.254 0.028 257.5 / 0.14)` | `0px 1px 2px 0px oklch(0.08 0.02 258 / 0.28), 0px 1px 2px 0px oklch(0.08 0.02 258 / 0.16)` | Level 1 layered shadow. Ambient plus key light. |
+| `elevation.2.bg` | `--sl-elevation-2-bg` | color | `#ffffff` | `#24272b` | Level 2 surface. Raised cards and menus. |
+| `elevation.2.border` | `--sl-elevation-2-border` | color | `oklch(0.254 0.028 257.5 / 0.18)` | `oklch(0.96 0.005 250 / 0.16)` | Level 2 hairline border. |
+| `elevation.2.highlight` | `--sl-elevation-2-highlight` | shadow | `inset 0px 1px 0px 0px transparent` | `inset 0px 1px 0px 0px oklch(1 0.005 258 / 0.12)` | Level 2 inset highlight. Unused in light mode. |
+| `elevation.2.shadow` | `--sl-elevation-2-shadow` | shadow | `0px 2px 4px 0px oklch(0.254 0.028 257.5 / 0.08), 0px 4px 10px 0px oklch(0.254 0.028 257.5 / 0.14)` | `0px 2px 4px 0px oklch(0.08 0.02 258 / 0.3), 0px 3px 8px 0px oklch(0.08 0.02 258 / 0.18)` | Level 2 layered shadow. Ambient plus key light. |
+| `elevation.3.bg` | `--sl-elevation-3-bg` | color | `#ffffff` | `#2e3135` | Level 3 surface. Popovers and floating panels. |
+| `elevation.3.border` | `--sl-elevation-3-border` | color | `oklch(0.254 0.028 257.5 / 0.18)` | `oklch(0.96 0.005 250 / 0.16)` | Level 3 hairline border. |
+| `elevation.3.highlight` | `--sl-elevation-3-highlight` | shadow | `inset 0px 1px 0px 0px transparent` | `inset 0px 1px 0px 0px oklch(1 0.005 258 / 0.12)` | Level 3 inset highlight. Unused in light mode. |
+| `elevation.3.shadow` | `--sl-elevation-3-shadow` | shadow | `0px 4px 8px 0px oklch(0.254 0.028 257.5 / 0.08), 0px 8px 20px 0px oklch(0.254 0.028 257.5 / 0.14)` | `0px 4px 8px 0px oklch(0.08 0.02 258 / 0.32), 0px 6px 16px 0px oklch(0.08 0.02 258 / 0.2)` | Level 3 layered shadow. Ambient plus key light. |
+| `elevation.4.bg` | `--sl-elevation-4-bg` | color | `#ffffff` | `#3a3e43` | Level 4 surface. Dialogs and sheets. |
+| `elevation.4.border` | `--sl-elevation-4-border` | color | `oklch(0.254 0.028 257.5 / 0.18)` | `oklch(0.96 0.005 250 / 0.16)` | Level 4 hairline border. |
+| `elevation.4.highlight` | `--sl-elevation-4-highlight` | shadow | `inset 0px 1px 0px 0px transparent` | `inset 0px 1px 0px 0px oklch(1 0.005 258 / 0.12)` | Level 4 inset highlight. Unused in light mode. |
+| `elevation.4.shadow` | `--sl-elevation-4-shadow` | shadow | `0px 8px 16px 0px oklch(0.254 0.028 257.5 / 0.08), 0px 16px 32px 0px oklch(0.254 0.028 257.5 / 0.14)` | `0px 6px 12px 0px oklch(0.08 0.02 258 / 0.34), 0px 10px 24px 0px oklch(0.08 0.02 258 / 0.22)` | Level 4 layered shadow. Ambient plus key light. |
+| `elevation.5.bg` | `--sl-elevation-5-bg` | color | `#ffffff` | `#464b50` | Level 5 surface. Highest floating layer. |
+| `elevation.5.border` | `--sl-elevation-5-border` | color | `oklch(0.254 0.028 257.5 / 0.18)` | `oklch(0.96 0.005 250 / 0.16)` | Level 5 hairline border. |
+| `elevation.5.highlight` | `--sl-elevation-5-highlight` | shadow | `inset 0px 1px 0px 0px transparent` | `inset 0px 1px 0px 0px oklch(1 0.005 258 / 0.12)` | Level 5 inset highlight. Unused in light mode. |
+| `elevation.5.shadow` | `--sl-elevation-5-shadow` | shadow | `0px 12px 24px 0px oklch(0.254 0.028 257.5 / 0.08), 0px 24px 48px 0px oklch(0.254 0.028 257.5 / 0.14)` | `0px 8px 16px 0px oklch(0.08 0.02 258 / 0.36), 0px 14px 32px 0px oklch(0.08 0.02 258 / 0.24)` | Level 5 layered shadow. Ambient plus key light. |
+
 ### focus
 
 | Token | CSS | Type | Light | Dark | Description |
@@ -149,6 +180,30 @@ tokens that alias them.
 | `focus.ring.contrast` | `--sl-focus-ring-contrast` | color | `#ffffff` | `#0f172a` | Inner color of the two-color keyboard focus indicator. |
 | `focus.ring.offset` | `--sl-focus-ring-offset` | dimension | `2px` | `2px` | Gap between a control and its focus ring. |
 | `focus.ring.width` | `--sl-focus-ring-width` | dimension | `3px` | `3px` | Focus outline thickness. |
+
+### gradient
+
+| Token | CSS | Type | Light | Dark | Description |
+| --- | --- | --- | --- | --- | --- |
+| `gradient.accent` | `--sl-gradient-accent` | gradient | `linear-gradient(135deg in oklch, #356af3 0%, #579dd1 100%)` | `linear-gradient(135deg in oklch, #60a5fa 0%, #38bdf8 100%)` | Accent gradient interpolated in oklch. |
+| `gradient.aurora` | `--sl-gradient-aurora` | gradient | `radial-gradient(in oklch at 14% 18%, #d6e3ff 0%, transparent 52%), radial-gradient(in oklch at 86% 12%, #cfe7fc 0%, transparent 48%), radial-gradient(in oklch at 62% 92%, #e8f6ea 0%, transparent 55%)` | `radial-gradient(in oklch at 14% 18%, #235187 0%, transparent 52%), radial-gradient(in oklch at 86% 12%, #005d80 0%, transparent 48%), radial-gradient(in oklch at 62% 92%, #045227 0%, transparent 55%)` | Layered radial aurora background interpolated in oklch. |
+| `gradient.border` | `--sl-gradient-border` | gradient | `linear-gradient(135deg in oklch, #356af3 0%, #579dd1 100%)` | `linear-gradient(135deg in oklch, #60a5fa 0%, #38bdf8 100%)` | Gradient used by the gradient-border mask recipe. |
+
+### material
+
+| Token | CSS | Type | Light | Dark | Description |
+| --- | --- | --- | --- | --- | --- |
+| `material.glass.bg` | `--sl-material-glass-bg` | color | `oklch(1 0 0 / 0.64)` | `oklch(0.27 0.018 258 / 0.55)` | Translucent glass fill. Contrast is gated on the opaque fallback. |
+| `material.glass.blur` | `--sl-material-glass-blur` | dimension | `1.25rem` | `1.25rem` | Glass backdrop blur radius. |
+| `material.glass.border` | `--sl-material-glass-border` | color | `oklch(0.254 0.028 257.5 / 0.18)` | `oklch(0.96 0.005 250 / 0.16)` | Glass hairline border. |
+| `material.glass.fallback.bg` | `--sl-material-glass-fallback-bg` | color | `#ffffff` | `#24272b` | Opaque glass fallback when backdrop-filter is unavailable. |
+| `material.glass.noise` | `--sl-material-glass-noise` | image | `url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20160%20160%22%3E%3Cfilter%20id%3D%22n%22%3E%3CfeTurbulence%20type%3D%22fractalNoise%22%20baseFrequency%3D%220.8%22%20numOctaves%3D%224%22%20seed%3D%222%22%20stitchTiles%3D%22stitch%22%2F%3E%3C%2Ffilter%3E%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20filter%3D%22url(%23n)%22%2F%3E%3C%2Fsvg%3E")` | `url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20160%20160%22%3E%3Cfilter%20id%3D%22n%22%3E%3CfeTurbulence%20type%3D%22fractalNoise%22%20baseFrequency%3D%220.8%22%20numOctaves%3D%224%22%20seed%3D%222%22%20stitchTiles%3D%22stitch%22%2F%3E%3C%2Ffilter%3E%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20filter%3D%22url(%23n)%22%2F%3E%3C%2Fsvg%3E")` | Glass noise overlay image. |
+| `material.glass.noise.opacity` | `--sl-material-glass-noise-opacity` | number | `0.04` | `0.04` | Glass noise overlay opacity. |
+| `material.glass.saturate` | `--sl-material-glass-saturate` | number | `1.45` | `1.45` | Glass backdrop saturation boost. |
+| `material.grain.bg` | `--sl-material-grain-bg` | color | `#ffffff` | `#0f172a` | Grain material fill. |
+| `material.grain.noise` | `--sl-material-grain-noise` | image | `url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20160%20160%22%3E%3Cfilter%20id%3D%22n%22%3E%3CfeTurbulence%20type%3D%22fractalNoise%22%20baseFrequency%3D%220.8%22%20numOctaves%3D%224%22%20seed%3D%222%22%20stitchTiles%3D%22stitch%22%2F%3E%3C%2Ffilter%3E%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20filter%3D%22url(%23n)%22%2F%3E%3C%2Fsvg%3E")` | `url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20160%20160%22%3E%3Cfilter%20id%3D%22n%22%3E%3CfeTurbulence%20type%3D%22fractalNoise%22%20baseFrequency%3D%220.8%22%20numOctaves%3D%224%22%20seed%3D%222%22%20stitchTiles%3D%22stitch%22%2F%3E%3C%2Ffilter%3E%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20filter%3D%22url(%23n)%22%2F%3E%3C%2Fsvg%3E")` | Grain noise overlay image. |
+| `material.grain.noise.opacity` | `--sl-material-grain-noise-opacity` | number | `0.08` | `0.08` | Grain noise overlay opacity. |
+| `material.solid.bg` | `--sl-material-solid-bg` | color | `#ffffff` | `#0f172a` | Opaque solid material fill. |
 
 ### status
 
@@ -199,6 +254,7 @@ tokens can alias a stable OKLCH scale.
 
 | Token | Type | Value | Description |
 | --- | --- | --- | --- |
+| `asset.noise` | image | `url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20160%20160%22%3E%3Cfilter%20id%3D%22n%22%3E%3CfeTurbulence%20type%3D%22fractalNoise%22%20baseFrequency%3D%220.8%22%20numOctaves%3D%224%22%20seed%3D%222%22%20stitchTiles%3D%22stitch%22%2F%3E%3C%2Ffilter%3E%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20filter%3D%22url(%23n)%22%2F%3E%3C%2Fsvg%3E")` | Tiled fractal-noise SVG for glass and grain overlays. Inline data URI; no network asset. |
 | `color.danger.100` | color | `#ffecea` | Danger 100 (light-tuned). |
 | `color.danger.1000` | color | `#1f0000` | Danger 1000 (light-tuned). |
 | `color.danger.200` | color | `#ffdad5` | Danger 200 (light-tuned). |
@@ -223,6 +279,7 @@ tokens can alias a stable OKLCH scale.
 | `color.danger.dark.800` | color | `#632425` | Danger 800 (dark-tuned). |
 | `color.danger.dark.900` | color | `#441919` | Danger 900 (dark-tuned). |
 | `color.danger.dark.950` | color | `#2b0f0f` | Danger 950 (dark-tuned). |
+| `color.hairline` | color | `oklch(0.254 0.028 257.5 / 0.18)` | Alpha hairline border tinted with the neutral hue. |
 | `color.info.100` | color | `#e7f3fd` | Info 100 (light-tuned). |
 | `color.info.1000` | color | `#000c19` | Info 1000 (light-tuned). |
 | `color.info.200` | color | `#cfe7fc` | Info 200 (light-tuned). |
@@ -297,6 +354,11 @@ tokens can alias a stable OKLCH scale.
 | `color.primary.dark.800` | color | `#1c3d64` | Primary 800 (dark-tuned). |
 | `color.primary.dark.900` | color | `#132944` | Primary 900 (dark-tuned). |
 | `color.primary.dark.950` | color | `#0c1a2b` | Primary 950 (dark-tuned). |
+| `color.raised.2` | color | `#24272b` | Dark-mode elevation 2 fill between neutral 950 and 900. |
+| `color.raised.4` | color | `#3a3e43` | Dark-mode elevation 4 fill between neutral 900 and 800. |
+| `color.shadow.ambient` | color | `oklch(0.254 0.028 257.5 / 0.08)` | Neutral-hue ambient shadow tint. Alpha is the light-mode rest value. |
+| `color.shadow.highlight` | color | `oklch(1 0.005 258 / 0.12)` | Inset top highlight used by dark-mode elevation. |
+| `color.shadow.key` | color | `oklch(0.254 0.028 257.5 / 0.14)` | Neutral-hue key-light shadow tint. Alpha is the light-mode rest value. |
 | `color.success.100` | color | `#e8f6ea` | Success 100 (light-tuned). |
 | `color.success.1000` | color | `#001003` | Success 1000 (light-tuned). |
 | `color.success.200` | color | `#d1eed6` | Success 200 (light-tuned). |
@@ -352,9 +414,14 @@ tokens can alias a stable OKLCH scale.
 | `duration.fast` | duration | `120ms` | Fast interaction duration. |
 | `font.weight.semibold` | fontWeight | `600` | Semibold font weight. |
 | `opacity.disabled` | number | `0.55` | Unavailable-state opacity. |
+| `opacity.glass` | number | `0.04` | Glass material noise overlay opacity. |
+| `opacity.grain` | number | `0.08` | Grain material noise overlay opacity. |
 | `radius.md` | dimension | `0.5rem` | Medium corner radius. |
+| `saturate.glass` | number | `1.45` | Glass material backdrop saturation boost. |
+| `size.blur.glass` | dimension | `1.25rem` | Glass material backdrop blur. |
 | `size.focus.offset` | dimension | `2px` | Gap between a control and its focus ring. |
 | `size.focus.width` | dimension | `3px` | Focus outline thickness. |
+| `size.hairline` | dimension | `1px` | Hairline border width at 1x. High-DPR screens use 0.5px via the compiler. |
 | `size.icon` | dimension | `1.1em` | Icon size relative to the label. |
 | `size.spinner.width` | dimension | `2px` | Default spinner stroke width. |
 | `space.2` | dimension | `0.5rem` | Space 2. |

@@ -21,6 +21,7 @@ export interface CompiledToken {
   description: string
   value: { light: string; dark: string }
   cssVar?: string
+  highDpr?: string
   aliases?: { light: string | null; dark: string | null }
 }
 

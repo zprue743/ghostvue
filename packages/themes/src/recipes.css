@@ -1,0 +1,177 @@
+/*
+ * Semantic recipes for elevation, materials, and gradients. Tokens stay the
+ * public CSS API; these data attributes are documented utilities, not
+ * per-component styles. Forced-colors discards decorative shadows, blur, and
+ * noise so system colors remain the only paint.
+ */
+@layer slop-ui-theme {
+  :where([data-elevation='0']) {
+    background-color: var(--sl-elevation-0-bg);
+    border: var(--sl-border-hairline-width) solid var(--sl-elevation-0-border);
+    box-shadow: var(--sl-elevation-0-shadow), var(--sl-elevation-0-highlight);
+  }
+
+  :where([data-elevation='1']) {
+    background-color: var(--sl-elevation-1-bg);
+    border: var(--sl-border-hairline-width) solid var(--sl-elevation-1-border);
+    box-shadow: var(--sl-elevation-1-shadow), var(--sl-elevation-1-highlight);
+  }
+
+  :where([data-elevation='2']) {
+    background-color: var(--sl-elevation-2-bg);
+    border: var(--sl-border-hairline-width) solid var(--sl-elevation-2-border);
+    box-shadow: var(--sl-elevation-2-shadow), var(--sl-elevation-2-highlight);
+  }
+
+  :where([data-elevation='3']) {
+    background-color: var(--sl-elevation-3-bg);
+    border: var(--sl-border-hairline-width) solid var(--sl-elevation-3-border);
+    box-shadow: var(--sl-elevation-3-shadow), var(--sl-elevation-3-highlight);
+  }
+
+  :where([data-elevation='4']) {
+    background-color: var(--sl-elevation-4-bg);
+    border: var(--sl-border-hairline-width) solid var(--sl-elevation-4-border);
+    box-shadow: var(--sl-elevation-4-shadow), var(--sl-elevation-4-highlight);
+  }
+
+  :where([data-elevation='5']) {
+    background-color: var(--sl-elevation-5-bg);
+    border: var(--sl-border-hairline-width) solid var(--sl-elevation-5-border);
+    box-shadow: var(--sl-elevation-5-shadow), var(--sl-elevation-5-highlight);
+  }
+
+  :where([data-material='solid']) {
+    background-color: var(--sl-material-solid-bg);
+  }
+
+  :where([data-material='glass']) {
+    isolation: isolate;
+    position: relative;
+    background-color: var(--sl-material-glass-bg);
+    border: var(--sl-border-hairline-width) solid
+      var(--sl-material-glass-border);
+    -webkit-backdrop-filter: blur(var(--sl-material-glass-blur))
+      saturate(var(--sl-material-glass-saturate));
+    backdrop-filter: blur(var(--sl-material-glass-blur))
+      saturate(var(--sl-material-glass-saturate));
+  }
+
+  :where([data-material='grain']) {
+    isolation: isolate;
+    position: relative;
+    background-color: var(--sl-material-grain-bg);
+  }
+
+  :where([data-material='glass'])::before,
+  :where([data-material='grain'])::before {
+    background-repeat: repeat;
+    background-size: 8rem 8rem;
+    content: '';
+    inset: 0;
+    pointer-events: none;
+    position: absolute;
+    z-index: -1;
+  }
+
+  :where([data-material='glass'])::before {
+    background-image: var(--sl-material-glass-noise);
+    opacity: var(--sl-material-glass-noise-opacity);
+  }
+
+  :where([data-material='grain'])::before {
+    background-image: var(--sl-material-grain-noise);
+    opacity: var(--sl-material-grain-noise-opacity);
+  }
+
+  :where([data-gradient='accent']) {
+    background-color: var(--sl-surface-bg);
+    background-image: var(--sl-gradient-accent);
+  }
+
+  :where([data-gradient='aurora']) {
+    background-color: var(--sl-surface-bg);
+    background-image: var(--sl-gradient-aurora);
+  }
+
+  :where([data-gradient='border']) {
+    isolation: isolate;
+    position: relative;
+    background-color: var(--sl-surface-bg);
+  }
+
+  :where([data-gradient='border'])::before {
+    background: var(--sl-gradient-border);
+    border-radius: inherit;
+    content: '';
+    inset: 0;
+    -webkit-mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    padding: var(--sl-border-hairline-width);
+    pointer-events: none;
+    position: absolute;
+  }
+
+  @supports not (
+    (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))
+  ) {
+    :where([data-material='glass']) {
+      background-color: var(--sl-material-glass-fallback-bg);
+      -webkit-backdrop-filter: none;
+      backdrop-filter: none;
+    }
+  }
+
+  @supports not ((mask-composite: exclude) or (-webkit-mask-composite: xor)) {
+    :where([data-gradient='border']) {
+      background:
+        linear-gradient(var(--sl-surface-bg), var(--sl-surface-bg)) padding-box,
+        var(--sl-gradient-border) border-box;
+      border: var(--sl-border-hairline-width) solid transparent;
+    }
+
+    :where([data-gradient='border'])::before {
+      content: none;
+    }
+  }
+
+  @media (forced-colors: active) {
+    :where([data-elevation]) {
+      background-color: Canvas;
+      border-color: CanvasText;
+      box-shadow: none;
+      color: CanvasText;
+    }
+
+    :where(
+      [data-material='solid'],
+      [data-material='glass'],
+      [data-material='grain']
+    ) {
+      background-color: Canvas;
+      background-image: none;
+      border-color: CanvasText;
+      -webkit-backdrop-filter: none;
+      backdrop-filter: none;
+      color: CanvasText;
+    }
+
+    :where([data-material='glass'])::before,
+    :where([data-material='grain'])::before,
+    :where([data-gradient='border'])::before {
+      content: none;
+    }
+
+    :where([data-gradient]) {
+      background-color: Canvas;
+      background-image: none;
+      color: CanvasText;
+    }
+  }
+}

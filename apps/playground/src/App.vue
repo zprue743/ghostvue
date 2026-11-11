@@ -2,6 +2,8 @@
 import { ref, useTemplateRef } from 'vue'
 
 import { SlButton as SlButtonThemed } from '@slop-ui/themes'
+
+import VisualReference from './VisualReference.vue'
 import {
   SlButton,
   SlVisuallyHidden,
@@ -134,6 +136,8 @@ function closeNested(): void {
         {{ status }}
       </SlVisuallyHidden>
     </section>
+
+    <VisualReference />
 
     <section aria-labelledby="button-heading">
       <h2 id="button-heading">SlButton</h2>

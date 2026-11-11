@@ -144,6 +144,10 @@ tone and `--sl-surface-bg` with `color-mix()`, so overriding a tone remains
 coherent across every treatment. Internal `--_slop-*` properties are
 implementation details and are not supported theme APIs.
 
+Elevation, materials, and gradients are semantic `--sl-*` variables plus
+documented `data-elevation`, `data-material`, and `data-gradient` recipes.
+See [elevation, materials, and gradients](./elevation.md).
+
 Authored DTCG lives in `packages/themes/tokens/` and is compiled by
 `@slop-ui/themes` ([ADR 0007](../adr/0007-token-pipeline.md)).
 

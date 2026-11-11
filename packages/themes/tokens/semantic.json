@@ -37,6 +37,383 @@
       }
     }
   },
+  "elevation": {
+    "0": {
+      "bg": {
+        "$type": "color",
+        "$value": "{surface.bg}",
+        "$description": "Level 0 surface. Flush with the canvas."
+      },
+      "shadow": {
+        "$type": "shadow",
+        "$value": [
+          {
+            "offsetX": "0px",
+            "offsetY": "0px",
+            "blur": "0px",
+            "spread": "0px",
+            "color": "transparent"
+          }
+        ],
+        "$description": "Level 0 shadow. No ambient or key layer."
+      },
+      "border": {
+        "$type": "color",
+        "$value": "transparent",
+        "$description": "Level 0 border. Flush surfaces do not stroke."
+      },
+      "highlight": {
+        "$type": "shadow",
+        "$value": {
+          "offsetX": "0px",
+          "offsetY": "1px",
+          "blur": "0px",
+          "spread": "0px",
+          "color": "transparent",
+          "inset": true
+        },
+        "$description": "Level 0 inset highlight. Unused in light mode."
+      }
+    },
+    "1": {
+      "bg": {
+        "$type": "color",
+        "$value": "{surface.bg}",
+        "$description": "Level 1 surface. Resting cards and controls."
+      },
+      "shadow": {
+        "$type": "shadow",
+        "$value": [
+          {
+            "offsetX": "0px",
+            "offsetY": "1px",
+            "blur": "2px",
+            "spread": "0px",
+            "color": "{color.shadow.ambient}"
+          },
+          {
+            "offsetX": "0px",
+            "offsetY": "1px",
+            "blur": "3px",
+            "spread": "0px",
+            "color": "{color.shadow.key}"
+          }
+        ],
+        "$description": "Level 1 layered shadow. Ambient plus key light."
+      },
+      "border": {
+        "$type": "color",
+        "$value": "{border.hairline}",
+        "$description": "Level 1 hairline border."
+      },
+      "highlight": {
+        "$type": "shadow",
+        "$value": {
+          "offsetX": "0px",
+          "offsetY": "1px",
+          "blur": "0px",
+          "spread": "0px",
+          "color": "transparent",
+          "inset": true
+        },
+        "$description": "Level 1 inset highlight. Unused in light mode."
+      }
+    },
+    "2": {
+      "bg": {
+        "$type": "color",
+        "$value": "{surface.bg}",
+        "$description": "Level 2 surface. Raised cards and menus."
+      },
+      "shadow": {
+        "$type": "shadow",
+        "$value": [
+          {
+            "offsetX": "0px",
+            "offsetY": "2px",
+            "blur": "4px",
+            "spread": "0px",
+            "color": "{color.shadow.ambient}"
+          },
+          {
+            "offsetX": "0px",
+            "offsetY": "4px",
+            "blur": "10px",
+            "spread": "0px",
+            "color": "{color.shadow.key}"
+          }
+        ],
+        "$description": "Level 2 layered shadow. Ambient plus key light."
+      },
+      "border": {
+        "$type": "color",
+        "$value": "{border.hairline}",
+        "$description": "Level 2 hairline border."
+      },
+      "highlight": {
+        "$type": "shadow",
+        "$value": {
+          "offsetX": "0px",
+          "offsetY": "1px",
+          "blur": "0px",
+          "spread": "0px",
+          "color": "transparent",
+          "inset": true
+        },
+        "$description": "Level 2 inset highlight. Unused in light mode."
+      }
+    },
+    "3": {
+      "bg": {
+        "$type": "color",
+        "$value": "{surface.bg}",
+        "$description": "Level 3 surface. Popovers and floating panels."
+      },
+      "shadow": {
+        "$type": "shadow",
+        "$value": [
+          {
+            "offsetX": "0px",
+            "offsetY": "4px",
+            "blur": "8px",
+            "spread": "0px",
+            "color": "{color.shadow.ambient}"
+          },
+          {
+            "offsetX": "0px",
+            "offsetY": "8px",
+            "blur": "20px",
+            "spread": "0px",
+            "color": "{color.shadow.key}"
+          }
+        ],
+        "$description": "Level 3 layered shadow. Ambient plus key light."
+      },
+      "border": {
+        "$type": "color",
+        "$value": "{border.hairline}",
+        "$description": "Level 3 hairline border."
+      },
+      "highlight": {
+        "$type": "shadow",
+        "$value": {
+          "offsetX": "0px",
+          "offsetY": "1px",
+          "blur": "0px",
+          "spread": "0px",
+          "color": "transparent",
+          "inset": true
+        },
+        "$description": "Level 3 inset highlight. Unused in light mode."
+      }
+    },
+    "4": {
+      "bg": {
+        "$type": "color",
+        "$value": "{surface.bg}",
+        "$description": "Level 4 surface. Dialogs and sheets."
+      },
+      "shadow": {
+        "$type": "shadow",
+        "$value": [
+          {
+            "offsetX": "0px",
+            "offsetY": "8px",
+            "blur": "16px",
+            "spread": "0px",
+            "color": "{color.shadow.ambient}"
+          },
+          {
+            "offsetX": "0px",
+            "offsetY": "16px",
+            "blur": "32px",
+            "spread": "0px",
+            "color": "{color.shadow.key}"
+          }
+        ],
+        "$description": "Level 4 layered shadow. Ambient plus key light."
+      },
+      "border": {
+        "$type": "color",
+        "$value": "{border.hairline}",
+        "$description": "Level 4 hairline border."
+      },
+      "highlight": {
+        "$type": "shadow",
+        "$value": {
+          "offsetX": "0px",
+          "offsetY": "1px",
+          "blur": "0px",
+          "spread": "0px",
+          "color": "transparent",
+          "inset": true
+        },
+        "$description": "Level 4 inset highlight. Unused in light mode."
+      }
+    },
+    "5": {
+      "bg": {
+        "$type": "color",
+        "$value": "{surface.bg}",
+        "$description": "Level 5 surface. Highest floating layer."
+      },
+      "shadow": {
+        "$type": "shadow",
+        "$value": [
+          {
+            "offsetX": "0px",
+            "offsetY": "12px",
+            "blur": "24px",
+            "spread": "0px",
+            "color": "{color.shadow.ambient}"
+          },
+          {
+            "offsetX": "0px",
+            "offsetY": "24px",
+            "blur": "48px",
+            "spread": "0px",
+            "color": "{color.shadow.key}"
+          }
+        ],
+        "$description": "Level 5 layered shadow. Ambient plus key light."
+      },
+      "border": {
+        "$type": "color",
+        "$value": "{border.hairline}",
+        "$description": "Level 5 hairline border."
+      },
+      "highlight": {
+        "$type": "shadow",
+        "$value": {
+          "offsetX": "0px",
+          "offsetY": "1px",
+          "blur": "0px",
+          "spread": "0px",
+          "color": "transparent",
+          "inset": true
+        },
+        "$description": "Level 5 inset highlight. Unused in light mode."
+      }
+    }
+  },
+  "material": {
+    "solid": {
+      "bg": {
+        "$type": "color",
+        "$value": "{surface.bg}",
+        "$description": "Opaque solid material fill."
+      }
+    },
+    "glass": {
+      "bg": {
+        "$type": "color",
+        "$value": "oklch(1 0 0 / 0.64)",
+        "$description": "Translucent glass fill. Contrast is gated on the opaque fallback."
+      },
+      "fallback": {
+        "bg": {
+          "$type": "color",
+          "$value": "{elevation.2.bg}",
+          "$description": "Opaque glass fallback when backdrop-filter is unavailable."
+        }
+      },
+      "blur": {
+        "$type": "dimension",
+        "$value": "{size.blur.glass}",
+        "$description": "Glass backdrop blur radius."
+      },
+      "saturate": {
+        "$type": "number",
+        "$value": "{saturate.glass}",
+        "$description": "Glass backdrop saturation boost."
+      },
+      "border": {
+        "$type": "color",
+        "$value": "{border.hairline}",
+        "$description": "Glass hairline border."
+      },
+      "noise": {
+        "$type": "image",
+        "$value": "{asset.noise}",
+        "$description": "Glass noise overlay image.",
+        "opacity": {
+          "$type": "number",
+          "$value": "{opacity.glass}",
+          "$description": "Glass noise overlay opacity."
+        }
+      }
+    },
+    "grain": {
+      "bg": {
+        "$type": "color",
+        "$value": "{surface.bg}",
+        "$description": "Grain material fill."
+      },
+      "noise": {
+        "$type": "image",
+        "$value": "{asset.noise}",
+        "$description": "Grain noise overlay image.",
+        "opacity": {
+          "$type": "number",
+          "$value": "{opacity.grain}",
+          "$description": "Grain noise overlay opacity."
+        }
+      }
+    }
+  },
+  "gradient": {
+    "accent": {
+      "$type": "gradient",
+      "$value": {
+        "style": "linear",
+        "interpolation": "oklch",
+        "angle": "135deg",
+        "stops": [
+          { "color": "{color.primary.600}", "position": 0 },
+          { "color": "{color.info.500}", "position": 1 }
+        ]
+      },
+      "$description": "Accent gradient interpolated in oklch."
+    },
+    "aurora": {
+      "$type": "gradient",
+      "$value": [
+        {
+          "style": "radial",
+          "interpolation": "oklch",
+          "at": "14% 18%",
+          "stops": [
+            { "color": "{color.primary.200}", "position": 0 },
+            { "color": "transparent", "position": 0.52 }
+          ]
+        },
+        {
+          "style": "radial",
+          "interpolation": "oklch",
+          "at": "86% 12%",
+          "stops": [
+            { "color": "{color.info.200}", "position": 0 },
+            { "color": "transparent", "position": 0.48 }
+          ]
+        },
+        {
+          "style": "radial",
+          "interpolation": "oklch",
+          "at": "62% 92%",
+          "stops": [
+            { "color": "{color.success.100}", "position": 0 },
+            { "color": "transparent", "position": 0.55 }
+          ]
+        }
+      ],
+      "$description": "Layered radial aurora background interpolated in oklch."
+    },
+    "border": {
+      "$type": "gradient",
+      "$value": "{gradient.accent}",
+      "$description": "Gradient used by the gradient-border mask recipe."
+    }
+  },
   "text": {
     "default": {
       "$type": "color",
@@ -129,6 +506,21 @@
       "$type": "color",
       "$value": "{focus.ring.color}",
       "$description": "Focus-indicator border."
+    },
+    "hairline": {
+      "$type": "color",
+      "$value": "{color.hairline}",
+      "$description": "Alpha hairline border color.",
+      "width": {
+        "$type": "dimension",
+        "$value": "{size.hairline}",
+        "$description": "Hairline width. 1px at 1x, 0.5px on high-DPR screens.",
+        "$extensions": {
+          "slop.ui": {
+            "highDpr": "0.5px"
+          }
+        }
+      }
     }
   },
   "action": {

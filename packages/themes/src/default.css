@@ -5,6 +5,7 @@
  * without participating in layout. Token values come from generated CSS.
  */
 @import './generated/tokens.css';
+@import './recipes.css';
 
 @layer slop-ui-theme {
   :where(.slop-themed-scope) {

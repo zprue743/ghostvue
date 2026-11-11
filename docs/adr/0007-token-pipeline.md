@@ -112,7 +112,7 @@ A docs page listing the catalog is generated from the JSON manifest.
   minimal monochrome. This pipeline emits `default` only.
 - **Density (SLO-66):** default density is comfortable. Size tokens in the
   seed set are the values SlButton already used, not a density system.
-- Elevation (SLO-64) and motion (SLO-65) are out of scope.
+- Motion (SLO-65) remains out of scope of this pipeline ADR.
 
 ## Alternatives considered
 
@@ -144,9 +144,10 @@ and JSON so ramps can land without renaming the runtime API.
   authoring reference and no longer describes a future pipeline.
 - ADR 0005 remains the record that DTCG and the three compile outputs were
   chosen; CSS prefix, component tokens, and mode switching follow this ADR.
-- Follow-ups: SLO-64 elevation, SLO-65 motion, SLO-66 density, SLO-68
-  flagship themes, MCP `get_tokens`. SLO-63 (ramps, semantic text/border/status,
-  contrast CI, forced-colors mapping) landed on this pipeline.
+- Follow-ups: SLO-65 motion, SLO-66 density, SLO-68 flagship themes, MCP
+  `get_tokens`. SLO-63 (ramps, semantic text/border/status, contrast CI,
+  forced-colors mapping) and SLO-64 (elevation, hairline, materials,
+  gradients) landed on this pipeline.
 
 ## Amendments
 
@@ -155,6 +156,12 @@ and JSON so ramps can land without renaming the runtime API.
   maps `--sl-*` variables under `forced-colors`, and gates WCAG 2 AA in
   `pnpm verify`. Dark palettes are tuned separately, not inverted from
   light. APCA Lc is advisory.
+- 2026-11-11: SLO-64 extends the compiler with DTCG `shadow` composites
+  and layered `gradient` values serialized `in oklch`. Semantic
+  `elevation` / `material` / `gradient` roles, a hairline width that
+  becomes 0.5px at 2dppx, glass/grain recipes, and contrast pairs on
+  elevation fills ship on this pipeline. Motion (SLO-65) is still out of
+  scope.
 
 ## Compatibility implications
 

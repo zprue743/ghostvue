@@ -31,6 +31,248 @@
       }
     }
   },
+  "elevation": {
+    "0": {
+      "bg": {
+        "$type": "color",
+        "$value": "{surface.bg}"
+      }
+    },
+    "1": {
+      "bg": {
+        "$type": "color",
+        "$value": "{color.neutral.dark.950}"
+      },
+      "shadow": {
+        "$type": "shadow",
+        "$value": [
+          {
+            "offsetX": "0px",
+            "offsetY": "1px",
+            "blur": "2px",
+            "spread": "0px",
+            "color": "oklch(0.08 0.02 258 / 0.28)"
+          },
+          {
+            "offsetX": "0px",
+            "offsetY": "1px",
+            "blur": "2px",
+            "spread": "0px",
+            "color": "oklch(0.08 0.02 258 / 0.16)"
+          }
+        ]
+      },
+      "highlight": {
+        "$type": "shadow",
+        "$value": {
+          "offsetX": "0px",
+          "offsetY": "1px",
+          "blur": "0px",
+          "spread": "0px",
+          "color": "{color.shadow.highlight}",
+          "inset": true
+        }
+      }
+    },
+    "2": {
+      "bg": {
+        "$type": "color",
+        "$value": "{color.raised.2}"
+      },
+      "shadow": {
+        "$type": "shadow",
+        "$value": [
+          {
+            "offsetX": "0px",
+            "offsetY": "2px",
+            "blur": "4px",
+            "spread": "0px",
+            "color": "oklch(0.08 0.02 258 / 0.3)"
+          },
+          {
+            "offsetX": "0px",
+            "offsetY": "3px",
+            "blur": "8px",
+            "spread": "0px",
+            "color": "oklch(0.08 0.02 258 / 0.18)"
+          }
+        ]
+      },
+      "highlight": {
+        "$type": "shadow",
+        "$value": {
+          "offsetX": "0px",
+          "offsetY": "1px",
+          "blur": "0px",
+          "spread": "0px",
+          "color": "{color.shadow.highlight}",
+          "inset": true
+        }
+      }
+    },
+    "3": {
+      "bg": {
+        "$type": "color",
+        "$value": "{color.neutral.dark.900}"
+      },
+      "shadow": {
+        "$type": "shadow",
+        "$value": [
+          {
+            "offsetX": "0px",
+            "offsetY": "4px",
+            "blur": "8px",
+            "spread": "0px",
+            "color": "oklch(0.08 0.02 258 / 0.32)"
+          },
+          {
+            "offsetX": "0px",
+            "offsetY": "6px",
+            "blur": "16px",
+            "spread": "0px",
+            "color": "oklch(0.08 0.02 258 / 0.2)"
+          }
+        ]
+      },
+      "highlight": {
+        "$type": "shadow",
+        "$value": {
+          "offsetX": "0px",
+          "offsetY": "1px",
+          "blur": "0px",
+          "spread": "0px",
+          "color": "{color.shadow.highlight}",
+          "inset": true
+        }
+      }
+    },
+    "4": {
+      "bg": {
+        "$type": "color",
+        "$value": "{color.raised.4}"
+      },
+      "shadow": {
+        "$type": "shadow",
+        "$value": [
+          {
+            "offsetX": "0px",
+            "offsetY": "6px",
+            "blur": "12px",
+            "spread": "0px",
+            "color": "oklch(0.08 0.02 258 / 0.34)"
+          },
+          {
+            "offsetX": "0px",
+            "offsetY": "10px",
+            "blur": "24px",
+            "spread": "0px",
+            "color": "oklch(0.08 0.02 258 / 0.22)"
+          }
+        ]
+      },
+      "highlight": {
+        "$type": "shadow",
+        "$value": {
+          "offsetX": "0px",
+          "offsetY": "1px",
+          "blur": "0px",
+          "spread": "0px",
+          "color": "{color.shadow.highlight}",
+          "inset": true
+        }
+      }
+    },
+    "5": {
+      "bg": {
+        "$type": "color",
+        "$value": "{color.neutral.dark.800}"
+      },
+      "shadow": {
+        "$type": "shadow",
+        "$value": [
+          {
+            "offsetX": "0px",
+            "offsetY": "8px",
+            "blur": "16px",
+            "spread": "0px",
+            "color": "oklch(0.08 0.02 258 / 0.36)"
+          },
+          {
+            "offsetX": "0px",
+            "offsetY": "14px",
+            "blur": "32px",
+            "spread": "0px",
+            "color": "oklch(0.08 0.02 258 / 0.24)"
+          }
+        ]
+      },
+      "highlight": {
+        "$type": "shadow",
+        "$value": {
+          "offsetX": "0px",
+          "offsetY": "1px",
+          "blur": "0px",
+          "spread": "0px",
+          "color": "{color.shadow.highlight}",
+          "inset": true
+        }
+      }
+    }
+  },
+  "material": {
+    "glass": {
+      "bg": {
+        "$type": "color",
+        "$value": "oklch(0.27 0.018 258 / 0.55)"
+      }
+    }
+  },
+  "gradient": {
+    "accent": {
+      "$type": "gradient",
+      "$value": {
+        "style": "linear",
+        "interpolation": "oklch",
+        "angle": "135deg",
+        "stops": [
+          { "color": "{color.primary.dark.400}", "position": 0 },
+          { "color": "{color.info.dark.400}", "position": 1 }
+        ]
+      }
+    },
+    "aurora": {
+      "$type": "gradient",
+      "$value": [
+        {
+          "style": "radial",
+          "interpolation": "oklch",
+          "at": "14% 18%",
+          "stops": [
+            { "color": "{color.primary.dark.700}", "position": 0 },
+            { "color": "transparent", "position": 0.52 }
+          ]
+        },
+        {
+          "style": "radial",
+          "interpolation": "oklch",
+          "at": "86% 12%",
+          "stops": [
+            { "color": "{color.info.dark.700}", "position": 0 },
+            { "color": "transparent", "position": 0.48 }
+          ]
+        },
+        {
+          "style": "radial",
+          "interpolation": "oklch",
+          "at": "62% 92%",
+          "stops": [
+            { "color": "{color.success.dark.800}", "position": 0 },
+            { "color": "transparent", "position": 0.55 }
+          ]
+        }
+      ]
+    }
+  },
   "text": {
     "muted": {
       "$type": "color",
@@ -93,6 +335,10 @@
     "info": {
       "$type": "color",
       "$value": "{color.info.dark.400}"
+    },
+    "hairline": {
+      "$type": "color",
+      "$value": "oklch(0.96 0.005 250 / 0.16)"
     }
   },
   "action": {
