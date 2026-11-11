@@ -329,6 +329,34 @@ test('default theme adapts to accessibility and color preferences', async ({
     await action.focus()
     await expect(action).toHaveCSS('outline-style', 'solid')
     await expect(action).toHaveCSS('box-shadow', 'none')
+    await expect(action).toBeVisible()
+    await expect(action).toBeEnabled()
+  } finally {
+    await playground.close()
+  }
+})
+
+test('unset data-sl-mode follows prefers-color-scheme from CSS alone', async ({
+  page,
+}) => {
+  const playground = await startStaticServer('apps/playground/dist')
+
+  try {
+    await page.goto(playground.url)
+
+    const systemGroup = page.getByRole('group', { name: 'System mode' })
+    const action = systemGroup.getByRole('button', { name: 'System action' })
+
+    await page.emulateMedia({ colorScheme: 'light' })
+    await expect(systemGroup).toHaveCSS(
+      'background-color',
+      'rgb(255, 255, 255)',
+    )
+    await expect(action).toHaveCSS('background-color', 'rgb(29, 78, 216)')
+
+    await page.emulateMedia({ colorScheme: 'dark' })
+    await expect(systemGroup).toHaveCSS('background-color', 'rgb(15, 23, 42)')
+    await expect(action).toHaveCSS('background-color', 'rgb(96, 165, 250)')
   } finally {
     await playground.close()
   }

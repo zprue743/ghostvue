@@ -31,6 +31,7 @@
     "vue": "^3.5.0"
   },
   "devDependencies": {
+    "culori": "4.0.2",
     "vue": "3.5.41"
   }
 }

@@ -57,7 +57,15 @@ describe('token pipeline', () => {
     expect(compiled.css).toContain('--sl-action-primary-bg: #60a5fa;')
     expect(compiled.css).toContain("[data-sl-mode='dark']")
     expect(compiled.css).toContain('prefers-color-scheme: dark')
+    expect(compiled.css).toContain('forced-colors: active')
+    expect(compiled.css).toContain('--sl-surface-bg: Canvas;')
+    expect(compiled.css).toContain('--sl-action-primary-bg: ButtonFace;')
     expect(compiled.css).not.toContain('--slop-')
+    expect(compiled.docsMarkdown).toContain('role="img"')
+    expect(compiled.docsMarkdown).toContain('primary (light-tuned)')
+    expect(compiled.rampsJson).toBe(
+      await readFile(join(themesRoot, 'tokens/generated/ramps.json'), 'utf8'),
+    )
     expect(compiled.manifest.tokens.length).toBeGreaterThan(0)
   })
 
@@ -65,8 +73,10 @@ describe('token pipeline', () => {
     expect(tokens['action.primary.bg'].cssVar).toBe('--sl-action-primary-bg')
     expect(tokens['action.primary.bg'].value.light).toBe('#1d4ed8')
     expect(tokens['action.primary.bg'].value.dark).toBe('#60a5fa')
-    expect(tokens['color.blue.700'].tier).toBe('primitive')
-    expect(tokens['color.blue.700']).not.toHaveProperty('cssVar')
+    expect(tokens['text.default'].cssVar).toBe('--sl-text-default')
+    expect(tokens['color.primary.700'].tier).toBe('primitive')
+    expect(tokens['color.primary.700']).not.toHaveProperty('cssVar')
+    expect(tokens['color.primary.dark.400'].value.light).toBe('#60a5fa')
   })
 
   it('nests rest-state tokens with hover/active children', () => {

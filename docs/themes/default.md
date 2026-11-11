@@ -149,11 +149,14 @@ Authored DTCG lives in `packages/themes/tokens/` and is compiled by
 
 ## Accessibility and motion
 
-The defaults include contrast-tested light and dark treatments, a two-color
-keyboard focus indicator, minimum control sizes, forced-colors support, disabled
-and loading cursors, and reduced-motion handling. Applications remain responsible
-for testing token overrides for contrast, focus visibility, zoom, and target size
-in their full interface.
+The defaults include contrast-tested light and dark treatments (WCAG 2 AA
+is gated in `pnpm contrast`; APCA Lc is advisory), a two-color keyboard
+focus indicator, minimum control sizes, forced-colors mapping to system
+colors, disabled and loading cursors, and reduced-motion handling. Unset
+`data-sl-mode` follows `prefers-color-scheme` from CSS alone, so server
+rendering does not flash the opposite palette. Applications remain
+responsible for testing token overrides for contrast, focus visibility,
+zoom, and target size in their full interface.
 
 ## Override classes directly
 

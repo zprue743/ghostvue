@@ -14,10 +14,19 @@ and design tools read and write this format. CSS is a compile output, not
 the source.
 
 ```text
+packages/themes/tokens/seeds.json
+packages/themes/tokens/generated/ramps.json
 packages/themes/tokens/primitives.json
 packages/themes/tokens/semantic.json
 packages/themes/tokens/semantic.dark.json
 ```
+
+`seeds.json` holds brand hex values. The compiler generates 12-step OKLCH
+ramps per hue (`neutral`, `primary`, `success`, `warning`, `danger`,
+`info`) into `generated/ramps.json`. Light-tuned and dark-tuned palettes
+are independent; dark is not an inversion of light. Those ramps are
+primitive tokens, committed and snapshot-checked like the other compile
+outputs.
 
 `semantic.json` is the default (light, and any token that does not change
 by mode). `semantic.dark.json` overlays dark `$value`s onto existing
@@ -26,16 +35,18 @@ node (`bg` plus `bg.hover`). There is no `tokens/components/` tree.
 
 `pnpm --filter @slop-ui/themes build` compiles these files to CSS custom
 properties, TypeScript constants, a JSON catalog, and
-[the token catalog docs page](../themes/tokens.md).
+[the token catalog docs page](../themes/tokens.md). `pnpm contrast` (part
+of `pnpm verify`) checks WCAG 2 AA on semantic text/background pairs.
 
 ## Tiers
 
 1. **Primitive** — raw palette and dimension literals. No product intent
-   (`color.blue.700`). Color ramps, elevation, motion, and density scales
-   belong to SLO-63–SLO-66; this pipeline only seeds values SlButton needs.
-2. **Semantic** — product intent as `role.part.state`
-   (`action.primary.bg`, `action.primary.bg.hover`). Components consume
-   semantic tokens only.
+   (`color.primary.700`). Color ramps are generated here; elevation, motion,
+   and density scales belong to SLO-64–SLO-66.
+2. **Semantic** — product intent as `role.part.state` across `action`,
+   `surface`, `text`, `border`, `status`, `focus`, and `control`
+   (`action.primary.bg`, `text.muted`, `status.danger.fg`). Components
+   consume semantic tokens only.
 
 Semantic tokens may reference primitives or other semantic tokens.
 Primitive tokens may only reference primitives. There are no per-component
@@ -85,15 +96,30 @@ Override a semantic custom property on the same subtree:
 Token selectors use `:where()` inside `@layer slop-ui-theme`, so unlayered
 consumer styles win.
 
-## Contrast and follow-ups
+## Contrast, forced colors, and follow-ups
 
-WCAG AA is required and APCA is advisory. That CI gate is SLO-63, not this
-pipeline. Flagship themes (calm enterprise, vibrant expressive, minimal
-monochrome) are SLO-68. Default density is comfortable (SLO-66).
+WCAG 2 AA (4.5:1) is required for every semantic text/background pair,
+including `*.fg` on matching `*.bg` / `*.bg.hover` / `*.bg.active`, in
+both modes. `pnpm contrast` fails the build on WCAG misses. APCA Lc
+(0.0.98G-4g, implemented locally; no `apca` package) is printed as
+advisory and never fails the build.
+
+`@media (forced-colors: active)` maps semantic color variables to system
+colors (`Canvas`, `CanvasText`, `ButtonFace`, `ButtonText`, `GrayText`,
+`Highlight`). SlButton keeps its own forced-colors rules so the control
+stays usable when palettes are discarded.
+
+Unset `data-sl-mode` follows `prefers-color-scheme` in CSS. No JavaScript
+is required to pick the initial mode, so SSR does not flash the opposite
+palette.
+
+Flagship themes (calm enterprise, vibrant expressive, minimal monochrome)
+are SLO-68. Default density is comfortable (SLO-66). Elevation and motion
+are SLO-64 and SLO-65.
 
 ## Authoring rules
 
-- Prefer aliases (`{color.blue.700}`) over copied hex values in semantic
+- Prefer aliases (`{color.primary.700}`) over copied hex values in semantic
   files.
 - Do not put the tier word in the token name.
 - Do not add per-component tokens; map component tones onto semantic roles

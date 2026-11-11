@@ -3,108 +3,17 @@
     "white": {
       "$type": "color",
       "$value": "#ffffff",
-      "$description": "White."
+      "$description": "Canvas white. Not part of a generated hue ramp."
     },
-    "slate": {
-      "50": {
-        "$type": "color",
-        "$value": "#f8fafc",
-        "$description": "Slate 50."
-      },
-      "100": {
-        "$type": "color",
-        "$value": "#f1f5f9",
-        "$description": "Slate 100."
-      },
-      "200": {
-        "$type": "color",
-        "$value": "#e2e8f0",
-        "$description": "Slate 200."
-      },
-      "300": {
-        "$type": "color",
-        "$value": "#cbd5e1",
-        "$description": "Slate 300."
-      },
-      "700": {
-        "$type": "color",
-        "$value": "#334155",
-        "$description": "Slate 700."
-      },
-      "800": {
-        "$type": "color",
-        "$value": "#1e293b",
-        "$description": "Slate 800."
-      },
-      "900": {
-        "$type": "color",
-        "$value": "#0f172a",
-        "$description": "Slate 900."
-      }
+    "ink": {
+      "$type": "color",
+      "$value": "#0f172a",
+      "$description": "Near-black canvas ink used for light-mode text and dark-mode surfaces."
     },
-    "blue": {
-      "200": {
-        "$type": "color",
-        "$value": "#bfdbfe",
-        "$description": "Blue 200."
-      },
-      "300": {
-        "$type": "color",
-        "$value": "#93c5fd",
-        "$description": "Blue 300."
-      },
-      "400": {
-        "$type": "color",
-        "$value": "#60a5fa",
-        "$description": "Blue 400."
-      },
-      "700": {
-        "$type": "color",
-        "$value": "#1d4ed8",
-        "$description": "Blue 700."
-      },
-      "800": {
-        "$type": "color",
-        "$value": "#1e40af",
-        "$description": "Blue 800."
-      },
-      "900": {
-        "$type": "color",
-        "$value": "#1e3a8a",
-        "$description": "Blue 900."
-      }
-    },
-    "red": {
-      "200": {
-        "$type": "color",
-        "$value": "#fecaca",
-        "$description": "Red 200."
-      },
-      "300": {
-        "$type": "color",
-        "$value": "#fca5a5",
-        "$description": "Red 300."
-      },
-      "400": {
-        "$type": "color",
-        "$value": "#f87171",
-        "$description": "Red 400."
-      },
-      "700": {
-        "$type": "color",
-        "$value": "#b91c1c",
-        "$description": "Red 700."
-      },
-      "800": {
-        "$type": "color",
-        "$value": "#991b1b",
-        "$description": "Red 800."
-      },
-      "900": {
-        "$type": "color",
-        "$value": "#7f1d1d",
-        "$description": "Red 900."
-      }
+    "mist": {
+      "$type": "color",
+      "$value": "#f8fafc",
+      "$description": "Near-white canvas foreground used in dark mode."
     }
   },
   "opacity": {

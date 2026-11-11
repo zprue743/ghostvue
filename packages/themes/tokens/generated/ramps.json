@@ -1,0 +1,748 @@
+{
+  "color": {
+    "neutral": {
+      "50": {
+        "$type": "color",
+        "$value": "#f9fafc",
+        "$description": "Neutral 50 (light-tuned)."
+      },
+      "100": {
+        "$type": "color",
+        "$value": "#eceff3",
+        "$description": "Neutral 100 (light-tuned)."
+      },
+      "200": {
+        "$type": "color",
+        "$value": "#d9dee6",
+        "$description": "Neutral 200 (light-tuned)."
+      },
+      "300": {
+        "$type": "color",
+        "$value": "#bcc4d1",
+        "$description": "Neutral 300 (light-tuned)."
+      },
+      "400": {
+        "$type": "color",
+        "$value": "#95a1b2",
+        "$description": "Neutral 400 (light-tuned)."
+      },
+      "500": {
+        "$type": "color",
+        "$value": "#707e92",
+        "$description": "Neutral 500 (light-tuned)."
+      },
+      "600": {
+        "$type": "color",
+        "$value": "#4f5d72",
+        "$description": "Neutral 600 (light-tuned)."
+      },
+      "700": {
+        "$type": "color",
+        "$value": "#334155",
+        "$description": "Neutral 700 (light-tuned)."
+      },
+      "800": {
+        "$type": "color",
+        "$value": "#263243",
+        "$description": "Neutral 800 (light-tuned)."
+      },
+      "900": {
+        "$type": "color",
+        "$value": "#1a2330",
+        "$description": "Neutral 900 (light-tuned)."
+      },
+      "950": {
+        "$type": "color",
+        "$value": "#111720",
+        "$description": "Neutral 950 (light-tuned)."
+      },
+      "1000": {
+        "$type": "color",
+        "$value": "#070b11",
+        "$description": "Neutral 1000 (light-tuned)."
+      },
+      "dark": {
+        "50": {
+          "$type": "color",
+          "$value": "#f0f2f5",
+          "$description": "Neutral 50 (dark-tuned)."
+        },
+        "100": {
+          "$type": "color",
+          "$value": "#e8ecf1",
+          "$description": "Neutral 100 (dark-tuned)."
+        },
+        "200": {
+          "$type": "color",
+          "$value": "#dee4eb",
+          "$description": "Neutral 200 (dark-tuned)."
+        },
+        "300": {
+          "$type": "color",
+          "$value": "#d3dce7",
+          "$description": "Neutral 300 (dark-tuned)."
+        },
+        "400": {
+          "$type": "color",
+          "$value": "#cbd5e1",
+          "$description": "Neutral 400 (dark-tuned)."
+        },
+        "500": {
+          "$type": "color",
+          "$value": "#a3adb9",
+          "$description": "Neutral 500 (dark-tuned)."
+        },
+        "600": {
+          "$type": "color",
+          "$value": "#7f8790",
+          "$description": "Neutral 600 (dark-tuned)."
+        },
+        "700": {
+          "$type": "color",
+          "$value": "#60666e",
+          "$description": "Neutral 700 (dark-tuned)."
+        },
+        "800": {
+          "$type": "color",
+          "$value": "#464b50",
+          "$description": "Neutral 800 (dark-tuned)."
+        },
+        "900": {
+          "$type": "color",
+          "$value": "#2e3135",
+          "$description": "Neutral 900 (dark-tuned)."
+        },
+        "950": {
+          "$type": "color",
+          "$value": "#1b1d1f",
+          "$description": "Neutral 950 (dark-tuned)."
+        },
+        "1000": {
+          "$type": "color",
+          "$value": "#0c0d0f",
+          "$description": "Neutral 1000 (dark-tuned)."
+        }
+      }
+    },
+    "primary": {
+      "50": {
+        "$type": "color",
+        "$value": "#f8faff",
+        "$description": "Primary 50 (light-tuned)."
+      },
+      "100": {
+        "$type": "color",
+        "$value": "#eaf1ff",
+        "$description": "Primary 100 (light-tuned)."
+      },
+      "200": {
+        "$type": "color",
+        "$value": "#d6e3ff",
+        "$description": "Primary 200 (light-tuned)."
+      },
+      "300": {
+        "$type": "color",
+        "$value": "#b6ceff",
+        "$description": "Primary 300 (light-tuned)."
+      },
+      "400": {
+        "$type": "color",
+        "$value": "#89afff",
+        "$description": "Primary 400 (light-tuned)."
+      },
+      "500": {
+        "$type": "color",
+        "$value": "#5b8dff",
+        "$description": "Primary 500 (light-tuned)."
+      },
+      "600": {
+        "$type": "color",
+        "$value": "#356af3",
+        "$description": "Primary 600 (light-tuned)."
+      },
+      "700": {
+        "$type": "color",
+        "$value": "#1d4ed8",
+        "$description": "Primary 700 (light-tuned)."
+      },
+      "800": {
+        "$type": "color",
+        "$value": "#0d35ae",
+        "$description": "Primary 800 (light-tuned)."
+      },
+      "900": {
+        "$type": "color",
+        "$value": "#05217d",
+        "$description": "Primary 900 (light-tuned)."
+      },
+      "950": {
+        "$type": "color",
+        "$value": "#021350",
+        "$description": "Primary 950 (light-tuned)."
+      },
+      "1000": {
+        "$type": "color",
+        "$value": "#00052d",
+        "$description": "Primary 1000 (light-tuned)."
+      },
+      "dark": {
+        "50": {
+          "$type": "color",
+          "$value": "#e9f3ff",
+          "$description": "Primary 50 (dark-tuned)."
+        },
+        "100": {
+          "$type": "color",
+          "$value": "#cde3ff",
+          "$description": "Primary 100 (dark-tuned)."
+        },
+        "200": {
+          "$type": "color",
+          "$value": "#a8ceff",
+          "$description": "Primary 200 (dark-tuned)."
+        },
+        "300": {
+          "$type": "color",
+          "$value": "#80b8ff",
+          "$description": "Primary 300 (dark-tuned)."
+        },
+        "400": {
+          "$type": "color",
+          "$value": "#60a5fa",
+          "$description": "Primary 400 (dark-tuned)."
+        },
+        "500": {
+          "$type": "color",
+          "$value": "#4286d9",
+          "$description": "Primary 500 (dark-tuned)."
+        },
+        "600": {
+          "$type": "color",
+          "$value": "#2f69af",
+          "$description": "Primary 600 (dark-tuned)."
+        },
+        "700": {
+          "$type": "color",
+          "$value": "#235187",
+          "$description": "Primary 700 (dark-tuned)."
+        },
+        "800": {
+          "$type": "color",
+          "$value": "#1c3d64",
+          "$description": "Primary 800 (dark-tuned)."
+        },
+        "900": {
+          "$type": "color",
+          "$value": "#132944",
+          "$description": "Primary 900 (dark-tuned)."
+        },
+        "950": {
+          "$type": "color",
+          "$value": "#0c1a2b",
+          "$description": "Primary 950 (dark-tuned)."
+        },
+        "1000": {
+          "$type": "color",
+          "$value": "#050e19",
+          "$description": "Primary 1000 (dark-tuned)."
+        }
+      }
+    },
+    "success": {
+      "50": {
+        "$type": "color",
+        "$value": "#f5fcf6",
+        "$description": "Success 50 (light-tuned)."
+      },
+      "100": {
+        "$type": "color",
+        "$value": "#e8f6ea",
+        "$description": "Success 100 (light-tuned)."
+      },
+      "200": {
+        "$type": "color",
+        "$value": "#d1eed6",
+        "$description": "Success 200 (light-tuned)."
+      },
+      "300": {
+        "$type": "color",
+        "$value": "#b1dfb9",
+        "$description": "Success 300 (light-tuned)."
+      },
+      "400": {
+        "$type": "color",
+        "$value": "#87c895",
+        "$description": "Success 400 (light-tuned)."
+      },
+      "500": {
+        "$type": "color",
+        "$value": "#5fb073",
+        "$description": "Success 500 (light-tuned)."
+      },
+      "600": {
+        "$type": "color",
+        "$value": "#389754",
+        "$description": "Success 600 (light-tuned)."
+      },
+      "700": {
+        "$type": "color",
+        "$value": "#15803d",
+        "$description": "Success 700 (light-tuned)."
+      },
+      "800": {
+        "$type": "color",
+        "$value": "#006029",
+        "$description": "Success 800 (light-tuned)."
+      },
+      "900": {
+        "$type": "color",
+        "$value": "#004019",
+        "$description": "Success 900 (light-tuned)."
+      },
+      "950": {
+        "$type": "color",
+        "$value": "#00270c",
+        "$description": "Success 950 (light-tuned)."
+      },
+      "1000": {
+        "$type": "color",
+        "$value": "#001003",
+        "$description": "Success 1000 (light-tuned)."
+      },
+      "dark": {
+        "50": {
+          "$type": "color",
+          "$value": "#dffae5",
+          "$description": "Success 50 (dark-tuned)."
+        },
+        "100": {
+          "$type": "color",
+          "$value": "#c4f6cf",
+          "$description": "Success 100 (dark-tuned)."
+        },
+        "200": {
+          "$type": "color",
+          "$value": "#9feeb3",
+          "$description": "Success 200 (dark-tuned)."
+        },
+        "300": {
+          "$type": "color",
+          "$value": "#6ee794",
+          "$description": "Success 300 (dark-tuned)."
+        },
+        "400": {
+          "$type": "color",
+          "$value": "#4ade80",
+          "$description": "Success 400 (dark-tuned)."
+        },
+        "500": {
+          "$type": "color",
+          "$value": "#00b95d",
+          "$description": "Success 500 (dark-tuned)."
+        },
+        "600": {
+          "$type": "color",
+          "$value": "#009148",
+          "$description": "Success 600 (dark-tuned)."
+        },
+        "700": {
+          "$type": "color",
+          "$value": "#006f35",
+          "$description": "Success 700 (dark-tuned)."
+        },
+        "800": {
+          "$type": "color",
+          "$value": "#045227",
+          "$description": "Success 800 (dark-tuned)."
+        },
+        "900": {
+          "$type": "color",
+          "$value": "#06371a",
+          "$description": "Success 900 (dark-tuned)."
+        },
+        "950": {
+          "$type": "color",
+          "$value": "#05220f",
+          "$description": "Success 950 (dark-tuned)."
+        },
+        "1000": {
+          "$type": "color",
+          "$value": "#021206",
+          "$description": "Success 1000 (dark-tuned)."
+        }
+      }
+    },
+    "warning": {
+      "50": {
+        "$type": "color",
+        "$value": "#fff9f5",
+        "$description": "Warning 50 (light-tuned)."
+      },
+      "100": {
+        "$type": "color",
+        "$value": "#ffeee6",
+        "$description": "Warning 100 (light-tuned)."
+      },
+      "200": {
+        "$type": "color",
+        "$value": "#ffdfce",
+        "$description": "Warning 200 (light-tuned)."
+      },
+      "300": {
+        "$type": "color",
+        "$value": "#fec6a8",
+        "$description": "Warning 300 (light-tuned)."
+      },
+      "400": {
+        "$type": "color",
+        "$value": "#f1a67d",
+        "$description": "Warning 400 (light-tuned)."
+      },
+      "500": {
+        "$type": "color",
+        "$value": "#e08755",
+        "$description": "Warning 500 (light-tuned)."
+      },
+      "600": {
+        "$type": "color",
+        "$value": "#cb6a2e",
+        "$description": "Warning 600 (light-tuned)."
+      },
+      "700": {
+        "$type": "color",
+        "$value": "#b45309",
+        "$description": "Warning 700 (light-tuned)."
+      },
+      "800": {
+        "$type": "color",
+        "$value": "#873b00",
+        "$description": "Warning 800 (light-tuned)."
+      },
+      "900": {
+        "$type": "color",
+        "$value": "#5b2600",
+        "$description": "Warning 900 (light-tuned)."
+      },
+      "950": {
+        "$type": "color",
+        "$value": "#381400",
+        "$description": "Warning 950 (light-tuned)."
+      },
+      "1000": {
+        "$type": "color",
+        "$value": "#180500",
+        "$description": "Warning 1000 (light-tuned)."
+      },
+      "dark": {
+        "50": {
+          "$type": "color",
+          "$value": "#fdf0d7",
+          "$description": "Warning 50 (dark-tuned)."
+        },
+        "100": {
+          "$type": "color",
+          "$value": "#fee7b8",
+          "$description": "Warning 100 (dark-tuned)."
+        },
+        "200": {
+          "$type": "color",
+          "$value": "#fed98e",
+          "$description": "Warning 200 (dark-tuned)."
+        },
+        "300": {
+          "$type": "color",
+          "$value": "#ffcb56",
+          "$description": "Warning 300 (dark-tuned)."
+        },
+        "400": {
+          "$type": "color",
+          "$value": "#fbbf24",
+          "$description": "Warning 400 (dark-tuned)."
+        },
+        "500": {
+          "$type": "color",
+          "$value": "#ce9a00",
+          "$description": "Warning 500 (dark-tuned)."
+        },
+        "600": {
+          "$type": "color",
+          "$value": "#a17800",
+          "$description": "Warning 600 (dark-tuned)."
+        },
+        "700": {
+          "$type": "color",
+          "$value": "#7b5b00",
+          "$description": "Warning 700 (dark-tuned)."
+        },
+        "800": {
+          "$type": "color",
+          "$value": "#5c4300",
+          "$description": "Warning 800 (dark-tuned)."
+        },
+        "900": {
+          "$type": "color",
+          "$value": "#3e2c00",
+          "$description": "Warning 900 (dark-tuned)."
+        },
+        "950": {
+          "$type": "color",
+          "$value": "#261a00",
+          "$description": "Warning 950 (dark-tuned)."
+        },
+        "1000": {
+          "$type": "color",
+          "$value": "#140c00",
+          "$description": "Warning 1000 (dark-tuned)."
+        }
+      }
+    },
+    "danger": {
+      "50": {
+        "$type": "color",
+        "$value": "#fff8f7",
+        "$description": "Danger 50 (light-tuned)."
+      },
+      "100": {
+        "$type": "color",
+        "$value": "#ffecea",
+        "$description": "Danger 100 (light-tuned)."
+      },
+      "200": {
+        "$type": "color",
+        "$value": "#ffdad5",
+        "$description": "Danger 200 (light-tuned)."
+      },
+      "300": {
+        "$type": "color",
+        "$value": "#ffbcb3",
+        "$description": "Danger 300 (light-tuned)."
+      },
+      "400": {
+        "$type": "color",
+        "$value": "#fe8e82",
+        "$description": "Danger 400 (light-tuned)."
+      },
+      "500": {
+        "$type": "color",
+        "$value": "#ec675b",
+        "$description": "Danger 500 (light-tuned)."
+      },
+      "600": {
+        "$type": "color",
+        "$value": "#d44038",
+        "$description": "Danger 600 (light-tuned)."
+      },
+      "700": {
+        "$type": "color",
+        "$value": "#b91c1c",
+        "$description": "Danger 700 (light-tuned)."
+      },
+      "800": {
+        "$type": "color",
+        "$value": "#900009",
+        "$description": "Danger 800 (light-tuned)."
+      },
+      "900": {
+        "$type": "color",
+        "$value": "#640004",
+        "$description": "Danger 900 (light-tuned)."
+      },
+      "950": {
+        "$type": "color",
+        "$value": "#400002",
+        "$description": "Danger 950 (light-tuned)."
+      },
+      "1000": {
+        "$type": "color",
+        "$value": "#1f0000",
+        "$description": "Danger 1000 (light-tuned)."
+      },
+      "dark": {
+        "50": {
+          "$type": "color",
+          "$value": "#ffedec",
+          "$description": "Danger 50 (dark-tuned)."
+        },
+        "100": {
+          "$type": "color",
+          "$value": "#ffd5d3",
+          "$description": "Danger 100 (dark-tuned)."
+        },
+        "200": {
+          "$type": "color",
+          "$value": "#ffb4b0",
+          "$description": "Danger 200 (dark-tuned)."
+        },
+        "300": {
+          "$type": "color",
+          "$value": "#ff908d",
+          "$description": "Danger 300 (dark-tuned)."
+        },
+        "400": {
+          "$type": "color",
+          "$value": "#f87171",
+          "$description": "Danger 400 (dark-tuned)."
+        },
+        "500": {
+          "$type": "color",
+          "$value": "#d65255",
+          "$description": "Danger 500 (dark-tuned)."
+        },
+        "600": {
+          "$type": "color",
+          "$value": "#ac3c3f",
+          "$description": "Danger 600 (dark-tuned)."
+        },
+        "700": {
+          "$type": "color",
+          "$value": "#852e30",
+          "$description": "Danger 700 (dark-tuned)."
+        },
+        "800": {
+          "$type": "color",
+          "$value": "#632425",
+          "$description": "Danger 800 (dark-tuned)."
+        },
+        "900": {
+          "$type": "color",
+          "$value": "#441919",
+          "$description": "Danger 900 (dark-tuned)."
+        },
+        "950": {
+          "$type": "color",
+          "$value": "#2b0f0f",
+          "$description": "Danger 950 (dark-tuned)."
+        },
+        "1000": {
+          "$type": "color",
+          "$value": "#190707",
+          "$description": "Danger 1000 (dark-tuned)."
+        }
+      }
+    },
+    "info": {
+      "50": {
+        "$type": "color",
+        "$value": "#f6fbff",
+        "$description": "Info 50 (light-tuned)."
+      },
+      "100": {
+        "$type": "color",
+        "$value": "#e7f3fd",
+        "$description": "Info 100 (light-tuned)."
+      },
+      "200": {
+        "$type": "color",
+        "$value": "#cfe7fc",
+        "$description": "Info 200 (light-tuned)."
+      },
+      "300": {
+        "$type": "color",
+        "$value": "#acd4f5",
+        "$description": "Info 300 (light-tuned)."
+      },
+      "400": {
+        "$type": "color",
+        "$value": "#81b9e5",
+        "$description": "Info 400 (light-tuned)."
+      },
+      "500": {
+        "$type": "color",
+        "$value": "#579dd1",
+        "$description": "Info 500 (light-tuned)."
+      },
+      "600": {
+        "$type": "color",
+        "$value": "#2f82ba",
+        "$description": "Info 600 (light-tuned)."
+      },
+      "700": {
+        "$type": "color",
+        "$value": "#0369a1",
+        "$description": "Info 700 (light-tuned)."
+      },
+      "800": {
+        "$type": "color",
+        "$value": "#004e7a",
+        "$description": "Info 800 (light-tuned)."
+      },
+      "900": {
+        "$type": "color",
+        "$value": "#003454",
+        "$description": "Info 900 (light-tuned)."
+      },
+      "950": {
+        "$type": "color",
+        "$value": "#001f35",
+        "$description": "Info 950 (light-tuned)."
+      },
+      "1000": {
+        "$type": "color",
+        "$value": "#000c19",
+        "$description": "Info 1000 (light-tuned)."
+      },
+      "dark": {
+        "50": {
+          "$type": "color",
+          "$value": "#e3f5ff",
+          "$description": "Info 50 (dark-tuned)."
+        },
+        "100": {
+          "$type": "color",
+          "$value": "#c5eaff",
+          "$description": "Info 100 (dark-tuned)."
+        },
+        "200": {
+          "$type": "color",
+          "$value": "#99dbff",
+          "$description": "Info 200 (dark-tuned)."
+        },
+        "300": {
+          "$type": "color",
+          "$value": "#65ccff",
+          "$description": "Info 300 (dark-tuned)."
+        },
+        "400": {
+          "$type": "color",
+          "$value": "#38bdf8",
+          "$description": "Info 400 (dark-tuned)."
+        },
+        "500": {
+          "$type": "color",
+          "$value": "#009bd2",
+          "$description": "Info 500 (dark-tuned)."
+        },
+        "600": {
+          "$type": "color",
+          "$value": "#007aa6",
+          "$description": "Info 600 (dark-tuned)."
+        },
+        "700": {
+          "$type": "color",
+          "$value": "#005d80",
+          "$description": "Info 700 (dark-tuned)."
+        },
+        "800": {
+          "$type": "color",
+          "$value": "#004661",
+          "$description": "Info 800 (dark-tuned)."
+        },
+        "900": {
+          "$type": "color",
+          "$value": "#042f42",
+          "$description": "Info 900 (dark-tuned)."
+        },
+        "950": {
+          "$type": "color",
+          "$value": "#041d29",
+          "$description": "Info 950 (dark-tuned)."
+        },
+        "1000": {
+          "$type": "color",
+          "$value": "#020f17",
+          "$description": "Info 1000 (dark-tuned)."
+        }
+      }
+    }
+  }
+}

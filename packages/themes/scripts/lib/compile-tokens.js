@@ -6,9 +6,20 @@
  * (light, and any token that does not change by mode). `semantic.dark.json`
  * overlays dark `$value`s onto existing semantic tokens so mode switching
  * stays in data rather than a proprietary DTCG extension.
+ *
+ * Color ramps are generated from `seeds.json` at compile time and written
+ * next to the other outputs. Unset `data-sl-mode` follows prefers-color-scheme
+ * in CSS, so SSR does not need a flash-prevention script.
  */
 import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import { dirname, join } from 'node:path'
+
+import {
+  RAMP_HUES,
+  RAMP_STEPS,
+  generateRampDocument,
+  rampTokenName,
+} from './generate-ramps.js'
 
 export const TOKEN_SCHEMA_VERSION = '1.0.0'
 export const TOKEN_PACKAGE_NAME = '@slop-ui/themes'
@@ -223,15 +234,56 @@ function renderCustomProperties(tokens, mode, indent = '    ') {
     .join('\n')
 }
 
+export function forcedColorForToken(token) {
+  if (token.tier !== 'semantic' || token.type !== 'color') return null
+  const { name } = token
+  if (name.startsWith('focus.ring')) {
+    return name.endsWith('contrast') ? 'Canvas' : 'Highlight'
+  }
+  if (name.startsWith('action.')) {
+    if (name.includes('.fg')) return 'ButtonText'
+    if (name.includes('.border')) return 'ButtonText'
+    if (name.includes('.bg')) return 'ButtonFace'
+    return null
+  }
+  if (name === 'surface.inverse.bg') return 'CanvasText'
+  if (name === 'surface.inverse.fg' || name === 'text.inverse') return 'Canvas'
+  if (name === 'text.muted' || name === 'text.subtle') return 'GrayText'
+  if (
+    (name.startsWith('surface.') && name.includes('.bg')) ||
+    (name.startsWith('status.') && name.includes('.bg'))
+  ) {
+    return 'Canvas'
+  }
+  if (name.startsWith('surface.fg') || name.startsWith('text.'))
+    return 'CanvasText'
+  if (name.startsWith('border.') || name.startsWith('status.'))
+    return 'CanvasText'
+  return 'CanvasText'
+}
+
+function renderForcedColors(tokens, indent = '    ') {
+  return semanticTokens(tokens)
+    .map((token) => {
+      const systemColor = forcedColorForToken(token)
+      if (!systemColor || !token.cssVar) return null
+      return `${indent}${token.cssVar}: ${systemColor};`
+    })
+    .filter((line) => line !== null)
+    .join('\n')
+}
+
 export function renderTokenCss(tokens) {
   const lightVars = renderCustomProperties(tokens, 'light')
   const darkVars = renderCustomProperties(tokens, 'dark')
   const nestedDarkVars = renderCustomProperties(tokens, 'dark', '      ')
+  const forcedVars = renderForcedColors(tokens)
   return `/*
  * Generated from packages/themes/tokens. Do not edit.
  * Semantic custom properties use --sl-<role>-<part>-<state>.
  * Unset data-sl-mode follows prefers-color-scheme; data-sl-mode overrides
- * on any subtree, including nested theme hosts.
+ * on any subtree, including nested theme hosts. No JavaScript is required
+ * to pick the initial mode, so SSR does not flash the opposite palette.
  */
 @layer slop-ui-theme {
   ${SYSTEM_HOST} {
@@ -256,6 +308,12 @@ ${darkVars}
 
   :where(.slop-theme):not([data-sl-mode]):not(:where([data-sl-mode] *)) {
     color-scheme: light dark;
+  }
+
+  @media (forced-colors: active) {
+    ${CSS_HOST} {
+${forcedVars}
+    }
   }
 }
 `
@@ -336,7 +394,28 @@ function groupByRole(tokens) {
   )
 }
 
+function rampSwatchRow(tokensByName, hue, mode) {
+  const spans = []
+  for (const step of RAMP_STEPS) {
+    const token = tokensByName.get(rampTokenName(hue, mode, step))
+    if (!token) continue
+    const hex = token.value.light
+    spans.push(
+      `<span title="${token.name} ${hex}" style="flex:1;background:${hex};border-radius:0.2rem"></span>`,
+    )
+  }
+  if (spans.length === 0) return []
+  const label = `${hue} (${mode}-tuned)`
+  return [
+    `### ${label}`,
+    '',
+    `<div role="img" aria-label="${label} ramp" style="display:flex;height:2.25rem;gap:0.15rem;margin:0.35rem 0 0.85rem;">${spans.join('')}</div>`,
+    '',
+  ]
+}
+
 export function renderTokenDocs(tokens) {
+  const tokensByName = new Map(tokens.map((token) => [token.name, token]))
   const lines = [
     '<!-- Generated from packages/themes/tokens. Do not edit by hand. -->',
     '',
@@ -353,9 +432,21 @@ export function renderTokenDocs(tokens) {
     'See [design tokens](../architecture/tokens.md) and',
     '[ADR 0007](../adr/0007-token-pipeline.md).',
     '',
-    '## Semantic tokens',
+    '## Color ramps',
+    '',
+    'Twelve-step OKLCH palettes generated from brand seeds. Light-tuned and',
+    'dark-tuned ramps are independent; dark is not an inversion of light.',
+    'These primitives are not CSS variables — components consume semantic',
+    'tokens that alias them.',
     '',
   ]
+
+  for (const hue of RAMP_HUES) {
+    lines.push(...rampSwatchRow(tokensByName, hue, 'light'))
+    lines.push(...rampSwatchRow(tokensByName, hue, 'dark'))
+  }
+
+  lines.push('## Semantic tokens', '')
 
   for (const [role, roleTokens] of groupByRole(semanticTokens(tokens))) {
     lines.push(`### ${role}`, '')
@@ -378,8 +469,8 @@ export function renderTokenDocs(tokens) {
   lines.push(
     '## Primitive tokens',
     '',
-    'Primitives are not CSS variables. They exist so semantic tokens can',
-    'alias a stable palette before SLO-63 generates ramps.',
+    'Primitives are not CSS variables. Color ramps live here so semantic',
+    'tokens can alias a stable OKLCH scale.',
     '',
   )
 
@@ -422,16 +513,45 @@ export async function loadTokenDocuments(tokensDir, sources = TOKEN_SOURCES) {
   return documents
 }
 
+async function loadRampDocument(tokensDir) {
+  const seedsPath = join(tokensDir, 'seeds.json')
+  try {
+    const seeds = JSON.parse(await readFile(seedsPath, 'utf8'))
+    return {
+      file: 'generated/ramps.json',
+      tier: 'primitive',
+      tree: generateRampDocument(seeds),
+    }
+  } catch (error) {
+    if (
+      typeof error === 'object' &&
+      error !== null &&
+      'code' in error &&
+      error.code === 'ENOENT'
+    ) {
+      return null
+    }
+    throw error
+  }
+}
+
 export async function compileThemeTokens(tokensDir) {
-  const compiled = compileTokenDocuments(await loadTokenDocuments(tokensDir))
+  const rampDocument = await loadRampDocument(tokensDir)
+  const documents = [
+    ...(rampDocument ? [rampDocument] : []),
+    ...(await loadTokenDocuments(tokensDir)),
+  ]
+  const compiled = compileTokenDocuments(documents)
   return {
     ...compiled,
+    rampsJson: rampDocument ? serializeJson(rampDocument.tree) : null,
     manifestJson: serializeJson(compiled.manifest),
   }
 }
 
 export function themeTokenOutputPaths(packageRoot, docsPath) {
   return {
+    ramps: join(packageRoot, 'tokens/generated/ramps.json'),
     css: join(packageRoot, 'src/generated/tokens.css'),
     typescript: join(packageRoot, 'src/generated/tokens.ts'),
     manifest: join(packageRoot, 'src/generated/tokens.json'),
@@ -444,7 +564,11 @@ export async function writeThemeTokenOutputs({ packageRoot, docsPath }) {
   const compiled = await compileThemeTokens(tokensDir)
   const paths = themeTokenOutputPaths(packageRoot, docsPath)
   await mkdir(dirname(paths.css), { recursive: true })
+  await mkdir(dirname(paths.ramps), { recursive: true })
   await mkdir(dirname(paths.docs), { recursive: true })
+  if (compiled.rampsJson) {
+    await writeFile(paths.ramps, compiled.rampsJson)
+  }
   await writeFile(paths.css, compiled.css)
   await writeFile(paths.typescript, compiled.typescript)
   await writeFile(paths.manifest, compiled.manifestJson)

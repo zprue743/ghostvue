@@ -157,6 +157,20 @@ function closeNested(): void {
           </form>
         </fieldset>
 
+        <fieldset class="slop-theme">
+          <legend>System mode</legend>
+          <p>
+            Unset data-sl-mode follows prefers-color-scheme from CSS, with no
+            script required.
+          </p>
+          <div class="examples">
+            <div class="example">
+              <span>System action</span>
+              <SlButtonThemed>System action</SlButtonThemed>
+            </div>
+          </div>
+        </fieldset>
+
         <fieldset class="slop-theme" data-sl-mode="light">
           <legend>Default theme</legend>
           <p>The same actions with the themed wrapper enabled.</p>
