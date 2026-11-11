@@ -3,6 +3,7 @@
 import { describe, expect, it } from 'vitest'
 
 import {
+  serializeCubicBezier,
   serializeGradient,
   serializeShadow,
 } from '../../packages/themes/scripts/lib/composite-tokens.js'
@@ -128,5 +129,73 @@ describe('DTCG composite tokens', () => {
     expect(compiled.css).toContain(
       '--sl-elevation-1-shadow: 0px 1px 2px 0px #0f172a;',
     )
+  })
+
+  it('serializes cubicBezier tokens and spring settle durations', () => {
+    expect(serializeCubicBezier([0.2, 0, 0, 1])).toBe(
+      'cubic-bezier(0.2, 0, 0, 1)',
+    )
+
+    const compiled = compileTokenDocuments([
+      {
+        file: 'primitives.json',
+        tier: 'primitive',
+        tree: {
+          spring: {
+            gentle: {
+              $type: 'spring',
+              $value: { stiffness: 280, damping: 33.47, mass: 1 },
+            },
+          },
+          easing: {
+            standard: {
+              $type: 'cubicBezier',
+              $value: [0.2, 0, 0, 1],
+            },
+          },
+        },
+      },
+      {
+        file: 'semantic.json',
+        tier: 'semantic',
+        tree: {
+          motion: {
+            easing: {
+              standard: {
+                $type: 'cubicBezier',
+                $value: '{easing.standard}',
+              },
+            },
+            spring: {
+              gentle: {
+                $type: 'spring',
+                $value: '{spring.gentle}',
+                duration: {
+                  $type: 'duration',
+                  $value: '{spring.gentle}',
+                  $extensions: {
+                    'slop.ui': { reducedMotion: '80ms' },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    ])
+
+    const easing = compiled.tokens.find(
+      (token) => token.name === 'motion.easing.standard',
+    )
+    const spring = compiled.tokens.find(
+      (token) => token.name === 'motion.spring.gentle',
+    )
+    const duration = compiled.tokens.find(
+      (token) => token.name === 'motion.spring.gentle.duration',
+    )
+    expect(easing?.value.light).toBe('cubic-bezier(0.2, 0, 0, 1)')
+    expect(spring?.value.light.startsWith('linear(')).toBe(true)
+    expect(duration?.value.light).toMatch(/^\d+ms$/)
+    expect(compiled.css).toContain('--sl-motion-spring-gentle-duration: calc(')
   })
 })

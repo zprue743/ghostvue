@@ -22,6 +22,7 @@ export interface CompiledToken {
   value: { light: string; dark: string }
   cssVar?: string
   highDpr?: string
+  reducedMotion?: string
   aliases?: { light: string | null; dark: string | null }
 }
 

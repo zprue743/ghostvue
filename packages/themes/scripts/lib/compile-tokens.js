@@ -8,8 +8,9 @@
  * stays in data rather than a proprietary DTCG extension.
  *
  * Color ramps are generated from `seeds.json` at compile time and written
- * next to the other outputs. Unset `data-sl-mode` follows prefers-color-scheme
- * in CSS, so SSR does not need a flash-prevention script.
+ * next to the other outputs. Duration tokens emit
+ * `calc(<ms> * var(--sl-motion-intensity, 1))`. Unset `data-sl-mode` follows
+ * prefers-color-scheme in CSS, so SSR does not need a flash-prevention script.
  */
 import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import { dirname, join } from 'node:path'
@@ -61,19 +62,28 @@ function authoredValue(value, label) {
     return value
   }
   throw new Error(
-    `${label} must be a string, number, shadow, or gradient $value`,
+    `${label} must be a string, number, shadow, gradient, cubicBezier, or spring $value`,
   )
 }
 
-function readHighDpr(node) {
+function readExtensionString(node, key) {
   const extensions = node.$extensions
   if (!isPlainObject(extensions)) return undefined
   const slop = extensions['slop.ui']
   if (!isPlainObject(slop)) return undefined
-  if (typeof slop.highDpr !== 'string' || slop.highDpr.trim() === '') {
+  const value = slop[key]
+  if (typeof value !== 'string' || value.trim() === '') {
     return undefined
   }
-  return slop.highDpr.trim()
+  return value.trim()
+}
+
+function readHighDpr(node) {
+  return readExtensionString(node, 'highDpr')
+}
+
+function readReducedMotion(node) {
+  return readExtensionString(node, 'reducedMotion')
 }
 
 function parseAlias(value) {
@@ -109,6 +119,7 @@ function flattenTokens(node, path, file) {
       description,
       authored: authoredValue(node.$value, `${file} token "${name}"`),
       highDpr: readHighDpr(node),
+      reducedMotion: readReducedMotion(node),
     })
     // A rest-state token may nest interaction states (bg + bg.hover).
     for (const [key, child] of Object.entries(node)) {
@@ -272,6 +283,7 @@ export function compileTokenDocuments(documents) {
         tier: document.tier,
         authored: { light: entry.authored, dark: entry.authored },
         highDpr: entry.highDpr,
+        reducedMotion: entry.reducedMotion,
       })
     }
   }
@@ -305,6 +317,9 @@ export function compileTokenDocuments(documents) {
       if (token.highDpr) {
         compiled.highDpr = token.highDpr
       }
+      if (token.reducedMotion) {
+        compiled.reducedMotion = token.reducedMotion
+      }
       if (aliases.light || aliases.dark) {
         compiled.aliases = {
           light: aliases.light,
@@ -328,10 +343,39 @@ function semanticTokens(tokens) {
   return tokens.filter((token) => token.tier === 'semantic')
 }
 
+function durationTokens(tokens) {
+  return semanticTokens(tokens).filter((token) => token.type === 'duration')
+}
+
+function nonDurationSemanticTokens(tokens) {
+  return semanticTokens(tokens).filter((token) => token.type !== 'duration')
+}
+
+const MOTION_INTENSITY_VAR = `${CSS_PREFIX}motion-intensity`
+
+function cssRuntimeValue(token, value) {
+  if (token.type === 'duration') {
+    // Intensity is unitless 0–1 so consumers can scale every duration from any
+    // subtree without rewriting each --sl-motion-duration-* property.
+    return `calc(${value} * var(${MOTION_INTENSITY_VAR}, 1))`
+  }
+  return value
+}
+
 function renderCustomProperties(tokens, mode, indent = '    ') {
-  return semanticTokens(tokens)
-    .map((token) => `${indent}${token.cssVar}: ${token.value[mode]};`)
+  return tokens
+    .map(
+      (token) =>
+        `${indent}${token.cssVar}: ${cssRuntimeValue(token, token.value[mode])};`,
+    )
     .join('\n')
+}
+
+function withDescendants(selector) {
+  // Duration calc() must be declared on descendants, not only the host.
+  // Custom properties otherwise substitute --sl-motion-intensity on the host
+  // and inherit a resolved time, so a nested intensity would do nothing.
+  return `${selector}, ${selector} :where(*)`
 }
 
 export function forcedColorForToken(token) {
@@ -388,10 +432,29 @@ function renderHighDprProperties(tokens, indent = '    ') {
     .join('\n')
 }
 
+function renderReducedMotionProperties(tokens, indent = '    ') {
+  return tokens
+    .filter((token) => token.reducedMotion && token.cssVar)
+    .map(
+      (token) =>
+        `${indent}${token.cssVar}: ${cssRuntimeValue(token, token.reducedMotion)};`,
+    )
+    .join('\n')
+}
+
 export function renderTokenCss(tokens) {
-  const lightVars = renderCustomProperties(tokens, 'light')
-  const darkVars = renderCustomProperties(tokens, 'dark')
-  const nestedDarkVars = renderCustomProperties(tokens, 'dark', '      ')
+  const rest = nonDurationSemanticTokens(tokens)
+  const durations = durationTokens(tokens)
+  const lightVars = renderCustomProperties(rest, 'light')
+  const darkVars = renderCustomProperties(rest, 'dark')
+  const nestedDarkVars = renderCustomProperties(rest, 'dark', '      ')
+  const lightDurations = renderCustomProperties(durations, 'light')
+  const darkDurations = renderCustomProperties(durations, 'dark')
+  const nestedDarkDurations = renderCustomProperties(
+    durations,
+    'dark',
+    '      ',
+  )
   const forcedVars = renderForcedColors(tokens)
   const highDprVars = renderHighDprProperties(tokens, '      ')
   const highDprBlock = highDprVars
@@ -403,6 +466,28 @@ ${highDprVars}
   }
 `
     : ''
+  const reducedRest = renderReducedMotionProperties(rest, '      ')
+  const reducedDurations = renderReducedMotionProperties(durations, '      ')
+  const reducedRestBlock = reducedRest
+    ? `
+    ${CSS_HOST} {
+${reducedRest}
+    }
+`
+    : ''
+  const reducedDurationBlock = reducedDurations
+    ? `
+    ${withDescendants(CSS_HOST)} {
+${reducedDurations}
+    }
+`
+    : ''
+  const reducedMotionBlock =
+    reducedRest || reducedDurations
+      ? `
+  @media (prefers-reduced-motion: reduce) {${reducedRestBlock}${reducedDurationBlock}  }
+`
+      : ''
   return `/*
  * Generated from packages/themes/tokens. Do not edit.
  * Semantic custom properties use --sl-<role>-<part>-<state>.
@@ -415,9 +500,17 @@ ${highDprVars}
 ${lightVars}
   }
 
+  ${withDescendants(SYSTEM_HOST)} {
+${lightDurations}
+  }
+
   @media (prefers-color-scheme: dark) {
     ${SYSTEM_HOST} {
 ${nestedDarkVars}
+    }
+
+    ${withDescendants(SYSTEM_HOST)} {
+${nestedDarkDurations}
     }
   }
 
@@ -426,15 +519,23 @@ ${nestedDarkVars}
 ${lightVars}
   }
 
+  ${withDescendants(":where([data-sl-mode='light'])")} {
+${lightDurations}
+  }
+
   :where([data-sl-mode='dark']) {
     color-scheme: dark;
 ${darkVars}
   }
 
+  ${withDescendants(":where([data-sl-mode='dark'])")} {
+${darkDurations}
+  }
+
   :where(.slop-theme):not([data-sl-mode]):not(:where([data-sl-mode] *)) {
     color-scheme: light dark;
   }
-${highDprBlock}
+${highDprBlock}${reducedMotionBlock}
   @media (forced-colors: active) {
     ${CSS_HOST} {
 ${forcedVars}
@@ -449,6 +550,9 @@ function renderTokenObject(token) {
     `    name: ${JSON.stringify(token.name)},`,
     token.cssVar ? `    cssVar: ${JSON.stringify(token.cssVar)},` : null,
     token.highDpr ? `    highDpr: ${JSON.stringify(token.highDpr)},` : null,
+    token.reducedMotion
+      ? `    reducedMotion: ${JSON.stringify(token.reducedMotion)},`
+      : null,
     `    type: ${JSON.stringify(token.type)},`,
     `    tier: ${JSON.stringify(token.tier)},`,
     `    description: ${JSON.stringify(token.description)},`,

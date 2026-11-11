@@ -146,7 +146,9 @@ implementation details and are not supported theme APIs.
 
 Elevation, materials, and gradients are semantic `--sl-*` variables plus
 documented `data-elevation`, `data-material`, and `data-gradient` recipes.
-See [elevation, materials, and gradients](./elevation.md).
+See [elevation, materials, and gradients](./elevation.md). Motion durations,
+easing, and springs are `--sl-motion-*` plus `data-motion` recipes; see
+[motion](./motion.md).
 
 Authored DTCG lives in `packages/themes/tokens/` and is compiled by
 `@slop-ui/themes` ([ADR 0007](../adr/0007-token-pipeline.md)).
@@ -156,11 +158,16 @@ Authored DTCG lives in `packages/themes/tokens/` and is compiled by
 The defaults include contrast-tested light and dark treatments (WCAG 2 AA
 is gated in `pnpm contrast`; APCA Lc is advisory), a two-color keyboard
 focus indicator, minimum control sizes, forced-colors mapping to system
-colors, disabled and loading cursors, and reduced-motion handling. Unset
-`data-sl-mode` follows `prefers-color-scheme` from CSS alone, so server
-rendering does not flash the opposite palette. Applications remain
+colors, disabled and loading cursors, and reduced-motion handling that
+keeps short color and opacity feedback instead of removing transitions.
+Unset `data-sl-mode` follows `prefers-color-scheme` from CSS alone, so
+server rendering does not flash the opposite palette. Applications remain
 responsible for testing token overrides for contrast, focus visibility,
 zoom, and target size in their full interface.
+
+`startThemeTransition(element, mode)` is an optional helper that crossfades
+`data-sl-mode` with the View Transitions API when it exists and reduced
+motion is not requested. This is a new public export.
 
 ## Override classes directly
 

@@ -135,10 +135,74 @@
     }
   },
   "duration": {
+    "instant": {
+      "$type": "duration",
+      "$value": "0ms",
+      "$description": "No delay. Used for snappings that should not interpolate."
+    },
     "fast": {
       "$type": "duration",
       "$value": "120ms",
       "$description": "Fast interaction duration."
+    },
+    "moderate": {
+      "$type": "duration",
+      "$value": "250ms",
+      "$description": "Default enter and shared-element duration."
+    },
+    "slow": {
+      "$type": "duration",
+      "$value": "400ms",
+      "$description": "Large-surface duration."
+    },
+    "expressive": {
+      "$type": "duration",
+      "$value": "700ms",
+      "$description": "Longest emphasized duration."
+    },
+    "feedback": {
+      "$type": "duration",
+      "$value": "80ms",
+      "$description": "Short color and opacity feedback used under reduced motion. Not zero so state changes stay visible."
+    },
+    "stagger": {
+      "$type": "duration",
+      "$value": "40ms",
+      "$description": "Delay between successive items in a staggered sequence."
+    }
+  },
+  "easing": {
+    "standard": {
+      "$type": "cubicBezier",
+      "$value": [0.2, 0, 0, 1],
+      "$description": "Default symmetric easing."
+    },
+    "decelerate": {
+      "$type": "cubicBezier",
+      "$value": [0, 0, 0, 1],
+      "$description": "Ease-out. Use for enters."
+    },
+    "accelerate": {
+      "$type": "cubicBezier",
+      "$value": [0.3, 0, 1, 1],
+      "$description": "Ease-in. Use for exits."
+    }
+  },
+  "spring": {
+    "gentle": {
+      "$type": "spring",
+      "$value": { "stiffness": 280, "damping": 33.47, "mass": 1 },
+      "$description": "Critically damped spring. No overshoot."
+    },
+    "snappy": {
+      "$type": "spring",
+      "$value": { "stiffness": 520, "damping": 28, "mass": 1 },
+      "$description": "Underdamped spring with a short settle."
+    },
+    "bouncy": {
+      "$type": "spring",
+      "$value": { "stiffness": 260, "damping": 12, "mass": 1 },
+      "$description": "Underdamped spring that overshoots before settling."
     }
   },
   "font": {
@@ -186,6 +250,20 @@
         "$value": "1.25rem",
         "$description": "Glass material backdrop blur."
       }
+    },
+    "motion": {
+      "translate": {
+        "$type": "dimension",
+        "$value": "0.5rem",
+        "$description": "Default enter/exit translation distance."
+      }
+    }
+  },
+  "scale": {
+    "motion": {
+      "$type": "number",
+      "$value": 0.96,
+      "$description": "Default enter scale. 1 means no scale motion."
     }
   }
 }

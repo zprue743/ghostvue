@@ -144,10 +144,11 @@ and JSON so ramps can land without renaming the runtime API.
   authoring reference and no longer describes a future pipeline.
 - ADR 0005 remains the record that DTCG and the three compile outputs were
   chosen; CSS prefix, component tokens, and mode switching follow this ADR.
-- Follow-ups: SLO-65 motion, SLO-66 density, SLO-68 flagship themes, MCP
-  `get_tokens`. SLO-63 (ramps, semantic text/border/status, contrast CI,
-  forced-colors mapping) and SLO-64 (elevation, hairline, materials,
-  gradients) landed on this pipeline.
+- Follow-ups: SLO-66 density, SLO-68 flagship themes, MCP `get_tokens`.
+  SLO-63 (ramps, semantic text/border/status, contrast CI, forced-colors
+  mapping), SLO-64 (elevation, hairline, materials, gradients), and
+  SLO-65 (motion durations, easing, springs, reduced motion) landed on
+  this pipeline.
 
 ## Amendments
 
@@ -162,6 +163,12 @@ and JSON so ramps can land without renaming the runtime API.
   becomes 0.5px at 2dppx, glass/grain recipes, and contrast pairs on
   elevation fills ship on this pipeline. Motion (SLO-65) is still out of
   scope.
+- 2026-11-11: SLO-65 extends the compiler with DTCG `cubicBezier` and
+  `spring` (mass-spring-damper compiled to CSS `linear()` plus settle
+  duration). Semantic `motion` durations wrap `calc()` with
+  `--sl-motion-intensity`. `$extensions.slop.ui.reducedMotion` overlays
+  values under `prefers-reduced-motion: reduce`. Density (SLO-66) is
+  still out of scope.
 
 ## Compatibility implications
 

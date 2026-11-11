@@ -65,6 +65,17 @@ describe('token pipeline', () => {
     expect(compiled.css).toContain('min-resolution: 2dppx')
     expect(compiled.css).toContain('--sl-border-hairline-width: 0.5px;')
     expect(compiled.css).toContain('--sl-elevation-5-bg: Canvas;')
+    expect(compiled.css).toContain(
+      '--sl-motion-duration-fast: calc(120ms * var(--sl-motion-intensity, 1));',
+    )
+    expect(compiled.css).toContain('--sl-motion-easing-standard: cubic-bezier(')
+    expect(compiled.css).toContain('--sl-motion-spring-gentle: linear(')
+    expect(compiled.css).toContain('prefers-reduced-motion: reduce')
+    expect(compiled.css).toContain(
+      '--sl-motion-duration-fast: calc(80ms * var(--sl-motion-intensity, 1));',
+    )
+    expect(compiled.css).toContain('--sl-motion-translate: 0px;')
+    expect(compiled.css).toContain(' :where(*)')
     expect(compiled.css).not.toContain('--slop-')
     expect(compiled.docsMarkdown).toContain('role="img"')
     expect(compiled.docsMarkdown).toContain('primary (light-tuned)')
@@ -82,6 +93,17 @@ describe('token pipeline', () => {
     expect(tokens['color.primary.700'].tier).toBe('primitive')
     expect(tokens['color.primary.700']).not.toHaveProperty('cssVar')
     expect(tokens['color.primary.dark.400'].value.light).toBe('#60a5fa')
+    expect(tokens['motion.intensity'].cssVar).toBe('--sl-motion-intensity')
+    expect(tokens['motion.intensity'].value.light).toBe('1')
+    expect(tokens['motion.duration.fast'].value.light).toBe('120ms')
+    expect(tokens['motion.duration.fast'].reducedMotion).toBe('80ms')
+    expect(tokens['action.duration'].value.light).toBe('120ms')
+    expect(tokens['motion.easing.decelerate'].value.light).toBe(
+      'cubic-bezier(0, 0, 0, 1)',
+    )
+    expect(
+      tokens['motion.spring.gentle'].value.light.startsWith('linear('),
+    ).toBe(true)
   })
 
   it('nests rest-state tokens with hover/active children', () => {

@@ -294,13 +294,22 @@ test('default theme adapts to accessibility and color preferences', async ({
       ),
     ).toBe('none')
 
+    await expect(action).toHaveCSS(
+      'transition-duration',
+      '0.12s, 0.12s, 0.12s, 0.12s',
+    )
+
     await page.emulateMedia({ reducedMotion: 'reduce' })
-    await expect(action).toHaveCSS('transition-duration', '0s')
+    // Color/opacity feedback stays; it just becomes the short 80ms token.
+    await expect(action).toHaveCSS(
+      'transition-duration',
+      '0.08s, 0.08s, 0.08s, 0.08s',
+    )
     expect(
       await loading.evaluate(
         (element) => getComputedStyle(element, '::before').animationName,
       ),
-    ).toBe('none')
+    ).toBe('slop-button-pulse')
 
     await themedGroup.evaluate((element) => {
       element.setAttribute('data-sl-mode', 'dark')
@@ -318,10 +327,11 @@ test('default theme adapts to accessibility and color preferences', async ({
           },
           { tone, variant },
         )
-        expect(
-          await textContrast(action, themedGroup),
-          `${tone} ${variant} text contrast`,
-        ).toBeGreaterThanOrEqual(4.5)
+        await expect
+          .poll(async () => textContrast(action, themedGroup), {
+            message: `${tone} ${variant} text contrast`,
+          })
+          .toBeGreaterThanOrEqual(4.5)
       }
     }
 
