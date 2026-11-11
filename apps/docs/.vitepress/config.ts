@@ -9,9 +9,9 @@ import {
   restoreDocsThemeScript,
 } from './theme/restore-theme'
 
-function themeCss(name: string): string {
+function packageSrc(relative: string): string {
   return fileURLToPath(
-    new URL(`../../../packages/themes/src/${name}`, import.meta.url),
+    new URL(`../../../packages/${relative}`, import.meta.url),
   )
 }
 
@@ -37,11 +37,17 @@ export default defineConfig({
     ],
     resolve: {
       alias: {
-        // Visual token pages import the source stylesheet, not a built dist.
-        '@slop-ui/themes/default.css': themeCss('default.css'),
-        '@slop-ui/themes/calm.css': themeCss('generated/calm.css'),
-        '@slop-ui/themes/vibrant.css': themeCss('generated/vibrant.css'),
-        '@slop-ui/themes/mono.css': themeCss('generated/mono.css'),
+        // Browser CI builds docs without `pnpm build`, so resolve workspace
+        // packages to source. CSS aliases must stay above `@slop-ui/themes`
+        // because Vite prefix-matches the package name.
+        '@slop-ui/themes/default.css': packageSrc('themes/src/default.css'),
+        '@slop-ui/themes/calm.css': packageSrc('themes/src/generated/calm.css'),
+        '@slop-ui/themes/vibrant.css': packageSrc(
+          'themes/src/generated/vibrant.css',
+        ),
+        '@slop-ui/themes/mono.css': packageSrc('themes/src/generated/mono.css'),
+        '@slop-ui/themes': packageSrc('themes/src/index.ts'),
+        '@slop-ui/vue': packageSrc('vue/src/index.ts'),
       },
     },
   },
