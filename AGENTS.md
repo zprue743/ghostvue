@@ -40,6 +40,7 @@ pnpm typecheck
 pnpm test
 pnpm test:e2e
 pnpm build
+pnpm published-exports
 pnpm docs:build
 pnpm verify
 ```

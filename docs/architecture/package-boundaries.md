@@ -29,8 +29,9 @@ enough graph complexity to justify it.
 A new package requires a responsibility that cannot remain coherent in an
 existing package. Document its purpose and dependency direction, add build and
 typecheck scripts, register it in `scripts/workspace-packages.mjs` and the root
-TypeScript project, and explain its public entry point. An anticipated future
-use is not by itself sufficient evidence.
+TypeScript project, and explain its public entry point. `pnpm published-exports`
+requires those entry points to exist on disk after `pnpm build`. An anticipated
+future use is not by itself sufficient evidence.
 
 Development apps may consume packages to exercise them. They are not published
 and must not become a hidden source of production logic.
