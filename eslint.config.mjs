@@ -68,6 +68,13 @@ export default tseslint.config(
       'vue/block-lang': ['error', { script: { lang: 'ts' } }],
       'vue/component-api-style': ['error', ['script-setup']],
       'vue/multi-word-component-names': 'off',
+      // These two rules reformat template markup, and Prettier reformats it
+      // back, so every real template reports warnings that cannot be fixed
+      // without hand-formatting around one tool or the other.
+      // `docs/standards/code-style.md` gives formatting to Prettier and
+      // semantic rules to ESLint, so the formatting rules yield.
+      'vue/max-attributes-per-line': 'off',
+      'vue/singleline-html-element-content-newline': 'off',
     },
   },
 )

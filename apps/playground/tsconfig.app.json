@@ -12,6 +12,11 @@
     }
   },
   // Composite projects must list files reached through `paths`.
-  "include": ["src/**/*.ts", "src/**/*.vue", "../../packages/vue/src/**/*.ts"],
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.vue",
+    "../../packages/vue/src/**/*.ts",
+    "../../packages/vue/src/**/*.vue"
+  ],
   "exclude": ["../../packages/vue/src/**/*.test.ts"]
 }

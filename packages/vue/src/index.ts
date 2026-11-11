@@ -1,7 +1,5 @@
 /**
  * Public Vue package entry point. Named ESM exports are the primary API.
- * Component exports still require an approved specification; these primitives
- * are the shared id, model, and focus contracts those components will use.
  */
 export { useSlId } from './use-sl-id'
 export {
@@ -15,3 +13,13 @@ export {
   type TextDirection,
   type UseRovingFocusOptions,
 } from './use-roving-focus'
+export { default as SlVisuallyHidden } from './SlVisuallyHidden.vue'
+export {
+  useSlVisuallyHidden,
+  type SlVisuallyHiddenRootProps,
+} from './use-sl-visually-hidden'
+export type {
+  SlVisuallyHiddenElement,
+  SlVisuallyHiddenProps,
+  UseSlVisuallyHiddenOptions,
+} from './sl-visually-hidden'
