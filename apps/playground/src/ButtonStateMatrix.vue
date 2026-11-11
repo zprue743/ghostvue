@@ -160,36 +160,37 @@ function stateAttrs(
 
 .shot {
   display: grid;
-  gap: 0.5rem;
+  gap: 8px;
   max-inline-size: 100%;
   overflow-x: auto;
 }
 
 .tone-row {
   align-items: end;
-  display: flex;
-  flex-wrap: nowrap;
-  gap: 0.5rem 0.75rem;
+  display: grid;
+  gap: 8px 12px;
+  grid-template-columns: 72px max-content;
 }
 
 .tone-label {
-  flex: none;
   font-size: 12px;
   font-weight: 600;
   height: 16px;
   line-height: 16px;
-  width: 4.5rem;
+  overflow: hidden;
+  width: 72px;
 }
 
 .buttons {
-  display: flex;
-  flex-wrap: nowrap;
-  gap: 0.5rem 0.75rem;
+  display: grid;
+  gap: 8px 12px;
+  grid-template-columns: repeat(10, 100px);
 }
 
 .cell {
   display: grid;
   gap: 4px;
+  width: 100px;
 }
 
 .cell-label {
@@ -198,5 +199,6 @@ function stateAttrs(
   height: 16px;
   line-height: 16px;
   overflow: hidden;
+  width: 100px;
 }
 </style>

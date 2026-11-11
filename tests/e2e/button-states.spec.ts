@@ -13,9 +13,11 @@ const densities = ['compact', 'comfortable', 'spacious'] as const
 async function pinShot(shot: {
   evaluate: (fn: (element: HTMLElement) => void) => Promise<void>
 }) {
+  // Fixed clip plus the playground's 100px grid tracks keep magenta label
+  // masks aligned when CI Chromium rasterizes system fonts differently.
   await shot.evaluate((element) => {
     element.style.boxSizing = 'border-box'
-    element.style.height = '200px'
+    element.style.height = '232px'
     element.style.overflow = 'hidden'
     element.style.width = '1240px'
   })
