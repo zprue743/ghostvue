@@ -5,9 +5,9 @@ when they make the component contract clear.
 
 - Type public props, emits, slots, and exposed methods explicitly.
 - Use computed state before introducing a watcher.
-- Public composables that are part of a component contract use the `useSl*`
-  prefix (`useSlButton`). Do not invent extra composables beyond that
-  contract.
+- Public component behavior belongs in a `useSl*` composable with a thin
+  unstyled `Sl*` component as the ordinary call site. Do not invent extra
+  composables beyond that contract.
 - Avoid unnecessary global state, hidden side effects, and provide/inject when a
   direct prop or local composition is simpler.
 - Do not mutate consumer-owned objects unless the public contract explicitly

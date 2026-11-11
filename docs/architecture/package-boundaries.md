@@ -4,17 +4,25 @@ Allowed production dependency direction is:
 
 ```text
 shared <- core <- vue
-   ^               |
-   +---------------+
-
-themes (independent and optional)
+   ^               ^
+   +-------+-------+
+           |
+         themes (optional; may depend on vue)
 ```
 
 - `shared` has no internal production dependency.
 - `core` may depend on `shared`.
-- `vue` may depend on `core` and `shared`.
-- `themes` must not be required by headless packages and currently remains
-  independent.
+- `vue` may depend on `core` and `shared`. `vue` must never depend on
+  `themes`.
+- `themes` is optional. Headless packages must not require it. It **may**
+  depend on `vue` so themed wrappers can import unstyled components and
+  composables. That edge is recorded here and in
+  [ADR 0004](../adr/0004-headless-styled-layering.md); the boundary checker
+  still lists `themes` as independent until the first wrapper lands.
+
+Themed Vue components belong in `themes`. Headless composables and thin
+unstyled components belong in `vue`. Do not add a third package merely to
+host styled twins.
 
 `scripts/workspace-packages.mjs` is the executable catalog of package
 responsibilities and allowed internal dependencies. Manifest edges are enforced
