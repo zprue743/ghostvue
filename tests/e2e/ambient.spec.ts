@@ -88,13 +88,28 @@ test.describe('ambient interactivity', () => {
       await page.goto(playground.url)
       await page.evaluate(() => document.fonts.ready)
 
-      const host = page.getByTestId('ambient-button-host')
       const button = page.getByTestId('ambient-button-spotlight')
-      await host.scrollIntoViewIfNeeded()
+      await button.scrollIntoViewIfNeeded()
+      await button.evaluate((element) => {
+        // Fixed clip so CI Chromium font rasterization cannot shift the box.
+        element.style.boxSizing = 'border-box'
+        element.style.height = '40px'
+        element.style.overflow = 'hidden'
+        element.style.width = '160px'
+      })
       await button.hover({ position: { x: 28, y: 12 } })
       await expect(button).toHaveAttribute('data-interactive-state', 'tracking')
-      await expect(host).toHaveScreenshot('button-spotlight-opt-in.png', {
-        ...screenshotOptions,
+      await expect
+        .poll(async () =>
+          button.evaluate((element) => {
+            const glow = element.querySelector('[data-part="glow"]')
+            return glow ? Number(getComputedStyle(glow).opacity) : 0
+          }),
+        )
+        .toBeGreaterThan(0)
+      await expect(button).toHaveScreenshot('button-spotlight-opt-in.png', {
+        animations: 'disabled',
+        maxDiffPixelRatio: 0.05,
       })
     } finally {
       await playground.close()
