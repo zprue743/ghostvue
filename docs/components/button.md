@@ -76,6 +76,12 @@ only on this wrapper:
 | `block`    | `boolean`                                   | `false`    | Stretch to the available width. |
 | `iconOnly` | `boolean`                                   | `false`    | Square icon-button treatment.   |
 
+Themed size, padding, gap, radius, and type come from density, spacing, and
+roundness tokens. Comfortable `md` is 40px tall with an 8px radius at
+`--sl-roundness: 1`. Compact and spacious nest through `data-sl-density`;
+coarse pointers floor heights to 44px. See
+[density, type, and roundness](../themes/density.md).
+
 You can also import the stylesheet and wrap unstyled buttons in `.slop-theme`
 when you want a region of headless components to pick up the defaults. See the
 [default theme guide](../themes/default.md) for tokens and overrides.

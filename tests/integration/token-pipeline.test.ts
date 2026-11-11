@@ -76,6 +76,16 @@ describe('token pipeline', () => {
     )
     expect(compiled.css).toContain('--sl-motion-translate: 0px;')
     expect(compiled.css).toContain(' :where(*)')
+    expect(compiled.css).toContain("[data-sl-density='compact']")
+    expect(compiled.css).toContain("[data-sl-density='comfortable']")
+    expect(compiled.css).toContain("[data-sl-density='spacious']")
+    expect(compiled.css).toContain('pointer: coarse')
+    expect(compiled.css).toContain(
+      '--sl-radius-md: calc(0.5rem * var(--sl-roundness, 1));',
+    )
+    expect(compiled.css).toContain('--sl-roundness: 1;')
+    expect(compiled.css).toContain('--sl-type-family-sans:')
+    expect(compiled.css).toContain('clamp(')
     expect(compiled.css).not.toContain('--slop-')
     expect(compiled.docsMarkdown).toContain('role="img"')
     expect(compiled.docsMarkdown).toContain('primary (light-tuned)')
@@ -104,6 +114,16 @@ describe('token pipeline', () => {
     expect(
       tokens['motion.spring.gentle'].value.light.startsWith('linear('),
     ).toBe(true)
+    expect(tokens['roundness.amount'].cssVar).toBe('--sl-roundness')
+    expect(tokens['control.size.md.min'].value.light).toBe('2.5rem')
+    expect(tokens['control.size.md.min'].density).toEqual({
+      compact: '2rem',
+      spacious: '3rem',
+    })
+    expect(tokens['control.size.md.min'].touchMin).toBe('2.75rem')
+    expect(tokens['radius.md'].value.light).toBe('0.5rem')
+    expect(tokens['type.family.sans'].cssVar).toBe('--sl-type-family-sans')
+    expect(tokens['type.numeric.tabular'].value.light).toBe('tabular-nums')
   })
 
   it('nests rest-state tokens with hover/active children', () => {
@@ -161,6 +181,8 @@ describe('token pipeline', () => {
     )
     await writeFile(join(dir, 'semantic.json'), '{}')
     await writeFile(join(dir, 'semantic.dark.json'), '{}')
+    await writeFile(join(dir, 'semantic.compact.json'), '{}')
+    await writeFile(join(dir, 'semantic.spacious.json'), '{}')
 
     await expect(compileThemeTokens(dir)).rejects.toThrow(/Cyclic token alias/)
 

@@ -2,14 +2,20 @@ export const TOKEN_SCHEMA_VERSION: string
 export const TOKEN_PACKAGE_NAME: string
 export const DEFAULT_THEME_NAME: string
 export const TOKEN_MODES: readonly ['light', 'dark']
+export const TOKEN_DENSITIES: readonly ['compact', 'comfortable', 'spacious']
+export const DEFAULT_DENSITY: 'comfortable'
 export const CSS_PREFIX: string
 export const THEME_ATTRIBUTE: string
 export const MODE_ATTRIBUTE: string
+export const DENSITY_ATTRIBUTE: string
+export const ROUNDNESS_TOKEN_NAME: string
+export const ROUNDNESS_VAR: string
 
 export interface TokenSource {
   file: string
   tier: 'primitive' | 'semantic'
   overlayMode?: 'light' | 'dark'
+  overlayDensity?: 'compact' | 'spacious'
 }
 
 export const TOKEN_SOURCES: readonly TokenSource[]
@@ -23,6 +29,8 @@ export interface CompiledToken {
   cssVar?: string
   highDpr?: string
   reducedMotion?: string
+  touchMin?: string
+  density?: { compact?: string; spacious?: string }
   aliases?: { light: string | null; dark: string | null }
 }
 
@@ -30,6 +38,7 @@ export interface TokenDocument {
   file: string
   tier: 'primitive' | 'semantic'
   overlayMode?: 'light' | 'dark'
+  overlayDensity?: 'compact' | 'spacious'
   tree: Record<string, unknown>
 }
 
@@ -39,7 +48,9 @@ export interface TokenManifest {
   package: string
   theme: string
   modes: string[]
-  attributes: { theme: string; mode: string }
+  densities: string[]
+  defaultDensity: string
+  attributes: { theme: string; mode: string; density: string }
   cssPrefix: string
   tokens: CompiledToken[]
 }
@@ -53,6 +64,13 @@ export interface CompiledTokens {
 }
 
 export function cssVariableName(tokenName: string): string
+export function usesRoundness(token: CompiledToken): boolean
+export function densityCssValue(
+  token: CompiledToken,
+  density: 'compact' | 'comfortable' | 'spacious',
+): string
+export function dimensionToPx(value: string): number | null
+export function maxCssDimension(value: string, floor: string): string
 export function compileTokenDocuments(
   documents: TokenDocument[],
 ): CompiledTokens

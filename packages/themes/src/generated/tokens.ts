@@ -89,6 +89,10 @@ export const tokens = {
   "action.gap": {
     name: "action.gap",
     cssVar: "--sl-action-gap",
+    density: {
+      compact: "0.25rem",
+      spacious: "0.75rem",
+    },
     type: "dimension",
     tier: "semantic",
     description: "Space between action label and icon content.",
@@ -161,6 +165,50 @@ export const tokens = {
     value: {
       light: "#ffffff",
       dark: "#0f172a",
+    },
+  },
+  "action.label.family": {
+    name: "action.label.family",
+    cssVar: "--sl-action-label-family",
+    type: "fontFamily",
+    tier: "semantic",
+    description: "Action label font family.",
+    value: {
+      light: "ui-sans-serif, system-ui, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\"",
+      dark: "ui-sans-serif, system-ui, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\"",
+    },
+  },
+  "action.label.letter": {
+    name: "action.label.letter",
+    cssVar: "--sl-action-label-letter",
+    type: "letterSpacing",
+    tier: "semantic",
+    description: "Action label letter-spacing.",
+    value: {
+      light: "0em",
+      dark: "0em",
+    },
+  },
+  "action.label.line": {
+    name: "action.label.line",
+    cssVar: "--sl-action-label-line",
+    type: "number",
+    tier: "semantic",
+    description: "Action label line-height.",
+    value: {
+      light: "1.2",
+      dark: "1.2",
+    },
+  },
+  "action.label.size": {
+    name: "action.label.size",
+    cssVar: "--sl-action-label-size",
+    type: "fontSize",
+    tier: "semantic",
+    description: "Default action label size. Size variants use control.size.*.font.",
+    value: {
+      light: "clamp(0.9375rem, 0.9167rem + 0.1042vw, 1rem)",
+      dark: "clamp(0.9375rem, 0.9167rem + 0.1042vw, 1rem)",
     },
   },
   "action.label.weight": {
@@ -287,9 +335,13 @@ export const tokens = {
   "action.radius": {
     name: "action.radius",
     cssVar: "--sl-action-radius",
+    density: {
+      compact: "0.25rem",
+      spacious: "0.75rem",
+    },
     type: "dimension",
     tier: "semantic",
-    description: "Action corner radius.",
+    description: "Action corner radius. Follows --sl-roundness.",
     value: {
       light: "0.5rem",
       dark: "0.5rem",
@@ -2089,61 +2141,105 @@ export const tokens = {
       dark: "#ffffff",
     },
   },
-  "control.min.lg": {
-    name: "control.min.lg",
+  "control.height.28": {
+    name: "control.height.28",
     type: "dimension",
     tier: "primitive",
-    description: "Large control minimum size.",
+    description: "Control height 28px.",
     value: {
-      light: "3.25rem",
-      dark: "3.25rem",
+      light: "1.75rem",
+      dark: "1.75rem",
     },
   },
-  "control.min.md": {
-    name: "control.min.md",
+  "control.height.32": {
+    name: "control.height.32",
     type: "dimension",
     tier: "primitive",
-    description: "Medium control minimum size.",
+    description: "Control height 32px.",
     value: {
-      light: "2.75rem",
-      dark: "2.75rem",
+      light: "2rem",
+      dark: "2rem",
     },
   },
-  "control.min.sm": {
-    name: "control.min.sm",
+  "control.height.36": {
+    name: "control.height.36",
     type: "dimension",
     tier: "primitive",
-    description: "Small control minimum size.",
+    description: "Control height 36px.",
     value: {
       light: "2.25rem",
       dark: "2.25rem",
     },
   },
+  "control.height.40": {
+    name: "control.height.40",
+    type: "dimension",
+    tier: "primitive",
+    description: "Control height 40px.",
+    value: {
+      light: "2.5rem",
+      dark: "2.5rem",
+    },
+  },
+  "control.height.48": {
+    name: "control.height.48",
+    type: "dimension",
+    tier: "primitive",
+    description: "Control height 48px.",
+    value: {
+      light: "3rem",
+      dark: "3rem",
+    },
+  },
+  "control.size.lg.font": {
+    name: "control.size.lg.font",
+    cssVar: "--sl-control-size-lg-font",
+    type: "fontSize",
+    tier: "semantic",
+    description: "Large control font size.",
+    value: {
+      light: "clamp(1.0625rem, 1.0417rem + 0.1042vw, 1.125rem)",
+      dark: "clamp(1.0625rem, 1.0417rem + 0.1042vw, 1.125rem)",
+    },
+  },
   "control.size.lg.min": {
     name: "control.size.lg.min",
     cssVar: "--sl-control-size-lg-min",
+    touchMin: "2.75rem",
+    density: {
+      compact: "2.5rem",
+      spacious: "3rem",
+    },
     type: "dimension",
     tier: "semantic",
-    description: "Large control minimum block size.",
+    description: "Large control minimum block size. Comfortable and spacious 48px; compact 40.",
     value: {
-      light: "3.25rem",
-      dark: "3.25rem",
+      light: "3rem",
+      dark: "3rem",
     },
   },
   "control.size.lg.padding.block": {
     name: "control.size.lg.padding.block",
     cssVar: "--sl-control-size-lg-padding-block",
+    density: {
+      compact: "0.75rem",
+      spacious: "1.25rem",
+    },
     type: "dimension",
     tier: "semantic",
     description: "Large control block padding.",
     value: {
-      light: "0.875rem",
-      dark: "0.875rem",
+      light: "1rem",
+      dark: "1rem",
     },
   },
   "control.size.lg.padding.inline": {
     name: "control.size.lg.padding.inline",
     cssVar: "--sl-control-size-lg-padding-inline",
+    density: {
+      compact: "1rem",
+      spacious: "1.5rem",
+    },
     type: "dimension",
     tier: "semantic",
     description: "Large control inline padding.",
@@ -2152,20 +2248,40 @@ export const tokens = {
       dark: "1.25rem",
     },
   },
+  "control.size.md.font": {
+    name: "control.size.md.font",
+    cssVar: "--sl-control-size-md-font",
+    type: "fontSize",
+    tier: "semantic",
+    description: "Medium control font size.",
+    value: {
+      light: "clamp(0.9375rem, 0.9167rem + 0.1042vw, 1rem)",
+      dark: "clamp(0.9375rem, 0.9167rem + 0.1042vw, 1rem)",
+    },
+  },
   "control.size.md.min": {
     name: "control.size.md.min",
     cssVar: "--sl-control-size-md-min",
+    touchMin: "2.75rem",
+    density: {
+      compact: "2rem",
+      spacious: "3rem",
+    },
     type: "dimension",
     tier: "semantic",
-    description: "Medium control minimum block size.",
+    description: "Medium control minimum block size. Comfortable 40px; compact 32; spacious 48.",
     value: {
-      light: "2.75rem",
-      dark: "2.75rem",
+      light: "2.5rem",
+      dark: "2.5rem",
     },
   },
   "control.size.md.padding.block": {
     name: "control.size.md.padding.block",
     cssVar: "--sl-control-size-md-padding-block",
+    density: {
+      compact: "0.5rem",
+      spacious: "1rem",
+    },
     type: "dimension",
     tier: "semantic",
     description: "Medium control block padding.",
@@ -2177,6 +2293,10 @@ export const tokens = {
   "control.size.md.padding.inline": {
     name: "control.size.md.padding.inline",
     cssVar: "--sl-control-size-md-padding-inline",
+    density: {
+      compact: "0.75rem",
+      spacious: "1.25rem",
+    },
     type: "dimension",
     tier: "semantic",
     description: "Medium control inline padding.",
@@ -2185,20 +2305,40 @@ export const tokens = {
       dark: "1rem",
     },
   },
+  "control.size.sm.font": {
+    name: "control.size.sm.font",
+    cssVar: "--sl-control-size-sm-font",
+    type: "fontSize",
+    tier: "semantic",
+    description: "Small control font size.",
+    value: {
+      light: "clamp(0.8125rem, 0.7917rem + 0.1042vw, 0.875rem)",
+      dark: "clamp(0.8125rem, 0.7917rem + 0.1042vw, 0.875rem)",
+    },
+  },
   "control.size.sm.min": {
     name: "control.size.sm.min",
     cssVar: "--sl-control-size-sm-min",
+    touchMin: "2.75rem",
+    density: {
+      compact: "1.75rem",
+      spacious: "2.25rem",
+    },
     type: "dimension",
     tier: "semantic",
-    description: "Small control minimum block size.",
+    description: "Small control minimum block size. Comfortable 32px; compact 28; spacious 36.",
     value: {
-      light: "2.25rem",
-      dark: "2.25rem",
+      light: "2rem",
+      dark: "2rem",
     },
   },
   "control.size.sm.padding.block": {
     name: "control.size.sm.padding.block",
     cssVar: "--sl-control-size-sm-padding-block",
+    density: {
+      compact: "0.25rem",
+      spacious: "0.75rem",
+    },
     type: "dimension",
     tier: "semantic",
     description: "Small control block padding.",
@@ -2210,12 +2350,37 @@ export const tokens = {
   "control.size.sm.padding.inline": {
     name: "control.size.sm.padding.inline",
     cssVar: "--sl-control-size-sm-padding-inline",
+    density: {
+      compact: "0.5rem",
+      spacious: "1rem",
+    },
     type: "dimension",
     tier: "semantic",
     description: "Small control inline padding.",
     value: {
       light: "0.75rem",
       dark: "0.75rem",
+    },
+  },
+  "control.touch": {
+    name: "control.touch",
+    type: "dimension",
+    tier: "primitive",
+    description: "44px minimum used as a coarse-pointer floor.",
+    value: {
+      light: "2.75rem",
+      dark: "2.75rem",
+    },
+  },
+  "control.touch.min": {
+    name: "control.touch.min",
+    cssVar: "--sl-control-touch-min",
+    type: "dimension",
+    tier: "semantic",
+    description: "Coarse-pointer floor applied to control heights.",
+    value: {
+      light: "2.75rem",
+      dark: "2.75rem",
     },
   },
   "duration.expressive": {
@@ -2624,6 +2789,226 @@ export const tokens = {
     value: {
       light: "3px",
       dark: "3px",
+    },
+  },
+  "font.family.sans": {
+    name: "font.family.sans",
+    type: "fontFamily",
+    tier: "primitive",
+    description: "System UI sans stack. No web font.",
+    value: {
+      light: "ui-sans-serif, system-ui, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\"",
+      dark: "ui-sans-serif, system-ui, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\"",
+    },
+  },
+  "font.feature.default": {
+    name: "font.feature.default",
+    type: "fontFeature",
+    tier: "primitive",
+    description: "Default OpenType features. Kerning, ligatures, contextual alternates.",
+    value: {
+      light: "\"kern\" 1, \"liga\" 1, \"calt\" 1",
+      dark: "\"kern\" 1, \"liga\" 1, \"calt\" 1",
+    },
+  },
+  "font.feature.none": {
+    name: "font.feature.none",
+    type: "fontFeature",
+    tier: "primitive",
+    description: "No OpenType feature settings.",
+    value: {
+      light: "normal",
+      dark: "normal",
+    },
+  },
+  "font.feature.tabular": {
+    name: "font.feature.tabular",
+    type: "fontFeature",
+    tier: "primitive",
+    description: "Tabular-number OpenType features.",
+    value: {
+      light: "\"tnum\" 1, \"kern\" 1, \"liga\" 1",
+      dark: "\"tnum\" 1, \"kern\" 1, \"liga\" 1",
+    },
+  },
+  "font.letter.normal": {
+    name: "font.letter.normal",
+    type: "letterSpacing",
+    tier: "primitive",
+    description: "Default letter-spacing.",
+    value: {
+      light: "0em",
+      dark: "0em",
+    },
+  },
+  "font.letter.tight": {
+    name: "font.letter.tight",
+    type: "letterSpacing",
+    tier: "primitive",
+    description: "Tight letter-spacing.",
+    value: {
+      light: "-0.02em",
+      dark: "-0.02em",
+    },
+  },
+  "font.letter.wide": {
+    name: "font.letter.wide",
+    type: "letterSpacing",
+    tier: "primitive",
+    description: "Wide letter-spacing.",
+    value: {
+      light: "0.04em",
+      dark: "0.04em",
+    },
+  },
+  "font.line.normal": {
+    name: "font.line.normal",
+    type: "number",
+    tier: "primitive",
+    description: "Default body line-height.",
+    value: {
+      light: "1.5",
+      dark: "1.5",
+    },
+  },
+  "font.line.snug": {
+    name: "font.line.snug",
+    type: "number",
+    tier: "primitive",
+    description: "Snug line-height.",
+    value: {
+      light: "1.375",
+      dark: "1.375",
+    },
+  },
+  "font.line.tight": {
+    name: "font.line.tight",
+    type: "number",
+    tier: "primitive",
+    description: "Tight line-height. Matches SlButton.",
+    value: {
+      light: "1.2",
+      dark: "1.2",
+    },
+  },
+  "font.numeric.proportional": {
+    name: "font.numeric.proportional",
+    type: "fontVariant",
+    tier: "primitive",
+    description: "Proportional numbers. font-variant-numeric.",
+    value: {
+      light: "proportional-nums",
+      dark: "proportional-nums",
+    },
+  },
+  "font.numeric.tabular": {
+    name: "font.numeric.tabular",
+    type: "fontVariant",
+    tier: "primitive",
+    description: "Tabular lining numbers. font-variant-numeric.",
+    value: {
+      light: "tabular-nums",
+      dark: "tabular-nums",
+    },
+  },
+  "font.size.2xl": {
+    name: "font.size.2xl",
+    type: "fontSize",
+    tier: "primitive",
+    description: "Fluid 2xl type. 24–32px from 320–1280px.",
+    value: {
+      light: "clamp(1.5rem, 1.3333rem + 0.8333vw, 2rem)",
+      dark: "clamp(1.5rem, 1.3333rem + 0.8333vw, 2rem)",
+    },
+  },
+  "font.size.3xl": {
+    name: "font.size.3xl",
+    type: "fontSize",
+    tier: "primitive",
+    description: "Fluid 3xl type. 30–40px from 320–1280px.",
+    value: {
+      light: "clamp(1.875rem, 1.6667rem + 1.0417vw, 2.5rem)",
+      dark: "clamp(1.875rem, 1.6667rem + 1.0417vw, 2.5rem)",
+    },
+  },
+  "font.size.lg": {
+    name: "font.size.lg",
+    type: "fontSize",
+    tier: "primitive",
+    description: "Fluid large type. 17–18px from 320–1280px.",
+    value: {
+      light: "clamp(1.0625rem, 1.0417rem + 0.1042vw, 1.125rem)",
+      dark: "clamp(1.0625rem, 1.0417rem + 0.1042vw, 1.125rem)",
+    },
+  },
+  "font.size.md": {
+    name: "font.size.md",
+    type: "fontSize",
+    tier: "primitive",
+    description: "Fluid body type. 15–16px from 320–1280px.",
+    value: {
+      light: "clamp(0.9375rem, 0.9167rem + 0.1042vw, 1rem)",
+      dark: "clamp(0.9375rem, 0.9167rem + 0.1042vw, 1rem)",
+    },
+  },
+  "font.size.sm": {
+    name: "font.size.sm",
+    type: "fontSize",
+    tier: "primitive",
+    description: "Fluid small type. 13–14px from 320–1280px.",
+    value: {
+      light: "clamp(0.8125rem, 0.7917rem + 0.1042vw, 0.875rem)",
+      dark: "clamp(0.8125rem, 0.7917rem + 0.1042vw, 0.875rem)",
+    },
+  },
+  "font.size.xl": {
+    name: "font.size.xl",
+    type: "fontSize",
+    tier: "primitive",
+    description: "Fluid extra-large type. 20–24px from 320–1280px.",
+    value: {
+      light: "clamp(1.25rem, 1.1667rem + 0.4167vw, 1.5rem)",
+      dark: "clamp(1.25rem, 1.1667rem + 0.4167vw, 1.5rem)",
+    },
+  },
+  "font.size.xs": {
+    name: "font.size.xs",
+    type: "fontSize",
+    tier: "primitive",
+    description: "Fluid extra-small type. 12–13px from 320–1280px.",
+    value: {
+      light: "clamp(0.75rem, 0.7292rem + 0.1042vw, 0.8125rem)",
+      dark: "clamp(0.75rem, 0.7292rem + 0.1042vw, 0.8125rem)",
+    },
+  },
+  "font.weight.bold": {
+    name: "font.weight.bold",
+    type: "fontWeight",
+    tier: "primitive",
+    description: "Bold font weight.",
+    value: {
+      light: "700",
+      dark: "700",
+    },
+  },
+  "font.weight.medium": {
+    name: "font.weight.medium",
+    type: "fontWeight",
+    tier: "primitive",
+    description: "Medium font weight.",
+    value: {
+      light: "500",
+      dark: "500",
+    },
+  },
+  "font.weight.regular": {
+    name: "font.weight.regular",
+    type: "fontWeight",
+    tier: "primitive",
+    description: "Regular font weight.",
+    value: {
+      light: "400",
+      dark: "400",
     },
   },
   "font.weight.semibold": {
@@ -3087,14 +3472,157 @@ export const tokens = {
       dark: "0.08",
     },
   },
+  "radius.lg": {
+    name: "radius.lg",
+    cssVar: "--sl-radius-lg",
+    density: {
+      compact: "0.5rem",
+      spacious: "1rem",
+    },
+    type: "dimension",
+    tier: "semantic",
+    description: "Large radius. 12px at comfortable density and roundness 1.",
+    value: {
+      light: "0.75rem",
+      dark: "0.75rem",
+    },
+  },
   "radius.md": {
     name: "radius.md",
+    cssVar: "--sl-radius-md",
+    density: {
+      compact: "0.25rem",
+      spacious: "0.75rem",
+    },
     type: "dimension",
-    tier: "primitive",
-    description: "Medium corner radius.",
+    tier: "semantic",
+    description: "Medium radius. 8px at comfortable density and roundness 1.",
     value: {
       light: "0.5rem",
       dark: "0.5rem",
+    },
+  },
+  "radius.none": {
+    name: "radius.none",
+    cssVar: "--sl-radius-none",
+    type: "dimension",
+    tier: "semantic",
+    description: "Sharp corner. Stays 0 at every roundness.",
+    value: {
+      light: "0px",
+      dark: "0px",
+    },
+  },
+  "radius.pill": {
+    name: "radius.pill",
+    cssVar: "--sl-radius-pill",
+    type: "dimension",
+    tier: "semantic",
+    description: "Pill radius. Capsule at roundness 1; sharp at 0.",
+    value: {
+      light: "999px",
+      dark: "999px",
+    },
+  },
+  "radius.scale.lg": {
+    name: "radius.scale.lg",
+    type: "dimension",
+    tier: "primitive",
+    description: "Large corner radius. 12px at roundness 1.",
+    value: {
+      light: "0.75rem",
+      dark: "0.75rem",
+    },
+  },
+  "radius.scale.md": {
+    name: "radius.scale.md",
+    type: "dimension",
+    tier: "primitive",
+    description: "Medium corner radius. 8px at roundness 1.",
+    value: {
+      light: "0.5rem",
+      dark: "0.5rem",
+    },
+  },
+  "radius.scale.none": {
+    name: "radius.scale.none",
+    type: "dimension",
+    tier: "primitive",
+    description: "Sharp corner. Roundness 0.",
+    value: {
+      light: "0px",
+      dark: "0px",
+    },
+  },
+  "radius.scale.pill": {
+    name: "radius.scale.pill",
+    type: "dimension",
+    tier: "primitive",
+    description: "Pill radius. Capsule at roundness 1.",
+    value: {
+      light: "999px",
+      dark: "999px",
+    },
+  },
+  "radius.scale.sm": {
+    name: "radius.scale.sm",
+    type: "dimension",
+    tier: "primitive",
+    description: "Small corner radius. 4px at roundness 1.",
+    value: {
+      light: "0.25rem",
+      dark: "0.25rem",
+    },
+  },
+  "radius.scale.xl": {
+    name: "radius.scale.xl",
+    type: "dimension",
+    tier: "primitive",
+    description: "Extra-large corner radius. 16px at roundness 1.",
+    value: {
+      light: "1rem",
+      dark: "1rem",
+    },
+  },
+  "radius.sm": {
+    name: "radius.sm",
+    cssVar: "--sl-radius-sm",
+    density: {
+      compact: "0px",
+      spacious: "0.5rem",
+    },
+    type: "dimension",
+    tier: "semantic",
+    description: "Small radius. 4px at comfortable density and roundness 1.",
+    value: {
+      light: "0.25rem",
+      dark: "0.25rem",
+    },
+  },
+  "radius.xl": {
+    name: "radius.xl",
+    cssVar: "--sl-radius-xl",
+    density: {
+      compact: "0.75rem",
+      spacious: "1rem",
+    },
+    type: "dimension",
+    tier: "semantic",
+    description: "Extra-large radius. 16px at comfortable density and roundness 1.",
+    value: {
+      light: "1rem",
+      dark: "1rem",
+    },
+  },
+  "roundness.amount": {
+    name: "roundness.amount",
+    cssVar: "--sl-roundness",
+    type: "number",
+    tier: "semantic",
+    description: "Unitless 0–1 corner scale compiled as --sl-roundness. 0 is sharp; 1 is the designed radius. Set on any subtree.",
+    value: {
+      light: "1",
+      dark: "1",
     },
   },
   "saturate.glass": {
@@ -3187,11 +3715,61 @@ export const tokens = {
       dark: "2px",
     },
   },
+  "space.0": {
+    name: "space.0",
+    type: "dimension",
+    tier: "primitive",
+    description: "Space 0. 4px grid.",
+    value: {
+      light: "0px",
+      dark: "0px",
+    },
+  },
+  "space.1": {
+    name: "space.1",
+    type: "dimension",
+    tier: "primitive",
+    description: "Space 1. 4px.",
+    value: {
+      light: "0.25rem",
+      dark: "0.25rem",
+    },
+  },
+  "space.10": {
+    name: "space.10",
+    type: "dimension",
+    tier: "primitive",
+    description: "Space 10. 40px.",
+    value: {
+      light: "2.5rem",
+      dark: "2.5rem",
+    },
+  },
+  "space.12": {
+    name: "space.12",
+    type: "dimension",
+    tier: "primitive",
+    description: "Space 12. 48px.",
+    value: {
+      light: "3rem",
+      dark: "3rem",
+    },
+  },
+  "space.16": {
+    name: "space.16",
+    type: "dimension",
+    tier: "primitive",
+    description: "Space 16. 64px.",
+    value: {
+      light: "4rem",
+      dark: "4rem",
+    },
+  },
   "space.2": {
     name: "space.2",
     type: "dimension",
     tier: "primitive",
-    description: "Space 2.",
+    description: "Space 2. 8px.",
     value: {
       light: "0.5rem",
       dark: "0.5rem",
@@ -3201,27 +3779,17 @@ export const tokens = {
     name: "space.3",
     type: "dimension",
     tier: "primitive",
-    description: "Space 3.",
+    description: "Space 3. 12px.",
     value: {
       light: "0.75rem",
       dark: "0.75rem",
-    },
-  },
-  "space.3-5": {
-    name: "space.3-5",
-    type: "dimension",
-    tier: "primitive",
-    description: "Space 3.5.",
-    value: {
-      light: "0.875rem",
-      dark: "0.875rem",
     },
   },
   "space.4": {
     name: "space.4",
     type: "dimension",
     tier: "primitive",
-    description: "Space 4.",
+    description: "Space 4. 16px.",
     value: {
       light: "1rem",
       dark: "1rem",
@@ -3231,10 +3799,195 @@ export const tokens = {
     name: "space.5",
     type: "dimension",
     tier: "primitive",
-    description: "Space 5.",
+    description: "Space 5. 20px.",
     value: {
       light: "1.25rem",
       dark: "1.25rem",
+    },
+  },
+  "space.6": {
+    name: "space.6",
+    type: "dimension",
+    tier: "primitive",
+    description: "Space 6. 24px.",
+    value: {
+      light: "1.5rem",
+      dark: "1.5rem",
+    },
+  },
+  "space.8": {
+    name: "space.8",
+    type: "dimension",
+    tier: "primitive",
+    description: "Space 8. 32px.",
+    value: {
+      light: "2rem",
+      dark: "2rem",
+    },
+  },
+  "space.gap.lg": {
+    name: "space.gap.lg",
+    cssVar: "--sl-space-gap-lg",
+    density: {
+      compact: "0.75rem",
+      spacious: "1.25rem",
+    },
+    type: "dimension",
+    tier: "semantic",
+    description: "Large gap. 16px at comfortable density.",
+    value: {
+      light: "1rem",
+      dark: "1rem",
+    },
+  },
+  "space.gap.md": {
+    name: "space.gap.md",
+    cssVar: "--sl-space-gap-md",
+    density: {
+      compact: "0.5rem",
+      spacious: "1rem",
+    },
+    type: "dimension",
+    tier: "semantic",
+    description: "Medium gap. 12px at comfortable density.",
+    value: {
+      light: "0.75rem",
+      dark: "0.75rem",
+    },
+  },
+  "space.gap.sm": {
+    name: "space.gap.sm",
+    cssVar: "--sl-space-gap-sm",
+    density: {
+      compact: "0.25rem",
+      spacious: "0.75rem",
+    },
+    type: "dimension",
+    tier: "semantic",
+    description: "Small gap. 8px at comfortable density.",
+    value: {
+      light: "0.5rem",
+      dark: "0.5rem",
+    },
+  },
+  "space.gap.xs": {
+    name: "space.gap.xs",
+    cssVar: "--sl-space-gap-xs",
+    density: {
+      compact: "0px",
+      spacious: "0.5rem",
+    },
+    type: "dimension",
+    tier: "semantic",
+    description: "Extra-small gap. 4px at comfortable density.",
+    value: {
+      light: "0.25rem",
+      dark: "0.25rem",
+    },
+  },
+  "space.inset.lg": {
+    name: "space.inset.lg",
+    cssVar: "--sl-space-inset-lg",
+    density: {
+      compact: "1rem",
+      spacious: "1.5rem",
+    },
+    type: "dimension",
+    tier: "semantic",
+    description: "Large inset. 20px at comfortable density.",
+    value: {
+      light: "1.25rem",
+      dark: "1.25rem",
+    },
+  },
+  "space.inset.md": {
+    name: "space.inset.md",
+    cssVar: "--sl-space-inset-md",
+    density: {
+      compact: "0.75rem",
+      spacious: "1.25rem",
+    },
+    type: "dimension",
+    tier: "semantic",
+    description: "Medium inset. 16px at comfortable density.",
+    value: {
+      light: "1rem",
+      dark: "1rem",
+    },
+  },
+  "space.inset.sm": {
+    name: "space.inset.sm",
+    cssVar: "--sl-space-inset-sm",
+    density: {
+      compact: "0.5rem",
+      spacious: "1rem",
+    },
+    type: "dimension",
+    tier: "semantic",
+    description: "Small inset. 12px at comfortable density.",
+    value: {
+      light: "0.75rem",
+      dark: "0.75rem",
+    },
+  },
+  "space.inset.xs": {
+    name: "space.inset.xs",
+    cssVar: "--sl-space-inset-xs",
+    density: {
+      compact: "0.25rem",
+      spacious: "0.75rem",
+    },
+    type: "dimension",
+    tier: "semantic",
+    description: "Extra-small inset. 8px at comfortable density.",
+    value: {
+      light: "0.5rem",
+      dark: "0.5rem",
+    },
+  },
+  "space.stack.lg": {
+    name: "space.stack.lg",
+    cssVar: "--sl-space-stack-lg",
+    density: {
+      compact: "1rem",
+      spacious: "2rem",
+    },
+    type: "dimension",
+    tier: "semantic",
+    description: "Large stack gap. 24px at comfortable density.",
+    value: {
+      light: "1.5rem",
+      dark: "1.5rem",
+    },
+  },
+  "space.stack.md": {
+    name: "space.stack.md",
+    cssVar: "--sl-space-stack-md",
+    density: {
+      compact: "0.75rem",
+      spacious: "1.25rem",
+    },
+    type: "dimension",
+    tier: "semantic",
+    description: "Medium stack gap. 16px at comfortable density.",
+    value: {
+      light: "1rem",
+      dark: "1rem",
+    },
+  },
+  "space.stack.sm": {
+    name: "space.stack.sm",
+    cssVar: "--sl-space-stack-sm",
+    density: {
+      compact: "0.25rem",
+      spacious: "0.75rem",
+    },
+    type: "dimension",
+    tier: "semantic",
+    description: "Small stack gap. 8px at comfortable density.",
+    value: {
+      light: "0.5rem",
+      dark: "0.5rem",
     },
   },
   "spring.bouncy": {
@@ -3562,6 +4315,248 @@ export const tokens = {
     value: {
       light: "#b45309",
       dark: "#fbbf24",
+    },
+  },
+  "type.family.sans": {
+    name: "type.family.sans",
+    cssVar: "--sl-type-family-sans",
+    type: "fontFamily",
+    tier: "semantic",
+    description: "System UI sans stack. No web font.",
+    value: {
+      light: "ui-sans-serif, system-ui, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\"",
+      dark: "ui-sans-serif, system-ui, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\"",
+    },
+  },
+  "type.feature.default": {
+    name: "type.feature.default",
+    cssVar: "--sl-type-feature-default",
+    type: "fontFeature",
+    tier: "semantic",
+    description: "Default OpenType features.",
+    value: {
+      light: "\"kern\" 1, \"liga\" 1, \"calt\" 1",
+      dark: "\"kern\" 1, \"liga\" 1, \"calt\" 1",
+    },
+  },
+  "type.feature.tabular": {
+    name: "type.feature.tabular",
+    cssVar: "--sl-type-feature-tabular",
+    type: "fontFeature",
+    tier: "semantic",
+    description: "Tabular-number OpenType features.",
+    value: {
+      light: "\"tnum\" 1, \"kern\" 1, \"liga\" 1",
+      dark: "\"tnum\" 1, \"kern\" 1, \"liga\" 1",
+    },
+  },
+  "type.letter.normal": {
+    name: "type.letter.normal",
+    cssVar: "--sl-type-letter-normal",
+    type: "letterSpacing",
+    tier: "semantic",
+    description: "Default letter-spacing.",
+    value: {
+      light: "0em",
+      dark: "0em",
+    },
+  },
+  "type.letter.tight": {
+    name: "type.letter.tight",
+    cssVar: "--sl-type-letter-tight",
+    type: "letterSpacing",
+    tier: "semantic",
+    description: "Tight letter-spacing.",
+    value: {
+      light: "-0.02em",
+      dark: "-0.02em",
+    },
+  },
+  "type.letter.wide": {
+    name: "type.letter.wide",
+    cssVar: "--sl-type-letter-wide",
+    type: "letterSpacing",
+    tier: "semantic",
+    description: "Wide letter-spacing.",
+    value: {
+      light: "0.04em",
+      dark: "0.04em",
+    },
+  },
+  "type.line.normal": {
+    name: "type.line.normal",
+    cssVar: "--sl-type-line-normal",
+    type: "number",
+    tier: "semantic",
+    description: "Default body line-height.",
+    value: {
+      light: "1.5",
+      dark: "1.5",
+    },
+  },
+  "type.line.snug": {
+    name: "type.line.snug",
+    cssVar: "--sl-type-line-snug",
+    type: "number",
+    tier: "semantic",
+    description: "Snug line-height.",
+    value: {
+      light: "1.375",
+      dark: "1.375",
+    },
+  },
+  "type.line.tight": {
+    name: "type.line.tight",
+    cssVar: "--sl-type-line-tight",
+    type: "number",
+    tier: "semantic",
+    description: "Tight line-height.",
+    value: {
+      light: "1.2",
+      dark: "1.2",
+    },
+  },
+  "type.numeric.proportional": {
+    name: "type.numeric.proportional",
+    cssVar: "--sl-type-numeric-proportional",
+    type: "fontVariant",
+    tier: "semantic",
+    description: "Proportional numbers. Apply as font-variant-numeric.",
+    value: {
+      light: "proportional-nums",
+      dark: "proportional-nums",
+    },
+  },
+  "type.numeric.tabular": {
+    name: "type.numeric.tabular",
+    cssVar: "--sl-type-numeric-tabular",
+    type: "fontVariant",
+    tier: "semantic",
+    description: "Tabular lining numbers. Apply as font-variant-numeric.",
+    value: {
+      light: "tabular-nums",
+      dark: "tabular-nums",
+    },
+  },
+  "type.size.2xl": {
+    name: "type.size.2xl",
+    cssVar: "--sl-type-size-2xl",
+    type: "fontSize",
+    tier: "semantic",
+    description: "Fluid 2xl type.",
+    value: {
+      light: "clamp(1.5rem, 1.3333rem + 0.8333vw, 2rem)",
+      dark: "clamp(1.5rem, 1.3333rem + 0.8333vw, 2rem)",
+    },
+  },
+  "type.size.3xl": {
+    name: "type.size.3xl",
+    cssVar: "--sl-type-size-3xl",
+    type: "fontSize",
+    tier: "semantic",
+    description: "Fluid 3xl type.",
+    value: {
+      light: "clamp(1.875rem, 1.6667rem + 1.0417vw, 2.5rem)",
+      dark: "clamp(1.875rem, 1.6667rem + 1.0417vw, 2.5rem)",
+    },
+  },
+  "type.size.lg": {
+    name: "type.size.lg",
+    cssVar: "--sl-type-size-lg",
+    type: "fontSize",
+    tier: "semantic",
+    description: "Fluid large type.",
+    value: {
+      light: "clamp(1.0625rem, 1.0417rem + 0.1042vw, 1.125rem)",
+      dark: "clamp(1.0625rem, 1.0417rem + 0.1042vw, 1.125rem)",
+    },
+  },
+  "type.size.md": {
+    name: "type.size.md",
+    cssVar: "--sl-type-size-md",
+    type: "fontSize",
+    tier: "semantic",
+    description: "Fluid body type.",
+    value: {
+      light: "clamp(0.9375rem, 0.9167rem + 0.1042vw, 1rem)",
+      dark: "clamp(0.9375rem, 0.9167rem + 0.1042vw, 1rem)",
+    },
+  },
+  "type.size.sm": {
+    name: "type.size.sm",
+    cssVar: "--sl-type-size-sm",
+    type: "fontSize",
+    tier: "semantic",
+    description: "Fluid small type.",
+    value: {
+      light: "clamp(0.8125rem, 0.7917rem + 0.1042vw, 0.875rem)",
+      dark: "clamp(0.8125rem, 0.7917rem + 0.1042vw, 0.875rem)",
+    },
+  },
+  "type.size.xl": {
+    name: "type.size.xl",
+    cssVar: "--sl-type-size-xl",
+    type: "fontSize",
+    tier: "semantic",
+    description: "Fluid extra-large type.",
+    value: {
+      light: "clamp(1.25rem, 1.1667rem + 0.4167vw, 1.5rem)",
+      dark: "clamp(1.25rem, 1.1667rem + 0.4167vw, 1.5rem)",
+    },
+  },
+  "type.size.xs": {
+    name: "type.size.xs",
+    cssVar: "--sl-type-size-xs",
+    type: "fontSize",
+    tier: "semantic",
+    description: "Fluid extra-small type.",
+    value: {
+      light: "clamp(0.75rem, 0.7292rem + 0.1042vw, 0.8125rem)",
+      dark: "clamp(0.75rem, 0.7292rem + 0.1042vw, 0.8125rem)",
+    },
+  },
+  "type.weight.bold": {
+    name: "type.weight.bold",
+    cssVar: "--sl-type-weight-bold",
+    type: "fontWeight",
+    tier: "semantic",
+    description: "Bold font weight.",
+    value: {
+      light: "700",
+      dark: "700",
+    },
+  },
+  "type.weight.medium": {
+    name: "type.weight.medium",
+    cssVar: "--sl-type-weight-medium",
+    type: "fontWeight",
+    tier: "semantic",
+    description: "Medium font weight.",
+    value: {
+      light: "500",
+      dark: "500",
+    },
+  },
+  "type.weight.regular": {
+    name: "type.weight.regular",
+    cssVar: "--sl-type-weight-regular",
+    type: "fontWeight",
+    tier: "semantic",
+    description: "Regular font weight.",
+    value: {
+      light: "400",
+      dark: "400",
+    },
+  },
+  "type.weight.semibold": {
+    name: "type.weight.semibold",
+    cssVar: "--sl-type-weight-semibold",
+    type: "fontWeight",
+    tier: "semantic",
+    description: "Semibold font weight.",
+    value: {
+      light: "600",
+      dark: "600",
     },
   },
 } as const

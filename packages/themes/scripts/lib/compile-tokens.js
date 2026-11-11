@@ -27,9 +27,14 @@ export const TOKEN_SCHEMA_VERSION = '1.0.0'
 export const TOKEN_PACKAGE_NAME = '@slop-ui/themes'
 export const DEFAULT_THEME_NAME = 'default'
 export const TOKEN_MODES = ['light', 'dark']
+export const TOKEN_DENSITIES = ['compact', 'comfortable', 'spacious']
+export const DEFAULT_DENSITY = 'comfortable'
 export const CSS_PREFIX = '--sl-'
 export const THEME_ATTRIBUTE = 'data-sl-theme'
 export const MODE_ATTRIBUTE = 'data-sl-mode'
+export const DENSITY_ATTRIBUTE = 'data-sl-density'
+export const ROUNDNESS_TOKEN_NAME = 'roundness.amount'
+export const ROUNDNESS_VAR = `${CSS_PREFIX}roundness`
 
 const ALIAS = /^\{([a-z0-9]+(?:\.[a-z0-9-]+)*)\}$/i
 const TOKEN_NAME = /^[a-z][a-z0-9]*(?:\.[a-z0-9][a-z0-9-]*)+$/
@@ -40,9 +45,21 @@ export const TOKEN_SOURCES = [
   { file: 'primitives.json', tier: 'primitive' },
   { file: 'semantic.json', tier: 'semantic' },
   { file: 'semantic.dark.json', tier: 'semantic', overlayMode: 'dark' },
+  {
+    file: 'semantic.compact.json',
+    tier: 'semantic',
+    overlayDensity: 'compact',
+  },
+  {
+    file: 'semantic.spacious.json',
+    tier: 'semantic',
+    overlayDensity: 'spacious',
+  },
 ]
 
 export function cssVariableName(tokenName) {
+  // Public knob name is --sl-roundness (0 sharp → 1 designed / pill).
+  if (tokenName === ROUNDNESS_TOKEN_NAME) return ROUNDNESS_VAR
   return `${CSS_PREFIX}${tokenName.replaceAll('.', '-')}`
 }
 
@@ -86,6 +103,10 @@ function readReducedMotion(node) {
   return readExtensionString(node, 'reducedMotion')
 }
 
+function readTouchMin(node) {
+  return readExtensionString(node, 'touchMin')
+}
+
 function parseAlias(value) {
   const match = value.match(ALIAS)
   return match ? match[1] : null
@@ -120,6 +141,7 @@ function flattenTokens(node, path, file) {
       authored: authoredValue(node.$value, `${file} token "${name}"`),
       highDpr: readHighDpr(node),
       reducedMotion: readReducedMotion(node),
+      touchMin: readTouchMin(node),
     })
     // A rest-state token may nest interaction states (bg + bg.hover).
     for (const [key, child] of Object.entries(node)) {
@@ -273,6 +295,28 @@ export function compileTokenDocuments(documents) {
         continue
       }
 
+      if (document.overlayDensity) {
+        const existing = tokensByName.get(entry.name)
+        if (!existing) {
+          throw new Error(
+            `${document.file}: overlay token "${entry.name}" has no base token`,
+          )
+        }
+        if (existing.tier !== 'semantic' || document.tier !== 'semantic') {
+          throw new Error(
+            `${document.file}: only semantic tokens may have density overlays`,
+          )
+        }
+        if (entry.type !== existing.type) {
+          throw new Error(
+            `${document.file}: overlay token "${entry.name}" changes $type`,
+          )
+        }
+        existing.densityAuthored = existing.densityAuthored ?? {}
+        existing.densityAuthored[document.overlayDensity] = entry.authored
+        continue
+      }
+
       if (tokensByName.has(entry.name)) {
         throw new Error(`${document.file}: duplicate token "${entry.name}"`)
       }
@@ -284,6 +328,8 @@ export function compileTokenDocuments(documents) {
         authored: { light: entry.authored, dark: entry.authored },
         highDpr: entry.highDpr,
         reducedMotion: entry.reducedMotion,
+        touchMin: entry.touchMin,
+        densityAuthored: undefined,
       })
     }
   }
@@ -320,6 +366,25 @@ export function compileTokenDocuments(documents) {
       if (token.reducedMotion) {
         compiled.reducedMotion = token.reducedMotion
       }
+      if (token.touchMin) {
+        compiled.touchMin = token.touchMin
+      }
+      if (token.densityAuthored) {
+        const density = {}
+        for (const [name, authored] of Object.entries(token.densityAuthored)) {
+          density[name] = serializeComposite(
+            token.type,
+            resolveTokenValue(
+              tokensByName,
+              authored,
+              'light',
+              [`${token.name}:${name}`],
+              token.name,
+            ),
+          )
+        }
+        compiled.density = density
+      }
       if (aliases.light || aliases.dark) {
         compiled.aliases = {
           light: aliases.light,
@@ -347,8 +412,33 @@ function durationTokens(tokens) {
   return semanticTokens(tokens).filter((token) => token.type === 'duration')
 }
 
-function nonDurationSemanticTokens(tokens) {
-  return semanticTokens(tokens).filter((token) => token.type !== 'duration')
+export function usesRoundness(token) {
+  if (token.tier !== 'semantic' || token.type !== 'dimension') return false
+  if (token.name === ROUNDNESS_TOKEN_NAME) return false
+  return (
+    token.name.startsWith('radius.') ||
+    token.name.endsWith('.radius') ||
+    token.name.includes('.radius.')
+  )
+}
+
+function roundnessTokens(tokens) {
+  return semanticTokens(tokens).filter(usesRoundness)
+}
+
+function restSemanticTokens(tokens) {
+  return semanticTokens(tokens).filter(
+    (token) => token.type !== 'duration' && !usesRoundness(token),
+  )
+}
+
+function densitySensitiveTokens(tokens) {
+  return semanticTokens(tokens).filter((token) => token.density)
+}
+
+export function densityCssValue(token, density) {
+  if (density === DEFAULT_DENSITY) return token.value.light
+  return token.density?.[density] ?? token.value.light
 }
 
 const MOTION_INTENSITY_VAR = `${CSS_PREFIX}motion-intensity`
@@ -359,7 +449,32 @@ function cssRuntimeValue(token, value) {
     // subtree without rewriting each --sl-motion-duration-* property.
     return `calc(${value} * var(${MOTION_INTENSITY_VAR}, 1))`
   }
+  if (usesRoundness(token)) {
+    // Roundness is unitless 0–1 so a nested --sl-roundness re-evaluates every
+    // radius without rewriting each property. 0 is sharp; 1 is the designed
+    // radius (pill for radius.pill).
+    return `calc(${value} * var(${ROUNDNESS_VAR}, 1))`
+  }
   return value
+}
+
+export function dimensionToPx(value) {
+  const match = String(value)
+    .trim()
+    .match(/^(-?[\d.]+)(px|rem)$/i)
+  if (!match) return null
+  const amount = Number(match[1])
+  if (!Number.isFinite(amount)) return null
+  return match[2].toLowerCase() === 'rem' ? amount * 16 : amount
+}
+
+export function maxCssDimension(value, floor) {
+  const valuePx = dimensionToPx(value)
+  const floorPx = dimensionToPx(floor)
+  if (valuePx == null || floorPx == null) {
+    return `max(${value}, ${floor})`
+  }
+  return valuePx >= floorPx ? value : floor
 }
 
 function renderCustomProperties(tokens, mode, indent = '    ') {
@@ -442,9 +557,87 @@ function renderReducedMotionProperties(tokens, indent = '    ') {
     .join('\n')
 }
 
+function densitySelector(density) {
+  return `:where([${DENSITY_ATTRIBUTE}='${density}'])`
+}
+
+function renderDensityProperties(tokens, density, indent = '    ') {
+  return tokens
+    .map((token) => {
+      const value = densityCssValue(token, density)
+      return `${indent}${token.cssVar}: ${cssRuntimeValue(token, value)};`
+    })
+    .join('\n')
+}
+
+function renderDensityCss(tokens) {
+  const sensitive = densitySensitiveTokens(tokens)
+  if (sensitive.length === 0) return ''
+  const rest = sensitive.filter((token) => !usesRoundness(token))
+  const round = sensitive.filter(usesRoundness)
+  return TOKEN_DENSITIES.map((density) => {
+    const selector = densitySelector(density)
+    const restVars = renderDensityProperties(rest, density)
+    const roundVars = renderDensityProperties(round, density)
+    const restBlock = restVars
+      ? `
+  ${selector} {
+${restVars}
+  }
+`
+      : ''
+    const roundBlock = roundVars
+      ? `
+  ${withDescendants(selector)} {
+${roundVars}
+  }
+`
+      : ''
+    return `${restBlock}${roundBlock}`
+  }).join('')
+}
+
+function renderCoarsePointerCss(tokens) {
+  const touchTokens = semanticTokens(tokens).filter(
+    (token) => token.touchMin && token.cssVar,
+  )
+  if (touchTokens.length === 0) return ''
+
+  const unsetHost = `${CSS_HOST}:not([${DENSITY_ATTRIBUTE}]):not(:where([${DENSITY_ATTRIBUTE}] *))`
+
+  function floorBlock(density, indent = '    ') {
+    return touchTokens
+      .map((token) => {
+        const value = densityCssValue(token, density)
+        const floored = maxCssDimension(value, token.touchMin)
+        return `${indent}${token.cssVar}: ${floored};`
+      })
+      .join('\n')
+  }
+
+  const unsetVars = floorBlock(DEFAULT_DENSITY, '      ')
+  const densityBlocks = TOKEN_DENSITIES.map((density) => {
+    const selector = densitySelector(density)
+    return `
+    ${selector} {
+${floorBlock(density, '      ')}
+    }
+`
+  }).join('')
+
+  return `
+  @media (pointer: coarse) {
+    ${unsetHost} {
+${unsetVars}
+    }
+${densityBlocks}  }
+`
+}
+
 export function renderTokenCss(tokens) {
-  const rest = nonDurationSemanticTokens(tokens)
+  const rest = restSemanticTokens(tokens)
   const durations = durationTokens(tokens)
+  const radii = roundnessTokens(tokens)
   const lightVars = renderCustomProperties(rest, 'light')
   const darkVars = renderCustomProperties(rest, 'dark')
   const nestedDarkVars = renderCustomProperties(rest, 'dark', '      ')
@@ -455,6 +648,11 @@ export function renderTokenCss(tokens) {
     'dark',
     '      ',
   )
+  const lightRadii = renderCustomProperties(radii, 'light')
+  const darkRadii = renderCustomProperties(radii, 'dark')
+  const nestedDarkRadii = renderCustomProperties(radii, 'dark', '      ')
+  const densityBlock = renderDensityCss(tokens)
+  const coarseBlock = renderCoarsePointerCss(tokens)
   const forcedVars = renderForcedColors(tokens)
   const highDprVars = renderHighDprProperties(tokens, '      ')
   const highDprBlock = highDprVars
@@ -466,8 +664,16 @@ ${highDprVars}
   }
 `
     : ''
+  const descendantLight = [lightDurations, lightRadii]
+    .filter(Boolean)
+    .join('\n')
+  const descendantDark = [darkDurations, darkRadii].filter(Boolean).join('\n')
+  const nestedDescendantDark = [nestedDarkDurations, nestedDarkRadii]
+    .filter(Boolean)
+    .join('\n')
   const reducedRest = renderReducedMotionProperties(rest, '      ')
   const reducedDurations = renderReducedMotionProperties(durations, '      ')
+  const reducedRadii = renderReducedMotionProperties(radii, '      ')
   const reducedRestBlock = reducedRest
     ? `
     ${CSS_HOST} {
@@ -475,15 +681,18 @@ ${reducedRest}
     }
 `
     : ''
-  const reducedDurationBlock = reducedDurations
+  const reducedDescendant = [reducedDurations, reducedRadii]
+    .filter(Boolean)
+    .join('\n')
+  const reducedDurationBlock = reducedDescendant
     ? `
     ${withDescendants(CSS_HOST)} {
-${reducedDurations}
+${reducedDescendant}
     }
 `
     : ''
   const reducedMotionBlock =
-    reducedRest || reducedDurations
+    reducedRest || reducedDescendant
       ? `
   @media (prefers-reduced-motion: reduce) {${reducedRestBlock}${reducedDurationBlock}  }
 `
@@ -492,8 +701,10 @@ ${reducedDurations}
  * Generated from packages/themes/tokens. Do not edit.
  * Semantic custom properties use --sl-<role>-<part>-<state>.
  * Unset data-sl-mode follows prefers-color-scheme; data-sl-mode overrides
- * on any subtree, including nested theme hosts. No JavaScript is required
- * to pick the initial mode, so SSR does not flash the opposite palette.
+ * on any subtree, including nested theme hosts. Unset data-sl-density is
+ * comfortable; data-sl-density and --sl-roundness nest the same way.
+ * No JavaScript is required to pick the initial mode, so SSR does not
+ * flash the opposite palette.
  */
 @layer slop-ui-theme {
   ${SYSTEM_HOST} {
@@ -501,7 +712,7 @@ ${lightVars}
   }
 
   ${withDescendants(SYSTEM_HOST)} {
-${lightDurations}
+${descendantLight}
   }
 
   @media (prefers-color-scheme: dark) {
@@ -510,7 +721,7 @@ ${nestedDarkVars}
     }
 
     ${withDescendants(SYSTEM_HOST)} {
-${nestedDarkDurations}
+${nestedDescendantDark}
     }
   }
 
@@ -520,7 +731,7 @@ ${lightVars}
   }
 
   ${withDescendants(":where([data-sl-mode='light'])")} {
-${lightDurations}
+${descendantLight}
   }
 
   :where([data-sl-mode='dark']) {
@@ -529,13 +740,13 @@ ${darkVars}
   }
 
   ${withDescendants(":where([data-sl-mode='dark'])")} {
-${darkDurations}
+${descendantDark}
   }
 
   :where(.slop-theme):not([data-sl-mode]):not(:where([data-sl-mode] *)) {
     color-scheme: light dark;
   }
-${highDprBlock}${reducedMotionBlock}
+${densityBlock}${coarseBlock}${highDprBlock}${reducedMotionBlock}
   @media (forced-colors: active) {
     ${CSS_HOST} {
 ${forcedVars}
@@ -552,6 +763,12 @@ function renderTokenObject(token) {
     token.highDpr ? `    highDpr: ${JSON.stringify(token.highDpr)},` : null,
     token.reducedMotion
       ? `    reducedMotion: ${JSON.stringify(token.reducedMotion)},`
+      : null,
+    token.touchMin ? `    touchMin: ${JSON.stringify(token.touchMin)},` : null,
+    token.density
+      ? `    density: {\n${Object.entries(token.density)
+          .map(([name, value]) => `      ${name}: ${JSON.stringify(value)},`)
+          .join('\n')}\n    },`
       : null,
     `    type: ${JSON.stringify(token.type)},`,
     `    tier: ${JSON.stringify(token.tier)},`,
@@ -591,9 +808,12 @@ export function renderTokenManifest(tokens) {
     package: TOKEN_PACKAGE_NAME,
     theme: DEFAULT_THEME_NAME,
     modes: [...TOKEN_MODES],
+    densities: [...TOKEN_DENSITIES],
+    defaultDensity: DEFAULT_DENSITY,
     attributes: {
       theme: THEME_ATTRIBUTE,
       mode: MODE_ATTRIBUTE,
+      density: DENSITY_ATTRIBUTE,
     },
     cssPrefix: CSS_PREFIX,
     tokens,
@@ -654,10 +874,14 @@ export function renderTokenDocs(tokens) {
     'Compiled from DTCG JSON in `@slop-ui/themes`. Semantic tokens are the',
     'public CSS custom properties (`--sl-<role>-<part>-<state>`). Primitive',
     'tokens are aliases for those values and are not published as CSS.',
-    'Override a semantic custom property on any subtree; `data-sl-theme` and',
-    '`data-sl-mode` nest. Unset `data-sl-mode` follows `prefers-color-scheme`.',
+    'Override a semantic custom property on any subtree; `data-sl-theme`,',
+    '`data-sl-mode`, and `data-sl-density` nest. Unset `data-sl-mode` follows',
+    '`prefers-color-scheme`. Unset `data-sl-density` is `comfortable`.',
+    '`--sl-roundness` (0–1) scales every radius token from sharp to its',
+    'designed value (pill for `radius.pill`).',
     '',
-    'Default theme: `default`. Modes: `light`, `dark`.',
+    'Default theme: `default`. Modes: `light`, `dark`. Densities: `compact`,',
+    '`comfortable` (default), `spacious`.',
     '',
     'See [design tokens](../architecture/tokens.md) and',
     '[ADR 0007](../adr/0007-token-pipeline.md).',
@@ -737,6 +961,7 @@ export async function loadTokenDocuments(tokensDir, sources = TOKEN_SOURCES) {
       file: source.file,
       tier: source.tier,
       overlayMode: source.overlayMode,
+      overlayDensity: source.overlayDensity,
       tree,
     })
   }

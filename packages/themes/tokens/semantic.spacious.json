@@ -1,0 +1,160 @@
+{
+  "space": {
+    "gap": {
+      "xs": {
+        "$type": "dimension",
+        "$value": "{space.2}",
+        "$description": "Extra-small gap at spacious density."
+      },
+      "sm": {
+        "$type": "dimension",
+        "$value": "{space.3}",
+        "$description": "Small gap at spacious density."
+      },
+      "md": {
+        "$type": "dimension",
+        "$value": "{space.4}",
+        "$description": "Medium gap at spacious density."
+      },
+      "lg": {
+        "$type": "dimension",
+        "$value": "{space.5}",
+        "$description": "Large gap at spacious density."
+      }
+    },
+    "inset": {
+      "xs": {
+        "$type": "dimension",
+        "$value": "{space.3}",
+        "$description": "Extra-small inset at spacious density."
+      },
+      "sm": {
+        "$type": "dimension",
+        "$value": "{space.4}",
+        "$description": "Small inset at spacious density."
+      },
+      "md": {
+        "$type": "dimension",
+        "$value": "{space.5}",
+        "$description": "Medium inset at spacious density."
+      },
+      "lg": {
+        "$type": "dimension",
+        "$value": "{space.6}",
+        "$description": "Large inset at spacious density."
+      }
+    },
+    "stack": {
+      "sm": {
+        "$type": "dimension",
+        "$value": "{space.3}",
+        "$description": "Small stack gap at spacious density."
+      },
+      "md": {
+        "$type": "dimension",
+        "$value": "{space.5}",
+        "$description": "Medium stack gap at spacious density."
+      },
+      "lg": {
+        "$type": "dimension",
+        "$value": "{space.8}",
+        "$description": "Large stack gap at spacious density."
+      }
+    }
+  },
+  "radius": {
+    "sm": {
+      "$type": "dimension",
+      "$value": "{radius.scale.md}",
+      "$description": "Small radius at spacious density."
+    },
+    "md": {
+      "$type": "dimension",
+      "$value": "{radius.scale.lg}",
+      "$description": "Medium radius at spacious density."
+    },
+    "lg": {
+      "$type": "dimension",
+      "$value": "{radius.scale.xl}",
+      "$description": "Large radius at spacious density."
+    },
+    "xl": {
+      "$type": "dimension",
+      "$value": "{radius.scale.xl}",
+      "$description": "Extra-large radius at spacious density."
+    }
+  },
+  "action": {
+    "gap": {
+      "$type": "dimension",
+      "$value": "{space.3}",
+      "$description": "Action gap at spacious density."
+    },
+    "radius": {
+      "$type": "dimension",
+      "$value": "{radius.scale.lg}",
+      "$description": "Action radius at spacious density."
+    }
+  },
+  "control": {
+    "size": {
+      "sm": {
+        "min": {
+          "$type": "dimension",
+          "$value": "{control.height.36}",
+          "$description": "Small control height at spacious density. 36px."
+        },
+        "padding": {
+          "block": {
+            "$type": "dimension",
+            "$value": "{space.3}",
+            "$description": "Small control block padding at spacious density."
+          },
+          "inline": {
+            "$type": "dimension",
+            "$value": "{space.4}",
+            "$description": "Small control inline padding at spacious density."
+          }
+        }
+      },
+      "md": {
+        "min": {
+          "$type": "dimension",
+          "$value": "{control.height.48}",
+          "$description": "Medium control height at spacious density. 48px."
+        },
+        "padding": {
+          "block": {
+            "$type": "dimension",
+            "$value": "{space.4}",
+            "$description": "Medium control block padding at spacious density."
+          },
+          "inline": {
+            "$type": "dimension",
+            "$value": "{space.5}",
+            "$description": "Medium control inline padding at spacious density."
+          }
+        }
+      },
+      "lg": {
+        "min": {
+          "$type": "dimension",
+          "$value": "{control.height.48}",
+          "$description": "Large control height at spacious density. 48px (scale cap)."
+        },
+        "padding": {
+          "block": {
+            "$type": "dimension",
+            "$value": "{space.5}",
+            "$description": "Large control block padding at spacious density."
+          },
+          "inline": {
+            "$type": "dimension",
+            "$value": "{space.6}",
+            "$description": "Large control inline padding at spacious density."
+          }
+        }
+      }
+    }
+  }
+}

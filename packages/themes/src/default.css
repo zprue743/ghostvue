@@ -15,6 +15,8 @@
   :where(.slop-theme) {
     background-color: var(--sl-surface-bg);
     color: var(--sl-surface-fg);
+    font-family: var(--sl-type-family-sans);
+    font-feature-settings: var(--sl-type-feature-default);
   }
 
   :where(.slop-theme .slop-button, .slop-themed-scope .slop-button) {
@@ -31,6 +33,7 @@
     --_slop-button-min-size: var(--sl-control-size-md-min);
     --_slop-button-padding-block: var(--sl-control-size-md-padding-block);
     --_slop-button-padding-inline: var(--sl-control-size-md-padding-inline);
+    --_slop-button-font-size: var(--sl-control-size-md-font);
 
     align-items: center;
     appearance: none;
@@ -41,11 +44,14 @@
     color: var(--_slop-button-color);
     cursor: pointer;
     display: inline-flex;
-    font: inherit;
+    font-family: var(--sl-action-label-family);
+    font-feature-settings: var(--sl-type-feature-default);
+    font-size: var(--_slop-button-font-size);
     font-weight: var(--sl-action-label-weight);
     gap: var(--sl-action-gap);
     justify-content: center;
-    line-height: 1.2;
+    letter-spacing: var(--sl-action-label-letter);
+    line-height: var(--sl-action-label-line);
     min-block-size: var(--_slop-button-min-size);
     padding-block: var(--_slop-button-padding-block);
     padding-inline: var(--_slop-button-padding-inline);
@@ -152,6 +158,7 @@
     --_slop-button-min-size: var(--sl-control-size-sm-min);
     --_slop-button-padding-block: var(--sl-control-size-sm-padding-block);
     --_slop-button-padding-inline: var(--sl-control-size-sm-padding-inline);
+    --_slop-button-font-size: var(--sl-control-size-sm-font);
   }
 
   :where(
@@ -161,6 +168,7 @@
     --_slop-button-min-size: var(--sl-control-size-lg-min);
     --_slop-button-padding-block: var(--sl-control-size-lg-padding-block);
     --_slop-button-padding-inline: var(--sl-control-size-lg-padding-inline);
+    --_slop-button-font-size: var(--sl-control-size-lg-font);
   }
 
   :where(

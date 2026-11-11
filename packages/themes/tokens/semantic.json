@@ -695,13 +695,13 @@
     },
     "gap": {
       "$type": "dimension",
-      "$value": "{space.2}",
+      "$value": "{space.gap.sm}",
       "$description": "Space between action label and icon content."
     },
     "radius": {
       "$type": "dimension",
       "$value": "{radius.md}",
-      "$description": "Action corner radius."
+      "$description": "Action corner radius. Follows --sl-roundness."
     },
     "duration": {
       "$type": "duration",
@@ -714,10 +714,30 @@
       }
     },
     "label": {
+      "family": {
+        "$type": "fontFamily",
+        "$value": "{font.family.sans}",
+        "$description": "Action label font family."
+      },
+      "size": {
+        "$type": "fontSize",
+        "$value": "{font.size.md}",
+        "$description": "Default action label size. Size variants use control.size.*.font."
+      },
       "weight": {
         "$type": "fontWeight",
         "$value": "{font.weight.semibold}",
         "$description": "Action label font weight."
+      },
+      "letter": {
+        "$type": "letterSpacing",
+        "$value": "{font.letter.normal}",
+        "$description": "Action label letter-spacing."
+      },
+      "line": {
+        "$type": "number",
+        "$value": "{font.line.tight}",
+        "$description": "Action label line-height."
       }
     },
     "icon": {
@@ -835,22 +855,39 @@
     }
   },
   "control": {
+    "touch": {
+      "min": {
+        "$type": "dimension",
+        "$value": "{control.touch}",
+        "$description": "Coarse-pointer floor applied to control heights."
+      }
+    },
     "size": {
       "sm": {
         "min": {
           "$type": "dimension",
-          "$value": "{control.min.sm}",
-          "$description": "Small control minimum block size."
+          "$value": "{control.height.32}",
+          "$description": "Small control minimum block size. Comfortable 32px; compact 28; spacious 36.",
+          "$extensions": {
+            "slop.ui": {
+              "touchMin": "2.75rem"
+            }
+          }
+        },
+        "font": {
+          "$type": "fontSize",
+          "$value": "{font.size.sm}",
+          "$description": "Small control font size."
         },
         "padding": {
           "block": {
             "$type": "dimension",
-            "$value": "{space.2}",
+            "$value": "{space.inset.xs}",
             "$description": "Small control block padding."
           },
           "inline": {
             "$type": "dimension",
-            "$value": "{space.3}",
+            "$value": "{space.inset.sm}",
             "$description": "Small control inline padding."
           }
         }
@@ -858,18 +895,28 @@
       "md": {
         "min": {
           "$type": "dimension",
-          "$value": "{control.min.md}",
-          "$description": "Medium control minimum block size."
+          "$value": "{control.height.40}",
+          "$description": "Medium control minimum block size. Comfortable 40px; compact 32; spacious 48.",
+          "$extensions": {
+            "slop.ui": {
+              "touchMin": "2.75rem"
+            }
+          }
+        },
+        "font": {
+          "$type": "fontSize",
+          "$value": "{font.size.md}",
+          "$description": "Medium control font size."
         },
         "padding": {
           "block": {
             "$type": "dimension",
-            "$value": "{space.3}",
+            "$value": "{space.inset.sm}",
             "$description": "Medium control block padding."
           },
           "inline": {
             "$type": "dimension",
-            "$value": "{space.4}",
+            "$value": "{space.inset.md}",
             "$description": "Medium control inline padding."
           }
         }
@@ -877,18 +924,28 @@
       "lg": {
         "min": {
           "$type": "dimension",
-          "$value": "{control.min.lg}",
-          "$description": "Large control minimum block size."
+          "$value": "{control.height.48}",
+          "$description": "Large control minimum block size. Comfortable and spacious 48px; compact 40.",
+          "$extensions": {
+            "slop.ui": {
+              "touchMin": "2.75rem"
+            }
+          }
+        },
+        "font": {
+          "$type": "fontSize",
+          "$value": "{font.size.lg}",
+          "$description": "Large control font size."
         },
         "padding": {
           "block": {
             "$type": "dimension",
-            "$value": "{space.3-5}",
+            "$value": "{space.inset.md}",
             "$description": "Large control block padding."
           },
           "inline": {
             "$type": "dimension",
-            "$value": "{space.5}",
+            "$value": "{space.inset.lg}",
             "$description": "Large control inline padding."
           }
         }
@@ -1091,6 +1148,234 @@
         "slop.ui": {
           "reducedMotion": "1"
         }
+      }
+    }
+  },
+  "space": {
+    "gap": {
+      "xs": {
+        "$type": "dimension",
+        "$value": "{space.1}",
+        "$description": "Extra-small gap. 4px at comfortable density."
+      },
+      "sm": {
+        "$type": "dimension",
+        "$value": "{space.2}",
+        "$description": "Small gap. 8px at comfortable density."
+      },
+      "md": {
+        "$type": "dimension",
+        "$value": "{space.3}",
+        "$description": "Medium gap. 12px at comfortable density."
+      },
+      "lg": {
+        "$type": "dimension",
+        "$value": "{space.4}",
+        "$description": "Large gap. 16px at comfortable density."
+      }
+    },
+    "inset": {
+      "xs": {
+        "$type": "dimension",
+        "$value": "{space.2}",
+        "$description": "Extra-small inset. 8px at comfortable density."
+      },
+      "sm": {
+        "$type": "dimension",
+        "$value": "{space.3}",
+        "$description": "Small inset. 12px at comfortable density."
+      },
+      "md": {
+        "$type": "dimension",
+        "$value": "{space.4}",
+        "$description": "Medium inset. 16px at comfortable density."
+      },
+      "lg": {
+        "$type": "dimension",
+        "$value": "{space.5}",
+        "$description": "Large inset. 20px at comfortable density."
+      }
+    },
+    "stack": {
+      "sm": {
+        "$type": "dimension",
+        "$value": "{space.2}",
+        "$description": "Small stack gap. 8px at comfortable density."
+      },
+      "md": {
+        "$type": "dimension",
+        "$value": "{space.4}",
+        "$description": "Medium stack gap. 16px at comfortable density."
+      },
+      "lg": {
+        "$type": "dimension",
+        "$value": "{space.6}",
+        "$description": "Large stack gap. 24px at comfortable density."
+      }
+    }
+  },
+  "radius": {
+    "none": {
+      "$type": "dimension",
+      "$value": "{radius.scale.none}",
+      "$description": "Sharp corner. Stays 0 at every roundness."
+    },
+    "sm": {
+      "$type": "dimension",
+      "$value": "{radius.scale.sm}",
+      "$description": "Small radius. 4px at comfortable density and roundness 1."
+    },
+    "md": {
+      "$type": "dimension",
+      "$value": "{radius.scale.md}",
+      "$description": "Medium radius. 8px at comfortable density and roundness 1."
+    },
+    "lg": {
+      "$type": "dimension",
+      "$value": "{radius.scale.lg}",
+      "$description": "Large radius. 12px at comfortable density and roundness 1."
+    },
+    "xl": {
+      "$type": "dimension",
+      "$value": "{radius.scale.xl}",
+      "$description": "Extra-large radius. 16px at comfortable density and roundness 1."
+    },
+    "pill": {
+      "$type": "dimension",
+      "$value": "{radius.scale.pill}",
+      "$description": "Pill radius. Capsule at roundness 1; sharp at 0."
+    }
+  },
+  "roundness": {
+    "amount": {
+      "$type": "number",
+      "$value": 1,
+      "$description": "Unitless 0–1 corner scale compiled as --sl-roundness. 0 is sharp; 1 is the designed radius. Set on any subtree."
+    }
+  },
+  "type": {
+    "family": {
+      "sans": {
+        "$type": "fontFamily",
+        "$value": "{font.family.sans}",
+        "$description": "System UI sans stack. No web font."
+      }
+    },
+    "size": {
+      "xs": {
+        "$type": "fontSize",
+        "$value": "{font.size.xs}",
+        "$description": "Fluid extra-small type."
+      },
+      "sm": {
+        "$type": "fontSize",
+        "$value": "{font.size.sm}",
+        "$description": "Fluid small type."
+      },
+      "md": {
+        "$type": "fontSize",
+        "$value": "{font.size.md}",
+        "$description": "Fluid body type."
+      },
+      "lg": {
+        "$type": "fontSize",
+        "$value": "{font.size.lg}",
+        "$description": "Fluid large type."
+      },
+      "xl": {
+        "$type": "fontSize",
+        "$value": "{font.size.xl}",
+        "$description": "Fluid extra-large type."
+      },
+      "2xl": {
+        "$type": "fontSize",
+        "$value": "{font.size.2xl}",
+        "$description": "Fluid 2xl type."
+      },
+      "3xl": {
+        "$type": "fontSize",
+        "$value": "{font.size.3xl}",
+        "$description": "Fluid 3xl type."
+      }
+    },
+    "weight": {
+      "regular": {
+        "$type": "fontWeight",
+        "$value": "{font.weight.regular}",
+        "$description": "Regular font weight."
+      },
+      "medium": {
+        "$type": "fontWeight",
+        "$value": "{font.weight.medium}",
+        "$description": "Medium font weight."
+      },
+      "semibold": {
+        "$type": "fontWeight",
+        "$value": "{font.weight.semibold}",
+        "$description": "Semibold font weight."
+      },
+      "bold": {
+        "$type": "fontWeight",
+        "$value": "{font.weight.bold}",
+        "$description": "Bold font weight."
+      }
+    },
+    "letter": {
+      "tight": {
+        "$type": "letterSpacing",
+        "$value": "{font.letter.tight}",
+        "$description": "Tight letter-spacing."
+      },
+      "normal": {
+        "$type": "letterSpacing",
+        "$value": "{font.letter.normal}",
+        "$description": "Default letter-spacing."
+      },
+      "wide": {
+        "$type": "letterSpacing",
+        "$value": "{font.letter.wide}",
+        "$description": "Wide letter-spacing."
+      }
+    },
+    "line": {
+      "tight": {
+        "$type": "number",
+        "$value": "{font.line.tight}",
+        "$description": "Tight line-height."
+      },
+      "snug": {
+        "$type": "number",
+        "$value": "{font.line.snug}",
+        "$description": "Snug line-height."
+      },
+      "normal": {
+        "$type": "number",
+        "$value": "{font.line.normal}",
+        "$description": "Default body line-height."
+      }
+    },
+    "numeric": {
+      "tabular": {
+        "$type": "fontVariant",
+        "$value": "{font.numeric.tabular}",
+        "$description": "Tabular lining numbers. Apply as font-variant-numeric."
+      },
+      "proportional": {
+        "$type": "fontVariant",
+        "$value": "{font.numeric.proportional}",
+        "$description": "Proportional numbers. Apply as font-variant-numeric."
+      }
+    },
+    "feature": {
+      "default": {
+        "$type": "fontFeature",
+        "$value": "{font.feature.default}",
+        "$description": "Default OpenType features."
+      },
+      "tabular": {
+        "$type": "fontFeature",
+        "$value": "{font.feature.tabular}",
+        "$description": "Tabular-number OpenType features."
       }
     }
   }

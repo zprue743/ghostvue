@@ -1,0 +1,160 @@
+{
+  "space": {
+    "gap": {
+      "xs": {
+        "$type": "dimension",
+        "$value": "{space.0}",
+        "$description": "Extra-small gap at compact density."
+      },
+      "sm": {
+        "$type": "dimension",
+        "$value": "{space.1}",
+        "$description": "Small gap at compact density."
+      },
+      "md": {
+        "$type": "dimension",
+        "$value": "{space.2}",
+        "$description": "Medium gap at compact density."
+      },
+      "lg": {
+        "$type": "dimension",
+        "$value": "{space.3}",
+        "$description": "Large gap at compact density."
+      }
+    },
+    "inset": {
+      "xs": {
+        "$type": "dimension",
+        "$value": "{space.1}",
+        "$description": "Extra-small inset at compact density."
+      },
+      "sm": {
+        "$type": "dimension",
+        "$value": "{space.2}",
+        "$description": "Small inset at compact density."
+      },
+      "md": {
+        "$type": "dimension",
+        "$value": "{space.3}",
+        "$description": "Medium inset at compact density."
+      },
+      "lg": {
+        "$type": "dimension",
+        "$value": "{space.4}",
+        "$description": "Large inset at compact density."
+      }
+    },
+    "stack": {
+      "sm": {
+        "$type": "dimension",
+        "$value": "{space.1}",
+        "$description": "Small stack gap at compact density."
+      },
+      "md": {
+        "$type": "dimension",
+        "$value": "{space.3}",
+        "$description": "Medium stack gap at compact density."
+      },
+      "lg": {
+        "$type": "dimension",
+        "$value": "{space.4}",
+        "$description": "Large stack gap at compact density."
+      }
+    }
+  },
+  "radius": {
+    "sm": {
+      "$type": "dimension",
+      "$value": "{radius.scale.none}",
+      "$description": "Small radius at compact density."
+    },
+    "md": {
+      "$type": "dimension",
+      "$value": "{radius.scale.sm}",
+      "$description": "Medium radius at compact density."
+    },
+    "lg": {
+      "$type": "dimension",
+      "$value": "{radius.scale.md}",
+      "$description": "Large radius at compact density."
+    },
+    "xl": {
+      "$type": "dimension",
+      "$value": "{radius.scale.lg}",
+      "$description": "Extra-large radius at compact density."
+    }
+  },
+  "action": {
+    "gap": {
+      "$type": "dimension",
+      "$value": "{space.1}",
+      "$description": "Action gap at compact density."
+    },
+    "radius": {
+      "$type": "dimension",
+      "$value": "{radius.scale.sm}",
+      "$description": "Action radius at compact density."
+    }
+  },
+  "control": {
+    "size": {
+      "sm": {
+        "min": {
+          "$type": "dimension",
+          "$value": "{control.height.28}",
+          "$description": "Small control height at compact density. 28px."
+        },
+        "padding": {
+          "block": {
+            "$type": "dimension",
+            "$value": "{space.1}",
+            "$description": "Small control block padding at compact density."
+          },
+          "inline": {
+            "$type": "dimension",
+            "$value": "{space.2}",
+            "$description": "Small control inline padding at compact density."
+          }
+        }
+      },
+      "md": {
+        "min": {
+          "$type": "dimension",
+          "$value": "{control.height.32}",
+          "$description": "Medium control height at compact density. 32px."
+        },
+        "padding": {
+          "block": {
+            "$type": "dimension",
+            "$value": "{space.2}",
+            "$description": "Medium control block padding at compact density."
+          },
+          "inline": {
+            "$type": "dimension",
+            "$value": "{space.3}",
+            "$description": "Medium control inline padding at compact density."
+          }
+        }
+      },
+      "lg": {
+        "min": {
+          "$type": "dimension",
+          "$value": "{control.height.40}",
+          "$description": "Large control height at compact density. 40px."
+        },
+        "padding": {
+          "block": {
+            "$type": "dimension",
+            "$value": "{space.3}",
+            "$description": "Large control block padding at compact density."
+          },
+          "inline": {
+            "$type": "dimension",
+            "$value": "{space.4}",
+            "$description": "Large control inline padding at compact density."
+          }
+        }
+      }
+    }
+  }
+}
