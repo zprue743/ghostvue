@@ -429,6 +429,12 @@ main {
   margin: 2rem;
 }
 
+/* Ghost* / --ghost-* identifiers are longer unbreakable tokens than Sl* /
+ * --sl-*. Wrap them at the 320px overflow check instead of widening the page. */
+main :is(h1, h2, h3, code) {
+  overflow-wrap: anywhere;
+}
+
 /* Skip-link target; not an interactive control. */
 main:focus {
   outline: none;
