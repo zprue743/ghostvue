@@ -5,6 +5,9 @@ import { startStaticServer } from './static-server'
 interface DotSample {
   name: string
   playState: string | undefined
+  currentTime: number | null
+  duration: number | null
+  computedDuration: string
   offset: number
   remaining: number
   trackWidth: number
@@ -29,12 +32,20 @@ async function measureDots(page: Page): Promise<DotSample[]> {
         const rect = element.getBoundingClientRect()
         const trackRect = track.getBoundingClientRect()
         const animation = element.getAnimations()[0]
+        const timing = animation?.effect?.getComputedTiming()
         return {
           name:
             animation instanceof CSSAnimation
               ? animation.animationName
               : style.animationName,
           playState: animation?.playState,
+          currentTime:
+            typeof animation?.currentTime === 'number'
+              ? animation.currentTime
+              : null,
+          duration:
+            typeof timing?.duration === 'number' ? timing.duration : null,
+          computedDuration: style.animationDuration,
           offset: rect.left - trackRect.left,
           remaining: trackRect.right - rect.right,
           trackWidth: trackRect.width,
@@ -45,8 +56,25 @@ async function measureDots(page: Page): Promise<DotSample[]> {
   )
 }
 
+async function waitForDotsFinished(page: Page): Promise<DotSample[]> {
+  await expect
+    .poll(
+      async () => {
+        const snapshot = await measureDots(page)
+        return snapshot.every((dot) => dot.playState === 'finished')
+      },
+      { timeout: 5000 },
+    )
+    .toBe(true)
+  return measureDots(page)
+}
+
 test.describe('docs motion demos', () => {
-  test('replay travels the full track and the nested mode crossfade updates', async ({
+  // Aside outline is `min-width: 1280px` when a sidebar is present. Stay above
+  // that so the active marker assertion is actually observing the outline.
+  test.use({ viewport: { width: 1440, height: 900 } })
+
+  test('replay remounts after the first play and keeps the outline marker', async ({
     page,
   }) => {
     const docs = await startStaticServer('apps/docs/.vitepress/dist')
@@ -57,48 +85,81 @@ test.describe('docs motion demos', () => {
       await expect(
         page.getByTestId('motion-docs-dot-standard'),
       ).toHaveAttribute('data-motion', 'standard')
+      await expect(
+        page.locator('.VPDocAsideOutline a.outline-link.active'),
+      ).toBeVisible()
+
+      const firstEnd = await waitForDotsFinished(page)
+      expect(firstEnd).toHaveLength(6)
+      for (const dot of firstEnd) {
+        expect(dot.name).toBe('ghost-docs-motion-shift')
+        expect(dot.offset).toBeGreaterThan(dot.trackWidth * 0.7)
+        expect(dot.remaining).toBeLessThan(16)
+      }
+
+      const activeOutline = page.locator(
+        '.VPDocAsideOutline a.outline-link.active',
+      )
+      await expect(activeOutline).toBeVisible()
+      const activeHref = await activeOutline.getAttribute('href')
+      expect(activeHref).toBeTruthy()
+      if (!activeHref) return
+      const marker = page.locator('.VPDocAsideOutline .outline-marker')
+      await expect(marker).toHaveCSS('opacity', '1')
 
       await page.getByTestId('motion-docs-replay').click()
 
-      const start = await measureDots(page)
-      expect(start).toHaveLength(6)
+      await expect(activeOutline).toBeVisible()
+      await expect(activeOutline).toHaveAttribute('href', activeHref)
+      await expect(marker).toHaveCSS('opacity', '1')
 
-      let middle = start
+      let restart = firstEnd
+      await expect
+        .poll(
+          async () => {
+            restart = await measureDots(page)
+            return restart.every((dot, index) => {
+              const fromEnd = firstEnd[index]
+              return (
+                fromEnd !== undefined &&
+                dot.playState === 'running' &&
+                (dot.currentTime ?? Number.POSITIVE_INFINITY) < 300 &&
+                dot.offset < fromEnd.offset
+              )
+            })
+          },
+          { timeout: 400 },
+        )
+        .toBe(true)
+      expect(restart).toHaveLength(6)
+      for (const dot of restart) {
+        expect(dot.name).toBe('ghost-docs-motion-shift')
+        expect(dot.offset).toBeLessThan(dot.trackWidth * 0.25)
+      }
+
+      let middle = restart
       await expect
         .poll(
           async () => {
             middle = await measureDots(page)
-            const firstStart = start[0]
-            const firstMiddle = middle[0]
-            if (!firstStart || !firstMiddle) return 0
-            return firstMiddle.offset - firstStart.offset
+            return middle.every((dot, index) => {
+              const from = restart[index]
+              return from !== undefined && dot.offset > from.offset + 12
+            })
           },
           { timeout: 1500 },
         )
-        .toBeGreaterThan(20)
-
-      await expect
-        .poll(
-          async () => {
-            const snapshot = await measureDots(page)
-            return snapshot.every((dot) => dot.playState === 'finished')
-          },
-          { timeout: 4000 },
-        )
         .toBe(true)
 
-      const late = await measureDots(page)
-      expect(late).toHaveLength(6)
-
-      for (const [index, dot] of late.entries()) {
-        const from = start[index]
+      const secondEnd = await waitForDotsFinished(page)
+      expect(secondEnd).toHaveLength(6)
+      for (const [index, dot] of secondEnd.entries()) {
         const during = middle[index]
-        expect(from).toBeDefined()
         expect(during).toBeDefined()
-        if (!from || !during) continue
+        if (!during) continue
 
         expect(dot.name).toBe('ghost-docs-motion-shift')
-        expect(during.offset).toBeGreaterThan(from.offset)
+        expect(during.offset).toBeGreaterThan(restart[index]?.offset ?? 0)
         expect(dot.offset).toBeGreaterThan(during.offset)
         expect(dot.offset).toBeGreaterThan(dot.trackWidth * 0.7)
         expect(dot.remaining).toBeLessThan(16)
@@ -131,6 +192,15 @@ test.describe('docs motion demos', () => {
       await expect(
         page.getByTestId('motion-docs-dot-standard'),
       ).toHaveAttribute('data-motion', 'standard')
+
+      const fadeTiming = await measureDots(page)
+      expect(fadeTiming).toHaveLength(6)
+      for (const dot of fadeTiming) {
+        expect(dot.name).toBe('ghost-motion-fade')
+        expect(dot.duration).toBeGreaterThanOrEqual(650)
+        expect(dot.duration).toBeLessThanOrEqual(750)
+        expect(dot.computedDuration).toBe('0.7s')
+      }
 
       await page.getByTestId('motion-docs-replay').click()
       await expect(
@@ -167,6 +237,8 @@ test.describe('docs motion demos', () => {
                   ? animation.animationName
                   : style.animationName,
               translate: style.translate,
+              duration: animation?.effect?.getComputedTiming().duration ?? null,
+              computedDuration: style.animationDuration,
               opacityStart,
               opacityEnd,
               keyframeOpacities: keyframes.map((frame) => frame.opacity),
@@ -178,6 +250,9 @@ test.describe('docs motion demos', () => {
       expect(fade).toHaveLength(6)
       for (const dot of fade) {
         expect(dot.name).toBe('ghost-motion-fade')
+        expect(dot.duration).toBeGreaterThanOrEqual(650)
+        expect(dot.duration).toBeLessThanOrEqual(750)
+        expect(dot.computedDuration).toBe('0.7s')
         expect(
           dot.translate === 'none' || parseTranslateX(dot.translate) === 0,
         ).toBe(true)

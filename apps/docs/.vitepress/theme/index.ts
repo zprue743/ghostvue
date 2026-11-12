@@ -8,6 +8,7 @@ import '@ghostvue/themes/mono.css'
 import './docs-theme.css'
 import GhostExample from './GhostExample.vue'
 import Layout from './Layout.vue'
+import MotionReplayDemo from './MotionReplayDemo.vue'
 
 function syncModeFromAppearance(): void {
   const root = document.documentElement
@@ -23,6 +24,7 @@ const theme: Theme = {
   Layout,
   enhanceApp({ app }) {
     app.component('GhostExample', GhostExample)
+    app.component('MotionReplayDemo', MotionReplayDemo)
     if (typeof window === 'undefined') return
     syncModeFromAppearance()
     new MutationObserver(syncModeFromAppearance).observe(
