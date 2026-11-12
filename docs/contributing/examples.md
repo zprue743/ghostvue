@@ -35,9 +35,10 @@ On a component page, render a usage sample with:
 ```
 
 The VitePress `GhostExample` host shows a live preview of the SFC (inside the
-docs theme, so light/dark and the flagship switcher apply) and the file
-source beneath it. Source is imported with Vite `?raw` at build time; do
-not paste a second copy into the markdown.
+docs theme, so light/dark and the flagship switcher apply). The docs markdown
+pipeline appends a `<<<` snippet for the same file so Shiki highlights the
+source the way ordinary VitePress fences do. Do not paste a second copy into
+the markdown.
 
 Keep API tables, CSS snippets, and non-runnable illustrations as fenced
 blocks.

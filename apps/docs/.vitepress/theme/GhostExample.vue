@@ -61,6 +61,21 @@ onUnmounted(() => {
         <span v-if="meta?.layer === 'headless'" class="ghost-example__badge">
           Headless
         </span>
+        <GhostButton
+          class="ghost-example__copy"
+          type="button"
+          size="sm"
+          variant="ghost"
+          tone="neutral"
+          :aria-label="
+            copied
+              ? `Copied ${meta?.title ?? id} source`
+              : `Copy ${meta?.title ?? id} source`
+          "
+          @click="copySource"
+        >
+          {{ copied ? 'Copied' : 'Copy' }}
+        </GhostButton>
       </div>
       <p v-if="meta?.description" class="ghost-example__description">
         {{ meta.description }}
@@ -68,27 +83,12 @@ onUnmounted(() => {
     </figcaption>
 
     <div class="ghost-example__preview" data-testid="ghost-example-preview">
-      <Preview />
-    </div>
-
-    <div class="ghost-example__source-wrap">
-      <div class="ghost-example__source-bar">
-        <span class="ghost-example__lang">vue</span>
-        <GhostButton
-          type="button"
-          size="sm"
-          variant="ghost"
-          tone="neutral"
-          @click="copySource"
-        >
-          {{ copied ? 'Copied' : 'Copy' }}
-        </GhostButton>
+      <p v-if="meta?.layer === 'headless'" class="ghost-example__hint">
+        Unstyled. Headless.
+      </p>
+      <div class="ghost-example__stage">
+        <Preview />
       </div>
-      <pre
-        class="ghost-example__source"
-        tabindex="0"
-        :aria-label="`${meta?.title ?? id} source`"
-      ><code>{{ source }}</code></pre>
     </div>
   </figure>
 </template>
@@ -97,10 +97,14 @@ onUnmounted(() => {
 .ghost-example {
   display: grid;
   gap: 0;
-  margin-block: 1.5rem;
+  margin-block: 1.5rem 0;
   overflow: hidden;
   border: 1px solid var(--ghost-border-default, var(--vp-c-border));
-  border-radius: calc(1rem * var(--ghost-roundness, 1));
+  border-block-end: 0;
+  border-end-end-radius: 0;
+  border-end-start-radius: 0;
+  border-start-end-radius: calc(1rem * var(--ghost-roundness, 1));
+  border-start-start-radius: calc(1rem * var(--ghost-roundness, 1));
   background: var(--ghost-surface-bg, var(--vp-c-bg));
 }
 
@@ -136,6 +140,10 @@ onUnmounted(() => {
   text-transform: uppercase;
 }
 
+.ghost-example__copy {
+  margin-inline-start: auto;
+}
+
 .ghost-example__description {
   color: var(--ghost-text-muted, var(--vp-c-text-2));
   font-size: 0.88rem;
@@ -144,23 +152,39 @@ onUnmounted(() => {
 }
 
 .ghost-example__preview {
-  align-items: center;
-  background: linear-gradient(
-    180deg,
-    color-mix(
-      in oklch,
-      var(--ghost-surface-subtle-bg, var(--vp-c-bg-alt)) 88%,
-      transparent
-    ),
-    var(--ghost-surface-subtle-bg, var(--vp-c-bg-alt))
+  isolation: isolate;
+  min-block-size: 8rem;
+  padding: 1.75rem 1.25rem;
+  position: relative;
+  background-color: var(--ghost-surface-bg, var(--vp-c-bg));
+  background-image: radial-gradient(
+    var(--ghost-border-muted, var(--vp-c-divider)) 1px,
+    transparent 1px
   );
-  border-block: 1px solid var(--ghost-border-muted, var(--vp-c-divider));
+  background-size: 0.85rem 0.85rem;
+  border-block-start: 1px solid var(--ghost-border-muted, var(--vp-c-divider));
+}
+
+.ghost-example__hint {
+  color: var(--ghost-text-subtle, var(--vp-c-text-3));
+  font-size: 0.68rem;
+  font-weight: 650;
+  letter-spacing: 0.06em;
+  line-height: 1.2;
+  margin: 0;
+  position: absolute;
+  inset-block-start: 0.7rem;
+  inset-inline-start: 0.9rem;
+  text-transform: uppercase;
+}
+
+.ghost-example__stage {
+  align-items: center;
   display: flex;
   flex-wrap: wrap;
   gap: 0.75rem;
-  justify-content: flex-start;
-  min-block-size: 6.5rem;
-  padding: 1.35rem 1.15rem;
+  justify-content: center;
+  min-block-size: 4.5rem;
 }
 
 .ghost-example__preview :deep(table) {
@@ -173,62 +197,19 @@ onUnmounted(() => {
   text-align: start;
 }
 
-.ghost-example__preview :deep(:focus-visible) {
-  outline: 2px solid var(--ghost-focus-ring-color, Highlight);
-  outline-offset: 2px;
-}
-
+/*
+ * VitePress zeros native button chrome. Revert headless hosts to the UA
+ * stylesheet so the preview reads as an intentional unstyled control, not
+ * broken text. Themed recipes stay on `.ghost-themed-scope` instead.
+ */
 .ghost-example[data-example-layer='headless']
   .ghost-example__preview
   :deep(button) {
-  min-block-size: 2.75rem;
-  min-inline-size: 2.75rem;
+  all: revert;
 }
 
-.ghost-example__source-wrap {
-  background: var(--vp-code-bg, var(--ghost-surface-muted-bg));
-}
-
-.ghost-example__source-bar {
-  align-items: center;
-  display: flex;
-  justify-content: space-between;
-  padding: 0.35rem 0.55rem 0.15rem 1.15rem;
-}
-
-.ghost-example__lang {
-  color: var(--ghost-text-subtle, var(--vp-c-text-3));
-  font-size: 0.72rem;
-  font-weight: 650;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.ghost-example__source {
-  font-family: var(
-    --vp-font-family-mono,
-    ui-monospace,
-    SFMono-Regular,
-    Menlo,
-    monospace
-  );
-  font-size: 0.82rem;
-  line-height: 1.55;
-  margin: 0;
-  max-inline-size: 100%;
-  overflow: auto;
-  padding: 0.35rem 1.15rem 1.15rem;
-}
-
-.ghost-example__source:focus-visible {
+.ghost-example__preview :deep(:focus-visible) {
   outline: 2px solid var(--ghost-focus-ring-color, Highlight);
-  outline-offset: -2px;
-}
-
-.ghost-example__source code {
-  background: transparent;
-  color: var(--ghost-surface-fg, var(--vp-c-text-1));
-  font: inherit;
-  padding: 0;
+  outline-offset: 2px;
 }
 </style>
