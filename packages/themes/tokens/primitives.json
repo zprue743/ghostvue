@@ -409,7 +409,7 @@
       "tight": {
         "$type": "number",
         "$value": 1.2,
-        "$description": "Tight line-height. Matches SlButton."
+        "$description": "Tight line-height. Matches GhostButton."
       },
       "snug": {
         "$type": "number",

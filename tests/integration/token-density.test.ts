@@ -47,7 +47,7 @@ describe('density, roundness, and touch-min compile', () => {
                 min: {
                   $type: 'dimension',
                   $value: '2.5rem',
-                  $extensions: { 'slop.ui': { touchMin: '2.75rem' } },
+                  $extensions: { ghostvue: { touchMin: '2.75rem' } },
                 },
               },
             },
@@ -123,20 +123,20 @@ describe('density, roundness, and touch-min compile', () => {
 
     expect(usesRoundness(radius)).toBe(true)
     expect(usesRoundness(roundness)).toBe(false)
-    expect(roundness.cssVar).toBe('--sl-roundness')
+    expect(roundness.cssVar).toBe('--ghost-roundness')
     expect(compiled.css).toContain(
-      '--sl-radius-md: calc(0.5rem * var(--sl-roundness, 1));',
+      '--ghost-radius-md: calc(0.5rem * var(--ghost-roundness, 1));',
     )
     expect(compiled.css).toContain(
-      '--sl-radius-md: calc(0.25rem * var(--sl-roundness, 1));',
+      '--ghost-radius-md: calc(0.25rem * var(--ghost-roundness, 1));',
     )
-    expect(compiled.css).toContain("[data-sl-density='compact']")
-    expect(compiled.css).toContain("[data-sl-density='comfortable']")
-    expect(compiled.css).toContain("[data-sl-density='spacious']")
+    expect(compiled.css).toContain("[data-ghost-density='compact']")
+    expect(compiled.css).toContain("[data-ghost-density='comfortable']")
+    expect(compiled.css).toContain("[data-ghost-density='spacious']")
 
     expect(min.touchMin).toBe('2.75rem')
     expect(compiled.css).toContain('pointer: coarse')
-    expect(compiled.css).toContain('--sl-control-size-md-min: 2.75rem;')
+    expect(compiled.css).toContain('--ghost-control-size-md-min: 2.75rem;')
     expect(maxCssDimension('2rem', '2.75rem')).toBe('2.75rem')
     expect(maxCssDimension('3rem', '2.75rem')).toBe('3rem')
   })

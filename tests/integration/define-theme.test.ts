@@ -28,9 +28,9 @@ describe('defineTheme', () => {
       theme.tokens.find((token) => token.name === 'motion.intensity')?.value
         .light,
     ).toBe('1')
-    expect(theme.css).toContain("[data-sl-theme='acme']")
-    expect(theme.css).not.toMatch(/:where\(\.slop-themed-scope/)
-    expect(theme.css).toContain('--sl-roundness: 1;')
+    expect(theme.css).toContain("[data-ghost-theme='acme']")
+    expect(theme.css).not.toMatch(/:where\(\.ghost-themed-scope/)
+    expect(theme.css).toContain('--ghost-roundness: 1;')
   })
 
   it('throws on reserved names, bad hues, and invalid enums', () => {
@@ -166,8 +166,8 @@ describe('flagship themes', () => {
         (row) => !row.passesWcagAa,
       )
       expect(failures, JSON.stringify(failures, null, 2)).toEqual([])
-      expect(theme.css).toContain(`[data-sl-theme='${input.name}']`)
-      expect(theme.css).not.toMatch(/:where\(\.slop-themed-scope/)
+      expect(theme.css).toContain(`[data-ghost-theme='${input.name}']`)
+      expect(theme.css).not.toMatch(/:where\(\.ghost-themed-scope/)
       expect(
         await readFile(
           resolve(

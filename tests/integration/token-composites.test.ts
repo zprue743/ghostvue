@@ -127,7 +127,7 @@ describe('DTCG composite tokens', () => {
       'linear-gradient(90deg in oklch, #0f172a 0%, transparent 55%)',
     )
     expect(compiled.css).toContain(
-      '--sl-elevation-1-shadow: 0px 1px 2px 0px #0f172a;',
+      '--ghost-elevation-1-shadow: 0px 1px 2px 0px #0f172a;',
     )
   })
 
@@ -174,7 +174,7 @@ describe('DTCG composite tokens', () => {
                   $type: 'duration',
                   $value: '{spring.gentle}',
                   $extensions: {
-                    'slop.ui': { reducedMotion: '80ms' },
+                    ghostvue: { reducedMotion: '80ms' },
                   },
                 },
               },
@@ -196,6 +196,8 @@ describe('DTCG composite tokens', () => {
     expect(easing?.value.light).toBe('cubic-bezier(0.2, 0, 0, 1)')
     expect(spring?.value.light.startsWith('linear(')).toBe(true)
     expect(duration?.value.light).toMatch(/^\d+ms$/)
-    expect(compiled.css).toContain('--sl-motion-spring-gentle-duration: calc(')
+    expect(compiled.css).toContain(
+      '--ghost-motion-spring-gentle-duration: calc(',
+    )
   })
 })

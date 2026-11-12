@@ -5,7 +5,7 @@ import { resolve } from 'node:path'
 
 import { describe, expect, it } from 'vitest'
 
-const cssPath = resolve(process.cwd(), 'packages/themes/src/sl-button.css')
+const cssPath = resolve(process.cwd(), 'packages/themes/src/ghost-button.css')
 
 const allowedExact = new Set([
   '0',
@@ -47,13 +47,13 @@ function findHardcodedVisuals(css: string) {
   return [...new Set(violations)]
 }
 
-describe('SlButton theme CSS tokens', () => {
+describe('GhostButton theme CSS tokens', () => {
   it('does not hard-code colors, px, or time literals', async () => {
     const css = await readFile(cssPath, 'utf8')
-    expect(css).toContain('--sl-state-layer-hover')
-    expect(css).toContain('--sl-gradient-action-primary')
-    expect(css).toContain('--sl-motion-press-scale')
-    expect(css).toContain('--sl-focus-ring-duration')
+    expect(css).toContain('--ghost-state-layer-hover')
+    expect(css).toContain('--ghost-gradient-action-primary')
+    expect(css).toContain('--ghost-motion-press-scale')
+    expect(css).toContain('--ghost-focus-ring-duration')
     expect(findHardcodedVisuals(css)).toEqual([])
   })
 })

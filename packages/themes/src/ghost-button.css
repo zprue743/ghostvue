@@ -1,238 +1,241 @@
 /*
- * Themed SlButton. Visual values come from semantic --sl-* tokens. Private
- * --_slop-button-* properties are per-instance wiring, not a public API.
+ * Themed GhostButton. Visual values come from semantic --ghost-* tokens. Private
+ * --_ghost-button-* properties are per-instance wiring, not a public API.
  * data-visual-state freezes hover/press/focus for docs and snapshots.
  */
-@layer slop-ui-theme {
-  :where(.slop-theme .slop-button, .slop-themed-scope .slop-button) {
-    --_slop-button-tone-color: var(--sl-action-primary-bg);
-    --_slop-button-tone-contrast: var(--sl-action-primary-fg);
-    --_slop-button-tone-border: var(--sl-action-primary-border);
-    --_slop-button-fill: var(--sl-gradient-action-primary);
-    --_slop-button-background: var(--_slop-button-tone-color);
-    --_slop-button-border-color: var(--_slop-button-tone-border);
-    --_slop-button-color: var(--_slop-button-tone-contrast);
-    --_slop-button-shadow: var(--sl-action-shadow), var(--sl-action-highlight);
-    --_slop-button-layer: 0;
-    --_slop-button-min-size: var(--sl-control-size-md-min);
-    --_slop-button-padding-block: var(--sl-control-size-md-padding-block);
-    --_slop-button-padding-inline: var(--sl-control-size-md-padding-inline);
-    --_slop-button-font-size: var(--sl-control-size-md-font);
+@layer ghostvue-theme {
+  :where(.ghost-theme .ghost-button, .ghost-themed-scope .ghost-button) {
+    --_ghost-button-tone-color: var(--ghost-action-primary-bg);
+    --_ghost-button-tone-contrast: var(--ghost-action-primary-fg);
+    --_ghost-button-tone-border: var(--ghost-action-primary-border);
+    --_ghost-button-fill: var(--ghost-gradient-action-primary);
+    --_ghost-button-background: var(--_ghost-button-tone-color);
+    --_ghost-button-border-color: var(--_ghost-button-tone-border);
+    --_ghost-button-color: var(--_ghost-button-tone-contrast);
+    --_ghost-button-shadow:
+      var(--ghost-action-shadow), var(--ghost-action-highlight);
+    --_ghost-button-layer: 0;
+    --_ghost-button-min-size: var(--ghost-control-size-md-min);
+    --_ghost-button-padding-block: var(--ghost-control-size-md-padding-block);
+    --_ghost-button-padding-inline: var(--ghost-control-size-md-padding-inline);
+    --_ghost-button-font-size: var(--ghost-control-size-md-font);
 
     align-items: center;
     appearance: none;
-    background-color: var(--_slop-button-background);
-    background-image: var(--_slop-button-fill);
-    border: var(--sl-border-hairline-width) solid
-      var(--_slop-button-border-color);
-    border-radius: var(--sl-action-radius);
-    box-shadow: var(--_slop-button-shadow);
+    background-color: var(--_ghost-button-background);
+    background-image: var(--_ghost-button-fill);
+    border: var(--ghost-border-hairline-width) solid
+      var(--_ghost-button-border-color);
+    border-radius: var(--ghost-action-radius);
+    box-shadow: var(--_ghost-button-shadow);
     box-sizing: border-box;
-    color: var(--_slop-button-color);
+    color: var(--_ghost-button-color);
     cursor: pointer;
     display: inline-flex;
-    font-family: var(--sl-action-label-family);
-    font-feature-settings: var(--sl-type-feature-default);
-    font-size: var(--_slop-button-font-size);
-    font-weight: var(--sl-action-label-weight);
-    gap: var(--sl-action-gap);
+    font-family: var(--ghost-action-label-family);
+    font-feature-settings: var(--ghost-type-feature-default);
+    font-size: var(--_ghost-button-font-size);
+    font-weight: var(--ghost-action-label-weight);
+    gap: var(--ghost-action-gap);
     isolation: isolate;
     justify-content: center;
-    letter-spacing: var(--sl-action-label-letter);
-    line-height: var(--sl-action-label-line);
-    min-block-size: var(--_slop-button-min-size);
-    padding-block: var(--_slop-button-padding-block);
-    padding-inline: var(--_slop-button-padding-inline);
+    letter-spacing: var(--ghost-action-label-letter);
+    line-height: var(--ghost-action-label-line);
+    min-block-size: var(--_ghost-button-min-size);
+    padding-block: var(--_ghost-button-padding-block);
+    padding-inline: var(--_ghost-button-padding-inline);
     position: relative;
     scale: 1;
     transition:
-      background-color var(--sl-action-duration)
-        var(--sl-motion-easing-standard),
-      background-image var(--sl-action-duration)
-        var(--sl-motion-easing-standard),
-      border-color var(--sl-action-duration) var(--sl-motion-easing-standard),
-      box-shadow var(--sl-action-duration) var(--sl-motion-easing-standard),
-      color var(--sl-action-duration) var(--sl-motion-easing-standard),
-      scale var(--sl-motion-spring-snappy-duration)
-        var(--sl-motion-spring-snappy);
+      background-color var(--ghost-action-duration)
+        var(--ghost-motion-easing-standard),
+      background-image var(--ghost-action-duration)
+        var(--ghost-motion-easing-standard),
+      border-color var(--ghost-action-duration)
+        var(--ghost-motion-easing-standard),
+      box-shadow var(--ghost-action-duration)
+        var(--ghost-motion-easing-standard),
+      color var(--ghost-action-duration) var(--ghost-motion-easing-standard),
+      scale var(--ghost-motion-spring-snappy-duration)
+        var(--ghost-motion-spring-snappy);
   }
 
-  :where(.slop-theme .slop-button, .slop-themed-scope .slop-button)::after {
-    background-color: var(--_slop-button-color);
+  :where(.ghost-theme .ghost-button, .ghost-themed-scope .ghost-button)::after {
+    background-color: var(--_ghost-button-color);
     border-radius: inherit;
     content: '';
     inset: 0;
-    opacity: var(--_slop-button-layer);
+    opacity: var(--_ghost-button-layer);
     pointer-events: none;
     position: absolute;
-    transition: opacity var(--sl-action-duration)
-      var(--sl-motion-easing-standard);
+    transition: opacity var(--ghost-action-duration)
+      var(--ghost-motion-easing-standard);
     z-index: -1;
   }
 
   :where(
-    .slop-theme .slop-button[data-tone='neutral'],
-    .slop-themed-scope .slop-button[data-tone='neutral']
+    .ghost-theme .ghost-button[data-tone='neutral'],
+    .ghost-themed-scope .ghost-button[data-tone='neutral']
   ) {
-    --_slop-button-tone-color: var(--sl-action-neutral-bg);
-    --_slop-button-tone-contrast: var(--sl-action-neutral-fg);
-    --_slop-button-tone-border: var(--sl-action-neutral-border);
-    --_slop-button-fill: var(--sl-gradient-action-neutral);
+    --_ghost-button-tone-color: var(--ghost-action-neutral-bg);
+    --_ghost-button-tone-contrast: var(--ghost-action-neutral-fg);
+    --_ghost-button-tone-border: var(--ghost-action-neutral-border);
+    --_ghost-button-fill: var(--ghost-gradient-action-neutral);
   }
 
   :where(
-    .slop-theme .slop-button[data-tone='danger'],
-    .slop-themed-scope .slop-button[data-tone='danger']
+    .ghost-theme .ghost-button[data-tone='danger'],
+    .ghost-themed-scope .ghost-button[data-tone='danger']
   ) {
-    --_slop-button-tone-color: var(--sl-action-danger-bg);
-    --_slop-button-tone-contrast: var(--sl-action-danger-fg);
-    --_slop-button-tone-border: var(--sl-action-danger-border);
-    --_slop-button-fill: var(--sl-gradient-action-danger);
+    --_ghost-button-tone-color: var(--ghost-action-danger-bg);
+    --_ghost-button-tone-contrast: var(--ghost-action-danger-fg);
+    --_ghost-button-tone-border: var(--ghost-action-danger-border);
+    --_ghost-button-fill: var(--ghost-gradient-action-danger);
   }
 
   :where(
-    .slop-theme .slop-button[data-variant='soft'],
-    .slop-themed-scope .slop-button[data-variant='soft']
+    .ghost-theme .ghost-button[data-variant='soft'],
+    .ghost-themed-scope .ghost-button[data-variant='soft']
   ) {
-    --_slop-button-background: color-mix(
+    --_ghost-button-background: color-mix(
       in oklch,
-      var(--_slop-button-tone-color) calc(100% * var(--sl-state-mix-soft)),
-      var(--sl-surface-bg)
+      var(--_ghost-button-tone-color) calc(100% * var(--ghost-state-mix-soft)),
+      var(--ghost-surface-bg)
     );
-    --_slop-button-border-color: color-mix(
+    --_ghost-button-border-color: color-mix(
       in oklch,
-      var(--_slop-button-tone-color) calc(100% * var(--sl-state-mix-border)),
-      var(--sl-surface-bg)
+      var(--_ghost-button-tone-color) calc(100% * var(--ghost-state-mix-border)),
+      var(--ghost-surface-bg)
     );
-    --_slop-button-color: var(--_slop-button-tone-color);
-    --_slop-button-fill: none;
-    --_slop-button-shadow: none;
+    --_ghost-button-color: var(--_ghost-button-tone-color);
+    --_ghost-button-fill: none;
+    --_ghost-button-shadow: none;
   }
 
   :where(
-    .slop-theme .slop-button[data-variant='outline'],
-    .slop-themed-scope .slop-button[data-variant='outline']
+    .ghost-theme .ghost-button[data-variant='outline'],
+    .ghost-themed-scope .ghost-button[data-variant='outline']
   ) {
-    --_slop-button-background: transparent;
-    --_slop-button-border-color: var(--_slop-button-tone-border);
-    --_slop-button-color: var(--_slop-button-tone-color);
-    --_slop-button-fill: none;
-    --_slop-button-shadow: none;
+    --_ghost-button-background: transparent;
+    --_ghost-button-border-color: var(--_ghost-button-tone-border);
+    --_ghost-button-color: var(--_ghost-button-tone-color);
+    --_ghost-button-fill: none;
+    --_ghost-button-shadow: none;
   }
 
   :where(
-    .slop-theme .slop-button[data-variant='ghost'],
-    .slop-themed-scope .slop-button[data-variant='ghost']
+    .ghost-theme .ghost-button[data-variant='ghost'],
+    .ghost-themed-scope .ghost-button[data-variant='ghost']
   ) {
-    --_slop-button-background: transparent;
-    --_slop-button-border-color: transparent;
-    --_slop-button-color: var(--_slop-button-tone-color);
-    --_slop-button-fill: none;
-    --_slop-button-shadow: none;
+    --_ghost-button-background: transparent;
+    --_ghost-button-border-color: transparent;
+    --_ghost-button-color: var(--_ghost-button-tone-color);
+    --_ghost-button-fill: none;
+    --_ghost-button-shadow: none;
   }
 
   :where(
-    .slop-theme .slop-button[data-size='sm'],
-    .slop-themed-scope .slop-button[data-size='sm']
+    .ghost-theme .ghost-button[data-size='sm'],
+    .ghost-themed-scope .ghost-button[data-size='sm']
   ) {
-    --_slop-button-min-size: var(--sl-control-size-sm-min);
-    --_slop-button-padding-block: var(--sl-control-size-sm-padding-block);
-    --_slop-button-padding-inline: var(--sl-control-size-sm-padding-inline);
-    --_slop-button-font-size: var(--sl-control-size-sm-font);
+    --_ghost-button-min-size: var(--ghost-control-size-sm-min);
+    --_ghost-button-padding-block: var(--ghost-control-size-sm-padding-block);
+    --_ghost-button-padding-inline: var(--ghost-control-size-sm-padding-inline);
+    --_ghost-button-font-size: var(--ghost-control-size-sm-font);
   }
 
   :where(
-    .slop-theme .slop-button[data-size='lg'],
-    .slop-themed-scope .slop-button[data-size='lg']
+    .ghost-theme .ghost-button[data-size='lg'],
+    .ghost-themed-scope .ghost-button[data-size='lg']
   ) {
-    --_slop-button-min-size: var(--sl-control-size-lg-min);
-    --_slop-button-padding-block: var(--sl-control-size-lg-padding-block);
-    --_slop-button-padding-inline: var(--sl-control-size-lg-padding-inline);
-    --_slop-button-font-size: var(--sl-control-size-lg-font);
+    --_ghost-button-min-size: var(--ghost-control-size-lg-min);
+    --_ghost-button-padding-block: var(--ghost-control-size-lg-padding-block);
+    --_ghost-button-padding-inline: var(--ghost-control-size-lg-padding-inline);
+    --_ghost-button-font-size: var(--ghost-control-size-lg-font);
   }
 
   :where(
-    .slop-theme
-      .slop-button:is(
+    .ghost-theme
+      .ghost-button:is(
         :hover,
         [data-visual-state='hover'],
         [data-visual-state='hover-focus']
       ):not(:disabled):not([aria-disabled='true']),
-    .slop-themed-scope
-      .slop-button:is(
+    .ghost-themed-scope
+      .ghost-button:is(
         :hover,
         [data-visual-state='hover'],
         [data-visual-state='hover-focus']
       ):not(:disabled):not([aria-disabled='true'])
   ) {
-    --_slop-button-layer: var(--sl-state-layer-hover);
+    --_ghost-button-layer: var(--ghost-state-layer-hover);
   }
 
   :where(
-    .slop-theme
-      .slop-button[aria-pressed='true']:not(:disabled):not(
+    .ghost-theme
+      .ghost-button[aria-pressed='true']:not(:disabled):not(
         [aria-disabled='true']
       ),
-    .slop-themed-scope
-      .slop-button[aria-pressed='true']:not(:disabled):not(
+    .ghost-themed-scope
+      .ghost-button[aria-pressed='true']:not(:disabled):not(
         [aria-disabled='true']
       ),
-    .slop-theme
-      .slop-button[data-visual-state='selected']:not(:disabled):not(
+    .ghost-theme
+      .ghost-button[data-visual-state='selected']:not(:disabled):not(
         [aria-disabled='true']
       ),
-    .slop-themed-scope
-      .slop-button[data-visual-state='selected']:not(:disabled):not(
+    .ghost-themed-scope
+      .ghost-button[data-visual-state='selected']:not(:disabled):not(
         [aria-disabled='true']
       )
   ) {
-    --_slop-button-layer: var(--sl-state-layer-selected);
+    --_ghost-button-layer: var(--ghost-state-layer-selected);
   }
 
   :where(
-    .slop-theme
-      .slop-button[aria-grabbed='true']:not(:disabled):not(
+    .ghost-theme
+      .ghost-button[aria-grabbed='true']:not(:disabled):not(
         [aria-disabled='true']
       ),
-    .slop-themed-scope
-      .slop-button[aria-grabbed='true']:not(:disabled):not(
+    .ghost-themed-scope
+      .ghost-button[aria-grabbed='true']:not(:disabled):not(
         [aria-disabled='true']
       )
   ) {
-    --_slop-button-layer: var(--sl-state-layer-dragged);
+    --_ghost-button-layer: var(--ghost-state-layer-dragged);
   }
 
   :where(
-    .slop-theme
-      .slop-button:is(
+    .ghost-theme
+      .ghost-button:is(
         :active,
         [data-visual-state='active'],
         [data-visual-state='press-focus']
       ):not(:disabled):not([aria-disabled='true']),
-    .slop-themed-scope
-      .slop-button:is(
+    .ghost-themed-scope
+      .ghost-button:is(
         :active,
         [data-visual-state='active'],
         [data-visual-state='press-focus']
       ):not(:disabled):not([aria-disabled='true'])
   ) {
-    --_slop-button-layer: var(--sl-state-layer-press);
-    --_slop-button-shadow:
-      var(--sl-action-shadow-press), var(--sl-action-highlight);
-    scale: var(--sl-motion-press-scale);
+    --_ghost-button-layer: var(--ghost-state-layer-press);
+    --_ghost-button-shadow:
+      var(--ghost-action-shadow-press), var(--ghost-action-highlight);
+    scale: var(--ghost-motion-press-scale);
   }
 
   :where(
-    .slop-theme
-      .slop-button:is(
+    .ghost-theme
+      .ghost-button:is(
         :focus-visible,
         [data-visual-state='focus-visible'],
         [data-visual-state='hover-focus'],
         [data-visual-state='press-focus'],
         [data-visual-state='loading-focus']
       ),
-    .slop-themed-scope
-      .slop-button:is(
+    .ghost-themed-scope
+      .ghost-button:is(
         :focus-visible,
         [data-visual-state='focus-visible'],
         [data-visual-state='hover-focus'],
@@ -240,33 +243,33 @@
         [data-visual-state='loading-focus']
       )
   ) {
-    animation: slop-focus-enter var(--sl-focus-ring-duration)
-      var(--sl-motion-easing-decelerate) both;
+    animation: ghost-focus-enter var(--ghost-focus-ring-duration)
+      var(--ghost-motion-easing-decelerate) both;
     box-shadow:
-      var(--_slop-button-shadow),
-      0 0 0 var(--sl-focus-ring-offset) var(--sl-focus-ring-contrast);
-    outline: var(--sl-focus-ring-width) solid var(--sl-focus-ring-color);
-    outline-offset: var(--sl-focus-ring-offset);
+      var(--_ghost-button-shadow),
+      0 0 0 var(--ghost-focus-ring-offset) var(--ghost-focus-ring-contrast);
+    outline: var(--ghost-focus-ring-width) solid var(--ghost-focus-ring-color);
+    outline-offset: var(--ghost-focus-ring-offset);
   }
 
   :where(
-    .slop-theme .slop-button:is(:disabled, [data-state='disabled']),
-    .slop-themed-scope .slop-button:is(:disabled, [data-state='disabled'])
+    .ghost-theme .ghost-button:is(:disabled, [data-state='disabled']),
+    .ghost-themed-scope .ghost-button:is(:disabled, [data-state='disabled'])
   ) {
-    --_slop-button-background: var(--sl-action-disabled-bg);
-    --_slop-button-border-color: var(--sl-action-disabled-border);
-    --_slop-button-color: var(--sl-action-disabled-fg);
-    --_slop-button-fill: none;
-    --_slop-button-layer: 0;
-    --_slop-button-shadow: none;
+    --_ghost-button-background: var(--ghost-action-disabled-bg);
+    --_ghost-button-border-color: var(--ghost-action-disabled-border);
+    --_ghost-button-color: var(--ghost-action-disabled-fg);
+    --_ghost-button-fill: none;
+    --_ghost-button-layer: 0;
+    --_ghost-button-shadow: none;
 
     cursor: not-allowed;
     scale: 1;
   }
 
   :where(
-    .slop-theme .slop-button[data-state='loading'],
-    .slop-themed-scope .slop-button[data-state='loading']
+    .ghost-theme .ghost-button[data-state='loading'],
+    .ghost-themed-scope .ghost-button[data-state='loading']
   ) {
     color: transparent;
     cursor: wait;
@@ -274,18 +277,18 @@
   }
 
   :where(
-    .slop-theme .slop-button[data-state='loading'],
-    .slop-themed-scope .slop-button[data-state='loading']
+    .ghost-theme .ghost-button[data-state='loading'],
+    .ghost-themed-scope .ghost-button[data-state='loading']
   )::before {
-    animation: slop-button-spin var(--sl-action-spinner-duration) linear
+    animation: ghost-button-spin var(--ghost-action-spinner-duration) linear
       infinite;
-    block-size: var(--sl-action-spinner-size);
-    border: var(--sl-action-spinner-width) solid var(--_slop-button-color);
+    block-size: var(--ghost-action-spinner-size);
+    border: var(--ghost-action-spinner-width) solid var(--_ghost-button-color);
     border-inline-end-color: transparent;
     border-radius: 50%;
     box-sizing: border-box;
     content: '';
-    inline-size: var(--sl-action-spinner-size);
+    inline-size: var(--ghost-action-spinner-size);
     inset-block-start: 50%;
     inset-inline-start: 50%;
     position: absolute;
@@ -294,24 +297,24 @@
   }
 
   :where(
-    .slop-theme .slop-button [data-part='loading-indicator'],
-    .slop-themed-scope .slop-button [data-part='loading-indicator']
+    .ghost-theme .ghost-button [data-part='loading-indicator'],
+    .ghost-themed-scope .ghost-button [data-part='loading-indicator']
   ) {
     display: none;
   }
 
   :where(
-    .slop-theme
-      .slop-button[data-state='loading']
+    .ghost-theme
+      .ghost-button[data-state='loading']
       [data-part='loading-indicator'],
-    .slop-themed-scope
-      .slop-button[data-state='loading']
+    .ghost-themed-scope
+      .ghost-button[data-state='loading']
       [data-part='loading-indicator']
   ) {
-    block-size: var(--sl-action-spinner-size);
-    color: var(--_slop-button-color);
+    block-size: var(--ghost-action-spinner-size);
+    color: var(--_ghost-button-color);
     display: block;
-    inline-size: var(--sl-action-spinner-size);
+    inline-size: var(--ghost-action-spinner-size);
     inset-block-start: 50%;
     inset-inline-start: 50%;
     position: absolute;
@@ -320,41 +323,41 @@
   }
 
   :where(
-    .slop-theme
-      .slop-button[data-state='loading']:has([data-part='loading-indicator']),
-    .slop-themed-scope
-      .slop-button[data-state='loading']:has([data-part='loading-indicator'])
+    .ghost-theme
+      .ghost-button[data-state='loading']:has([data-part='loading-indicator']),
+    .ghost-themed-scope
+      .ghost-button[data-state='loading']:has([data-part='loading-indicator'])
   )::before {
     content: none;
   }
 
   :where(
-    .slop-theme .slop-button[data-block],
-    .slop-themed-scope .slop-button[data-block]
+    .ghost-theme .ghost-button[data-block],
+    .ghost-themed-scope .ghost-button[data-block]
   ) {
     inline-size: 100%;
   }
 
   :where(
-    .slop-theme .slop-button[data-icon-only],
-    .slop-themed-scope .slop-button[data-icon-only]
+    .ghost-theme .ghost-button[data-icon-only],
+    .ghost-themed-scope .ghost-button[data-icon-only]
   ) {
-    inline-size: var(--_slop-button-min-size);
+    inline-size: var(--_ghost-button-min-size);
     padding: 0;
   }
 
   :where(
-    .slop-theme .slop-button [data-part='icon'],
-    .slop-themed-scope .slop-button [data-part='icon']
+    .ghost-theme .ghost-button [data-part='icon'],
+    .ghost-themed-scope .ghost-button [data-part='icon']
   ) {
-    block-size: var(--sl-action-icon-size);
+    block-size: var(--ghost-action-icon-size);
     flex: none;
-    inline-size: var(--sl-action-icon-size);
+    inline-size: var(--ghost-action-icon-size);
   }
 
   :where(
-    .slop-theme .slop-button [data-part='icon'] svg,
-    .slop-themed-scope .slop-button [data-part='icon'] svg
+    .ghost-theme .ghost-button [data-part='icon'] svg,
+    .ghost-themed-scope .ghost-button [data-part='icon'] svg
   ) {
     block-size: 100%;
     display: block;
@@ -363,21 +366,21 @@
 
   @media (prefers-reduced-motion: reduce) {
     :where(
-      .slop-theme .slop-button[data-state='loading'],
-      .slop-themed-scope .slop-button[data-state='loading']
+      .ghost-theme .ghost-button[data-state='loading'],
+      .ghost-themed-scope .ghost-button[data-state='loading']
     )::before {
-      animation: slop-button-pulse var(--sl-action-spinner-duration)
-        var(--sl-motion-easing-standard) infinite;
+      animation: ghost-button-pulse var(--ghost-action-spinner-duration)
+        var(--ghost-motion-easing-standard) infinite;
       transform: translate(-50%, -50%);
     }
   }
 
   @media (forced-colors: active) {
-    :where(.slop-theme .slop-button, .slop-themed-scope .slop-button) {
-      --_slop-button-color: ButtonText;
-      --_slop-button-fill: none;
-      --_slop-button-layer: 0;
-      --_slop-button-shadow: none;
+    :where(.ghost-theme .ghost-button, .ghost-themed-scope .ghost-button) {
+      --_ghost-button-color: ButtonText;
+      --_ghost-button-fill: none;
+      --_ghost-button-layer: 0;
+      --_ghost-button-shadow: none;
 
       background-color: ButtonFace;
       background-image: none;
@@ -388,33 +391,33 @@
     }
 
     :where(
-      .slop-theme .slop-button:is(:disabled, [data-state='disabled']),
-      .slop-themed-scope .slop-button:is(:disabled, [data-state='disabled'])
+      .ghost-theme .ghost-button:is(:disabled, [data-state='disabled']),
+      .ghost-themed-scope .ghost-button:is(:disabled, [data-state='disabled'])
     ) {
-      --_slop-button-color: GrayText;
+      --_ghost-button-color: GrayText;
 
       border-color: GrayText;
       color: GrayText;
     }
 
     :where(
-      .slop-theme .slop-button[data-state='loading'],
-      .slop-themed-scope .slop-button[data-state='loading']
+      .ghost-theme .ghost-button[data-state='loading'],
+      .ghost-themed-scope .ghost-button[data-state='loading']
     ) {
       color: transparent;
     }
 
     :where(
-      .slop-theme
-        .slop-button:is(
+      .ghost-theme
+        .ghost-button:is(
           :focus-visible,
           [data-visual-state='focus-visible'],
           [data-visual-state='hover-focus'],
           [data-visual-state='press-focus'],
           [data-visual-state='loading-focus']
         ),
-      .slop-themed-scope
-        .slop-button:is(
+      .ghost-themed-scope
+        .ghost-button:is(
           :focus-visible,
           [data-visual-state='focus-visible'],
           [data-visual-state='hover-focus'],
@@ -428,35 +431,38 @@
     }
 
     :where(
-      .slop-theme .slop-button[data-state='loading'],
-      .slop-themed-scope .slop-button[data-state='loading']
+      .ghost-theme .ghost-button[data-state='loading'],
+      .ghost-themed-scope .ghost-button[data-state='loading']
     )::before {
-      border-color: var(--_slop-button-color);
+      border-color: var(--_ghost-button-color);
       border-inline-end-color: transparent;
     }
 
-    :where(.slop-theme .slop-button, .slop-themed-scope .slop-button)::after {
+    :where(
+      .ghost-theme .ghost-button,
+      .ghost-themed-scope .ghost-button
+    )::after {
       content: none;
     }
   }
 
-  @keyframes slop-focus-enter {
+  @keyframes ghost-focus-enter {
     from {
       box-shadow:
-        var(--_slop-button-shadow),
-        0 0 0 0 var(--sl-focus-ring-contrast);
+        var(--_ghost-button-shadow),
+        0 0 0 0 var(--ghost-focus-ring-contrast);
       outline-offset: 0;
     }
 
     to {
       box-shadow:
-        var(--_slop-button-shadow),
-        0 0 0 var(--sl-focus-ring-offset) var(--sl-focus-ring-contrast);
-      outline-offset: var(--sl-focus-ring-offset);
+        var(--_ghost-button-shadow),
+        0 0 0 var(--ghost-focus-ring-offset) var(--ghost-focus-ring-contrast);
+      outline-offset: var(--ghost-focus-ring-offset);
     }
   }
 
-  @keyframes slop-button-spin {
+  @keyframes ghost-button-spin {
     from {
       transform: translate(-50%, -50%) rotate(0);
     }
@@ -466,9 +472,9 @@
     }
   }
 
-  @keyframes slop-button-pulse {
+  @keyframes ghost-button-pulse {
     50% {
-      opacity: var(--sl-action-spinner-opacity);
+      opacity: var(--ghost-action-spinner-opacity);
     }
   }
 }

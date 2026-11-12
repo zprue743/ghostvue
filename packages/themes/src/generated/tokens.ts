@@ -10,7 +10,7 @@ export type TokenMode = (typeof tokenModes)[number]
 export const tokens = {
   "action.danger.bg": {
     name: "action.danger.bg",
-    cssVar: "--sl-action-danger-bg",
+    cssVar: "--ghost-action-danger-bg",
     type: "color",
     tier: "semantic",
     description: "Solid danger action background.",
@@ -21,7 +21,7 @@ export const tokens = {
   },
   "action.danger.bg.active": {
     name: "action.danger.bg.active",
-    cssVar: "--sl-action-danger-bg-active",
+    cssVar: "--ghost-action-danger-bg-active",
     type: "color",
     tier: "semantic",
     description: "Solid danger action background on press.",
@@ -32,7 +32,7 @@ export const tokens = {
   },
   "action.danger.bg.hover": {
     name: "action.danger.bg.hover",
-    cssVar: "--sl-action-danger-bg-hover",
+    cssVar: "--ghost-action-danger-bg-hover",
     type: "color",
     tier: "semantic",
     description: "Solid danger action background on hover.",
@@ -43,7 +43,7 @@ export const tokens = {
   },
   "action.danger.border": {
     name: "action.danger.border",
-    cssVar: "--sl-action-danger-border",
+    cssVar: "--ghost-action-danger-border",
     type: "color",
     tier: "semantic",
     description: "Border on a solid danger action.",
@@ -54,7 +54,7 @@ export const tokens = {
   },
   "action.danger.fg": {
     name: "action.danger.fg",
-    cssVar: "--sl-action-danger-fg",
+    cssVar: "--ghost-action-danger-fg",
     type: "color",
     tier: "semantic",
     description: "Content color on a solid danger action.",
@@ -65,7 +65,7 @@ export const tokens = {
   },
   "action.danger.gradient.from": {
     name: "action.danger.gradient.from",
-    cssVar: "--sl-action-danger-gradient-from",
+    cssVar: "--ghost-action-danger-gradient-from",
     type: "color",
     tier: "semantic",
     description: "Danger action gradient start. Must meet WCAG AA with action.danger.fg.",
@@ -76,7 +76,7 @@ export const tokens = {
   },
   "action.danger.gradient.to": {
     name: "action.danger.gradient.to",
-    cssVar: "--sl-action-danger-gradient-to",
+    cssVar: "--ghost-action-danger-gradient-to",
     type: "color",
     tier: "semantic",
     description: "Danger action gradient end. Must meet WCAG AA with action.danger.fg.",
@@ -87,7 +87,7 @@ export const tokens = {
   },
   "action.disabled.bg": {
     name: "action.disabled.bg",
-    cssVar: "--sl-action-disabled-bg",
+    cssVar: "--ghost-action-disabled-bg",
     type: "color",
     tier: "semantic",
     description: "Unavailable action background. Desaturated; still meets WCAG AA with action.disabled.fg.",
@@ -98,7 +98,7 @@ export const tokens = {
   },
   "action.disabled.border": {
     name: "action.disabled.border",
-    cssVar: "--sl-action-disabled-border",
+    cssVar: "--ghost-action-disabled-border",
     type: "color",
     tier: "semantic",
     description: "Unavailable action border.",
@@ -109,7 +109,7 @@ export const tokens = {
   },
   "action.disabled.fg": {
     name: "action.disabled.fg",
-    cssVar: "--sl-action-disabled-fg",
+    cssVar: "--ghost-action-disabled-fg",
     type: "color",
     tier: "semantic",
     description: "Unavailable action foreground. Reduced emphasis, still legible.",
@@ -120,10 +120,10 @@ export const tokens = {
   },
   "action.disabled.opacity": {
     name: "action.disabled.opacity",
-    cssVar: "--sl-action-disabled-opacity",
+    cssVar: "--ghost-action-disabled-opacity",
     type: "number",
     tier: "semantic",
-    description: "Shared unavailable-state opacity. SlButton uses dedicated disabled colors instead of fading the rest tone.",
+    description: "Shared unavailable-state opacity. GhostButton uses dedicated disabled colors instead of fading the rest tone.",
     value: {
       light: "0.55",
       dark: "0.55",
@@ -131,7 +131,7 @@ export const tokens = {
   },
   "action.duration": {
     name: "action.duration",
-    cssVar: "--sl-action-duration",
+    cssVar: "--ghost-action-duration",
     reducedMotion: "80ms",
     type: "duration",
     tier: "semantic",
@@ -143,7 +143,7 @@ export const tokens = {
   },
   "action.gap": {
     name: "action.gap",
-    cssVar: "--sl-action-gap",
+    cssVar: "--ghost-action-gap",
     density: {
       compact: "0.25rem",
       spacious: "0.75rem",
@@ -158,7 +158,7 @@ export const tokens = {
   },
   "action.highlight": {
     name: "action.highlight",
-    cssVar: "--sl-action-highlight",
+    cssVar: "--ghost-action-highlight",
     type: "shadow",
     tier: "semantic",
     description: "Inset top sheen on solid actions.",
@@ -169,7 +169,7 @@ export const tokens = {
   },
   "action.icon.size": {
     name: "action.icon.size",
-    cssVar: "--sl-action-icon-size",
+    cssVar: "--ghost-action-icon-size",
     type: "dimension",
     tier: "semantic",
     description: "Action icon size.",
@@ -180,7 +180,7 @@ export const tokens = {
   },
   "action.info.bg": {
     name: "action.info.bg",
-    cssVar: "--sl-action-info-bg",
+    cssVar: "--ghost-action-info-bg",
     type: "color",
     tier: "semantic",
     description: "Solid info action background.",
@@ -191,7 +191,7 @@ export const tokens = {
   },
   "action.info.bg.active": {
     name: "action.info.bg.active",
-    cssVar: "--sl-action-info-bg-active",
+    cssVar: "--ghost-action-info-bg-active",
     type: "color",
     tier: "semantic",
     description: "Solid info action background on press.",
@@ -202,7 +202,7 @@ export const tokens = {
   },
   "action.info.bg.hover": {
     name: "action.info.bg.hover",
-    cssVar: "--sl-action-info-bg-hover",
+    cssVar: "--ghost-action-info-bg-hover",
     type: "color",
     tier: "semantic",
     description: "Solid info action background on hover.",
@@ -213,7 +213,7 @@ export const tokens = {
   },
   "action.info.border": {
     name: "action.info.border",
-    cssVar: "--sl-action-info-border",
+    cssVar: "--ghost-action-info-border",
     type: "color",
     tier: "semantic",
     description: "Border on a solid info action.",
@@ -224,7 +224,7 @@ export const tokens = {
   },
   "action.info.fg": {
     name: "action.info.fg",
-    cssVar: "--sl-action-info-fg",
+    cssVar: "--ghost-action-info-fg",
     type: "color",
     tier: "semantic",
     description: "Content color on a solid info action.",
@@ -235,7 +235,7 @@ export const tokens = {
   },
   "action.label.family": {
     name: "action.label.family",
-    cssVar: "--sl-action-label-family",
+    cssVar: "--ghost-action-label-family",
     type: "fontFamily",
     tier: "semantic",
     description: "Action label font family.",
@@ -246,7 +246,7 @@ export const tokens = {
   },
   "action.label.letter": {
     name: "action.label.letter",
-    cssVar: "--sl-action-label-letter",
+    cssVar: "--ghost-action-label-letter",
     type: "letterSpacing",
     tier: "semantic",
     description: "Action label letter-spacing.",
@@ -257,7 +257,7 @@ export const tokens = {
   },
   "action.label.line": {
     name: "action.label.line",
-    cssVar: "--sl-action-label-line",
+    cssVar: "--ghost-action-label-line",
     type: "number",
     tier: "semantic",
     description: "Action label line-height.",
@@ -268,7 +268,7 @@ export const tokens = {
   },
   "action.label.size": {
     name: "action.label.size",
-    cssVar: "--sl-action-label-size",
+    cssVar: "--ghost-action-label-size",
     type: "fontSize",
     tier: "semantic",
     description: "Default action label size. Size variants use control.size.*.font.",
@@ -279,7 +279,7 @@ export const tokens = {
   },
   "action.label.weight": {
     name: "action.label.weight",
-    cssVar: "--sl-action-label-weight",
+    cssVar: "--ghost-action-label-weight",
     type: "fontWeight",
     tier: "semantic",
     description: "Action label font weight.",
@@ -290,7 +290,7 @@ export const tokens = {
   },
   "action.neutral.bg": {
     name: "action.neutral.bg",
-    cssVar: "--sl-action-neutral-bg",
+    cssVar: "--ghost-action-neutral-bg",
     type: "color",
     tier: "semantic",
     description: "Solid neutral action background.",
@@ -301,7 +301,7 @@ export const tokens = {
   },
   "action.neutral.bg.active": {
     name: "action.neutral.bg.active",
-    cssVar: "--sl-action-neutral-bg-active",
+    cssVar: "--ghost-action-neutral-bg-active",
     type: "color",
     tier: "semantic",
     description: "Solid neutral action background on press.",
@@ -312,7 +312,7 @@ export const tokens = {
   },
   "action.neutral.bg.hover": {
     name: "action.neutral.bg.hover",
-    cssVar: "--sl-action-neutral-bg-hover",
+    cssVar: "--ghost-action-neutral-bg-hover",
     type: "color",
     tier: "semantic",
     description: "Solid neutral action background on hover.",
@@ -323,7 +323,7 @@ export const tokens = {
   },
   "action.neutral.border": {
     name: "action.neutral.border",
-    cssVar: "--sl-action-neutral-border",
+    cssVar: "--ghost-action-neutral-border",
     type: "color",
     tier: "semantic",
     description: "Border on a solid neutral action.",
@@ -334,7 +334,7 @@ export const tokens = {
   },
   "action.neutral.fg": {
     name: "action.neutral.fg",
-    cssVar: "--sl-action-neutral-fg",
+    cssVar: "--ghost-action-neutral-fg",
     type: "color",
     tier: "semantic",
     description: "Content color on a solid neutral action.",
@@ -345,7 +345,7 @@ export const tokens = {
   },
   "action.neutral.gradient.from": {
     name: "action.neutral.gradient.from",
-    cssVar: "--sl-action-neutral-gradient-from",
+    cssVar: "--ghost-action-neutral-gradient-from",
     type: "color",
     tier: "semantic",
     description: "Neutral action gradient start. Must meet WCAG AA with action.neutral.fg.",
@@ -356,7 +356,7 @@ export const tokens = {
   },
   "action.neutral.gradient.to": {
     name: "action.neutral.gradient.to",
-    cssVar: "--sl-action-neutral-gradient-to",
+    cssVar: "--ghost-action-neutral-gradient-to",
     type: "color",
     tier: "semantic",
     description: "Neutral action gradient end. Must meet WCAG AA with action.neutral.fg.",
@@ -367,10 +367,10 @@ export const tokens = {
   },
   "action.primary.bg": {
     name: "action.primary.bg",
-    cssVar: "--sl-action-primary-bg",
+    cssVar: "--ghost-action-primary-bg",
     type: "color",
     tier: "semantic",
-    description: "Solid primary action background. Maps to SlButton tone accent.",
+    description: "Solid primary action background. Maps to GhostButton tone accent.",
     value: {
       light: "#1d4ed8",
       dark: "#60a5fa",
@@ -378,7 +378,7 @@ export const tokens = {
   },
   "action.primary.bg.active": {
     name: "action.primary.bg.active",
-    cssVar: "--sl-action-primary-bg-active",
+    cssVar: "--ghost-action-primary-bg-active",
     type: "color",
     tier: "semantic",
     description: "Solid primary action background on press.",
@@ -389,7 +389,7 @@ export const tokens = {
   },
   "action.primary.bg.hover": {
     name: "action.primary.bg.hover",
-    cssVar: "--sl-action-primary-bg-hover",
+    cssVar: "--ghost-action-primary-bg-hover",
     type: "color",
     tier: "semantic",
     description: "Solid primary action background on hover.",
@@ -400,7 +400,7 @@ export const tokens = {
   },
   "action.primary.border": {
     name: "action.primary.border",
-    cssVar: "--sl-action-primary-border",
+    cssVar: "--ghost-action-primary-border",
     type: "color",
     tier: "semantic",
     description: "Border on a solid primary action.",
@@ -411,7 +411,7 @@ export const tokens = {
   },
   "action.primary.fg": {
     name: "action.primary.fg",
-    cssVar: "--sl-action-primary-fg",
+    cssVar: "--ghost-action-primary-fg",
     type: "color",
     tier: "semantic",
     description: "Content color on a solid primary action.",
@@ -422,7 +422,7 @@ export const tokens = {
   },
   "action.primary.gradient.from": {
     name: "action.primary.gradient.from",
-    cssVar: "--sl-action-primary-gradient-from",
+    cssVar: "--ghost-action-primary-gradient-from",
     type: "color",
     tier: "semantic",
     description: "Primary action gradient start. Must meet WCAG AA with action.primary.fg.",
@@ -433,7 +433,7 @@ export const tokens = {
   },
   "action.primary.gradient.to": {
     name: "action.primary.gradient.to",
-    cssVar: "--sl-action-primary-gradient-to",
+    cssVar: "--ghost-action-primary-gradient-to",
     type: "color",
     tier: "semantic",
     description: "Primary action gradient end. Subtle hue shift; must meet WCAG AA with action.primary.fg.",
@@ -444,14 +444,14 @@ export const tokens = {
   },
   "action.radius": {
     name: "action.radius",
-    cssVar: "--sl-action-radius",
+    cssVar: "--ghost-action-radius",
     density: {
       compact: "0.25rem",
       spacious: "0.75rem",
     },
     type: "dimension",
     tier: "semantic",
-    description: "Action corner radius. Follows --sl-roundness.",
+    description: "Action corner radius. Follows --ghost-roundness.",
     value: {
       light: "0.5rem",
       dark: "0.5rem",
@@ -459,7 +459,7 @@ export const tokens = {
   },
   "action.shadow": {
     name: "action.shadow",
-    cssVar: "--sl-action-shadow",
+    cssVar: "--ghost-action-shadow",
     type: "shadow",
     tier: "semantic",
     description: "Rest elevation on solid actions.",
@@ -470,7 +470,7 @@ export const tokens = {
   },
   "action.shadow.press": {
     name: "action.shadow.press",
-    cssVar: "--sl-action-shadow-press",
+    cssVar: "--ghost-action-shadow-press",
     type: "shadow",
     tier: "semantic",
     description: "Compressed elevation on a pressed solid action.",
@@ -481,7 +481,7 @@ export const tokens = {
   },
   "action.spinner.duration": {
     name: "action.spinner.duration",
-    cssVar: "--sl-action-spinner-duration",
+    cssVar: "--ghost-action-spinner-duration",
     type: "duration",
     tier: "semantic",
     description: "Default action spinner rotation period. The reduced-motion pulse uses the same period so it does not flicker.",
@@ -492,7 +492,7 @@ export const tokens = {
   },
   "action.spinner.opacity": {
     name: "action.spinner.opacity",
-    cssVar: "--sl-action-spinner-opacity",
+    cssVar: "--ghost-action-spinner-opacity",
     type: "number",
     tier: "semantic",
     description: "Reduced-motion spinner pulse trough opacity.",
@@ -503,7 +503,7 @@ export const tokens = {
   },
   "action.spinner.size": {
     name: "action.spinner.size",
-    cssVar: "--sl-action-spinner-size",
+    cssVar: "--ghost-action-spinner-size",
     type: "dimension",
     tier: "semantic",
     description: "Action loading-indicator size.",
@@ -514,7 +514,7 @@ export const tokens = {
   },
   "action.spinner.width": {
     name: "action.spinner.width",
-    cssVar: "--sl-action-spinner-width",
+    cssVar: "--ghost-action-spinner-width",
     type: "dimension",
     tier: "semantic",
     description: "Default action spinner stroke width.",
@@ -525,7 +525,7 @@ export const tokens = {
   },
   "action.success.bg": {
     name: "action.success.bg",
-    cssVar: "--sl-action-success-bg",
+    cssVar: "--ghost-action-success-bg",
     type: "color",
     tier: "semantic",
     description: "Solid success action background.",
@@ -536,7 +536,7 @@ export const tokens = {
   },
   "action.success.bg.active": {
     name: "action.success.bg.active",
-    cssVar: "--sl-action-success-bg-active",
+    cssVar: "--ghost-action-success-bg-active",
     type: "color",
     tier: "semantic",
     description: "Solid success action background on press.",
@@ -547,7 +547,7 @@ export const tokens = {
   },
   "action.success.bg.hover": {
     name: "action.success.bg.hover",
-    cssVar: "--sl-action-success-bg-hover",
+    cssVar: "--ghost-action-success-bg-hover",
     type: "color",
     tier: "semantic",
     description: "Solid success action background on hover.",
@@ -558,7 +558,7 @@ export const tokens = {
   },
   "action.success.border": {
     name: "action.success.border",
-    cssVar: "--sl-action-success-border",
+    cssVar: "--ghost-action-success-border",
     type: "color",
     tier: "semantic",
     description: "Border on a solid success action.",
@@ -569,7 +569,7 @@ export const tokens = {
   },
   "action.success.fg": {
     name: "action.success.fg",
-    cssVar: "--sl-action-success-fg",
+    cssVar: "--ghost-action-success-fg",
     type: "color",
     tier: "semantic",
     description: "Content color on a solid success action.",
@@ -580,7 +580,7 @@ export const tokens = {
   },
   "action.warning.bg": {
     name: "action.warning.bg",
-    cssVar: "--sl-action-warning-bg",
+    cssVar: "--ghost-action-warning-bg",
     type: "color",
     tier: "semantic",
     description: "Solid warning action background. Uses 800 so white label text meets WCAG AA.",
@@ -591,7 +591,7 @@ export const tokens = {
   },
   "action.warning.bg.active": {
     name: "action.warning.bg.active",
-    cssVar: "--sl-action-warning-bg-active",
+    cssVar: "--ghost-action-warning-bg-active",
     type: "color",
     tier: "semantic",
     description: "Solid warning action background on press.",
@@ -602,7 +602,7 @@ export const tokens = {
   },
   "action.warning.bg.hover": {
     name: "action.warning.bg.hover",
-    cssVar: "--sl-action-warning-bg-hover",
+    cssVar: "--ghost-action-warning-bg-hover",
     type: "color",
     tier: "semantic",
     description: "Solid warning action background on hover.",
@@ -613,7 +613,7 @@ export const tokens = {
   },
   "action.warning.border": {
     name: "action.warning.border",
-    cssVar: "--sl-action-warning-border",
+    cssVar: "--ghost-action-warning-border",
     type: "color",
     tier: "semantic",
     description: "Border on a solid warning action.",
@@ -624,7 +624,7 @@ export const tokens = {
   },
   "action.warning.fg": {
     name: "action.warning.fg",
-    cssVar: "--sl-action-warning-fg",
+    cssVar: "--ghost-action-warning-fg",
     type: "color",
     tier: "semantic",
     description: "Content color on a solid warning action.",
@@ -645,7 +645,7 @@ export const tokens = {
   },
   "border.danger": {
     name: "border.danger",
-    cssVar: "--sl-border-danger",
+    cssVar: "--ghost-border-danger",
     type: "color",
     tier: "semantic",
     description: "Danger-accent border.",
@@ -656,7 +656,7 @@ export const tokens = {
   },
   "border.default": {
     name: "border.default",
-    cssVar: "--sl-border-default",
+    cssVar: "--ghost-border-default",
     type: "color",
     tier: "semantic",
     description: "Default structural border.",
@@ -667,7 +667,7 @@ export const tokens = {
   },
   "border.focus": {
     name: "border.focus",
-    cssVar: "--sl-border-focus",
+    cssVar: "--ghost-border-focus",
     type: "color",
     tier: "semantic",
     description: "Focus-indicator border.",
@@ -678,7 +678,7 @@ export const tokens = {
   },
   "border.hairline": {
     name: "border.hairline",
-    cssVar: "--sl-border-hairline",
+    cssVar: "--ghost-border-hairline",
     type: "color",
     tier: "semantic",
     description: "Alpha hairline border color.",
@@ -689,7 +689,7 @@ export const tokens = {
   },
   "border.hairline.width": {
     name: "border.hairline.width",
-    cssVar: "--sl-border-hairline-width",
+    cssVar: "--ghost-border-hairline-width",
     highDpr: "0.5px",
     type: "dimension",
     tier: "semantic",
@@ -701,7 +701,7 @@ export const tokens = {
   },
   "border.info": {
     name: "border.info",
-    cssVar: "--sl-border-info",
+    cssVar: "--ghost-border-info",
     type: "color",
     tier: "semantic",
     description: "Info-accent border.",
@@ -712,7 +712,7 @@ export const tokens = {
   },
   "border.muted": {
     name: "border.muted",
-    cssVar: "--sl-border-muted",
+    cssVar: "--ghost-border-muted",
     type: "color",
     tier: "semantic",
     description: "Low-emphasis border.",
@@ -723,7 +723,7 @@ export const tokens = {
   },
   "border.primary": {
     name: "border.primary",
-    cssVar: "--sl-border-primary",
+    cssVar: "--ghost-border-primary",
     type: "color",
     tier: "semantic",
     description: "Primary-accent border.",
@@ -734,7 +734,7 @@ export const tokens = {
   },
   "border.strong": {
     name: "border.strong",
-    cssVar: "--sl-border-strong",
+    cssVar: "--ghost-border-strong",
     type: "color",
     tier: "semantic",
     description: "High-emphasis border.",
@@ -745,7 +745,7 @@ export const tokens = {
   },
   "border.success": {
     name: "border.success",
-    cssVar: "--sl-border-success",
+    cssVar: "--ghost-border-success",
     type: "color",
     tier: "semantic",
     description: "Success-accent border.",
@@ -756,7 +756,7 @@ export const tokens = {
   },
   "border.warning": {
     name: "border.warning",
-    cssVar: "--sl-border-warning",
+    cssVar: "--ghost-border-warning",
     type: "color",
     tier: "semantic",
     description: "Warning-accent border.",
@@ -2357,7 +2357,7 @@ export const tokens = {
   },
   "control.size.lg.font": {
     name: "control.size.lg.font",
-    cssVar: "--sl-control-size-lg-font",
+    cssVar: "--ghost-control-size-lg-font",
     type: "fontSize",
     tier: "semantic",
     description: "Large control font size.",
@@ -2368,7 +2368,7 @@ export const tokens = {
   },
   "control.size.lg.min": {
     name: "control.size.lg.min",
-    cssVar: "--sl-control-size-lg-min",
+    cssVar: "--ghost-control-size-lg-min",
     touchMin: "2.75rem",
     density: {
       compact: "2.5rem",
@@ -2384,7 +2384,7 @@ export const tokens = {
   },
   "control.size.lg.padding.block": {
     name: "control.size.lg.padding.block",
-    cssVar: "--sl-control-size-lg-padding-block",
+    cssVar: "--ghost-control-size-lg-padding-block",
     density: {
       compact: "0.75rem",
       spacious: "1.25rem",
@@ -2399,7 +2399,7 @@ export const tokens = {
   },
   "control.size.lg.padding.inline": {
     name: "control.size.lg.padding.inline",
-    cssVar: "--sl-control-size-lg-padding-inline",
+    cssVar: "--ghost-control-size-lg-padding-inline",
     density: {
       compact: "1rem",
       spacious: "1.5rem",
@@ -2414,7 +2414,7 @@ export const tokens = {
   },
   "control.size.md.font": {
     name: "control.size.md.font",
-    cssVar: "--sl-control-size-md-font",
+    cssVar: "--ghost-control-size-md-font",
     type: "fontSize",
     tier: "semantic",
     description: "Medium control font size.",
@@ -2425,7 +2425,7 @@ export const tokens = {
   },
   "control.size.md.min": {
     name: "control.size.md.min",
-    cssVar: "--sl-control-size-md-min",
+    cssVar: "--ghost-control-size-md-min",
     touchMin: "2.75rem",
     density: {
       compact: "2rem",
@@ -2441,7 +2441,7 @@ export const tokens = {
   },
   "control.size.md.padding.block": {
     name: "control.size.md.padding.block",
-    cssVar: "--sl-control-size-md-padding-block",
+    cssVar: "--ghost-control-size-md-padding-block",
     density: {
       compact: "0.5rem",
       spacious: "1rem",
@@ -2456,7 +2456,7 @@ export const tokens = {
   },
   "control.size.md.padding.inline": {
     name: "control.size.md.padding.inline",
-    cssVar: "--sl-control-size-md-padding-inline",
+    cssVar: "--ghost-control-size-md-padding-inline",
     density: {
       compact: "0.75rem",
       spacious: "1.25rem",
@@ -2471,7 +2471,7 @@ export const tokens = {
   },
   "control.size.sm.font": {
     name: "control.size.sm.font",
-    cssVar: "--sl-control-size-sm-font",
+    cssVar: "--ghost-control-size-sm-font",
     type: "fontSize",
     tier: "semantic",
     description: "Small control font size.",
@@ -2482,7 +2482,7 @@ export const tokens = {
   },
   "control.size.sm.min": {
     name: "control.size.sm.min",
-    cssVar: "--sl-control-size-sm-min",
+    cssVar: "--ghost-control-size-sm-min",
     touchMin: "2.75rem",
     density: {
       compact: "1.75rem",
@@ -2498,7 +2498,7 @@ export const tokens = {
   },
   "control.size.sm.padding.block": {
     name: "control.size.sm.padding.block",
-    cssVar: "--sl-control-size-sm-padding-block",
+    cssVar: "--ghost-control-size-sm-padding-block",
     density: {
       compact: "0.25rem",
       spacious: "0.75rem",
@@ -2513,7 +2513,7 @@ export const tokens = {
   },
   "control.size.sm.padding.inline": {
     name: "control.size.sm.padding.inline",
-    cssVar: "--sl-control-size-sm-padding-inline",
+    cssVar: "--ghost-control-size-sm-padding-inline",
     density: {
       compact: "0.5rem",
       spacious: "1rem",
@@ -2538,7 +2538,7 @@ export const tokens = {
   },
   "control.touch.min": {
     name: "control.touch.min",
-    cssVar: "--sl-control-touch-min",
+    cssVar: "--ghost-control-touch-min",
     type: "dimension",
     tier: "semantic",
     description: "Coarse-pointer floor applied to control heights.",
@@ -2649,7 +2649,7 @@ export const tokens = {
   },
   "elevation.0.bg": {
     name: "elevation.0.bg",
-    cssVar: "--sl-elevation-0-bg",
+    cssVar: "--ghost-elevation-0-bg",
     type: "color",
     tier: "semantic",
     description: "Level 0 surface. Flush with the canvas.",
@@ -2660,7 +2660,7 @@ export const tokens = {
   },
   "elevation.0.border": {
     name: "elevation.0.border",
-    cssVar: "--sl-elevation-0-border",
+    cssVar: "--ghost-elevation-0-border",
     type: "color",
     tier: "semantic",
     description: "Level 0 border. Flush surfaces do not stroke.",
@@ -2671,7 +2671,7 @@ export const tokens = {
   },
   "elevation.0.highlight": {
     name: "elevation.0.highlight",
-    cssVar: "--sl-elevation-0-highlight",
+    cssVar: "--ghost-elevation-0-highlight",
     type: "shadow",
     tier: "semantic",
     description: "Level 0 inset highlight. Unused in light mode.",
@@ -2682,7 +2682,7 @@ export const tokens = {
   },
   "elevation.0.shadow": {
     name: "elevation.0.shadow",
-    cssVar: "--sl-elevation-0-shadow",
+    cssVar: "--ghost-elevation-0-shadow",
     type: "shadow",
     tier: "semantic",
     description: "Level 0 shadow. No ambient or key layer.",
@@ -2693,7 +2693,7 @@ export const tokens = {
   },
   "elevation.1.bg": {
     name: "elevation.1.bg",
-    cssVar: "--sl-elevation-1-bg",
+    cssVar: "--ghost-elevation-1-bg",
     type: "color",
     tier: "semantic",
     description: "Level 1 surface. Resting cards and controls.",
@@ -2704,7 +2704,7 @@ export const tokens = {
   },
   "elevation.1.border": {
     name: "elevation.1.border",
-    cssVar: "--sl-elevation-1-border",
+    cssVar: "--ghost-elevation-1-border",
     type: "color",
     tier: "semantic",
     description: "Level 1 hairline border.",
@@ -2715,7 +2715,7 @@ export const tokens = {
   },
   "elevation.1.highlight": {
     name: "elevation.1.highlight",
-    cssVar: "--sl-elevation-1-highlight",
+    cssVar: "--ghost-elevation-1-highlight",
     type: "shadow",
     tier: "semantic",
     description: "Level 1 inset highlight. Unused in light mode.",
@@ -2726,7 +2726,7 @@ export const tokens = {
   },
   "elevation.1.shadow": {
     name: "elevation.1.shadow",
-    cssVar: "--sl-elevation-1-shadow",
+    cssVar: "--ghost-elevation-1-shadow",
     type: "shadow",
     tier: "semantic",
     description: "Level 1 layered shadow. Ambient plus key light.",
@@ -2737,7 +2737,7 @@ export const tokens = {
   },
   "elevation.2.bg": {
     name: "elevation.2.bg",
-    cssVar: "--sl-elevation-2-bg",
+    cssVar: "--ghost-elevation-2-bg",
     type: "color",
     tier: "semantic",
     description: "Level 2 surface. Raised cards and menus.",
@@ -2748,7 +2748,7 @@ export const tokens = {
   },
   "elevation.2.border": {
     name: "elevation.2.border",
-    cssVar: "--sl-elevation-2-border",
+    cssVar: "--ghost-elevation-2-border",
     type: "color",
     tier: "semantic",
     description: "Level 2 hairline border.",
@@ -2759,7 +2759,7 @@ export const tokens = {
   },
   "elevation.2.highlight": {
     name: "elevation.2.highlight",
-    cssVar: "--sl-elevation-2-highlight",
+    cssVar: "--ghost-elevation-2-highlight",
     type: "shadow",
     tier: "semantic",
     description: "Level 2 inset highlight. Unused in light mode.",
@@ -2770,7 +2770,7 @@ export const tokens = {
   },
   "elevation.2.shadow": {
     name: "elevation.2.shadow",
-    cssVar: "--sl-elevation-2-shadow",
+    cssVar: "--ghost-elevation-2-shadow",
     type: "shadow",
     tier: "semantic",
     description: "Level 2 layered shadow. Ambient plus key light.",
@@ -2781,7 +2781,7 @@ export const tokens = {
   },
   "elevation.3.bg": {
     name: "elevation.3.bg",
-    cssVar: "--sl-elevation-3-bg",
+    cssVar: "--ghost-elevation-3-bg",
     type: "color",
     tier: "semantic",
     description: "Level 3 surface. Popovers and floating panels.",
@@ -2792,7 +2792,7 @@ export const tokens = {
   },
   "elevation.3.border": {
     name: "elevation.3.border",
-    cssVar: "--sl-elevation-3-border",
+    cssVar: "--ghost-elevation-3-border",
     type: "color",
     tier: "semantic",
     description: "Level 3 hairline border.",
@@ -2803,7 +2803,7 @@ export const tokens = {
   },
   "elevation.3.highlight": {
     name: "elevation.3.highlight",
-    cssVar: "--sl-elevation-3-highlight",
+    cssVar: "--ghost-elevation-3-highlight",
     type: "shadow",
     tier: "semantic",
     description: "Level 3 inset highlight. Unused in light mode.",
@@ -2814,7 +2814,7 @@ export const tokens = {
   },
   "elevation.3.shadow": {
     name: "elevation.3.shadow",
-    cssVar: "--sl-elevation-3-shadow",
+    cssVar: "--ghost-elevation-3-shadow",
     type: "shadow",
     tier: "semantic",
     description: "Level 3 layered shadow. Ambient plus key light.",
@@ -2825,7 +2825,7 @@ export const tokens = {
   },
   "elevation.4.bg": {
     name: "elevation.4.bg",
-    cssVar: "--sl-elevation-4-bg",
+    cssVar: "--ghost-elevation-4-bg",
     type: "color",
     tier: "semantic",
     description: "Level 4 surface. Dialogs and sheets.",
@@ -2836,7 +2836,7 @@ export const tokens = {
   },
   "elevation.4.border": {
     name: "elevation.4.border",
-    cssVar: "--sl-elevation-4-border",
+    cssVar: "--ghost-elevation-4-border",
     type: "color",
     tier: "semantic",
     description: "Level 4 hairline border.",
@@ -2847,7 +2847,7 @@ export const tokens = {
   },
   "elevation.4.highlight": {
     name: "elevation.4.highlight",
-    cssVar: "--sl-elevation-4-highlight",
+    cssVar: "--ghost-elevation-4-highlight",
     type: "shadow",
     tier: "semantic",
     description: "Level 4 inset highlight. Unused in light mode.",
@@ -2858,7 +2858,7 @@ export const tokens = {
   },
   "elevation.4.shadow": {
     name: "elevation.4.shadow",
-    cssVar: "--sl-elevation-4-shadow",
+    cssVar: "--ghost-elevation-4-shadow",
     type: "shadow",
     tier: "semantic",
     description: "Level 4 layered shadow. Ambient plus key light.",
@@ -2869,7 +2869,7 @@ export const tokens = {
   },
   "elevation.5.bg": {
     name: "elevation.5.bg",
-    cssVar: "--sl-elevation-5-bg",
+    cssVar: "--ghost-elevation-5-bg",
     type: "color",
     tier: "semantic",
     description: "Level 5 surface. Highest floating layer.",
@@ -2880,7 +2880,7 @@ export const tokens = {
   },
   "elevation.5.border": {
     name: "elevation.5.border",
-    cssVar: "--sl-elevation-5-border",
+    cssVar: "--ghost-elevation-5-border",
     type: "color",
     tier: "semantic",
     description: "Level 5 hairline border.",
@@ -2891,7 +2891,7 @@ export const tokens = {
   },
   "elevation.5.highlight": {
     name: "elevation.5.highlight",
-    cssVar: "--sl-elevation-5-highlight",
+    cssVar: "--ghost-elevation-5-highlight",
     type: "shadow",
     tier: "semantic",
     description: "Level 5 inset highlight. Unused in light mode.",
@@ -2902,7 +2902,7 @@ export const tokens = {
   },
   "elevation.5.shadow": {
     name: "elevation.5.shadow",
-    cssVar: "--sl-elevation-5-shadow",
+    cssVar: "--ghost-elevation-5-shadow",
     type: "shadow",
     tier: "semantic",
     description: "Level 5 layered shadow. Ambient plus key light.",
@@ -2913,7 +2913,7 @@ export const tokens = {
   },
   "focus.ring.color": {
     name: "focus.ring.color",
-    cssVar: "--sl-focus-ring-color",
+    cssVar: "--ghost-focus-ring-color",
     type: "color",
     tier: "semantic",
     description: "Outer color of the two-color keyboard focus indicator.",
@@ -2924,7 +2924,7 @@ export const tokens = {
   },
   "focus.ring.contrast": {
     name: "focus.ring.contrast",
-    cssVar: "--sl-focus-ring-contrast",
+    cssVar: "--ghost-focus-ring-contrast",
     type: "color",
     tier: "semantic",
     description: "Inner color of the two-color keyboard focus indicator.",
@@ -2935,7 +2935,7 @@ export const tokens = {
   },
   "focus.ring.duration": {
     name: "focus.ring.duration",
-    cssVar: "--sl-focus-ring-duration",
+    cssVar: "--ghost-focus-ring-duration",
     reducedMotion: "0ms",
     type: "duration",
     tier: "semantic",
@@ -2947,7 +2947,7 @@ export const tokens = {
   },
   "focus.ring.offset": {
     name: "focus.ring.offset",
-    cssVar: "--sl-focus-ring-offset",
+    cssVar: "--ghost-focus-ring-offset",
     type: "dimension",
     tier: "semantic",
     description: "Gap between a control and its focus ring.",
@@ -2958,7 +2958,7 @@ export const tokens = {
   },
   "focus.ring.width": {
     name: "focus.ring.width",
-    cssVar: "--sl-focus-ring-width",
+    cssVar: "--ghost-focus-ring-width",
     type: "dimension",
     tier: "semantic",
     description: "Focus outline thickness.",
@@ -3061,7 +3061,7 @@ export const tokens = {
     name: "font.line.tight",
     type: "number",
     tier: "primitive",
-    description: "Tight line-height. Matches SlButton.",
+    description: "Tight line-height. Matches GhostButton.",
     value: {
       light: "1.2",
       dark: "1.2",
@@ -3199,7 +3199,7 @@ export const tokens = {
   },
   "gradient.accent": {
     name: "gradient.accent",
-    cssVar: "--sl-gradient-accent",
+    cssVar: "--ghost-gradient-accent",
     type: "gradient",
     tier: "semantic",
     description: "Accent gradient interpolated in oklch.",
@@ -3210,7 +3210,7 @@ export const tokens = {
   },
   "gradient.action.danger": {
     name: "gradient.action.danger",
-    cssVar: "--sl-gradient-action-danger",
+    cssVar: "--ghost-gradient-action-danger",
     type: "gradient",
     tier: "semantic",
     description: "Solid danger action fill. Interpolated in oklch; both stops meet WCAG AA with action.danger.fg.",
@@ -3221,7 +3221,7 @@ export const tokens = {
   },
   "gradient.action.neutral": {
     name: "gradient.action.neutral",
-    cssVar: "--sl-gradient-action-neutral",
+    cssVar: "--ghost-gradient-action-neutral",
     type: "gradient",
     tier: "semantic",
     description: "Solid neutral action fill. Interpolated in oklch; both stops meet WCAG AA with action.neutral.fg.",
@@ -3232,7 +3232,7 @@ export const tokens = {
   },
   "gradient.action.primary": {
     name: "gradient.action.primary",
-    cssVar: "--sl-gradient-action-primary",
+    cssVar: "--ghost-gradient-action-primary",
     type: "gradient",
     tier: "semantic",
     description: "Solid primary action fill. Interpolated in oklch; both stops meet WCAG AA with action.primary.fg.",
@@ -3243,7 +3243,7 @@ export const tokens = {
   },
   "gradient.aurora": {
     name: "gradient.aurora",
-    cssVar: "--sl-gradient-aurora",
+    cssVar: "--ghost-gradient-aurora",
     type: "gradient",
     tier: "semantic",
     description: "Layered radial aurora background interpolated in oklch.",
@@ -3254,7 +3254,7 @@ export const tokens = {
   },
   "gradient.border": {
     name: "gradient.border",
-    cssVar: "--sl-gradient-border",
+    cssVar: "--ghost-gradient-border",
     type: "gradient",
     tier: "semantic",
     description: "Gradient used by the gradient-border mask recipe.",
@@ -3265,7 +3265,7 @@ export const tokens = {
   },
   "interactive.leave.spring": {
     name: "interactive.leave.spring",
-    cssVar: "--sl-interactive-leave-spring",
+    cssVar: "--ghost-interactive-leave-spring",
     type: "spring",
     tier: "semantic",
     description: "Leave-settle easing for pointer-reactive surfaces.",
@@ -3276,7 +3276,7 @@ export const tokens = {
   },
   "interactive.leave.spring.duration": {
     name: "interactive.leave.spring.duration",
-    cssVar: "--sl-interactive-leave-spring-duration",
+    cssVar: "--ghost-interactive-leave-spring-duration",
     reducedMotion: "80ms",
     type: "duration",
     tier: "semantic",
@@ -3288,7 +3288,7 @@ export const tokens = {
   },
   "interactive.spotlight.color": {
     name: "interactive.spotlight.color",
-    cssVar: "--sl-interactive-spotlight-color",
+    cssVar: "--ghost-interactive-spotlight-color",
     type: "color",
     tier: "semantic",
     description: "Spotlight glow color. Mono hairline uses chroma-0 primary through this alias.",
@@ -3299,10 +3299,10 @@ export const tokens = {
   },
   "interactive.spotlight.opacity": {
     name: "interactive.spotlight.opacity",
-    cssVar: "--sl-interactive-spotlight-opacity",
+    cssVar: "--ghost-interactive-spotlight-opacity",
     type: "number",
     tier: "semantic",
-    description: "Peak spotlight opacity before --sl-motion-intensity. 0 hides the glow.",
+    description: "Peak spotlight opacity before --ghost-motion-intensity. 0 hides the glow.",
     value: {
       light: "0.28",
       dark: "0.28",
@@ -3310,7 +3310,7 @@ export const tokens = {
   },
   "interactive.spotlight.size": {
     name: "interactive.spotlight.size",
-    cssVar: "--sl-interactive-spotlight-size",
+    cssVar: "--ghost-interactive-spotlight-size",
     type: "dimension",
     tier: "semantic",
     description: "Spotlight glow diameter. Subtle default; defineTheme interactivity resizes it.",
@@ -3321,7 +3321,7 @@ export const tokens = {
   },
   "material.glass.bg": {
     name: "material.glass.bg",
-    cssVar: "--sl-material-glass-bg",
+    cssVar: "--ghost-material-glass-bg",
     type: "color",
     tier: "semantic",
     description: "Translucent glass fill. Contrast is gated on the opaque fallback.",
@@ -3332,7 +3332,7 @@ export const tokens = {
   },
   "material.glass.blur": {
     name: "material.glass.blur",
-    cssVar: "--sl-material-glass-blur",
+    cssVar: "--ghost-material-glass-blur",
     type: "dimension",
     tier: "semantic",
     description: "Glass backdrop blur radius.",
@@ -3343,7 +3343,7 @@ export const tokens = {
   },
   "material.glass.border": {
     name: "material.glass.border",
-    cssVar: "--sl-material-glass-border",
+    cssVar: "--ghost-material-glass-border",
     type: "color",
     tier: "semantic",
     description: "Glass hairline border.",
@@ -3354,7 +3354,7 @@ export const tokens = {
   },
   "material.glass.fallback.bg": {
     name: "material.glass.fallback.bg",
-    cssVar: "--sl-material-glass-fallback-bg",
+    cssVar: "--ghost-material-glass-fallback-bg",
     type: "color",
     tier: "semantic",
     description: "Opaque glass fallback when backdrop-filter is unavailable.",
@@ -3365,7 +3365,7 @@ export const tokens = {
   },
   "material.glass.noise": {
     name: "material.glass.noise",
-    cssVar: "--sl-material-glass-noise",
+    cssVar: "--ghost-material-glass-noise",
     type: "image",
     tier: "semantic",
     description: "Glass noise overlay image.",
@@ -3376,7 +3376,7 @@ export const tokens = {
   },
   "material.glass.noise.opacity": {
     name: "material.glass.noise.opacity",
-    cssVar: "--sl-material-glass-noise-opacity",
+    cssVar: "--ghost-material-glass-noise-opacity",
     type: "number",
     tier: "semantic",
     description: "Glass noise overlay opacity.",
@@ -3387,7 +3387,7 @@ export const tokens = {
   },
   "material.glass.saturate": {
     name: "material.glass.saturate",
-    cssVar: "--sl-material-glass-saturate",
+    cssVar: "--ghost-material-glass-saturate",
     type: "number",
     tier: "semantic",
     description: "Glass backdrop saturation boost.",
@@ -3398,7 +3398,7 @@ export const tokens = {
   },
   "material.grain.bg": {
     name: "material.grain.bg",
-    cssVar: "--sl-material-grain-bg",
+    cssVar: "--ghost-material-grain-bg",
     type: "color",
     tier: "semantic",
     description: "Grain material fill.",
@@ -3409,7 +3409,7 @@ export const tokens = {
   },
   "material.grain.noise": {
     name: "material.grain.noise",
-    cssVar: "--sl-material-grain-noise",
+    cssVar: "--ghost-material-grain-noise",
     type: "image",
     tier: "semantic",
     description: "Grain noise overlay image.",
@@ -3420,7 +3420,7 @@ export const tokens = {
   },
   "material.grain.noise.opacity": {
     name: "material.grain.noise.opacity",
-    cssVar: "--sl-material-grain-noise-opacity",
+    cssVar: "--ghost-material-grain-noise-opacity",
     type: "number",
     tier: "semantic",
     description: "Grain noise overlay opacity.",
@@ -3431,7 +3431,7 @@ export const tokens = {
   },
   "material.solid.bg": {
     name: "material.solid.bg",
-    cssVar: "--sl-material-solid-bg",
+    cssVar: "--ghost-material-solid-bg",
     type: "color",
     tier: "semantic",
     description: "Opaque solid material fill.",
@@ -3442,7 +3442,7 @@ export const tokens = {
   },
   "motion.duration.expressive": {
     name: "motion.duration.expressive",
-    cssVar: "--sl-motion-duration-expressive",
+    cssVar: "--ghost-motion-duration-expressive",
     reducedMotion: "80ms",
     type: "duration",
     tier: "semantic",
@@ -3454,7 +3454,7 @@ export const tokens = {
   },
   "motion.duration.fast": {
     name: "motion.duration.fast",
-    cssVar: "--sl-motion-duration-fast",
+    cssVar: "--ghost-motion-duration-fast",
     reducedMotion: "80ms",
     type: "duration",
     tier: "semantic",
@@ -3466,7 +3466,7 @@ export const tokens = {
   },
   "motion.duration.instant": {
     name: "motion.duration.instant",
-    cssVar: "--sl-motion-duration-instant",
+    cssVar: "--ghost-motion-duration-instant",
     reducedMotion: "0ms",
     type: "duration",
     tier: "semantic",
@@ -3478,7 +3478,7 @@ export const tokens = {
   },
   "motion.duration.moderate": {
     name: "motion.duration.moderate",
-    cssVar: "--sl-motion-duration-moderate",
+    cssVar: "--ghost-motion-duration-moderate",
     reducedMotion: "80ms",
     type: "duration",
     tier: "semantic",
@@ -3490,7 +3490,7 @@ export const tokens = {
   },
   "motion.duration.slow": {
     name: "motion.duration.slow",
-    cssVar: "--sl-motion-duration-slow",
+    cssVar: "--ghost-motion-duration-slow",
     reducedMotion: "80ms",
     type: "duration",
     tier: "semantic",
@@ -3502,7 +3502,7 @@ export const tokens = {
   },
   "motion.easing.accelerate": {
     name: "motion.easing.accelerate",
-    cssVar: "--sl-motion-easing-accelerate",
+    cssVar: "--ghost-motion-easing-accelerate",
     type: "cubicBezier",
     tier: "semantic",
     description: "Ease-in for exits.",
@@ -3513,7 +3513,7 @@ export const tokens = {
   },
   "motion.easing.decelerate": {
     name: "motion.easing.decelerate",
-    cssVar: "--sl-motion-easing-decelerate",
+    cssVar: "--ghost-motion-easing-decelerate",
     type: "cubicBezier",
     tier: "semantic",
     description: "Ease-out for enters.",
@@ -3524,7 +3524,7 @@ export const tokens = {
   },
   "motion.easing.standard": {
     name: "motion.easing.standard",
-    cssVar: "--sl-motion-easing-standard",
+    cssVar: "--ghost-motion-easing-standard",
     type: "cubicBezier",
     tier: "semantic",
     description: "Default symmetric easing.",
@@ -3535,7 +3535,7 @@ export const tokens = {
   },
   "motion.enter.duration": {
     name: "motion.enter.duration",
-    cssVar: "--sl-motion-enter-duration",
+    cssVar: "--ghost-motion-enter-duration",
     reducedMotion: "80ms",
     type: "duration",
     tier: "semantic",
@@ -3547,7 +3547,7 @@ export const tokens = {
   },
   "motion.enter.easing": {
     name: "motion.enter.easing",
-    cssVar: "--sl-motion-enter-easing",
+    cssVar: "--ghost-motion-enter-easing",
     type: "cubicBezier",
     tier: "semantic",
     description: "Enter easing. Decelerate into rest.",
@@ -3558,7 +3558,7 @@ export const tokens = {
   },
   "motion.exit.duration": {
     name: "motion.exit.duration",
-    cssVar: "--sl-motion-exit-duration",
+    cssVar: "--ghost-motion-exit-duration",
     reducedMotion: "80ms",
     type: "duration",
     tier: "semantic",
@@ -3570,7 +3570,7 @@ export const tokens = {
   },
   "motion.exit.easing": {
     name: "motion.exit.easing",
-    cssVar: "--sl-motion-exit-easing",
+    cssVar: "--ghost-motion-exit-easing",
     type: "cubicBezier",
     tier: "semantic",
     description: "Exit easing. Accelerate out.",
@@ -3581,7 +3581,7 @@ export const tokens = {
   },
   "motion.fade.duration": {
     name: "motion.fade.duration",
-    cssVar: "--sl-motion-fade-duration",
+    cssVar: "--ghost-motion-fade-duration",
     reducedMotion: "80ms",
     type: "duration",
     tier: "semantic",
@@ -3593,10 +3593,10 @@ export const tokens = {
   },
   "motion.intensity": {
     name: "motion.intensity",
-    cssVar: "--sl-motion-intensity",
+    cssVar: "--ghost-motion-intensity",
     type: "number",
     tier: "semantic",
-    description: "Unitless 0–1 duration scale. Set --sl-motion-intensity on any subtree to slow or freeze motion.",
+    description: "Unitless 0–1 duration scale. Set --ghost-motion-intensity on any subtree to slow or freeze motion.",
     value: {
       light: "1",
       dark: "1",
@@ -3604,7 +3604,7 @@ export const tokens = {
   },
   "motion.press.scale": {
     name: "motion.press.scale",
-    cssVar: "--sl-motion-press-scale",
+    cssVar: "--ghost-motion-press-scale",
     reducedMotion: "1",
     type: "number",
     tier: "semantic",
@@ -3616,7 +3616,7 @@ export const tokens = {
   },
   "motion.scale": {
     name: "motion.scale",
-    cssVar: "--sl-motion-scale",
+    cssVar: "--ghost-motion-scale",
     reducedMotion: "1",
     type: "number",
     tier: "semantic",
@@ -3628,7 +3628,7 @@ export const tokens = {
   },
   "motion.spring.bouncy": {
     name: "motion.spring.bouncy",
-    cssVar: "--sl-motion-spring-bouncy",
+    cssVar: "--ghost-motion-spring-bouncy",
     type: "spring",
     tier: "semantic",
     description: "Bouncy spring compiled to CSS linear().",
@@ -3639,7 +3639,7 @@ export const tokens = {
   },
   "motion.spring.bouncy.duration": {
     name: "motion.spring.bouncy.duration",
-    cssVar: "--sl-motion-spring-bouncy-duration",
+    cssVar: "--ghost-motion-spring-bouncy-duration",
     reducedMotion: "80ms",
     type: "duration",
     tier: "semantic",
@@ -3651,7 +3651,7 @@ export const tokens = {
   },
   "motion.spring.gentle": {
     name: "motion.spring.gentle",
-    cssVar: "--sl-motion-spring-gentle",
+    cssVar: "--ghost-motion-spring-gentle",
     type: "spring",
     tier: "semantic",
     description: "Gentle spring compiled to CSS linear().",
@@ -3662,7 +3662,7 @@ export const tokens = {
   },
   "motion.spring.gentle.duration": {
     name: "motion.spring.gentle.duration",
-    cssVar: "--sl-motion-spring-gentle-duration",
+    cssVar: "--ghost-motion-spring-gentle-duration",
     reducedMotion: "80ms",
     type: "duration",
     tier: "semantic",
@@ -3674,7 +3674,7 @@ export const tokens = {
   },
   "motion.spring.snappy": {
     name: "motion.spring.snappy",
-    cssVar: "--sl-motion-spring-snappy",
+    cssVar: "--ghost-motion-spring-snappy",
     type: "spring",
     tier: "semantic",
     description: "Snappy spring compiled to CSS linear().",
@@ -3685,7 +3685,7 @@ export const tokens = {
   },
   "motion.spring.snappy.duration": {
     name: "motion.spring.snappy.duration",
-    cssVar: "--sl-motion-spring-snappy-duration",
+    cssVar: "--ghost-motion-spring-snappy-duration",
     reducedMotion: "80ms",
     type: "duration",
     tier: "semantic",
@@ -3697,7 +3697,7 @@ export const tokens = {
   },
   "motion.stagger": {
     name: "motion.stagger",
-    cssVar: "--sl-motion-stagger",
+    cssVar: "--ghost-motion-stagger",
     reducedMotion: "0ms",
     type: "duration",
     tier: "semantic",
@@ -3709,7 +3709,7 @@ export const tokens = {
   },
   "motion.translate": {
     name: "motion.translate",
-    cssVar: "--sl-motion-translate",
+    cssVar: "--ghost-motion-translate",
     reducedMotion: "0px",
     type: "dimension",
     tier: "semantic",
@@ -3821,7 +3821,7 @@ export const tokens = {
   },
   "radius.lg": {
     name: "radius.lg",
-    cssVar: "--sl-radius-lg",
+    cssVar: "--ghost-radius-lg",
     density: {
       compact: "0.5rem",
       spacious: "1rem",
@@ -3836,7 +3836,7 @@ export const tokens = {
   },
   "radius.md": {
     name: "radius.md",
-    cssVar: "--sl-radius-md",
+    cssVar: "--ghost-radius-md",
     density: {
       compact: "0.25rem",
       spacious: "0.75rem",
@@ -3851,7 +3851,7 @@ export const tokens = {
   },
   "radius.none": {
     name: "radius.none",
-    cssVar: "--sl-radius-none",
+    cssVar: "--ghost-radius-none",
     type: "dimension",
     tier: "semantic",
     description: "Sharp corner. Stays 0 at every roundness.",
@@ -3862,7 +3862,7 @@ export const tokens = {
   },
   "radius.pill": {
     name: "radius.pill",
-    cssVar: "--sl-radius-pill",
+    cssVar: "--ghost-radius-pill",
     type: "dimension",
     tier: "semantic",
     description: "Pill radius. Capsule at roundness 1; sharp at 0.",
@@ -3933,7 +3933,7 @@ export const tokens = {
   },
   "radius.sm": {
     name: "radius.sm",
-    cssVar: "--sl-radius-sm",
+    cssVar: "--ghost-radius-sm",
     density: {
       compact: "0px",
       spacious: "0.5rem",
@@ -3948,7 +3948,7 @@ export const tokens = {
   },
   "radius.xl": {
     name: "radius.xl",
-    cssVar: "--sl-radius-xl",
+    cssVar: "--ghost-radius-xl",
     density: {
       compact: "0.75rem",
       spacious: "1rem",
@@ -3963,10 +3963,10 @@ export const tokens = {
   },
   "roundness.amount": {
     name: "roundness.amount",
-    cssVar: "--sl-roundness",
+    cssVar: "--ghost-roundness",
     type: "number",
     tier: "semantic",
-    description: "Unitless 0–1 corner scale compiled as --sl-roundness. 0 is sharp; 1 is the designed radius. Set on any subtree.",
+    description: "Unitless 0–1 corner scale compiled as --ghost-roundness. 0 is sharp; 1 is the designed radius. Set on any subtree.",
     value: {
       light: "1",
       dark: "1",
@@ -4184,7 +4184,7 @@ export const tokens = {
   },
   "space.gap.lg": {
     name: "space.gap.lg",
-    cssVar: "--sl-space-gap-lg",
+    cssVar: "--ghost-space-gap-lg",
     density: {
       compact: "0.75rem",
       spacious: "1.25rem",
@@ -4199,7 +4199,7 @@ export const tokens = {
   },
   "space.gap.md": {
     name: "space.gap.md",
-    cssVar: "--sl-space-gap-md",
+    cssVar: "--ghost-space-gap-md",
     density: {
       compact: "0.5rem",
       spacious: "1rem",
@@ -4214,7 +4214,7 @@ export const tokens = {
   },
   "space.gap.sm": {
     name: "space.gap.sm",
-    cssVar: "--sl-space-gap-sm",
+    cssVar: "--ghost-space-gap-sm",
     density: {
       compact: "0.25rem",
       spacious: "0.75rem",
@@ -4229,7 +4229,7 @@ export const tokens = {
   },
   "space.gap.xs": {
     name: "space.gap.xs",
-    cssVar: "--sl-space-gap-xs",
+    cssVar: "--ghost-space-gap-xs",
     density: {
       compact: "0px",
       spacious: "0.5rem",
@@ -4244,7 +4244,7 @@ export const tokens = {
   },
   "space.inset.lg": {
     name: "space.inset.lg",
-    cssVar: "--sl-space-inset-lg",
+    cssVar: "--ghost-space-inset-lg",
     density: {
       compact: "1rem",
       spacious: "1.5rem",
@@ -4259,7 +4259,7 @@ export const tokens = {
   },
   "space.inset.md": {
     name: "space.inset.md",
-    cssVar: "--sl-space-inset-md",
+    cssVar: "--ghost-space-inset-md",
     density: {
       compact: "0.75rem",
       spacious: "1.25rem",
@@ -4274,7 +4274,7 @@ export const tokens = {
   },
   "space.inset.sm": {
     name: "space.inset.sm",
-    cssVar: "--sl-space-inset-sm",
+    cssVar: "--ghost-space-inset-sm",
     density: {
       compact: "0.5rem",
       spacious: "1rem",
@@ -4289,7 +4289,7 @@ export const tokens = {
   },
   "space.inset.xs": {
     name: "space.inset.xs",
-    cssVar: "--sl-space-inset-xs",
+    cssVar: "--ghost-space-inset-xs",
     density: {
       compact: "0.25rem",
       spacious: "0.75rem",
@@ -4304,7 +4304,7 @@ export const tokens = {
   },
   "space.stack.lg": {
     name: "space.stack.lg",
-    cssVar: "--sl-space-stack-lg",
+    cssVar: "--ghost-space-stack-lg",
     density: {
       compact: "1rem",
       spacious: "2rem",
@@ -4319,7 +4319,7 @@ export const tokens = {
   },
   "space.stack.md": {
     name: "space.stack.md",
-    cssVar: "--sl-space-stack-md",
+    cssVar: "--ghost-space-stack-md",
     density: {
       compact: "0.75rem",
       spacious: "1.25rem",
@@ -4334,7 +4334,7 @@ export const tokens = {
   },
   "space.stack.sm": {
     name: "space.stack.sm",
-    cssVar: "--sl-space-stack-sm",
+    cssVar: "--ghost-space-stack-sm",
     density: {
       compact: "0.25rem",
       spacious: "0.75rem",
@@ -4379,7 +4379,7 @@ export const tokens = {
   },
   "state.layer.dragged": {
     name: "state.layer.dragged",
-    cssVar: "--sl-state-layer-dragged",
+    cssVar: "--ghost-state-layer-dragged",
     type: "number",
     tier: "semantic",
     description: "Dragged overlay opacity on the current tone. Used when aria-grabbed is true.",
@@ -4390,7 +4390,7 @@ export const tokens = {
   },
   "state.layer.hover": {
     name: "state.layer.hover",
-    cssVar: "--sl-state-layer-hover",
+    cssVar: "--ghost-state-layer-hover",
     type: "number",
     tier: "semantic",
     description: "Hover overlay opacity on the current tone. Works across every tone and mode.",
@@ -4401,7 +4401,7 @@ export const tokens = {
   },
   "state.layer.press": {
     name: "state.layer.press",
-    cssVar: "--sl-state-layer-press",
+    cssVar: "--ghost-state-layer-press",
     type: "number",
     tier: "semantic",
     description: "Pressed overlay opacity on the current tone.",
@@ -4412,7 +4412,7 @@ export const tokens = {
   },
   "state.layer.selected": {
     name: "state.layer.selected",
-    cssVar: "--sl-state-layer-selected",
+    cssVar: "--ghost-state-layer-selected",
     type: "number",
     tier: "semantic",
     description: "Selected overlay opacity on the current tone. Used when aria-pressed is true.",
@@ -4423,7 +4423,7 @@ export const tokens = {
   },
   "state.mix.border": {
     name: "state.mix.border",
-    cssVar: "--sl-state-mix-border",
+    cssVar: "--ghost-state-mix-border",
     type: "number",
     tier: "semantic",
     description: "Border mix of tone into the surface for soft treatments.",
@@ -4434,7 +4434,7 @@ export const tokens = {
   },
   "state.mix.soft": {
     name: "state.mix.soft",
-    cssVar: "--sl-state-mix-soft",
+    cssVar: "--ghost-state-mix-soft",
     type: "number",
     tier: "semantic",
     description: "Rest mix of tone into the surface for soft treatments.",
@@ -4445,7 +4445,7 @@ export const tokens = {
   },
   "status.danger.bg": {
     name: "status.danger.bg",
-    cssVar: "--sl-status-danger-bg",
+    cssVar: "--ghost-status-danger-bg",
     type: "color",
     tier: "semantic",
     description: "Danger status background.",
@@ -4456,7 +4456,7 @@ export const tokens = {
   },
   "status.danger.border": {
     name: "status.danger.border",
-    cssVar: "--sl-status-danger-border",
+    cssVar: "--ghost-status-danger-border",
     type: "color",
     tier: "semantic",
     description: "Danger status border.",
@@ -4467,7 +4467,7 @@ export const tokens = {
   },
   "status.danger.fg": {
     name: "status.danger.fg",
-    cssVar: "--sl-status-danger-fg",
+    cssVar: "--ghost-status-danger-fg",
     type: "color",
     tier: "semantic",
     description: "Danger status foreground.",
@@ -4478,7 +4478,7 @@ export const tokens = {
   },
   "status.info.bg": {
     name: "status.info.bg",
-    cssVar: "--sl-status-info-bg",
+    cssVar: "--ghost-status-info-bg",
     type: "color",
     tier: "semantic",
     description: "Info status background.",
@@ -4489,7 +4489,7 @@ export const tokens = {
   },
   "status.info.border": {
     name: "status.info.border",
-    cssVar: "--sl-status-info-border",
+    cssVar: "--ghost-status-info-border",
     type: "color",
     tier: "semantic",
     description: "Info status border.",
@@ -4500,7 +4500,7 @@ export const tokens = {
   },
   "status.info.fg": {
     name: "status.info.fg",
-    cssVar: "--sl-status-info-fg",
+    cssVar: "--ghost-status-info-fg",
     type: "color",
     tier: "semantic",
     description: "Info status foreground.",
@@ -4511,7 +4511,7 @@ export const tokens = {
   },
   "status.success.bg": {
     name: "status.success.bg",
-    cssVar: "--sl-status-success-bg",
+    cssVar: "--ghost-status-success-bg",
     type: "color",
     tier: "semantic",
     description: "Success status background.",
@@ -4522,7 +4522,7 @@ export const tokens = {
   },
   "status.success.border": {
     name: "status.success.border",
-    cssVar: "--sl-status-success-border",
+    cssVar: "--ghost-status-success-border",
     type: "color",
     tier: "semantic",
     description: "Success status border.",
@@ -4533,7 +4533,7 @@ export const tokens = {
   },
   "status.success.fg": {
     name: "status.success.fg",
-    cssVar: "--sl-status-success-fg",
+    cssVar: "--ghost-status-success-fg",
     type: "color",
     tier: "semantic",
     description: "Success status foreground.",
@@ -4544,7 +4544,7 @@ export const tokens = {
   },
   "status.warning.bg": {
     name: "status.warning.bg",
-    cssVar: "--sl-status-warning-bg",
+    cssVar: "--ghost-status-warning-bg",
     type: "color",
     tier: "semantic",
     description: "Warning status background.",
@@ -4555,7 +4555,7 @@ export const tokens = {
   },
   "status.warning.border": {
     name: "status.warning.border",
-    cssVar: "--sl-status-warning-border",
+    cssVar: "--ghost-status-warning-border",
     type: "color",
     tier: "semantic",
     description: "Warning status border.",
@@ -4566,7 +4566,7 @@ export const tokens = {
   },
   "status.warning.fg": {
     name: "status.warning.fg",
-    cssVar: "--sl-status-warning-fg",
+    cssVar: "--ghost-status-warning-fg",
     type: "color",
     tier: "semantic",
     description: "Warning status foreground.",
@@ -4577,7 +4577,7 @@ export const tokens = {
   },
   "surface.bg": {
     name: "surface.bg",
-    cssVar: "--sl-surface-bg",
+    cssVar: "--ghost-surface-bg",
     type: "color",
     tier: "semantic",
     description: "Theme canvas background.",
@@ -4588,7 +4588,7 @@ export const tokens = {
   },
   "surface.fg": {
     name: "surface.fg",
-    cssVar: "--sl-surface-fg",
+    cssVar: "--ghost-surface-fg",
     type: "color",
     tier: "semantic",
     description: "Theme canvas foreground.",
@@ -4599,7 +4599,7 @@ export const tokens = {
   },
   "surface.inverse.bg": {
     name: "surface.inverse.bg",
-    cssVar: "--sl-surface-inverse-bg",
+    cssVar: "--ghost-surface-inverse-bg",
     type: "color",
     tier: "semantic",
     description: "Inverted surface background.",
@@ -4610,7 +4610,7 @@ export const tokens = {
   },
   "surface.inverse.fg": {
     name: "surface.inverse.fg",
-    cssVar: "--sl-surface-inverse-fg",
+    cssVar: "--ghost-surface-inverse-fg",
     type: "color",
     tier: "semantic",
     description: "Foreground on an inverted surface.",
@@ -4621,7 +4621,7 @@ export const tokens = {
   },
   "surface.muted.bg": {
     name: "surface.muted.bg",
-    cssVar: "--sl-surface-muted-bg",
+    cssVar: "--ghost-surface-muted-bg",
     type: "color",
     tier: "semantic",
     description: "Muted surface fill behind grouped content.",
@@ -4632,7 +4632,7 @@ export const tokens = {
   },
   "surface.subtle.bg": {
     name: "surface.subtle.bg",
-    cssVar: "--sl-surface-subtle-bg",
+    cssVar: "--ghost-surface-subtle-bg",
     type: "color",
     tier: "semantic",
     description: "Subtle surface fill for inset regions.",
@@ -4643,7 +4643,7 @@ export const tokens = {
   },
   "text.danger": {
     name: "text.danger",
-    cssVar: "--sl-text-danger",
+    cssVar: "--ghost-text-danger",
     type: "color",
     tier: "semantic",
     description: "Danger-colored text on the canvas.",
@@ -4654,7 +4654,7 @@ export const tokens = {
   },
   "text.default": {
     name: "text.default",
-    cssVar: "--sl-text-default",
+    cssVar: "--ghost-text-default",
     type: "color",
     tier: "semantic",
     description: "Default body text on the canvas.",
@@ -4665,7 +4665,7 @@ export const tokens = {
   },
   "text.info": {
     name: "text.info",
-    cssVar: "--sl-text-info",
+    cssVar: "--ghost-text-info",
     type: "color",
     tier: "semantic",
     description: "Info-colored text on the canvas.",
@@ -4676,7 +4676,7 @@ export const tokens = {
   },
   "text.inverse": {
     name: "text.inverse",
-    cssVar: "--sl-text-inverse",
+    cssVar: "--ghost-text-inverse",
     type: "color",
     tier: "semantic",
     description: "Text on an inverted surface.",
@@ -4687,7 +4687,7 @@ export const tokens = {
   },
   "text.muted": {
     name: "text.muted",
-    cssVar: "--sl-text-muted",
+    cssVar: "--ghost-text-muted",
     type: "color",
     tier: "semantic",
     description: "Secondary text on the canvas.",
@@ -4698,7 +4698,7 @@ export const tokens = {
   },
   "text.primary": {
     name: "text.primary",
-    cssVar: "--sl-text-primary",
+    cssVar: "--ghost-text-primary",
     type: "color",
     tier: "semantic",
     description: "Primary-colored text on the canvas.",
@@ -4709,7 +4709,7 @@ export const tokens = {
   },
   "text.subtle": {
     name: "text.subtle",
-    cssVar: "--sl-text-subtle",
+    cssVar: "--ghost-text-subtle",
     type: "color",
     tier: "semantic",
     description: "Tertiary text on the canvas. Still meets WCAG 2 AA.",
@@ -4720,7 +4720,7 @@ export const tokens = {
   },
   "text.success": {
     name: "text.success",
-    cssVar: "--sl-text-success",
+    cssVar: "--ghost-text-success",
     type: "color",
     tier: "semantic",
     description: "Success-colored text on the canvas.",
@@ -4731,7 +4731,7 @@ export const tokens = {
   },
   "text.warning": {
     name: "text.warning",
-    cssVar: "--sl-text-warning",
+    cssVar: "--ghost-text-warning",
     type: "color",
     tier: "semantic",
     description: "Warning-colored text on the canvas.",
@@ -4742,7 +4742,7 @@ export const tokens = {
   },
   "type.family.sans": {
     name: "type.family.sans",
-    cssVar: "--sl-type-family-sans",
+    cssVar: "--ghost-type-family-sans",
     type: "fontFamily",
     tier: "semantic",
     description: "System UI sans stack. No web font.",
@@ -4753,7 +4753,7 @@ export const tokens = {
   },
   "type.feature.default": {
     name: "type.feature.default",
-    cssVar: "--sl-type-feature-default",
+    cssVar: "--ghost-type-feature-default",
     type: "fontFeature",
     tier: "semantic",
     description: "Default OpenType features.",
@@ -4764,7 +4764,7 @@ export const tokens = {
   },
   "type.feature.tabular": {
     name: "type.feature.tabular",
-    cssVar: "--sl-type-feature-tabular",
+    cssVar: "--ghost-type-feature-tabular",
     type: "fontFeature",
     tier: "semantic",
     description: "Tabular-number OpenType features.",
@@ -4775,7 +4775,7 @@ export const tokens = {
   },
   "type.letter.normal": {
     name: "type.letter.normal",
-    cssVar: "--sl-type-letter-normal",
+    cssVar: "--ghost-type-letter-normal",
     type: "letterSpacing",
     tier: "semantic",
     description: "Default letter-spacing.",
@@ -4786,7 +4786,7 @@ export const tokens = {
   },
   "type.letter.tight": {
     name: "type.letter.tight",
-    cssVar: "--sl-type-letter-tight",
+    cssVar: "--ghost-type-letter-tight",
     type: "letterSpacing",
     tier: "semantic",
     description: "Tight letter-spacing.",
@@ -4797,7 +4797,7 @@ export const tokens = {
   },
   "type.letter.wide": {
     name: "type.letter.wide",
-    cssVar: "--sl-type-letter-wide",
+    cssVar: "--ghost-type-letter-wide",
     type: "letterSpacing",
     tier: "semantic",
     description: "Wide letter-spacing.",
@@ -4808,7 +4808,7 @@ export const tokens = {
   },
   "type.line.normal": {
     name: "type.line.normal",
-    cssVar: "--sl-type-line-normal",
+    cssVar: "--ghost-type-line-normal",
     type: "number",
     tier: "semantic",
     description: "Default body line-height.",
@@ -4819,7 +4819,7 @@ export const tokens = {
   },
   "type.line.snug": {
     name: "type.line.snug",
-    cssVar: "--sl-type-line-snug",
+    cssVar: "--ghost-type-line-snug",
     type: "number",
     tier: "semantic",
     description: "Snug line-height.",
@@ -4830,7 +4830,7 @@ export const tokens = {
   },
   "type.line.tight": {
     name: "type.line.tight",
-    cssVar: "--sl-type-line-tight",
+    cssVar: "--ghost-type-line-tight",
     type: "number",
     tier: "semantic",
     description: "Tight line-height.",
@@ -4841,7 +4841,7 @@ export const tokens = {
   },
   "type.numeric.proportional": {
     name: "type.numeric.proportional",
-    cssVar: "--sl-type-numeric-proportional",
+    cssVar: "--ghost-type-numeric-proportional",
     type: "fontVariant",
     tier: "semantic",
     description: "Proportional numbers. Apply as font-variant-numeric.",
@@ -4852,7 +4852,7 @@ export const tokens = {
   },
   "type.numeric.tabular": {
     name: "type.numeric.tabular",
-    cssVar: "--sl-type-numeric-tabular",
+    cssVar: "--ghost-type-numeric-tabular",
     type: "fontVariant",
     tier: "semantic",
     description: "Tabular lining numbers. Apply as font-variant-numeric.",
@@ -4863,7 +4863,7 @@ export const tokens = {
   },
   "type.size.2xl": {
     name: "type.size.2xl",
-    cssVar: "--sl-type-size-2xl",
+    cssVar: "--ghost-type-size-2xl",
     type: "fontSize",
     tier: "semantic",
     description: "Fluid 2xl type.",
@@ -4874,7 +4874,7 @@ export const tokens = {
   },
   "type.size.3xl": {
     name: "type.size.3xl",
-    cssVar: "--sl-type-size-3xl",
+    cssVar: "--ghost-type-size-3xl",
     type: "fontSize",
     tier: "semantic",
     description: "Fluid 3xl type.",
@@ -4885,7 +4885,7 @@ export const tokens = {
   },
   "type.size.lg": {
     name: "type.size.lg",
-    cssVar: "--sl-type-size-lg",
+    cssVar: "--ghost-type-size-lg",
     type: "fontSize",
     tier: "semantic",
     description: "Fluid large type.",
@@ -4896,7 +4896,7 @@ export const tokens = {
   },
   "type.size.md": {
     name: "type.size.md",
-    cssVar: "--sl-type-size-md",
+    cssVar: "--ghost-type-size-md",
     type: "fontSize",
     tier: "semantic",
     description: "Fluid body type.",
@@ -4907,7 +4907,7 @@ export const tokens = {
   },
   "type.size.sm": {
     name: "type.size.sm",
-    cssVar: "--sl-type-size-sm",
+    cssVar: "--ghost-type-size-sm",
     type: "fontSize",
     tier: "semantic",
     description: "Fluid small type.",
@@ -4918,7 +4918,7 @@ export const tokens = {
   },
   "type.size.xl": {
     name: "type.size.xl",
-    cssVar: "--sl-type-size-xl",
+    cssVar: "--ghost-type-size-xl",
     type: "fontSize",
     tier: "semantic",
     description: "Fluid extra-large type.",
@@ -4929,7 +4929,7 @@ export const tokens = {
   },
   "type.size.xs": {
     name: "type.size.xs",
-    cssVar: "--sl-type-size-xs",
+    cssVar: "--ghost-type-size-xs",
     type: "fontSize",
     tier: "semantic",
     description: "Fluid extra-small type.",
@@ -4940,7 +4940,7 @@ export const tokens = {
   },
   "type.weight.bold": {
     name: "type.weight.bold",
-    cssVar: "--sl-type-weight-bold",
+    cssVar: "--ghost-type-weight-bold",
     type: "fontWeight",
     tier: "semantic",
     description: "Bold font weight.",
@@ -4951,7 +4951,7 @@ export const tokens = {
   },
   "type.weight.medium": {
     name: "type.weight.medium",
-    cssVar: "--sl-type-weight-medium",
+    cssVar: "--ghost-type-weight-medium",
     type: "fontWeight",
     tier: "semantic",
     description: "Medium font weight.",
@@ -4962,7 +4962,7 @@ export const tokens = {
   },
   "type.weight.regular": {
     name: "type.weight.regular",
-    cssVar: "--sl-type-weight-regular",
+    cssVar: "--ghost-type-weight-regular",
     type: "fontWeight",
     tier: "semantic",
     description: "Regular font weight.",
@@ -4973,7 +4973,7 @@ export const tokens = {
   },
   "type.weight.semibold": {
     name: "type.weight.semibold",
-    cssVar: "--sl-type-weight-semibold",
+    cssVar: "--ghost-type-weight-semibold",
     type: "fontWeight",
     tier: "semantic",
     description: "Semibold font weight.",
