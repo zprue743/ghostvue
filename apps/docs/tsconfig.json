@@ -2,11 +2,26 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "jsx": "preserve",
-    "types": ["vite/client"]
+    "types": ["vite/client"],
+    "paths": {
+      "@ghostvue/themes": ["../../packages/themes/src/index.ts"],
+      "@ghostvue/vue": ["../../packages/vue/src/index.ts"]
+    }
   },
   "include": [
     ".vitepress/**/*.ts",
     ".vitepress/**/*.vue",
-    ".vitepress/**/*.d.ts"
+    ".vitepress/**/*.d.ts",
+    "../../examples/**/*.ts",
+    "../../examples/**/*.vue",
+    "../../examples/**/*.d.ts",
+    "../../packages/vue/src/**/*.ts",
+    "../../packages/vue/src/**/*.vue",
+    "../../packages/themes/src/**/*.ts",
+    "../../packages/themes/src/**/*.d.ts"
+  ],
+  "exclude": [
+    "../../packages/vue/src/**/*.test.ts",
+    "../../packages/themes/src/**/*.test.ts"
   ]
 }

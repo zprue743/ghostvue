@@ -44,6 +44,12 @@ export default defineConfig({
         },
       },
     ],
+    server: {
+      fs: {
+        // Example SFCs live at the repository root, outside apps/docs.
+        allow: [fileURLToPath(new URL('../../..', import.meta.url))],
+      },
+    },
     resolve: {
       alias: {
         // Browser CI builds docs without `pnpm build`, so resolve workspace

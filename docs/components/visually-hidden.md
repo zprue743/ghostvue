@@ -7,18 +7,7 @@ changing the design.
 
 ## Basic use
 
-```vue
-<script setup lang="ts">
-import { GhostVisuallyHidden } from '@ghostvue/vue'
-</script>
-
-<template>
-  <button type="button">
-    <TrashIcon aria-hidden="true" />
-    <GhostVisuallyHidden>Delete report</GhostVisuallyHidden>
-  </button>
-</template>
-```
+<GhostExample id="visually-hidden/basic" />
 
 The button now has the accessible name "Delete report" while still showing only
 an icon. No stylesheet import or bundler configuration is required.
@@ -36,29 +25,14 @@ to the single root element, which is how you attach `id`, `role`, `lang`,
 
 Headless use of the same contract without the SFC:
 
-```vue
-<script setup lang="ts">
-import { useGhostVisuallyHidden } from '@ghostvue/vue'
-
-const { rootProps } = useGhostVisuallyHidden()
-</script>
-
-<template>
-  <span v-bind="rootProps">Delete report</span>
-</template>
-```
+<GhostExample id="visually-hidden/composable" />
 
 ## Naming icon-only controls
 
 Icon-only controls are the most common use. Hide the decorative icon from
 assistive technology and supply the name as hidden text:
 
-```vue
-<button type="button" @click="remove(report.name)">
-  <TrashIcon aria-hidden="true" />
-  <GhostVisuallyHidden>Delete {{ report.name }}</GhostVisuallyHidden>
-</button>
-```
+<GhostExample id="visually-hidden/icon-name" />
 
 Prefer this to `aria-label` when the name is interpolated from content, because
 hidden text is translated by page-level translation tools that skip attributes.
@@ -69,13 +43,7 @@ A column of row actions usually needs no visible header, but a screen reader
 still announces every cell against one. Render a real header that only assistive
 technology encounters:
 
-```vue
-<tr>
-  <th scope="col">Report</th>
-  <th scope="col">Owner</th>
-  <GhostVisuallyHidden as="th" scope="col">Actions</GhostVisuallyHidden>
-</tr>
-```
+<GhostExample id="visually-hidden/table-header" />
 
 `as` exists for exactly this: a `<span>` is not valid inside a `<tr>`. Pick the
 element that is valid where you place the component.
@@ -85,11 +53,7 @@ element that is valid where you place the component.
 Content that can receive focus must become visible when it does. Set `focusable`
 so keyboard users can see what they have focused:
 
-```vue
-<GhostVisuallyHidden focusable>
-  <a href="#main">Skip to content</a>
-</GhostVisuallyHidden>
-```
+<GhostExample id="visually-hidden/skip-link" />
 
 The component reveals itself while focus is anywhere inside it and hides again
 when focus leaves. Without `focusable`, a focusable child is reachable by
@@ -101,12 +65,7 @@ cannot see. Always pass `focusable` when the slot contains anything focusable.
 A visually hidden live region announces an outcome that is otherwise conveyed
 only visually:
 
-```vue
-<GhostVisuallyHidden
-  role="status"
-  aria-live="polite"
->{{ status }}</GhostVisuallyHidden>
-```
+<GhostExample id="visually-hidden/live-region" />
 
 Render the region before the text changes. A live region that is inserted and
 populated in the same update is frequently not announced, so keep the element

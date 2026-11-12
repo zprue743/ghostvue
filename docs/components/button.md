@@ -6,19 +6,7 @@ from `@ghostvue/themes` for the default visual treatment.
 
 ## Basic use
 
-```vue
-<script setup lang="ts">
-import { GhostButton } from '@ghostvue/vue'
-
-function save() {
-  // Start the application-owned action.
-}
-</script>
-
-<template>
-  <GhostButton @click="save">Save changes</GhostButton>
-</template>
-```
+<GhostExample id="button/basic" />
 
 The default `type` is `button`, so placing the component in a form does not
 submit accidentally. Set `type="submit"` or `type="reset"` explicitly when that
@@ -26,17 +14,7 @@ native behavior is intended.
 
 Headless use of the same contract without the SFC:
 
-```vue
-<script setup lang="ts">
-import { useGhostButton } from '@ghostvue/vue'
-
-const { rootProps } = useGhostButton({ loading: saving })
-</script>
-
-<template>
-  <button v-bind="rootProps" @click="save">Save</button>
-</template>
-```
+<GhostExample id="button/composable" />
 
 ## API
 
@@ -53,17 +31,7 @@ toggle/`pressed` model.
 
 ## Themed use
 
-```vue
-<script setup lang="ts">
-import { GhostButton } from '@ghostvue/themes'
-</script>
-
-<template>
-  <GhostButton variant="outline" tone="danger" :loading="saving">
-    Delete
-  </GhostButton>
-</template>
-```
+<GhostExample id="button/themed" />
 
 Importing the themed component loads the default stylesheet. Visual props exist
 only on this wrapper:
@@ -118,10 +86,7 @@ when you want a region of headless components to pick up the defaults. See the
 
 ## Loading and disabled actions
 
-```vue
-<GhostButton :loading="saving" @click="save">Save changes</GhostButton>
-<GhostButton disabled>Unavailable action</GhostButton>
-```
+<GhostExample id="button/loading" />
 
 Loading adds `aria-disabled="true"`, `aria-busy="true"`, and
 `data-state="loading"`. Activation is blocked while the native button remains
@@ -135,35 +100,17 @@ cancellation, and any success or failure announcement.
 Icon-only buttons require an accessible name. Hide decorative icon content from
 assistive technology.
 
-```vue
-<GhostButton data-icon-only aria-label="Close dialog">
-  <CloseIcon data-part="icon" aria-hidden="true" />
-</GhostButton>
-```
+<GhostExample id="button/icon-only" />
 
-With the themed wrapper, `iconOnly` is a prop rather than a data attribute. Text
-buttons normally receive their accessible name from the slot. You can also
-forward `aria-labelledby` or `aria-describedby`, or compose with
-`GhostVisuallyHidden` when the name should be translated as content.
+With the themed wrapper, `iconOnly` is a prop rather than a data attribute. The
+unstyled component uses `data-icon-only` instead. Text buttons normally receive
+their accessible name from the slot. You can also forward `aria-labelledby` or
+`aria-describedby`, or compose with `GhostVisuallyHidden` when the name should
+be translated as content.
 
 ## Component refs
 
-```vue
-<script setup lang="ts">
-import { useTemplateRef } from 'vue'
-import { GhostButton, type GhostButtonExposed } from '@ghostvue/vue'
-
-const saveButton = useTemplateRef<GhostButtonExposed>('saveButton')
-
-function returnFocus() {
-  saveButton.value?.focus()
-}
-</script>
-
-<template>
-  <GhostButton ref="saveButton">Save changes</GhostButton>
-</template>
-```
+<GhostExample id="button/ref" />
 
 The ref exposes `element`, `focus(options?)`, and `blur()`. Before mount and after
 unmount, `element` is `null` and the methods are safe no-ops.

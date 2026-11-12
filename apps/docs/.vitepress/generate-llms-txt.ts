@@ -1,6 +1,9 @@
 import { access, readFile, writeFile } from 'node:fs/promises'
 import { join, relative, resolve } from 'node:path'
 
+const EXAMPLE_TAG = /<GhostExample\s+id=["']([^"']+)["']\s*\/?\s*>/g
+const EXAMPLE_ID = /^[a-z][a-z0-9-]+\/[a-z][a-z0-9-]+$/
+
 /**
  * Sidebar shape used by the docs site. Nested groups stay under their
  * top-level section so `llms.txt` H2s match the published nav.
@@ -59,7 +62,10 @@ export async function generateLlmsDocuments(
   for (const group of options.sidebar) {
     for (const entry of collectLinkedItems(group.items, group.text)) {
       const absolutePath = await resolveDocsPagePath(docsRoot, entry.link)
-      const source = await readFile(absolutePath, 'utf8')
+      const source = await expandExampleTags(
+        await readFile(absolutePath, 'utf8'),
+        repoRoot,
+      )
       const body = toPlainMarkdown(source).replace(/^\n+|\n+$/g, '')
       const h1 = extractH1(body) ?? entry.title
       pages.push({
@@ -120,6 +126,41 @@ export async function resolveDocsPagePath(
   }
 
   throw new Error(`No markdown source for sidebar link ${link}`)
+}
+
+/**
+ * Replace docs `<GhostExample id="..." />` tags with the executable SFC source so
+ * llms-full.txt still contains copyable examples instead of a Vue host tag.
+ */
+export async function expandExampleTags(
+  source: string,
+  repoRoot: string,
+): Promise<string> {
+  const expandable: { tag: string; id: string }[] = []
+  mapOutsideFences(source, (chunk) => {
+    EXAMPLE_TAG.lastIndex = 0
+    for (const match of chunk.matchAll(EXAMPLE_TAG)) {
+      const id = match[1]
+      if (id && EXAMPLE_ID.test(id)) {
+        expandable.push({ tag: match[0], id })
+      }
+    }
+    return chunk
+  })
+
+  let result = source
+  const seen = new Set<string>()
+  for (const { tag, id } of expandable) {
+    if (seen.has(tag)) {
+      continue
+    }
+    seen.add(tag)
+    const filePath = join(repoRoot, 'examples', `${id}.vue`)
+    const exampleSource = (await readFile(filePath, 'utf8')).replace(/\n+$/, '')
+    result = result.replaceAll(tag, `\`\`\`vue\n${exampleSource}\n\`\`\``)
+  }
+
+  return result
 }
 
 /**

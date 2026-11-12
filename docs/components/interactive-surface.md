@@ -1,8 +1,3 @@
-<script setup lang="ts">
-import { GhostButton, GhostInteractiveSurface } from '@ghostvue/themes'
-import '@ghostvue/themes/default.css'
-</script>
-
 # GhostInteractiveSurface
 
 Pointer spotlight for surfaces that should notice the cursor. Import the
@@ -12,47 +7,11 @@ follow-ups. See [ADR 0009](../adr/0009-ambient-interactivity.md).
 
 ## Basic use
 
-```vue
-<script setup lang="ts">
-import { GhostInteractiveSurface } from '@ghostvue/themes'
-</script>
-
-<template>
-  <GhostInteractiveSurface>
-    <h3>Quarterly report</h3>
-    <p>The glow follows the pointer. Copy stays readable without it.</p>
-  </GhostInteractiveSurface>
-</template>
-```
-
-<div class="ghost-theme demo-board" data-ghost-mode="light">
-  <GhostInteractiveSurface class="demo-card" data-elevation="2">
-    <h3 class="demo-title">Quarterly report</h3>
-    <p class="demo-copy">Move the pointer across this card. The glow is decoration.</p>
-  </GhostInteractiveSurface>
-  <p>
-    <GhostButton interactive="spotlight">Save changes</GhostButton>
-  </p>
-</div>
+<GhostExample id="interactive-surface/basic" />
 
 Headless use of the same contract without the SFC:
 
-```vue
-<script setup lang="ts">
-import { useTemplateRef } from 'vue'
-import { useGhostInteractiveSurface } from '@ghostvue/vue'
-
-const host = useTemplateRef<HTMLElement>('host')
-const { rootProps } = useGhostInteractiveSurface(host)
-</script>
-
-<template>
-  <article ref="host" v-bind="rootProps">
-    <span data-part="glow" aria-hidden="true" />
-    <slot />
-  </article>
-</template>
-```
+<GhostExample id="interactive-surface/composable" />
 
 ## API
 
@@ -74,9 +33,7 @@ unitless `--ghost-pointer-nx` / `--ghost-pointer-ny` on the host.
 Themed `GhostButton` stays inert unless you pass `interactive="spotlight"`.
 Off by default — existing screenshots do not change.
 
-```vue
-<GhostButton interactive="spotlight">Save changes</GhostButton>
-```
+<GhostExample id="interactive-surface/button" />
 
 That sets `data-interactive="spotlight"` and tracks on
 `data-interactive-state` so loading and disabled keep `data-state`.
@@ -109,24 +66,3 @@ SSR markup is `data-state="off"`; capable surfaces become `idle` after
 mount. Setup does not read browser globals.
 
 See the [approved specification](./interactive-surface-spec.md).
-
-<style>
-.demo-board {
-  border-radius: var(--ghost-radius-lg);
-  display: grid;
-  gap: var(--ghost-space-stack-md);
-  margin-block: var(--ghost-space-stack-md);
-  padding: var(--ghost-space-inset-md);
-}
-.demo-card {
-  min-block-size: 8rem;
-  padding: var(--ghost-space-inset-md);
-}
-.demo-title,
-.demo-copy {
-  margin: 0;
-}
-.demo-copy {
-  color: var(--ghost-text-muted);
-}
-</style>

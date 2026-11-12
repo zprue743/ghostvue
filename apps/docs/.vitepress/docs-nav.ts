@@ -87,6 +87,7 @@ export const docsSidebar: LlmsSidebarGroup[] = [
     text: 'Contributing',
     items: [
       { text: 'Workflow', link: '/contributing/workflow' },
+      { text: 'Executable examples', link: '/contributing/examples' },
       { text: 'Releases', link: '/contributing/releases' },
       { text: 'Component specs', link: '/components/spec-template' },
       {
