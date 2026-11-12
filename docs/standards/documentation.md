@@ -4,7 +4,9 @@ Documentation ships with a public feature rather than following as optional
 cleanup. Every future public feature should include:
 
 - an API reference with types and defaults;
-- a minimal ordinary-use example and focused advanced examples;
+- a minimal ordinary-use example and focused advanced examples, each an
+  executable SFC under `examples/` rendered live on the docs page
+  ([convention](../contributing/examples.md));
 - accessibility and keyboard guidance where relevant;
 - loading, empty, disabled, error, async, and edge-case behavior;
 - SSR, performance, or data-shape constraints when applicable; and

@@ -52,6 +52,72 @@ export function pascalToKebab(name) {
     .toLowerCase()
 }
 
+/** `GhostButton` → `button`, matching `examples/<prefix>/<id>.vue`. */
+export function componentExamplePrefix(name) {
+  const remainder = name.startsWith('Ghost') ? name.slice('Ghost'.length) : name
+  return pascalToKebab(remainder)
+}
+
+/**
+ * Every examples/<component>/<id>.vue file must be listed on a Ghost*
+ * manifest, and every manifest example id must exist as that file.
+ * Skips when the repository has no examples directory so fixture syncs
+ * used by unit tests stay isolated.
+ */
+export async function validateExampleManifests(repositoryRoot) {
+  const violations = []
+  const examplesRoot = join(repositoryRoot, 'examples')
+  if (!(await fileExists(examplesRoot))) {
+    return violations
+  }
+
+  const fileIds = new Set()
+  for await (const file of glob('*/*.vue', { cwd: examplesRoot })) {
+    fileIds.add(file.replaceAll('\\', '/').replace(/\.vue$/, ''))
+  }
+
+  const referenced = new Map()
+  for await (const file of glob('packages/*/manifests/*.manifest.json', {
+    cwd: repositoryRoot,
+  })) {
+    const relativePath = file.replaceAll('\\', '/')
+    const manifest = await readJsonObject(join(repositoryRoot, relativePath))
+    const prefix =
+      typeof manifest.name === 'string'
+        ? componentExamplePrefix(manifest.name)
+        : ''
+    const examples = Array.isArray(manifest.examples) ? manifest.examples : []
+
+    for (const id of examples) {
+      if (typeof id !== 'string') continue
+      const owners = referenced.get(id) ?? []
+      owners.push(relativePath)
+      referenced.set(id, owners)
+
+      if (!fileIds.has(id)) {
+        violations.push(
+          `${relativePath} examples lists "${id}" but examples/${id}.vue does not exist`,
+        )
+      }
+      if (prefix && !id.startsWith(`${prefix}/`)) {
+        violations.push(
+          `${relativePath} example "${id}" does not belong to ${String(manifest.name)} (expected ${prefix}/*)`,
+        )
+      }
+    }
+  }
+
+  for (const id of [...fileIds].sort()) {
+    if (!referenced.has(id)) {
+      violations.push(
+        `examples/${id}.vue is not listed in any component manifest`,
+      )
+    }
+  }
+
+  return violations
+}
+
 export function serializeManifest(manifest) {
   return `${JSON.stringify(manifest, null, 2)}\n`
 }

@@ -43,4 +43,6 @@ requires those entry points to exist on disk after `pnpm build`. An anticipated
 future use is not by itself sufficient evidence.
 
 Development apps may consume packages to exercise them. They are not published
-and must not become a hidden source of production logic.
+and must not become a hidden source of production logic. The unpublished
+`examples/` tree is the same kind of development host: it may import `vue` and
+`themes` but is not a workspace package.

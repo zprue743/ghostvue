@@ -14,6 +14,8 @@ links here for canonical detail.
    [component gate](./COMPONENT_WORKFLOW.md) (approved spec, tests, docs,
    manifest) before treating the change as complete. Do not start production
    markup before the specification resolves behavior and accessibility.
+   Runnable docs samples are typed SFCs under `examples/`; see
+   [executable examples](../contributing/examples.md).
 5. Reuse existing utilities and capabilities when their responsibility matches.
 6. Add behavior-focused tests with the implementation. Include regression tests
    for bug fixes whenever practical.

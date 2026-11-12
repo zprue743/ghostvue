@@ -103,8 +103,7 @@
     "requiredAriaAttributes": []
   },
   "examples": [
-    "interactive-surface-basic",
-    "interactive-surface-button",
-    "interactive-surface-flagships"
+    "interactive-surface/basic",
+    "interactive-surface/button"
   ]
 }

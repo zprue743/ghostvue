@@ -57,9 +57,11 @@
     "requiredAriaAttributes": []
   },
   "examples": [
-    "visually-hidden-icon-name",
-    "visually-hidden-table-header",
-    "visually-hidden-skip-link",
-    "visually-hidden-live-region"
+    "visually-hidden/basic",
+    "visually-hidden/composable",
+    "visually-hidden/icon-name",
+    "visually-hidden/table-header",
+    "visually-hidden/skip-link",
+    "visually-hidden/live-region"
   ]
 }

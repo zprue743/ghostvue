@@ -139,11 +139,11 @@
     },
     "examples": {
       "type": "array",
-      "description": "Stable example identifiers corresponding to docs or playground snippets (button-basic, button-loading). Not file paths.",
+      "description": "Stable example identifiers matching unpublished files at examples/<id>.vue. Prefer the path form (button/icon-only). Kebab-case ids remain valid. Not filesystem paths from the repository root.",
       "items": {
         "type": "string",
-        "description": "Kebab-case example id.",
-        "pattern": "^[a-z][a-z0-9-]*$"
+        "description": "Example id: component/name (button/icon-only) or a legacy kebab-case token.",
+        "pattern": "^[a-z][a-z0-9-]+(/[a-z][a-z0-9-]+)?$"
       },
       "uniqueItems": true
     }

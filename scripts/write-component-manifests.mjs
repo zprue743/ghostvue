@@ -7,7 +7,10 @@
  */
 import { fileURLToPath } from 'node:url'
 
-import { syncRepositoryManifests } from './lib/component-manifests.js'
+import {
+  syncRepositoryManifests,
+  validateExampleManifests,
+} from './lib/component-manifests.js'
 
 const repositoryRoot = fileURLToPath(new URL('..', import.meta.url))
 const writeMode = process.argv.includes('--write')
@@ -16,9 +19,11 @@ const result = await syncRepositoryManifests({
   repositoryRoot,
   write: writeMode,
 })
+const exampleViolations = await validateExampleManifests(repositoryRoot)
+const violations = [...result.violations, ...exampleViolations]
 
-if (result.violations.length > 0) {
-  console.error(result.violations.join('\n'))
+if (violations.length > 0) {
+  console.error(violations.join('\n'))
   if (!writeMode) {
     console.error('\nRegenerate manifests with: pnpm manifests:write')
     console.error(
@@ -40,4 +45,5 @@ if (result.violations.length > 0) {
       ? 'No generated component manifests to check.'
       : `Component manifests match Vue sources (${String(generated)} generated).`,
   )
+  console.log('Example files match manifest example ids.')
 }

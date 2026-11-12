@@ -67,7 +67,9 @@ Every manifest lists:
 - styling hooks — `data-part`, `data-state`, `--ghost-*` custom properties
 - accessibility — role, APG pattern URL, keyboard map, required ARIA
   attributes
-- `examples` — stable example ids, not file paths
+- `examples` — stable example ids matching `examples/<id>.vue`
+  (`button/icon-only`). Not repository-root file paths. See
+  [executable examples](../contributing/examples.md).
 
 Unknown keys are invalid. Native HTML/ARIA fallthrough is not duplicated into
 `props`. Native listeners on a native root are not duplicated into `events`.

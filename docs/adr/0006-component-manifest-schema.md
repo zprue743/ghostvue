@@ -55,9 +55,13 @@ from Vue sources with `pnpm manifests:write`.
 payload types, `slots` and slot props, `exposed` methods/properties, styling
 hooks (`data-part`, `data-state`, `--ghost-*` custom properties), accessibility
 (role, APG pattern URL, keyboard map, required ARIA attributes), and example
-IDs. Objects use `additionalProperties: false`. Every schema field has a
+IDs (`button/icon-only`, matching unpublished `examples/<id>.vue` files).
+Objects use `additionalProperties: false`. Every schema field has a
 `description`. The keyboard map is the one dictionary (`additionalProperties`
-of strings) because key names are not a closed enum.
+of strings) because key names are not a closed enum. `pnpm manifests` checks
+that every example id exists as a file and every example file is listed on a
+manifest. A future MCP `get_examples` tool should read
+[`examples/registry.ts`](../../examples/registry.ts).
 
 ## Alternatives considered
 
