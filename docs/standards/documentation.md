@@ -16,3 +16,5 @@ tool integrations rather than copying it. `pnpm adapters` fails when those
 adapters drift from the catalog. Run `pnpm docs:build` to catch broken site
 configuration and invalid Markdown integration before review. The docs build
 also emits `/llms.txt` and `/llms-full.txt` for language-model clients.
+VitePress `cleanUrls` must stay paired with `apps/docs/vercel.json`
+(`{"cleanUrls": true}`) so extensionless page URLs do not 404 on Vercel.
