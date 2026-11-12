@@ -5,8 +5,8 @@ when they make the component contract clear.
 
 - Type public props, emits, slots, and exposed methods explicitly.
 - Use computed state before introducing a watcher.
-- Public component behavior belongs in a `useSl*` composable with a thin
-  unstyled `Sl*` component as the ordinary call site. Do not invent extra
+- Public component behavior belongs in a `useGhost*` composable with a thin
+  unstyled `Ghost*` component as the ordinary call site. Do not invent extra
   composables beyond that contract.
 - Avoid unnecessary global state, hidden side effects, and provide/inject when a
   direct prop or local composition is simpler.

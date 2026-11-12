@@ -16,11 +16,11 @@
 - Do not create `core` types or functions solely to parameterize a Vue
   implementation or anticipate possible future framework adapters. Vue
   lifecycle and reactivity behavior belongs in `vue`.
-- Keep headless functionality independent of `themes`. `@slop-ui/vue` must
-  never import `@slop-ui/themes`. Themed wrappers may live in `themes` and
+- Keep headless functionality independent of `themes`. `@ghostvue/vue` must
+  never import `@ghostvue/themes`. Themed wrappers may live in `themes` and
   depend on `vue`.
-- Headless behavior is a `useSl*` composable plus a thin unstyled `Sl*`
-  component. Themed `Sl*` components wrap those. Style through `data-part`,
+- Headless behavior is a `useGhost*` composable plus a thin unstyled `Ghost*`
+  component. Themed `Ghost*` components wrap those. Style through `data-part`,
   `data-state`, CSS variables, class/attr fallthrough, and slots. Do not add
   PrimeVue-style `pt` objects or per-part style-object props.
 - Extract shared abstractions from evidence, not speculation.

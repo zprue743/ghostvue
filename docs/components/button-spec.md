@@ -1,12 +1,12 @@
-# SlButton specification
+# GhostButton specification
 
 **Status:** Approved for issue #1 implementation scope on 2026-08-15.
-Rebased onto ADRs 0002–0005 as `SlButton` / `useSlButton`, with a themed
-wrapper in `@slop-ui/themes`.
+Rebased onto ADRs 0002–0005 as `GhostButton` / `useGhostButton`, with a themed
+wrapper in `@ghostvue/themes`.
 
 ## Purpose and user problems
 
-`SlButton` provides the foundational action primitive for toolbar, retry,
+`GhostButton` provides the foundational action primitive for toolbar, retry,
 pagination, and row actions. It keeps native browser behavior while standardizing
 safe defaults, pending-action behavior, and the public Vue ref contract.
 
@@ -14,8 +14,8 @@ safe defaults, pending-action behavior, and the public Vue ref contract.
 
 - Toggle, menu, link, and composite-widget behavior are separate primitives.
   There is no `pressed` model, so `useControllableState` is not used.
-- `SlButton` does not start, cancel, or announce the result of asynchronous work.
-- The unstyled component does not generate ids (`useSlId` is unused; pass `id`
+- `GhostButton` does not start, cancel, or announce the result of asynchronous work.
+- The unstyled component does not generate ids (`useGhostId` is unused; pass `id`
   as a native attribute) and ships no visual styles. Variants, tones, sizes,
   and target-size enforcement belong to the consuming design system or the
   themed wrapper.
@@ -24,7 +24,7 @@ safe defaults, pending-action behavior, and the public Vue ref contract.
 
 ### Props and configuration
 
-Headless `@slop-ui/vue` `SlButton` / `useSlButton`:
+Headless `@ghostvue/vue` `GhostButton` / `useGhostButton`:
 
 | Prop       | Type                              | Default    | Contract                                                                                                          |
 | ---------- | --------------------------------- | ---------- | ----------------------------------------------------------------------------------------------------------------- |
@@ -34,9 +34,9 @@ Headless `@slop-ui/vue` `SlButton` / `useSlButton`:
 
 Native button attributes, including form, value, accessible-name, and event
 attributes, are included in the public type and fall through to the root
-`<button>`. Named ESM exports: `SlButton`, `useSlButton`, and the types above.
+`<button>`. Named ESM exports: `GhostButton`, `useGhostButton`, and the types above.
 
-Themed `@slop-ui/themes` `SlButton` wraps the unstyled component and adds visual
+Themed `@ghostvue/themes` `GhostButton` wraps the unstyled component and adds visual
 props. Same behavioral props; these exist only on the themed wrapper:
 
 | Prop          | Type                                        | Default    | Contract                                                                                           |
@@ -52,8 +52,8 @@ The themed wrapper sets matching `data-variant`, `data-tone`, `data-size`,
 `data-block`, `data-icon-only`, and optional `data-interactive` attributes on
 the inner button. Defaults omit the attribute so CSS can treat a missing hook
 as the default. It also wraps the
-button in `.slop-themed-scope` (`display: contents`) so default CSS can style
-that instance without forcing every `.slop-button` on the page.
+button in `.ghost-themed-scope` (`display: contents`) so default CSS can style
+that instance without forcing every `.ghost-button` on the page.
 
 ### v-model contracts
 
@@ -111,7 +111,7 @@ No consumer data is accepted or mutated.
 
 The root is always a native `<button>`. Text content normally provides its name.
 Icon-only use requires `aria-label`, `aria-labelledby`, or hidden text (for
-example `SlVisuallyHidden`). Decorative icons must be hidden from assistive
+example `GhostVisuallyHidden`). Decorative icons must be hidden from assistive
 technology. `disabled` uses native semantics. Loading exposes
 `aria-disabled="true"` and `aria-busy="true"` while retaining the name and
 focusability.
@@ -143,7 +143,7 @@ unstyled component. It ships no wrapper or visual styles.
 
 Stable styling hooks follow ADR 0004:
 
-- class `slop-button`
+- class `ghost-button`
 - `data-part="root"` on the button
 - `data-state="loading"` while loading; `data-state="disabled"` while disabled
   and not loading. Loading wins when both props are true because native
@@ -155,10 +155,10 @@ Consumers may also set `data-variant`, `data-tone`, `data-size`, `data-block`,
 and `data-icon-only` on the unstyled button when they style it themselves. The
 themed wrapper sets those from visual props.
 
-Recipe CSS applies under `.slop-theme` or `.slop-themed-scope`, so a
-headless `SlButton` on the same page stays unstyled when the stylesheet is
-loaded. Token values inherit from the nearest `.slop-theme` /
-`[data-sl-theme]`; `.slop-themed-scope` is not a token host. There is no
+Recipe CSS applies under `.ghost-theme` or `.ghost-themed-scope`, so a
+headless `GhostButton` on the same page stays unstyled when the stylesheet is
+loaded. Token values inherit from the nearest `.ghost-theme` /
+`[data-ghost-theme]`; `.ghost-themed-scope` is not a token host. There is no
 `pt` passthrough object.
 
 ## Environment behavior
@@ -182,22 +182,22 @@ global listeners, timers, observers, registries, or cleanup obligations.
 
 ## Composition
 
-`useSlButton` owns type/disabled/loading behavior and `data-part` / `data-state`
-bindings. Unstyled `SlButton` spreads those onto a native `<button>`. Themed
-`SlButton` wraps that component. Behavior stays in `packages/vue` because its
+`useGhostButton` owns type/disabled/loading behavior and `data-part` / `data-state`
+bindings. Unstyled `GhostButton` spreads those onto a native `<button>`. Themed
+`GhostButton` wraps that component. Behavior stays in `packages/vue` because its
 component, slot, attribute-fallthrough, and template ref contracts are
 Vue-specific. No framework-neutral core abstraction is needed.
 
 The machine-readable contracts are
-`packages/vue/manifests/sl-button.manifest.json` and
-`packages/themes/manifests/sl-button.manifest.json`.
+`packages/vue/manifests/ghost-button.manifest.json` and
+`packages/themes/manifests/ghost-button.manifest.json`.
 
 ## Test plan
 
 - Vue tests cover defaults, slots, typed fallthrough attributes/listeners,
   disabled and loading activation, loading focus and semantics, icon-only naming,
   exposed refs, SSR, and `data-part` / `data-state`.
-- Compile-time tests cover native attribute types on `SlButtonProps` and the
+- Compile-time tests cover native attribute types on `GhostButtonProps` and the
   exposed ref contract.
 - Browser tests cover click and keyboard activation, loading focus and geometry,
   disabled behavior, icon hooks, theme contrast, and an axe smoke check.
@@ -211,9 +211,9 @@ examples in the playground. Document default theme tokens separately.
 
 ## Compatibility and release impact
 
-Additive; minor Changesets for `@slop-ui/vue` and `@slop-ui/themes`. The public
-contract comprises the behavioral props, `useSlButton`, single-root attribute
-fallthrough, exposed refs, `slop-button` / `data-part` / `data-state`, and the
+Additive; minor Changesets for `@ghostvue/vue` and `@ghostvue/themes`. The public
+contract comprises the behavioral props, `useGhostButton`, single-root attribute
+fallthrough, exposed refs, `ghost-button` / `data-part` / `data-state`, and the
 themed visual props plus CSS custom properties.
 
 Future changes to event timing, native semantics, loading behavior, exposed refs,
@@ -226,5 +226,5 @@ dragged overlays use semantic `state.layer.*` tokens. `aria-pressed` and
 ## Open architectural questions
 
 None blocking. Token pipeline, ramps, elevation, motion, density, the
-SlButton reference theme, and flagship `defineTheme` generation have landed
+GhostButton reference theme, and flagship `defineTheme` generation have landed
 (ADR 0007, ADR 0008, SLO-63–SLO-68).

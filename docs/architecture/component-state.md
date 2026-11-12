@@ -1,13 +1,13 @@
 # IDs and controllable state
 
-Headless components share two primitives from `@slop-ui/vue`: `useSlId` and
-`useControllableState`. They are named ESM exports. `@slop-ui/vue` must not
-import `@slop-ui/themes`.
+Headless components share two primitives from `@ghostvue/vue`: `useGhostId` and
+`useControllableState`. They are named ESM exports. `@ghostvue/vue` must not
+import `@ghostvue/themes`.
 
-Component composables stay `useSl*` (`useSlButton`) per ADR 0003. These two
+Component composables stay `useGhost*` (`useGhostButton`) per ADR 0003. These two
 are not a component contract, so they do not take that prefix:
 
-- `useSlId` keeps `Sl` because the generated token enters the DOM in the
+- `useGhostId` keeps `Ghost` because the generated token enters the DOM in the
   library namespace.
 - `useControllableState` is a generic Vue state helper, so the descriptive
   name is the public name.
@@ -15,18 +15,18 @@ are not a component contract, so they do not take that prefix:
 Using them from Collapsible and Checkbox is deferred until those components
 exist.
 
-## `useSlId(prefix?, id?)`
+## `useGhostId(prefix?, id?)`
 
 Wraps Vue 3.5 `useId()`. Generated ids are unique per app and stable across
 SSR and hydration. `useId()` always runs, even when `id` is set, so Vue's
 per-instance counter cannot drift between server and client trees.
 
-- Default prefix is `slop` (id namespace, not Shoelace `sl-`).
+- Default prefix is `ghost` (id namespace, not Shoelace `sl-`).
 - A non-empty `id` wins. `undefined` and `''` fall back to a generated id.
-- Do not call `useId()` inside `computed`; `useSlId` calls it at setup.
+- Do not call `useId()` inside `computed`; `useGhostId` calls it at setup.
 
 ```ts
-const id = useSlId('slop-checkbox', () => props.id)
+const id = useGhostId('ghost-checkbox', () => props.id)
 ```
 
 ## `useControllableState`
@@ -81,5 +81,5 @@ ignores the emit, the getter still returns the prop.
 ignored.
 
 Switching controlled ↔ uncontrolled after setup is unsupported. In
-development the composable reports [SLOP001](../warnings.md#slop001) and keeps
+development the composable reports [GHOST001](../warnings.md#ghost001) and keeps
 the last rendered value so the UI does not snap to `default*`.

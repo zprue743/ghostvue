@@ -1,8 +1,8 @@
 <script setup>
 import { ref } from 'vue'
 
-import '@slop-ui/themes/default.css'
-import { SlButton } from '../../packages/themes/src/sl-button'
+import '@ghostvue/themes/default.css'
+import { GhostButton } from '../../packages/themes/src/ghost-button'
 
 const density = ref('comfortable')
 const roundness = ref(1)
@@ -11,12 +11,12 @@ const roundness = ref(1)
 # Density, type, and roundness
 
 SLO-66 recipes on top of the [token catalog](./tokens.md). Components consume
-semantic `--sl-*` variables. There are no per-component tokens.
+semantic `--ghost-*` variables. There are no per-component tokens.
 
-Unset `data-sl-density` is **comfortable**. `data-sl-density` nests on any
-subtree the same way `data-sl-mode` does: a descendant attribute overrides
-the ancestor. `--sl-roundness` (0–1, default 1) is a CSS custom property on
-any subtree; every radius token is `calc(<designed> * var(--sl-roundness, 1))`.
+Unset `data-ghost-density` is **comfortable**. `data-ghost-density` nests on any
+subtree the same way `data-ghost-mode` does: a descendant attribute overrides
+the ancestor. `--ghost-roundness` (0–1, default 1) is a CSS custom property on
+any subtree; every radius token is `calc(<designed> * var(--ghost-roundness, 1))`.
 
 ## Spacing
 
@@ -35,13 +35,13 @@ map onto that scale:
 | md   | 32px    | 40px                  | 48px     |
 | lg   | 40px    | 48px                  | 48px     |
 
-Comfortable is 4px below the previous SlButton snapshot (36 / 44 / 52).
+Comfortable is 4px below the previous GhostButton snapshot (36 / 44 / 52).
 `@media (pointer: coarse)` floors every control minimum to 44px
 (`control.touch`, 2.75rem) so touch targets do not shrink with compact or
 small sizes. Fine pointers keep the mapped height.
 
 Radius follows the same density step: compact is one step tighter,
-spacious one step rounder, then multiplied by `--sl-roundness`.
+spacious one step rounder, then multiplied by `--ghost-roundness`.
 
 ## Type
 
@@ -49,54 +49,54 @@ Fluid `clamp()` sizes from 320px–1280px viewports. The stack is system UI
 only (`ui-sans-serif, system-ui, sans-serif` plus emoji fallbacks). No web
 font.
 
-| Token                  | CSS                         | Use                    |
-| ---------------------- | --------------------------- | ---------------------- |
-| `type.family.sans`     | `--sl-type-family-sans`     | System sans            |
-| `type.size.sm`–`3xl`   | `--sl-type-size-*`          | Fluid type scale       |
-| `type.letter.tight`    | `--sl-type-letter-tight`    | `-0.02em`              |
-| `type.letter.normal`   | `--sl-type-letter-normal`   | `0em`                  |
-| `type.letter.wide`     | `--sl-type-letter-wide`     | `0.04em`               |
-| `type.numeric.tabular` | `--sl-type-numeric-tabular` | `font-variant-numeric` |
-| `type.feature.default` | `--sl-type-feature-default` | kern / liga / calt     |
-| `type.feature.tabular` | `--sl-type-feature-tabular` | `tnum` plus kerning    |
+| Token                  | CSS                            | Use                    |
+| ---------------------- | ------------------------------ | ---------------------- |
+| `type.family.sans`     | `--ghost-type-family-sans`     | System sans            |
+| `type.size.sm`–`3xl`   | `--ghost-type-size-*`          | Fluid type scale       |
+| `type.letter.tight`    | `--ghost-type-letter-tight`    | `-0.02em`              |
+| `type.letter.normal`   | `--ghost-type-letter-normal`   | `0em`                  |
+| `type.letter.wide`     | `--ghost-type-letter-wide`     | `0.04em`               |
+| `type.numeric.tabular` | `--ghost-type-numeric-tabular` | `font-variant-numeric` |
+| `type.feature.default` | `--ghost-type-feature-default` | kern / liga / calt     |
+| `type.feature.tabular` | `--ghost-type-feature-tabular` | `tnum` plus kerning    |
 
 ```css
 .price {
-  font-variant-numeric: var(--sl-type-numeric-tabular);
-  font-feature-settings: var(--sl-type-feature-tabular);
+  font-variant-numeric: var(--ghost-type-numeric-tabular);
+  font-feature-settings: var(--ghost-type-feature-tabular);
 }
 ```
 
-Type does not change with density. SlButton maps `sm` / `md` / `lg` onto
+Type does not change with density. GhostButton maps `sm` / `md` / `lg` onto
 `control.size.*.font` (fluid sm / md / lg).
 
 ## Roundness
 
 ```css
 .product-theme {
-  --sl-roundness: 0.35;
+  --ghost-roundness: 0.35;
 }
 
 .chip {
-  border-radius: var(--sl-radius-pill);
+  border-radius: var(--ghost-radius-pill);
 }
 ```
 
-| `--sl-roundness` | Effect                                       |
-| ---------------- | -------------------------------------------- |
-| `0`              | Sharp. Every radius token computes to `0`.   |
-| `1` (default)    | Designed radii. `radius.pill` is a capsule.  |
-| between          | Linear scale of each token’s designed value. |
+| `--ghost-roundness` | Effect                                       |
+| ------------------- | -------------------------------------------- |
+| `0`                 | Sharp. Every radius token computes to `0`.   |
+| `1` (default)       | Designed radii. `radius.pill` is a capsule.  |
+| between             | Linear scale of each token’s designed value. |
 
 Set the knob on any subtree. Radius `calc()` is redeclared on descendants so
-a nested `--sl-roundness` re-evaluates, matching `--sl-motion-intensity`.
+a nested `--ghost-roundness` re-evaluates, matching `--ghost-motion-intensity`.
 
 ## Live demo
 
-Density and roundness on this card. Nested `data-sl-density` inside a
+Density and roundness on this card. Nested `data-ghost-density` inside a
 comfortable page still wins.
 
-<div class="slop-theme demo-board" data-sl-mode="light">
+<div class="ghost-theme demo-board" data-ghost-mode="light">
   <p>
     <label>
       Density
@@ -113,13 +113,13 @@ comfortable page still wins.
   </p>
   <div
     class="demo-row"
-    :data-sl-density="density"
-    :style="{ '--sl-roundness': String(roundness) }"
+    :data-ghost-density="density"
+    :style="{ '--ghost-roundness': String(roundness) }"
   >
-    <SlButton size="sm">Small</SlButton>
-    <SlButton>Medium</SlButton>
-    <SlButton size="lg">Large</SlButton>
-    <SlButton variant="outline">Outline</SlButton>
+    <GhostButton size="sm">Small</GhostButton>
+    <GhostButton>Medium</GhostButton>
+    <GhostButton size="lg">Large</GhostButton>
+    <GhostButton variant="outline">Outline</GhostButton>
   </div>
   <p class="demo-type">
     <span class="demo-xs">xs</span>
@@ -148,26 +148,26 @@ snapshots.
 .demo-row {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--sl-space-gap-md, 0.75rem);
+  gap: var(--ghost-space-gap-md, 0.75rem);
 }
 .demo-type {
   align-items: baseline;
   display: flex;
   flex-wrap: wrap;
-  font-family: var(--sl-type-family-sans);
+  font-family: var(--ghost-type-family-sans);
   gap: 1rem;
   margin-block-start: 1rem;
 }
 .demo-xs {
-  font-size: var(--sl-type-size-xs);
+  font-size: var(--ghost-type-size-xs);
 }
 .demo-md {
-  font-size: var(--sl-type-size-md);
+  font-size: var(--ghost-type-size-md);
 }
 .demo-tabular {
-  font-feature-settings: var(--sl-type-feature-tabular);
-  font-size: var(--sl-type-size-lg);
-  font-variant-numeric: var(--sl-type-numeric-tabular);
-  letter-spacing: var(--sl-type-letter-tight);
+  font-feature-settings: var(--ghost-type-feature-tabular);
+  font-size: var(--ghost-type-size-lg);
+  font-variant-numeric: var(--ghost-type-numeric-tabular);
+  letter-spacing: var(--ghost-type-letter-tight);
 }
 </style>

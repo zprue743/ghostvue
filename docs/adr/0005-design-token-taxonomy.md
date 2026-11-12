@@ -1,6 +1,8 @@
 # ADR 0005: Design token taxonomy and source format
 
-- Status: accepted (CSS prefix, component tokens, and mode switching
+Identifiers updated for the GhostVue rebrand (ADR 0010).
+
+- Status: accepted (CSS prefix, component tokens, and mode switching)
   superseded by [ADR 0007](./0007-token-pipeline.md))
 - Date: 2026-11-11
 - Decision owners: repository maintainers
@@ -12,14 +14,14 @@ token taxonomy exists because the foundation phase has not seen components.
 [PR #20](https://github.com/zprue743/slop-ui/pull/20) already authors a
 runtime token surface in `packages/themes/src/default.css`:
 
-- semantic theme: `--slop-theme-surface`, `--slop-theme-color`
-- component: `--slop-button-{tone}-color`, `--slop-button-size-*`, focus,
-  radius, and related `--slop-button-*` properties
-- private derived: `--_slop-button-*`
-- color schemes via `light-dark()` and `data-color-scheme` on `.slop-theme`
+- semantic theme: `--ghost-theme-surface`, `--ghost-theme-color`
+- component: `--ghost-button-{tone}-color`, `--ghost-button-size-*`, focus,
+  radius, and related `--ghost-button-*` properties
+- private derived: `--_ghost-button-*`
+- color schemes via `light-dark()` and `data-color-scheme` on `.ghost-theme`
 
 Those names will become a compatibility contract if Button merges without a
-taxonomy. slop-ui is AI-native: tokens must be a format agents can read and
+taxonomy. GhostVue is AI-native: tokens must be a format agents can read and
 write, not only CSS a browser can apply.
 
 ADR 0004 (SLO-10) says themed components style through CSS variables from
@@ -59,7 +61,7 @@ Lower tiers may only reference equal or higher tiers (component → semantic
 A follow-up pipeline compiles DTCG JSON to all three of:
 
 1. **CSS custom properties** — runtime for themed components and consumer
-   overrides (`--slop-button-accent-color`).
+   overrides (`--ghost-button-accent-color`).
 2. **TypeScript types** — a typed map of public token names for Vue props,
    docs, and codegen.
 3. **JSON manifest** — resolved values for MCP and agents. This is the
@@ -74,22 +76,22 @@ properties so #20 does not become a parallel system.
 
 - Authored: `{group}.{path}` with groups `color`, `space`, `font`,
   `radius`, `duration`, plus one group per component (`button`).
-- Runtime CSS: `--slop-{group}-{path}` (`--slop-color-accent`,
-  `--slop-button-radius`). Vue components are `SlButton` (ADR 0003); CSS
-  stays `slop-*` to avoid Shoelace's `sl-` namespace.
-- Private CSS: `--_slop-*` is unpublished.
+- Runtime CSS: `--ghost-{group}-{path}` (`--ghost-color-accent`,
+  `--ghost-button-radius`). Vue components are `GhostButton` (ADR 0003); CSS
+  stays `ghost-*` to avoid Shoelace's `sl-` namespace.
+- Private CSS: `--_ghost-*` is unpublished.
 
 ### Reconciliation with PR #20 `default.css`
 
-| Runtime CSS (PR #20)                                     | Tier               | Authored token                      | Compile target                               |
-| -------------------------------------------------------- | ------------------ | ----------------------------------- | -------------------------------------------- |
-| `--slop-theme-surface`, `--slop-theme-color`             | semantic           | `color.surface`, `color.foreground` | CSS + types + JSON                           |
-| `--slop-button-accent-color` and other `--slop-button-*` | component          | `button.*`                          | CSS + types + JSON                           |
-| `light-dark(#1d4ed8, #60a5fa)` literals                  | primitive (inline) | `color.blue.700` / `color.blue.400` | source; CSS may keep `light-dark()`          |
-| `--_slop-button-*`                                       | not public         | none                                | CSS only, not in the TS/JSON public manifest |
+| Runtime CSS (PR #20)                                       | Tier               | Authored token                      | Compile target                               |
+| ---------------------------------------------------------- | ------------------ | ----------------------------------- | -------------------------------------------- |
+| `--ghost-theme-surface`, `--ghost-theme-color`             | semantic           | `color.surface`, `color.foreground` | CSS + types + JSON                           |
+| `--ghost-button-accent-color` and other `--ghost-button-*` | component          | `button.*`                          | CSS + types + JSON                           |
+| `light-dark(#1d4ed8, #60a5fa)` literals                    | primitive (inline) | `color.blue.700` / `color.blue.400` | source; CSS may keep `light-dark()`          |
+| `--_ghost-button-*`                                        | not public         | none                                | CSS only, not in the TS/JSON public manifest |
 
-Do not rename `--slop-theme-surface` inside #20. The pipeline may emit
-`--slop-color-surface` as an alias later. Light and dark stay one public
+Do not rename `--ghost-theme-surface` inside #20. The pipeline may emit
+`--ghost-color-surface` as an alias later. Light and dark stay one public
 name using CSS `light-dark()` at emit time, matching #20.
 
 Primitives may exist only in DTCG source until two components share a
@@ -129,7 +131,7 @@ Example aligned with #20's accent solid:
 Emitted CSS (already the public shape in #20):
 
 ```css
---slop-button-accent-color: #1d4ed8;
+--ghost-button-accent-color: #1d4ed8;
 ```
 
 ## Alternatives considered
@@ -147,7 +149,7 @@ requires all three outputs so Vue, docs, and MCP share one catalog.
 avoided a global color system before a second component shared values.
 Primitives belong in DTCG source first.
 
-**Rename `--slop-theme-*` in #20 now.** Deferred. Aliases can land with the
+**Rename `--ghost-theme-*` in #20 now.** Deferred. Aliases can land with the
 pipeline; a rename fights an open PR for no runtime gain.
 
 ## Consequences
@@ -162,8 +164,8 @@ pipeline; a rename fights an open PR for no runtime gain.
 
 ## Compatibility implications
 
-Docs only. Once #20 merges, `--slop-button-*` and `--slop-theme-*` are
+Docs only. Once #20 merges, `--ghost-button-*` and `--ghost-theme-*` are
 compatibility-bearing names. Changing a public custom property is breaking;
 adding primitives, aliases, TS types, or a JSON manifest is additive.
-`--_slop-*` stays private. No SSR/a11y impact beyond the contrast contracts
+`--_ghost-*` stays private. No SSR/a11y impact beyond the contrast contracts
 the theme already documents.

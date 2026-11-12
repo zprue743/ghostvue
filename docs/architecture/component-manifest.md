@@ -1,7 +1,7 @@
 # Component manifests
 
 The machine-readable public contract for each component. Docs, the future
-`@slop-ui/mcp` server, codegen, and evals read the same JSON. The schema and
+`@ghostvue/mcp` server, codegen, and evals read the same JSON. The schema and
 versioning rules are [ADR 0006](../adr/0006-component-manifest-schema.md).
 
 ## Schema
@@ -15,7 +15,7 @@ schemas/component-manifest.schema.json
 Published export (byte-identical copy):
 
 ```ts
-import schema from '@slop-ui/core/manifest.schema.json'
+import schema from '@ghostvue/core/manifest.schema.json'
 ```
 
 JSON Schema draft 2020-12. `$id` includes major version `@1`. Each manifest
@@ -29,14 +29,14 @@ This is not the [token JSON catalog](./tokens.md) from ADR 0005.
 One file per component, next to the package that exports it:
 
 ```text
-packages/vue/manifests/sl-button.manifest.json
-packages/vue/manifests/sl-visually-hidden.manifest.json
-packages/themes/manifests/sl-button.manifest.json  // when a themed wrapper adds visual props
+packages/vue/manifests/ghost-button.manifest.json
+packages/vue/manifests/ghost-visually-hidden.manifest.json
+packages/themes/manifests/ghost-button.manifest.json  // when a themed wrapper adds visual props
 ```
 
 `pnpm manifests:write` generates `"source": "generated"` files from every
-`packages/vue/src/**/Sl*.vue` and `packages/themes/src/**/Sl*.vue` using
-`vue-component-meta`. New `Sl*` SFCs are picked up automatically; do not
+`packages/vue/src/**/Ghost*.vue` and `packages/themes/src/**/Ghost*.vue` using
+`vue-component-meta`. New `Ghost*` SFCs are picked up automatically; do not
 register them in a list. `pnpm manifests` (part of `pnpm verify`) fails when
 a generated file is stale versus the SFC.
 
@@ -49,14 +49,14 @@ overwrites types and membership from source and keeps that prose. JSDoc on the
 SFC fills a description only when the manifest does not already have one.
 
 Handwritten manifests (`"source": "handwritten"`) remain valid only when no
-matching SFC exists yet. The themed wrapper lives in `sl-button.ts`, so its
-manifest stays handwritten until it is an `Sl*.vue` file.
+matching SFC exists yet. The themed wrapper lives in `ghost-button.ts`, so its
+manifest stays handwritten until it is a `Ghost*.vue` file.
 
 ## Required contents
 
 Every manifest lists:
 
-- `name` (`SlButton`), `package`, `status`, `description`
+- `name` (`GhostButton`), `package`, `status`, `description`
 - `props` — name, TypeScript type string, default, required, description,
   deprecated
 - `models` — v-model prop plus `update:*` event
@@ -64,7 +64,7 @@ Every manifest lists:
 - `events` and payload types (component emits only)
 - `slots` and slot props
 - `exposed` methods and properties
-- styling hooks — `data-part`, `data-state`, `--sl-*` custom properties
+- styling hooks — `data-part`, `data-state`, `--ghost-*` custom properties
 - accessibility — role, APG pattern URL, keyboard map, required ARIA
   attributes
 - `examples` — stable example ids, not file paths

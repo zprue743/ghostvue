@@ -24,7 +24,7 @@ body:
     id: versions
     attributes:
       label: Versions
-      description: slop-ui, Vue, browser, Node, and package-manager versions.
+      description: GhostVue, Vue, browser, Node, and package-manager versions.
     validations:
       required: true
   - type: textarea

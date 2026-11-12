@@ -26,35 +26,36 @@ reachable through sprawling barrels or undocumented deep imports.
 
 ## Vue component conventions
 
-These rules implement [ADR 0003](../adr/0003-public-component-api-conventions.md).
-They apply to public components in `@slop-ui/vue` and themed wrappers in
-`@slop-ui/themes`.
+These rules implement [ADR 0003](../adr/0003-public-component-api-conventions.md)
+and the `Ghost` prefix in [ADR 0010](../adr/0010-rebrand-to-ghostvue.md).
+They apply to public components in `@ghostvue/vue` and themed wrappers in
+`@ghostvue/themes`.
 
 ### Names
 
-- Component exports use the `Sl` prefix (`SlButton`, `SlDialog`,
-  `SlVisuallyHidden`).
-- Public composables use `useSl*` (`useSlButton`, `useSlDialog`) so the
+- Component exports use the `Ghost` prefix (`GhostButton`, `GhostDialog`,
+  `GhostVisuallyHidden`) per [ADR 0010](../adr/0010-rebrand-to-ghostvue.md).
+- Public composables use `useGhost*` (`useGhostButton`, `useGhostDialog`) so the
   library has one searchable namespace.
-- CSS classes and documented hooks use the `slop-` prefix (`slop-button`).
-  Semantic custom properties use `--sl-<role>-<part>-<state>`
-  (`--sl-action-primary-bg`) per [ADR 0007](../adr/0007-token-pipeline.md).
+- CSS classes and documented hooks use the `ghost-` prefix (`ghost-button`).
+  Semantic custom properties use `--ghost-<role>-<part>-<state>`
+  (`--ghost-action-primary-bg`) per [ADR 0007](../adr/0007-token-pipeline.md).
   Class names still avoid Shoelace's `sl-` custom-element namespace.
-- Compound parts are flattened named exports (`SlDialogTrigger`), not
-  `SlDialog.Trigger` namespaces.
+- Compound parts are flattened named exports (`GhostDialogTrigger`), not
+  `GhostDialog.Trigger` namespaces.
 
 ### Registration
 
 - Named, tree-shakeable ESM imports are the primary API:
-  `import { SlButton, useSlButton } from '@slop-ui/vue'`.
-- An optional `app.use(SlopUi)` plugin may register those same `Sl*`
+  `import { GhostButton, useGhostButton } from '@ghostvue/vue'`.
+- An optional `app.use(GhostVue)` plugin may register those same `Ghost*`
   components globally and apply documented defaults. It is never required
   for a component to work.
 - `GlobalComponents` types ship on an intended subpath
-  `@slop-ui/vue/components` for plugin and auto-import users. The main
+  `@ghostvue/vue/components` for plugin and auto-import users. The main
   entry must not augment globals.
-- `unplugin-vue-components` support, when implemented, is `SlopUiResolver()`
-  from `@slop-ui/vue/resolver`, resolving `SlButton` to `@slop-ui/vue`.
+- `unplugin-vue-components` support, when implemented, is `GhostVueResolver()`
+  from `@ghostvue/vue/resolver`, resolving `GhostButton` to `@ghostvue/vue`.
   Do not add that dependency until a consumer in this repo needs auto-import.
 
 ### Props, events, and slots

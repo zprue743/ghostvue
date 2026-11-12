@@ -16,7 +16,7 @@ predecessor. Do not start markup to stand in for an unresolved design.
 4. **Machine-readable manifest.** A JSON file that validates against
    [the component-manifest schema](../architecture/component-manifest.md)
    ([ADR 0006](../adr/0006-component-manifest-schema.md)). Place it at
-   `packages/<dir>/manifests/<kebab-name>.manifest.json`. After the `Sl*.vue`
+   `packages/<dir>/manifests/<kebab-name>.manifest.json`. After the `Ghost*.vue`
    file exists, run `pnpm manifests:write` so props, emits, slots, and
    exposed types are derived from source; keep descriptions, accessibility,
    styling hooks, and examples as prose in that file. `pnpm manifests` is

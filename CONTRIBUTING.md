@@ -1,6 +1,6 @@
 # Contributing
 
-Thank you for helping build slop-ui. The project accepts human-authored and
+Thank you for helping build GhostVue. The project accepts human-authored and
 AI-assisted contributions under the same engineering standards.
 
 Start with the [contribution workflow](./docs/contributing/workflow.md), then read

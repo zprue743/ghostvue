@@ -1,6 +1,6 @@
-# slop-ui
+# GhostVue
 
-slop-ui is the foundation of a Vue-first, headless-first open-source UI
+GhostVue is the foundation of a Vue-first, headless-first open-source UI
 component library. The project aims to make ordinary use cases concise while
 providing progressive escape hatches for demanding application interfaces.
 

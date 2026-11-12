@@ -1,11 +1,11 @@
-# SlInteractiveSurface specification
+# GhostInteractiveSurface specification
 
 **Status:** Approved with ADR 0009 (accepted 2026-11-11). v1 ships
 spotlight only; tilt and magnetic are follow-ups.
 
 ## Purpose and user problems
 
-`SlInteractiveSurface` makes a host notice the pointer. A glow follows the
+`GhostInteractiveSurface` makes a host notice the pointer. A glow follows the
 cursor so a card or opted-in control feels alive. The effect is decoration.
 Focus, selection, and status stay on the host's existing semantics.
 
@@ -17,35 +17,35 @@ Focus, selection, and status stay on the host's existing semantics.
 - A JS spring integrator. Leave uses the existing CSS `linear()` spring.
 - A singleton that forbids more than one tracking surface. One active
   surface is a documented budget, not an invariant.
-- Changing themed `SlButton` by default. Spotlight is opt-in.
+- Changing themed `GhostButton` by default. Spotlight is opt-in.
 
 ## Public API
 
 ### Props and configuration
 
-Headless `@slop-ui/vue` `SlInteractiveSurface` / `useSlInteractiveSurface`:
+Headless `@ghostvue/vue` `GhostInteractiveSurface` / `useGhostInteractiveSurface`:
 
-| Prop / option    | Type                                         | Default         | Contract                                                                                             |
-| ---------------- | -------------------------------------------- | --------------- | ---------------------------------------------------------------------------------------------------- |
-| `as`             | `'div' \| 'article' \| 'section' \| 'aside'` | `'div'`         | Root tag on the unstyled SFC. Not an option on the composable.                                       |
-| `effects`        | `InteractiveEffect[]`                        | `['spotlight']` | Recipes on `data-interactive`. v1 is `'spotlight'` only. An empty list is an explicit off.           |
-| `stateAttribute` | `'data-state' \| 'data-interactive-state'`   | `'data-state'`  | Composable-only. Hosts that already own `data-state` (themed SlButton) use `data-interactive-state`. |
+| Prop / option    | Type                                         | Default         | Contract                                                                                                |
+| ---------------- | -------------------------------------------- | --------------- | ------------------------------------------------------------------------------------------------------- |
+| `as`             | `'div' \| 'article' \| 'section' \| 'aside'` | `'div'`         | Root tag on the unstyled SFC. Not an option on the composable.                                          |
+| `effects`        | `InteractiveEffect[]`                        | `['spotlight']` | Recipes on `data-interactive`. v1 is `'spotlight'` only. An empty list is an explicit off.              |
+| `stateAttribute` | `'data-state' \| 'data-interactive-state'`   | `'data-state'`  | Composable-only. Hosts that already own `data-state` (themed GhostButton) use `data-interactive-state`. |
 
 ```ts
 export type InteractiveEffect = 'spotlight'
 export type InteractiveSurfaceState = 'off' | 'idle' | 'tracking'
 ```
 
-Named ESM exports: `SlInteractiveSurface`, `useSlInteractiveSurface`, and
+Named ESM exports: `GhostInteractiveSurface`, `useGhostInteractiveSurface`, and
 the types above. Native attributes fall through to the root. There is no
 `pt` object.
 
-Themed `@slop-ui/themes` `SlInteractiveSurface` wraps the unstyled
-component in `.slop-themed-scope` and re-exports `as` and `effects`. Visual
+Themed `@ghostvue/themes` `GhostInteractiveSurface` wraps the unstyled
+component in `.ghost-themed-scope` and re-exports `as` and `effects`. Visual
 values come from `interactive.spotlight.*` tokens and the
 `data-interactive='spotlight'` recipe.
 
-Themed `SlButton` gains `interactive?: 'spotlight'`. Omitting it leaves
+Themed `GhostButton` gains `interactive?: 'spotlight'`. Omitting it leaves
 markup identical to today.
 
 ### v-model contracts
@@ -59,9 +59,9 @@ The default slot is the content. The unstyled SFC always renders an
 `aria-hidden` `data-part="glow"` sibling; that layer is not a public slot.
 No component events. A template ref exposes `element: HTMLElement | null`.
 
-`useSlInteractiveSurface` returns `rootProps` for `data-part`,
+`useGhostInteractiveSurface` returns `rootProps` for `data-part`,
 `data-interactive`, and the chosen state attribute. CSS variables
-`--sl-pointer-x`, `--sl-pointer-y`, `--sl-pointer-nx`, and `--sl-pointer-ny`
+`--ghost-pointer-x`, `--ghost-pointer-y`, `--ghost-pointer-nx`, and `--ghost-pointer-ny`
 are written on the host imperatively so pointer motion does not invalidate
 Vue subtrees.
 
@@ -76,7 +76,7 @@ tracking. Empty `effects` is `off`.
 
 ### Loading, empty, disabled, read-only, and error states
 
-None of these belong to the surface. On a themed `SlButton`, loading and
+None of these belong to the surface. On a themed `GhostButton`, loading and
 disabled stay on `data-state`; spotlight uses `data-interactive-state`.
 
 ## Accessibility contract
@@ -89,8 +89,8 @@ Forced colors drop the glow. Keyboard focus is unchanged.
 ## Rendering and customization
 
 Stable hooks: `data-part="root"`, `data-part="glow"`, `data-interactive`,
-`data-state` or `data-interactive-state`, and the `--sl-pointer-*` /
-`--sl-interactive-spotlight-*` variables. Recipes live in `recipes.css`.
+`data-state` or `data-interactive-state`, and the `--ghost-pointer-*` /
+`--ghost-interactive-spotlight-*` variables. Recipes live in `recipes.css`.
 
 ## Environment behavior
 
@@ -111,9 +111,9 @@ is the expected case.
 
 ## Composition
 
-`useSlInteractiveSurface` owns sampling and attributes. Unstyled
-`SlInteractiveSurface` spreads those onto `as`. The themed wrapper scopes
-CSS. Themed `SlButton` opts in with `interactive="spotlight"`.
+`useGhostInteractiveSurface` owns sampling and attributes. Unstyled
+`GhostInteractiveSurface` spreads those onto `as`. The themed wrapper scopes
+CSS. Themed `GhostButton` opts in with `interactive="spotlight"`.
 
 ## Test plan
 
@@ -130,6 +130,6 @@ link to ADR 0009. Playground exercises the published API.
 
 ## Compatibility and release impact
 
-Additive minor Changesets for `@slop-ui/vue` and `@slop-ui/themes`.
-Existing themed `SlButton` snapshots stay unchanged when the prop is
+Additive minor Changesets for `@ghostvue/vue` and `@ghostvue/themes`.
+Existing themed `GhostButton` snapshots stay unchanged when the prop is
 omitted.

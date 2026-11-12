@@ -2,7 +2,7 @@
 layout: home
 
 hero:
-  name: slop-ui
+  name: GhostVue
   text: Vue-first, headless-first UI
   tagline: A disciplined engineering foundation for simple APIs and capable application components.
   actions:
@@ -23,6 +23,6 @@ features:
 ---
 
 > [!WARNING]
-> slop-ui is pre-release. First components are experimental and it is not
+> GhostVue is pre-release. First components are experimental and it is not
 > ready for production use. Adding a component requires the
 > [component gate](/agents/COMPONENT_WORKFLOW).

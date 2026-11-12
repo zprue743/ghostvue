@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from 'vue'
 
-import '@slop-ui/themes/default.css'
+import '@ghostvue/themes/default.css'
 import { startThemeTransition } from '../../packages/themes/src/start-theme-transition'
 
 const replay = ref(0)
@@ -19,13 +19,13 @@ async function crossfade(mode) {
 # Motion
 
 SLO-65 recipes on top of the [token catalog](./tokens.md). Components consume
-semantic `--sl-*` variables. `data-motion` attributes are documented utilities
-in `@slop-ui/themes` default CSS. They are not per-component tokens.
+semantic `--ghost-*` variables. `data-motion` attributes are documented utilities
+in `@ghostvue/themes` default CSS. They are not per-component tokens.
 
-Duration CSS values are `calc(<ms> * var(--sl-motion-intensity, 1))`. Set
-`--sl-motion-intensity` (0–1, default 1) on any subtree to scale every
+Duration CSS values are `calc(<ms> * var(--ghost-motion-intensity, 1))`. Set
+`--ghost-motion-intensity` (0–1, default 1) on any subtree to scale every
 duration without rewriting each property. Modes still nest through
-`data-sl-mode`.
+`data-ghost-mode`.
 
 ## Durations and easing
 
@@ -44,7 +44,7 @@ duration without rewriting each property. Modes still nest through
 
 `gentle`, `snappy`, and `bouncy` are authored as stiffness / damping / mass
 and compiled to CSS `linear()` plus a settle duration
-(`--sl-motion-spring-gentle-duration`, and the same for snappy and bouncy).
+(`--ghost-motion-spring-gentle-duration`, and the same for snappy and bouncy).
 Use the easing string as `animation-timing-function` or
 `transition-timing-function`, and the settle duration as the duration.
 
@@ -53,7 +53,7 @@ Use the easing string as `animation-timing-function` or
 - **Exits run faster than enters.** `motion.exit.duration` aliases fast;
   `motion.enter.duration` aliases moderate. Arrivals get time to land;
   departures get out of the way.
-- **Stagger from the trigger.** Offset each item by `n * var(--sl-motion-stagger)`.
+- **Stagger from the trigger.** Offset each item by `n * var(--ghost-motion-stagger)`.
   Under reduced motion stagger becomes 0 so the group appears together.
 - **Animate from the trigger origin.** Set `transform-origin` (or
   `transform-box`) on the moving surface to the point that opened it — the
@@ -63,16 +63,17 @@ Use the easing string as `animation-timing-function` or
 .menu {
   transform-origin: var(--menu-origin, top left);
   transition:
-    opacity var(--sl-motion-enter-duration) var(--sl-motion-enter-easing),
-    transform var(--sl-motion-enter-duration) var(--sl-motion-enter-easing);
+    opacity var(--ghost-motion-enter-duration) var(--ghost-motion-enter-easing),
+    transform var(--ghost-motion-enter-duration)
+      var(--ghost-motion-enter-easing);
 }
 
 .menu[data-state='closed'] {
   opacity: 0;
-  transform: translateY(var(--sl-motion-translate))
-    scale(var(--sl-motion-scale));
-  transition-duration: var(--sl-motion-exit-duration);
-  transition-timing-function: var(--sl-motion-exit-easing);
+  transform: translateY(var(--ghost-motion-translate))
+    scale(var(--ghost-motion-scale));
+  transition-duration: var(--ghost-motion-exit-duration);
+  transition-timing-function: var(--ghost-motion-exit-easing);
 }
 ```
 
@@ -84,7 +85,7 @@ so the state change is still visible.
 
 ```css
 .quiet-panel {
-  --sl-motion-intensity: 0.5;
+  --ghost-motion-intensity: 0.5;
 }
 ```
 
@@ -100,7 +101,7 @@ honor `prefers-reduced-motion: reduce` by swapping travel for opacity.
   <button type="button" class="demo-play" @click="play">Replay easings and springs</button>
 </p>
 
-<div class="slop-theme demo-board" data-sl-mode="light">
+<div class="ghost-theme demo-board" data-ghost-mode="light">
   <div v-for="recipe in ['standard', 'decelerate', 'accelerate', 'spring-gentle', 'spring-snappy', 'spring-bouncy']" :key="`${recipe}-${replay}`" class="demo-row">
     <span>{{ recipe }}</span>
     <div class="demo-track">
@@ -111,18 +112,18 @@ honor `prefers-reduced-motion: reduce` by swapping travel for opacity.
 
 ## Theme crossfade helper
 
-`startThemeTransition` is a small optional export from `@slop-ui/themes`. It
-sets `data-sl-mode` inside `document.startViewTransition` when that API exists
+`startThemeTransition` is a small optional export from `@ghostvue/themes`. It
+sets `data-ghost-mode` inside `document.startViewTransition` when that API exists
 and the user has not requested reduced motion. Otherwise it writes the
 attribute immediately.
 
 ```ts
-import { startThemeTransition } from '@slop-ui/themes'
+import { startThemeTransition } from '@ghostvue/themes'
 
-await startThemeTransition(document.querySelector('.slop-theme'), 'dark')
+await startThemeTransition(document.querySelector('.ghost-theme'), 'dark')
 ```
 
-<div ref="stage" class="slop-theme demo-stage" data-sl-mode="light">
+<div ref="stage" class="ghost-theme demo-stage" data-ghost-mode="light">
   <p>Nested mode on this card.</p>
   <button type="button" class="demo-play" @click="crossfade('light')">Light</button>
   <button type="button" class="demo-play" @click="crossfade('dark')">Dark</button>
@@ -136,10 +137,10 @@ transitions and collapsed translate/scale tokens.
 
 <style>
 .demo-play {
-  background: var(--sl-action-primary-bg, #1d4ed8);
+  background: var(--ghost-action-primary-bg, #1d4ed8);
   border: 0;
   border-radius: 0.5rem;
-  color: var(--sl-action-primary-fg, #fff);
+  color: var(--ghost-action-primary-fg, #fff);
   cursor: pointer;
   font: inherit;
   margin-inline-end: 0.4rem;
@@ -159,14 +160,14 @@ transitions and collapsed translate/scale tokens.
   margin-block: 0.45rem;
 }
 .demo-track {
-  background: var(--sl-surface-muted-bg);
+  background: var(--ghost-surface-muted-bg);
   border-radius: 999px;
   min-block-size: 2rem;
   overflow: hidden;
   padding: 0.35rem;
 }
 .demo-dot {
-  background: var(--sl-action-primary-bg);
+  background: var(--ghost-action-primary-bg);
   block-size: 1.25rem;
   border-radius: 999px;
   display: block;

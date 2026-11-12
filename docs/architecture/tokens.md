@@ -35,7 +35,7 @@ by mode). `semantic.dark.json` overlays dark `$value`s onto existing
 semantic tokens. A rest-state token may nest interaction states on the same
 node (`bg` plus `bg.hover`). There is no `tokens/components/` tree.
 
-`pnpm --filter @slop-ui/themes build` compiles these files to CSS custom
+`pnpm --filter @ghostvue/themes build` compiles these files to CSS custom
 properties, TypeScript constants, a JSON catalog, and
 [the token catalog docs page](../themes/tokens.md). `pnpm contrast` (part
 of `pnpm verify`) checks WCAG 2 AA on semantic text/background pairs.
@@ -68,32 +68,36 @@ tokens.
 
 The JSON token catalog is not the per-component gate manifest in
 [ADR 0006](../adr/0006-component-manifest-schema.md). It is published as
-`@slop-ui/themes/tokens.json`. Semantic CSS is `@slop-ui/themes/tokens.css`
-and is concatenated into `@slop-ui/themes/default.css`.
+`@ghostvue/themes/tokens.json`. Semantic CSS is `@ghostvue/themes/tokens.css`
+and is concatenated into `@ghostvue/themes/default.css`.
 
-Public CSS names are `--sl-<role>-<part>-<state>`
-(`--sl-action-primary-bg`, `--sl-action-primary-bg-hover`). Vue components
-are `SlButton` (ADR 0003); class names stay `slop-*`. Primitive tokens are
-not published as CSS. Private derived properties (`--_slop-*`) are not in
+Public CSS names are `--ghost-<role>-<part>-<state>`
+(`--ghost-action-primary-bg`, `--ghost-action-primary-bg-hover`). Vue components
+are `GhostButton` (ADR 0003); class names stay `ghost-*`. Primitive tokens are
+not published as CSS. Private derived properties (`--_ghost-*`) are not in
 the TS or JSON public catalog.
 
 ## Theme and mode switching
 
-`data-sl-theme`, `data-sl-mode`, and `data-sl-density` nest on any subtree.
-The default theme name is `default`; `.slop-theme` without `data-sl-theme`
-implies it. Named themes match `[data-sl-theme='name']`.
-`.slop-themed-scope` is a recipe scope only — not a token host — so a themed
+`data-ghost-theme`, `data-ghost-mode`, and `data-ghost-density` nest on any subtree.
+The default theme name is `default`; `.ghost-theme` without `data-ghost-theme`
+implies it. Named themes match `[data-ghost-theme='name']`.
+`.ghost-themed-scope` is a recipe scope only — not a token host — so a themed
 wrapper inside a nested flagship inherits that flagship. Unset
-`data-sl-mode` follows `prefers-color-scheme`. Unset `data-sl-density` is
+`data-ghost-mode` follows `prefers-color-scheme`. Unset `data-ghost-density` is
 `comfortable` globally; a generated theme may set a different unset-density
-default under its own `data-sl-theme`. `data-sl-mode="light"` or `"dark"`
+default under its own `data-ghost-theme`. `data-ghost-mode="light"` or `"dark"`
 overrides the preference, including inside a parent with a different mode.
 Compact, comfortable, and spacious density attributes work the same way.
 
 ```vue
-<main class="slop-theme">...</main>
-<section data-sl-mode="dark">...</section>
-<aside data-sl-theme="default" data-sl-mode="light" data-sl-density="compact">
+<main class="ghost-theme">...</main>
+<section data-ghost-mode="dark">...</section>
+<aside
+  data-ghost-theme="default"
+  data-ghost-mode="light"
+  data-ghost-density="compact"
+>
   ...
 </aside>
 ```
@@ -102,12 +106,12 @@ Override a semantic custom property on the same subtree:
 
 ```css
 .product-theme {
-  --sl-action-primary-bg: #7c3aed;
-  --sl-action-primary-bg-hover: #6d28d9;
+  --ghost-action-primary-bg: #7c3aed;
+  --ghost-action-primary-bg-hover: #6d28d9;
 }
 ```
 
-Token selectors use `:where()` inside `@layer slop-ui-theme`, so unlayered
+Token selectors use `:where()` inside `@layer ghostvue-theme`, so unlayered
 consumer styles win.
 
 ## Contrast, forced colors, and follow-ups
@@ -120,10 +124,10 @@ advisory and never fails the build.
 
 `@media (forced-colors: active)` maps semantic color variables to system
 colors (`Canvas`, `CanvasText`, `ButtonFace`, `ButtonText`, `GrayText`,
-`Highlight`). SlButton keeps its own forced-colors rules so the control
+`Highlight`). GhostButton keeps its own forced-colors rules so the control
 stays usable when palettes are discarded.
 
-Unset `data-sl-mode` follows `prefers-color-scheme` in CSS. No JavaScript
+Unset `data-ghost-mode` follows `prefers-color-scheme` in CSS. No JavaScript
 is required to pick the initial mode, so SSR does not flash the opposite
 palette.
 
@@ -138,30 +142,30 @@ tokens. See [elevation, materials, and gradients](../themes/elevation.md).
 Motion durations, cubic-bezier easing, and spring presets are SLO-65.
 Springs are authored as stiffness / damping / mass and compile to CSS
 `linear()` plus a settle duration. Every duration CSS value is
-`calc(<ms> * var(--sl-motion-intensity, 1))`, redeclared on descendants so a
-nested `--sl-motion-intensity` re-evaluates. Under
+`calc(<ms> * var(--ghost-motion-intensity, 1))`, redeclared on descendants so a
+nested `--ghost-motion-intensity` re-evaluates. Under
 `prefers-reduced-motion: reduce`, movement tokens collapse to opacity-only
 or 80ms feedback so state changes stay visible. See
 [motion](../themes/motion.md).
 
 Density, fluid type, and roundness are SLO-66. Default density is
 comfortable. Compact and spacious overlay spacing, control heights, and
-radius through `data-sl-density`. `--sl-roundness` (0 sharp → 1 designed,
+radius through `data-ghost-density`. `--ghost-roundness` (0 sharp → 1 designed,
 including pill) scales every radius token via `calc()`. Type uses a system
 font stack and `clamp()` sizes; letter-spacing, tabular numbers, and
-OpenType feature tokens are semantic `--sl-type-*` variables. Coarse
+OpenType feature tokens are semantic `--ghost-type-*` variables. Coarse
 pointers floor control heights to 44px. See
 [density, type, and roundness](../themes/density.md).
 
 State-layer overlay opacities (`state.layer.hover` / `press` /
-`selected` / `dragged`) and action gradient stops are SLO-67. SlButton
+`selected` / `dragged`) and action gradient stops are SLO-67. GhostButton
 applies those overlays with a pseudo-element so they work on every tone
 and mode, including gradient fills. `pnpm contrast` checks
 `action.*.fg` against both gradient end stops.
 
 Flagship themes (calm enterprise, vibrant expressive, minimal monochrome)
 are generated by Node-only `defineTheme` ([ADR 0008](../adr/0008-define-theme.md),
-SLO-68) and published as `@slop-ui/themes/calm.css`, `vibrant.css`, and
+SLO-68) and published as `@ghostvue/themes/calm.css`, `vibrant.css`, and
 `mono.css`. See [defineTheme and flagship themes](../themes/define-theme.md).
 
 ## Authoring rules
@@ -175,15 +179,15 @@ SLO-68) and published as `@slop-ui/themes/calm.css`, `vibrant.css`, and
   `blur`, `spread`, `color`, optional `inset`). Gradients use stop lists
   or layered `{ style, interpolation, stops }` objects and compile to
   CSS `in oklch`.
-- Hairline width may set `$extensions.slop.ui.highDpr` so 2dppx screens
+- Hairline width may set `$extensions.ghostvue.highDpr` so 2dppx screens
   paint one device pixel. Motion tokens may set
-  `$extensions.slop.ui.reducedMotion` for the `prefers-reduced-motion:
-reduce` override. Control minima may set `$extensions.slop.ui.touchMin`
+  `$extensions.ghostvue.reducedMotion` for the `prefers-reduced-motion:
+reduce` override. Control minima may set `$extensions.ghostvue.touchMin`
   so `@media (pointer: coarse)` floors mapped heights to 44px.
 - Density overlays live in `semantic.compact.json` and
   `semantic.spacious.json`, mirroring `semantic.dark.json`.
 - cubicBezier values are four numbers. Spring values are
   `{ stiffness, damping, mass }` and may be aliased from a duration token
   to emit the settle time.
-- Headless `@slop-ui/vue` components must not require these tokens to
+- Headless `@ghostvue/vue` components must not require these tokens to
   function. Themed wrappers consume them as in ADR 0004.
