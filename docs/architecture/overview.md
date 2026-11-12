@@ -10,6 +10,7 @@ packages/vue       Vue lifecycle, reactivity, composables, and components
 packages/themes    optional theme and design-token infrastructure
 apps/docs          VitePress command wrapper for canonical docs
 apps/playground    manual development and browser-test host
+examples           typed executable samples (unpublished)
 tests              cross-package integration and browser tests
 docs               canonical product and engineering documentation
 scripts            repository invariants (`pnpm adapters`, `pnpm manifests`)

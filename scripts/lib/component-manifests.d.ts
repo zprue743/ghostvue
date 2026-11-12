@@ -92,6 +92,10 @@ export interface SyncResult {
 }
 
 export function pascalToKebab(name: string): string
+export function componentExamplePrefix(name: string): string
+export function validateExampleManifests(
+  repositoryRoot: string,
+): Promise<string[]>
 export function serializeManifest(manifest: unknown): string
 export function normalizeType(
   type: string,

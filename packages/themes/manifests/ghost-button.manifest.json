@@ -345,9 +345,8 @@
     "requiredAriaAttributes": []
   },
   "examples": [
-    "button-basic",
-    "button-loading",
-    "button-icon-only",
-    "button-variants"
+    "button/themed",
+    "button/loading",
+    "button/icon-only"
   ]
 }

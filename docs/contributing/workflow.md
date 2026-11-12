@@ -3,7 +3,8 @@
 1. Read `AGENTS.md`, this workflow, and relevant standards.
 2. Inspect related code before introducing a pattern.
 3. Agree on public behavior; component work begins from an approved spec.
-4. Make the smallest coherent change with tests and documentation.
+4. Make the smallest coherent change with tests and documentation. Component
+   usage samples belong in `examples/` ([executable examples](./examples.md)).
 5. Add intent-focused comments for non-obvious reasoning.
 6. Add a Changeset when a publishable package's consumer-visible behavior changes.
 7. Run focused checks, then `pnpm verify`; run `pnpm test:e2e` for browser behavior.

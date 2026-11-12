@@ -5,6 +5,14 @@ import { defineConfig } from 'vite'
 
 export default defineConfig({
   plugins: [vue()],
+  build: {
+    rollupOptions: {
+      input: {
+        main: fileURLToPath(new URL('./index.html', import.meta.url)),
+        examples: fileURLToPath(new URL('./examples.html', import.meta.url)),
+      },
+    },
+  },
   resolve: {
     // Browser tests build the playground without `pnpm build`, so resolve the
     // Vue package to source instead of a possibly missing dist bundle. Keep

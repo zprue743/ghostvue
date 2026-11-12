@@ -3,6 +3,7 @@ import { fileURLToPath } from 'node:url'
 import { defineConfig } from 'vitepress'
 
 import { docsDescription, docsSidebar, docsTitle } from './docs-nav'
+import { expandExampleSnippets } from './expand-example-snippets'
 import { writeLlmsTxtFiles } from './generate-llms-txt'
 import {
   applyDocsThemeHost,
@@ -35,6 +36,15 @@ export default defineConfig({
   transformHtml(code) {
     return applyDocsThemeHost(code)
   },
+  markdown: {
+    config(md) {
+      // Rewrite live `<GhostExample>` tags into a preview plus a `<<<` snippet
+      // so Shiki (and the VP copy control) match ordinary docs fences.
+      md.core.ruler.before('normalize', 'ghost-example-snippets', (state) => {
+        state.src = expandExampleSnippets(state.src)
+      })
+    },
+  },
   vite: {
     plugins: [
       {
@@ -44,6 +54,12 @@ export default defineConfig({
         },
       },
     ],
+    server: {
+      fs: {
+        // Example SFCs live at the repository root, outside apps/docs.
+        allow: [fileURLToPath(new URL('../../..', import.meta.url))],
+      },
+    },
     resolve: {
       alias: {
         // Browser CI builds docs without `pnpm build`, so resolve workspace

@@ -97,9 +97,8 @@
     "requiredAriaAttributes": []
   },
   "examples": [
-    "button-basic",
-    "button-loading",
-    "button-icon-only",
-    "button-themed"
+    "button/basic",
+    "button/composable",
+    "button/ref"
   ]
 }

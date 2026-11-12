@@ -10,6 +10,7 @@ import {
   docsTitle,
 } from '../../apps/docs/.vitepress/docs-nav'
 import {
+  expandExampleTags,
   generateLlmsDocuments,
   resolveDocsPagePath,
   toPlainMarkdown,
@@ -136,5 +137,16 @@ kept fence
     expect(plain).toContain('> Do not ignore this.')
     expect(plain).not.toMatch(/^::: warning/m)
     expect(plain).toContain('```md\n::: tip\nkept fence\n:::\n```')
+  })
+
+  it('inlines executable example source in place of Example tags', async () => {
+    const expanded = await expandExampleTags(
+      'Intro\n\n<GhostExample id="button/basic" />\n',
+      process.cwd(),
+    )
+
+    expect(expanded).not.toContain('<GhostExample')
+    expect(expanded).toContain('```vue')
+    expect(expanded).toContain("import { GhostButton } from '@ghostvue/vue'")
   })
 })

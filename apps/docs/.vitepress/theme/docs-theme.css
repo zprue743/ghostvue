@@ -36,6 +36,60 @@ html.ghost-theme {
     transparent
   );
   --vp-code-bg: var(--ghost-surface-muted-bg);
+  --vp-code-block-bg: var(--ghost-surface-muted-bg);
+  --vp-code-copy-code-bg: var(--ghost-surface-bg);
+  --vp-code-copy-code-hover-bg: var(--ghost-surface-subtle-bg);
+}
+
+/*
+ * VitePress ships an unlayered `button { padding: 0; background: transparent;
+ * border: 0 }` reset. GhostButton recipes live in `@layer ghostvue-theme` with
+ * `:where()`, so that reset always wins in docs. Restore only the themed
+ * wrapper from the same `--_ghost-button-*` vars the layer still sets.
+ * Do not target `html.ghost-theme .ghost-button` — the docs host always has
+ * `.ghost-theme` on `<html>`, and that selector would paint headless examples.
+ */
+.ghost-themed-scope .ghost-button {
+  appearance: none;
+  background-color: var(--_ghost-button-background);
+  background-image: var(--_ghost-button-fill);
+  border: var(--ghost-border-hairline-width) solid
+    var(--_ghost-button-border-color);
+  border-radius: var(--ghost-action-radius);
+  box-shadow: var(--_ghost-button-shadow);
+  color: var(--_ghost-button-color);
+  font-family: var(--ghost-action-label-family);
+  font-size: var(--_ghost-button-font-size);
+  font-weight: var(--ghost-action-label-weight);
+  min-block-size: var(--_ghost-button-min-size);
+  padding-block: var(--_ghost-button-padding-block);
+  padding-inline: var(--_ghost-button-padding-inline);
+}
+
+/*
+ * Live `<GhostExample>` is followed by a VitePress `<<<` fence. Join them into
+ * one card so Shiki, the copy control, and dark-mode token mapping apply.
+ */
+.vp-doc .ghost-example + div[class*='language-'] {
+  margin-block: 0 1.5rem;
+  margin-inline: 0;
+  overflow: hidden;
+  border: 1px solid var(--ghost-border-default);
+  border-block-start: 1px solid var(--ghost-border-muted);
+  border-end-end-radius: calc(1rem * var(--ghost-roundness, 1));
+  border-end-start-radius: calc(1rem * var(--ghost-roundness, 1));
+  border-start-end-radius: 0;
+  border-start-start-radius: 0;
+  background-color: var(--ghost-surface-muted-bg);
+}
+
+.vp-doc .ghost-example + div[class*='language-'] pre {
+  max-block-size: 22rem;
+}
+
+.vp-doc .ghost-example + div[class*='language-'] > button.copy {
+  /* Header Copy is the labeled control; hide the duplicate VP icon. */
+  display: none;
 }
 
 html.ghost-theme[data-ghost-theme='vibrant'] {

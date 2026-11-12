@@ -6,6 +6,7 @@ import '@ghostvue/themes/calm.css'
 import '@ghostvue/themes/vibrant.css'
 import '@ghostvue/themes/mono.css'
 import './docs-theme.css'
+import GhostExample from './GhostExample.vue'
 import Layout from './Layout.vue'
 
 function syncModeFromAppearance(): void {
@@ -20,7 +21,8 @@ function syncModeFromAppearance(): void {
 const theme: Theme = {
   extends: DefaultTheme,
   Layout,
-  enhanceApp() {
+  enhanceApp({ app }) {
+    app.component('GhostExample', GhostExample)
     if (typeof window === 'undefined') return
     syncModeFromAppearance()
     new MutationObserver(syncModeFromAppearance).observe(

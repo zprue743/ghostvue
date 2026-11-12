@@ -12,7 +12,10 @@ predecessor. Do not start markup to stand in for an unresolved design.
    the exported declaration extends beyond custom props. Follow
    [TESTING_RULES.md](./TESTING_RULES.md).
 3. **Public documentation.** API reference and examples in `docs/components/`,
-   plus a playground exercise of the supported patterns.
+   plus a playground exercise of the supported patterns. Runnable samples are
+   typed SFCs under `examples/<component>/<id>.vue`, rendered with
+   `<GhostExample id="..." />` on the docs page. Follow
+   [executable examples](../contributing/examples.md).
 4. **Machine-readable manifest.** A JSON file that validates against
    [the component-manifest schema](../architecture/component-manifest.md)
    ([ADR 0006](../adr/0006-component-manifest-schema.md)). Place it at

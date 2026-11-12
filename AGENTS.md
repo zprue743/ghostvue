@@ -71,6 +71,8 @@ pnpm verify
 - Scope Vitest with `pnpm test path/to/file.test.ts` (root script; packages
   have no `test` script).
 - Use `packages/*/manifests/*.manifest.json` as the cheap component API map.
+- Executable examples live in `examples/<component>/<id>.vue` with ids listed
+  in the matching manifest. See [executable examples](./docs/contributing/examples.md).
 - Prefer `docs/` over built `llms.txt`. `pnpm docs:build` writes `/llms.txt`
   into `.vitepress/dist`, which is not for agent reading.
 - Edit DTCG JSON under `packages/themes/tokens/`. Do not learn tokens from
