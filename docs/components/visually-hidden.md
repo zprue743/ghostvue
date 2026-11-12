@@ -1,6 +1,6 @@
-# SlVisuallyHidden
+# GhostVisuallyHidden
 
-`SlVisuallyHidden` renders content that assistive technology can reach but sighted
+`GhostVisuallyHidden` renders content that assistive technology can reach but sighted
 users do not see. Use it when an interface conveys meaning through position,
 iconography, or visual grouping, and the missing text has to exist without
 changing the design.
@@ -9,13 +9,13 @@ changing the design.
 
 ```vue
 <script setup lang="ts">
-import { SlVisuallyHidden } from '@slop-ui/vue'
+import { GhostVisuallyHidden } from '@ghostvue/vue'
 </script>
 
 <template>
   <button type="button">
     <TrashIcon aria-hidden="true" />
-    <SlVisuallyHidden>Delete report</SlVisuallyHidden>
+    <GhostVisuallyHidden>Delete report</GhostVisuallyHidden>
   </button>
 </template>
 ```
@@ -38,9 +38,9 @@ Headless use of the same contract without the SFC:
 
 ```vue
 <script setup lang="ts">
-import { useSlVisuallyHidden } from '@slop-ui/vue'
+import { useGhostVisuallyHidden } from '@ghostvue/vue'
 
-const { rootProps } = useSlVisuallyHidden()
+const { rootProps } = useGhostVisuallyHidden()
 </script>
 
 <template>
@@ -56,7 +56,7 @@ assistive technology and supply the name as hidden text:
 ```vue
 <button type="button" @click="remove(report.name)">
   <TrashIcon aria-hidden="true" />
-  <SlVisuallyHidden>Delete {{ report.name }}</SlVisuallyHidden>
+  <GhostVisuallyHidden>Delete {{ report.name }}</GhostVisuallyHidden>
 </button>
 ```
 
@@ -73,7 +73,7 @@ technology encounters:
 <tr>
   <th scope="col">Report</th>
   <th scope="col">Owner</th>
-  <SlVisuallyHidden as="th" scope="col">Actions</SlVisuallyHidden>
+  <GhostVisuallyHidden as="th" scope="col">Actions</GhostVisuallyHidden>
 </tr>
 ```
 
@@ -86,9 +86,9 @@ Content that can receive focus must become visible when it does. Set `focusable`
 so keyboard users can see what they have focused:
 
 ```vue
-<SlVisuallyHidden focusable>
+<GhostVisuallyHidden focusable>
   <a href="#main">Skip to content</a>
-</SlVisuallyHidden>
+</GhostVisuallyHidden>
 ```
 
 The component reveals itself while focus is anywhere inside it and hides again
@@ -102,10 +102,10 @@ A visually hidden live region announces an outcome that is otherwise conveyed
 only visually:
 
 ```vue
-<SlVisuallyHidden
+<GhostVisuallyHidden
   role="status"
   aria-live="polite"
->{{ status }}</SlVisuallyHidden>
+>{{ status }}</GhostVisuallyHidden>
 ```
 
 Render the region before the text changes. A live region that is inserted and
@@ -130,12 +130,12 @@ mounted and change only its content.
 The component applies its hiding declarations inline, so it works with no setup
 and no CSS import. It renders one element with no wrappers.
 
-Stable styling hooks are class `slop-visually-hidden`, `data-part="root"`, and
+Stable styling hooks are class `ghost-visually-hidden`, `data-part="root"`, and
 `data-state="hidden"` while the content is hidden (`data-state` is omitted while
 revealed):
 
 ```css
-.slop-visually-hidden[data-state='hidden'] {
+.ghost-visually-hidden[data-state='hidden'] {
   /* Applies only while the content is hidden. */
 }
 ```
@@ -145,9 +145,9 @@ Because the declarations are inline, a stylesheet cannot override them without
 the component's own, so a conflicting declaration wins:
 
 ```vue
-<SlVisuallyHidden
+<GhostVisuallyHidden
   :style="{ whiteSpace: 'normal' }"
->Still hidden</SlVisuallyHidden>
+>Still hidden</GhostVisuallyHidden>
 ```
 
 Overriding one declaration does not reveal the content. The declarations work
@@ -159,7 +159,7 @@ fighting the style:
 ```vue
 <template>
   <span v-if="expanded">{{ label }}</span>
-  <SlVisuallyHidden v-else>{{ label }}</SlVisuallyHidden>
+  <GhostVisuallyHidden v-else>{{ label }}</GhostVisuallyHidden>
 </template>
 ```
 
@@ -187,5 +187,5 @@ size and spacing of any content that becomes visible.
 Automated checks cannot tell you whether hidden text is correct, sufficient, or
 appropriately terse. Verify it with a screen reader.
 
-See the [approved SlVisuallyHidden specification](./visually-hidden-spec.md) for
+See the [approved GhostVisuallyHidden specification](./visually-hidden-spec.md) for
 the complete behavior and compatibility contract.

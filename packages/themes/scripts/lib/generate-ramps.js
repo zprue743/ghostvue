@@ -2,7 +2,7 @@
  * Build 12-step OKLCH ramps from brand seeds. Light and dark each have
  * their own lightness/chroma curves so dark is not `1 - light`.
  *
- * The seed is pinned at its anchor step so SlButton rest colors stay
+ * The seed is pinned at its anchor step so GhostButton rest colors stay
  * the hex values the theme already shipped.
  */
 import { clampChroma, converter, formatHex } from 'culori'

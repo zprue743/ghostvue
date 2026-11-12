@@ -51,7 +51,7 @@ export function useFocusScope(
           document.activeElement instanceof HTMLElement
             ? document.activeElement
             : null
-        const scopeId = Symbol('slop-focus-scope')
+        const scopeId = Symbol('ghost-focus-scope')
 
         // onMounted has already committed the container, so autofocus can run
         // synchronously. Deferring would race nested scopes and SSR tests.

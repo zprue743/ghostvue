@@ -8,7 +8,7 @@ import {
   type WritableComputedRef,
 } from 'vue'
 
-import { logSlopCode } from './dev-codes'
+import { logGhostCode } from './dev-codes'
 
 export interface UseControllableStateOptions<Value> {
   /** Controlled value. `undefined` is uncontrolled; `null` is a defined value. */
@@ -55,7 +55,7 @@ export function useControllableState<Value>(
     watch(isControlled, (controlled, wasControlled) => {
       const from = wasControlled ? 'controlled' : 'uncontrolled'
       const to = controlled ? 'controlled' : 'uncontrolled'
-      logSlopCode('SLOP001', { from, to })
+      logGhostCode('GHOST001', { from, to })
     })
   }
 

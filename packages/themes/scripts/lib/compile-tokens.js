@@ -9,7 +9,7 @@
  *
  * Color ramps are generated from `seeds.json` at compile time and written
  * next to the other outputs. Duration tokens emit
- * `calc(<ms> * var(--sl-motion-intensity, 1))`. Unset `data-sl-mode` follows
+ * `calc(<ms> * var(--ghost-motion-intensity, 1))`. Unset `data-ghost-mode` follows
  * prefers-color-scheme in CSS, so SSR does not need a flash-prevention script.
  */
 import { mkdir, readFile, writeFile } from 'node:fs/promises'
@@ -24,15 +24,15 @@ import {
 } from './generate-ramps.js'
 
 export const TOKEN_SCHEMA_VERSION = '1.0.0'
-export const TOKEN_PACKAGE_NAME = '@slop-ui/themes'
+export const TOKEN_PACKAGE_NAME = '@ghostvue/themes'
 export const DEFAULT_THEME_NAME = 'default'
 export const TOKEN_MODES = ['light', 'dark']
 export const TOKEN_DENSITIES = ['compact', 'comfortable', 'spacious']
 export const DEFAULT_DENSITY = 'comfortable'
-export const CSS_PREFIX = '--sl-'
-export const THEME_ATTRIBUTE = 'data-sl-theme'
-export const MODE_ATTRIBUTE = 'data-sl-mode'
-export const DENSITY_ATTRIBUTE = 'data-sl-density'
+export const CSS_PREFIX = '--ghost-'
+export const THEME_ATTRIBUTE = 'data-ghost-theme'
+export const MODE_ATTRIBUTE = 'data-ghost-mode'
+export const DENSITY_ATTRIBUTE = 'data-ghost-density'
 export const ROUNDNESS_TOKEN_NAME = 'roundness.amount'
 export const ROUNDNESS_VAR = `${CSS_PREFIX}roundness`
 
@@ -40,14 +40,14 @@ const ALIAS = /^\{([a-z0-9]+(?:\.[a-z0-9-]+)*)\}$/i
 const TOKEN_NAME = /^[a-z][a-z0-9]*(?:\.[a-z0-9][a-z0-9-]*)+$/
 
 /**
- * Token hosts. `.slop-themed-scope` is a recipe scope only — putting it here
- * would pin themed wrappers to `default` inside a nested `data-sl-theme`.
- * `.slop-theme` without the attribute is `default`; named themes match the
- * attribute only, including on the same element as `.slop-theme`.
+ * Token hosts. `.ghost-themed-scope` is a recipe scope only — putting it here
+ * would pin themed wrappers to `default` inside a nested `data-ghost-theme`.
+ * `.ghost-theme` without the attribute is `default`; named themes match the
+ * attribute only, including on the same element as `.ghost-theme`.
  */
 export function themeHostSelector(themeName = DEFAULT_THEME_NAME) {
   if (themeName === DEFAULT_THEME_NAME) {
-    return `:where(.slop-theme:not([${THEME_ATTRIBUTE}]), [${THEME_ATTRIBUTE}='default'])`
+    return `:where(.ghost-theme:not([${THEME_ATTRIBUTE}]), [${THEME_ATTRIBUTE}='default'])`
   }
   return `:where([${THEME_ATTRIBUTE}='${themeName}'])`
 }
@@ -94,7 +94,7 @@ export const TOKEN_SOURCES = [
 ]
 
 export function cssVariableName(tokenName) {
-  // Public knob name is --sl-roundness (0 sharp → 1 designed / pill).
+  // Public knob name is --ghost-roundness (0 sharp → 1 designed / pill).
   if (tokenName === ROUNDNESS_TOKEN_NAME) return ROUNDNESS_VAR
   return `${CSS_PREFIX}${tokenName.replaceAll('.', '-')}`
 }
@@ -122,9 +122,9 @@ function authoredValue(value, label) {
 function readExtensionString(node, key) {
   const extensions = node.$extensions
   if (!isPlainObject(extensions)) return undefined
-  const slop = extensions['slop.ui']
-  if (!isPlainObject(slop)) return undefined
-  const value = slop[key]
+  const ghost = extensions['ghostvue']
+  if (!isPlainObject(ghost)) return undefined
+  const value = ghost[key]
   if (typeof value !== 'string' || value.trim() === '') {
     return undefined
   }
@@ -485,11 +485,11 @@ const MOTION_INTENSITY_VAR = `${CSS_PREFIX}motion-intensity`
 function cssRuntimeValue(token, value) {
   if (token.type === 'duration') {
     // Intensity is unitless 0–1 so consumers can scale every duration from any
-    // subtree without rewriting each --sl-motion-duration-* property.
+    // subtree without rewriting each --ghost-motion-duration-* property.
     return `calc(${value} * var(${MOTION_INTENSITY_VAR}, 1))`
   }
   if (usesRoundness(token)) {
-    // Roundness is unitless 0–1 so a nested --sl-roundness re-evaluates every
+    // Roundness is unitless 0–1 so a nested --ghost-roundness re-evaluates every
     // radius without rewriting each property. 0 is sharp; 1 is the designed
     // radius (pill for radius.pill).
     return `calc(${value} * var(${ROUNDNESS_VAR}, 1))`
@@ -545,7 +545,7 @@ function splitTopLevelSelectors(selector) {
 
 function withDescendants(selector) {
   // Duration/radius calc() must be declared on descendants, not only the host.
-  // Custom properties otherwise substitute --sl-motion-intensity / --sl-roundness
+  // Custom properties otherwise substitute --ghost-motion-intensity / --ghost-roundness
   // on the host and inherit a resolved value, so a nested knob would do nothing.
   // Split only on top-level commas so `:where(a, b)` stays one selector.
   return splitTopLevelSelectors(selector)
@@ -791,16 +791,16 @@ ${reducedDescendant}
       : `${defaultDensity} under this theme, comfortable globally for default`
   return `/*
  * Generated from packages/themes/tokens. Do not edit.
- * Semantic custom properties use --sl-<role>-<part>-<state>.
- * Theme host: ${themeName}. Unset data-sl-mode follows prefers-color-scheme;
- * data-sl-mode overrides on any subtree, including nested theme hosts.
- * Unset data-sl-density is ${densityLabel}; data-sl-density and
- * --sl-roundness nest the same way. Token hosts exclude .slop-themed-scope
- * so nested data-sl-theme values inherit into themed wrappers.
+ * Semantic custom properties use --ghost-<role>-<part>-<state>.
+ * Theme host: ${themeName}. Unset data-ghost-mode follows prefers-color-scheme;
+ * data-ghost-mode overrides on any subtree, including nested theme hosts.
+ * Unset data-ghost-density is ${densityLabel}; data-ghost-density and
+ * --ghost-roundness nest the same way. Token hosts exclude .ghost-themed-scope
+ * so nested data-ghost-theme values inherit into themed wrappers.
  * No JavaScript is required to pick the initial mode, so SSR does not
  * flash the opposite palette.
  */
-@layer slop-ui-theme {
+@layer ghostvue-theme {
   ${systemHost} {
 ${lightVars}
   }
@@ -965,13 +965,13 @@ export function renderTokenDocs(tokens) {
     '',
     '# Design token catalog',
     '',
-    'Compiled from DTCG JSON in `@slop-ui/themes`. Semantic tokens are the',
-    'public CSS custom properties (`--sl-<role>-<part>-<state>`). Primitive',
+    'Compiled from DTCG JSON in `@ghostvue/themes`. Semantic tokens are the',
+    'public CSS custom properties (`--ghost-<role>-<part>-<state>`). Primitive',
     'tokens are aliases for those values and are not published as CSS.',
-    'Override a semantic custom property on any subtree; `data-sl-theme`,',
-    '`data-sl-mode`, and `data-sl-density` nest. Unset `data-sl-mode` follows',
-    '`prefers-color-scheme`. Unset `data-sl-density` is `comfortable`.',
-    '`--sl-roundness` (0–1) scales every radius token from sharp to its',
+    'Override a semantic custom property on any subtree; `data-ghost-theme`,',
+    '`data-ghost-mode`, and `data-ghost-density` nest. Unset `data-ghost-mode` follows',
+    '`prefers-color-scheme`. Unset `data-ghost-density` is `comfortable`.',
+    '`--ghost-roundness` (0–1) scales every radius token from sharp to its',
     'designed value (pill for `radius.pill`).',
     '',
     'Default theme: `default`. Modes: `light`, `dark`. Densities: `compact`,',

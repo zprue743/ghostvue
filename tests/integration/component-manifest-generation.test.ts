@@ -24,14 +24,14 @@ const fixtureRoot = join(
   repositoryRoot,
   'tests/fixtures/component-manifests/sfc',
 )
-const widgetPath = join(fixtureRoot, 'src/SlWidget.vue')
+const widgetPath = join(fixtureRoot, 'src/GhostWidget.vue')
 const fixtureTsconfig = join(fixtureRoot, 'tsconfig.json')
 
 const prose = {
   schemaVersion: '1.0.0',
   source: 'handwritten',
-  name: 'SlWidget',
-  package: '@slop-ui/vue',
+  name: 'GhostWidget',
+  package: '@ghostvue/vue',
   status: 'beta',
   description: 'Hand-authored widget summary.',
   props: [
@@ -84,7 +84,7 @@ const prose = {
     states: [{ name: 'open', description: 'Expanded.' }],
     cssProperties: [
       {
-        name: '--sl-widget-gap',
+        name: '--ghost-widget-gap',
         description: 'Space between parts.',
       },
     ],
@@ -123,7 +123,7 @@ async function fixturePackages(manifestsDir: string) {
   return [
     {
       directory: 'vue',
-      name: '@slop-ui/vue' as const,
+      name: '@ghostvue/vue' as const,
       srcDir: join(fixtureRoot, 'src'),
       manifestsDir,
       tsconfig: fixtureTsconfig,
@@ -135,8 +135,8 @@ function derivedFromWidget() {
   const checker = createMetaChecker(fixtureTsconfig)
   const meta = extractComponentMeta(checker, widgetPath)
   return buildDerivedContract(meta, {
-    name: 'SlWidget',
-    packageName: '@slop-ui/vue',
+    name: 'GhostWidget',
+    packageName: '@ghostvue/vue',
   })
 }
 
@@ -145,10 +145,10 @@ afterEach(() => {
 })
 
 describe('manifest derivation helpers', () => {
-  it('converts Sl* names to kebab-case manifest filenames', () => {
-    expect(pascalToKebab('SlButton')).toBe('sl-button')
-    expect(pascalToKebab('SlVisuallyHidden')).toBe('sl-visually-hidden')
-    expect(pascalToKebab('SlDialogTrigger')).toBe('sl-dialog-trigger')
+  it('converts Ghost* names to kebab-case manifest filenames', () => {
+    expect(pascalToKebab('GhostButton')).toBe('ghost-button')
+    expect(pascalToKebab('GhostVisuallyHidden')).toBe('ghost-visually-hidden')
+    expect(pascalToKebab('GhostDialogTrigger')).toBe('ghost-dialog-trigger')
   })
 
   it('normalizes vue-component-meta optional types and quote style', () => {
@@ -185,8 +185,8 @@ describe('vue-component-meta extraction', () => {
   it('extracts props, models, events, slots, and exposed members', () => {
     const { derived, violations } = derivedFromWidget()
     expect(violations).toEqual([])
-    expect(derived.name).toBe('SlWidget')
-    expect(derived.package).toBe('@slop-ui/vue')
+    expect(derived.name).toBe('GhostWidget')
+    expect(derived.package).toBe('@ghostvue/vue')
     expect(derived.source).toBe('generated')
 
     expect(derived.props).toEqual(
@@ -315,14 +315,14 @@ describe('hand-authored field preservation', () => {
     const merged = mergeManifest(derived, null)
     const disabled = merged.props.find((prop) => prop.name === 'disabled')
     expect(disabled?.description).toBe('Prevents activation.')
-    expect(merged.description).toBe('Public SlWidget component.')
+    expect(merged.description).toBe('Public GhostWidget component.')
     expect(merged.status).toBe('experimental')
   })
 })
 
 describe('manifest sync check and write', () => {
   it('fails check when a generated manifest is stale versus the SFC', async () => {
-    const manifestsDir = await mkdtemp(join(tmpdir(), 'slop-manifests-'))
+    const manifestsDir = await mkdtemp(join(tmpdir(), 'ghost-manifests-'))
     const packages = await fixturePackages(manifestsDir)
 
     const written = await syncRepositoryManifests({
@@ -332,10 +332,10 @@ describe('manifest sync check and write', () => {
     })
     expect(written.ok).toBe(true)
     expect(written.written).toEqual([
-      'packages/vue/manifests/sl-widget.manifest.json',
+      'packages/vue/manifests/ghost-widget.manifest.json',
     ])
 
-    const manifestPath = join(manifestsDir, 'sl-widget.manifest.json')
+    const manifestPath = join(manifestsDir, 'ghost-widget.manifest.json')
     const fresh = parseJsonObject(await readFile(manifestPath, 'utf8'))
     const staleProps = asPropList(fresh.props).map((prop) =>
       prop.name === 'count' ? { ...prop, type: 'string' } : prop,
@@ -355,7 +355,7 @@ describe('manifest sync check and write', () => {
   })
 
   it('rewrites machine fields without dropping later hand-authored edits', async () => {
-    const manifestsDir = await mkdtemp(join(tmpdir(), 'slop-manifests-'))
+    const manifestsDir = await mkdtemp(join(tmpdir(), 'ghost-manifests-'))
     const packages = await fixturePackages(manifestsDir)
 
     await syncRepositoryManifests({
@@ -364,7 +364,7 @@ describe('manifest sync check and write', () => {
       packages,
     })
 
-    const manifestPath = join(manifestsDir, 'sl-widget.manifest.json')
+    const manifestPath = join(manifestsDir, 'ghost-widget.manifest.json')
     const generated = parseJsonObject(await readFile(manifestPath, 'utf8'))
     generated.description = 'Edited after the first write.'
     generated.examples = ['widget-basic', 'widget-disabled']
@@ -391,13 +391,13 @@ describe('manifest sync check and write', () => {
   })
 
   it('allows leftover handwritten manifests when no matching SFC exists', async () => {
-    const manifestsDir = await mkdtemp(join(tmpdir(), 'slop-manifests-'))
+    const manifestsDir = await mkdtemp(join(tmpdir(), 'ghost-manifests-'))
     const packages = await fixturePackages(manifestsDir)
     await writeFile(
-      join(manifestsDir, 'sl-button.manifest.json'),
+      join(manifestsDir, 'ghost-button.manifest.json'),
       serializeManifest({
         ...prose,
-        name: 'SlButton',
+        name: 'GhostButton',
         source: 'handwritten',
         description: 'Legacy handwritten contract.',
       }),
@@ -411,17 +411,17 @@ describe('manifest sync check and write', () => {
     expect(result.ok).toBe(true)
 
     const leftover = parseJsonObject(
-      await readFile(join(manifestsDir, 'sl-button.manifest.json'), 'utf8'),
+      await readFile(join(manifestsDir, 'ghost-button.manifest.json'), 'utf8'),
     )
     expect(leftover.source).toBe('handwritten')
   })
 
   it('fails when a generated manifest has no matching SFC', async () => {
-    const manifestsDir = await mkdtemp(join(tmpdir(), 'slop-manifests-'))
+    const manifestsDir = await mkdtemp(join(tmpdir(), 'ghost-manifests-'))
     const packages = [
       {
         directory: 'vue',
-        name: '@slop-ui/vue' as const,
+        name: '@ghostvue/vue' as const,
         srcDir: join(manifestsDir, 'empty-src'),
         manifestsDir,
         tsconfig: fixtureTsconfig,
@@ -429,10 +429,10 @@ describe('manifest sync check and write', () => {
     ]
     await mkdir(join(manifestsDir, 'empty-src'), { recursive: true })
     await writeFile(
-      join(manifestsDir, 'sl-gone.manifest.json'),
+      join(manifestsDir, 'ghost-gone.manifest.json'),
       serializeManifest({
         ...prose,
-        name: 'SlGone',
+        name: 'GhostGone',
         source: 'generated',
       }),
     )
@@ -444,13 +444,13 @@ describe('manifest sync check and write', () => {
     })
     expect(result.ok).toBe(false)
     expect(
-      result.violations.some((item) => item.includes('no matching Sl*.vue')),
+      result.violations.some((item) => item.includes('no matching Ghost*.vue')),
     ).toBe(true)
   })
 })
 
 describe('repository manifests check', () => {
-  it('passes on the current repository (handwritten leftover, no Sl*.vue yet)', async () => {
+  it('passes on the current repository', async () => {
     const result = await syncRepositoryManifests({
       repositoryRoot,
       write: false,
@@ -465,8 +465,8 @@ describe('mergeManifest derived contract', () => {
     const derived: DerivedContract = {
       schemaVersion: '1.0.0',
       source: 'generated',
-      name: 'SlWidget',
-      package: '@slop-ui/vue',
+      name: 'GhostWidget',
+      package: '@ghostvue/vue',
       description: '',
       props: [],
       models: [],

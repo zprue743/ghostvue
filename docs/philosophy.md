@@ -1,6 +1,6 @@
 # Project philosophy
 
-slop-ui aims to pair readable Vue ergonomics with the depth required by complex
+GhostVue aims to pair readable Vue ergonomics with the depth required by complex
 application interfaces. Simple use should look simple; consumers should meet
 complexity only when their problem requires it.
 

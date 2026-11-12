@@ -1,5 +1,5 @@
 ---
-'@slop-ui/vue': minor
+'@ghostvue/vue': minor
 ---
 
-Add `useSlId` and `useControllableState` primitives for SSR-safe DOM ids and controlled/uncontrolled Vue state.
+Add `useGhostId` and `useControllableState` primitives for SSR-safe DOM ids and controlled/uncontrolled Vue state.

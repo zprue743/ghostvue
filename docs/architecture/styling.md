@@ -1,24 +1,24 @@
 # Styling architecture
 
-Functionality is headless and must work without the default theme. `@slop-ui/vue`
-must never import `@slop-ui/themes` as a requirement for behavior.
+Functionality is headless and must work without the default theme. `@ghostvue/vue`
+must never import `@ghostvue/themes` as a requirement for behavior.
 
 Both headless and themed use must be ordinary Vue: a composable and thin
-unstyled `SlButton` from `@slop-ui/vue`, or a themed `SlButton` from
-`@slop-ui/themes` that wraps it. Details, a hard rejection of PrimeVue
+unstyled `GhostButton` from `@ghostvue/vue`, or a themed `GhostButton` from
+`@ghostvue/themes` that wraps it. Details, a hard rejection of PrimeVue
 `pt` objects, and worked examples are in
 [ADR 0004](../adr/0004-headless-styled-layering.md). Component names use the
-`Sl` prefix (`SlButton`, `useSlButton`); that convention is
+`Ghost` prefix (`GhostButton`, `useGhostButton`); that convention is
 [ADR 0003](../adr/0003-public-component-api-conventions.md).
 
 ## Layers
 
-1. **Composable** in `@slop-ui/vue` (`useSlButton`) owns behavior, a11y, and
+1. **Composable** in `@ghostvue/vue` (`useGhostButton`) owns behavior, a11y, and
    SSR.
-2. **Thin unstyled component** in `@slop-ui/vue` (`SlButton`) spreads those
+2. **Thin unstyled component** in `@ghostvue/vue` (`GhostButton`) spreads those
    bindings onto a native element, forwards `class` and attrs, and exposes
    slots. It ships no visual styles.
-3. **Themed wrapper** in `@slop-ui/themes` wraps the unstyled component,
+3. **Themed wrapper** in `@ghostvue/themes` wraps the unstyled component,
    applies default classes, and exposes ordinary visual props. It may depend
    on `vue`; `vue` still must not depend on `themes`.
 
@@ -42,6 +42,6 @@ TypeScript types, and a JSON manifest. See
 [ADR 0005](../adr/0005-design-token-taxonomy.md),
 [ADR 0007](../adr/0007-token-pipeline.md), and
 [ADR 0008](../adr/0008-define-theme.md). Public custom properties use
-`--sl-<role>-<part>-<state>`. Components consume semantic tokens only.
-Brand themes are generated in Node (`@slop-ui/themes/define`) and applied
-with `data-sl-theme`.
+`--ghost-<role>-<part>-<state>`. Components consume semantic tokens only.
+Brand themes are generated in Node (`@ghostvue/themes/define`) and applied
+with `data-ghost-theme`.

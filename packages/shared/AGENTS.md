@@ -1,4 +1,4 @@
-# @slop-ui/shared
+# @ghostvue/shared
 
 Proven framework-neutral low-level utilities.
 

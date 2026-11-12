@@ -1,5 +1,5 @@
 ---
-'@slop-ui/themes': minor
+'@ghostvue/themes': minor
 ---
 
 Add elevation 0–5, hairline borders, solid/glass/grain materials, and

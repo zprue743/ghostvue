@@ -18,11 +18,11 @@ const vueEntry = fileURLToPath(
 
 describe('themes main-entry graph', () => {
   it('does not pull culori or defineTheme into a browser bundle', async () => {
-    const dir = await mkdtemp(join(tmpdir(), 'slop-themes-graph-'))
+    const dir = await mkdtemp(join(tmpdir(), 'ghost-themes-graph-'))
     const entry = join(dir, 'consumer.ts')
     await writeFile(
       entry,
-      `import { flagshipThemes, startThemeTransition } from '@slop-ui/themes'
+      `import { flagshipThemes, startThemeTransition } from '@ghostvue/themes'
 
 export const names = flagshipThemes
 export const transition = startThemeTransition
@@ -51,11 +51,11 @@ export const transition = startThemeTransition
       },
       resolve: {
         alias: {
-          '@slop-ui/themes/default.css': fileURLToPath(
+          '@ghostvue/themes/default.css': fileURLToPath(
             new URL('../../packages/themes/src/default.css', import.meta.url),
           ),
-          '@slop-ui/themes': themesEntry,
-          '@slop-ui/vue': vueEntry,
+          '@ghostvue/themes': themesEntry,
+          '@ghostvue/vue': vueEntry,
         },
       },
     })

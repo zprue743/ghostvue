@@ -1,6 +1,6 @@
 import type { LlmsSidebarGroup } from './generate-llms-txt'
 
-export const docsTitle = 'slop-ui'
+export const docsTitle = 'GhostVue'
 
 export const docsDescription =
   'Engineering foundation for a Vue-first, headless-first UI library'
@@ -17,12 +17,12 @@ export const docsSidebar: LlmsSidebarGroup[] = [
   {
     text: 'Components',
     items: [
-      { text: 'SlButton', link: '/components/button' },
+      { text: 'GhostButton', link: '/components/button' },
       {
-        text: 'SlInteractiveSurface',
+        text: 'GhostInteractiveSurface',
         link: '/components/interactive-surface',
       },
-      { text: 'SlVisuallyHidden', link: '/components/visually-hidden' },
+      { text: 'GhostVisuallyHidden', link: '/components/visually-hidden' },
       { text: 'Default theme', link: '/themes/default' },
       {
         text: 'defineTheme and flagships',
@@ -90,15 +90,15 @@ export const docsSidebar: LlmsSidebarGroup[] = [
       { text: 'Releases', link: '/contributing/releases' },
       { text: 'Component specs', link: '/components/spec-template' },
       {
-        text: 'SlButton specification',
+        text: 'GhostButton specification',
         link: '/components/button-spec',
       },
       {
-        text: 'SlInteractiveSurface specification',
+        text: 'GhostInteractiveSurface specification',
         link: '/components/interactive-surface-spec',
       },
       {
-        text: 'SlVisuallyHidden specification',
+        text: 'GhostVisuallyHidden specification',
         link: '/components/visually-hidden-spec',
       },
       { text: 'ADRs', link: '/adr/' },

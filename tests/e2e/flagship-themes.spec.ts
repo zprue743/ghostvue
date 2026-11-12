@@ -21,7 +21,7 @@ async function pinShot(shot: {
   })
 }
 
-test.describe('Flagship SlButton matrices', () => {
+test.describe('Flagship GhostButton matrices', () => {
   test.use({
     viewport: { width: 1280, height: 900 },
     deviceScaleFactor: 1,
@@ -37,7 +37,7 @@ test.describe('Flagship SlButton matrices', () => {
       for (const theme of flagships) {
         const host = page.getByTestId(`button-state-matrix-${theme}`)
         await expect(host.locator('.mode-block').first()).toHaveAttribute(
-          'data-sl-theme',
+          'data-ghost-theme',
           theme,
         )
 

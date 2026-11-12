@@ -6,63 +6,75 @@
  * only paint. Reduced motion swaps travel recipes for opacity and turns
  * spotlight fully off.
  */
-@layer slop-ui-theme {
+@layer ghostvue-theme {
   :where([data-elevation='0']) {
-    background-color: var(--sl-elevation-0-bg);
-    border: var(--sl-border-hairline-width) solid var(--sl-elevation-0-border);
-    box-shadow: var(--sl-elevation-0-shadow), var(--sl-elevation-0-highlight);
+    background-color: var(--ghost-elevation-0-bg);
+    border: var(--ghost-border-hairline-width) solid
+      var(--ghost-elevation-0-border);
+    box-shadow:
+      var(--ghost-elevation-0-shadow), var(--ghost-elevation-0-highlight);
   }
 
   :where([data-elevation='1']) {
-    background-color: var(--sl-elevation-1-bg);
-    border: var(--sl-border-hairline-width) solid var(--sl-elevation-1-border);
-    box-shadow: var(--sl-elevation-1-shadow), var(--sl-elevation-1-highlight);
+    background-color: var(--ghost-elevation-1-bg);
+    border: var(--ghost-border-hairline-width) solid
+      var(--ghost-elevation-1-border);
+    box-shadow:
+      var(--ghost-elevation-1-shadow), var(--ghost-elevation-1-highlight);
   }
 
   :where([data-elevation='2']) {
-    background-color: var(--sl-elevation-2-bg);
-    border: var(--sl-border-hairline-width) solid var(--sl-elevation-2-border);
-    box-shadow: var(--sl-elevation-2-shadow), var(--sl-elevation-2-highlight);
+    background-color: var(--ghost-elevation-2-bg);
+    border: var(--ghost-border-hairline-width) solid
+      var(--ghost-elevation-2-border);
+    box-shadow:
+      var(--ghost-elevation-2-shadow), var(--ghost-elevation-2-highlight);
   }
 
   :where([data-elevation='3']) {
-    background-color: var(--sl-elevation-3-bg);
-    border: var(--sl-border-hairline-width) solid var(--sl-elevation-3-border);
-    box-shadow: var(--sl-elevation-3-shadow), var(--sl-elevation-3-highlight);
+    background-color: var(--ghost-elevation-3-bg);
+    border: var(--ghost-border-hairline-width) solid
+      var(--ghost-elevation-3-border);
+    box-shadow:
+      var(--ghost-elevation-3-shadow), var(--ghost-elevation-3-highlight);
   }
 
   :where([data-elevation='4']) {
-    background-color: var(--sl-elevation-4-bg);
-    border: var(--sl-border-hairline-width) solid var(--sl-elevation-4-border);
-    box-shadow: var(--sl-elevation-4-shadow), var(--sl-elevation-4-highlight);
+    background-color: var(--ghost-elevation-4-bg);
+    border: var(--ghost-border-hairline-width) solid
+      var(--ghost-elevation-4-border);
+    box-shadow:
+      var(--ghost-elevation-4-shadow), var(--ghost-elevation-4-highlight);
   }
 
   :where([data-elevation='5']) {
-    background-color: var(--sl-elevation-5-bg);
-    border: var(--sl-border-hairline-width) solid var(--sl-elevation-5-border);
-    box-shadow: var(--sl-elevation-5-shadow), var(--sl-elevation-5-highlight);
+    background-color: var(--ghost-elevation-5-bg);
+    border: var(--ghost-border-hairline-width) solid
+      var(--ghost-elevation-5-border);
+    box-shadow:
+      var(--ghost-elevation-5-shadow), var(--ghost-elevation-5-highlight);
   }
 
   :where([data-material='solid']) {
-    background-color: var(--sl-material-solid-bg);
+    background-color: var(--ghost-material-solid-bg);
   }
 
   :where([data-material='glass']) {
     isolation: isolate;
     position: relative;
-    background-color: var(--sl-material-glass-bg);
-    border: var(--sl-border-hairline-width) solid
-      var(--sl-material-glass-border);
-    -webkit-backdrop-filter: blur(var(--sl-material-glass-blur))
-      saturate(var(--sl-material-glass-saturate));
-    backdrop-filter: blur(var(--sl-material-glass-blur))
-      saturate(var(--sl-material-glass-saturate));
+    background-color: var(--ghost-material-glass-bg);
+    border: var(--ghost-border-hairline-width) solid
+      var(--ghost-material-glass-border);
+    -webkit-backdrop-filter: blur(var(--ghost-material-glass-blur))
+      saturate(var(--ghost-material-glass-saturate));
+    backdrop-filter: blur(var(--ghost-material-glass-blur))
+      saturate(var(--ghost-material-glass-saturate));
   }
 
   :where([data-material='grain']) {
     isolation: isolate;
     position: relative;
-    background-color: var(--sl-material-grain-bg);
+    background-color: var(--ghost-material-grain-bg);
   }
 
   :where([data-material='glass'])::before,
@@ -77,33 +89,33 @@
   }
 
   :where([data-material='glass'])::before {
-    background-image: var(--sl-material-glass-noise);
-    opacity: var(--sl-material-glass-noise-opacity);
+    background-image: var(--ghost-material-glass-noise);
+    opacity: var(--ghost-material-glass-noise-opacity);
   }
 
   :where([data-material='grain'])::before {
-    background-image: var(--sl-material-grain-noise);
-    opacity: var(--sl-material-grain-noise-opacity);
+    background-image: var(--ghost-material-grain-noise);
+    opacity: var(--ghost-material-grain-noise-opacity);
   }
 
   :where([data-gradient='accent']) {
-    background-color: var(--sl-surface-bg);
-    background-image: var(--sl-gradient-accent);
+    background-color: var(--ghost-surface-bg);
+    background-image: var(--ghost-gradient-accent);
   }
 
   :where([data-gradient='aurora']) {
-    background-color: var(--sl-surface-bg);
-    background-image: var(--sl-gradient-aurora);
+    background-color: var(--ghost-surface-bg);
+    background-image: var(--ghost-gradient-aurora);
   }
 
   :where([data-gradient='border']) {
     isolation: isolate;
     position: relative;
-    background-color: var(--sl-surface-bg);
+    background-color: var(--ghost-surface-bg);
   }
 
   :where([data-gradient='border'])::before {
-    background: var(--sl-gradient-border);
+    background: var(--ghost-gradient-border);
     border-radius: inherit;
     content: '';
     inset: 0;
@@ -115,7 +127,7 @@
       linear-gradient(#000 0 0);
     -webkit-mask-composite: xor;
     mask-composite: exclude;
-    padding: var(--sl-border-hairline-width);
+    padding: var(--ghost-border-hairline-width);
     pointer-events: none;
     position: absolute;
   }
@@ -124,7 +136,7 @@
     (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))
   ) {
     :where([data-material='glass']) {
-      background-color: var(--sl-material-glass-fallback-bg);
+      background-color: var(--ghost-material-glass-fallback-bg);
       -webkit-backdrop-filter: none;
       backdrop-filter: none;
     }
@@ -133,9 +145,10 @@
   @supports not ((mask-composite: exclude) or (-webkit-mask-composite: xor)) {
     :where([data-gradient='border']) {
       background:
-        linear-gradient(var(--sl-surface-bg), var(--sl-surface-bg)) padding-box,
-        var(--sl-gradient-border) border-box;
-      border: var(--sl-border-hairline-width) solid transparent;
+        linear-gradient(var(--ghost-surface-bg), var(--ghost-surface-bg))
+          padding-box,
+        var(--ghost-gradient-border) border-box;
+      border: var(--ghost-border-hairline-width) solid transparent;
     }
 
     :where([data-gradient='border'])::before {
@@ -143,7 +156,7 @@
     }
   }
 
-  @keyframes slop-motion-shift {
+  @keyframes ghost-motion-shift {
     from {
       translate: 0;
     }
@@ -153,7 +166,7 @@
     }
   }
 
-  @keyframes slop-motion-fade {
+  @keyframes ghost-motion-fade {
     from {
       opacity: 0.25;
     }
@@ -164,46 +177,46 @@
   }
 
   :where([data-motion='standard']) {
-    animation: slop-motion-shift var(--sl-motion-duration-moderate)
-      var(--sl-motion-easing-standard) both;
+    animation: ghost-motion-shift var(--ghost-motion-duration-moderate)
+      var(--ghost-motion-easing-standard) both;
   }
 
   :where([data-motion='decelerate']) {
-    animation: slop-motion-shift var(--sl-motion-enter-duration)
-      var(--sl-motion-easing-decelerate) both;
+    animation: ghost-motion-shift var(--ghost-motion-enter-duration)
+      var(--ghost-motion-easing-decelerate) both;
   }
 
   :where([data-motion='accelerate']) {
-    animation: slop-motion-shift var(--sl-motion-exit-duration)
-      var(--sl-motion-easing-accelerate) both;
+    animation: ghost-motion-shift var(--ghost-motion-exit-duration)
+      var(--ghost-motion-easing-accelerate) both;
   }
 
   :where([data-motion='spring-gentle']) {
-    animation: slop-motion-shift var(--sl-motion-spring-gentle-duration)
-      var(--sl-motion-spring-gentle) both;
+    animation: ghost-motion-shift var(--ghost-motion-spring-gentle-duration)
+      var(--ghost-motion-spring-gentle) both;
   }
 
   :where([data-motion='spring-snappy']) {
-    animation: slop-motion-shift var(--sl-motion-spring-snappy-duration)
-      var(--sl-motion-spring-snappy) both;
+    animation: ghost-motion-shift var(--ghost-motion-spring-snappy-duration)
+      var(--ghost-motion-spring-snappy) both;
   }
 
   :where([data-motion='spring-bouncy']) {
-    animation: slop-motion-shift var(--sl-motion-spring-bouncy-duration)
-      var(--sl-motion-spring-bouncy) both;
+    animation: ghost-motion-shift var(--ghost-motion-spring-bouncy-duration)
+      var(--ghost-motion-spring-bouncy) both;
   }
 
   :where([data-motion='enter']) {
-    animation: slop-motion-shift var(--sl-motion-enter-duration)
-      var(--sl-motion-easing-decelerate) both;
-    scale: var(--sl-motion-scale);
+    animation: ghost-motion-shift var(--ghost-motion-enter-duration)
+      var(--ghost-motion-easing-decelerate) both;
+    scale: var(--ghost-motion-scale);
   }
 
   @media (prefers-reduced-motion: reduce) {
     :where([data-motion]) {
-      animation-name: slop-motion-fade;
-      animation-duration: var(--sl-motion-fade-duration);
-      animation-timing-function: var(--sl-motion-easing-standard);
+      animation-name: ghost-motion-fade;
+      animation-duration: var(--ghost-motion-fade-duration);
+      animation-timing-function: var(--ghost-motion-easing-standard);
       scale: 1;
       translate: 0;
     }
@@ -224,13 +237,13 @@
 
   :where([data-interactive~='spotlight'] > [data-part='glow']) {
     background: radial-gradient(
-      circle at var(--sl-pointer-x, 50%) var(--sl-pointer-y, 50%),
+      circle at var(--ghost-pointer-x, 50%) var(--ghost-pointer-y, 50%),
       color-mix(
         in oklch,
-        var(--sl-interactive-spotlight-color) 100%,
+        var(--ghost-interactive-spotlight-color) 100%,
         transparent
       ),
-      transparent var(--sl-interactive-spotlight-size)
+      transparent var(--ghost-interactive-spotlight-size)
     );
     border-radius: inherit;
     display: block;
@@ -238,8 +251,8 @@
     opacity: 0;
     pointer-events: none;
     position: absolute;
-    transition: opacity var(--sl-interactive-leave-spring-duration)
-      var(--sl-interactive-leave-spring);
+    transition: opacity var(--ghost-interactive-leave-spring-duration)
+      var(--ghost-interactive-leave-spring);
     /* Behind in-flow copy, with the button state layer. Isolation on the host
        keeps -1 above the fill instead of disappearing behind the canvas. */
     z-index: -1;
@@ -251,15 +264,16 @@
       > [data-part='glow']
   ) {
     opacity: calc(
-      var(--sl-interactive-spotlight-opacity) * var(--sl-motion-intensity, 1)
+      var(--ghost-interactive-spotlight-opacity) *
+        var(--ghost-motion-intensity, 1)
     );
-    transition-duration: var(--sl-motion-duration-instant);
+    transition-duration: var(--ghost-motion-duration-instant);
   }
 
   ::view-transition-old(root),
   ::view-transition-new(root) {
-    animation-duration: var(--sl-motion-duration-moderate);
-    animation-timing-function: var(--sl-motion-easing-standard);
+    animation-duration: var(--ghost-motion-duration-moderate);
+    animation-timing-function: var(--ghost-motion-easing-standard);
   }
 
   @media (forced-colors: active) {

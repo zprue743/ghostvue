@@ -1,37 +1,37 @@
 <script setup lang="ts">
-import { SlButton, SlInteractiveSurface } from '@slop-ui/themes'
-import '@slop-ui/themes/default.css'
+import { GhostButton, GhostInteractiveSurface } from '@ghostvue/themes'
+import '@ghostvue/themes/default.css'
 </script>
 
-# SlInteractiveSurface
+# GhostInteractiveSurface
 
 Pointer spotlight for surfaces that should notice the cursor. Import the
-unstyled primitive from `@slop-ui/vue`, or the themed wrapper from
-`@slop-ui/themes`. v1 is **spotlight only**; tilt and magnetic are
+unstyled primitive from `@ghostvue/vue`, or the themed wrapper from
+`@ghostvue/themes`. v1 is **spotlight only**; tilt and magnetic are
 follow-ups. See [ADR 0009](../adr/0009-ambient-interactivity.md).
 
 ## Basic use
 
 ```vue
 <script setup lang="ts">
-import { SlInteractiveSurface } from '@slop-ui/themes'
+import { GhostInteractiveSurface } from '@ghostvue/themes'
 </script>
 
 <template>
-  <SlInteractiveSurface>
+  <GhostInteractiveSurface>
     <h3>Quarterly report</h3>
     <p>The glow follows the pointer. Copy stays readable without it.</p>
-  </SlInteractiveSurface>
+  </GhostInteractiveSurface>
 </template>
 ```
 
-<div class="slop-theme demo-board" data-sl-mode="light">
-  <SlInteractiveSurface class="demo-card" data-elevation="2">
+<div class="ghost-theme demo-board" data-ghost-mode="light">
+  <GhostInteractiveSurface class="demo-card" data-elevation="2">
     <h3 class="demo-title">Quarterly report</h3>
     <p class="demo-copy">Move the pointer across this card. The glow is decoration.</p>
-  </SlInteractiveSurface>
+  </GhostInteractiveSurface>
   <p>
-    <SlButton interactive="spotlight">Save changes</SlButton>
+    <GhostButton interactive="spotlight">Save changes</GhostButton>
   </p>
 </div>
 
@@ -40,10 +40,10 @@ Headless use of the same contract without the SFC:
 ```vue
 <script setup lang="ts">
 import { useTemplateRef } from 'vue'
-import { useSlInteractiveSurface } from '@slop-ui/vue'
+import { useGhostInteractiveSurface } from '@ghostvue/vue'
 
 const host = useTemplateRef<HTMLElement>('host')
-const { rootProps } = useSlInteractiveSurface(host)
+const { rootProps } = useGhostInteractiveSurface(host)
 </script>
 
 <template>
@@ -64,18 +64,18 @@ const { rootProps } = useSlInteractiveSurface(host)
 `InteractiveEffect` is `'spotlight'`. Native attributes fall through to the
 root. The default slot is the content. A template ref exposes `element`.
 
-`useSlInteractiveSurface(target, options?)` also accepts `stateAttribute`
+`useGhostInteractiveSurface(target, options?)` also accepts `stateAttribute`
 (`'data-state'` or `'data-interactive-state'`) for hosts that already own
-`data-state`. It writes `--sl-pointer-x` / `--sl-pointer-y` (px) and
-unitless `--sl-pointer-nx` / `--sl-pointer-ny` on the host.
+`data-state`. It writes `--ghost-pointer-x` / `--ghost-pointer-y` (px) and
+unitless `--ghost-pointer-nx` / `--ghost-pointer-ny` on the host.
 
-## Themed SlButton opt-in
+## Themed GhostButton opt-in
 
-Themed `SlButton` stays inert unless you pass `interactive="spotlight"`.
+Themed `GhostButton` stays inert unless you pass `interactive="spotlight"`.
 Off by default — existing screenshots do not change.
 
 ```vue
-<SlButton interactive="spotlight">Save changes</SlButton>
+<GhostButton interactive="spotlight">Save changes</GhostButton>
 ```
 
 That sets `data-interactive="spotlight"` and tracks on
@@ -94,8 +94,8 @@ expressive.
 
 Recipes key off `data-interactive~='spotlight'` and `data-part="glow"`.
 Peak opacity is
-`calc(var(--sl-interactive-spotlight-opacity) * var(--sl-motion-intensity, 1))`.
-Leave settles with `--sl-interactive-leave-spring`. Forced colors and
+`calc(var(--ghost-interactive-spotlight-opacity) * var(--ghost-motion-intensity, 1))`.
+Leave settles with `--ghost-interactive-leave-spring`. Forced colors and
 `prefers-reduced-motion: reduce` drop the glow. Coarse pointers never
 track.
 
@@ -112,21 +112,21 @@ See the [approved specification](./interactive-surface-spec.md).
 
 <style>
 .demo-board {
-  border-radius: var(--sl-radius-lg);
+  border-radius: var(--ghost-radius-lg);
   display: grid;
-  gap: var(--sl-space-stack-md);
-  margin-block: var(--sl-space-stack-md);
-  padding: var(--sl-space-inset-md);
+  gap: var(--ghost-space-stack-md);
+  margin-block: var(--ghost-space-stack-md);
+  padding: var(--ghost-space-inset-md);
 }
 .demo-card {
   min-block-size: 8rem;
-  padding: var(--sl-space-inset-md);
+  padding: var(--ghost-space-inset-md);
 }
 .demo-title,
 .demo-copy {
   margin: 0;
 }
 .demo-copy {
-  color: var(--sl-text-muted);
+  color: var(--ghost-text-muted);
 }
 </style>

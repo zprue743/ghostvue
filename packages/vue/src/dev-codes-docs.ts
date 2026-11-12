@@ -1,17 +1,17 @@
 import {
-  retiredSlopCodes,
-  slopCodes,
-  type SlopCode,
-  type SlopCodeEntry,
+  retiredGhostCodes,
+  ghostCodes,
+  type GhostCode,
+  type GhostCodeEntry,
 } from './dev-codes'
 
-export function renderSlopCodeDocs(): string {
+export function renderGhostCodeDocs(): string {
   const lines = [
     '<!-- Generated from packages/vue/src/dev-codes.ts. Do not edit by hand. -->',
     '',
     '# Development diagnostic codes',
     '',
-    'slop-ui reports API misuse in development with stable `SLOP0xx` codes.',
+    'GhostVue reports API misuse in development with stable `GHOST0xx` codes.',
     'Each code is assigned once and is never reused, including after a warning',
     'is removed. Production builds should not contain these strings: the library',
     "ships `process.env.NODE_ENV !== 'production'` so the consumer bundler can",
@@ -20,11 +20,11 @@ export function renderSlopCodeDocs(): string {
     'Console format:',
     '',
     '```text',
-    '[slop-ui SLOP001] <message> See <docs url>',
+    '[ghostvue GHOST001] <message> See <docs url>',
     '```',
     '',
     'This page is generated from `packages/vue/src/dev-codes.ts`.',
-    'Update the catalog, then rewrite this file from `renderSlopCodeDocs()`.',
+    'Update the catalog, then rewrite this file from `renderGhostCodeDocs()`.',
     '',
   ]
 
@@ -38,7 +38,7 @@ export function renderSlopCodeDocs(): string {
     }
   }
 
-  const retired = Object.entries(retiredSlopCodes)
+  const retired = Object.entries(retiredGhostCodes)
   if (retired.length > 0) {
     lines.push('## Retired codes', '')
     lines.push('These numbers remain reserved and must not be reassigned.', '')
@@ -51,9 +51,9 @@ export function renderSlopCodeDocs(): string {
   return `${lines.join('\n')}\n`
 }
 
-function catalogEntries(): readonly (readonly [SlopCode, SlopCodeEntry])[] {
-  return Object.entries(slopCodes) as readonly (readonly [
-    SlopCode,
-    SlopCodeEntry,
+function catalogEntries(): readonly (readonly [GhostCode, GhostCodeEntry])[] {
+  return Object.entries(ghostCodes) as readonly (readonly [
+    GhostCode,
+    GhostCodeEntry,
   ])[]
 }

@@ -1,10 +1,10 @@
 # Focus scope and roving focus
 
-Overlays and composite widgets share two primitives from `@slop-ui/vue`:
+Overlays and composite widgets share two primitives from `@ghostvue/vue`:
 `useFocusScope` and `useRovingFocus`. They are named ESM exports.
-`@slop-ui/vue` must not import `@slop-ui/themes`.
+`@ghostvue/vue` must not import `@ghostvue/themes`.
 
-Component composables stay `useSl*` (`useSlDialog`) per ADR 0003. These two
+Component composables stay `useGhost*` (`useGhostDialog`) per ADR 0003. These two
 are not a component contract, so they do not take that prefix — the same
 rule as `useControllableState` in [component-state.md](./component-state.md).
 

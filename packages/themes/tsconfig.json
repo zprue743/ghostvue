@@ -5,7 +5,7 @@
     "jsx": "preserve",
     "types": ["vite/client"],
     "paths": {
-      "@slop-ui/vue": ["../vue/src/index.ts"]
+      "@ghostvue/vue": ["../vue/src/index.ts"]
     }
   },
   "include": [

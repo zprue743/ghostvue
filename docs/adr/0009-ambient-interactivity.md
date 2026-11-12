@@ -1,10 +1,12 @@
 # ADR 0009: Ambient interactivity for 'alive' surfaces
 
+Identifiers updated for the GhostVue rebrand (ADR 0010).
+
 - Status: accepted
 - Date: 2026-11-11
 - Decision owners: Zac Pruett, repository maintainers
 - Relates to: [ADR 0004](./0004-headless-styled-layering.md) (layering),
-  [ADR 0007](./0007-token-pipeline.md) (tokens, `--sl-motion-intensity`),
+  [ADR 0007](./0007-token-pipeline.md) (tokens, `--ghost-motion-intensity`),
   [ADR 0008](./0008-define-theme.md) (flagships); SLO-62
 
 Accepted 2026-11-11 with the answers in
@@ -15,7 +17,7 @@ only**; tilt and magnetic are follow-ups.
 
 SLO-62 asks for surfaces that react to the pointer so the UI feels alive.
 The inspiration is [particles.js](https://vincentgarreau.com/particles.js/) —
-ambient response to presence, not a particle-field clone. `--sl-motion-intensity`
+ambient response to presence, not a particle-field clone. `--ghost-motion-intensity`
 already scales duration; reduced-motion overlays already exist. The missing
 piece is pointer-driven motion that still fits headless-plus-themed layering:
 composables wrap into themed components, styling is `data-part` / `data-state`
@@ -34,23 +36,23 @@ WebGL, or a particle system in the library.
 
 ### Effect survey
 
-**Pointer spotlight and glow.** The composable writes `--sl-pointer-x` /
-`--sl-pointer-y` (and unitless `--sl-pointer-nx` / `--sl-pointer-ny`). Theme
+**Pointer spotlight and glow.** The composable writes `--ghost-pointer-x` /
+`--ghost-pointer-y` (and unitless `--ghost-pointer-nx` / `--ghost-pointer-ny`). Theme
 CSS paints a glow on a `data-part="glow"` layer whose `transform` and
 `opacity` follow those variables. This is the particles.js _feeling_ — the
 surface notices you — at a fraction of the cost. Paint stays on one
 composited layer. **First effect to productize.**
 
 **Magnetic pull and tilt.** The same pointer normals drive
-`--sl-magnetic-x` / `--sl-magnetic-y` and `--sl-tilt-x` / `--sl-tilt-y`.
+`--ghost-magnetic-x` / `--ghost-magnetic-y` and `--ghost-tilt-x` / `--ghost-tilt-y`.
 An inner face uses `transform` only. While tracking, transitions are instant
-so the face follows the pointer; on leave, `--sl-motion-spring-snappy`
+so the face follows the pointer; on leave, `--ghost-motion-spring-snappy`
 settles back. Intensity scales the amplitudes through `calc()`. **Second
 effect; opt-in per surface, never a global default.**
 
 **Ambient canvas / WebGL backgrounds.** True particle fields, trails, and
 shader backdrops. They fight the token model (colors and motion cease to be
-`--sl-*` assignments), need a frame loop even at rest, and invite a runtime
+`--ghost-*` assignments), need a frame loop even at rest, and invite a runtime
 dependency. Playground experiments may try them; **they are not a library
 feature.**
 
@@ -65,13 +67,13 @@ massy.
 
 Options considered:
 
-1. **`useSlInteractiveSurface` only.** Headless, tree-shakeable, SSR-safe.
-   Consumers spread `rootProps` and own markup. Matches `useSlButton`.
+1. **`useGhostInteractiveSurface` only.** Headless, tree-shakeable, SSR-safe.
+   Consumers spread `rootProps` and own markup. Matches `useGhostButton`.
    Themed use then requires a class, a recipe attribute, and a stylesheet —
    the same gap ADR 0004 rejected as the _only_ public unit.
-2. **Themed `SlInteractiveSurface` / `SlAmbient` only.** Easy for docs and
+2. **Themed `GhostInteractiveSurface` / `GhostAmbient` only.** Easy for docs and
    marketing pages; hostile to headless consumers and to attaching the
-   effect to an existing `SlButton` or card the app already owns.
+   effect to an existing `GhostButton` or card the app already owns.
 3. **Theme-level only** (`data-interactive` plus tokens, no JS). CSS cannot
    read pointer position. Rejected as a complete solution. Recipes remain
    the _visual_ half.
@@ -81,8 +83,8 @@ Options considered:
    `data-interactive` and the composable. No `pt` object.
 
 **Recommendation:** option 4. Public names follow ADR 0003:
-`useSlInteractiveSurface`, unstyled `SlInteractiveSurface` in `@slop-ui/vue`,
-themed wrapper in `@slop-ui/themes`. Do not name it `SlAmbient` — that
+`useGhostInteractiveSurface`, unstyled `GhostInteractiveSurface` in `@ghostvue/vue`,
+themed wrapper in `@ghostvue/themes`. Do not name it `GhostAmbient` — that
 sounds like a page background. Recipes use `data-interactive` with
 space-separated effects (`spotlight`, `tilt`, `magnetic`), matching
 `data-elevation` / `data-motion`. `data-state` is `off` | `idle` |
@@ -93,7 +95,7 @@ Proposed (not shipped) sketch:
 ```ts
 export type InteractiveEffect = 'spotlight' | 'tilt' | 'magnetic'
 
-export function useSlInteractiveSurface(
+export function useGhostInteractiveSurface(
   target: MaybeRefOrGetter<HTMLElement | null | undefined>,
   options?: { effects?: MaybeRefOrGetter<readonly InteractiveEffect[]> },
 ): {
@@ -106,7 +108,7 @@ export function useSlInteractiveSurface(
 ```
 
 ```vue
-<SlInteractiveSurface effects="spotlight">…</SlInteractiveSurface>
+<GhostInteractiveSurface effects="spotlight">…</GhostInteractiveSurface>
 ```
 
 The composable writes CSS variables **imperatively** on the host (not via
@@ -149,7 +151,7 @@ subtrees. Bindings cover attributes only.
 ### Theming hooks
 
 Proposed semantic tokens (not authored in this spike). Public CSS names
-follow `--sl-<role>-<part>-<state>`:
+follow `--ghost-<role>-<part>-<state>`:
 
 | Token                           | Role                                     |
 | ------------------------------- | ---------------------------------------- |
@@ -160,7 +162,7 @@ follow `--sl-<role>-<part>-<state>`:
 | `interactive.magnetic.distance` | Max translate in px                      |
 | `interactive.leave.spring`      | Alias of `motion.spring.snappy`          |
 
-Amplitudes multiply by `--sl-motion-intensity`. Flagships tune the tokens,
+Amplitudes multiply by `--ghost-motion-intensity`. Flagships tune the tokens,
 not a second API:
 
 | Theme                             | Spotlight               | Tilt       | Magnetic |
@@ -193,26 +195,26 @@ belong in `vue`; `vue` must not import `themes`.
 
 ## Consequences
 
-- `@slop-ui/vue` exports `useSlInteractiveSurface` and unstyled
-  `SlInteractiveSurface`. `@slop-ui/themes` exports a themed wrapper and a
-  `data-interactive='spotlight'` recipe. Themed `SlButton` opts in with
+- `@ghostvue/vue` exports `useGhostInteractiveSurface` and unstyled
+  `GhostInteractiveSurface`. `@ghostvue/themes` exports a themed wrapper and a
+  `data-interactive='spotlight'` recipe. Themed `GhostButton` opts in with
   `interactive="spotlight"` (`data-interactive`), off by default.
 - Magnetic/tilt and any particle/WebGL background are follow-ups (tilt on
   the same composable; particles only in a separate opt-in package).
-- `--sl-motion-intensity: 0` already freezes amplitudes via `calc()`.
+- `--ghost-motion-intensity: 0` already freezes amplitudes via `calc()`.
 
 ## Compatibility implications
 
-Additive. Package is unpublished (`0.0.0`). Headless `SlButton` is unchanged.
-Themed `SlButton` gains an optional `interactive` prop; omitting it leaves
+Additive. Package is unpublished (`0.0.0`). Headless `GhostButton` is unchanged.
+Themed `GhostButton` gains an optional `interactive` prop; omitting it leaves
 markup and snapshots identical. No new runtime dependency.
 
 ## Decision record (Zac, 2026-11-11)
 
-1. **`SlButton` opt-in.** Themed `SlButton` may set `data-interactive="spotlight"`.
+1. **`GhostButton` opt-in.** Themed `GhostButton` may set `data-interactive="spotlight"`.
    Off by default. Not a global button treatment.
 2. **CSS vars + existing springs in v1.** Pointer tracking writes CSS
-   variables; leave uses `--sl-interactive-leave-spring` (`linear()` from
+   variables; leave uses `--ghost-interactive-leave-spring` (`linear()` from
    SLO-65). A JS spring integrator is a follow-up only if tracking feels
    weightless.
 3. **Coarse pointers are fully off.** No static centered glow.
@@ -221,5 +223,5 @@ markup and snapshots identical. No new runtime dependency.
 5. **`defineTheme` knob.** `interactivity: 'none' | 'subtle' | 'expressive'`
    maps onto the spotlight tokens, parallel to `elevation` / `gradient`.
 6. **Canvas/WebGL stay playground-only.** A future particle background would
-   be a separate opt-in package, not part of `@slop-ui/vue` or
-   `@slop-ui/themes`.
+   be a separate opt-in package, not part of `@ghostvue/vue` or
+   `@ghostvue/themes`.

@@ -1,5 +1,7 @@
 # ADR 0002: Exit the foundation phase under a component gate
 
+Identifiers updated for the GhostVue rebrand (ADR 0010).
+
 - Status: accepted
 - Date: 2026-11-11
 - Decision owners: repository maintainers
@@ -27,7 +29,7 @@ SLO-8 still needs work ADR 0001 left implicit:
   manifest**) is scattered across workflow, testing, documentation, and
   public-API docs instead of one checklist agents can fail closed against.
 
-slop-ui is meant to be AI-native. A spec that only humans read is not enough
+GhostVue is meant to be AI-native. A spec that only humans read is not enough
 for MCP, codegen, or deterministic review. The gate has to name a manifest as
 a first-class deliverable even though the component-manifest schema is not
 designed here. Token emit (CSS, TS types, JSON) is ADR 0005 (SLO-36), a
@@ -94,7 +96,7 @@ tooling ADRs.
 - Agents read `AGENTS.md` → component gate, not "do not add components."
 - Reviewers ask "does this change pass the gate?" rather than "is a component
   allowed?"
-- #20 and #21 still have to satisfy the gate. They also have to adopt `Sl`
+- #20 and #21 still have to satisfy the gate. They also have to adopt `Ghost`
   names and the headless/themed split in ADR 0003/0004 when they rebase.
   Their playground replacements will conflict with the copy-only playground
   edit in this PR; keep the later component examples.

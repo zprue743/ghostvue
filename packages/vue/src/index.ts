@@ -1,7 +1,7 @@
 /**
  * Public Vue package entry point. Named ESM exports are the primary API.
  */
-export { useSlId } from './use-sl-id'
+export { useGhostId } from './use-ghost-id'
 export {
   useControllableState,
   type UseControllableStateOptions,
@@ -13,35 +13,35 @@ export {
   type TextDirection,
   type UseRovingFocusOptions,
 } from './use-roving-focus'
-export { default as SlButton } from './SlButton.vue'
-export { useSlButton, type SlButtonRootProps } from './use-sl-button'
+export { default as GhostButton } from './GhostButton.vue'
+export { useGhostButton, type GhostButtonRootProps } from './use-ghost-button'
 export type {
-  SlButtonExposed,
-  SlButtonProps,
-  SlButtonType,
-  UseSlButtonOptions,
-} from './sl-button'
-export { default as SlInteractiveSurface } from './SlInteractiveSurface.vue'
+  GhostButtonExposed,
+  GhostButtonProps,
+  GhostButtonType,
+  UseGhostButtonOptions,
+} from './ghost-button'
+export { default as GhostInteractiveSurface } from './GhostInteractiveSurface.vue'
 export {
-  useSlInteractiveSurface,
-  type SlInteractiveSurfaceRootProps,
-} from './use-sl-interactive-surface'
+  useGhostInteractiveSurface,
+  type GhostInteractiveSurfaceRootProps,
+} from './use-ghost-interactive-surface'
 export type {
   InteractiveEffect,
   InteractiveStateAttribute,
   InteractiveSurfaceElement,
   InteractiveSurfaceState,
-  SlInteractiveSurfaceExposed,
-  SlInteractiveSurfaceProps,
-  UseSlInteractiveSurfaceOptions,
-} from './sl-interactive-surface'
-export { default as SlVisuallyHidden } from './SlVisuallyHidden.vue'
+  GhostInteractiveSurfaceExposed,
+  GhostInteractiveSurfaceProps,
+  UseGhostInteractiveSurfaceOptions,
+} from './ghost-interactive-surface'
+export { default as GhostVisuallyHidden } from './GhostVisuallyHidden.vue'
 export {
-  useSlVisuallyHidden,
-  type SlVisuallyHiddenRootProps,
-} from './use-sl-visually-hidden'
+  useGhostVisuallyHidden,
+  type GhostVisuallyHiddenRootProps,
+} from './use-ghost-visually-hidden'
 export type {
-  SlVisuallyHiddenElement,
-  SlVisuallyHiddenProps,
-  UseSlVisuallyHiddenOptions,
-} from './sl-visually-hidden'
+  GhostVisuallyHiddenElement,
+  GhostVisuallyHiddenProps,
+  UseGhostVisuallyHiddenOptions,
+} from './ghost-visually-hidden'

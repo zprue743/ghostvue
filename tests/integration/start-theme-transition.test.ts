@@ -26,13 +26,13 @@ afterEach(() => {
 })
 
 describe('startThemeTransition', () => {
-  it('writes data-sl-mode immediately without View Transitions', async () => {
+  it('writes data-ghost-mode immediately without View Transitions', async () => {
     mockWindow({})
     const element = { setAttribute: vi.fn() }
 
     await startThemeTransition(element as unknown as Element, 'dark')
 
-    expect(element.setAttribute).toHaveBeenCalledWith('data-sl-mode', 'dark')
+    expect(element.setAttribute).toHaveBeenCalledWith('data-ghost-mode', 'dark')
   })
 
   it('skips View Transitions when the user prefers reduced motion', async () => {
@@ -43,7 +43,10 @@ describe('startThemeTransition', () => {
     await startThemeTransition(element as unknown as Element, 'light')
 
     expect(startViewTransition).not.toHaveBeenCalled()
-    expect(element.setAttribute).toHaveBeenCalledWith('data-sl-mode', 'light')
+    expect(element.setAttribute).toHaveBeenCalledWith(
+      'data-ghost-mode',
+      'light',
+    )
   })
 
   it('applies the mode inside startViewTransition when available', async () => {
@@ -57,6 +60,6 @@ describe('startThemeTransition', () => {
     await startThemeTransition(element as unknown as Element, 'dark')
 
     expect(startViewTransition).toHaveBeenCalledTimes(1)
-    expect(element.setAttribute).toHaveBeenCalledWith('data-sl-mode', 'dark')
+    expect(element.setAttribute).toHaveBeenCalledWith('data-ghost-mode', 'dark')
   })
 })

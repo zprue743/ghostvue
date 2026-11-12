@@ -1,5 +1,5 @@
 ---
-'@slop-ui/core': minor
+'@ghostvue/core': minor
 ---
 
-Publish the component-manifest JSON Schema as `@slop-ui/core/manifest.schema.json` so docs, MCP, codegen, and evals share one contract.
+Publish the component-manifest JSON Schema as `@ghostvue/core/manifest.schema.json` so docs, MCP, codegen, and evals share one contract.

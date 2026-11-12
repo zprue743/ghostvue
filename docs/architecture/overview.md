@@ -33,12 +33,12 @@ imported directly within a package; networks of nested `index.ts` barrels hide
 dependency direction and encourage cycles.
 
 SSR-safe ids and controlled/uncontrolled v-model behavior live in
-[`component-state.md`](./component-state.md) (`useSlId`,
+[`component-state.md`](./component-state.md) (`useGhostId`,
 `useControllableState`). Overlay Tab traps and APG roving tabindex live in
 [`focus.md`](./focus.md) (`useFocusScope`, `useRovingFocus`). Coded development
-diagnostics (`SLOP0xx`) live in `@slop-ui/vue` and are listed in
+diagnostics (`GHOST0xx`) live in `@ghostvue/vue` and are listed in
 [`warnings.md`](../warnings.md). They stay in `vue` until a second package
-needs to emit them; `@slop-ui/shared` remains empty until then. Per-component
+needs to emit them; `@ghostvue/shared` remains empty until then. Per-component
 public contracts for agents, MCP, codegen, and evals live in
 [`component-manifest.md`](./component-manifest.md).
 

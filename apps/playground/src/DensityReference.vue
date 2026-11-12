@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 
-import { SlButton as SlButtonThemed } from '@slop-ui/themes'
+import { GhostButton as GhostButtonThemed } from '@ghostvue/themes'
 
 const densities = ['compact', 'comfortable', 'spacious'] as const
 const roundnesses = [0, 0.5, 1] as const
@@ -19,12 +19,12 @@ const roundness = ref(1)
   >
     <h2 id="density-reference-heading">Density, type, and roundness</h2>
     <p>
-      <code>data-sl-density</code> nests like <code>data-sl-mode</code>. Unset
-      density is comfortable. <code>--sl-roundness</code> (0–1) scales every
-      radius from sharp to its designed value.
+      <code>data-ghost-density</code> nests like <code>data-ghost-mode</code>.
+      Unset density is comfortable. <code>--ghost-roundness</code> (0–1) scales
+      every radius from sharp to its designed value.
     </p>
 
-    <div class="slop-theme controls" data-sl-mode="light">
+    <div class="ghost-theme controls" data-ghost-mode="light">
       <label>
         Density
         <select v-model="density" data-testid="density-control">
@@ -47,13 +47,13 @@ const roundness = ref(1)
       </label>
       <div
         class="preview"
-        :data-sl-density="density"
-        :style="{ '--sl-roundness': String(roundness) }"
+        :data-ghost-density="density"
+        :style="{ '--ghost-roundness': String(roundness) }"
         data-testid="density-preview"
       >
-        <SlButtonThemed size="sm">Small</SlButtonThemed>
-        <SlButtonThemed>Medium</SlButtonThemed>
-        <SlButtonThemed size="lg">Large</SlButtonThemed>
+        <GhostButtonThemed size="sm">Small</GhostButtonThemed>
+        <GhostButtonThemed>Medium</GhostButtonThemed>
+        <GhostButtonThemed size="lg">Large</GhostButtonThemed>
       </div>
     </div>
 
@@ -61,9 +61,9 @@ const roundness = ref(1)
       <div
         v-for="mode in densities"
         :key="mode"
-        class="slop-theme density-row"
-        data-sl-mode="light"
-        :data-sl-density="mode"
+        class="ghost-theme density-row"
+        data-ghost-mode="light"
+        :data-ghost-density="mode"
         :data-testid="`density-row-${mode}`"
       >
         <h3>{{ mode }}</h3>
@@ -72,19 +72,19 @@ const roundness = ref(1)
             v-for="amount in roundnesses"
             :key="`${mode}-${amount}`"
             class="roundness-cell"
-            :style="{ '--sl-roundness': String(amount) }"
+            :style="{ '--ghost-roundness': String(amount) }"
             :data-testid="`density-${mode}-roundness-${amount}`"
           >
             <span>roundness {{ amount }}</span>
             <div class="buttons">
-              <SlButtonThemed
+              <GhostButtonThemed
                 v-for="size in sizes"
                 :key="size"
                 :size="size"
                 :data-testid="`density-${mode}-roundness-${amount}-${size}`"
               >
                 {{ size }}
-              </SlButtonThemed>
+              </GhostButtonThemed>
             </div>
           </div>
         </div>

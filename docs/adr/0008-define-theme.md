@@ -1,9 +1,11 @@
 # ADR 0008: Brand-input theme generator and flagship themes
 
+Identifiers updated for the GhostVue rebrand (ADR 0010).
+
 - Status: accepted
 - Date: 2026-11-11
 - Decision owners: Zac Pruett, repository maintainers
-- Relates to: [ADR 0007](./0007-token-pipeline.md) (pipeline, `data-sl-*`,
+- Relates to: [ADR 0007](./0007-token-pipeline.md) (pipeline, `data-ghost-*`,
   CSS names); SLO-68 / SLO-61f
 
 Accepted 2026-11-11 with the answers in [Decision record](#decision-record-zac-2026-11-11).
@@ -12,11 +14,11 @@ Accepted 2026-11-11 with the answers in [Decision record](#decision-record-zac-2
 
 ADR 0007 compiles one authored theme (`default`) from DTCG JSON. Brand
 seeds in `seeds.json` become 12-step OKLCH ramps; semantic files alias
-those ramps; CSS custom properties switch on `data-sl-theme`,
-`data-sl-mode`, and `data-sl-density`. `--sl-roundness` and
-`--sl-motion-intensity` already scale nested subtrees through `calc()`.
-`culori` is a **devDependency** of `@slop-ui/themes` (ramps + `pnpm
-contrast`). Unset `data-sl-mode` follows `prefers-color-scheme` in CSS, so
+those ramps; CSS custom properties switch on `data-ghost-theme`,
+`data-ghost-mode`, and `data-ghost-density`. `--ghost-roundness` and
+`--ghost-motion-intensity` already scale nested subtrees through `calc()`.
+`culori` is a **devDependency** of `@ghostvue/themes` (ramps + `pnpm
+contrast`). Unset `data-ghost-mode` follows `prefers-color-scheme` in CSS, so
 SSR does not flash the opposite palette.
 
 SLO-68 asks for `defineTheme({ primaryHue, neutralTint, roundness,
@@ -36,8 +38,8 @@ customization API; `default` stays the authored DTCG source of truth.
 
 `defineTheme` runs **on the Node side only** (app build, package build, or
 a thin CLI wrapper). It returns a CSS string plus catalogs. Flagship
-themes are compiled at `@slop-ui/themes` build and published as `.css`
-files. Runtime switching applies pre-generated CSS with `data-sl-theme`.
+themes are compiled at `@ghostvue/themes` build and published as `.css`
+files. Runtime switching applies pre-generated CSS with `data-ghost-theme`.
 
 | Delivery                    | Role                                                 |
 | --------------------------- | ---------------------------------------------------- |
@@ -52,7 +54,7 @@ shipping only a Vite plugin (locks non-Vite consumers).
 
 `culori` stays out of the **browser** graph. The Node generator may keep
 using it. **Do not add `culori` as a runtime dependency of
-`@slop-ui/themes`'s main entry.** Promoting it to a browser dependency
+`@ghostvue/themes`'s main entry.** Promoting it to a browser dependency
 needs Zac's approval ([dependency policy](../standards/dependencies.md)).
 
 ### 2. Signature
@@ -71,7 +73,7 @@ export type ElevationFlavor = 'subtle' | 'standard' | 'dramatic'
 export type GradientFlavor = 'none' | 'subtle' | 'aurora'
 
 export interface DefineThemeInput {
-  /** `data-sl-theme` value. Kebab-case. Not `default`. */
+  /** `data-ghost-theme` value. Kebab-case. Not `default`. */
   name: string
   primary: ColorSeed
   /** Neutral hue/color, or `'none'` for chroma 0. Default: primary hue, low chroma. */
@@ -85,7 +87,7 @@ export interface DefineThemeInput {
   }
   /** `0` sharp → `1` designed (including pill). Default `1`. */
   roundness?: number
-  /** Unset `data-sl-density` under this theme. Default `'comfortable'`. */
+  /** Unset `data-ghost-density` under this theme. Default `'comfortable'`. */
   density?: ThemeDensity
   /** Unitless duration scale. Default `1`. */
   motionIntensity?: number
@@ -121,7 +123,7 @@ exact. After fg auto-adjust, every WCAG AA pair from `evaluateContrast`
 must pass or `defineTheme` throws.
 
 ```ts
-import { defineTheme } from '@slop-ui/themes/define'
+import { defineTheme } from '@ghostvue/themes/define'
 import { writeFileSync } from 'node:fs'
 
 const acme = defineTheme({ name: 'acme', primary: '#0f766e', roundness: 0.5 })
@@ -129,44 +131,44 @@ writeFileSync('src/acme.css', acme.css)
 ```
 
 ```html
-<main class="slop-theme" data-sl-theme="acme">…</main>
+<main class="ghost-theme" data-ghost-theme="acme">…</main>
 ```
 
 ### 3. Apply and scope
 
 Token sheets set properties on
-`:where([data-sl-theme='<name>'])`. `.slop-theme` **without**
-`data-sl-theme` continues to mean `default`. Implementation must stop
-treating `.slop-themed-scope` as a token host (today it is in `CSS_HOST`,
+`:where([data-ghost-theme='<name>'])`. `.ghost-theme` **without**
+`data-ghost-theme` continues to mean `default`. Implementation must stop
+treating `.ghost-themed-scope` as a token host (today it is in `CSS_HOST`,
 which would pin themed wrappers to `default` inside a nested flagship).
-`.slop-themed-scope` stays a recipe scope only.
+`.ghost-themed-scope` stays a recipe scope only.
 
-`data-sl-mode` and `data-sl-density` stay orthogonal and nestable: a
+`data-ghost-mode` and `data-ghost-density` stay orthogonal and nestable: a
 descendant attribute wins. Generated CSS still follows
 `prefers-color-scheme` when mode is unset. Theme CSS sets
-`--sl-roundness` and `--sl-motion-intensity` on its host; nested hosts
+`--ghost-roundness` and `--ghost-motion-intensity` on its host; nested hosts
 override. A theme's `density` default is the unset-density rule **under
-that `data-sl-theme` only**; global unset density on `default` remains
+that `data-ghost-theme` only**; global unset density on `default` remains
 `comfortable`.
 
 Recipes (`default.css` button/elevation/motion rules) stay theme-agnostic
-and consume `--sl-*`. Flagship files are token sheets, not forks of
+and consume `--ghost-*`. Flagship files are token sheets, not forks of
 `default.css`. Import recipes plus every theme the page might show:
 
 ```ts
-import '@slop-ui/themes/default.css'
-import '@slop-ui/themes/calm.css'
-import '@slop-ui/themes/vibrant.css'
-import '@slop-ui/themes/mono.css'
+import '@ghostvue/themes/default.css'
+import '@ghostvue/themes/calm.css'
+import '@ghostvue/themes/vibrant.css'
+import '@ghostvue/themes/mono.css'
 ```
 
 **No-flash:** all used token sheets are in the document before first
-paint; the host HTML already has `data-sl-theme` (SSG/SSR). Mode needs no
+paint; the host HTML already has `data-ghost-theme` (SSG/SSR). Mode needs no
 JS. Persisted docs/app choice may use a tiny blocking inline script that
-writes `data-sl-theme` from `localStorage` before paint. Do not generate
+writes `data-ghost-theme` from `localStorage` before paint. Do not generate
 or fetch theme CSS after hydrate as the supported path.
 `startThemeTransition` remains mode-only; theme switches are
-`setAttribute('data-sl-theme', name)` (callers may wrap the View
+`setAttribute('data-ghost-theme', name)` (callers may wrap the View
 Transitions pattern themselves).
 
 ### 4. Flagships are checked-in `defineTheme` calls
@@ -213,8 +215,8 @@ defineTheme({
 ```
 
 `mono` keeps default **status** hues so danger/success stay
-distinguishable. Docs chrome dogfoods `calm` (`class="slop-theme"
-data-sl-theme="calm"`) and ships a switcher for `default` | `calm` |
+distinguishable. Docs chrome dogfoods `calm` (`class="ghost-theme"
+data-ghost-theme="calm"`) and ships a switcher for `default` | `calm` |
 `vibrant` | `mono`.
 
 ### 5. Contrast: auto-adjust fg, then fail loudly
@@ -228,14 +230,14 @@ flagships stay in `pnpm contrast`.
 
 ### 6. Package placement
 
-Stay in `@slop-ui/themes`. No new package.
+Stay in `@ghostvue/themes`. No new package.
 
-| Export                                             | Contents                                                        | Runtime                                          |
-| -------------------------------------------------- | --------------------------------------------------------------- | ------------------------------------------------ |
-| `@slop-ui/themes`                                  | wrappers, `tokens`, `startThemeTransition`, flagship name union | browser; **no `defineTheme`**                    |
-| `@slop-ui/themes/define`                           | `defineTheme` + types                                           | **Node only** (`exports.node` / documented Node) |
-| `@slop-ui/themes/calm.css` (and `vibrant`, `mono`) | compiled token sheets                                           | CSS                                              |
-| `@slop-ui/themes/default.css`                      | recipes + `default` tokens                                      | CSS                                              |
+| Export                                              | Contents                                                        | Runtime                                          |
+| --------------------------------------------------- | --------------------------------------------------------------- | ------------------------------------------------ |
+| `@ghostvue/themes`                                  | wrappers, `tokens`, `startThemeTransition`, flagship name union | browser; **no `defineTheme`**                    |
+| `@ghostvue/themes/define`                           | `defineTheme` + types                                           | **Node only** (`exports.node` / documented Node) |
+| `@ghostvue/themes/calm.css` (and `vibrant`, `mono`) | compiled token sheets                                           | CSS                                              |
+| `@ghostvue/themes/default.css`                      | recipes + `default` tokens                                      | CSS                                              |
 
 Main entry must not re-export `defineTheme`, so app bundles cannot pull
 `culori` by accident. **New browser runtime dependency: none, unless Zac
@@ -259,34 +261,34 @@ sketch.
 the API; a plugin would wrap it later if Vite-only ergonomics demand it.
 
 **Injecting `<style>` at runtime as the apply API.** Rejected. Fights
-no-flash and duplicates `data-sl-theme` scoping.
+no-flash and duplicates `data-ghost-theme` scoping.
 
 **Deriving status hues from primary.** Rejected. Danger must not collapse
 into the brand color.
 
 ## Consequences
 
-- Node `defineTheme` lives at `@slop-ui/themes/define` (not the main
+- Node `defineTheme` lives at `@ghostvue/themes/define` (not the main
   entry). Flagship CSS is compiled at package build. `pnpm contrast`
   gates `default`, `calm`, `vibrant`, and `mono`. Docs chrome dogfoods
   `calm` and restores a persisted choice with a blocking inline script.
 - `default` DTCG pipeline is unchanged.
-- Nested themed wrappers inherit the nearest `data-sl-theme` because
-  `.slop-themed-scope` is no longer a token host.
+- Nested themed wrappers inherit the nearest `data-ghost-theme` because
+  `.ghost-themed-scope` is no longer a token host.
 
 ## Compatibility implications
 
 Package is unpublished (`0.0.0`). Selector change for
-`.slop-themed-scope` is required for nesting and is backwards-compatible
-for `default` if `.slop-theme` / `[data-sl-theme='default']` keep
-emitting the same variables. Headless `@slop-ui/vue` is unchanged. No
+`.ghost-themed-scope` is required for nesting and is backwards-compatible
+for `default` if `.ghost-theme` / `[data-ghost-theme='default']` keep
+emitting the same variables. Headless `@ghostvue/vue` is unchanged. No
 browser dependency added. Accessibility: AA remains a hard fail for every
 generated theme.
 
 ## Decision record (Zac, 2026-11-11)
 
 1. **Node-only.** `defineTheme` runs in Node. `culori` stays a
-   `devDependency` of `@slop-ui/themes`. No new runtime dependency.
+   `devDependency` of `@ghostvue/themes`. No new runtime dependency.
 2. **Flagship names:** `calm`, `vibrant`, and `mono`.
 3. **Docs chrome dogfoods `calm` on first paint.** `default` stays the
    published baseline theme.

@@ -1,10 +1,10 @@
-export type SlopCodeLevel = 'warn' | 'error'
+export type GhostCodeLevel = 'warn' | 'error'
 
-export interface SlopCodeEntry {
-  readonly level: SlopCodeLevel
+export interface GhostCodeEntry {
+  readonly level: GhostCodeLevel
   readonly title: string
   /**
-   * Runtime message. `{name}` placeholders are replaced by `logSlopCode`
+   * Runtime message. `{name}` placeholders are replaced by `logGhostCode`
    * replacements; unknown placeholders are left unchanged.
    */
   readonly message: string
@@ -12,7 +12,7 @@ export interface SlopCodeEntry {
   readonly relatedDocs?: string
 }
 
-export interface RetiredSlopCodeEntry {
+export interface RetiredGhostCodeEntry {
   readonly reason: string
 }
 
@@ -20,50 +20,51 @@ export interface RetiredSlopCodeEntry {
  * Canonical public URL for the diagnostic catalog. Console messages link here
  * until a hosted docs origin exists.
  */
-export const SLOP_CODE_DOCS_URL =
+export const GHOST_CODE_DOCS_URL =
   'https://github.com/zprue743/slop-ui/blob/master/docs/warnings.md'
 
 /**
  * Assigned development diagnostic codes. Keys are stable public identifiers and
- * must never be reused. Retire a code in `retiredSlopCodes` instead of deleting
+ * must never be reused. Retire a code in `retiredGhostCodes` instead of deleting
  * it.
  */
-export const slopCodes = {
-  SLOP001: {
+export const ghostCodes = {
+  GHOST001: {
     level: 'warn',
     title: 'Controlled and uncontrolled state mixed',
     message:
       'A component switched from {from} to {to}. Pass the value prop for the lifetime of the instance, or omit it and use default*.',
     relatedDocs: './architecture/component-state.md',
   },
-} as const satisfies Record<string, SlopCodeEntry>
+} as const satisfies Record<string, GhostCodeEntry>
 
 /**
  * Formerly assigned codes. Kept so the number cannot be given to a new meaning.
  */
-export const retiredSlopCodes: Readonly<Record<string, RetiredSlopCodeEntry>> =
-  {}
+export const retiredGhostCodes: Readonly<
+  Record<string, RetiredGhostCodeEntry>
+> = {}
 
-export type SlopCode = keyof typeof slopCodes
+export type GhostCode = keyof typeof ghostCodes
 
-export function slopCodeDocsUrl(code: SlopCode): string {
-  return `${SLOP_CODE_DOCS_URL}#${code.toLowerCase()}`
+export function ghostCodeDocsUrl(code: GhostCode): string {
+  return `${GHOST_CODE_DOCS_URL}#${code.toLowerCase()}`
 }
 
 const PLACEHOLDER = /\{([A-Za-z][A-Za-z0-9]*)\}/g
 
-export function formatSlopCodeMessage(
-  code: SlopCode,
+export function formatGhostCodeMessage(
+  code: GhostCode,
   replacements: Readonly<Record<string, string>> = {},
 ): string {
-  const message = slopCodes[code].message.replace(
+  const message = ghostCodes[code].message.replace(
     PLACEHOLDER,
     (placeholder, name: string) => replacements[name] ?? placeholder,
   )
-  return `[slop-ui ${code}] ${message} See ${slopCodeDocsUrl(code)}`
+  return `[ghostvue ${code}] ${message} See ${ghostCodeDocsUrl(code)}`
 }
 
-function emitSlopDiagnostic(level: SlopCodeLevel, formatted: string): void {
+function emitGhostDiagnostic(level: GhostCodeLevel, formatted: string): void {
   if (level === 'error') {
     console.error(formatted)
     return
@@ -77,12 +78,12 @@ function emitSlopDiagnostic(level: SlopCodeLevel, formatted: string): void {
  * the call and these strings. `import.meta.env.DEV` would be baked by the
  * library build.
  */
-export function logSlopCode(
-  code: SlopCode,
+export function logGhostCode(
+  code: GhostCode,
   replacements: Readonly<Record<string, string>> = {},
 ): void {
-  emitSlopDiagnostic(
-    slopCodes[code].level,
-    formatSlopCodeMessage(code, replacements),
+  emitGhostDiagnostic(
+    ghostCodes[code].level,
+    formatGhostCodeMessage(code, replacements),
   )
 }

@@ -67,7 +67,7 @@ pnpm verify
   `rg -i 'fail|error'`.
 - Use `gh pr checks` for CI status instead of fetching full logs.
 - Do not paste large diffs or Playwright snapshots into context.
-- Prefer `pnpm --filter @slop-ui/<package>` to scope typecheck, build, and docs.
+- Prefer `pnpm --filter @ghostvue/<package>` to scope typecheck, build, and docs.
 - Scope Vitest with `pnpm test path/to/file.test.ts` (root script; packages
   have no `test` script).
 - Use `packages/*/manifests/*.manifest.json` as the cheap component API map.

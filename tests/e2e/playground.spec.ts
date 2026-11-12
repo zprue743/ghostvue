@@ -55,7 +55,7 @@ test('playground shell loads without detectable accessibility violations', async
     await page.goto(playground.url)
 
     await expect(
-      page.getByRole('heading', { name: 'slop-ui playground' }),
+      page.getByRole('heading', { name: 'GhostVue playground' }),
     ).toBeVisible()
 
     const results = await new AxeBuilder({ page }).analyze()
@@ -65,7 +65,7 @@ test('playground shell loads without detectable accessibility violations', async
   }
 })
 
-test('SlVisuallyHidden names icon-only controls without showing the text', async ({
+test('GhostVisuallyHidden names icon-only controls without showing the text', async ({
   page,
 }) => {
   const playground = await startStaticServer('apps/playground/dist')
@@ -96,7 +96,7 @@ test('SlVisuallyHidden names icon-only controls without showing the text', async
   }
 })
 
-test('SlVisuallyHidden reveals a focusable skip link to keyboard users', async ({
+test('GhostVisuallyHidden reveals a focusable skip link to keyboard users', async ({
   page,
 }) => {
   const playground = await startStaticServer('apps/playground/dist')
@@ -133,7 +133,7 @@ test('SlVisuallyHidden reveals a focusable skip link to keyboard users', async (
   }
 })
 
-test('SlVisuallyHidden does not introduce horizontal overflow at 320px', async ({
+test('GhostVisuallyHidden does not introduce horizontal overflow at 320px', async ({
   page,
 }) => {
   const playground = await startStaticServer('apps/playground/dist')
@@ -153,7 +153,7 @@ test('SlVisuallyHidden does not introduce horizontal overflow at 320px', async (
   }
 })
 
-test('SlButton supports native activation, focus, and unavailable states', async ({
+test('GhostButton supports native activation, focus, and unavailable states', async ({
   page,
 }) => {
   const playground = await startStaticServer('apps/playground/dist')
@@ -299,17 +299,17 @@ test('default theme adapts to accessibility and color preferences', async ({
       await loading.evaluate(
         (element) => getComputedStyle(element, '::before').animationName,
       ),
-    ).toBe('slop-button-pulse')
+    ).toBe('ghost-button-pulse')
     expect(
       await action.evaluate((element) =>
         getComputedStyle(element)
-          .getPropertyValue('--sl-motion-press-scale')
+          .getPropertyValue('--ghost-motion-press-scale')
           .trim(),
       ),
     ).toBe('1')
 
     await themedGroup.evaluate((element) => {
-      element.setAttribute('data-sl-mode', 'dark')
+      element.setAttribute('data-ghost-mode', 'dark')
     })
     await expect(themedGroup).toHaveCSS('color-scheme', 'dark')
     await expect(themedGroup).toHaveCSS('background-color', 'rgb(15, 23, 42)')
@@ -343,7 +343,7 @@ test('default theme adapts to accessibility and color preferences', async ({
   }
 })
 
-test('unset data-sl-mode follows prefers-color-scheme from CSS alone', async ({
+test('unset data-ghost-mode follows prefers-color-scheme from CSS alone', async ({
   page,
 }) => {
   const playground = await startStaticServer('apps/playground/dist')

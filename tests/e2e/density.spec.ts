@@ -28,7 +28,9 @@ test.describe('density, type, and roundness', () => {
     deviceScaleFactor: 1,
   })
 
-  test('renders SlButton at every density and roundness', async ({ page }) => {
+  test('renders GhostButton at every density and roundness', async ({
+    page,
+  }) => {
     const playground = await startStaticServer('apps/playground/dist')
 
     try {
@@ -39,13 +41,15 @@ test.describe('density, type, and roundness', () => {
       const preview = page.getByTestId('density-preview')
       expect(
         await preview.evaluate((element) =>
-          getComputedStyle(element).getPropertyValue('--sl-roundness').trim(),
+          getComputedStyle(element)
+            .getPropertyValue('--ghost-roundness')
+            .trim(),
         ),
       ).toBe('1')
 
       for (const density of densities) {
         const row = page.getByTestId(`density-row-${density}`)
-        await expect(row).toHaveAttribute('data-sl-density', density)
+        await expect(row).toHaveAttribute('data-ghost-density', density)
 
         for (const amount of roundnesses) {
           const key = String(amount)

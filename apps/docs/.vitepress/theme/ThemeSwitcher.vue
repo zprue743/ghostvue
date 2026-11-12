@@ -20,12 +20,12 @@ const theme = ref<DocsThemeName>(DOCS_DEFAULT_THEME)
 let observer: MutationObserver | undefined
 
 function readTheme(): DocsThemeName {
-  const value = document.documentElement.getAttribute('data-sl-theme')
+  const value = document.documentElement.getAttribute('data-ghost-theme')
   return value && isDocsThemeName(value) ? value : DOCS_DEFAULT_THEME
 }
 
 function applyTheme(next: DocsThemeName): void {
-  document.documentElement.setAttribute('data-sl-theme', next)
+  document.documentElement.setAttribute('data-ghost-theme', next)
   localStorage.setItem(DOCS_THEME_STORAGE_KEY, next)
   theme.value = next
 }
@@ -37,7 +37,7 @@ onMounted(() => {
   })
   observer.observe(document.documentElement, {
     attributes: true,
-    attributeFilter: ['data-sl-theme'],
+    attributeFilter: ['data-ghost-theme'],
   })
 })
 
@@ -48,7 +48,7 @@ onUnmounted(() => {
 
 <template>
   <div
-    class="slop-docs-theme-switcher"
+    class="ghost-docs-theme-switcher"
     role="radiogroup"
     aria-label="Documentation theme"
   >
@@ -56,7 +56,7 @@ onUnmounted(() => {
       v-for="name in DOCS_THEME_OPTIONS"
       :key="name"
       type="button"
-      class="slop-docs-theme-switcher__option"
+      class="ghost-docs-theme-switcher__option"
       role="radio"
       :aria-checked="theme === name ? 'true' : 'false'"
       :data-active="theme === name ? '' : undefined"

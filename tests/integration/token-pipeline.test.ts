@@ -28,13 +28,15 @@ describe('token pipeline', () => {
     )
   })
 
-  it('maps role.part.state names to --sl-<role>-<part>-<state>', () => {
-    expect(cssVariableName('action.primary.bg')).toBe('--sl-action-primary-bg')
+  it('maps role.part.state names to --ghost-<role>-<part>-<state>', () => {
+    expect(cssVariableName('action.primary.bg')).toBe(
+      '--ghost-action-primary-bg',
+    )
     expect(cssVariableName('action.primary.bg.hover')).toBe(
-      '--sl-action-primary-bg-hover',
+      '--ghost-action-primary-bg-hover',
     )
     expect(cssVariableName('control.size.sm.padding.block')).toBe(
-      '--sl-control-size-sm-padding-block',
+      '--ghost-control-size-sm-padding-block',
     )
   })
 
@@ -53,48 +55,49 @@ describe('token pipeline', () => {
     expect(compiled.docsMarkdown).toBe(
       await readFile(resolve(repositoryRoot, 'docs/themes/tokens.md'), 'utf8'),
     )
-    expect(compiled.css).toContain('--sl-action-primary-bg: #1d4ed8;')
-    expect(compiled.css).toContain('--sl-action-primary-bg: #60a5fa;')
-    expect(compiled.css).toContain("[data-sl-mode='dark']")
-    expect(compiled.css).toContain('.slop-theme:not([data-sl-theme])')
+    expect(compiled.css).toContain('--ghost-action-primary-bg: #1d4ed8;')
+    expect(compiled.css).toContain('--ghost-action-primary-bg: #60a5fa;')
+    expect(compiled.css).toContain("[data-ghost-mode='dark']")
+    expect(compiled.css).toContain('.ghost-theme:not([data-ghost-theme])')
     expect(compiled.css).not.toMatch(
-      /:where\(\.slop-theme, \.slop-themed-scope/,
+      /:where\(\.ghost-theme, \.ghost-themed-scope/,
     )
     expect(compiled.css).toContain('prefers-color-scheme: dark')
     expect(compiled.css).toContain('forced-colors: active')
-    expect(compiled.css).toContain('--sl-surface-bg: Canvas;')
-    expect(compiled.css).toContain('--sl-action-primary-bg: ButtonFace;')
-    expect(compiled.css).toContain('--sl-elevation-2-shadow:')
+    expect(compiled.css).toContain('--ghost-surface-bg: Canvas;')
+    expect(compiled.css).toContain('--ghost-action-primary-bg: ButtonFace;')
+    expect(compiled.css).toContain('--ghost-elevation-2-shadow:')
     expect(compiled.css).toContain('linear-gradient(135deg in oklch')
     expect(compiled.css).toContain('min-resolution: 2dppx')
-    expect(compiled.css).toContain('--sl-border-hairline-width: 0.5px;')
-    expect(compiled.css).toContain('--sl-elevation-5-bg: Canvas;')
+    expect(compiled.css).toContain('--ghost-border-hairline-width: 0.5px;')
+    expect(compiled.css).toContain('--ghost-elevation-5-bg: Canvas;')
     expect(compiled.css).toContain(
-      '--sl-motion-duration-fast: calc(120ms * var(--sl-motion-intensity, 1));',
+      '--ghost-motion-duration-fast: calc(120ms * var(--ghost-motion-intensity, 1));',
     )
-    expect(compiled.css).toContain('--sl-motion-easing-standard: cubic-bezier(')
-    expect(compiled.css).toContain('--sl-motion-spring-gentle: linear(')
+    expect(compiled.css).toContain(
+      '--ghost-motion-easing-standard: cubic-bezier(',
+    )
+    expect(compiled.css).toContain('--ghost-motion-spring-gentle: linear(')
     expect(compiled.css).toContain('prefers-reduced-motion: reduce')
     expect(compiled.css).toContain(
-      '--sl-motion-duration-fast: calc(80ms * var(--sl-motion-intensity, 1));',
+      '--ghost-motion-duration-fast: calc(80ms * var(--ghost-motion-intensity, 1));',
     )
-    expect(compiled.css).toContain('--sl-motion-translate: 0px;')
+    expect(compiled.css).toContain('--ghost-motion-translate: 0px;')
     expect(compiled.css).toContain(' :where(*)')
-    expect(compiled.css).toContain("[data-sl-density='compact']")
-    expect(compiled.css).toContain("[data-sl-density='comfortable']")
-    expect(compiled.css).toContain("[data-sl-density='spacious']")
+    expect(compiled.css).toContain("[data-ghost-density='compact']")
+    expect(compiled.css).toContain("[data-ghost-density='comfortable']")
+    expect(compiled.css).toContain("[data-ghost-density='spacious']")
     expect(compiled.css).toContain('pointer: coarse')
     expect(compiled.css).toContain(
-      '--sl-radius-md: calc(0.5rem * var(--sl-roundness, 1));',
+      '--ghost-radius-md: calc(0.5rem * var(--ghost-roundness, 1));',
     )
-    expect(compiled.css).toContain('--sl-roundness: 1;')
-    expect(compiled.css).toContain('--sl-type-family-sans:')
-    expect(compiled.css).toContain('--sl-state-layer-hover:')
-    expect(compiled.css).toContain('--sl-gradient-action-primary:')
-    expect(compiled.css).toContain('--sl-action-disabled-bg:')
-    expect(compiled.css).toContain('--sl-motion-press-scale:')
+    expect(compiled.css).toContain('--ghost-roundness: 1;')
+    expect(compiled.css).toContain('--ghost-type-family-sans:')
+    expect(compiled.css).toContain('--ghost-state-layer-hover:')
+    expect(compiled.css).toContain('--ghost-gradient-action-primary:')
+    expect(compiled.css).toContain('--ghost-action-disabled-bg:')
+    expect(compiled.css).toContain('--ghost-motion-press-scale:')
     expect(compiled.css).toContain('clamp(')
-    expect(compiled.css).not.toContain('--slop-')
     expect(compiled.docsMarkdown).toContain('role="img"')
     expect(compiled.docsMarkdown).toContain('primary (light-tuned)')
     expect(compiled.rampsJson).toBe(
@@ -104,14 +107,14 @@ describe('token pipeline', () => {
   })
 
   it('exports typed semantic constants with resolved light and dark values', () => {
-    expect(tokens['action.primary.bg'].cssVar).toBe('--sl-action-primary-bg')
+    expect(tokens['action.primary.bg'].cssVar).toBe('--ghost-action-primary-bg')
     expect(tokens['action.primary.bg'].value.light).toBe('#1d4ed8')
     expect(tokens['action.primary.bg'].value.dark).toBe('#60a5fa')
-    expect(tokens['text.default'].cssVar).toBe('--sl-text-default')
+    expect(tokens['text.default'].cssVar).toBe('--ghost-text-default')
     expect(tokens['color.primary.700'].tier).toBe('primitive')
     expect(tokens['color.primary.700']).not.toHaveProperty('cssVar')
     expect(tokens['color.primary.dark.400'].value.light).toBe('#60a5fa')
-    expect(tokens['motion.intensity'].cssVar).toBe('--sl-motion-intensity')
+    expect(tokens['motion.intensity'].cssVar).toBe('--ghost-motion-intensity')
     expect(tokens['motion.intensity'].value.light).toBe('1')
     expect(tokens['motion.duration.fast'].value.light).toBe('120ms')
     expect(tokens['motion.duration.fast'].reducedMotion).toBe('80ms')
@@ -122,7 +125,7 @@ describe('token pipeline', () => {
     expect(
       tokens['motion.spring.gentle'].value.light.startsWith('linear('),
     ).toBe(true)
-    expect(tokens['roundness.amount'].cssVar).toBe('--sl-roundness')
+    expect(tokens['roundness.amount'].cssVar).toBe('--ghost-roundness')
     expect(tokens['control.size.md.min'].value.light).toBe('2.5rem')
     expect(tokens['control.size.md.min'].density).toEqual({
       compact: '2rem',
@@ -130,7 +133,7 @@ describe('token pipeline', () => {
     })
     expect(tokens['control.size.md.min'].touchMin).toBe('2.75rem')
     expect(tokens['radius.md'].value.light).toBe('0.5rem')
-    expect(tokens['type.family.sans'].cssVar).toBe('--sl-type-family-sans')
+    expect(tokens['type.family.sans'].cssVar).toBe('--ghost-type-family-sans')
     expect(tokens['type.numeric.tabular'].value.light).toBe('tabular-nums')
   })
 
@@ -171,11 +174,11 @@ describe('token pipeline', () => {
     expect(
       compiled.tokens.find((token) => token.name === 'action.primary.bg.hover')
         ?.cssVar,
-    ).toBe('--sl-action-primary-bg-hover')
+    ).toBe('--ghost-action-primary-bg-hover')
   })
 
   it('rejects cyclic aliases, unknown aliases, and primitive-to-semantic aliases', async () => {
-    const dir = await mkdtemp(join(tmpdir(), 'slop-tokens-'))
+    const dir = await mkdtemp(join(tmpdir(), 'ghost-tokens-'))
     tempDirs.push(dir)
 
     await writeFile(

@@ -1,19 +1,21 @@
 # ADR 0004: Headless and styled layering
 
+Identifiers updated for the GhostVue rebrand (ADR 0010).
+
 - Status: accepted
 - Date: 2026-11-11
 - Decision owners: repository maintainers
 
 ## Context
 
-Architecture docs already say functionality is headless, `@slop-ui/vue` must
-not import `@slop-ui/themes`, and new behavior stays in `vue` unless a
+Architecture docs already say functionality is headless, `@ghostvue/vue` must
+not import `@ghostvue/themes`, and new behavior stays in `vue` unless a
 non-Vue consumer exists. They do not say whether the public unit is a
 composable, a renderless component, a styled component, or all three, or how
 a theme attaches without making either path painful.
 
 [PR #20](https://github.com/zprue743/slop-ui/pull/20) implements one Button
-as a single unstyled SFC plus optional CSS under `.slop-theme`. That is a
+as a single unstyled SFC plus optional CSS under `.ghost-theme`. That is a
 useful CSS attachment idea, but it does not give a themed component that is
 as easy as a headless one, and it uses `data-slot` rather than a stable
 part/state vocabulary.
@@ -28,7 +30,7 @@ Comparable models:
 
 Owner requirement: **both** headless and themed use must be extremely easy.
 PrimeVue-style `pt` prop objects are **rejected**. Naming follows ADR 0003
-(SLO-9): `SlButton`, `useSlButton`. Tokens follow ADR 0005 (SLO-36).
+(SLO-9): `GhostButton`, `useGhostButton`. Tokens follow ADR 0005 (SLO-36).
 
 ## Decision
 
@@ -40,18 +42,18 @@ objects.
 
 ### Layers
 
-1. **Composable (`@slop-ui/vue`).** `useSlButton` owns state, a11y, keyboard,
+1. **Composable (`@ghostvue/vue`).** `useGhostButton` owns state, a11y, keyboard,
    and SSR. It returns bindings (`rootProps`, maybe `parts`) the consumer or
    the unstyled component spreads. Vue lifecycle stays in `vue`; move logic
    to `core` only with an approved framework-neutral contract.
 
-2. **Thin unstyled component (`@slop-ui/vue`).** `SlButton` renders the
+2. **Thin unstyled component (`@ghostvue/vue`).** `GhostButton` renders the
    native element, spreads composable bindings, forwards `class` and attrs,
    and exposes slots for structure. It ships **no visual styles**. This is
    the easy headless path.
 
-3. **Themed component (`@slop-ui/themes`).** A wrapper around the unstyled
-   `SlButton` that applies default classes, `data-part` / `data-state` that
+3. **Themed component (`@ghostvue/themes`).** A wrapper around the unstyled
+   `GhostButton` that applies default classes, `data-part` / `data-state` that
    the default CSS already targets, and ordinary visual props (`variant`,
    `tone`, `size`). It may import the default stylesheet so themed use is
    one import. Behavior still comes from the composable; the wrapper does
@@ -73,8 +75,8 @@ objects.
 
 `vue` never imports `themes`. `themes` **may** depend on `vue` so themed
 wrappers can import unstyled components. That is a new allowed edge;
-`scripts/check-package-boundaries.mjs` should gain `@slop-ui/vue` on
-`@slop-ui/themes` when the first wrapper lands. Headless packages still
+`scripts/check-package-boundaries.mjs` should gain `@ghostvue/vue` on
+`@ghostvue/themes` when the first wrapper lands. Headless packages still
 must not require `themes`.
 
 ```text
@@ -89,10 +91,12 @@ shared <- core <- vue
 
 ```vue
 <script setup lang="ts">
-import { SlButton } from '@slop-ui/vue'
+import { GhostButton } from '@ghostvue/vue'
 </script>
 <template>
-  <SlButton class="my-btn" :loading="saving" @click="save"> Save </SlButton>
+  <GhostButton class="my-btn" :loading="saving" @click="save">
+    Save
+  </GhostButton>
 </template>
 ```
 
@@ -100,8 +104,8 @@ Own the markup with the composable when the thin component is not enough:
 
 ```vue
 <script setup lang="ts">
-import { useSlButton } from '@slop-ui/vue'
-const { rootProps } = useSlButton({ loading: saving })
+import { useGhostButton } from '@ghostvue/vue'
+const { rootProps } = useGhostButton({ loading: saving })
 </script>
 <template>
   <button v-bind="rootProps" class="my-btn" @click="save">Save</button>
@@ -112,17 +116,17 @@ const { rootProps } = useSlButton({ loading: saving })
 
 ```vue
 <script setup lang="ts">
-import { SlButton } from '@slop-ui/themes'
+import { GhostButton } from '@ghostvue/themes'
 </script>
 <template>
-  <SlButton variant="outline" tone="danger" :loading="saving">
+  <GhostButton variant="outline" tone="danger" :loading="saving">
     Delete
-  </SlButton>
+  </GhostButton>
 </template>
 ```
 
-The themed `SlButton` wraps `@slop-ui/vue`'s `SlButton`, sets `data-part` /
-`data-state`, and uses semantic `--sl-*` variables
+The themed `GhostButton` wraps `@ghostvue/vue`'s `GhostButton`, sets `data-part` /
+`data-state`, and uses semantic `--ghost-*` variables
 ([ADR 0007](./0007-token-pipeline.md)). Same behavioral props; visual props
 exist only on the themed wrapper.
 
@@ -142,21 +146,21 @@ tokens replace them.
 path for Tailwind/CSS-Modules consumers and for agents that style
 themselves.
 
-**Renderless-only, no unstyled `SlButton`.** Rejected as the ordinary
+**Renderless-only, no unstyled `GhostButton`.** Rejected as the ordinary
 headless API. Spreading `rootProps` onto a native element is the escape
 hatch, not the default. A thin unstyled component is the easy call site.
 
-**Themed wrappers inside `@slop-ui/vue` that import CSS.** Rejected. That
+**Themed wrappers inside `@ghostvue/vue` that import CSS.** Rejected. That
 would make `vue` depend on `themes` and break headless installs.
 
 ## Consequences
 
-- #20 should split Button into `useSlButton` + unstyled `SlButton` + themed
+- #20 should split Button into `useGhostButton` + unstyled `GhostButton` + themed
   wrapper, and rename `data-slot` / `data-loading` toward `data-part` /
   `data-state` where they are styling hooks.
-- Compound widgets follow the same split (`useSlDialog`, `SlDialog`,
-  themed `SlDialog`).
-- Playground/docs may import `@slop-ui/themes` for the easy themed path.
+- Compound widgets follow the same split (`useGhostDialog`, `GhostDialog`,
+  themed `GhostDialog`).
+- Playground/docs may import `@ghostvue/themes` for the easy themed path.
 
 ## Compatibility implications
 

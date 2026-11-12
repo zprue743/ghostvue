@@ -9,7 +9,7 @@ export type GradientFlavor = 'none' | 'subtle' | 'aurora'
 export type InteractivityFlavor = 'none' | 'subtle' | 'expressive'
 
 export interface DefineThemeInput {
-  /** `data-sl-theme` value. Kebab-case. Not `default`. */
+  /** `data-ghost-theme` value. Kebab-case. Not `default`. */
   name: string
   primary: ColorSeed
   /** Neutral hue/color, or the string `'none'` for chroma 0. Default: primary hue, low chroma. */
@@ -23,7 +23,7 @@ export interface DefineThemeInput {
   }
   /** `0` sharp → `1` designed (including pill). Default `1`. */
   roundness?: number
-  /** Unset `data-sl-density` under this theme. Default `'comfortable'`. */
+  /** Unset `data-ghost-density` under this theme. Default `'comfortable'`. */
   density?: ThemeDensity
   /** Unitless duration scale. Default `1`. */
   motionIntensity?: number

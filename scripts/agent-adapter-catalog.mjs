@@ -89,7 +89,7 @@ export const toolAdapters = [
       'Production components must pass the component gate in',
       '`docs/agents/COMPONENT_WORKFLOW.md` (approved spec from',
       '`docs/components/spec-template.md`, tests, docs, and a machine-readable',
-      'manifest). After changing an `Sl*.vue` public API, run',
+      'manifest). After changing a `Ghost*.vue` public API, run',
       '`pnpm manifests:write` so props/emits/slots/exposed stay derived.',
       '`pnpm manifests` is part of `pnpm verify`. Do not start markup before the',
       'specification resolves public behavior and accessibility.',

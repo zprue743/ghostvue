@@ -1,10 +1,10 @@
 import { createApp } from 'vue'
 
 import './consumer-overrides.css'
-import '@slop-ui/themes/default.css'
-import '@slop-ui/themes/calm.css'
-import '@slop-ui/themes/vibrant.css'
-import '@slop-ui/themes/mono.css'
+import '@ghostvue/themes/default.css'
+import '@ghostvue/themes/calm.css'
+import '@ghostvue/themes/vibrant.css'
+import '@ghostvue/themes/mono.css'
 
 import App from './App.vue'
 

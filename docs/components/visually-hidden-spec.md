@@ -1,11 +1,11 @@
-# SlVisuallyHidden specification
+# GhostVisuallyHidden specification
 
 **Status:** Approved for issue #2 implementation scope on 2026-08-16.
-Rebased onto ADRs 0002–0005 as `SlVisuallyHidden` / `useSlVisuallyHidden`.
+Rebased onto ADRs 0002–0005 as `GhostVisuallyHidden` / `useGhostVisuallyHidden`.
 
 ## Purpose and user problems
 
-`SlVisuallyHidden` renders content that assistive technology can reach but sighted
+`GhostVisuallyHidden` renders content that assistive technology can reach but sighted
 users do not see. It solves the recurring problem of interfaces that convey
 meaning through position, iconography, or visual grouping alone, where the
 missing text must exist in the accessibility tree without disturbing the visual
@@ -36,13 +36,13 @@ primitive covers skip links, supplementary instructions attached through
 
 ### Props and configuration
 
-| Prop        | Type                      | Default  | Contract                                                                                                           |
-| ----------- | ------------------------- | -------- | ------------------------------------------------------------------------------------------------------------------ |
-| `as`        | `SlVisuallyHiddenElement` | `'span'` | Selects the rendered root element so the result is valid HTML in its parent context. Never an interactive element. |
-| `focusable` | `boolean`                 | `false`  | When `true`, the content becomes visible while focus is inside it and hides again when focus leaves.               |
+| Prop        | Type                         | Default  | Contract                                                                                                           |
+| ----------- | ---------------------------- | -------- | ------------------------------------------------------------------------------------------------------------------ |
+| `as`        | `GhostVisuallyHiddenElement` | `'span'` | Selects the rendered root element so the result is valid HTML in its parent context. Never an interactive element. |
+| `focusable` | `boolean`                    | `false`  | When `true`, the content becomes visible while focus is inside it and hides again when focus leaves.               |
 
 ```ts
-type SlVisuallyHiddenElement = 'span' | 'div' | 'p' | 'li' | 'td' | 'th'
+type GhostVisuallyHiddenElement = 'span' | 'div' | 'p' | 'li' | 'td' | 'th'
 ```
 
 The union is closed rather than `keyof HTMLElementTagNameMap`. It admits the
@@ -51,14 +51,14 @@ list items, and table cells — while excluding interactive, void, and metadata
 elements, which would either break the hiding contract or produce content that
 cannot hold children. Widening the union later is additive; narrowing it is not.
 
-Named ESM exports: `SlVisuallyHidden`, `useSlVisuallyHidden`, and the types
+Named ESM exports: `GhostVisuallyHidden`, `useGhostVisuallyHidden`, and the types
 above. Headless behavior lives in the composable; the SFC is a thin unstyled
 root that spreads `rootProps` onto `as`.
 
 Native attributes and event listeners fall through to the single root element.
 That fallthrough, not a set of dedicated props, is how consumers attach `id`,
 `role`, `lang`, `aria-live`, `aria-atomic`, `data-*`, and anything else an
-accessibility tool requires. `useSlId` is not used: the component does not
+accessibility tool requires. `useGhostId` is not used: the component does not
 generate ids. Reveal is derived from real focus, so `useControllableState` is
 not used.
 
@@ -73,7 +73,7 @@ The default slot supplies the content and is the only slot. The component
 declares no events; native listeners attach to the root element and receive
 native events.
 
-No methods are exposed. Unlike `SlButton`, the root is never interactive, so there
+No methods are exposed. Unlike `GhostButton`, the root is never interactive, so there
 is no imperative `focus()` or `blur()` contract worth publishing. Consumers that
 need the element can attach a plain template ref to the component's root through
 normal Vue attribute fallthrough.
@@ -121,7 +121,7 @@ transformed.
 
 ### Semantics and relationships
 
-The root is one of the elements in `SlVisuallyHiddenElement` and defaults to
+The root is one of the elements in `GhostVisuallyHiddenElement` and defaults to
 `<span>`. The component adds no `role` and never sets `aria-hidden`, because
 removing the content from the accessibility tree would invert its entire
 purpose.
@@ -203,11 +203,11 @@ structure to depend on.
 
 Stable styling hooks follow ADR 0004:
 
-- class `slop-visually-hidden`
+- class `ghost-visually-hidden`
 - `data-part="root"`
 - `data-state="hidden"` while hidden; the attribute is omitted while revealed
 
-There is no themed wrapper in `@slop-ui/themes`. Hiding is the behavior; a
+There is no themed wrapper in `@ghostvue/themes`. Hiding is the behavior; a
 theme cannot restyle this into visibility without breaking the contract.
 
 The hiding declarations are applied inline. This makes the component work with no
@@ -253,8 +253,8 @@ removes them with the element and there is no cleanup obligation to get wrong.
 
 ## Composition
 
-`useSlVisuallyHidden` owns the clip style, focus tracking, and `data-part` /
-`data-state` bindings. `SlVisuallyHidden` spreads those onto the `as` element.
+`useGhostVisuallyHidden` owns the clip style, focus tracking, and `data-part` /
+`data-state` bindings. `GhostVisuallyHidden` spreads those onto the `as` element.
 The behavior stays in `packages/vue` because its slot, attribute-fallthrough, and
 dynamic-root contracts are Vue-specific. Per
 `docs/agents/ARCHITECTURE_RULES.md`, the style constant is not promoted to
@@ -262,7 +262,7 @@ dynamic-root contracts are Vue-specific. Per
 not sufficient justification.
 
 The machine-readable contract is
-`packages/vue/manifests/sl-visually-hidden.manifest.json`.
+`packages/vue/manifests/ghost-visually-hidden.manifest.json`.
 
 ## Test plan
 
@@ -340,9 +340,9 @@ gap. Mirror the same examples in the playground so browser tests exercise them.
 
 ## Compatibility and release impact
 
-Additive; a minor Changeset for `@slop-ui/vue`. The public contract comprises the
-`as` union and its default, the `focusable` behavior, `useSlVisuallyHidden`,
-single-root attribute fallthrough, the `slop-visually-hidden` class, `data-part`
+Additive; a minor Changeset for `@ghostvue/vue`. The public contract comprises the
+`as` union and its default, the `focusable` behavior, `useGhostVisuallyHidden`,
+single-root attribute fallthrough, the `ghost-visually-hidden` class, `data-part`
 / `data-state` hooks, and the guarantee that the content stays in the
 accessibility tree.
 

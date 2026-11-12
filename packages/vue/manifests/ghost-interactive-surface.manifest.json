@@ -1,0 +1,98 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "generated",
+  "name": "GhostInteractiveSurface",
+  "package": "@ghostvue/vue",
+  "status": "experimental",
+  "description": "Headless pointer-reactive surface. useGhostInteractiveSurface owns rAF-batched CSS variable writes, cached layout, and off/idle/tracking; GhostInteractiveSurface is the thin unstyled element with a decorative glow layer. Themed visual tokens live on @ghostvue/themes. v1 is spotlight only.",
+  "props": [
+    {
+      "name": "as",
+      "type": "InteractiveSurfaceElement",
+      "default": "div",
+      "required": false,
+      "description": "Rendered root element. Choose the tag that is valid in the parent context.",
+      "deprecated": false
+    },
+    {
+      "name": "effects",
+      "type": "'spotlight'[]",
+      "default": "[\"spotlight\"]",
+      "required": false,
+      "description": "Recipes advertised on data-interactive. v1 supports spotlight only. An empty list is an explicit off.",
+      "deprecated": false
+    }
+  ],
+  "models": [],
+  "events": [],
+  "slots": [
+    {
+      "name": "default",
+      "props": [],
+      "description": "Surface content. The glow layer is rendered by the component, not this slot."
+    }
+  ],
+  "exposed": [
+    {
+      "name": "element",
+      "kind": "property",
+      "type": "HTMLElement | null",
+      "description": "The root element after mount; null before mount and after unmount."
+    }
+  ],
+  "styling": {
+    "parts": [
+      {
+        "name": "root",
+        "description": "The element selected by as. Receives data-interactive, data-state, and --ghost-pointer-* variables."
+      },
+      {
+        "name": "glow",
+        "description": "Decorative spotlight overlay. aria-hidden. Not a public slot."
+      }
+    ],
+    "states": [
+      {
+        "name": "off",
+        "description": "Reduced motion, coarse pointer, empty effects, or unmounted. No listeners."
+      },
+      {
+        "name": "idle",
+        "description": "Capable of tracking. At rest; glow opacity is 0."
+      },
+      {
+        "name": "tracking",
+        "description": "Pointer is over the host. Glow follows --ghost-pointer-x/y."
+      }
+    ],
+    "cssProperties": [
+      {
+        "name": "--ghost-pointer-x",
+        "description": "Pointer x in CSS pixels, written imperatively on the host."
+      },
+      {
+        "name": "--ghost-pointer-y",
+        "description": "Pointer y in CSS pixels, written imperatively on the host."
+      },
+      {
+        "name": "--ghost-pointer-nx",
+        "description": "Unitless pointer x from -0.5 to 0.5."
+      },
+      {
+        "name": "--ghost-pointer-ny",
+        "description": "Unitless pointer y from -0.5 to 0.5."
+      }
+    ]
+  },
+  "accessibility": {
+    "role": "generic",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/practices/hiding-semantics/",
+    "keyboard": {},
+    "requiredAriaAttributes": []
+  },
+  "examples": [
+    "interactive-surface-basic",
+    "interactive-surface-composable",
+    "interactive-surface-button"
+  ]
+}

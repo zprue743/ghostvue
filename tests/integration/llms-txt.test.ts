@@ -87,7 +87,7 @@ describe('llms.txt generation', () => {
   })
 
   it('writes both files into the docs output directory', async () => {
-    const outDir = await mkdtemp(join(tmpdir(), 'slop-llms-'))
+    const outDir = await mkdtemp(join(tmpdir(), 'ghost-llms-'))
     tempDirs.push(outDir)
 
     const documents = await writeLlmsTxtFiles({

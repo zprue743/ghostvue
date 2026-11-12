@@ -18,7 +18,7 @@ shared <- core <- vue
   depend on `vue` so themed wrappers can import unstyled components and
   composables. That edge is recorded here, in
   [ADR 0004](../adr/0004-headless-styled-layering.md), and in
-  `scripts/workspace-packages.mjs` now that themed `SlButton` is the first
+  `scripts/workspace-packages.mjs` now that themed `GhostButton` is the first
   wrapper.
 
 Themed Vue components belong in `themes`. Headless composables and thin

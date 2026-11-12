@@ -13,15 +13,15 @@ const elevations = [0, 1, 2, 3, 4, 5] as const
       Semantic recipes from
       <code>data-elevation</code>, <code>data-material</code>, and
       <code>data-gradient</code>. Light and dark use nested
-      <code>data-sl-mode</code>.
+      <code>data-ghost-mode</code>.
     </p>
 
     <div class="mode-grid">
       <div
         v-for="mode in ['light', 'dark']"
         :key="mode"
-        class="slop-theme mode-column"
-        :data-sl-mode="mode"
+        class="ghost-theme mode-column"
+        :data-ghost-mode="mode"
         :data-testid="`visual-mode-${mode}`"
       >
         <h3>{{ mode }} mode</h3>
@@ -121,7 +121,7 @@ const elevations = [0, 1, 2, 3, 4, 5] as const
 }
 
 .sample span {
-  color: var(--sl-text-muted);
+  color: var(--ghost-text-muted);
   font-size: 0.85rem;
 }
 </style>

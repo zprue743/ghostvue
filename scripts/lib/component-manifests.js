@@ -6,7 +6,7 @@
  * examples) is preserved from the existing file so humans do not maintain
  * types in two places. `source` is always `generated` for SFC-backed files.
  *
- * Handwritten manifests without a matching `Sl*.vue` stay as they are until
+ * Handwritten manifests without a matching `Ghost*.vue` stay as they are until
  * the component source exists — required while Button/VisuallyHidden land in
  * parallel PRs.
  *
@@ -21,11 +21,11 @@ import { createChecker } from 'vue-component-meta'
 export const CURRENT_SCHEMA_VERSION = '1.0.0'
 
 export const MANIFEST_PACKAGES = [
-  { directory: 'vue', name: '@slop-ui/vue' },
-  { directory: 'themes', name: '@slop-ui/themes' },
+  { directory: 'vue', name: '@ghostvue/vue' },
+  { directory: 'themes', name: '@ghostvue/themes' },
 ]
 
-const COMPONENT_FILE = /^Sl[A-Z][A-Za-z0-9]*\.vue$/
+const COMPONENT_FILE = /^Ghost[A-Z][A-Za-z0-9]*\.vue$/
 const PROP_NAME = /^[a-z][A-Za-z0-9]*$/
 const EVENT_NAME = /^[a-z][A-Za-z0-9:]*$/
 const SLOT_NAME = /^(default|[a-z][A-Za-z0-9]*)$/
@@ -539,7 +539,7 @@ export async function syncRepositoryManifests({
         const manifest = await readJsonObject(join(pkg.manifestsDir, fileName))
         if (manifest.source === 'generated') {
           violations.push(
-            `${relativePath} has source "generated" but no matching Sl*.vue under ${pkg.srcDir}`,
+            `${relativePath} has source "generated" but no matching Ghost*.vue under ${pkg.srcDir}`,
           )
         }
       }
@@ -625,7 +625,7 @@ export async function syncRepositoryManifests({
       const manifest = await readJsonObject(absoluteManifest)
       if (manifest.source === 'generated') {
         violations.push(
-          `${relativePath} has source "generated" but no matching Sl*.vue`,
+          `${relativePath} has source "generated" but no matching Ghost*.vue`,
         )
       }
     }

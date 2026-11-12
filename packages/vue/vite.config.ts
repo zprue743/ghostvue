@@ -9,7 +9,7 @@ export default defineConfig({
     lib: {
       entry: 'src/index.ts',
       formats: ['es'],
-      fileName: 'slop-ui',
+      fileName: 'ghostvue',
     },
     rollupOptions: {
       // Vue remains a peer dependency so consumers share their application

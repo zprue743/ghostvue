@@ -796,7 +796,7 @@ export function applyContrastAdjustments(tokens) {
 
 /**
  * Compile a complete theme from brand knobs. Node-only; returns CSS scoped to
- * `[data-sl-theme='name']`.
+ * `[data-ghost-theme='name']`.
  *
  * @param {object} input
  */

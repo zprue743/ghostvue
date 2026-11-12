@@ -1,0 +1,480 @@
+/*
+ * Themed GhostButton. Visual values come from semantic --ghost-* tokens. Private
+ * --_ghost-button-* properties are per-instance wiring, not a public API.
+ * data-visual-state freezes hover/press/focus for docs and snapshots.
+ */
+@layer ghostvue-theme {
+  :where(.ghost-theme .ghost-button, .ghost-themed-scope .ghost-button) {
+    --_ghost-button-tone-color: var(--ghost-action-primary-bg);
+    --_ghost-button-tone-contrast: var(--ghost-action-primary-fg);
+    --_ghost-button-tone-border: var(--ghost-action-primary-border);
+    --_ghost-button-fill: var(--ghost-gradient-action-primary);
+    --_ghost-button-background: var(--_ghost-button-tone-color);
+    --_ghost-button-border-color: var(--_ghost-button-tone-border);
+    --_ghost-button-color: var(--_ghost-button-tone-contrast);
+    --_ghost-button-shadow:
+      var(--ghost-action-shadow), var(--ghost-action-highlight);
+    --_ghost-button-layer: 0;
+    --_ghost-button-min-size: var(--ghost-control-size-md-min);
+    --_ghost-button-padding-block: var(--ghost-control-size-md-padding-block);
+    --_ghost-button-padding-inline: var(--ghost-control-size-md-padding-inline);
+    --_ghost-button-font-size: var(--ghost-control-size-md-font);
+
+    align-items: center;
+    appearance: none;
+    background-color: var(--_ghost-button-background);
+    background-image: var(--_ghost-button-fill);
+    border: var(--ghost-border-hairline-width) solid
+      var(--_ghost-button-border-color);
+    border-radius: var(--ghost-action-radius);
+    box-shadow: var(--_ghost-button-shadow);
+    box-sizing: border-box;
+    color: var(--_ghost-button-color);
+    cursor: pointer;
+    display: inline-flex;
+    font-family: var(--ghost-action-label-family);
+    font-feature-settings: var(--ghost-type-feature-default);
+    font-size: var(--_ghost-button-font-size);
+    font-weight: var(--ghost-action-label-weight);
+    gap: var(--ghost-action-gap);
+    isolation: isolate;
+    justify-content: center;
+    letter-spacing: var(--ghost-action-label-letter);
+    line-height: var(--ghost-action-label-line);
+    min-block-size: var(--_ghost-button-min-size);
+    padding-block: var(--_ghost-button-padding-block);
+    padding-inline: var(--_ghost-button-padding-inline);
+    position: relative;
+    scale: 1;
+    transition:
+      background-color var(--ghost-action-duration)
+        var(--ghost-motion-easing-standard),
+      background-image var(--ghost-action-duration)
+        var(--ghost-motion-easing-standard),
+      border-color var(--ghost-action-duration)
+        var(--ghost-motion-easing-standard),
+      box-shadow var(--ghost-action-duration)
+        var(--ghost-motion-easing-standard),
+      color var(--ghost-action-duration) var(--ghost-motion-easing-standard),
+      scale var(--ghost-motion-spring-snappy-duration)
+        var(--ghost-motion-spring-snappy);
+  }
+
+  :where(.ghost-theme .ghost-button, .ghost-themed-scope .ghost-button)::after {
+    background-color: var(--_ghost-button-color);
+    border-radius: inherit;
+    content: '';
+    inset: 0;
+    opacity: var(--_ghost-button-layer);
+    pointer-events: none;
+    position: absolute;
+    transition: opacity var(--ghost-action-duration)
+      var(--ghost-motion-easing-standard);
+    z-index: -1;
+  }
+
+  :where(
+    .ghost-theme .ghost-button[data-tone='neutral'],
+    .ghost-themed-scope .ghost-button[data-tone='neutral']
+  ) {
+    --_ghost-button-tone-color: var(--ghost-action-neutral-bg);
+    --_ghost-button-tone-contrast: var(--ghost-action-neutral-fg);
+    --_ghost-button-tone-border: var(--ghost-action-neutral-border);
+    --_ghost-button-fill: var(--ghost-gradient-action-neutral);
+  }
+
+  :where(
+    .ghost-theme .ghost-button[data-tone='danger'],
+    .ghost-themed-scope .ghost-button[data-tone='danger']
+  ) {
+    --_ghost-button-tone-color: var(--ghost-action-danger-bg);
+    --_ghost-button-tone-contrast: var(--ghost-action-danger-fg);
+    --_ghost-button-tone-border: var(--ghost-action-danger-border);
+    --_ghost-button-fill: var(--ghost-gradient-action-danger);
+  }
+
+  :where(
+    .ghost-theme .ghost-button[data-variant='soft'],
+    .ghost-themed-scope .ghost-button[data-variant='soft']
+  ) {
+    --_ghost-button-background: color-mix(
+      in oklch,
+      var(--_ghost-button-tone-color) calc(100% * var(--ghost-state-mix-soft)),
+      var(--ghost-surface-bg)
+    );
+    --_ghost-button-border-color: color-mix(
+      in oklch,
+      var(--_ghost-button-tone-color) calc(100% * var(--ghost-state-mix-border)),
+      var(--ghost-surface-bg)
+    );
+    --_ghost-button-color: var(--_ghost-button-tone-color);
+    --_ghost-button-fill: none;
+    --_ghost-button-shadow: none;
+  }
+
+  :where(
+    .ghost-theme .ghost-button[data-variant='outline'],
+    .ghost-themed-scope .ghost-button[data-variant='outline']
+  ) {
+    --_ghost-button-background: transparent;
+    --_ghost-button-border-color: var(--_ghost-button-tone-border);
+    --_ghost-button-color: var(--_ghost-button-tone-color);
+    --_ghost-button-fill: none;
+    --_ghost-button-shadow: none;
+  }
+
+  :where(
+    .ghost-theme .ghost-button[data-variant='ghost'],
+    .ghost-themed-scope .ghost-button[data-variant='ghost']
+  ) {
+    --_ghost-button-background: transparent;
+    --_ghost-button-border-color: transparent;
+    --_ghost-button-color: var(--_ghost-button-tone-color);
+    --_ghost-button-fill: none;
+    --_ghost-button-shadow: none;
+  }
+
+  :where(
+    .ghost-theme .ghost-button[data-size='sm'],
+    .ghost-themed-scope .ghost-button[data-size='sm']
+  ) {
+    --_ghost-button-min-size: var(--ghost-control-size-sm-min);
+    --_ghost-button-padding-block: var(--ghost-control-size-sm-padding-block);
+    --_ghost-button-padding-inline: var(--ghost-control-size-sm-padding-inline);
+    --_ghost-button-font-size: var(--ghost-control-size-sm-font);
+  }
+
+  :where(
+    .ghost-theme .ghost-button[data-size='lg'],
+    .ghost-themed-scope .ghost-button[data-size='lg']
+  ) {
+    --_ghost-button-min-size: var(--ghost-control-size-lg-min);
+    --_ghost-button-padding-block: var(--ghost-control-size-lg-padding-block);
+    --_ghost-button-padding-inline: var(--ghost-control-size-lg-padding-inline);
+    --_ghost-button-font-size: var(--ghost-control-size-lg-font);
+  }
+
+  :where(
+    .ghost-theme
+      .ghost-button:is(
+        :hover,
+        [data-visual-state='hover'],
+        [data-visual-state='hover-focus']
+      ):not(:disabled):not([aria-disabled='true']),
+    .ghost-themed-scope
+      .ghost-button:is(
+        :hover,
+        [data-visual-state='hover'],
+        [data-visual-state='hover-focus']
+      ):not(:disabled):not([aria-disabled='true'])
+  ) {
+    --_ghost-button-layer: var(--ghost-state-layer-hover);
+  }
+
+  :where(
+    .ghost-theme
+      .ghost-button[aria-pressed='true']:not(:disabled):not(
+        [aria-disabled='true']
+      ),
+    .ghost-themed-scope
+      .ghost-button[aria-pressed='true']:not(:disabled):not(
+        [aria-disabled='true']
+      ),
+    .ghost-theme
+      .ghost-button[data-visual-state='selected']:not(:disabled):not(
+        [aria-disabled='true']
+      ),
+    .ghost-themed-scope
+      .ghost-button[data-visual-state='selected']:not(:disabled):not(
+        [aria-disabled='true']
+      )
+  ) {
+    --_ghost-button-layer: var(--ghost-state-layer-selected);
+  }
+
+  :where(
+    .ghost-theme
+      .ghost-button[aria-grabbed='true']:not(:disabled):not(
+        [aria-disabled='true']
+      ),
+    .ghost-themed-scope
+      .ghost-button[aria-grabbed='true']:not(:disabled):not(
+        [aria-disabled='true']
+      )
+  ) {
+    --_ghost-button-layer: var(--ghost-state-layer-dragged);
+  }
+
+  :where(
+    .ghost-theme
+      .ghost-button:is(
+        :active,
+        [data-visual-state='active'],
+        [data-visual-state='press-focus']
+      ):not(:disabled):not([aria-disabled='true']),
+    .ghost-themed-scope
+      .ghost-button:is(
+        :active,
+        [data-visual-state='active'],
+        [data-visual-state='press-focus']
+      ):not(:disabled):not([aria-disabled='true'])
+  ) {
+    --_ghost-button-layer: var(--ghost-state-layer-press);
+    --_ghost-button-shadow:
+      var(--ghost-action-shadow-press), var(--ghost-action-highlight);
+    scale: var(--ghost-motion-press-scale);
+  }
+
+  :where(
+    .ghost-theme
+      .ghost-button:is(
+        :focus-visible,
+        [data-visual-state='focus-visible'],
+        [data-visual-state='hover-focus'],
+        [data-visual-state='press-focus'],
+        [data-visual-state='loading-focus']
+      ),
+    .ghost-themed-scope
+      .ghost-button:is(
+        :focus-visible,
+        [data-visual-state='focus-visible'],
+        [data-visual-state='hover-focus'],
+        [data-visual-state='press-focus'],
+        [data-visual-state='loading-focus']
+      )
+  ) {
+    animation: ghost-focus-enter var(--ghost-focus-ring-duration)
+      var(--ghost-motion-easing-decelerate) both;
+    box-shadow:
+      var(--_ghost-button-shadow),
+      0 0 0 var(--ghost-focus-ring-offset) var(--ghost-focus-ring-contrast);
+    outline: var(--ghost-focus-ring-width) solid var(--ghost-focus-ring-color);
+    outline-offset: var(--ghost-focus-ring-offset);
+  }
+
+  :where(
+    .ghost-theme .ghost-button:is(:disabled, [data-state='disabled']),
+    .ghost-themed-scope .ghost-button:is(:disabled, [data-state='disabled'])
+  ) {
+    --_ghost-button-background: var(--ghost-action-disabled-bg);
+    --_ghost-button-border-color: var(--ghost-action-disabled-border);
+    --_ghost-button-color: var(--ghost-action-disabled-fg);
+    --_ghost-button-fill: none;
+    --_ghost-button-layer: 0;
+    --_ghost-button-shadow: none;
+
+    cursor: not-allowed;
+    scale: 1;
+  }
+
+  :where(
+    .ghost-theme .ghost-button[data-state='loading'],
+    .ghost-themed-scope .ghost-button[data-state='loading']
+  ) {
+    color: transparent;
+    cursor: wait;
+    scale: 1;
+  }
+
+  :where(
+    .ghost-theme .ghost-button[data-state='loading'],
+    .ghost-themed-scope .ghost-button[data-state='loading']
+  )::before {
+    animation: ghost-button-spin var(--ghost-action-spinner-duration) linear
+      infinite;
+    block-size: var(--ghost-action-spinner-size);
+    border: var(--ghost-action-spinner-width) solid var(--_ghost-button-color);
+    border-inline-end-color: transparent;
+    border-radius: 50%;
+    box-sizing: border-box;
+    content: '';
+    inline-size: var(--ghost-action-spinner-size);
+    inset-block-start: 50%;
+    inset-inline-start: 50%;
+    position: absolute;
+    transform: translate(-50%, -50%);
+    z-index: 1;
+  }
+
+  :where(
+    .ghost-theme .ghost-button [data-part='loading-indicator'],
+    .ghost-themed-scope .ghost-button [data-part='loading-indicator']
+  ) {
+    display: none;
+  }
+
+  :where(
+    .ghost-theme
+      .ghost-button[data-state='loading']
+      [data-part='loading-indicator'],
+    .ghost-themed-scope
+      .ghost-button[data-state='loading']
+      [data-part='loading-indicator']
+  ) {
+    block-size: var(--ghost-action-spinner-size);
+    color: var(--_ghost-button-color);
+    display: block;
+    inline-size: var(--ghost-action-spinner-size);
+    inset-block-start: 50%;
+    inset-inline-start: 50%;
+    position: absolute;
+    transform: translate(-50%, -50%);
+    z-index: 1;
+  }
+
+  :where(
+    .ghost-theme
+      .ghost-button[data-state='loading']:has([data-part='loading-indicator']),
+    .ghost-themed-scope
+      .ghost-button[data-state='loading']:has([data-part='loading-indicator'])
+  )::before {
+    content: none;
+  }
+
+  :where(
+    .ghost-theme .ghost-button[data-block],
+    .ghost-themed-scope .ghost-button[data-block]
+  ) {
+    inline-size: 100%;
+  }
+
+  :where(
+    .ghost-theme .ghost-button[data-icon-only],
+    .ghost-themed-scope .ghost-button[data-icon-only]
+  ) {
+    inline-size: var(--_ghost-button-min-size);
+    padding: 0;
+  }
+
+  :where(
+    .ghost-theme .ghost-button [data-part='icon'],
+    .ghost-themed-scope .ghost-button [data-part='icon']
+  ) {
+    block-size: var(--ghost-action-icon-size);
+    flex: none;
+    inline-size: var(--ghost-action-icon-size);
+  }
+
+  :where(
+    .ghost-theme .ghost-button [data-part='icon'] svg,
+    .ghost-themed-scope .ghost-button [data-part='icon'] svg
+  ) {
+    block-size: 100%;
+    display: block;
+    inline-size: 100%;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    :where(
+      .ghost-theme .ghost-button[data-state='loading'],
+      .ghost-themed-scope .ghost-button[data-state='loading']
+    )::before {
+      animation: ghost-button-pulse var(--ghost-action-spinner-duration)
+        var(--ghost-motion-easing-standard) infinite;
+      transform: translate(-50%, -50%);
+    }
+  }
+
+  @media (forced-colors: active) {
+    :where(.ghost-theme .ghost-button, .ghost-themed-scope .ghost-button) {
+      --_ghost-button-color: ButtonText;
+      --_ghost-button-fill: none;
+      --_ghost-button-layer: 0;
+      --_ghost-button-shadow: none;
+
+      background-color: ButtonFace;
+      background-image: none;
+      border-color: ButtonText;
+      box-shadow: none;
+      color: ButtonText;
+      scale: 1;
+    }
+
+    :where(
+      .ghost-theme .ghost-button:is(:disabled, [data-state='disabled']),
+      .ghost-themed-scope .ghost-button:is(:disabled, [data-state='disabled'])
+    ) {
+      --_ghost-button-color: GrayText;
+
+      border-color: GrayText;
+      color: GrayText;
+    }
+
+    :where(
+      .ghost-theme .ghost-button[data-state='loading'],
+      .ghost-themed-scope .ghost-button[data-state='loading']
+    ) {
+      color: transparent;
+    }
+
+    :where(
+      .ghost-theme
+        .ghost-button:is(
+          :focus-visible,
+          [data-visual-state='focus-visible'],
+          [data-visual-state='hover-focus'],
+          [data-visual-state='press-focus'],
+          [data-visual-state='loading-focus']
+        ),
+      .ghost-themed-scope
+        .ghost-button:is(
+          :focus-visible,
+          [data-visual-state='focus-visible'],
+          [data-visual-state='hover-focus'],
+          [data-visual-state='press-focus'],
+          [data-visual-state='loading-focus']
+        )
+    ) {
+      animation: none;
+      box-shadow: none;
+      outline-color: Highlight;
+    }
+
+    :where(
+      .ghost-theme .ghost-button[data-state='loading'],
+      .ghost-themed-scope .ghost-button[data-state='loading']
+    )::before {
+      border-color: var(--_ghost-button-color);
+      border-inline-end-color: transparent;
+    }
+
+    :where(
+      .ghost-theme .ghost-button,
+      .ghost-themed-scope .ghost-button
+    )::after {
+      content: none;
+    }
+  }
+
+  @keyframes ghost-focus-enter {
+    from {
+      box-shadow:
+        var(--_ghost-button-shadow),
+        0 0 0 0 var(--ghost-focus-ring-contrast);
+      outline-offset: 0;
+    }
+
+    to {
+      box-shadow:
+        var(--_ghost-button-shadow),
+        0 0 0 var(--ghost-focus-ring-offset) var(--ghost-focus-ring-contrast);
+      outline-offset: var(--ghost-focus-ring-offset);
+    }
+  }
+
+  @keyframes ghost-button-spin {
+    from {
+      transform: translate(-50%, -50%) rotate(0);
+    }
+
+    to {
+      transform: translate(-50%, -50%) rotate(1turn);
+    }
+  }
+
+  @keyframes ghost-button-pulse {
+    50% {
+      opacity: var(--ghost-action-spinner-opacity);
+    }
+  }
+}

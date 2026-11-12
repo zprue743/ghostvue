@@ -557,7 +557,7 @@
         "$value": "{size.hairline}",
         "$description": "Hairline width. 1px at 1x, 0.5px on high-DPR screens.",
         "$extensions": {
-          "slop.ui": {
+          "ghostvue": {
             "highDpr": "0.5px"
           }
         }
@@ -569,7 +569,7 @@
       "bg": {
         "$type": "color",
         "$value": "{color.primary.700}",
-        "$description": "Solid primary action background. Maps to SlButton tone accent.",
+        "$description": "Solid primary action background. Maps to GhostButton tone accent.",
         "hover": {
           "$type": "color",
           "$value": "{color.primary.800}",
@@ -782,7 +782,7 @@
       "opacity": {
         "$type": "number",
         "$value": "{opacity.disabled}",
-        "$description": "Shared unavailable-state opacity. SlButton uses dedicated disabled colors instead of fading the rest tone."
+        "$description": "Shared unavailable-state opacity. GhostButton uses dedicated disabled colors instead of fading the rest tone."
       }
     },
     "highlight": {
@@ -815,14 +815,14 @@
     "radius": {
       "$type": "dimension",
       "$value": "{radius.md}",
-      "$description": "Action corner radius. Follows --sl-roundness."
+      "$description": "Action corner radius. Follows --ghost-roundness."
     },
     "duration": {
       "$type": "duration",
       "$value": "{motion.duration.fast}",
       "$description": "Action color and opacity transition duration.",
       "$extensions": {
-        "slop.ui": {
+        "ghostvue": {
           "reducedMotion": "80ms"
         }
       }
@@ -1017,7 +1017,7 @@
         "$value": "{motion.duration.fast}",
         "$description": "Focus-ring entrance duration. Instant under reduced motion.",
         "$extensions": {
-          "slop.ui": {
+          "ghostvue": {
             "reducedMotion": "0ms"
           }
         }
@@ -1039,7 +1039,7 @@
           "$value": "{control.height.32}",
           "$description": "Small control minimum block size. Comfortable 32px; compact 28; spacious 36.",
           "$extensions": {
-            "slop.ui": {
+            "ghostvue": {
               "touchMin": "2.75rem"
             }
           }
@@ -1068,7 +1068,7 @@
           "$value": "{control.height.40}",
           "$description": "Medium control minimum block size. Comfortable 40px; compact 32; spacious 48.",
           "$extensions": {
-            "slop.ui": {
+            "ghostvue": {
               "touchMin": "2.75rem"
             }
           }
@@ -1097,7 +1097,7 @@
           "$value": "{control.height.48}",
           "$description": "Large control minimum block size. Comfortable and spacious 48px; compact 40.",
           "$extensions": {
-            "slop.ui": {
+            "ghostvue": {
               "touchMin": "2.75rem"
             }
           }
@@ -1126,7 +1126,7 @@
     "intensity": {
       "$type": "number",
       "$value": 1,
-      "$description": "Unitless 0–1 duration scale. Set --sl-motion-intensity on any subtree to slow or freeze motion."
+      "$description": "Unitless 0–1 duration scale. Set --ghost-motion-intensity on any subtree to slow or freeze motion."
     },
     "duration": {
       "instant": {
@@ -1134,7 +1134,7 @@
         "$value": "{duration.instant}",
         "$description": "No interpolation.",
         "$extensions": {
-          "slop.ui": {
+          "ghostvue": {
             "reducedMotion": "0ms"
           }
         }
@@ -1144,7 +1144,7 @@
         "$value": "{duration.fast}",
         "$description": "Fast color, opacity, and control transitions.",
         "$extensions": {
-          "slop.ui": {
+          "ghostvue": {
             "reducedMotion": "80ms"
           }
         }
@@ -1154,7 +1154,7 @@
         "$value": "{duration.moderate}",
         "$description": "Default enter duration. Exits should use fast instead.",
         "$extensions": {
-          "slop.ui": {
+          "ghostvue": {
             "reducedMotion": "80ms"
           }
         }
@@ -1164,7 +1164,7 @@
         "$value": "{duration.slow}",
         "$description": "Large-surface duration.",
         "$extensions": {
-          "slop.ui": {
+          "ghostvue": {
             "reducedMotion": "80ms"
           }
         }
@@ -1174,7 +1174,7 @@
         "$value": "{duration.expressive}",
         "$description": "Emphasized duration for hero or springy motion.",
         "$extensions": {
-          "slop.ui": {
+          "ghostvue": {
             "reducedMotion": "80ms"
           }
         }
@@ -1207,7 +1207,7 @@
           "$value": "{spring.gentle}",
           "$description": "Settle duration for the gentle spring.",
           "$extensions": {
-            "slop.ui": {
+            "ghostvue": {
               "reducedMotion": "80ms"
             }
           }
@@ -1222,7 +1222,7 @@
           "$value": "{spring.snappy}",
           "$description": "Settle duration for the snappy spring.",
           "$extensions": {
-            "slop.ui": {
+            "ghostvue": {
               "reducedMotion": "80ms"
             }
           }
@@ -1237,7 +1237,7 @@
           "$value": "{spring.bouncy}",
           "$description": "Settle duration for the bouncy spring.",
           "$extensions": {
-            "slop.ui": {
+            "ghostvue": {
               "reducedMotion": "80ms"
             }
           }
@@ -1250,7 +1250,7 @@
         "$value": "{motion.duration.moderate}",
         "$description": "Enter duration. Longer than exit so arrivals read clearly.",
         "$extensions": {
-          "slop.ui": {
+          "ghostvue": {
             "reducedMotion": "80ms"
           }
         }
@@ -1267,7 +1267,7 @@
         "$value": "{motion.duration.fast}",
         "$description": "Exit duration. Faster than enter so departures get out of the way.",
         "$extensions": {
-          "slop.ui": {
+          "ghostvue": {
             "reducedMotion": "80ms"
           }
         }
@@ -1284,7 +1284,7 @@
         "$value": "{motion.duration.fast}",
         "$description": "Opacity-only duration. Kept under reduced motion so state changes stay visible.",
         "$extensions": {
-          "slop.ui": {
+          "ghostvue": {
             "reducedMotion": "80ms"
           }
         }
@@ -1295,7 +1295,7 @@
       "$value": "{duration.stagger}",
       "$description": "Delay between staggered items. Zero under reduced motion.",
       "$extensions": {
-        "slop.ui": {
+        "ghostvue": {
           "reducedMotion": "0ms"
         }
       }
@@ -1305,7 +1305,7 @@
       "$value": "{size.motion.translate}",
       "$description": "Enter/exit translation distance. 0 under reduced motion.",
       "$extensions": {
-        "slop.ui": {
+        "ghostvue": {
           "reducedMotion": "0px"
         }
       }
@@ -1315,7 +1315,7 @@
       "$value": "{scale.motion}",
       "$description": "Enter scale. 1 under reduced motion so only opacity remains.",
       "$extensions": {
-        "slop.ui": {
+        "ghostvue": {
           "reducedMotion": "1"
         }
       }
@@ -1326,7 +1326,7 @@
         "$value": "{scale.press}",
         "$description": "Pressed control scale. 1 under reduced motion so only color feedback remains.",
         "$extensions": {
-          "slop.ui": {
+          "ghostvue": {
             "reducedMotion": "1"
           }
         }
@@ -1438,7 +1438,7 @@
       "opacity": {
         "$type": "number",
         "$value": 0.28,
-        "$description": "Peak spotlight opacity before --sl-motion-intensity. 0 hides the glow."
+        "$description": "Peak spotlight opacity before --ghost-motion-intensity. 0 hides the glow."
       },
       "color": {
         "$type": "color",
@@ -1456,7 +1456,7 @@
           "$value": "{spring.snappy}",
           "$description": "Settle duration when a pointer-reactive surface returns to rest.",
           "$extensions": {
-            "slop.ui": {
+            "ghostvue": {
               "reducedMotion": "80ms"
             }
           }
@@ -1468,7 +1468,7 @@
     "amount": {
       "$type": "number",
       "$value": 1,
-      "$description": "Unitless 0–1 corner scale compiled as --sl-roundness. 0 is sharp; 1 is the designed radius. Set on any subtree."
+      "$description": "Unitless 0–1 corner scale compiled as --ghost-roundness. 0 is sharp; 1 is the designed radius. Set on any subtree."
     }
   },
   "type": {

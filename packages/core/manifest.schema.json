@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://unpkg.com/@slop-ui/core@1/manifest.schema.json",
-  "title": "slop-ui component manifest",
-  "description": "Machine-readable public contract for one slop-ui component. Docs, the future @slop-ui/mcp server, codegen, and evals all read this shape. Instance documents set schemaVersion; breaking schema changes bump the $id major version.",
+  "$id": "https://unpkg.com/@ghostvue/core@1/manifest.schema.json",
+  "title": "GhostVue component manifest",
+  "description": "Machine-readable public contract for one GhostVue component. Docs, the future @ghostvue/mcp server, codegen, and evals all read this shape. Instance documents set schemaVersion; breaking schema changes bump the $id major version.",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -29,18 +29,18 @@
     },
     "source": {
       "type": "string",
-      "description": "How this file was produced. generated files are written by pnpm manifests:write from the Sl*.vue source; handwritten is allowed only when no matching SFC exists yet. Machine-derived API fields are overwritten on regeneration; descriptions, status, styling, accessibility, and examples are preserved.",
+      "description": "How this file was produced. generated files are written by pnpm manifests:write from the Ghost*.vue source; handwritten is allowed only when no matching SFC exists yet. Machine-derived API fields are overwritten on regeneration; descriptions, status, styling, accessibility, and examples are preserved.",
       "enum": ["handwritten", "generated"]
     },
     "name": {
       "type": "string",
-      "description": "Public Vue component export name. Must use the Sl prefix from ADR 0003 (SlButton, SlDialog).",
-      "pattern": "^Sl[A-Z][A-Za-z0-9]*$"
+      "description": "Public Vue component export name. Must use the Ghost prefix from ADR 0003 (GhostButton, GhostDialog).",
+      "pattern": "^Ghost[A-Z][A-Za-z0-9]*$"
     },
     "package": {
       "type": "string",
-      "description": "npm package that exports this component. Headless unstyled components live in @slop-ui/vue; themed wrappers live in @slop-ui/themes.",
-      "enum": ["@slop-ui/vue", "@slop-ui/themes"]
+      "description": "npm package that exports this component. Headless unstyled components live in @ghostvue/vue; themed wrappers live in @ghostvue/themes.",
+      "enum": ["@ghostvue/vue", "@ghostvue/themes"]
     },
     "status": {
       "type": "string",
@@ -95,7 +95,7 @@
         },
         "cssProperties": {
           "type": "array",
-          "description": "Public CSS custom properties consumers may set. Must use the --sl- prefix from ADR 0007. Private --_slop-* properties are unpublished and must not appear here.",
+          "description": "Public CSS custom properties consumers may set. Must use the --ghost- prefix from ADR 0007. Private --_ghost-* properties are unpublished and must not appear here.",
           "items": { "$ref": "#/$defs/cssProperty" }
         }
       }
@@ -352,12 +352,12 @@
       "properties": {
         "name": {
           "type": "string",
-          "description": "Custom property name using the --sl- prefix, for example --sl-action-primary-bg.",
-          "pattern": "^--sl-[a-z0-9-]+$"
+          "description": "Custom property name using the --ghost- prefix, for example --ghost-action-primary-bg.",
+          "pattern": "^--ghost-[a-z0-9-]+$"
         },
         "description": {
           "type": "string",
-          "description": "What the property controls. Do not list private --_slop-* names.",
+          "description": "What the property controls. Do not list private --_ghost-* names.",
           "minLength": 1
         }
       }

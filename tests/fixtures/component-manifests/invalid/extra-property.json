@@ -1,8 +1,8 @@
 {
   "schemaVersion": "1.0.0",
   "source": "handwritten",
-  "name": "SlButton",
-  "package": "@slop-ui/vue",
+  "name": "GhostButton",
+  "package": "@ghostvue/vue",
   "status": "experimental",
   "description": "Invalid because passthrough objects are not part of the contract.",
   "props": [],

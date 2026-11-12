@@ -10,31 +10,31 @@ export default defineConfig({
     // Vue package to source instead of a possibly missing dist bundle. Keep
     // tsconfig.app.json `paths` in sync with this alias.
     alias: {
-      '@slop-ui/themes/default.css': fileURLToPath(
+      '@ghostvue/themes/default.css': fileURLToPath(
         new URL('../../packages/themes/src/default.css', import.meta.url),
       ),
-      '@slop-ui/themes/calm.css': fileURLToPath(
+      '@ghostvue/themes/calm.css': fileURLToPath(
         new URL(
           '../../packages/themes/src/generated/calm.css',
           import.meta.url,
         ),
       ),
-      '@slop-ui/themes/vibrant.css': fileURLToPath(
+      '@ghostvue/themes/vibrant.css': fileURLToPath(
         new URL(
           '../../packages/themes/src/generated/vibrant.css',
           import.meta.url,
         ),
       ),
-      '@slop-ui/themes/mono.css': fileURLToPath(
+      '@ghostvue/themes/mono.css': fileURLToPath(
         new URL(
           '../../packages/themes/src/generated/mono.css',
           import.meta.url,
         ),
       ),
-      '@slop-ui/themes': fileURLToPath(
+      '@ghostvue/themes': fileURLToPath(
         new URL('../../packages/themes/src/index.ts', import.meta.url),
       ),
-      '@slop-ui/vue': fileURLToPath(
+      '@ghostvue/vue': fileURLToPath(
         new URL('../../packages/vue/src/index.ts', import.meta.url),
       ),
     },

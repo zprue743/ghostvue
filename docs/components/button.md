@@ -1,14 +1,14 @@
-# SlButton
+# GhostButton
 
-`SlButton` is an unstyled native action control with safe form behavior and a
-consumer-owned loading state. Import it from `@slop-ui/vue` for headless use, or
-from `@slop-ui/themes` for the default visual treatment.
+`GhostButton` is an unstyled native action control with safe form behavior and a
+consumer-owned loading state. Import it from `@ghostvue/vue` for headless use, or
+from `@ghostvue/themes` for the default visual treatment.
 
 ## Basic use
 
 ```vue
 <script setup lang="ts">
-import { SlButton } from '@slop-ui/vue'
+import { GhostButton } from '@ghostvue/vue'
 
 function save() {
   // Start the application-owned action.
@@ -16,7 +16,7 @@ function save() {
 </script>
 
 <template>
-  <SlButton @click="save">Save changes</SlButton>
+  <GhostButton @click="save">Save changes</GhostButton>
 </template>
 ```
 
@@ -28,9 +28,9 @@ Headless use of the same contract without the SFC:
 
 ```vue
 <script setup lang="ts">
-import { useSlButton } from '@slop-ui/vue'
+import { useGhostButton } from '@ghostvue/vue'
 
-const { rootProps } = useSlButton({ loading: saving })
+const { rootProps } = useGhostButton({ loading: saving })
 </script>
 
 <template>
@@ -55,13 +55,13 @@ toggle/`pressed` model.
 
 ```vue
 <script setup lang="ts">
-import { SlButton } from '@slop-ui/themes'
+import { GhostButton } from '@ghostvue/themes'
 </script>
 
 <template>
-  <SlButton variant="outline" tone="danger" :loading="saving">
+  <GhostButton variant="outline" tone="danger" :loading="saving">
     Delete
-  </SlButton>
+  </GhostButton>
 </template>
 ```
 
@@ -79,48 +79,48 @@ only on this wrapper:
 
 Themed size, padding, gap, radius, and type come from density, spacing, and
 roundness tokens. Comfortable `md` is 40px tall with an 8px radius at
-`--sl-roundness: 1`. Compact and spacious nest through `data-sl-density`;
+`--ghost-roundness: 1`. Compact and spacious nest through `data-ghost-density`;
 coarse pointers floor heights to 44px. See
 [density, type, and roundness](../themes/density.md).
 
 Solid accent (the default), neutral, and danger fills use oklch gradients
-(`--sl-gradient-action-*`) with an inset highlight and elevation-2 shadow.
+(`--ghost-gradient-action-*`) with an inset highlight and elevation-2 shadow.
 Hover, press, selected, and dragged are **state-layer overlays**
-(`--sl-state-layer-*`) mixed onto the current tone, so they work in every
+(`--ghost-state-layer-*`) mixed onto the current tone, so they work in every
 mode without per-tone hover colors. There are no per-component tokens.
 
 ### State matrix
 
-Headless `SlButton` has no `pressed` model. The theme still styles
+Headless `GhostButton` has no `pressed` model. The theme still styles
 `aria-pressed` and `aria-grabbed` when a consumer sets them, so later
 toggle and drag controls can reuse the same overlay tokens.
 
-| State                 | How it appears        | Overlay                     | Motion                                                                     | Notes                                                                                            |
-| --------------------- | --------------------- | --------------------------- | -------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
-| Rest                  | Default               | none                        | —                                                                          | Solid: gradient fill, inner highlight, elevation 2.                                              |
-| Hover                 | `:hover`              | `--sl-state-layer-hover`    | color                                                                      | Not applied while disabled or loading.                                                           |
-| Focus-visible         | `:focus-visible`      | two-tone ring               | ring entrance (`--sl-focus-ring-duration`)                                 | Inner `--sl-focus-ring-contrast`, outer `--sl-focus-ring-color`. Instant under reduced motion.   |
-| Hover + focus-visible | both                  | hover overlay + ring        | ring entrance                                                              | Overlay and ring compose.                                                                        |
-| Pressed               | `:active`             | `--sl-state-layer-press`    | scale `--sl-motion-press-scale` (0.98), elevation 1, snappy spring release | No scale under reduced motion; color overlay stays.                                              |
-| Pressed + focus       | both                  | press overlay + ring        | press + ring                                                               |                                                                                                  |
-| Loading               | `loading`             | none                        | spinner                                                                    | Fixed width, `aria-busy`, focusable. Focus-visible still draws the ring.                         |
-| Loading + focus       | both                  | ring                        | spinner + ring                                                             | Activation stays cancelled.                                                                      |
-| Disabled              | `disabled`            | none                        | none                                                                       | Desaturated `--sl-action-disabled-*` colors, `cursor: not-allowed`. Not a low-opacity rest tone. |
-| Selected              | `aria-pressed="true"` | `--sl-state-layer-selected` | —                                                                          | CSS hook only; not a headless API.                                                               |
-| Dragged               | `aria-grabbed="true"` | `--sl-state-layer-dragged`  | —                                                                          | CSS hook for later drag controls.                                                                |
+| State                 | How it appears        | Overlay                        | Motion                                                                        | Notes                                                                                                |
+| --------------------- | --------------------- | ------------------------------ | ----------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| Rest                  | Default               | none                           | —                                                                             | Solid: gradient fill, inner highlight, elevation 2.                                                  |
+| Hover                 | `:hover`              | `--ghost-state-layer-hover`    | color                                                                         | Not applied while disabled or loading.                                                               |
+| Focus-visible         | `:focus-visible`      | two-tone ring                  | ring entrance (`--ghost-focus-ring-duration`)                                 | Inner `--ghost-focus-ring-contrast`, outer `--ghost-focus-ring-color`. Instant under reduced motion. |
+| Hover + focus-visible | both                  | hover overlay + ring           | ring entrance                                                                 | Overlay and ring compose.                                                                            |
+| Pressed               | `:active`             | `--ghost-state-layer-press`    | scale `--ghost-motion-press-scale` (0.98), elevation 1, snappy spring release | No scale under reduced motion; color overlay stays.                                                  |
+| Pressed + focus       | both                  | press overlay + ring           | press + ring                                                                  |                                                                                                      |
+| Loading               | `loading`             | none                           | spinner                                                                       | Fixed width, `aria-busy`, focusable. Focus-visible still draws the ring.                             |
+| Loading + focus       | both                  | ring                           | spinner + ring                                                                | Activation stays cancelled.                                                                          |
+| Disabled              | `disabled`            | none                           | none                                                                          | Desaturated `--ghost-action-disabled-*` colors, `cursor: not-allowed`. Not a low-opacity rest tone.  |
+| Selected              | `aria-pressed="true"` | `--ghost-state-layer-selected` | —                                                                             | CSS hook only; not a headless API.                                                                   |
+| Dragged               | `aria-grabbed="true"` | `--ghost-state-layer-dragged`  | —                                                                             | CSS hook for later drag controls.                                                                    |
 
 Docs and visual snapshots freeze hover/press/focus with `data-visual-state`.
 That attribute is not a component prop.
 
-You can also import the stylesheet and wrap unstyled buttons in `.slop-theme`
+You can also import the stylesheet and wrap unstyled buttons in `.ghost-theme`
 when you want a region of headless components to pick up the defaults. See the
 [default theme guide](../themes/default.md) for tokens and overrides.
 
 ## Loading and disabled actions
 
 ```vue
-<SlButton :loading="saving" @click="save">Save changes</SlButton>
-<SlButton disabled>Unavailable action</SlButton>
+<GhostButton :loading="saving" @click="save">Save changes</GhostButton>
+<GhostButton disabled>Unavailable action</GhostButton>
 ```
 
 Loading adds `aria-disabled="true"`, `aria-busy="true"`, and
@@ -136,24 +136,24 @@ Icon-only buttons require an accessible name. Hide decorative icon content from
 assistive technology.
 
 ```vue
-<SlButton data-icon-only aria-label="Close dialog">
+<GhostButton data-icon-only aria-label="Close dialog">
   <CloseIcon data-part="icon" aria-hidden="true" />
-</SlButton>
+</GhostButton>
 ```
 
 With the themed wrapper, `iconOnly` is a prop rather than a data attribute. Text
 buttons normally receive their accessible name from the slot. You can also
 forward `aria-labelledby` or `aria-describedby`, or compose with
-`SlVisuallyHidden` when the name should be translated as content.
+`GhostVisuallyHidden` when the name should be translated as content.
 
 ## Component refs
 
 ```vue
 <script setup lang="ts">
 import { useTemplateRef } from 'vue'
-import { SlButton, type SlButtonExposed } from '@slop-ui/vue'
+import { GhostButton, type GhostButtonExposed } from '@ghostvue/vue'
 
-const saveButton = useTemplateRef<SlButtonExposed>('saveButton')
+const saveButton = useTemplateRef<GhostButtonExposed>('saveButton')
 
 function returnFocus() {
   saveButton.value?.focus()
@@ -161,7 +161,7 @@ function returnFocus() {
 </script>
 
 <template>
-  <SlButton ref="saveButton">Save changes</SlButton>
+  <GhostButton ref="saveButton">Save changes</GhostButton>
 </template>
 ```
 
@@ -170,13 +170,13 @@ unmount, `element` is `null` and the methods are safe no-ops.
 
 ## Styling
 
-The unstyled component renders one native `<button>` with class `slop-button`,
+The unstyled component renders one native `<button>` with class `ghost-button`,
 `data-part="root"`, `data-state="loading"` while pending, and
 `data-state="disabled"` while disabled and not loading. There is no internal
 wrapper to target.
 
 ```css
-.slop-button[data-state='loading'] {
+.ghost-button[data-state='loading'] {
   /* Applies only while the action is pending. */
 }
 ```
@@ -191,5 +191,5 @@ visible focus indication, sufficient contrast, and an adequate touch target.
 SSR markup is deterministic from props and slot content, and setup does not read
 browser globals. No listeners, timers, or observers require cleanup.
 
-See the [approved SlButton specification](./button-spec.md) for the complete
+See the [approved GhostButton specification](./button-spec.md) for the complete
 behavior and compatibility contract.

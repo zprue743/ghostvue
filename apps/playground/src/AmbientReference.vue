@@ -2,9 +2,9 @@
 import { ref } from 'vue'
 
 import {
-  SlButton as SlButtonThemed,
-  SlInteractiveSurface,
-} from '@slop-ui/themes'
+  GhostButton as GhostButtonThemed,
+  GhostInteractiveSurface,
+} from '@ghostvue/themes'
 
 const intensity = ref(1)
 const flagships = ['calm', 'vibrant', 'mono'] as const
@@ -24,10 +24,10 @@ const flagships = ['calm', 'vibrant', 'mono'] as const
     </p>
 
     <div
-      class="slop-theme stage"
-      data-sl-mode="light"
+      class="ghost-theme stage"
+      data-ghost-mode="light"
       data-testid="ambient-stage"
-      :style="{ '--sl-motion-intensity': String(intensity) }"
+      :style="{ '--ghost-motion-intensity': String(intensity) }"
     >
       <div class="toolbar">
         <span>
@@ -58,7 +58,7 @@ const flagships = ['calm', 'vibrant', 'mono'] as const
       </div>
 
       <div class="demo-grid">
-        <SlInteractiveSurface
+        <GhostInteractiveSurface
           as="article"
           class="host"
           data-elevation="2"
@@ -67,28 +67,28 @@ const flagships = ['calm', 'vibrant', 'mono'] as const
           <h3>Spotlight</h3>
           <p>
             The glow follows the pointer through
-            <code>--sl-pointer-x</code> and <code>--sl-pointer-y</code>. Copy
-            stays readable without the effect.
+            <code>--ghost-pointer-x</code> and <code>--ghost-pointer-y</code>.
+            Copy stays readable without the effect.
           </p>
-        </SlInteractiveSurface>
+        </GhostInteractiveSurface>
 
         <article
           class="host rest"
           data-elevation="2"
           data-testid="ambient-button-host"
         >
-          <h3>SlButton opt-in</h3>
+          <h3>GhostButton opt-in</h3>
           <p>
             Off by default. This control sets
             <code>interactive="spotlight"</code>.
           </p>
           <div data-testid="ambient-button-shot">
-            <SlButtonThemed
+            <GhostButtonThemed
               interactive="spotlight"
               data-testid="ambient-button-spotlight"
             >
               Save report
-            </SlButtonThemed>
+            </GhostButtonThemed>
           </div>
         </article>
       </div>
@@ -103,19 +103,19 @@ const flagships = ['calm', 'vibrant', 'mono'] as const
       <div
         v-for="theme in flagships"
         :key="theme"
-        class="slop-theme flagship"
-        :data-sl-theme="theme"
-        data-sl-mode="light"
+        class="ghost-theme flagship"
+        :data-ghost-theme="theme"
+        data-ghost-mode="light"
         :data-testid="`ambient-flagship-${theme}`"
       >
         <strong>{{ theme }}</strong>
-        <SlInteractiveSurface
+        <GhostInteractiveSurface
           class="host compact"
           data-elevation="2"
           :data-testid="`ambient-flagship-surface-${theme}`"
         >
           Preview
-        </SlInteractiveSurface>
+        </GhostInteractiveSurface>
       </div>
     </div>
   </section>
@@ -127,17 +127,17 @@ const flagships = ['calm', 'vibrant', 'mono'] as const
 }
 
 .stage {
-  border-radius: var(--sl-radius-lg);
-  margin-block: var(--sl-space-stack-md);
-  padding: var(--sl-space-inset-md);
+  border-radius: var(--ghost-radius-lg);
+  margin-block: var(--ghost-space-stack-md);
+  padding: var(--ghost-space-inset-md);
 }
 
 .toolbar {
   align-items: center;
   display: flex;
   flex-wrap: wrap;
-  gap: var(--sl-space-gap-md);
-  margin-block-end: var(--sl-space-stack-md);
+  gap: var(--ghost-space-gap-md);
+  margin-block-end: var(--ghost-space-stack-md);
 }
 
 .toolbar button {
@@ -147,13 +147,13 @@ const flagships = ['calm', 'vibrant', 'mono'] as const
 .demo-grid,
 .flagship-grid {
   display: grid;
-  gap: var(--sl-space-gap-lg);
+  gap: var(--ghost-space-gap-lg);
   grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
 }
 
 :deep(.host) {
   min-block-size: 12rem;
-  padding: var(--sl-space-inset-md);
+  padding: var(--ghost-space-inset-md);
 }
 
 :deep(.host) h3,
@@ -162,15 +162,15 @@ const flagships = ['calm', 'vibrant', 'mono'] as const
 }
 
 :deep(.host) p {
-  color: var(--sl-text-muted);
+  color: var(--ghost-text-muted);
 }
 
 .host.rest {
   display: grid;
-  gap: var(--sl-space-stack-sm);
+  gap: var(--ghost-space-stack-sm);
   justify-items: start;
   min-block-size: 12rem;
-  padding: var(--sl-space-inset-md);
+  padding: var(--ghost-space-inset-md);
 }
 
 :deep(.compact) {
@@ -178,9 +178,9 @@ const flagships = ['calm', 'vibrant', 'mono'] as const
 }
 
 .flagship {
-  border-radius: var(--sl-radius-md);
+  border-radius: var(--ghost-radius-md);
   display: grid;
-  gap: var(--sl-space-stack-sm);
-  padding: var(--sl-space-inset-sm);
+  gap: var(--ghost-space-stack-sm);
+  padding: var(--ghost-space-inset-sm);
 }
 </style>
