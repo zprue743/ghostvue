@@ -1,8 +1,8 @@
-# @slop-ui/core
+# @ghostvue/core
 
 Framework-independent behavior and contracts.
 
-Allowed workspace dependencies: `@slop-ui/shared`.
+Allowed workspace dependencies: `@ghostvue/shared`.
 
 See [package boundaries](../../docs/architecture/package-boundaries.md) for
 the allowed dependency graph and [AGENTS.md](../../AGENTS.md) for the

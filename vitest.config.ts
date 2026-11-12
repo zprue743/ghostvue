@@ -9,7 +9,7 @@ export default defineConfig({
   resolve: {
     // Package exports point at dist, which `pnpm test` does not build.
     alias: {
-      '@slop-ui/vue': fileURLToPath(
+      '@ghostvue/vue': fileURLToPath(
         new URL('./packages/vue/src/index.ts', import.meta.url),
       ),
     },

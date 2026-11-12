@@ -1,15 +1,15 @@
 {
-  "name": "@slop-ui/vue",
+  "name": "@ghostvue/vue",
   "version": "0.0.0",
   "private": true,
-  "description": "Vue 3 integration for the headless-first slop-ui library.",
+  "description": "Vue 3 integration for the headless-first GhostVue library.",
   "license": "MIT",
   "type": "module",
   "sideEffects": false,
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/slop-ui.js"
+      "import": "./dist/ghostvue.js"
     }
   },
   "files": [
@@ -20,8 +20,8 @@
     "typecheck": "vue-tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
-    "@slop-ui/core": "workspace:*",
-    "@slop-ui/shared": "workspace:*"
+    "@ghostvue/core": "workspace:*",
+    "@ghostvue/shared": "workspace:*"
   },
   "peerDependencies": {
     "vue": "^3.5.0"

@@ -1,8 +1,8 @@
 {
-  "name": "@slop-ui/shared",
+  "name": "@ghostvue/shared",
   "version": "0.0.0",
   "private": true,
-  "description": "Framework-neutral low-level utilities shared by slop-ui packages.",
+  "description": "Framework-neutral low-level utilities shared by GhostVue packages.",
   "license": "MIT",
   "type": "module",
   "sideEffects": false,

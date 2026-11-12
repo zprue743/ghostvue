@@ -76,10 +76,10 @@ importers:
 
   apps/playground:
     dependencies:
-      '@slop-ui/themes':
+      '@ghostvue/themes':
         specifier: workspace:*
         version: link:../../packages/themes
-      '@slop-ui/vue':
+      '@ghostvue/vue':
         specifier: workspace:*
         version: link:../../packages/vue
       vue:
@@ -88,7 +88,7 @@ importers:
 
   packages/core:
     dependencies:
-      '@slop-ui/shared':
+      '@ghostvue/shared':
         specifier: workspace:*
         version: link:../shared
 
@@ -96,7 +96,7 @@ importers:
 
   packages/themes:
     dependencies:
-      '@slop-ui/vue':
+      '@ghostvue/vue':
         specifier: workspace:*
         version: link:../vue
     devDependencies:
@@ -109,10 +109,10 @@ importers:
 
   packages/vue:
     dependencies:
-      '@slop-ui/core':
+      '@ghostvue/core':
         specifier: workspace:*
         version: link:../core
-      '@slop-ui/shared':
+      '@ghostvue/shared':
         specifier: workspace:*
         version: link:../shared
     devDependencies:

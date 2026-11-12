@@ -8,26 +8,26 @@
 export const workspacePackages = [
   {
     directory: 'shared',
-    name: '@slop-ui/shared',
+    name: '@ghostvue/shared',
     responsibility: 'Proven framework-neutral low-level utilities.',
     allowedDependencies: [],
   },
   {
     directory: 'core',
-    name: '@slop-ui/core',
+    name: '@ghostvue/core',
     responsibility: 'Framework-independent behavior and contracts.',
-    allowedDependencies: ['@slop-ui/shared'],
+    allowedDependencies: ['@ghostvue/shared'],
   },
   {
     directory: 'vue',
-    name: '@slop-ui/vue',
+    name: '@ghostvue/vue',
     responsibility: 'Vue lifecycle, reactivity, composables, and components.',
-    allowedDependencies: ['@slop-ui/core', '@slop-ui/shared'],
+    allowedDependencies: ['@ghostvue/core', '@ghostvue/shared'],
   },
   {
     directory: 'themes',
-    name: '@slop-ui/themes',
+    name: '@ghostvue/themes',
     responsibility: 'Optional theme and design-token infrastructure.',
-    allowedDependencies: ['@slop-ui/vue'],
+    allowedDependencies: ['@ghostvue/vue'],
   },
 ]

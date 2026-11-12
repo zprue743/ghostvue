@@ -8,8 +8,8 @@
     "types": [],
     // Match vite.config.ts: playground typecheck runs before dist types exist.
     "paths": {
-      "@slop-ui/themes": ["../../packages/themes/src/index.ts"],
-      "@slop-ui/vue": ["../../packages/vue/src/index.ts"]
+      "@ghostvue/themes": ["../../packages/themes/src/index.ts"],
+      "@ghostvue/vue": ["../../packages/vue/src/index.ts"]
     }
   },
   // Composite projects must list files reached through `paths`.

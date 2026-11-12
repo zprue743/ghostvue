@@ -29,14 +29,16 @@ export default defineConfig({
     'adr/README.md': 'adr/index.md',
   },
   // Restore a persisted theme before paint; first paint dogfoods calm (ADR 0008).
-  head: [['script', { id: 'slop-docs-theme-restore' }, restoreDocsThemeScript]],
+  head: [
+    ['script', { id: 'ghost-docs-theme-restore' }, restoreDocsThemeScript],
+  ],
   transformHtml(code) {
     return applyDocsThemeHost(code)
   },
   vite: {
     plugins: [
       {
-        name: 'slop-docs-theme-host',
+        name: 'ghost-docs-theme-host',
         transformIndexHtml(html) {
           return applyDocsThemeHost(html)
         },
@@ -45,16 +47,20 @@ export default defineConfig({
     resolve: {
       alias: {
         // Browser CI builds docs without `pnpm build`, so resolve workspace
-        // packages to source. CSS aliases must stay above `@slop-ui/themes`
+        // packages to source. CSS aliases must stay above `@ghostvue/themes`
         // because Vite prefix-matches the package name.
-        '@slop-ui/themes/default.css': packageSrc('themes/src/default.css'),
-        '@slop-ui/themes/calm.css': packageSrc('themes/src/generated/calm.css'),
-        '@slop-ui/themes/vibrant.css': packageSrc(
+        '@ghostvue/themes/default.css': packageSrc('themes/src/default.css'),
+        '@ghostvue/themes/calm.css': packageSrc(
+          'themes/src/generated/calm.css',
+        ),
+        '@ghostvue/themes/vibrant.css': packageSrc(
           'themes/src/generated/vibrant.css',
         ),
-        '@slop-ui/themes/mono.css': packageSrc('themes/src/generated/mono.css'),
-        '@slop-ui/themes': packageSrc('themes/src/index.ts'),
-        '@slop-ui/vue': packageSrc('vue/src/index.ts'),
+        '@ghostvue/themes/mono.css': packageSrc(
+          'themes/src/generated/mono.css',
+        ),
+        '@ghostvue/themes': packageSrc('themes/src/index.ts'),
+        '@ghostvue/vue': packageSrc('vue/src/index.ts'),
       },
     },
   },

@@ -53,7 +53,7 @@ for (const directory of packageDirectories) {
 
   for (const dependencyName of dependencyGroups.flatMap(Object.keys)) {
     if (
-      dependencyName.startsWith('@slop-ui/') &&
+      dependencyName.startsWith('@ghostvue/') &&
       !allowedDependencies.has(dependencyName)
     ) {
       violations.push(`${packageJson.name} may not depend on ${dependencyName}`)

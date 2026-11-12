@@ -1,5 +1,5 @@
 {
-  "name": "@slop-ui/playground",
+  "name": "@ghostvue/playground",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -9,8 +9,8 @@
     "typecheck": "vue-tsc -p tsconfig.app.json --noEmit && tsc -p tsconfig.node.json --noEmit"
   },
   "dependencies": {
-    "@slop-ui/themes": "workspace:*",
-    "@slop-ui/vue": "workspace:*",
+    "@ghostvue/themes": "workspace:*",
+    "@ghostvue/vue": "workspace:*",
     "vue": "3.5.41"
   }
 }

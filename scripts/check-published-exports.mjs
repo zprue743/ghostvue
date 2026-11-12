@@ -78,10 +78,10 @@ for (const directory of packageDirectories) {
     }
   }
 
-  if (packageJson.name === '@slop-ui/vue') {
+  if (packageJson.name === '@ghostvue/vue') {
     try {
       const bundle = await readFile(
-        resolve(packageDirectory, 'dist/slop-ui.js'),
+        resolve(packageDirectory, 'dist/ghostvue.js'),
         'utf8',
       )
       // Vite lib mode must leave this identifier so consumer bundlers can DCE
