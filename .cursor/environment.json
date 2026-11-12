@@ -1,0 +1,4 @@
+{
+  "name": "GhostVue",
+  "install": "export COREPACK_ENABLE_DOWNLOAD_PROMPT=0 && (corepack enable pnpm || sudo env \"PATH=$PATH\" \"$(command -v corepack)\" enable pnpm --install-directory /usr/local/bin) && corepack install && pnpm install --frozen-lockfile && pnpm exec playwright install --with-deps chromium"
+}
