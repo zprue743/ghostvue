@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, useTemplateRef } from 'vue'
 
-import { SlButton as SlButtonThemed } from '@slop-ui/themes'
+import { GhostButton as GhostButtonThemed } from '@ghostvue/themes'
 
 import AmbientReference from './AmbientReference.vue'
 import ButtonStateMatrix from './ButtonStateMatrix.vue'
@@ -9,11 +9,11 @@ import DensityReference from './DensityReference.vue'
 import MotionReference from './MotionReference.vue'
 import VisualReference from './VisualReference.vue'
 import {
-  SlButton,
-  SlVisuallyHidden,
+  GhostButton,
+  GhostVisuallyHidden,
   useFocusScope,
   useRovingFocus,
-} from '@slop-ui/vue'
+} from '@ghostvue/vue'
 
 const flagships = ['calm', 'vibrant', 'mono'] as const
 const flagshipDensities = ['comfortable'] as const
@@ -88,20 +88,20 @@ function closeNested(): void {
 <template>
   <header>
     <!-- Skip link must reveal on focus; without `focusable` it stays invisible. -->
-    <SlVisuallyHidden focusable>
+    <GhostVisuallyHidden focusable>
       <a class="skip-link" href="#main">Skip to content</a>
-    </SlVisuallyHidden>
+    </GhostVisuallyHidden>
   </header>
 
   <main id="main" tabindex="-1">
-    <h1>slop-ui playground</h1>
+    <h1>GhostVue playground</h1>
     <p>
       Pre-release host for components that have passed the component gate. Focus
       primitives below are fixtures for keyboard tests, not library components.
     </p>
 
     <section aria-labelledby="visually-hidden-heading">
-      <h2 id="visually-hidden-heading">SlVisuallyHidden</h2>
+      <h2 id="visually-hidden-heading">GhostVisuallyHidden</h2>
 
       <table>
         <caption>
@@ -112,7 +112,9 @@ function closeNested(): void {
             <th scope="col">Report</th>
             <th scope="col">Owner</th>
             <!-- Real `th` for AT; sighted users infer the column from context. -->
-            <SlVisuallyHidden as="th" scope="col"> Actions </SlVisuallyHidden>
+            <GhostVisuallyHidden as="th" scope="col">
+              Actions
+            </GhostVisuallyHidden>
           </tr>
         </thead>
         <tbody>
@@ -120,7 +122,7 @@ function closeNested(): void {
             <td>{{ report.name }}</td>
             <td>{{ report.owner }}</td>
             <td>
-              <SlButton @click="remove(report.name)">
+              <GhostButton @click="remove(report.name)">
                 <svg
                   aria-hidden="true"
                   viewBox="0 0 16 16"
@@ -129,8 +131,10 @@ function closeNested(): void {
                 >
                   <path d="M3 3l10 10M13 3L3 13" stroke="currentColor" />
                 </svg>
-                <SlVisuallyHidden>Delete {{ report.name }}</SlVisuallyHidden>
-              </SlButton>
+                <GhostVisuallyHidden>
+                  Delete {{ report.name }}
+                </GhostVisuallyHidden>
+              </GhostButton>
             </td>
           </tr>
         </tbody>
@@ -139,9 +143,9 @@ function closeNested(): void {
       <p v-if="reports.length === 0">Every report was deleted.</p>
 
       <!-- Live region must exist before its text changes. -->
-      <SlVisuallyHidden role="status" aria-live="polite">
+      <GhostVisuallyHidden role="status" aria-live="polite">
         {{ status }}
-      </SlVisuallyHidden>
+      </GhostVisuallyHidden>
     </section>
 
     <VisualReference />
@@ -157,97 +161,101 @@ function closeNested(): void {
     <AmbientReference />
 
     <section aria-labelledby="button-heading">
-      <h2 id="button-heading">SlButton</h2>
+      <h2 id="button-heading">GhostButton</h2>
       <p>Activations: {{ activations }}</p>
       <div class="comparison">
         <fieldset>
           <legend>Headless</legend>
           <p>No theme styles are applied to these buttons.</p>
           <div class="examples">
-            <SlButton @click="activations += 1"> Run action </SlButton>
-            <SlButton disabled @click="activations += 1">
+            <GhostButton @click="activations += 1"> Run action </GhostButton>
+            <GhostButton disabled @click="activations += 1">
               Disabled action
-            </SlButton>
+            </GhostButton>
           </div>
           <form class="form-example" @submit.prevent="submissions += 1">
             <span>Form submissions: {{ submissions }}</span>
             <div class="examples">
-              <SlButton>Default form action</SlButton>
-              <SlButton type="submit">Submit form</SlButton>
+              <GhostButton>Default form action</GhostButton>
+              <GhostButton type="submit">Submit form</GhostButton>
             </div>
           </form>
         </fieldset>
 
-        <fieldset class="slop-theme">
+        <fieldset class="ghost-theme">
           <legend>System mode</legend>
           <p>
-            Unset data-sl-mode follows prefers-color-scheme from CSS, with no
+            Unset data-ghost-mode follows prefers-color-scheme from CSS, with no
             script required.
           </p>
           <div class="examples">
             <div class="example">
               <span>System action</span>
-              <SlButtonThemed>System action</SlButtonThemed>
+              <GhostButtonThemed>System action</GhostButtonThemed>
             </div>
           </div>
         </fieldset>
 
-        <fieldset class="slop-theme" data-sl-mode="light">
+        <fieldset class="ghost-theme" data-ghost-mode="light">
           <legend>Default theme</legend>
           <p>The same actions with the themed wrapper enabled.</p>
           <div class="examples">
             <div class="example">
               <span>Icon with text</span>
-              <SlButtonThemed @click="activations += 1">
+              <GhostButtonThemed @click="activations += 1">
                 <span data-part="icon">
                   <svg aria-hidden="true" viewBox="0 0 16 16">
                     <path d="M8 3v10M3 8h10" stroke="currentColor" />
                   </svg>
                 </span>
                 Add item
-              </SlButtonThemed>
+              </GhostButtonThemed>
             </div>
             <div class="example">
               <span>Neutral soft</span>
-              <SlButtonThemed
+              <GhostButtonThemed
                 variant="soft"
                 tone="neutral"
                 size="sm"
                 @click="activations += 1"
               >
                 Neutral action
-              </SlButtonThemed>
+              </GhostButtonThemed>
             </div>
             <div class="example">
               <span>Outline</span>
-              <SlButtonThemed variant="outline" @click="activations += 1">
+              <GhostButtonThemed variant="outline" @click="activations += 1">
                 Outline action
-              </SlButtonThemed>
+              </GhostButtonThemed>
             </div>
             <div class="example">
               <span>Danger solid</span>
-              <SlButtonThemed tone="danger" size="lg" @click="activations += 1">
+              <GhostButtonThemed
+                tone="danger"
+                size="lg"
+                @click="activations += 1"
+              >
                 Delete item
-              </SlButtonThemed>
+              </GhostButtonThemed>
             </div>
             <div class="example">
               <span>Loading (activations: {{ pendingActivations }})</span>
               <div class="examples">
-                <SlButtonThemed :loading="isPending" @click="startPending">
+                <GhostButtonThemed :loading="isPending" @click="startPending">
                   Save changes
-                </SlButtonThemed>
-                <SlButtonThemed
+                </GhostButtonThemed>
+                <GhostButtonThemed
                   variant="ghost"
                   tone="neutral"
                   @click="isPending = false"
                 >
                   Reset
-                </SlButtonThemed>
+                </GhostButtonThemed>
               </div>
             </div>
             <div class="example">
               <span>Custom loading indicator</span>
-              <SlButtonThemed loading>
+              <GhostButtonThemed loading>
                 <svg
                   data-part="loading-indicator"
                   aria-hidden="true"
@@ -263,11 +271,11 @@ function closeNested(): void {
                   />
                 </svg>
                 Publishing
-              </SlButtonThemed>
+              </GhostButtonThemed>
             </div>
             <div class="example">
               <span>Icon only</span>
-              <SlButtonThemed
+              <GhostButtonThemed
                 icon-only
                 aria-label="Close playground"
                 @click="activations += 1"
@@ -275,17 +283,17 @@ function closeNested(): void {
                 <svg data-part="icon" aria-hidden="true" viewBox="0 0 16 16">
                   <path d="M3 3l10 10M13 3L3 13" stroke="currentColor" />
                 </svg>
-              </SlButtonThemed>
+              </GhostButtonThemed>
             </div>
             <div class="example block-example">
               <span>Consumer override</span>
-              <SlButtonThemed
+              <GhostButtonThemed
                 class="product-button"
                 block
                 @click="activations += 1"
               >
                 Product action
-              </SlButtonThemed>
+              </GhostButtonThemed>
             </div>
           </div>
         </fieldset>

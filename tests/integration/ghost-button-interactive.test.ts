@@ -2,7 +2,7 @@ import { mount } from '@vue/test-utils'
 import { nextTick } from 'vue'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
-import { SlButton } from '../../packages/themes/src/sl-button'
+import { GhostButton } from '../../packages/themes/src/ghost-button'
 
 afterEach(() => {
   vi.unstubAllGlobals()
@@ -27,10 +27,10 @@ function stubFinePointer() {
   vi.stubGlobal('ResizeObserver', IdleObserver)
 }
 
-describe('themed SlButton interactivity', () => {
+describe('themed GhostButton interactivity', () => {
   it('omits spotlight markup when the prop is unset', async () => {
     stubFinePointer()
-    const wrapper = mount(SlButton, {
+    const wrapper = mount(GhostButton, {
       attachTo: document.body,
       slots: { default: 'Save' },
     })
@@ -46,7 +46,7 @@ describe('themed SlButton interactivity', () => {
 
   it('opts into spotlight without overwriting loading data-state', async () => {
     stubFinePointer()
-    const wrapper = mount(SlButton, {
+    const wrapper = mount(GhostButton, {
       attachTo: document.body,
       props: { interactive: 'spotlight', loading: true },
       slots: { default: 'Save' },

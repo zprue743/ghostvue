@@ -200,13 +200,13 @@ describe('useControllableState', () => {
     await nextTick()
     expect(warn).toHaveBeenCalledTimes(1)
     expect(warn).toHaveBeenLastCalledWith(
-      expect.stringContaining('[slop-ui SLOP001]'),
+      expect.stringContaining('[ghostvue GHOST001]'),
     )
     expect(warn).toHaveBeenLastCalledWith(
       expect.stringContaining('controlled to uncontrolled'),
     )
     expect(warn).toHaveBeenLastCalledWith(
-      expect.stringContaining('docs/warnings.md#slop001'),
+      expect.stringContaining('docs/warnings.md#ghost001'),
     )
     expect(result.value).toBe(false)
 

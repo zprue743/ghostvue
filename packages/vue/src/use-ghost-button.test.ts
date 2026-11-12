@@ -2,7 +2,7 @@ import { mount } from '@vue/test-utils'
 import { defineComponent, h, ref } from 'vue'
 import { describe, expect, it } from 'vitest'
 
-import { useSlButton } from './use-sl-button'
+import { useGhostButton } from './use-ghost-button'
 
 function mountComposable<Value>(setup: () => Value) {
   let result!: Value
@@ -17,9 +17,9 @@ function mountComposable<Value>(setup: () => Value) {
   return { result, wrapper }
 }
 
-describe('useSlButton', () => {
+describe('useGhostButton', () => {
   it('defaults to a non-submitting native type', () => {
-    const { result, wrapper } = mountComposable(() => useSlButton())
+    const { result, wrapper } = mountComposable(() => useGhostButton())
 
     expect(result.rootProps.value.type).toBe('button')
     expect(result.rootProps.value['data-part']).toBe('root')
@@ -29,7 +29,9 @@ describe('useSlButton', () => {
 
   it('exposes loading as data-state without disabling', () => {
     const loading = ref(true)
-    const { result, wrapper } = mountComposable(() => useSlButton({ loading }))
+    const { result, wrapper } = mountComposable(() =>
+      useGhostButton({ loading }),
+    )
 
     expect(result.rootProps.value.disabled).toBeUndefined()
     expect(result.rootProps.value['aria-disabled']).toBe('true')
@@ -41,7 +43,7 @@ describe('useSlButton', () => {
     const disabled = ref(true)
     const loading = ref(false)
     const { result, wrapper } = mountComposable(() =>
-      useSlButton({ disabled, loading }),
+      useGhostButton({ disabled, loading }),
     )
 
     expect(result.rootProps.value['data-state']).toBe('disabled')

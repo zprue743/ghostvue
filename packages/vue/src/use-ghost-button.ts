@@ -1,10 +1,10 @@
 import { computed, toValue, type ComputedRef } from 'vue'
 
-import type { SlButtonType, UseSlButtonOptions } from './sl-button'
+import type { GhostButtonType, UseGhostButtonOptions } from './ghost-button'
 
-export interface SlButtonRootProps {
-  class: 'slop-button'
-  type: SlButtonType
+export interface GhostButtonRootProps {
+  class: 'ghost-button'
+  type: GhostButtonType
   disabled: boolean | undefined
   'aria-disabled': 'true' | undefined
   'aria-busy': 'true' | undefined
@@ -14,10 +14,10 @@ export interface SlButtonRootProps {
 }
 
 /** Native type/disabled, loading that stays focusable, `data-part` / `data-state`. */
-export function useSlButton(options: UseSlButtonOptions = {}): {
+export function useGhostButton(options: UseGhostButtonOptions = {}): {
   isDisabled: ComputedRef<boolean>
   isLoading: ComputedRef<boolean>
-  rootProps: ComputedRef<SlButtonRootProps>
+  rootProps: ComputedRef<GhostButtonRootProps>
 } {
   const isDisabled = computed(() => Boolean(toValue(options.disabled)))
   const isLoading = computed(() => Boolean(toValue(options.loading)))
@@ -31,8 +31,8 @@ export function useSlButton(options: UseSlButtonOptions = {}): {
     event.stopImmediatePropagation()
   }
 
-  const rootProps = computed((): SlButtonRootProps => ({
-    class: 'slop-button',
+  const rootProps = computed((): GhostButtonRootProps => ({
+    class: 'ghost-button',
     type: toValue(options.type) ?? 'button',
     disabled: isDisabled.value || undefined,
     'aria-disabled': isLoading.value ? 'true' : undefined,

@@ -1,18 +1,18 @@
 import { defineComponent, h, ref, type PropType } from 'vue'
 
 import {
-  SlInteractiveSurface as SlUnstyledInteractiveSurface,
+  GhostInteractiveSurface as GhostUnstyledInteractiveSurface,
   type InteractiveEffect,
   type InteractiveSurfaceElement,
-  type SlInteractiveSurfaceExposed,
-} from '@slop-ui/vue'
+  type GhostInteractiveSurfaceExposed,
+} from '@ghostvue/vue'
 
 /**
  * Themed wrapper: instance-scoped CSS. Behavior stays on the unstyled
  * primitive; native attrs fall through.
  */
-export const SlInteractiveSurface = defineComponent({
-  name: 'SlInteractiveSurface',
+export const GhostInteractiveSurface = defineComponent({
+  name: 'GhostInteractiveSurface',
   inheritAttrs: false,
   props: {
     as: {
@@ -25,18 +25,18 @@ export const SlInteractiveSurface = defineComponent({
     },
   },
   setup(props, { attrs, slots, expose }) {
-    const inner = ref<SlInteractiveSurfaceExposed | null>(null)
+    const inner = ref<GhostInteractiveSurfaceExposed | null>(null)
 
     expose({
       get element() {
         return inner.value?.element ?? null
       },
-    } satisfies SlInteractiveSurfaceExposed)
+    } satisfies GhostInteractiveSurfaceExposed)
 
     return () =>
-      h('span', { class: 'slop-themed-scope' }, [
+      h('span', { class: 'ghost-themed-scope' }, [
         h(
-          SlUnstyledInteractiveSurface,
+          GhostUnstyledInteractiveSurface,
           {
             ...attrs,
             ref: inner,
@@ -52,5 +52,5 @@ export const SlInteractiveSurface = defineComponent({
 export type {
   InteractiveEffect,
   InteractiveSurfaceElement,
-  SlInteractiveSurfaceExposed,
+  GhostInteractiveSurfaceExposed,
 }

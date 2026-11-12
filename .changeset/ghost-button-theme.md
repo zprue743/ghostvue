@@ -1,7 +1,7 @@
 ---
-'@slop-ui/themes': minor
+'@ghostvue/themes': minor
 ---
 
-Add a themed `SlButton` wrapper and default Button CSS. Visual props
+Add a themed `GhostButton` wrapper and default Button CSS. Visual props
 (`variant`, `tone`, `size`, `block`, `iconOnly`) stay on the wrapper; headless
 buttons on the same page remain unstyled.

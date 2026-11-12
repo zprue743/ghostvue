@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { useTemplateRef } from 'vue'
 
-import { SlButton, type SlButtonExposed } from '../src'
+import { GhostButton, type GhostButtonExposed } from '../src'
 
-const button = useTemplateRef<SlButtonExposed>('button')
+const button = useTemplateRef<GhostButtonExposed>('button')
 
 function handleClick(event: MouseEvent) {
   event.preventDefault()
@@ -17,7 +17,7 @@ void focusButton
 </script>
 
 <template>
-  <SlButton
+  <GhostButton
     ref="button"
     class="product-button"
     type="submit"

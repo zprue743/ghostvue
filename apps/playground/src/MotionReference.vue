@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, useTemplateRef } from 'vue'
 
-import { startThemeTransition } from '@slop-ui/themes'
+import { startThemeTransition } from '@ghostvue/themes'
 
 const recipes = [
   'standard',
@@ -40,10 +40,10 @@ async function crossfade(mode: 'light' | 'dark') {
 
     <div
       ref="motion-stage"
-      class="slop-theme stage"
-      data-sl-mode="light"
+      class="ghost-theme stage"
+      data-ghost-mode="light"
       data-testid="motion-stage"
-      :style="{ '--sl-motion-intensity': String(intensity) }"
+      :style="{ '--ghost-motion-intensity': String(intensity) }"
     >
       <div class="toolbar">
         <button type="button" data-testid="motion-replay" @click="play">
@@ -137,7 +137,7 @@ async function crossfade(mode: 'light' | 'dark') {
 }
 
 .track {
-  background: var(--sl-surface-muted-bg);
+  background: var(--ghost-surface-muted-bg);
   border-radius: 999px;
   min-block-size: 2rem;
   overflow: hidden;
@@ -145,7 +145,7 @@ async function crossfade(mode: 'light' | 'dark') {
 }
 
 .dot {
-  background: var(--sl-action-primary-bg);
+  background: var(--ghost-action-primary-bg);
   block-size: 1.25rem;
   border-radius: 999px;
   display: block;

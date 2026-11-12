@@ -13,10 +13,10 @@ import type {
   InteractiveEffect,
   InteractiveStateAttribute,
   InteractiveSurfaceState,
-  UseSlInteractiveSurfaceOptions,
-} from './sl-interactive-surface'
+  UseGhostInteractiveSurfaceOptions,
+} from './ghost-interactive-surface'
 
-export interface SlInteractiveSurfaceRootProps {
+export interface GhostInteractiveSurfaceRootProps {
   'data-part': 'root'
   'data-interactive': string
   'data-state'?: InteractiveSurfaceState
@@ -33,17 +33,17 @@ export interface SlInteractiveSurfaceRootProps {
  * cancel the frame loop. One tracking surface is a documented budget, not
  * a singleton.
  */
-export function useSlInteractiveSurface(
+export function useGhostInteractiveSurface(
   target: MaybeRefOrGetter<HTMLElement | null | undefined>,
-  options?: UseSlInteractiveSurfaceOptions,
+  options?: UseGhostInteractiveSurfaceOptions,
 ): {
-  rootProps: ComputedRef<SlInteractiveSurfaceRootProps>
+  rootProps: ComputedRef<GhostInteractiveSurfaceRootProps>
 } {
   const state = ref<InteractiveSurfaceState>('off')
   const effects = computed((): readonly InteractiveEffect[] => {
     const value = toValue(options?.effects)
     // `undefined` means the dedicated surface default. An empty list is an
-    // explicit off (themed SlButton with no interactive prop).
+    // explicit off (themed GhostButton with no interactive prop).
     return value ?? ['spotlight']
   })
   const stateAttribute = computed(
@@ -51,7 +51,7 @@ export function useSlInteractiveSurface(
       toValue(options?.stateAttribute) ?? 'data-state',
   )
 
-  const rootProps = computed((): SlInteractiveSurfaceRootProps => {
+  const rootProps = computed((): GhostInteractiveSurfaceRootProps => {
     const status = state.value
     const interactive = effects.value.join(' ')
     if (stateAttribute.value === 'data-interactive-state') {
@@ -112,13 +112,16 @@ export function useSlInteractiveSurface(
 
         function writeRest(): void {
           const box = measure()
-          host.style.setProperty('--sl-pointer-x', `${String(box.width / 2)}px`)
           host.style.setProperty(
-            '--sl-pointer-y',
+            '--ghost-pointer-x',
+            `${String(box.width / 2)}px`,
+          )
+          host.style.setProperty(
+            '--ghost-pointer-y',
             `${String(box.height / 2)}px`,
           )
-          host.style.setProperty('--sl-pointer-nx', '0')
-          host.style.setProperty('--sl-pointer-ny', '0')
+          host.style.setProperty('--ghost-pointer-nx', '0')
+          host.style.setProperty('--ghost-pointer-ny', '0')
         }
 
         function writeSample(clientX: number, clientY: number): void {
@@ -127,10 +130,10 @@ export function useSlInteractiveSurface(
           const localY = clientY - box.top
           const nx = box.width === 0 ? 0 : localX / box.width - 0.5
           const ny = box.height === 0 ? 0 : localY / box.height - 0.5
-          host.style.setProperty('--sl-pointer-x', `${String(localX)}px`)
-          host.style.setProperty('--sl-pointer-y', `${String(localY)}px`)
-          host.style.setProperty('--sl-pointer-nx', String(nx))
-          host.style.setProperty('--sl-pointer-ny', String(ny))
+          host.style.setProperty('--ghost-pointer-x', `${String(localX)}px`)
+          host.style.setProperty('--ghost-pointer-y', `${String(localY)}px`)
+          host.style.setProperty('--ghost-pointer-nx', String(nx))
+          host.style.setProperty('--ghost-pointer-ny', String(ny))
         }
 
         function cancelFrame(): void {

@@ -1,14 +1,14 @@
 {
   "schemaVersion": "1.0.0",
   "source": "generated",
-  "name": "SlVisuallyHidden",
-  "package": "@slop-ui/vue",
+  "name": "GhostVisuallyHidden",
+  "package": "@ghostvue/vue",
   "status": "experimental",
-  "description": "Renders content assistive technology can reach but sighted users do not see. useSlVisuallyHidden owns the clip technique and focus-driven reveal; SlVisuallyHidden is the thin unstyled element. There is no themed wrapper.",
+  "description": "Renders content assistive technology can reach but sighted users do not see. useGhostVisuallyHidden owns the clip technique and focus-driven reveal; GhostVisuallyHidden is the thin unstyled element. There is no themed wrapper.",
   "props": [
     {
       "name": "as",
-      "type": "SlVisuallyHiddenElement",
+      "type": "GhostVisuallyHiddenElement",
       "default": "span",
       "required": false,
       "description": "Rendered root element. Choose the tag that is valid in the parent context. Interactive and void elements are excluded.",

@@ -4,9 +4,9 @@ import { useTemplateRef } from 'vue'
 import type {
   InteractiveEffect,
   InteractiveSurfaceElement,
-  SlInteractiveSurfaceExposed,
-} from './sl-interactive-surface'
-import { useSlInteractiveSurface } from './use-sl-interactive-surface'
+  GhostInteractiveSurfaceExposed,
+} from './ghost-interactive-surface'
+import { useGhostInteractiveSurface } from './use-ghost-interactive-surface'
 
 const props = withDefaults(
   defineProps<{
@@ -22,11 +22,11 @@ const props = withDefaults(
 )
 
 const element = useTemplateRef<HTMLElement>('element')
-const { rootProps } = useSlInteractiveSurface(element, {
+const { rootProps } = useGhostInteractiveSurface(element, {
   effects: () => props.effects,
 })
 
-defineExpose<SlInteractiveSurfaceExposed>({
+defineExpose<GhostInteractiveSurfaceExposed>({
   get element() {
     return element.value
   },

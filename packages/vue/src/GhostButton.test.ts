@@ -3,22 +3,22 @@ import { h } from 'vue'
 import { renderToString } from 'vue/server-renderer'
 import { describe, expect, it, vi } from 'vitest'
 
-import SlButton from './SlButton.vue'
-import type { SlButtonExposed } from './sl-button'
+import GhostButton from './GhostButton.vue'
+import type { GhostButtonExposed } from './ghost-button'
 
-describe('SlButton', () => {
+describe('GhostButton', () => {
   it('renders native button semantics and defaults to a non-submitting type', () => {
-    const wrapper = mount(SlButton, { slots: { default: 'Save' } })
+    const wrapper = mount(GhostButton, { slots: { default: 'Save' } })
 
     expect(wrapper.get('button').attributes('type')).toBe('button')
-    expect(wrapper.get('button').classes()).toContain('slop-button')
+    expect(wrapper.get('button').classes()).toContain('ghost-button')
     expect(wrapper.get('button').attributes('data-part')).toBe('root')
     expect(wrapper.text()).toBe('Save')
   })
 
   it('forwards native attributes and listeners to the button', () => {
     const onClick = vi.fn()
-    const wrapper = mount(SlButton, {
+    const wrapper = mount(GhostButton, {
       attrs: {
         'aria-describedby': 'save-help',
         class: 'action',
@@ -37,14 +37,14 @@ describe('SlButton', () => {
     expect(button.attributes('formaction')).toBe('/settings')
     expect(button.attributes('name')).toBe('intent')
     expect(button.attributes('value')).toBe('save')
-    expect(button.classes()).toContain('slop-button')
+    expect(button.classes()).toContain('ghost-button')
     expect(button.classes()).toContain('action')
     expect(onClick).toHaveBeenCalledOnce()
   })
 
   it('prevents activation while disabled', () => {
     const onClick = vi.fn()
-    const wrapper = mount(SlButton, {
+    const wrapper = mount(GhostButton, {
       attrs: { onClick },
       props: { disabled: true },
       slots: { default: 'Save' },
@@ -60,7 +60,7 @@ describe('SlButton', () => {
 
   it('prevents loading activation without discarding focus', async () => {
     const onClick = vi.fn()
-    const wrapper = mount(SlButton, {
+    const wrapper = mount(GhostButton, {
       attachTo: document.body,
       attrs: { onClick },
       slots: { default: 'Save' },
@@ -87,7 +87,7 @@ describe('SlButton', () => {
       setup() {
         return () =>
           h('form', { onSubmit }, [
-            h(SlButton, { loading: true, type: 'submit' }, () => 'Save'),
+            h(GhostButton, { loading: true, type: 'submit' }, () => 'Save'),
           ])
       },
     })
@@ -98,7 +98,7 @@ describe('SlButton', () => {
   })
 
   it('marks loading state without replacing the accessible content', () => {
-    const wrapper = mount(SlButton, {
+    const wrapper = mount(GhostButton, {
       props: { loading: true },
       slots: { default: 'Save changes' },
     })
@@ -111,7 +111,7 @@ describe('SlButton', () => {
   })
 
   it('supports an icon-only accessible name through forwarded attributes', () => {
-    const wrapper = mount(SlButton, {
+    const wrapper = mount(GhostButton, {
       attrs: { 'aria-label': 'Close dialog' },
       slots: { default: '<svg aria-hidden="true"></svg>' },
     })
@@ -120,11 +120,11 @@ describe('SlButton', () => {
   })
 
   it('exposes the native element and focus controls', () => {
-    const wrapper = mount(SlButton, {
+    const wrapper = mount(GhostButton, {
       attachTo: document.body,
       slots: { default: 'Save' },
     })
-    const exposed = wrapper.vm as unknown as SlButtonExposed
+    const exposed = wrapper.vm as unknown as GhostButtonExposed
 
     exposed.focus()
     expect(exposed.element).toBe(wrapper.get('button').element)
@@ -137,10 +137,10 @@ describe('SlButton', () => {
 
   it('renders deterministic native markup during SSR', async () => {
     const html = await renderToString(
-      h(SlButton, { disabled: true, type: 'submit' }),
+      h(GhostButton, { disabled: true, type: 'submit' }),
     )
 
-    expect(html).toContain('class="slop-button"')
+    expect(html).toContain('class="ghost-button"')
     expect(html).toContain('type="submit"')
     expect(html).toContain('disabled')
     expect(html).not.toContain('aria-busy')

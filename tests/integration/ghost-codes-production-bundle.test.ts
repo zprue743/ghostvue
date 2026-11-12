@@ -16,11 +16,11 @@ const vueEntry = fileURLToPath(
 async function bundleConsumer(
   mode: 'development' | 'production',
 ): Promise<string> {
-  const dir = await mkdtemp(join(tmpdir(), 'slop-codes-'))
+  const dir = await mkdtemp(join(tmpdir(), 'ghost-codes-'))
   const entry = join(dir, 'consumer.ts')
   await writeFile(
     entry,
-    `import { useControllableState } from '@slop-ui/vue'
+    `import { useControllableState } from '@ghostvue/vue'
 
 export function createState() {
   return useControllableState({
@@ -32,14 +32,14 @@ export function createState() {
   )
 
   const outDir = join(dir, 'dist')
-  // Lib mode matches how apps consume `@slop-ui/vue`. `define` is what a
+  // Lib mode matches how apps consume `@ghostvue/vue`. `define` is what a
   // consumer application build does; the library itself leaves NODE_ENV intact.
   await build({
     configFile: false,
     root: dir,
     mode,
     logLevel: 'silent',
-    // The package barrel re-exports SFCs such as SlVisuallyHidden.
+    // The package barrel re-exports SFCs such as GhostVisuallyHidden.
     plugins: [vue()],
     define: {
       'process.env.NODE_ENV': JSON.stringify(mode),
@@ -60,7 +60,7 @@ export function createState() {
     },
     resolve: {
       alias: {
-        '@slop-ui/vue': vueEntry,
+        '@ghostvue/vue': vueEntry,
       },
     },
   })
@@ -70,14 +70,14 @@ export function createState() {
   return output
 }
 
-describe('SLOP0 production DCE', () => {
-  it('keeps SLOP0 strings in development and strips them in production', async () => {
+describe('GHOST0 production DCE', () => {
+  it('keeps GHOST0 strings in development and strips them in production', async () => {
     const development = await bundleConsumer('development')
-    expect(development).toMatch(/SLOP0/)
+    expect(development).toMatch(/GHOST0/)
     expect(development).toContain('useControllableState')
 
     const production = await bundleConsumer('production')
-    expect(production).not.toMatch(/SLOP0/)
+    expect(production).not.toMatch(/GHOST0/)
     expect(production).toContain('useControllableState')
   }, 60_000)
 })

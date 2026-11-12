@@ -22,35 +22,35 @@ test.describe('motion tokens', () => {
       expect(
         await stage.evaluate((element) =>
           getComputedStyle(element)
-            .getPropertyValue('--sl-motion-intensity')
+            .getPropertyValue('--ghost-motion-intensity')
             .trim(),
         ),
       ).toBe('1')
       expect(
         await stage.evaluate((element) =>
           getComputedStyle(element)
-            .getPropertyValue('--sl-motion-easing-standard')
+            .getPropertyValue('--ghost-motion-easing-standard')
             .replaceAll(' ', ''),
         ),
       ).toMatch(/cubic-bezier\(0?\.2,0,0,1\)/)
       expect(
         await stage.evaluate((element) =>
           getComputedStyle(element)
-            .getPropertyValue('--sl-motion-spring-gentle')
+            .getPropertyValue('--ghost-motion-spring-gentle')
             .trim()
             .startsWith('linear('),
         ),
       ).toBe(true)
 
       await action.evaluate((element) => {
-        element.style.setProperty('--sl-motion-intensity', '0.5')
+        element.style.setProperty('--ghost-motion-intensity', '0.5')
       })
       await expect(action).toHaveCSS(
         'transition-duration',
         '0.06s, 0.06s, 0.06s, 0.06s, 0.06s, 0.252s',
       )
       await action.evaluate((element) => {
-        element.style.removeProperty('--sl-motion-intensity')
+        element.style.removeProperty('--ghost-motion-intensity')
       })
 
       await page.emulateMedia({ reducedMotion: 'reduce' })
@@ -61,14 +61,14 @@ test.describe('motion tokens', () => {
       expect(
         await stage.evaluate((element) =>
           getComputedStyle(element)
-            .getPropertyValue('--sl-motion-translate')
+            .getPropertyValue('--ghost-motion-translate')
             .trim(),
         ),
       ).toBe('0px')
       expect(
         await stage.evaluate((element) =>
           getComputedStyle(element)
-            .getPropertyValue('--sl-motion-scale')
+            .getPropertyValue('--ghost-motion-scale')
             .trim(),
         ),
       ).toBe('1')
@@ -78,7 +78,7 @@ test.describe('motion tokens', () => {
         await fadeDot.evaluate(
           (element) => getComputedStyle(element).animationName,
         ),
-      ).toBe('slop-motion-fade')
+      ).toBe('ghost-motion-fade')
     } finally {
       await playground.close()
     }

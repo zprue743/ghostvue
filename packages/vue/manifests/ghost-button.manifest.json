@@ -1,10 +1,10 @@
 {
   "schemaVersion": "1.0.0",
   "source": "generated",
-  "name": "SlButton",
-  "package": "@slop-ui/vue",
+  "name": "GhostButton",
+  "package": "@ghostvue/vue",
   "status": "experimental",
-  "description": "Headless native action control. useSlButton owns behavior; SlButton is the thin unstyled element. Themed visual props live on @slop-ui/themes.",
+  "description": "Headless native action control. useGhostButton owns behavior; GhostButton is the thin unstyled element. Themed visual props live on @ghostvue/themes.",
   "props": [
     {
       "name": "disabled",
@@ -24,7 +24,7 @@
     },
     {
       "name": "type",
-      "type": "SlButtonType",
+      "type": "GhostButtonType",
       "default": "button",
       "required": false,
       "description": "Native button behavior. Defaults to button so a control inside a form does not submit unless the consumer opts in.",

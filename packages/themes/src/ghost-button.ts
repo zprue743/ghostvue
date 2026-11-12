@@ -1,47 +1,47 @@
 import { defineComponent, h, ref, type PropType } from 'vue'
 
 import {
-  SlButton as SlUnstyledButton,
-  useSlInteractiveSurface,
-  type SlButtonExposed,
-  type SlButtonType,
-} from '@slop-ui/vue'
+  GhostButton as GhostUnstyledButton,
+  useGhostInteractiveSurface,
+  type GhostButtonExposed,
+  type GhostButtonType,
+} from '@ghostvue/vue'
 
 /** Visual treatment for the themed button. Omitting it selects `solid`. */
-export type SlButtonVariant = 'solid' | 'soft' | 'outline' | 'ghost'
+export type GhostButtonVariant = 'solid' | 'soft' | 'outline' | 'ghost'
 
-/** Semantic color intent, independent of {@link SlButtonVariant}. */
-export type SlButtonTone = 'accent' | 'neutral' | 'danger'
+/** Semantic color intent, independent of {@link GhostButtonVariant}. */
+export type GhostButtonTone = 'accent' | 'neutral' | 'danger'
 
 /** Visual size. Omitting it selects `md`. */
-export type SlButtonSize = 'sm' | 'md' | 'lg'
+export type GhostButtonSize = 'sm' | 'md' | 'lg'
 
 /** Opt-in pointer spotlight. Omitting it leaves the button inert. */
-export type SlButtonInteractive = 'spotlight'
+export type GhostButtonInteractive = 'spotlight'
 
 /**
  * Themed wrapper: visual props as `data-*`, instance-scoped CSS. Behavior stays
  * on the unstyled primitive; native attrs fall through.
  */
-export const SlButton = defineComponent({
-  name: 'SlButton',
+export const GhostButton = defineComponent({
+  name: 'GhostButton',
   inheritAttrs: false,
   props: {
-    type: { type: String as PropType<SlButtonType>, default: 'button' },
+    type: { type: String as PropType<GhostButtonType>, default: 'button' },
     disabled: { type: Boolean, default: false },
     loading: { type: Boolean, default: false },
-    variant: { type: String as PropType<SlButtonVariant>, default: 'solid' },
-    tone: { type: String as PropType<SlButtonTone>, default: 'accent' },
-    size: { type: String as PropType<SlButtonSize>, default: 'md' },
+    variant: { type: String as PropType<GhostButtonVariant>, default: 'solid' },
+    tone: { type: String as PropType<GhostButtonTone>, default: 'accent' },
+    size: { type: String as PropType<GhostButtonSize>, default: 'md' },
     block: { type: Boolean, default: false },
     iconOnly: { type: Boolean, default: false },
     interactive: {
-      type: String as PropType<SlButtonInteractive>,
+      type: String as PropType<GhostButtonInteractive>,
       default: undefined,
     },
   },
   setup(props, { attrs, slots, expose }) {
-    const inner = ref<SlButtonExposed | null>(null)
+    const inner = ref<GhostButtonExposed | null>(null)
 
     expose({
       get element() {
@@ -53,17 +53,20 @@ export const SlButton = defineComponent({
       blur() {
         inner.value?.blur()
       },
-    } satisfies SlButtonExposed)
+    } satisfies GhostButtonExposed)
 
-    const { rootProps } = useSlInteractiveSurface(() => inner.value?.element, {
-      effects: () => (props.interactive === 'spotlight' ? ['spotlight'] : []),
-      stateAttribute: 'data-interactive-state',
-    })
+    const { rootProps } = useGhostInteractiveSurface(
+      () => inner.value?.element,
+      {
+        effects: () => (props.interactive === 'spotlight' ? ['spotlight'] : []),
+        stateAttribute: 'data-interactive-state',
+      },
+    )
 
     return () =>
-      h('span', { class: 'slop-themed-scope' }, [
+      h('span', { class: 'ghost-themed-scope' }, [
         h(
-          SlUnstyledButton,
+          GhostUnstyledButton,
           {
             ...attrs,
             ref: inner,
@@ -94,4 +97,4 @@ export const SlButton = defineComponent({
   },
 })
 
-export type { SlButtonExposed, SlButtonType }
+export type { GhostButtonExposed, GhostButtonType }

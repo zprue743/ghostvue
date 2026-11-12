@@ -1,17 +1,17 @@
 {
   "schemaVersion": "1.0.0",
   "source": "handwritten",
-  "name": "SlButton",
-  "package": "@slop-ui/themes",
+  "name": "GhostButton",
+  "package": "@ghostvue/themes",
   "status": "experimental",
-  "description": "Themed wrapper around headless SlButton. Same behavioral props plus variant, tone, size, block, and iconOnly. Importing it loads the default stylesheet and scopes styles to this instance. Hand-written until SLO-13 generates manifests.",
+  "description": "Themed wrapper around headless GhostButton. Same behavioral props plus variant, tone, size, block, and iconOnly. Importing it loads the default stylesheet and scopes styles to this instance. Hand-written until SLO-13 generates manifests.",
   "props": [
     {
       "name": "type",
       "type": "'button' | 'submit' | 'reset'",
       "default": "button",
       "required": false,
-      "description": "Native button behavior, forwarded to the unstyled SlButton.",
+      "description": "Native button behavior, forwarded to the unstyled GhostButton.",
       "deprecated": false
     },
     {
@@ -19,7 +19,7 @@
       "type": "boolean",
       "default": false,
       "required": false,
-      "description": "Forwards native disabled semantics to the unstyled SlButton.",
+      "description": "Forwards native disabled semantics to the unstyled GhostButton.",
       "deprecated": false
     },
     {
@@ -27,7 +27,7 @@
       "type": "boolean",
       "default": false,
       "required": false,
-      "description": "Forwards consumer-owned pending state to the unstyled SlButton.",
+      "description": "Forwards consumer-owned pending state to the unstyled GhostButton.",
       "deprecated": false
     },
     {
@@ -92,19 +92,19 @@
       "name": "element",
       "kind": "property",
       "type": "HTMLButtonElement | null",
-      "description": "The native button after mount; null before mount and after unmount. Delegates to the unstyled SlButton."
+      "description": "The native button after mount; null before mount and after unmount. Delegates to the unstyled GhostButton."
     },
     {
       "name": "focus",
       "kind": "method",
       "type": "(options?: FocusOptions) => void",
-      "description": "Focuses the native button when it is mounted and enabled. Delegates to the unstyled SlButton."
+      "description": "Focuses the native button when it is mounted and enabled. Delegates to the unstyled GhostButton."
     },
     {
       "name": "blur",
       "kind": "method",
       "type": "() => void",
-      "description": "Removes focus from the native button when it is mounted. Delegates to the unstyled SlButton."
+      "description": "Removes focus from the native button when it is mounted. Delegates to the unstyled GhostButton."
     }
   ],
   "styling": {
@@ -150,187 +150,187 @@
     ],
     "cssProperties": [
       {
-        "name": "--sl-surface-bg",
-        "description": "Canvas background on .slop-theme and the mix surface for soft, outline, and ghost treatments."
+        "name": "--ghost-surface-bg",
+        "description": "Canvas background on .ghost-theme and the mix surface for soft, outline, and ghost treatments."
       },
       {
-        "name": "--sl-surface-fg",
-        "description": "Canvas foreground on .slop-theme."
+        "name": "--ghost-surface-fg",
+        "description": "Canvas foreground on .ghost-theme."
       },
       {
-        "name": "--sl-action-primary-bg",
+        "name": "--ghost-action-primary-bg",
         "description": "Solid background fallback and outline/ghost foreground for the accent tone."
       },
       {
-        "name": "--sl-action-primary-fg",
+        "name": "--ghost-action-primary-fg",
         "description": "Content color on the solid accent treatment."
       },
       {
-        "name": "--sl-action-primary-border",
+        "name": "--ghost-action-primary-border",
         "description": "Border color on the solid accent treatment."
       },
       {
-        "name": "--sl-action-primary-gradient-from",
+        "name": "--ghost-action-primary-gradient-from",
         "description": "Accent solid gradient start. Contrast-gated against accent foreground."
       },
       {
-        "name": "--sl-action-primary-gradient-to",
+        "name": "--ghost-action-primary-gradient-to",
         "description": "Accent solid gradient end. Contrast-gated against accent foreground."
       },
       {
-        "name": "--sl-action-neutral-bg",
+        "name": "--ghost-action-neutral-bg",
         "description": "Solid background fallback and outline/ghost foreground for the neutral tone."
       },
       {
-        "name": "--sl-action-neutral-fg",
+        "name": "--ghost-action-neutral-fg",
         "description": "Content color on the solid neutral treatment."
       },
       {
-        "name": "--sl-action-neutral-border",
+        "name": "--ghost-action-neutral-border",
         "description": "Border color on the solid neutral treatment."
       },
       {
-        "name": "--sl-action-danger-bg",
+        "name": "--ghost-action-danger-bg",
         "description": "Solid background fallback and outline/ghost foreground for the danger tone."
       },
       {
-        "name": "--sl-action-danger-fg",
+        "name": "--ghost-action-danger-fg",
         "description": "Content color on the solid danger treatment."
       },
       {
-        "name": "--sl-action-danger-border",
+        "name": "--ghost-action-danger-border",
         "description": "Border color on the solid danger treatment."
       },
       {
-        "name": "--sl-action-disabled-bg",
+        "name": "--ghost-action-disabled-bg",
         "description": "Desaturated unavailable background. Used instead of fading the rest tone."
       },
       {
-        "name": "--sl-action-disabled-fg",
+        "name": "--ghost-action-disabled-fg",
         "description": "Unavailable foreground. Reduced emphasis, still legible."
       },
       {
-        "name": "--sl-action-disabled-border",
+        "name": "--ghost-action-disabled-border",
         "description": "Unavailable border."
       },
       {
-        "name": "--sl-action-disabled-opacity",
-        "description": "Shared unavailable-state opacity. SlButton uses dedicated disabled colors instead."
+        "name": "--ghost-action-disabled-opacity",
+        "description": "Shared unavailable-state opacity. GhostButton uses dedicated disabled colors instead."
       },
       {
-        "name": "--sl-gradient-action-primary",
+        "name": "--ghost-gradient-action-primary",
         "description": "Oklch gradient fill for solid accent actions."
       },
       {
-        "name": "--sl-gradient-action-neutral",
+        "name": "--ghost-gradient-action-neutral",
         "description": "Oklch gradient fill for solid neutral actions."
       },
       {
-        "name": "--sl-gradient-action-danger",
+        "name": "--ghost-gradient-action-danger",
         "description": "Oklch gradient fill for solid danger actions."
       },
       {
-        "name": "--sl-state-layer-hover",
+        "name": "--ghost-state-layer-hover",
         "description": "Hover overlay opacity on the current tone."
       },
       {
-        "name": "--sl-state-layer-press",
+        "name": "--ghost-state-layer-press",
         "description": "Pressed overlay opacity on the current tone."
       },
       {
-        "name": "--sl-state-layer-selected",
+        "name": "--ghost-state-layer-selected",
         "description": "Selected overlay opacity, used when aria-pressed is true."
       },
       {
-        "name": "--sl-state-layer-dragged",
+        "name": "--ghost-state-layer-dragged",
         "description": "Dragged overlay opacity, used when aria-grabbed is true."
       },
       {
-        "name": "--sl-motion-press-scale",
+        "name": "--ghost-motion-press-scale",
         "description": "Pressed scale. 1 under reduced motion."
       },
       {
-        "name": "--sl-focus-ring-duration",
+        "name": "--ghost-focus-ring-duration",
         "description": "Focus-ring entrance duration. Instant under reduced motion."
       },
       {
-        "name": "--sl-action-duration",
+        "name": "--ghost-action-duration",
         "description": "Duration of color and opacity transitions."
       },
       {
-        "name": "--sl-action-gap",
+        "name": "--ghost-action-gap",
         "description": "Space between label and icon content."
       },
       {
-        "name": "--sl-action-icon-size",
+        "name": "--ghost-action-icon-size",
         "description": "Size of content marked data-part=icon."
       },
       {
-        "name": "--sl-action-label-weight",
+        "name": "--ghost-action-label-weight",
         "description": "Button label font weight."
       },
       {
-        "name": "--sl-action-radius",
+        "name": "--ghost-action-radius",
         "description": "Corner radius of the themed button."
       },
       {
-        "name": "--sl-action-spinner-size",
+        "name": "--ghost-action-spinner-size",
         "description": "Size of the default and custom loading indicators."
       },
       {
-        "name": "--sl-action-spinner-width",
+        "name": "--ghost-action-spinner-width",
         "description": "Stroke width of the default loading spinner."
       },
       {
-        "name": "--sl-focus-ring-color",
+        "name": "--ghost-focus-ring-color",
         "description": "Outer color of the two-color keyboard focus indicator."
       },
       {
-        "name": "--sl-focus-ring-contrast",
+        "name": "--ghost-focus-ring-contrast",
         "description": "Inner color of the two-color keyboard focus indicator."
       },
       {
-        "name": "--sl-focus-ring-offset",
+        "name": "--ghost-focus-ring-offset",
         "description": "Gap between the button edge and the focus ring."
       },
       {
-        "name": "--sl-focus-ring-width",
+        "name": "--ghost-focus-ring-width",
         "description": "Thickness of the focus outline."
       },
       {
-        "name": "--sl-control-size-sm-min",
+        "name": "--ghost-control-size-sm-min",
         "description": "Minimum block size for size sm."
       },
       {
-        "name": "--sl-control-size-sm-padding-block",
+        "name": "--ghost-control-size-sm-padding-block",
         "description": "Block padding for size sm."
       },
       {
-        "name": "--sl-control-size-sm-padding-inline",
+        "name": "--ghost-control-size-sm-padding-inline",
         "description": "Inline padding for size sm."
       },
       {
-        "name": "--sl-control-size-md-min",
+        "name": "--ghost-control-size-md-min",
         "description": "Minimum block size for size md."
       },
       {
-        "name": "--sl-control-size-md-padding-block",
+        "name": "--ghost-control-size-md-padding-block",
         "description": "Block padding for size md."
       },
       {
-        "name": "--sl-control-size-md-padding-inline",
+        "name": "--ghost-control-size-md-padding-inline",
         "description": "Inline padding for size md."
       },
       {
-        "name": "--sl-control-size-lg-min",
+        "name": "--ghost-control-size-lg-min",
         "description": "Minimum block size for size lg."
       },
       {
-        "name": "--sl-control-size-lg-padding-block",
+        "name": "--ghost-control-size-lg-padding-block",
         "description": "Block padding for size lg."
       },
       {
-        "name": "--sl-control-size-lg-padding-inline",
+        "name": "--ghost-control-size-lg-padding-inline",
         "description": "Inline padding for size lg."
       }
     ]

@@ -3,16 +3,16 @@ import { defineComponent, h } from 'vue'
 import { renderToString } from 'vue/server-renderer'
 import { describe, expect, it } from 'vitest'
 
-import SlVisuallyHidden from './SlVisuallyHidden.vue'
-import type { SlVisuallyHiddenElement } from './sl-visually-hidden'
+import GhostVisuallyHidden from './GhostVisuallyHidden.vue'
+import type { GhostVisuallyHiddenElement } from './ghost-visually-hidden'
 
 const SKIP_LINK = '<a href="#main">Skip to content</a>'
 
 // jsdom has no layout or accessible-name computation; perception lives in e2e.
-describe('SlVisuallyHidden', () => {
+describe('GhostVisuallyHidden', () => {
   describe('WCAG 1.3.1 Info and Relationships', () => {
     it('keeps content in the accessibility tree', () => {
-      const wrapper = mount(SlVisuallyHidden, {
+      const wrapper = mount(GhostVisuallyHidden, {
         slots: { default: 'Delete row 3' },
       })
       const root = wrapper.get('span').element
@@ -31,7 +31,7 @@ describe('SlVisuallyHidden', () => {
         render() {
           return h('p', [
             'Column ',
-            h(SlVisuallyHidden, null, { default: () => 'sorted ascending' }),
+            h(GhostVisuallyHidden, null, { default: () => 'sorted ascending' }),
             ' header',
           ])
         },
@@ -45,7 +45,7 @@ describe('SlVisuallyHidden', () => {
 
   describe('WCAG 1.4.4 Resize Text', () => {
     it('constrains its own box without constraining text size', () => {
-      const wrapper = mount(SlVisuallyHidden, { slots: { default: 'Sort' } })
+      const wrapper = mount(GhostVisuallyHidden, { slots: { default: 'Sort' } })
       const root = wrapper.get('span').element
 
       expect(root.style.fontSize).toBe('')
@@ -57,7 +57,7 @@ describe('SlVisuallyHidden', () => {
 
   describe('WCAG 1.4.10 Reflow', () => {
     it('cannot introduce scrollable overflow', () => {
-      const wrapper = mount(SlVisuallyHidden, {
+      const wrapper = mount(GhostVisuallyHidden, {
         slots: { default: 'A long label that would otherwise wrap' },
       })
       const root = wrapper.get('span').element
@@ -70,7 +70,7 @@ describe('SlVisuallyHidden', () => {
 
   describe('WCAG 1.4.12 Text Spacing', () => {
     it('sets no text spacing a consumer stylesheet could need to override', () => {
-      const wrapper = mount(SlVisuallyHidden, { slots: { default: 'Sort' } })
+      const wrapper = mount(GhostVisuallyHidden, { slots: { default: 'Sort' } })
       const root = wrapper.get('span').element
 
       expect(root.style.lineHeight).toBe('')
@@ -81,7 +81,7 @@ describe('SlVisuallyHidden', () => {
 
   describe('WCAG 2.1.1 Keyboard and 2.4.7 Focus Visible', () => {
     it('reveals focusable content while focus is inside it', async () => {
-      const wrapper = mount(SlVisuallyHidden, {
+      const wrapper = mount(GhostVisuallyHidden, {
         attachTo: document.body,
         props: { focusable: true },
         slots: { default: SKIP_LINK },
@@ -106,7 +106,7 @@ describe('SlVisuallyHidden', () => {
     })
 
     it('stays hidden on focus unless the consumer opts in', async () => {
-      const wrapper = mount(SlVisuallyHidden, {
+      const wrapper = mount(GhostVisuallyHidden, {
         attachTo: document.body,
         slots: { default: SKIP_LINK },
       })
@@ -120,7 +120,7 @@ describe('SlVisuallyHidden', () => {
     })
 
     it('resolves correctly when focusable changes while focus is inside', async () => {
-      const wrapper = mount(SlVisuallyHidden, {
+      const wrapper = mount(GhostVisuallyHidden, {
         attachTo: document.body,
         props: { focusable: false },
         slots: { default: SKIP_LINK },
@@ -143,7 +143,7 @@ describe('SlVisuallyHidden', () => {
 
   describe('WCAG 4.1.2 Name, Role, Value', () => {
     it('adds no role of its own', () => {
-      const wrapper = mount(SlVisuallyHidden, {
+      const wrapper = mount(GhostVisuallyHidden, {
         slots: { default: 'Delete row 3' },
       })
 
@@ -151,7 +151,7 @@ describe('SlVisuallyHidden', () => {
     })
 
     it('forwards the attributes that build naming relationships', () => {
-      const wrapper = mount(SlVisuallyHidden, {
+      const wrapper = mount(GhostVisuallyHidden, {
         attrs: { id: 'row-3-label', lang: 'en', 'data-testid': 'label' },
         slots: { default: 'Delete row 3' },
       })
@@ -170,24 +170,24 @@ describe('SlVisuallyHidden', () => {
         'aria-live': 'polite',
         'aria-atomic': 'true',
       }
-      const wrapper = mount(SlVisuallyHidden, { attrs })
+      const wrapper = mount(GhostVisuallyHidden, { attrs })
       const root = wrapper.get('span').element
 
       expect(root.getAttribute('role')).toBe('status')
       expect(root.getAttribute('aria-live')).toBe('polite')
       expect(root.getAttribute('aria-atomic')).toBe('true')
 
-      const html = await renderToString(h(SlVisuallyHidden, attrs))
+      const html = await renderToString(h(GhostVisuallyHidden, attrs))
       expect(html).toContain('role="status"')
       expect(html).toContain('aria-live="polite"')
     })
   })
 
   describe('rendering contract', () => {
-    it.each<SlVisuallyHiddenElement>(['span', 'div', 'p', 'li', 'td', 'th'])(
+    it.each<GhostVisuallyHiddenElement>(['span', 'div', 'p', 'li', 'td', 'th'])(
       'renders %s as its only root element',
       (as) => {
-        const wrapper = mount(SlVisuallyHidden, {
+        const wrapper = mount(GhostVisuallyHidden, {
           props: { as },
           slots: { default: 'Delete row 3' },
         })
@@ -199,7 +199,7 @@ describe('SlVisuallyHidden', () => {
     )
 
     it('applies the clip technique rather than a layout-affecting alternative', () => {
-      const wrapper = mount(SlVisuallyHidden, { slots: { default: 'Sort' } })
+      const wrapper = mount(GhostVisuallyHidden, { slots: { default: 'Sort' } })
       const root = wrapper.get('span').element
 
       expect(root.style.margin).toBe('-1px')
@@ -210,13 +210,13 @@ describe('SlVisuallyHidden', () => {
     })
 
     it('renders an empty slot as inert markup rather than failing', () => {
-      const wrapper = mount(SlVisuallyHidden)
+      const wrapper = mount(GhostVisuallyHidden)
 
       expect(wrapper.get('span').element.textContent).toBe('')
     })
 
     it('lets a consumer style binding win on a conflicting declaration', () => {
-      const wrapper = mount(SlVisuallyHidden, {
+      const wrapper = mount(GhostVisuallyHidden, {
         attrs: { style: 'position: static' },
         slots: { default: 'Sort' },
       })
@@ -228,17 +228,17 @@ describe('SlVisuallyHidden', () => {
     })
 
     it('forwards classes for consumer styling', () => {
-      const wrapper = mount(SlVisuallyHidden, {
+      const wrapper = mount(GhostVisuallyHidden, {
         attrs: { class: 'table-label' },
         slots: { default: 'Sort' },
       })
 
       expect(wrapper.get('span').classes()).toContain('table-label')
-      expect(wrapper.get('span').classes()).toContain('slop-visually-hidden')
+      expect(wrapper.get('span').classes()).toContain('ghost-visually-hidden')
     })
 
     it('exposes data-part and hidden data-state as styling hooks', () => {
-      const wrapper = mount(SlVisuallyHidden, { slots: { default: 'Sort' } })
+      const wrapper = mount(GhostVisuallyHidden, { slots: { default: 'Sort' } })
       const root = wrapper.get('span').element
 
       expect(root.getAttribute('data-part')).toBe('root')
@@ -249,7 +249,7 @@ describe('SlVisuallyHidden', () => {
   describe('server rendering', () => {
     it('renders hidden, deterministic markup without browser globals', async () => {
       const html = await renderToString(
-        h(SlVisuallyHidden, null, { default: () => 'Delete row 3' }),
+        h(GhostVisuallyHidden, null, { default: () => 'Delete row 3' }),
       )
 
       expect(html).toContain('Delete row 3')
@@ -262,7 +262,7 @@ describe('SlVisuallyHidden', () => {
 
     it('renders focusable content hidden on the server', async () => {
       const html = await renderToString(
-        h(SlVisuallyHidden, { focusable: true }, { default: () => 'Skip' }),
+        h(GhostVisuallyHidden, { focusable: true }, { default: () => 'Skip' }),
       )
 
       expect(html).toContain('position:absolute')
@@ -271,7 +271,7 @@ describe('SlVisuallyHidden', () => {
 
   describe('cleanup', () => {
     it('removes its element and listeners on unmount', () => {
-      const wrapper = mount(SlVisuallyHidden, {
+      const wrapper = mount(GhostVisuallyHidden, {
         attachTo: document.body,
         props: { focusable: true },
         slots: { default: SKIP_LINK },

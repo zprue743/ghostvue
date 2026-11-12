@@ -5,8 +5,8 @@ import { fileURLToPath } from 'node:url'
 
 import { describe, expect, it } from 'vitest'
 
-import { slopCodes } from '../../packages/vue/src/dev-codes'
-import { renderSlopCodeDocs } from '../../packages/vue/src/dev-codes-docs'
+import { ghostCodes } from '../../packages/vue/src/dev-codes'
+import { renderGhostCodeDocs } from '../../packages/vue/src/dev-codes-docs'
 
 describe('diagnostic code docs', () => {
   it('keeps docs/warnings.md identical to the catalog renderer', async () => {
@@ -15,8 +15,8 @@ describe('diagnostic code docs', () => {
       'utf8',
     )
 
-    expect(markdown).toBe(renderSlopCodeDocs())
-    expect(markdown).toContain('## SLOP001')
-    expect(markdown).toContain(slopCodes.SLOP001.title)
+    expect(markdown).toBe(renderGhostCodeDocs())
+    expect(markdown).toContain('## GHOST001')
+    expect(markdown).toContain(ghostCodes.GHOST001.title)
   })
 })

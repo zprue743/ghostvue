@@ -3,7 +3,7 @@ import { createSSRApp, defineComponent, h, nextTick, ref } from 'vue'
 import { renderToString } from 'vue/server-renderer'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
-import { useSlInteractiveSurface } from './use-sl-interactive-surface'
+import { useGhostInteractiveSurface } from './use-ghost-interactive-surface'
 
 const attached: ReturnType<typeof mount>[] = []
 
@@ -68,15 +68,15 @@ function mountSurface(
   return wrapper
 }
 
-describe('useSlInteractiveSurface', () => {
+describe('useGhostInteractiveSurface', () => {
   it('starts idle and moves to tracking then idle on pointer enter/leave', async () => {
     stubPointerMedia({})
     const host = ref<HTMLElement | null>(null)
-    let rootProps!: ReturnType<typeof useSlInteractiveSurface>['rootProps']
+    let rootProps!: ReturnType<typeof useGhostInteractiveSurface>['rootProps']
 
     const wrapper = mountSurface(
       () => {
-        ;({ rootProps } = useSlInteractiveSurface(host))
+        ;({ rootProps } = useGhostInteractiveSurface(host))
       },
       () => h('div', { ref: host, ...rootProps.value }, 'Card'),
     )
@@ -107,25 +107,25 @@ describe('useSlInteractiveSurface', () => {
     await nextTick()
 
     expect(rootProps.value['data-state']).toBe('tracking')
-    expect(element.style.getPropertyValue('--sl-pointer-x')).toBe('40px')
-    expect(element.style.getPropertyValue('--sl-pointer-y')).toBe('25px')
+    expect(element.style.getPropertyValue('--ghost-pointer-x')).toBe('40px')
+    expect(element.style.getPropertyValue('--ghost-pointer-y')).toBe('25px')
 
     element.dispatchEvent(new PointerEvent('pointerleave'))
     await nextTick()
 
     expect(rootProps.value['data-state']).toBe('idle')
-    expect(element.style.getPropertyValue('--sl-pointer-nx')).toBe('0')
-    expect(element.style.getPropertyValue('--sl-pointer-ny')).toBe('0')
+    expect(element.style.getPropertyValue('--ghost-pointer-nx')).toBe('0')
+    expect(element.style.getPropertyValue('--ghost-pointer-ny')).toBe('0')
   })
 
   it('stays off under prefers-reduced-motion', async () => {
     stubPointerMedia({ reducedMotion: true })
     const host = ref<HTMLElement | null>(null)
-    let rootProps!: ReturnType<typeof useSlInteractiveSurface>['rootProps']
+    let rootProps!: ReturnType<typeof useGhostInteractiveSurface>['rootProps']
 
     const wrapper = mountSurface(
       () => {
-        ;({ rootProps } = useSlInteractiveSurface(host))
+        ;({ rootProps } = useGhostInteractiveSurface(host))
       },
       () => h('div', { ref: host, ...rootProps.value }, 'Card'),
     )
@@ -144,11 +144,11 @@ describe('useSlInteractiveSurface', () => {
   it('stays off under coarse pointers', async () => {
     stubPointerMedia({ coarsePointer: true })
     const host = ref<HTMLElement | null>(null)
-    let rootProps!: ReturnType<typeof useSlInteractiveSurface>['rootProps']
+    let rootProps!: ReturnType<typeof useGhostInteractiveSurface>['rootProps']
 
     const wrapper = mountSurface(
       () => {
-        ;({ rootProps } = useSlInteractiveSurface(host))
+        ;({ rootProps } = useGhostInteractiveSurface(host))
       },
       () => h('div', { ref: host, ...rootProps.value }, 'Card'),
     )
@@ -167,11 +167,11 @@ describe('useSlInteractiveSurface', () => {
   it('omits tracking when effects is an empty list', async () => {
     stubPointerMedia({})
     const host = ref<HTMLElement | null>(null)
-    let rootProps!: ReturnType<typeof useSlInteractiveSurface>['rootProps']
+    let rootProps!: ReturnType<typeof useGhostInteractiveSurface>['rootProps']
 
     const wrapper = mountSurface(
       () => {
-        ;({ rootProps } = useSlInteractiveSurface(host, { effects: [] }))
+        ;({ rootProps } = useGhostInteractiveSurface(host, { effects: [] }))
       },
       () => h('div', { ref: host, ...rootProps.value }, 'Card'),
     )
@@ -192,11 +192,11 @@ describe('useSlInteractiveSurface', () => {
   it('writes data-interactive-state when asked, leaving data-state free', async () => {
     stubPointerMedia({})
     const host = ref<HTMLElement | null>(null)
-    let rootProps!: ReturnType<typeof useSlInteractiveSurface>['rootProps']
+    let rootProps!: ReturnType<typeof useGhostInteractiveSurface>['rootProps']
 
     mountSurface(
       () => {
-        ;({ rootProps } = useSlInteractiveSurface(host, {
+        ;({ rootProps } = useGhostInteractiveSurface(host, {
           stateAttribute: 'data-interactive-state',
         }))
       },
@@ -211,11 +211,11 @@ describe('useSlInteractiveSurface', () => {
   it('removes listeners on unmount', async () => {
     stubPointerMedia({})
     const host = ref<HTMLElement | null>(null)
-    let rootProps!: ReturnType<typeof useSlInteractiveSurface>['rootProps']
+    let rootProps!: ReturnType<typeof useGhostInteractiveSurface>['rootProps']
 
     const wrapper = mountSurface(
       () => {
-        ;({ rootProps } = useSlInteractiveSurface(host))
+        ;({ rootProps } = useGhostInteractiveSurface(host))
       },
       () => h('div', { ref: host, ...rootProps.value }, 'Card'),
     )
@@ -239,7 +239,7 @@ describe('useSlInteractiveSurface', () => {
     const Comp = defineComponent({
       setup() {
         const host = ref<HTMLElement | null>(null)
-        useSlInteractiveSurface(host)
+        useGhostInteractiveSurface(host)
         return () => h('div', { ref: host }, 'Card')
       },
     })

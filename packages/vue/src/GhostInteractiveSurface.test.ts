@@ -3,8 +3,8 @@ import { h } from 'vue'
 import { renderToString } from 'vue/server-renderer'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
-import SlInteractiveSurface from './SlInteractiveSurface.vue'
-import type { SlInteractiveSurfaceExposed } from './sl-interactive-surface'
+import GhostInteractiveSurface from './GhostInteractiveSurface.vue'
+import type { GhostInteractiveSurfaceExposed } from './ghost-interactive-surface'
 
 afterEach(() => {
   vi.unstubAllGlobals()
@@ -29,10 +29,10 @@ function stubFinePointer() {
   vi.stubGlobal('ResizeObserver', IdleObserver)
 }
 
-describe('SlInteractiveSurface', () => {
+describe('GhostInteractiveSurface', () => {
   it('renders a glow layer and default spotlight hooks', () => {
     stubFinePointer()
-    const wrapper = mount(SlInteractiveSurface, {
+    const wrapper = mount(GhostInteractiveSurface, {
       slots: { default: 'Report' },
     })
 
@@ -48,7 +48,7 @@ describe('SlInteractiveSurface', () => {
 
   it('renders the requested root tag and forwards attributes', () => {
     stubFinePointer()
-    const wrapper = mount(SlInteractiveSurface, {
+    const wrapper = mount(GhostInteractiveSurface, {
       props: { as: 'article' },
       attrs: { class: 'card', 'data-testid': 'surface' },
       slots: { default: 'Body' },
@@ -62,11 +62,11 @@ describe('SlInteractiveSurface', () => {
 
   it('exposes the root element after mount', () => {
     stubFinePointer()
-    const wrapper = mount(SlInteractiveSurface, {
+    const wrapper = mount(GhostInteractiveSurface, {
       attachTo: document.body,
       slots: { default: 'Body' },
     })
-    const exposed = wrapper.vm as unknown as SlInteractiveSurfaceExposed
+    const exposed = wrapper.vm as unknown as GhostInteractiveSurfaceExposed
 
     expect(exposed.element).toBe(wrapper.element)
     wrapper.unmount()
@@ -74,7 +74,7 @@ describe('SlInteractiveSurface', () => {
 
   it('renders deterministic off-state markup during SSR', async () => {
     const html = await renderToString(
-      h(SlInteractiveSurface, null, { default: () => 'Report' }),
+      h(GhostInteractiveSurface, null, { default: () => 'Report' }),
     )
 
     expect(html).toContain('data-part="root"')

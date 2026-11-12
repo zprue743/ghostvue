@@ -6,7 +6,7 @@ import {
   type CSSProperties,
 } from 'vue'
 
-import type { UseSlVisuallyHiddenOptions } from './sl-visually-hidden'
+import type { UseGhostVisuallyHiddenOptions } from './ghost-visually-hidden'
 
 /**
  * Clip technique: 1px not 0 so some engines keep the node in the accessibility
@@ -25,8 +25,8 @@ const visuallyHiddenStyle = Object.freeze({
   whiteSpace: 'nowrap',
 } satisfies CSSProperties)
 
-export interface SlVisuallyHiddenRootProps {
-  class: 'slop-visually-hidden'
+export interface GhostVisuallyHiddenRootProps {
+  class: 'ghost-visually-hidden'
   style: CSSProperties | undefined
   'data-part': 'root'
   'data-state': 'hidden' | undefined
@@ -35,9 +35,11 @@ export interface SlVisuallyHiddenRootProps {
 }
 
 /** Clip hiding, `data-part` / `data-state`, and focus-driven reveal. */
-export function useSlVisuallyHidden(options: UseSlVisuallyHiddenOptions = {}): {
+export function useGhostVisuallyHidden(
+  options: UseGhostVisuallyHiddenOptions = {},
+): {
   isRevealed: ComputedRef<boolean>
-  rootProps: ComputedRef<SlVisuallyHiddenRootProps>
+  rootProps: ComputedRef<GhostVisuallyHiddenRootProps>
 } {
   // Bubbling stand-in for `:focus-within`. Always track so toggling `focusable`
   // while focused cannot go stale.
@@ -47,8 +49,8 @@ export function useSlVisuallyHidden(options: UseSlVisuallyHiddenOptions = {}): {
     () => Boolean(toValue(options.focusable)) && hasFocusWithin.value,
   )
 
-  const rootProps = computed((): SlVisuallyHiddenRootProps => ({
-    class: 'slop-visually-hidden',
+  const rootProps = computed((): GhostVisuallyHiddenRootProps => ({
+    class: 'ghost-visually-hidden',
     style: isRevealed.value ? undefined : visuallyHiddenStyle,
     'data-part': 'root',
     'data-state': isRevealed.value ? undefined : 'hidden',

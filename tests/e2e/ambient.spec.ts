@@ -29,12 +29,16 @@ test.describe('ambient interactivity', () => {
       await expect(spotlight).toHaveAttribute('data-state', 'tracking')
       expect(
         await spotlight.evaluate((element) =>
-          getComputedStyle(element).getPropertyValue('--sl-pointer-x').trim(),
+          getComputedStyle(element)
+            .getPropertyValue('--ghost-pointer-x')
+            .trim(),
         ),
       ).toBe('48px')
       expect(
         await spotlight.evaluate((element) =>
-          getComputedStyle(element).getPropertyValue('--sl-pointer-y').trim(),
+          getComputedStyle(element)
+            .getPropertyValue('--ghost-pointer-y')
+            .trim(),
         ),
       ).toBe('36px')
 
@@ -51,7 +55,7 @@ test.describe('ambient interactivity', () => {
     }
   })
 
-  test('opted-in SlButton tracks on data-interactive-state', async ({
+  test('opted-in GhostButton tracks on data-interactive-state', async ({
     page,
   }) => {
     const playground = await startStaticServer('apps/playground/dist')
@@ -97,8 +101,8 @@ test.describe('ambient interactivity', () => {
         element.style.height = '40px'
         element.style.overflow = 'hidden'
         element.style.width = '160px'
-        element.style.setProperty('--sl-pointer-x', '40px')
-        element.style.setProperty('--sl-pointer-y', '16px')
+        element.style.setProperty('--ghost-pointer-x', '40px')
+        element.style.setProperty('--ghost-pointer-y', '16px')
         const glow = element.querySelector('[data-part="glow"]')
         if (glow instanceof HTMLElement) glow.style.opacity = '0.28'
       })

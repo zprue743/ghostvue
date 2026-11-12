@@ -1,4 +1,4 @@
-import type { SlButton, SlButtonProps } from '../src'
+import type { GhostButton, GhostButtonProps } from '../src'
 
 const nativeProps = {
   autofocus: true,
@@ -14,8 +14,8 @@ const nativeProps = {
   },
   type: 'submit',
   value: 'save',
-} satisfies SlButtonProps
+} satisfies GhostButtonProps
 
-const componentProps: InstanceType<typeof SlButton>['$props'] = nativeProps
+const componentProps: InstanceType<typeof GhostButton>['$props'] = nativeProps
 
 void componentProps

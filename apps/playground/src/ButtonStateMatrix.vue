@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { SlButton as SlButtonThemed } from '@slop-ui/themes'
+import { GhostButton as GhostButtonThemed } from '@ghostvue/themes'
 
 const modes = ['light', 'dark'] as const
 const tones = ['accent', 'neutral', 'danger'] as const
@@ -78,29 +78,29 @@ function stateAttrs(
           : 'button-state-matrix-heading'
       "
     >
-      SlButton state matrix{{ theme ? ` (${theme})` : '' }}
+      GhostButton state matrix{{ theme ? ` (${theme})` : '' }}
     </h2>
     <p>
       Frozen interaction states for visual regression. Hover, press, and focus
       use <code>data-visual-state</code>; loading and disabled use the public
       props. Combined states share the same CSS as native <code>:hover</code>,
       <code>:active</code>, and <code>:focus-visible</code>. Selected uses
-      <code>aria-pressed</code> (not a headless SlButton model).
+      <code>aria-pressed</code> (not a headless GhostButton model).
     </p>
 
     <div
       v-for="mode in modes"
       :key="mode"
-      class="mode-block slop-theme"
-      :data-sl-mode="mode"
-      :data-sl-theme="theme"
+      class="mode-block ghost-theme"
+      :data-ghost-mode="mode"
+      :data-ghost-theme="theme"
     >
       <h3>{{ mode }}</h3>
       <div
         v-for="density in densityFilter"
         :key="`${mode}-${density}`"
         class="density-block"
-        :data-sl-density="density"
+        :data-ghost-density="density"
         :data-testid="`button-matrix-${theme ? `${theme}-` : ''}${mode}-${density}`"
       >
         <h4>{{ density }}</h4>
@@ -118,24 +118,24 @@ function stateAttrs(
             <div class="buttons">
               <div v-for="state in states" :key="state.id" class="cell">
                 <span class="cell-label">{{ state.label }}</span>
-                <SlButtonThemed
+                <GhostButtonThemed
                   :tone="tone"
                   :loading="state.id === 'loading'"
                   :disabled="state.id === 'disabled'"
                   v-bind="stateAttrs(mode, density, tone, state.id)"
                 >
                   Action
-                </SlButtonThemed>
+                </GhostButtonThemed>
               </div>
               <div v-for="state in combined" :key="state.id" class="cell">
                 <span class="cell-label">{{ state.label }}</span>
-                <SlButtonThemed
+                <GhostButtonThemed
                   :tone="tone"
                   :loading="state.id === 'loading-focus'"
                   v-bind="stateAttrs(mode, density, tone, state.id)"
                 >
                   Action
-                </SlButtonThemed>
+                </GhostButtonThemed>
               </div>
             </div>
           </div>

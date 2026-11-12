@@ -1,4 +1,4 @@
-/** Themed wrappers and default CSS. One `SlButton` import loads the stylesheet. */
+/** Themed wrappers and default CSS. One `GhostButton` import loads the stylesheet. */
 import './default.css'
 
 export {
@@ -19,18 +19,18 @@ export {
 } from './flagship-themes'
 
 export {
-  SlButton,
-  type SlButtonExposed,
-  type SlButtonInteractive,
-  type SlButtonSize,
-  type SlButtonTone,
-  type SlButtonType,
-  type SlButtonVariant,
-} from './sl-button'
+  GhostButton,
+  type GhostButtonExposed,
+  type GhostButtonInteractive,
+  type GhostButtonSize,
+  type GhostButtonTone,
+  type GhostButtonType,
+  type GhostButtonVariant,
+} from './ghost-button'
 
 export {
-  SlInteractiveSurface,
+  GhostInteractiveSurface,
   type InteractiveEffect,
   type InteractiveSurfaceElement,
-  type SlInteractiveSurfaceExposed,
-} from './sl-interactive-surface'
+  type GhostInteractiveSurfaceExposed,
+} from './ghost-interactive-surface'

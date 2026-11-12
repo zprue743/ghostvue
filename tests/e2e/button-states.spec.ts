@@ -23,7 +23,7 @@ async function pinShot(shot: {
   })
 }
 
-test.describe('SlButton state matrix', () => {
+test.describe('GhostButton state matrix', () => {
   test.use({
     viewport: { width: 1280, height: 900 },
     deviceScaleFactor: 1,
@@ -89,7 +89,7 @@ test.describe('SlButton state matrix', () => {
   })
 })
 
-test.describe('SlButton state matrix forced colors', () => {
+test.describe('GhostButton state matrix forced colors', () => {
   test.use({
     viewport: { width: 1280, height: 900 },
     deviceScaleFactor: 1,

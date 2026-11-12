@@ -1,7 +1,7 @@
 /**
  * Writes or checks machine-readable component manifests.
  *
- * `--write` refreshes `*.manifest.json` from `Sl*.vue` sources. The default
+ * `--write` refreshes `*.manifest.json` from `Ghost*.vue` sources. The default
  * check mode fails when a checked-in manifest is stale, matching
  * `pnpm adapters`.
  */
@@ -30,7 +30,7 @@ if (result.violations.length > 0) {
   const count = result.written.length
   console.log(
     count === 0
-      ? 'No Sl*.vue components to generate manifests for.'
+      ? 'No Ghost*.vue components to generate manifests for.'
       : `Wrote ${String(count)} component manifest${count === 1 ? '' : 's'}.`,
   )
 } else {

@@ -1,17 +1,17 @@
 {
   "schemaVersion": "1.0.0",
   "source": "handwritten",
-  "name": "SlInteractiveSurface",
-  "package": "@slop-ui/themes",
+  "name": "GhostInteractiveSurface",
+  "package": "@ghostvue/themes",
   "status": "experimental",
-  "description": "Themed wrapper around headless SlInteractiveSurface. Same as/effects props; importing it loads the default stylesheet and scopes recipes to this instance. Spotlight tokens come from defineTheme interactivity. Hand-written because the wrapper is a .ts defineComponent.",
+  "description": "Themed wrapper around headless GhostInteractiveSurface. Same as/effects props; importing it loads the default stylesheet and scopes recipes to this instance. Spotlight tokens come from defineTheme interactivity. Hand-written because the wrapper is a .ts defineComponent.",
   "props": [
     {
       "name": "as",
       "type": "'div' | 'article' | 'section' | 'aside'",
       "default": "div",
       "required": false,
-      "description": "Rendered root element, forwarded to the unstyled SlInteractiveSurface.",
+      "description": "Rendered root element, forwarded to the unstyled GhostInteractiveSurface.",
       "deprecated": false
     },
     {
@@ -37,7 +37,7 @@
       "name": "element",
       "kind": "property",
       "type": "HTMLElement | null",
-      "description": "The root element after mount; null before mount and after unmount. Delegates to the unstyled SlInteractiveSurface."
+      "description": "The root element after mount; null before mount and after unmount. Delegates to the unstyled GhostInteractiveSurface."
     }
   ],
   "styling": {
@@ -62,36 +62,36 @@
       },
       {
         "name": "tracking",
-        "description": "Pointer is over the host. Glow follows --sl-pointer-x/y."
+        "description": "Pointer is over the host. Glow follows --ghost-pointer-x/y."
       }
     ],
     "cssProperties": [
       {
-        "name": "--sl-interactive-spotlight-size",
+        "name": "--ghost-interactive-spotlight-size",
         "description": "Glow diameter. Subtle default 10rem; none is 0px; expressive is 20rem."
       },
       {
-        "name": "--sl-interactive-spotlight-opacity",
-        "description": "Peak glow opacity before --sl-motion-intensity."
+        "name": "--ghost-interactive-spotlight-opacity",
+        "description": "Peak glow opacity before --ghost-motion-intensity."
       },
       {
-        "name": "--sl-interactive-spotlight-color",
+        "name": "--ghost-interactive-spotlight-color",
         "description": "Glow color. Aliases action.primary.bg so mono stays a hairline."
       },
       {
-        "name": "--sl-interactive-leave-spring",
+        "name": "--ghost-interactive-leave-spring",
         "description": "Leave-settle easing. Alias of motion.spring.snappy."
       },
       {
-        "name": "--sl-interactive-leave-spring-duration",
+        "name": "--ghost-interactive-leave-spring-duration",
         "description": "Leave-settle duration. Instant tracking, spring on leave."
       },
       {
-        "name": "--sl-pointer-x",
+        "name": "--ghost-pointer-x",
         "description": "Pointer x in CSS pixels."
       },
       {
-        "name": "--sl-pointer-y",
+        "name": "--ghost-pointer-y",
         "description": "Pointer y in CSS pixels."
       }
     ]

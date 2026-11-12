@@ -1,15 +1,15 @@
 <script setup lang="ts">
 import { useTemplateRef } from 'vue'
 
-import type { SlButtonExposed, SlButtonType } from './sl-button'
-import { useSlButton } from './use-sl-button'
+import type { GhostButtonExposed, GhostButtonType } from './ghost-button'
+import { useGhostButton } from './use-ghost-button'
 
 // Declared props only; native HTML/ARIA stay fallthrough so the generator omits them.
 const props = withDefaults(
   defineProps<{
     disabled?: boolean
     loading?: boolean
-    type?: SlButtonType
+    type?: GhostButtonType
   }>(),
   {
     disabled: false,
@@ -18,7 +18,7 @@ const props = withDefaults(
   },
 )
 
-const { rootProps } = useSlButton({
+const { rootProps } = useGhostButton({
   disabled: () => props.disabled,
   loading: () => props.loading,
   type: () => props.type,
@@ -26,7 +26,7 @@ const { rootProps } = useSlButton({
 
 const element = useTemplateRef<HTMLButtonElement>('element')
 
-defineExpose<SlButtonExposed>({
+defineExpose<GhostButtonExposed>({
   get element() {
     return element.value
   },

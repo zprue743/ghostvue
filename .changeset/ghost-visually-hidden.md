@@ -1,8 +1,8 @@
 ---
-'@slop-ui/vue': minor
+'@ghostvue/vue': minor
 ---
 
-Add `SlVisuallyHidden` and `useSlVisuallyHidden` for content that assistive
+Add `GhostVisuallyHidden` and `useGhostVisuallyHidden` for content that assistive
 technology reaches but sighted users do not see. The unstyled component renders
 a single configurable element, keeps content in the accessibility tree, forwards
 native attributes for live regions and naming relationships, and can reveal

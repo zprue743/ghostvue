@@ -1,20 +1,20 @@
 import { describe, expect, expectTypeOf, it, vi } from 'vitest'
 
 import {
-  formatSlopCodeMessage,
-  logSlopCode,
-  retiredSlopCodes,
-  SLOP_CODE_DOCS_URL,
-  slopCodes,
-  type SlopCode,
+  formatGhostCodeMessage,
+  logGhostCode,
+  retiredGhostCodes,
+  GHOST_CODE_DOCS_URL,
+  ghostCodes,
+  type GhostCode,
 } from './dev-codes'
 
-const CODE_PATTERN = /^SLOP\d{3}$/
+const CODE_PATTERN = /^GHOST\d{3}$/
 
-describe('slop diagnostic codes', () => {
-  it('assigns unique SLOP0xx keys that are never listed as retired', () => {
-    const active = Object.keys(slopCodes)
-    const retired = Object.keys(retiredSlopCodes)
+describe('ghost diagnostic codes', () => {
+  it('assigns unique GHOST0xx keys that are never listed as retired', () => {
+    const active = Object.keys(ghostCodes)
+    const retired = Object.keys(retiredGhostCodes)
     const assigned = [...active, ...retired]
 
     expect(active.length).toBeGreaterThan(0)
@@ -26,27 +26,27 @@ describe('slop diagnostic codes', () => {
 
   it('formats the catalog message with a code prefix and docs URL', () => {
     expect(
-      formatSlopCodeMessage('SLOP001', {
+      formatGhostCodeMessage('GHOST001', {
         from: 'controlled',
         to: 'uncontrolled',
       }),
     ).toBe(
-      `[slop-ui SLOP001] A component switched from controlled to uncontrolled. Pass the value prop for the lifetime of the instance, or omit it and use default*. See ${SLOP_CODE_DOCS_URL}#slop001`,
+      `[ghostvue GHOST001] A component switched from controlled to uncontrolled. Pass the value prop for the lifetime of the instance, or omit it and use default*. See ${GHOST_CODE_DOCS_URL}#ghost001`,
     )
   })
 
   it('leaves unknown placeholders in the message', () => {
-    expect(formatSlopCodeMessage('SLOP001')).toContain('from {from} to {to}')
+    expect(formatGhostCodeMessage('GHOST001')).toContain('from {from} to {to}')
   })
 
   it('logs warnings through console.warn', () => {
     const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined)
 
-    logSlopCode('SLOP001', { from: 'uncontrolled', to: 'controlled' })
+    logGhostCode('GHOST001', { from: 'uncontrolled', to: 'controlled' })
 
     expect(warn).toHaveBeenCalledTimes(1)
     expect(warn).toHaveBeenCalledWith(
-      formatSlopCodeMessage('SLOP001', {
+      formatGhostCodeMessage('GHOST001', {
         from: 'uncontrolled',
         to: 'controlled',
       }),
@@ -54,7 +54,7 @@ describe('slop diagnostic codes', () => {
     warn.mockRestore()
   })
 
-  it('narrows SlopCode to assigned catalog keys', () => {
-    expectTypeOf<SlopCode>().toEqualTypeOf<'SLOP001'>()
+  it('narrows GhostCode to assigned catalog keys', () => {
+    expectTypeOf<GhostCode>().toEqualTypeOf<'GHOST001'>()
   })
 })

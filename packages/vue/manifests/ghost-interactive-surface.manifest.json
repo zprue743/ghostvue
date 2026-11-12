@@ -1,10 +1,10 @@
 {
   "schemaVersion": "1.0.0",
   "source": "generated",
-  "name": "SlInteractiveSurface",
-  "package": "@slop-ui/vue",
+  "name": "GhostInteractiveSurface",
+  "package": "@ghostvue/vue",
   "status": "experimental",
-  "description": "Headless pointer-reactive surface. useSlInteractiveSurface owns rAF-batched CSS variable writes, cached layout, and off/idle/tracking; SlInteractiveSurface is the thin unstyled element with a decorative glow layer. Themed visual tokens live on @slop-ui/themes. v1 is spotlight only.",
+  "description": "Headless pointer-reactive surface. useGhostInteractiveSurface owns rAF-batched CSS variable writes, cached layout, and off/idle/tracking; GhostInteractiveSurface is the thin unstyled element with a decorative glow layer. Themed visual tokens live on @ghostvue/themes. v1 is spotlight only.",
   "props": [
     {
       "name": "as",
@@ -44,7 +44,7 @@
     "parts": [
       {
         "name": "root",
-        "description": "The element selected by as. Receives data-interactive, data-state, and --sl-pointer-* variables."
+        "description": "The element selected by as. Receives data-interactive, data-state, and --ghost-pointer-* variables."
       },
       {
         "name": "glow",
@@ -62,24 +62,24 @@
       },
       {
         "name": "tracking",
-        "description": "Pointer is over the host. Glow follows --sl-pointer-x/y."
+        "description": "Pointer is over the host. Glow follows --ghost-pointer-x/y."
       }
     ],
     "cssProperties": [
       {
-        "name": "--sl-pointer-x",
+        "name": "--ghost-pointer-x",
         "description": "Pointer x in CSS pixels, written imperatively on the host."
       },
       {
-        "name": "--sl-pointer-y",
+        "name": "--ghost-pointer-y",
         "description": "Pointer y in CSS pixels, written imperatively on the host."
       },
       {
-        "name": "--sl-pointer-nx",
+        "name": "--ghost-pointer-nx",
         "description": "Unitless pointer x from -0.5 to 0.5."
       },
       {
-        "name": "--sl-pointer-ny",
+        "name": "--ghost-pointer-ny",
         "description": "Unitless pointer y from -0.5 to 0.5."
       }
     ]
