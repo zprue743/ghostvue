@@ -21,6 +21,13 @@ export default defineConfig({
   title: docsTitle,
   description: docsDescription,
   cleanUrls: true,
+  // Vercel static hosting only strips `.html` when `apps/docs/vercel.json`
+  // also sets `cleanUrls`. Keep the two flags together.
+  rewrites: {
+    // Sidebar links to `/adr/`; VitePress would otherwise emit README.html.
+    // Leave docs/adr/README.md in place so GitHub still renders the index.
+    'adr/README.md': 'adr/index.md',
+  },
   // Restore a persisted theme before paint; first paint dogfoods calm (ADR 0008).
   head: [['script', { id: 'slop-docs-theme-restore' }, restoreDocsThemeScript]],
   transformHtml(code) {

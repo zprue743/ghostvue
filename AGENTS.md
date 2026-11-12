@@ -52,6 +52,7 @@ pnpm test:e2e
 pnpm build
 pnpm published-exports
 pnpm docs:build
+pnpm docs:links
 pnpm verify
 ```
 
