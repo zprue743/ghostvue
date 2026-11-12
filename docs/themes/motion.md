@@ -1,19 +1,59 @@
 <script setup>
-import { ref } from 'vue'
+import { onMounted, onUnmounted, ref } from 'vue'
 
 import '@ghostvue/themes/default.css'
 import { startThemeTransition } from '../../packages/themes/src/start-theme-transition'
 
+/** Demo-local times so easing differences stay readable across a full track. */
+const recipes = [
+  { id: 'standard', duration: '1.4s' },
+  { id: 'decelerate', duration: '1.4s' },
+  { id: 'accelerate', duration: '0.9s' },
+  { id: 'spring-gentle', duration: '2s' },
+  { id: 'spring-snappy', duration: '1.8s' },
+  { id: 'spring-bouncy', duration: '2.8s' },
+]
+
 const replay = ref(0)
+const armed = ref(false)
 const stage = ref(null)
+const board = ref(null)
+
+let intersection
 
 function play() {
+  armed.value = true
   replay.value += 1
 }
 
 async function crossfade(mode) {
   if (stage.value) await startThemeTransition(stage.value, mode)
 }
+
+onMounted(() => {
+  const host = board.value
+  if (!(host instanceof Element) || typeof IntersectionObserver !== 'function') {
+    play()
+    return
+  }
+
+  // Recipes auto-play on insert with fill-both, so a below-the-fold first
+  // paint finishes before anyone sees it. Arm once the board is on screen.
+  intersection = new IntersectionObserver(
+    (entries) => {
+      if (entries.some((entry) => entry.isIntersecting)) {
+        if (!armed.value) play()
+        intersection?.disconnect()
+      }
+    },
+    { threshold: 0.35 },
+  )
+  intersection.observe(host)
+})
+
+onUnmounted(() => {
+  intersection?.disconnect()
+})
 </script>
 
 # Motion
@@ -94,18 +134,49 @@ interpolation; state changes remain in the end values.
 
 ## Live demos
 
-These use `data-motion` recipes. Replay remounts the dots. The recipes already
-honor `prefers-reduced-motion: reduce` by swapping travel for opacity.
+These reuse `data-motion` timing functions. Travel, duration, and replay are
+demo-local so easing can be compared across the full track — production recipes
+still move `4.5rem` in 120–1204ms. Replay remounts every row together. The first
+run waits until the board is on screen.
 
 <p>
-  <button type="button" class="demo-play" @click="play">Replay easings and springs</button>
+  <button
+    type="button"
+    class="demo-play"
+    data-testid="motion-docs-replay"
+    @click="play"
+  >
+    Replay easings and springs
+  </button>
 </p>
 
-<div class="ghost-theme demo-board" data-ghost-mode="light">
-  <div v-for="recipe in ['standard', 'decelerate', 'accelerate', 'spring-gentle', 'spring-snappy', 'spring-bouncy']" :key="`${recipe}-${replay}`" class="demo-row">
-    <span>{{ recipe }}</span>
+<div
+  ref="board"
+  class="ghost-theme demo-board"
+  data-ghost-mode="light"
+  data-testid="motion-docs-board"
+>
+  <p
+    class="demo-reduced-note"
+    data-testid="motion-docs-reduced-note"
+    role="status"
+  >
+    Reduced motion is on. Dots fade in place instead of traveling, so this
+    demo is not broken.
+  </p>
+  <div
+    v-for="recipe in recipes"
+    :key="recipe.id + '-' + replay"
+    class="demo-row"
+  >
+    <span>{{ recipe.id }} · {{ recipe.duration }}</span>
     <div class="demo-track">
-      <span class="demo-dot" :data-motion="recipe"></span>
+      <span
+        class="demo-dot"
+        :data-motion="armed ? recipe.id : undefined"
+        :data-testid="'motion-docs-dot-' + recipe.id"
+        :style="{ '--demo-motion-duration': recipe.duration }"
+      ></span>
     </div>
   </div>
 </div>
@@ -123,10 +194,29 @@ import { startThemeTransition } from '@ghostvue/themes'
 await startThemeTransition(document.querySelector('.ghost-theme'), 'dark')
 ```
 
-<div ref="stage" class="ghost-theme demo-stage" data-ghost-mode="light">
+<div
+  ref="stage"
+  class="ghost-theme demo-stage"
+  data-ghost-mode="light"
+  data-testid="motion-docs-stage"
+>
   <p>Nested mode on this card.</p>
-  <button type="button" class="demo-play" @click="crossfade('light')">Light</button>
-  <button type="button" class="demo-play" @click="crossfade('dark')">Dark</button>
+  <button
+    type="button"
+    class="demo-play"
+    data-testid="motion-docs-mode-light"
+    @click="crossfade('light')"
+  >
+    Light
+  </button>
+  <button
+    type="button"
+    class="demo-play"
+    data-testid="motion-docs-mode-dark"
+    @click="crossfade('dark')"
+  >
+    Dark
+  </button>
 </div>
 
 ## Playground
@@ -152,11 +242,19 @@ transitions and collapsed translate/scale tokens.
   margin: 1rem 0 1.5rem;
   padding: 1rem;
 }
+.demo-board {
+  /* Calm docs inherit intensity 0.6; pin 1 so demo times match the labels. */
+  --ghost-motion-intensity: 1;
+}
+.demo-reduced-note {
+  display: none;
+  margin-block: 0 0.75rem;
+}
 .demo-row {
   align-items: center;
   display: grid;
   gap: 0.75rem;
-  grid-template-columns: 8.5rem 1fr;
+  grid-template-columns: 12.5rem 1fr;
   margin-block: 0.45rem;
 }
 .demo-track {
@@ -173,7 +271,31 @@ transitions and collapsed translate/scale tokens.
   display: block;
   inline-size: 1.25rem;
 }
+.demo-dot[data-motion] {
+  /* Keep recipe easing/fill; margin % is the track, unlike translate %. */
+  animation-duration: var(--demo-motion-duration);
+  animation-name: ghost-docs-motion-shift;
+}
+@keyframes ghost-docs-motion-shift {
+  from {
+    margin-inline-start: 0;
+  }
+
+  to {
+    margin-inline-start: calc(100% - 1.25rem);
+  }
+}
 .demo-stage p {
   margin-block: 0 0.75rem;
+}
+@media (prefers-reduced-motion: reduce) {
+  .demo-reduced-note {
+    display: block;
+  }
+
+  .demo-dot[data-motion] {
+    animation-duration: 0.7s;
+    animation-name: ghost-motion-fade;
+  }
 }
 </style>
