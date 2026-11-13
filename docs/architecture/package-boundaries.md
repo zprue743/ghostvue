@@ -32,6 +32,8 @@ relative imports, and no direct imports from `dist`) are enforced by
 `scripts/check-package-boundaries.mjs` and `.dependency-cruiser.mjs`
 (`pnpm boundaries`). Each package `AGENTS.md` is generated from the same
 catalog and checked by `scripts/check-agent-adapters.mjs` (`pnpm adapters`).
+`tests/integration/package-boundaries.test.ts` runs the same import rules against
+fixtures to prove invalid imports fail and an allowed package import passes.
 
 ## Adding a package
 
