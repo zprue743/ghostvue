@@ -22,3 +22,4 @@ new context rather than rewriting history.
 - [0009 — Ambient interactivity for 'alive' surfaces](./0009-ambient-interactivity.md)
 - [0010 — Rebrand to GhostVue](./0010-rebrand-to-ghostvue.md)
 - [0011 — Overlay primitives](./0011-overlay-primitives.md)
+- [0012 — Modal overlays](./0012-modal-overlays.md)

@@ -7,6 +7,14 @@ import {
   type MaybeRefOrGetter,
 } from 'vue'
 
+import {
+  getTopDismissableLayer,
+  hasDismissableLayers,
+  pushDismissableLayer,
+  removeDismissableLayer,
+  type DismissableLayerEntry,
+} from './dismissable-layer-stack'
+
 /** Why the topmost dismissable layer was asked to close. */
 export type DismissReason = 'escape' | 'outside-pointer'
 
@@ -36,18 +44,7 @@ export interface UseDismissableLayerOptions {
   ignore?: MaybeRefOrGetter<DismissableLayerIgnore | undefined>
 }
 
-interface LayerRecord {
-  id: symbol
-  element: HTMLElement
-  options: UseDismissableLayerOptions
-}
-
-/**
- * Module-level stack of active dismissable layers (per copy of `@ghostvue/vue`).
- * Only the topmost layer handles Escape and outside-pointer dismissal so nested
- * overlays close one layer at a time.
- */
-const layerStack: LayerRecord[] = []
+const layerOptions = new Map<symbol, UseDismissableLayerOptions>()
 let listenersAttached = false
 
 function attachDocumentListeners(): void {
@@ -76,27 +73,29 @@ function handleDocumentKeyDown(event: KeyboardEvent): void {
   if (event.key !== 'Escape' || event.defaultPrevented || event.isComposing) {
     return
   }
-  const top = layerStack.at(-1)
-  if (!top || (toValue(top.options.disableEscape) ?? false)) {
+  const top = getTopDismissableLayer()
+  const options = top ? layerOptions.get(top.id) : undefined
+  if (!options || (toValue(options.disableEscape) ?? false)) {
     return
   }
-  top.options.onDismiss('escape', event)
+  options.onDismiss('escape', event)
 }
 
 function handleDocumentPointerDown(event: PointerEvent): void {
-  const top = layerStack.at(-1)
-  if (!top || (toValue(top.options.disableOutsidePointer) ?? false)) {
+  const top = getTopDismissableLayer()
+  const options = top ? layerOptions.get(top.id) : undefined
+  if (!top || !options || (toValue(options.disableOutsidePointer) ?? false)) {
     return
   }
   if (isEventInsideElement(event, top.element)) {
     return
   }
-  for (const ignored of resolveIgnoredElements(top.options.ignore)) {
+  for (const ignored of resolveIgnoredElements(options.ignore)) {
     if (isEventInsideElement(event, ignored)) {
       return
     }
   }
-  top.options.onDismiss('outside-pointer', event)
+  options.onDismiss('outside-pointer', event)
 }
 
 function isEventInsideElement(
@@ -139,21 +138,6 @@ function resolveIgnoredElements(
   return resolved ? [resolved] : []
 }
 
-function insertLayerRecord(record: LayerRecord): void {
-  // Vue runs child onMounted hooks before parent onMounted hooks. When nested
-  // DOM layers mount in the same render, keep descendants above ancestors.
-  const descendantIndex = layerStack.findIndex(
-    (existing) =>
-      existing.element !== record.element &&
-      record.element.contains(existing.element),
-  )
-  if (descendantIndex >= 0) {
-    layerStack.splice(descendantIndex, 0, record)
-    return
-  }
-  layerStack.push(record)
-}
-
 /**
  * Dismisses the topmost active overlay layer on Escape or pointerdown outside
  * `el` and any `ignore` elements.
@@ -175,20 +159,18 @@ export function useDismissableLayer(
           return
         }
 
-        const record: LayerRecord = {
+        const entry: DismissableLayerEntry = {
           id: Symbol('ghost-dismissable-layer'),
           element,
-          options,
         }
-        insertLayerRecord(record)
+        layerOptions.set(entry.id, options)
+        pushDismissableLayer(entry)
         attachDocumentListeners()
 
         onCleanup(() => {
-          const index = layerStack.lastIndexOf(record)
-          if (index >= 0) {
-            layerStack.splice(index, 1)
-          }
-          if (layerStack.length === 0) {
+          removeDismissableLayer(entry)
+          layerOptions.delete(entry.id)
+          if (!hasDismissableLayers()) {
             detachDocumentListeners()
           }
         })
