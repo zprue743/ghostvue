@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, provide, shallowRef } from 'vue'
+import { computed, provide, shallowRef, watch } from 'vue'
 
 import { ghostPopoverContextKey } from './ghost-popover'
 import { useGhostPopover } from './use-ghost-popover'
@@ -43,6 +43,16 @@ const {
   },
 })
 
+// Record whether the root started open at setup so `defaultOpen` / initial
+// `open: true` does not steal focus on page load, while lazily mounted content
+// (`v-if="open"` on the root slot) still autofocuses when opened after setup.
+const openedAtMount = shallowRef(isOpen.value)
+watch(isOpen, (open) => {
+  if (!open) {
+    openedAtMount.value = false
+  }
+})
+
 const customTriggerId = shallowRef<string | null>(null)
 const customContentId = shallowRef<string | null>(null)
 const triggerRegistered = shallowRef(false)
@@ -59,6 +69,7 @@ provide(ghostPopoverContextKey, {
   contentId: computed(() => customContentId.value ?? defaultContentId.value),
   triggerRegistered,
   triggerElement,
+  openedAtMount,
   setTriggerElement(element) {
     triggerElement.value = element
   },

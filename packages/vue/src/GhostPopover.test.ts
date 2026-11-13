@@ -410,6 +410,44 @@ describe('GhostPopover', () => {
     )
     expect(insideButton).not.toBeNull()
     expect(document.activeElement).toBe(insideButton)
+    preFocusedWrapper.unmount()
+
+    // 3. Lazily mounted GhostPopoverContent (v-if="open" on the root slot) still autofocuses when opened via the trigger.
+    const lazyWrapper = mountAttached(
+      defineComponent({
+        setup() {
+          return () =>
+            h(GhostPopover, null, {
+              default: ({ open }: { open: boolean }) => [
+                h(
+                  GhostPopoverTrigger,
+                  { 'data-testid': 'lazy-trigger' },
+                  () => 'Open lazy',
+                ),
+                open
+                  ? h(GhostPopoverContent, null, () => [
+                      h(
+                        'button',
+                        { type: 'button', 'data-testid': 'lazy-inside' },
+                        'Lazy action',
+                      ),
+                    ])
+                  : null,
+              ],
+            })
+        },
+      }),
+    )
+
+    const lazyTrigger = lazyWrapper.get('[data-testid="lazy-trigger"]')
+    ;(lazyTrigger.element as HTMLElement).focus()
+    await lazyTrigger.trigger('click')
+    await flushPromises()
+    const lazyInside = document.querySelector<HTMLElement>(
+      '[data-testid="lazy-inside"]',
+    )
+    expect(lazyInside).not.toBeNull()
+    expect(document.activeElement).toBe(lazyInside)
   })
 
   it('keeps focus off trigger when clicking a child span/svg/text of an outside button and restores focus when clicking plain outside text', async () => {

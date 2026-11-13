@@ -111,20 +111,16 @@ const floating = useFloating(
   },
 )
 
-// Only autofocus on an actual closed-to-open transition after mount so a
-// popover rendered with `defaultOpen` or `open: true` at mount does not steal
-// focus on page load.
-const shouldAutoFocus = shallowRef(false)
 const shouldRestoreFocus = shallowRef(true)
 
 watch(
   () => context.isOpen.value,
   (open) => {
     if (open) {
-      shouldAutoFocus.value = true
       shouldRestoreFocus.value = true
     }
   },
+  { immediate: true },
 )
 
 function hasFocusableAncestor(target: EventTarget | null): boolean {
@@ -193,7 +189,7 @@ watch(
 
 useFocusScope(focusTarget, {
   trapped: false,
-  autoFocus: shouldAutoFocus,
+  autoFocus: () => !context.openedAtMount.value,
   restoreFocus: shouldRestoreFocus,
 })
 
