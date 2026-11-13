@@ -89,7 +89,7 @@ export default defineConfig({
     ],
     sidebar: docsSidebar,
     socialLinks: [
-      { icon: 'github', link: 'https://github.com/zprue743/slop-ui' },
+      { icon: 'github', link: 'https://github.com/zprue743/ghostvue' },
     ],
   },
   // Emit llmstxt.org files into the static output so they are served at

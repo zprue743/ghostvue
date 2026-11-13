@@ -21,7 +21,7 @@ export interface RetiredGhostCodeEntry {
  * until a hosted docs origin exists.
  */
 export const GHOST_CODE_DOCS_URL =
-  'https://github.com/zprue743/slop-ui/blob/master/docs/warnings.md'
+  'https://github.com/zprue743/ghostvue/blob/master/docs/warnings.md'
 
 /**
  * Assigned development diagnostic codes. Keys are stable public identifiers and
