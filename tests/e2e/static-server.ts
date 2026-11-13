@@ -36,12 +36,16 @@ export async function startStaticServer(relativeRoot: string): Promise<{
       }
 
       try {
-        const body = await readFile(requestedPath)
+        // Mirror Vercel `cleanUrls`: `/components/button` serves `button.html`.
+        const servedPath =
+          extname(requestedPath) === ''
+            ? `${requestedPath}.html`
+            : requestedPath
+        const body = await readFile(servedPath)
         response
           .writeHead(200, {
             'content-type':
-              contentTypes[extname(requestedPath)] ??
-              'application/octet-stream',
+              contentTypes[extname(servedPath)] ?? 'application/octet-stream',
           })
           .end(body)
       } catch {

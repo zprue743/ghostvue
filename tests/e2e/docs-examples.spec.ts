@@ -1,7 +1,19 @@
 import AxeBuilder from '@axe-core/playwright'
 import { expect, test } from '@playwright/test'
 
+import { docsSidebar } from '../../apps/docs/.vitepress/docs-nav'
 import { startStaticServer } from './static-server'
+
+// Every GhostX component page in the sidebar, excluding its spec page.
+const componentPages = docsSidebar
+  .flatMap((group) => group.items)
+  .flatMap(({ text, link }) =>
+    text.startsWith('Ghost') &&
+    link?.startsWith('/components/') &&
+    !link.endsWith('-spec')
+      ? [link]
+      : [],
+  )
 
 function isTransparentColor(value: string): boolean {
   return /^(transparent|rgba\(\s*0,\s*0,\s*0,\s*0\s*\)|oklab\(\s*0\s+0\s+0\s*\/\s*0\s*\))$/i.test(
@@ -129,6 +141,67 @@ test.describe('docs example previews', () => {
       await expect(
         source.locator('.vp-code span[style*="--shiki-"]').first(),
       ).toBeVisible()
+    } finally {
+      await docs.close()
+    }
+  })
+
+  test('every Ghost* component page renders each demo preview', async ({
+    page,
+  }) => {
+    expect(componentPages.length).toBeGreaterThan(0)
+    const errors: string[] = []
+    page.on('pageerror', (error) => errors.push(error.message))
+    const docs = await startStaticServer('apps/docs/.vitepress/dist')
+
+    try {
+      for (const link of componentPages) {
+        await page.goto(`${docs.url}${link}`)
+        const stages = page.locator('.ghost-example__stage')
+        await expect(stages.first()).toBeVisible()
+        for (const stage of await stages.all()) {
+          await expect(stage.locator(':scope > *').first()).toBeAttached()
+        }
+      }
+      expect(errors).toEqual([])
+    } finally {
+      await docs.close()
+    }
+  })
+
+  test('a tab left open across a redeploy reloads instead of rendering empty previews', async ({
+    page,
+  }) => {
+    const docs = await startStaticServer('apps/docs/.vitepress/dist')
+
+    try {
+      await page.goto(`${docs.url}/components/popover`)
+      await page.waitForLoadState('networkidle')
+
+      // A redeploy replaces every hashed chunk. Lazy example chunks the old
+      // tab never fetched now 404 once; a fresh document load gets them.
+      const removed = new Set<string>()
+      await page.route('**/assets/chunks/*.js', async (route) => {
+        const url = route.request().url()
+        if (removed.has(url)) {
+          await route.continue()
+          return
+        }
+        removed.add(url)
+        await route.fulfill({ status: 404, body: 'Not found' })
+      })
+
+      await page
+        .locator('.VPSidebar a[href="/components/button"]')
+        .first()
+        .click()
+      await expect(page).toHaveURL(/\/components\/button$/)
+
+      const stages = page.locator('.ghost-example__stage')
+      await expect(stages).toHaveCount(6)
+      for (const stage of await stages.all()) {
+        await expect(stage.locator(':scope > *').first()).toBeAttached()
+      }
     } finally {
       await docs.close()
     }
