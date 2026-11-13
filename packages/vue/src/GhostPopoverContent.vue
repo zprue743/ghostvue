@@ -2,6 +2,7 @@
 import {
   computed,
   inject,
+  nextTick,
   onUnmounted,
   shallowRef,
   useAttrs,
@@ -110,31 +111,60 @@ const floating = useFloating(
   },
 )
 
+// Only autofocus on an actual closed-to-open transition after mount so a
+// popover rendered with `defaultOpen` or `open: true` at mount does not steal
+// focus on page load.
+const shouldAutoFocus = shallowRef(false)
 const shouldRestoreFocus = shallowRef(true)
 
 watch(
   () => context.isOpen.value,
   (open) => {
     if (open) {
+      shouldAutoFocus.value = true
       shouldRestoreFocus.value = true
     }
   },
-  { immediate: true },
 )
+
+function hasFocusableAncestor(target: EventTarget | null): boolean {
+  let current: Element | null =
+    target instanceof Element
+      ? target
+      : target instanceof Node
+        ? target.parentElement
+        : null
+  while (
+    current &&
+    current !== document.body &&
+    current !== document.documentElement
+  ) {
+    if (current instanceof HTMLElement && isFocusable(current)) {
+      return true
+    }
+    current = current.parentElement
+  }
+  return false
+}
 
 useDismissableLayer(contentElement, {
   ignore: () => context.triggerElement.value,
   onDismiss: (reason, event) => {
-    // Allow outside clicks on other focusable controls (inputs, buttons) to
-    // keep focus instead of pulling focus back to the trigger on close.
-    if (reason === 'outside-pointer') {
-      const targetIsFocusable =
-        event.target instanceof HTMLElement && isFocusable(event.target)
-      shouldRestoreFocus.value = !targetIsFocusable
-    } else {
-      shouldRestoreFocus.value = true
-    }
+    // Allow outside clicks on other focusable controls (or their child spans/SVGs)
+    // to keep focus instead of pulling focus back to the trigger on close.
+    const skipRestore =
+      reason === 'outside-pointer' && hasFocusableAncestor(event.target)
+    shouldRestoreFocus.value = !skipRestore
     context.close()
+    if (skipRestore) {
+      // Scope the suppression to this dismissal only so a controlled parent
+      // that ignores `update:open` still restores focus on a later close.
+      void nextTick(() => {
+        if (context.isOpen.value) {
+          shouldRestoreFocus.value = true
+        }
+      })
+    }
   },
 })
 
@@ -163,7 +193,7 @@ watch(
 
 useFocusScope(focusTarget, {
   trapped: false,
-  autoFocus: true,
+  autoFocus: shouldAutoFocus,
   restoreFocus: shouldRestoreFocus,
 })
 

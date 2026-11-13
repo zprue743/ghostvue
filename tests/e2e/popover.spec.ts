@@ -187,4 +187,33 @@ test.describe('GhostPopover', () => {
       await playground.close()
     }
   })
+
+  test('defaultOpen renders open without stealing focus on page load and focuses content when reopened via trigger', async ({
+    page,
+  }) => {
+    const playground = await startStaticServer('apps/playground/dist')
+
+    try {
+      await page.goto(playground.url)
+
+      const trigger = page.getByTestId('popover-default-open-trigger')
+      const content = page.getByTestId('popover-default-open-content')
+      const input = page.getByTestId('popover-default-open-input')
+
+      await expect(content).toBeVisible()
+      await expect(input).not.toBeFocused()
+      await expect(page.locator('body')).toBeFocused()
+
+      // Closing and reopening via the trigger performs a closed-to-open transition and autofocuses content.
+      await trigger.scrollIntoViewIfNeeded()
+      await trigger.click()
+      await expect(content).toHaveCount(0)
+
+      await trigger.click()
+      await expect(content).toBeVisible()
+      await expect(input).toBeFocused()
+    } finally {
+      await playground.close()
+    }
+  })
 })
