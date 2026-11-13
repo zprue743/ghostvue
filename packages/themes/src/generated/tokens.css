@@ -150,6 +150,7 @@
     --ghost-motion-spring-snappy: linear(0, 0.0043 0.8264%, 0.036 2.4793%, 0.1271 4.9587%, 0.6578 14.876%, 0.8392 19.0083%, 0.9867 23.9669%, 1.0328 26.4463%, 1.063 28.9256%, 1.0832 32.2314%, 1.0853 36.3636%, 1.0164 52.8926%, 0.9952 62.8099%, 1);
     --ghost-motion-translate: 0.5rem;
     --ghost-roundness: 1;
+    --ghost-scrim: color-mix(in srgb, #070b11 60%, transparent);
     --ghost-space-gap-lg: 1rem;
     --ghost-space-gap-md: 0.75rem;
     --ghost-space-gap-sm: 0.5rem;
@@ -385,6 +386,7 @@
       --ghost-motion-spring-snappy: linear(0, 0.0043 0.8264%, 0.036 2.4793%, 0.1271 4.9587%, 0.6578 14.876%, 0.8392 19.0083%, 0.9867 23.9669%, 1.0328 26.4463%, 1.063 28.9256%, 1.0832 32.2314%, 1.0853 36.3636%, 1.0164 52.8926%, 0.9952 62.8099%, 1);
       --ghost-motion-translate: 0.5rem;
       --ghost-roundness: 1;
+      --ghost-scrim: color-mix(in srgb, #0c0d0f 60%, transparent);
       --ghost-space-gap-lg: 1rem;
       --ghost-space-gap-md: 0.75rem;
       --ghost-space-gap-sm: 0.5rem;
@@ -621,6 +623,7 @@
     --ghost-motion-spring-snappy: linear(0, 0.0043 0.8264%, 0.036 2.4793%, 0.1271 4.9587%, 0.6578 14.876%, 0.8392 19.0083%, 0.9867 23.9669%, 1.0328 26.4463%, 1.063 28.9256%, 1.0832 32.2314%, 1.0853 36.3636%, 1.0164 52.8926%, 0.9952 62.8099%, 1);
     --ghost-motion-translate: 0.5rem;
     --ghost-roundness: 1;
+    --ghost-scrim: color-mix(in srgb, #070b11 60%, transparent);
     --ghost-space-gap-lg: 1rem;
     --ghost-space-gap-md: 0.75rem;
     --ghost-space-gap-sm: 0.5rem;
@@ -856,6 +859,7 @@
     --ghost-motion-spring-snappy: linear(0, 0.0043 0.8264%, 0.036 2.4793%, 0.1271 4.9587%, 0.6578 14.876%, 0.8392 19.0083%, 0.9867 23.9669%, 1.0328 26.4463%, 1.063 28.9256%, 1.0832 32.2314%, 1.0853 36.3636%, 1.0164 52.8926%, 0.9952 62.8099%, 1);
     --ghost-motion-translate: 0.5rem;
     --ghost-roundness: 1;
+    --ghost-scrim: color-mix(in srgb, #0c0d0f 60%, transparent);
     --ghost-space-gap-lg: 1rem;
     --ghost-space-gap-md: 0.75rem;
     --ghost-space-gap-sm: 0.5rem;
@@ -1173,6 +1177,7 @@
     --ghost-material-glass-fallback-bg: Canvas;
     --ghost-material-grain-bg: Canvas;
     --ghost-material-solid-bg: Canvas;
+    --ghost-scrim: transparent;
     --ghost-status-danger-bg: Canvas;
     --ghost-status-danger-border: CanvasText;
     --ghost-status-danger-fg: CanvasText;

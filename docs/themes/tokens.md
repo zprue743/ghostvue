@@ -291,6 +291,12 @@ tokens that alias them.
 | --- | --- | --- | --- | --- | --- |
 | `roundness.amount` | `--ghost-roundness` | number | `1` | `1` | Unitless 0–1 corner scale compiled as --ghost-roundness. 0 is sharp; 1 is the designed radius. Set on any subtree. |
 
+### scrim
+
+| Token | CSS | Type | Light | Dark | Description |
+| --- | --- | --- | --- | --- | --- |
+| `scrim` | `--ghost-scrim` | color | `color-mix(in srgb, #070b11 60%, transparent)` | `color-mix(in srgb, #0c0d0f 60%, transparent)` | Modal backdrop. Darkest neutral at 60% opacity dims the page while leaving it visible; transparent in forced colors. |
+
 ### space
 
 | Token | CSS | Type | Light | Dark | Description |

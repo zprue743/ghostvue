@@ -29,6 +29,7 @@ describe('token pipeline', () => {
   })
 
   it('maps role.part.state names to --ghost-<role>-<part>-<state>', () => {
+    expect(cssVariableName('scrim')).toBe('--ghost-scrim')
     expect(cssVariableName('action.primary.bg')).toBe(
       '--ghost-action-primary-bg',
     )
@@ -38,6 +39,18 @@ describe('token pipeline', () => {
     expect(cssVariableName('control.size.sm.padding.block')).toBe(
       '--ghost-control-size-sm-padding-block',
     )
+  })
+
+  it('keeps dotted names required for roles other than scrim', () => {
+    expect(() =>
+      compileTokenDocuments([
+        {
+          file: 'semantic.json',
+          tier: 'semantic',
+          tree: { canvas: { $type: 'color', $value: '#ffffff' } },
+        },
+      ]),
+    ).toThrow(/not dotted role.part/)
   })
 
   it('snapshots compiled CSS, TypeScript, JSON, and docs outputs', async () => {
@@ -65,6 +78,7 @@ describe('token pipeline', () => {
     expect(compiled.css).toContain('prefers-color-scheme: dark')
     expect(compiled.css).toContain('forced-colors: active')
     expect(compiled.css).toContain('--ghost-surface-bg: Canvas;')
+    expect(compiled.css).toContain('--ghost-scrim: transparent;')
     expect(compiled.css).toContain('--ghost-action-primary-bg: ButtonFace;')
     expect(compiled.css).toContain('--ghost-elevation-2-shadow:')
     expect(compiled.css).toContain('linear-gradient(135deg in oklch')
@@ -107,6 +121,13 @@ describe('token pipeline', () => {
   })
 
   it('exports typed semantic constants with resolved light and dark values', () => {
+    expect(tokens.scrim.cssVar).toBe('--ghost-scrim')
+    expect(tokens.scrim.tier).toBe('semantic')
+    expect(tokens.scrim.type).toBe('color')
+    expect(tokens.scrim.value).toEqual({
+      light: 'color-mix(in srgb, #070b11 60%, transparent)',
+      dark: 'color-mix(in srgb, #0c0d0f 60%, transparent)',
+    })
     expect(tokens['action.primary.bg'].cssVar).toBe('--ghost-action-primary-bg')
     expect(tokens['action.primary.bg'].value.light).toBe('#1d4ed8')
     expect(tokens['action.primary.bg'].value.dark).toBe('#60a5fa')

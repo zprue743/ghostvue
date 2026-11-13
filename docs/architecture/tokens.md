@@ -47,7 +47,7 @@ of `pnpm verify`) checks WCAG 2 AA on semantic text/background pairs.
    easing, spring parameters, the 4px spacing scale, control heights, and
    type primitives live here.
 2. **Semantic** — product intent as `role.part.state` across `action`,
-   `surface`, `text`, `border`, `status`, `focus`, `control`,
+   `surface`, `scrim`, `text`, `border`, `status`, `focus`, `control`,
    `elevation`, `material`, `gradient`, `motion`, `space`, `radius`,
    `type`, `roundness`, `interactive`, and `state` (`action.primary.bg`,
    `elevation.2.shadow`, `motion.duration.fast`, `space.gap.sm`,
@@ -72,7 +72,8 @@ The JSON token catalog is not the per-component gate manifest in
 and is concatenated into `@ghostvue/themes/default.css`.
 
 Public CSS names are `--ghost-<role>-<part>-<state>`
-(`--ghost-action-primary-bg`, `--ghost-action-primary-bg-hover`). Vue components
+(`--ghost-action-primary-bg`, `--ghost-action-primary-bg-hover`).
+The standalone `scrim` role publishes `--ghost-scrim`. Vue components
 are `GhostButton` (ADR 0003); class names stay `ghost-*`. Primitive tokens are
 not published as CSS. Private derived properties (`--_ghost-*`) are not in
 the TS or JSON public catalog.
@@ -113,6 +114,13 @@ Override a semantic custom property on the same subtree:
 
 Token selectors use `:where()` inside `@layer ghostvue-theme`, so unlayered
 consumer styles win.
+
+`--ghost-scrim` is the shared modal-backdrop color. It mixes the theme's
+darkest neutral palette step (`color.neutral.1000` in light mode,
+`color.neutral.dark.1000` in dark mode) at 60% opacity with transparent,
+leaving 40% of the page visible. The default, calm, vibrant, and mono themes
+all inherit this role through the token pipeline. In forced colors it is
+transparent so the backdrop does not obscure the user's high-contrast page.
 
 ## Contrast, forced colors, and follow-ups
 

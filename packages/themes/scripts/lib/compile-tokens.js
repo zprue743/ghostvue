@@ -161,7 +161,8 @@ function flattenTokens(node, path, file) {
       throw new Error(`${file}: the document root cannot be a token`)
     }
     const name = path.join('.')
-    if (!TOKEN_NAME.test(name)) {
+    // Scrim is a standalone semantic role with the public name --ghost-scrim.
+    if (name !== 'scrim' && !TOKEN_NAME.test(name)) {
       throw new Error(`${file}: token name "${name}" is not dotted role.part…`)
     }
     const type = node.$type
@@ -556,6 +557,8 @@ function withDescendants(selector) {
 export function forcedColorForToken(token) {
   if (token.tier !== 'semantic' || token.type !== 'color') return null
   const { name } = token
+  // Preserve page visibility when forced colors would make a backdrop opaque.
+  if (name === 'scrim') return 'transparent'
   if (name.startsWith('focus.ring')) {
     return name.endsWith('contrast') ? 'Canvas' : 'Highlight'
   }
