@@ -34,8 +34,22 @@ export default defineConfig({
         '**/*.test.ts',
         '**/*.spec.ts',
       ],
+      // Keep the workspace-wide threshold (which includes packages/themes/scripts/lib)
+      // alongside per-package src/** gates so one package cannot mask another.
       thresholds: {
         lines: 80,
+        'packages/core/src/**': {
+          lines: 80,
+        },
+        'packages/shared/src/**': {
+          lines: 80,
+        },
+        'packages/themes/src/**': {
+          lines: 80,
+        },
+        'packages/vue/src/**': {
+          lines: 80,
+        },
       },
     },
   },
