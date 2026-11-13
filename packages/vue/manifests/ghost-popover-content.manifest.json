@@ -1,0 +1,129 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "generated",
+  "name": "GhostPopoverContent",
+  "package": "@ghostvue/vue",
+  "status": "experimental",
+  "description": "Headless floating non-modal dialog surface for GhostPopover. Composes GhostPortal, useFloating, useDismissableLayer, and untrapped useFocusScope while staying unmounted (v-if) when closed.",
+  "props": [
+    {
+      "name": "as",
+      "type": "GhostPopoverContentElement",
+      "default": "div",
+      "required": false,
+      "description": "Tag name or component rendered for the popover dialog surface.",
+      "deprecated": false
+    },
+    {
+      "name": "placement",
+      "type": "Placement",
+      "default": "bottom",
+      "required": false,
+      "description": "Preferred placement relative to the trigger.",
+      "deprecated": false
+    },
+    {
+      "name": "offset",
+      "type": "boolean | GhostPopoverOffsetOptions",
+      "required": false,
+      "description": "Distance or axis offsets passed to `useFloating`.",
+      "deprecated": false
+    },
+    {
+      "name": "flip",
+      "type": "boolean | GhostPopoverFlipOptions",
+      "default": true,
+      "required": false,
+      "description": "Flip to an opposite side when overflowing the viewport or boundary.",
+      "deprecated": false
+    },
+    {
+      "name": "shift",
+      "type": "boolean | GhostPopoverShiftOptions",
+      "default": true,
+      "required": false,
+      "description": "Shift along the cross axis to keep the popover in view.",
+      "deprecated": false
+    },
+    {
+      "name": "strategy",
+      "type": "Strategy",
+      "default": "absolute",
+      "required": false,
+      "description": "CSS positioning strategy passed to `useFloating`.",
+      "deprecated": false
+    },
+    {
+      "name": "portal",
+      "type": "boolean",
+      "default": true,
+      "required": false,
+      "description": "Teleport content through `GhostPortal` when `true`, or render inline when `false`.",
+      "deprecated": false
+    },
+    {
+      "name": "portalTo",
+      "type": "GhostPortalTarget",
+      "default": "body",
+      "required": false,
+      "description": "Teleport target passed to `GhostPortal` when `portal` is `true`.",
+      "deprecated": false
+    }
+  ],
+  "models": [],
+  "events": [],
+  "slots": [
+    {
+      "name": "default",
+      "props": [],
+      "description": "Non-modal dialog content rendered while open."
+    }
+  ],
+  "exposed": [
+    {
+      "name": "element",
+      "kind": "property",
+      "type": "HTMLElement | null",
+      "description": "Resolved floating dialog element while open; null when closed or unmounted."
+    },
+    {
+      "name": "focus",
+      "kind": "method",
+      "type": "(options?: FocusOptions) => void",
+      "description": "Focuses the floating dialog element when mounted."
+    },
+    {
+      "name": "blur",
+      "kind": "method",
+      "type": "() => void",
+      "description": "Removes focus from the floating dialog element."
+    }
+  ],
+  "styling": {
+    "parts": [
+      {
+        "name": "content",
+        "description": "Floating surface marked with class ghost-popover-content, data-part=\"content\", and data-placement."
+      }
+    ],
+    "states": [
+      {
+        "name": "open",
+        "description": "Applied on data-state while mounted and open."
+      }
+    ],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "dialog",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/",
+    "keyboard": {
+      "Escape": "Dismisses the topmost open popover and restores focus to the trigger.",
+      "Tab": "Moves freely without trapping (non-modal)."
+    },
+    "requiredAriaAttributes": [
+      "aria-labelledby"
+    ]
+  },
+  "examples": []
+}

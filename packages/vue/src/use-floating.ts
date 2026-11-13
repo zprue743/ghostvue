@@ -48,6 +48,8 @@ export interface UseFloatingReturn {
   placement: Readonly<Ref<Placement>>
   /** Active CSS positioning strategy (`'absolute'` or `'fixed'`). */
   strategy: ComputedRef<Strategy>
+  /** True after the first `computePosition` resolves; resets on close or target change. */
+  isPositioned: Readonly<Ref<boolean>>
   /** Recompute the position on demand when mounted. */
   update: () => Promise<void>
 }
@@ -104,6 +106,7 @@ export function useFloating(
   const internalPlacement = shallowRef<Placement>(
     toValue(options?.placement) ?? 'bottom',
   )
+  const internalPositioned = shallowRef(false)
   const strategy = computed<Strategy>(
     () => toValue(options?.strategy) ?? 'absolute',
   )
@@ -139,6 +142,7 @@ export function useFloating(
       ) => {
         if (!anchorEl || !floatingEl) {
           internalPlacement.value = placementOption ?? 'bottom'
+          internalPositioned.value = false
           return
         }
 
@@ -158,6 +162,7 @@ export function useFloating(
           internalY.value = result.y
           internalPlacement.value = result.placement
           floatingEl.setAttribute('data-placement', result.placement)
+          internalPositioned.value = true
         }
 
         currentUpdate = runUpdate
@@ -172,6 +177,15 @@ export function useFloating(
           }
           stopAutoUpdate()
           floatingEl.removeAttribute('data-placement')
+          // Reset readiness on close or target swap so reopened/retarged
+          // layers hide until new coordinates resolve, without flickering on
+          // option-only updates for the same active targets.
+          if (
+            toValue(anchor) !== anchorEl ||
+            toValue(floating) !== floatingEl
+          ) {
+            internalPositioned.value = false
+          }
         })
       },
       { immediate: true },
@@ -180,6 +194,7 @@ export function useFloating(
 
   onUnmounted(() => {
     stopWatch?.()
+    internalPositioned.value = false
   })
 
   return {
@@ -187,6 +202,7 @@ export function useFloating(
     y: computed(() => internalY.value),
     placement: computed(() => internalPlacement.value),
     strategy,
+    isPositioned: computed(() => internalPositioned.value),
     update: () => (currentUpdate ? currentUpdate() : Promise.resolve()),
   }
 }

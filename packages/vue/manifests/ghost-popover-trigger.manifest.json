@@ -1,0 +1,88 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "generated",
+  "name": "GhostPopoverTrigger",
+  "package": "@ghostvue/vue",
+  "status": "experimental",
+  "description": "Headless anchor and toggle button for GhostPopover. Sets aria-haspopup=\"dialog\", aria-expanded, aria-controls, and data-state.",
+  "props": [
+    {
+      "name": "as",
+      "type": "GhostPopoverTriggerElement",
+      "default": "button",
+      "required": false,
+      "description": "Tag name or component rendered for the trigger control.",
+      "deprecated": false
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Disables toggling on click or keyboard activation.",
+      "deprecated": false
+    }
+  ],
+  "models": [],
+  "events": [],
+  "slots": [
+    {
+      "name": "default",
+      "props": [],
+      "description": "Trigger label or button content."
+    }
+  ],
+  "exposed": [
+    {
+      "name": "element",
+      "kind": "property",
+      "type": "HTMLElement | null",
+      "description": "Resolved DOM trigger element after mount; null before mount and after unmount."
+    },
+    {
+      "name": "focus",
+      "kind": "method",
+      "type": "(options?: FocusOptions) => void",
+      "description": "Focuses the resolved trigger element."
+    },
+    {
+      "name": "blur",
+      "kind": "method",
+      "type": "() => void",
+      "description": "Blurs the resolved trigger element."
+    }
+  ],
+  "styling": {
+    "parts": [
+      {
+        "name": "trigger",
+        "description": "Trigger element marked with data-part=\"trigger\"."
+      }
+    ],
+    "states": [
+      {
+        "name": "open",
+        "description": "Popover is open."
+      },
+      {
+        "name": "closed",
+        "description": "Popover is closed."
+      }
+    ],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "button",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/disclosure/",
+    "keyboard": {
+      "Enter": "Toggles the popover when enabled.",
+      "Space": "Toggles the popover when enabled."
+    },
+    "requiredAriaAttributes": [
+      "aria-expanded",
+      "aria-controls",
+      "aria-haspopup"
+    ]
+  },
+  "examples": []
+}

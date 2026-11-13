@@ -73,21 +73,33 @@ describe('useFloating', () => {
     const addDoc = vi.spyOn(document, 'addEventListener')
 
     let snapshot:
-      { x: number; y: number; placement: string; strategy: string } | undefined
+      | {
+          x: number
+          y: number
+          placement: string
+          strategy: string
+          isPositioned: boolean
+        }
+      | undefined
 
     const Comp = defineComponent({
       setup() {
         const anchor = ref<HTMLElement | null>(null)
         const floating = ref<HTMLElement | null>(null)
-        const { x, y, placement, strategy } = useFloating(anchor, floating, {
-          placement: 'top-start',
-          strategy: 'fixed',
-        })
+        const { x, y, placement, strategy, isPositioned } = useFloating(
+          anchor,
+          floating,
+          {
+            placement: 'top-start',
+            strategy: 'fixed',
+          },
+        )
         snapshot = {
           x: x.value,
           y: y.value,
           placement: placement.value,
           strategy: strategy.value,
+          isPositioned: isPositioned.value,
         }
         return () =>
           h('div', [
@@ -105,6 +117,7 @@ describe('useFloating', () => {
       y: 0,
       placement: 'top-start',
       strategy: 'fixed',
+      isPositioned: false,
     })
     expect(floatingDomMocks.autoUpdate).not.toHaveBeenCalled()
     expect(floatingDomMocks.computePosition).not.toHaveBeenCalled()
@@ -278,5 +291,92 @@ describe('useFloating', () => {
     expect(
       wrapper.get('[data-testid="floating"]').attributes('data-placement'),
     ).toBe('bottom-end')
+  })
+
+  it('tracks isPositioned from first resolution and resets on close or target change', async () => {
+    type ComputeResult = Awaited<ReturnType<typeof FloatingDom.computePosition>>
+    const resolvers: ((result: ComputeResult) => void)[] = []
+
+    computePositionOverride = () =>
+      new Promise<ComputeResult>((resolve) => {
+        resolvers.push(resolve)
+      })
+
+    const anchorA = ref<HTMLElement | null>(null)
+    const anchorB = ref<HTMLElement | null>(null)
+    const useSecondAnchor = ref(false)
+    const open = ref(true)
+    const placement = ref<'bottom' | 'top'>('bottom')
+    const floating = ref<HTMLElement | null>(null)
+    let floatingState: ReturnType<typeof useFloating> | undefined
+
+    const wrapper = mount(
+      defineComponent({
+        setup() {
+          floatingState = useFloating(
+            () => (useSecondAnchor.value ? anchorB.value : anchorA.value),
+            () => (open.value ? floating.value : null),
+            { placement },
+          )
+          return () =>
+            h('div', [
+              h('button', { ref: anchorA, type: 'button' }, 'Anchor A'),
+              h('button', { ref: anchorB, type: 'button' }, 'Anchor B'),
+              h('div', { ref: floating, 'data-testid': 'floating' }, 'Tip'),
+            ])
+        },
+      }),
+      { attachTo: document.body },
+    )
+    attached.push(wrapper)
+
+    // Before first computePosition resolves, isPositioned must stay false.
+    expect(floatingState?.isPositioned.value).toBe(false)
+    expect(resolvers).toHaveLength(1)
+
+    resolvers[0]?.({
+      x: 16,
+      y: 32,
+      placement: 'bottom',
+      strategy: 'absolute',
+      middlewareData: {},
+    })
+    await flushPromises()
+    expect(floatingState?.isPositioned.value).toBe(true)
+
+    // Option-only updates must not reset isPositioned while open on the same targets.
+    placement.value = 'top'
+    await nextTick()
+    expect(floatingState?.isPositioned.value).toBe(true)
+    expect(resolvers).toHaveLength(2)
+    resolvers[1]?.({
+      x: 16,
+      y: 8,
+      placement: 'top',
+      strategy: 'absolute',
+      middlewareData: {},
+    })
+    await flushPromises()
+    expect(floatingState?.isPositioned.value).toBe(true)
+
+    // Swapping the anchor target resets isPositioned until the new position resolves.
+    useSecondAnchor.value = true
+    await nextTick()
+    expect(floatingState?.isPositioned.value).toBe(false)
+    expect(resolvers).toHaveLength(3)
+    resolvers[2]?.({
+      x: 48,
+      y: 8,
+      placement: 'top',
+      strategy: 'absolute',
+      middlewareData: {},
+    })
+    await flushPromises()
+    expect(floatingState?.isPositioned.value).toBe(true)
+
+    // Closing (floating -> null) resets isPositioned.
+    open.value = false
+    await nextTick()
+    expect(floatingState?.isPositioned.value).toBe(false)
   })
 })

@@ -1,0 +1,59 @@
+/*
+ * Themed GhostPopover surface. Visual values come from semantic --ghost-*
+ * tokens with no component-specific tokens or hard-coded colors/lengths.
+ */
+@layer ghostvue-theme {
+  :where(
+    .ghost-theme .ghost-popover-content,
+    .ghost-themed-scope .ghost-popover-content,
+    .ghost-popover-content[data-themed]
+  ) {
+    background-color: var(--ghost-elevation-3-bg);
+    border: var(--ghost-border-hairline-width) solid
+      var(--ghost-elevation-3-border);
+    border-radius: var(--ghost-radius-lg);
+    box-shadow:
+      var(--ghost-elevation-3-shadow), var(--ghost-elevation-3-highlight);
+    box-sizing: border-box;
+    color: var(--ghost-surface-fg);
+    font-family: var(--ghost-type-family-sans);
+    font-feature-settings: var(--ghost-type-feature-default);
+    padding: var(--ghost-space-inset-md);
+    z-index: 50;
+  }
+
+  :where(
+    .ghost-theme .ghost-popover-content:focus-visible,
+    .ghost-themed-scope .ghost-popover-content:focus-visible,
+    .ghost-popover-content[data-themed]:focus-visible
+  ) {
+    box-shadow:
+      var(--ghost-elevation-3-shadow),
+      var(--ghost-elevation-3-highlight),
+      0 0 0 var(--ghost-focus-ring-offset) var(--ghost-focus-ring-contrast);
+    outline: var(--ghost-focus-ring-width) solid var(--ghost-focus-ring-color);
+    outline-offset: var(--ghost-focus-ring-offset);
+  }
+
+  @media (forced-colors: active) {
+    :where(
+      .ghost-theme .ghost-popover-content,
+      .ghost-themed-scope .ghost-popover-content,
+      .ghost-popover-content[data-themed]
+    ) {
+      background-color: Canvas;
+      border-color: CanvasText;
+      box-shadow: none;
+      color: CanvasText;
+    }
+
+    :where(
+      .ghost-theme .ghost-popover-content:focus-visible,
+      .ghost-themed-scope .ghost-popover-content:focus-visible,
+      .ghost-popover-content[data-themed]:focus-visible
+    ) {
+      box-shadow: none;
+      outline-color: Highlight;
+    }
+  }
+}

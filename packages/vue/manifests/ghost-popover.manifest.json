@@ -1,0 +1,97 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "generated",
+  "name": "GhostPopover",
+  "package": "@ghostvue/vue",
+  "status": "experimental",
+  "description": "Headless non-modal disclosure and popover root provider. Manages controlled/uncontrolled open state via useControllableState and deterministic trigger/content IDs via useGhostId.",
+  "props": [
+    {
+      "name": "open",
+      "type": "boolean",
+      "required": false,
+      "description": "Controlled open state. Omit for uncontrolled mode.",
+      "deprecated": false
+    },
+    {
+      "name": "defaultOpen",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Initial open state when `open` is omitted.",
+      "deprecated": false
+    }
+  ],
+  "models": [
+    {
+      "prop": "open",
+      "event": "update:open",
+      "type": "boolean",
+      "description": "v-model binding for `open`."
+    }
+  ],
+  "events": [],
+  "slots": [
+    {
+      "name": "default",
+      "props": [
+        {
+          "name": "open",
+          "type": "boolean",
+          "description": "Current open state."
+        },
+        {
+          "name": "close",
+          "type": "() => void",
+          "description": "Closes the popover."
+        }
+      ],
+      "description": "Trigger and content parts plus optional custom UI reading the scoped state."
+    }
+  ],
+  "exposed": [],
+  "styling": {
+    "parts": [
+      {
+        "name": "trigger",
+        "description": "Anchor control rendered by GhostPopoverTrigger."
+      },
+      {
+        "name": "content",
+        "description": "Floating dialog surface rendered by GhostPopoverContent."
+      },
+      {
+        "name": "close",
+        "description": "Close button rendered by GhostPopoverClose."
+      }
+    ],
+    "states": [
+      {
+        "name": "open",
+        "description": "Applied on data-state while the popover is open."
+      },
+      {
+        "name": "closed",
+        "description": "Applied on GhostPopoverTrigger data-state while the popover is closed."
+      }
+    ],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "dialog",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/disclosure/",
+    "keyboard": {
+      "Enter": "Toggles the popover on GhostPopoverTrigger or closes on GhostPopoverClose.",
+      "Space": "Toggles the popover on GhostPopoverTrigger or closes on GhostPopoverClose.",
+      "Escape": "Dismisses the topmost open popover and restores focus to the trigger."
+    },
+    "requiredAriaAttributes": [
+      "aria-expanded",
+      "aria-controls",
+      "aria-haspopup"
+    ]
+  },
+  "examples": [
+    "popover/basic"
+  ]
+}
