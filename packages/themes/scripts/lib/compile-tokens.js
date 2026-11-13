@@ -38,6 +38,7 @@ export const ROUNDNESS_VAR = `${CSS_PREFIX}roundness`
 
 const ALIAS = /^\{([a-z0-9]+(?:\.[a-z0-9-]+)*)\}$/i
 const TOKEN_NAME = /^[a-z][a-z0-9]*(?:\.[a-z0-9][a-z0-9-]*)+$/
+const STANDALONE_SEMANTIC_TOKENS = new Set(['scrim'])
 
 /**
  * Token hosts. `.ghost-themed-scope` is a recipe scope only — putting it here
@@ -161,8 +162,7 @@ function flattenTokens(node, path, file) {
       throw new Error(`${file}: the document root cannot be a token`)
     }
     const name = path.join('.')
-    // Scrim is a standalone semantic role with the public name --ghost-scrim.
-    if (name !== 'scrim' && !TOKEN_NAME.test(name)) {
+    if (!STANDALONE_SEMANTIC_TOKENS.has(name) && !TOKEN_NAME.test(name)) {
       throw new Error(`${file}: token name "${name}" is not dotted role.part…`)
     }
     const type = node.$type

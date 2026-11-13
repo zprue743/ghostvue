@@ -41,17 +41,39 @@ describe('token pipeline', () => {
     )
   })
 
-  it('keeps dotted names required for roles other than scrim', () => {
-    expect(() =>
-      compileTokenDocuments([
-        {
-          file: 'semantic.json',
-          tier: 'semantic',
-          tree: { canvas: { $type: 'color', $value: '#ffffff' } },
-        },
-      ]),
-    ).toThrow(/not dotted role.part/)
+  it('compiles the standalone scrim semantic token', () => {
+    const compiled = compileTokenDocuments([
+      {
+        file: 'semantic.json',
+        tier: 'semantic',
+        tree: { scrim: { $type: 'color', $value: '#000000' } },
+      },
+    ])
+
+    expect(compiled.tokens).toHaveLength(1)
+    expect(compiled.tokens[0]).toMatchObject({
+      name: 'scrim',
+      cssVar: '--ghost-scrim',
+      tier: 'semantic',
+    })
+    expect(compiled.css).toContain('--ghost-scrim: #000000;')
+    expect(compiled.css).toContain('--ghost-scrim: transparent;')
   })
+
+  it.each(['canvas', 'overlay'])(
+    'rejects the undotted token %s outside the standalone allowlist',
+    (name) => {
+      expect(() =>
+        compileTokenDocuments([
+          {
+            file: 'semantic.json',
+            tier: 'semantic',
+            tree: { [name]: { $type: 'color', $value: '#ffffff' } },
+          },
+        ]),
+      ).toThrow(/not dotted role.part/)
+    },
+  )
 
   it('snapshots compiled CSS, TypeScript, JSON, and docs outputs', async () => {
     const compiled = await compileThemeTokens(tokensDir)

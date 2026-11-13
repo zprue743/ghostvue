@@ -98,7 +98,7 @@
     "cssProperties": [
       {
         "name": "--ghost-scrim",
-        "description": "Backdrop color of GhostDialogOverlay (falls back to rgb(0 0 0 / 0.5) when undefined)."
+        "description": "Shared semantic backdrop color of GhostDialogOverlay, supplied by the theme."
       },
       {
         "name": "--ghost-elevation-4-bg",
