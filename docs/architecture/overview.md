@@ -59,6 +59,8 @@ playground and documentation responsibilities without providing meaningful
 stories. Reconsider it when component development demonstrates a concrete review
 or visual-regression need.
 
-The repository-owned boundary checker is intentionally smaller than a general
-dependency graph tool. Reconsider dedicated cycle analysis when implementation
-volume makes simple manifest validation insufficient.
+`scripts/check-package-boundaries.mjs` validates package manifest edges against
+`scripts/workspace-packages.mjs` and runs `dependency-cruiser` (configured in
+`.dependency-cruiser.mjs`) to enforce source-level package layering, forbid
+circular imports, block cross-package relative imports, and reject imports from
+`dist`.

@@ -26,12 +26,12 @@ unstyled components belong in `vue`. Do not add a third package merely to
 host styled twins.
 
 `scripts/workspace-packages.mjs` is the executable catalog of package
-responsibilities and allowed internal dependencies. Manifest edges are enforced
-by `scripts/check-package-boundaries.mjs` (`pnpm boundaries`). Each package
-`AGENTS.md` is generated from the same catalog and checked by
-`scripts/check-agent-adapters.mjs` (`pnpm adapters`). Source-level circular
-dependency tooling is intentionally deferred until real implementation provides
-enough graph complexity to justify it.
+responsibilities and allowed internal dependencies. Manifest edges and
+source-level import boundaries (layering, no circular imports, no cross-package
+relative imports, and no direct imports from `dist`) are enforced by
+`scripts/check-package-boundaries.mjs` and `.dependency-cruiser.mjs`
+(`pnpm boundaries`). Each package `AGENTS.md` is generated from the same
+catalog and checked by `scripts/check-agent-adapters.mjs` (`pnpm adapters`).
 
 ## Adding a package
 
