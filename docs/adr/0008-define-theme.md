@@ -6,7 +6,7 @@ Identifiers updated for the GhostVue rebrand (ADR 0010).
 - Date: 2026-11-11
 - Decision owners: Zac Pruett, repository maintainers
 - Relates to: [ADR 0007](./0007-token-pipeline.md) (pipeline, `data-ghost-*`,
-  CSS names); SLO-68 / SLO-61f
+  CSS names); GHO-68 / GHO-61f
 
 Accepted 2026-11-11 with the answers in [Decision record](#decision-record-zac-2026-11-11).
 
@@ -21,7 +21,7 @@ those ramps; CSS custom properties switch on `data-ghost-theme`,
 contrast`). Unset `data-ghost-mode` follows `prefers-color-scheme` in CSS, so
 SSR does not flash the opposite palette.
 
-SLO-68 asks for `defineTheme({ primaryHue, neutralTint, roundness,
+GHO-68 asks for `defineTheme({ primaryHue, neutralTint, roundness,
 density, motionIntensity })` that emits a complete theme, runtime
 switching with no SSR flash, nested scoped themes, three flagship themes
 (calm enterprise, vibrant expressive, minimal monochrome), and a docs

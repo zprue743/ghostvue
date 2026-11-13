@@ -4,7 +4,7 @@ import '@ghostvue/themes/default.css'
 
 # Elevation, materials, and gradients
 
-SLO-64 recipes on top of the [token catalog](./tokens.md). Components consume
+GHO-64 recipes on top of the [token catalog](./tokens.md). Components consume
 semantic `--ghost-*` variables; these `data-elevation`, `data-material`, and
 `data-gradient` attributes are documented utilities in `@ghostvue/themes`
 default CSS. They are not per-component tokens and they are not passthrough

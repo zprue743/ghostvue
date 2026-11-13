@@ -25,7 +25,7 @@ will type. Per-component tokens would duplicate every later control. Nested
 theme and mode switching cannot be expressed with one `color-scheme` attribute
 on the theme root.
 
-This ADR records the binding decisions for SLO-37 (the emit pipeline) and
+This ADR records the binding decisions for GHO-37 (the emit pipeline) and
 leaves ramp generation, contrast CI, density, motion, elevation, and flagship
 themes to follow-up issues.
 
@@ -52,7 +52,7 @@ semantic tokens. There is no `tokens/components/` tree.
 
 1. **Primitive** — raw palette and dimension literals. No product intent
    (`color.blue.700`). Color ramps, elevation, motion, and density scales are
-   **not** authored here; SLO-63–SLO-66 own those systems. This pipeline seeds
+   **not** authored here; GHO-63–GHO-66 own those systems. This pipeline seeds
    only the literals GhostButton already used.
 2. **Semantic** — product intent as `role.part.state` (for example
    `action.primary.bg` and `action.primary.bg.hover`). Components consume
@@ -109,15 +109,15 @@ A docs page listing the catalog is generated from the JSON manifest.
 
 ### Contrast, ramps, and flagship themes
 
-- **CI contrast (SLO-63):** WCAG AA is required; APCA is advisory. Implemented
+- **CI contrast (GHO-63):** WCAG AA is required; APCA is advisory. Implemented
   in `pnpm contrast` with `culori.wcagContrast` and a local APCA 0.0.98G-4g
   function. `culori` is a devDependency of `@ghostvue/themes`.
-- **Flagship themes (SLO-68):** calm enterprise, vibrant expressive, and
+- **Flagship themes (GHO-68):** calm enterprise, vibrant expressive, and
   minimal monochrome. This pipeline still emits authored `default`; flagships
   are `defineTheme` output ([ADR 0008](./0008-define-theme.md)).
-- **Density (SLO-66):** default density is comfortable. Implemented as
+- **Density (GHO-66):** default density is comfortable. Implemented as
   nestable `data-ghost-density` overlays plus `--ghost-roundness`; see the
-  SLO-66 amendment.
+  GHO-66 amendment.
 
 ## Alternatives considered
 
@@ -135,7 +135,7 @@ previews, docs, and mixed-mode applications need `data-ghost-mode` on any
 subtree, with the default still following the operating system.
 
 **Add Style Dictionary or `culori` now.** Rejected. The seed set is a small
-JSON graph; a local compiler is enough. `culori` waits for SLO-63.
+JSON graph; a local compiler is enough. `culori` waits for GHO-63.
 
 **Publish primitive CSS variables on day one.** Rejected. The public CSS
 shape is semantic `--ghost-<role>-<part>-<state>`. Primitives stay in DTCG, TS,
@@ -149,46 +149,46 @@ and JSON so ramps can land without renaming the runtime API.
   authoring reference and no longer describes a future pipeline.
 - ADR 0005 remains the record that DTCG and the three compile outputs were
   chosen; CSS prefix, component tokens, and mode switching follow this ADR.
-- Follow-ups: MCP `get_tokens`. SLO-63 (ramps, semantic
-  text/border/status, contrast CI, forced-colors mapping), SLO-64
-  (elevation, hairline, materials, gradients), SLO-65 (motion durations,
-  easing, springs, reduced motion), SLO-66 (density, type, roundness),
-  SLO-67 (state layers and the GhostButton reference theme), and SLO-68
+- Follow-ups: MCP `get_tokens`. GHO-63 (ramps, semantic
+  text/border/status, contrast CI, forced-colors mapping), GHO-64
+  (elevation, hairline, materials, gradients), GHO-65 (motion durations,
+  easing, springs, reduced motion), GHO-66 (density, type, roundness),
+  GHO-67 (state layers and the GhostButton reference theme), and GHO-68
   (`defineTheme` and flagships; [ADR 0008](./0008-define-theme.md)) landed
   on this pipeline.
 
 ## Amendments
 
-- 2026-11-11: SLO-63 generates 12-step OKLCH ramps from `seeds.json` with
+- 2026-11-11: GHO-63 generates 12-step OKLCH ramps from `seeds.json` with
   `culori`, expands semantic `text` / `border` / `status` / `action` roles,
   maps `--ghost-*` variables under `forced-colors`, and gates WCAG 2 AA in
   `pnpm verify`. Dark palettes are tuned separately, not inverted from
   light. APCA Lc is advisory.
-- 2026-11-11: SLO-64 extends the compiler with DTCG `shadow` composites
+- 2026-11-11: GHO-64 extends the compiler with DTCG `shadow` composites
   and layered `gradient` values serialized `in oklch`. Semantic
   `elevation` / `material` / `gradient` roles, a hairline width that
   becomes 0.5px at 2dppx, glass/grain recipes, and contrast pairs on
-  elevation fills ship on this pipeline. Motion (SLO-65) is still out of
+  elevation fills ship on this pipeline. Motion (GHO-65) is still out of
   scope.
-- 2026-11-11: SLO-65 extends the compiler with DTCG `cubicBezier` and
+- 2026-11-11: GHO-65 extends the compiler with DTCG `cubicBezier` and
   `spring` (mass-spring-damper compiled to CSS `linear()` plus settle
   duration). Semantic `motion` durations wrap `calc()` with
   `--ghost-motion-intensity`. `$extensions.ghostvue.reducedMotion` overlays
-  values under `prefers-reduced-motion: reduce`. Density (SLO-66) is
+  values under `prefers-reduced-motion: reduce`. Density (GHO-66) is
   still out of scope.
-- 2026-11-11: SLO-66 adds a 4px spacing scale, nestable
+- 2026-11-11: GHO-66 adds a 4px spacing scale, nestable
   `data-ghost-density` (`compact` / `comfortable` / `spacious`; default
   comfortable) via overlay files, fluid `clamp()` type with a system
   font stack, and `--ghost-roundness` (0–1) that scales every radius
   token through `calc()`. Control heights use 28/32/36/40/48px with a
   44px coarse-pointer floor. Density (this amendment) is no longer out
   of scope.
-- 2026-11-11: SLO-67 adds semantic `state.layer.*` overlay opacities,
+- 2026-11-11: GHO-67 adds semantic `state.layer.*` overlay opacities,
   `state.mix.*` rest mixes, action gradient stops gated against `*.fg`,
   disabled `action.disabled.bg` / `fg` / `border`, and press/focus
   motion tokens. GhostButton is the reference consumer: token-only CSS,
   two-tone focus ring, spring press, and a documented state matrix.
-- 2026-11-11: SLO-68 (`defineTheme`, flagship CSS, `.ghost-themed-scope`
+- 2026-11-11: GHO-68 (`defineTheme`, flagship CSS, `.ghost-themed-scope`
   token-host change) is [ADR 0008](./0008-define-theme.md). This pipeline
   still compiles authored `default`; flagships are generated token sheets.
 

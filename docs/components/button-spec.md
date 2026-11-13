@@ -219,7 +219,7 @@ themed visual props plus CSS custom properties.
 Future changes to event timing, native semantics, loading behavior, exposed refs,
 semantic attributes, or styling hooks require compatibility review.
 
-Themed visual states (SLO-67) are CSS-only. Hover, press, selected, and
+Themed visual states (GHO-67) are CSS-only. Hover, press, selected, and
 dragged overlays use semantic `state.layer.*` tokens. `aria-pressed` and
 `aria-grabbed` are native fallthrough hooks, not headless props.
 
@@ -227,4 +227,4 @@ dragged overlays use semantic `state.layer.*` tokens. `aria-pressed` and
 
 None blocking. Token pipeline, ramps, elevation, motion, density, the
 GhostButton reference theme, and flagship `defineTheme` generation have landed
-(ADR 0007, ADR 0008, SLO-63–SLO-68).
+(ADR 0007, ADR 0008, GHO-63–GHO-68).

@@ -13,7 +13,7 @@ async function crossfade(mode) {
 
 # Motion
 
-SLO-65 recipes on top of the [token catalog](./tokens.md). Components consume
+GHO-65 recipes on top of the [token catalog](./tokens.md). Components consume
 semantic `--ghost-*` variables. `data-motion` attributes are documented utilities
 in `@ghostvue/themes` default CSS. They are not per-component tokens.
 

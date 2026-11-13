@@ -15,4 +15,4 @@ Rename the library from slop-ui to GhostVue. This is a breaking public rename of
 - Classes `.slop-*` are now `.ghost-*`
 - Development diagnostic codes `SLOP0xx` are now `GHOST0xx`
 
-Button `variant="ghost"` is unchanged. The GitHub repository URL remains `github.com/zprue743/slop-ui`.
+Button `variant="ghost"` is unchanged. The GitHub repository moved to `github.com/zprue743/ghostvue` (old URLs redirect).

@@ -7,7 +7,7 @@ Identifiers updated for the GhostVue rebrand (ADR 0010).
 - Decision owners: Zac Pruett, repository maintainers
 - Relates to: [ADR 0004](./0004-headless-styled-layering.md) (layering),
   [ADR 0007](./0007-token-pipeline.md) (tokens, `--ghost-motion-intensity`),
-  [ADR 0008](./0008-define-theme.md) (flagships); SLO-62
+  [ADR 0008](./0008-define-theme.md) (flagships); GHO-62
 
 Accepted 2026-11-11 with the answers in
 [Decision record](#decision-record-zac-2026-11-11). v1 ships **spotlight
@@ -15,7 +15,7 @@ only**; tilt and magnetic are follow-ups.
 
 ## Context
 
-SLO-62 asks for surfaces that react to the pointer so the UI feels alive.
+GHO-62 asks for surfaces that react to the pointer so the UI feels alive.
 The inspiration is [particles.js](https://vincentgarreau.com/particles.js/) —
 ambient response to presence, not a particle-field clone. `--ghost-motion-intensity`
 already scales duration; reduced-motion overlays already exist. The missing
@@ -56,7 +56,7 @@ shader backdrops. They fight the token model (colors and motion cease to be
 dependency. Playground experiments may try them; **they are not a library
 feature.**
 
-**Spring physics.** SLO-65 already compiles mass-spring-damper triples to
+**Spring physics.** GHO-65 already compiles mass-spring-damper triples to
 CSS `linear()` plus settle duration. That is the right tool for discrete
 arrivals and the leave settle. Continuous pointer tracking should **not**
 run a JS integrator in v1: CSS-var writes plus the existing spring on leave
@@ -186,7 +186,7 @@ not SSR-safe at import, and the request is the _feeling_, not the clone.
 not available to CSS.
 
 **JS spring integrator in v1.** Rejected until tracking-while-down needs
-mass. SLO-65 springs already cover leave.
+mass. GHO-65 springs already cover leave.
 
 **PrimeVue-style `pt` for glow layers.** Rejected by ADR 0004.
 
@@ -215,7 +215,7 @@ markup and snapshots identical. No new runtime dependency.
    Off by default. Not a global button treatment.
 2. **CSS vars + existing springs in v1.** Pointer tracking writes CSS
    variables; leave uses `--ghost-interactive-leave-spring` (`linear()` from
-   SLO-65). A JS spring integrator is a follow-up only if tracking feels
+   GHO-65). A JS spring integrator is a follow-up only if tracking feels
    weightless.
 3. **Coarse pointers are fully off.** No static centered glow.
 4. **Budget, not invariant.** One active tracking surface is documented.

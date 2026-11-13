@@ -68,7 +68,7 @@ test.describe('density, type, and roundness', () => {
         const shot = page.getByTestId(`density-shot-${density}`)
         // Pin the clip so system-font metrics cannot change snapshot dimensions.
         // Mask playground labels; button glyphs still differ slightly across
-        // Ubuntu fonts, so this suite allows 0.05 (SLO-64 snapshots stay at 0.03).
+        // Ubuntu fonts, so this suite allows 0.05 (GHO-64 snapshots stay at 0.03).
         await shot.evaluate((element) => {
           element.style.boxSizing = 'border-box'
           element.style.height = '88px'
