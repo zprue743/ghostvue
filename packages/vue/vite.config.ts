@@ -12,9 +12,9 @@ export default defineConfig({
       fileName: 'ghostvue',
     },
     rollupOptions: {
-      // Vue remains a peer dependency so consumers share their application
-      // runtime instead of receiving a second copy in the library bundle.
-      external: ['vue'],
+      // Vue remains a peer dependency and @floating-ui/dom a runtime dependency
+      // so consumer bundlers share a single copy and tree-shake unused middleware.
+      external: ['vue', '@floating-ui/dom'],
     },
   },
 })

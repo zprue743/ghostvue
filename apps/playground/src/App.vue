@@ -7,6 +7,7 @@ import AmbientReference from './AmbientReference.vue'
 import ButtonStateMatrix from './ButtonStateMatrix.vue'
 import DensityReference from './DensityReference.vue'
 import MotionReference from './MotionReference.vue'
+import OverlayReference from './OverlayReference.vue'
 import VisualReference from './VisualReference.vue'
 import {
   GhostButton,
@@ -159,6 +160,7 @@ function closeNested(): void {
       :density-filter="flagshipDensities"
     />
     <AmbientReference />
+    <OverlayReference />
 
     <section aria-labelledby="button-heading">
       <h2 id="button-heading">GhostButton</h2>

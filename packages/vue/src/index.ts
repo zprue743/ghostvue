@@ -45,3 +45,17 @@ export type {
   GhostVisuallyHiddenProps,
   UseGhostVisuallyHiddenOptions,
 } from './ghost-visually-hidden'
+export {
+  useDismissableLayer,
+  type DismissableLayerIgnore,
+  type DismissableLayerTarget,
+  type DismissReason,
+  type UseDismissableLayerOptions,
+} from './use-dismissable-layer'
+export {
+  useFloating,
+  type UseFloatingOptions,
+  type UseFloatingReturn,
+} from './use-floating'
+export { default as GhostPortal } from './GhostPortal.vue'
+export type { GhostPortalProps, GhostPortalTarget } from './ghost-portal'

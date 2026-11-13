@@ -1,0 +1,56 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "generated",
+  "name": "GhostPortal",
+  "package": "@ghostvue/vue",
+  "status": "experimental",
+  "description": "Thin SSR-safe wrapper around Vue Teleport for rendering overlay content outside the parent DOM hierarchy. Defers teleportation until after mount so SSR and initial hydration render inline without touching document.",
+  "props": [
+    {
+      "name": "to",
+      "type": "GhostPortalTarget",
+      "default": "body",
+      "required": false,
+      "description": "Target CSS selector, DOM element, or null (disables teleportation) to teleport children into after mount.",
+      "deprecated": false
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Render slot content inline instead of teleporting.",
+      "deprecated": false
+    },
+    {
+      "name": "defer",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Defer target lookup until after the current mount or update cycle so targets rendered later in the tree resolve.",
+      "deprecated": false
+    }
+  ],
+  "models": [],
+  "events": [],
+  "slots": [
+    {
+      "name": "default",
+      "props": [],
+      "description": "Overlay content to teleport to the target container once mounted (or render inline when disabled or during SSR)."
+    }
+  ],
+  "exposed": [],
+  "styling": {
+    "parts": [],
+    "states": [],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "generic",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/",
+    "keyboard": {},
+    "requiredAriaAttributes": []
+  },
+  "examples": []
+}
