@@ -19,7 +19,7 @@ export default defineConfig({
     include: ['packages/**/*.test.ts', 'tests/integration/**/*.test.ts'],
     coverage: {
       provider: 'v8',
-      reporter: ['text', 'html'],
+      reporter: ['text', 'html', 'json-summary', 'lcov'],
       // Measure publishable package sources (including Node-side theme compilers
       // in packages/themes/scripts/lib); CLI entry scripts (.mjs), generated
       // token outputs, build artifacts, and type-test fixtures are not unit targets.
