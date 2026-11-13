@@ -56,6 +56,7 @@ test.describe('GhostPopover', () => {
       await expect(content).toBeVisible()
       await outsideTarget.click()
       await expect(content).toHaveCount(0)
+      await expect(outsideTarget).toBeFocused()
     } finally {
       await playground.close()
     }
