@@ -2,7 +2,10 @@ import { mount } from '@vue/test-utils'
 import { nextTick } from 'vue'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
-import { GhostButton } from '../../packages/themes/src/ghost-button'
+import {
+  GhostButton,
+  type GhostButtonExposed,
+} from '../../packages/themes/src/ghost-button'
 
 afterEach(() => {
   vi.unstubAllGlobals()
@@ -61,5 +64,63 @@ describe('themed GhostButton interactivity', () => {
       'true',
     )
     wrapper.unmount()
+  })
+
+  it('maps non-default visual props to data attributes and omits defaults', () => {
+    stubFinePointer()
+    const defaultWrapper = mount(GhostButton, {
+      slots: { default: 'Default' },
+    })
+    const defaultButton = defaultWrapper.get('button')
+    expect(defaultButton.attributes('data-variant')).toBeUndefined()
+    expect(defaultButton.attributes('data-tone')).toBeUndefined()
+    expect(defaultButton.attributes('data-size')).toBeUndefined()
+    expect(defaultButton.attributes('data-block')).toBeUndefined()
+    expect(defaultButton.attributes('data-icon-only')).toBeUndefined()
+    defaultWrapper.unmount()
+
+    const styledWrapper = mount(GhostButton, {
+      props: {
+        variant: 'outline',
+        tone: 'danger',
+        size: 'lg',
+        block: true,
+        iconOnly: true,
+      },
+      attrs: { 'aria-label': 'Delete' },
+      slots: { default: 'X' },
+    })
+    const styledButton = styledWrapper.get('button')
+    expect(styledButton.attributes('data-variant')).toBe('outline')
+    expect(styledButton.attributes('data-tone')).toBe('danger')
+    expect(styledButton.attributes('data-size')).toBe('lg')
+    expect(styledButton.attributes('data-block')).toBe('')
+    expect(styledButton.attributes('data-icon-only')).toBe('')
+    styledWrapper.unmount()
+  })
+
+  it('delegates exposed element, focus, and blur to the native button', () => {
+    stubFinePointer()
+    const wrapper = mount(GhostButton, {
+      attachTo: document.body,
+      slots: { default: 'Save' },
+    })
+    const button = wrapper.get('button')
+    const focusSpy = vi.spyOn(button.element, 'focus')
+    const blurSpy = vi.spyOn(button.element, 'blur')
+    const exposed = wrapper.vm as unknown as GhostButtonExposed
+
+    expect(exposed.element).toBe(button.element)
+
+    exposed.focus({ preventScroll: true })
+    expect(focusSpy).toHaveBeenCalledWith({ preventScroll: true })
+    expect(document.activeElement).toBe(button.element)
+
+    exposed.blur()
+    expect(blurSpy).toHaveBeenCalledOnce()
+    expect(document.activeElement).not.toBe(button.element)
+
+    wrapper.unmount()
+    expect(exposed.element).toBeNull()
   })
 })
