@@ -10,7 +10,7 @@ const roundness = ref(1)
 
 # Density, type, and roundness
 
-SLO-66 recipes on top of the [token catalog](./tokens.md). Components consume
+GHO-66 recipes on top of the [token catalog](./tokens.md). Components consume
 semantic `--ghost-*` variables. There are no per-component tokens.
 
 Unset `data-ghost-density` is **comfortable**. `data-ghost-density` nests on any

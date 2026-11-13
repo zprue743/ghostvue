@@ -10,8 +10,8 @@ Identifiers updated for the GhostVue rebrand (ADR 0010).
 
 ## Context
 
-The first components in [PR #20](https://github.com/zprue743/slop-ui/pull/20)
-(`Button`) and [PR #21](https://github.com/zprue743/slop-ui/pull/21)
+The first components in [PR #20](https://github.com/zprue743/ghostvue/pull/20)
+(`Button`) and [PR #21](https://github.com/zprue743/ghostvue/pull/21)
 (`VisuallyHidden`) export unprefixed PascalCase names from `@ghostvue/vue`.
 Master has not recorded the name prefix, whether `app.use()` is required, how
 Volar `GlobalComponents` and `unplugin-vue-components` should work, or how
@@ -29,7 +29,7 @@ optional plugin rather than a required one. Comparable Vue libraries diverge:
 | Ark UI              | Unprefixed (`Button`)           | Named imports              | Per import               |
 | Shoelace            | Prefixed (`sl-button`)          | Custom elements            | Custom-element types     |
 
-ADR 0004 (SLO-10) splits headless composables from themed wrappers. Both
+ADR 0004 (GHO-10) splits headless composables from themed wrappers. Both
 layers share these naming and registration rules.
 
 ## Decision

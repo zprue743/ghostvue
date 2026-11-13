@@ -44,7 +44,7 @@ that look like URLs use `pattern`. Manifests are not loaded at runtime by
 is `packages/vue/manifests/ghost-button.manifest.json`. Themed wrappers get a
 separate themes manifest when they add visual props. Until a `Ghost*.vue`
 file exists for a component, checked-in manifests may set
-`"source": "handwritten"`. SLO-13 generates `"source": "generated"` files
+`"source": "handwritten"`. GHO-13 generates `"source": "generated"` files
 from Vue sources with `pnpm manifests:write`.
 
 **Shape.** Every component records `name` (`Ghost*`), `package`, `status`
@@ -86,7 +86,7 @@ dependency.
 - The component gate's manifest item is this schema, not the spec prose.
 - `pnpm test` validates every `*.manifest.json` and rejects fixtures that are
   not named `*.manifest.json`.
-- SLO-13 generates manifests with `source: "generated"` via
+- GHO-13 generates manifests with `source: "generated"` via
   `pnpm manifests:write`. Check mode (`pnpm manifests`) is part of
   `pnpm verify`. Output must stay valid against this schema. Prose fields
   stay in the same file and are preserved on regeneration.

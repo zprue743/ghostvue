@@ -72,3 +72,9 @@ variables, `data-sl-*` attributes, `.slop-*` classes, or `SLOP0xx` codes.
 Migration is a mechanical find-and-replace along the map above. No visual or
 runtime behavior change is intended. No SSR, accessibility, or token-value
 change. First release remains pre-1.0; this is still a named breaking change.
+
+## Amendment
+
+2026-11-11: The GitHub repository was renamed to zprue743/ghostvue (old URLs
+redirect). 2026-11-12: the Linear team key changed from SLO to GHO with the same
+issue numbers; docs now cite GHO-n.

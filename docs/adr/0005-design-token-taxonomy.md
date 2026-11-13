@@ -11,7 +11,7 @@ Identifiers updated for the GhostVue rebrand (ADR 0010).
 
 [docs/architecture/styling.md](../architecture/styling.md) still says no
 token taxonomy exists because the foundation phase has not seen components.
-[PR #20](https://github.com/zprue743/slop-ui/pull/20) already authors a
+[PR #20](https://github.com/zprue743/ghostvue/pull/20) already authors a
 runtime token surface in `packages/themes/src/default.css`:
 
 - semantic theme: `--ghost-theme-surface`, `--ghost-theme-color`
@@ -24,7 +24,7 @@ Those names will become a compatibility contract if Button merges without a
 taxonomy. GhostVue is AI-native: tokens must be a format agents can read and
 write, not only CSS a browser can apply.
 
-ADR 0004 (SLO-10) says themed components style through CSS variables from
+ADR 0004 (GHO-10) says themed components style through CSS variables from
 tokens. This ADR names the source, tiers, and compile outputs. Building the
 pipeline is **out of scope**; this PR is ADR plus docs.
 
@@ -66,7 +66,7 @@ A follow-up pipeline compiles DTCG JSON to all three of:
    docs, and codegen.
 3. **JSON manifest** — resolved values for MCP and agents. This is the
    _token_ manifest; it is not the per-component gate manifest in ADR 0002
-   (SLO-8).
+   (GHO-8).
 
 `default.css` in PR #20 is the current runtime snapshot, not the long-term
 source. The pipeline should be able to emit equivalent public custom

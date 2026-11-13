@@ -14,7 +14,7 @@ non-Vue consumer exists. They do not say whether the public unit is a
 composable, a renderless component, a styled component, or all three, or how
 a theme attaches without making either path painful.
 
-[PR #20](https://github.com/zprue743/slop-ui/pull/20) implements one Button
+[PR #20](https://github.com/zprue743/ghostvue/pull/20) implements one Button
 as a single unstyled SFC plus optional CSS under `.ghost-theme`. That is a
 useful CSS attachment idea, but it does not give a themed component that is
 as easy as a headless one, and it uses `data-slot` rather than a stable
@@ -30,7 +30,7 @@ Comparable models:
 
 Owner requirement: **both** headless and themed use must be extremely easy.
 PrimeVue-style `pt` prop objects are **rejected**. Naming follows ADR 0003
-(SLO-9): `GhostButton`, `useGhostButton`. Tokens follow ADR 0005 (SLO-36).
+(GHO-9): `GhostButton`, `useGhostButton`. Tokens follow ADR 0005 (GHO-36).
 
 ## Decision
 

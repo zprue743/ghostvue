@@ -4,7 +4,7 @@
   "name": "GhostButton",
   "package": "@ghostvue/themes",
   "status": "experimental",
-  "description": "Themed wrapper around headless GhostButton. Same behavioral props plus variant, tone, size, block, and iconOnly. Importing it loads the default stylesheet and scopes styles to this instance. Hand-written until SLO-13 generates manifests.",
+  "description": "Themed wrapper around headless GhostButton. Same behavioral props plus variant, tone, size, block, and iconOnly. Importing it loads the default stylesheet and scopes styles to this instance. Hand-written until GHO-13 generates manifests.",
   "props": [
     {
       "name": "type",

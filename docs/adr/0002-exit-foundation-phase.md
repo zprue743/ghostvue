@@ -13,14 +13,14 @@ That rule protected the project while architecture, package boundaries, tests,
 and contribution standards were unset. Those foundations now exist and are
 enforced by `pnpm verify`.
 
-[PR #21](https://github.com/zprue743/slop-ui/pull/21) already records **ADR
+[PR #21](https://github.com/zprue743/ghostvue/pull/21) already records **ADR
 0001** (`0001-begin-component-implementation.md`): the moratorium ends and is
 replaced by the specification step in
 [COMPONENT_WORKFLOW.md](../agents/COMPONENT_WORKFLOW.md). This ADR does not
 reopen that decision or duplicate its alternatives. Number 0001 is reserved for
 that file so the two PRs do not collide.
 
-SLO-8 still needs work ADR 0001 left implicit:
+GHO-8 still needs work ADR 0001 left implicit:
 
 - status copy on master still says the library exports no components
   (`README.md`, `docs/index.md`, the playground, `SECURITY.md`, release notes);
@@ -32,7 +32,7 @@ SLO-8 still needs work ADR 0001 left implicit:
 GhostVue is meant to be AI-native. A spec that only humans read is not enough
 for MCP, codegen, or deterministic review. The gate has to name a manifest as
 a first-class deliverable even though the component-manifest schema is not
-designed here. Token emit (CSS, TS types, JSON) is ADR 0005 (SLO-36), a
+designed here. Token emit (CSS, TS types, JSON) is ADR 0005 (GHO-36), a
 different manifest.
 
 ## Decision
@@ -63,14 +63,14 @@ are experimental, and it is not production-ready. That is a release claim, not
 a moratorium.
 
 Naming, registration, and layering of those components are ADR 0003
-(SLO-9) and ADR 0004 (SLO-10).
+(GHO-9) and ADR 0004 (GHO-10).
 
 Agent guardrails otherwise stay: no `any` or weakened checks, no speculative
 registries, no undocumented public APIs, no mutating consumer data, no
 exposing internal DOM as the ordinary customization API.
 
 Tool adapters (`CLAUDE.md`, `.cursor/rules/*.mdc`, package `AGENTS.md`) must
-keep pointing at this gate rather than restating a moratorium. After SLO-21
+keep pointing at this gate rather than restating a moratorium. After GHO-21
 lands, edit `scripts/agent-adapter-catalog.mjs` and run `pnpm adapters:write`;
 do not hand-edit generated adapters.
 
@@ -82,7 +82,7 @@ why a previous component branch was rejected on process rather than quality.
 Waiting on #20/#21 would keep that contradiction on master.
 
 **Treat ADR 0001 as sufficient and only edit status copy.** Rejected for
-SLO-8. ADR 0001 names a spec gate and mentions tests, docs, and a Changeset
+GHO-8. ADR 0001 names a spec gate and mentions tests, docs, and a Changeset
 as cost; it does not put spec, tests, docs, and manifest in one fail-closed
 list, and it does not mention manifests at all.
 
