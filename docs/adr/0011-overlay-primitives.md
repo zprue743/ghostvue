@@ -41,9 +41,12 @@ Add three headless overlay primitives to `@ghostvue/vue`:
 - **`useDismissableLayer(el, options)`** coordinates nested overlays through a
   **module-level `layerStack`** inside `@ghostvue/vue`, matching the stacking
   model used by `useFocusScope`'s `trappedStack`.
-- Capture-phase `keydown` and `pointerdown` listeners attach to `document` only
-  after mount and only while `layerStack` is non-empty; they detach as soon as
-  the last layer deactivates or unmounts.
+- Capture-phase `pointerdown` and bubble-phase `keydown` listeners attach to
+  `document` only after mount and only while `layerStack` is non-empty; they
+  detach as soon as the last layer deactivates or unmounts. Listening in the
+  bubble phase for `keydown` ensures descendants inside the layer (such as an
+  `<input>`) can call `event.preventDefault()` on `Escape` before layer
+  dismissal runs.
 - Only the **topmost layer** on `layerStack` handles `Escape` (when not
   `defaultPrevented` or `isComposing`) and outside `pointerdown`. If the topmost
   layer sets `disableEscape` or `disableOutsidePointer`, it blocks lower layers

@@ -54,9 +54,11 @@ function attachDocumentListeners(): void {
   if (listenersAttached) {
     return
   }
-  // Capture phase runs before target handlers can stop propagation or detach
-  // the pressed node, while still letting inputs call preventDefault on Escape.
-  document.addEventListener('keydown', handleDocumentKeyDown, true)
+  // Bubble phase for keydown lets descendants inside the layer (such as inputs)
+  // call event.preventDefault() on Escape before dismissal runs. Capture phase
+  // for pointerdown runs before target handlers can stop propagation or detach
+  // the pressed node.
+  document.addEventListener('keydown', handleDocumentKeyDown, false)
   document.addEventListener('pointerdown', handleDocumentPointerDown, true)
   listenersAttached = true
 }
@@ -65,7 +67,7 @@ function detachDocumentListeners(): void {
   if (!listenersAttached) {
     return
   }
-  document.removeEventListener('keydown', handleDocumentKeyDown, true)
+  document.removeEventListener('keydown', handleDocumentKeyDown, false)
   document.removeEventListener('pointerdown', handleDocumentPointerDown, true)
   listenersAttached = false
 }

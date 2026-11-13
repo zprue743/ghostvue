@@ -314,7 +314,7 @@ describe('useDismissableLayer', () => {
 
     show.value = false
     await nextTick()
-    expect(remove).toHaveBeenCalledWith('keydown', expect.any(Function), true)
+    expect(remove).toHaveBeenCalledWith('keydown', expect.any(Function), false)
     expect(remove).toHaveBeenCalledWith(
       'pointerdown',
       expect.any(Function),
@@ -333,5 +333,162 @@ describe('useDismissableLayer', () => {
     pointerDown(document.body)
     expect(onDismiss).not.toHaveBeenCalled()
     remove.mockRestore()
+  })
+
+  it('honors preventDefault on Escape from a descendant input inside the layer', () => {
+    const layer = ref<HTMLElement | null>(null)
+    const shouldPrevent = ref(true)
+    const onDismiss = vi.fn()
+
+    const wrapper = mountLayer(
+      () => {
+        useDismissableLayer(layer, { onDismiss })
+      },
+      () =>
+        h('div', { ref: layer }, [
+          h('input', {
+            type: 'text',
+            'data-testid': 'inner-input',
+            onKeydown: (event: KeyboardEvent) => {
+              if (event.key === 'Escape' && shouldPrevent.value) {
+                event.preventDefault()
+              }
+            },
+          }),
+        ]),
+    )
+
+    const input = wrapper.get('[data-testid="inner-input"]').element
+    input.dispatchEvent(
+      new KeyboardEvent('keydown', {
+        key: 'Escape',
+        bubbles: true,
+        cancelable: true,
+      }),
+    )
+    expect(onDismiss).not.toHaveBeenCalled()
+
+    shouldPrevent.value = false
+    input.dispatchEvent(
+      new KeyboardEvent('keydown', {
+        key: 'Escape',
+        bubbles: true,
+        cancelable: true,
+      }),
+    )
+    expect(onDismiss).toHaveBeenCalledTimes(1)
+    expect(onDismiss).toHaveBeenCalledWith('escape', expect.any(KeyboardEvent))
+  })
+
+  it('keeps the topmost layer dismissable when a non-top layer unmounts', async () => {
+    const showBottom = ref(true)
+    const onBottomDismiss = vi.fn()
+    const onTopDismiss = vi.fn()
+
+    const Bottom = defineComponent({
+      setup() {
+        const el = ref<HTMLElement | null>(null)
+        useDismissableLayer(el, { onDismiss: onBottomDismiss })
+        return () => h('div', { ref: el }, 'Bottom')
+      },
+    })
+
+    const Top = defineComponent({
+      setup() {
+        const el = ref<HTMLElement | null>(null)
+        useDismissableLayer(el, { onDismiss: onTopDismiss })
+        return () => h('div', { ref: el }, 'Top')
+      },
+    })
+
+    const wrapper = mount(
+      defineComponent({
+        setup() {
+          return () => h('div', [showBottom.value ? h(Bottom) : null, h(Top)])
+        },
+      }),
+      { attachTo: document.body },
+    )
+    attached.push(wrapper)
+
+    showBottom.value = false
+    await nextTick()
+
+    pressKey('Escape')
+    expect(onBottomDismiss).not.toHaveBeenCalled()
+    expect(onTopDismiss).toHaveBeenCalledTimes(1)
+
+    pointerDown(document.body)
+    expect(onTopDismiss).toHaveBeenCalledTimes(2)
+  })
+
+  it('cleans up both registrations when the same element is registered twice', async () => {
+    const layer = ref<HTMLElement | null>(null)
+    const firstActive = ref(true)
+    const onFirstDismiss = vi.fn()
+    const onSecondDismiss = vi.fn()
+
+    const wrapper = mountLayer(
+      () => {
+        useDismissableLayer(() => (firstActive.value ? layer.value : null), {
+          onDismiss: onFirstDismiss,
+        })
+        useDismissableLayer(layer, { onDismiss: onSecondDismiss })
+      },
+      () => h('div', { ref: layer }, 'Shared layer'),
+    )
+
+    // Topmost (second) registration receives Escape first.
+    pressKey('Escape')
+    expect(onSecondDismiss).toHaveBeenCalledTimes(1)
+    expect(onFirstDismiss).not.toHaveBeenCalled()
+
+    // Deactivating the first leaves the second registration active.
+    firstActive.value = false
+    await nextTick()
+    pressKey('Escape')
+    expect(onSecondDismiss).toHaveBeenCalledTimes(2)
+
+    // Unmounting cleans up both without leaving stale listeners or records.
+    wrapper.unmount()
+    pressKey('Escape')
+    pointerDown(document.body)
+    expect(onFirstDismiss).not.toHaveBeenCalled()
+    expect(onSecondDismiss).toHaveBeenCalledTimes(2)
+  })
+
+  it('re-registers cleanly when the el ref swaps to another element', async () => {
+    const first = ref<HTMLElement | null>(null)
+    const second = ref<HTMLElement | null>(null)
+    const useSecond = ref(false)
+    const onDismiss = vi.fn()
+
+    const wrapper = mountLayer(
+      () => {
+        useDismissableLayer(
+          () => (useSecond.value ? second.value : first.value),
+          { onDismiss },
+        )
+      },
+      () =>
+        h('div', [
+          h('div', { ref: first, 'data-testid': 'first' }, 'First'),
+          h('div', { ref: second, 'data-testid': 'second' }, 'Second'),
+        ]),
+    )
+
+    pointerDown(wrapper.get('[data-testid="first"]').element)
+    expect(onDismiss).not.toHaveBeenCalled()
+    pointerDown(wrapper.get('[data-testid="second"]').element)
+    expect(onDismiss).toHaveBeenCalledTimes(1)
+
+    onDismiss.mockClear()
+    useSecond.value = true
+    await nextTick()
+
+    pointerDown(wrapper.get('[data-testid="second"]').element)
+    expect(onDismiss).not.toHaveBeenCalled()
+    pointerDown(wrapper.get('[data-testid="first"]').element)
+    expect(onDismiss).toHaveBeenCalledTimes(1)
   })
 })

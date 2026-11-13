@@ -12,6 +12,12 @@ const floatingDomMocks = vi.hoisted(() => ({
   computePosition: vi.fn(),
 }))
 
+let computePositionOverride:
+  | ((
+      ...args: Parameters<typeof FloatingDom.computePosition>
+    ) => ReturnType<typeof FloatingDom.computePosition>)
+  | null = null
+
 vi.mock('@floating-ui/dom', async () => {
   const actual = await vi.importActual<typeof FloatingDom>('@floating-ui/dom')
   return {
@@ -40,6 +46,9 @@ vi.mock('@floating-ui/dom', async () => {
       config?: Parameters<typeof actual.computePosition>[2],
     ) => {
       floatingDomMocks.computePosition(reference, floating, config)
+      if (computePositionOverride) {
+        return computePositionOverride(reference, floating, config)
+      }
       return actual.computePosition(reference, floating, config)
     },
   }
@@ -55,6 +64,7 @@ afterEach(() => {
   floatingDomMocks.cleanup.mockClear()
   floatingDomMocks.autoUpdate.mockClear()
   floatingDomMocks.computePosition.mockClear()
+  computePositionOverride = null
 })
 
 describe('useFloating', () => {
@@ -206,5 +216,67 @@ describe('useFloating', () => {
 
     wrapper.unmount()
     expect(floatingDomMocks.cleanup).toHaveBeenCalledTimes(2)
+  })
+
+  it('ignores stale computePosition results when calls resolve out of order', async () => {
+    type ComputeResult = Awaited<ReturnType<typeof FloatingDom.computePosition>>
+    const resolvers: ((result: ComputeResult) => void)[] = []
+
+    computePositionOverride = () =>
+      new Promise<ComputeResult>((resolve) => {
+        resolvers.push(resolve)
+      })
+
+    const anchor = ref<HTMLElement | null>(null)
+    const floating = ref<HTMLElement | null>(null)
+    let floatingState: ReturnType<typeof useFloating> | undefined
+
+    const wrapper = mount(
+      defineComponent({
+        setup() {
+          floatingState = useFloating(anchor, floating, { placement: 'top' })
+          return () =>
+            h('div', [
+              h('button', { ref: anchor, type: 'button' }, 'Anchor'),
+              h('div', { ref: floating, 'data-testid': 'floating' }, 'Tip'),
+            ])
+        },
+      }),
+      { attachTo: document.body },
+    )
+    attached.push(wrapper)
+
+    // autoUpdate runs immediately on mount for call #1.
+    expect(resolvers).toHaveLength(1)
+
+    // Trigger call #2 before call #1 resolves.
+    const secondPromise = floatingState?.update()
+    expect(resolvers).toHaveLength(2)
+
+    // Resolve call #2 first, then resolve stale call #1 with older coordinates.
+    resolvers[1]?.({
+      x: 120,
+      y: 240,
+      placement: 'bottom-end',
+      strategy: 'absolute',
+      middlewareData: {},
+    })
+    await secondPromise
+
+    resolvers[0]?.({
+      x: 10,
+      y: 20,
+      placement: 'top-start',
+      strategy: 'absolute',
+      middlewareData: {},
+    })
+    await flushPromises()
+
+    expect(floatingState?.x.value).toBe(120)
+    expect(floatingState?.y.value).toBe(240)
+    expect(floatingState?.placement.value).toBe('bottom-end')
+    expect(
+      wrapper.get('[data-testid="floating"]').attributes('data-placement'),
+    ).toBe('bottom-end')
   })
 })
