@@ -6,6 +6,7 @@ import {
   type MaybeRefOrGetter,
 } from 'vue'
 
+import { isFocusInUpperDismissableLayer } from './dismissable-layer-stack'
 import { getTabbableElements, isFocusable } from './get-tabbable-elements'
 
 export interface UseFocusScopeOptions {
@@ -127,6 +128,11 @@ function handleTab(
     return
   }
   if (trappedStack.at(-1) !== scopeId) {
+    return
+  }
+  // A non-trapped dismissable layer (such as a portaled popover) opened above
+  // this scope owns Tab while focus sits inside it.
+  if (isFocusInUpperDismissableLayer(root, document.activeElement)) {
     return
   }
 

@@ -11,9 +11,11 @@ import GhostPopoverTrigger from './GhostPopoverTrigger.vue'
 import GhostPortal from './GhostPortal.vue'
 import { useDismissableLayer } from './use-dismissable-layer'
 import { useFloating } from './use-floating'
+import { useInertOthers } from './use-inert-others'
+import { useScrollLock } from './use-scroll-lock'
 
 describe('overlay primitives in Node SSR (no window or document)', () => {
-  it('renders all three primitives without window or document globals', async () => {
+  it('renders all overlay and modal primitives without window or document globals', async () => {
     expect(typeof window).toBe('undefined')
     expect(typeof document).toBe('undefined')
 
@@ -23,6 +25,8 @@ describe('overlay primitives in Node SSR (no window or document)', () => {
         const floating = ref<HTMLElement | null>(null)
 
         useDismissableLayer(floating, { onDismiss: () => undefined })
+        useScrollLock(true)
+        useInertOthers(floating, true)
         const { x, y, placement } = useFloating(anchor, floating, {
           placement: 'right',
         })
