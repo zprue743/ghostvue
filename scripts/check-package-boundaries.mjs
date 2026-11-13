@@ -1,5 +1,5 @@
 import { readFile, readdir } from 'node:fs/promises'
-import { extname, join, relative } from 'node:path'
+import { extname, join, relative, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 import { cruise } from 'dependency-cruiser'
@@ -8,13 +8,14 @@ import dependencyCruiserConfig from '../.dependency-cruiser.mjs'
 import { workspacePackages } from './workspace-packages.mjs'
 
 const repositoryRootUrl = new URL('..', import.meta.url)
-const repositoryRootPath = fileURLToPath(repositoryRootUrl)
-const packageDirectories = await readdir(
-  new URL('packages/', repositoryRootUrl),
-  {
-    withFileTypes: true,
-  },
+// An optional workspace root lets integration fixtures exercise this CLI's
+// collection, manifest validation, diagnostics, and exit status together.
+const repositoryRootPath = resolve(
+  process.argv[2] ?? fileURLToPath(repositoryRootUrl),
 )
+const packageDirectories = await readdir(join(repositoryRootPath, 'packages'), {
+  withFileTypes: true,
+})
 
 const catalogByName = new Map(
   workspacePackages.map((workspacePackage) => [
@@ -30,7 +31,8 @@ for (const directory of packageDirectories) {
   if (!directory.isDirectory()) continue
 
   const packageJsonPath = join(
-    fileURLToPath(new URL('packages/', repositoryRootUrl)),
+    repositoryRootPath,
+    'packages',
     directory.name,
     'package.json',
   )
@@ -137,6 +139,8 @@ const sourceFiles = await collectSourceFiles([
 
 const cruiseResult = await cruise(sourceFiles, {
   ...dependencyCruiserConfig.options,
+  baseDir: repositoryRootPath,
+  tsConfig: { fileName: join(repositoryRootPath, 'tsconfig.json') },
   validate: true,
   ruleSet: {
     forbidden: dependencyCruiserConfig.forbidden,
