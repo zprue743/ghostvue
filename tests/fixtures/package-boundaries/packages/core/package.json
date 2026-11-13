@@ -1,0 +1,8 @@
+{
+  "name": "@ghostvue/core",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@ghostvue/shared": "*"
+  }
+}
