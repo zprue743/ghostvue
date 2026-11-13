@@ -25,3 +25,19 @@ A component switched from {from} to {to}. Pass the value prop for the lifetime o
 
 Related: [./architecture/component-state.md](./architecture/component-state.md)
 
+## GHOST002
+
+**Warning:** Dialog content missing accessible name
+
+GhostDialogContent requires an accessible name. Render GhostDialogTitle inside GhostDialogContent, or pass aria-label or aria-labelledby.
+
+Related: [./components/dialog.md](./components/dialog.md)
+
+## GHOST003
+
+**Warning:** Alert dialog missing description
+
+GhostDialogContent with role="alertdialog" should provide a description. Render GhostDialogDescription inside GhostDialogContent, or pass aria-describedby.
+
+Related: [./components/dialog.md](./components/dialog.md)
+

@@ -1,0 +1,64 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "generated",
+  "name": "GhostDialogTitle",
+  "package": "@ghostvue/vue",
+  "status": "experimental",
+  "description": "Accessible heading for GhostDialogContent. Registers its id on context so Content links via aria-labelledby automatically.",
+  "props": [
+    {
+      "name": "as",
+      "type": "GhostDialogTitleElement",
+      "default": "h2",
+      "required": false,
+      "description": "Tag name or component rendered for the dialog heading.",
+      "deprecated": false
+    }
+  ],
+  "models": [],
+  "events": [],
+  "slots": [
+    {
+      "name": "default",
+      "props": [],
+      "description": "Heading text."
+    }
+  ],
+  "exposed": [
+    {
+      "name": "element",
+      "kind": "property",
+      "type": "HTMLElement | null",
+      "description": "Resolved heading element after mount; null before mount and after unmount."
+    },
+    {
+      "name": "focus",
+      "kind": "method",
+      "type": "(options?: FocusOptions) => void",
+      "description": "Focuses the resolved heading element."
+    },
+    {
+      "name": "blur",
+      "kind": "method",
+      "type": "() => void",
+      "description": "Blurs the resolved heading element."
+    }
+  ],
+  "styling": {
+    "parts": [
+      {
+        "name": "title",
+        "description": "Heading element marked with data-part=\"title\"."
+      }
+    ],
+    "states": [],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "heading",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/",
+    "keyboard": {},
+    "requiredAriaAttributes": []
+  },
+  "examples": []
+}

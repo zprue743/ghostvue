@@ -86,3 +86,37 @@ export type {
   UseGhostPopoverOptions,
   UseGhostPopoverReturn,
 } from './ghost-popover'
+export { default as GhostDialog } from './GhostDialog.vue'
+export { default as GhostDialogTrigger } from './GhostDialogTrigger.vue'
+export { default as GhostDialogOverlay } from './GhostDialogOverlay.vue'
+export { default as GhostDialogContent } from './GhostDialogContent.vue'
+export { default as GhostDialogTitle } from './GhostDialogTitle.vue'
+export { default as GhostDialogDescription } from './GhostDialogDescription.vue'
+export { default as GhostDialogClose } from './GhostDialogClose.vue'
+export { useGhostDialog } from './use-ghost-dialog'
+export type {
+  GhostDialogCloseElement,
+  GhostDialogCloseExposed,
+  GhostDialogCloseProps,
+  GhostDialogContentElement,
+  GhostDialogContentExposed,
+  GhostDialogContentProps,
+  GhostDialogContentRole,
+  GhostDialogContext,
+  GhostDialogDescriptionElement,
+  GhostDialogDescriptionExposed,
+  GhostDialogDescriptionProps,
+  GhostDialogOverlayElement,
+  GhostDialogOverlayExposed,
+  GhostDialogOverlayProps,
+  GhostDialogProps,
+  GhostDialogSlotProps,
+  GhostDialogTitleElement,
+  GhostDialogTitleExposed,
+  GhostDialogTitleProps,
+  GhostDialogTriggerElement,
+  GhostDialogTriggerExposed,
+  GhostDialogTriggerProps,
+  UseGhostDialogOptions,
+  UseGhostDialogReturn,
+} from './ghost-dialog'

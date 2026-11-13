@@ -1,0 +1,114 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "generated",
+  "name": "GhostDialogContent",
+  "package": "@ghostvue/vue",
+  "status": "experimental",
+  "description": "Headless dialog surface for GhostDialog. Composes GhostPortal, useScrollLock, useInertOthers, useDismissableLayer, and useFocusScope while staying unmounted when closed.",
+  "props": [
+    {
+      "name": "as",
+      "type": "GhostDialogContentElement",
+      "default": "div",
+      "required": false,
+      "description": "Tag name or component rendered for the dialog surface.",
+      "deprecated": false
+    },
+    {
+      "name": "role",
+      "type": "GhostDialogContentRole",
+      "default": "dialog",
+      "required": false,
+      "description": "Semantic ARIA role for the dialog surface (`'dialog'` or `'alertdialog'`).",
+      "deprecated": false
+    },
+    {
+      "name": "closeOnEscape",
+      "type": "boolean",
+      "default": true,
+      "required": false,
+      "description": "Dismisses the topmost open dialog on `Escape`.",
+      "deprecated": false
+    },
+    {
+      "name": "closeOnOutsideClick",
+      "type": "boolean",
+      "required": false,
+      "description": "Dismisses the dialog on outside pointerdown (`true` for `'dialog'`, `false` for `'alertdialog'` by default).",
+      "deprecated": false
+    },
+    {
+      "name": "portal",
+      "type": "boolean",
+      "default": true,
+      "required": false,
+      "description": "Teleport content through `GhostPortal` when `true`, or render inline when `false`.",
+      "deprecated": false
+    },
+    {
+      "name": "portalTo",
+      "type": "GhostPortalTarget",
+      "default": "body",
+      "required": false,
+      "description": "Teleport target passed to `GhostPortal` when `portal` is `true`.",
+      "deprecated": false
+    }
+  ],
+  "models": [],
+  "events": [],
+  "slots": [
+    {
+      "name": "default",
+      "props": [],
+      "description": "Dialog heading, description, body content, and action controls rendered while open."
+    }
+  ],
+  "exposed": [
+    {
+      "name": "element",
+      "kind": "property",
+      "type": "HTMLElement | null",
+      "description": "Resolved dialog surface element while open; null when closed or unmounted."
+    },
+    {
+      "name": "focus",
+      "kind": "method",
+      "type": "(options?: FocusOptions) => void",
+      "description": "Focuses the dialog surface element when mounted."
+    },
+    {
+      "name": "blur",
+      "kind": "method",
+      "type": "() => void",
+      "description": "Removes focus from the dialog surface element."
+    }
+  ],
+  "styling": {
+    "parts": [
+      {
+        "name": "content",
+        "description": "Dialog surface marked with class ghost-dialog-content and data-part=\"content\"."
+      }
+    ],
+    "states": [
+      {
+        "name": "open",
+        "description": "Applied on data-state while mounted and open."
+      }
+    ],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "dialog",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/",
+    "keyboard": {
+      "Escape": "Dismisses the topmost open dialog when closeOnEscape is true.",
+      "Tab": "Cycles forward within modal dialogs; moves freely in non-modal dialogs.",
+      "Shift+Tab": "Cycles backward within modal dialogs; moves freely in non-modal dialogs."
+    },
+    "requiredAriaAttributes": [
+      "aria-labelledby"
+    ]
+  },
+  "examples": []
+}

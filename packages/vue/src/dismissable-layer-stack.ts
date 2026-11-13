@@ -49,7 +49,7 @@ export function isFocusInUpperDismissableLayer(
   scopeRoot: HTMLElement,
   activeElement: Element | null,
 ): boolean {
-  if (!activeElement) {
+  if (!activeElement || scopeRoot.contains(activeElement)) {
     return false
   }
 

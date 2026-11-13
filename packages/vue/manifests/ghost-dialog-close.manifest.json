@@ -1,0 +1,75 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "generated",
+  "name": "GhostDialogClose",
+  "package": "@ghostvue/vue",
+  "status": "experimental",
+  "description": "Headless close control rendered inside GhostDialogContent. Closes the nearest enclosing GhostDialog on click or keyboard activation.",
+  "props": [
+    {
+      "name": "as",
+      "type": "GhostDialogCloseElement",
+      "default": "button",
+      "required": false,
+      "description": "Tag name or component rendered for the close control.",
+      "deprecated": false
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Disables closing on click or keyboard activation.",
+      "deprecated": false
+    }
+  ],
+  "models": [],
+  "events": [],
+  "slots": [
+    {
+      "name": "default",
+      "props": [],
+      "description": "Close button label or icon."
+    }
+  ],
+  "exposed": [
+    {
+      "name": "element",
+      "kind": "property",
+      "type": "HTMLElement | null",
+      "description": "Resolved DOM close element after mount; null before mount and after unmount."
+    },
+    {
+      "name": "focus",
+      "kind": "method",
+      "type": "(options?: FocusOptions) => void",
+      "description": "Focuses the resolved close element."
+    },
+    {
+      "name": "blur",
+      "kind": "method",
+      "type": "() => void",
+      "description": "Blurs the resolved close element."
+    }
+  ],
+  "styling": {
+    "parts": [
+      {
+        "name": "close",
+        "description": "Close control marked with data-part=\"close\"."
+      }
+    ],
+    "states": [],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "button",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/button/",
+    "keyboard": {
+      "Enter": "Closes the dialog when enabled.",
+      "Space": "Closes the dialog when enabled."
+    },
+    "requiredAriaAttributes": []
+  },
+  "examples": []
+}

@@ -1,0 +1,183 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "handwritten",
+  "name": "GhostDialog",
+  "package": "@ghostvue/themes",
+  "status": "experimental",
+  "description": "Themed wrappers around headless GhostDialog, GhostDialogTrigger, GhostDialogOverlay, GhostDialogContent, GhostDialogTitle, GhostDialogDescription, and GhostDialogClose. Importing from @ghostvue/themes loads the default elevation-4 dialog and scrim stylesheet.",
+  "props": [
+    {
+      "name": "open",
+      "type": "boolean",
+      "required": false,
+      "description": "Controlled open state forwarded to headless GhostDialog.",
+      "deprecated": false
+    },
+    {
+      "name": "defaultOpen",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Initial open state when open is omitted.",
+      "deprecated": false
+    },
+    {
+      "name": "modal",
+      "type": "boolean",
+      "default": true,
+      "required": false,
+      "description": "Enables modal behavior (trapped focus, scroll lock, inert background, overlay).",
+      "deprecated": false
+    }
+  ],
+  "models": [
+    {
+      "prop": "open",
+      "event": "update:open",
+      "type": "boolean",
+      "description": "v-model:open binding for controlled state."
+    }
+  ],
+  "events": [],
+  "slots": [
+    {
+      "name": "default",
+      "props": [
+        {
+          "name": "open",
+          "type": "boolean",
+          "description": "Current open state."
+        },
+        {
+          "name": "close",
+          "type": "() => void",
+          "description": "Closes the dialog."
+        }
+      ],
+      "description": "Dialog trigger, overlay, content, title, description, and close parts."
+    }
+  ],
+  "exposed": [],
+  "styling": {
+    "parts": [
+      {
+        "name": "trigger",
+        "description": "Trigger control rendered by GhostDialogTrigger."
+      },
+      {
+        "name": "overlay",
+        "description": "Full-viewport backdrop rendered by GhostDialogOverlay with data-themed."
+      },
+      {
+        "name": "content",
+        "description": "Centered elevation-4 dialog surface rendered by GhostDialogContent with data-themed."
+      },
+      {
+        "name": "title",
+        "description": "Accessible heading rendered by GhostDialogTitle."
+      },
+      {
+        "name": "description",
+        "description": "Muted supporting description rendered by GhostDialogDescription."
+      },
+      {
+        "name": "close",
+        "description": "Close control rendered by GhostDialogClose."
+      }
+    ],
+    "states": [
+      {
+        "name": "open",
+        "description": "Applied to trigger, overlay, and content while open."
+      },
+      {
+        "name": "closed",
+        "description": "Applied to trigger while closed."
+      }
+    ],
+    "cssProperties": [
+      {
+        "name": "--ghost-scrim",
+        "description": "Backdrop color of GhostDialogOverlay (falls back to rgb(0 0 0 / 0.5) when undefined)."
+      },
+      {
+        "name": "--ghost-elevation-4-bg",
+        "description": "Surface background color of GhostDialogContent."
+      },
+      {
+        "name": "--ghost-elevation-4-border",
+        "description": "Border color of GhostDialogContent."
+      },
+      {
+        "name": "--ghost-elevation-4-shadow",
+        "description": "Drop shadow of GhostDialogContent."
+      },
+      {
+        "name": "--ghost-elevation-4-highlight",
+        "description": "Inner highlight shadow of GhostDialogContent."
+      },
+      {
+        "name": "--ghost-border-hairline-width",
+        "description": "Border thickness."
+      },
+      {
+        "name": "--ghost-radius-lg",
+        "description": "Corner radius of GhostDialogContent."
+      },
+      {
+        "name": "--ghost-surface-fg",
+        "description": "Foreground text color."
+      },
+      {
+        "name": "--ghost-text-muted",
+        "description": "Muted text color applied to GhostDialogDescription."
+      },
+      {
+        "name": "--ghost-space-inset-lg",
+        "description": "Internal padding and viewport margin of GhostDialogContent."
+      },
+      {
+        "name": "--ghost-space-gap-md",
+        "description": "Vertical spacing between sections inside GhostDialogContent."
+      },
+      {
+        "name": "--ghost-focus-ring-color",
+        "description": "Outer focus-visible outline color when content receives focus."
+      },
+      {
+        "name": "--ghost-focus-ring-contrast",
+        "description": "Inner focus-visible halo color."
+      },
+      {
+        "name": "--ghost-focus-ring-offset",
+        "description": "Focus-visible outline offset."
+      },
+      {
+        "name": "--ghost-focus-ring-width",
+        "description": "Focus-visible outline width."
+      }
+    ]
+  },
+  "accessibility": {
+    "role": "dialog",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/",
+    "keyboard": {
+      "Enter": "Opens or toggles the dialog when focused on the trigger, or closes when focused on GhostDialogClose.",
+      "Space": "Opens or toggles the dialog when focused on the trigger, or closes when focused on GhostDialogClose.",
+      "Tab": "Cycles forward within modal dialogs.",
+      "Shift+Tab": "Cycles backward within modal dialogs.",
+      "Escape": "Dismisses the topmost open dialog when closeOnEscape is true and restores focus."
+    },
+    "requiredAriaAttributes": [
+      "aria-expanded",
+      "aria-controls",
+      "aria-haspopup",
+      "aria-labelledby"
+    ]
+  },
+  "examples": [
+    "dialog/themed",
+    "dialog/nested",
+    "dialog/alert"
+  ]
+}

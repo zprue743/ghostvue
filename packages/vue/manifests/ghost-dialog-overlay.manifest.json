@@ -1,0 +1,85 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "generated",
+  "name": "GhostDialogOverlay",
+  "package": "@ghostvue/vue",
+  "status": "experimental",
+  "description": "Headless modal backdrop overlay for GhostDialog. Renders only when the dialog is open and modal is true; marked aria-hidden=\"true\" and excluded from inert isolation.",
+  "props": [
+    {
+      "name": "as",
+      "type": "GhostDialogOverlayElement",
+      "default": "div",
+      "required": false,
+      "description": "Tag name or component rendered for the modal backdrop.",
+      "deprecated": false
+    },
+    {
+      "name": "portal",
+      "type": "boolean",
+      "default": true,
+      "required": false,
+      "description": "Teleport overlay through `GhostPortal` when `true`, or render inline when `false`.",
+      "deprecated": false
+    },
+    {
+      "name": "portalTo",
+      "type": "GhostPortalTarget",
+      "default": "body",
+      "required": false,
+      "description": "Teleport target passed to `GhostPortal` when `portal` is `true`.",
+      "deprecated": false
+    }
+  ],
+  "models": [],
+  "events": [],
+  "slots": [
+    {
+      "name": "default",
+      "props": [],
+      "description": "Optional backdrop content."
+    }
+  ],
+  "exposed": [
+    {
+      "name": "element",
+      "kind": "property",
+      "type": "HTMLElement | null",
+      "description": "Resolved DOM overlay element while open and modal; null otherwise."
+    },
+    {
+      "name": "focus",
+      "kind": "method",
+      "type": "(options?: FocusOptions) => void",
+      "description": "Focuses the resolved overlay element when mounted."
+    },
+    {
+      "name": "blur",
+      "kind": "method",
+      "type": "() => void",
+      "description": "Blurs the resolved overlay element."
+    }
+  ],
+  "styling": {
+    "parts": [
+      {
+        "name": "overlay",
+        "description": "Backdrop element marked with class ghost-dialog-overlay and data-part=\"overlay\"."
+      }
+    ],
+    "states": [
+      {
+        "name": "open",
+        "description": "Applied on data-state while open and modal."
+      }
+    ],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "none",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/",
+    "keyboard": {},
+    "requiredAriaAttributes": []
+  },
+  "examples": []
+}

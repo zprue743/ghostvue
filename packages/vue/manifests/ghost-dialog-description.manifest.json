@@ -1,0 +1,64 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "generated",
+  "name": "GhostDialogDescription",
+  "package": "@ghostvue/vue",
+  "status": "experimental",
+  "description": "Accessible description for GhostDialogContent. Registers its id on context so Content links via aria-describedby automatically.",
+  "props": [
+    {
+      "name": "as",
+      "type": "GhostDialogDescriptionElement",
+      "default": "p",
+      "required": false,
+      "description": "Tag name or component rendered for the dialog description.",
+      "deprecated": false
+    }
+  ],
+  "models": [],
+  "events": [],
+  "slots": [
+    {
+      "name": "default",
+      "props": [],
+      "description": "Supporting dialog description text."
+    }
+  ],
+  "exposed": [
+    {
+      "name": "element",
+      "kind": "property",
+      "type": "HTMLElement | null",
+      "description": "Resolved description element after mount; null before mount and after unmount."
+    },
+    {
+      "name": "focus",
+      "kind": "method",
+      "type": "(options?: FocusOptions) => void",
+      "description": "Focuses the resolved description element."
+    },
+    {
+      "name": "blur",
+      "kind": "method",
+      "type": "() => void",
+      "description": "Blurs the resolved description element."
+    }
+  ],
+  "styling": {
+    "parts": [
+      {
+        "name": "description",
+        "description": "Description element marked with data-part=\"description\"."
+      }
+    ],
+    "states": [],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "generic",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/",
+    "keyboard": {},
+    "requiredAriaAttributes": []
+  },
+  "examples": []
+}

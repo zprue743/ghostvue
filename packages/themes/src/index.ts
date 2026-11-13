@@ -59,3 +59,42 @@ export {
   type GhostPopoverCloseElement,
   type GhostPopoverCloseExposed,
 } from './ghost-popover-close'
+
+export { GhostDialog, type GhostDialogSlotProps } from './ghost-dialog'
+
+export {
+  GhostDialogTrigger,
+  type GhostDialogTriggerElement,
+  type GhostDialogTriggerExposed,
+} from './ghost-dialog-trigger'
+
+export {
+  GhostDialogOverlay,
+  type GhostDialogOverlayElement,
+  type GhostDialogOverlayExposed,
+} from './ghost-dialog-overlay'
+
+export {
+  GhostDialogContent,
+  type GhostDialogContentElement,
+  type GhostDialogContentExposed,
+  type GhostDialogContentRole,
+} from './ghost-dialog-content'
+
+export {
+  GhostDialogTitle,
+  type GhostDialogTitleElement,
+  type GhostDialogTitleExposed,
+} from './ghost-dialog-title'
+
+export {
+  GhostDialogDescription,
+  type GhostDialogDescriptionElement,
+  type GhostDialogDescriptionExposed,
+} from './ghost-dialog-description'
+
+export {
+  GhostDialogClose,
+  type GhostDialogCloseElement,
+  type GhostDialogCloseExposed,
+} from './ghost-dialog-close'

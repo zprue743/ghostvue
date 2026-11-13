@@ -39,9 +39,11 @@ trap.
 
 When a dismissable layer from `useDismissableLayer` (such as a portaled
 `GhostPopover`) is stacked **above** the trapped scope's own layer and
-`document.activeElement` is inside that upper layer, the trapped scope ignores
-Tab so focus can move freely inside the popover instead of being pulled back to
-the dialog. Dismissable layers stacked below the scope do not bypass the trap.
+`document.activeElement` is inside that upper layer (and outside the trapped
+scope's container), the trapped scope ignores Tab so focus can move freely
+inside the popover instead of being pulled back to the dialog. Inline layers
+contained inside the scope (`portal=false`) and dismissable layers stacked below
+the scope do not bypass the trap.
 
 ```ts
 const content = useTemplateRef<HTMLElement>('content')

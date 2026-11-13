@@ -127,6 +127,34 @@ export const ghostExamples = [
       'Elevated surface tokens and themed button controls composed via the as prop.',
     layer: 'themed',
   },
+  {
+    id: 'dialog/basic',
+    title: 'Basic',
+    description:
+      'Unstyled modal dialog with overlay, trapped Tab focus, scroll lock, and inert background.',
+    layer: 'headless',
+  },
+  {
+    id: 'dialog/themed',
+    title: 'Themed',
+    description:
+      'Elevation-4 modal surface, scrim overlay, and themed button actions.',
+    layer: 'themed',
+  },
+  {
+    id: 'dialog/nested',
+    title: 'Nested',
+    description:
+      'Stacked modal dialogs where Escape dismisses only the innermost open dialog.',
+    layer: 'themed',
+  },
+  {
+    id: 'dialog/alert',
+    title: 'Alert dialog',
+    description:
+      'Confirmation dialog with role="alertdialog" and outside-click dismissal disabled by default.',
+    layer: 'themed',
+  },
 ] as const satisfies readonly GhostExampleDefinition[]
 
 export type GhostExampleId = (typeof ghostExamples)[number]['id']

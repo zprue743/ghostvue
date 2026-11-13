@@ -4,6 +4,13 @@ import { createSSRApp, defineComponent, h, ref } from 'vue'
 import { renderToString } from 'vue/server-renderer'
 import { describe, expect, it } from 'vitest'
 
+import GhostDialog from './GhostDialog.vue'
+import GhostDialogClose from './GhostDialogClose.vue'
+import GhostDialogContent from './GhostDialogContent.vue'
+import GhostDialogDescription from './GhostDialogDescription.vue'
+import GhostDialogOverlay from './GhostDialogOverlay.vue'
+import GhostDialogTitle from './GhostDialogTitle.vue'
+import GhostDialogTrigger from './GhostDialogTrigger.vue'
 import GhostPopover from './GhostPopover.vue'
 import GhostPopoverClose from './GhostPopoverClose.vue'
 import GhostPopoverContent from './GhostPopoverContent.vue'
@@ -105,5 +112,67 @@ describe('overlay primitives in Node SSR (no window or document)', () => {
     expect(openHtml).toContain('Visible SSR panel')
     expect(openHtml).toContain('role="dialog"')
     expect(openHtml).toContain('visibility:hidden')
+  })
+
+  it('renders GhostDialog closed and defaultOpen states cleanly in Node SSR', async () => {
+    expect(typeof window).toBe('undefined')
+    expect(typeof document).toBe('undefined')
+
+    const ClosedApp = defineComponent({
+      setup() {
+        return () =>
+          h(GhostDialog, null, {
+            default: () => [
+              h(GhostDialogTrigger, null, () => 'Closed dialog trigger'),
+              h(GhostDialogOverlay),
+              h(GhostDialogContent, null, () => [
+                h(GhostDialogTitle, null, () => 'Hidden SSR title'),
+                h(GhostDialogDescription, null, () => 'Hidden SSR description'),
+                h(GhostDialogClose, null, () => 'Dismiss'),
+              ]),
+            ],
+          })
+      },
+    })
+
+    const closedHtml = await renderToString(createSSRApp(ClosedApp))
+    expect(closedHtml).toContain('Closed dialog trigger')
+    expect(closedHtml).toContain('aria-expanded="false"')
+    expect(closedHtml).not.toContain('Hidden SSR title')
+    expect(closedHtml).not.toContain('Hidden SSR description')
+
+    const OpenApp = defineComponent({
+      setup() {
+        return () =>
+          h(
+            GhostDialog,
+            { defaultOpen: true },
+            {
+              default: () => [
+                h(GhostDialogTrigger, null, () => 'Open dialog trigger'),
+                h(GhostDialogOverlay, { portal: false }),
+                h(GhostDialogContent, { portal: false }, () => [
+                  h(GhostDialogTitle, null, () => 'Visible SSR title'),
+                  h(
+                    GhostDialogDescription,
+                    null,
+                    () => 'Visible SSR description',
+                  ),
+                  h(GhostDialogClose, null, () => 'Close'),
+                ]),
+              ],
+            },
+          )
+      },
+    })
+
+    const openHtml = await renderToString(createSSRApp(OpenApp))
+    expect(openHtml).toContain('Open dialog trigger')
+    expect(openHtml).toContain('aria-expanded="true"')
+    expect(openHtml).toContain('Visible SSR title')
+    expect(openHtml).toContain('Visible SSR description')
+    expect(openHtml).toContain('role="dialog"')
+    expect(openHtml).toContain('aria-modal="true"')
+    expect(openHtml).toContain('data-part="overlay"')
   })
 })

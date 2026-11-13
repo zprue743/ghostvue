@@ -1,0 +1,120 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "generated",
+  "name": "GhostDialog",
+  "package": "@ghostvue/vue",
+  "status": "experimental",
+  "description": "Headless dialog root provider. Manages controlled/uncontrolled open state via useControllableState, modal mode (trapped focus, scroll lock, inert background siblings, overlay), and deterministic trigger/content/title/description IDs.",
+  "props": [
+    {
+      "name": "open",
+      "type": "boolean",
+      "required": false,
+      "description": "Controlled open state. Omit for uncontrolled mode.",
+      "deprecated": false
+    },
+    {
+      "name": "defaultOpen",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Initial open state when `open` is omitted.",
+      "deprecated": false
+    },
+    {
+      "name": "modal",
+      "type": "boolean",
+      "default": true,
+      "required": false,
+      "description": "Enables modal behavior (trapped focus, scroll lock, inert background, overlay).",
+      "deprecated": false
+    }
+  ],
+  "models": [
+    {
+      "prop": "open",
+      "event": "update:open",
+      "type": "boolean",
+      "description": "v-model binding for `open`."
+    }
+  ],
+  "events": [],
+  "slots": [
+    {
+      "name": "default",
+      "props": [
+        {
+          "name": "open",
+          "type": "boolean",
+          "description": "Current open state."
+        },
+        {
+          "name": "close",
+          "type": "() => void",
+          "description": "Closes the dialog."
+        }
+      ],
+      "description": "Trigger, overlay, content, title, description, close parts, and optional custom UI reading the scoped state."
+    }
+  ],
+  "exposed": [],
+  "styling": {
+    "parts": [
+      {
+        "name": "trigger",
+        "description": "Trigger control rendered by GhostDialogTrigger."
+      },
+      {
+        "name": "overlay",
+        "description": "Modal backdrop rendered by GhostDialogOverlay."
+      },
+      {
+        "name": "content",
+        "description": "Dialog surface rendered by GhostDialogContent."
+      },
+      {
+        "name": "title",
+        "description": "Accessible heading rendered by GhostDialogTitle."
+      },
+      {
+        "name": "description",
+        "description": "Accessible description rendered by GhostDialogDescription."
+      },
+      {
+        "name": "close",
+        "description": "Close button rendered by GhostDialogClose."
+      }
+    ],
+    "states": [
+      {
+        "name": "open",
+        "description": "Applied on data-state across trigger, overlay, and content while the dialog is open."
+      },
+      {
+        "name": "closed",
+        "description": "Applied on GhostDialogTrigger data-state while the dialog is closed."
+      }
+    ],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "dialog",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/",
+    "keyboard": {
+      "Enter": "Opens or toggles the dialog on GhostDialogTrigger or closes on GhostDialogClose.",
+      "Space": "Opens or toggles the dialog on GhostDialogTrigger or closes on GhostDialogClose.",
+      "Tab": "Moves focus forward through tabbable descendants, wrapping within modal dialogs.",
+      "Shift+Tab": "Moves focus backward through tabbable descendants, wrapping within modal dialogs.",
+      "Escape": "Dismisses the topmost open dialog when closeOnEscape is enabled and restores focus."
+    },
+    "requiredAriaAttributes": [
+      "aria-expanded",
+      "aria-controls",
+      "aria-haspopup",
+      "aria-labelledby"
+    ]
+  },
+  "examples": [
+    "dialog/basic"
+  ]
+}

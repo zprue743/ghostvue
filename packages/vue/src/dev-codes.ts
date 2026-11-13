@@ -36,6 +36,20 @@ export const ghostCodes = {
       'A component switched from {from} to {to}. Pass the value prop for the lifetime of the instance, or omit it and use default*.',
     relatedDocs: './architecture/component-state.md',
   },
+  GHOST002: {
+    level: 'warn',
+    title: 'Dialog content missing accessible name',
+    message:
+      'GhostDialogContent requires an accessible name. Render GhostDialogTitle inside GhostDialogContent, or pass aria-label or aria-labelledby.',
+    relatedDocs: './components/dialog.md',
+  },
+  GHOST003: {
+    level: 'warn',
+    title: 'Alert dialog missing description',
+    message:
+      'GhostDialogContent with role="alertdialog" should provide a description. Render GhostDialogDescription inside GhostDialogContent, or pass aria-describedby.',
+    relatedDocs: './components/dialog.md',
+  },
 } as const satisfies Record<string, GhostCodeEntry>
 
 /**
