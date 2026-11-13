@@ -29,10 +29,11 @@
     "manifests:write": "node scripts/write-component-manifests.mjs --write",
     "contrast": "node packages/themes/scripts/check-contrast.mjs",
     "test": "vitest run --passWithNoTests",
+    "test:coverage": "vitest run --coverage",
     "test:e2e": "pnpm --filter @ghostvue/playground build && pnpm --filter @ghostvue/docs build && playwright test",
     "test:watch": "vitest",
     "typecheck": "pnpm -r --if-present typecheck",
-    "verify": "pnpm lint && pnpm boundaries && pnpm adapters && pnpm manifests && pnpm typecheck && pnpm test && pnpm contrast && pnpm build && pnpm published-exports && pnpm docs:build && pnpm docs:links"
+    "verify": "pnpm lint && pnpm boundaries && pnpm adapters && pnpm manifests && pnpm typecheck && pnpm test:coverage && pnpm contrast && pnpm build && pnpm published-exports && pnpm docs:build && pnpm docs:links"
   },
   "devDependencies": {
     "@axe-core/playwright": "4.13.0",
@@ -41,6 +42,7 @@
     "@playwright/test": "1.62.1",
     "@types/node": "22.20.1",
     "@vitejs/plugin-vue": "6.0.8",
+    "@vitest/coverage-v8": "4.1.10",
     "@vue/test-utils": "2.4.11",
     "ajv": "8.20.0",
     "eslint": "10.8.1",

@@ -140,6 +140,10 @@ function derivedFromWidget() {
   })
 }
 
+// `afterEach` clears the cached Volar/TypeScript checker; cold checker creation
+// under v8 coverage on 2-core CI runners can exceed Vitest's 5s default timeout.
+const META_CHECKER_TIMEOUT_MS = 30_000
+
 afterEach(() => {
   resetMetaCheckers()
 })
@@ -181,284 +185,305 @@ describe('manifest derivation helpers', () => {
   })
 })
 
-describe('vue-component-meta extraction', () => {
-  it('extracts props, models, events, slots, and exposed members', () => {
-    const { derived, violations } = derivedFromWidget()
-    expect(violations).toEqual([])
-    expect(derived.name).toBe('GhostWidget')
-    expect(derived.package).toBe('@ghostvue/vue')
-    expect(derived.source).toBe('generated')
+describe(
+  'vue-component-meta extraction',
+  { timeout: META_CHECKER_TIMEOUT_MS },
+  () => {
+    it('extracts props, models, events, slots, and exposed members', () => {
+      const { derived, violations } = derivedFromWidget()
+      expect(violations).toEqual([])
+      expect(derived.name).toBe('GhostWidget')
+      expect(derived.package).toBe('@ghostvue/vue')
+      expect(derived.source).toBe('generated')
 
-    expect(derived.props).toEqual(
-      expect.arrayContaining([
+      expect(derived.props).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            name: 'disabled',
+            type: 'boolean',
+            default: false,
+            required: false,
+            deprecated: false,
+          }),
+          expect.objectContaining({
+            name: 'variant',
+            type: "'one' | 'two'",
+            default: 'one',
+            required: false,
+          }),
+          expect.objectContaining({
+            name: 'count',
+            type: 'number',
+            required: true,
+          }),
+          expect.objectContaining({
+            name: 'open',
+            type: 'boolean',
+            required: false,
+          }),
+        ]),
+      )
+      expect(derived.props.some((prop) => prop.name === 'class')).toBe(false)
+      expect(derived.props.some((prop) => prop.name === 'key')).toBe(false)
+
+      expect(derived.models).toEqual([
         expect.objectContaining({
-          name: 'disabled',
+          prop: 'open',
+          event: 'update:open',
           type: 'boolean',
-          default: false,
-          required: false,
-          deprecated: false,
         }),
-        expect.objectContaining({
-          name: 'variant',
-          type: "'one' | 'two'",
-          default: 'one',
-          required: false,
-        }),
-        expect.objectContaining({
-          name: 'count',
-          type: 'number',
-          required: true,
-        }),
+      ])
+      expect(derived.events.map((event) => event.name).sort()).toEqual([
+        'close',
+        'select',
+      ])
+      expect(derived.events).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ name: 'close', payloadType: 'void' }),
+          expect.objectContaining({ name: 'select', payloadType: 'string' }),
+        ]),
+      )
+
+      const defaultSlot = derived.slots.find((slot) => slot.name === 'default')
+      const iconSlot = derived.slots.find((slot) => slot.name === 'icon')
+      expect(defaultSlot?.props).toEqual([
+        expect.objectContaining({ name: 'open', type: 'boolean' }),
+      ])
+      expect(iconSlot?.props).toEqual([])
+
+      expect(derived.exposed).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            name: 'element',
+            kind: 'property',
+            type: 'HTMLDivElement | null',
+          }),
+          expect.objectContaining({
+            name: 'focus',
+            kind: 'method',
+          }),
+        ]),
+      )
+    })
+  },
+)
+
+describe(
+  'hand-authored field preservation',
+  { timeout: META_CHECKER_TIMEOUT_MS },
+  () => {
+    it('keeps prose, styling, accessibility, and examples while refreshing types', () => {
+      const { derived } = derivedFromWidget()
+      const merged = mergeManifest(derived, prose)
+
+      expect(merged.source).toBe('generated')
+      expect(merged.status).toBe('beta')
+      expect(merged.description).toBe('Hand-authored widget summary.')
+      expect(merged.examples).toEqual(['widget-basic'])
+      expect(merged.styling).toEqual(prose.styling)
+      expect(merged.accessibility).toEqual(prose.accessibility)
+
+      const disabled = merged.props.find((prop) => prop.name === 'disabled')
+      expect(disabled).toMatchObject({
+        type: 'boolean',
+        default: false,
+        deprecated: false,
+        description: 'Hand-authored disabled prose.',
+      })
+
+      const openModel = merged.models.find((model) => model.prop === 'open')
+      expect(openModel).toMatchObject({
+        type: 'boolean',
+        description: 'Hand-authored model prose.',
+      })
+
+      const close = merged.events.find((event) => event.name === 'close')
+      expect(close).toMatchObject({
+        payloadType: 'void',
+        description: 'Hand-authored close prose.',
+      })
+
+      const defaultSlot = merged.slots.find((slot) => slot.name === 'default')
+      expect(defaultSlot?.description).toBe('Hand-authored default slot prose.')
+      expect(defaultSlot?.props).toEqual([
         expect.objectContaining({
           name: 'open',
           type: 'boolean',
-          required: false,
+          description: 'Hand-authored slot prop prose.',
         }),
-      ]),
-    )
-    expect(derived.props.some((prop) => prop.name === 'class')).toBe(false)
-    expect(derived.props.some((prop) => prop.name === 'key')).toBe(false)
+      ])
 
-    expect(derived.models).toEqual([
-      expect.objectContaining({
-        prop: 'open',
-        event: 'update:open',
-        type: 'boolean',
-      }),
-    ])
-    expect(derived.events.map((event) => event.name).sort()).toEqual([
-      'close',
-      'select',
-    ])
-    expect(derived.events).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({ name: 'close', payloadType: 'void' }),
-        expect.objectContaining({ name: 'select', payloadType: 'string' }),
-      ]),
-    )
+      const element = merged.exposed.find((member) => member.name === 'element')
+      expect(element).toMatchObject({
+        kind: 'property',
+        type: 'HTMLDivElement | null',
+        description: 'Hand-authored expose prose.',
+      })
+    })
 
-    const defaultSlot = derived.slots.find((slot) => slot.name === 'default')
-    const iconSlot = derived.slots.find((slot) => slot.name === 'icon')
-    expect(defaultSlot?.props).toEqual([
-      expect.objectContaining({ name: 'open', type: 'boolean' }),
-    ])
-    expect(iconSlot?.props).toEqual([])
+    it('uses JSDoc when a member has no existing prose', () => {
+      const { derived } = derivedFromWidget()
+      const merged = mergeManifest(derived, null)
+      const disabled = merged.props.find((prop) => prop.name === 'disabled')
+      expect(disabled?.description).toBe('Prevents activation.')
+      expect(merged.description).toBe('Public GhostWidget component.')
+      expect(merged.status).toBe('experimental')
+    })
+  },
+)
 
-    expect(derived.exposed).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({
-          name: 'element',
-          kind: 'property',
-          type: 'HTMLDivElement | null',
+describe(
+  'manifest sync check and write',
+  { timeout: META_CHECKER_TIMEOUT_MS },
+  () => {
+    it('fails check when a generated manifest is stale versus the SFC', async () => {
+      const manifestsDir = await mkdtemp(join(tmpdir(), 'ghost-manifests-'))
+      const packages = await fixturePackages(manifestsDir)
+
+      const written = await syncRepositoryManifests({
+        repositoryRoot,
+        write: true,
+        packages,
+      })
+      expect(written.ok).toBe(true)
+      expect(written.written).toEqual([
+        'packages/vue/manifests/ghost-widget.manifest.json',
+      ])
+
+      const manifestPath = join(manifestsDir, 'ghost-widget.manifest.json')
+      const fresh = parseJsonObject(await readFile(manifestPath, 'utf8'))
+      const staleProps = asPropList(fresh.props).map((prop) =>
+        prop.name === 'count' ? { ...prop, type: 'string' } : prop,
+      )
+      await writeFile(
+        manifestPath,
+        serializeManifest({ ...fresh, props: staleProps }),
+      )
+
+      const check = await syncRepositoryManifests({
+        repositoryRoot,
+        write: false,
+        packages,
+      })
+      expect(check.ok).toBe(false)
+      expect(check.violations.some((item) => item.includes('stale'))).toBe(true)
+    })
+
+    it('rewrites machine fields without dropping later hand-authored edits', async () => {
+      const manifestsDir = await mkdtemp(join(tmpdir(), 'ghost-manifests-'))
+      const packages = await fixturePackages(manifestsDir)
+
+      await syncRepositoryManifests({
+        repositoryRoot,
+        write: true,
+        packages,
+      })
+
+      const manifestPath = join(manifestsDir, 'ghost-widget.manifest.json')
+      const generated = parseJsonObject(await readFile(manifestPath, 'utf8'))
+      generated.description = 'Edited after the first write.'
+      generated.examples = ['widget-basic', 'widget-disabled']
+      await writeFile(manifestPath, serializeManifest(generated))
+
+      const again = await syncRepositoryManifests({
+        repositoryRoot,
+        write: true,
+        packages,
+      })
+      expect(again.ok).toBe(true)
+
+      const refreshed = parseJsonObject(await readFile(manifestPath, 'utf8'))
+      expect(refreshed.description).toBe('Edited after the first write.')
+      expect(refreshed.examples).toEqual(['widget-basic', 'widget-disabled'])
+      expect(refreshed.source).toBe('generated')
+
+      const check = await syncRepositoryManifests({
+        repositoryRoot,
+        write: false,
+        packages,
+      })
+      expect(check.ok).toBe(true)
+    })
+
+    it('allows leftover handwritten manifests when no matching SFC exists', async () => {
+      const manifestsDir = await mkdtemp(join(tmpdir(), 'ghost-manifests-'))
+      const packages = await fixturePackages(manifestsDir)
+      await writeFile(
+        join(manifestsDir, 'ghost-button.manifest.json'),
+        serializeManifest({
+          ...prose,
+          name: 'GhostButton',
+          source: 'handwritten',
+          description: 'Legacy handwritten contract.',
         }),
-        expect.objectContaining({
-          name: 'focus',
-          kind: 'method',
+      )
+
+      const result = await syncRepositoryManifests({
+        repositoryRoot,
+        write: true,
+        packages,
+      })
+      expect(result.ok).toBe(true)
+
+      const leftover = parseJsonObject(
+        await readFile(
+          join(manifestsDir, 'ghost-button.manifest.json'),
+          'utf8',
+        ),
+      )
+      expect(leftover.source).toBe('handwritten')
+    })
+
+    it('fails when a generated manifest has no matching SFC', async () => {
+      const manifestsDir = await mkdtemp(join(tmpdir(), 'ghost-manifests-'))
+      const packages = [
+        {
+          directory: 'vue',
+          name: '@ghostvue/vue' as const,
+          srcDir: join(manifestsDir, 'empty-src'),
+          manifestsDir,
+          tsconfig: fixtureTsconfig,
+        },
+      ]
+      await mkdir(join(manifestsDir, 'empty-src'), { recursive: true })
+      await writeFile(
+        join(manifestsDir, 'ghost-gone.manifest.json'),
+        serializeManifest({
+          ...prose,
+          name: 'GhostGone',
+          source: 'generated',
         }),
-      ]),
-    )
-  })
-})
+      )
 
-describe('hand-authored field preservation', () => {
-  it('keeps prose, styling, accessibility, and examples while refreshing types', () => {
-    const { derived } = derivedFromWidget()
-    const merged = mergeManifest(derived, prose)
-
-    expect(merged.source).toBe('generated')
-    expect(merged.status).toBe('beta')
-    expect(merged.description).toBe('Hand-authored widget summary.')
-    expect(merged.examples).toEqual(['widget-basic'])
-    expect(merged.styling).toEqual(prose.styling)
-    expect(merged.accessibility).toEqual(prose.accessibility)
-
-    const disabled = merged.props.find((prop) => prop.name === 'disabled')
-    expect(disabled).toMatchObject({
-      type: 'boolean',
-      default: false,
-      deprecated: false,
-      description: 'Hand-authored disabled prose.',
+      const result = await syncRepositoryManifests({
+        repositoryRoot,
+        write: false,
+        packages,
+      })
+      expect(result.ok).toBe(false)
+      expect(
+        result.violations.some((item) =>
+          item.includes('no matching Ghost*.vue'),
+        ),
+      ).toBe(true)
     })
+  },
+)
 
-    const openModel = merged.models.find((model) => model.prop === 'open')
-    expect(openModel).toMatchObject({
-      type: 'boolean',
-      description: 'Hand-authored model prose.',
+describe(
+  'repository manifests check',
+  { timeout: META_CHECKER_TIMEOUT_MS },
+  () => {
+    it('passes on the current repository', async () => {
+      const result = await syncRepositoryManifests({
+        repositoryRoot,
+        write: false,
+      })
+      expect(result.violations).toEqual([])
+      expect(result.ok).toBe(true)
     })
-
-    const close = merged.events.find((event) => event.name === 'close')
-    expect(close).toMatchObject({
-      payloadType: 'void',
-      description: 'Hand-authored close prose.',
-    })
-
-    const defaultSlot = merged.slots.find((slot) => slot.name === 'default')
-    expect(defaultSlot?.description).toBe('Hand-authored default slot prose.')
-    expect(defaultSlot?.props).toEqual([
-      expect.objectContaining({
-        name: 'open',
-        type: 'boolean',
-        description: 'Hand-authored slot prop prose.',
-      }),
-    ])
-
-    const element = merged.exposed.find((member) => member.name === 'element')
-    expect(element).toMatchObject({
-      kind: 'property',
-      type: 'HTMLDivElement | null',
-      description: 'Hand-authored expose prose.',
-    })
-  })
-
-  it('uses JSDoc when a member has no existing prose', () => {
-    const { derived } = derivedFromWidget()
-    const merged = mergeManifest(derived, null)
-    const disabled = merged.props.find((prop) => prop.name === 'disabled')
-    expect(disabled?.description).toBe('Prevents activation.')
-    expect(merged.description).toBe('Public GhostWidget component.')
-    expect(merged.status).toBe('experimental')
-  })
-})
-
-describe('manifest sync check and write', () => {
-  it('fails check when a generated manifest is stale versus the SFC', async () => {
-    const manifestsDir = await mkdtemp(join(tmpdir(), 'ghost-manifests-'))
-    const packages = await fixturePackages(manifestsDir)
-
-    const written = await syncRepositoryManifests({
-      repositoryRoot,
-      write: true,
-      packages,
-    })
-    expect(written.ok).toBe(true)
-    expect(written.written).toEqual([
-      'packages/vue/manifests/ghost-widget.manifest.json',
-    ])
-
-    const manifestPath = join(manifestsDir, 'ghost-widget.manifest.json')
-    const fresh = parseJsonObject(await readFile(manifestPath, 'utf8'))
-    const staleProps = asPropList(fresh.props).map((prop) =>
-      prop.name === 'count' ? { ...prop, type: 'string' } : prop,
-    )
-    await writeFile(
-      manifestPath,
-      serializeManifest({ ...fresh, props: staleProps }),
-    )
-
-    const check = await syncRepositoryManifests({
-      repositoryRoot,
-      write: false,
-      packages,
-    })
-    expect(check.ok).toBe(false)
-    expect(check.violations.some((item) => item.includes('stale'))).toBe(true)
-  })
-
-  it('rewrites machine fields without dropping later hand-authored edits', async () => {
-    const manifestsDir = await mkdtemp(join(tmpdir(), 'ghost-manifests-'))
-    const packages = await fixturePackages(manifestsDir)
-
-    await syncRepositoryManifests({
-      repositoryRoot,
-      write: true,
-      packages,
-    })
-
-    const manifestPath = join(manifestsDir, 'ghost-widget.manifest.json')
-    const generated = parseJsonObject(await readFile(manifestPath, 'utf8'))
-    generated.description = 'Edited after the first write.'
-    generated.examples = ['widget-basic', 'widget-disabled']
-    await writeFile(manifestPath, serializeManifest(generated))
-
-    const again = await syncRepositoryManifests({
-      repositoryRoot,
-      write: true,
-      packages,
-    })
-    expect(again.ok).toBe(true)
-
-    const refreshed = parseJsonObject(await readFile(manifestPath, 'utf8'))
-    expect(refreshed.description).toBe('Edited after the first write.')
-    expect(refreshed.examples).toEqual(['widget-basic', 'widget-disabled'])
-    expect(refreshed.source).toBe('generated')
-
-    const check = await syncRepositoryManifests({
-      repositoryRoot,
-      write: false,
-      packages,
-    })
-    expect(check.ok).toBe(true)
-  })
-
-  it('allows leftover handwritten manifests when no matching SFC exists', async () => {
-    const manifestsDir = await mkdtemp(join(tmpdir(), 'ghost-manifests-'))
-    const packages = await fixturePackages(manifestsDir)
-    await writeFile(
-      join(manifestsDir, 'ghost-button.manifest.json'),
-      serializeManifest({
-        ...prose,
-        name: 'GhostButton',
-        source: 'handwritten',
-        description: 'Legacy handwritten contract.',
-      }),
-    )
-
-    const result = await syncRepositoryManifests({
-      repositoryRoot,
-      write: true,
-      packages,
-    })
-    expect(result.ok).toBe(true)
-
-    const leftover = parseJsonObject(
-      await readFile(join(manifestsDir, 'ghost-button.manifest.json'), 'utf8'),
-    )
-    expect(leftover.source).toBe('handwritten')
-  })
-
-  it('fails when a generated manifest has no matching SFC', async () => {
-    const manifestsDir = await mkdtemp(join(tmpdir(), 'ghost-manifests-'))
-    const packages = [
-      {
-        directory: 'vue',
-        name: '@ghostvue/vue' as const,
-        srcDir: join(manifestsDir, 'empty-src'),
-        manifestsDir,
-        tsconfig: fixtureTsconfig,
-      },
-    ]
-    await mkdir(join(manifestsDir, 'empty-src'), { recursive: true })
-    await writeFile(
-      join(manifestsDir, 'ghost-gone.manifest.json'),
-      serializeManifest({
-        ...prose,
-        name: 'GhostGone',
-        source: 'generated',
-      }),
-    )
-
-    const result = await syncRepositoryManifests({
-      repositoryRoot,
-      write: false,
-      packages,
-    })
-    expect(result.ok).toBe(false)
-    expect(
-      result.violations.some((item) => item.includes('no matching Ghost*.vue')),
-    ).toBe(true)
-  })
-})
-
-describe('repository manifests check', () => {
-  it('passes on the current repository', async () => {
-    const result = await syncRepositoryManifests({
-      repositoryRoot,
-      write: false,
-    })
-    expect(result.violations).toEqual([])
-    expect(result.ok).toBe(true)
-  })
-})
+  },
+)
 
 describe('mergeManifest derived contract', () => {
   it('serializes a stable JSON document', () => {
