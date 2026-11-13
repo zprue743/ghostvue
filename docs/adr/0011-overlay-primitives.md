@@ -89,8 +89,15 @@ Add three headless overlay primitives to `@ghostvue/vue`:
     actively maintained standard across headless UI libraries, and no
     browser-global side effects at module evaluation time.
   - **SSR/browser behavior:** `computePosition` and `autoUpdate` run only inside
-    `onMounted`; SSR setup returns `{ x: 0, y: 0, placement }` without touching
-    `window` or `document` and writes `data-placement` only on mounted clients.
+    `onMounted`; SSR setup returns `{ x: 0, y: 0, placement, isPositioned: false }`
+    without touching `window` or `document` and writes `data-placement` only on
+    mounted clients.
+  - **First-paint visibility guard:** `useFloating` exposes `isPositioned`,
+    which stays `false` until the first `computePosition` resolves and resets
+    when the floating layer closes, swaps targets, or unmounts (without
+    flickering on option-only updates). Overlay consumers keep floating surfaces
+    `visibility: hidden` until `isPositioned` is `true` so they never flash at
+    `0,0`.
 
 ### 3. Single-copy module stack constraint
 

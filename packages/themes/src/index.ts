@@ -34,3 +34,28 @@ export {
   type InteractiveSurfaceElement,
   type GhostInteractiveSurfaceExposed,
 } from './ghost-interactive-surface'
+
+export { GhostPopover, type GhostPopoverSlotProps } from './ghost-popover'
+
+export {
+  GhostPopoverTrigger,
+  type GhostPopoverTriggerElement,
+  type GhostPopoverTriggerExposed,
+} from './ghost-popover-trigger'
+
+export {
+  GhostPopoverContent,
+  type GhostPopoverContentElement,
+  type GhostPopoverContentExposed,
+  type GhostPopoverFlipOptions,
+  type GhostPopoverOffsetOptions,
+  type GhostPopoverPlacement,
+  type GhostPopoverShiftOptions,
+  type GhostPopoverStrategy,
+} from './ghost-popover-content'
+
+export {
+  GhostPopoverClose,
+  type GhostPopoverCloseElement,
+  type GhostPopoverCloseExposed,
+} from './ghost-popover-close'

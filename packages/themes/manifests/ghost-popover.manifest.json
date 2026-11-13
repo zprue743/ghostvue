@@ -1,0 +1,146 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "handwritten",
+  "name": "GhostPopover",
+  "package": "@ghostvue/themes",
+  "status": "experimental",
+  "description": "Themed wrapper around headless GhostPopover, GhostPopoverTrigger, GhostPopoverContent, and GhostPopoverClose. Importing from @ghostvue/themes loads the default elevation-3 surface stylesheet.",
+  "props": [
+    {
+      "name": "open",
+      "type": "boolean",
+      "required": false,
+      "description": "Controlled open state forwarded to headless GhostPopover.",
+      "deprecated": false
+    },
+    {
+      "name": "defaultOpen",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Initial open state when open is omitted.",
+      "deprecated": false
+    }
+  ],
+  "models": [
+    {
+      "prop": "open",
+      "event": "update:open",
+      "type": "boolean",
+      "description": "v-model:open binding for controlled state."
+    }
+  ],
+  "events": [],
+  "slots": [
+    {
+      "name": "default",
+      "props": [
+        {
+          "name": "open",
+          "type": "boolean",
+          "description": "Current open state."
+        },
+        {
+          "name": "close",
+          "type": "() => void",
+          "description": "Closes the popover."
+        }
+      ],
+      "description": "Popover trigger and content parts."
+    }
+  ],
+  "exposed": [],
+  "styling": {
+    "parts": [
+      {
+        "name": "trigger",
+        "description": "Anchor control rendered by GhostPopoverTrigger."
+      },
+      {
+        "name": "content",
+        "description": "Elevated floating dialog surface rendered by GhostPopoverContent with data-themed."
+      },
+      {
+        "name": "close",
+        "description": "Close control rendered by GhostPopoverClose."
+      }
+    ],
+    "states": [
+      {
+        "name": "open",
+        "description": "Applied to trigger and content while open."
+      },
+      {
+        "name": "closed",
+        "description": "Applied to trigger while closed."
+      }
+    ],
+    "cssProperties": [
+      {
+        "name": "--ghost-elevation-3-bg",
+        "description": "Surface background color of GhostPopoverContent."
+      },
+      {
+        "name": "--ghost-elevation-3-border",
+        "description": "Border color of GhostPopoverContent."
+      },
+      {
+        "name": "--ghost-elevation-3-shadow",
+        "description": "Drop shadow of GhostPopoverContent."
+      },
+      {
+        "name": "--ghost-elevation-3-highlight",
+        "description": "Inner highlight shadow of GhostPopoverContent."
+      },
+      {
+        "name": "--ghost-border-hairline-width",
+        "description": "Border thickness."
+      },
+      {
+        "name": "--ghost-radius-lg",
+        "description": "Corner radius of GhostPopoverContent."
+      },
+      {
+        "name": "--ghost-surface-fg",
+        "description": "Foreground text color."
+      },
+      {
+        "name": "--ghost-space-inset-md",
+        "description": "Internal padding of GhostPopoverContent."
+      },
+      {
+        "name": "--ghost-focus-ring-color",
+        "description": "Outer focus-visible outline color when content receives focus."
+      },
+      {
+        "name": "--ghost-focus-ring-contrast",
+        "description": "Inner focus-visible halo color."
+      },
+      {
+        "name": "--ghost-focus-ring-offset",
+        "description": "Focus-visible outline offset."
+      },
+      {
+        "name": "--ghost-focus-ring-width",
+        "description": "Focus-visible outline width."
+      }
+    ]
+  },
+  "accessibility": {
+    "role": "dialog",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/disclosure/",
+    "keyboard": {
+      "Enter": "Toggles the popover when focused on the trigger, or closes when focused on GhostPopoverClose.",
+      "Space": "Toggles the popover when focused on the trigger, or closes when focused on GhostPopoverClose.",
+      "Escape": "Dismisses the topmost open popover and restores focus to the trigger."
+    },
+    "requiredAriaAttributes": [
+      "aria-expanded",
+      "aria-controls",
+      "aria-haspopup"
+    ]
+  },
+  "examples": [
+    "popover/themed"
+  ]
+}

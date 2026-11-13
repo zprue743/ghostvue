@@ -113,6 +113,20 @@ export const ghostExamples = [
       'A visually hidden status that assistive technology announces.',
     layer: 'headless',
   },
+  {
+    id: 'popover/basic',
+    title: 'Basic',
+    description:
+      'Unstyled non-modal disclosure anchored to its trigger with Escape and outside-click dismissal.',
+    layer: 'headless',
+  },
+  {
+    id: 'popover/themed',
+    title: 'Themed',
+    description:
+      'Elevated surface tokens and themed button controls composed via the as prop.',
+    layer: 'themed',
+  },
 ] as const satisfies readonly GhostExampleDefinition[]
 
 export type GhostExampleId = (typeof ghostExamples)[number]['id']

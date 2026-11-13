@@ -59,3 +59,30 @@ export {
 } from './use-floating'
 export { default as GhostPortal } from './GhostPortal.vue'
 export type { GhostPortalProps, GhostPortalTarget } from './ghost-portal'
+export { default as GhostPopover } from './GhostPopover.vue'
+export { default as GhostPopoverTrigger } from './GhostPopoverTrigger.vue'
+export { default as GhostPopoverContent } from './GhostPopoverContent.vue'
+export { default as GhostPopoverClose } from './GhostPopoverClose.vue'
+export { useGhostPopover } from './use-ghost-popover'
+export type {
+  GhostPopoverCloseElement,
+  GhostPopoverCloseExposed,
+  GhostPopoverCloseProps,
+  GhostPopoverContentElement,
+  GhostPopoverContentExposed,
+  GhostPopoverContentProps,
+  GhostPopoverContext,
+  GhostPopoverFlipOptions,
+  GhostPopoverOffsetOptions,
+  GhostPopoverPadding,
+  GhostPopoverPlacement,
+  GhostPopoverProps,
+  GhostPopoverShiftOptions,
+  GhostPopoverSlotProps,
+  GhostPopoverStrategy,
+  GhostPopoverTriggerElement,
+  GhostPopoverTriggerExposed,
+  GhostPopoverTriggerProps,
+  UseGhostPopoverOptions,
+  UseGhostPopoverReturn,
+} from './ghost-popover'

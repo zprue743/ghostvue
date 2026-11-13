@@ -8,6 +8,7 @@
 @import './generated/tokens.css';
 @import './recipes.css';
 @import './ghost-button.css';
+@import './ghost-popover.css';
 
 @layer ghostvue-theme {
   :where(.ghost-themed-scope) {
