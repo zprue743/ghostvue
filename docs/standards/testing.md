@@ -40,7 +40,8 @@ and do not count toward Vitest coverage.
 `apps/docs` and `apps/playground` are development hosts. They are intentionally
 outside the Vitest include list and the coverage gate.
 
-Find the coverage table in the CI `verify` job summary on each run and download
-the `coverage-report` artifact for the HTML, JSON summary, and LCOV reports
-(retained for 14 days). Locally, run `pnpm test:coverage` and open
-`coverage/index.html`.
+After Vitest runs, find the coverage table in the CI `verify` job summary and
+download the `coverage-report` artifact for the HTML, JSON summary, and LCOV
+reports (retained for 14 days). Reports are generated even when tests fail;
+failures before Vitest starts cannot produce coverage. Locally, run
+`pnpm test:coverage` and open `coverage/index.html`.

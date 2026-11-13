@@ -33,13 +33,16 @@ describe('coverage summary', () => {
       },
       'packages/shared/src/index.ts': coverage(0, 0),
       '/repo/packages/themes/src/index.ts': coverage(3, 4),
-      'C:\\repo\\packages\\vue\\src\\index.ts': coverage(9, 10),
+      '/repo/packages/vue/src/index.ts': coverage(9, 10),
       // Theme compiler coverage belongs only in the provided global total.
       '/repo/packages/themes/scripts/lib/compiler.js': coverage(0, 100),
       '/repo/packages/core/src-other/ignored.ts': coverage(0, 100),
+      '/other/packages/core/src/ignored.ts': coverage(0, 100),
+      '/repo/vendor/packages/core/src/ignored.ts': coverage(0, 100),
+      'packages/core/src/../../../../outside.ts': coverage(0, 100),
     }
 
-    expect(formatCoverageSummary(summary)).toBe(
+    expect(formatCoverageSummary(summary, '/repo')).toBe(
       [
         '## Coverage',
         '',
@@ -58,12 +61,29 @@ describe('coverage summary', () => {
   })
 
   it('marks global and package lines below 80% as failing', () => {
-    const output = formatCoverageSummary({
-      total: coverage(7999, 10000),
-      'packages/core/src/index.ts': coverage(7999, 10000),
-    })
+    const output = formatCoverageSummary(
+      {
+        total: coverage(7999, 10000),
+        'packages/core/src/index.ts': coverage(7999, 10000),
+      },
+      '/repo',
+    )
 
     expect(output).toContain('| Total | 79.99% FAIL |')
     expect(output).toContain('| packages/core/src | 79.99% FAIL |')
+  })
+
+  it('resolves Windows paths against the project root', () => {
+    const output = formatCoverageSummary(
+      {
+        total: coverage(9, 10),
+        'C:\\repo\\packages\\vue\\src\\index.ts': coverage(9, 10),
+        'C:\\other\\packages\\vue\\src\\index.ts': coverage(0, 100),
+        'D:\\repo\\packages\\vue\\src\\index.ts': coverage(0, 100),
+      },
+      'C:\\repo',
+    )
+
+    expect(output).toContain('| packages/vue/src | 90.00% PASS |')
   })
 })

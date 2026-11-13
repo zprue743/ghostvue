@@ -10,4 +10,5 @@ type CoverageMetrics = Record<
 
 export function formatCoverageSummary(
   summary: Record<string, CoverageMetrics> & { total: CoverageMetrics },
+  projectRoot: string,
 ): string
