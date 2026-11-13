@@ -275,8 +275,9 @@ describe('GhostPopover', () => {
 
   it('does not stay visibility:hidden and still moves focus in when no trigger anchor is registered', async () => {
     // Even if computePosition never resolves, standalone content has no anchor
-    // to wait on and must become visible and autofocus immediately.
+    // to wait on and must become visible and autofocus on a closed-to-open transition.
     computePositionOverride = () => new Promise(() => undefined)
+    const open = ref(false)
 
     mountAttached(
       defineComponent({
@@ -284,7 +285,7 @@ describe('GhostPopover', () => {
           return () =>
             h(
               GhostPopover,
-              { defaultOpen: true },
+              { open: open.value },
               {
                 default: () =>
                   h(GhostPopoverContent, { 'aria-label': 'Standalone' }, () => [
@@ -296,11 +297,297 @@ describe('GhostPopover', () => {
       }),
     )
 
+    open.value = true
     await flushPromises()
     const content = document.querySelector<HTMLElement>('[data-part="content"]')
     expect(content).not.toBeNull()
     expect(content?.style.visibility).not.toBe('hidden')
     expect(document.activeElement?.textContent).toBe('Standalone action')
+  })
+
+  it('does not steal focus on mount when defaultOpen or open=true, and focuses content when opened later via trigger', async () => {
+    // 1. Focus stays on document.body when defaultOpen=true mounts with no focused element.
+    ;(document.activeElement as HTMLElement | null)?.blur()
+    expect(document.activeElement).toBe(document.body)
+
+    const bodyMount = mountAttached(
+      defineComponent({
+        setup() {
+          return () =>
+            h(
+              GhostPopover,
+              { defaultOpen: true },
+              {
+                default: () => [
+                  h(GhostPopoverTrigger, null, () => 'Body default trigger'),
+                  h(GhostPopoverContent, null, () => [
+                    h(
+                      'button',
+                      { type: 'button', 'data-testid': 'body-default-action' },
+                      'Inside action',
+                    ),
+                  ]),
+                ],
+              },
+            )
+        },
+      }),
+    )
+
+    await flushPromises()
+    expect(
+      document.querySelector('[data-testid="body-default-action"]'),
+    ).not.toBeNull()
+    expect(document.activeElement).toBe(document.body)
+    bodyMount.unmount()
+
+    // 2. Focus stays on a pre-focused input on mount (both defaultOpen and controlled open=true),
+    // and closing then reopening via the trigger moves focus into the content.
+    const preFocusedWrapper = mountAttached(
+      defineComponent({
+        setup() {
+          return () =>
+            h('div', [
+              h('input', {
+                'data-testid': 'pre-focused-input',
+                type: 'text',
+              }),
+              h(
+                GhostPopover,
+                { defaultOpen: true },
+                {
+                  default: () => [
+                    h(
+                      GhostPopoverTrigger,
+                      { 'data-testid': 'default-open-trigger' },
+                      () => 'Toggle defaultOpen',
+                    ),
+                    h(GhostPopoverContent, null, () => [
+                      h(
+                        'button',
+                        {
+                          type: 'button',
+                          'data-testid': 'default-open-inside',
+                        },
+                        'Inside button',
+                      ),
+                    ]),
+                  ],
+                },
+              ),
+            ])
+        },
+      }),
+    )
+
+    const preFocusedInput = preFocusedWrapper.get(
+      '[data-testid="pre-focused-input"]',
+    ).element as HTMLElement
+    preFocusedInput.focus()
+    expect(document.activeElement).toBe(preFocusedInput)
+
+    await flushPromises()
+    expect(
+      document.querySelector('[data-testid="default-open-inside"]'),
+    ).not.toBeNull()
+    expect(document.activeElement).toBe(preFocusedInput)
+
+    const trigger = preFocusedWrapper.get(
+      '[data-testid="default-open-trigger"]',
+    )
+    ;(trigger.element as HTMLElement).focus()
+    // Close first, then reopen via trigger -> now autofocuses content.
+    await trigger.trigger('click')
+    await flushPromises()
+    expect(
+      document.querySelector('[data-testid="default-open-inside"]'),
+    ).toBeNull()
+
+    await trigger.trigger('click')
+    await flushPromises()
+    const insideButton = document.querySelector<HTMLElement>(
+      '[data-testid="default-open-inside"]',
+    )
+    expect(insideButton).not.toBeNull()
+    expect(document.activeElement).toBe(insideButton)
+    preFocusedWrapper.unmount()
+
+    // 3. Lazily mounted GhostPopoverContent (v-if="open" on the root slot) still autofocuses when opened via the trigger.
+    const lazyWrapper = mountAttached(
+      defineComponent({
+        setup() {
+          return () =>
+            h(GhostPopover, null, {
+              default: ({ open }: { open: boolean }) => [
+                h(
+                  GhostPopoverTrigger,
+                  { 'data-testid': 'lazy-trigger' },
+                  () => 'Open lazy',
+                ),
+                open
+                  ? h(GhostPopoverContent, null, () => [
+                      h(
+                        'button',
+                        { type: 'button', 'data-testid': 'lazy-inside' },
+                        'Lazy action',
+                      ),
+                    ])
+                  : null,
+              ],
+            })
+        },
+      }),
+    )
+
+    const lazyTrigger = lazyWrapper.get('[data-testid="lazy-trigger"]')
+    ;(lazyTrigger.element as HTMLElement).focus()
+    await lazyTrigger.trigger('click')
+    await flushPromises()
+    const lazyInside = document.querySelector<HTMLElement>(
+      '[data-testid="lazy-inside"]',
+    )
+    expect(lazyInside).not.toBeNull()
+    expect(document.activeElement).toBe(lazyInside)
+  })
+
+  it('keeps focus off trigger when clicking a child span/svg/text of an outside button and restores focus when clicking plain outside text', async () => {
+    const wrapper = mountAttached(
+      defineComponent({
+        setup() {
+          return () =>
+            h('div', [
+              h('button', { type: 'button', 'data-testid': 'outside-btn' }, [
+                h('span', { 'data-testid': 'outside-btn-span' }, 'Span child'),
+                h('svg', { 'data-testid': 'outside-btn-svg' }, [
+                  h('path', { 'data-testid': 'outside-btn-path' }),
+                ]),
+              ]),
+              h('p', { 'data-testid': 'outside-plain-text' }, 'Plain text'),
+              h(GhostPopover, null, {
+                default: () => [
+                  h(GhostPopoverTrigger, null, () => 'Trigger'),
+                  h(GhostPopoverContent, null, () => [
+                    h('button', { type: 'button' }, 'Popover action'),
+                  ]),
+                ],
+              }),
+            ])
+        },
+      }),
+    )
+
+    const trigger = wrapper.get('[data-part="trigger"]')
+    const outsideBtn = wrapper.get('[data-testid="outside-btn"]')
+      .element as HTMLElement
+    const outsideBtnSpan = wrapper.get(
+      '[data-testid="outside-btn-span"]',
+    ).element
+    const outsideBtnPath = wrapper.get(
+      '[data-testid="outside-btn-path"]',
+    ).element
+    const outsidePlainText = wrapper.get(
+      '[data-testid="outside-plain-text"]',
+    ).element
+
+    // 1. Clicking child <span> inside an outside button keeps focus off the trigger.
+    ;(trigger.element as HTMLElement).focus()
+    await trigger.trigger('click')
+    await flushPromises()
+    expect(document.querySelector('[data-part="content"]')).not.toBeNull()
+
+    pointerDown(outsideBtnSpan)
+    outsideBtn.focus()
+    await flushPromises()
+    expect(document.querySelector('[data-part="content"]')).toBeNull()
+    expect(document.activeElement).toBe(outsideBtn)
+
+    // 2. Clicking an SVGElement child inside an outside button also keeps focus off the trigger.
+    ;(trigger.element as HTMLElement).focus()
+    await trigger.trigger('click')
+    await flushPromises()
+    pointerDown(outsideBtnPath)
+    outsideBtn.focus()
+    await flushPromises()
+    expect(document.querySelector('[data-part="content"]')).toBeNull()
+    expect(document.activeElement).toBe(outsideBtn)
+
+    // 3. Clicking a Text node inside an outside button keeps focus off the trigger.
+    ;(trigger.element as HTMLElement).focus()
+    await trigger.trigger('click')
+    await flushPromises()
+    const textNode = outsideBtnSpan.firstChild
+    expect(textNode).not.toBeNull()
+    if (textNode) {
+      pointerDown(textNode)
+    }
+    outsideBtn.focus()
+    await flushPromises()
+    expect(document.querySelector('[data-part="content"]')).toBeNull()
+    expect(document.activeElement).toBe(outsideBtn)
+
+    // 4. Clicking plain outside text restores focus to the trigger.
+    ;(trigger.element as HTMLElement).focus()
+    await trigger.trigger('click')
+    await flushPromises()
+    pointerDown(outsidePlainText)
+    await flushPromises()
+    expect(document.querySelector('[data-part="content"]')).toBeNull()
+    expect(document.activeElement).toBe(trigger.element)
+  })
+
+  it('resets shouldRestoreFocus when a controlled parent ignores update:open after an outside focusable click', async () => {
+    const open = ref(false)
+    const wrapper = mountAttached(
+      defineComponent({
+        setup() {
+          return () =>
+            h('div', [
+              h('input', {
+                'data-testid': 'outside-input',
+                type: 'text',
+              }),
+              h(
+                GhostPopover,
+                {
+                  open: open.value,
+                  // Parent intentionally ignores update:open on outside click.
+                },
+                {
+                  default: () => [
+                    h(GhostPopoverTrigger, null, () => 'Controlled trigger'),
+                    h(GhostPopoverContent, null, () => [
+                      h('button', { type: 'button' }, 'Inside control'),
+                    ]),
+                  ],
+                },
+              ),
+            ])
+        },
+      }),
+    )
+
+    const trigger = wrapper.get('[data-part="trigger"]')
+    const outsideInput = wrapper.get('[data-testid="outside-input"]')
+      .element as HTMLElement
+
+    // Open popover from trigger so trigger is recorded as previouslyFocused.
+    ;(trigger.element as HTMLElement).focus()
+    open.value = true
+    await flushPromises()
+    expect(document.querySelector('[data-part="content"]')).not.toBeNull()
+
+    // Click outside focusable input; parent ignores update:open and keeps open=true.
+    pointerDown(outsideInput)
+    outsideInput.focus()
+    await flushPromises()
+    expect(document.querySelector('[data-part="content"]')).not.toBeNull()
+    expect(document.activeElement).toBe(outsideInput)
+
+    // Later, parent closes the popover programmatically -> focus returns to trigger.
+    open.value = false
+    await flushPromises()
+    expect(document.querySelector('[data-part="content"]')).toBeNull()
+    expect(document.activeElement).toBe(trigger.element)
   })
 
   it('moves focus in on open (first focusable, else content) and restores to trigger on close', async () => {

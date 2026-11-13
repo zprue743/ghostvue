@@ -198,7 +198,11 @@ export interface GhostPopoverContext {
   setContentId: (id: string | null) => void
 }
 
-export const ghostPopoverContextKey: InjectionKey<GhostPopoverContext> =
+export interface GhostPopoverInternalContext extends GhostPopoverContext {
+  openedAtMount: Ref<boolean>
+}
+
+export const ghostPopoverContextKey: InjectionKey<GhostPopoverInternalContext> =
   Symbol('ghost-popover')
 
 /**

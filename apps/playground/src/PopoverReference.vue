@@ -142,6 +142,30 @@ import {
         </GhostPopoverContentThemed>
       </GhostPopoverThemed>
     </fieldset>
+
+    <div class="popover-default-open-host">
+      <GhostPopover default-open>
+        <GhostPopoverTrigger data-testid="popover-default-open-trigger">
+          Default open popover
+        </GhostPopoverTrigger>
+        <GhostPopoverContent
+          data-testid="popover-default-open-content"
+          class="popover-demo-surface"
+          placement="bottom-start"
+          :offset="8"
+        >
+          <label for="popover-default-open-note">Default open note</label>
+          <input
+            id="popover-default-open-note"
+            data-testid="popover-default-open-input"
+            type="text"
+          />
+          <GhostPopoverClose data-testid="popover-default-open-close">
+            Close default open
+          </GhostPopoverClose>
+        </GhostPopoverContent>
+      </GhostPopover>
+    </div>
   </section>
 </template>
 
@@ -156,6 +180,10 @@ import {
   display: flex;
   flex-wrap: wrap;
   gap: 0.75rem;
+}
+
+.popover-default-open-host {
+  min-block-size: 9rem;
 }
 
 .popover-offset-parent {
