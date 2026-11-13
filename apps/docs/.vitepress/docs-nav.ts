@@ -18,6 +18,7 @@ export const docsSidebar: LlmsSidebarGroup[] = [
     text: 'Components',
     items: [
       { text: 'GhostButton', link: '/components/button' },
+      { text: 'GhostDialog', link: '/components/dialog' },
       {
         text: 'GhostInteractiveSurface',
         link: '/components/interactive-surface',
@@ -94,6 +95,10 @@ export const docsSidebar: LlmsSidebarGroup[] = [
       {
         text: 'GhostButton specification',
         link: '/components/button-spec',
+      },
+      {
+        text: 'GhostDialog specification',
+        link: '/components/dialog-spec',
       },
       {
         text: 'GhostInteractiveSurface specification',

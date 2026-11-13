@@ -460,4 +460,52 @@ describe('useFocusScope', () => {
     upperBtn.focus()
     expect(tab(upperBtn).defaultPrevented).toBe(false)
   })
+
+  it('keeps Tab trapped when focus is inside an inline dismissable layer contained within the scope', async () => {
+    const dialog = ref<HTMLElement | null>(null)
+    const inlinePopover = ref<HTMLElement | null>(null)
+    const popoverOpen = ref(false)
+
+    const wrapper = mountScope(
+      () => {
+        useDismissableLayer(dialog, { onDismiss: () => undefined })
+        useFocusScope(dialog, {
+          trapped: true,
+          loop: true,
+          autoFocus: false,
+        })
+        useDismissableLayer(inlinePopover, { onDismiss: () => undefined })
+      },
+      () =>
+        h('div', { ref: dialog, tabindex: '-1' }, [
+          h(
+            'button',
+            { type: 'button', 'data-testid': 'dialog-first' },
+            'Dialog first',
+          ),
+          popoverOpen.value
+            ? h('div', { ref: inlinePopover, tabindex: '-1' }, [
+                h(
+                  'button',
+                  { type: 'button', 'data-testid': 'inline-last' },
+                  'Inline popover last',
+                ),
+              ])
+            : null,
+        ]),
+    )
+
+    popoverOpen.value = true
+    await nextTick()
+
+    const inlineLast = wrapper.get<HTMLElement>(
+      '[data-testid="inline-last"]',
+    ).element
+    inlineLast.focus()
+    const event = tab(inlineLast)
+    expect(event.defaultPrevented).toBe(true)
+    expect(document.activeElement).toBe(
+      wrapper.get<HTMLElement>('[data-testid="dialog-first"]').element,
+    )
+  })
 })

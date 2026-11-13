@@ -1,0 +1,102 @@
+/*
+ * Themed GhostDialog overlay and surface. Visual values come from semantic
+ * --ghost-* tokens with no component-specific tokens or exit animations.
+ */
+@layer ghostvue-theme {
+  :where(
+    .ghost-theme .ghost-dialog-overlay[data-state='open'],
+    .ghost-themed-scope .ghost-dialog-overlay[data-state='open'],
+    .ghost-dialog-overlay[data-themed][data-state='open']
+  ) {
+    background-color: var(--ghost-scrim, rgb(0 0 0 / 0.5));
+    inset: 0;
+    position: fixed;
+    z-index: 50;
+  }
+
+  :where(
+    .ghost-theme .ghost-dialog-content[data-state='open'],
+    .ghost-themed-scope .ghost-dialog-content[data-state='open'],
+    .ghost-dialog-content[data-themed][data-state='open']
+  ) {
+    background-color: var(--ghost-elevation-4-bg);
+    border: var(--ghost-border-hairline-width) solid
+      var(--ghost-elevation-4-border);
+    border-radius: var(--ghost-radius-lg);
+    box-shadow:
+      var(--ghost-elevation-4-shadow), var(--ghost-elevation-4-highlight);
+    box-sizing: border-box;
+    color: var(--ghost-surface-fg);
+    display: grid;
+    font-family: var(--ghost-type-family-sans);
+    font-feature-settings: var(--ghost-type-feature-default);
+    gap: var(--ghost-space-gap-md);
+    inline-size: min(calc(100vw - 2 * var(--ghost-space-inset-lg)), 48ch);
+    inset-block-start: 50%;
+    inset-inline-start: 50%;
+    max-block-size: calc(100dvh - 2 * var(--ghost-space-inset-lg));
+    max-inline-size: calc(100vw - 2 * var(--ghost-space-inset-lg));
+    overflow: auto;
+    padding: var(--ghost-space-inset-lg);
+    position: fixed;
+    transform: translate(-50%, -50%);
+    z-index: 50;
+  }
+
+  :where(
+    .ghost-theme .ghost-dialog-content [data-part='title'],
+    .ghost-themed-scope .ghost-dialog-content [data-part='title'],
+    .ghost-dialog-content[data-themed] [data-part='title']
+  ) {
+    font-size: var(--ghost-type-size-lg);
+    font-weight: var(--ghost-type-weight-semibold);
+    line-height: var(--ghost-type-line-snug);
+    margin: 0;
+  }
+
+  :where(
+    .ghost-theme .ghost-dialog-content [data-part='description'],
+    .ghost-themed-scope .ghost-dialog-content [data-part='description'],
+    .ghost-dialog-content[data-themed] [data-part='description']
+  ) {
+    color: var(--ghost-text-muted);
+    font-size: var(--ghost-type-size-sm);
+    line-height: var(--ghost-type-line-normal);
+    margin: 0;
+  }
+
+  :where(
+    .ghost-theme .ghost-dialog-content:focus-visible,
+    .ghost-themed-scope .ghost-dialog-content:focus-visible,
+    .ghost-dialog-content[data-themed]:focus-visible
+  ) {
+    box-shadow:
+      var(--ghost-elevation-4-shadow),
+      var(--ghost-elevation-4-highlight),
+      0 0 0 var(--ghost-focus-ring-offset) var(--ghost-focus-ring-contrast);
+    outline: var(--ghost-focus-ring-width) solid var(--ghost-focus-ring-color);
+    outline-offset: var(--ghost-focus-ring-offset);
+  }
+
+  @media (forced-colors: active) {
+    :where(
+      .ghost-theme .ghost-dialog-content[data-state='open'],
+      .ghost-themed-scope .ghost-dialog-content[data-state='open'],
+      .ghost-dialog-content[data-themed][data-state='open']
+    ) {
+      background-color: Canvas;
+      border-color: CanvasText;
+      box-shadow: none;
+      color: CanvasText;
+    }
+
+    :where(
+      .ghost-theme .ghost-dialog-content:focus-visible,
+      .ghost-themed-scope .ghost-dialog-content:focus-visible,
+      .ghost-dialog-content[data-themed]:focus-visible
+    ) {
+      box-shadow: none;
+      outline-color: Highlight;
+    }
+  }
+}

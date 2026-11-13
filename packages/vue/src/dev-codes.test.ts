@@ -55,6 +55,8 @@ describe('ghost diagnostic codes', () => {
   })
 
   it('narrows GhostCode to assigned catalog keys', () => {
-    expectTypeOf<GhostCode>().toEqualTypeOf<'GHOST001'>()
+    expectTypeOf<GhostCode>().toEqualTypeOf<
+      'GHOST001' | 'GHOST002' | 'GHOST003'
+    >()
   })
 })

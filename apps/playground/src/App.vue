@@ -6,6 +6,7 @@ import { GhostButton as GhostButtonThemed } from '@ghostvue/themes'
 import AmbientReference from './AmbientReference.vue'
 import ButtonStateMatrix from './ButtonStateMatrix.vue'
 import DensityReference from './DensityReference.vue'
+import DialogReference from './DialogReference.vue'
 import ModalPrimitivesReference from './ModalPrimitivesReference.vue'
 import MotionReference from './MotionReference.vue'
 import OverlayReference from './OverlayReference.vue'
@@ -164,6 +165,7 @@ function closeNested(): void {
     <AmbientReference />
     <OverlayReference />
     <PopoverReference />
+    <DialogReference />
     <ModalPrimitivesReference />
 
     <section aria-labelledby="button-heading">
