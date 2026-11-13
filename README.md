@@ -43,6 +43,7 @@ Useful focused commands include:
 pnpm dev
 pnpm docs:dev
 pnpm test
+pnpm test:coverage
 pnpm test:e2e
 pnpm typecheck
 pnpm manifests
