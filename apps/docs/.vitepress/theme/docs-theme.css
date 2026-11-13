@@ -42,6 +42,28 @@ html.ghost-theme {
 }
 
 /*
+ * Dark muted surfaces are grey-green (#2d3233) from the dark-tuned neutral
+ * ramp. The docs canvas is navy `--ghost-surface-bg` (#0f172a), so VitePress
+ * fences clash unless `--vp-code-block-bg` stays in that navy family.
+ * Light appearance keeps the mapping above; these rules are html.dark-only.
+ */
+html.ghost-theme.dark {
+  --vp-code-block-bg: color-mix(
+    in oklch,
+    var(--ghost-surface-bg) 78%,
+    var(--ghost-surface-muted-bg)
+  );
+  --vp-code-bg: var(--vp-code-block-bg);
+  --vp-code-block-divider-color: var(--ghost-border-muted);
+  --vp-code-copy-code-bg: var(--ghost-surface-bg);
+  --vp-code-copy-code-hover-bg: color-mix(
+    in oklch,
+    var(--ghost-surface-bg) 70%,
+    var(--ghost-surface-muted-bg)
+  );
+}
+
+/*
  * VitePress ships an unlayered `button { padding: 0; background: transparent;
  * border: 0 }` reset. GhostButton recipes live in `@layer ghostvue-theme` with
  * `:where()`, so that reset always wins in docs. Restore only the themed
@@ -80,7 +102,7 @@ html.ghost-theme {
   border-end-start-radius: calc(1rem * var(--ghost-roundness, 1));
   border-start-end-radius: 0;
   border-start-start-radius: 0;
-  background-color: var(--ghost-surface-muted-bg);
+  background-color: var(--vp-code-block-bg);
 }
 
 .vp-doc .ghost-example + div[class*='language-'] pre {

@@ -429,8 +429,8 @@ main {
   margin: 2rem;
 }
 
-/* Ghost* / --ghost-* identifiers are longer unbreakable tokens than Sl* /
- * --sl-*. Wrap them at the 320px overflow check instead of widening the page. */
+/* Ghost* / --ghost-* identifiers are long unbreakable tokens.
+ * Wrap them at the 320px overflow check instead of widening the page. */
 main :is(h1, h2, h3, code) {
   overflow-wrap: anywhere;
 }
