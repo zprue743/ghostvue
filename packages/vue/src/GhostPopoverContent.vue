@@ -139,14 +139,16 @@ useDismissableLayer(contentElement, {
 })
 
 // Wait for positioning readiness (visibility: hidden removed) and post-mount
-// portal placement before handing the element to useFocusScope.
+// portal placement before handing the element to useFocusScope. When no trigger
+// anchor is registered, skip the positioning gate so standalone content still
+// becomes visible and receives focus.
+const isPositioned = computed(
+  () => !context.triggerRegistered.value || floating.isPositioned.value,
+)
+
 const focusTarget = shallowRef<HTMLElement | null>(null)
 watch(
-  [
-    () => context.isOpen.value,
-    contentElement,
-    () => floating.isPositioned.value,
-  ],
+  [() => context.isOpen.value, contentElement, isPositioned],
   ([open, el, positioned]) => {
     if (!open || !el) {
       focusTarget.value = null
@@ -205,7 +207,7 @@ const contentStyle = computed(() => [
     position: floating.strategy.value,
     left: `${String(floating.x.value)}px`,
     top: `${String(floating.y.value)}px`,
-    ...(floating.isPositioned.value ? {} : { visibility: 'hidden' as const }),
+    ...(isPositioned.value ? {} : { visibility: 'hidden' as const }),
   },
   attrs.style,
 ])

@@ -273,6 +273,36 @@ describe('GhostPopover', () => {
     expect(document.activeElement?.textContent).toBe('Focusable')
   })
 
+  it('does not stay visibility:hidden and still moves focus in when no trigger anchor is registered', async () => {
+    // Even if computePosition never resolves, standalone content has no anchor
+    // to wait on and must become visible and autofocus immediately.
+    computePositionOverride = () => new Promise(() => undefined)
+
+    mountAttached(
+      defineComponent({
+        setup() {
+          return () =>
+            h(
+              GhostPopover,
+              { defaultOpen: true },
+              {
+                default: () =>
+                  h(GhostPopoverContent, { 'aria-label': 'Standalone' }, () => [
+                    h('button', { type: 'button' }, 'Standalone action'),
+                  ]),
+              },
+            )
+        },
+      }),
+    )
+
+    await flushPromises()
+    const content = document.querySelector<HTMLElement>('[data-part="content"]')
+    expect(content).not.toBeNull()
+    expect(content?.style.visibility).not.toBe('hidden')
+    expect(document.activeElement?.textContent).toBe('Standalone action')
+  })
+
   it('moves focus in on open (first focusable, else content) and restores to trigger on close', async () => {
     // 1. With focusable child + Escape
     const withFocusable = mountAttached(
