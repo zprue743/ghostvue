@@ -12,12 +12,7 @@ function stripComments(css: string) {
 }
 
 function findHardcodedVisuals(css: string) {
-  // Permit only the explicit fallback inside `var(--ghost-scrim, rgb(0 0 0 / 0.5))`
-  // until `--ghost-scrim` lands in the token system.
-  const source = stripComments(css).replace(
-    /var\(--ghost-scrim,\s*rgb\(0 0 0 \/ 0\.5\)\)/g,
-    'var(--ghost-scrim)',
-  )
+  const source = stripComments(css)
   const violations: string[] = []
 
   for (const match of source.matchAll(/#(?:[0-9a-f]{3,8})\b/gi)) {
@@ -42,9 +37,9 @@ function findHardcodedVisuals(css: string) {
 }
 
 describe('GhostDialog theme CSS tokens', () => {
-  it('uses semantic --ghost-* tokens, --ghost-scrim fallback, and no exit animations or extra literals', async () => {
+  it('uses semantic --ghost-* tokens and no exit animations or extra literals', async () => {
     const css = await readFile(cssPath, 'utf8')
-    expect(css).toContain('var(--ghost-scrim, rgb(0 0 0 / 0.5))')
+    expect(css).toContain('background-color: var(--ghost-scrim);')
     expect(css).toContain('--ghost-elevation-4-bg')
     expect(css).toContain('--ghost-elevation-4-border')
     expect(css).toContain('--ghost-elevation-4-shadow')

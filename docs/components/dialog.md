@@ -23,7 +23,7 @@ scrollbar-width compensation, marks background siblings `inert` (while skipping
 <GhostExample id="dialog/themed" />
 
 Importing from `@ghostvue/themes` loads `default.css`, styling
-`.ghost-dialog-overlay` with `var(--ghost-scrim, rgb(0 0 0 / 0.5))` and
+`.ghost-dialog-overlay` with `var(--ghost-scrim)` and
 `.ghost-dialog-content` with `--ghost-elevation-4-*`, border, hairline width,
 radius, inset padding, typography, and focus-ring `--ghost-*` tokens. Composing
 `:as="GhostButton"` delegates trigger and close styling cleanly.

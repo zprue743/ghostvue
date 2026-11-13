@@ -213,7 +213,7 @@ autoFocus: true, restoreFocus: true }`. Even when open at mount (`defaultOpen`
   `description`, `close`. `data-state`: `open` | `closed`.
 - Classes: `.ghost-dialog-overlay` and `.ghost-dialog-content`.
 - `@ghostvue/themes` CSS (`ghost-dialog.css`) under `@layer ghostvue-theme`
-  styles `.ghost-dialog-overlay` with `var(--ghost-scrim, rgb(0 0 0 / 0.5))`
+  styles `.ghost-dialog-overlay` with `var(--ghost-scrim)`
   and `.ghost-dialog-content` with `--ghost-elevation-4-*`, `--ghost-radius-lg`,
   `--ghost-border-hairline-width`, `--ghost-surface-fg`, `--ghost-space-inset-lg`,
   `--ghost-space-gap-*`, focus-ring tokens, typography tokens, and
@@ -257,7 +257,7 @@ autoFocus: true, restoreFocus: true }`. Even when open at mount (`defaultOpen`
   dialogs, Node SSR without globals.
 - **Theme integration (`tests/integration/ghost-dialog-themed.test.ts`,
   `ghost-dialog-theme-css.test.ts`):** all themed wrappers preserving >= 80%
-  line coverage in `packages/themes/src`, CSS tokens (`--ghost-scrim` fallback)
+  line coverage in `packages/themes/src`, CSS tokens (`--ghost-scrim`)
   with no exit animations or unexpected literals.
 - **Browser E2E (`tests/e2e/dialog.spec.ts`):** Tab/Shift+Tab wrap, Escape,
   overlay click, `closeOnEscape`/`closeOnOutsideClick=false`, scroll lock with

@@ -8,7 +8,7 @@
     .ghost-themed-scope .ghost-dialog-overlay[data-state='open'],
     .ghost-dialog-overlay[data-themed][data-state='open']
   ) {
-    background-color: var(--ghost-scrim, rgb(0 0 0 / 0.5));
+    background-color: var(--ghost-scrim);
     inset: 0;
     position: fixed;
     z-index: 50;
