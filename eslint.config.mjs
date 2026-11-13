@@ -27,7 +27,7 @@ export default tseslint.config(
     },
   },
   {
-    files: ['**/*.{ts,tsx,vue}'],
+    files: ['**/*.{ts,tsx,mts,vue}'],
     languageOptions: {
       globals: {
         ...globals.browser,

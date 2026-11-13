@@ -30,3 +30,18 @@ feedback fast; CI runs the browser job separately after installing Chromium. Tha
 job caches `~/.cache/ms-playwright` by Playwright version and does not run
 `playwright install --with-deps`, because GitHub-hosted Ubuntu images already
 include Chromium's libraries and apt is a frequent stall.
+
+## Coverage reporting
+
+`*.test.ts` files run in Vitest as unit and integration tests and count toward
+coverage. `*.spec.ts` files run in Playwright e2e tests in CI's `browser` job
+and do not count toward Vitest coverage.
+
+`apps/docs` and `apps/playground` are development hosts. They are intentionally
+outside the Vitest include list and the coverage gate.
+
+After Vitest runs, find the coverage table in the CI `verify` job summary and
+download the `coverage-report` artifact for the HTML, JSON summary, and LCOV
+reports (retained for 14 days). Reports are generated even when tests fail;
+failures before Vitest starts cannot produce coverage. Locally, run
+`pnpm test:coverage` and open `coverage/index.html`.
