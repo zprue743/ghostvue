@@ -32,4 +32,37 @@ test.describe('docs theme switcher', () => {
       await docs.close()
     }
   })
+
+  test('appearance toggle stays responsive and syncs data-ghost-mode', async ({
+    page,
+  }) => {
+    const docs = await startStaticServer('apps/docs/.vitepress/dist')
+    try {
+      await page.goto(`${docs.url}/components/button`)
+      const root = page.locator('html')
+      await expect(root).toHaveAttribute('data-ghost-mode', 'light')
+      await page.evaluate(() => {
+        const counter = window as unknown as { classWrites: number }
+        counter.classWrites = 0
+        new MutationObserver((records) => {
+          counter.classWrites += records.length
+        }).observe(document.documentElement, {
+          attributes: true,
+          attributeFilter: ['class'],
+        })
+      })
+      const toggle = page.locator('.VPNavBar .VPSwitchAppearance').first()
+      for (const mode of ['dark', 'light', 'dark', 'light']) {
+        await toggle.click({ timeout: 2_000 })
+        await expect(root).toHaveAttribute('data-ghost-mode', mode)
+        await expect(root).toHaveClass(/ghost-theme/)
+      }
+      const writes = await page.evaluate(
+        () => (window as unknown as { classWrites: number }).classWrites,
+      )
+      expect(writes).toBeLessThan(40)
+    } finally {
+      await docs.close()
+    }
+  })
 })

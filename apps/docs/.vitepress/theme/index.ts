@@ -13,11 +13,14 @@ import { reloadOnStaleChunk } from './reload-on-stale-chunk'
 
 function syncModeFromAppearance(): void {
   const root = document.documentElement
-  root.classList.add('ghost-theme')
-  root.setAttribute(
-    'data-ghost-mode',
-    root.classList.contains('dark') ? 'dark' : 'light',
-  )
+  // Only write when something changed. `classList.add` re-sets the `class`
+  // attribute even when the token is already present, which queues another
+  // mutation record and re-runs this observer forever.
+  if (!root.classList.contains('ghost-theme')) root.classList.add('ghost-theme')
+  const mode = root.classList.contains('dark') ? 'dark' : 'light'
+  if (root.getAttribute('data-ghost-mode') !== mode) {
+    root.setAttribute('data-ghost-mode', mode)
+  }
 }
 
 const theme: Theme = {
