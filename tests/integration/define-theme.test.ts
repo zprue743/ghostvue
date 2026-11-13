@@ -167,6 +167,18 @@ describe('flagship themes', () => {
       )
       expect(failures, JSON.stringify(failures, null, 2)).toEqual([])
       expect(theme.css).toContain(`[data-ghost-theme='${input.name}']`)
+      const scrim = theme.tokens.find((token) => token.name === 'scrim')
+      expect(scrim?.cssVar).toBe('--ghost-scrim')
+      for (const mode of ['light', 'dark'] as const) {
+        const paletteName =
+          mode === 'light' ? 'color.neutral.1000' : 'color.neutral.dark.1000'
+        const palette = theme.tokens.find((token) => token.name === paletteName)
+        if (!palette) throw new Error(`Missing palette token: ${paletteName}`)
+        const value = `color-mix(in srgb, ${palette.value[mode]} 60%, transparent)`
+        expect(scrim?.value[mode]).toBe(value)
+        expect(theme.css).toContain(`--ghost-scrim: ${value};`)
+      }
+      expect(theme.css).toContain('--ghost-scrim: transparent;')
       expect(theme.css).not.toMatch(/:where\(\.ghost-themed-scope/)
       expect(
         await readFile(

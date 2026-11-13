@@ -1,4 +1,9 @@
 {
+  "scrim": {
+    "$type": "color",
+    "$value": "color-mix(in srgb, {color.neutral.1000} 60%, transparent)",
+    "$description": "Modal backdrop. Darkest neutral at 60% opacity dims the page while leaving it visible; transparent in forced colors."
+  },
   "surface": {
     "bg": {
       "$type": "color",

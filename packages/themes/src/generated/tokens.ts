@@ -4002,6 +4002,17 @@ export const tokens = {
       dark: "0.98",
     },
   },
+  "scrim": {
+    name: "scrim",
+    cssVar: "--ghost-scrim",
+    type: "color",
+    tier: "semantic",
+    description: "Modal backdrop. Darkest neutral at 60% opacity dims the page while leaving it visible; transparent in forced colors.",
+    value: {
+      light: "color-mix(in srgb, #070b11 60%, transparent)",
+      dark: "color-mix(in srgb, #0c0d0f 60%, transparent)",
+    },
+  },
   "size.blur.glass": {
     name: "size.blur.glass",
     type: "dimension",
