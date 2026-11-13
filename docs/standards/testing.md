@@ -23,8 +23,8 @@ contract. Keep fixtures narrow. Bug fixes require regression tests whenever
 practical.
 
 Run `pnpm test` for focused unit/integration checks, `pnpm test:coverage` (also
-run by `pnpm verify`) to enforce the 80% package line-coverage gate, and
-`pnpm test:e2e` for browser checks.
+run by `pnpm verify`) to enforce the 80% global and per-package (`packages/*/src/**`)
+line-coverage gates, and `pnpm test:e2e` for browser checks.
 The normal `pnpm verify` gate excludes browser tests to keep routine local and CI
 feedback fast; CI runs the browser job separately after installing Chromium. That
 job caches `~/.cache/ms-playwright` by Playwright version and does not run
