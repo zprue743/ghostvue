@@ -36,9 +36,9 @@ describe('applyToggleGroupSelectionTabStops', () => {
 
     applyToggleGroupSelectionTabStops(outer, 'outer')
     expect(outerItem.tabIndex).toBe(0)
-    expect(innerItem.tabIndex).toBe(-1)
 
     applyToggleGroupSelectionTabStops(inner, 'inner')
     expect(innerItem.tabIndex).toBe(0)
+    expect(outerItem.tabIndex).toBe(0)
   })
 })

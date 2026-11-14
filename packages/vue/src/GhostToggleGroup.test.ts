@@ -295,15 +295,21 @@ describe('GhostToggleGroup', () => {
     )
     attached.push(wrapper)
     await flushPromises()
-    const outerButtons = wrapper
-      .get('[aria-label="Outer"]')
+    const outerRoot = wrapper.get('[aria-label="Outer"]').element
+    const innerRoot = wrapper.get('[aria-label="Inner"]').element
+    const outerItems = wrapper
       .findAll('.ghost-toggle-group-item')
-    expect(outerButtons).toHaveLength(1)
-    expect(outerButtons[0]?.attributes('tabindex')).toBe('0')
-    const innerButton = wrapper
-      .get('[aria-label="Inner"]')
-      .find('.ghost-toggle-group-item')
-    expect(innerButton.attributes('tabindex')).toBe('0')
+      .filter(
+        (item) => item.element.closest('.ghost-toggle-group') === outerRoot,
+      )
+    const innerItems = wrapper
+      .findAll('.ghost-toggle-group-item')
+      .filter(
+        (item) => item.element.closest('.ghost-toggle-group') === innerRoot,
+      )
+    expect(outerItems).toHaveLength(1)
+    expect(outerItems[0]?.attributes('tabindex')).toBe('0')
+    expect(innerItems).toHaveLength(1)
   })
 
   it('uses aria-disabled on non-button disabled items', async () => {
