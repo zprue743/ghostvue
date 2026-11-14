@@ -7,6 +7,10 @@
  * GhostVue recipes live in `@layer ghostvue-theme`, so those resets win in
  * docs unless we restore only what VP touches.
  *
+ * Do not set `line-height` on `.ghost-button` here — the header Copy control
+ * shares `.ghost-themed-scope` and an explicit line-height can nudge unrelated
+ * preview screenshot bounds by one device pixel.
+ *
  * Never copy stateful recipe values (border-color, background, color) from
  * public tokens in this unlayered sheet — layered state rules cannot override
  * them. Wire private `--_ghost-*` where the recipe already sets per-state
@@ -31,8 +35,8 @@
 }
 
 /* VP zeros the button box model; restore structure without pinning surfaces. */
-.ghost-themed-scope .ghost-tabs-trigger,
-.ghost-themed-scope .ghost-collapsible-trigger {
+.ghost-themed-scope .ghost-tabs-trigger[data-themed],
+.ghost-themed-scope .ghost-collapsible-trigger[data-themed] {
   border-style: solid;
   border-width: var(--ghost-border-hairline-width);
   cursor: pointer;
@@ -43,14 +47,17 @@
 }
 
 .ghost-themed-scope
-  :is(.ghost-tabs-trigger, .ghost-collapsible-trigger)[data-state] {
+  :is(
+    .ghost-tabs-trigger,
+    .ghost-collapsible-trigger
+  )[data-themed][data-state] {
   background-color: revert-layer;
   border-color: revert-layer;
   box-shadow: revert-layer;
   color: revert-layer;
 }
 
-.ghost-themed-scope .ghost-collapsible-trigger {
+.ghost-themed-scope .ghost-collapsible-trigger[data-themed] {
   align-items: revert-layer;
   display: revert-layer;
   font-feature-settings: revert-layer;
@@ -74,7 +81,6 @@
   font-family: var(--ghost-action-label-family);
   font-size: var(--_ghost-button-font-size);
   font-weight: var(--ghost-action-label-weight);
-  line-height: var(--ghost-type-line-normal);
   min-block-size: var(--_ghost-button-min-size);
   padding-block: var(--_ghost-button-padding-block);
   padding-inline: var(--_ghost-button-padding-inline);
