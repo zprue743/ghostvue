@@ -1,0 +1,10 @@
+/* Full-width home canvas; unscoped so VitePress layout selectors match. */
+.VPContent:has(.ghost-landing) {
+  padding-inline: 0;
+}
+
+.VPContent:has(.ghost-landing) .VPDoc,
+.VPContent:has(.ghost-landing) .container {
+  max-width: 100%;
+  padding: 0;
+}

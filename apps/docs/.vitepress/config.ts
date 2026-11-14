@@ -31,6 +31,18 @@ export default defineConfig({
   },
   // Restore a persisted theme before paint; first paint dogfoods calm (ADR 0008).
   head: [
+    ['link', { rel: 'icon', href: '/favicon.svg', type: 'image/svg+xml' }],
+    ['link', { rel: 'icon', href: '/favicon.ico', sizes: 'any' }],
+    [
+      'link',
+      {
+        rel: 'icon',
+        href: '/icons/icon-32x32.png',
+        sizes: '32x32',
+        type: 'image/png',
+      },
+    ],
+    ['link', { rel: 'apple-touch-icon', href: '/icons/apple-touch-icon.png' }],
     ['script', { id: 'ghost-docs-theme-restore' }, restoreDocsThemeScript],
   ],
   transformHtml(code) {
@@ -81,6 +93,12 @@ export default defineConfig({
     },
   },
   themeConfig: {
+    logo: {
+      light: '/logo-light.svg',
+      dark: '/logo-dark.svg',
+      // Decorative: VPNavBarTitle already exposes the "GhostVue" text label.
+      alt: '',
+    },
     nav: [
       { text: 'Philosophy', link: '/philosophy' },
       { text: 'Architecture', link: '/architecture/overview' },
