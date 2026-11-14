@@ -1,18 +1,20 @@
 import { onBeforeUnmount, onMounted } from 'vue'
 
 /**
- * Reconciles Vue state when a native form reset will commit. Call from a
- * bubble-phase listener (for example on `document`) so `preventDefault` on the
- * form is visible before the browser restores control defaults.
+ * Schedules reconciliation after the `reset` event has fully dispatched so
+ * `defaultPrevented` is final (including listeners on `document` and `window`
+ * registered after the library listener).
  */
 export function afterNativeFormReset(event: Event, apply: () => void): void {
-  if (event.defaultPrevented) return
-  apply()
+  queueMicrotask(() => {
+    if (event.defaultPrevented) return
+    apply()
+  })
 }
 
 /**
  * Listens for a native `reset` on the control's current owner form. Uses bubble
- * phase on `document` so `preventDefault` on the form runs first.
+ * phase on `document` so form-scoped `preventDefault` runs during dispatch.
  */
 export function useNativeFormReset(
   getElement: () => (HTMLElement & { form?: HTMLFormElement | null }) | null,

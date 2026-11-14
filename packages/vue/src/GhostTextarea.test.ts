@@ -252,6 +252,7 @@ describe('GhostTextarea', () => {
 
     await textarea.setValue('typed')
     wrapper.get('form').element.reset()
+    await Promise.resolve()
     await nextTick()
 
     expect(textarea.element.value).toBe('start')
@@ -283,6 +284,7 @@ describe('GhostTextarea', () => {
       .emitted('update:modelValue')?.length
 
     form.reset()
+    await Promise.resolve()
     await nextTick()
 
     expect(textarea.element.value).toBe('edited')
@@ -314,6 +316,7 @@ describe('GhostTextarea', () => {
     expect(textarea.element.value).toBe('seed')
 
     form.reset()
+    await Promise.resolve()
     await nextTick()
 
     expect(textarea.element.value).toBe('seed')

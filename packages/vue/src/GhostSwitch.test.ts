@@ -215,6 +215,7 @@ describe('GhostSwitch', () => {
     expect(wrapper.get('button').attributes('aria-checked')).toBe('false')
 
     form.reset()
+    await Promise.resolve()
     await nextTick()
 
     expect(wrapper.get('button').attributes('aria-checked')).toBe('true')
@@ -250,6 +251,7 @@ describe('GhostSwitch', () => {
 
     const emitsBefore = switchCmp.emitted('update:modelValue')?.length
     form.reset()
+    await Promise.resolve()
     await nextTick()
 
     expect(wrapper.get('button').attributes('aria-checked')).toBe('true')

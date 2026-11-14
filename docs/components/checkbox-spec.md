@@ -146,13 +146,12 @@ checked (`true`) on click. If a consumer sets both `modelValue` and
 `indeterminate` true, native click unchecks. That is native behavior, not a
 library cycle.
 
-Form reset uses the same contract as other form controls: a bubble-phase
-`document` `reset` listener filtered by `element.form` reconciles the mounted
-`defaultValue` when the reset event is not canceled. **Uncontrolled** instances
-write the seed through the model setter and sync `:checked` on the native input.
-**Controlled** instances emit the seed; if the parent ignores the emit,
-reconcile on `nextTick` when the DOM still differs. A canceled reset is a
-no-op: no emit and no model or DOM write.
+**Reset baseline and form reset** follow the same GhostVue policy as
+[GhostInput](./input-spec.md#v-model-contracts): captured `defaultValue`
+baseline (not live native defaults), reset requests that baseline rather than
+the displayed `modelValue`, parent authority with deferred DOM restore
+(including `indeterminate` when applicable), microtask after full `reset`
+dispatch, and no-op on late cancel.
 
 ### Events, callbacks, slots, and exposed methods
 

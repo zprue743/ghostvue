@@ -255,6 +255,7 @@ describe('GhostInput', () => {
 
     await input.setValue('typed')
     wrapper.get('form').element.reset()
+    await Promise.resolve()
     await nextTick()
 
     expect(input.element.value).toBe('start')
@@ -284,6 +285,7 @@ describe('GhostInput', () => {
       .emitted('update:modelValue')?.length
 
     form.reset()
+    await Promise.resolve()
     await nextTick()
 
     expect(input.element.value).toBe('edited')
@@ -291,6 +293,44 @@ describe('GhostInput', () => {
       wrapper.findComponent(GhostInput).emitted('update:modelValue')?.length,
     ).toBe(emitsBefore)
     wrapper.unmount()
+  })
+
+  it('keeps an edited uncontrolled value when a later document listener cancels', async () => {
+    const wrapper = mount(
+      {
+        setup() {
+          return () =>
+            h('form', [h(GhostInput, { defaultValue: 'seed', name: 'q' })])
+        },
+      },
+      { attachTo: document.body },
+    )
+    const form = wrapper.get('form').element as HTMLFormElement
+    const input = wrapper.get('input')
+
+    function cancelOnDocument(event: Event) {
+      event.preventDefault()
+    }
+    document.addEventListener('reset', cancelOnDocument)
+
+    try {
+      await input.setValue('edited')
+      const emitsBefore = wrapper
+        .findComponent(GhostInput)
+        .emitted('update:modelValue')?.length
+
+      form.reset()
+      await Promise.resolve()
+      await nextTick()
+
+      expect(input.element.value).toBe('edited')
+      expect(
+        wrapper.findComponent(GhostInput).emitted('update:modelValue')?.length,
+      ).toBe(emitsBefore)
+    } finally {
+      document.removeEventListener('reset', cancelOnDocument)
+      wrapper.unmount()
+    }
   })
 
   it('reconciles the DOM when a controlled parent ignores reset updates', async () => {
@@ -315,9 +355,94 @@ describe('GhostInput', () => {
     expect(input.element.value).toBe('seed')
 
     form.reset()
+    await Promise.resolve()
     await nextTick()
 
     expect(input.element.value).toBe('seed')
+    wrapper.unmount()
+  })
+
+  it('emits the captured defaultValue on reset when controlled', async () => {
+    const wrapper = mount(
+      {
+        setup() {
+          return () =>
+            h('form', [
+              h(GhostInput, {
+                modelValue: 'Alice',
+                name: 'q',
+              }),
+            ])
+        },
+      },
+      { attachTo: document.body },
+    )
+    const form = wrapper.get('form').element as HTMLFormElement
+    const input = wrapper.get('input')
+
+    expect(input.element.value).toBe('Alice')
+
+    form.reset()
+    await Promise.resolve()
+    await nextTick()
+
+    expect(
+      wrapper.findComponent(GhostInput).emitted('update:modelValue'),
+    ).toEqual([['']])
+    wrapper.unmount()
+  })
+
+  it('does not emit on reset when the controlled value already matches the default', async () => {
+    const wrapper = mount(
+      {
+        setup() {
+          return () =>
+            h('form', [
+              h(GhostInput, {
+                modelValue: '',
+                defaultValue: '',
+                name: 'q',
+              }),
+            ])
+        },
+      },
+      { attachTo: document.body },
+    )
+    const form = wrapper.get('form').element as HTMLFormElement
+
+    form.reset()
+    await Promise.resolve()
+    await nextTick()
+
+    expect(
+      wrapper.findComponent(GhostInput).emitted('update:modelValue'),
+    ).toBeUndefined()
+    wrapper.unmount()
+  })
+
+  it('reconciles the DOM to the parent when a controlled reset emit is ignored', async () => {
+    const wrapper = mount(
+      {
+        setup() {
+          return () =>
+            h('form', [
+              h(GhostInput, {
+                modelValue: 'Alice',
+                name: 'q',
+              }),
+            ])
+        },
+      },
+      { attachTo: document.body },
+    )
+    const form = wrapper.get('form').element as HTMLFormElement
+    const input = wrapper.get('input')
+
+    form.reset()
+    await Promise.resolve()
+    await nextTick()
+
+    expect(input.element.value).toBe('Alice')
     wrapper.unmount()
   })
 
@@ -343,6 +468,7 @@ describe('GhostInput', () => {
 
     await input.setValue('live')
     form.reset()
+    await Promise.resolve()
     await nextTick()
 
     expect(input.element.value).toBe('mount')

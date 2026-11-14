@@ -99,16 +99,20 @@ the `invalid` prop, and disabled uses `--ghost-action-disabled-*`.
 The displayed string is the model. The component never trims, parses, or
 mutates the consumer's string beyond writing the next textarea value.
 
-`defaultValue` on the root is the form-reset seed captured at setup, not a
-live prop. Later `defaultValue` changes are ignored, matching native
-default contents.
+**Reset baseline (GhostVue policy).** `defaultValue` establishes GhostVue's
+reset baseline, captured once at mount; later `defaultValue` changes are
+ignored. `modelValue` controls the current value. This is not native reset
+semantics: [native `form.reset()`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLFormElement/reset)
+restores from the control's current default content/attributes. Pin the
+baseline at mount for predictable uncontrolled instances. Reusing the same
+control for another record without remounting keeps the original baseline — use
+controlled state or `:key` when the baseline must follow the record.
 
-An owner or associated `<form>` reset restores the mounted default for an
-**uncontrolled** instance by syncing after the browser reset (when the reset
-event was not canceled). A **controlled** instance emits `update:modelValue`
-with that seed; if the parent ignores the emit, restore on `nextTick` when
-the DOM still differs. A canceled reset is a no-op: no emit and no model or
-DOM write.
+**Form reset reconciliation** matches [GhostInput](./input-spec.md#v-model-contracts):
+emit the captured baseline (skip redundant emit via `Object.is`), parent-owned
+controlled values, `nextTick` DOM restore when ignored, microtask after full
+`reset` dispatch (late `document` / `window` cancel is a no-op). The root
+`defaultValue` attribute mirrors the captured baseline for native participation.
 
 ### Events, callbacks, slots, and exposed methods
 

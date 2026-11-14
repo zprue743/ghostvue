@@ -265,6 +265,7 @@ describe('GhostCheckbox', () => {
 
     await input.setValue(false)
     wrapper.get('form').element.reset()
+    await Promise.resolve()
     await nextTick()
 
     expect((input.element as HTMLInputElement).checked).toBe(true)
