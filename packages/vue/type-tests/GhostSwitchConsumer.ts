@@ -13,6 +13,21 @@ const nativeProps = {
   value: 'on',
 } satisfies GhostSwitchProps
 
+const controlled = {
+  modelValue: true,
+} satisfies GhostSwitchProps
+
+const uncontrolled = {
+  defaultValue: false,
+} satisfies GhostSwitchProps
+
 const componentProps: InstanceType<typeof GhostSwitch>['$props'] = nativeProps
 
 void componentProps
+void controlled
+void uncontrolled
+
+// @ts-expect-error modelValue must be boolean
+const rejectedModelType = { modelValue: 'on' } satisfies GhostSwitchProps
+
+void rejectedModelType

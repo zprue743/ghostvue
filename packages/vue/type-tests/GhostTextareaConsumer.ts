@@ -18,6 +18,21 @@ const nativeProps = {
   wrap: 'soft',
 } satisfies GhostTextareaProps
 
+const controlled = {
+  modelValue: 'Draft notes',
+} satisfies GhostTextareaProps
+
+const uncontrolled = {
+  defaultValue: 'Seed copy',
+} satisfies GhostTextareaProps
+
 const componentProps: InstanceType<typeof GhostTextarea>['$props'] = nativeProps
 
 void componentProps
+void controlled
+void uncontrolled
+
+// @ts-expect-error modelValue must be string
+const rejectedModelType = { modelValue: 12 } satisfies GhostTextareaProps
+
+void rejectedModelType
