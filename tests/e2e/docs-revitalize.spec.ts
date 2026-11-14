@@ -114,8 +114,12 @@ test.describe('docs revitalize phase 1', () => {
         .first()
       await expect(input).toBeVisible()
       const inputStyles = await fieldChrome(input)
-      expect(Number.parseFloat(inputStyles.paddingBlockStart)).toBeGreaterThan(0)
-      expect(Number.parseFloat(inputStyles.paddingInlineStart)).toBeGreaterThan(0)
+      expect(Number.parseFloat(inputStyles.paddingBlockStart)).toBeGreaterThan(
+        0,
+      )
+      expect(Number.parseFloat(inputStyles.paddingInlineStart)).toBeGreaterThan(
+        0,
+      )
       expect(Number.parseFloat(inputStyles.borderTopWidth)).toBeGreaterThan(0)
       expect(isTransparentColor(inputStyles.backgroundColor)).toBe(false)
 
@@ -133,7 +137,9 @@ test.describe('docs revitalize phase 1', () => {
       expect(
         Number.parseFloat(textareaStyles.paddingInlineStart),
       ).toBeGreaterThan(0)
-      expect(Number.parseFloat(textareaStyles.borderTopWidth)).toBeGreaterThan(0)
+      expect(Number.parseFloat(textareaStyles.borderTopWidth)).toBeGreaterThan(
+        0,
+      )
       expect(isTransparentColor(textareaStyles.backgroundColor)).toBe(false)
     } finally {
       await docs.close()
@@ -242,7 +248,9 @@ test.describe('docs revitalize phase 1', () => {
     }
   })
 
-  test('open dialog overlay in docs stays within viewport', async ({ page }) => {
+  test('open dialog overlay in docs stays within viewport', async ({
+    page,
+  }) => {
     const docs = await startStaticServer('apps/docs/.vitepress/dist')
     try {
       await page.setViewportSize({ width: 390, height: 800 })
@@ -251,7 +259,9 @@ test.describe('docs revitalize phase 1', () => {
         .locator('[data-example-id="dialog/themed"]')
         .getByRole('button', { name: 'Edit profile' })
       await trigger.click()
-      await expect(page.getByRole('dialog', { name: 'Profile details' })).toBeVisible()
+      await expect(
+        page.getByRole('dialog', { name: 'Profile details' }),
+      ).toBeVisible()
       await assertNoPageOverflow(page)
     } finally {
       await docs.close()
