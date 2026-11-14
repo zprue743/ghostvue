@@ -2,9 +2,7 @@
 export const DIRECT_ACCORDION_TRIGGER_SELECTOR =
   ':scope > [data-part="item"] > [data-part="header"] > [data-part="trigger"]'
 
-export function getDirectAccordionTriggers(
-  root: HTMLElement,
-): HTMLElement[] {
+export function getDirectAccordionTriggers(root: HTMLElement): HTMLElement[] {
   return Array.from(
     root.querySelectorAll(DIRECT_ACCORDION_TRIGGER_SELECTOR),
   ).filter((node): node is HTMLElement => node instanceof HTMLElement)
@@ -30,8 +28,7 @@ export function isDirectAccordionTrigger(
   }
   const item = header.parentElement
   if (
-    !item ||
-    item.getAttribute('data-part') !== 'item' ||
+    item?.getAttribute('data-part') !== 'item' ||
     item.parentElement !== root
   ) {
     return false

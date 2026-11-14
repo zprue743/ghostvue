@@ -45,8 +45,14 @@ describe('accordion-header-keyboard', () => {
 
   it('moves focus among direct triggers on arrow keys', () => {
     const root = accordionDom()
-    const a = root.querySelector('#outer-a') as HTMLButtonElement
-    const b = root.querySelector('#outer-b') as HTMLButtonElement
+    const a = root.querySelector('#outer-a')
+    const b = root.querySelector('#outer-b')
+    if (
+      !(a instanceof HTMLButtonElement) ||
+      !(b instanceof HTMLButtonElement)
+    ) {
+      throw new Error('Expected outer accordion triggers')
+    }
     a.focus()
     const event = new KeyboardEvent('keydown', {
       key: 'ArrowDown',
@@ -60,7 +66,10 @@ describe('accordion-header-keyboard', () => {
 
   it('ignores keydown when focus is on a nested trigger', () => {
     const root = accordionDom()
-    const nested = root.querySelector('#inner-nested') as HTMLButtonElement
+    const nested = root.querySelector('#inner-nested')
+    if (!(nested instanceof HTMLButtonElement)) {
+      throw new Error('Expected nested accordion trigger')
+    }
     nested.focus()
     handleAccordionHeaderKeydown(
       new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true }),
