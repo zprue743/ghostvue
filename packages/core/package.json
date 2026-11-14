@@ -13,6 +13,7 @@
     },
     "./manifest.schema.json": "./manifest.schema.json"
   },
+  "types": "./dist/index.d.ts",
   "files": [
     "dist",
     "manifest.schema.json"

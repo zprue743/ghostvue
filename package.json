@@ -36,9 +36,11 @@
     "test:visual:update": "pnpm test:visual --update-snapshots",
     "test:watch": "vitest",
     "typecheck": "pnpm -r --if-present typecheck",
-    "verify": "pnpm lint && pnpm boundaries && pnpm adapters && pnpm manifests && pnpm typecheck && pnpm test:coverage && pnpm contrast && pnpm build && pnpm published-exports && pnpm docs:build && pnpm docs:links"
+    "verify": "pnpm lint && pnpm boundaries && pnpm adapters && pnpm manifests && pnpm typecheck && pnpm test:coverage && pnpm contrast && pnpm build && pnpm published-exports && pnpm exports:check && pnpm docs:build && pnpm docs:links",
+    "exports:check": "node scripts/check-export-integrity.mjs"
   },
   "devDependencies": {
+    "@arethetypeswrong/cli": "0.18.5",
     "@axe-core/playwright": "4.13.0",
     "@changesets/cli": "3.0.0",
     "@eslint/js": "10.0.1",
@@ -54,6 +56,7 @@
     "globals": "17.11.0",
     "jsdom": "30.0.1",
     "prettier": "3.9.6",
+    "publint": "0.3.25",
     "typescript": "6.0.3",
     "typescript-eslint": "8.67.0",
     "vite": "8.2.1",
