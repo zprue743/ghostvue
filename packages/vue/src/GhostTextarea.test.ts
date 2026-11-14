@@ -3,6 +3,7 @@ import { defineComponent, h, nextTick, ref } from 'vue'
 import { renderToString } from 'vue/server-renderer'
 import { describe, expect, it, vi } from 'vitest'
 
+import { waitForFormResetDeferral } from './form-reset'
 import GhostTextarea from './GhostTextarea.vue'
 import type { GhostTextareaExposed } from './ghost-textarea'
 
@@ -252,7 +253,7 @@ describe('GhostTextarea', () => {
 
     await textarea.setValue('typed')
     wrapper.get('form').element.reset()
-    await Promise.resolve()
+    await waitForFormResetDeferral()
     await nextTick()
 
     expect(textarea.element.value).toBe('start')
@@ -284,7 +285,7 @@ describe('GhostTextarea', () => {
       .emitted('update:modelValue')?.length
 
     form.reset()
-    await Promise.resolve()
+    await waitForFormResetDeferral()
     await nextTick()
 
     expect(textarea.element.value).toBe('edited')
@@ -316,7 +317,7 @@ describe('GhostTextarea', () => {
     expect(textarea.element.value).toBe('seed')
 
     form.reset()
-    await Promise.resolve()
+    await waitForFormResetDeferral()
     await nextTick()
 
     expect(textarea.element.value).toBe('seed')

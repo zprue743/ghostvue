@@ -3,6 +3,7 @@ import { defineComponent, h, nextTick, ref } from 'vue'
 import { renderToString } from 'vue/server-renderer'
 import { describe, expect, it, vi } from 'vitest'
 
+import { waitForFormResetDeferral } from './form-reset'
 import GhostInput from './GhostInput.vue'
 import type { GhostInputExposed, GhostInputType } from './ghost-input'
 
@@ -255,7 +256,7 @@ describe('GhostInput', () => {
 
     await input.setValue('typed')
     wrapper.get('form').element.reset()
-    await Promise.resolve()
+    await waitForFormResetDeferral()
     await nextTick()
 
     expect(input.element.value).toBe('start')
@@ -285,7 +286,7 @@ describe('GhostInput', () => {
       .emitted('update:modelValue')?.length
 
     form.reset()
-    await Promise.resolve()
+    await waitForFormResetDeferral()
     await nextTick()
 
     expect(input.element.value).toBe('edited')
@@ -320,7 +321,7 @@ describe('GhostInput', () => {
         .emitted('update:modelValue')?.length
 
       form.reset()
-      await Promise.resolve()
+      await waitForFormResetDeferral()
       await nextTick()
 
       expect(input.element.value).toBe('edited')
@@ -355,7 +356,7 @@ describe('GhostInput', () => {
     expect(input.element.value).toBe('seed')
 
     form.reset()
-    await Promise.resolve()
+    await waitForFormResetDeferral()
     await nextTick()
 
     expect(input.element.value).toBe('seed')
@@ -383,7 +384,7 @@ describe('GhostInput', () => {
     expect(input.element.value).toBe('Alice')
 
     form.reset()
-    await Promise.resolve()
+    await waitForFormResetDeferral()
     await nextTick()
 
     expect(
@@ -411,7 +412,7 @@ describe('GhostInput', () => {
     const form = wrapper.get('form').element as HTMLFormElement
 
     form.reset()
-    await Promise.resolve()
+    await waitForFormResetDeferral()
     await nextTick()
 
     expect(
@@ -439,7 +440,7 @@ describe('GhostInput', () => {
     const input = wrapper.get('input')
 
     form.reset()
-    await Promise.resolve()
+    await waitForFormResetDeferral()
     await nextTick()
 
     expect(input.element.value).toBe('Alice')
@@ -468,7 +469,7 @@ describe('GhostInput', () => {
 
     await input.setValue('live')
     form.reset()
-    await Promise.resolve()
+    await waitForFormResetDeferral()
     await nextTick()
 
     expect(input.element.value).toBe('mount')

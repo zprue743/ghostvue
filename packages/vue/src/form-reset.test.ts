@@ -3,7 +3,7 @@ import { h, nextTick } from 'vue'
 import { describe, expect, it, vi } from 'vitest'
 
 import GhostInput from './GhostInput.vue'
-import { afterNativeFormReset } from './form-reset'
+import { afterNativeFormReset, waitForFormResetDeferral } from './form-reset'
 
 describe('afterNativeFormReset', () => {
   it('runs apply after dispatch when reset is not canceled', async () => {
@@ -15,7 +15,7 @@ describe('afterNativeFormReset', () => {
     })
 
     form.reset()
-    await Promise.resolve()
+    await waitForFormResetDeferral()
 
     expect(apply).toHaveBeenCalledOnce()
     form.remove()
@@ -31,7 +31,7 @@ describe('afterNativeFormReset', () => {
     })
 
     form.reset()
-    await Promise.resolve()
+    await waitForFormResetDeferral()
 
     expect(apply).not.toHaveBeenCalled()
     form.remove()
@@ -53,7 +53,7 @@ describe('afterNativeFormReset', () => {
 
     try {
       form.reset()
-      await Promise.resolve()
+      await waitForFormResetDeferral()
 
       expect(apply).not.toHaveBeenCalled()
     } finally {
@@ -78,7 +78,7 @@ describe('afterNativeFormReset', () => {
 
     try {
       form.reset()
-      await Promise.resolve()
+      await waitForFormResetDeferral()
 
       expect(apply).not.toHaveBeenCalled()
     } finally {
@@ -113,7 +113,7 @@ describe('GhostInput form reset cancellation', () => {
       .emitted('update:modelValue')?.length
 
     form.reset()
-    await Promise.resolve()
+    await waitForFormResetDeferral()
     await nextTick()
 
     expect(input.element.value).toBe('edited')

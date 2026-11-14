@@ -3,6 +3,7 @@ import { defineComponent, h, nextTick, ref } from 'vue'
 import { renderToString } from 'vue/server-renderer'
 import { describe, expect, it, vi } from 'vitest'
 
+import { waitForFormResetDeferral } from './form-reset'
 import GhostCheckbox from './GhostCheckbox.vue'
 import type { GhostCheckboxExposed } from './ghost-checkbox'
 
@@ -265,7 +266,7 @@ describe('GhostCheckbox', () => {
 
     await input.setValue(false)
     wrapper.get('form').element.reset()
-    await Promise.resolve()
+    await waitForFormResetDeferral()
     await nextTick()
 
     expect((input.element as HTMLInputElement).checked).toBe(true)

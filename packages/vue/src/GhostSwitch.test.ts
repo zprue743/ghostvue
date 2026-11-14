@@ -3,6 +3,7 @@ import { h, nextTick, ref } from 'vue'
 import { renderToString } from 'vue/server-renderer'
 import { describe, expect, it, vi } from 'vitest'
 
+import { waitForFormResetDeferral } from './form-reset'
 import GhostSwitch from './GhostSwitch.vue'
 import type { GhostSwitchExposed } from './ghost-switch'
 
@@ -215,7 +216,7 @@ describe('GhostSwitch', () => {
     expect(wrapper.get('button').attributes('aria-checked')).toBe('false')
 
     form.reset()
-    await Promise.resolve()
+    await waitForFormResetDeferral()
     await nextTick()
 
     expect(wrapper.get('button').attributes('aria-checked')).toBe('true')
@@ -251,7 +252,7 @@ describe('GhostSwitch', () => {
 
     const emitsBefore = switchCmp.emitted('update:modelValue')?.length
     form.reset()
-    await Promise.resolve()
+    await waitForFormResetDeferral()
     await nextTick()
 
     expect(wrapper.get('button').attributes('aria-checked')).toBe('true')
