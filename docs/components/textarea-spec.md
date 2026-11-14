@@ -39,17 +39,17 @@ fallthrough.
 
 Headless `@ghostvue/vue` `GhostTextarea` / `useGhostTextarea`:
 
-| Prop           | Type      | Default     | Contract                                                                                                                                                          |
-| -------------- | --------- | ----------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `modelValue`   | `string`  | omitted     | Controlled value. `undefined` is uncontrolled; `''` is a defined empty string.                                                                                    |
-| `defaultValue` | `string`  | `''`        | Initial uncontrolled value. Later changes are ignored, matching `useControllableState`.                                                                           |
-| `disabled`     | `boolean` | `false`     | Native `disabled`. Not focusable, not editable, omitted from form submit.                                                                                         |
-| `readonly`     | `boolean` | `false`     | Native `readonly`. Focusable and submitted; user edits are rejected by the UA.                                                                                    |
-| `invalid`      | `boolean` | `false`     | Sets `aria-invalid="true"` and participates in `data-state`. Does not invent error text.                                                                          |
-| `required`     | `boolean` | `false`     | Native `required`. Constraint validation stays with the form.                                                                                                     |
-| `rows`         | `number`  | `2`         | Native `rows`. Matches the HTML default so SSR and the UA agree. Auto-resize uses this as the minimum height.                                                     |
-| `maxRows`      | `number`  | omitted     | Auto-resize ceiling, in rows. Ignored when `autoResize` is false. When set below `rows`, `rows` wins as both min and max. Consumer CSS `max-height` still applies. |
-| `autoResize`   | `boolean` | `false`     | Grow the field with its content after mount. Off by default so native `resize` and a fixed `rows` height remain the ordinary path.                                |
+| Prop           | Type      | Default | Contract                                                                                                                                                           |
+| -------------- | --------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `modelValue`   | `string`  | omitted | Controlled value. `undefined` is uncontrolled; `''` is a defined empty string.                                                                                     |
+| `defaultValue` | `string`  | `''`    | Initial uncontrolled value. Later changes are ignored, matching `useControllableState`.                                                                            |
+| `disabled`     | `boolean` | `false` | Native `disabled`. Not focusable, not editable, omitted from form submit.                                                                                          |
+| `readonly`     | `boolean` | `false` | Native `readonly`. Focusable and submitted; user edits are rejected by the UA.                                                                                     |
+| `invalid`      | `boolean` | `false` | Sets `aria-invalid="true"` and participates in `data-state`. Does not invent error text.                                                                           |
+| `required`     | `boolean` | `false` | Native `required`. Constraint validation stays with the form.                                                                                                      |
+| `rows`         | `number`  | `2`     | Native `rows`. Matches the HTML default so SSR and the UA agree. Auto-resize uses this as the minimum height.                                                      |
+| `maxRows`      | `number`  | omitted | Auto-resize ceiling, in rows. Ignored when `autoResize` is false. When set below `rows`, `rows` wins as both min and max. Consumer CSS `max-height` still applies. |
+| `autoResize`   | `boolean` | `false` | Grow the field with its content after mount. Off by default so native `resize` and a fixed `rows` height remain the ordinary path.                                 |
 
 ```ts
 type GhostTextareaSize = 'sm' | 'md' | 'lg' // themed wrapper only
@@ -71,9 +71,9 @@ Themed `@ghostvue/themes` `GhostTextarea` wraps the unstyled component and
 adds one visual prop. Same behavioral props; this exists only on the themed
 wrapper:
 
-| Prop   | Type                    | Default | Contract                                                                        |
-| ------ | ----------------------- | ------- | ------------------------------------------------------------------------------- |
-| `size` | `'sm' \| 'md' \| 'lg'`  | `'md'`  | Control size (padding and font). The default omits `data-size`.                 |
+| Prop   | Type                   | Default | Contract                                                        |
+| ------ | ---------------------- | ------- | --------------------------------------------------------------- |
+| `size` | `'sm' \| 'md' \| 'lg'` | `'md'`  | Control size (padding and font). The default omits `data-size`. |
 
 Importing it loads the default stylesheet and wraps the instance in
 `.ghost-themed-scope` so recipe CSS applies without forcing every
@@ -181,13 +181,13 @@ native host.
 
 Native platform behavior:
 
-| Key                         | Behavior                                                                 |
-| --------------------------- | ------------------------------------------------------------------------ |
-| Printable characters        | Insert text when enabled and not readonly.                               |
-| `Enter`                     | Insert a newline. Does not submit the form.                              |
-| `Tab` / `Shift+Tab`         | Leave the field. Native tab order.                                       |
-| `Escape`                    | No component handling.                                                   |
-| Arrow keys, Home/End, etc.  | Native caret movement.                                                   |
+| Key                        | Behavior                                    |
+| -------------------------- | ------------------------------------------- |
+| Printable characters       | Insert text when enabled and not readonly.  |
+| `Enter`                    | Insert a newline. Does not submit the form. |
+| `Tab` / `Shift+Tab`        | Leave the field. Native tab order.          |
+| `Escape`                   | No component handling.                      |
+| Arrow keys, Home/End, etc. | Native caret movement.                      |
 
 Disabled fields are not in sequential tab order. Readonly fields are.
 
