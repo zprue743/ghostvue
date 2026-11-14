@@ -15,16 +15,19 @@ test.describe('Native form reset', () => {
       const textarea = page.getByTestId('form-reset-textarea')
       const checkbox = page.getByTestId('form-reset-checkbox')
       const toggle = page.getByTestId('form-reset-switch')
+      const radioDaily = page.getByTestId('form-reset-radio-daily')
 
       await input.fill('edited-input')
       await textarea.fill('edited-notes')
       await checkbox.click()
       await toggle.click()
+      await radioDaily.check()
 
       await expect(input).toHaveValue('edited-input')
       await expect(textarea).toHaveValue('edited-notes')
       await expect(checkbox).not.toBeChecked()
       await expect(toggle).toHaveAttribute('aria-checked', 'true')
+      await expect(radioDaily).toBeChecked()
 
       await page.getByTestId('form-reset-trigger').click()
 
@@ -32,6 +35,7 @@ test.describe('Native form reset', () => {
       await expect(textarea).toHaveValue('seed')
       await expect(checkbox).toBeChecked()
       await expect(toggle).toHaveAttribute('aria-checked', 'false')
+      await expect(page.getByTestId('form-reset-radio-weekly')).toBeChecked()
     } finally {
       await playground.close()
     }

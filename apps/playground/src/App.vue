@@ -13,6 +13,8 @@ import {
   GhostProgress as GhostProgressThemed,
   GhostSeparator as GhostSeparatorThemed,
   GhostSkeleton as GhostSkeletonThemed,
+  GhostRadioGroup as GhostRadioGroupThemed,
+  GhostRadioGroupItem as GhostRadioGroupItemThemed,
   GhostSwitch as GhostSwitchThemed,
   GhostTextarea as GhostTextareaThemed,
   GhostToolbar as GhostToolbarThemed,
@@ -44,6 +46,8 @@ import {
   GhostKbd,
   GhostPagination,
   GhostProgress,
+  GhostRadioGroup,
+  GhostRadioGroupItem,
   GhostSeparator,
   GhostSkeleton,
   GhostSwitch,
@@ -117,12 +121,25 @@ function submitCheckboxForm(event: Event): void {
 
 const airplane = ref(false)
 const digestSubmitted = ref('')
+const digestCadence = ref('daily')
+const digestCadenceSubmissions = ref(0)
+const digestCadenceFormValue = ref('')
 
 function onDigestSubmit(event: Event): void {
   event.preventDefault()
   const data = new FormData(event.target as HTMLFormElement)
   const digest = data.get('digest')
   digestSubmitted.value = typeof digest === 'string' ? digest : 'off'
+}
+
+function submitDigestCadenceForm(event: Event): void {
+  event.preventDefault()
+  const data = new FormData(event.target as HTMLFormElement)
+  const cadence = data.get('digest-cadence')
+  if (typeof cadence === 'string') {
+    digestCadenceSubmissions.value += 1
+    digestCadenceFormValue.value = cadence
+  }
 }
 
 function remove(name: string) {
@@ -908,6 +925,79 @@ function submitPlaygroundComment(event: Event): void {
       />
     </section>
 
+    <section
+      aria-labelledby="radio-group-heading"
+      data-testid="radio-group-section"
+    >
+      <h2 id="radio-group-heading">GhostRadioGroup</h2>
+      <GhostRadioGroup v-model="digestCadence" name="digest-cadence-demo">
+        <label>
+          <GhostRadioGroupItem value="daily" data-testid="radio-group-daily" />
+          Daily summary
+        </label>
+        <label>
+          <GhostRadioGroupItem
+            value="weekly"
+            data-testid="radio-group-weekly"
+          />
+          Weekly rollup
+        </label>
+        <label>
+          <GhostRadioGroupItem
+            value="quiet"
+            disabled
+            data-testid="radio-group-quiet"
+          />
+          Quiet mode (disabled)
+        </label>
+      </GhostRadioGroup>
+      <p>Cadence model: {{ digestCadence }}</p>
+      <form class="form-example" @submit="submitDigestCadenceForm">
+        <span>Digest cadence submissions: {{ digestCadenceSubmissions }}</span>
+        <GhostRadioGroup
+          v-model="digestCadence"
+          name="digest-cadence"
+          default-value="daily"
+        >
+          <label>
+            <GhostRadioGroupItem
+              value="daily"
+              data-testid="radio-group-form-daily"
+            />
+            Daily
+          </label>
+          <label>
+            <GhostRadioGroupItem
+              value="weekly"
+              data-testid="radio-group-form-weekly"
+            />
+            Weekly
+          </label>
+        </GhostRadioGroup>
+        <GhostButton type="submit">Submit digest cadence</GhostButton>
+        <p v-if="digestCadenceFormValue">
+          Digest cadence value: {{ digestCadenceFormValue }}
+        </p>
+      </form>
+      <fieldset class="ghost-theme">
+        <legend>Themed cadence</legend>
+        <GhostRadioGroupThemed
+          v-model="digestCadence"
+          orientation="horizontal"
+          name="digest-cadence-themed"
+        >
+          <label>
+            <GhostRadioGroupItemThemed value="daily" />
+            Daily
+          </label>
+          <label>
+            <GhostRadioGroupItemThemed value="weekly" />
+            Weekly
+          </label>
+        </GhostRadioGroupThemed>
+      </fieldset>
+    </section>
+
     <section aria-labelledby="textarea-heading">
       <h2 id="textarea-heading">GhostTextarea</h2>
       <div class="textarea-stack">
@@ -1210,6 +1300,27 @@ function submitPlaygroundComment(event: Event): void {
             aria-label="Reset switch"
           />
         </div>
+        <GhostRadioGroup
+          name="reset-cadence"
+          default-value="weekly"
+          data-testid="form-reset-radio-group"
+        >
+          <legend>Reset cadence</legend>
+          <label>
+            <GhostRadioGroupItem
+              value="daily"
+              data-testid="form-reset-radio-daily"
+            />
+            Daily
+          </label>
+          <label>
+            <GhostRadioGroupItem
+              value="weekly"
+              data-testid="form-reset-radio-weekly"
+            />
+            Weekly
+          </label>
+        </GhostRadioGroup>
         <GhostButton type="reset" data-testid="form-reset-trigger">
           Reset suite
         </GhostButton>

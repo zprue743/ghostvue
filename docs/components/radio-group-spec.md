@@ -47,17 +47,17 @@ Themed `@ghostvue/themes`:
 
 #### `GhostRadioGroup`
 
-| Prop           | Type                            | Default      | Contract                                                                                                                                 |
-| -------------- | ------------------------------- | ------------ | ---------------------------------------------------------------------------------------------------------------------------------------- |
-| `modelValue`   | `string`                        | `undefined`  | Controlled selected value. `undefined` is uncontrolled.                                                                                  |
-| `defaultValue` | `string`                        | `undefined`  | Initial value when `modelValue` is omitted. Ignored after mount. Form reset restores this captured seed.                                  |
-| `name`         | `string`                        | `undefined`  | Shared native `name` on item inputs for submit.                                                                                          |
-| `disabled`     | `boolean`                       | `false`      | Disables the group (fieldset `disabled` or propagated to items).                                                                       |
-| `required`     | `boolean`                       | `false`      | Native `required` on items when the group is required.                                                                                   |
-| `invalid`      | `boolean`                       | `false`      | Sets `aria-invalid` on the group root for Field integration.                                                                         |
-| `orientation`  | `'horizontal' \| 'vertical'`    | `'vertical'` | Roving arrow keys via `useRovingFocus`. Maps to list layout in theme.                                                                   |
-| `dir`          | `'ltr' \| 'rtl'`                | `undefined`  | Explicit text direction for horizontal roving; otherwise inferred.                                                                     |
-| `as`           | `string \| Component`           | `'fieldset'` | Root element. Native `fieldset` does not need `role="radiogroup"`. Non-fieldset hosts set `role="radiogroup"`.                           |
+| Prop           | Type                         | Default      | Contract                                                                                                       |
+| -------------- | ---------------------------- | ------------ | -------------------------------------------------------------------------------------------------------------- |
+| `modelValue`   | `string`                     | `undefined`  | Controlled selected value. `undefined` is uncontrolled.                                                        |
+| `defaultValue` | `string`                     | `undefined`  | Initial value when `modelValue` is omitted. Ignored after mount. Form reset restores this captured seed.       |
+| `name`         | `string`                     | `undefined`  | Shared native `name` on item inputs for submit.                                                                |
+| `disabled`     | `boolean`                    | `false`      | Disables the group (fieldset `disabled` or propagated to items).                                               |
+| `required`     | `boolean`                    | `false`      | Native `required` on items when the group is required.                                                         |
+| `invalid`      | `boolean`                    | `false`      | Sets `aria-invalid` on the group root for Field integration.                                                   |
+| `orientation`  | `'horizontal' \| 'vertical'` | `'vertical'` | Roving arrow keys via `useRovingFocus`. Maps to list layout in theme.                                          |
+| `dir`          | `'ltr' \| 'rtl'`             | `undefined`  | Explicit text direction for horizontal roving; otherwise inferred.                                             |
+| `as`           | `string \| Component`        | `'fieldset'` | Root element. Native `fieldset` does not need `role="radiogroup"`. Non-fieldset hosts set `role="radiogroup"`. |
 
 Native attributes on the root fall through except reserved wiring (`id` may be
 overridden by Field slot props intentionally). `GhostFieldControl` slot props
@@ -66,10 +66,10 @@ the group root.
 
 #### `GhostRadioGroupItem`
 
-| Prop       | Type      | Default | Contract                                                                 |
-| ---------- | --------- | ------- | ------------------------------------------------------------------------ |
-| `value`    | `string`  | —       | Stable option value; drives checked state and form `value`.              |
-| `disabled` | `boolean` | `false` | Disables this option; skipped by roving focus and selection.             |
+| Prop       | Type      | Default | Contract                                                     |
+| ---------- | --------- | ------- | ------------------------------------------------------------ |
+| `value`    | `string`  | —       | Stable option value; drives checked state and form `value`.  |
+| `disabled` | `boolean` | `false` | Disables this option; skipped by roving focus and selection. |
 
 Each item renders a native radio input. `name` comes from the group. Optional
 fallthrough `id` (else `useGhostId('ghost-radio-group-item')`), `aria-*`, and
@@ -78,8 +78,8 @@ use `for`/`id` like `GhostCheckbox`.
 
 ### v-model contracts
 
-| Role     | Prop         | Emit                | Uncontrolled initial        |
-| -------- | ------------ | ------------------- | --------------------------- |
+| Role     | Prop         | Emit                | Uncontrolled initial         |
+| -------- | ------------ | ------------------- | ---------------------------- |
 | Selected | `modelValue` | `update:modelValue` | `defaultValue` or first item |
 
 - **Uncontrolled:** omit `modelValue`. Seed from `defaultValue` when provided;
@@ -107,11 +107,11 @@ Exposed template refs:
 
 ## State model
 
-| Condition              | `data-state` on item | Native                         |
-| ---------------------- | ------------------ | ------------------------------ |
-| Selected               | `checked`          | `checked === true`             |
-| Not selected           | omitted            | `checked === false`            |
-| Group or item disabled | omitted            | `disabled` (native)            |
+| Condition              | `data-state` on item | Native              |
+| ---------------------- | -------------------- | ------------------- |
+| Selected               | `checked`            | `checked === true`  |
+| Not selected           | omitted              | `checked === false` |
+| Group or item disabled | omitted              | `disabled` (native) |
 
 Group root `data-state`: `invalid` when `invalid` is true; `disabled` when
 `disabled` and not invalid; else omitted.

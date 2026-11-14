@@ -29,6 +29,7 @@
 @import './ghost-pagination.css';
 @import './ghost-number-input.css';
 @import './ghost-toolbar.css';
+@import './ghost-radio-group.css';
 
 @layer ghostvue-theme {
   :where(.ghost-themed-scope) {
