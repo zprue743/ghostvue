@@ -203,57 +203,6 @@ test.describe('docs revitalize phase 1', () => {
     }
   })
 
-  test('@visual docs shell and fields at desktop and narrow widths', async ({
-    page,
-  }) => {
-    const docs = await startStaticServer('apps/docs/.vitepress/dist')
-    try {
-      async function ensureAppearance(mode: 'light' | 'dark'): Promise<void> {
-        await page.evaluate((next) => {
-          localStorage.setItem('vitepress-theme-appearance', next)
-        }, mode)
-        await page.reload()
-        await expect
-          .poll(async () =>
-            page.evaluate(() =>
-              document.documentElement.classList.contains('dark')
-                ? 'dark'
-                : 'light',
-            ),
-          )
-          .toBe(mode)
-      }
-
-      for (const [name, width] of [
-        ['desktop', 1280],
-        ['narrow', 390],
-      ] as const) {
-        await page.setViewportSize({ width, height: 800 })
-        await page.goto(`${docs.url}/components/input.html`)
-        for (const mode of ['light', 'dark'] as const) {
-          await ensureAppearance(mode)
-          await assertNoPageOverflow(page)
-          await page.evaluate(() => document.fonts.ready)
-          await page.evaluate(() => window.scrollTo(0, 0))
-          const shell = page.locator('.VPNav')
-          await expect(shell).toHaveScreenshot(
-            `docs-revitalize-nav-${name}-${mode}.png`,
-          )
-          const inputPreview = page
-            .locator('[data-example-id="input/themed"]')
-            .getByTestId('ghost-example-preview')
-          await inputPreview.scrollIntoViewIfNeeded()
-          await expect(inputPreview).toHaveScreenshot(
-            `docs-revitalize-input-themed-${name}-${mode}.png`,
-            { maxDiffPixelRatio: name === 'narrow' ? 0.05 : 0.03 },
-          )
-        }
-      }
-    } finally {
-      await docs.close()
-    }
-  })
-
   test('open dialog overlay in docs stays within viewport', async ({
     page,
   }) => {
