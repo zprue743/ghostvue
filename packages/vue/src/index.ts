@@ -120,3 +120,14 @@ export type {
   UseGhostDialogOptions,
   UseGhostDialogReturn,
 } from './ghost-dialog'
+export { default as GhostSeparator } from './GhostSeparator.vue'
+export {
+  useGhostSeparator,
+  type GhostSeparatorRootProps,
+} from './use-ghost-separator'
+export type {
+  GhostSeparatorElement,
+  GhostSeparatorOrientation,
+  GhostSeparatorProps,
+  UseGhostSeparatorOptions,
+} from './ghost-separator'

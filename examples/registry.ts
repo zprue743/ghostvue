@@ -155,6 +155,42 @@ export const ghostExamples = [
       'Confirmation dialog with role="alertdialog" and outside-click dismissal disabled by default.',
     layer: 'themed',
   },
+  {
+    id: 'separator/basic',
+    title: 'Basic',
+    description: 'Native horizontal thematic break with separator semantics.',
+    layer: 'headless',
+  },
+  {
+    id: 'separator/composable',
+    title: 'Composable',
+    description: 'Same contract as GhostSeparator, applied to a native host.',
+    layer: 'headless',
+  },
+  {
+    id: 'separator/vertical',
+    title: 'Vertical',
+    description: 'Inline-axis rule between neighboring items.',
+    layer: 'headless',
+  },
+  {
+    id: 'separator/decorative',
+    title: 'Decorative',
+    description: 'Visual line omitted from the accessibility tree.',
+    layer: 'headless',
+  },
+  {
+    id: 'separator/list',
+    title: 'List',
+    description: 'li separator inside a list-shaped menu.',
+    layer: 'headless',
+  },
+  {
+    id: 'separator/themed',
+    title: 'Themed',
+    description: 'Hairline rules on the @ghostvue/themes wrapper.',
+    layer: 'themed',
+  },
 ] as const satisfies readonly GhostExampleDefinition[]
 
 export type GhostExampleId = (typeof ghostExamples)[number]['id']

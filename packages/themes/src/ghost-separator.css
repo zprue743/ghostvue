@@ -1,0 +1,41 @@
+/*
+ * Themed GhostSeparator. Visual values come from semantic --ghost-* tokens.
+ * Background fill (not border) is the stroke so both axes share one thickness.
+ * Native <hr> UA margin/border are reset so the token width is the only line.
+ */
+@layer ghostvue-theme {
+  :where(.ghost-theme .ghost-separator, .ghost-themed-scope .ghost-separator) {
+    align-self: stretch;
+    background-color: var(--ghost-border-default);
+    border: none;
+    box-sizing: border-box;
+    flex: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  :where(
+    .ghost-theme .ghost-separator[data-orientation='horizontal'],
+    .ghost-themed-scope .ghost-separator[data-orientation='horizontal']
+  ) {
+    block-size: var(--ghost-border-hairline-width);
+    inline-size: 100%;
+  }
+
+  :where(
+    .ghost-theme .ghost-separator[data-orientation='vertical'],
+    .ghost-themed-scope .ghost-separator[data-orientation='vertical']
+  ) {
+    /* Stretch, do not use 100% — percentage block-size collapses in height-auto flex rows. */
+    inline-size: var(--ghost-border-hairline-width);
+  }
+
+  @media (forced-colors: active) {
+    :where(
+      .ghost-theme .ghost-separator,
+      .ghost-themed-scope .ghost-separator
+    ) {
+      background-color: CanvasText;
+    }
+  }
+}

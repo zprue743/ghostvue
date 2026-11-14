@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import { ref, useTemplateRef } from 'vue'
 
-import { GhostButton as GhostButtonThemed } from '@ghostvue/themes'
+import {
+  GhostButton as GhostButtonThemed,
+  GhostSeparator as GhostSeparatorThemed,
+} from '@ghostvue/themes'
 
 import AmbientReference from './AmbientReference.vue'
 import ButtonStateMatrix from './ButtonStateMatrix.vue'
@@ -14,6 +17,7 @@ import PopoverReference from './PopoverReference.vue'
 import VisualReference from './VisualReference.vue'
 import {
   GhostButton,
+  GhostSeparator,
   GhostVisuallyHidden,
   useFocusScope,
   useRovingFocus,
@@ -391,6 +395,27 @@ function closeNested(): void {
       </div>
     </section>
 
+    <section aria-labelledby="separator-heading">
+      <h2 id="separator-heading">GhostSeparator</h2>
+      <div data-testid="separator-stack">
+        <p>Above the rule</p>
+        <GhostSeparator data-testid="separator-horizontal" />
+        <p>Below the rule</p>
+      </div>
+      <GhostSeparator decorative data-testid="separator-decorative" />
+      <div
+        class="separator-toolbar ghost-theme"
+        data-testid="separator-toolbar"
+      >
+        <GhostButtonThemed size="sm">Cut</GhostButtonThemed>
+        <GhostSeparatorThemed
+          orientation="vertical"
+          data-testid="separator-vertical"
+        />
+        <GhostButtonThemed size="sm">Copy</GhostButtonThemed>
+      </div>
+    </section>
+
     <section aria-labelledby="roving-heading">
       <h2 id="roving-heading">Roving focus</h2>
       <button type="button" data-testid="before-roving">Before roving</button>
@@ -514,5 +539,12 @@ fieldset {
 
 .block-example {
   flex: 1 1 100%;
+}
+
+.separator-toolbar {
+  align-items: stretch;
+  display: flex;
+  gap: 0.75rem;
+  margin-block-start: 1rem;
 }
 </style>
