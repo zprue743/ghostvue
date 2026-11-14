@@ -19,6 +19,8 @@ describe('GhostPagination', () => {
 
     const current = wrapper.get('button[aria-current="page"]')
     expect(current.text()).toBe('2')
+    expect(current.attributes('aria-disabled')).toBeUndefined()
+    expect(current.attributes('data-disabled')).toBeUndefined()
     expect(wrapper.findAll('button')).toHaveLength(9)
   })
 
