@@ -137,8 +137,10 @@ export interface UseGhostTabsReturn {
   dir: ComputedRef<TextDirection | undefined>
   select: (value: string) => void
   isSelected: (value: string) => boolean
-  registerTrigger: (value: string, triggerId: string) => void
+  registerTrigger: (value: string, triggerId: string, disabled: boolean) => void
+  setTriggerDisabled: (value: string, disabled: boolean) => void
   unregisterTrigger: (value: string) => void
+  tabStopValue: ComputedRef<string | undefined>
   registerPanel: (value: string, panelId: string) => void
   unregisterPanel: (value: string) => void
   getTriggerId: (value: string) => string | undefined
@@ -155,8 +157,11 @@ export interface GhostTabsContext {
   dir: ComputedRef<TextDirection | undefined>
   select: (value: string) => void
   isSelected: (value: string) => boolean
-  registerTrigger: (value: string, triggerId: string) => void
+  registerTrigger: (value: string, triggerId: string, disabled: boolean) => void
+  setTriggerDisabled: (value: string, disabled: boolean) => void
   unregisterTrigger: (value: string) => void
+  tabStopValue: ComputedRef<string | undefined>
+  syncSelectionTabStops: (listRoot: HTMLElement) => void
   registerPanel: (value: string, panelId: string) => void
   unregisterPanel: (value: string) => void
   getTriggerId: (value: string) => string | undefined

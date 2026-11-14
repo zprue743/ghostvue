@@ -272,6 +272,88 @@ describe('GhostTabs', () => {
     expect(tabButtons(wrapper)[1]?.attributes('aria-selected')).toBe('true')
   })
 
+  it('assigns tabindex 0 only to the selected enabled tab', async () => {
+    const { wrapper } = mountTabs({ defaultValue: 'two' })
+    await nextTick()
+    const tabs = tabButtons(wrapper)
+    expect(tabs[0]?.attributes('tabindex')).toBe('-1')
+    expect(tabs[1]?.attributes('tabindex')).toBe('0')
+    expect(tabs[2]?.attributes('tabindex')).toBe('-1')
+  })
+
+  it('keeps selection when focusing the selected tab in automatic mode', async () => {
+    const { wrapper, updates } = mountTabs({ defaultValue: 'two' })
+    await nextTick()
+    const selected = tabButtons(wrapper)[1]?.element as HTMLElement
+    expect(selected.tabIndex).toBe(0)
+    selected.focus()
+    await nextTick()
+    expect(updates).toEqual([])
+    expect(tabButtons(wrapper)[1]?.attributes('aria-selected')).toBe('true')
+  })
+
+  it('moves the tab stop when the controlled value changes', async () => {
+    const model = ref('one')
+    const wrapper = mount(
+      defineComponent({
+        setup: () => () =>
+          h(
+            GhostTabs,
+            {
+              modelValue: model.value,
+              'onUpdate:modelValue': (value: string) => {
+                model.value = value
+              },
+            },
+            {
+              default: () => [
+                h(GhostTabsList, null, () => [
+                  h(GhostTabsTrigger, { value: 'one' }, () => 'One'),
+                  h(GhostTabsTrigger, { value: 'two' }, () => 'Two'),
+                  h(GhostTabsTrigger, { value: 'three' }, () => 'Three'),
+                ]),
+                h(GhostTabsContent, { value: 'one' }, () => 'P1'),
+                h(GhostTabsContent, { value: 'two' }, () => 'P2'),
+                h(GhostTabsContent, { value: 'three' }, () => 'P3'),
+              ],
+            },
+          ),
+      }),
+      { attachTo: document.body },
+    )
+    attached.push(wrapper)
+    await nextTick()
+    model.value = 'three'
+    await nextTick()
+    const tabs = tabButtons(wrapper)
+    expect(tabs[0]?.attributes('tabindex')).toBe('-1')
+    expect(tabs[2]?.attributes('tabindex')).toBe('0')
+  })
+
+  it('restores the selected tab stop after roving and leaving the list', async () => {
+    const { wrapper } = mountTabs({
+      defaultValue: 'two',
+      activationMode: 'manual',
+    })
+    await nextTick()
+    const list = wrapper.get('[role="tablist"]')
+    const tabs = tabButtons(wrapper)
+    ;(tabs[1]?.element as HTMLElement).focus()
+    key(list.element, 'ArrowRight')
+    await nextTick()
+    expect((tabs[2]?.element as HTMLElement).tabIndex).toBe(0)
+
+    const outside = document.createElement('input')
+    document.body.appendChild(outside)
+    outside.focus()
+    await flushPromises()
+    await nextTick()
+
+    expect(tabs[1]?.attributes('tabindex')).toBe('0')
+    expect(tabs[2]?.attributes('tabindex')).toBe('-1')
+    outside.remove()
+  })
+
   it('hides inactive panels and exposes list metadata', async () => {
     const { wrapper } = mountTabs({ defaultValue: 'two' })
     await nextTick()

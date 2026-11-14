@@ -2,6 +2,7 @@
 import { provide } from 'vue'
 
 import { ghostTabsContextKey, type GhostTabsExposed } from './ghost-tabs'
+import { applyTabsSelectionTabStops } from './sync-tabs-selection-tab-stops'
 import { useGhostTabs } from './use-ghost-tabs'
 
 // Explicit `modelValue: undefined` prevents Vue from coercing an omitted string prop,
@@ -59,15 +60,20 @@ provide(ghostTabsContextKey, {
   activationMode: tabs.activationMode,
   orientation: tabs.orientation,
   dir: tabs.dir,
+  tabStopValue: tabs.tabStopValue,
   select: tabs.select,
   isSelected: tabs.isSelected,
   registerTrigger: tabs.registerTrigger,
+  setTriggerDisabled: tabs.setTriggerDisabled,
   unregisterTrigger: tabs.unregisterTrigger,
   registerPanel: tabs.registerPanel,
   unregisterPanel: tabs.unregisterPanel,
   getTriggerId: tabs.getTriggerId,
   getPanelId: tabs.getPanelId,
   registryVersion: tabs.registryVersion,
+  syncSelectionTabStops(listRoot) {
+    applyTabsSelectionTabStops(listRoot, tabs.tabStopValue.value)
+  },
 })
 </script>
 

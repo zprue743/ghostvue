@@ -62,11 +62,18 @@ const panelId = computed(() => {
 })
 
 watch(
-  triggerId,
-  (id) => {
-    tabsContext.registerTrigger(props.value, id)
+  [triggerId, () => props.disabled],
+  ([id, disabled]) => {
+    tabsContext.registerTrigger(props.value, id, disabled)
   },
   { immediate: true },
+)
+
+watch(
+  () => props.disabled,
+  (disabled) => {
+    tabsContext.setTriggerDisabled(props.value, disabled)
+  },
 )
 
 watch(
@@ -75,7 +82,7 @@ watch(
     if (previous) {
       tabsContext.unregisterTrigger(previous)
     }
-    tabsContext.registerTrigger(value, triggerId.value)
+    tabsContext.registerTrigger(value, triggerId.value, props.disabled)
   },
 )
 
@@ -84,6 +91,10 @@ onUnmounted(() => {
 })
 
 const active = computed(() => tabsContext.isSelected(props.value))
+
+const receivesTabStop = computed(
+  () => !props.disabled && tabsContext.tabStopValue.value === props.value,
+)
 
 const triggerAttrs = computed(() => {
   const rest: Record<string, unknown> = {}
@@ -102,14 +113,16 @@ const triggerAttrs = computed(() => {
   }
 
   const customType = attrs['type']
-  const customRole = attrs['role']
   const customTabindex = attrs['tabindex']
+  const tabIndex = customTabindex ?? (receivesTabStop.value ? 0 : -1)
 
   const base: Record<string, unknown> = {
     ...rest,
     id: triggerId.value,
     role: 'tab',
     class: 'ghost-tabs-trigger',
+    tabindex: tabIndex,
+    'data-ghost-tabs-value': props.value,
     'aria-selected': String(active.value),
     'data-part': 'trigger',
     'data-ghost-tabs': '',
@@ -128,12 +141,8 @@ const triggerAttrs = computed(() => {
     if (customType !== undefined) {
       base['type'] = customType
     }
-  } else {
-    base['role'] = customRole ?? 'tab'
-    base['tabindex'] = customTabindex ?? (props.disabled ? undefined : 0)
-    if (props.disabled) {
-      base['aria-disabled'] = 'true'
-    }
+  } else if (props.disabled) {
+    base['aria-disabled'] = 'true'
   }
 
   return base

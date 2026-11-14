@@ -42,4 +42,28 @@ test.describe('GhostTabs', { tag }, () => {
       await playground.close()
     }
   })
+
+  test('manual example keeps selection when tabbing into the selected tab', async ({
+    page,
+  }) => {
+    const playground = await startStaticServer('apps/playground/dist')
+    try {
+      await page.goto(`${playground.url}/examples.html?id=tabs/manual`)
+
+      const drafts = page.getByRole('tab', { name: 'Drafts' })
+      const sent = page.getByRole('tab', { name: 'Sent' })
+      await expect(drafts).toHaveAttribute('aria-selected', 'true')
+      await expect(drafts).toHaveAttribute('tabindex', '0')
+      await expect(sent).toHaveAttribute('tabindex', '-1')
+
+      await drafts.focus()
+      await expect(drafts).toHaveAttribute('aria-selected', 'true')
+      await expect(sent).toHaveAttribute('aria-selected', 'false')
+
+      const results = await new AxeBuilder({ page }).analyze()
+      expect(results.violations).toEqual([])
+    } finally {
+      await playground.close()
+    }
+  })
 })

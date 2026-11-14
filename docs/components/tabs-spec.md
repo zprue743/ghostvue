@@ -155,10 +155,17 @@ Disabled tabs are skipped by roving focus and cannot be activated.
 
 ### Focus behavior
 
-- One tab stop in the tab list; arrows move roving `tabindex` among enabled tabs.
-- Tab out of the list moves to the next document tab stop; Entering the active
-  panel uses `tabindex="0"` on the visible `tabpanel`.
-- Focus does not trap inside panels.
+- The **selected** enabled tab is the sequential tab stop (`tabindex="0"`); other
+  enabled tabs use `tabindex="-1"`, including native `<button>` hosts (so the
+  initial stop is not always the first tab).
+- Arrow keys move focus among tabs via `useRovingFocus`; in **automatic** mode,
+  focus activation also updates selection. When focus leaves the tab list, tab
+  stops reset to the selected tab so a later `Tab` into the list focuses the
+  active tab, not the last arrow-focused tab in manual mode.
+- If the selected value is missing or its trigger is disabled, the tab stop
+  falls back to the first enabled trigger **without** changing `modelValue`.
+- Tab out of the list moves to the next document tab stop; the visible
+  `tabpanel` uses `tabindex="0"`. Focus does not trap inside panels.
 
 ### Assistive technology expectations
 

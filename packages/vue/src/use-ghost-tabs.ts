@@ -38,6 +38,7 @@ export function useGhostTabs(
   const dir = computed<TextDirection | undefined>(() => toValue(options.dir))
 
   const triggerIds = shallowRef(new Map<string, string>())
+  const triggerDisabled = shallowRef(new Map<string, boolean>())
   const panelIds = shallowRef(new Map<string, string>())
   const triggerOrder = shallowRef<string[]>([])
   const registryVersion = shallowRef(0)
@@ -49,9 +50,22 @@ export function useGhostTabs(
 
   function bumpMaps(): void {
     triggerIds.value = new Map(triggerIds.value)
+    triggerDisabled.value = new Map(triggerDisabled.value)
     panelIds.value = new Map(panelIds.value)
     registryVersion.value += 1
   }
+
+  const tabStopValue = computed((): string | undefined => {
+    const selected = modelValue.value
+    if (
+      selected !== undefined &&
+      triggerIds.value.has(selected) &&
+      !triggerDisabled.value.get(selected)
+    ) {
+      return selected
+    }
+    return triggerOrder.value.find((value) => !triggerDisabled.value.get(value))
+  })
 
   function ensureInitialSelection(nextValue: string): void {
     if (!defaultUncontrolled.value) {
@@ -60,7 +74,11 @@ export function useGhostTabs(
     modelValue.value ??= nextValue
   }
 
-  function registerTrigger(value: string, triggerId: string): void {
+  function registerTrigger(
+    value: string,
+    triggerId: string,
+    disabled: boolean,
+  ): void {
     const nextOrder = [...triggerOrder.value]
     if (!nextOrder.includes(value)) {
       nextOrder.push(value)
@@ -68,12 +86,22 @@ export function useGhostTabs(
       ensureInitialSelection(value)
     }
     triggerIds.value.set(value, triggerId)
+    triggerDisabled.value.set(value, disabled)
+    bumpMaps()
+  }
+
+  function setTriggerDisabled(value: string, disabled: boolean): void {
+    if (triggerDisabled.value.get(value) === disabled) {
+      return
+    }
+    triggerDisabled.value.set(value, disabled)
     bumpMaps()
   }
 
   function unregisterTrigger(value: string): void {
     triggerOrder.value = triggerOrder.value.filter((item) => item !== value)
     triggerIds.value.delete(value)
+    triggerDisabled.value.delete(value)
     bumpMaps()
   }
 
@@ -110,9 +138,11 @@ export function useGhostTabs(
     activationMode,
     orientation,
     dir,
+    tabStopValue,
     select,
     isSelected,
     registerTrigger,
+    setTriggerDisabled,
     unregisterTrigger,
     registerPanel,
     unregisterPanel,

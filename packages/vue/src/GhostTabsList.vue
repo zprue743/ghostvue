@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, inject, useTemplateRef } from 'vue'
+import { computed, inject, useTemplateRef, watch } from 'vue'
 
 import {
   ghostTabsContextKey,
@@ -23,10 +23,11 @@ withDefaults(
   },
 )
 
-const context = inject(ghostTabsContextKey)
-if (!context) {
+const injected = inject(ghostTabsContextKey)
+if (!injected) {
   throw new Error('GhostTabsList must be used inside GhostTabs')
 }
+const context = injected
 
 const hostRef = useTemplateRef('host')
 const element = computed(() => resolveTabsHtmlElement(hostRef.value))
@@ -50,6 +51,34 @@ useRovingFocus(element, {
   loop: true,
 })
 
+watch(
+  () =>
+    [
+      context.modelValue.value,
+      context.tabStopValue.value,
+      context.registryVersion.value,
+    ] as const,
+  () => {
+    const list = element.value
+    if (list) {
+      context.syncSelectionTabStops(list)
+    }
+  },
+  { flush: 'post' },
+)
+
+function onFocusOut(event: FocusEvent): void {
+  const list = element.value
+  if (!list) {
+    return
+  }
+  const related = event.relatedTarget
+  if (related instanceof Node && list.contains(related)) {
+    return
+  }
+  context.syncSelectionTabStops(list)
+}
+
 const listAttrs = computed(() => ({
   role: 'tablist',
   'aria-orientation': context.orientation.value,
@@ -72,7 +101,12 @@ defineExpose<GhostTabsListExposed>({
 </script>
 
 <template>
-  <component :is="as" ref="host" v-bind="{ ...listAttrs, ...$attrs }">
+  <component
+    :is="as"
+    ref="host"
+    v-bind="{ ...listAttrs, ...$attrs }"
+    @focusout="onFocusOut"
+  >
     <slot />
   </component>
 </template>
