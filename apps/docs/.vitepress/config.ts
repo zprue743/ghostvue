@@ -96,7 +96,8 @@ export default defineConfig({
     logo: {
       light: '/logo-light.svg',
       dark: '/logo-dark.svg',
-      alt: 'GhostVue',
+      // Decorative: VPNavBarTitle already exposes the "GhostVue" text label.
+      alt: '',
     },
     nav: [
       { text: 'Philosophy', link: '/philosophy' },
