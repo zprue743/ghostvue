@@ -10,8 +10,8 @@ Each panel reuses `GhostCollapsible` for open state and semantics. Import from
 <GhostExample id="accordion/basic" />
 
 `type="single"` with `collapsible` keeps at most one panel open and allows
-closing the active section. Arrow keys move focus between triggers on the
-accordion root.
+closing the active section. Optional Arrow/Home/End keys move focus among
+direct headers without changing `tabindex`; every header stays in the tab sequence.
 
 ## Multiple expansion
 
@@ -28,7 +28,7 @@ exposed members, styling hooks, and executable examples.
 ### `GhostAccordion` (root)
 
 Emits `update:modelValue` with `string | string[] | undefined` depending on
-`type`. Hosts vertical roving focus among item triggers.
+`type`. Delegates optional arrow-key navigation among direct item triggers.
 
 ### `GhostAccordionItem`
 
@@ -48,7 +48,9 @@ behavior.
 
 - Disclosure triggers sit in programmatic headings with `aria-expanded` and
   `aria-controls`.
-- Arrow keys, Home, and End move focus among triggers via `useRovingFocus`.
+- Arrow keys, Home, and End optionally move focus among direct triggers (no roving
+  `tabindex`).
+- Non-collapsible single mode sets `aria-disabled="true"` on the open trigger.
 - Root and item `disabled` prevent toggling.
 
 ## Specification

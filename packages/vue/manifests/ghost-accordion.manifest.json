@@ -111,6 +111,8 @@
     "requiredAriaAttributes": []
   },
   "examples": [
-    "accordion/basic"
+    "accordion/basic",
+    "accordion/navigation",
+    "accordion/themed"
   ]
 }

@@ -1,5 +1,13 @@
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, provide, toRef, useTemplateRef, watch } from 'vue'
+import {
+  computed,
+  onMounted,
+  onUnmounted,
+  provide,
+  toRef,
+  useTemplateRef,
+  watch,
+} from 'vue'
 
 import {
   focusFirstEnabledAccordionTrigger,
@@ -86,7 +94,9 @@ onMounted(() => {
         handleAccordionHeaderKeydown(event, host)
       }
       host.addEventListener('keydown', onKeyDown)
-      onCleanup(() => host.removeEventListener('keydown', onKeyDown))
+      onCleanup(() => {
+        host.removeEventListener('keydown', onKeyDown)
+      })
     },
     { immediate: true },
   )

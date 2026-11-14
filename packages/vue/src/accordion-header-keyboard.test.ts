@@ -48,10 +48,12 @@ describe('accordion-header-keyboard', () => {
     const a = root.querySelector('#outer-a') as HTMLButtonElement
     const b = root.querySelector('#outer-b') as HTMLButtonElement
     a.focus()
-    handleAccordionHeaderKeydown(
-      new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true }),
-      root,
-    )
+    const event = new KeyboardEvent('keydown', {
+      key: 'ArrowDown',
+      bubbles: true,
+    })
+    Object.defineProperty(event, 'target', { value: a, configurable: true })
+    handleAccordionHeaderKeydown(event, root)
     expect(document.activeElement).toBe(b)
     root.remove()
   })

@@ -182,7 +182,7 @@ describe('GhostAccordion', () => {
     accordionRef.value?.blur()
   })
 
-  it('marks the open header aria-disabled in single non-collapsible mode', async () => {
+  it('marks the open header aria-disabled in single non-collapsible mode', () => {
     const wrapper = mountAttached(
       defineComponent({
         setup() {

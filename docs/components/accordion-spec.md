@@ -12,8 +12,8 @@ expansion, and arrow-key movement between section triggers without reimplementin
 `useControllableState` or duplicating `GhostCollapsible` open/close logic.
 
 The component composes `GhostCollapsible`, `useControllableState`, `useGhostId`,
-and `useRovingFocus` so applications get controlled/uncontrolled expansion values,
-heading-wrapped triggers, and SSR-stable relationships.
+so applications get controlled/uncontrolled expansion values, heading-wrapped
+triggers, and SSR-stable relationships.
 
 ## Non-goals
 
@@ -28,7 +28,7 @@ heading-wrapped triggers, and SSR-stable relationships.
 
 Headless exports from `@ghostvue/vue`:
 
-- `GhostAccordion` (root state, roving focus host)
+- `GhostAccordion` (root state and optional header keydown delegation)
 - `GhostAccordionItem` (per-panel `GhostCollapsible` wiring)
 - `GhostAccordionTrigger` (heading-wrapped disclosure trigger)
 - `GhostAccordionContent` (in-flow panel)
@@ -126,15 +126,17 @@ Follows
 ### Keyboard interaction
 
 - **Enter / Space** on a trigger: toggle its panel (via `GhostCollapsibleTrigger`).
-- **ArrowDown / ArrowUp:** move focus among accordion triggers (roving tabindex on
-  the root host; vertical orientation).
-- **Home / End:** focus first/last trigger when supported by `useRovingFocus`.
-- Roving skips disabled triggers.
+- **ArrowDown / ArrowUp:** optional focus move among direct item triggers (no
+  `tabindex` mutation; nested accordions excluded).
+- **Home / End:** optional focus on first/last direct trigger.
+- Every header trigger remains in the sequential tab order.
+- In `type="single"` without `collapsible`, the open trigger sets
+  `aria-disabled="true"` (APG).
 
 ### Focus behavior
 
-One trigger tab stop at a time within the accordion root; arrow keys move among
-triggers. Focus does not move into panel content on expand.
+Headers stay in document tab order; arrow keys optionally move among direct
+triggers only. Focus does not move into panel content on expand.
 
 ## Rendering and customization
 
@@ -147,9 +149,8 @@ triggers. Focus does not move into panel content on expand.
 
 ### SSR and hydration
 
-Deterministic ids from `useGhostId` inside each `GhostCollapsible`. No
-browser-only APIs in root setup except roving listeners mounted on the client
-(matching `GhostTabsList`).
+Deterministic ids from `useGhostId` inside each `GhostCollapsible`. Optional
+header keydown listeners attach on the client in `onMounted`.
 
 ## Composition
 

@@ -56,26 +56,24 @@ test.describe('GhostAccordion @component:GhostAccordion', () => {
     const playground = await startStaticServer('apps/playground/dist')
 
     try {
-      await page.goto(
-        `${playground.url}/examples.html?id=accordion/navigation`,
-      )
+      await page.goto(`${playground.url}/examples.html?id=accordion/navigation`)
 
       const outerOne = page.getByTestId('accordion-outer-trigger-1')
       const outerTwo = page.getByTestId('accordion-outer-trigger-2')
       const panelLink = page.locator('#accordion-panel-link')
       const nestedTrigger = page.getByTestId('accordion-nested-trigger')
 
+      await expect(outerOne).not.toHaveAttribute('tabindex', '-1')
+      await expect(outerTwo).not.toHaveAttribute('tabindex', '-1')
+
       await outerOne.focus()
-      await expect(outerOne).toBeFocused()
+      await page.keyboard.press('Tab')
+      await expect(panelLink).toBeFocused()
 
       await page.keyboard.press('Tab')
-      await expect(outerTwo).toBeFocused()
+      await expect(nestedTrigger).toBeFocused()
 
-      await page.keyboard.press('Shift+Tab')
-      await expect(outerOne).toBeFocused()
-
-      await outerOne.focus()
-      await page.keyboard.press('ArrowDown')
+      await page.keyboard.press('Tab')
       await expect(outerTwo).toBeFocused()
 
       await outerOne.focus()
@@ -90,17 +88,9 @@ test.describe('GhostAccordion @component:GhostAccordion', () => {
       await page.keyboard.press('Home')
       await expect(outerOne).toBeFocused()
 
-      await outerOne.focus()
+      await outerTwo.focus()
       await page.keyboard.press('ArrowDown')
-      await expect(outerTwo).toBeFocused()
-      await page.keyboard.press('ArrowDown')
-      await expect(outerTwo).toBeFocused()
-
-      await outerOne.focus()
-      await page.keyboard.press('Tab')
-      await expect(outerTwo).toBeFocused()
-      await page.keyboard.press('Tab')
-      await expect(panelLink).toBeFocused()
+      await expect(outerOne).toBeFocused()
 
       await nestedTrigger.focus()
       await page.keyboard.press('ArrowDown')
