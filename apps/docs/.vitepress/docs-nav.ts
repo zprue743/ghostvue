@@ -17,6 +17,7 @@ export const docsSidebar: LlmsSidebarGroup[] = [
   {
     text: 'Components',
     items: [
+      { text: 'GhostAccordion', link: '/components/accordion' },
       { text: 'GhostBadge', link: '/components/badge' },
       { text: 'GhostCollapsible', link: '/components/collapsible' },
       { text: 'GhostButton', link: '/components/button' },
@@ -111,6 +112,10 @@ export const docsSidebar: LlmsSidebarGroup[] = [
     items: [
       { text: 'GhostSlider specification', link: '/components/slider-spec' },
       { text: 'GhostToolbar specification', link: '/components/toolbar-spec' },
+      {
+        text: 'GhostAccordion specification',
+        link: '/components/accordion-spec',
+      },
       {
         text: 'GhostNumberInput specification',
         link: '/components/number-input-spec',

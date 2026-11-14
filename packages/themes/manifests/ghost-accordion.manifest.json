@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "handwritten",
+  "name": "GhostAccordion",
+  "package": "@ghostvue/themes",
+  "status": "experimental",
+  "description": "Themed wrappers for GhostAccordion compound parts; imports default stacked disclosure styles.",
+  "props": [],
+  "models": [],
+  "events": [],
+  "slots": [
+    {
+      "name": "default",
+      "props": [],
+      "description": "Container content."
+    }
+  ],
+  "exposed": [
+    {
+      "name": "element",
+      "kind": "property",
+      "type": "HTMLElement | null",
+      "description": "Root element after mount; null before mount."
+    }
+  ],
+  "styling": {
+    "parts": [
+      {
+        "name": "root",
+        "description": "Neutral content container."
+      }
+    ],
+    "states": [],
+    "cssProperties": [
+      {
+        "name": "--ghost-surface-fg",
+        "description": "Inherited text color."
+      }
+    ]
+  },
+  "accessibility": {
+    "role": "generic",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/",
+    "keyboard": {},
+    "requiredAriaAttributes": []
+  },
+  "examples": [
+    "accordion/basic",
+    "accordion/themed"
+  ]
+}

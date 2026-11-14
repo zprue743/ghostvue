@@ -44,34 +44,34 @@ Themed exports from `@ghostvue/themes`:
 
 #### `GhostAccordion` (root)
 
-| Prop           | Type                          | Default     | Contract                                                                                        |
-| -------------- | ----------------------------- | ----------- | ------------------------------------------------------------------------------------------------- |
-| `type`         | `'single' \| 'multiple'`      | `'single'`  | Single allows at most one open item; multiple allows many.                                        |
-| `collapsible`  | `boolean`                     | `false`     | When `type` is `single`, allows closing the open item so none are expanded.                         |
-| `modelValue`   | `string \| string[] \| undefined` | `undefined` | Controlled expansion. Omit for uncontrolled. Shape depends on `type`.                             |
-| `defaultValue` | `string \| string[] \| undefined` | `undefined` | Initial expansion in uncontrolled mode.                                                         |
-| `headingLevel` | `1 \| 2 \| 3 \| 4 \| 5 \| 6`  | `3`         | Heading element wrapping each trigger (`h1`–`h6`).                                                |
-| `disabled`     | `boolean`                     | `false`     | Disables toggling on all items (root-level disable).                                              |
+| Prop           | Type                              | Default     | Contract                                                                    |
+| -------------- | --------------------------------- | ----------- | --------------------------------------------------------------------------- |
+| `type`         | `'single' \| 'multiple'`          | `'single'`  | Single allows at most one open item; multiple allows many.                  |
+| `collapsible`  | `boolean`                         | `false`     | When `type` is `single`, allows closing the open item so none are expanded. |
+| `modelValue`   | `string \| string[] \| undefined` | `undefined` | Controlled expansion. Omit for uncontrolled. Shape depends on `type`.       |
+| `defaultValue` | `string \| string[] \| undefined` | `undefined` | Initial expansion in uncontrolled mode.                                     |
+| `headingLevel` | `1 \| 2 \| 3 \| 4 \| 5 \| 6`      | `3`         | Heading element wrapping each trigger (`h1`–`h6`).                          |
+| `disabled`     | `boolean`                         | `false`     | Disables toggling on all items (root-level disable).                        |
 
 #### `GhostAccordionItem`
 
-| Prop       | Type      | Default | Contract                                                                   |
-| ---------- | --------- | ------- | -------------------------------------------------------------------------- |
-| `value`    | `string`  | required | Stable id for this panel.                                                  |
-| `disabled` | `boolean` | `false` | Prevents toggling; combines with root `disabled`.                          |
+| Prop       | Type      | Default  | Contract                                          |
+| ---------- | --------- | -------- | ------------------------------------------------- |
+| `value`    | `string`  | required | Stable id for this panel.                         |
+| `disabled` | `boolean` | `false`  | Prevents toggling; combines with root `disabled`. |
 
 #### `GhostAccordionTrigger`
 
-| Prop | Type | Default | Contract                                                                 |
-| ---- | ---- | ------- | ------------------------------------------------------------------------ |
+| Prop | Type                           | Default    | Contract                                |
+| ---- | ------------------------------ | ---------- | --------------------------------------- |
 | `as` | `GhostAccordionTriggerElement` | `'button'` | Forwarded to `GhostCollapsibleTrigger`. |
 
 #### `GhostAccordionContent`
 
-| Prop               | Type | Default | Contract                                        |
-| ------------------ | ---- | ------- | ----------------------------------------------- |
-| `as`               | `GhostAccordionContentElement` | `'div'` | Forwarded to `GhostCollapsibleContent`.         |
-| `disableAnimation` | `boolean` | `false` | Forwarded to `GhostCollapsibleContent`.         |
+| Prop               | Type                           | Default | Contract                                |
+| ------------------ | ------------------------------ | ------- | --------------------------------------- |
+| `as`               | `GhostAccordionContentElement` | `'div'` | Forwarded to `GhostCollapsibleContent`. |
+| `disableAnimation` | `boolean`                      | `false` | Forwarded to `GhostCollapsibleContent`. |
 
 Native attributes fall through to each part root (trigger/content) or the accordion root.
 

@@ -205,6 +205,21 @@ export {
   type GhostTabsContentExposed,
 } from './ghost-tabs-content'
 export {
+  GhostAccordion,
+  GhostAccordionItem,
+  GhostAccordionTrigger,
+  GhostAccordionContent,
+  type GhostAccordionContentElement,
+  type GhostAccordionContentExposed,
+  type GhostAccordionExposed,
+  type GhostAccordionHeadingLevel,
+  type GhostAccordionItemProps,
+  type GhostAccordionTriggerElement,
+  type GhostAccordionTriggerExposed,
+  type GhostAccordionType,
+  type GhostAccordionValue,
+} from './ghost-accordion'
+export {
   GhostEmptyState,
   type GhostEmptyStateExposed,
 } from './ghost-empty-state'
