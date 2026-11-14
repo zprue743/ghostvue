@@ -1,0 +1,174 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "handwritten",
+  "name": "GhostLink",
+  "package": "@ghostvue/themes",
+  "status": "experimental",
+  "description": "Themed wrapper around headless GhostLink. Same navigation contract plus variant and tone. Importing it loads the default stylesheet and scopes link styles to this instance.",
+  "props": [
+    {
+      "name": "as",
+      "type": "GhostLinkElement",
+      "default": "a",
+      "required": false,
+      "description": "Host element or router component forwarded to the unstyled GhostLink.",
+      "deprecated": false
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Disables navigation on the inner host.",
+      "deprecated": false
+    },
+    {
+      "name": "external",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Shows the external indicator for same-tab outbound links.",
+      "deprecated": false
+    },
+    {
+      "name": "newTabLabel",
+      "type": "string",
+      "default": "Opens in new tab",
+      "required": false,
+      "description": "Visually hidden hint when target is _blank.",
+      "deprecated": false
+    },
+    {
+      "name": "variant",
+      "type": "'inline' | 'subtle'",
+      "default": "inline",
+      "required": false,
+      "description": "Underline treatment. The default omits data-variant.",
+      "deprecated": false
+    },
+    {
+      "name": "tone",
+      "type": "'accent' | 'neutral'",
+      "default": "accent",
+      "required": false,
+      "description": "Link color intent. The default omits data-tone.",
+      "deprecated": false
+    }
+  ],
+  "models": [],
+  "events": [],
+  "slots": [
+    {
+      "name": "default",
+      "props": [],
+      "description": "Link text forwarded to the unstyled GhostLink."
+    },
+    {
+      "name": "externalIndicator",
+      "props": [],
+      "description": "Optional external icon content inside data-part=external-icon."
+    }
+  ],
+  "exposed": [
+    {
+      "name": "element",
+      "kind": "property",
+      "type": "HTMLElement | null",
+      "description": "The inner navigable host after mount."
+    },
+    {
+      "name": "focus",
+      "kind": "method",
+      "type": "(options?: FocusOptions) => void",
+      "description": "Focuses the inner host when enabled."
+    },
+    {
+      "name": "blur",
+      "kind": "method",
+      "type": "() => void",
+      "description": "Blurs the inner host."
+    }
+  ],
+  "styling": {
+    "parts": [
+      {
+        "name": "root",
+        "description": "The navigable host inside the display:contents themed scope."
+      },
+      {
+        "name": "external-icon",
+        "description": "Decorative external navigation icon."
+      }
+    ],
+    "states": [
+      {
+        "name": "disabled",
+        "description": "Navigation is unavailable."
+      }
+    ],
+    "cssProperties": [
+      {
+        "name": "--ghost-action-primary-bg",
+        "description": "Default accent link color."
+      },
+      {
+        "name": "--ghost-action-primary-bg-hover",
+        "description": "Hover link color."
+      },
+      {
+        "name": "--ghost-action-primary-bg-active",
+        "description": "Active link color."
+      },
+      {
+        "name": "--ghost-action-disabled-fg",
+        "description": "Disabled link color."
+      },
+      {
+        "name": "--ghost-surface-fg",
+        "description": "Neutral tone link color."
+      },
+      {
+        "name": "--ghost-action-icon-size",
+        "description": "External icon size."
+      },
+      {
+        "name": "--ghost-focus-ring-color",
+        "description": "Focus outline color."
+      },
+      {
+        "name": "--ghost-focus-ring-width",
+        "description": "Focus outline width."
+      },
+      {
+        "name": "--ghost-focus-ring-offset",
+        "description": "Focus outline offset."
+      },
+      {
+        "name": "--ghost-border-hairline-width",
+        "description": "Underline thickness."
+      },
+      {
+        "name": "--ghost-space-gap-xs",
+        "description": "Gap between text and icon; underline offset."
+      },
+      {
+        "name": "--ghost-state-mix-border",
+        "description": "Inline variant resting underline mix."
+      },
+      {
+        "name": "--ghost-radius-sm",
+        "description": "Focus ring corner radius."
+      }
+    ]
+  },
+  "accessibility": {
+    "role": "link",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/link/",
+    "keyboard": {
+      "Tab": "Enabled links participate in tab order.",
+      "Enter": "Activates the focused link."
+    },
+    "requiredAriaAttributes": []
+  },
+  "examples": ["link/themed", "link/external", "link/disabled"]
+}

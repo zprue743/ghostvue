@@ -77,6 +77,13 @@ export {
 export { GhostKbd, type GhostKbdPlatform, type GhostKbdSize } from './ghost-kbd'
 
 export {
+  GhostLink,
+  type GhostLinkExposed,
+  type GhostLinkTone,
+  type GhostLinkVariant,
+} from './ghost-link'
+
+export {
   GhostSpinner,
   type GhostSpinnerSize,
   type GhostSpinnerTone,

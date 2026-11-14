@@ -419,6 +419,42 @@ export const ghostExamples = [
     layer: 'themed',
   },
   {
+    id: 'link/basic',
+    title: 'Basic',
+    description: 'Native anchor with headless styling hooks.',
+    layer: 'headless',
+  },
+  {
+    id: 'link/composable',
+    title: 'Composable',
+    description: 'Same contract as GhostLink, applied to a native host.',
+    layer: 'headless',
+  },
+  {
+    id: 'link/themed',
+    title: 'Themed',
+    description: 'Default inline link visuals from @ghostvue/themes.',
+    layer: 'themed',
+  },
+  {
+    id: 'link/external',
+    title: 'External',
+    description: 'New-tab safety, indicator, and accessible hint.',
+    layer: 'themed',
+  },
+  {
+    id: 'link/disabled',
+    title: 'Disabled',
+    description: 'No href, not focusable, and activation cancelled.',
+    layer: 'themed',
+  },
+  {
+    id: 'link/router',
+    title: 'Router composition',
+    description: 'Render through as without importing vue-router.',
+    layer: 'headless',
+  },
+  {
     id: 'input/basic',
     title: 'Basic',
     description: 'Native labeled text field. The default type is text.',

@@ -33,19 +33,19 @@ behavior that remains valid for assistive technology.
 
 Headless `@ghostvue/vue` `GhostLink` / `useGhostLink`:
 
-| Prop           | Type              | Default               | Contract                                                                                                                                 |
-| -------------- | ----------------- | --------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
-| `as`           | `'a' \| Component` | `'a'`                 | Root tag or component (for example `RouterLink` / `NuxtLink`). Headless output must stay valid HTML for every supported value.           |
-| `disabled`     | `boolean`         | `false`               | Removes navigation: no `href` on native anchors, `aria-disabled="true"`, `tabindex="-1"`, and activation is cancelled in the capture phase. |
-| `external`     | `boolean`         | `false`               | Shows the external-link indicator for same-tab outbound navigation. `target="_blank"` implies an external indicator even when `external` is false. |
-| `newTabLabel`  | `string`          | `'Opens in new tab'`  | Visually hidden text appended when `target` is `_blank` so the accessible name includes new-tab intent.                                 |
+| Prop          | Type               | Default              | Contract                                                                                                                                           |
+| ------------- | ------------------ | -------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `as`          | `'a' \| Component` | `'a'`                | Root tag or component (for example `RouterLink` / `NuxtLink`). Headless output must stay valid HTML for every supported value.                     |
+| `disabled`    | `boolean`          | `false`              | Removes navigation: no `href` on native anchors, `aria-disabled="true"`, `tabindex="-1"`, and activation is cancelled in the capture phase.        |
+| `external`    | `boolean`          | `false`              | Shows the external-link indicator for same-tab outbound navigation. `target="_blank"` implies an external indicator even when `external` is false. |
+| `newTabLabel` | `string`           | `'Opens in new tab'` | Visually hidden text appended when `target` is `_blank` so the accessible name includes new-tab intent.                                            |
 
 Native anchor attributes (`href`, `target`, `rel`, `download`, `hreflang`,
 `referrerpolicy`, `type`, `ping`, accessible name, and event listeners) are
 included in the public type and fall through to the root host. Named ESM exports:
 `GhostLink`, `useGhostLink`, `resolveGhostLinkHtmlElement`, and the types below.
 
-The default slot carries the visible link text. An optional `external-indicator`
+The default slot carries the visible link text. An optional `externalIndicator`
 slot replaces the default decorative icon (the slot wrapper stays
 `aria-hidden="true"`). A `new-tab-hint` slot is not offered: `newTabLabel` and
 `GhostVisuallyHidden` keep the accessible name stable.
@@ -53,10 +53,10 @@ slot replaces the default decorative icon (the slot wrapper stays
 Themed `@ghostvue/themes` `GhostLink` wraps the unstyled component and adds
 visual props. Same behavioral props; these exist only on the themed wrapper:
 
-| Prop      | Type                         | Default     | Contract                                                          |
-| --------- | ---------------------------- | ----------- | ----------------------------------------------------------------- |
-| `variant` | `'inline' \| 'subtle'`       | `'inline'`  | `inline` underlines on hover/focus; `subtle` stays text-colored without underline until hover. |
-| `tone`    | `'accent' \| 'neutral'`      | `'accent'`  | Semantic color intent for the link text.                          |
+| Prop      | Type                    | Default    | Contract                                                                                       |
+| --------- | ----------------------- | ---------- | ---------------------------------------------------------------------------------------------- |
+| `variant` | `'inline' \| 'subtle'`  | `'inline'` | `inline` underlines on hover/focus; `subtle` stays text-colored without underline until hover. |
+| `tone`    | `'accent' \| 'neutral'` | `'accent'` | Semantic color intent for the link text.                                                       |
 
 The themed wrapper sets matching `data-variant` and `data-tone` on the inner
 host. Defaults omit the attribute so CSS treats a missing hook as the default
@@ -76,7 +76,7 @@ Slots:
 
 - `default` — visible link content (required for an accessible name unless
   `aria-label` / `aria-labelledby` is provided).
-- `external-indicator` — decorative icon markup inside `data-part="external-icon"`.
+- `externalIndicator` — decorative icon markup inside `data-part="external-icon"`.
 
 A component template ref exposes:
 
