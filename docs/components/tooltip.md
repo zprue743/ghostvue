@@ -9,6 +9,15 @@ focus without moving focus. Import `GhostTooltip`, `GhostTooltipTrigger`, and
 
 <GhostExample id="tooltip/basic" />
 
+## Shared provider and skip delay
+
+Wrap several tooltips in `GhostTooltipProvider` so moving the pointer between
+nearby triggers skips the open delay within `skipDelayDuration` after the
+previous tooltip closes. The first tooltip in a provider still waits the full
+delay; keyboard focus keeps per-root timing.
+
+<GhostExample id="tooltip-provider/skip-delay" />
+
 `GhostTooltip` owns `open` via `useControllableState`, assigns deterministic IDs
 via `useGhostId`, applies open/close delays for WCAG 1.4.13, positions the
 floating label with `useFloating`, renders it through `GhostPortal` by default,
