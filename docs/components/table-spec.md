@@ -34,16 +34,16 @@ styling hooks.
 
 Headless `@ghostvue/vue` primitives and composables:
 
-| Component               | Native element | Behavioral props                                      |
-| ----------------------- | -------------- | ----------------------------------------------------- |
-| `GhostTable`            | `table`        | `containHorizontal?: boolean` (default `false`)       |
-| `GhostTableCaption`     | `caption`      | none                                                  |
-| `GhostTableHead`        | `thead`        | none                                                  |
-| `GhostTableBody`        | `tbody`        | none                                                  |
-| `GhostTableFoot`        | `tfoot`        | none                                                  |
-| `GhostTableRow`         | `tr`           | none                                                  |
-| `GhostTableHeaderCell`  | `th`           | `scope?: 'col' \| 'row' \| 'colgroup' \| 'rowgroup'` |
-| `GhostTableCell`        | `td`           | none                                                  |
+| Component              | Native element | Behavioral props                                     |
+| ---------------------- | -------------- | ---------------------------------------------------- |
+| `GhostTable`           | `table`        | `containHorizontal?: boolean` (default `false`)      |
+| `GhostTableCaption`    | `caption`      | none                                                 |
+| `GhostTableHead`       | `thead`        | none                                                 |
+| `GhostTableBody`       | `tbody`        | none                                                 |
+| `GhostTableFoot`       | `tfoot`        | none                                                 |
+| `GhostTableRow`        | `tr`           | none                                                 |
+| `GhostTableHeaderCell` | `th`           | `scope?: 'col' \| 'row' \| 'colgroup' \| 'rowgroup'` |
+| `GhostTableCell`       | `td`           | none                                                 |
 
 ```ts
 type GhostTableHeaderScope = 'col' | 'row' | 'colgroup' | 'rowgroup'
@@ -82,9 +82,9 @@ events. No keyboard handlers.
 
 `GhostTable` exposes:
 
-| Member    | Type                      | Contract                          |
-| --------- | ------------------------- | --------------------------------- |
-| `element` | `HTMLTableElement \| null` | The `<table>` after mount.       |
+| Member    | Type                       | Contract                   |
+| --------- | -------------------------- | -------------------------- |
+| `element` | `HTMLTableElement \| null` | The `<table>` after mount. |
 
 Other parts expose `element` as their native host (`HTMLTableCaptionElement`,
 `HTMLTableSectionElement`, `HTMLTableRowElement`, `HTMLTableCellElement`).
@@ -115,14 +115,14 @@ accessible name, mark header cells with `<th>` and `scope` when relationships
 are not implicit, and keep **all** body rows inside `GhostTableBody` so DOM
 order matches what assistive technology expects.
 
-| Part            | Implicit role        | Notes                                                                 |
-| --------------- | -------------------- | --------------------------------------------------------------------- |
-| `table`         | table                | No redundant `role`.                                                  |
-| `caption`       | caption              | First child of `table` when present.                                  |
-| `thead`/`tbody`/`tfoot` | rowgroup     | Explicit sections; avoids implicit `tbody` insertion.                 |
-| `tr`            | row                  |                                                                       |
-| `th`            | columnheader or rowheader | Determined by `scope` and placement.                           |
-| `td`            | cell                 |                                                                       |
+| Part                    | Implicit role             | Notes                                                 |
+| ----------------------- | ------------------------- | ----------------------------------------------------- |
+| `table`                 | table                     | No redundant `role`.                                  |
+| `caption`               | caption                   | First child of `table` when present.                  |
+| `thead`/`tbody`/`tfoot` | rowgroup                  | Explicit sections; avoids implicit `tbody` insertion. |
+| `tr`                    | row                       |                                                       |
+| `th`                    | columnheader or rowheader | Determined by `scope` and placement.                  |
+| `td`                    | cell                      |                                                       |
 
 The scroll container is presentational layout only: no `role`, no
 `aria-*`. Focusable controls inside cells follow normal tab order.
@@ -156,8 +156,7 @@ Themed CSS uses `--ghost-*` tokens only:
 - `--ghost-border-default`, `--ghost-border-hairline-width`
 - `--ghost-space-inset-sm` / `--ghost-space-inset-md` for cell padding
 - `--ghost-surface-fg`, `--ghost-text-muted`, `--ghost-type-*` for typography
-- Header row: subtle background via `--ghost-surface-muted` or equivalent
-  existing token
+- Header row: subtle background via `--ghost-surface-muted-bg`
 
 ## Environment behavior
 

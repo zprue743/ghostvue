@@ -570,6 +570,36 @@ export const ghostExamples = [
     layer: 'themed',
   },
   {
+    id: 'table/basic',
+    title: 'Basic table',
+    description: 'Caption, header row, and explicit tbody semantics.',
+    layer: 'headless',
+  },
+  {
+    id: 'table/composable',
+    title: 'Composable',
+    description: 'Native table hosts with useGhostTable hooks.',
+    layer: 'headless',
+  },
+  {
+    id: 'table/contain-horizontal',
+    title: 'Horizontal containment',
+    description: 'Optional scroll container for wide static tables.',
+    layer: 'headless',
+  },
+  {
+    id: 'table/row-headers',
+    title: 'Row headers',
+    description: 'th scope=row inside the table body.',
+    layer: 'headless',
+  },
+  {
+    id: 'table/themed',
+    title: 'Themed',
+    description: 'Default table chrome from @ghostvue/themes.',
+    layer: 'themed',
+  },
+  {
     id: 'empty-state/basic',
     title: 'Empty state basics',
     description: 'Title and description for an unused panel.',

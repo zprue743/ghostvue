@@ -49,6 +49,7 @@ export const docsSidebar: LlmsSidebarGroup[] = [
       { text: 'GhostSpinner', link: '/components/spinner' },
       { text: 'GhostSwitch', link: '/components/switch' },
       { text: 'GhostTabs', link: '/components/tabs' },
+      { text: 'GhostTable', link: '/components/table' },
       { text: 'GhostTextarea', link: '/components/textarea' },
       { text: 'GhostToggleGroup', link: '/components/toggle-group' },
       { text: 'GhostToolbar', link: '/components/toolbar' },
@@ -157,6 +158,7 @@ export const docsSidebar: LlmsSidebarGroup[] = [
       },
       { text: 'GhostField specification', link: '/components/field-spec' },
       { text: 'GhostTabs specification', link: '/components/tabs-spec' },
+      { text: 'GhostTable specification', link: '/components/table-spec' },
       { text: 'GhostTooltip specification', link: '/components/tooltip-spec' },
       { text: 'Workflow', link: '/contributing/workflow' },
       {

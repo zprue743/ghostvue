@@ -57,6 +57,14 @@ import {
   GhostRadioGroupItem,
   GhostSlider,
   GhostSeparator,
+  GhostTable,
+  GhostTableBody,
+  GhostTableCaption,
+  GhostTableCell,
+  GhostTableFoot,
+  GhostTableHead,
+  GhostTableHeaderCell,
+  GhostTableRow,
   GhostEmptyState,
   GhostInlineAlert,
   GhostSkeleton,
@@ -1243,6 +1251,62 @@ function submitPlaygroundComment(event: Event): void {
           <GhostSwitchThemed id="playground-dark" />
         </div>
       </fieldset>
+    </section>
+
+    <section aria-labelledby="table-heading">
+      <h2 id="table-heading">GhostTable</h2>
+      <GhostTable data-testid="table-invoices">
+        <GhostTableCaption>Open invoices</GhostTableCaption>
+        <GhostTableHead>
+          <GhostTableRow>
+            <GhostTableHeaderCell scope="col">Invoice</GhostTableHeaderCell>
+            <GhostTableHeaderCell scope="col">Status</GhostTableHeaderCell>
+          </GhostTableRow>
+        </GhostTableHead>
+        <GhostTableBody>
+          <GhostTableRow>
+            <GhostTableCell>INV-9</GhostTableCell>
+            <GhostTableCell>Open</GhostTableCell>
+          </GhostTableRow>
+        </GhostTableBody>
+      </GhostTable>
+      <GhostTable data-testid="table-metrics">
+        <GhostTableHead>
+          <GhostTableRow>
+            <GhostTableHeaderCell scope="col">Metric</GhostTableHeaderCell>
+            <GhostTableHeaderCell scope="col">Value</GhostTableHeaderCell>
+          </GhostTableRow>
+        </GhostTableHead>
+        <GhostTableBody>
+          <GhostTableRow>
+            <GhostTableHeaderCell scope="row">Errors</GhostTableHeaderCell>
+            <GhostTableCell>0</GhostTableCell>
+          </GhostTableRow>
+        </GhostTableBody>
+        <GhostTableFoot>
+          <GhostTableRow>
+            <GhostTableCell colspan="2">Last 24h</GhostTableCell>
+          </GhostTableRow>
+        </GhostTableFoot>
+      </GhostTable>
+      <GhostTable contain-horizontal data-testid="table-contained">
+        <GhostTableHead>
+          <GhostTableRow>
+            <GhostTableHeaderCell scope="col">Alpha</GhostTableHeaderCell>
+            <GhostTableHeaderCell scope="col">Beta</GhostTableHeaderCell>
+            <GhostTableHeaderCell scope="col">Gamma</GhostTableHeaderCell>
+            <GhostTableHeaderCell scope="col">Delta</GhostTableHeaderCell>
+          </GhostTableRow>
+        </GhostTableHead>
+        <GhostTableBody>
+          <GhostTableRow>
+            <GhostTableCell>1</GhostTableCell>
+            <GhostTableCell>2</GhostTableCell>
+            <GhostTableCell>3</GhostTableCell>
+            <GhostTableCell>4</GhostTableCell>
+          </GhostTableRow>
+        </GhostTableBody>
+      </GhostTable>
     </section>
 
     <section aria-labelledby="separator-heading">
