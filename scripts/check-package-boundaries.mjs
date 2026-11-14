@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url'
 
 import { cruise } from 'dependency-cruiser'
 
-import dependencyCruiserConfig from '../.dependency-cruiser.mjs'
+import { createDependencyCruiserConfig } from '../.dependency-cruiser.mjs'
 import { workspacePackages } from './workspace-packages.mjs'
 
 const repositoryRootUrl = new URL('..', import.meta.url)
@@ -13,6 +13,8 @@ const repositoryRootUrl = new URL('..', import.meta.url)
 const repositoryRootPath = resolve(
   process.argv[2] ?? fileURLToPath(repositoryRootUrl),
 )
+const dependencyCruiserConfig =
+  createDependencyCruiserConfig(repositoryRootPath)
 const packageDirectories = await readdir(join(repositoryRootPath, 'packages'), {
   withFileTypes: true,
 })
@@ -140,7 +142,6 @@ const sourceFiles = await collectSourceFiles([
 const cruiseResult = await cruise(sourceFiles, {
   ...dependencyCruiserConfig.options,
   baseDir: repositoryRootPath,
-  tsConfig: { fileName: join(repositoryRootPath, 'tsconfig.json') },
   validate: true,
   ruleSet: {
     forbidden: dependencyCruiserConfig.forbidden,

@@ -1,5 +1,8 @@
+import { resolve } from 'node:path'
+import { fileURLToPath } from 'node:url'
+
 /** @type {import('dependency-cruiser').IConfiguration} */
-export default {
+const config = {
   forbidden: [
     {
       name: 'no-circular',
@@ -105,9 +108,6 @@ export default {
         '(^|/)\\.vitepress/(dist|cache)/',
       ],
     },
-    tsConfig: {
-      fileName: 'tsconfig.json',
-    },
     enhancedResolveOptions: {
       exportsFields: ['exports'],
       conditionNames: ['import', 'require', 'node', 'default', 'types'],
@@ -120,3 +120,18 @@ export default {
     },
   },
 }
+
+// The caller's workspace owns its tsconfig, regardless of the process cwd.
+export function createDependencyCruiserConfig(root) {
+  return {
+    ...config,
+    options: {
+      ...config.options,
+      tsConfig: { fileName: resolve(root, 'tsconfig.json') },
+    },
+  }
+}
+
+export default createDependencyCruiserConfig(
+  fileURLToPath(new URL('.', import.meta.url)),
+)
