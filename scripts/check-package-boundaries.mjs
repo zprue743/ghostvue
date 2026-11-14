@@ -131,13 +131,18 @@ async function collectSourceFiles(roots) {
   return files
 }
 
-const sourceFiles = await collectSourceFiles([
-  'packages',
-  'apps',
-  'examples',
-  'tests',
-  'scripts',
-])
+// Optional source entries reuse the same rules for component-scoped checks.
+const selectedFiles = process.argv.slice(3)
+const sourceFiles =
+  selectedFiles.length > 0
+    ? selectedFiles
+    : await collectSourceFiles([
+        'packages',
+        'apps',
+        'examples',
+        'tests',
+        'scripts',
+      ])
 
 const cruiseResult = await cruise(sourceFiles, {
   ...dependencyCruiserConfig.options,

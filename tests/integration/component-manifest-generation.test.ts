@@ -405,6 +405,34 @@ describe(
       expect(check.ok).toBe(true)
     })
 
+    it('ignores unrelated generated manifests only in component-scoped checks', async () => {
+      const manifestsDir = await mkdtemp(
+        join(tmpdir(), 'ghost-scoped-manifests-'),
+      )
+      const packages = await fixturePackages(manifestsDir)
+      await syncRepositoryManifests({ repositoryRoot, write: true, packages })
+      await writeFile(
+        join(manifestsDir, 'ghost-unrelated.manifest.json'),
+        serializeManifest({
+          ...prose,
+          name: 'GhostUnrelated',
+          source: 'generated',
+        }),
+      )
+      const scoped = await syncRepositoryManifests({
+        repositoryRoot,
+        packages,
+        componentNames: ['GhostWidget'],
+      })
+      expect(scoped.ok).toBe(true)
+      expect(scoped.checked).toEqual([
+        'packages/vue/manifests/ghost-widget.manifest.json',
+      ])
+      expect(
+        (await syncRepositoryManifests({ repositoryRoot, packages })).ok,
+      ).toBe(false)
+    })
+
     it('allows leftover handwritten manifests when no matching SFC exists', async () => {
       const manifestsDir = await mkdtemp(join(tmpdir(), 'ghost-manifests-'))
       const packages = await fixturePackages(manifestsDir)

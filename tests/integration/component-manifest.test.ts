@@ -4,6 +4,8 @@ import { resolve } from 'node:path'
 import Ajv2020 from 'ajv/dist/2020'
 import { describe, expect, it } from 'vitest'
 
+import { validateManifestSchemas } from '../../scripts/lib/component-manifests.js'
+
 const repositoryRoot = process.cwd()
 const schemaPath = resolve(
   repositoryRoot,
@@ -50,22 +52,9 @@ describe('component manifest schema', () => {
   })
 
   it('accepts every repository *.manifest.json', async () => {
-    const schema = await readJsonObject(schemaPath)
-    const ajv = new Ajv2020({ allErrors: true, strict: true })
-    const validate = ajv.compile(schema)
     const manifests = await listFiles('**/*.manifest.json')
-
     expect(manifests.length).toBeGreaterThan(0)
-
-    for (const relativePath of manifests) {
-      const manifest = await readJsonObject(
-        resolve(repositoryRoot, relativePath),
-      )
-      const valid = validate(manifest)
-      expect(valid, `${relativePath}: ${ajv.errorsText(validate.errors)}`).toBe(
-        true,
-      )
-    }
+    expect(await validateManifestSchemas(repositoryRoot, manifests)).toEqual([])
   })
 
   it('rejects invalid fixtures that are not named *.manifest.json', async () => {

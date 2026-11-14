@@ -16,6 +16,7 @@
 import { access, glob, mkdir, readFile, writeFile } from 'node:fs/promises'
 import { basename, join } from 'node:path'
 
+import Ajv2020 from 'ajv/dist/2020.js'
 import { createChecker } from 'vue-component-meta'
 
 export const CURRENT_SCHEMA_VERSION = '1.0.0'
@@ -64,7 +65,8 @@ export function componentExamplePrefix(name) {
  * Skips when the repository has no examples directory so fixture syncs
  * used by unit tests stay isolated.
  */
-export async function validateExampleManifests(repositoryRoot) {
+export async function validateExampleManifests(repositoryRoot, componentNames) {
+  const prefixes = componentNames?.map(componentExamplePrefix)
   const violations = []
   const examplesRoot = join(repositoryRoot, 'examples')
   if (!(await fileExists(examplesRoot))) {
@@ -73,7 +75,9 @@ export async function validateExampleManifests(repositoryRoot) {
 
   const fileIds = new Set()
   for await (const file of glob('*/*.vue', { cwd: examplesRoot })) {
-    fileIds.add(file.replaceAll('\\', '/').replace(/\.vue$/, ''))
+    const id = file.replaceAll('\\', '/').replace(/\.vue$/, '')
+    if (!prefixes || prefixes.some((prefix) => id.startsWith(`${prefix}/`)))
+      fileIds.add(id)
   }
 
   const referenced = new Map()
@@ -81,7 +85,16 @@ export async function validateExampleManifests(repositoryRoot) {
     cwd: repositoryRoot,
   })) {
     const relativePath = file.replaceAll('\\', '/')
+    if (
+      componentNames &&
+      !componentNames.some(
+        (name) =>
+          basename(relativePath) === `${pascalToKebab(name)}.manifest.json`,
+      )
+    )
+      continue
     const manifest = await readJsonObject(join(repositoryRoot, relativePath))
+    if (componentNames && !componentNames.includes(manifest.name)) continue
     const prefix =
       typeof manifest.name === 'string'
         ? componentExamplePrefix(manifest.name)
@@ -585,7 +598,13 @@ export async function syncRepositoryManifests({
   repositoryRoot,
   write = false,
   packages = MANIFEST_PACKAGES,
+  componentNames,
 } = {}) {
+  const selectedManifestFiles =
+    componentNames &&
+    new Set(
+      componentNames.map((name) => `${pascalToKebab(name)}.manifest.json`),
+    )
   const violations = []
   const written = []
   const checked = []
@@ -593,9 +612,14 @@ export async function syncRepositoryManifests({
 
   for (const spec of packages) {
     const pkg = resolveManifestPackage(repositoryRoot, spec)
-    const components = await listVueComponents(pkg.srcDir)
+    const components = (await listVueComponents(pkg.srcDir)).filter(
+      (file) =>
+        !componentNames || componentNames.includes(basename(file, '.vue')),
+    )
     if (components.length === 0) {
       for (const fileName of await listManifestFiles(pkg.manifestsDir)) {
+        if (selectedManifestFiles && !selectedManifestFiles.has(fileName))
+          continue
         const relativePath = join(
           'packages',
           pkg.directory,
@@ -680,6 +704,8 @@ export async function syncRepositoryManifests({
     }
 
     for (const fileName of await listManifestFiles(pkg.manifestsDir)) {
+      if (selectedManifestFiles && !selectedManifestFiles.has(fileName))
+        continue
       const absoluteManifest = join(pkg.manifestsDir, fileName)
       if (generatedFiles.has(absoluteManifest)) continue
       const relativePath = join(
@@ -698,4 +724,20 @@ export async function syncRepositoryManifests({
   }
 
   return { ok: violations.length === 0, violations, written, checked }
+}
+
+/** Shared schema validation for the repository gate and scoped verification. */
+export async function validateManifestSchemas(repositoryRoot, files) {
+  const schema = await readJsonObject(
+    join(repositoryRoot, 'schemas/component-manifest.schema.json'),
+  )
+  const ajv = new Ajv2020({ allErrors: true, strict: true })
+  const validate = ajv.compile(schema)
+  const violations = []
+  for (const file of files) {
+    const manifest = await readJsonObject(join(repositoryRoot, file))
+    if (!validate(manifest))
+      violations.push(`${file}: ${ajv.errorsText(validate.errors)}`)
+  }
+  return violations
 }

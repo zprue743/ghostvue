@@ -4,6 +4,9 @@ node_modules
 **/*.manifest.json
 dist
 coverage
+
+# Scoped component reports and temporary checker configs.
+reports/verify-component/
 docs/warnings.md
 docs/themes/tokens.md
 packages/themes/src/generated
