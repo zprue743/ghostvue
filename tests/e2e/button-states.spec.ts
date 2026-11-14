@@ -23,7 +23,7 @@ async function pinShot(shot: {
   })
 }
 
-test.describe('GhostButton state matrix', () => {
+test.describe('GhostButton state matrix', { tag: '@visual' }, () => {
   test.use({
     viewport: { width: 1280, height: 900 },
     deviceScaleFactor: 1,
@@ -78,7 +78,6 @@ test.describe('GhostButton state matrix', () => {
             {
               ...screenshotOptions,
               mask: [shot.locator('.cell-label'), shot.locator('.tone-label')],
-              maxDiffPixelRatio: 0.05,
             },
           )
         }
@@ -89,41 +88,44 @@ test.describe('GhostButton state matrix', () => {
   })
 })
 
-test.describe('GhostButton state matrix forced colors', () => {
-  test.use({
-    viewport: { width: 1280, height: 900 },
-    deviceScaleFactor: 1,
-  })
+test.describe(
+  'GhostButton state matrix forced colors',
+  { tag: '@visual' },
+  () => {
+    test.use({
+      viewport: { width: 1280, height: 900 },
+      deviceScaleFactor: 1,
+    })
 
-  test('snapshots forced-colors at each density', async ({ page }) => {
-    const playground = await startStaticServer('apps/playground/dist')
+    test('snapshots forced-colors at each density', async ({ page }) => {
+      const playground = await startStaticServer('apps/playground/dist')
 
-    try {
-      await page.emulateMedia({
-        forcedColors: 'active',
-        reducedMotion: 'reduce',
-      })
-      await page.goto(playground.url)
-      await page.evaluate(() => document.fonts.ready)
+      try {
+        await page.emulateMedia({
+          forcedColors: 'active',
+          reducedMotion: 'reduce',
+        })
+        await page.goto(playground.url)
+        await page.evaluate(() => document.fonts.ready)
 
-      const rest = page.getByTestId('matrix-light-comfortable-accent-rest')
-      await expect(rest).toHaveCSS('box-shadow', 'none')
-      await expect(rest).toHaveCSS('background-image', 'none')
+        const rest = page.getByTestId('matrix-light-comfortable-accent-rest')
+        await expect(rest).toHaveCSS('box-shadow', 'none')
+        await expect(rest).toHaveCSS('background-image', 'none')
 
-      for (const density of densities) {
-        const shot = page.getByTestId(`button-matrix-shot-light-${density}`)
-        await pinShot(shot)
-        await expect(shot).toHaveScreenshot(
-          `button-matrix-forced-colors-${density}.png`,
-          {
-            ...screenshotOptions,
-            mask: [shot.locator('.cell-label'), shot.locator('.tone-label')],
-            maxDiffPixelRatio: 0.05,
-          },
-        )
+        for (const density of densities) {
+          const shot = page.getByTestId(`button-matrix-shot-light-${density}`)
+          await pinShot(shot)
+          await expect(shot).toHaveScreenshot(
+            `button-matrix-forced-colors-${density}.png`,
+            {
+              ...screenshotOptions,
+              mask: [shot.locator('.cell-label'), shot.locator('.tone-label')],
+            },
+          )
+        }
+      } finally {
+        await playground.close()
       }
-    } finally {
-      await playground.close()
-    }
-  })
-})
+    })
+  },
+)

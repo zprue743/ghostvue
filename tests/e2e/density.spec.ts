@@ -28,63 +28,64 @@ test.describe('density, type, and roundness', () => {
     deviceScaleFactor: 1,
   })
 
-  test('renders GhostButton at every density and roundness', async ({
-    page,
-  }) => {
-    const playground = await startStaticServer('apps/playground/dist')
+  test(
+    'renders GhostButton at every density and roundness',
+    { tag: '@visual' },
+    async ({ page }) => {
+      const playground = await startStaticServer('apps/playground/dist')
 
-    try {
-      await page.emulateMedia({ reducedMotion: 'reduce' })
-      await page.goto(playground.url)
-      await page.evaluate(() => document.fonts.ready)
+      try {
+        await page.emulateMedia({ reducedMotion: 'reduce' })
+        await page.goto(playground.url)
+        await page.evaluate(() => document.fonts.ready)
 
-      const preview = page.getByTestId('density-preview')
-      expect(
-        await preview.evaluate((element) =>
-          getComputedStyle(element)
-            .getPropertyValue('--ghost-roundness')
-            .trim(),
-        ),
-      ).toBe('1')
+        const preview = page.getByTestId('density-preview')
+        expect(
+          await preview.evaluate((element) =>
+            getComputedStyle(element)
+              .getPropertyValue('--ghost-roundness')
+              .trim(),
+          ),
+        ).toBe('1')
 
-      for (const density of densities) {
-        const row = page.getByTestId(`density-row-${density}`)
-        await expect(row).toHaveAttribute('data-ghost-density', density)
+        for (const density of densities) {
+          const row = page.getByTestId(`density-row-${density}`)
+          await expect(row).toHaveAttribute('data-ghost-density', density)
 
-        for (const amount of roundnesses) {
-          const key = String(amount)
-          const md = page.getByTestId(`density-${density}-roundness-${key}-md`)
-          await expect(md).toHaveCSS('min-height', heights[density].md)
-          await expect(md).toHaveCSS('border-radius', radii[density][amount])
+          for (const amount of roundnesses) {
+            const key = String(amount)
+            const md = page.getByTestId(
+              `density-${density}-roundness-${key}-md`,
+            )
+            await expect(md).toHaveCSS('min-height', heights[density].md)
+            await expect(md).toHaveCSS('border-radius', radii[density][amount])
 
-          await expect(
-            page.getByTestId(`density-${density}-roundness-${key}-sm`),
-          ).toHaveCSS('min-height', heights[density].sm)
-          await expect(
-            page.getByTestId(`density-${density}-roundness-${key}-lg`),
-          ).toHaveCSS('min-height', heights[density].lg)
+            await expect(
+              page.getByTestId(`density-${density}-roundness-${key}-sm`),
+            ).toHaveCSS('min-height', heights[density].sm)
+            await expect(
+              page.getByTestId(`density-${density}-roundness-${key}-lg`),
+            ).toHaveCSS('min-height', heights[density].lg)
+          }
+
+          const shot = page.getByTestId(`density-shot-${density}`)
+          // Pin the clip so snapshot dimensions stay invariant and mask playground labels.
+          await shot.evaluate((element) => {
+            element.style.boxSizing = 'border-box'
+            element.style.height = '88px'
+            element.style.overflow = 'hidden'
+            element.style.width = '1168px'
+          })
+          await expect(shot).toHaveScreenshot(`density-${density}.png`, {
+            ...screenshotOptions,
+            mask: [shot.locator('.roundness-cell > span')],
+          })
         }
-
-        const shot = page.getByTestId(`density-shot-${density}`)
-        // Pin the clip so system-font metrics cannot change snapshot dimensions.
-        // Mask playground labels; button glyphs still differ slightly across
-        // Ubuntu fonts, so this suite allows 0.05 (GHO-64 snapshots stay at 0.03).
-        await shot.evaluate((element) => {
-          element.style.boxSizing = 'border-box'
-          element.style.height = '88px'
-          element.style.overflow = 'hidden'
-          element.style.width = '1168px'
-        })
-        await expect(shot).toHaveScreenshot(`density-${density}.png`, {
-          ...screenshotOptions,
-          mask: [shot.locator('.roundness-cell > span')],
-          maxDiffPixelRatio: 0.05,
-        })
+      } finally {
+        await playground.close()
       }
-    } finally {
-      await playground.close()
-    }
-  })
+    },
+  )
 })
 
 test.describe('coarse pointer touch floor', () => {

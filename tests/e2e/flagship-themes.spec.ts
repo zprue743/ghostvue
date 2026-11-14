@@ -4,7 +4,7 @@ import { startStaticServer } from './static-server'
 
 const screenshotOptions = {
   animations: 'disabled' as const,
-  maxDiffPixelRatio: 0.05,
+  maxDiffPixelRatio: 0.03,
 }
 
 const flagships = ['calm', 'vibrant', 'mono'] as const
@@ -21,7 +21,7 @@ async function pinShot(shot: {
   })
 }
 
-test.describe('Flagship GhostButton matrices', () => {
+test.describe('Flagship GhostButton matrices', { tag: '@visual' }, () => {
   test.use({
     viewport: { width: 1280, height: 900 },
     deviceScaleFactor: 1,

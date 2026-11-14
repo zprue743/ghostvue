@@ -57,6 +57,9 @@ segment does not match the manifest `name`.
 and `/examples.html?id=<id>` (one example). `pnpm test:e2e` visits every
 registered id and runs axe on that page.
 
-Do not add per-example screenshot snapshots here. Deterministic visual
-regression is a separate concern; existing playground snapshots must stay
-stable.
+Per-example visual regression snapshots live in
+[`tests/e2e/examples-visual.spec.ts`](../../tests/e2e/examples-visual.spec.ts),
+driven automatically by `examples/registry.ts`. When adding or updating an
+example, follow the
+[visual regression workflow](../standards/testing.md#visual-regression) to
+regenerate Linux baselines with `pnpm test:visual:docker`.

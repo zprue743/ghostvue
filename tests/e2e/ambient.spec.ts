@@ -85,35 +85,39 @@ test.describe('ambient interactivity', () => {
     }
   })
 
-  test('snapshots the opted-in spotlight button', async ({ page }) => {
-    const playground = await startStaticServer('apps/playground/dist')
+  test(
+    'snapshots the opted-in spotlight button',
+    { tag: '@visual' },
+    async ({ page }) => {
+      const playground = await startStaticServer('apps/playground/dist')
 
-    try {
-      await page.goto(playground.url)
-      await page.evaluate(() => document.fonts.ready)
+      try {
+        await page.goto(playground.url)
+        await page.evaluate(() => document.fonts.ready)
 
-      const button = page.getByTestId('ambient-button-spotlight')
-      await button.scrollIntoViewIfNeeded()
-      // Freeze the glow without :hover. Tolerance is for CI font AA; a
-      // missing glow is a much larger share of this clip.
-      await button.evaluate((element) => {
-        element.style.boxSizing = 'border-box'
-        element.style.height = '40px'
-        element.style.overflow = 'hidden'
-        element.style.width = '160px'
-        element.style.setProperty('--ghost-pointer-x', '40px')
-        element.style.setProperty('--ghost-pointer-y', '16px')
-        const glow = element.querySelector('[data-part="glow"]')
-        if (glow instanceof HTMLElement) glow.style.opacity = '0.28'
-      })
-      await expect(button).toHaveScreenshot('button-spotlight-opt-in.png', {
-        ...screenshotOptions,
-        maxDiffPixelRatio: 0.12,
-      })
-    } finally {
-      await playground.close()
-    }
-  })
+        const button = page.getByTestId('ambient-button-spotlight')
+        await button.scrollIntoViewIfNeeded()
+        // Freeze the glow without :hover. Tolerance is for CI font AA; a
+        // missing glow is a much larger share of this clip.
+        await button.evaluate((element) => {
+          element.style.boxSizing = 'border-box'
+          element.style.height = '40px'
+          element.style.overflow = 'hidden'
+          element.style.width = '160px'
+          element.style.setProperty('--ghost-pointer-x', '40px')
+          element.style.setProperty('--ghost-pointer-y', '16px')
+          const glow = element.querySelector('[data-part="glow"]')
+          if (glow instanceof HTMLElement) glow.style.opacity = '0.28'
+        })
+        await expect(button).toHaveScreenshot('button-spotlight-opt-in.png', {
+          ...screenshotOptions,
+          maxDiffPixelRatio: 0.12,
+        })
+      } finally {
+        await playground.close()
+      }
+    },
+  )
 
   test('prefers-reduced-motion keeps surfaces off and still', async ({
     page,

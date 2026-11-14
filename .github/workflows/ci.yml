@@ -36,7 +36,11 @@ jobs:
 
   browser:
     runs-on: ubuntu-latest
-    # Fail faster than the previous 10+ minute apt hang; healthy runs are ~1 minute.
+    # Keep the image tag aligned with @playwright/test in package.json so Chromium and system fonts stay pinned.
+    container:
+      image: mcr.microsoft.com/playwright:v1.62.1-noble
+    env:
+      HOME: /root
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
@@ -48,17 +52,13 @@ jobs:
           node-version: 22
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - name: Resolve Playwright version
-        id: playwright
-        run: |
-          version=$(node -p 'JSON.parse(require("fs").readFileSync("package.json","utf8")).devDependencies["@playwright/test"]')
-          echo "version=${version}" >> "$GITHUB_OUTPUT"
-      - uses: actions/cache@v4
+      - run: pnpm test:e2e --update-snapshots=none
+      - uses: actions/upload-artifact@v4
+        if: failure()
         with:
-          path: ~/.cache/ms-playwright
-          key: ${{ runner.os }}-playwright-${{ steps.playwright.outputs.version }}
-      # Skip --with-deps: GitHub Ubuntu already has Chromium libs, and apt hangs on mirror DNS.
-      - name: Install Playwright Chromium
-        timeout-minutes: 5
-        run: pnpm exec playwright install chromium
-      - run: pnpm test:e2e
+          name: playwright-report
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 14
+          if-no-files-found: ignore
