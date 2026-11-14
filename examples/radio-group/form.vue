@@ -39,5 +39,7 @@ label {
 form {
   display: grid;
   gap: 0.75rem;
+  /* Stable example clip height across Linux CI and local Playwright (subpixel grid rounding). */
+  min-block-size: 242px;
 }
 </style>
