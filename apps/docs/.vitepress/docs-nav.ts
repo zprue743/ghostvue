@@ -30,6 +30,7 @@ export const docsSidebar: LlmsSidebarGroup[] = [
       },
       { text: 'GhostKbd', link: '/components/kbd' },
       { text: 'GhostPopover', link: '/components/popover' },
+      { text: 'GhostPagination', link: '/components/pagination' },
       { text: 'GhostProgress', link: '/components/progress' },
       { text: 'GhostSeparator', link: '/components/separator' },
       { text: 'GhostSkeleton', link: '/components/skeleton' },
@@ -102,6 +103,10 @@ export const docsSidebar: LlmsSidebarGroup[] = [
   {
     text: 'Contributing',
     items: [
+      {
+        text: 'GhostPagination specification',
+        link: '/components/pagination-spec',
+      },
       {
         text: 'GhostCollapsible specification',
         link: '/components/collapsible-spec',

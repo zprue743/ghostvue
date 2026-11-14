@@ -8,6 +8,7 @@ import {
   GhostField as GhostFieldThemed,
   GhostInput as GhostInputThemed,
   GhostKbd as GhostKbdThemed,
+  GhostPagination as GhostPaginationThemed,
   GhostProgress as GhostProgressThemed,
   GhostSeparator as GhostSeparatorThemed,
   GhostSkeleton as GhostSkeletonThemed,
@@ -38,6 +39,7 @@ import {
   GhostFieldLabel,
   GhostInput,
   GhostKbd,
+  GhostPagination,
   GhostProgress,
   GhostSeparator,
   GhostSkeleton,
@@ -71,6 +73,7 @@ const submitName = ref('')
 const submittedName = ref('')
 const opsEmail = ref('')
 const distributionOptIn = ref(false)
+const playgroundPaginationPage = ref(4)
 const playgroundNotes = ref('Headless notes.')
 const playgroundBio = ref('Themed bio.')
 const playgroundDraft = ref('Auto-resize this draft.\nAdd more lines to grow.')
@@ -680,6 +683,35 @@ function submitPlaygroundComment(event: Event): void {
       </div>
     </section>
 
+    <section aria-labelledby="pagination-heading">
+      <h2 id="pagination-heading">GhostPagination</h2>
+      <fieldset>
+        <legend>Headless pages</legend>
+        <GhostPagination
+          v-model="playgroundPaginationPage"
+          :page-count="15"
+          aria-label="Playground result pages"
+          data-testid="pagination-headless"
+          class="playground-pagination"
+        />
+        <p data-testid="pagination-page-status">
+          Paged results: page {{ playgroundPaginationPage }} of 15
+        </p>
+      </fieldset>
+      <fieldset>
+        <legend>Compact themed</legend>
+        <div class="ghost-theme">
+          <GhostPaginationThemed
+            :page-count="6"
+            :default-page="2"
+            size="sm"
+            aria-label="Playground compact pages"
+            data-testid="pagination-themed"
+          />
+        </div>
+      </fieldset>
+    </section>
+
     <section aria-labelledby="progress-heading">
       <h2 id="progress-heading">GhostProgress</h2>
       <GhostProgress
@@ -1217,6 +1249,31 @@ fieldset {
   display: flex;
   gap: 0.75rem;
   margin-block-start: 1rem;
+}
+
+.playground-pagination :deep(.ghost-pagination__list) {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.playground-pagination :deep(button) {
+  appearance: none;
+  background: Canvas;
+  border: 1px solid GrayText;
+  border-radius: 0.25rem;
+  color: CanvasText;
+  cursor: pointer;
+  min-inline-size: 2rem;
+  padding: 0.25rem 0.5rem;
+}
+
+.playground-pagination :deep(button[aria-current='page']) {
+  background: Highlight;
+  color: HighlightText;
 }
 
 /* Headless progress ships no visuals; playground-owned track, not the themed recipe. */

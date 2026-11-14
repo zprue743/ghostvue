@@ -29,22 +29,22 @@ intent to a page index.
 
 Headless `@ghostvue/vue` `GhostPagination` / `useGhostPagination`:
 
-| Prop             | Type      | Default        | Contract                                                                                                                                 |
-| ---------------- | --------- | -------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
-| `modelValue`     | `number`  | omitted        | Controlled current page (1-based). Omit for uncontrolled mode.                                                                           |
-| `defaultPage`    | `number`  | `1`            | Initial page when `modelValue` is omitted. Later changes are ignored. Clamped to `[1, pageCount]`.                                         |
-| `pageCount`      | `number`  | required       | Total pages. Values below `1` are treated as `1`.                                                                                        |
-| `siblingCount`   | `number`  | `1`            | Pages shown on each side of the current page in the numeric range. Non-negative integers; invalid values fall back to `1`.                |
-| `boundaryCount`  | `number`  | `1`            | Pages always visible at the start and end of the numeric range. Non-negative integers; invalid values fall back to `1`.                |
-| `showEdges`      | `boolean` | `true`         | When `true`, render first and last controls in addition to previous and next.                                                           |
-| `disabled`       | `boolean` | `false`        | Disables all pagination controls. Current page semantics remain visible.                                                                 |
-| `ariaLabel`      | `string`  | `'Pagination'` | Accessible name for the root `navigation` landmark (`aria-label`).                                                                       |
-| `getPageLabel`   | `(page: number) => string` | omitted | Optional formatter for numbered page accessible names. Default: `` `Page ${page}` ``. Current page appends `', current page'`.          |
-| `previousLabel`  | `string`  | `'Previous page'` | Accessible name for the previous control.                                                                                            |
-| `nextLabel`      | `string`  | `'Next page'`  | Accessible name for the next control.                                                                                                    |
-| `firstLabel`     | `string`  | `'First page'` | Accessible name for the first control when `showEdges` is `true`.                                                                        |
-| `lastLabel`      | `string`  | `'Last page'`  | Accessible name for the last control when `showEdges` is `true`.                                                                         |
-| `ellipsisLabel`  | `string`  | `'More pages'` | Accessible name for the ellipsis affordance (exposed on the list item; the glyph itself is `aria-hidden`).                              |
+| Prop            | Type                       | Default           | Contract                                                                                                                       |
+| --------------- | -------------------------- | ----------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| `modelValue`    | `number`                   | omitted           | Controlled current page (1-based). Omit for uncontrolled mode.                                                                 |
+| `defaultPage`   | `number`                   | `1`               | Initial page when `modelValue` is omitted. Later changes are ignored. Clamped to `[1, pageCount]`.                             |
+| `pageCount`     | `number`                   | required          | Total pages. Values below `1` are treated as `1`.                                                                              |
+| `siblingCount`  | `number`                   | `1`               | Pages shown on each side of the current page in the numeric range. Non-negative integers; invalid values fall back to `1`.     |
+| `boundaryCount` | `number`                   | `1`               | Pages always visible at the start and end of the numeric range. Non-negative integers; invalid values fall back to `1`.        |
+| `showEdges`     | `boolean`                  | `true`            | When `true`, render first and last controls in addition to previous and next.                                                  |
+| `disabled`      | `boolean`                  | `false`           | Disables all pagination controls. Current page semantics remain visible.                                                       |
+| `ariaLabel`     | `string`                   | `'Pagination'`    | Accessible name for the root `navigation` landmark (`aria-label`).                                                             |
+| `getPageLabel`  | `(page: number) => string` | omitted           | Optional formatter for numbered page accessible names. Default: `` `Page ${page}` ``. Current page appends `', current page'`. |
+| `previousLabel` | `string`                   | `'Previous page'` | Accessible name for the previous control.                                                                                      |
+| `nextLabel`     | `string`                   | `'Next page'`     | Accessible name for the next control.                                                                                          |
+| `firstLabel`    | `string`                   | `'First page'`    | Accessible name for the first control when `showEdges` is `true`.                                                              |
+| `lastLabel`     | `string`                   | `'Last page'`     | Accessible name for the last control when `showEdges` is `true`.                                                               |
+| `ellipsisLabel` | `string`                   | `'More pages'`    | Accessible name for the ellipsis affordance (exposed on the list item; the glyph itself is `aria-hidden`).                     |
 
 Named ESM exports: `GhostPagination`, `useGhostPagination`,
 `getPaginationRange`, `GhostPaginationItem` (type), and related prop types.
@@ -58,9 +58,9 @@ items it renders. Do not redeclare `aria-*` as camelCase props.
 Themed `@ghostvue/themes` `GhostPagination` wraps the unstyled component. Same
 behavioral props; these exist only on the themed wrapper:
 
-| Prop   | Type                   | Default | Contract                                                                                       |
-| ------ | ---------------------- | ------- | ---------------------------------------------------------------------------------------------- |
-| `size` | `'sm' \| 'md' \| 'lg'` | `'md'`  | Control sizing. The default omits `data-size` so CSS can treat a missing hook as `md`.          |
+| Prop   | Type                   | Default | Contract                                                                               |
+| ------ | ---------------------- | ------- | -------------------------------------------------------------------------------------- |
+| `size` | `'sm' \| 'md' \| 'lg'` | `'md'`  | Control sizing. The default omits `data-size` so CSS can treat a missing hook as `md`. |
 
 The themed wrapper sets `data-size` on the inner root and wraps the instance in
 `.ghost-themed-scope` (`display: contents`).

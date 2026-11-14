@@ -1,0 +1,76 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "handwritten",
+  "name": "GhostPagination",
+  "package": "@ghostvue/themes",
+  "status": "experimental",
+  "description": "Themed pagination wrapper around @ghostvue/vue GhostPagination. Adds size styling via data-size.",
+  "props": [
+    {
+      "name": "size",
+      "type": "'sm' | 'md' | 'lg'",
+      "default": "md",
+      "required": false,
+      "description": "Control sizing. Default omits data-size.",
+      "deprecated": false
+    }
+  ],
+  "models": [
+    {
+      "prop": "modelValue",
+      "event": "update:modelValue",
+      "type": "number",
+      "description": "v-model binding for the current page."
+    }
+  ],
+  "events": [],
+  "slots": [
+    {
+      "name": "page",
+      "props": [],
+      "description": "Forwarded page slot."
+    },
+    {
+      "name": "ellipsis",
+      "props": [],
+      "description": "Forwarded ellipsis slot."
+    }
+  ],
+  "exposed": [
+    {
+      "name": "element",
+      "kind": "property",
+      "type": "HTMLElement | null",
+      "description": "Navigation root of the inner headless component."
+    },
+    {
+      "name": "focus",
+      "kind": "method",
+      "type": "(options?: FocusOptions) => void",
+      "description": "Delegate focus to the inner pagination."
+    },
+    {
+      "name": "blur",
+      "kind": "method",
+      "type": "() => void",
+      "description": "Blur the inner pagination."
+    }
+  ],
+  "styling": {
+    "parts": [
+      {
+        "name": "root",
+        "description": "Themed navigation root (headless ghost-pagination)."
+      }
+    ],
+    "states": [],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "navigation",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/practices/landmark-regions/",
+    "keyboard": {},
+    "requiredAriaAttributes": []
+  },
+  "examples": ["pagination/themed"]
+}

@@ -204,6 +204,10 @@ export {
   type GhostTabsContentElement,
   type GhostTabsContentExposed,
 } from './ghost-tabs-content'
+export {
+  GhostPagination,
+  type GhostPaginationExposed,
+} from './ghost-pagination'
 export { GhostTooltip, type GhostTooltipSlotProps } from './ghost-tooltip'
 export {
   GhostTooltipTrigger,
