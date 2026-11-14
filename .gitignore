@@ -1,6 +1,9 @@
 node_modules/
 dist/
 coverage/
+
+# Scoped component reports and temporary checker configs.
+reports/verify-component/
 .vitepress/cache/
 .vitepress/dist/
 playwright-report/
@@ -10,5 +13,5 @@ test-results/
 *.local
 
 
-# Scoped component reports and temporary checker configs.
-reports/verify-component/
+# Generated from component manifests before docs build/dev.
+docs/reference/

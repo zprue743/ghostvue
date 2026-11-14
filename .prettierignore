@@ -4,6 +4,9 @@ node_modules
 **/*.manifest.json
 dist
 coverage
+
+# Scoped component reports and temporary checker configs.
+reports/verify-component/
 docs/warnings.md
 docs/themes/tokens.md
 packages/themes/src/generated
@@ -15,5 +18,5 @@ test-results
 pnpm-lock.yaml
 
 
-# Scoped component reports and temporary checker configs.
-reports/verify-component/
+# Manifest-derived Markdown is regenerated before docs commands.
+docs/reference
