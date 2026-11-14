@@ -151,8 +151,9 @@ describe('GhostSlider', () => {
       .findAll('span')
       .find((node) => node.text() === 'maximum')
       ?.attributes('id')
-    expect(minHintId).toBeTruthy()
-    expect(maxHintId).toBeTruthy()
+    if (!minHintId || !maxHintId) {
+      throw new Error('expected visually hidden range end label ids')
+    }
     expect(low?.attributes('aria-labelledby')).toBe(
       `price-range-label ${minHintId}`,
     )
@@ -248,7 +249,7 @@ describe('GhostSlider', () => {
     await nextTick()
     expect(focusSpy).toHaveBeenCalled()
 
-    thumb.element.focus()
+    HTMLElement.prototype.focus.call(thumb.element)
     await thumb.trigger('keydown', { key: 'ArrowRight' })
     expect(model.value).toBe(51)
     wrapper.unmount()
