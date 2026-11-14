@@ -281,6 +281,41 @@ describe('GhostTabs', () => {
     expect(tabs[2]?.attributes('tabindex')).toBe('-1')
   })
 
+  it('assigns the tab stop to a visible tab when the selected trigger is in a hidden subtree', async () => {
+    const wrapper = mount(
+      defineComponent({
+        setup() {
+          return () =>
+            h(
+              GhostTabs,
+              { defaultValue: 'one' },
+              {
+                default: () => [
+                  h(GhostTabsList, null, () => [
+                    h(
+                      'div',
+                      { style: { display: 'none' } },
+                      h(GhostTabsTrigger, { value: 'one' }, () => 'One'),
+                    ),
+                    h(GhostTabsTrigger, { value: 'two' }, () => 'Two'),
+                  ]),
+                  h(GhostTabsContent, { value: 'one' }, () => 'Panel one'),
+                  h(GhostTabsContent, { value: 'two' }, () => 'Panel two'),
+                ],
+              },
+            )
+        },
+      }),
+      { attachTo: document.body },
+    )
+    attached.push(wrapper)
+    await nextTick()
+
+    const tabs = tabButtons(wrapper)
+    expect(tabs[0]?.attributes('tabindex')).toBe('-1')
+    expect(tabs[1]?.attributes('tabindex')).toBe('0')
+  })
+
   it('keeps selection when focusing the selected tab in automatic mode', async () => {
     const { wrapper, updates } = mountTabs({ defaultValue: 'two' })
     await nextTick()
