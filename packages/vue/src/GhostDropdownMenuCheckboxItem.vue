@@ -64,6 +64,17 @@ const itemAttrs = computed(() => {
   }
 })
 
+function handleKeydown(event: KeyboardEvent): void {
+  if (props.disabled || event.defaultPrevented) {
+    return
+  }
+  if (event.key !== ' ' && event.key !== 'Enter') {
+    return
+  }
+  event.preventDefault()
+  handleClick(event as unknown as MouseEvent)
+}
+
 function handleClick(event: MouseEvent): void {
   const custom = attrs['onClick']
   if (typeof custom === 'function') {
@@ -98,7 +109,13 @@ defineExpose<GhostDropdownMenuCheckboxItemExposed>({
 </script>
 
 <template>
-  <component :is="as" ref="host" v-bind="itemAttrs" @click="handleClick">
+  <component
+    :is="as"
+    ref="host"
+    v-bind="itemAttrs"
+    @click="handleClick"
+    @keydown="handleKeydown"
+  >
     <slot />
   </component>
 </template>

@@ -148,7 +148,15 @@ useDismissableLayer(contentElement, {
     const skipRestore =
       reason === 'outside-pointer' && hasFocusableAncestor(event.target)
     shouldRestoreFocus.value = !skipRestore
+    const restoreTrigger = shouldRestoreFocus.value
     context.close()
+    if (restoreTrigger) {
+      // APG: Escape closes the menu and returns focus to the trigger even when
+      // roving focus moved into portaled items before useFocusScope captured it.
+      void nextTick(() => {
+        context.triggerElement.value?.focus({ preventScroll: true })
+      })
+    }
     if (skipRestore) {
       void nextTick(() => {
         if (context.isOpen.value) {
@@ -184,13 +192,18 @@ watch(
     if (!el || !positioned) {
       return
     }
-    // Item roving owns the tab stop; focus scope only restores to the trigger on close.
-    const focusLast = context.focusLastOnOpen.value
-    if (focusLast) {
-      focusLastMenuItem(el)
-    } else {
-      focusFirstMenuItem(el)
-    }
+    // Defer so `useFocusScope` records the trigger as `previouslyFocused` first.
+    void nextTick(() => {
+      if (!context.isOpen.value || focusTarget.value !== el) {
+        return
+      }
+      const focusLast = context.focusLastOnOpen.value
+      if (focusLast) {
+        focusLastMenuItem(el)
+      } else {
+        focusFirstMenuItem(el)
+      }
+    })
   },
   { flush: 'post' },
 )

@@ -227,12 +227,8 @@ function handleMenuKeyDown(
     }
 
     const role = target.getAttribute('role')
-    if (event.key === ' ' && role === 'menuitemcheckbox') {
-      event.preventDefault()
-      target.click()
-      return
-    }
-    if (role === 'menuitemcheckbox' && event.key === 'Enter') {
+    if (role === 'menuitemcheckbox') {
+      // Checkbox items own Space/Enter toggling on the host element.
       return
     }
 
