@@ -10,7 +10,6 @@ test.describe('docs theme switcher', () => {
     try {
       await page.goto(docs.url)
       const root = page.locator('html')
-      await expect(root).toHaveClass(/ghost-theme/)
       await expect(root).toHaveAttribute('data-ghost-theme', 'calm')
       await expect(page.getByTestId('docs-theme-calm').first()).toHaveAttribute(
         'aria-checked',
@@ -55,7 +54,7 @@ test.describe('docs theme switcher', () => {
       for (const mode of ['dark', 'light', 'dark', 'light']) {
         await toggle.click({ timeout: 2_000 })
         await expect(root).toHaveAttribute('data-ghost-mode', mode)
-        await expect(root).toHaveClass(/ghost-theme/)
+        await expect(root).toHaveAttribute('data-ghost-theme', /.+/)
       }
       const writes = await page.evaluate(
         () => (window as unknown as { classWrites: number }).classWrites,

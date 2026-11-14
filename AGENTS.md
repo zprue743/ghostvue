@@ -31,10 +31,24 @@ run `pnpm adapters:write` rather than hand-editing them.
 4. Comment non-obvious assumptions, invariants, accessibility choices,
    compatibility constraints, and tradeoffs. Comments explain intent, not
    syntax.
-5. Run focused checks while working, then run `pnpm verify` before completion.
-   Run `pnpm test:e2e` for browser-observable behavior.
+5. Run focused checks while working, then run `pnpm verify` before every push and
+   again before completion. Run only the e2e specs relevant to the change locally;
+   let CI run the full browser suite.
 6. Review the final diff as if reviewing another engineer's contribution.
 7. Report exactly what changed and which checks ran.
+
+## Agent workflow
+
+- Run `pnpm verify` before every push. Never push known format, lint, or type
+  failures.
+- Create or update Playwright visual baselines only with `pnpm test:visual:docker`
+  (Linux container snapshots). Do not commit host-rendered screenshots.
+- Locally, run only the e2e files that cover your change (for example
+  `pnpm exec playwright test tests/e2e/docs-revitalize.spec.ts`); rely on CI for
+  the full `pnpm test:e2e` run.
+- Before writing docs-side CSS overrides, read the upstream reset you are undoing
+  (for example VitePress `base.css`) and restore only those properties under the
+  narrowest scope.
 
 ## Commands
 
