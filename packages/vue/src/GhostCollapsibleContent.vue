@@ -14,6 +14,7 @@ import {
   type GhostCollapsibleContentElement,
   type GhostCollapsibleContentExposed,
 } from './ghost-collapsible'
+import { useCollapsibleContentHidden } from './use-collapsible-content-hidden'
 
 defineOptions({
   inheritAttrs: false,
@@ -71,6 +72,19 @@ onUnmounted(() => {
   context.setContentId(null)
 })
 
+const hasDataThemed = computed(() => 'data-themed' in attrs)
+const dataAnimationOff = computed(
+  () => props.disableAnimation || attrs['data-animation'] === 'off',
+)
+
+const panelHidden = useCollapsibleContentHidden({
+  isOpen: () => context.isOpen.value,
+  host: hostRef,
+  disableAnimation: () => props.disableAnimation,
+  dataAnimationOff: () => dataAnimationOff.value,
+  hasDataThemed: () => hasDataThemed.value,
+})
+
 const contentAttrs = computed(() => {
   const rest: Record<string, unknown> = {}
   for (const [key, value] of Object.entries(attrs)) {
@@ -82,7 +96,7 @@ const contentAttrs = computed(() => {
   const result: Record<string, unknown> = {
     ...rest,
     id: contentId.value,
-    hidden: !context.isOpen.value,
+    ...(panelHidden.value ? { hidden: true } : {}),
     'data-part': 'content',
     'data-state': context.isOpen.value ? 'open' : 'closed',
     ...(props.disableAnimation ? { 'data-animation': 'off' } : {}),
@@ -115,6 +129,8 @@ defineExpose<GhostCollapsibleContentExposed>({
     class="ghost-collapsible-content"
     v-bind="contentAttrs"
   >
-    <slot />
+    <div data-part="content-inner">
+      <slot />
+    </div>
   </component>
 </template>
