@@ -29,22 +29,22 @@ intent to a page index.
 
 Headless `@ghostvue/vue` `GhostPagination` / `useGhostPagination`:
 
-| Prop            | Type                       | Default           | Contract                                                                                                                       |
-| --------------- | -------------------------- | ----------------- | ------------------------------------------------------------------------------------------------------------------------------ |
-| `modelValue`    | `number`                   | omitted           | Controlled current page (1-based). Omit for uncontrolled mode.                                                                 |
-| `defaultPage`   | `number`                   | `1`               | Initial page when `modelValue` is omitted. Later changes are ignored. Clamped to `[1, pageCount]`.                             |
-| `pageCount`     | `number`                   | required          | Total pages. Values below `1` are treated as `1`.                                                                              |
-| `siblingCount`  | `number`                   | `1`               | Pages shown on each side of the current page in the numeric range. Non-negative integers; invalid values fall back to `1`.     |
-| `boundaryCount` | `number`                   | `1`               | Pages always visible at the start and end of the numeric range. Non-negative integers; invalid values fall back to `1`.        |
-| `showEdges`     | `boolean`                  | `true`            | When `true`, render first and last controls in addition to previous and next.                                                  |
-| `disabled`      | `boolean`                  | `false`           | Disables all pagination controls. Current page semantics remain visible.                                                       |
-| `ariaLabel`     | `string`                   | `'Pagination'`    | Accessible name for the root `navigation` landmark (`aria-label`).                                                             |
-| `getPageLabel`  | `(page: number) => string` | omitted           | Optional formatter for numbered page accessible names. Default: `` `Page ${page}` ``. Current page appends `', current page'`. |
-| `previousLabel` | `string`                   | `'Previous page'` | Accessible name for the previous control.                                                                                      |
-| `nextLabel`     | `string`                   | `'Next page'`     | Accessible name for the next control.                                                                                          |
-| `firstLabel`    | `string`                   | `'First page'`    | Accessible name for the first control when `showEdges` is `true`.                                                              |
-| `lastLabel`     | `string`                   | `'Last page'`     | Accessible name for the last control when `showEdges` is `true`.                                                               |
-| `ellipsisLabel` | `string`                   | `'More pages'`    | Accessible name for the ellipsis affordance (exposed on the list item; the glyph itself is `aria-hidden`).                     |
+| Prop            | Type                       | Default           | Contract                                                                                                                     |
+| --------------- | -------------------------- | ----------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| `modelValue`    | `number`                   | omitted           | Controlled current page (1-based). Omit for uncontrolled mode.                                                               |
+| `defaultPage`   | `number`                   | `1`               | Initial page when `modelValue` is omitted. Later changes are ignored. Clamped to `[1, pageCount]`.                           |
+| `pageCount`     | `number`                   | required          | Total pages. Values below `1` are treated as `1`.                                                                            |
+| `siblingCount`  | `number`                   | `1`               | Pages shown on each side of the current page in the numeric range. Non-negative integers; invalid values fall back to `1`.   |
+| `boundaryCount` | `number`                   | `1`               | Pages always visible at the start and end of the numeric range. Non-negative integers; invalid values fall back to `1`.      |
+| `showEdges`     | `boolean`                  | `true`            | When `true`, render first and last controls in addition to previous and next.                                                |
+| `disabled`      | `boolean`                  | `false`           | Disables all pagination controls. Current page semantics remain visible.                                                     |
+| `ariaLabel`     | `string`                   | `'Pagination'`    | Accessible name for the root `navigation` landmark (`aria-label`).                                                           |
+| `getPageLabel`  | `(page: number) => string` | omitted           | Optional formatter for numbered page accessible names. Default: `` `Page ${page}` ``. `aria-current` marks the current page. |
+| `previousLabel` | `string`                   | `'Previous page'` | Accessible name for the previous control.                                                                                    |
+| `nextLabel`     | `string`                   | `'Next page'`     | Accessible name for the next control.                                                                                        |
+| `firstLabel`    | `string`                   | `'First page'`    | Accessible name for the first control when `showEdges` is `true`.                                                            |
+| `lastLabel`     | `string`                   | `'Last page'`     | Accessible name for the last control when `showEdges` is `true`.                                                             |
+| `ellipsisLabel` | `string`                   | `'More pages'`    | Accessible name for the ellipsis affordance (exposed on the list item; the glyph itself is `aria-hidden`).                   |
 
 Named ESM exports: `GhostPagination`, `useGhostPagination`,
 `getPaginationRange`, `GhostPaginationItem` (type), and related prop types.
@@ -100,12 +100,11 @@ Exposed instance API:
 
 ## State model
 
-Effective page is always clamped to `[1, pageCount]`. Edge controls disable when
-their action would not change the page (`first`/`previous` on page 1,
-`next`/`last` on the last page). The current numbered page is a `button` with
-`aria-current="page"` and `disabled` so it remains in the roving set but cannot
-re-activate. Global `disabled` disables every control including the current
-page marker.
+Effective page is always clamped to `[1, pageCount]`. Edge controls and the
+current page become visually inactive with `aria-disabled="true"` and
+`data-disabled` when their action would not change the page, but they stay
+focusable. Native `disabled` applies only when the whole component `disabled`
+prop is `true`.
 
 ### Loading, empty, disabled, read-only, and error states
 
@@ -128,9 +127,10 @@ No consumer-owned collections. `pageCount` is a number, not derived data.
 - Root: native `nav` with `aria-label` from `ariaLabel`.
 - List: `ul` / `li` structure (`data-part="list"` / `data-part="item"`).
 - Controls: native `button type="button"`.
-- Current page: `aria-current="page"` on the active numbered button.
-- Ellipsis: non-focusable `span` with `aria-hidden="true"` on the glyph; the
-  `li` may expose `aria-label={ellipsisLabel}` when the default glyph is used.
+- Current page: `aria-current="page"` on the active numbered button (name does
+  not repeat “current page” in `aria-label`).
+- Ellipsis: `role="img"` and `aria-label` on the ellipsis `span`; the glyph is
+  `aria-hidden="true"`.
 
 APG reference: no dedicated pagination pattern; behavior follows the
 [navigation landmark](https://www.w3.org/WAI/ARIA/apg/practices/landmark-regions/)
@@ -138,16 +138,12 @@ and link-button conventions for paged collections.
 
 ### Keyboard interaction
 
-`useRovingFocus` on the list (`orientation: horizontal`, `loop: false`):
-
-- `ArrowLeft` / `ArrowRight` move among enabled page and edge controls (RTL
-  aware).
-- `Home` / `End` move to the first and last enabled controls.
-- `Enter` / `Space` activate the focused control (native button behavior).
+Each control remains a normal tab stop (no roving tabindex). `Enter` / `Space`
+activate the focused control (native button behavior). Inactive controls still
+receive focus but ignore activation.
 
 ### Focus behavior
 
-Roving `tabindex` keeps one tab stop on the list. Focus moves with arrow keys.
 When the current page changes, focus stays on the activated control. The exposed
 `focus()` method targets the current page button when present.
 
@@ -174,8 +170,7 @@ examples render without the theme.
 
 ### SSR and hydration
 
-Markup is deterministic from props. `useRovingFocus` attaches only `onMounted`.
-IDs are not generated (`useGhostId` unused).
+Markup is deterministic from props. IDs are not generated (`useGhostId` unused).
 
 ### Mobile and touch
 
@@ -188,7 +183,7 @@ fixed number of items. No virtualization.
 
 ## Composition
 
-Reuses `useControllableState` and `useRovingFocus`. Does not reuse `GhostButton`
+Reuses `useControllableState`. Does not reuse `GhostButton`
 in the headless tree (keeps pagination self-contained); themed styles mirror
 button tokens.
 
@@ -198,7 +193,7 @@ button tokens.
   counts, invalid counts).
 - Vue tests for clamping, controlled/uncontrolled updates, disabled edges,
   `aria-current`, and emit timing.
-- Browser tests: keyboard roving, activation, axe on playground and examples.
+- Browser tests: focus retention, activation, axe on playground and examples.
 - Type tests: `GhostPaginationConsumer` covers props and `v-model`.
 
 ## Documentation plan

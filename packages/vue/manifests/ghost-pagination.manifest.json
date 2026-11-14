@@ -225,10 +225,7 @@
     "role": "navigation",
     "apgPattern": "https://www.w3.org/WAI/ARIA/apg/practices/landmark-regions/",
     "keyboard": {
-      "ArrowLeft": "Move focus to the previous control.",
-      "ArrowRight": "Move focus to the next control.",
-      "Home": "Move focus to the first control.",
-      "End": "Move focus to the last control.",
+      "Tab": "Move focus among pagination controls.",
       "Enter": "Activate the focused control.",
       "Space": "Activate the focused control."
     },

@@ -65,7 +65,9 @@
 
   :where(
     .ghost-theme .ghost-pagination button:disabled,
-    .ghost-themed-scope .ghost-pagination button:disabled
+    .ghost-themed-scope .ghost-pagination button:disabled,
+    .ghost-theme .ghost-pagination button[aria-disabled='true'],
+    .ghost-themed-scope .ghost-pagination button[aria-disabled='true']
   ) {
     cursor: not-allowed;
     opacity: var(--ghost-disabled-opacity);

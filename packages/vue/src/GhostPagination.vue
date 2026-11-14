@@ -3,7 +3,6 @@ import { computed, useAttrs, useTemplateRef } from 'vue'
 
 import type { GhostPaginationExposed } from './ghost-pagination'
 import { useGhostPagination } from './use-ghost-pagination'
-import { useRovingFocus } from './use-roving-focus'
 
 defineOptions({ inheritAttrs: false })
 
@@ -49,11 +48,6 @@ const attrs = useAttrs()
 const root = useTemplateRef<HTMLElement>('root')
 const list = useTemplateRef<HTMLUListElement>('list')
 
-useRovingFocus(list, {
-  orientation: 'horizontal',
-  loop: false,
-})
-
 const {
   page,
   range,
@@ -64,8 +58,7 @@ const {
   nextProps,
   lastProps,
   pageButtonProps,
-  ellipsisProps,
-  ellipsisGlyphProps,
+  ellipsisMarkerProps,
 } = useGhostPagination({
   modelValue: () => props.modelValue,
   defaultPage: () => props.defaultPage,
@@ -105,9 +98,7 @@ function focusCurrentOrFirst(options?: FocusOptions): void {
     'button[aria-current="page"]',
   )
   const target =
-    current && !current.hasAttribute('disabled')
-      ? current
-      : listElement.querySelector<HTMLElement>('button:not([disabled])')
+    current ?? listElement.querySelector<HTMLElement>('button:not([disabled])')
   target?.focus(options)
 }
 
@@ -138,16 +129,18 @@ defineExpose<GhostPaginationExposed>({
       <li data-part="item" role="listitem">
         <button v-bind="previousProps">‹</button>
       </li>
-      <template v-for="(entry, index) in range" :key="`page-${index}`">
-        <li
-          v-if="entry.type === 'ellipsis'"
-          data-part="item"
-          role="listitem"
-          :aria-label="ellipsisProps()['aria-label']"
-        >
-          <span :data-part="ellipsisProps()['data-part']">
+      <template
+        v-for="entry in range"
+        :key="
+          entry.type === 'page'
+            ? `page-${entry.page}`
+            : `ellipsis-${entry.placement}`
+        "
+      >
+        <li v-if="entry.type === 'ellipsis'" data-part="item" role="listitem">
+          <span v-bind="ellipsisMarkerProps">
             <slot name="ellipsis" :placement="entry.placement">
-              <span v-bind="ellipsisGlyphProps">…</span>
+              <span aria-hidden="true">…</span>
             </slot>
           </span>
         </li>

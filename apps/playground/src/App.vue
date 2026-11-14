@@ -74,6 +74,7 @@ const submittedName = ref('')
 const opsEmail = ref('')
 const distributionOptIn = ref(false)
 const playgroundPaginationPage = ref(4)
+const playgroundPaginationFocusPage = ref(1)
 const playgroundNotes = ref('Headless notes.')
 const playgroundBio = ref('Themed bio.')
 const playgroundDraft = ref('Auto-resize this draft.\nAdd more lines to grow.')
@@ -697,6 +698,16 @@ function submitPlaygroundComment(event: Event): void {
         <p data-testid="pagination-page-status">
           Paged results: page {{ playgroundPaginationPage }} of 15
         </p>
+      </fieldset>
+      <fieldset>
+        <legend>Focus retention</legend>
+        <GhostPagination
+          v-model="playgroundPaginationFocusPage"
+          :page-count="3"
+          aria-label="Playground focus pages"
+          data-testid="pagination-focus-edge"
+          class="playground-pagination"
+        />
       </fieldset>
       <fieldset>
         <legend>Compact themed</legend>

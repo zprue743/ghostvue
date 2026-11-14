@@ -3,8 +3,7 @@ import { computed, toValue, type ComputedRef } from 'vue'
 import { getPaginationRange } from './get-pagination-range'
 import type {
   GhostPaginationControlProps,
-  GhostPaginationEllipsisGlyphProps,
-  GhostPaginationEllipsisProps,
+  GhostPaginationEllipsisMarkerProps,
   GhostPaginationListProps,
   GhostPaginationRootProps,
   UseGhostPaginationOptions,
@@ -41,8 +40,7 @@ export function useGhostPagination(options: UseGhostPaginationOptions): {
   nextProps: ComputedRef<GhostPaginationControlProps>
   lastProps: ComputedRef<GhostPaginationControlProps>
   pageButtonProps: (page: number) => GhostPaginationControlProps
-  ellipsisProps: () => GhostPaginationEllipsisProps
-  ellipsisGlyphProps: GhostPaginationEllipsisGlyphProps
+  ellipsisMarkerProps: ComputedRef<GhostPaginationEllipsisMarkerProps>
   goToPage: (target: number) => void
 } {
   const pageCount = computed(() => resolvePageCount(toValue(options.pageCount)))
@@ -98,16 +96,20 @@ export function useGhostPagination(options: UseGhostPaginationOptions): {
     inactive: boolean,
     current = false,
   ): GhostPaginationControlProps {
-    const disabled = isDisabled.value || inactive
+    const globallyDisabled = isDisabled.value
+    const visuallyDisabled = !globallyDisabled && inactive
     return {
       type: 'button',
-      disabled: disabled || undefined,
-      'data-disabled': disabled ? '' : undefined,
-      'aria-label': current ? `${label}, current page` : label,
+      disabled: globallyDisabled ? true : undefined,
+      'aria-disabled': visuallyDisabled ? 'true' : undefined,
+      'data-disabled': globallyDisabled || visuallyDisabled ? '' : undefined,
+      'aria-label': label,
       'aria-current': current ? 'page' : undefined,
       'data-part': part,
       onClick: (event: MouseEvent) => {
-        if (event.defaultPrevented || disabled) return
+        if (event.defaultPrevented || globallyDisabled || visuallyDisabled) {
+          return
+        }
         goToPage(target)
       },
     }
@@ -171,16 +173,13 @@ export function useGhostPagination(options: UseGhostPaginationOptions): {
     )
   }
 
-  function ellipsisProps(): GhostPaginationEllipsisProps {
-    return {
-      'data-part': 'ellipsis',
+  const ellipsisMarkerProps = computed(
+    (): GhostPaginationEllipsisMarkerProps => ({
+      role: 'img',
       'aria-label': ellipsisLabel.value,
-    }
-  }
-
-  const ellipsisGlyphProps: GhostPaginationEllipsisGlyphProps = {
-    'aria-hidden': 'true',
-  }
+      'data-part': 'ellipsis',
+    }),
+  )
 
   return {
     page: effectivePage,
@@ -194,8 +193,7 @@ export function useGhostPagination(options: UseGhostPaginationOptions): {
     nextProps,
     lastProps,
     pageButtonProps,
-    ellipsisProps,
-    ellipsisGlyphProps,
+    ellipsisMarkerProps,
     goToPage,
   }
 }

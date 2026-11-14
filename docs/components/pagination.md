@@ -56,9 +56,10 @@ Native attributes fall through to the `nav`. Template refs expose `element`,
 
 ## Keyboard and focus
 
-Arrow keys move focus among controls (`useRovingFocus`, horizontal, no loop).
-`Enter` / `Space` activate the focused button. The current page button is
-disabled but remains in the roving set.
+Each control stays in the native tab order (no roving tabindex). `Enter` /
+`Space` activate the focused button. Edge controls and the current page use
+`aria-disabled="true"` so focus is not lost when a control becomes inactive.
+Native `disabled` is reserved for the whole component.
 
 ## See also
 

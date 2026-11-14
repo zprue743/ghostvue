@@ -22,17 +22,19 @@ describe('GhostPagination', () => {
     expect(wrapper.findAll('button')).toHaveLength(9)
   })
 
-  it('disables previous and first on the first page', () => {
+  it('marks edge controls aria-disabled without removing them from the tab order', () => {
     const wrapper = mount(GhostPagination, {
       props: { pageCount: 8, defaultPage: 1 },
     })
 
-    expect(wrapper.get('[data-part="first"]').attributes('disabled')).toBe('')
+    expect(wrapper.get('[data-part="first"]').attributes('aria-disabled')).toBe(
+      'true',
+    )
     expect(wrapper.get('[data-part="previous"]').attributes('disabled')).toBe(
-      '',
+      undefined,
     )
     expect(
-      wrapper.get('[data-part="next"]').attributes('disabled'),
+      wrapper.get('[data-part="next"]').attributes('aria-disabled'),
     ).toBeUndefined()
   })
 

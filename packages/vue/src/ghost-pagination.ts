@@ -90,7 +90,8 @@ export interface GhostPaginationListProps {
 
 export interface GhostPaginationControlProps {
   type: 'button'
-  disabled: boolean | undefined
+  disabled: true | undefined
+  'aria-disabled': 'true' | undefined
   'data-disabled': '' | undefined
   'aria-label': string
   'aria-current': 'page' | undefined
@@ -98,13 +99,10 @@ export interface GhostPaginationControlProps {
   onClick: (event: MouseEvent) => void
 }
 
-export interface GhostPaginationEllipsisProps {
-  'data-part': 'ellipsis'
+export interface GhostPaginationEllipsisMarkerProps {
+  role: 'img'
   'aria-label': string
-}
-
-export interface GhostPaginationEllipsisGlyphProps {
-  'aria-hidden': 'true'
+  'data-part': 'ellipsis'
 }
 
 export interface GhostPaginationExposed {
