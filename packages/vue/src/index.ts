@@ -298,6 +298,20 @@ export type {
   GhostToolbarOrientation,
   UseGhostToolbarOptions,
 } from './ghost-toolbar'
+
+export { default as GhostRadioGroup } from './GhostRadioGroup.vue'
+export { default as GhostRadioGroupItem } from './GhostRadioGroupItem.vue'
+export { useGhostRadioGroup } from './use-ghost-radio-group'
+export type {
+  GhostRadioGroupExposed,
+  GhostRadioGroupItemExposed,
+  GhostRadioGroupElement,
+  GhostRadioGroupItemProps,
+  GhostRadioGroupOrientation,
+  GhostRadioGroupProps,
+  UseGhostRadioGroupOptions,
+  UseGhostRadioGroupReturn,
+} from './ghost-radio-group'
 export { default as GhostTooltip } from './GhostTooltip.vue'
 export { default as GhostTooltipTrigger } from './GhostTooltipTrigger.vue'
 export { default as GhostTooltipContent } from './GhostTooltipContent.vue'

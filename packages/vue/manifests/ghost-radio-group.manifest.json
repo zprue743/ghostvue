@@ -1,0 +1,138 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "generated",
+  "name": "GhostRadioGroup",
+  "package": "@ghostvue/vue",
+  "status": "experimental",
+  "description": "Headless native radio group root with roving focus, v-model, and form reset.",
+  "props": [
+    {
+      "name": "modelValue",
+      "type": "string",
+      "required": false,
+      "description": "Declared prop `modelValue`.",
+      "deprecated": false
+    },
+    {
+      "name": "defaultValue",
+      "type": "string",
+      "required": false,
+      "description": "Declared prop `defaultValue`.",
+      "deprecated": false
+    },
+    {
+      "name": "name",
+      "type": "string",
+      "required": false,
+      "description": "Declared prop `name`.",
+      "deprecated": false
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Declared prop `disabled`.",
+      "deprecated": false
+    },
+    {
+      "name": "required",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Declared prop `required`.",
+      "deprecated": false
+    },
+    {
+      "name": "invalid",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Declared prop `invalid`.",
+      "deprecated": false
+    },
+    {
+      "name": "orientation",
+      "type": "GhostRadioGroupOrientation",
+      "default": "vertical",
+      "required": false,
+      "description": "Declared prop `orientation`.",
+      "deprecated": false
+    },
+    {
+      "name": "as",
+      "type": "GhostRadioGroupElement",
+      "default": "fieldset",
+      "required": false,
+      "description": "Declared prop `as`.",
+      "deprecated": false
+    }
+  ],
+  "models": [
+    {
+      "prop": "modelValue",
+      "event": "update:modelValue",
+      "type": "string",
+      "description": "v-model binding for `modelValue`."
+    }
+  ],
+  "events": [],
+  "slots": [
+    {
+      "name": "default",
+      "props": [],
+      "description": "Container content."
+    }
+  ],
+  "exposed": [
+    {
+      "name": "element",
+      "kind": "property",
+      "type": "HTMLElement | null",
+      "description": "Root element after mount; null before mount."
+    },
+    {
+      "name": "focus",
+      "kind": "method",
+      "type": "(options?: FocusOptions) => void",
+      "description": "Exposed method `focus`."
+    },
+    {
+      "name": "blur",
+      "kind": "method",
+      "type": "() => void",
+      "description": "Exposed method `blur`."
+    }
+  ],
+  "styling": {
+    "parts": [
+      {
+        "name": "root",
+        "description": "Fieldset or radiogroup host for items."
+      }
+    ],
+    "states": [
+      {
+        "name": "invalid",
+        "description": "Field or validation error."
+      },
+      {
+        "name": "disabled",
+        "description": "Whole group disabled."
+      }
+    ],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "radiogroup",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/radio/",
+    "keyboard": {},
+    "requiredAriaAttributes": []
+  },
+  "examples": [
+    "radio-group/basic",
+    "radio-group/field",
+    "radio-group/form",
+    "radio-group/themed"
+  ]
+}

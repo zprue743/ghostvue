@@ -1,0 +1,73 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "generated",
+  "name": "GhostRadioGroupItem",
+  "package": "@ghostvue/vue",
+  "status": "experimental",
+  "description": "Native radio input part for GhostRadioGroup.",
+  "props": [
+    {
+      "name": "value",
+      "type": "string",
+      "required": true,
+      "description": "Declared prop `value`.",
+      "deprecated": false
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Declared prop `disabled`.",
+      "deprecated": false
+    }
+  ],
+  "models": [],
+  "events": [],
+  "slots": [],
+  "exposed": [
+    {
+      "name": "element",
+      "kind": "property",
+      "type": "HTMLInputElement | null",
+      "description": "Exposed property `element`."
+    },
+    {
+      "name": "focus",
+      "kind": "method",
+      "type": "(options?: FocusOptions) => void",
+      "description": "Exposed method `focus`."
+    },
+    {
+      "name": "blur",
+      "kind": "method",
+      "type": "() => void",
+      "description": "Exposed method `blur`."
+    }
+  ],
+  "styling": {
+    "parts": [
+      {
+        "name": "item",
+        "description": "Native radio input."
+      }
+    ],
+    "states": [
+      {
+        "name": "checked",
+        "description": "Selected option."
+      }
+    ],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "radio",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/radio/",
+    "keyboard": {
+      "Space": "Select focused radio (native).",
+      "Arrow*": "Roving focus handled by the group root."
+    },
+    "requiredAriaAttributes": []
+  },
+  "examples": []
+}

@@ -544,6 +544,30 @@ export const ghostExamples = [
     layer: 'themed',
   },
   {
+    id: 'radio-group/basic',
+    title: 'Basic',
+    description: 'Headless radio group with labeled items.',
+    layer: 'headless',
+  },
+  {
+    id: 'radio-group/field',
+    title: 'Field wiring',
+    description: 'Group label, description, and error through GhostField.',
+    layer: 'headless',
+  },
+  {
+    id: 'radio-group/form',
+    title: 'Form reset',
+    description: 'Native submit and reset with a shared name.',
+    layer: 'headless',
+  },
+  {
+    id: 'radio-group/themed',
+    title: 'Themed',
+    description: 'Styled radio dots from @ghostvue/themes.',
+    layer: 'themed',
+  },
+  {
     id: 'tooltip/basic',
     title: 'Supplemental label',
     description:

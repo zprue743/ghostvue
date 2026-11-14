@@ -208,6 +208,13 @@ export {
   GhostPagination,
   type GhostPaginationExposed,
 } from './ghost-pagination'
+export {
+  GhostRadioGroup,
+  GhostRadioGroupItem,
+  type GhostRadioGroupExposed,
+  type GhostRadioGroupItemExposed,
+  type GhostRadioGroupSize,
+} from './ghost-radio-group'
 export { GhostTooltip, type GhostTooltipSlotProps } from './ghost-tooltip'
 export {
   GhostTooltipTrigger,
