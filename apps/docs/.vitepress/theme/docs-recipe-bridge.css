@@ -1,0 +1,69 @@
+/*
+ * VitePress `base.css` zeros border, padding, and background on native
+ * controls with unlayered rules. GhostVue recipes live in
+ * `@layer ghostvue-theme` with `:where()`, so those resets win in docs.
+ *
+ * Restore presentation only under `.ghost-themed-scope` (themed wrappers and
+ * explicit scopes), using the same private `--_ghost-*` wiring the layer still
+ * sets on each instance. Do not target `html` or `.ghost-theme` on the canvas:
+ * the docs host must not apply recipes to headless previews.
+ */
+.ghost-themed-scope .ghost-button {
+  appearance: none;
+  background-color: var(--_ghost-button-background);
+  background-image: var(--_ghost-button-fill);
+  border: var(--ghost-border-hairline-width) solid
+    var(--_ghost-button-border-color);
+  border-radius: var(--ghost-action-radius);
+  box-shadow: var(--_ghost-button-shadow);
+  color: var(--_ghost-button-color);
+  font-family: var(--ghost-action-label-family);
+  font-size: var(--_ghost-button-font-size);
+  font-weight: var(--ghost-action-label-weight);
+  min-block-size: var(--_ghost-button-min-size);
+  padding-block: var(--_ghost-button-padding-block);
+  padding-inline: var(--_ghost-button-padding-inline);
+}
+
+.ghost-themed-scope .ghost-input {
+  appearance: none;
+  background-color: var(--_ghost-input-background);
+  border: var(--ghost-border-hairline-width) solid
+    var(--_ghost-input-border-color);
+  border-radius: var(--ghost-action-radius);
+  box-sizing: border-box;
+  color: var(--_ghost-input-color);
+  display: inline-block;
+  font-family: var(--ghost-type-family-sans);
+  font-feature-settings: var(--ghost-type-feature-default);
+  font-size: var(--_ghost-input-font-size);
+  font-weight: var(--ghost-type-weight-regular);
+  letter-spacing: var(--ghost-type-letter-normal);
+  line-height: var(--ghost-type-line-normal);
+  margin: 0;
+  max-inline-size: 100%;
+  min-block-size: var(--_ghost-input-min-size);
+  padding-block: var(--_ghost-input-padding-block);
+  padding-inline: var(--_ghost-input-padding-inline);
+}
+
+.ghost-themed-scope .ghost-textarea {
+  appearance: none;
+  background-color: var(--ghost-elevation-1-bg);
+  border: var(--ghost-border-hairline-width) solid var(--ghost-border-default);
+  border-radius: var(--ghost-action-radius);
+  box-sizing: border-box;
+  color: var(--ghost-surface-fg);
+  display: block;
+  font-family: var(--ghost-type-family-sans);
+  font-feature-settings: var(--ghost-type-feature-default);
+  font-size: var(--_ghost-textarea-font-size);
+  font-weight: var(--ghost-type-weight-regular);
+  inline-size: 100%;
+  letter-spacing: var(--ghost-type-letter-normal);
+  line-height: var(--ghost-type-line-normal);
+  max-inline-size: 100%;
+  padding-block: var(--_ghost-textarea-padding-block);
+  padding-inline: var(--_ghost-textarea-padding-inline);
+  resize: vertical;
+}
