@@ -285,6 +285,19 @@ export type {
   GhostPaginationRootProps,
   UseGhostPaginationOptions,
 } from './ghost-pagination'
+export { default as GhostToolbar } from './GhostToolbar.vue'
+export {
+  useGhostToolbar,
+  type GhostToolbarRootProps,
+  type UseGhostToolbarReturn,
+} from './use-ghost-toolbar'
+export type {
+  GhostToolbarDirection,
+  GhostToolbarElement,
+  GhostToolbarExposed,
+  GhostToolbarOrientation,
+  UseGhostToolbarOptions,
+} from './ghost-toolbar'
 export { default as GhostTooltip } from './GhostTooltip.vue'
 export { default as GhostTooltipTrigger } from './GhostTooltipTrigger.vue'
 export { default as GhostTooltipContent } from './GhostTooltipContent.vue'

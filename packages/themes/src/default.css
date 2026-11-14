@@ -28,6 +28,7 @@
 
 @import './ghost-pagination.css';
 @import './ghost-number-input.css';
+@import './ghost-toolbar.css';
 
 @layer ghostvue-theme {
   :where(.ghost-themed-scope) {

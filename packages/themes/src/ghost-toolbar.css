@@ -1,0 +1,25 @@
+/* Themed GhostToolbar: flex row/column shell for controls and separators. */
+@layer ghostvue-theme {
+  :where(.ghost-theme .ghost-toolbar, .ghost-themed-scope .ghost-toolbar) {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--ghost-space-gap-sm);
+  }
+
+  :where(
+    .ghost-theme .ghost-toolbar[data-orientation='horizontal'],
+    .ghost-themed-scope .ghost-toolbar[data-orientation='horizontal']
+  ) {
+    flex-direction: row;
+  }
+
+  :where(
+    .ghost-theme .ghost-toolbar[data-orientation='vertical'],
+    .ghost-themed-scope .ghost-toolbar[data-orientation='vertical']
+  ) {
+    align-items: stretch;
+    flex-direction: column;
+    inline-size: max-content;
+  }
+}

@@ -616,6 +616,36 @@ export const ghostExamples = [
     description: 'Large block layout from @ghostvue/themes.',
     layer: 'themed',
   },
+  {
+    id: 'toolbar/basic',
+    title: 'Basic',
+    description: 'Horizontal action bar with roving focus among buttons.',
+    layer: 'headless',
+  },
+  {
+    id: 'toolbar/composable',
+    title: 'Composable',
+    description: 'Same contract as GhostToolbar on a native host.',
+    layer: 'headless',
+  },
+  {
+    id: 'toolbar/vertical',
+    title: 'Vertical',
+    description: 'Vertical toolbar with up and down arrow movement.',
+    layer: 'headless',
+  },
+  {
+    id: 'toolbar/separators',
+    title: 'Separators',
+    description: 'Group controls with semantic vertical separators.',
+    layer: 'headless',
+  },
+  {
+    id: 'toolbar/themed',
+    title: 'Themed',
+    description: 'Flex layout from @ghostvue/themes.',
+    layer: 'themed',
+  },
 ] as const satisfies readonly GhostExampleDefinition[]
 
 export type GhostExampleId = (typeof ghostExamples)[number]['id']

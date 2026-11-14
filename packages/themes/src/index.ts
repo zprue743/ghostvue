@@ -229,3 +229,4 @@ export {
   GhostNumberInput,
   type GhostNumberInputExposed,
 } from './ghost-number-input'
+export { GhostToolbar, type GhostToolbarExposed } from './ghost-toolbar'

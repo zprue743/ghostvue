@@ -38,13 +38,13 @@ default slot and get correct semantics and keyboard behavior.
 
 Headless `@ghostvue/vue` `GhostToolbar` / `useGhostToolbar`:
 
-| Prop          | Type                         | Default        | Contract                                                                                                      |
-| ------------- | ---------------------------- | -------------- | ------------------------------------------------------------------------------------------------------------- |
-| `orientation` | `'horizontal' \| 'vertical'` | `'horizontal'` | Sets `aria-orientation` when `vertical` and drives roving arrow keys (left/right vs up/down).                  |
-| `loop`        | `boolean`                    | `true`         | When `true`, arrow/Home/End movement wraps from last to first. When `false`, movement stops at the ends.       |
-| `dir`         | `'ltr' \| 'rtl' \| undefined` | `undefined`    | Optional text direction for horizontal arrow reversal. When omitted, read from the root or document.          |
-| `label`       | `string \| undefined`        | `undefined`    | Accessible name via `aria-label`. Prefer `aria-labelledby` fallthrough when a visible heading already names it. |
-| `as`          | `GhostToolbarElement`        | `'div'`        | Element tag or component for the toolbar root.                                                                |
+| Prop          | Type                          | Default        | Contract                                                                                                        |
+| ------------- | ----------------------------- | -------------- | --------------------------------------------------------------------------------------------------------------- |
+| `orientation` | `'horizontal' \| 'vertical'`  | `'horizontal'` | Sets `aria-orientation` when `vertical` and drives roving arrow keys (left/right vs up/down).                   |
+| `loop`        | `boolean`                     | `true`         | When `true`, arrow/Home/End movement wraps from last to first. When `false`, movement stops at the ends.        |
+| `dir`         | `'ltr' \| 'rtl' \| undefined` | `undefined`    | Optional text direction for horizontal arrow reversal. When omitted, read from the root or document.            |
+| `label`       | `string \| undefined`         | `undefined`    | Accessible name via `aria-label`. Prefer `aria-labelledby` fallthrough when a visible heading already names it. |
+| `as`          | `GhostToolbarElement`         | `'div'`        | Element tag or component for the toolbar root.                                                                  |
 
 ```ts
 type GhostToolbarElement = 'div' | 'section' | 'footer' | 'header'
@@ -55,8 +55,9 @@ The component owns `role`, `aria-orientation`, and `aria-label` when `label` is
 set. Do not redeclare owned `aria-*` as camelCase props.
 
 Named ESM exports: `GhostToolbar`, `useGhostToolbar`, and the types above.
-`useGhostToolbar` returns computed `rootProps`; `useRovingFocus` is invoked from
-the SFC after mount so SSR setup does not touch `document`.
+`useGhostToolbar` returns computed `rootProps`, `focus`, and `blur`, and invokes
+`useRovingFocus` on the supplied root ref after mount so SSR setup does not
+touch `document`.
 
 Themed `@ghostvue/themes` `GhostToolbar` wraps the unstyled component. Same
 behavioral props; no extra visual props in this issue. Default CSS is a flex row
@@ -79,14 +80,14 @@ DOM events.
 
 `defineExpose` matches other focusable containers:
 
-| Member    | Type                           | Contract                                      |
-| --------- | ------------------------------ | --------------------------------------------- |
-| `element` | `HTMLElement \| null`          | Root after mount.                             |
-| `focus`   | `(options?: FocusOptions) => void` | Focuses the root (toolbar container).     |
-| `blur`    | `() => void`                   | Blurs the root.                               |
+| Member    | Type                               | Contract                              |
+| --------- | ---------------------------------- | ------------------------------------- |
+| `element` | `HTMLElement \| null`              | Root after mount.                     |
+| `focus`   | `(options?: FocusOptions) => void` | Focuses the root (toolbar container). |
+| `blur`    | `() => void`                       | Blurs the root.                       |
 
-Focusing the container is valid APG use; the first roving tab stop receives
-focus when the user activates a child via Tab.
+Programmatic `focus()` on the toolbar targets the current roving tab stop, or
+the first enabled item when none is selected. The root is not focusable.
 
 ### State model
 
@@ -111,27 +112,27 @@ slot.
 Follow the WAI-ARIA APG
 [Toolbar pattern](https://www.w3.org/WAI/ARIA/apg/patterns/toolbar/).
 
-| Aspect              | Contract                                                                                         |
-| ------------------- | ------------------------------------------------------------------------------------------------ |
-| Role                | `toolbar` on the root.                                                                           |
-| Name                | Required from author: `label` prop or `aria-labelledby` / `aria-label` fallthrough.                |
-| Orientation         | `aria-orientation="vertical"` when `orientation` is `vertical`; omitted when horizontal (default). |
-| Items               | Focusable descendants supplied by the consumer; not owned by this component.                      |
-| Separators          | Compose `GhostSeparator` with `orientation` matching the bar axis; keep `decorative={false}` for grouping. |
+| Aspect      | Contract                                                                                                   |
+| ----------- | ---------------------------------------------------------------------------------------------------------- |
+| Role        | `toolbar` on the root.                                                                                     |
+| Name        | Required from author: `label` prop or `aria-labelledby` / `aria-label` fallthrough.                        |
+| Orientation | `aria-orientation="vertical"` when `orientation` is `vertical`; omitted when horizontal (default).         |
+| Items       | Focusable descendants supplied by the consumer; not owned by this component.                               |
+| Separators  | Compose `GhostSeparator` with `orientation` matching the bar axis; keep `decorative={false}` for grouping. |
 
 ### Keyboard interaction
 
 Delegated to `useRovingFocus` inside the toolbar root:
 
-| Key              | Behavior                                                                 |
-| ---------------- | ------------------------------------------------------------------------ |
-| `ArrowRight`     | Next enabled item when `orientation` is `horizontal` (flipped in RTL).   |
-| `ArrowLeft`      | Previous enabled item when `orientation` is `horizontal` (flipped in RTL). |
-| `ArrowDown`      | Next enabled item when `orientation` is `vertical`.                      |
-| `ArrowUp`        | Previous enabled item when `orientation` is `vertical`.                  |
-| `Home`           | First enabled item.                                                      |
-| `End`            | Last enabled item.                                                       |
-| `Tab` / `Shift+Tab` | Not intercepted; moves focus into or out of the composite.          |
+| Key                 | Behavior                                                                   |
+| ------------------- | -------------------------------------------------------------------------- |
+| `ArrowRight`        | Next enabled item when `orientation` is `horizontal` (flipped in RTL).     |
+| `ArrowLeft`         | Previous enabled item when `orientation` is `horizontal` (flipped in RTL). |
+| `ArrowDown`         | Next enabled item when `orientation` is `vertical`.                        |
+| `ArrowUp`           | Previous enabled item when `orientation` is `vertical`.                    |
+| `Home`              | First enabled item.                                                        |
+| `End`               | Last enabled item.                                                         |
+| `Tab` / `Shift+Tab` | Not intercepted; moves focus into or out of the composite.                 |
 
 Arrow keys do not move focus when the event target is an editable field inside
 the toolbar. Disabled and `aria-disabled` items are skipped.
