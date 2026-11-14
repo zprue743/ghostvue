@@ -25,6 +25,7 @@ export const docsSidebar: LlmsSidebarGroup[] = [
       },
       { text: 'GhostPopover', link: '/components/popover' },
       { text: 'GhostSeparator', link: '/components/separator' },
+      { text: 'GhostSkeleton', link: '/components/skeleton' },
       { text: 'GhostSpinner', link: '/components/spinner' },
       { text: 'GhostVisuallyHidden', link: '/components/visually-hidden' },
       { text: 'Default theme', link: '/themes/default' },

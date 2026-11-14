@@ -41,6 +41,12 @@ export {
   type GhostInteractiveSurfaceExposed,
 } from './ghost-interactive-surface'
 
+export {
+  GhostSkeleton,
+  type GhostSkeletonElement,
+  type GhostSkeletonShape,
+} from './ghost-skeleton'
+
 export { GhostPopover, type GhostPopoverSlotProps } from './ghost-popover'
 
 export {

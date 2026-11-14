@@ -44,9 +44,9 @@ separate live region or visible status text owned by the consumer.
 
 Headless `@ghostvue/vue` `GhostSkeleton` / `useGhostSkeleton`:
 
-| Prop | Type                      | Default  | Contract                                                                                          |
-| ---- | ------------------------- | -------- | ------------------------------------------------------------------------------------------------- |
-| `as` | `GhostSkeletonElement`    | `'span'` | Selects the rendered root so the result is valid HTML in its parent. Never an interactive element. |
+| Prop | Type                   | Default  | Contract                                                                                           |
+| ---- | ---------------------- | -------- | -------------------------------------------------------------------------------------------------- |
+| `as` | `GhostSkeletonElement` | `'span'` | Selects the rendered root so the result is valid HTML in its parent. Never an interactive element. |
 
 ```ts
 type GhostSkeletonElement = 'span' | 'div' | 'p' | 'li' | 'td' | 'th'
@@ -73,19 +73,20 @@ nothing for the consumer to configure in behavior.
 Themed `@ghostvue/themes` `GhostSkeleton` wraps the unstyled component and
 adds visual props. Same `as` contract; these exist only on the themed wrapper:
 
-| Prop    | Type                             | Default  | Contract                                                                                          |
-| ------- | -------------------------------- | -------- | ------------------------------------------------------------------------------------------------- |
-| `shape` | `'text' \| 'rect' \| 'circle'`   | `'text'` | Visual treatment via `data-shape`. The default omits the attribute so CSS can treat missing as text. |
+| Prop    | Type                           | Default  | Contract                                                                                             |
+| ------- | ------------------------------ | -------- | ---------------------------------------------------------------------------------------------------- |
+| `shape` | `'text' \| 'rect' \| 'circle'` | `'text'` | Visual treatment via `data-shape`. The default omits the attribute so CSS can treat missing as text. |
 
 Dimensions are not props. Consumers set `inline-size` / `block-size` (or
 `width` / `height`) through native `style` and `class` fallthrough. That is
 the flexible-dimension contract: any CSS length, percentage, or token, without
 a parallel size API.
 
-The themed wrapper wraps the unstyled root in `.ghost-themed-scope`
-(`display: contents`) so default CSS can style that instance without forcing
-every `.ghost-skeleton` on the page. Token values inherit from the nearest
-`.ghost-theme` / `[data-ghost-theme]`.
+The themed wrapper sets `data-themed` on the root so default CSS can style
+that instance without a wrapper element. A `.ghost-themed-scope` span would
+be invalid HTML between a `<tr>` and `as="td"`. Token values inherit from
+the nearest `.ghost-theme` / `[data-ghost-theme]`. `.ghost-themed-scope`
+remains a valid ancestor selector for consumers who wrap a region themselves.
 
 ### v-model contracts
 
@@ -120,7 +121,7 @@ vocabulary already used by `GhostButton`. Shape is a visual value
 
 ### Loading, empty, disabled, read-only, and error states
 
-The skeleton *is* the loading representation of something else. It does not
+The skeleton _is_ the loading representation of something else. It does not
 have its own loading, disabled, read-only, or error semantics, and adding them
 would duplicate state the surrounding UI already owns.
 
@@ -204,11 +205,11 @@ review.
 
 ### When Spinner, Skeleton, or status text is appropriate
 
-| Pattern        | Use when                                                                                          | Do not use when                                                                 |
-| -------------- | ------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
-| Skeleton       | The resulting layout is known and should stay stable. Decorative. Always pair with status/busy.   | The wait has no predictable shape, or the wait *is* the message.                |
-| Spinner        | A single control or unknown-shape region is pending (`GhostButton` `loading`, later `GhostSpinner`). | Many spinners in a table; they are visually noisy and still need a status text. |
-| Status text    | Assistive technology (and often sighted users) must hear or read that loading is happening.       | As the only treatment when layout collapse would be disorienting.               |
+| Pattern     | Use when                                                                                             | Do not use when                                                                 |
+| ----------- | ---------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
+| Skeleton    | The resulting layout is known and should stay stable. Decorative. Always pair with status/busy.      | The wait has no predictable shape, or the wait _is_ the message.                |
+| Spinner     | A single control or unknown-shape region is pending (`GhostButton` `loading`, later `GhostSpinner`). | Many spinners in a table; they are visually noisy and still need a status text. |
+| Status text | Assistive technology (and often sighted users) must hear or read that loading is happening.          | As the only treatment when layout collapse would be disorienting.               |
 
 Color and motion on the skeleton are not a text alternative. WCAG 4.1.3
 (Status Messages) is satisfied by the consumer's status text, not by this
@@ -226,6 +227,8 @@ Stable styling hooks follow ADR 0004 and GhostButton's visual attributes:
 - `data-shape="rect"` or `data-shape="circle"` when the themed `shape` prop
   (or a consumer attribute on the unstyled root) is not the default text
   treatment. Missing `data-shape` is text.
+- `data-themed` on the themed wrapper, matching themed `GhostPopoverContent`,
+  so recipes apply without wrapping `td` / `th` in an extra element.
 
 There is no `data-state`, no `pt` object, and no public `data-ghost-*`
 attribute on the component. Theme hosts already use `data-ghost-theme` /
@@ -311,13 +314,13 @@ in a real browser.
 
 Vitest with Vue Test Utils, mapped to WCAG 2.1 success criteria:
 
-| Criterion                          | Assertion                                                                                         |
-| ---------------------------------- | ------------------------------------------------------------------------------------------------- |
-| 1.3.1 Info and Relationships (A)   | `aria-hidden="true"`; no `role`; slot content is not exposed as a name                            |
-| 2.1.1 Keyboard (A)                 | `inert` is set; the root has no `tabindex`                                                        |
-| 2.2.2 Pause, Stop, Hide (A)        | themed CSS contains `prefers-reduced-motion` that disables the shimmer animation                  |
-| 4.1.2 Name, Role, Value (A)        | adds no `role`; `as` members render that tag as the sole root                                     |
-| 4.1.3 Status Messages (AA)         | does not set `aria-live`, `aria-busy`, or `role="status"` / `progressbar`                         |
+| Criterion                        | Assertion                                                                        |
+| -------------------------------- | -------------------------------------------------------------------------------- |
+| 1.3.1 Info and Relationships (A) | `aria-hidden="true"`; no `role`; slot content is not exposed as a name           |
+| 2.1.1 Keyboard (A)               | `inert` is set; the root has no `tabindex`                                       |
+| 2.2.2 Pause, Stop, Hide (A)      | themed CSS contains `prefers-reduced-motion` that disables the shimmer animation |
+| 4.1.2 Name, Role, Value (A)      | adds no `role`; `as` members render that tag as the sole root                    |
+| 4.1.3 Status Messages (AA)       | does not set `aria-live`, `aria-busy`, or `role="status"` / `progressbar`        |
 
 Behavior tests beyond the criteria: each `as` member renders that tag;
 `renderToString` emits deterministic hidden markup; `class`, `style`, and
@@ -328,12 +331,12 @@ consumer attrs; empty slot is permitted; unmounting removes the node.
 
 Playwright against the built playground and registered examples:
 
-| Criterion                     | Assertion                                                                                          |
-| ----------------------------- | -------------------------------------------------------------------------------------------------- |
-| 1.3.1 / 4.1.2                 | an axe scan of pages using the component reports zero violations                                   |
-| 4.1.3 Status Messages (AA)    | skeletons are not returned by role queries; a sibling status node can still announce               |
-| 2.2.2 Pause, Stop, Hide (A)   | under `prefers-reduced-motion: reduce`, computed `animation-name` on `::after` is `none`           |
-| 1.3.1 table geometry          | `as="td"` remains a table cell in a loading-row fixture                                            |
+| Criterion                   | Assertion                                                                                |
+| --------------------------- | ---------------------------------------------------------------------------------------- |
+| 1.3.1 / 4.1.2               | an axe scan of pages using the component reports zero violations                         |
+| 4.1.3 Status Messages (AA)  | skeletons are not returned by role queries; a sibling status node can still announce     |
+| 2.2.2 Pause, Stop, Hide (A) | under `prefers-reduced-motion: reduce`, computed `animation-name` on `::after` is `none` |
+| 1.3.1 table geometry        | `as="td"` remains a table cell in a loading-row fixture                                  |
 
 Visual baselines of registered examples run with reduced motion and Playwright
 `animations: 'disabled'`.

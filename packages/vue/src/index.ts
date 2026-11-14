@@ -45,6 +45,12 @@ export type {
   GhostVisuallyHiddenProps,
   UseGhostVisuallyHiddenOptions,
 } from './ghost-visually-hidden'
+export { default as GhostSkeleton } from './GhostSkeleton.vue'
+export {
+  useGhostSkeleton,
+  type GhostSkeletonRootProps,
+} from './use-ghost-skeleton'
+export type { GhostSkeletonElement, GhostSkeletonProps } from './ghost-skeleton'
 export { default as GhostSpinner } from './GhostSpinner.vue'
 export {
   useGhostSpinner,
