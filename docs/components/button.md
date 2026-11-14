@@ -18,11 +18,8 @@ Headless use of the same contract without the SFC:
 
 ## API
 
-| Prop       | Type                              | Default    | Description                                                                   |
-| ---------- | --------------------------------- | ---------- | ----------------------------------------------------------------------------- |
-| `type`     | `'button' \| 'submit' \| 'reset'` | `'button'` | Selects native button behavior.                                               |
-| `disabled` | `boolean`                         | `false`    | Disables activation and sequential focus.                                     |
-| `loading`  | `boolean`                         | `false`    | Prevents duplicate activation while preserving focus and exposing busy state. |
+See the [generated component references](/reference/) for props, emits, slots,
+exposed members, styling hooks, CSS variables, and executable examples.
 
 All native button attributes and event listeners fall through to the root
 button. The default slot is the only content slot. The component does not
@@ -34,16 +31,7 @@ toggle/`pressed` model.
 <GhostExample id="button/themed" />
 
 Importing the themed component loads the default stylesheet. Visual props exist
-only on this wrapper:
-
-| Prop          | Type                                        | Default    | Description                               |
-| ------------- | ------------------------------------------- | ---------- | ----------------------------------------- |
-| `variant`     | `'solid' \| 'soft' \| 'outline' \| 'ghost'` | `'solid'`  | Visual treatment.                         |
-| `tone`        | `'accent' \| 'neutral' \| 'danger'`         | `'accent'` | Semantic color intent.                    |
-| `size`        | `'sm' \| 'md' \| 'lg'`                      | `'md'`     | Control size.                             |
-| `block`       | `boolean`                                   | `false`    | Stretch to the available width.           |
-| `iconOnly`    | `boolean`                                   | `false`    | Square icon-button treatment.             |
-| `interactive` | `'spotlight'`                               | omitted    | Opt-in pointer spotlight. Off by default. |
+only on this wrapper; see its [generated reference](/reference/themes/ghost-button).
 
 Themed size, padding, gap, radius, and type come from density, spacing, and
 roundness tokens. Comfortable `md` is 40px tall with an 8px radius at
