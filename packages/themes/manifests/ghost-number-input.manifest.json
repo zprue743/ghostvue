@@ -1,0 +1,206 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "handwritten",
+  "name": "GhostNumberInput",
+  "package": "@ghostvue/themes",
+  "status": "experimental",
+  "description": "Themed wrapper around headless GhostNumberInput. Forwards behavioral props and adds size and block layout hooks.",
+  "props": [
+    {
+      "name": "modelValue",
+      "type": "number | null",
+      "required": false,
+      "description": "Controlled value forwarded to the unstyled spinbutton.",
+      "deprecated": false
+    },
+    {
+      "name": "defaultValue",
+      "type": "number | null",
+      "default": null,
+      "required": false,
+      "description": "Initial uncontrolled value forwarded to the unstyled spinbutton.",
+      "deprecated": false
+    },
+    {
+      "name": "min",
+      "type": "number",
+      "required": false,
+      "description": "Inclusive minimum forwarded to the unstyled spinbutton.",
+      "deprecated": false
+    },
+    {
+      "name": "max",
+      "type": "number",
+      "required": false,
+      "description": "Inclusive maximum forwarded to the unstyled spinbutton.",
+      "deprecated": false
+    },
+    {
+      "name": "step",
+      "type": "number",
+      "default": 1,
+      "required": false,
+      "description": "Step amount forwarded to the unstyled spinbutton.",
+      "deprecated": false
+    },
+    {
+      "name": "locale",
+      "type": "string",
+      "required": false,
+      "description": "Intl locale forwarded to the unstyled spinbutton.",
+      "deprecated": false
+    },
+    {
+      "name": "formatOptions",
+      "type": "Intl.NumberFormatOptions",
+      "required": false,
+      "description": "Intl format options forwarded to the unstyled spinbutton.",
+      "deprecated": false
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Forwards disabled semantics.",
+      "deprecated": false
+    },
+    {
+      "name": "readonly",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Forwards readonly semantics.",
+      "deprecated": false
+    },
+    {
+      "name": "invalid",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Forwards invalid semantics.",
+      "deprecated": false
+    },
+    {
+      "name": "required",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Forwards required semantics.",
+      "deprecated": false
+    },
+    {
+      "name": "decrementLabel",
+      "type": "string",
+      "default": "Decrease",
+      "required": false,
+      "description": "Accessible decrement label.",
+      "deprecated": false
+    },
+    {
+      "name": "incrementLabel",
+      "type": "string",
+      "default": "Increase",
+      "required": false,
+      "description": "Accessible increment label.",
+      "deprecated": false
+    },
+    {
+      "name": "size",
+      "type": "'sm' | 'md' | 'lg'",
+      "default": "md",
+      "required": false,
+      "description": "Control size. Default omits data-size.",
+      "deprecated": false
+    },
+    {
+      "name": "block",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Stretch to available width via data-block.",
+      "deprecated": false
+    }
+  ],
+  "models": [
+    {
+      "prop": "modelValue",
+      "event": "update:modelValue",
+      "type": "number | null",
+      "description": "v-model binding forwarded to the unstyled spinbutton."
+    }
+  ],
+  "events": [],
+  "slots": [],
+  "exposed": [
+    {
+      "name": "element",
+      "kind": "property",
+      "type": "HTMLInputElement | null",
+      "description": "The spinbutton input after mount."
+    },
+    {
+      "name": "focus",
+      "kind": "method",
+      "type": "(options?: FocusOptions) => void",
+      "description": "Focus the spinbutton."
+    },
+    {
+      "name": "blur",
+      "kind": "method",
+      "type": "() => void",
+      "description": "Blur the spinbutton."
+    },
+    {
+      "name": "increment",
+      "kind": "method",
+      "type": "() => void",
+      "description": "Step up when not disabled or readonly."
+    },
+    {
+      "name": "decrement",
+      "kind": "method",
+      "type": "() => void",
+      "description": "Step down when not disabled or readonly."
+    }
+  ],
+  "styling": {
+    "parts": [
+      {
+        "name": "root",
+        "description": "Flex row grouping buttons and input."
+      },
+      {
+        "name": "input",
+        "description": "Themed spinbutton field."
+      },
+      {
+        "name": "decrement",
+        "description": "Step-down button."
+      },
+      {
+        "name": "increment",
+        "description": "Step-up button."
+      }
+    ],
+    "states": [
+      {
+        "name": "invalid",
+        "description": "Forwarded invalid styling on the root."
+      }
+    ],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "spinbutton",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/spinbutton/",
+    "keyboard": {
+      "ArrowUp": "Increase by step.",
+      "ArrowDown": "Decrease by step."
+    },
+    "requiredAriaAttributes": []
+  },
+  "examples": [
+    "number-input/themed"
+  ]
+}

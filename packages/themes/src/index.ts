@@ -225,3 +225,7 @@ export {
   type GhostTooltipStrategy,
   type GhostPortalTarget,
 } from './ghost-tooltip-content'
+export {
+  GhostNumberInput,
+  type GhostNumberInputExposed,
+} from './ghost-number-input'

@@ -1,0 +1,205 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "generated",
+  "name": "GhostNumberInput",
+  "package": "@ghostvue/vue",
+  "status": "experimental",
+  "description": "Headless locale-aware spinbutton with numeric v-model, min/max/step clamping, and increment and decrement buttons. useGhostNumberInput owns parsing and formatting; GhostNumberInput composes the control layout.",
+  "props": [
+    {
+      "name": "modelValue",
+      "type": "number | null",
+      "required": false,
+      "description": "Declared prop `modelValue`.",
+      "deprecated": false
+    },
+    {
+      "name": "defaultValue",
+      "type": "number | null",
+      "default": null,
+      "required": false,
+      "description": "Declared prop `defaultValue`.",
+      "deprecated": false
+    },
+    {
+      "name": "min",
+      "type": "number",
+      "required": false,
+      "description": "Declared prop `min`.",
+      "deprecated": false
+    },
+    {
+      "name": "max",
+      "type": "number",
+      "required": false,
+      "description": "Declared prop `max`.",
+      "deprecated": false
+    },
+    {
+      "name": "step",
+      "type": "number",
+      "default": 1,
+      "required": false,
+      "description": "Declared prop `step`.",
+      "deprecated": false
+    },
+    {
+      "name": "locale",
+      "type": "string",
+      "required": false,
+      "description": "Declared prop `locale`.",
+      "deprecated": false
+    },
+    {
+      "name": "formatOptions",
+      "type": "Intl.NumberFormatOptions",
+      "required": false,
+      "description": "Declared prop `formatOptions`.",
+      "deprecated": false
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Declared prop `disabled`.",
+      "deprecated": false
+    },
+    {
+      "name": "readonly",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Declared prop `readonly`.",
+      "deprecated": false
+    },
+    {
+      "name": "invalid",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Declared prop `invalid`.",
+      "deprecated": false
+    },
+    {
+      "name": "required",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Declared prop `required`.",
+      "deprecated": false
+    },
+    {
+      "name": "decrementLabel",
+      "type": "string",
+      "default": "Decrease",
+      "required": false,
+      "description": "Declared prop `decrementLabel`.",
+      "deprecated": false
+    },
+    {
+      "name": "incrementLabel",
+      "type": "string",
+      "default": "Increase",
+      "required": false,
+      "description": "Declared prop `incrementLabel`.",
+      "deprecated": false
+    }
+  ],
+  "models": [
+    {
+      "prop": "modelValue",
+      "event": "update:modelValue",
+      "type": "number | null",
+      "description": "v-model binding for `modelValue`."
+    }
+  ],
+  "events": [],
+  "slots": [],
+  "exposed": [
+    {
+      "name": "element",
+      "kind": "property",
+      "type": "HTMLInputElement | null",
+      "description": "Root element after mount; null before mount."
+    },
+    {
+      "name": "focus",
+      "kind": "method",
+      "type": "(options?: FocusOptions) => void",
+      "description": "Exposed method `focus`."
+    },
+    {
+      "name": "blur",
+      "kind": "method",
+      "type": "() => void",
+      "description": "Exposed method `blur`."
+    },
+    {
+      "name": "increment",
+      "kind": "method",
+      "type": "() => void",
+      "description": "Exposed method `increment`."
+    },
+    {
+      "name": "decrement",
+      "kind": "method",
+      "type": "() => void",
+      "description": "Exposed method `decrement`."
+    }
+  ],
+  "styling": {
+    "parts": [
+      {
+        "name": "root",
+        "description": "Outer layout grouping the buttons and spinbutton."
+      },
+      {
+        "name": "input",
+        "description": "Text field with role=spinbutton."
+      },
+      {
+        "name": "decrement",
+        "description": "Step-down button."
+      },
+      {
+        "name": "increment",
+        "description": "Step-up button."
+      }
+    ],
+    "states": [
+      {
+        "name": "invalid",
+        "description": "Consumer-owned invalid on the root container."
+      },
+      {
+        "name": "disabled",
+        "description": "Unavailable field on the root container."
+      },
+      {
+        "name": "readonly",
+        "description": "Read-only field on the root container."
+      }
+    ],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "spinbutton",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/spinbutton/",
+    "keyboard": {
+      "ArrowUp": "Increase by step.",
+      "ArrowDown": "Decrease by step.",
+      "Home": "Jump to min when defined.",
+      "End": "Jump to max when defined."
+    },
+    "requiredAriaAttributes": []
+  },
+  "examples": [
+    "number-input/basic",
+    "number-input/bounds",
+    "number-input/field",
+    "number-input/form-locale",
+    "number-input/ref",
+    "number-input/themed"
+  ]
+}
