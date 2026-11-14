@@ -11,6 +11,7 @@ import {
 import {
   ghostFieldContextKey,
   resolveFieldHtmlElement,
+  type GhostFieldContext,
   type GhostFieldErrorElement,
   type GhostFieldErrorExposed,
 } from './ghost-field'
@@ -32,10 +33,11 @@ withDefaults(
   },
 )
 
-const context = inject(ghostFieldContextKey)
-if (!context) {
+const injectedFieldContext = inject(ghostFieldContextKey)
+if (!injectedFieldContext) {
   throw new Error('GhostFieldError must be used inside GhostField')
 }
+const fieldContext: GhostFieldContext = injectedFieldContext
 
 const attrs = useAttrs()
 const slots = useSlots()
@@ -45,17 +47,15 @@ const visible = shallowRef(false)
 
 useGhostFieldPartContent(hostRef, (next) => {
   visible.value = next
-  context.setErrorVisible(next)
-  context.setErrorRegistered(next)
+  fieldContext.setErrorVisible(next)
+  fieldContext.setErrorRegistered(next)
 })
 
-const slotVisible = computed(() => {
+function buildErrorAttrs(): Record<string, unknown> {
   const slotRender = slots['default']
-  return slotRender ? fieldPartSlotHasRenderableContent(slotRender()) : false
-})
-
-const errorAttrs = computed(() => {
-  const showInMarkup = slotVisible.value
+  const showInMarkup = slotRender
+    ? fieldPartSlotHasRenderableContent(slotRender())
+    : false
 
   const rest: Record<string, unknown> = {}
   for (const [key, value] of Object.entries(attrs)) {
@@ -68,7 +68,7 @@ const errorAttrs = computed(() => {
   const id =
     typeof customId === 'string' && customId.length > 0
       ? customId
-      : context.errorId.value
+      : fieldContext.errorId.value
 
   const result: Record<string, unknown> = {
     ...rest,
@@ -83,7 +83,7 @@ const errorAttrs = computed(() => {
   }
 
   return result
-})
+}
 
 defineExpose<GhostFieldErrorExposed>({
   get element() {
@@ -99,7 +99,7 @@ defineExpose<GhostFieldErrorExposed>({
 </script>
 
 <template>
-  <component :is="as" ref="host" v-bind="errorAttrs">
+  <component :is="as" ref="host" v-bind="buildErrorAttrs()">
     <slot />
   </component>
 </template>
