@@ -154,6 +154,8 @@ describe('GhostSelect', () => {
       }),
     )
 
+    await flushPromises()
+    await nextTick()
     expect(wrapper.get('[data-part="value"]').text()).toBe('Banana')
     const trigger = wrapper.get('[data-part="trigger"]')
     await trigger.trigger('click')
@@ -195,6 +197,8 @@ describe('GhostSelect', () => {
         },
       }),
     )
+    await flushPromises()
+    await nextTick()
     expect(wrapper.get('[data-part="value"]').text()).toBe('Banana')
     expect(
       wrapper.get('[data-part="trigger"]').attributes('aria-expanded'),
@@ -273,6 +277,14 @@ describe('GhostSelect', () => {
       }),
     )
 
+    await flushPromises()
+    await nextTick()
+    const input = wrapper.get('input.ghost-visually-hidden')
+      .element as HTMLInputElement
+    expect(input.required).toBe(true)
+    expect(input.value).toBe('')
+    expect(input.checkValidity()).toBe(false)
+    expect(input.validationMessage).toBe('Select a value.')
     const form = wrapper.get('form').element as HTMLFormElement
     expect(form.checkValidity()).toBe(false)
   })

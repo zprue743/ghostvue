@@ -3,6 +3,7 @@ import {
   nextTick,
   shallowRef,
   toValue,
+  watch,
   type ComputedRef,
   type Ref,
 } from 'vue'
@@ -24,10 +25,9 @@ export interface GhostSelectFormInputProps {
   form: string | undefined
   disabled: boolean | undefined
   required: boolean | undefined
-  readonly: true
   tabindex: -1
-  'aria-hidden': 'true'
   class: 'ghost-visually-hidden'
+  autocomplete: 'off'
 }
 
 /**
@@ -61,6 +61,7 @@ export function useGhostSelect(options: UseGhostSelectOptions = {}): {
   focusFirstEnabledOption: (fromEnd?: boolean) => void
   formInputProps: ComputedRef<GhostSelectFormInputProps>
   applyFormReset: () => void
+  syncFormValidity: () => void
 } {
   let suppressValueChange = false
 
@@ -303,16 +304,32 @@ export function useGhostSelect(options: UseGhostSelectOptions = {}): {
       form: form ?? undefined,
       disabled: disabled.value || undefined,
       required: named && required.value ? true : undefined,
-      readonly: true,
       tabindex: -1,
-      'aria-hidden': 'true',
       class: 'ghost-visually-hidden',
+      autocomplete: 'off',
     }
   })
 
   function applyFormReset(): void {
     selectedValue.value = toValue(options.defaultValue)
   }
+
+  function syncFormValidity(): void {
+    const el = options.getFormInput?.() ?? null
+    if (!el) {
+      return
+    }
+    const empty = selectedValue.value === undefined || selectedValue.value === ''
+    if (required.value && empty) {
+      el.setCustomValidity('Select a value.')
+    } else {
+      el.setCustomValidity('')
+    }
+  }
+
+  watch([selectedValue, required], () => {
+    syncFormValidity()
+  })
 
   return {
     selectedValue,
@@ -343,6 +360,7 @@ export function useGhostSelect(options: UseGhostSelectOptions = {}): {
     focusFirstEnabledOption,
     formInputProps,
     applyFormReset,
+    syncFormValidity,
     labelVersion,
   }
 }

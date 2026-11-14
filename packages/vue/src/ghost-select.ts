@@ -132,4 +132,5 @@ export interface UseGhostSelectOptions {
   placeholder?: MaybeRefOrGetter<string | undefined>
   onValueChange?: (value: string | undefined) => void
   onOpenChange?: (open: boolean) => void
+  getFormInput?: () => HTMLInputElement | null
 }

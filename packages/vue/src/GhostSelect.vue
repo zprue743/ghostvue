@@ -1,5 +1,11 @@
 <script setup lang="ts">
-import { computed, provide, shallowRef, useTemplateRef, watch } from 'vue'
+import {
+  computed,
+  provide,
+  shallowRef,
+  useTemplateRef,
+  watch,
+} from 'vue'
 
 import { ghostSelectContextKey } from './ghost-select'
 import { useNativeFormReset } from './form-reset'
@@ -67,6 +73,7 @@ const {
   focusFirstEnabledOption,
   formInputProps,
   applyFormReset,
+  syncFormValidity,
   labelVersion,
 } = useGhostSelect({
   modelValue: () => props.modelValue,
@@ -85,6 +92,7 @@ const {
   onOpenChange: (next) => {
     emit('update:open', next)
   },
+  getFormInput: () => formInput.value,
 })
 
 useNativeFormReset(
@@ -98,6 +106,16 @@ watch(isOpen, (next) => {
     openedAtMount.value = false
   }
 })
+
+watch(
+  () => formInput.value,
+  (el) => {
+    if (el) {
+      syncFormValidity()
+    }
+  },
+  { flush: 'post', immediate: true },
+)
 
 const customTriggerId = shallowRef<string | null>(null)
 const customContentId = shallowRef<string | null>(null)
@@ -170,5 +188,8 @@ defineExpose({
     v-if="formInputProps.name !== undefined"
     ref="formInput"
     v-bind="formInputProps"
+    @keydown.prevent
+    @beforeinput.prevent
+    @paste.prevent
   />
 </template>
