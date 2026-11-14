@@ -1,0 +1,94 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "generated",
+  "name": "GhostHoverCard",
+  "package": "@ghostvue/vue",
+  "status": "experimental",
+  "description": "Headless hover-card root provider composing delay timing, open state, and GhostHoverCardTrigger/GhostHoverCardContent context.",
+  "props": [
+    {
+      "name": "closeDelay",
+      "type": "number",
+      "default": 300,
+      "required": false,
+      "description": "Milliseconds before hiding after hover/focus leaves the trigger and content.",
+      "deprecated": false
+    },
+    {
+      "name": "closeOnEscape",
+      "type": "boolean",
+      "default": true,
+      "required": false,
+      "description": "When `true`, `Escape` dismisses the open card via `useDismissableLayer`.",
+      "deprecated": false
+    },
+    {
+      "name": "defaultOpen",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Initial open state when `open` is omitted.",
+      "deprecated": false
+    },
+    {
+      "name": "open",
+      "type": "boolean",
+      "required": false,
+      "description": "Controlled open state. Omit for uncontrolled mode.",
+      "deprecated": false
+    },
+    {
+      "name": "openDelay",
+      "type": "number",
+      "default": 700,
+      "required": false,
+      "description": "Milliseconds before showing after hover or focus begins.",
+      "deprecated": false
+    }
+  ],
+  "models": [
+    {
+      "prop": "open",
+      "event": "update:open",
+      "type": "boolean",
+      "description": "v-model binding for `open`."
+    }
+  ],
+  "events": [],
+  "slots": [
+    {
+      "name": "default",
+      "props": [
+        {
+          "name": "close",
+          "type": "() => void",
+          "description": "Slot prop `close`."
+        },
+        {
+          "name": "open",
+          "type": "boolean",
+          "description": "Slot prop `open`."
+        }
+      ],
+      "description": "Primary content."
+    }
+  ],
+  "exposed": [],
+  "styling": {
+    "parts": [],
+    "states": [],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "generic",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/disclosure/",
+    "keyboard": {
+      "Escape": "Dismisses an open hover card."
+    },
+    "requiredAriaAttributes": []
+  },
+  "examples": [
+    "hover-card/basic",
+    "hover-card/themed"
+  ]
+}

@@ -146,6 +146,59 @@ test.describe('docs example previews', () => {
     }
   })
 
+  test('GhostHoverCard docs demos show on hover/focus and pass Axe', async ({
+    page,
+  }) => {
+    const docs = await startStaticServer('apps/docs/.vitepress/dist')
+
+    try {
+      await page.goto(`${docs.url}/components/hover-card.html`)
+
+      const basicExample = page.locator('[data-example-id="hover-card/basic"]')
+      await expect(basicExample.getByText('Unstyled. Headless.')).toBeVisible()
+
+      const basicTrigger = basicExample.getByRole('button', {
+        name: 'Contributor profile preview',
+      })
+      const closedAxe = await new AxeBuilder({ page }).analyze()
+      expect(closedAxe.violations).toEqual([])
+
+      await basicTrigger.hover()
+      const basicDialog = page
+        .getByRole('dialog')
+        .filter({ hasText: 'headless Vue primitives' })
+      await expect(basicDialog).toBeVisible({ timeout: 2000 })
+      await expect(basicDialog.getByRole('link')).toBeVisible()
+
+      const themedExample = page.locator(
+        '[data-example-id="hover-card/themed"]',
+      )
+      const themedTrigger = themedExample.getByRole('button', {
+        name: 'Design token preview',
+      })
+      await themedTrigger.focus()
+      const themedDialog = page
+        .getByRole('dialog')
+        .filter({ hasText: 'Elevation-3 surface' })
+      await expect(themedDialog).toBeVisible({ timeout: 2000 })
+
+      const themedStyles = await themedDialog.evaluate((el) => {
+        const computed = getComputedStyle(el)
+        return {
+          backgroundColor: computed.backgroundColor,
+          borderTopWidth: computed.borderTopWidth,
+          borderRadius: computed.borderRadius,
+        }
+      })
+
+      expect(isTransparentColor(themedStyles.backgroundColor)).toBe(false)
+      expect(Number.parseFloat(themedStyles.borderTopWidth)).toBeGreaterThan(0)
+      expect(Number.parseFloat(themedStyles.borderRadius)).toBeGreaterThan(0)
+    } finally {
+      await docs.close()
+    }
+  })
+
   test('GhostTooltip docs demos show on hover/focus and pass Axe', async ({
     page,
   }) => {

@@ -54,20 +54,20 @@ Themed exports from `@ghostvue/themes`:
 
 #### `GhostHoverCard` (root)
 
-| Prop            | Type                   | Default     | Contract                                                                 |
-| --------------- | ---------------------- | ----------- | ------------------------------------------------------------------------ |
-| `open`          | `boolean \| undefined` | `undefined` | Controlled open state. Omit for uncontrolled mode.                       |
-| `defaultOpen`   | `boolean`              | `false`     | Initial open state in uncontrolled mode (discouraged; for tests/SSR).    |
-| `openDelay`     | `number`               | `700`       | Milliseconds before showing after hover or focus begins.                 |
-| `closeDelay`    | `number`               | `300`       | Milliseconds before hiding after hover/focus leaves the trigger and card.|
-| `closeOnEscape` | `boolean`              | `true`      | When `true`, `Escape` dismisses via `useDismissableLayer`.               |
+| Prop            | Type                   | Default     | Contract                                                                  |
+| --------------- | ---------------------- | ----------- | ------------------------------------------------------------------------- |
+| `open`          | `boolean \| undefined` | `undefined` | Controlled open state. Omit for uncontrolled mode.                        |
+| `defaultOpen`   | `boolean`              | `false`     | Initial open state in uncontrolled mode (discouraged; for tests/SSR).     |
+| `openDelay`     | `number`               | `700`       | Milliseconds before showing after hover or focus begins.                  |
+| `closeDelay`    | `number`               | `300`       | Milliseconds before hiding after hover/focus leaves the trigger and card. |
+| `closeOnEscape` | `boolean`              | `true`      | When `true`, `Escape` dismisses via `useDismissableLayer`.                |
 
 #### `GhostHoverCardTrigger`
 
-| Prop       | Type                                                   | Default    | Contract                                                                                                                               |
-| ---------- | ------------------------------------------------------ | ---------- | -------------------------------------------------------------------------------------------------------------------------------------- |
-| `as`       | `GhostHoverCardTriggerElement` (`Component \| string`) | `'button'` | Element tag or component (for example `GhostButton`).                                                                                  |
-| `disabled` | `boolean`                                              | `false`    | Prevents show scheduling when `true`. Uses native `disabled` on `<button>` / button components and `aria-disabled="true"` otherwise.    |
+| Prop       | Type                                                   | Default    | Contract                                                                                                                             |
+| ---------- | ------------------------------------------------------ | ---------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| `as`       | `GhostHoverCardTriggerElement` (`Component \| string`) | `'button'` | Element tag or component (for example `GhostButton`).                                                                                |
+| `disabled` | `boolean`                                              | `false`    | Prevents show scheduling when `true`. Uses native `disabled` on `<button>` / button components and `aria-disabled="true"` otherwise. |
 
 Native attributes and listeners fall through to the rendered root element.
 
@@ -150,10 +150,10 @@ Follows WAI-ARIA APG non-modal dialog / disclosure-on-hover guidance and WCAG
 
 ### Keyboard interaction
 
-| Key      | Where                                | Behavior                                                             |
-| -------- | ------------------------------------ | -------------------------------------------------------------------- |
-| `Escape` | Document while open                  | Closes when `closeOnEscape` is `true`; focus stays on the trigger.   |
-| `Tab`    | Trigger and content                  | Normal tab order; focus inside content keeps the card open.          |
+| Key      | Where               | Behavior                                                           |
+| -------- | ------------------- | ------------------------------------------------------------------ |
+| `Escape` | Document while open | Closes when `closeOnEscape` is `true`; focus stays on the trigger. |
+| `Tab`    | Trigger and content | Normal tab order; focus inside content keeps the card open.        |
 
 Opening on hover does **not** move focus. Opening on focus follows delay timing
 without auto-moving focus into the card.
