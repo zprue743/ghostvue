@@ -5,6 +5,7 @@ import {
   onUnmounted,
   provide,
   shallowRef,
+  watch,
   watchEffect,
 } from 'vue'
 
@@ -100,18 +101,17 @@ function resolveScheduleOpenDelay(viaPointer: boolean): number {
   return resolvedDelayDuration.value
 }
 
-function runOpen(): void {
-  open()
-  tooltipProvider?.onTooltipDidOpen()
-}
-
-function runClose(): void {
-  if (!isOpen.value) {
-    return
-  }
-  close()
-  tooltipProvider?.onTooltipDidClose()
-}
+watch(
+  isOpen,
+  (nextOpen, previousOpen) => {
+    if (nextOpen && previousOpen !== true) {
+      tooltipProvider?.onTooltipDidOpen()
+    } else if (!nextOpen && previousOpen === true) {
+      tooltipProvider?.onTooltipDidClose()
+    }
+  },
+  { immediate: true },
+)
 
 function scheduleOpen(viaPointer: boolean): void {
   clearCloseTimer()
@@ -122,7 +122,7 @@ function scheduleOpen(viaPointer: boolean): void {
   const delay = resolveScheduleOpenDelay(viaPointer)
   openTimer = setTimeout(() => {
     openTimer = null
-    runOpen()
+    open()
   }, delay)
 }
 
@@ -139,7 +139,7 @@ function maybeScheduleClose(): void {
   closeTimer = setTimeout(() => {
     closeTimer = null
     if (!shouldRemainOpen()) {
-      runClose()
+      close()
     }
   }, delay)
 }
@@ -147,7 +147,9 @@ function maybeScheduleClose(): void {
 function hideImmediate(): void {
   clearOpenTimer()
   clearCloseTimer()
-  runClose()
+  if (isOpen.value) {
+    close()
+  }
 }
 
 function notifyTriggerPointerEnter(): void {
@@ -211,6 +213,9 @@ watchEffect(() => {
 onUnmounted(() => {
   clearOpenTimer()
   clearCloseTimer()
+  if (isOpen.value) {
+    tooltipProvider?.onTooltipDidClose()
+  }
 })
 
 const customTriggerId = shallowRef<string | null>(null)
