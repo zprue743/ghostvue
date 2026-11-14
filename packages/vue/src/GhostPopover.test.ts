@@ -225,6 +225,60 @@ describe('GhostPopover', () => {
     expect(customContent?.hasAttribute('aria-labelledby')).toBe(false)
   })
 
+  it('does not inherit menu, tooltip, or modal dialog semantics (GHO-78)', async () => {
+    mountAttached(
+      defineComponent({
+        setup() {
+          return () =>
+            h(
+              GhostPopover,
+              { defaultOpen: true },
+              {
+                default: () => [
+                  h(GhostPopoverTrigger, null, () => 'Open'),
+                  h(GhostPopoverContent, null, () => 'Panel'),
+                ],
+              },
+            )
+        },
+      }),
+    )
+    await flushPromises()
+
+    const trigger = document.querySelector('[data-part="trigger"]')
+    const content = document.querySelector('[data-part="content"]')
+    expect(trigger?.getAttribute('aria-haspopup')).toBe('dialog')
+    expect(content?.getAttribute('role')).toBe('dialog')
+    expect(content?.hasAttribute('aria-modal')).toBe(false)
+  })
+
+  it('does not open when GhostPopoverTrigger uses native disabled', async () => {
+    const wrapper = mountAttached(
+      defineComponent({
+        setup() {
+          return () =>
+            h(GhostPopover, null, {
+              default: () => [
+                h(GhostPopoverTrigger, { disabled: true }, () => 'Disabled'),
+                h(GhostPopoverContent, null, () => 'Should stay closed'),
+              ],
+            })
+        },
+      }),
+    )
+
+    const trigger = wrapper.get('[data-part="trigger"]')
+    expect(trigger.attributes('disabled')).toBeDefined()
+
+    await trigger.trigger('click')
+    await flushPromises()
+    expect(document.querySelector('[data-part="content"]')).toBeNull()
+
+    pressKey('Enter', trigger.element)
+    await flushPromises()
+    expect(document.querySelector('[data-part="content"]')).toBeNull()
+  })
+
   it('keeps content visibility:hidden until useFloating resolves isPositioned', async () => {
     type ComputeResult = Awaited<ReturnType<typeof FloatingDom.computePosition>>
     let resolvePosition: ((result: ComputeResult) => void) | undefined

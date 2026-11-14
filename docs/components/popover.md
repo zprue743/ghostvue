@@ -1,5 +1,8 @@
 # GhostPopover
 
+`GhostPopover` is the non-modal floating disclosure for [GHO-78](https://linear.app/ghost-vue/issue/GHO-78)
+(disclosure dialog semantics, not menu, tooltip, or modal dialog).
+
 `GhostPopover` renders a floating, non-modal disclosure dialog anchored to a
 trigger control. Import `GhostPopover`, `GhostPopoverTrigger`,
 `GhostPopoverContent`, and `GhostPopoverClose` from `@ghostvue/vue` for
