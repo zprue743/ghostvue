@@ -52,25 +52,25 @@ Themed exports from `@ghostvue/themes`:
 
 #### `GhostCollapsible` (root)
 
-| Prop          | Type                   | Default     | Contract                                                                                 |
-| ------------- | ---------------------- | ----------- | ---------------------------------------------------------------------------------------- |
-| `open`        | `boolean \| undefined` | `undefined` | Controlled open state. Omit for uncontrolled mode.                                     |
-| `defaultOpen` | `boolean`              | `false`     | Initial open state in uncontrolled mode.                                               |
-| `disabled`    | `boolean`              | `false`     | When `true`, the trigger cannot toggle open state (root-level disable).                  |
+| Prop          | Type                   | Default     | Contract                                                                |
+| ------------- | ---------------------- | ----------- | ----------------------------------------------------------------------- |
+| `open`        | `boolean \| undefined` | `undefined` | Controlled open state. Omit for uncontrolled mode.                      |
+| `defaultOpen` | `boolean`              | `false`     | Initial open state in uncontrolled mode.                                |
+| `disabled`    | `boolean`              | `false`     | When `true`, the trigger cannot toggle open state (root-level disable). |
 
 #### `GhostCollapsibleTrigger`
 
-| Prop       | Type                                                      | Default    | Contract                                                                                                                               |
-| ---------- | --------------------------------------------------------- | ---------- | -------------------------------------------------------------------------------------------------------------------------------------- |
-| `as`       | `GhostCollapsibleTriggerElement` (`Component \| string`) | `'button'` | Element tag or component (for example `GhostButton`).                                                                                  |
-| `disabled` | `boolean`                                                 | `false`    | Prevents toggling when `true` or when the root is `disabled`. Uses native `disabled` on `<button>` and `aria-disabled="true"` otherwise. |
+| Prop       | Type                                                     | Default    | Contract                                                                                                                                 |
+| ---------- | -------------------------------------------------------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| `as`       | `GhostCollapsibleTriggerElement` (`Component \| string`) | `'button'` | Element tag or component (for example `GhostButton`).                                                                                    |
+| `disabled` | `boolean`                                                | `false`    | Prevents toggling when `true` or when the root is `disabled`. Uses native `disabled` on `<button>` and `aria-disabled="true"` otherwise. |
 
 #### `GhostCollapsibleContent`
 
-| Prop               | Type                                                      | Default | Contract                                                                                                                                 |
-| ------------------ | --------------------------------------------------------- | ------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
-| `as`               | `GhostCollapsibleContentElement` (`Component \| string`) | `'div'` | Element tag or component for the panel.                                                                                                  |
-| `disableAnimation` | `boolean`                                                 | `false` | When `true`, sets `data-animation="off"` so theme height transitions are skipped even when motion is allowed.                            |
+| Prop               | Type                                                     | Default | Contract                                                                                                      |
+| ------------------ | -------------------------------------------------------- | ------- | ------------------------------------------------------------------------------------------------------------- |
+| `as`               | `GhostCollapsibleContentElement` (`Component \| string`) | `'div'` | Element tag or component for the panel.                                                                       |
+| `disableAnimation` | `boolean`                                                | `false` | When `true`, sets `data-animation="off"` so theme height transitions are skipped even when motion is allowed. |
 
 Native attributes and listeners fall through to the rendered root element.
 
@@ -117,7 +117,7 @@ Follows
 
 - `GhostCollapsibleTrigger` renders `type="button"` (when `as="button"`),
   `id` (from `useGhostId`, overridable by consumer `id`), `aria-expanded="true" |
-  "false"`, `aria-controls="<contentId>"`, `data-part="trigger"`, and
+"false"`, `aria-controls="<contentId>"`, `data-part="trigger"`, and
   `data-state="open" | "closed"`. No `aria-haspopup`.
 - `GhostCollapsibleContent` renders `id` (matching `aria-controls`), `hidden`
   when closed, `data-part="content"`, `data-state="open" | "closed"`, and
@@ -170,7 +170,7 @@ Follows
 ## Composition
 
 - Reuses `useControllableState`, `useGhostId`, and the `as` + `inheritAttrs:
-  false` attribute-splitting pattern from `GhostPopover` / `GhostDialog` triggers.
+false` attribute-splitting pattern from `GhostPopover` / `GhostDialog` triggers.
 
 ## Test plan
 

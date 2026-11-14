@@ -1,0 +1,107 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "handwritten",
+  "name": "GhostCollapsible",
+  "package": "@ghostvue/themes",
+  "status": "experimental",
+  "description": "Themed wrapper around headless GhostCollapsible, GhostCollapsibleTrigger, and GhostCollapsibleContent. Importing from @ghostvue/themes loads default disclosure surface styles.",
+  "props": [
+    {
+      "name": "open",
+      "type": "boolean",
+      "required": false,
+      "description": "Controlled open state forwarded to headless GhostCollapsible.",
+      "deprecated": false
+    },
+    {
+      "name": "defaultOpen",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Initial open state when open is omitted.",
+      "deprecated": false
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Disables toggling on the trigger.",
+      "deprecated": false
+    }
+  ],
+  "models": [
+    {
+      "prop": "open",
+      "event": "update:open",
+      "type": "boolean",
+      "description": "v-model:open binding for controlled state."
+    }
+  ],
+  "events": [],
+  "slots": [
+    {
+      "name": "default",
+      "props": [
+        {
+          "name": "open",
+          "type": "boolean",
+          "description": "Current open state."
+        },
+        {
+          "name": "toggle",
+          "type": "() => void",
+          "description": "Toggles the panel open state."
+        }
+      ],
+      "description": "Collapsible trigger and content parts."
+    }
+  ],
+  "exposed": [],
+  "styling": {
+    "parts": [
+      {
+        "name": "trigger",
+        "description": "Full-width disclosure button with surface border tokens."
+      },
+      {
+        "name": "content",
+        "description": "In-flow panel with inset padding and optional height motion."
+      }
+    ],
+    "states": [
+      {
+        "name": "open",
+        "description": "Applied on data-state while expanded."
+      },
+      {
+        "name": "closed",
+        "description": "Applied on data-state while collapsed."
+      }
+    ],
+    "cssProperties": [
+      {
+        "name": "--ghost-surface-fg",
+        "description": "Trigger and panel text color."
+      },
+      {
+        "name": "--ghost-surface-border",
+        "description": "Trigger and panel borders."
+      },
+      {
+        "name": "--ghost-motion-duration-moderate",
+        "description": "Optional content height transition duration."
+      }
+    ]
+  },
+  "accessibility": {
+    "role": "generic",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/disclosure/",
+    "keyboard": {
+      "Enter": "Toggles disclosure on native button triggers.",
+      "Space": "Toggles disclosure on native button triggers."
+    },
+    "requiredAriaAttributes": ["aria-expanded", "aria-controls"]
+  },
+  "examples": ["collapsible/themed"]
+}

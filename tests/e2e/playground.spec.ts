@@ -410,6 +410,34 @@ test('GhostBadge renders compact metadata without becoming a tab stop', async ({
   }
 })
 
+test('GhostCollapsible toggles in-flow disclosure from the playground', async ({
+  page,
+}) => {
+  const playground = await startStaticServer('apps/playground/dist')
+
+  try {
+    await page.goto(playground.url)
+
+    const section = page.getByRole('region', { name: 'GhostCollapsible' })
+    const trigger = section.getByRole('button', { name: 'Expand billing memo' })
+    const panel = section.getByTestId('collapsible-headless-content')
+
+    await expect(trigger).toHaveAttribute('aria-expanded', 'false')
+    await expect(panel).toHaveAttribute('hidden', '')
+
+    await trigger.click()
+    await expect(trigger).toHaveAttribute('aria-expanded', 'true')
+    await expect(panel).not.toHaveAttribute('hidden', '')
+
+    const disabled = section.getByRole('button', {
+      name: 'Disabled disclosure control',
+    })
+    await expect(disabled).toBeDisabled()
+  } finally {
+    await playground.close()
+  }
+})
+
 test('unset data-ghost-mode follows prefers-color-scheme from CSS alone', async ({
   page,
 }) => {

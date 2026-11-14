@@ -21,6 +21,8 @@
 @import './ghost-switch.css';
 @import './ghost-textarea.css';
 
+@import './ghost-collapsible.css';
+
 @layer ghostvue-theme {
   :where(.ghost-themed-scope) {
     display: contents;

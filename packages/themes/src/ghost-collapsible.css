@@ -1,0 +1,77 @@
+/*
+ * Themed GhostCollapsible disclosure panel. Optional height transition uses
+ * semantic motion tokens and respects prefers-reduced-motion.
+ */
+@layer ghostvue-theme {
+  :where(
+    .ghost-theme .ghost-collapsible-trigger,
+    .ghost-themed-scope .ghost-collapsible-trigger,
+    .ghost-collapsible-trigger[data-themed]
+  ) {
+    align-items: center;
+    background: transparent;
+    border: var(--ghost-border-hairline-width) solid var(--ghost-surface-border);
+    border-radius: var(--ghost-radius-md);
+    color: var(--ghost-surface-fg);
+    cursor: pointer;
+    display: inline-flex;
+    font-family: var(--ghost-type-family-sans);
+    font-feature-settings: var(--ghost-type-feature-default);
+    font-size: var(--ghost-type-size-sm);
+    font-weight: var(--ghost-type-weight-medium);
+    gap: var(--ghost-space-inline-xs);
+    line-height: var(--ghost-type-leading-snug);
+    padding: var(--ghost-space-inset-sm) var(--ghost-space-inset-md);
+    text-align: start;
+    width: 100%;
+  }
+
+  :where(
+    .ghost-theme .ghost-collapsible-trigger:focus-visible,
+    .ghost-themed-scope .ghost-collapsible-trigger:focus-visible,
+    .ghost-collapsible-trigger[data-themed]:focus-visible
+  ) {
+    outline: var(--ghost-focus-ring-width) solid var(--ghost-focus-ring-color);
+    outline-offset: var(--ghost-focus-ring-offset);
+  }
+
+  :where(
+    .ghost-theme .ghost-collapsible-trigger:disabled,
+    .ghost-themed-scope .ghost-collapsible-trigger:disabled,
+    .ghost-collapsible-trigger[data-themed]:disabled
+  ) {
+    cursor: not-allowed;
+    opacity: var(--ghost-state-disabled-opacity);
+  }
+
+  :where(
+    .ghost-theme .ghost-collapsible-content,
+    .ghost-themed-scope .ghost-collapsible-content,
+    .ghost-collapsible-content[data-themed]
+  ) {
+    border: var(--ghost-border-hairline-width) solid var(--ghost-surface-border);
+    border-radius: var(--ghost-radius-md);
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    border-top: none;
+    box-sizing: border-box;
+    color: var(--ghost-surface-fg);
+    font-family: var(--ghost-type-family-sans);
+    font-feature-settings: var(--ghost-type-feature-default);
+    font-size: var(--ghost-type-size-sm);
+    line-height: var(--ghost-type-leading-normal);
+    overflow: hidden;
+    padding: var(--ghost-space-inset-md);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    :where(
+      .ghost-theme .ghost-collapsible-content:not([data-animation='off']),
+      .ghost-themed-scope
+        .ghost-collapsible-content:not([data-animation='off']),
+      .ghost-collapsible-content[data-themed]:not([data-animation='off'])
+    ) {
+      transition: max-height var(--ghost-motion-duration-moderate);
+    }
+  }
+}
