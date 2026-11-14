@@ -24,6 +24,7 @@ export const docsSidebar: LlmsSidebarGroup[] = [
         text: 'GhostInteractiveSurface',
         link: '/components/interactive-surface',
       },
+      { text: 'GhostKbd', link: '/components/kbd' },
       { text: 'GhostPopover', link: '/components/popover' },
       { text: 'GhostSeparator', link: '/components/separator' },
       { text: 'GhostSkeleton', link: '/components/skeleton' },
@@ -111,6 +112,10 @@ export const docsSidebar: LlmsSidebarGroup[] = [
       {
         text: 'GhostInteractiveSurface specification',
         link: '/components/interactive-surface-spec',
+      },
+      {
+        text: 'GhostKbd specification',
+        link: '/components/kbd-spec',
       },
       {
         text: 'GhostPopover specification',

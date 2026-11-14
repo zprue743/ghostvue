@@ -1,0 +1,145 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "handwritten",
+  "name": "GhostKbd",
+  "package": "@ghostvue/themes",
+  "status": "experimental",
+  "description": "Themed wrapper around headless GhostKbd. Same keys and platform props plus size. Importing it loads the default stylesheet and scopes keycap styles to this instance. Hand-written until GHO-13 generates manifests.",
+  "props": [
+    {
+      "name": "keys",
+      "type": "string | readonly string[]",
+      "required": false,
+      "description": "Key tokens forwarded to the unstyled GhostKbd.",
+      "deprecated": false
+    },
+    {
+      "name": "platform",
+      "type": "'auto' | 'apple' | 'pc'",
+      "default": "auto",
+      "required": false,
+      "description": "Modifier label set forwarded to the unstyled GhostKbd.",
+      "deprecated": false
+    },
+    {
+      "name": "size",
+      "type": "'sm' | 'md' | 'lg'",
+      "default": "md",
+      "required": false,
+      "description": "Type and inset scale. The default omits data-size so CSS can treat a missing hook as md.",
+      "deprecated": false
+    }
+  ],
+  "models": [],
+  "events": [],
+  "slots": [
+    {
+      "name": "default",
+      "props": [],
+      "description": "Key content forwarded to the unstyled GhostKbd."
+    }
+  ],
+  "exposed": [],
+  "styling": {
+    "parts": [
+      {
+        "name": "root",
+        "description": "The outer native kbd inside the display:contents themed scope. Combination roots drop keycap chrome."
+      },
+      {
+        "name": "key",
+        "description": "Nested keycap for one token from the keys prop."
+      },
+      {
+        "name": "separator",
+        "description": "Muted plus between keycaps."
+      }
+    ],
+    "states": [],
+    "cssProperties": [
+      {
+        "name": "--ghost-elevation-0-bg",
+        "description": "Keycap background."
+      },
+      {
+        "name": "--ghost-elevation-0-border",
+        "description": "Keycap border color."
+      },
+      {
+        "name": "--ghost-elevation-0-shadow",
+        "description": "Keycap shadow."
+      },
+      {
+        "name": "--ghost-elevation-0-highlight",
+        "description": "Keycap inset highlight."
+      },
+      {
+        "name": "--ghost-surface-fg",
+        "description": "Keycap text color."
+      },
+      {
+        "name": "--ghost-text-muted",
+        "description": "Combination separator color."
+      },
+      {
+        "name": "--ghost-border-hairline-width",
+        "description": "Keycap border width."
+      },
+      {
+        "name": "--ghost-radius-sm",
+        "description": "Default keycap corner radius."
+      },
+      {
+        "name": "--ghost-radius-md",
+        "description": "Large keycap corner radius."
+      },
+      {
+        "name": "--ghost-type-family-sans",
+        "description": "Keycap font family."
+      },
+      {
+        "name": "--ghost-type-size-xs",
+        "description": "Small keycap font size."
+      },
+      {
+        "name": "--ghost-type-size-sm",
+        "description": "Default keycap font size."
+      },
+      {
+        "name": "--ghost-type-size-md",
+        "description": "Large keycap font size."
+      },
+      {
+        "name": "--ghost-type-weight-medium",
+        "description": "Keycap font weight."
+      },
+      {
+        "name": "--ghost-type-letter-tight",
+        "description": "Keycap letter spacing."
+      },
+      {
+        "name": "--ghost-type-line-tight",
+        "description": "Keycap line height."
+      },
+      {
+        "name": "--ghost-space-gap-xs",
+        "description": "Default keycap block padding, small padding, and combination gap."
+      },
+      {
+        "name": "--ghost-space-gap-sm",
+        "description": "Default keycap inline padding."
+      },
+      {
+        "name": "--ghost-space-inset-xs",
+        "description": "Large keycap padding."
+      }
+    ]
+  },
+  "accessibility": {
+    "role": "generic",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/practices/names-and-descriptions/",
+    "keyboard": {},
+    "requiredAriaAttributes": []
+  },
+  "examples": ["kbd/themed"]
+}
