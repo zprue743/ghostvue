@@ -11,13 +11,15 @@ The scaffold creates:
 - `packages/vue/src/GhostSwitch.vue`, its `ghost-switch.ts` ref contract,
   `use-ghost-switch.ts` composable and colocated unit test.
 - A themed wrapper and CSS recipe under `packages/themes/src`, using existing
-  `--ghost-*` tokens. The root exposes `data-part="root"` and
-  `data-ghost-switch` hooks.
+  `--ghost-*` tokens, plus a themed ref test. Both exports expose the content
+  root as `element`; the themed wrapper forwards the headless ref contract.
+  The root exposes `data-part="root"` and `data-ghost-switch` hooks.
 - Vue and themed manifests, a docs page and draft specification, and
   `examples/switch/basic.vue` registered in `examples/registry.ts`.
 - A runnable Playwright/Axe smoke test at `tests/e2e/ghost-switch.spec.ts`.
 
-It wires both public barrels, the default CSS imports and the docs sidebar.
+It wires both public barrels, the default CSS imports and the docs sidebar:
+the component under Components and its draft specification under Contributing.
 Vue refs and composables stay in `vue`; a neutral scaffold has no useful
 framework-independent behavior to put in `core` or `shared`.
 

@@ -38,17 +38,14 @@ function manifest(name, packageName, slug) {
     models: [],
     events: [],
     slots: [{ name: 'default', props: [], description: 'Container content.' }],
-    exposed:
-      packageName === '@ghostvue/vue'
-        ? [
-            {
-              name: 'element',
-              kind: 'property',
-              type: 'HTMLElement | null',
-              description: 'Root element after mount; null before mount.',
-            },
-          ]
-        : [],
+    exposed: [
+      {
+        name: 'element',
+        kind: 'property',
+        type: 'HTMLElement | null',
+        description: 'Root element after mount; null before mount.',
+      },
+    ],
     styling: {
       parts: [{ name: 'root', description: 'Neutral content container.' }],
       states: [],
@@ -133,20 +130,30 @@ defineExpose<${name}Exposed>({
     ],
     [
       `packages/themes/src/${base}.ts`,
-      `import { defineComponent, h } from 'vue'
+      `import { defineComponent, h, ref } from 'vue'
 
-import { ${name} as GhostUnstyled${suffix} } from '@ghostvue/vue'
+import { ${name} as GhostUnstyled${suffix}, type ${name}Exposed } from '@ghostvue/vue'
 
 /** Themed scaffold; behavior remains in @ghostvue/vue. */
 export const ${name} = defineComponent({
   name: '${name}',
   inheritAttrs: false,
-  setup(_props, { attrs, slots }) {
+  setup(_props, { attrs, slots, expose }) {
+    const inner = ref<${name}Exposed | null>(null)
+
+    expose({
+      get element() {
+        return inner.value?.element ?? null
+      },
+    } satisfies ${name}Exposed)
+
     return () => h('span', { class: 'ghost-themed-scope' }, [
-      h(GhostUnstyled${suffix}, attrs, slots),
+      h(GhostUnstyled${suffix}, { ...attrs, ref: inner }, slots),
     ])
   },
 })
+
+export type { ${name}Exposed }
 `,
     ],
     [
@@ -172,7 +179,7 @@ export const ${name} = defineComponent({
       `# ${name}
 
 Scaffold only: a neutral content container with a default slot, native attribute
-fallthrough, and a headless \`element\` ref. It does not implement ${suffix} widget
+fallthrough, and headless/themed \`element\` refs. It does not implement ${suffix} widget
 semantics. Complete and approve the [specification](./${slug}-spec.md) before
 using it in production.
 
@@ -243,6 +250,28 @@ describe('${name} scaffold', () => {
 `,
     ],
     [
+      `tests/integration/${base}-themed.test.ts`,
+      `import { mount } from '@vue/test-utils'
+import { describe, expect, it } from 'vitest'
+import { defineComponent, h, ref } from 'vue'
+
+import { ${name}, type ${name}Exposed } from '../../packages/themes/src/index'
+
+describe('themed ${name} scaffold', () => {
+  it('exposes the mounted content root through the public themed export', () => {
+    const component = ref<${name}Exposed | null>(null)
+    const host = defineComponent({ setup: () => () => h(${name}, { ref: component }, () => 'Content') })
+    const wrapper = mount(host)
+    const exposed = component.value
+    expect(exposed?.element).toBe(wrapper.get('[data-${base}]').element)
+    expect(exposed?.element).not.toBe(wrapper.element)
+    wrapper.unmount()
+    expect(exposed?.element).toBeNull()
+  })
+})
+`,
+    ],
+    [
       `tests/e2e/${base}.spec.ts`,
       `import AxeBuilder from '@axe-core/playwright'
 import { expect, test } from '@playwright/test'
@@ -282,7 +311,10 @@ test('${name} scaffold renders accessible content', async ({ page }) => {
       'packages/vue/src/index.ts',
       `\nexport { default as ${name} } from './${name}.vue'\nexport { use${name}, type ${name}RootProps } from './use-${base}'\nexport type { ${name}Exposed } from './${base}'\n`,
     ],
-    ['packages/themes/src/index.ts', `\nexport { ${name} } from './${base}'\n`],
+    [
+      'packages/themes/src/index.ts',
+      `\nexport { ${name}, type ${name}Exposed } from './${base}'\n`,
+    ],
     ['packages/themes/src/default.css', `\n@import './${base}.css';\n`],
   ]) {
     const original = await readFile(join(repositoryRoot, path), 'utf8')
@@ -316,14 +348,22 @@ test('${name} scaffold renders accessible content', async ({ page }) => {
   const navPath = 'apps/docs/.vitepress/docs-nav.ts'
   const nav = await readFile(join(repositoryRoot, navPath), 'utf8')
   const marker = "text: 'Components',\n    items: ["
+  const contributingMarker = "text: 'Contributing',\n    items: ["
   if (!nav.includes(marker))
     throw new Error('Component sidebar anchor missing.')
+  if (!nav.includes(contributingMarker))
+    throw new Error('Contributing sidebar anchor missing.')
   edits.set(
     navPath,
-    nav.replace(
-      marker,
-      `${marker}\n      { text: '${name}', link: '/components/${slug}' },`,
-    ),
+    nav
+      .replace(
+        marker,
+        `${marker}\n      { text: '${name}', link: '/components/${slug}' },`,
+      )
+      .replace(
+        contributingMarker,
+        `${contributingMarker}\n      { text: '${name} specification', link: '/components/${slug}-spec' },`,
+      ),
   )
 
   for (const [path, source] of [...files, ...edits]) {

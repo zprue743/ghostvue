@@ -169,6 +169,34 @@ describe('component scaffolding', () => {
       const paths = [...result.created, ...result.updated]
       for (const path of paths)
         expect(relative(root, join(root, path))).toBe(path)
+      expect(result.created).toContain(
+        'tests/integration/ghost-switch-themed.test.ts',
+      )
+      for (const pkg of ['vue', 'themes']) {
+        const manifest: unknown = JSON.parse(
+          await readFile(
+            join(root, `packages/${pkg}/manifests/ghost-switch.manifest.json`),
+            'utf8',
+          ),
+        )
+        expect(manifest).toHaveProperty('exposed', [
+          {
+            name: 'element',
+            kind: 'property',
+            type: 'HTMLElement | null',
+            description: 'Root element after mount; null before mount.',
+          },
+        ])
+      }
+      const nav = await readFile(
+        join(root, 'apps/docs/.vitepress/docs-nav.ts'),
+        'utf8',
+      )
+      const contributing = nav
+        .split("text: 'Contributing',")[1]
+        ?.split("text: 'AI agents',")[0]
+      expect(contributing).toContain("text: 'GhostSwitch specification'")
+      expect(contributing).toContain("link: '/components/switch-spec'")
       run(root, ['verify'])
       await expect(scaffoldComponent(root, 'GhostSwitch')).rejects.toThrow(
         'Refusing to overwrite',
