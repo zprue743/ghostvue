@@ -1,20 +1,23 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 
-import { GhostSlider } from '@ghostvue/themes'
+import { GhostSlider } from '@ghostvue/vue'
 
 const level = ref(60)
 </script>
 
 <template>
-  <div class="ghost-theme" style="display: inline-block; padding: 1rem">
-    <GhostSlider
-      v-model="level"
-      orientation="vertical"
-      aria-label="Gain"
-      :min="0"
-      :max="100"
-    />
-  </div>
-  <p>Level {{ level }}</p>
+  <GhostSlider
+    v-model="level"
+    orientation="vertical"
+    aria-label="Gain"
+    :min="0"
+    :max="100"
+  />
+  <!-- Fixed block-size avoids subpixel line-box drift in visual snapshots. -->
+  <p
+    style="margin: 0; line-height: var(--ghost-font-line-body, 1.25rem)"
+  >
+    Level {{ level }}
+  </p>
 </template>
