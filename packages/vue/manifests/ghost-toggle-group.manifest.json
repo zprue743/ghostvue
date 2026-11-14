@@ -1,0 +1,135 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "generated",
+  "name": "GhostToggleGroup",
+  "package": "@ghostvue/vue",
+  "status": "experimental",
+  "description": "Headless toggle group root with role=group, single/multiple aria-pressed selection, and roving focus among items.",
+  "props": [
+    {
+      "name": "type",
+      "type": "'single' | 'multiple'",
+      "default": "single",
+      "required": false,
+      "description": "Single vs multiple pressed items.",
+      "deprecated": false
+    },
+    {
+      "name": "modelValue",
+      "type": "GhostToggleGroupValue",
+      "required": false,
+      "description": "Controlled selection; shape follows `type`.",
+      "deprecated": false
+    },
+    {
+      "name": "defaultValue",
+      "type": "GhostToggleGroupValue",
+      "required": false,
+      "description": "Initial selection when `modelValue` is omitted.",
+      "deprecated": false
+    },
+    {
+      "name": "orientation",
+      "type": "'vertical' | 'horizontal'",
+      "default": "horizontal",
+      "required": false,
+      "description": "Arrow-key roving layout.",
+      "deprecated": false
+    },
+    {
+      "name": "dir",
+      "type": "'ltr' | 'rtl'",
+      "required": false,
+      "description": "Explicit text direction for horizontal roving.",
+      "deprecated": false
+    },
+    {
+      "name": "as",
+      "type": "GhostToggleGroupElement",
+      "default": "div",
+      "required": false,
+      "description": "Root host element.",
+      "deprecated": false
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Disables every item.",
+      "deprecated": false
+    }
+  ],
+  "models": [
+    {
+      "prop": "modelValue",
+      "event": "update:modelValue",
+      "type": "GhostToggleGroupValue",
+      "description": "v-model binding for `modelValue`."
+    }
+  ],
+  "events": [],
+  "slots": [
+    {
+      "name": "default",
+      "props": [],
+      "description": "Toggle group items."
+    }
+  ],
+  "exposed": [
+    {
+      "name": "element",
+      "kind": "property",
+      "type": "HTMLElement | null",
+      "description": "Root element after mount; null before mount."
+    },
+    {
+      "name": "focus",
+      "kind": "method",
+      "type": "(options?: FocusOptions) => void",
+      "description": "Exposed method `focus`."
+    },
+    {
+      "name": "blur",
+      "kind": "method",
+      "type": "() => void",
+      "description": "Exposed method `blur`."
+    }
+  ],
+  "styling": {
+    "parts": [
+      {
+        "name": "root",
+        "description": "Group host with role=group."
+      }
+    ],
+    "states": [
+      {
+        "name": "disabled",
+        "description": "Group-level disabled via aria-disabled."
+      }
+    ],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "group",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/button/",
+    "keyboard": {
+      "ArrowLeft": "Previous enabled item (horizontal).",
+      "ArrowRight": "Next enabled item (horizontal).",
+      "ArrowUp": "Previous enabled item (vertical).",
+      "ArrowDown": "Next enabled item (vertical).",
+      "Home": "First enabled item.",
+      "End": "Last enabled item."
+    },
+    "requiredAriaAttributes": [
+      "aria-label",
+      "aria-labelledby"
+    ]
+  },
+  "examples": [
+    "toggle-group/basic",
+    "toggle-group/multiple",
+    "toggle-group/themed"
+  ]
+}

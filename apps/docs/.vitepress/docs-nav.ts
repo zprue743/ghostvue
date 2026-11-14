@@ -42,6 +42,7 @@ export const docsSidebar: LlmsSidebarGroup[] = [
       { text: 'GhostSwitch', link: '/components/switch' },
       { text: 'GhostTabs', link: '/components/tabs' },
       { text: 'GhostTextarea', link: '/components/textarea' },
+      { text: 'GhostToggleGroup', link: '/components/toggle-group' },
       { text: 'GhostToolbar', link: '/components/toolbar' },
       { text: 'GhostTooltip', link: '/components/tooltip' },
       { text: 'GhostVisuallyHidden', link: '/components/visually-hidden' },
@@ -111,12 +112,16 @@ export const docsSidebar: LlmsSidebarGroup[] = [
       { text: 'GhostSlider specification', link: '/components/slider-spec' },
       { text: 'GhostToolbar specification', link: '/components/toolbar-spec' },
       {
+        text: 'GhostNumberInput specification',
+        link: '/components/number-input-spec',
+      },
+      {
         text: 'GhostPagination specification',
         link: '/components/pagination-spec',
       },
       {
-        text: 'GhostNumberInput specification',
-        link: '/components/number-input-spec',
+        text: 'GhostToggleGroup specification',
+        link: '/components/toggle-group-spec',
       },
       {
         text: 'GhostEmptyState specification',

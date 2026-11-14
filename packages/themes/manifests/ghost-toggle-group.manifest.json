@@ -1,0 +1,64 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "handwritten",
+  "name": "GhostToggleGroup",
+  "package": "@ghostvue/themes",
+  "status": "experimental",
+  "description": "Themed segmented GhostToggleGroup root with default elevation and layout styles.",
+  "props": [],
+  "models": [],
+  "events": [],
+  "slots": [
+    {
+      "name": "default",
+      "props": [],
+      "description": "Toggle group items."
+    }
+  ],
+  "exposed": [
+    {
+      "name": "element",
+      "kind": "property",
+      "type": "HTMLElement | null",
+      "description": "Headless group root element."
+    },
+    {
+      "name": "focus",
+      "kind": "method",
+      "type": "(options?: FocusOptions) => void",
+      "description": "Focus the primary item tab stop."
+    },
+    {
+      "name": "blur",
+      "kind": "method",
+      "type": "() => void",
+      "description": "Blur the focused item within the group."
+    }
+  ],
+  "styling": {
+    "parts": [
+      {
+        "name": "root",
+        "description": "Segmented group container."
+      }
+    ],
+    "states": [],
+    "cssProperties": [
+      {
+        "name": "--ghost-elevation-1-bg",
+        "description": "Group track background."
+      },
+      {
+        "name": "--ghost-elevation-2-bg",
+        "description": "Pressed item surface."
+      }
+    ]
+  },
+  "accessibility": {
+    "role": "group",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/button/",
+    "keyboard": {},
+    "requiredAriaAttributes": []
+  },
+  "examples": ["toggle-group/themed"]
+}

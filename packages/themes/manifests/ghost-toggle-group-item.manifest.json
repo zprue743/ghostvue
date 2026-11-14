@@ -1,0 +1,65 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "handwritten",
+  "name": "GhostToggleGroupItem",
+  "package": "@ghostvue/themes",
+  "status": "experimental",
+  "description": "Themed toggle item with segmented pressed styles.",
+  "props": [],
+  "models": [],
+  "events": [],
+  "slots": [
+    {
+      "name": "default",
+      "props": [],
+      "description": "Item label."
+    }
+  ],
+  "exposed": [
+    {
+      "name": "element",
+      "kind": "property",
+      "type": "HTMLElement | null",
+      "description": "Headless item element."
+    },
+    {
+      "name": "focus",
+      "kind": "method",
+      "type": "(options?: FocusOptions) => void",
+      "description": "Focus the item."
+    },
+    {
+      "name": "blur",
+      "kind": "method",
+      "type": "() => void",
+      "description": "Blur the item."
+    }
+  ],
+  "styling": {
+    "parts": [
+      {
+        "name": "item",
+        "description": "Segmented toggle button."
+      }
+    ],
+    "states": [
+      {
+        "name": "on",
+        "description": "Pressed segment."
+      }
+    ],
+    "cssProperties": [
+      {
+        "name": "--ghost-focus-ring-color",
+        "description": "Focus ring on items."
+      }
+    ]
+  },
+  "accessibility": {
+    "role": "button",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/button/",
+    "keyboard": {},
+    "requiredAriaAttributes": ["aria-pressed"]
+  },
+  "examples": []
+}
