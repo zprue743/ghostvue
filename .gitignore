@@ -9,3 +9,6 @@ test-results/
 .DS_Store
 *.local
 
+
+# Generated from component manifests before docs build/dev.
+docs/reference/

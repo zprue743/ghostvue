@@ -63,3 +63,15 @@ driven automatically by `examples/registry.ts`. When adding or updating an
 example, follow the
 [visual regression workflow](../standards/testing.md#visual-regression) to
 regenerate Linux baselines with `pnpm test:visual:docker`.
+
+## Generated component references
+
+`pnpm docs:build` and `pnpm docs:dev` run
+`scripts/write-component-references.mjs` first. It renders every Vue and theme
+manifest into `docs/reference/`, including compound parts. That directory is
+gitignored and replaced on each run so removed components cannot leave stale
+pages. Edit source/manifests and keep behavioral prose on the hand-written
+component page; link to the [generated references](/reference/) for API tables.
+The generated pages render the registered examples and link to their SFC source.
+Only hooks recorded by the manifest schema (`data-part`, `data-state`, public
+CSS properties) are listed; native fallthrough attributes are not inferred.

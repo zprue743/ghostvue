@@ -14,3 +14,6 @@ playwright-report
 test-results
 pnpm-lock.yaml
 
+
+# Manifest-derived Markdown is regenerated before docs commands.
+docs/reference

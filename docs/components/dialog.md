@@ -58,23 +58,15 @@ accidentally by clicking the backdrop, and emits a development warning
 
 ## API
 
-### `GhostDialog` (root)
+See the [generated component references](/reference/) for props, emits, slots,
+exposed members, styling hooks, CSS variables, and executable examples.
 
-| Prop          | Type      | Default     | Description                                                                          |
-| ------------- | --------- | ----------- | ------------------------------------------------------------------------------------ |
-| `open`        | `boolean` | `undefined` | Controlled open state. Omit for uncontrolled mode.                                   |
-| `defaultOpen` | `boolean` | `false`     | Initial open state when running uncontrolled.                                        |
-| `modal`       | `boolean` | `true`      | Enables trapped looping focus, scroll lock, inert background, `aria-modal`, overlay. |
+### `GhostDialog` (root)
 
 Emits `update:open` with `(open: boolean)`. The default slot receives
 `{ open: boolean, close: () => void }`.
 
 ### `GhostDialogTrigger`
-
-| Prop       | Type                  | Default    | Description                                         |
-| ---------- | --------------------- | ---------- | --------------------------------------------------- |
-| `as`       | `string \| Component` | `'button'` | Root element tag or button component.               |
-| `disabled` | `boolean`             | `false`    | Prevents toggling on click and keyboard activation. |
 
 Sets `type="button"` (when `as="button"`), `aria-haspopup="dialog"`,
 `aria-expanded`, `aria-controls`, `data-part="trigger"`, and
@@ -82,26 +74,11 @@ Sets `type="button"` (when `as="button"`), `aria-haspopup="dialog"`,
 
 ### `GhostDialogOverlay`
 
-| Prop       | Type                  | Default  | Description                                                                    |
-| ---------- | --------------------- | -------- | ------------------------------------------------------------------------------ |
-| `as`       | `string \| Component` | `'div'`  | Root element tag or component for the backdrop.                                |
-| `portal`   | `boolean`             | `true`   | Teleport overlay via `GhostPortal` when `true`, or render inline when `false`. |
-| `portalTo` | `GhostPortalTarget`   | `'body'` | Teleport destination passed to `GhostPortal`.                                  |
-
 Renders only when both `open` and `modal` are `true`. Sets
 `aria-hidden="true"`, `data-part="overlay"`, and `data-state="open"`. Exposes
 `{ element, focus, blur }`.
 
 ### `GhostDialogContent`
-
-| Prop                  | Type                        | Default                              | Description                                                                    |
-| --------------------- | --------------------------- | ------------------------------------ | ------------------------------------------------------------------------------ |
-| `as`                  | `string \| Component`       | `'div'`                              | Element tag or component for the dialog surface.                               |
-| `role`                | `'dialog' \| 'alertdialog'` | `'dialog'`                           | Semantic role. `'alertdialog'` defaults `closeOnOutsideClick` to `false`.      |
-| `closeOnEscape`       | `boolean`                   | `true`                               | Whether pressing `Escape` dismisses the topmost dialog.                        |
-| `closeOnOutsideClick` | `boolean`                   | `true` (`false` for `'alertdialog'`) | Whether clicking outside content (including the overlay) closes the dialog.    |
-| `portal`              | `boolean`                   | `true`                               | Teleport content via `GhostPortal` when `true`, or render inline when `false`. |
-| `portalTo`            | `GhostPortalTarget`         | `'body'`                             | Teleport destination passed to `GhostPortal`.                                  |
 
 Sets `role`, `aria-modal="true"` (when `modal=true`), `tabindex="-1"`,
 `data-part="content"`, `data-state="open"`, `aria-labelledby` (linking
@@ -110,30 +87,17 @@ Exposes `{ element, focus, blur }`.
 
 ### `GhostDialogTitle`
 
-| Prop | Type                  | Default | Description                               |
-| ---- | --------------------- | ------- | ----------------------------------------- |
-| `as` | `string \| Component` | `'h2'`  | Element tag or component for the heading. |
-
 Sets `id` and `data-part="title"`, and registers as the dialog's accessible name
 unless `aria-label` or `aria-labelledby` is provided directly on
 `GhostDialogContent`. Exposes `{ element, focus, blur }`.
 
 ### `GhostDialogDescription`
 
-| Prop | Type                  | Default | Description                                   |
-| ---- | --------------------- | ------- | --------------------------------------------- |
-| `as` | `string \| Component` | `'p'`   | Element tag or component for the description. |
-
 Sets `id` and `data-part="description"`, and registers as the dialog's
 description (`aria-describedby`) on `GhostDialogContent`. Exposes
 `{ element, focus, blur }`.
 
 ### `GhostDialogClose`
-
-| Prop       | Type                  | Default    | Description                                        |
-| ---------- | --------------------- | ---------- | -------------------------------------------------- |
-| `as`       | `string \| Component` | `'button'` | Element tag or component for the close button.     |
-| `disabled` | `boolean`             | `false`    | Prevents closing on click and keyboard activation. |
 
 Closes the enclosing `GhostDialog` on click or keyboard activation and exposes
 `{ element, focus, blur }`.
