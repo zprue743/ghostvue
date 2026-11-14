@@ -60,6 +60,9 @@ with `animations: 'disabled'` and a default `maxDiffPixelRatio` of `0.03`
 - **Public example baselines:** `tests/e2e/examples-visual.spec.ts` snapshots
   every registered example in `examples/registry.ts` in `light` and `dark` mode
   at `comfortable` density with the `default` theme.
+- **Docs site baselines:** `tests/e2e/docs-visual.spec.ts` snapshots the docs
+  nav, a themed `GhostInput` preview, and a headless checkbox preview at 390px in
+  `light` and `dark` mode (requires `apps/docs` build; included in `pnpm test:visual`).
 
 Run only the visual snapshot suites locally with:
 
