@@ -45,6 +45,12 @@ export type {
   GhostVisuallyHiddenProps,
   UseGhostVisuallyHiddenOptions,
 } from './ghost-visually-hidden'
+export { default as GhostSpinner } from './GhostSpinner.vue'
+export {
+  useGhostSpinner,
+  type GhostSpinnerRootProps,
+} from './use-ghost-spinner'
+export type { GhostSpinnerProps, UseGhostSpinnerOptions } from './ghost-spinner'
 export {
   useDismissableLayer,
   type DismissableLayerIgnore,

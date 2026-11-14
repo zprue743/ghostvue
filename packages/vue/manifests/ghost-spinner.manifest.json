@@ -1,0 +1,42 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "generated",
+  "name": "GhostSpinner",
+  "package": "@ghostvue/vue",
+  "status": "experimental",
+  "description": "Headless indeterminate loading indicator. useGhostSpinner owns status semantics and the live-region message; GhostSpinner is the thin unstyled element. Themed visual props live on @ghostvue/themes. Loading-state orchestration stays with the consumer.",
+  "props": [
+    {
+      "name": "label",
+      "type": "string",
+      "default": "Loading",
+      "required": false,
+      "description": "Status message rendered as visually hidden live-region content. role=status is nameFrom author; contents, not aria-label, are what polite AT announces.",
+      "deprecated": false
+    }
+  ],
+  "models": [],
+  "events": [],
+  "slots": [],
+  "exposed": [],
+  "styling": {
+    "parts": [
+      {
+        "name": "root",
+        "description": "The status span. Presence of the element is the pending state; there is no data-state."
+      }
+    ],
+    "states": [],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "status",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/practices/live-regions/",
+    "keyboard": {},
+    "requiredAriaAttributes": []
+  },
+  "examples": [
+    "spinner/basic",
+    "spinner/composable"
+  ]
+}

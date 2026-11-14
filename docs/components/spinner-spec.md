@@ -37,9 +37,9 @@ named status without owning the async work.
 
 Headless `@ghostvue/vue` `GhostSpinner` / `useGhostSpinner`:
 
-| Prop    | Type     | Default     | Contract                                                                                                                                                                 |
-| ------- | -------- | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `label` | `string` | `'Loading'` | Accessible status name, rendered as visually hidden text so page translation tools can see it. Omitted from the tree when `aria-label` or `aria-labelledby` already name the root. |
+| Prop    | Type     | Default     | Contract                                                                                                                                                                                                  |
+| ------- | -------- | ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `label` | `string` | `'Loading'` | Status **message** rendered as visually hidden live-region content so page translation tools can see it. `role="status"` is `nameFrom: author`; contents, not `aria-label`, are what polite AT announces. |
 
 The root is always a `<span>`. Native attributes and listeners fall through.
 Named ESM exports: `GhostSpinner`, `useGhostSpinner`, and the types above.
@@ -47,20 +47,21 @@ Headless behavior lives in the composable; the SFC is a thin unstyled root that
 spreads `rootProps` onto the span and composes `GhostVisuallyHidden` for the
 label.
 
-`aria-label` / `aria-labelledby` fallthrough is how a consumer supplies a name
-that already exists elsewhere (for example a table caption). In that case the
-component does not also render hidden text, so the accessible name is not
-doubled. Decorative use sets `aria-hidden="true"` via fallthrough; the status
-is then removed from the accessibility tree and the consumer's parent (a named
-`aria-busy` region) owns the announcement.
+`aria-label` / `aria-labelledby` fallthrough may supply an author name (for
+example when a table caption already names the pending region). That name is
+independent of the live-region message: status announcements come from
+contents, so the hidden `label` still renders. Decorative use sets
+`aria-hidden="true"` via fallthrough; the status is then removed from the
+accessibility tree and the consumer's parent (a named `aria-busy` region) owns
+the announcement.
 
 Themed `@ghostvue/themes` `GhostSpinner` wraps the unstyled component and adds
 visual props. Same `label`; these exist only on the themed wrapper:
 
-| Prop   | Type                          | Default    | Contract                                                                                          |
-| ------ | ----------------------------- | ---------- | ------------------------------------------------------------------------------------------------- |
+| Prop   | Type                                | Default    | Contract                                                                                        |
+| ------ | ----------------------------------- | ---------- | ----------------------------------------------------------------------------------------------- |
 | `tone` | `'accent' \| 'neutral' \| 'danger'` | `'accent'` | Semantic color intent. The default omits `data-tone` so CSS can treat a missing hook as accent. |
-| `size` | `'sm' \| 'md' \| 'lg'`        | `'md'`     | Visual size. The default omits `data-size` so CSS can treat a missing hook as md.                 |
+| `size` | `'sm' \| 'md' \| 'lg'`              | `'md'`     | Visual size. The default omits `data-size` so CSS can treat a missing hook as md.               |
 
 The themed wrapper sets matching `data-tone` and `data-size` on the inner
 spinner and wraps it in `.ghost-themed-scope` (`display: contents`) so default
@@ -96,15 +97,16 @@ None apply as component states. Loading of the surrounding workflow is the
 reason the spinner is mounted; disabled, read-only, and error belong to that
 workflow or to other primitives.
 
-An empty `label` is permitted only when `aria-label` or `aria-labelledby`
-already names the root. An unnamed status is a consumer error, not a distinct
-empty state.
+An empty `label` produces empty live-region content, so assistive technology
+has nothing to announce. Prefer the default or a workflow-specific message.
+Leaving a surrounding `aria-busy` region unnamed is a consumer error, not a
+distinct empty state of this component.
 
 ### Async behavior
 
 The component performs no asynchronous work and owns no races, cancellation,
 stale results, or result announcements. Assistive technology hears the status
-when the named element is inserted or when its accessible name changes. The
+when the element is inserted or when its live-region contents change. The
 consumer owns when that happens (typically mount on request start, unmount on
 settle). Keep the spinner mounted across a refresh if the announcement should
 not repeat; remount if a new "loading" message is intended.
@@ -137,11 +139,12 @@ rejected for this primitive:
   theme-dependent visual that headless consumers cannot restyle with ordinary
   CSS.
 
-The accessible name comes from visually hidden text (`GhostVisuallyHidden`) by
-default, not `aria-label`, so page-level translation tools that skip attributes
-still see "Loading" (or the consumer's `label`). Decorative icons are not used;
-the themed indicator is a CSS `::before` on the root and is not in the
-accessibility tree.
+`role="status"` takes its accessible name from the author. This primitive does
+not set `aria-label`; the visually hidden `label` (`GhostVisuallyHidden`) is
+live-region **content**, which is what polite assistive technology announces
+and what page-level translation tools that skip attributes can still see.
+Decorative icons are not used; the themed indicator is a CSS `::before` on the
+root and is not in the accessibility tree.
 
 ### Keyboard interaction
 
@@ -157,8 +160,8 @@ control; this spinner does not steal it.
 
 ### Assistive technology expectations
 
-Assistive technology encounters a named status. Polite announcement of the
-label occurs when the element is added or when its name changes, without
+Assistive technology encounters a status live region. Polite announcement of
+the label occurs when the element is added or when its contents change, without
 interrupting the current utterance. The component does not speak completion,
 errors, or row counts; those messages belong to the consumer's own live region
 or to the control that became busy (`GhostButton` `aria-busy`, a table
@@ -240,14 +243,14 @@ The machine-readable contracts are
 
 ## Test plan
 
-- Vue tests cover defaults, the hidden "Loading" name, custom `label`,
-  `aria-label` / `aria-labelledby` suppressing hidden text, `aria-hidden`
-  fallthrough, class/`data-*` fallthrough, `role="status"`, SSR markup, and
-  `data-part="root"`.
-- Composable tests cover the same name/role decision without the SFC.
+- Vue tests cover defaults, the hidden "Loading" message, custom `label`,
+  `aria-label` / `aria-labelledby` fallthrough that still keeps contents,
+  `aria-hidden` fallthrough, class/`data-*` fallthrough, `role="status"`, SSR
+  markup, and `data-part="root"`.
+- Composable tests cover the default and custom message and status bindings.
 - Compile-time tests cover native attribute types on `GhostSpinnerProps`.
-- Browser tests cover an accessible name computed from hidden text, a custom
-  label (table-refresh copy), themed size/tone hooks, reduced-motion pulse vs
+- Browser tests cover live-region content from hidden text, a custom label
+  (table-refresh copy), themed size/tone hooks, reduced-motion pulse vs
   rotation, and an axe smoke check on registered examples.
 - Theme CSS tests forbid hardcoded colors and duration/size literals so the
   recipe stays on `--ghost-*` tokens.

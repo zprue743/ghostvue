@@ -29,6 +29,12 @@ export {
 } from './ghost-button'
 
 export {
+  GhostSpinner,
+  type GhostSpinnerSize,
+  type GhostSpinnerTone,
+} from './ghost-spinner'
+
+export {
   GhostInteractiveSurface,
   type InteractiveEffect,
   type InteractiveSurfaceElement,
