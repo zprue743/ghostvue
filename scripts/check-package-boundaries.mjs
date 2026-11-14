@@ -84,6 +84,7 @@ const EXCLUDED_DIRS = new Set([
   'node_modules',
   'dist',
   'generated',
+  'fixtures',
   'coverage',
   'cache',
 ])
@@ -101,9 +102,8 @@ const SOURCE_EXTENSIONS = new Set([
 
 /**
  * Collects source files under the given roots while skipping build outputs,
- * and generated files so `dist` stays out of `from` entries yet remains
- * visible in `doNotFollow` for `no-dist-imports`. Fixture exclusion lives
- * in the dependency-cruiser config and applies to both entries and imports.
+ * generated files, and test fixtures so `dist` stays out of `from` entries
+ * yet remains visible in `doNotFollow` for `no-dist-imports`.
  */
 async function collectSourceFiles(roots) {
   const files = []

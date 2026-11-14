@@ -144,6 +144,27 @@ describe('source import boundaries', () => {
     },
   )
 
+  it('keeps imports from fixture entries out of the boundary graph', async () => {
+    await cp(
+      resolve(fixtureRoot, 'cases/good.js'),
+      resolve(workspace, 'packages/core/src/index.js'),
+    )
+    const baseline = await execFileAsync(process.execPath, [checker, workspace])
+    await writeFile(
+      resolve(workspace, 'packages/core/fixtures/leak.js'),
+      "import 'ghostvue-fixture-leak-sentinel'\n",
+    )
+    const withFixture = await execFileAsync(process.execPath, [
+      checker,
+      workspace,
+    ])
+
+    expect(baseline.stderr).toBe('')
+    expect(withFixture.stderr).toBe('')
+    // Config exclusion alone can hide the entry while leaking its dependencies.
+    expect(withFixture.stdout).toBe(baseline.stdout)
+  })
+
   it('resolves the requested workspace tsconfig from another cwd', async () => {
     const entry = 'packages/core/src/index.js'
     await writeFile(
