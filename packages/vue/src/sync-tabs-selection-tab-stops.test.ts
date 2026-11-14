@@ -83,4 +83,20 @@ describe('applyTabsSelectionTabStops', () => {
     expect(tab(list, 0).tabIndex).toBe(-1)
     expect(tab(list, 1).tabIndex).toBe(0)
   })
+
+  it('keeps one tab stop when every tab sits in a display:none subtree', () => {
+    const list = mountTabList(`
+      <div style="display: none">
+        <button type="button" role="tab" data-ghost-tabs-value="one">One</button>
+        <button type="button" role="tab" data-ghost-tabs-value="two">Two</button>
+        <button type="button" role="tab" data-ghost-tabs-value="three">Three</button>
+      </div>
+    `)
+
+    applyTabsSelectionTabStops(list, 'two')
+
+    expect(tab(list, 0).tabIndex).toBe(-1)
+    expect(tab(list, 1).tabIndex).toBe(0)
+    expect(tab(list, 2).tabIndex).toBe(-1)
+  })
 })

@@ -281,6 +281,48 @@ describe('GhostTabs', () => {
     expect(tabs[2]?.attributes('tabindex')).toBe('-1')
   })
 
+  it('keeps the selected tab stop when tabs become visible after a hidden mount', async () => {
+    const hidden = ref(true)
+    const wrapper = mount(
+      defineComponent({
+        setup() {
+          return () =>
+            h(
+              'div',
+              { style: { display: hidden.value ? 'none' : undefined } },
+              h(
+                GhostTabs,
+                { defaultValue: 'two' },
+                {
+                  default: () => [
+                    h(GhostTabsList, null, () => [
+                      h(GhostTabsTrigger, { value: 'one' }, () => 'One'),
+                      h(GhostTabsTrigger, { value: 'two' }, () => 'Two'),
+                    ]),
+                    h(GhostTabsContent, { value: 'one' }, () => 'Panel one'),
+                    h(GhostTabsContent, { value: 'two' }, () => 'Panel two'),
+                  ],
+                },
+              ),
+            )
+        },
+      }),
+      { attachTo: document.body },
+    )
+    attached.push(wrapper)
+    await nextTick()
+
+    let tabs = tabButtons(wrapper)
+    expect(tabs[1]?.attributes('tabindex')).toBe('0')
+
+    hidden.value = false
+    await nextTick()
+
+    tabs = tabButtons(wrapper)
+    expect(tabs[1]?.attributes('tabindex')).toBe('0')
+    expect(tabs[1]?.attributes('aria-selected')).toBe('true')
+  })
+
   it('assigns the tab stop to a visible tab when the selected trigger is in a hidden subtree', async () => {
     const wrapper = mount(
       defineComponent({
