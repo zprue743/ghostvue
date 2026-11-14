@@ -15,9 +15,7 @@ const level = ref(60)
     :max="100"
   />
   <!-- Fixed block-size avoids subpixel line-box drift in visual snapshots. -->
-  <p
-    style="margin: 0; line-height: var(--ghost-font-line-body, 1.25rem)"
-  >
+  <p style="margin: 0; line-height: var(--ghost-font-line-body, 1.25rem)">
     Level {{ level }}
   </p>
 </template>
