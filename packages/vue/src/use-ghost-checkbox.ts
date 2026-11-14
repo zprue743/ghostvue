@@ -52,8 +52,15 @@ export function useGhostCheckbox(options: UseGhostCheckboxOptions = {}): {
     // revert a v-model parent before it flushes. After flush: parent followed →
     // values match, skip; parent ignored → restore the prop.
     void nextTick(() => {
-      if (!input.isConnected || input.checked === isChecked.value) return
-      input.checked = isChecked.value
+      if (!input.isConnected) return
+      if (input.checked !== isChecked.value) {
+        input.checked = isChecked.value
+      }
+      // Native activation clears `indeterminate`; props may be unchanged when
+      // a controlled parent ignores the emit, so restore mixed here as well.
+      if (input.indeterminate !== isIndeterminate.value) {
+        input.indeterminate = isIndeterminate.value
+      }
     })
   }
 

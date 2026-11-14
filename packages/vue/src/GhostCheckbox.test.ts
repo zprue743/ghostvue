@@ -174,6 +174,26 @@ describe('GhostCheckbox', () => {
     expect(wrapper.get('input').attributes('data-state')).toBe('indeterminate')
   })
 
+  it('restores native mixed when activation is rejected and props stay fixed', async () => {
+    const wrapper = mount(GhostCheckbox, {
+      attachTo: document.body,
+      props: { indeterminate: true, modelValue: false },
+    })
+    const input = wrapper.get('input').element as HTMLInputElement
+
+    await nextTick()
+    expect(input.indeterminate).toBe(true)
+
+    input.click()
+    await nextTick()
+
+    expect(wrapper.emitted('update:modelValue')?.[0]).toEqual([true])
+    expect(input.checked).toBe(false)
+    expect(input.indeterminate).toBe(true)
+    expect(wrapper.get('input').attributes('data-state')).toBe('indeterminate')
+    wrapper.unmount()
+  })
+
   it('prevents activation while disabled', () => {
     const onChange = vi.fn()
     const wrapper = mount(GhostCheckbox, {

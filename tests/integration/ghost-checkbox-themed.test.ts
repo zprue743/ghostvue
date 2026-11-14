@@ -54,4 +54,24 @@ describe('themed GhostCheckbox', () => {
     expect(document.activeElement).toBe(exposed.element)
     wrapper.unmount()
   })
+
+  it('restores native mixed when a controlled parent ignores activation', async () => {
+    const wrapper = mount(GhostCheckbox, {
+      attachTo: document.body,
+      props: { indeterminate: true, modelValue: false },
+    })
+    const input = wrapper.get('input').element as HTMLInputElement
+
+    await nextTick()
+    expect(input.indeterminate).toBe(true)
+
+    input.click()
+    await nextTick()
+
+    expect(wrapper.emitted('update:modelValue')?.[0]).toEqual([true])
+    expect(input.checked).toBe(false)
+    expect(input.indeterminate).toBe(true)
+    expect(wrapper.get('input').attributes('data-state')).toBe('indeterminate')
+    wrapper.unmount()
+  })
 })
