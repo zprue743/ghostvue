@@ -18,7 +18,10 @@ const sort = ref('a')
 </script>
 
 <template>
-  <section aria-labelledby="dropdown-menu-heading" class="dropdown-menu-section">
+  <section
+    aria-labelledby="dropdown-menu-heading"
+    class="dropdown-menu-section"
+  >
     <h2 id="dropdown-menu-heading">GhostDropdownMenu</h2>
 
     <div class="dropdown-menu-row">

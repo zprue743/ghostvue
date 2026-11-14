@@ -61,6 +61,22 @@ function pointerDown(target: EventTarget): PointerEvent {
   return event
 }
 
+function getHtmlPart(part: string): HTMLElement {
+  const element = document.querySelector(`[data-part="${part}"]`)
+  if (!(element instanceof HTMLElement)) {
+    throw new Error(`Expected [data-part="${part}"] to be an HTMLElement`)
+  }
+  return element
+}
+
+function getDataValueSelector(value: string): HTMLElement {
+  const element = document.querySelector(`[data-value="${value}"]`)
+  if (!(element instanceof HTMLElement)) {
+    throw new Error(`Expected [data-value="${value}"] to be an HTMLElement`)
+  }
+  return element
+}
+
 afterEach(() => {
   for (const wrapper of attached) {
     wrapper.unmount()
@@ -179,7 +195,7 @@ describe('GhostDropdownMenu', () => {
       }),
     )
 
-    const trigger = document.querySelector('[data-part="trigger"]') as HTMLElement
+    const trigger = getHtmlPart('trigger')
     trigger.focus()
     pressKey('ArrowDown', trigger)
     await flushPromises()
@@ -188,8 +204,8 @@ describe('GhostDropdownMenu', () => {
     expect(items.length).toBe(2)
     expect(document.activeElement?.textContent).toBe('First')
 
-    const trigger2 = document.querySelector('[data-part="trigger"]') as HTMLElement
-    await trigger2.click()
+    const trigger2 = getHtmlPart('trigger')
+    trigger2.click()
     await flushPromises()
     expect(document.querySelector('[data-part="content"]')).toBeNull()
 
@@ -231,7 +247,7 @@ describe('GhostDropdownMenu', () => {
     )
     await flushPromises()
 
-    const content = document.querySelector('[data-part="content"]') as HTMLElement
+    const content = getHtmlPart('content')
     pressKey('ArrowDown', content)
     expect(document.activeElement?.textContent).toBe('Banana')
     pressKey('ArrowUp', content)
@@ -284,7 +300,7 @@ describe('GhostDropdownMenu', () => {
     )
     await flushPromises()
 
-    const content = document.querySelector('[data-part="content"]') as HTMLElement
+    const content = getHtmlPart('content')
     const items = [
       ...content.querySelectorAll<HTMLElement>('[data-part="item"]'),
     ]
@@ -333,7 +349,7 @@ describe('GhostDropdownMenu', () => {
     )
     await flushPromises()
 
-    const trigger = document.querySelector('[data-part="trigger"]') as HTMLElement
+    const trigger = getHtmlPart('trigger')
     trigger.focus()
 
     pressKey('Escape')
@@ -341,7 +357,7 @@ describe('GhostDropdownMenu', () => {
     expect(document.querySelector('[data-part="content"]')).toBeNull()
     expect(document.activeElement).toBe(trigger)
 
-    await trigger.click()
+    trigger.click()
     await flushPromises()
     pointerDown(document.body)
     await flushPromises()
@@ -349,7 +365,7 @@ describe('GhostDropdownMenu', () => {
 
     pressKey('ArrowDown', trigger)
     await flushPromises()
-    const item = document.querySelector('[data-part="item"]') as HTMLElement
+    const item = getHtmlPart('item')
     item.click()
     await flushPromises()
     expect(selectLog).toEqual(['selected'])
@@ -422,17 +438,13 @@ describe('GhostDropdownMenu', () => {
 
     expect(document.querySelector('[data-part="content"]')).not.toBeNull()
 
-    const checkbox = document.querySelector(
-      '[data-part="checkbox-item"]',
-    ) as HTMLElement
+    const checkbox = getHtmlPart('checkbox-item')
     checkbox.click()
     await flushPromises()
     expect(checked.value).toBe(true)
     expect(document.querySelector('[data-part="content"]')).not.toBeNull()
 
-    const radioB = document.querySelector(
-      '[data-value="b"]',
-    ) as HTMLElement
+    const radioB = getDataValueSelector('b')
     radioB.click()
     await flushPromises()
     expect(radio.value).toBe('b')

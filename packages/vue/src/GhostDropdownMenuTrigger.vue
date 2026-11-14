@@ -32,7 +32,9 @@ const props = withDefaults(
 
 const injected = inject(ghostDropdownMenuContextKey)
 if (!injected) {
-  throw new Error('GhostDropdownMenuTrigger must be used inside GhostDropdownMenu')
+  throw new Error(
+    'GhostDropdownMenuTrigger must be used inside GhostDropdownMenu',
+  )
 }
 const context = injected
 
@@ -175,10 +177,7 @@ function handleKeydown(event: KeyboardEvent): void {
   ) {
     event.preventDefault()
     context.setFocusLastOnOpen(event.key === 'ArrowUp')
-    if (
-      element.value &&
-      document.activeElement !== element.value
-    ) {
+    if (element.value && document.activeElement !== element.value) {
       element.value.focus({ preventScroll: true })
     }
     context.open()

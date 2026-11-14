@@ -11,7 +11,11 @@ export const GhostDropdownMenuSeparator = defineComponent({
   inheritAttrs: false,
   props: {
     as: {
-      type: [String, Object, Function] as PropType<GhostDropdownMenuSeparatorElement>,
+      type: [
+        String,
+        Object,
+        Function,
+      ] as PropType<GhostDropdownMenuSeparatorElement>,
       default: 'div',
     },
     decorative: {

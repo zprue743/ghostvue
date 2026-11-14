@@ -64,53 +64,53 @@ Themed exports from `@ghostvue/themes`:
 
 #### `GhostDropdownMenuTrigger`
 
-| Prop       | Type                                                   | Default    | Contract                                                                                                                               |
-| ---------- | ------------------------------------------------------ | ---------- | -------------------------------------------------------------------------------------------------------------------------------------- |
-| `as`       | `GhostDropdownMenuTriggerElement` (`Component \| string`) | `'button'` | Element tag or component (for example `GhostButton`).                                                                                  |
-| `disabled` | `boolean`                                              | `false`    | Prevents toggling when `true`. Uses native `disabled` on `<button>` and `aria-disabled` on non-button tags.                              |
+| Prop       | Type                                                      | Default    | Contract                                                                                                    |
+| ---------- | --------------------------------------------------------- | ---------- | ----------------------------------------------------------------------------------------------------------- |
+| `as`       | `GhostDropdownMenuTriggerElement` (`Component \| string`) | `'button'` | Element tag or component (for example `GhostButton`).                                                       |
+| `disabled` | `boolean`                                                 | `false`    | Prevents toggling when `true`. Uses native `disabled` on `<button>` and `aria-disabled` on non-button tags. |
 
 #### `GhostDropdownMenuContent`
 
-| Prop        | Type                                                    | Default      | Contract                                                                   |
-| ----------- | ------------------------------------------------------- | ------------ | -------------------------------------------------------------------------- |
-| `as`        | `GhostDropdownMenuContentElement`                       | `'div'`      | Menu surface element.                                                      |
-| `placement` | `Placement`                                             | `'bottom'`   | Preferred placement relative to the trigger.                               |
-| `offset`    | `OffsetOptions \| boolean \| undefined`                 | `undefined`  | Distance passed to `useFloating`.                                            |
-| `flip`      | `boolean \| FlipOptions`                                | `true`       | Flip when overflowing.                                                       |
-| `shift`     | `boolean \| ShiftOptions`                               | `true`       | Shift along cross axis.                                                        |
-| `strategy`  | `Strategy`                                              | `'absolute'` | CSS positioning strategy.                                                  |
-| `portal`    | `boolean`                                               | `true`       | Teleport via `GhostPortal` when `true`.                                      |
-| `portalTo`  | `GhostPortalTarget`                                     | `'body'`     | Teleport target.                                                             |
+| Prop        | Type                                    | Default      | Contract                                     |
+| ----------- | --------------------------------------- | ------------ | -------------------------------------------- |
+| `as`        | `GhostDropdownMenuContentElement`       | `'div'`      | Menu surface element.                        |
+| `placement` | `Placement`                             | `'bottom'`   | Preferred placement relative to the trigger. |
+| `offset`    | `OffsetOptions \| boolean \| undefined` | `undefined`  | Distance passed to `useFloating`.            |
+| `flip`      | `boolean \| FlipOptions`                | `true`       | Flip when overflowing.                       |
+| `shift`     | `boolean \| ShiftOptions`               | `true`       | Shift along cross axis.                      |
+| `strategy`  | `Strategy`                              | `'absolute'` | CSS positioning strategy.                    |
+| `portal`    | `boolean`                               | `true`       | Teleport via `GhostPortal` when `true`.      |
+| `portalTo`  | `GhostPortalTarget`                     | `'body'`     | Teleport target.                             |
 
 #### `GhostDropdownMenuItem`
 
-| Prop       | Type                              | Default | Contract                         |
-| ---------- | --------------------------------- | ------- | -------------------------------- |
-| `as`       | `GhostDropdownMenuItemElement`    | `'div'` | Item element.                    |
-| `disabled` | `boolean`                         | `false` | Skipped in roving; not activatable. |
+| Prop       | Type                           | Default | Contract                            |
+| ---------- | ------------------------------ | ------- | ----------------------------------- |
+| `as`       | `GhostDropdownMenuItemElement` | `'div'` | Item element.                       |
+| `disabled` | `boolean`                      | `false` | Skipped in roving; not activatable. |
 
 Emits `select` when activated; closes the menu after a successful activation.
 
 #### `GhostDropdownMenuCheckboxItem`
 
-| Prop             | Type            | Default     | Contract                                      |
-| ---------------- | --------------- | ----------- | --------------------------------------------- |
-| `checked`        | `boolean`       | `undefined` | Controlled checked state (`v-model:checked`). |
-| `defaultChecked` | `boolean`       | `false`     | Uncontrolled initial checked.                 |
-| `disabled`       | `boolean`       | `false`     | Skipped in roving.                            |
+| Prop             | Type      | Default     | Contract                                      |
+| ---------------- | --------- | ----------- | --------------------------------------------- |
+| `checked`        | `boolean` | `undefined` | Controlled checked state (`v-model:checked`). |
+| `defaultChecked` | `boolean` | `false`     | Uncontrolled initial checked.                 |
+| `disabled`       | `boolean` | `false`     | Skipped in roving.                            |
 
 Toggles on click or `Space` / `Enter` without closing the menu.
 
 #### `GhostDropdownMenuRadioGroup` / `GhostDropdownMenuRadioItem`
 
-| Part        | Prop / emit          | Contract                                                    |
-| ----------- | -------------------- | ----------------------------------------------------------- |
-| Radio group | `modelValue`         | Controlled selected value (`v-model`).                      |
-| Radio group | `defaultValue`       | Uncontrolled initial value.                                 |
-| Radio group | `disabled`           | Disables all items when `true`.                             |
-| Radio item  | `value` (required)   | Value reported on selection.                                |
-| Radio item  | `disabled`           | Skipped in roving.                                          |
-| Radio item  | emits `select`       | Selecting closes the menu.                                  |
+| Part        | Prop / emit        | Contract                               |
+| ----------- | ------------------ | -------------------------------------- |
+| Radio group | `modelValue`       | Controlled selected value (`v-model`). |
+| Radio group | `defaultValue`     | Uncontrolled initial value.            |
+| Radio group | `disabled`         | Disables all items when `true`.        |
+| Radio item  | `value` (required) | Value reported on selection.           |
+| Radio item  | `disabled`         | Skipped in roving.                     |
+| Radio item  | emits `select`     | Selecting closes the menu.             |
 
 #### Structural parts
 
@@ -161,17 +161,17 @@ WAI-ARIA APG **Menu Button** pattern (flat menu):
 
 ### Keyboard interaction
 
-| Key                      | Where              | Behavior                                                        |
-| ------------------------ | ------------------ | --------------------------------------------------------------- |
-| `Enter` / `Space`        | Trigger            | Toggle open (non-anchor `as`).                                  |
-| `ArrowDown` / `ArrowUp`  | Closed trigger     | Open; focus first / last item.                                  |
-| `ArrowDown` / `ArrowUp`  | Open menu          | Roving focus among enabled items.                               |
-| `Home` / `End`           | Open menu          | First / last enabled item.                                      |
-| Printable key            | Open menu          | Typeahead among item labels.                                    |
-| `Space`                  | Checkbox item      | Toggle checked; menu stays open.                                |
-| `Enter` / `Space`        | Item / radio       | Activate (radio closes menu).                                   |
-| `Escape`                 | Open menu          | Close; restore focus to trigger.                                |
-| `Tab`                    | Open menu          | Not trapped; ordinary tab order (`useFocusScope` `trapped: false`). |
+| Key                     | Where          | Behavior                                                            |
+| ----------------------- | -------------- | ------------------------------------------------------------------- |
+| `Enter` / `Space`       | Trigger        | Toggle open (non-anchor `as`).                                      |
+| `ArrowDown` / `ArrowUp` | Closed trigger | Open; focus first / last item.                                      |
+| `ArrowDown` / `ArrowUp` | Open menu      | Roving focus among enabled items.                                   |
+| `Home` / `End`          | Open menu      | First / last enabled item.                                          |
+| Printable key           | Open menu      | Typeahead among item labels.                                        |
+| `Space`                 | Checkbox item  | Toggle checked; menu stays open.                                    |
+| `Enter` / `Space`       | Item / radio   | Activate (radio closes menu).                                       |
+| `Escape`                | Open menu      | Close; restore focus to trigger.                                    |
+| `Tab`                   | Open menu      | Not trapped; ordinary tab order (`useFocusScope` `trapped: false`). |
 
 Disabled items are omitted from roving and typeahead.
 

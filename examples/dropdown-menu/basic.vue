@@ -26,9 +26,7 @@ const sort = ref('name')
       <GhostDropdownMenuItem>Edit</GhostDropdownMenuItem>
       <GhostDropdownMenuItem disabled>Archive (disabled)</GhostDropdownMenuItem>
       <GhostDropdownMenuSeparator decorative />
-      <GhostDropdownMenuCheckboxItem
-        v-model:checked="showHidden"
-      >
+      <GhostDropdownMenuCheckboxItem v-model:checked="showHidden">
         Show hidden files
       </GhostDropdownMenuCheckboxItem>
       <GhostDropdownMenuSeparator decorative />

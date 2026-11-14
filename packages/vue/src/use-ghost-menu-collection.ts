@@ -288,6 +288,7 @@ function findTypeaheadMatch(
     if (!item) {
       continue
     }
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- live DOM allows null `textContent`.
     const text = (item.textContent ?? '').trim().toLowerCase()
     if (text.startsWith(normalized)) {
       return item

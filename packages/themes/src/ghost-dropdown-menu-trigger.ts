@@ -12,7 +12,11 @@ export const GhostDropdownMenuTrigger = defineComponent({
   inheritAttrs: false,
   props: {
     as: {
-      type: [String, Object, Function] as PropType<GhostDropdownMenuTriggerElement>,
+      type: [
+        String,
+        Object,
+        Function,
+      ] as PropType<GhostDropdownMenuTriggerElement>,
       default: 'button',
     },
     disabled: {

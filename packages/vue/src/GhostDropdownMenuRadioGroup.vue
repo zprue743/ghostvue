@@ -53,7 +53,8 @@ function isSelected(value: string): boolean {
   return selectedValue.value === value
 }
 
-function isItemDisabled(_value: string): boolean {
+function isItemDisabled(value: string): boolean {
+  void value
   return groupDisabled.value
 }
 
@@ -79,7 +80,7 @@ const groupAttrs = computed(() => {
 </script>
 
 <template>
-  <component :is="as" v-bind="groupAttrs">
+  <component :is="props.as" v-bind="groupAttrs">
     <slot />
   </component>
 </template>

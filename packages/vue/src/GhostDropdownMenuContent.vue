@@ -62,7 +62,9 @@ const props = withDefaults(
 
 const injected = inject(ghostDropdownMenuContextKey)
 if (!injected) {
-  throw new Error('GhostDropdownMenuContent must be used inside GhostDropdownMenu')
+  throw new Error(
+    'GhostDropdownMenuContent must be used inside GhostDropdownMenu',
+  )
 }
 const context = injected
 
@@ -182,7 +184,7 @@ watch(
     if (!el || !positioned) {
       return
     }
-  // Item roving owns the tab stop; focus scope only restores to the trigger on close.
+    // Item roving owns the tab stop; focus scope only restores to the trigger on close.
     const focusLast = context.focusLastOnOpen.value
     if (focusLast) {
       focusLastMenuItem(el)

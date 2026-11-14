@@ -1,4 +1,4 @@
-import { defineComponent, h, ref, type PropType } from 'vue'
+import { defineComponent, h, ref, type Component, type PropType } from 'vue'
 
 import {
   GhostDropdownMenuRadioItem as GhostUnstyledDropdownMenuRadioItem,
@@ -12,7 +12,11 @@ export const GhostDropdownMenuRadioItem = defineComponent({
   inheritAttrs: false,
   props: {
     as: {
-      type: [String, Object, Function] as PropType<GhostDropdownMenuRadioItemElement>,
+      type: [
+        String,
+        Object,
+        Function,
+      ] as PropType<GhostDropdownMenuRadioItemElement>,
       default: 'div',
     },
     value: {
@@ -42,9 +46,11 @@ export const GhostDropdownMenuRadioItem = defineComponent({
       },
     } satisfies GhostDropdownMenuRadioItemExposed)
 
+    const UnstyledRadioItem = GhostUnstyledDropdownMenuRadioItem as Component
+
     return () =>
       h(
-        GhostUnstyledDropdownMenuRadioItem,
+        UnstyledRadioItem,
         {
           ...attrs,
           ref: inner,
@@ -60,4 +66,7 @@ export const GhostDropdownMenuRadioItem = defineComponent({
   },
 })
 
-export type { GhostDropdownMenuRadioItemElement, GhostDropdownMenuRadioItemExposed }
+export type {
+  GhostDropdownMenuRadioItemElement,
+  GhostDropdownMenuRadioItemExposed,
+}

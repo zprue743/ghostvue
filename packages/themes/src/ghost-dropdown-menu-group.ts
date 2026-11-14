@@ -11,7 +11,11 @@ export const GhostDropdownMenuGroup = defineComponent({
   inheritAttrs: false,
   props: {
     as: {
-      type: [String, Object, Function] as PropType<GhostDropdownMenuGroupElement>,
+      type: [
+        String,
+        Object,
+        Function,
+      ] as PropType<GhostDropdownMenuGroupElement>,
       default: 'div',
     },
   },

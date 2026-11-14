@@ -12,7 +12,11 @@ export const GhostDropdownMenuCheckboxItem = defineComponent({
   inheritAttrs: false,
   props: {
     as: {
-      type: [String, Object, Function] as PropType<GhostDropdownMenuCheckboxItemElement>,
+      type: [
+        String,
+        Object,
+        Function,
+      ] as PropType<GhostDropdownMenuCheckboxItemElement>,
       default: 'div',
     },
     checked: {

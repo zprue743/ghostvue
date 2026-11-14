@@ -31,8 +31,12 @@ const layout = ref('list')
       </GhostDropdownMenuCheckboxItem>
       <GhostDropdownMenuSeparator decorative />
       <GhostDropdownMenuRadioGroup v-model="layout">
-        <GhostDropdownMenuRadioItem value="list">List</GhostDropdownMenuRadioItem>
-        <GhostDropdownMenuRadioItem value="grid">Grid</GhostDropdownMenuRadioItem>
+        <GhostDropdownMenuRadioItem value="list"
+          >List</GhostDropdownMenuRadioItem
+        >
+        <GhostDropdownMenuRadioItem value="grid"
+          >Grid</GhostDropdownMenuRadioItem
+        >
       </GhostDropdownMenuRadioGroup>
       <GhostDropdownMenuSeparator decorative />
       <GhostDropdownMenuItem>Reset filters</GhostDropdownMenuItem>

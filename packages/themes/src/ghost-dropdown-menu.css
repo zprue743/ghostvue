@@ -43,7 +43,9 @@
     .ghost-themed-scope .ghost-dropdown-menu-content [data-part='item'],
     .ghost-dropdown-menu-content[data-themed] [data-part='item'],
     .ghost-theme .ghost-dropdown-menu-content [data-part='checkbox-item'],
-    .ghost-themed-scope .ghost-dropdown-menu-content [data-part='checkbox-item'],
+    .ghost-themed-scope
+      .ghost-dropdown-menu-content
+      [data-part='checkbox-item'],
     .ghost-dropdown-menu-content[data-themed] [data-part='checkbox-item'],
     .ghost-theme .ghost-dropdown-menu-content [data-part='radio-item'],
     .ghost-themed-scope .ghost-dropdown-menu-content [data-part='radio-item'],
@@ -70,10 +72,14 @@
     .ghost-themed-scope .ghost-dropdown-menu-content [data-part='item']:hover,
     .ghost-dropdown-menu-content[data-themed] [data-part='item']:hover,
     .ghost-theme .ghost-dropdown-menu-content [data-part='checkbox-item']:hover,
-    .ghost-themed-scope .ghost-dropdown-menu-content [data-part='checkbox-item']:hover,
+    .ghost-themed-scope
+      .ghost-dropdown-menu-content
+      [data-part='checkbox-item']:hover,
     .ghost-dropdown-menu-content[data-themed] [data-part='checkbox-item']:hover,
     .ghost-theme .ghost-dropdown-menu-content [data-part='radio-item']:hover,
-    .ghost-themed-scope .ghost-dropdown-menu-content [data-part='radio-item']:hover,
+    .ghost-themed-scope
+      .ghost-dropdown-menu-content
+      [data-part='radio-item']:hover,
     .ghost-dropdown-menu-content[data-themed] [data-part='radio-item']:hover
   ) {
     background-color: var(--ghost-elevation-2-bg);
@@ -81,17 +87,26 @@
 
   :where(
     .ghost-theme .ghost-dropdown-menu-content [data-part='item']:focus-visible,
-    .ghost-themed-scope .ghost-dropdown-menu-content [data-part='item']:focus-visible,
+    .ghost-themed-scope
+      .ghost-dropdown-menu-content
+      [data-part='item']:focus-visible,
     .ghost-dropdown-menu-content[data-themed] [data-part='item']:focus-visible,
-    .ghost-theme .ghost-dropdown-menu-content [data-part='checkbox-item']:focus-visible,
+    .ghost-theme
+      .ghost-dropdown-menu-content
+      [data-part='checkbox-item']:focus-visible,
     .ghost-themed-scope
       .ghost-dropdown-menu-content
       [data-part='checkbox-item']:focus-visible,
     .ghost-dropdown-menu-content[data-themed]
       [data-part='checkbox-item']:focus-visible,
-    .ghost-theme .ghost-dropdown-menu-content [data-part='radio-item']:focus-visible,
-    .ghost-themed-scope .ghost-dropdown-menu-content [data-part='radio-item']:focus-visible,
-    .ghost-dropdown-menu-content[data-themed] [data-part='radio-item']:focus-visible
+    .ghost-theme
+      .ghost-dropdown-menu-content
+      [data-part='radio-item']:focus-visible,
+    .ghost-themed-scope
+      .ghost-dropdown-menu-content
+      [data-part='radio-item']:focus-visible,
+    .ghost-dropdown-menu-content[data-themed]
+      [data-part='radio-item']:focus-visible
   ) {
     outline: var(--ghost-focus-ring-width) solid var(--ghost-focus-ring-color);
     outline-offset: var(--ghost-focus-ring-offset);
@@ -102,15 +117,18 @@
     .ghost-themed-scope
       .ghost-dropdown-menu-content
       [data-part='item'][data-disabled],
-    .ghost-dropdown-menu-content[data-themed]
-      [data-part='item'][data-disabled],
-    .ghost-theme .ghost-dropdown-menu-content [data-part='checkbox-item'][data-disabled],
+    .ghost-dropdown-menu-content[data-themed] [data-part='item'][data-disabled],
+    .ghost-theme
+      .ghost-dropdown-menu-content
+      [data-part='checkbox-item'][data-disabled],
     .ghost-themed-scope
       .ghost-dropdown-menu-content
       [data-part='checkbox-item'][data-disabled],
     .ghost-dropdown-menu-content[data-themed]
       [data-part='checkbox-item'][data-disabled],
-    .ghost-theme .ghost-dropdown-menu-content [data-part='radio-item'][data-disabled],
+    .ghost-theme
+      .ghost-dropdown-menu-content
+      [data-part='radio-item'][data-disabled],
     .ghost-themed-scope
       .ghost-dropdown-menu-content
       [data-part='radio-item'][data-disabled],
@@ -148,16 +166,25 @@
     }
 
     :where(
-      .ghost-theme .ghost-dropdown-menu-content [data-part='item']:focus-visible,
-      .ghost-themed-scope .ghost-dropdown-menu-content [data-part='item']:focus-visible,
-      .ghost-dropdown-menu-content[data-themed] [data-part='item']:focus-visible,
-      .ghost-theme .ghost-dropdown-menu-content [data-part='checkbox-item']:focus-visible,
+      .ghost-theme
+        .ghost-dropdown-menu-content
+        [data-part='item']:focus-visible,
+      .ghost-themed-scope
+        .ghost-dropdown-menu-content
+        [data-part='item']:focus-visible,
+      .ghost-dropdown-menu-content[data-themed]
+        [data-part='item']:focus-visible,
+      .ghost-theme
+        .ghost-dropdown-menu-content
+        [data-part='checkbox-item']:focus-visible,
       .ghost-themed-scope
         .ghost-dropdown-menu-content
         [data-part='checkbox-item']:focus-visible,
       .ghost-dropdown-menu-content[data-themed]
         [data-part='checkbox-item']:focus-visible,
-      .ghost-theme .ghost-dropdown-menu-content [data-part='radio-item']:focus-visible,
+      .ghost-theme
+        .ghost-dropdown-menu-content
+        [data-part='radio-item']:focus-visible,
       .ghost-themed-scope
         .ghost-dropdown-menu-content
         [data-part='radio-item']:focus-visible,

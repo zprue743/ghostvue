@@ -21,7 +21,11 @@ export const GhostDropdownMenuContent = defineComponent({
   inheritAttrs: false,
   props: {
     as: {
-      type: [String, Object, Function] as PropType<GhostDropdownMenuContentElement>,
+      type: [
+        String,
+        Object,
+        Function,
+      ] as PropType<GhostDropdownMenuContentElement>,
       default: 'div',
     },
     placement: {
@@ -35,11 +39,15 @@ export const GhostDropdownMenuContent = defineComponent({
       default: undefined,
     },
     flip: {
-      type: [Boolean, Object] as PropType<boolean | GhostDropdownMenuFlipOptions>,
+      type: [Boolean, Object] as PropType<
+        boolean | GhostDropdownMenuFlipOptions
+      >,
       default: true,
     },
     shift: {
-      type: [Boolean, Object] as PropType<boolean | GhostDropdownMenuShiftOptions>,
+      type: [Boolean, Object] as PropType<
+        boolean | GhostDropdownMenuShiftOptions
+      >,
       default: true,
     },
     strategy: {

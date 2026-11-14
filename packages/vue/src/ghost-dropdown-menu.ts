@@ -260,7 +260,9 @@ export const ghostDropdownMenuRadioGroupContextKey: InjectionKey<GhostDropdownMe
  * (preferring exposed `.element` over `.$el` so wrappers with a `display:
  * contents` scope resolve to their inner control).
  */
-export function resolveDropdownMenuHtmlElement(target: unknown): HTMLElement | null {
+export function resolveDropdownMenuHtmlElement(
+  target: unknown,
+): HTMLElement | null {
   if (typeof HTMLElement === 'undefined') {
     return null
   }

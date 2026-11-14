@@ -43,7 +43,7 @@ const labelAttrs = computed(() => {
 </script>
 
 <template>
-  <component :is="as" v-bind="labelAttrs">
+  <component :is="props.as" v-bind="labelAttrs">
     <slot />
   </component>
 </template>

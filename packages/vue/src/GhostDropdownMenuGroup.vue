@@ -29,7 +29,7 @@ const groupAttrs = computed(() => {
 </script>
 
 <template>
-  <component :is="as" v-bind="groupAttrs">
+  <component :is="props.as" v-bind="groupAttrs">
     <slot />
   </component>
 </template>

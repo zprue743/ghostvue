@@ -41,15 +41,15 @@ if (!radioGroup) {
     'GhostDropdownMenuRadioItem must be used inside GhostDropdownMenuRadioGroup',
   )
 }
+const menu = menuContext
+const group = radioGroup
 
 const attrs = useAttrs()
 const hostRef = useTemplateRef('host')
 const element = computed(() => resolveDropdownMenuHtmlElement(hostRef.value))
 
-const isDisabled = computed(
-  () => radioGroup.disabled.value || props.disabled,
-)
-const checked = computed(() => radioGroup.isSelected(props.value))
+const isDisabled = computed(() => group.disabled.value || props.disabled)
+const checked = computed(() => group.isSelected(props.value))
 
 const itemAttrs = computed(() => {
   const rest: Record<string, unknown> = {}
@@ -89,9 +89,9 @@ function handleClick(event: MouseEvent): void {
     }
     return
   }
-  radioGroup!.select(props.value)
+  group.select(props.value)
   emit('select', props.value)
-  menuContext!.close()
+  menu.close()
 }
 
 defineExpose<GhostDropdownMenuRadioItemExposed>({

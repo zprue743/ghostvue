@@ -11,7 +11,11 @@ export const GhostDropdownMenuRadioGroup = defineComponent({
   inheritAttrs: false,
   props: {
     as: {
-      type: [String, Object, Function] as PropType<GhostDropdownMenuRadioGroupElement>,
+      type: [
+        String,
+        Object,
+        Function,
+      ] as PropType<GhostDropdownMenuRadioGroupElement>,
       default: 'div',
     },
     modelValue: {
