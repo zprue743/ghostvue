@@ -94,7 +94,8 @@ async function copyRepository() {
 
 function run(root: string, args: string[]) {
   try {
-    execFileSync('pnpm', args, { cwd: root, stdio: 'pipe', timeout: 240_000 })
+    // Full-repo verify in a copied workspace can exceed four minutes as packages grow.
+    execFileSync('pnpm', args, { cwd: root, stdio: 'pipe', timeout: 480_000 })
   } catch (error) {
     if (error instanceof Error && 'stdout' in error && 'stderr' in error) {
       throw new Error(
