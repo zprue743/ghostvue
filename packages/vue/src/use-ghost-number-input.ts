@@ -349,6 +349,10 @@ export function useGhostNumberInput(options: UseGhostNumberInputOptions = {}): {
       return
     }
 
+    // Without min/max, Home/End behave like ordinary text fields (caret only).
+    if (event.key === 'Home' && min.value === undefined) return
+    if (event.key === 'End' && max.value === undefined) return
+
     const steppingKeys = [
       'ArrowUp',
       'ArrowDown',
