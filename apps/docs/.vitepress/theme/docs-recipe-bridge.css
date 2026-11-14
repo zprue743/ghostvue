@@ -22,9 +22,6 @@
  * - Unaffected: GhostCheckbox (::before chrome), GhostSwitch ([data-part]),
  *   non-native hosts, no GhostSelect.
  *
- * Library follow-up: mirror GhostInput with `--_ghost-textarea-background` and
- * `--_ghost-textarea-border-color` so docs can undo VP's transparent background
- * without hardcoding elevation or border tokens.
  */
 .ghost-themed-scope :where(.ghost-input, .ghost-textarea) {
   border-style: revert-layer;
@@ -111,7 +108,13 @@
 
 .ghost-themed-scope .ghost-textarea {
   appearance: none;
+  background-color: var(--_ghost-textarea-background);
+  border-style: solid;
+  border-width: var(--ghost-border-hairline-width);
+  border-color: var(--_ghost-textarea-border-color);
+  border-radius: var(--ghost-action-radius);
   box-sizing: border-box;
+  color: var(--_ghost-textarea-color);
   display: block;
   font-family: var(--ghost-type-family-sans);
   font-feature-settings: var(--ghost-type-feature-default);
@@ -123,24 +126,4 @@
   padding-block: var(--_ghost-textarea-padding-block);
   padding-inline: var(--_ghost-textarea-padding-inline);
   resize: vertical;
-}
-
-.ghost-themed-scope .ghost-textarea {
-  background-color: revert-layer;
-  border-color: revert-layer;
-  color: revert-layer;
-}
-
-.ghost-themed-scope .ghost-textarea[aria-invalid='true'] {
-  border-color: revert-layer;
-}
-
-.ghost-themed-scope .ghost-textarea[data-state='readonly']:not(:disabled) {
-  background-color: revert-layer;
-}
-
-.ghost-themed-scope .ghost-textarea:is(:disabled, [data-state='disabled']) {
-  background-color: revert-layer;
-  border-color: revert-layer;
-  color: revert-layer;
 }
