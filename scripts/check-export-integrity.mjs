@@ -5,6 +5,7 @@ import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 import { workspacePackages } from './workspace-packages.mjs'
+import { runThemesDefinePackedSmoke } from './themes-define-packed-smoke.mjs'
 
 // Run after `pnpm build` so the tarballs contain the release artifacts.
 const root = fileURLToPath(new URL('..', import.meta.url))
@@ -58,7 +59,13 @@ try {
       },
     )
   }
-  console.log('\nAll packed package exports pass publint and attw.')
+  console.log('\nRunning packed @ghostvue/themes/define smoke test…')
+  await runThemesDefinePackedSmoke()
+  console.log('Packed @ghostvue/themes/define smoke passed.')
+
+  console.log(
+    '\nAll packed package exports pass publint, attw, and define smoke.',
+  )
 } finally {
   await rm(temporary, { recursive: true, force: true })
 }

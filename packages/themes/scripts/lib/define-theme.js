@@ -3,7 +3,7 @@
  * from a small input, reusing the DTCG compile pipeline. Not imported from
  * the browser entry — culori stays a themes devDependency.
  */
-import { readFileSync } from 'node:fs'
+import { existsSync, readFileSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
@@ -45,10 +45,20 @@ const KEYWORD_COLORS = new Set([
   'transparent',
 ])
 
-const tokensDir = resolve(
-  dirname(fileURLToPath(import.meta.url)),
-  '../../tokens',
-)
+function resolveTokensDir() {
+  const here = dirname(fileURLToPath(import.meta.url))
+  for (const relative of ['tokens', '../../tokens']) {
+    const dir = resolve(here, relative)
+    if (existsSync(resolve(dir, 'seeds.json'))) {
+      return dir
+    }
+  }
+  throw new Error(
+    'defineTheme token templates missing: expected dist/tokens (packed) or packages/themes/tokens (development)',
+  )
+}
+
+const tokensDir = resolveTokensDir()
 
 const seedsTemplate = JSON.parse(
   readFileSync(resolve(tokensDir, 'seeds.json'), 'utf8'),
