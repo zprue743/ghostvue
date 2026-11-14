@@ -15,6 +15,7 @@ import {
   GhostSkeleton as GhostSkeletonThemed,
   GhostSwitch as GhostSwitchThemed,
   GhostTextarea as GhostTextareaThemed,
+  GhostToolbar as GhostToolbarThemed,
 } from '@ghostvue/themes'
 
 import AmbientReference from './AmbientReference.vue'
@@ -47,6 +48,7 @@ import {
   GhostSkeleton,
   GhostSwitch,
   GhostTextarea,
+  GhostToolbar,
   GhostVisuallyHidden,
   useFocusScope,
   useRovingFocus,
@@ -1041,6 +1043,39 @@ function submitPlaygroundComment(event: Event): void {
       </div>
     </section>
 
+    <section aria-labelledby="toolbar-heading">
+      <h2 id="toolbar-heading">GhostToolbar</h2>
+      <p>
+        Table and chart action bars use one tab stop with arrow keys among
+        controls.
+      </p>
+      <fieldset>
+        <legend>Headless</legend>
+        <GhostToolbar
+          label="Selection tools"
+          data-testid="toolbar-horizontal"
+          class="toolbar-demo"
+        >
+          <GhostButton type="button">Edit row</GhostButton>
+          <GhostButton type="button" disabled>Lock row</GhostButton>
+          <GhostButton type="button">Duplicate row</GhostButton>
+          <GhostSeparator orientation="vertical" />
+          <GhostButton type="button">Archive row</GhostButton>
+        </GhostToolbar>
+      </fieldset>
+      <fieldset class="ghost-theme" data-ghost-mode="light">
+        <legend>Themed action bar</legend>
+        <GhostToolbarThemed
+          label="Bulk operations"
+          data-testid="toolbar-themed"
+        >
+          <GhostButtonThemed size="sm">Assign</GhostButtonThemed>
+          <GhostSeparatorThemed orientation="vertical" />
+          <GhostButtonThemed size="sm" tone="danger">Remove</GhostButtonThemed>
+        </GhostToolbarThemed>
+      </fieldset>
+    </section>
+
     <section aria-labelledby="roving-heading">
       <h2 id="roving-heading">Roving focus</h2>
       <button type="button" data-testid="before-roving">Before roving</button>
@@ -1317,6 +1352,13 @@ fieldset {
 .playground-pagination :deep(button[aria-current='page']) {
   background: Highlight;
   color: HighlightText;
+}
+
+.toolbar-demo {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
 }
 
 /* Headless progress ships no visuals; playground-owned track, not the themed recipe. */

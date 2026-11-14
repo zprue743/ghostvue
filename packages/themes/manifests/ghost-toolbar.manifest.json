@@ -1,0 +1,106 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "handwritten",
+  "name": "GhostToolbar",
+  "package": "@ghostvue/themes",
+  "status": "experimental",
+  "description": "Themed wrapper around headless GhostToolbar. Same behavioral props; flex row/column layout from default CSS. Hand-written until GHO-13 generates manifests.",
+  "props": [
+    {
+      "name": "orientation",
+      "type": "'horizontal' | 'vertical'",
+      "default": "horizontal",
+      "required": false,
+      "description": "Toolbar layout forwarded to the unstyled GhostToolbar.",
+      "deprecated": false
+    },
+    {
+      "name": "loop",
+      "type": "boolean",
+      "default": true,
+      "required": false,
+      "description": "Roving wrap behavior forwarded to the unstyled GhostToolbar.",
+      "deprecated": false
+    },
+    {
+      "name": "dir",
+      "type": "'ltr' | 'rtl'",
+      "required": false,
+      "description": "Text direction for horizontal arrows, forwarded to the unstyled GhostToolbar.",
+      "deprecated": false
+    },
+    {
+      "name": "label",
+      "type": "string",
+      "required": false,
+      "description": "Accessible name forwarded to the unstyled GhostToolbar.",
+      "deprecated": false
+    },
+    {
+      "name": "as",
+      "type": "'div' | 'section' | 'footer' | 'header'",
+      "default": "div",
+      "required": false,
+      "description": "Root element forwarded to the unstyled GhostToolbar.",
+      "deprecated": false
+    }
+  ],
+  "models": [],
+  "events": [],
+  "slots": [
+    {
+      "name": "default",
+      "props": [],
+      "description": "Toolbar items forwarded to the unstyled GhostToolbar."
+    }
+  ],
+  "exposed": [
+    {
+      "name": "element",
+      "kind": "property",
+      "type": "HTMLElement | null",
+      "description": "Root toolbar element inside the themed scope."
+    },
+    {
+      "name": "focus",
+      "kind": "method",
+      "type": "(options?: FocusOptions) => void",
+      "description": "Focuses the toolbar root."
+    },
+    {
+      "name": "blur",
+      "kind": "method",
+      "type": "() => void",
+      "description": "Blurs the toolbar root."
+    }
+  ],
+  "styling": {
+    "parts": [
+      {
+        "name": "root",
+        "description": "The toolbar element inside the display:contents themed scope."
+      }
+    ],
+    "states": [],
+    "cssProperties": [
+      {
+        "name": "--ghost-space-gap-sm",
+        "description": "Gap between toolbar controls."
+      }
+    ]
+  },
+  "accessibility": {
+    "role": "toolbar",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/toolbar/",
+    "keyboard": {
+      "ArrowLeft": "Previous enabled item when orientation is horizontal.",
+      "ArrowRight": "Next enabled item when orientation is horizontal.",
+      "ArrowUp": "Previous enabled item when orientation is vertical.",
+      "ArrowDown": "Next enabled item when orientation is vertical.",
+      "Home": "First enabled item.",
+      "End": "Last enabled item."
+    },
+    "requiredAriaAttributes": ["aria-label"]
+  },
+  "examples": ["toolbar/themed"]
+}

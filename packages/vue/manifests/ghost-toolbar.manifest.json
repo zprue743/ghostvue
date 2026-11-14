@@ -1,0 +1,108 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "generated",
+  "name": "GhostToolbar",
+  "package": "@ghostvue/vue",
+  "status": "experimental",
+  "description": "Headless APG toolbar container. useGhostToolbar owns role and orientation semantics; useRovingFocus moves among focusable slot children. Themed flex layout lives on @ghostvue/themes.",
+  "props": [
+    {
+      "name": "orientation",
+      "type": "GhostToolbarOrientation",
+      "default": "horizontal",
+      "required": false,
+      "description": "Toolbar layout and roving arrow axis. Sets aria-orientation when vertical.",
+      "deprecated": false
+    },
+    {
+      "name": "loop",
+      "type": "boolean",
+      "default": true,
+      "required": false,
+      "description": "Wrap arrow and Home/End movement from last enabled item to first.",
+      "deprecated": false
+    },
+    {
+      "name": "dir",
+      "type": "GhostToolbarDirection",
+      "required": false,
+      "description": "Optional text direction for horizontal arrow reversal in RTL.",
+      "deprecated": false
+    },
+    {
+      "name": "label",
+      "type": "string",
+      "required": false,
+      "description": "Accessible name via aria-label when a visible label element is not used.",
+      "deprecated": false
+    },
+    {
+      "name": "as",
+      "type": "GhostToolbarElement",
+      "default": "div",
+      "required": false,
+      "description": "Root element tag for the toolbar container.",
+      "deprecated": false
+    }
+  ],
+  "models": [],
+  "events": [],
+  "slots": [
+    {
+      "name": "default",
+      "props": [],
+      "description": "Toolbar items such as GhostButton, GhostSwitch, and GhostSeparator."
+    }
+  ],
+  "exposed": [
+    {
+      "name": "element",
+      "kind": "property",
+      "type": "HTMLElement | null",
+      "description": "Root element after mount; null before mount."
+    },
+    {
+      "name": "focus",
+      "kind": "method",
+      "type": "(options?: FocusOptions) => void",
+      "description": "Exposed method `focus`."
+    },
+    {
+      "name": "blur",
+      "kind": "method",
+      "type": "() => void",
+      "description": "Exposed method `blur`."
+    }
+  ],
+  "styling": {
+    "parts": [
+      {
+        "name": "root",
+        "description": "Toolbar container with role=toolbar."
+      }
+    ],
+    "states": [],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "toolbar",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/toolbar/",
+    "keyboard": {
+      "ArrowLeft": "Previous enabled item when orientation is horizontal (flipped in RTL).",
+      "ArrowRight": "Next enabled item when orientation is horizontal (flipped in RTL).",
+      "ArrowUp": "Previous enabled item when orientation is vertical.",
+      "ArrowDown": "Next enabled item when orientation is vertical.",
+      "Home": "First enabled item.",
+      "End": "Last enabled item."
+    },
+    "requiredAriaAttributes": [
+      "aria-label"
+    ]
+  },
+  "examples": [
+    "toolbar/basic",
+    "toolbar/composable",
+    "toolbar/vertical",
+    "toolbar/separators"
+  ]
+}

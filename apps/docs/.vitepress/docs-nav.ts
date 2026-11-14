@@ -39,6 +39,7 @@ export const docsSidebar: LlmsSidebarGroup[] = [
       { text: 'GhostSwitch', link: '/components/switch' },
       { text: 'GhostTabs', link: '/components/tabs' },
       { text: 'GhostTextarea', link: '/components/textarea' },
+      { text: 'GhostToolbar', link: '/components/toolbar' },
       { text: 'GhostTooltip', link: '/components/tooltip' },
       { text: 'GhostVisuallyHidden', link: '/components/visually-hidden' },
       { text: 'Default theme', link: '/themes/default' },
@@ -104,6 +105,7 @@ export const docsSidebar: LlmsSidebarGroup[] = [
   {
     text: 'Contributing',
     items: [
+      { text: 'GhostToolbar specification', link: '/components/toolbar-spec' },
       {
         text: 'GhostPagination specification',
         link: '/components/pagination-spec',
