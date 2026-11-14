@@ -25,6 +25,11 @@ export interface GhostTextareaRootProps {
   'data-auto-resize': '' | undefined
   value: string
   onInput: (event: Event) => void
+  /**
+   * Unitless row count for themed `block-size: N * 1lh`. Native `rows` uses
+   * font metrics and rounds 1px differently across fontconfigs.
+   */
+  style: { '--_ghost-textarea-rows': string }
 }
 
 const DEFAULT_ROWS = 2
@@ -135,7 +140,10 @@ export function useGhostTextarea(options: UseGhostTextareaOptions = {}): {
       numeric(computed.borderTopWidth) + numeric(computed.borderBottomWidth)
     const contentHeight =
       el.scrollHeight + (computed.boxSizing === 'border-box' ? borderY : 0)
-    const next = Math.min(Math.max(contentHeight, minHeight), maxHeight)
+    // Integer px so auto-resize height does not drift 1px across Chromium fontconfigs.
+    const next = Math.round(
+      Math.min(Math.max(contentHeight, minHeight), maxHeight),
+    )
 
     el.style.height = `${String(next)}px`
     el.style.overflowY = contentHeight > maxHeight ? 'auto' : 'hidden'
@@ -183,6 +191,9 @@ export function useGhostTextarea(options: UseGhostTextareaOptions = {}): {
     'data-auto-resize': autoResize.value ? '' : undefined,
     value: value.value,
     onInput,
+    style: {
+      '--_ghost-textarea-rows': String(rows.value),
+    },
   }))
 
   onMounted(() => {

@@ -26,6 +26,7 @@ describe('useGhostTextarea', () => {
     expect(result.rootProps.value.class).toBe('ghost-textarea')
     expect(result.rootProps.value['data-part']).toBe('root')
     expect(result.rootProps.value.rows).toBe(2)
+    expect(result.rootProps.value.style['--_ghost-textarea-rows']).toBe('2')
     expect(result.rootProps.value.disabled).toBeUndefined()
     expect(result.rootProps.value['aria-invalid']).toBeUndefined()
     expect(result.rootProps.value['data-state']).toBeUndefined()
@@ -112,7 +113,7 @@ describe('useGhostTextarea', () => {
 
     result.resize(textarea)
 
-    expect(textarea.style.height).toMatch(/px$/)
+    expect(textarea.style.height).toMatch(/^\d+px$/)
     expect(textarea.style.overflowY).toBe('auto')
 
     textarea.remove()

@@ -15,6 +15,9 @@ describe('GhostTextarea', () => {
     expect(root.classes()).toContain('ghost-textarea')
     expect(root.attributes('data-part')).toBe('root')
     expect(root.attributes('rows')).toBe('2')
+    expect(root.element.style.getPropertyValue('--_ghost-textarea-rows')).toBe(
+      '2',
+    )
     expect(root.element.value).toBe('')
     expect(root.attributes()).not.toHaveProperty('disabled')
     expect(root.attributes('aria-invalid')).toBeUndefined()

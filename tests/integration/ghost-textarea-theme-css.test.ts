@@ -44,6 +44,8 @@ describe('GhostTextarea theme CSS tokens', () => {
     expect(css).toContain('--ghost-border-danger')
     expect(css).toContain('--ghost-action-disabled-bg')
     expect(css).toContain('--ghost-control-size-md-font')
+    expect(css).toContain('1lh')
+    expect(css).toContain('--_ghost-textarea-rows')
     expect(findHardcodedVisuals(css)).toEqual([])
   })
 })

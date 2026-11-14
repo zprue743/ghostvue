@@ -252,8 +252,11 @@ Themed visual values use existing semantic tokens only:
 - `--ghost-focus-ring-*` for `:focus-visible`
 
 Themed default: `inline-size: 100%`, `resize: vertical` when auto-resize is
-off, `resize: none` when it is on. Forced colors map fill to `Field` and
-text to `FieldText`. There are no per-component tokens.
+off, `resize: none` when it is on. Used `block-size` is
+`rows * 1lh + padding + border` (via `--_ghost-textarea-rows`) so Chromium
+does not size from font metrics, which rounded 1px differently across
+fontconfigs. Forced colors map fill to `Field` and text to `FieldText`.
+There are no per-component tokens.
 
 ## Environment behavior
 

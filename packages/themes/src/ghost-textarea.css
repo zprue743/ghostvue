@@ -29,6 +29,14 @@
     padding-block: var(--_ghost-textarea-padding-block);
     padding-inline: var(--_ghost-textarea-padding-inline);
     resize: vertical;
+    /* Native `rows` sizes from font metrics, not CSS line-height, so used
+       height can differ 1px per field across Chromium fontconfigs. `lh` is
+       the used line-height; `--_ghost-textarea-rows` comes from the `rows` prop. */
+    block-size: calc(
+      var(--_ghost-textarea-rows, 2) * 1lh + 2 *
+        var(--_ghost-textarea-padding-block) + 2 *
+        var(--ghost-border-hairline-width)
+    );
   }
 
   :where(
