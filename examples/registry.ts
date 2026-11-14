@@ -23,6 +23,36 @@ export interface GhostExampleDefinition {
 
 export const ghostExamples = [
   {
+    id: 'badge/basic',
+    title: 'Basic',
+    description: 'Unstyled compact status text.',
+    layer: 'headless',
+  },
+  {
+    id: 'badge/composable',
+    title: 'Composable',
+    description: 'Same contract as GhostBadge, applied to a native host.',
+    layer: 'headless',
+  },
+  {
+    id: 'badge/themed',
+    title: 'Themed',
+    description: 'Visual props on the @ghostvue/themes wrapper.',
+    layer: 'themed',
+  },
+  {
+    id: 'badge/icon',
+    title: 'Icon',
+    description: 'Optional decorative icon marked data-part=icon.',
+    layer: 'themed',
+  },
+  {
+    id: 'badge/table',
+    title: 'Table and filters',
+    description: 'Cell statuses, counts, and active-filter summaries.',
+    layer: 'themed',
+  },
+  {
     id: 'button/basic',
     title: 'Basic',
     description: 'Native action control. The default type is button.',

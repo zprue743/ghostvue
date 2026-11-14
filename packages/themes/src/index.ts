@@ -1,4 +1,4 @@
-/** Themed wrappers and default CSS. One `GhostButton` import loads the stylesheet. */
+/** Themed wrappers and default CSS. One `GhostBadge` or `GhostButton` import loads the stylesheet. */
 import './default.css'
 
 export {
@@ -17,6 +17,14 @@ export {
   type FlagshipThemeName,
   type ThemeName,
 } from './flagship-themes'
+
+export {
+  GhostBadge,
+  type GhostBadgeExposed,
+  type GhostBadgeSize,
+  type GhostBadgeTone,
+  type GhostBadgeVariant,
+} from './ghost-badge'
 
 export {
   GhostButton,

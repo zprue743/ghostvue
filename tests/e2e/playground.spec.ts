@@ -343,6 +343,73 @@ test('default theme adapts to accessibility and color preferences', async ({
   }
 })
 
+test('GhostBadge renders compact metadata without becoming a tab stop', async ({
+  page,
+}) => {
+  const playground = await startStaticServer('apps/playground/dist')
+
+  try {
+    await page.goto(playground.url)
+
+    const section = page.getByRole('region', { name: 'GhostBadge' })
+    const headless = section.getByRole('group', { name: 'Headless' })
+    const themedGroup = section.getByRole('group', { name: 'Themed badges' })
+    const themed = themedGroup.getByTestId('themed-badge')
+    const headlessBadge = headless.locator('.ghost-badge').first()
+
+    await expect(headlessBadge).toHaveJSProperty('tagName', 'SPAN')
+    await expect(headlessBadge).toHaveAttribute('data-part', 'root')
+    await expect(headlessBadge).not.toHaveAttribute('role')
+    await expect(headlessBadge).toHaveText('Active')
+
+    expect(
+      await themed.evaluate((element) => (element as HTMLElement).tabIndex),
+    ).toBe(-1)
+
+    const live = themedGroup.getByText('Live', { exact: true })
+    await expect(live.locator('[data-part="icon"]')).toBeVisible()
+    await expect(live.locator('svg')).toHaveAttribute('aria-hidden', 'true')
+
+    await expect(themed).not.toHaveAttribute('data-variant')
+    await expect(themed).not.toHaveAttribute('data-tone')
+    await expect(themed).not.toHaveAttribute('data-size')
+
+    const overdue = themedGroup.getByText('Overdue', { exact: true })
+    await expect(overdue).toHaveAttribute('data-variant', 'outline')
+    await expect(overdue).toHaveAttribute('data-tone', 'danger')
+
+    const count = themedGroup.getByText('24', { exact: true })
+    await expect(count).toHaveAttribute('data-variant', 'solid')
+    await expect(count).toHaveAttribute('data-size', 'md')
+
+    await expect(themedGroup.getByText('New', { exact: true })).toBeAttached()
+    await expect(themedGroup.getByRole('cell', { name: 'Draft' })).toBeVisible()
+
+    for (const tone of ['accent', 'neutral', 'danger']) {
+      for (const variant of ['solid', 'soft', 'outline', 'ghost']) {
+        await themed.evaluate(
+          (element, options) => {
+            element.setAttribute('data-tone', options.tone)
+            element.setAttribute('data-variant', options.variant)
+          },
+          { tone, variant },
+        )
+        await expect
+          .poll(async () => textContrast(themed, themedGroup), {
+            message: `${tone} ${variant} text contrast`,
+          })
+          .toBeGreaterThanOrEqual(4.5)
+      }
+    }
+
+    await page.emulateMedia({ forcedColors: 'active' })
+    await expect(themed).toBeVisible()
+    await expect(themed).toHaveCSS('box-shadow', 'none')
+  } finally {
+    await playground.close()
+  }
+})
+
 test('unset data-ghost-mode follows prefers-color-scheme from CSS alone', async ({
   page,
 }) => {

@@ -45,11 +45,11 @@ not required for the DataTable cases.
 Themed `@ghostvue/themes` `GhostBadge` wraps the unstyled component and adds
 visual props. Same fallthrough; these exist only on the themed wrapper:
 
-| Prop      | Type                                        | Default    | Contract                                                                                         |
-| --------- | ------------------------------------------- | ---------- | ------------------------------------------------------------------------------------------------ |
-| `variant` | `'solid' \| 'soft' \| 'outline' \| 'ghost'` | `'soft'`   | Visual treatment.                                                                                |
-| `tone`    | `'accent' \| 'neutral' \| 'danger'`         | `'neutral'` | Semantic color intent, independent of `variant`. Not a status enum.                            |
-| `size`    | `'sm' \| 'md'`                              | `'sm'`     | Compact type and padding. No control minimum size; badges are not touch targets.                 |
+| Prop      | Type                                        | Default     | Contract                                                                         |
+| --------- | ------------------------------------------- | ----------- | -------------------------------------------------------------------------------- |
+| `variant` | `'solid' \| 'soft' \| 'outline' \| 'ghost'` | `'soft'`    | Visual treatment.                                                                |
+| `tone`    | `'accent' \| 'neutral' \| 'danger'`         | `'neutral'` | Semantic color intent, independent of `variant`. Not a status enum.              |
+| `size`    | `'sm' \| 'md'`                              | `'sm'`      | Compact type and padding. No control minimum size; badges are not touch targets. |
 
 The themed wrapper sets matching `data-variant`, `data-tone`, and `data-size`
 attributes on the inner span. Defaults omit the attribute so CSS can treat a
@@ -120,9 +120,10 @@ The component adds no `role`. In particular it does not set `role="status"`
 
 Text in the default slot is the accessible name. Color and iconography must not
 be the only encoding of meaning: a red badge still reads `Overdue`, not an
-unlabeled mark. Decorative icons must be `aria-hidden`. Icon-only use requires
-`aria-label`, `aria-labelledby`, or hidden text (for example
-`GhostVisuallyHidden`).
+unlabeled mark. Decorative icons must be `aria-hidden`. Icon-only use must
+include real text (typically `GhostVisuallyHidden`). `aria-label` is prohibited
+on a role-less `<span>` (ARIA 1.2 / axe `aria-prohibited-attr`); do not name a
+badge that way.
 
 ### Keyboard interaction
 
@@ -219,8 +220,8 @@ The machine-readable contracts are
 
 - Vue tests cover defaults (native span, class, `data-part="root"`, no `role`,
   no `data-state`), slots, typed fallthrough attributes/listeners, decorative
-  `data-part="icon"`, icon-only naming through forwarded attributes, exposed
-  `element`, and SSR markup.
+  `data-part="icon"`, icon naming through hidden text, exposed `element`, and
+  SSR markup.
 - Compile-time tests cover native attribute types on `GhostBadgeProps` and the
   exposed ref contract.
 - Browser tests cover DataTable-like cell statuses, counts, and filter

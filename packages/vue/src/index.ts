@@ -13,6 +13,9 @@ export {
   type TextDirection,
   type UseRovingFocusOptions,
 } from './use-roving-focus'
+export { default as GhostBadge } from './GhostBadge.vue'
+export { useGhostBadge, type GhostBadgeRootProps } from './use-ghost-badge'
+export type { GhostBadgeExposed, GhostBadgeProps } from './ghost-badge'
 export { default as GhostButton } from './GhostButton.vue'
 export { useGhostButton, type GhostButtonRootProps } from './use-ghost-button'
 export type {

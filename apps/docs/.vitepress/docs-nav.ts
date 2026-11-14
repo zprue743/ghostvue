@@ -17,6 +17,7 @@ export const docsSidebar: LlmsSidebarGroup[] = [
   {
     text: 'Components',
     items: [
+      { text: 'GhostBadge', link: '/components/badge' },
       { text: 'GhostButton', link: '/components/button' },
       { text: 'GhostDialog', link: '/components/dialog' },
       {
@@ -93,6 +94,10 @@ export const docsSidebar: LlmsSidebarGroup[] = [
       { text: 'Executable examples', link: '/contributing/examples' },
       { text: 'Releases', link: '/contributing/releases' },
       { text: 'Component specs', link: '/components/spec-template' },
+      {
+        text: 'GhostBadge specification',
+        link: '/components/badge-spec',
+      },
       {
         text: 'GhostButton specification',
         link: '/components/button-spec',
