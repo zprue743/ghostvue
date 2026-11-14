@@ -187,3 +187,20 @@ export {
   type GhostFieldExposed,
   type GhostFieldLabelAssociate,
 } from './ghost-field'
+
+export { GhostTabs, type GhostTabsSlotProps } from './ghost-tabs'
+export {
+  GhostTabsList,
+  type GhostTabsListElement,
+  type GhostTabsListExposed,
+} from './ghost-tabs-list'
+export {
+  GhostTabsTrigger,
+  type GhostTabsTriggerElement,
+  type GhostTabsTriggerExposed,
+} from './ghost-tabs-trigger'
+export {
+  GhostTabsContent,
+  type GhostTabsContentElement,
+  type GhostTabsContentExposed,
+} from './ghost-tabs-content'

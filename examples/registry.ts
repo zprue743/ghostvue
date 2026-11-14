@@ -519,6 +519,30 @@ export const ghostExamples = [
     description: 'Default vertical spacing from @ghostvue/themes.',
     layer: 'themed',
   },
+  {
+    id: 'tabs/basic',
+    title: 'Basic',
+    description: 'Controlled compound tabs with automatic activation.',
+    layer: 'headless',
+  },
+  {
+    id: 'tabs/manual',
+    title: 'Manual activation',
+    description: 'Tabs activate on click or Enter/Space instead of focus.',
+    layer: 'headless',
+  },
+  {
+    id: 'tabs/vertical',
+    title: 'Vertical',
+    description: 'Vertical tab list with arrow-key roving focus.',
+    layer: 'headless',
+  },
+  {
+    id: 'tabs/themed',
+    title: 'Themed',
+    description: 'Styled tab list and panels from @ghostvue/themes.',
+    layer: 'themed',
+  },
 ] as const satisfies readonly GhostExampleDefinition[]
 
 export type GhostExampleId = (typeof ghostExamples)[number]['id']

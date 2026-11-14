@@ -1,0 +1,99 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "generated",
+  "name": "GhostTabs",
+  "package": "@ghostvue/vue",
+  "status": "experimental",
+  "description": "Headless tabs root provider. Manages controlled/uncontrolled selection, activation mode, and orientation for APG tab composites.",
+  "props": [
+    {
+      "name": "modelValue",
+      "type": "string",
+      "required": false,
+      "description": "Controlled selected tab value. Omit for uncontrolled mode.",
+      "deprecated": false
+    },
+    {
+      "name": "defaultValue",
+      "type": "string",
+      "required": false,
+      "description": "Initial selected value when `modelValue` is omitted.",
+      "deprecated": false
+    },
+    {
+      "name": "activationMode",
+      "type": "'automatic' | 'manual'",
+      "default": "automatic",
+      "required": false,
+      "description": "Focus-driven (`automatic`) vs explicit activation (`manual`) tab selection.",
+      "deprecated": false
+    },
+    {
+      "name": "orientation",
+      "type": "'horizontal' | 'vertical'",
+      "default": "horizontal",
+      "required": false,
+      "description": "Tab list orientation for arrow-key roving and `aria-orientation`.",
+      "deprecated": false
+    },
+    {
+      "name": "dir",
+      "type": "'ltr' | 'rtl'",
+      "required": false,
+      "description": "Explicit text direction for roving focus within the tab list.",
+      "deprecated": false
+    }
+  ],
+  "models": [
+    {
+      "prop": "modelValue",
+      "event": "update:modelValue",
+      "type": "string",
+      "description": "v-model binding for `modelValue`."
+    }
+  ],
+  "events": [],
+  "slots": [
+    {
+      "name": "default",
+      "props": [
+        {
+          "name": "modelValue",
+          "type": "string | undefined",
+          "description": "Slot prop `modelValue`."
+        }
+      ],
+      "description": "Container content."
+    }
+  ],
+  "exposed": [
+    {
+      "name": "element",
+      "kind": "property",
+      "type": "HTMLElement | null",
+      "description": "Root element after mount; null before mount."
+    }
+  ],
+  "styling": {
+    "parts": [
+      {
+        "name": "root",
+        "description": "Neutral content container."
+      }
+    ],
+    "states": [],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "generic",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/",
+    "keyboard": {},
+    "requiredAriaAttributes": []
+  },
+  "examples": [
+    "tabs/basic",
+    "tabs/manual",
+    "tabs/vertical",
+    "tabs/themed"
+  ]
+}

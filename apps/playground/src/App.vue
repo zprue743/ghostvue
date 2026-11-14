@@ -24,6 +24,7 @@ import MotionReference from './MotionReference.vue'
 import OverlayReference from './OverlayReference.vue'
 import CollapsibleReference from './CollapsibleReference.vue'
 import PopoverReference from './PopoverReference.vue'
+import TabsReference from './TabsReference.vue'
 import VisualReference from './VisualReference.vue'
 import {
   GhostBadge,
@@ -248,6 +249,7 @@ function submitPlaygroundComment(event: Event): void {
     <PopoverReference />
     <CollapsibleReference />
     <DialogReference />
+    <TabsReference />
     <ModalPrimitivesReference />
 
     <section aria-labelledby="button-heading">

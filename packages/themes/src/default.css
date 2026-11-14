@@ -23,6 +23,7 @@
 
 @import './ghost-collapsible.css';
 @import './ghost-field.css';
+@import './ghost-tabs.css';
 
 @layer ghostvue-theme {
   :where(.ghost-themed-scope) {
