@@ -205,6 +205,10 @@ export {
   type GhostTabsContentExposed,
 } from './ghost-tabs-content'
 export {
+  GhostEmptyState,
+  type GhostEmptyStateExposed,
+} from './ghost-empty-state'
+export {
   GhostPagination,
   type GhostPaginationExposed,
 } from './ghost-pagination'

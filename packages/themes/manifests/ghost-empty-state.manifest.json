@@ -1,0 +1,95 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "handwritten",
+  "name": "GhostEmptyState",
+  "package": "@ghostvue/themes",
+  "status": "experimental",
+  "description": "Themed GhostEmptyState with centered layout and token typography. Sets data-themed on the inner root.",
+  "props": [
+    {
+      "name": "as",
+      "type": "GhostEmptyStateElement",
+      "default": "div",
+      "required": false,
+      "description": "Root element passed to the unstyled primitive.",
+      "deprecated": false
+    },
+    {
+      "name": "headingLevel",
+      "type": "GhostEmptyStateHeadingLevel",
+      "default": 3,
+      "required": false,
+      "description": "Heading level for the title slot.",
+      "deprecated": false
+    }
+  ],
+  "models": [],
+  "events": [],
+  "slots": [
+    {
+      "name": "visual",
+      "props": [],
+      "description": "Optional decorative graphic."
+    },
+    {
+      "name": "title",
+      "props": [],
+      "description": "Optional heading copy."
+    },
+    {
+      "name": "description",
+      "props": [],
+      "description": "Optional supporting copy."
+    },
+    {
+      "name": "actions",
+      "props": [],
+      "description": "Optional action controls."
+    }
+  ],
+  "exposed": [
+    {
+      "name": "element",
+      "kind": "property",
+      "type": "HTMLElement | null",
+      "description": "Inner unstyled root after mount."
+    }
+  ],
+  "styling": {
+    "parts": [
+      {
+        "name": "root",
+        "description": "Themed empty-state root with data-themed."
+      },
+      {
+        "name": "visual",
+        "description": "Decorative graphic wrapper."
+      },
+      {
+        "name": "title",
+        "description": "Heading element."
+      },
+      {
+        "name": "description",
+        "description": "Muted description paragraph."
+      },
+      {
+        "name": "actions",
+        "description": "Action button row."
+      }
+    ],
+    "states": [],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "generic",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/practices/names-and-descriptions/",
+    "keyboard": {
+      "Tab": "Moves through focusable actions. Root is not focusable."
+    },
+    "requiredAriaAttributes": []
+  },
+  "examples": [
+    "empty-state/themed"
+  ]
+}

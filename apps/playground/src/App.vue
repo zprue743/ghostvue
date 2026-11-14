@@ -12,6 +12,7 @@ import {
   GhostPagination as GhostPaginationThemed,
   GhostProgress as GhostProgressThemed,
   GhostSeparator as GhostSeparatorThemed,
+  GhostEmptyState as GhostEmptyStateThemed,
   GhostSkeleton as GhostSkeletonThemed,
   GhostRadioGroup as GhostRadioGroupThemed,
   GhostRadioGroupItem as GhostRadioGroupItemThemed,
@@ -49,6 +50,7 @@ import {
   GhostRadioGroup,
   GhostRadioGroupItem,
   GhostSeparator,
+  GhostEmptyState,
   GhostSkeleton,
   GhostSwitch,
   GhostTextarea,
@@ -1239,6 +1241,58 @@ function submitPlaygroundComment(event: Event): void {
         <button type="button">Rightmost</button>
         <button type="button">Middle</button>
         <button type="button">Leftmost</button>
+      </div>
+    </section>
+
+    <section aria-labelledby="empty-state-heading">
+      <h2 id="empty-state-heading">GhostEmptyState</h2>
+      <div class="comparison">
+        <fieldset>
+          <legend>Headless empty panels</legend>
+          <p>Unstyled structure only; spacing comes from the playground.</p>
+          <GhostEmptyState data-testid="headless-empty-state">
+            <template #title>No invoices on file</template>
+            <template #description>
+              Upload a CSV or connect billing to see rows here.
+            </template>
+            <template #actions>
+              <GhostButton type="button">Import CSV</GhostButton>
+            </template>
+          </GhostEmptyState>
+        </fieldset>
+
+        <fieldset class="ghost-theme" data-ghost-mode="light">
+          <legend>Themed empty panels</legend>
+          <p>Default theme layout and muted description text.</p>
+          <GhostEmptyStateThemed data-testid="themed-empty-state">
+            <template #visual>
+              <svg
+                aria-hidden="true"
+                viewBox="0 0 40 40"
+                width="40"
+                height="40"
+              >
+                <rect
+                  x="6"
+                  y="10"
+                  width="28"
+                  height="20"
+                  rx="4"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                />
+              </svg>
+            </template>
+            <template #title>No subscriptions yet</template>
+            <template #description>
+              Plans you sell will be listed once the first customer subscribes.
+            </template>
+            <template #actions>
+              <GhostButtonThemed type="button">Create plan</GhostButtonThemed>
+            </template>
+          </GhostEmptyStateThemed>
+        </fieldset>
       </div>
     </section>
 
