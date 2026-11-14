@@ -150,6 +150,10 @@ export const docsSidebar: LlmsSidebarGroup[] = [
         link: '/components/spinner-spec',
       },
       {
+        text: 'GhostSwitch specification',
+        link: '/components/switch-spec',
+      },
+      {
         text: 'GhostTextarea specification',
         link: '/components/textarea-spec',
       },
