@@ -44,6 +44,30 @@ test.describe('GhostCheckbox', () => {
       await page.getByRole('button', { name: 'Submit checkbox form' }).click()
       await expect(page.getByText('Subscribe submissions: 1')).toBeVisible()
 
+      const mixedReject = page.getByTestId('checkbox-mixed-reject')
+      await expect(mixedReject).toHaveJSProperty('indeterminate', true)
+      await expect(mixedReject).toHaveAttribute('data-state', 'indeterminate')
+      await mixedReject.click()
+      await expect(mixedReject).toHaveJSProperty('indeterminate', true)
+      await expect(mixedReject).not.toBeChecked()
+      await expect(mixedReject).toHaveAttribute('data-state', 'indeterminate')
+
+      await mixedReject.focus()
+      await page.keyboard.press('Space')
+      await expect(mixedReject).toHaveJSProperty('indeterminate', true)
+      await expect(mixedReject).not.toBeChecked()
+      await expect(mixedReject).toHaveAttribute('data-state', 'indeterminate')
+
+      const mixedRejectThemed = page.getByTestId('checkbox-mixed-reject-themed')
+      await expect(mixedRejectThemed).toHaveJSProperty('indeterminate', true)
+      await mixedRejectThemed.click()
+      await expect(mixedRejectThemed).toHaveJSProperty('indeterminate', true)
+      await expect(mixedRejectThemed).not.toBeChecked()
+      await expect(mixedRejectThemed).toHaveAttribute(
+        'data-state',
+        'indeterminate',
+      )
+
       const themed = page.getByTestId('checkbox-themed')
       await expect(themed).toHaveClass(/ghost-checkbox/)
       await expect(page.getByTestId('checkbox-themed-neutral')).toHaveAttribute(

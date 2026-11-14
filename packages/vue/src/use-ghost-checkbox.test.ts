@@ -117,6 +117,35 @@ describe('useGhostCheckbox', () => {
     wrapper.unmount()
   })
 
+  it('restores native indeterminate when a controlled parent ignores mixed activation', async () => {
+    const onChange = vi.fn()
+    const Harness = defineComponent({
+      setup() {
+        const checkbox = useGhostCheckbox({
+          modelValue: false,
+          indeterminate: true,
+          onChange,
+        })
+        return { rootProps: checkbox.rootProps }
+      },
+      template: '<input v-bind="rootProps" />',
+    })
+    const wrapper = mount(Harness, { attachTo: document.body })
+    const input = wrapper.get('input').element as HTMLInputElement
+    input.indeterminate = true
+    await nextTick()
+
+    input.checked = true
+    input.indeterminate = false
+    input.dispatchEvent(new Event('change', { bubbles: true }))
+    await nextTick()
+
+    expect(onChange).toHaveBeenCalledWith(true)
+    expect(input.checked).toBe(false)
+    expect(input.indeterminate).toBe(true)
+    wrapper.unmount()
+  })
+
   it('reads a controlled model without writing local state', () => {
     const modelValue = ref(false)
     const onChange = vi.fn()

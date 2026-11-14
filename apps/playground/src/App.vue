@@ -496,6 +496,14 @@ function submitPlaygroundComment(event: Event): void {
               <GhostCheckbox disabled data-testid="checkbox-disabled" />
               Disabled option
             </label>
+            <label>
+              <GhostCheckbox
+                :model-value="false"
+                :indeterminate="true"
+                data-testid="checkbox-mixed-reject"
+              />
+              Mixed, controlled false (ignores update)
+            </label>
           </div>
           <form class="form-example" @submit.prevent="submitCheckboxForm">
             <span>Subscribe submissions: {{ checkboxSubmissions }}</span>
@@ -529,6 +537,14 @@ function submitPlaygroundComment(event: Event): void {
                 data-testid="checkbox-themed-danger"
               />
               Danger large
+            </label>
+            <label>
+              <GhostCheckboxThemed
+                :model-value="false"
+                :indeterminate="true"
+                data-testid="checkbox-mixed-reject-themed"
+              />
+              Mixed reject (themed)
             </label>
           </div>
         </fieldset>
