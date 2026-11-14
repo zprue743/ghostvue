@@ -18,6 +18,9 @@ import GhostPopover from './GhostPopover.vue'
 import GhostPopoverClose from './GhostPopoverClose.vue'
 import GhostPopoverContent from './GhostPopoverContent.vue'
 import GhostPopoverTrigger from './GhostPopoverTrigger.vue'
+import GhostTooltip from './GhostTooltip.vue'
+import GhostTooltipContent from './GhostTooltipContent.vue'
+import GhostTooltipTrigger from './GhostTooltipTrigger.vue'
 import GhostPortal from './GhostPortal.vue'
 import { useDismissableLayer } from './use-dismissable-layer'
 import { useFloating } from './use-floating'
@@ -114,6 +117,51 @@ describe('overlay primitives in Node SSR (no window or document)', () => {
     expect(openHtml).toContain('aria-expanded="true"')
     expect(openHtml).toContain('Visible SSR panel')
     expect(openHtml).toContain('role="dialog"')
+    expect(openHtml).toContain('visibility:hidden')
+  })
+
+  it('renders GhostTooltip closed and defaultOpen states cleanly in Node SSR', async () => {
+    expect(typeof window).toBe('undefined')
+    expect(typeof document).toBe('undefined')
+
+    const ClosedApp = defineComponent({
+      setup() {
+        return () =>
+          h(GhostTooltip, null, {
+            default: () => [
+              h(GhostTooltipTrigger, null, () => 'Closed trigger'),
+              h(GhostTooltipContent, null, () => 'Hidden SSR hint'),
+            ],
+          })
+      },
+    })
+
+    const closedHtml = await renderToString(createSSRApp(ClosedApp))
+    expect(closedHtml).toContain('Closed trigger')
+    expect(closedHtml).not.toContain('aria-describedby')
+    expect(closedHtml).not.toContain('Hidden SSR hint')
+
+    const OpenApp = defineComponent({
+      setup() {
+        return () =>
+          h(
+            GhostTooltip,
+            { defaultOpen: true },
+            {
+              default: () => [
+                h(GhostTooltipTrigger, null, () => 'Open trigger'),
+                h(GhostTooltipContent, null, () => 'Visible SSR hint'),
+              ],
+            },
+          )
+      },
+    })
+
+    const openHtml = await renderToString(createSSRApp(OpenApp))
+    expect(openHtml).toContain('Open trigger')
+    expect(openHtml).toContain('aria-describedby')
+    expect(openHtml).toContain('Visible SSR hint')
+    expect(openHtml).toContain('role="tooltip"')
     expect(openHtml).toContain('visibility:hidden')
   })
 

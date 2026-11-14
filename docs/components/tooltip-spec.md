@@ -54,20 +54,20 @@ Themed exports from `@ghostvue/themes`:
 
 #### `GhostTooltip` (root)
 
-| Prop                      | Type                   | Default     | Contract                                                                                    |
-| ------------------------- | ---------------------- | ----------- | ------------------------------------------------------------------------------------------- |
-| `open`                    | `boolean \| undefined` | `undefined` | Controlled open state. Omit for uncontrolled mode.                                          |
-| `defaultOpen`             | `boolean`              | `false`     | Initial open state in uncontrolled mode (discouraged; for tests/SSR snapshots).             |
-| `delayDuration`           | `number`               | `700`       | Milliseconds before showing after hover or focus begins.                                    |
-| `skipDelayDuration`       | `number`               | `300`       | Milliseconds before hiding after hover/focus ends (WCAG 1.4.13 grace / hoverable content).  |
-| `disableHoverableContent` | `boolean`              | `false`     | When `true`, hides immediately on pointer/focus leave (`skipDelayDuration` ignored).        |
+| Prop                      | Type                   | Default     | Contract                                                                                   |
+| ------------------------- | ---------------------- | ----------- | ------------------------------------------------------------------------------------------ |
+| `open`                    | `boolean \| undefined` | `undefined` | Controlled open state. Omit for uncontrolled mode.                                         |
+| `defaultOpen`             | `boolean`              | `false`     | Initial open state in uncontrolled mode (discouraged; for tests/SSR snapshots).            |
+| `delayDuration`           | `number`               | `700`       | Milliseconds before showing after hover or focus begins.                                   |
+| `skipDelayDuration`       | `number`               | `300`       | Milliseconds before hiding after hover/focus ends (WCAG 1.4.13 grace / hoverable content). |
+| `disableHoverableContent` | `boolean`              | `false`     | When `true`, hides immediately on pointer/focus leave (`skipDelayDuration` ignored).       |
 
 #### `GhostTooltipTrigger`
 
-| Prop       | Type                                                 | Default | Contract                                                                                                                               |
-| ---------- | ---------------------------------------------------- | ------- | -------------------------------------------------------------------------------------------------------------------------------------- |
-| `as`       | `GhostTooltipTriggerElement` (`Component \| string`) | `'button'` | Element tag or component (for example `GhostButton`).                                                                               |
-| `disabled` | `boolean`                                            | `false` | Prevents show scheduling when `true`. Uses native `disabled` on `<button>` / button components and `aria-disabled="true"` otherwise. |
+| Prop       | Type                                                 | Default    | Contract                                                                                                                             |
+| ---------- | ---------------------------------------------------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| `as`       | `GhostTooltipTriggerElement` (`Component \| string`) | `'button'` | Element tag or component (for example `GhostButton`).                                                                                |
+| `disabled` | `boolean`                                            | `false`    | Prevents show scheduling when `true`. Uses native `disabled` on `<button>` / button components and `aria-disabled="true"` otherwise. |
 
 Native attributes and listeners fall through to the rendered root element.
 
@@ -79,7 +79,7 @@ Native attributes and listeners fall through to the rendered root element.
 | `placement` | `Placement`                                          | `'top'`      | Preferred placement relative to the trigger.                               |
 | `offset`    | `OffsetOptions \| boolean \| undefined`              | `undefined`  | Distance or axis offsets passed to `useFloating`.                          |
 | `flip`      | `boolean \| FlipOptions`                             | `true`       | Flip to an opposite side when overflowing.                                 |
-| `shift`     | `boolean \| ShiftOptions`                            | `true`       | Shift along the cross axis to stay in view.                                 |
+| `shift`     | `boolean \| ShiftOptions`                            | `true`       | Shift along the cross axis to stay in view.                                |
 | `strategy`  | `Strategy` (`'absolute' \| 'fixed'`)                 | `'absolute'` | CSS positioning strategy passed to `useFloating`.                          |
 | `portal`    | `boolean`                                            | `true`       | Renders content through `GhostPortal` when `true`, or inline when `false`. |
 | `portalTo`  | `GhostPortalTarget`                                  | `'body'`     | Teleport target passed to `GhostPortal` when `portal` is `true`.           |
@@ -146,10 +146,10 @@ Follows WAI-ARIA APG Tooltip pattern and WCAG 1.4.13 (Content on Hover or Focus)
 
 ### Keyboard interaction
 
-| Key       | Where                 | Behavior                                                                |
-| --------- | --------------------- | ----------------------------------------------------------------------- |
-| `Escape`  | Document while open   | Closes immediately (`hideImmediate`); does not move focus.              |
-| `Tab`     | `GhostTooltipTrigger` | Normal tab order; focus scheduling opens the tooltip after delay.       |
+| Key      | Where                 | Behavior                                                          |
+| -------- | --------------------- | ----------------------------------------------------------------- |
+| `Escape` | Document while open   | Closes immediately (`hideImmediate`); does not move focus.        |
+| `Tab`    | `GhostTooltipTrigger` | Normal tab order; focus scheduling opens the tooltip after delay. |
 
 Tooltip content is not in the tab order and must not receive focus.
 

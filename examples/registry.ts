@@ -543,6 +543,19 @@ export const ghostExamples = [
     description: 'Styled tab list and panels from @ghostvue/themes.',
     layer: 'themed',
   },
+  {
+    id: 'tooltip/basic',
+    title: 'Supplemental label',
+    description:
+      'Icon-only trigger with delay timing, floating placement, and aria-describedby.',
+    layer: 'headless',
+  },
+  {
+    id: 'tooltip/themed',
+    title: 'Themed',
+    description: 'Elevation-2 tooltip surface inside a ghost-theme fieldset.',
+    layer: 'themed',
+  },
 ] as const satisfies readonly GhostExampleDefinition[]
 
 export type GhostExampleId = (typeof ghostExamples)[number]['id']

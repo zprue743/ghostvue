@@ -1,0 +1,40 @@
+/*
+ * Themed GhostTooltip surface. Visual values come from semantic --ghost-*
+ * tokens with no component-specific tokens or hard-coded colors/lengths.
+ */
+@layer ghostvue-theme {
+  :where(
+    .ghost-theme .ghost-tooltip-content,
+    .ghost-themed-scope .ghost-tooltip-content,
+    .ghost-tooltip-content[data-themed]
+  ) {
+    background-color: var(--ghost-elevation-2-bg);
+    border: var(--ghost-border-hairline-width) solid
+      var(--ghost-elevation-2-border);
+    border-radius: var(--ghost-radius-md);
+    box-shadow:
+      var(--ghost-elevation-2-shadow), var(--ghost-elevation-2-highlight);
+    box-sizing: border-box;
+    color: var(--ghost-surface-fg);
+    font-family: var(--ghost-type-family-sans);
+    font-feature-settings: var(--ghost-type-feature-default);
+    font-size: var(--ghost-type-size-sm);
+    line-height: var(--ghost-type-line-snug);
+    padding: var(--ghost-space-inset-sm);
+    pointer-events: none;
+    z-index: 50;
+  }
+
+  @media (forced-colors: active) {
+    :where(
+      .ghost-theme .ghost-tooltip-content,
+      .ghost-themed-scope .ghost-tooltip-content,
+      .ghost-tooltip-content[data-themed]
+    ) {
+      background-color: Canvas;
+      border-color: CanvasText;
+      box-shadow: none;
+      color: CanvasText;
+    }
+  }
+}

@@ -1,0 +1,85 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "generated",
+  "name": "GhostTooltipTrigger",
+  "package": "@ghostvue/vue",
+  "status": "experimental",
+  "description": "Hover/focus trigger anchoring supplemental tooltip content.",
+  "props": [
+    {
+      "name": "as",
+      "type": "GhostTooltipTriggerElement",
+      "default": "button",
+      "required": false,
+      "description": "Tag name or component rendered for the trigger control.",
+      "deprecated": false
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Prevents scheduling show on hover or focus when `true`.",
+      "deprecated": false
+    }
+  ],
+  "models": [],
+  "events": [],
+  "slots": [
+    {
+      "name": "default",
+      "props": [],
+      "description": "Primary content."
+    }
+  ],
+  "exposed": [
+    {
+      "name": "element",
+      "kind": "property",
+      "type": "HTMLElement | null",
+      "description": "Exposed property `element`."
+    },
+    {
+      "name": "focus",
+      "kind": "method",
+      "type": "(options?: FocusOptions) => void",
+      "description": "Exposed method `focus`."
+    },
+    {
+      "name": "blur",
+      "kind": "method",
+      "type": "() => void",
+      "description": "Exposed method `blur`."
+    }
+  ],
+  "styling": {
+    "parts": [
+      {
+        "name": "trigger",
+        "description": "Trigger element marked with data-part=\"trigger\"."
+      }
+    ],
+    "states": [
+      {
+        "name": "open",
+        "description": "Tooltip is open."
+      },
+      {
+        "name": "closed",
+        "description": "Tooltip is closed."
+      }
+    ],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "button",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/tooltip/",
+    "keyboard": {
+      "Tab": "Moves focus to the trigger and schedules the tooltip after delayDuration."
+    },
+    "requiredAriaAttributes": [
+      "aria-describedby"
+    ]
+  },
+  "examples": []
+}

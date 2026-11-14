@@ -1,0 +1,126 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "generated",
+  "name": "GhostTooltipContent",
+  "package": "@ghostvue/vue",
+  "status": "experimental",
+  "description": "Positioned floating tooltip surface with role=\"tooltip\".",
+  "props": [
+    {
+      "name": "as",
+      "type": "GhostTooltipContentElement",
+      "default": "div",
+      "required": false,
+      "description": "Tag name or component rendered for the tooltip surface.",
+      "deprecated": false
+    },
+    {
+      "name": "placement",
+      "type": "Placement",
+      "default": "top",
+      "required": false,
+      "description": "Preferred placement relative to the trigger.",
+      "deprecated": false
+    },
+    {
+      "name": "offset",
+      "type": "boolean | GhostTooltipOffsetOptions",
+      "required": false,
+      "description": "Distance or axis offsets passed to `useFloating`.",
+      "deprecated": false
+    },
+    {
+      "name": "flip",
+      "type": "boolean | GhostTooltipFlipOptions",
+      "default": true,
+      "required": false,
+      "description": "Flip to an opposite side when overflowing the viewport or boundary.",
+      "deprecated": false
+    },
+    {
+      "name": "shift",
+      "type": "boolean | GhostTooltipShiftOptions",
+      "default": true,
+      "required": false,
+      "description": "Shift along the cross axis to keep the tooltip in view.",
+      "deprecated": false
+    },
+    {
+      "name": "strategy",
+      "type": "Strategy",
+      "default": "absolute",
+      "required": false,
+      "description": "CSS positioning strategy passed to `useFloating`.",
+      "deprecated": false
+    },
+    {
+      "name": "portal",
+      "type": "boolean",
+      "default": true,
+      "required": false,
+      "description": "Teleport content through `GhostPortal` when `true`, or render inline when `false`.",
+      "deprecated": false
+    },
+    {
+      "name": "portalTo",
+      "type": "GhostPortalTarget",
+      "default": "body",
+      "required": false,
+      "description": "Teleport target passed to `GhostPortal` when `portal` is `true`.",
+      "deprecated": false
+    }
+  ],
+  "models": [],
+  "events": [],
+  "slots": [
+    {
+      "name": "default",
+      "props": [],
+      "description": "Primary content."
+    }
+  ],
+  "exposed": [
+    {
+      "name": "element",
+      "kind": "property",
+      "type": "HTMLElement | null",
+      "description": "Exposed property `element`."
+    },
+    {
+      "name": "focus",
+      "kind": "method",
+      "type": "(options?: FocusOptions) => void",
+      "description": "Exposed method `focus`."
+    },
+    {
+      "name": "blur",
+      "kind": "method",
+      "type": "() => void",
+      "description": "Exposed method `blur`."
+    }
+  ],
+  "styling": {
+    "parts": [
+      {
+        "name": "content",
+        "description": "Floating tooltip marked with data-part=\"content\" and class ghost-tooltip-content."
+      }
+    ],
+    "states": [
+      {
+        "name": "open",
+        "description": "Visible while mounted."
+      }
+    ],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "tooltip",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/tooltip/",
+    "keyboard": {
+      "Escape": "Dismisses the tooltip via the root provider."
+    },
+    "requiredAriaAttributes": []
+  },
+  "examples": []
+}
