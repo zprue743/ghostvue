@@ -3,6 +3,7 @@ import { defineComponent, h, nextTick, ref } from 'vue'
 import { renderToString } from 'vue/server-renderer'
 import { describe, expect, it, vi } from 'vitest'
 
+import { waitForFormResetDeferral } from './form-reset'
 import GhostInput from './GhostInput.vue'
 import type { GhostInputExposed, GhostInputType } from './ghost-input'
 
@@ -255,9 +256,223 @@ describe('GhostInput', () => {
 
     await input.setValue('typed')
     wrapper.get('form').element.reset()
+    await waitForFormResetDeferral()
     await nextTick()
 
     expect(input.element.value).toBe('start')
+    wrapper.unmount()
+  })
+
+  it('keeps an edited uncontrolled value when form reset is canceled', async () => {
+    const wrapper = mount(
+      {
+        setup() {
+          return () =>
+            h('form', [h(GhostInput, { defaultValue: 'seed', name: 'q' })])
+        },
+      },
+      { attachTo: document.body },
+    )
+    const form = wrapper.get('form').element as HTMLFormElement
+    const input = wrapper.get('input')
+
+    form.addEventListener('reset', (event) => {
+      event.preventDefault()
+    })
+
+    await input.setValue('edited')
+    const emitsBefore = wrapper
+      .findComponent(GhostInput)
+      .emitted('update:modelValue')?.length
+
+    form.reset()
+    await waitForFormResetDeferral()
+    await nextTick()
+
+    expect(input.element.value).toBe('edited')
+    expect(
+      wrapper.findComponent(GhostInput).emitted('update:modelValue')?.length,
+    ).toBe(emitsBefore)
+    wrapper.unmount()
+  })
+
+  it('keeps an edited uncontrolled value when a later document listener cancels', async () => {
+    const wrapper = mount(
+      {
+        setup() {
+          return () =>
+            h('form', [h(GhostInput, { defaultValue: 'seed', name: 'q' })])
+        },
+      },
+      { attachTo: document.body },
+    )
+    const form = wrapper.get('form').element as HTMLFormElement
+    const input = wrapper.get('input')
+
+    function cancelOnDocument(event: Event) {
+      event.preventDefault()
+    }
+    document.addEventListener('reset', cancelOnDocument)
+
+    try {
+      await input.setValue('edited')
+      const emitsBefore = wrapper
+        .findComponent(GhostInput)
+        .emitted('update:modelValue')?.length
+
+      form.reset()
+      await waitForFormResetDeferral()
+      await nextTick()
+
+      expect(input.element.value).toBe('edited')
+      expect(
+        wrapper.findComponent(GhostInput).emitted('update:modelValue')?.length,
+      ).toBe(emitsBefore)
+    } finally {
+      document.removeEventListener('reset', cancelOnDocument)
+      wrapper.unmount()
+    }
+  })
+
+  it('reconciles the DOM when a controlled parent ignores reset updates', async () => {
+    const wrapper = mount(
+      {
+        setup() {
+          return () =>
+            h('form', [
+              h(GhostInput, {
+                modelValue: 'seed',
+                defaultValue: 'seed',
+                name: 'q',
+              }),
+            ])
+        },
+      },
+      { attachTo: document.body },
+    )
+    const form = wrapper.get('form').element as HTMLFormElement
+    const input = wrapper.get('input')
+
+    expect(input.element.value).toBe('seed')
+
+    form.reset()
+    await waitForFormResetDeferral()
+    await nextTick()
+
+    expect(input.element.value).toBe('seed')
+    wrapper.unmount()
+  })
+
+  it('emits the captured defaultValue on reset when controlled', async () => {
+    const wrapper = mount(
+      {
+        setup() {
+          return () =>
+            h('form', [
+              h(GhostInput, {
+                modelValue: 'Alice',
+                name: 'q',
+              }),
+            ])
+        },
+      },
+      { attachTo: document.body },
+    )
+    const form = wrapper.get('form').element as HTMLFormElement
+    const input = wrapper.get('input')
+
+    expect(input.element.value).toBe('Alice')
+
+    form.reset()
+    await waitForFormResetDeferral()
+    await nextTick()
+
+    expect(
+      wrapper.findComponent(GhostInput).emitted('update:modelValue'),
+    ).toEqual([['']])
+    wrapper.unmount()
+  })
+
+  it('does not emit on reset when the controlled value already matches the default', async () => {
+    const wrapper = mount(
+      {
+        setup() {
+          return () =>
+            h('form', [
+              h(GhostInput, {
+                modelValue: '',
+                defaultValue: '',
+                name: 'q',
+              }),
+            ])
+        },
+      },
+      { attachTo: document.body },
+    )
+    const form = wrapper.get('form').element as HTMLFormElement
+
+    form.reset()
+    await waitForFormResetDeferral()
+    await nextTick()
+
+    expect(
+      wrapper.findComponent(GhostInput).emitted('update:modelValue'),
+    ).toBeUndefined()
+    wrapper.unmount()
+  })
+
+  it('reconciles the DOM to the parent when a controlled reset emit is ignored', async () => {
+    const wrapper = mount(
+      {
+        setup() {
+          return () =>
+            h('form', [
+              h(GhostInput, {
+                modelValue: 'Alice',
+                name: 'q',
+              }),
+            ])
+        },
+      },
+      { attachTo: document.body },
+    )
+    const form = wrapper.get('form').element as HTMLFormElement
+    const input = wrapper.get('input')
+
+    form.reset()
+    await waitForFormResetDeferral()
+    await nextTick()
+
+    expect(input.element.value).toBe('Alice')
+    wrapper.unmount()
+  })
+
+  it('resets an input associated with an external form via the form attribute', async () => {
+    const wrapper = mount(
+      {
+        setup() {
+          return () =>
+            h('div', [
+              h('form', { id: 'external-form' }),
+              h(GhostInput, {
+                form: 'external-form',
+                defaultValue: 'mount',
+                name: 'q',
+              }),
+            ])
+        },
+      },
+      { attachTo: document.body },
+    )
+    const form = document.getElementById('external-form') as HTMLFormElement
+    const input = wrapper.get('input')
+
+    await input.setValue('live')
+    form.reset()
+    await waitForFormResetDeferral()
+    await nextTick()
+
+    expect(input.element.value).toBe('mount')
     wrapper.unmount()
   })
 

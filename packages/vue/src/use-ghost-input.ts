@@ -34,7 +34,7 @@ export function useGhostInput(options: UseGhostInputOptions = {}): {
   isReadonly: ComputedRef<boolean>
   isInvalid: ComputedRef<boolean>
   isRequired: ComputedRef<boolean>
-  restoreDefault: () => void
+  applyFormReset: () => void
   rootProps: ComputedRef<GhostInputRootProps>
 } {
   // Captured once so later defaultValue writes cannot retarget form reset.
@@ -53,8 +53,31 @@ export function useGhostInput(options: UseGhostInputOptions = {}): {
   const isInvalid = computed(() => Boolean(toValue(options.invalid)))
   const isRequired = computed(() => Boolean(toValue(options.required)))
 
-  function restoreDefault() {
+  function applyFormReset(): void {
     value.value = seed
+    const el = toValue(options.element)
+    if (!el) return
+
+    const controlled = toValue(options.modelValue) !== undefined
+    if (!controlled) {
+      if (el.value !== value.value) {
+        el.value = value.value
+      }
+      return
+    }
+
+    void nextTick(() => {
+      if (!el.isConnected || el.value === value.value) return
+      const selectionStart = el.selectionStart
+      const selectionEnd = el.selectionEnd
+      el.value = value.value
+      if (selectionStart == null || selectionEnd == null) return
+      const max = el.value.length
+      el.setSelectionRange(
+        Math.min(selectionStart, max),
+        Math.min(selectionEnd, max),
+      )
+    })
   }
 
   function handleInput(event: Event) {
@@ -111,7 +134,7 @@ export function useGhostInput(options: UseGhostInputOptions = {}): {
     isReadonly,
     isInvalid,
     isRequired,
-    restoreDefault,
+    applyFormReset,
     rootProps,
   }
 }

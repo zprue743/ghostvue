@@ -68,6 +68,8 @@ export interface UseGhostInputOptions {
   invalid?: MaybeRefOrGetter<boolean | undefined>
   required?: MaybeRefOrGetter<boolean | undefined>
   type?: MaybeRefOrGetter<GhostInputType | undefined>
+  /** Native input for post-reset DOM reconciliation. */
+  element?: MaybeRefOrGetter<HTMLInputElement | null | undefined>
   /** Synchronous write. Emit `update:modelValue` here. */
   onChange?: (value: string) => void
 }

@@ -99,6 +99,21 @@ the `invalid` prop, and disabled uses `--ghost-action-disabled-*`.
 The displayed string is the model. The component never trims, parses, or
 mutates the consumer's string beyond writing the next textarea value.
 
+**Reset baseline (GhostVue policy).** `defaultValue` establishes GhostVue's
+reset baseline, captured once at mount; later `defaultValue` changes are
+ignored. `modelValue` controls the current value. This is not native reset
+semantics: [native `form.reset()`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLFormElement/reset)
+restores from the control's current default content/attributes. Pin the
+baseline at mount for predictable uncontrolled instances. Reusing the same
+control for another record without remounting keeps the original baseline — use
+controlled state or `:key` when the baseline must follow the record.
+
+**Form reset reconciliation** matches [GhostInput](./input-spec.md#v-model-contracts):
+emit the captured baseline (skip redundant emit via `Object.is`), parent-owned
+controlled values, `nextTick` DOM restore when ignored, microtask after full
+`reset` dispatch (late `document` / `window` cancel is a no-op). The root
+`defaultValue` attribute mirrors the captured baseline for native participation.
+
 ### Events, callbacks, slots, and exposed methods
 
 No content slot: a native `<textarea>`'s value is the model, not children.

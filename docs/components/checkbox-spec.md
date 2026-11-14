@@ -146,6 +146,13 @@ checked (`true`) on click. If a consumer sets both `modelValue` and
 `indeterminate` true, native click unchecks. That is native behavior, not a
 library cycle.
 
+**Reset baseline and form reset** follow the same GhostVue policy as
+[GhostInput](./input-spec.md#v-model-contracts): captured `defaultValue`
+baseline (not live native defaults), reset requests that baseline rather than
+the displayed `modelValue`, parent authority with deferred DOM restore
+(including `indeterminate` when applicable), microtask after full `reset`
+dispatch, and no-op on late cancel.
+
 ### Events, callbacks, slots, and exposed methods
 
 No default slot: native `<input>` is void. Labels wrap the component or use

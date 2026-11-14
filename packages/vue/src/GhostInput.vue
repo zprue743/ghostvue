@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, useTemplateRef } from 'vue'
+import { useTemplateRef } from 'vue'
 
 import type { GhostInputExposed, GhostInputType } from './ghost-input'
+import { useNativeFormReset } from './form-reset'
 import { useGhostInput } from './use-ghost-input'
 
 // Declared props only; native HTML/ARIA stay fallthrough so the generator omits them.
@@ -33,7 +34,9 @@ const emit = defineEmits<{
   'update:modelValue': [value: string]
 }>()
 
-const { rootProps, restoreDefault } = useGhostInput({
+const element = useTemplateRef<HTMLInputElement>('element')
+
+const { rootProps, applyFormReset } = useGhostInput({
   modelValue: () => props.modelValue,
   defaultValue: () => props.defaultValue,
   disabled: () => props.disabled,
@@ -41,29 +44,13 @@ const { rootProps, restoreDefault } = useGhostInput({
   invalid: () => props.invalid,
   required: () => props.required,
   type: () => props.type,
+  element,
   onChange: (value) => {
     emit('update:modelValue', value)
   },
 })
 
-const element = useTemplateRef<HTMLInputElement>('element')
-
-let form: HTMLFormElement | null = null
-
-function onReset() {
-  // Browser reset writes the native default, then Vue would reapply `value`
-  // unless the model is updated in this same turn.
-  restoreDefault()
-}
-
-onMounted(() => {
-  form = element.value?.form ?? null
-  form?.addEventListener('reset', onReset)
-})
-
-onUnmounted(() => {
-  form?.removeEventListener('reset', onReset)
-})
+useNativeFormReset(() => element.value, applyFormReset)
 
 defineExpose<GhostInputExposed>({
   get element() {

@@ -2,6 +2,7 @@
 import { useTemplateRef, watch, type PropType } from 'vue'
 
 import type { GhostCheckboxExposed } from './ghost-checkbox'
+import { useNativeFormReset } from './form-reset'
 import { useGhostCheckbox } from './use-ghost-checkbox'
 
 // Runtime props so `modelValue` can default to `undefined`. Type-only Boolean
@@ -20,17 +21,21 @@ const emit = defineEmits<{
   'update:modelValue': [value: boolean]
 }>()
 
-const { isChecked, isIndeterminate, rootProps } = useGhostCheckbox({
-  modelValue: () => props.modelValue,
-  defaultValue: () => props.defaultValue,
-  indeterminate: () => props.indeterminate,
-  disabled: () => props.disabled,
-  onChange: (value) => {
-    emit('update:modelValue', value)
-  },
-})
-
 const element = useTemplateRef<HTMLInputElement>('element')
+
+const { isChecked, isIndeterminate, rootProps, applyFormReset } =
+  useGhostCheckbox({
+    modelValue: () => props.modelValue,
+    defaultValue: () => props.defaultValue,
+    indeterminate: () => props.indeterminate,
+    disabled: () => props.disabled,
+    element,
+    onChange: (value) => {
+      emit('update:modelValue', value)
+    },
+  })
+
+useNativeFormReset(() => element.value, applyFormReset)
 
 // `indeterminate` is a DOM property, not an HTML attribute. Re-apply after
 // `:checked` updates because some engines clear the property when `checked` is set.

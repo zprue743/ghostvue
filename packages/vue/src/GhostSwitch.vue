@@ -2,6 +2,7 @@
 import { computed, useAttrs, useTemplateRef } from 'vue'
 
 import type { GhostSwitchExposed } from './ghost-switch'
+import { useNativeFormReset } from './form-reset'
 import { useGhostSwitch } from './use-ghost-switch'
 
 defineOptions({ inheritAttrs: false })
@@ -35,6 +36,7 @@ const emit = defineEmits<{
 }>()
 
 const element = useTemplateRef<HTMLButtonElement>('element')
+const formInput = useTemplateRef<HTMLInputElement>('formInput')
 const attrs = useAttrs()
 
 function isMouseHandler(value: unknown): value is (event: MouseEvent) => void {
@@ -53,19 +55,22 @@ function invokeMouseHandler(handler: unknown, event: MouseEvent): void {
   }
 }
 
-const { checked, rootProps, inputProps, toggle } = useGhostSwitch({
-  modelValue: () => props.modelValue,
-  defaultValue: () => props.defaultValue,
-  disabled: () => props.disabled,
-  readonly: () => props.readonly,
-  name: () => props.name,
-  value: () => props.value,
-  form: () => props.form,
-  onChange: (next) => {
-    emit('update:modelValue', next)
-  },
-  element,
-})
+const { checked, rootProps, inputProps, toggle, applyFormReset } =
+  useGhostSwitch({
+    modelValue: () => props.modelValue,
+    defaultValue: () => props.defaultValue,
+    disabled: () => props.disabled,
+    readonly: () => props.readonly,
+    name: () => props.name,
+    value: () => props.value,
+    form: () => props.form,
+    onChange: (next) => {
+      emit('update:modelValue', next)
+    },
+    element,
+  })
+
+useNativeFormReset(() => formInput.value ?? element.value, applyFormReset)
 
 // Fragment root (button + hidden input) cannot use automatic fallthrough.
 // Consumer onClick runs first so preventDefault can cancel the toggle.
@@ -107,5 +112,5 @@ defineExpose<GhostSwitchExposed>({
     </span>
     <slot />
   </button>
-  <input v-bind="inputProps" />
+  <input ref="formInput" v-bind="inputProps" />
 </template>

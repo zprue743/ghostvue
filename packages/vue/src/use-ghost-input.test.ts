@@ -86,13 +86,13 @@ describe('useGhostInput', () => {
     wrapper.unmount()
   })
 
-  it('restoreDefault writes the captured seed', () => {
+  it('applyFormReset writes the captured seed', () => {
     const { result, wrapper } = mountComposable(() =>
       useGhostInput({ defaultValue: 'seed' }),
     )
 
     result.value.value = 'later'
-    result.restoreDefault()
+    result.applyFormReset()
     expect(result.value.value).toBe('seed')
     wrapper.unmount()
   })

@@ -122,10 +122,15 @@ on the page.
 - Assignment is synchronous and skipped when `Object.is(current, next)`.
 - Switching between controlled and uncontrolled at runtime logs `GHOST001`
   in development, same as other `useControllableState` consumers.
-- Form reset assigns the **mounted** `defaultValue` through the same writable
-  computed, so controlled parents that keep `v-model` in sync with the emit
-  also reset. Later changes to the `defaultValue` prop are ignored, matching
-  native `defaultChecked`.
+- **Reset baseline (GhostVue policy).** `defaultValue` establishes the reset
+  baseline, captured once at mount (later prop changes ignored). This is not
+  native `defaultChecked` timing: [native `form.reset()`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLFormElement/reset)
+  uses the control's current default attributes. Reuse across records needs
+  controlled state or `:key` when the baseline must change.
+- **Form reset reconciliation** matches [GhostInput](./input-spec.md#v-model-contracts):
+  request the captured baseline, not the displayed `modelValue`; skip redundant
+  emit; parent-owned controlled state; microtask after full dispatch (late cancel
+  on `document` / `window` is a no-op).
 
 ### Events, callbacks, slots, and exposed methods
 
@@ -317,9 +322,10 @@ control).
 
 ## Performance
 
-Rendering and state derivation are constant-time. One document-level
-`reset` listener is registered while mounted when an `element` is provided,
-and it is always released on unmount. No timers, observers, or registries.
+Rendering and state derivation are constant-time. One document-level `reset`
+listener (bubble phase, not capture) is registered while mounted and released on
+unmount so associated forms and canceled resets match native timing. No timers,
+observers, or registries beyond the form-reset microtask and controlled DOM reconciliation.
 
 ## Composition
 

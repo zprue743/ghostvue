@@ -117,11 +117,30 @@ resets the caret to the end. If the parent ignores the emit, restore on
 changes are ignored. Switching controlled ↔ uncontrolled after setup is
 unsupported; development reports GHOST001 and keeps the last rendered value.
 
-An owner `<form>` reset restores the default for an **uncontrolled** instance
-by syncing from the native field after the browser reset. A **controlled**
-instance emits `update:modelValue` with that restored string; if the parent
-ignores the emit, the field stays on the parent value. That preserves Vue
-control without inventing a second write channel.
+**Reset baseline (GhostVue policy).** `defaultValue` establishes GhostVue's
+reset baseline, captured once at mount; later `defaultValue` changes are
+ignored. `modelValue` controls the current value. This is not native reset
+semantics: [native `form.reset()`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLFormElement/reset)
+restores from the control's current default content/attributes. The library
+pins the baseline at mount so uncontrolled instances stay predictable. When a
+control first represents record A and later record B without remounting, the
+reset baseline still belongs to A — apps should drive the baseline through
+controlled state or remount the control (for example `:key`).
+
+**Form reset reconciliation.** An owner or associated `<form>` `reset` asks
+parents to adopt the captured baseline: emit `update:modelValue` with that
+seed (skip when `Object.is` with the current value — no redundant emit).
+**Uncontrolled:** write local state and sync the native control when needed.
+**Controlled:** the parent stays authoritative; if it ignores the emit, restore
+the DOM on `nextTick` to match the parent. The reset request is always the
+captured `defaultValue`, not the displayed `modelValue` (for example
+controlled `'Alice'` with omitted `defaultValue` requests `''`).
+
+Reconciliation runs in a microtask after the `reset` event has fully
+dispatched so `defaultPrevented` is final (including `document` and `window`
+listeners registered later). A canceled reset is a no-op: no emit and no model
+or DOM write. The root `defaultValue` attribute mirrors the captured baseline
+for native participation, not a live prop.
 
 ### Events, callbacks, slots, and exposed methods
 
@@ -295,7 +314,9 @@ search decorations remain native.
 
 Rendering is deterministic from props and the current model string. Setup
 reads no browser globals. The exposed element is `null` until mount. Form
-reset listening attaches on mount and is removed on unmount; server markup
+reset listening uses a bubble-phase document `reset` listener filtered by
+`element.form`, reconciling in a microtask after dispatch; it attaches on
+mount and is removed on unmount; server markup
 does not depend on it.
 
 ### Mobile and touch

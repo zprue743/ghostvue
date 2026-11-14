@@ -3,6 +3,7 @@ import { h, nextTick, ref } from 'vue'
 import { renderToString } from 'vue/server-renderer'
 import { describe, expect, it, vi } from 'vitest'
 
+import { waitForFormResetDeferral } from './form-reset'
 import GhostSwitch from './GhostSwitch.vue'
 import type { GhostSwitchExposed } from './ghost-switch'
 
@@ -174,6 +175,25 @@ describe('GhostSwitch', () => {
     expect(new FormData(form).get('digest')).toBeNull()
   })
 
+  it('associates the button with its owner form', () => {
+    const wrapper = mount(
+      {
+        setup() {
+          return () =>
+            h('form', [
+              h(GhostSwitch, { 'aria-label': 'Alerts', name: 'alerts' }),
+            ])
+        },
+      },
+      { attachTo: document.body },
+    )
+    const form = wrapper.get('form').element as HTMLFormElement
+    const button = wrapper.get('button').element as HTMLButtonElement
+
+    expect(button.form).toBe(form)
+    wrapper.unmount()
+  })
+
   it('restores the mounted default on native form reset', async () => {
     const wrapper = mount(
       {
@@ -196,10 +216,47 @@ describe('GhostSwitch', () => {
     expect(wrapper.get('button').attributes('aria-checked')).toBe('false')
 
     form.reset()
+    await waitForFormResetDeferral()
     await nextTick()
 
     expect(wrapper.get('button').attributes('aria-checked')).toBe('true')
     expect(new FormData(form).get('digest')).toBe('on')
+    wrapper.unmount()
+  })
+
+  it('keeps an on switch when form reset is canceled', async () => {
+    const wrapper = mount(
+      {
+        setup() {
+          return () =>
+            h('form', [
+              h(GhostSwitch, {
+                'aria-label': 'Daily digest',
+                name: 'digest',
+                defaultValue: false,
+              }),
+            ])
+        },
+      },
+      { attachTo: document.body },
+    )
+    const form = wrapper.get('form').element as HTMLFormElement
+    const switchCmp = wrapper.findComponent(GhostSwitch)
+
+    form.addEventListener('reset', (event) => {
+      event.preventDefault()
+    })
+
+    await wrapper.get('button').trigger('click')
+    expect(wrapper.get('button').attributes('aria-checked')).toBe('true')
+
+    const emitsBefore = switchCmp.emitted('update:modelValue')?.length
+    form.reset()
+    await waitForFormResetDeferral()
+    await nextTick()
+
+    expect(wrapper.get('button').attributes('aria-checked')).toBe('true')
+    expect(switchCmp.emitted('update:modelValue')?.length).toBe(emitsBefore)
     wrapper.unmount()
   })
 

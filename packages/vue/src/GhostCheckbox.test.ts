@@ -3,6 +3,7 @@ import { defineComponent, h, nextTick, ref } from 'vue'
 import { renderToString } from 'vue/server-renderer'
 import { describe, expect, it, vi } from 'vitest'
 
+import { waitForFormResetDeferral } from './form-reset'
 import GhostCheckbox from './GhostCheckbox.vue'
 import type { GhostCheckboxExposed } from './ghost-checkbox'
 
@@ -249,6 +250,27 @@ describe('GhostCheckbox', () => {
     expect(submitted).toHaveBeenCalledOnce()
     const data = submitted.mock.calls[0]?.[0] as FormData
     expect(data.get('subscribe')).toBe('on')
+  })
+
+  it('restores the mounted default on native form reset', async () => {
+    const wrapper = mount(
+      {
+        setup() {
+          return () =>
+            h('form', [h(GhostCheckbox, { defaultValue: true, name: 'agree' })])
+        },
+      },
+      { attachTo: document.body },
+    )
+    const input = wrapper.get('input')
+
+    await input.setValue(false)
+    wrapper.get('form').element.reset()
+    await waitForFormResetDeferral()
+    await nextTick()
+
+    expect((input.element as HTMLInputElement).checked).toBe(true)
+    wrapper.unmount()
   })
 
   it('renders deterministic native markup during SSR', async () => {

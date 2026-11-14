@@ -1059,6 +1059,51 @@ function submitPlaygroundComment(event: Event): void {
     <!-- After visual fixtures so extra page height does not shift snapshot
          clips. PC labels only: Apple glyphs can load a fallback font and
          change rasterization of earlier shots. -->
+    <section aria-labelledby="form-reset-heading">
+      <h2 id="form-reset-heading">Form reset</h2>
+      <form class="form-example" data-testid="form-reset-suite">
+        <div class="field">
+          <label for="form-reset-input">Reset input</label>
+          <GhostInput
+            id="form-reset-input"
+            data-testid="form-reset-input"
+            default-value="seed"
+            name="reset-input"
+          />
+        </div>
+        <div class="field">
+          <label for="form-reset-textarea">Reset textarea</label>
+          <GhostTextarea
+            id="form-reset-textarea"
+            data-testid="form-reset-textarea"
+            default-value="seed"
+            name="reset-notes"
+          />
+        </div>
+        <div class="field">
+          <GhostCheckbox
+            id="form-reset-checkbox"
+            data-testid="form-reset-checkbox"
+            default-value
+            name="reset-agree"
+          />
+          <label for="form-reset-checkbox">Reset checkbox</label>
+        </div>
+        <div class="switch-row">
+          <label for="form-reset-switch">Reset switch</label>
+          <GhostSwitch
+            id="form-reset-switch"
+            data-testid="form-reset-switch"
+            name="reset-alerts"
+            aria-label="Reset switch"
+          />
+        </div>
+        <GhostButton type="reset" data-testid="form-reset-trigger">
+          Reset suite
+        </GhostButton>
+      </form>
+    </section>
+
     <section aria-labelledby="kbd-heading">
       <h2 id="kbd-heading">GhostKbd</h2>
       <p>
