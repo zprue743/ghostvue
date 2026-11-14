@@ -5,7 +5,7 @@
  */
 import { execFileSync } from 'node:child_process'
 import { fileURLToPath } from 'node:url'
-import { dirname, isAbsolute, join } from 'node:path'
+import { isAbsolute, join } from 'node:path'
 
 import { parseVueTscErrorLines } from './lib/vue-type-tests-negative-diagnostics.js'
 
@@ -20,8 +20,9 @@ const isCanonicalHarness = tsconfigArg === canonicalTsconfig
 const tsconfigPath = isAbsolute(tsconfigArg)
   ? tsconfigArg
   : join(vuePackageRoot, tsconfigArg)
-const vueTscWorkingDir = dirname(tsconfigPath)
-const vueTscConfig = isAbsolute(tsconfigArg) ? tsconfigPath : tsconfigArg
+// Keep pnpm/vue-tsc on the workspace package so CI can resolve devDependencies.
+const vueTscWorkingDir = vuePackageRoot
+const vueTscConfig = tsconfigPath
 
 function failWithOutput(reason, output) {
   console.error(reason)
@@ -86,7 +87,10 @@ if (result.exitCode === 0) {
 }
 
 if (!isCanonicalHarness) {
-  process.exit(0)
+  failWithOutput(
+    'Harness smoke tsconfig must compile cleanly; vue-tsc reported errors.',
+    result.output,
+  )
 }
 
 const diagnostics = parseVueTscErrorLines(result.output)
