@@ -25,6 +25,7 @@ export const docsSidebar: LlmsSidebarGroup[] = [
       { text: 'GhostDialog', link: '/components/dialog' },
       { text: 'GhostEmptyState', link: '/components/empty-state' },
       { text: 'GhostField', link: '/components/field' },
+      { text: 'GhostInlineAlert', link: '/components/inline-alert' },
       { text: 'GhostInput', link: '/components/input' },
       { text: 'GhostNumberInput', link: '/components/number-input' },
       {
@@ -131,6 +132,10 @@ export const docsSidebar: LlmsSidebarGroup[] = [
       {
         text: 'GhostEmptyState specification',
         link: '/components/empty-state-spec',
+      },
+      {
+        text: 'GhostInlineAlert specification',
+        link: '/components/inline-alert-spec',
       },
       {
         text: 'GhostRadioGroup specification',

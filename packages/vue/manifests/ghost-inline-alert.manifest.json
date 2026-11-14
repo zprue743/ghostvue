@@ -1,0 +1,98 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "generated",
+  "name": "GhostInlineAlert",
+  "package": "@ghostvue/vue",
+  "status": "experimental",
+  "description": "Inline contextual feedback with optional live-region semantics. useGhostInlineAlert supplies root bindings; GhostInlineAlert renders title, message, and actions slots.",
+  "props": [
+    {
+      "name": "announce",
+      "type": "GhostInlineAlertAnnounce",
+      "default": "off",
+      "required": false,
+      "description": "Live-region behavior. Default `off` for static inline feedback.\nUse `status` or `alert` only when copy appears or changes after mount.",
+      "deprecated": false
+    },
+    {
+      "name": "as",
+      "type": "GhostInlineAlertElement",
+      "default": "div",
+      "required": false,
+      "description": "Root element. Prefer `div` inside table cells.",
+      "deprecated": false
+    },
+    {
+      "name": "headingLevel",
+      "type": "GhostInlineAlertHeadingLevel",
+      "default": 3,
+      "required": false,
+      "description": "Heading level wrapping the `title` slot.",
+      "deprecated": false
+    }
+  ],
+  "models": [],
+  "events": [],
+  "slots": [
+    {
+      "name": "actions",
+      "props": [],
+      "description": "Optional action controls such as GhostButton. Children stay focusable."
+    },
+    {
+      "name": "message",
+      "props": [],
+      "description": "Primary supporting copy."
+    },
+    {
+      "name": "title",
+      "props": [],
+      "description": "Optional heading. Rendered as h1–h6 from headingLevel."
+    }
+  ],
+  "exposed": [
+    {
+      "name": "element",
+      "kind": "property",
+      "type": "HTMLElement | null",
+      "description": "Root element after mount; null before mount."
+    }
+  ],
+  "styling": {
+    "parts": [
+      {
+        "name": "root",
+        "description": "Outer inline alert container."
+      },
+      {
+        "name": "title",
+        "description": "Heading for the title slot."
+      },
+      {
+        "name": "message",
+        "description": "Message copy wrapper."
+      },
+      {
+        "name": "actions",
+        "description": "Optional action controls."
+      }
+    ],
+    "states": [],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "generic",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/practices/names-and-descriptions/",
+    "keyboard": {
+      "Tab": "Moves through focusable content in the actions slot. The root is not focusable."
+    },
+    "requiredAriaAttributes": []
+  },
+  "examples": [
+    "inline-alert/basic",
+    "inline-alert/composable",
+    "inline-alert/themed",
+    "inline-alert/live",
+    "inline-alert/table-error"
+  ]
+}
