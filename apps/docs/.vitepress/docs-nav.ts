@@ -32,6 +32,7 @@ export const docsSidebar: LlmsSidebarGroup[] = [
       { text: 'GhostSeparator', link: '/components/separator' },
       { text: 'GhostSkeleton', link: '/components/skeleton' },
       { text: 'GhostSpinner', link: '/components/spinner' },
+      { text: 'GhostSwitch', link: '/components/switch' },
       { text: 'GhostTextarea', link: '/components/textarea' },
       { text: 'GhostVisuallyHidden', link: '/components/visually-hidden' },
       { text: 'Default theme', link: '/themes/default' },

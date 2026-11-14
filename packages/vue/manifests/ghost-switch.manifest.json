@@ -1,0 +1,154 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "generated",
+  "name": "GhostSwitch",
+  "package": "@ghostvue/vue",
+  "status": "experimental",
+  "description": "Headless on/off switch. useGhostSwitch owns v-model, APG switch semantics, disabled/readonly, and form submit/reset; GhostSwitch is the thin unstyled button. Themed visual props live on @ghostvue/themes.",
+  "props": [
+    {
+      "name": "modelValue",
+      "type": "boolean",
+      "required": false,
+      "description": "Controlled on/off. Omit for uncontrolled mode.",
+      "deprecated": false
+    },
+    {
+      "name": "defaultValue",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Initial on/off when modelValue is omitted. Form reset restores this mounted value.",
+      "deprecated": false
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Native disabled: not focusable, not operable, and not submitted.",
+      "deprecated": false
+    },
+    {
+      "name": "readonly",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Focusable and submitted, but not user-operable. Expressed as aria-readonly.",
+      "deprecated": false
+    },
+    {
+      "name": "name",
+      "type": "string",
+      "required": false,
+      "description": "Form field name. Submits name=value while on and enabled.",
+      "deprecated": false
+    },
+    {
+      "name": "value",
+      "type": "string",
+      "default": "on",
+      "required": false,
+      "description": "Submitted string when on. Same default as a native checkbox.",
+      "deprecated": false
+    },
+    {
+      "name": "form",
+      "type": "string",
+      "required": false,
+      "description": "Associates the hidden input with an external form id.",
+      "deprecated": false
+    }
+  ],
+  "models": [
+    {
+      "prop": "modelValue",
+      "event": "update:modelValue",
+      "type": "boolean",
+      "description": "v-model binding for on/off."
+    }
+  ],
+  "events": [],
+  "slots": [
+    {
+      "name": "default",
+      "props": [],
+      "description": "Optional inner content, usually a visible name. Prefer a label for=id or aria-label when the name should not sit inside the control. Do not put On/Off in the name."
+    }
+  ],
+  "exposed": [
+    {
+      "name": "element",
+      "kind": "property",
+      "type": "HTMLButtonElement | null",
+      "description": "The native switch button after mount; null before mount and after unmount."
+    },
+    {
+      "name": "checked",
+      "kind": "property",
+      "type": "boolean",
+      "description": "Current on/off."
+    },
+    {
+      "name": "toggle",
+      "kind": "method",
+      "type": "() => void",
+      "description": "User-activation toggle. No-op when disabled or readonly."
+    },
+    {
+      "name": "focus",
+      "kind": "method",
+      "type": "(options?: FocusOptions) => void",
+      "description": "Focuses the native button when it is mounted and enabled. No-op before mount."
+    },
+    {
+      "name": "blur",
+      "kind": "method",
+      "type": "() => void",
+      "description": "Removes focus from the native button when it is mounted. No-op before mount."
+    }
+  ],
+  "styling": {
+    "parts": [
+      {
+        "name": "root",
+        "description": "The native button element."
+      },
+      {
+        "name": "track",
+        "description": "Decorative track. aria-hidden."
+      },
+      {
+        "name": "thumb",
+        "description": "Decorative thumb inside the track. aria-hidden."
+      }
+    ],
+    "states": [
+      {
+        "name": "checked",
+        "description": "Switch is on. Pair with aria-checked=true."
+      },
+      {
+        "name": "unchecked",
+        "description": "Switch is off. Pair with aria-checked=false."
+      }
+    ],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "switch",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/switch/",
+    "keyboard": {
+      "Space": "Toggle the switch when it is enabled and not readonly.",
+      "Enter": "Toggle the switch when it is enabled and not readonly. Implemented because the host is a native button; APG lists Enter as optional."
+    },
+    "requiredAriaAttributes": [
+      "aria-checked"
+    ]
+  },
+  "examples": [
+    "switch/basic",
+    "switch/composable",
+    "switch/ref"
+  ]
+}

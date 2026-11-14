@@ -184,6 +184,17 @@ export type {
   GhostInputType,
   UseGhostInputOptions,
 } from './ghost-input'
+export { default as GhostSwitch } from './GhostSwitch.vue'
+export {
+  useGhostSwitch,
+  type GhostSwitchInputProps,
+  type GhostSwitchRootProps,
+} from './use-ghost-switch'
+export type {
+  GhostSwitchExposed,
+  GhostSwitchProps,
+  UseGhostSwitchOptions,
+} from './ghost-switch'
 export { default as GhostTextarea } from './GhostTextarea.vue'
 export {
   useGhostTextarea,

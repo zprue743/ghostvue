@@ -1,0 +1,281 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "handwritten",
+  "name": "GhostSwitch",
+  "package": "@ghostvue/themes",
+  "status": "experimental",
+  "description": "Themed wrapper around headless GhostSwitch. Same behavioral props plus size and tone. Importing it loads the default stylesheet and scopes styles to this instance. Hand-written until GHO-13 generates manifests.",
+  "props": [
+    {
+      "name": "modelValue",
+      "type": "boolean",
+      "required": false,
+      "description": "Controlled on/off, forwarded to the unstyled GhostSwitch.",
+      "deprecated": false
+    },
+    {
+      "name": "defaultValue",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Initial on/off when modelValue is omitted, forwarded to the unstyled GhostSwitch.",
+      "deprecated": false
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Forwards native disabled semantics to the unstyled GhostSwitch.",
+      "deprecated": false
+    },
+    {
+      "name": "readonly",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Forwards read-only semantics to the unstyled GhostSwitch.",
+      "deprecated": false
+    },
+    {
+      "name": "name",
+      "type": "string",
+      "required": false,
+      "description": "Form field name, forwarded to the unstyled GhostSwitch.",
+      "deprecated": false
+    },
+    {
+      "name": "value",
+      "type": "string",
+      "default": "on",
+      "required": false,
+      "description": "Submitted string when on, forwarded to the unstyled GhostSwitch.",
+      "deprecated": false
+    },
+    {
+      "name": "form",
+      "type": "string",
+      "required": false,
+      "description": "External form id, forwarded to the unstyled GhostSwitch.",
+      "deprecated": false
+    },
+    {
+      "name": "size",
+      "type": "'sm' | 'md' | 'lg'",
+      "default": "md",
+      "required": false,
+      "description": "Control size. The default omits data-size so CSS can treat a missing hook as md.",
+      "deprecated": false
+    },
+    {
+      "name": "tone",
+      "type": "'accent' | 'neutral' | 'danger'",
+      "default": "accent",
+      "required": false,
+      "description": "Semantic color of the on track. The default omits data-tone.",
+      "deprecated": false
+    }
+  ],
+  "models": [
+    {
+      "prop": "modelValue",
+      "event": "update:modelValue",
+      "type": "boolean",
+      "description": "v-model binding for on/off."
+    }
+  ],
+  "events": [],
+  "slots": [
+    {
+      "name": "default",
+      "props": [],
+      "description": "Optional inner content, usually a visible name. Prefer a label for=id or aria-label when the name should not sit inside the control."
+    }
+  ],
+  "exposed": [
+    {
+      "name": "element",
+      "kind": "property",
+      "type": "HTMLButtonElement | null",
+      "description": "The native switch button after mount; null before mount and after unmount. Delegates to the unstyled GhostSwitch."
+    },
+    {
+      "name": "checked",
+      "kind": "property",
+      "type": "boolean",
+      "description": "Current on/off. Delegates to the unstyled GhostSwitch."
+    },
+    {
+      "name": "toggle",
+      "kind": "method",
+      "type": "() => void",
+      "description": "User-activation toggle. Delegates to the unstyled GhostSwitch."
+    },
+    {
+      "name": "focus",
+      "kind": "method",
+      "type": "(options?: FocusOptions) => void",
+      "description": "Focuses the native button when it is mounted and enabled. Delegates to the unstyled GhostSwitch."
+    },
+    {
+      "name": "blur",
+      "kind": "method",
+      "type": "() => void",
+      "description": "Removes focus from the native button when it is mounted. Delegates to the unstyled GhostSwitch."
+    }
+  ],
+  "styling": {
+    "parts": [
+      {
+        "name": "root",
+        "description": "The native button element inside the display:contents themed scope."
+      },
+      {
+        "name": "track",
+        "description": "Decorative track. aria-hidden."
+      },
+      {
+        "name": "thumb",
+        "description": "Decorative thumb inside the track. aria-hidden."
+      }
+    ],
+    "states": [
+      {
+        "name": "checked",
+        "description": "On appearance. Accent, neutral, or danger fill."
+      },
+      {
+        "name": "unchecked",
+        "description": "Off appearance. Muted surface fill."
+      }
+    ],
+    "cssProperties": [
+      {
+        "name": "--ghost-surface-bg",
+        "description": "Thumb color while off, and canvas behind the control."
+      },
+      {
+        "name": "--ghost-surface-muted-bg",
+        "description": "Off-track fill."
+      },
+      {
+        "name": "--ghost-surface-fg",
+        "description": "Hover and press overlay color on the track."
+      },
+      {
+        "name": "--ghost-motion-easing-standard",
+        "description": "Easing of track color and thumb travel."
+      },
+      {
+        "name": "--ghost-border-hairline-width",
+        "description": "Forced-colors track outline thickness."
+      },
+      {
+        "name": "--ghost-action-primary-bg",
+        "description": "On-track fill for the accent tone."
+      },
+      {
+        "name": "--ghost-action-primary-fg",
+        "description": "Thumb color on the accent on-track."
+      },
+      {
+        "name": "--ghost-action-neutral-bg",
+        "description": "On-track fill for the neutral tone."
+      },
+      {
+        "name": "--ghost-action-neutral-fg",
+        "description": "Thumb color on the neutral on-track."
+      },
+      {
+        "name": "--ghost-action-danger-bg",
+        "description": "On-track fill for the danger tone."
+      },
+      {
+        "name": "--ghost-action-danger-fg",
+        "description": "Thumb color on the danger on-track."
+      },
+      {
+        "name": "--ghost-action-disabled-bg",
+        "description": "Disabled track fill."
+      },
+      {
+        "name": "--ghost-action-disabled-fg",
+        "description": "Disabled thumb color."
+      },
+      {
+        "name": "--ghost-gradient-action-primary",
+        "description": "On-track gradient for the accent tone."
+      },
+      {
+        "name": "--ghost-gradient-action-neutral",
+        "description": "On-track gradient for the neutral tone."
+      },
+      {
+        "name": "--ghost-gradient-action-danger",
+        "description": "On-track gradient for the danger tone."
+      },
+      {
+        "name": "--ghost-state-layer-hover",
+        "description": "Hover overlay opacity on the track."
+      },
+      {
+        "name": "--ghost-state-layer-press",
+        "description": "Pressed overlay opacity on the track."
+      },
+      {
+        "name": "--ghost-focus-ring-color",
+        "description": "Outer color of the two-color keyboard focus indicator."
+      },
+      {
+        "name": "--ghost-focus-ring-contrast",
+        "description": "Inner color of the two-color keyboard focus indicator."
+      },
+      {
+        "name": "--ghost-focus-ring-offset",
+        "description": "Gap between the track edge and the focus ring."
+      },
+      {
+        "name": "--ghost-focus-ring-width",
+        "description": "Thickness of the focus outline."
+      },
+      {
+        "name": "--ghost-control-size-sm-min",
+        "description": "Track block size for size sm."
+      },
+      {
+        "name": "--ghost-control-size-md-min",
+        "description": "Track block size for size md."
+      },
+      {
+        "name": "--ghost-control-size-lg-min",
+        "description": "Track block size for size lg."
+      },
+      {
+        "name": "--ghost-space-gap-xs",
+        "description": "Inset between the track edge and the thumb."
+      },
+      {
+        "name": "--ghost-space-gap-sm",
+        "description": "Gap between the track and optional slot content."
+      },
+      {
+        "name": "--ghost-action-duration",
+        "description": "Duration of track color and thumb travel."
+      },
+      {
+        "name": "--ghost-action-shadow",
+        "description": "Resting shadow on the thumb and the inner focus contrast ring."
+      }
+    ]
+  },
+  "accessibility": {
+    "role": "switch",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/switch/",
+    "keyboard": {
+      "Space": "Toggle the switch when it is enabled and not readonly.",
+      "Enter": "Toggle the switch when it is enabled and not readonly. Implemented because the host is a native button; APG lists Enter as optional."
+    },
+    "requiredAriaAttributes": ["aria-checked"]
+  },
+  "examples": ["switch/themed", "switch/states", "switch/form"]
+}

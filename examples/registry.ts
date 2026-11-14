@@ -440,6 +440,43 @@ export const ghostExamples = [
     description: 'Template refs expose element, focus, and blur.',
     layer: 'headless',
   },
+  {
+    id: 'switch/basic',
+    title: 'Basic',
+    description: 'Labeled native switch. The default state is off.',
+    layer: 'headless',
+  },
+  {
+    id: 'switch/composable',
+    title: 'Composable',
+    description: 'Same contract as GhostSwitch, applied to a native host.',
+    layer: 'headless',
+  },
+  {
+    id: 'switch/themed',
+    title: 'Themed',
+    description: 'Visual size and tone on the @ghostvue/themes wrapper.',
+    layer: 'themed',
+  },
+  {
+    id: 'switch/states',
+    title: 'Disabled and read-only',
+    description: 'Disabled switches leave the tab order; read-only ones stay.',
+    layer: 'themed',
+  },
+  {
+    id: 'switch/form',
+    title: 'Form value',
+    description: 'Named switches submit while on and restore on reset.',
+    layer: 'themed',
+  },
+  {
+    id: 'switch/ref',
+    title: 'Component ref',
+    description:
+      'Template refs expose element, checked, toggle, focus, and blur.',
+    layer: 'headless',
+  },
 ] as const satisfies readonly GhostExampleDefinition[]
 
 export type GhostExampleId = (typeof ghostExamples)[number]['id']

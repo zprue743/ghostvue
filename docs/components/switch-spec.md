@@ -40,16 +40,16 @@ hosts. This component uses a **native `button` with `role="switch"`**, plus a
 **hidden `input type="hidden"`** when `name` is set so the value still rides
 native form submit.
 
-| Requirement                         | `button[role="switch"]`                                                                                                                                | `input[type="checkbox"][role="switch"]`                                                                                         |
-| ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------- |
-| APG examples                        | [Button example](https://www.w3.org/WAI/ARIA/apg/patterns/switch/examples/switch-button/) is the documented HTML host.                                 | Allowed when the element is a checkbox; then `checked` replaces `aria-checked`.                                                 |
-| Keyboard                            | Native activation is Space **and** Enter. APG lists Space as required and Enter as optional; a button host therefore implements the optional key too. | Native checkbox activation is Space only. Enter typically submits the nearest form.                                             |
-| `readonly`                          | Not a native button attribute. Implemented with `aria-readonly` and ignored activation, which matches the ARIA `switch` property.                      | The HTML `readonly` attribute does not apply to checkbox; browsers ignore it. User-toggling cannot be prevented natively.       |
-| Accessible name via `<label for>`   | Buttons are labelable.                                                                                                                                 | Checkboxes are labelable.                                                                                                       |
-| Form submit / reset                 | Buttons with `type="button"` do not contribute a value. A named hidden input does, and submit/reset stay native.                                       | Native `name` / `value` / `checked` / `defaultChecked` already submit and reset.                                                |
-| Wrapping `<label>`                  | The button is the only labelable descendant. The hidden input is not labelable, so it cannot steal label activation.                                   | A visible switch plus a form checkbox would be two labelable descendants.                                                       |
-| Theming a track and thumb           | The button is an empty host; inner `data-part` hooks are ordinary flow content.                                                                        | UA checkbox appearance has to be fully replaced; `appearance: none` still leaves host-specific quirks.                          |
-| Mixing with `GhostCheckbox` (GHO-74) | Distinct host, so the two components do not converge on one "binary input" abstraction.                                                              | Same host as a checkbox would invite a shared primitive this issue forbids.                                                     |
+| Requirement                          | `button[role="switch"]`                                                                                                                               | `input[type="checkbox"][role="switch"]`                                                                                   |
+| ------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| APG examples                         | [Button example](https://www.w3.org/WAI/ARIA/apg/patterns/switch/examples/switch-button/) is the documented HTML host.                                | Allowed when the element is a checkbox; then `checked` replaces `aria-checked`.                                           |
+| Keyboard                             | Native activation is Space **and** Enter. APG lists Space as required and Enter as optional; a button host therefore implements the optional key too. | Native checkbox activation is Space only. Enter typically submits the nearest form.                                       |
+| `readonly`                           | Not a native button attribute. Implemented with `aria-readonly` and ignored activation, which matches the ARIA `switch` property.                     | The HTML `readonly` attribute does not apply to checkbox; browsers ignore it. User-toggling cannot be prevented natively. |
+| Accessible name via `<label for>`    | Buttons are labelable.                                                                                                                                | Checkboxes are labelable.                                                                                                 |
+| Form submit / reset                  | Buttons with `type="button"` do not contribute a value. A named hidden input does, and submit/reset stay native.                                      | Native `name` / `value` / `checked` / `defaultChecked` already submit and reset.                                          |
+| Wrapping `<label>`                   | The button is the only labelable descendant. The hidden input is not labelable, so it cannot steal label activation.                                  | A visible switch plus a form checkbox would be two labelable descendants.                                                 |
+| Theming a track and thumb            | The button is an empty host; inner `data-part` hooks are ordinary flow content.                                                                       | UA checkbox appearance has to be fully replaced; `appearance: none` still leaves host-specific quirks.                    |
+| Mixing with `GhostCheckbox` (GHO-74) | Distinct host, so the two components do not converge on one "binary input" abstraction.                                                               | Same host as a checkbox would invite a shared primitive this issue forbids.                                               |
 
 Rejected alternative: `input[type="checkbox"]` as the sole root. Form
 participation would be free, but `readonly` would be fake, Enter would not
@@ -57,12 +57,13 @@ toggle (and might submit), and GHO-74 would be under pressure to share the
 host. Hidden-input form participation is a small, Switch-local cost.
 
 `type="hidden"` is the form participant rather than a visually hidden
-checkbox so the control has exactly one labelable element. The hidden input
-is omitted when `name` is unset, when the switch is off, and when it is
-disabled, matching native checkbox submit rules (`name=value` only when on
-and enabled). Form reset is observed on the switch's `HTMLButtonElement.form`
-and writes the mounted default, because a hidden input has no `checked`
-state to restore.
+checkbox so the control has exactly one labelable element. The sibling
+input is always in the tree; its `name` is set only while the switch is
+named, on, and enabled, matching native checkbox submit rules
+(`name=value` only when on and enabled). Unnamed, off, and disabled
+switches leave `name` unset so they contribute nothing. Form reset is
+observed on the switch's `HTMLButtonElement.form` and writes the mounted
+default, because a hidden input has no `checked` state to restore.
 
 ## Public API
 
@@ -70,15 +71,15 @@ state to restore.
 
 Headless `@ghostvue/vue` `GhostSwitch` / `useGhostSwitch`:
 
-| Prop           | Type      | Default     | Contract                                                                                                                                                          |
-| -------------- | --------- | ----------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `modelValue`   | `boolean` | omitted     | Controlled on/off. `undefined` (omitted) is uncontrolled. Vue boolean-prop coercion is defeated with an explicit `undefined` default, as on `GhostDialog.open`.   |
-| `defaultValue` | `boolean` | `false`     | Initial on/off when `modelValue` is omitted. Later changes are ignored. Form reset restores this mounted value.                                                   |
-| `disabled`     | `boolean` | `false`     | Native disabled: not focusable, not operable, not submitted.                                                                                                      |
-| `readonly`     | `boolean` | `false`     | Focusable, announced `aria-readonly="true"`, not user-operable. Still submitted. Programmatic writes to the model still apply.                                    |
-| `name`         | `string`  | omitted     | Form field name. When set, a hidden input submits `name=value` while on and enabled.                                                                              |
-| `value`        | `string`  | `'on'`      | Submitted string when on. Same default as a native checkbox.                                                                                                      |
-| `form`         | `string`  | omitted     | Associates the hidden input (and the button's `form` IDL) with an external form id.                                                                               |
+| Prop           | Type      | Default | Contract                                                                                                                                                        |
+| -------------- | --------- | ------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `modelValue`   | `boolean` | omitted | Controlled on/off. `undefined` (omitted) is uncontrolled. Vue boolean-prop coercion is defeated with an explicit `undefined` default, as on `GhostDialog.open`. |
+| `defaultValue` | `boolean` | `false` | Initial on/off when `modelValue` is omitted. Later changes are ignored. Form reset restores this mounted value.                                                 |
+| `disabled`     | `boolean` | `false` | Native disabled: not focusable, not operable, not submitted.                                                                                                    |
+| `readonly`     | `boolean` | `false` | Focusable, announced `aria-readonly="true"`, not user-operable. Still submitted. Programmatic writes to the model still apply.                                  |
+| `name`         | `string`  | omitted | Form field name. When set, a hidden input submits `name=value` while on and enabled.                                                                            |
+| `value`        | `string`  | `'on'`  | Submitted string when on. Same default as a native checkbox.                                                                                                    |
+| `form`         | `string`  | omitted | Associates the hidden input (and the button's `form` IDL) with an external form id.                                                                             |
 
 Native button attributes, including `id`, accessible-name attributes, and
 event listeners, are included in the public type and fall through to the
@@ -96,10 +97,10 @@ Themed `@ghostvue/themes` `GhostSwitch` wraps the unstyled component and
 adds visual props. Same behavioral props; these exist only on the themed
 wrapper:
 
-| Prop   | Type                                | Default    | Contract                                                                              |
-| ------ | ----------------------------------- | ---------- | ------------------------------------------------------------------------------------- |
-| `size` | `'sm' \| 'md' \| 'lg'`              | `'md'`     | Control size. The default omits `data-size` so CSS can treat a missing hook as `md`.  |
-| `tone` | `'accent' \| 'neutral' \| 'danger'` | `'accent'` | Semantic color of the on track. The default omits `data-tone`.                        |
+| Prop   | Type                                | Default    | Contract                                                                             |
+| ------ | ----------------------------------- | ---------- | ------------------------------------------------------------------------------------ |
+| `size` | `'sm' \| 'md' \| 'lg'`              | `'md'`     | Control size. The default omits `data-size` so CSS can treat a missing hook as `md`. |
+| `tone` | `'accent' \| 'neutral' \| 'danger'` | `'accent'` | Semantic color of the on track. The default omits `data-tone`.                       |
 
 The themed wrapper sets matching `data-size` and `data-tone` on the inner
 button and wraps the instance in `.ghost-themed-scope` (`display: contents`)
@@ -164,12 +165,12 @@ when `inputProps.name` is set. Pass `element` so form reset can see
 The switch is on or off. `disabled` and `readonly` are independent
 availability flags.
 
-| User input | `disabled` | `readonly` | Result                                      |
-| ---------- | ---------- | ---------- | ------------------------------------------- |
-| click / Space / Enter | `false` | `false` | Toggle                                      |
-| click / Space / Enter | `true`  | any     | Native disabled; no activation, no focus    |
-| click / Space / Enter | `false` | `true`  | Focusable; activation ignored               |
-| `checked = next` (programmatic) | any | any | Always applied                              |
+| User input                      | `disabled` | `readonly` | Result                                   |
+| ------------------------------- | ---------- | ---------- | ---------------------------------------- |
+| click / Space / Enter           | `false`    | `false`    | Toggle                                   |
+| click / Space / Enter           | `true`     | any        | Native disabled; no activation, no focus |
+| click / Space / Enter           | `false`    | `true`     | Focusable; activation ignored            |
+| `checked = next` (programmatic) | any        | any        | Always applied                           |
 
 When `disabled` and `readonly` overlap, native `disabled` wins: the control
 is not focusable and is not submitted.
@@ -221,10 +222,10 @@ The hidden form input is not in the accessibility tree (`type="hidden"`).
 
 Enabled, non-readonly switches use native button activation:
 
-| Key   | Behavior                                                                 |
-| ----- | ------------------------------------------------------------------------ |
-| Tab   | Moves sequential focus to the switch when it is not disabled.            |
-| Space | Toggles on/off. Native button click; not reimplemented as a key handler. |
+| Key   | Behavior                                                                                          |
+| ----- | ------------------------------------------------------------------------------------------------- |
+| Tab   | Moves sequential focus to the switch when it is not disabled.                                     |
+| Space | Toggles on/off. Native button click; not reimplemented as a key handler.                          |
 | Enter | Toggles on/off. **Implemented** because the host is a button; documented as APG's optional Enter. |
 
 Disabled switches are not in the tab order and do not activate. Readonly
@@ -300,10 +301,11 @@ thumb to `Highlight`. There is no `pt` passthrough object.
 ### SSR and hydration
 
 Rendering is deterministic from props and slot content. `aria-checked` and
-`data-state` reflect the model on the server. The hidden input is included
-when `name` is set and the switch is on and enabled. Setup does not read
-browser globals. The form-reset listener is registered in `onMounted` and
-removed in `onBeforeUnmount`. The exposed element is `null` until mount.
+`data-state` reflect the model on the server. The hidden input is always
+in the markup; its `name` is present only when the switch is named, on,
+and enabled. Setup does not read browser globals. The form-reset listener
+is registered in `onMounted` and removed in `onBeforeUnmount`. The exposed
+element is `null` until mount.
 
 ### Mobile and touch
 
@@ -343,8 +345,8 @@ The machine-readable contracts are
   readonly (focusable, no toggle, still submitted), Space/Enter via click
   activation, `preventDefault` on click skipping the toggle, named form
   submit (`FormData` includes `name=value` only when on), form reset to the
-  mounted default, hidden input omitted when unnamed/off/disabled, exposed
-  refs, SSR markup, and `data-part` / `data-state`.
+  mounted default, hidden-input `name` omitted when unnamed/off/disabled,
+  exposed refs, SSR markup, and `data-part` / `data-state`.
 - Composable tests cover the same state matrix, `rootProps` / `inputProps`,
   and toggle no-ops under disabled/readonly.
 - Compile-time tests cover native attribute types on `GhostSwitchProps` and
