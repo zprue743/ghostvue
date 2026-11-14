@@ -22,7 +22,7 @@ function onHeadlessChange(value: string) {
 </script>
 
 <template>
-  <section aria-labelledby="tabs-heading" class="tabs-section">
+  <section role="region" aria-labelledby="tabs-heading" class="tabs-section">
     <h2 id="tabs-heading">GhostTabs</h2>
     <p class="tabs-status" aria-live="polite">{{ tabsStatus }}</p>
 
