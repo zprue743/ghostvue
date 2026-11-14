@@ -1,8 +1,18 @@
 <script setup lang="ts">
-import { computed, onUnmounted, provide, shallowRef, watchEffect } from 'vue'
+import {
+  computed,
+  inject,
+  onUnmounted,
+  provide,
+  shallowRef,
+  watchEffect,
+} from 'vue'
 
 import { ghostTooltipContextKey } from './ghost-tooltip'
+import { ghostTooltipProviderContextKey } from './ghost-tooltip-provider'
 import { useGhostTooltip } from './use-ghost-tooltip'
+
+const tooltipProvider = inject(ghostTooltipProviderContextKey, null)
 
 const props = withDefaults(
   defineProps<{
@@ -20,11 +30,20 @@ const props = withDefaults(
   {
     open: undefined,
     defaultOpen: false,
-    delayDuration: 700,
     closeDelay: 300,
     disableHoverableContent: false,
   },
 )
+
+const resolvedDelayDuration = computed(() => {
+  if (props.delayDuration !== undefined) {
+    return props.delayDuration
+  }
+  if (tooltipProvider) {
+    return tooltipProvider.delayDuration.value
+  }
+  return 700
+})
 
 const emit = defineEmits<{
   /** Emitted when the open state transitions. */
@@ -74,16 +93,37 @@ function shouldRemainOpen(): boolean {
   return triggerPointer.value || triggerFocus.value || contentPointer.value
 }
 
-function scheduleShow(): void {
+function resolveScheduleOpenDelay(viaPointer: boolean): number {
+  if (tooltipProvider) {
+    return tooltipProvider.resolveOpenDelay(props.delayDuration, viaPointer)
+  }
+  return resolvedDelayDuration.value
+}
+
+function runOpen(): void {
+  open()
+  tooltipProvider?.onTooltipDidOpen()
+}
+
+function runClose(): void {
+  if (!isOpen.value) {
+    return
+  }
+  close()
+  tooltipProvider?.onTooltipDidClose()
+}
+
+function scheduleOpen(viaPointer: boolean): void {
   clearCloseTimer()
   if (isOpen.value) {
     return
   }
   clearOpenTimer()
+  const delay = resolveScheduleOpenDelay(viaPointer)
   openTimer = setTimeout(() => {
     openTimer = null
-    open()
-  }, props.delayDuration)
+    runOpen()
+  }, delay)
 }
 
 function cancelClose(): void {
@@ -99,7 +139,7 @@ function maybeScheduleClose(): void {
   closeTimer = setTimeout(() => {
     closeTimer = null
     if (!shouldRemainOpen()) {
-      close()
+      runClose()
     }
   }, delay)
 }
@@ -107,12 +147,12 @@ function maybeScheduleClose(): void {
 function hideImmediate(): void {
   clearOpenTimer()
   clearCloseTimer()
-  close()
+  runClose()
 }
 
 function notifyTriggerPointerEnter(): void {
   triggerPointer.value = true
-  scheduleShow()
+  scheduleOpen(true)
 }
 
 function notifyTriggerPointerLeave(): void {
@@ -122,7 +162,7 @@ function notifyTriggerPointerLeave(): void {
 
 function notifyTriggerFocusIn(): void {
   triggerFocus.value = true
-  scheduleShow()
+  scheduleOpen(false)
 }
 
 function notifyTriggerFocusOut(): void {
@@ -180,10 +220,12 @@ const triggerElement = shallowRef<HTMLElement | null>(null)
 
 provide(ghostTooltipContextKey, {
   isOpen,
-  delayDuration: computed(() => props.delayDuration),
+  delayDuration: resolvedDelayDuration,
   closeDelay: computed(() => props.closeDelay),
   disableHoverableContent: computed(() => props.disableHoverableContent),
-  scheduleShow,
+  scheduleShow: () => {
+    scheduleOpen(true)
+  },
   cancelClose,
   hideImmediate,
   notifyTriggerPointerEnter,

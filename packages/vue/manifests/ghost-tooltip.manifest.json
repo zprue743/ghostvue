@@ -24,7 +24,6 @@
     {
       "name": "delayDuration",
       "type": "number",
-      "default": 700,
       "required": false,
       "description": "Milliseconds before showing after hover or focus begins.",
       "deprecated": false

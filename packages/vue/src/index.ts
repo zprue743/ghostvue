@@ -364,9 +364,15 @@ export type {
   UseGhostRadioGroupReturn,
 } from './ghost-radio-group'
 export { default as GhostTooltip } from './GhostTooltip.vue'
+export { default as GhostTooltipProvider } from './GhostTooltipProvider.vue'
 export { default as GhostTooltipTrigger } from './GhostTooltipTrigger.vue'
 export { default as GhostTooltipContent } from './GhostTooltipContent.vue'
 export { useGhostTooltip } from './use-ghost-tooltip'
+export {
+  ghostTooltipProviderContextKey,
+  type GhostTooltipProviderContext,
+  type GhostTooltipProviderProps,
+} from './ghost-tooltip-provider'
 export {
   ghostTooltipContextKey,
   mergeTooltipDescribedBy,
