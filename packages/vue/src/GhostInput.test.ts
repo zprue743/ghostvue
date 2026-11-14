@@ -261,6 +261,94 @@ describe('GhostInput', () => {
     wrapper.unmount()
   })
 
+  it('keeps an edited uncontrolled value when form reset is canceled', async () => {
+    const wrapper = mount(
+      {
+        setup() {
+          return () =>
+            h('form', [h(GhostInput, { defaultValue: 'seed', name: 'q' })])
+        },
+      },
+      { attachTo: document.body },
+    )
+    const form = wrapper.get('form').element as HTMLFormElement
+    const input = wrapper.get('input')
+
+    form.addEventListener('reset', (event) => {
+      event.preventDefault()
+    })
+
+    await input.setValue('edited')
+    const emitsBefore = wrapper
+      .findComponent(GhostInput)
+      .emitted('update:modelValue')?.length
+
+    form.reset()
+    await nextTick()
+
+    expect(input.element.value).toBe('edited')
+    expect(
+      wrapper.findComponent(GhostInput).emitted('update:modelValue')?.length,
+    ).toBe(emitsBefore)
+    wrapper.unmount()
+  })
+
+  it('reconciles the DOM when a controlled parent ignores reset updates', async () => {
+    const wrapper = mount(
+      {
+        setup() {
+          return () =>
+            h('form', [
+              h(GhostInput, {
+                modelValue: 'seed',
+                defaultValue: 'seed',
+                name: 'q',
+              }),
+            ])
+        },
+      },
+      { attachTo: document.body },
+    )
+    const form = wrapper.get('form').element as HTMLFormElement
+    const input = wrapper.get('input')
+
+    expect(input.element.value).toBe('seed')
+
+    form.reset()
+    await nextTick()
+
+    expect(input.element.value).toBe('seed')
+    wrapper.unmount()
+  })
+
+  it('resets an input associated with an external form via the form attribute', async () => {
+    const wrapper = mount(
+      {
+        setup() {
+          return () =>
+            h('div', [
+              h('form', { id: 'external-form' }),
+              h(GhostInput, {
+                form: 'external-form',
+                defaultValue: 'mount',
+                name: 'q',
+              }),
+            ])
+        },
+      },
+      { attachTo: document.body },
+    )
+    const form = document.getElementById('external-form') as HTMLFormElement
+    const input = wrapper.get('input')
+
+    await input.setValue('live')
+    form.reset()
+    await nextTick()
+
+    expect(input.element.value).toBe('mount')
+    wrapper.unmount()
+  })
+
   it('exposes the native element and focus controls', () => {
     const wrapper = mount(GhostInput, { attachTo: document.body })
     const exposed = wrapper.vm as unknown as GhostInputExposed

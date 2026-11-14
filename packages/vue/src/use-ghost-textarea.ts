@@ -24,6 +24,7 @@ export interface GhostTextareaRootProps {
   'data-state': GhostTextareaDataState | undefined
   'data-auto-resize': '' | undefined
   value: string
+  defaultValue: string
   onInput: (event: Event) => void
   /**
    * Unitless row count for themed `block-size: N * 1lh`. Native `rows` uses
@@ -93,6 +94,7 @@ export function useGhostTextarea(options: UseGhostTextareaOptions = {}): {
   rootProps: ComputedRef<GhostTextareaRootProps>
   onInput: (event: Event) => void
   resize: (element?: HTMLTextAreaElement | null) => void
+  applyFormReset: () => void
 } {
   const isDisabled = computed(() => Boolean(toValue(options.disabled)))
   const isReadonly = computed(() => Boolean(toValue(options.readonly)))
@@ -102,13 +104,35 @@ export function useGhostTextarea(options: UseGhostTextareaOptions = {}): {
   const rows = computed(() => toValue(options.rows) ?? DEFAULT_ROWS)
   const maxRows = computed(() => toValue(options.maxRows))
 
+  // Captured once so later defaultValue writes cannot retarget form reset.
+  const seed = toValue(options.defaultValue) ?? ''
+
   const value = useControllableState<string>({
     prop: () => toValue(options.modelValue),
-    defaultValue: () => toValue(options.defaultValue) ?? '',
+    defaultValue: seed,
     onChange: (next) => {
       options.onValueChange?.(next)
     },
   })
+
+  function applyFormReset(): void {
+    value.value = seed
+    const el = toValue(options.element) ?? null
+    if (!el) return
+
+    const controlled = toValue(options.modelValue) !== undefined
+    if (!controlled) {
+      if (el.value !== value.value) {
+        el.value = value.value
+      }
+      resize(el)
+      return
+    }
+
+    void nextTick(() => {
+      restoreDomIfRejected(el)
+    })
+  }
 
   function currentElement(
     override?: HTMLTextAreaElement | null,
@@ -190,6 +214,7 @@ export function useGhostTextarea(options: UseGhostTextareaOptions = {}): {
     }),
     'data-auto-resize': autoResize.value ? '' : undefined,
     value: value.value,
+    defaultValue: seed,
     onInput,
     style: {
       '--_ghost-textarea-rows': String(rows.value),
@@ -254,5 +279,6 @@ export function useGhostTextarea(options: UseGhostTextareaOptions = {}): {
     rootProps,
     onInput,
     resize,
+    applyFormReset,
   }
 }

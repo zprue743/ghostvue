@@ -123,9 +123,11 @@ on the page.
 - Switching between controlled and uncontrolled at runtime logs `GHOST001`
   in development, same as other `useControllableState` consumers.
 - Form reset assigns the **mounted** `defaultValue` through the same writable
-  computed, so controlled parents that keep `v-model` in sync with the emit
-  also reset. Later changes to the `defaultValue` prop are ignored, matching
-  native `defaultChecked`.
+  computed after the browser finishes reset dispatch (when the reset event
+  was not canceled), so controlled parents that keep `v-model` in sync with
+  the emit also reset. Later changes to the `defaultValue` prop are ignored,
+  matching native `defaultChecked`. A canceled reset is a no-op: no emit and
+  no toggle.
 
 ### Events, callbacks, slots, and exposed methods
 
@@ -317,9 +319,10 @@ control).
 
 ## Performance
 
-Rendering and state derivation are constant-time. One document-level
-`reset` listener is registered while mounted when an `element` is provided,
-and it is always released on unmount. No timers, observers, or registries.
+Rendering and state derivation are constant-time. One document-level `reset`
+listener (bubble phase, not capture) is registered while mounted and released on
+unmount so associated forms and canceled resets match native timing. No timers,
+observers, or registries beyond deferred DOM reconciliation for controlled rejection.
 
 ## Composition
 

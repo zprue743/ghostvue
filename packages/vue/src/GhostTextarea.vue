@@ -2,6 +2,7 @@
 import { useTemplateRef } from 'vue'
 
 import type { GhostTextareaExposed } from './ghost-textarea'
+import { useNativeFormReset } from './form-reset'
 import { useGhostTextarea } from './use-ghost-textarea'
 
 // Declared props only; native HTML/ARIA stay fallthrough so Field can wire id.
@@ -36,7 +37,7 @@ const emit = defineEmits<{
 
 const element = useTemplateRef<HTMLTextAreaElement>('element')
 
-const { rootProps } = useGhostTextarea({
+const { rootProps, applyFormReset } = useGhostTextarea({
   modelValue: () => props.modelValue,
   defaultValue: () => props.defaultValue,
   disabled: () => props.disabled,
@@ -51,6 +52,8 @@ const { rootProps } = useGhostTextarea({
     emit('update:modelValue', value)
   },
 })
+
+useNativeFormReset(() => element.value, applyFormReset)
 
 defineExpose<GhostTextareaExposed>({
   get element() {

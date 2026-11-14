@@ -251,6 +251,26 @@ describe('GhostCheckbox', () => {
     expect(data.get('subscribe')).toBe('on')
   })
 
+  it('restores the mounted default on native form reset', async () => {
+    const wrapper = mount(
+      {
+        setup() {
+          return () =>
+            h('form', [h(GhostCheckbox, { defaultValue: true, name: 'agree' })])
+        },
+      },
+      { attachTo: document.body },
+    )
+    const input = wrapper.get('input')
+
+    await input.setValue(false)
+    wrapper.get('form').element.reset()
+    await nextTick()
+
+    expect((input.element as HTMLInputElement).checked).toBe(true)
+    wrapper.unmount()
+  })
+
   it('renders deterministic native markup during SSR', async () => {
     const html = await renderToString(
       h(GhostCheckbox, {

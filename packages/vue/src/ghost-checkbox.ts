@@ -41,6 +41,8 @@ export interface UseGhostCheckboxOptions {
   defaultValue?: MaybeRefOrGetter<boolean | undefined>
   indeterminate?: MaybeRefOrGetter<boolean | undefined>
   disabled?: MaybeRefOrGetter<boolean | undefined>
+  /** Native input for post-reset DOM reconciliation. */
+  element?: MaybeRefOrGetter<HTMLInputElement | null | undefined>
   /** Synchronous write. Emit `update:modelValue` here. */
   onChange?: (value: boolean) => void
 }

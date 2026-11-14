@@ -99,6 +99,17 @@ the `invalid` prop, and disabled uses `--ghost-action-disabled-*`.
 The displayed string is the model. The component never trims, parses, or
 mutates the consumer's string beyond writing the next textarea value.
 
+`defaultValue` on the root is the form-reset seed captured at setup, not a
+live prop. Later `defaultValue` changes are ignored, matching native
+default contents.
+
+An owner or associated `<form>` reset restores the mounted default for an
+**uncontrolled** instance by syncing after the browser reset (when the reset
+event was not canceled). A **controlled** instance emits `update:modelValue`
+with that seed; if the parent ignores the emit, restore on `nextTick` when
+the DOM still differs. A canceled reset is a no-op: no emit and no model or
+DOM write.
+
 ### Events, callbacks, slots, and exposed methods
 
 No content slot: a native `<textarea>`'s value is the model, not children.

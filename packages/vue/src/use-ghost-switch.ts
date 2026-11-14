@@ -1,7 +1,5 @@
 import {
   computed,
-  onBeforeUnmount,
-  onMounted,
   toValue,
   type ComputedRef,
   type WritableComputedRef,
@@ -47,6 +45,7 @@ export function useGhostSwitch(options: UseGhostSwitchOptions = {}): {
   rootProps: ComputedRef<GhostSwitchRootProps>
   inputProps: ComputedRef<GhostSwitchInputProps>
   toggle: () => void
+  applyFormReset: () => void
 } {
   // Native defaultChecked is the value at parse time; later defaultValue
   // writes must not change what form.reset() restores.
@@ -106,19 +105,17 @@ export function useGhostSwitch(options: UseGhostSwitchOptions = {}): {
     }
   })
 
-  function onReset(event: Event): void {
-    if (!(event.target instanceof HTMLFormElement)) return
-    if (toValue(options.element)?.form !== event.target) return
+  function applyFormReset(): void {
     checked.value = resetValue
   }
 
-  onMounted(() => {
-    document.addEventListener('reset', onReset, true)
-  })
-
-  onBeforeUnmount(() => {
-    document.removeEventListener('reset', onReset, true)
-  })
-
-  return { checked, isDisabled, isReadonly, rootProps, inputProps, toggle }
+  return {
+    checked,
+    isDisabled,
+    isReadonly,
+    rootProps,
+    inputProps,
+    toggle,
+    applyFormReset,
+  }
 }

@@ -117,11 +117,13 @@ resets the caret to the end. If the parent ignores the emit, restore on
 changes are ignored. Switching controlled ↔ uncontrolled after setup is
 unsupported; development reports GHOST001 and keeps the last rendered value.
 
-An owner `<form>` reset restores the default for an **uncontrolled** instance
-by syncing from the native field after the browser reset. A **controlled**
-instance emits `update:modelValue` with that restored string; if the parent
-ignores the emit, the field stays on the parent value. That preserves Vue
-control without inventing a second write channel.
+An owner or associated `<form>` reset restores the mounted default for an
+**uncontrolled** instance by syncing after the browser reset (when the reset
+event was not canceled). A **controlled** instance emits `update:modelValue`
+with that seed; if the parent ignores the emit, restore on `nextTick` when
+the DOM still differs. A canceled reset is a no-op: no emit and no model or
+DOM write. `defaultValue` on the root is the reset seed captured at setup,
+not a live prop.
 
 ### Events, callbacks, slots, and exposed methods
 
@@ -295,7 +297,9 @@ search decorations remain native.
 
 Rendering is deterministic from props and the current model string. Setup
 reads no browser globals. The exposed element is `null` until mount. Form
-reset listening attaches on mount and is removed on unmount; server markup
+reset listening uses a bubble-phase document `reset` listener filtered by
+`element.form` so the `form` attribute and canceled resets stay native; it
+attaches on mount and is removed on unmount; server markup
 does not depend on it.
 
 ### Mobile and touch

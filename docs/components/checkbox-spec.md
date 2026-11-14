@@ -146,6 +146,14 @@ checked (`true`) on click. If a consumer sets both `modelValue` and
 `indeterminate` true, native click unchecks. That is native behavior, not a
 library cycle.
 
+Form reset uses the same contract as other form controls: a bubble-phase
+`document` `reset` listener filtered by `element.form` reconciles the mounted
+`defaultValue` when the reset event is not canceled. **Uncontrolled** instances
+write the seed through the model setter and sync `:checked` on the native input.
+**Controlled** instances emit the seed; if the parent ignores the emit,
+reconcile on `nextTick` when the DOM still differs. A canceled reset is a
+no-op: no emit and no model or DOM write.
+
 ### Events, callbacks, slots, and exposed methods
 
 No default slot: native `<input>` is void. Labels wrap the component or use

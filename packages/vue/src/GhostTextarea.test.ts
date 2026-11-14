@@ -235,4 +235,88 @@ describe('GhostTextarea', () => {
 
     expect(wrapper.get('textarea').element.value).toBe('two')
   })
+
+  it('restores the uncontrolled seed when the owner form resets', async () => {
+    const wrapper = mount(
+      {
+        setup() {
+          return () =>
+            h('form', [
+              h(GhostTextarea, { defaultValue: 'start', name: 'notes' }),
+            ])
+        },
+      },
+      { attachTo: document.body },
+    )
+    const textarea = wrapper.get('textarea')
+
+    await textarea.setValue('typed')
+    wrapper.get('form').element.reset()
+    await nextTick()
+
+    expect(textarea.element.value).toBe('start')
+    wrapper.unmount()
+  })
+
+  it('keeps an edited uncontrolled value when form reset is canceled', async () => {
+    const wrapper = mount(
+      {
+        setup() {
+          return () =>
+            h('form', [
+              h(GhostTextarea, { defaultValue: 'seed', name: 'notes' }),
+            ])
+        },
+      },
+      { attachTo: document.body },
+    )
+    const form = wrapper.get('form').element as HTMLFormElement
+    const textarea = wrapper.get('textarea')
+
+    form.addEventListener('reset', (event) => {
+      event.preventDefault()
+    })
+
+    await textarea.setValue('edited')
+    const emitsBefore = wrapper
+      .findComponent(GhostTextarea)
+      .emitted('update:modelValue')?.length
+
+    form.reset()
+    await nextTick()
+
+    expect(textarea.element.value).toBe('edited')
+    expect(
+      wrapper.findComponent(GhostTextarea).emitted('update:modelValue')?.length,
+    ).toBe(emitsBefore)
+    wrapper.unmount()
+  })
+
+  it('reconciles the DOM when a controlled parent ignores reset updates', async () => {
+    const wrapper = mount(
+      {
+        setup() {
+          return () =>
+            h('form', [
+              h(GhostTextarea, {
+                modelValue: 'seed',
+                defaultValue: 'seed',
+                name: 'notes',
+              }),
+            ])
+        },
+      },
+      { attachTo: document.body },
+    )
+    const form = wrapper.get('form').element as HTMLFormElement
+    const textarea = wrapper.get('textarea')
+
+    expect(textarea.element.value).toBe('seed')
+
+    form.reset()
+    await nextTick()
+
+    expect(textarea.element.value).toBe('seed')
+    wrapper.unmount()
+  })
 })
