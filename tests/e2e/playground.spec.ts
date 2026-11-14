@@ -150,3 +150,29 @@ test('GhostCollapsible toggles in-flow disclosure from the playground', async ({
     await playground.close()
   }
 })
+
+test('GhostAccordion coordinates expansion from the playground', async ({
+  page,
+}) => {
+  const playground = await startStaticServer('apps/playground/dist')
+
+  try {
+    await page.goto(playground.url)
+
+    const section = page.getByRole('region', { name: 'GhostAccordion' })
+    const openTrigger = section.getByRole('button', {
+      name: 'Fulfillment policies',
+    })
+    const sibling = section.getByRole('button', { name: 'Handling exceptions' })
+    const panel = section.getByTestId('accordion-headless-content')
+
+    await expect(openTrigger).toHaveAttribute('aria-expanded', 'true')
+    await expect(panel).not.toHaveAttribute('hidden', '')
+
+    await sibling.click()
+    await expect(openTrigger).toHaveAttribute('aria-expanded', 'false')
+    await expect(sibling).toHaveAttribute('aria-expanded', 'true')
+  } finally {
+    await playground.close()
+  }
+})

@@ -598,6 +598,25 @@ export const ghostExamples = [
     layer: 'themed',
   },
   {
+    id: 'accordion/basic',
+    title: 'Accordion sections',
+    description: 'Single expansion with collapsible coordination over panels.',
+    layer: 'headless',
+  },
+  {
+    id: 'accordion/themed',
+    title: 'Themed accordion',
+    description: 'Multiple expansion with default surface styles.',
+    layer: 'themed',
+  },
+  {
+    id: 'accordion/navigation',
+    title: 'Accordion navigation',
+    description:
+      'Tab order across headers and panel links; nested accordion isolation.',
+    layer: 'headless',
+  },
+  {
     id: 'slider/basic',
     title: 'Single value',
     description: 'Headless numeric slider with stepped values.',

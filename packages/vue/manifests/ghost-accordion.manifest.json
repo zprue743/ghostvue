@@ -1,0 +1,118 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "generated",
+  "name": "GhostAccordion",
+  "package": "@ghostvue/vue",
+  "status": "experimental",
+  "description": "Headless accordion root coordinating single or multiple expansion over GhostCollapsible items with vertical roving focus.",
+  "props": [
+    {
+      "name": "type",
+      "type": "GhostAccordionType",
+      "default": "single",
+      "required": false,
+      "description": "Single or multiple expanded panels.",
+      "deprecated": false
+    },
+    {
+      "name": "collapsible",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "When `type` is `single`, allow closing the active panel.",
+      "deprecated": false
+    },
+    {
+      "name": "modelValue",
+      "type": "GhostAccordionValue",
+      "required": false,
+      "description": "Controlled expansion value. Omit for uncontrolled mode.",
+      "deprecated": false
+    },
+    {
+      "name": "defaultValue",
+      "type": "GhostAccordionValue",
+      "required": false,
+      "description": "Initial expansion when `modelValue` is omitted.",
+      "deprecated": false
+    },
+    {
+      "name": "headingLevel",
+      "type": "GhostAccordionHeadingLevel",
+      "default": 3,
+      "required": false,
+      "description": "Heading level wrapping each accordion trigger (`h1`–`h6`).",
+      "deprecated": false
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Disables toggling on every item when `true`.",
+      "deprecated": false
+    }
+  ],
+  "models": [
+    {
+      "prop": "modelValue",
+      "event": "update:modelValue",
+      "type": "GhostAccordionValue",
+      "description": "v-model binding for `modelValue`."
+    }
+  ],
+  "events": [],
+  "slots": [
+    {
+      "name": "default",
+      "props": [],
+      "description": "Accordion items."
+    }
+  ],
+  "exposed": [
+    {
+      "name": "element",
+      "kind": "property",
+      "type": "HTMLElement | null",
+      "description": "Root element after mount; null before mount."
+    },
+    {
+      "name": "focus",
+      "kind": "method",
+      "type": "(options?: FocusOptions) => void",
+      "description": "Exposed method `focus`."
+    },
+    {
+      "name": "blur",
+      "kind": "method",
+      "type": "() => void",
+      "description": "Exposed method `blur`."
+    }
+  ],
+  "styling": {
+    "parts": [
+      {
+        "name": "root",
+        "description": "Accordion host and roving-focus container."
+      }
+    ],
+    "states": [],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "generic",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/accordion/",
+    "keyboard": {
+      "ArrowDown": "Move focus to the next accordion trigger.",
+      "ArrowUp": "Move focus to the previous accordion trigger.",
+      "Home": "Focus the first accordion trigger.",
+      "End": "Focus the last accordion trigger."
+    },
+    "requiredAriaAttributes": []
+  },
+  "examples": [
+    "accordion/basic",
+    "accordion/navigation",
+    "accordion/themed"
+  ]
+}

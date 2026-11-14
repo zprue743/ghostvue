@@ -273,6 +273,29 @@ export type {
   UseGhostTabsOptions,
   UseGhostTabsReturn,
 } from './ghost-tabs'
+export { default as GhostAccordion } from './GhostAccordion.vue'
+export { default as GhostAccordionItem } from './GhostAccordionItem.vue'
+export { default as GhostAccordionTrigger } from './GhostAccordionTrigger.vue'
+export { default as GhostAccordionContent } from './GhostAccordionContent.vue'
+export { useGhostAccordion } from './use-ghost-accordion'
+export type {
+  GhostAccordionContentElement,
+  GhostAccordionContentExposed,
+  GhostAccordionContentProps,
+  GhostAccordionContext,
+  GhostAccordionExposed,
+  GhostAccordionHeadingLevel,
+  GhostAccordionItemContext,
+  GhostAccordionItemProps,
+  GhostAccordionProps,
+  GhostAccordionTriggerElement,
+  GhostAccordionTriggerExposed,
+  GhostAccordionTriggerProps,
+  GhostAccordionType,
+  GhostAccordionValue,
+  UseGhostAccordionOptions,
+  UseGhostAccordionReturn,
+} from './ghost-accordion'
 export { default as GhostEmptyState } from './GhostEmptyState.vue'
 export {
   useGhostEmptyState,

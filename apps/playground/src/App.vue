@@ -30,6 +30,7 @@ import ModalPrimitivesReference from './ModalPrimitivesReference.vue'
 import MotionReference from './MotionReference.vue'
 import OverlayReference from './OverlayReference.vue'
 import CollapsibleReference from './CollapsibleReference.vue'
+import AccordionReference from './AccordionReference.vue'
 import PopoverReference from './PopoverReference.vue'
 import TabsReference from './TabsReference.vue'
 import ToggleGroupReference from './ToggleGroupReference.vue'
@@ -305,6 +306,7 @@ function submitPlaygroundComment(event: Event): void {
     <OverlayReference />
     <PopoverReference />
     <CollapsibleReference />
+    <AccordionReference />
     <TooltipReference />
     <DialogReference />
     <TabsReference />
