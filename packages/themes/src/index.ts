@@ -219,6 +219,15 @@ export {
   type GhostRadioGroupItemExposed,
   type GhostRadioGroupSize,
 } from './ghost-radio-group'
+export {
+  GhostToggleGroup,
+  type GhostToggleGroupExposed,
+} from './ghost-toggle-group'
+export {
+  GhostToggleGroupItem,
+  type GhostToggleGroupItemElement,
+  type GhostToggleGroupItemExposed,
+} from './ghost-toggle-group-item'
 export { GhostTooltip, type GhostTooltipSlotProps } from './ghost-tooltip'
 export {
   GhostTooltipTrigger,

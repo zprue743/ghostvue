@@ -47,23 +47,23 @@ Themed exports from `@ghostvue/themes`:
 
 #### `GhostToggleGroup` (root)
 
-| Prop           | Type                                     | Default        | Contract                                                                                  |
-| -------------- | ---------------------------------------- | -------------- | ----------------------------------------------------------------------------------------- |
-| `type`         | `'single' \| 'multiple'`                 | `'single'`     | Single allows zero or one pressed item; multiple allows any subset.                        |
-| `modelValue`   | `string \| string[] \| undefined`        | `undefined`    | Controlled selection. Omit for uncontrolled. Type must match `type`.                      |
-| `defaultValue` | `string \| string[] \| undefined`        | `undefined`    | Initial selection when uncontrolled. Multiple defaults to `[]` when omitted.            |
-| `orientation`  | `'horizontal' \| 'vertical'`           | `'horizontal'` | Drives roving arrow keys and optional `aria-orientation` on the group.                    |
-| `dir`          | `'ltr' \| 'rtl' \| undefined`            | `undefined`    | Explicit text direction for horizontal roving.                                            |
-| `as`           | `string \| Component`                    | `'div'`        | Root element hosting items. Must remain focusable as a group container (not `button`).     |
-| `disabled`     | `boolean`                                | `false`        | Disables interaction for all items (items still render; items’ own `disabled` also applies). |
+| Prop           | Type                              | Default        | Contract                                                                                     |
+| -------------- | --------------------------------- | -------------- | -------------------------------------------------------------------------------------------- |
+| `type`         | `'single' \| 'multiple'`          | `'single'`     | Single allows zero or one pressed item; multiple allows any subset.                          |
+| `modelValue`   | `string \| string[] \| undefined` | `undefined`    | Controlled selection. Omit for uncontrolled. Type must match `type`.                         |
+| `defaultValue` | `string \| string[] \| undefined` | `undefined`    | Initial selection when uncontrolled. Multiple defaults to `[]` when omitted.                 |
+| `orientation`  | `'horizontal' \| 'vertical'`      | `'horizontal'` | Drives roving arrow keys and optional `aria-orientation` on the group.                       |
+| `dir`          | `'ltr' \| 'rtl' \| undefined`     | `undefined`    | Explicit text direction for horizontal roving.                                               |
+| `as`           | `string \| Component`             | `'div'`        | Root element hosting items. Must remain focusable as a group container (not `button`).       |
+| `disabled`     | `boolean`                         | `false`        | Disables interaction for all items (items still render; items’ own `disabled` also applies). |
 
 #### `GhostToggleGroupItem`
 
-| Prop       | Type                   | Default    | Contract                                                                                               |
-| ---------- | ---------------------- | ---------- | ------------------------------------------------------------------------------------------------------ |
-| `as`       | `string \| Component`  | `'button'` | Element or component for the control.                                                                  |
-| `value`    | `string`               | required   | Stable id for selection and `v-model`.                                                                 |
-| `disabled` | `boolean`              | `false`    | Skips roving focus and ignores toggle. Native `disabled` on `<button>`; `aria-disabled` otherwise.       |
+| Prop       | Type                  | Default    | Contract                                                                                           |
+| ---------- | --------------------- | ---------- | -------------------------------------------------------------------------------------------------- |
+| `as`       | `string \| Component` | `'button'` | Element or component for the control.                                                              |
+| `value`    | `string`              | required   | Stable id for selection and `v-model`.                                                             |
+| `disabled` | `boolean`             | `false`    | Skips roving focus and ignores toggle. Native `disabled` on `<button>`; `aria-disabled` otherwise. |
 
 Native attributes and listeners fall through to each part’s rendered root.
 
@@ -133,8 +133,8 @@ semantics inside a **group**, not `radiogroup` / `radio`.
 
 Roving among items (`useRovingFocus` on the group root):
 
-| Key          | Orientation | Behavior                          |
-| ------------ | ----------- | --------------------------------- |
+| Key          | Orientation | Behavior                           |
+| ------------ | ----------- | ---------------------------------- |
 | `ArrowRight` | horizontal  | Next enabled item (RTL: previous). |
 | `ArrowLeft`  | horizontal  | Previous enabled item (RTL: next). |
 | `ArrowDown`  | vertical    | Next enabled item.                 |
@@ -144,10 +144,10 @@ Roving among items (`useRovingFocus` on the group root):
 
 Activation (`GhostToggleGroupItem`):
 
-| Key             | Behavior                                                                 |
-| --------------- | ------------------------------------------------------------------------ |
-| `Space`/`Enter` | Toggles pressed state (native on `<button>`).                            |
-| Click           | Toggles pressed state.                                                   |
+| Key             | Behavior                                      |
+| --------------- | --------------------------------------------- |
+| `Space`/`Enter` | Toggles pressed state (native on `<button>`). |
+| Click           | Toggles pressed state.                        |
 
 Disabled items are skipped by roving focus and cannot be toggled.
 

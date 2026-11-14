@@ -725,6 +725,24 @@ export const ghostExamples = [
     description: 'Flex layout from @ghostvue/themes.',
     layer: 'themed',
   },
+  {
+    id: 'toggle-group/basic',
+    title: 'Toggle group single',
+    description: 'Exclusive aria-pressed density controls.',
+    layer: 'headless',
+  },
+  {
+    id: 'toggle-group/multiple',
+    title: 'Toggle group multiple',
+    description: 'Independent formatting toggles in one group.',
+    layer: 'headless',
+  },
+  {
+    id: 'toggle-group/themed',
+    title: 'Toggle group themed',
+    description: 'Segmented layout switcher with default styles.',
+    layer: 'themed',
+  },
 ] as const satisfies readonly GhostExampleDefinition[]
 
 export type GhostExampleId = (typeof ghostExamples)[number]['id']

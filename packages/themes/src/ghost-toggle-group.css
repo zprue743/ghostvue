@@ -1,0 +1,92 @@
+/*
+ * Themed GhostToggleGroup segmented toggle buttons.
+ */
+@layer ghostvue-theme {
+  :where(
+    .ghost-theme .ghost-toggle-group,
+    .ghost-themed-scope .ghost-toggle-group,
+    .ghost-toggle-group[data-themed]
+  ) {
+    display: inline-flex;
+    flex-wrap: wrap;
+    font-family: var(--ghost-type-family-sans);
+    font-feature-settings: var(--ghost-type-feature-default);
+    gap: var(--ghost-space-gap-xs);
+    padding: var(--ghost-space-inset-xs);
+    background-color: var(--ghost-elevation-1-bg);
+    border: var(--ghost-border-hairline-width) solid
+      var(--ghost-elevation-1-border);
+    border-radius: var(--ghost-radius-md);
+    box-sizing: border-box;
+  }
+
+  :where(
+    .ghost-theme .ghost-toggle-group[aria-orientation='vertical'],
+    .ghost-themed-scope .ghost-toggle-group[aria-orientation='vertical'],
+    .ghost-toggle-group[data-themed][aria-orientation='vertical']
+  ) {
+    flex-direction: column;
+    align-items: stretch;
+    width: max-content;
+  }
+
+  :where(
+    .ghost-theme .ghost-toggle-group-item,
+    .ghost-themed-scope .ghost-toggle-group-item,
+    .ghost-toggle-group-item[data-themed]
+  ) {
+    background-color: transparent;
+    border: var(--ghost-border-hairline-width) solid transparent;
+    border-radius: var(--ghost-radius-sm);
+    color: var(--ghost-surface-fg-muted);
+    cursor: pointer;
+    font: inherit;
+    padding: var(--ghost-space-inset-sm) var(--ghost-space-inset-md);
+    transition: background-color var(--ghost-motion-duration-fast)
+      var(--ghost-motion-ease-standard);
+  }
+
+  :where(
+    .ghost-theme .ghost-toggle-group-item[data-state='on'],
+    .ghost-themed-scope .ghost-toggle-group-item[data-state='on'],
+    .ghost-toggle-group-item[data-themed][data-state='on']
+  ) {
+    background-color: var(--ghost-elevation-2-bg);
+    border-color: var(--ghost-elevation-2-border);
+    box-shadow: var(--ghost-elevation-2-shadow);
+    color: var(--ghost-surface-fg);
+  }
+
+  :where(
+    .ghost-theme .ghost-toggle-group-item:focus-visible,
+    .ghost-themed-scope .ghost-toggle-group-item:focus-visible,
+    .ghost-toggle-group-item[data-themed]:focus-visible
+  ) {
+    outline: var(--ghost-focus-ring-width) solid var(--ghost-focus-ring-color);
+    outline-offset: var(--ghost-focus-ring-offset);
+  }
+
+  :where(
+    .ghost-theme
+      .ghost-toggle-group[aria-disabled='true']
+      .ghost-toggle-group-item,
+    .ghost-themed-scope
+      .ghost-toggle-group[aria-disabled='true']
+      .ghost-toggle-group-item,
+    .ghost-toggle-group[data-themed][aria-disabled='true']
+      .ghost-toggle-group-item
+  ) {
+    cursor: not-allowed;
+    opacity: var(--ghost-opacity-disabled);
+  }
+
+  @media (forced-colors: active) {
+    :where(
+      .ghost-theme .ghost-toggle-group-item[data-state='on'],
+      .ghost-themed-scope .ghost-toggle-group-item[data-state='on'],
+      .ghost-toggle-group-item[data-themed][data-state='on']
+    ) {
+      border-color: Highlight;
+    }
+  }
+}

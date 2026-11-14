@@ -297,6 +297,22 @@ export type {
   GhostPaginationRootProps,
   UseGhostPaginationOptions,
 } from './ghost-pagination'
+export { default as GhostToggleGroup } from './GhostToggleGroup.vue'
+export { default as GhostToggleGroupItem } from './GhostToggleGroupItem.vue'
+export { useGhostToggleGroup } from './use-ghost-toggle-group'
+export type {
+  GhostToggleGroupElement,
+  GhostToggleGroupItemElement,
+  GhostToggleGroupExposed,
+  GhostToggleGroupItemExposed,
+  GhostToggleGroupProps,
+  GhostToggleGroupItemProps,
+  GhostToggleGroupType,
+  GhostToggleGroupOrientation,
+  GhostToggleGroupValue,
+  UseGhostToggleGroupOptions,
+  UseGhostToggleGroupReturn,
+} from './ghost-toggle-group'
 export { default as GhostToolbar } from './GhostToolbar.vue'
 export {
   useGhostToolbar,
