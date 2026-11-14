@@ -64,9 +64,7 @@ test.describe('docs visual baselines', { tag: '@visual' }, () => {
           .getByTestId('ghost-example-preview')
         await preview.scrollIntoViewIfNeeded()
         await expect(preview).toBeVisible()
-        await expect(
-          preview.locator('.ghost-input').first(),
-        ).toBeAttached()
+        await expect(preview.locator('.ghost-input').first()).toBeAttached()
         await preview.evaluate((element) => {
           element.style.padding = '12px'
         })
@@ -92,9 +90,7 @@ test.describe('docs visual baselines', { tag: '@visual' }, () => {
           .getByTestId('ghost-example-preview')
         await preview.scrollIntoViewIfNeeded()
         await expect(preview).toBeVisible()
-        await expect(
-          preview.locator('.ghost-checkbox').first(),
-        ).toBeAttached()
+        await expect(preview.locator('.ghost-checkbox').first()).toBeAttached()
         await preview.evaluate((element) => {
           element.style.padding = '12px'
         })
