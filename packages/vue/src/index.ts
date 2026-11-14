@@ -250,3 +250,26 @@ export type {
   UseGhostFieldOptions,
   UseGhostFieldReturn,
 } from './ghost-field'
+export { default as GhostTabs } from './GhostTabs.vue'
+export { default as GhostTabsList } from './GhostTabsList.vue'
+export { default as GhostTabsTrigger } from './GhostTabsTrigger.vue'
+export { default as GhostTabsContent } from './GhostTabsContent.vue'
+export { useGhostTabs } from './use-ghost-tabs'
+export type {
+  GhostTabsExposed,
+  GhostTabsListElement,
+  GhostTabsListExposed,
+  GhostTabsTriggerElement,
+  GhostTabsTriggerExposed,
+  GhostTabsContentElement,
+  GhostTabsContentExposed,
+  GhostTabsProps,
+  GhostTabsSlotProps,
+  GhostTabsListProps,
+  GhostTabsTriggerProps,
+  GhostTabsContentProps,
+  GhostTabsActivationMode,
+  GhostTabsOrientation,
+  UseGhostTabsOptions,
+  UseGhostTabsReturn,
+} from './ghost-tabs'
