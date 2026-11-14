@@ -273,3 +273,29 @@ export type {
   UseGhostTabsOptions,
   UseGhostTabsReturn,
 } from './ghost-tabs'
+export { default as GhostTooltip } from './GhostTooltip.vue'
+export { default as GhostTooltipTrigger } from './GhostTooltipTrigger.vue'
+export { default as GhostTooltipContent } from './GhostTooltipContent.vue'
+export { useGhostTooltip } from './use-ghost-tooltip'
+export {
+  ghostTooltipContextKey,
+  mergeTooltipDescribedBy,
+  resolveTooltipHtmlElement,
+  type GhostTooltipContentElement,
+  type GhostTooltipContentExposed,
+  type GhostTooltipContentProps,
+  type GhostTooltipContext,
+  type GhostTooltipFlipOptions,
+  type GhostTooltipOffsetOptions,
+  type GhostTooltipPadding,
+  type GhostTooltipPlacement,
+  type GhostTooltipProps,
+  type GhostTooltipShiftOptions,
+  type GhostTooltipSlotProps,
+  type GhostTooltipStrategy,
+  type GhostTooltipTriggerElement,
+  type GhostTooltipTriggerExposed,
+  type GhostTooltipTriggerProps,
+  type UseGhostTooltipOptions,
+  type UseGhostTooltipReturn,
+} from './ghost-tooltip'

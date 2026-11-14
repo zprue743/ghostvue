@@ -1,0 +1,114 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "handwritten",
+  "name": "GhostTooltip",
+  "package": "@ghostvue/themes",
+  "status": "experimental",
+  "description": "Themed wrapper around headless GhostTooltip, GhostTooltipTrigger, and GhostTooltipContent. Importing from @ghostvue/themes loads the default elevation-2 tooltip surface stylesheet.",
+  "props": [
+    {
+      "name": "open",
+      "type": "boolean",
+      "required": false,
+      "description": "Controlled open state forwarded to headless GhostTooltip.",
+      "deprecated": false
+    },
+    {
+      "name": "defaultOpen",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Initial open state when open is omitted.",
+      "deprecated": false
+    },
+    {
+      "name": "delayDuration",
+      "type": "number",
+      "default": 700,
+      "required": false,
+      "description": "Show delay forwarded to headless GhostTooltip.",
+      "deprecated": false
+    },
+    {
+      "name": "closeDelay",
+      "type": "number",
+      "default": 300,
+      "required": false,
+      "description": "Hide grace delay forwarded to headless GhostTooltip.",
+      "deprecated": false
+    },
+    {
+      "name": "disableHoverableContent",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Immediate hide on leave when true.",
+      "deprecated": false
+    }
+  ],
+  "models": [
+    {
+      "prop": "open",
+      "event": "update:open",
+      "type": "boolean",
+      "description": "v-model:open binding for controlled state."
+    }
+  ],
+  "events": [],
+  "slots": [
+    {
+      "name": "default",
+      "props": [
+        {
+          "name": "open",
+          "type": "boolean",
+          "description": "Current open state."
+        }
+      ],
+      "description": "GhostTooltipTrigger and GhostTooltipContent parts."
+    }
+  ],
+  "exposed": [],
+  "styling": {
+    "parts": [
+      {
+        "name": "content",
+        "description": "Themed .ghost-tooltip-content with data-themed."
+      }
+    ],
+    "states": [
+      {
+        "name": "open",
+        "description": "data-state on trigger and content while visible."
+      }
+    ],
+    "cssProperties": [
+      {
+        "name": "--ghost-elevation-2-bg",
+        "description": "Tooltip surface background."
+      },
+      {
+        "name": "--ghost-elevation-2-border",
+        "description": "Tooltip hairline border."
+      },
+      {
+        "name": "--ghost-type-size-sm",
+        "description": "Compact tooltip type size."
+      }
+    ]
+  },
+  "accessibility": {
+    "role": "tooltip",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/tooltip/",
+    "keyboard": {
+      "Escape": "Dismisses the tooltip without moving focus."
+    },
+    "requiredAriaAttributes": [
+      "aria-describedby"
+    ]
+  },
+  "examples": [
+    "tooltip/basic",
+    "tooltip/themed"
+  ]
+}

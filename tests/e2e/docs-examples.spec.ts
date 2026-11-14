@@ -146,6 +146,56 @@ test.describe('docs example previews', () => {
     }
   })
 
+  test('GhostTooltip docs demos show on hover/focus and pass Axe', async ({
+    page,
+  }) => {
+    const docs = await startStaticServer('apps/docs/.vitepress/dist')
+
+    try {
+      await page.goto(`${docs.url}/components/tooltip.html`)
+
+      const basicExample = page.locator('[data-example-id="tooltip/basic"]')
+      await expect(basicExample.getByText('Unstyled. Headless.')).toBeVisible()
+
+      const basicTrigger = basicExample.getByRole('button', {
+        name: 'Archive row',
+      })
+      const closedAxe = await new AxeBuilder({ page }).analyze()
+      expect(closedAxe.violations).toEqual([])
+
+      await basicTrigger.hover()
+      const basicTooltip = page
+        .getByRole('tooltip')
+        .filter({ hasText: 'long-term archive' })
+      await expect(basicTooltip).toBeVisible({ timeout: 2000 })
+
+      const themedExample = page.locator('[data-example-id="tooltip/themed"]')
+      const themedTrigger = themedExample.getByRole('button', {
+        name: 'Hover for glossary',
+      })
+      await themedTrigger.focus()
+      const themedTooltip = page
+        .getByRole('tooltip')
+        .filter({ hasText: '95th percentile' })
+      await expect(themedTooltip).toBeVisible({ timeout: 2000 })
+
+      const themedStyles = await themedTooltip.evaluate((el) => {
+        const computed = getComputedStyle(el)
+        return {
+          backgroundColor: computed.backgroundColor,
+          borderTopWidth: computed.borderTopWidth,
+          borderRadius: computed.borderRadius,
+        }
+      })
+
+      expect(isTransparentColor(themedStyles.backgroundColor)).toBe(false)
+      expect(Number.parseFloat(themedStyles.borderTopWidth)).toBeGreaterThan(0)
+      expect(Number.parseFloat(themedStyles.borderRadius)).toBeGreaterThan(0)
+    } finally {
+      await docs.close()
+    }
+  })
+
   test('every Ghost* component page renders each demo preview', async ({
     page,
   }) => {

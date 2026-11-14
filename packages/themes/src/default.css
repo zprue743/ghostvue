@@ -24,6 +24,7 @@
 @import './ghost-collapsible.css';
 @import './ghost-field.css';
 @import './ghost-tabs.css';
+@import './ghost-tooltip.css';
 
 @layer ghostvue-theme {
   :where(.ghost-themed-scope) {

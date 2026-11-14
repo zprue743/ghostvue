@@ -1,0 +1,89 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "generated",
+  "name": "GhostTooltip",
+  "package": "@ghostvue/vue",
+  "status": "experimental",
+  "description": "Headless tooltip root provider composing delay timing, open state, and GhostTooltipTrigger/GhostTooltipContent context.",
+  "props": [
+    {
+      "name": "open",
+      "type": "boolean",
+      "required": false,
+      "description": "Controlled open state. Omit for uncontrolled mode.",
+      "deprecated": false
+    },
+    {
+      "name": "defaultOpen",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Initial open state when `open` is omitted.",
+      "deprecated": false
+    },
+    {
+      "name": "delayDuration",
+      "type": "number",
+      "default": 700,
+      "required": false,
+      "description": "Milliseconds before showing after hover or focus begins.",
+      "deprecated": false
+    },
+    {
+      "name": "closeDelay",
+      "type": "number",
+      "default": 300,
+      "required": false,
+      "description": "Milliseconds before hiding after hover/focus ends (WCAG hoverable grace).",
+      "deprecated": false
+    },
+    {
+      "name": "disableHoverableContent",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "When `true`, hides immediately on pointer/focus leave.",
+      "deprecated": false
+    }
+  ],
+  "models": [
+    {
+      "prop": "open",
+      "event": "update:open",
+      "type": "boolean",
+      "description": "v-model binding for `open`."
+    }
+  ],
+  "events": [],
+  "slots": [
+    {
+      "name": "default",
+      "props": [
+        {
+          "name": "open",
+          "type": "boolean",
+          "description": "Slot prop `open`."
+        }
+      ],
+      "description": "Tooltip trigger and content parts."
+    }
+  ],
+  "exposed": [],
+  "styling": {
+    "parts": [],
+    "states": [],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "generic",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/tooltip/",
+    "keyboard": {
+      "Escape": "Dismisses an open tooltip without moving focus."
+    },
+    "requiredAriaAttributes": []
+  },
+  "examples": [
+    "tooltip/basic",
+    "tooltip/themed"
+  ]
+}
