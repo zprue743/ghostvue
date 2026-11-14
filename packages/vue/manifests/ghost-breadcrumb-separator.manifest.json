@@ -1,0 +1,54 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "generated",
+  "name": "GhostBreadcrumbSeparator",
+  "package": "@ghostvue/vue",
+  "status": "experimental",
+  "description": "Decorative separator hidden from assistive technologies.",
+  "props": [
+    {
+      "name": "as",
+      "type": "GhostBreadcrumbSeparatorElement",
+      "default": "span",
+      "required": false,
+      "description": "Tag name or component rendered for the decorative separator.",
+      "deprecated": false
+    }
+  ],
+  "models": [],
+  "events": [],
+  "slots": [
+    {
+      "name": "default",
+      "props": [],
+      "description": "Primary content."
+    }
+  ],
+  "exposed": [
+    {
+      "name": "element",
+      "kind": "property",
+      "type": "HTMLElement | null",
+      "description": "Exposed property `element`."
+    }
+  ],
+  "styling": {
+    "parts": [
+      {
+        "name": "separator",
+        "description": "Decorative separator glyph."
+      }
+    ],
+    "states": [],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "presentation",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/breadcrumb/",
+    "keyboard": {},
+    "requiredAriaAttributes": [
+      "aria-hidden"
+    ]
+  },
+  "examples": []
+}

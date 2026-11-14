@@ -1,0 +1,54 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "generated",
+  "name": "GhostBreadcrumbPage",
+  "package": "@ghostvue/vue",
+  "status": "experimental",
+  "description": "Current page segment with aria-current=page.",
+  "props": [
+    {
+      "name": "as",
+      "type": "GhostBreadcrumbPageElement",
+      "default": "span",
+      "required": false,
+      "description": "Tag name or component rendered for the current page segment.",
+      "deprecated": false
+    }
+  ],
+  "models": [],
+  "events": [],
+  "slots": [
+    {
+      "name": "default",
+      "props": [],
+      "description": "Primary content."
+    }
+  ],
+  "exposed": [
+    {
+      "name": "element",
+      "kind": "property",
+      "type": "HTMLElement | null",
+      "description": "Exposed property `element`."
+    }
+  ],
+  "styling": {
+    "parts": [
+      {
+        "name": "page",
+        "description": "Current page text."
+      }
+    ],
+    "states": [],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "generic",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/breadcrumb/",
+    "keyboard": {},
+    "requiredAriaAttributes": [
+      "aria-current"
+    ]
+  },
+  "examples": []
+}

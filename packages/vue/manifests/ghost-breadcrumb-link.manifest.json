@@ -1,0 +1,66 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "generated",
+  "name": "GhostBreadcrumbLink",
+  "package": "@ghostvue/vue",
+  "status": "experimental",
+  "description": "Ancestor breadcrumb hyperlink or polymorphic focusable host.",
+  "props": [
+    {
+      "name": "as",
+      "type": "GhostBreadcrumbLinkElement",
+      "default": "a",
+      "required": false,
+      "description": "Tag name or component rendered for the ancestor segment.",
+      "deprecated": false
+    }
+  ],
+  "models": [],
+  "events": [],
+  "slots": [
+    {
+      "name": "default",
+      "props": [],
+      "description": "Primary content."
+    }
+  ],
+  "exposed": [
+    {
+      "name": "blur",
+      "kind": "method",
+      "type": "() => void",
+      "description": "Exposed method `blur`."
+    },
+    {
+      "name": "element",
+      "kind": "property",
+      "type": "HTMLElement | null",
+      "description": "Exposed property `element`."
+    },
+    {
+      "name": "focus",
+      "kind": "method",
+      "type": "(options?: FocusOptions) => void",
+      "description": "Exposed method `focus`."
+    }
+  ],
+  "styling": {
+    "parts": [
+      {
+        "name": "link",
+        "description": "Ancestor segment control."
+      }
+    ],
+    "states": [],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "link",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/breadcrumb/",
+    "keyboard": {
+      "Enter": "Activates the ancestor link when rendered as anchor."
+    },
+    "requiredAriaAttributes": []
+  },
+  "examples": []
+}

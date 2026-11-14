@@ -1,6 +1,6 @@
 # GhostBreadcrumb specification
 
-**Status:** Approved for implementation (GHO-99).
+**Status:** Approved and implemented (`GhostBreadcrumb` on `feat/gho-99-breadcrumb`, GHO-99).
 
 ## Purpose and user problems
 
@@ -43,10 +43,10 @@ Themed exports from `@ghostvue/themes`:
 
 #### `GhostBreadcrumb`
 
-| Prop        | Type                   | Default        | Contract                              |
-| ----------- | ---------------------- | -------------- | ------------------------------------- |
-| `as`        | `string \| Component`  | `'nav'`        | Root landmark element.                |
-| `ariaLabel` | `string`               | `'Breadcrumb'` | Accessible name for the navigation. |
+| Prop        | Type                  | Default        | Contract                            |
+| ----------- | --------------------- | -------------- | ----------------------------------- |
+| `as`        | `string \| Component` | `'nav'`        | Root landmark element.              |
+| `ariaLabel` | `string`              | `'Breadcrumb'` | Accessible name for the navigation. |
 
 Native attributes fall through to the root.
 
@@ -58,32 +58,32 @@ Native attributes fall through to the root.
 
 #### `GhostBreadcrumbItem`
 
-| Prop | Type                  | Default | Contract                    |
-| ---- | --------------------- | ------- | --------------------------- |
+| Prop | Type                  | Default | Contract                                                    |
+| ---- | --------------------- | ------- | ----------------------------------------------------------- |
 | `as` | `string \| Component` | `'li'`  | Must remain `li` for valid trail markup when using default. |
 
 #### `GhostBreadcrumbLink`
 
-| Prop | Type                  | Default | Contract                                |
-| ---- | --------------------- | ------- | --------------------------------------- |
+| Prop | Type                  | Default | Contract                                                        |
+| ---- | --------------------- | ------- | --------------------------------------------------------------- |
 | `as` | `string \| Component` | `'a'`   | Ancestor link; consumer supplies `href` on `a` or button hosts. |
 
 #### `GhostBreadcrumbPage`
 
-| Prop | Type                  | Default   | Contract                                   |
-| ---- | --------------------- | --------- | ------------------------------------------ |
-| `as` | `string \| Component` | `'span'`  | Current page; sets `aria-current="page"`. |
+| Prop | Type                  | Default  | Contract                                  |
+| ---- | --------------------- | -------- | ----------------------------------------- |
+| `as` | `string \| Component` | `'span'` | Current page; sets `aria-current="page"`. |
 
 #### `GhostBreadcrumbSeparator`
 
-| Prop | Type                  | Default  | Contract                                                         |
-| ---- | --------------------- | -------- | ---------------------------------------------------------------- |
+| Prop | Type                  | Default  | Contract                                                        |
+| ---- | --------------------- | -------- | --------------------------------------------------------------- |
 | `as` | `string \| Component` | `'span'` | Decorative; always `aria-hidden="true"`. Default slot text `/`. |
 
 #### `GhostBreadcrumbEllipsis`
 
-| Prop    | Type     | Default                           | Contract                                              |
-| ------- | -------- | --------------------------------- | ----------------------------------------------------- |
+| Prop    | Type     | Default                           | Contract                                            |
+| ------- | -------- | --------------------------------- | --------------------------------------------------- |
 | `label` | `string` | `'Show more breadcrumb segments'` | Accessible name for the disclosure trigger control. |
 
 Default slot: popover body (typically a vertical list of `GhostBreadcrumbLink`

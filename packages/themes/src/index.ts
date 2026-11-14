@@ -27,6 +27,31 @@ export {
 } from './ghost-badge'
 
 export {
+  GhostBreadcrumb,
+  GhostBreadcrumbEllipsis,
+  GhostBreadcrumbItem,
+  GhostBreadcrumbLink,
+  GhostBreadcrumbList,
+  GhostBreadcrumbPage,
+  GhostBreadcrumbSeparator,
+  type GhostBreadcrumbElement,
+  type GhostBreadcrumbEllipsisExposed,
+  type GhostBreadcrumbEllipsisProps,
+  type GhostBreadcrumbExposed,
+  type GhostBreadcrumbItemElement,
+  type GhostBreadcrumbItemExposed,
+  type GhostBreadcrumbLinkElement,
+  type GhostBreadcrumbLinkExposed,
+  type GhostBreadcrumbListElement,
+  type GhostBreadcrumbListExposed,
+  type GhostBreadcrumbPageElement,
+  type GhostBreadcrumbPageExposed,
+  type GhostBreadcrumbProps,
+  type GhostBreadcrumbSeparatorElement,
+  type GhostBreadcrumbSeparatorExposed,
+} from './ghost-breadcrumb'
+
+export {
   GhostButton,
   type GhostButtonExposed,
   type GhostButtonInteractive,
