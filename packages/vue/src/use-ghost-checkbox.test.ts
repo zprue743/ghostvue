@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils'
-import { defineComponent, h, ref } from 'vue'
+import { defineComponent, h, nextTick, ref } from 'vue'
 import { describe, expect, it, vi } from 'vitest'
 
 import { useGhostCheckbox } from './use-ghost-checkbox'
@@ -95,7 +95,7 @@ describe('useGhostCheckbox', () => {
     wrapper.unmount()
   })
 
-  it('restores the native box when a controlled parent ignores the emit', () => {
+  it('restores the native box when a controlled parent ignores the emit', async () => {
     const onChange = vi.fn()
     const { result, wrapper } = mountComposable(() =>
       useGhostCheckbox({ modelValue: false, onChange }),
@@ -103,6 +103,7 @@ describe('useGhostCheckbox', () => {
 
     const input = document.createElement('input')
     input.type = 'checkbox'
+    document.body.append(input)
     input.checked = true
     const event = new Event('change', { bubbles: true })
     Object.defineProperty(event, 'target', { value: input })
@@ -110,7 +111,9 @@ describe('useGhostCheckbox', () => {
 
     expect(onChange).toHaveBeenCalledWith(true)
     expect(result.isChecked.value).toBe(false)
+    await nextTick()
     expect(input.checked).toBe(false)
+    input.remove()
     wrapper.unmount()
   })
 

@@ -1,4 +1,4 @@
-import { computed, toValue, type ComputedRef } from 'vue'
+import { computed, nextTick, toValue, type ComputedRef } from 'vue'
 
 import { useControllableState } from './use-controllable-state'
 import type {
@@ -47,11 +47,14 @@ export function useGhostCheckbox(options: UseGhostCheckboxOptions = {}): {
 
     isChecked.value = input.checked
 
-    // Native activation already toggled. If the getter still disagrees, the
-    // parent is controlling and ignored the emit — restore so the DOM matches.
-    if (input.checked !== isChecked.value) {
+    // Native activation already toggled. Controlled writes do not update local
+    // state. Restoring `input.checked` here would use the still-stale prop and
+    // revert a v-model parent before it flushes. After flush: parent followed →
+    // values match, skip; parent ignored → restore the prop.
+    void nextTick(() => {
+      if (!input.isConnected || input.checked === isChecked.value) return
       input.checked = isChecked.value
-    }
+    })
   }
 
   const rootProps = computed((): GhostCheckboxRootProps => ({

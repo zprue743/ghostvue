@@ -74,7 +74,10 @@ describe('GhostCheckbox', () => {
   })
 
   it('keeps a controlled model when the parent ignores the emit', async () => {
-    const wrapper = mount(GhostCheckbox, { props: { modelValue: false } })
+    const wrapper = mount(GhostCheckbox, {
+      attachTo: document.body,
+      props: { modelValue: false },
+    })
     const input = wrapper.get('input').element as HTMLInputElement
 
     await wrapper.get('input').setValue(true)
@@ -82,6 +85,7 @@ describe('GhostCheckbox', () => {
     expect(wrapper.emitted('update:modelValue')?.[0]).toEqual([true])
     expect(input.checked).toBe(false)
     expect(wrapper.get('input').attributes('data-state')).toBeUndefined()
+    wrapper.unmount()
   })
 
   it('follows a controlled v-model from the parent', async () => {
@@ -106,6 +110,26 @@ describe('GhostCheckbox', () => {
     expect((wrapper.get('input').element as HTMLInputElement).checked).toBe(
       true,
     )
+  })
+
+  it('keeps the native checked state equal to a v-model parent after nextTick', async () => {
+    const Host = defineComponent({
+      components: { GhostCheckbox },
+      setup() {
+        const accepted = ref(false)
+        return { accepted }
+      },
+      template: '<GhostCheckbox v-model="accepted" />',
+    })
+    const wrapper = mount(Host, { attachTo: document.body })
+    const input = wrapper.get('input').element as HTMLInputElement
+
+    await wrapper.get('input').setValue(true)
+    await nextTick()
+
+    expect(wrapper.vm.accepted).toBe(true)
+    expect(input.checked).toBe(wrapper.vm.accepted)
+    wrapper.unmount()
   })
 
   it('applies mixed through the DOM property and data-state', async () => {
