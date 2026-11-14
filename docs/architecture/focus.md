@@ -11,8 +11,9 @@ rule as `useControllableState` in [component-state.md](./component-state.md).
 Do not add `focus-trap`, `tabbable`, or similar runtime dependencies. A small
 internal `getTabbableElements(root)` helper is the tab-sequence query.
 
-Using them from Dialog, DropdownMenu, Select, ToggleGroup, Tabs, and Popover
-is deferred until those components exist.
+`GhostPopover` uses `useFocusScope` with `trapped: false` for non-modal entry
+and restoration. Dialog, DropdownMenu, Select, ToggleGroup, and Tabs are still
+deferred until those components exist.
 
 SSR setup must not touch the document. Both composables register listeners in
 `onMounted` (and in the handlers those listeners call) and remove them on

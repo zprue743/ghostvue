@@ -1,6 +1,6 @@
 # GhostPopover specification
 
-**Status:** Approved for minimal `GhostPopover` (GHO-27 / GHO-78 PR 2 of 2).
+**Status:** Approved and implemented (`GhostPopover` on `master`, GHO-78 complete).
 
 ## Purpose and user problems
 
@@ -248,6 +248,26 @@ Follows WAI-ARIA APG disclosure / non-modal dialog guidance:
 - Additive minor change (`minor` Changeset) for `@ghostvue/vue` and
   `@ghostvue/themes`.
 - Additive `isPositioned` property on `UseFloatingReturn` (non-breaking).
+
+## GHO-78 acceptance traceability
+
+Audit (GHO-78): implementation on `master` satisfies the issue scope. Gaps closed
+in [#61](https://github.com/zprue743/ghostvue/pull/61) and follow-up PRs; this
+issue confirms coverage via the tests below rather than new public API.
+
+| Criterion                        | Implementation                                               | Proof                                                                                |
+| -------------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------------------------------ |
+| Controlled / uncontrolled `open` | `useControllableState` in `useGhostPopover` / `GhostPopover` | `GhostPopover.test.ts` — uncontrolled and controlled cases                           |
+| Trigger toggle                   | `GhostPopoverTrigger` click / `Enter` / `Space`              | `GhostPopover.test.ts`, `tests/e2e/popover.spec.ts`                                  |
+| Disabled trigger                 | Native `disabled` on `<button>`; no open on click / `Enter`  | `GhostPopover.test.ts` — `disabled` prop                                             |
+| Outside interaction              | `useDismissableLayer` + trigger `ignore`                     | `GhostPopover.test.ts` — outside `pointerdown`                                       |
+| `Escape` dismissal               | `useDismissableLayer` stack                                  | `GhostPopover.test.ts`, `tests/e2e/popover.spec.ts`                                  |
+| Focus entry / restoration        | `useFocusScope` (`trapped: false`)                           | `GhostPopover.test.ts` — open/close and outside-focusable clicks                     |
+| Positioning / collision          | `useFloating` (`flip`, `shift`, `data-placement`)            | `GhostPopover.test.ts` — `isPositioned`; `tests/e2e/popover.spec.ts` — viewport flip |
+| Portal                           | `GhostPortal` default `body`                                 | `GhostPopover.test.ts` — `portal` / `portal=false`                                   |
+| Nesting                          | `dismissable-layer-stack`                                    | `GhostPopover.test.ts` — nested `Escape`; `tests/e2e/popover.spec.ts`                |
+| SSR                              | `useGhostId`, mount guards in composables                    | `overlay-ssr.test.ts`                                                                |
+| Not Menu / Tooltip / Dialog      | `aria-haspopup="dialog"`, `role="dialog"`, no `aria-modal`   | `GhostPopover.test.ts` — APG attributes; semantics guard test                        |
 
 ## Open architectural questions
 
