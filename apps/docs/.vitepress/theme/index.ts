@@ -7,7 +7,9 @@ import '@ghostvue/themes/vibrant.css'
 import '@ghostvue/themes/mono.css'
 import './docs-theme.css'
 import './docs-recipe-bridge.css'
+import './landing-page-global.css'
 import GhostExample from './GhostExample.vue'
+import GhostLanding from './GhostLanding.vue'
 import Layout from './Layout.vue'
 import MotionReplayDemo from './MotionReplayDemo.vue'
 import { reloadOnStaleChunk } from './reload-on-stale-chunk'
@@ -25,6 +27,7 @@ const theme: Theme = {
   Layout,
   enhanceApp({ app }) {
     app.component('GhostExample', GhostExample)
+    app.component('GhostLanding', GhostLanding)
     app.component('MotionReplayDemo', MotionReplayDemo)
     if (typeof window === 'undefined') return
     reloadOnStaleChunk()
