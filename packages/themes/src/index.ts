@@ -224,6 +224,12 @@ export {
   type GhostEmptyStateExposed,
 } from './ghost-empty-state'
 export {
+  GhostInlineAlert,
+  type GhostInlineAlertExposed,
+  type GhostInlineAlertTone,
+  type GhostInlineAlertVariant,
+} from './ghost-inline-alert'
+export {
   GhostPagination,
   type GhostPaginationExposed,
 } from './ghost-pagination'

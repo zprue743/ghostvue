@@ -14,6 +14,7 @@ import {
   GhostSlider as GhostSliderThemed,
   GhostSeparator as GhostSeparatorThemed,
   GhostEmptyState as GhostEmptyStateThemed,
+  GhostInlineAlert as GhostInlineAlertThemed,
   GhostSkeleton as GhostSkeletonThemed,
   GhostRadioGroup as GhostRadioGroupThemed,
   GhostRadioGroupItem as GhostRadioGroupItemThemed,
@@ -55,6 +56,7 @@ import {
   GhostSlider,
   GhostSeparator,
   GhostEmptyState,
+  GhostInlineAlert,
   GhostSkeleton,
   GhostSwitch,
   GhostTextarea,
@@ -1328,6 +1330,38 @@ function submitPlaygroundComment(event: Event): void {
         <button type="button">Rightmost</button>
         <button type="button">Middle</button>
         <button type="button">Leftmost</button>
+      </div>
+    </section>
+
+    <section aria-labelledby="inline-alert-heading">
+      <h2 id="inline-alert-heading">GhostInlineAlert</h2>
+      <div class="comparison">
+        <fieldset>
+          <legend>Headless static alert</legend>
+          <GhostInlineAlert as="section" data-testid="headless-inline-alert">
+            <template #title>Filters are active</template>
+            <template #message>
+              Showing rows that match your current search.
+            </template>
+          </GhostInlineAlert>
+        </fieldset>
+
+        <fieldset class="ghost-theme" data-ghost-mode="light">
+          <legend>Themed load failure</legend>
+          <GhostInlineAlertThemed
+            tone="danger"
+            variant="outline"
+            data-testid="themed-inline-alert"
+          >
+            <template #title>Unable to load table</template>
+            <template #message>
+              A network error prevented rows from loading.
+            </template>
+            <template #actions>
+              <GhostButtonThemed type="button">Retry load</GhostButtonThemed>
+            </template>
+          </GhostInlineAlertThemed>
+        </fieldset>
       </div>
     </section>
 

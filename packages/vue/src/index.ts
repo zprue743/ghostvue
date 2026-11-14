@@ -184,6 +184,19 @@ export type {
   GhostInputType,
   UseGhostInputOptions,
 } from './ghost-input'
+export { default as GhostInlineAlert } from './GhostInlineAlert.vue'
+export {
+  useGhostInlineAlert,
+  type GhostInlineAlertRootProps,
+} from './use-ghost-inline-alert'
+export type {
+  GhostInlineAlertAnnounce,
+  GhostInlineAlertElement,
+  GhostInlineAlertExposed,
+  GhostInlineAlertHeadingLevel,
+  GhostInlineAlertProps,
+  UseGhostInlineAlertOptions,
+} from './ghost-inline-alert'
 export { default as GhostSwitch } from './GhostSwitch.vue'
 export {
   useGhostSwitch,

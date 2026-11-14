@@ -574,6 +574,36 @@ export const ghostExamples = [
     layer: 'headless',
   },
   {
+    id: 'inline-alert/basic',
+    title: 'Static inline alert',
+    description: 'Title and message without live-region semantics.',
+    layer: 'headless',
+  },
+  {
+    id: 'inline-alert/composable',
+    title: 'Composable inline alert',
+    description: 'useGhostInlineAlert bindings on a section root.',
+    layer: 'headless',
+  },
+  {
+    id: 'inline-alert/themed',
+    title: 'Themed inline alert',
+    description: 'Soft danger styling from @ghostvue/themes.',
+    layer: 'themed',
+  },
+  {
+    id: 'inline-alert/live',
+    title: 'Post-mount alert',
+    description: 'announce=alert after a simulated failure.',
+    layer: 'headless',
+  },
+  {
+    id: 'inline-alert/table-error',
+    title: 'Table load failure',
+    description: 'Recoverable table error with a retry action.',
+    layer: 'themed',
+  },
+  {
     id: 'radio-group/basic',
     title: 'Basic',
     description: 'Headless radio group with labeled items.',

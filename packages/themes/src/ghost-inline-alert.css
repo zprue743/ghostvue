@@ -1,0 +1,179 @@
+/*
+ * Themed GhostInlineAlert. Visual values come from semantic --ghost-* tokens.
+ * Private --_ghost-inline-alert-* properties are per-instance wiring, not a
+ * public API. Defaults are soft / neutral (omitted data-* hooks). Inline layout
+ * keeps contextual feedback compact beside table and form regions.
+ */
+@layer ghostvue-theme {
+  :where(
+    .ghost-theme .ghost-inline-alert,
+    .ghost-themed-scope .ghost-inline-alert,
+    .ghost-inline-alert[data-themed]
+  ) {
+    --_ghost-inline-alert-tone-color: var(--ghost-action-neutral-bg);
+    --_ghost-inline-alert-tone-contrast: var(--ghost-action-neutral-fg);
+    --_ghost-inline-alert-tone-border: var(--ghost-action-neutral-border);
+    --_ghost-inline-alert-fill: none;
+    --_ghost-inline-alert-background: color-mix(
+      in oklch,
+      var(--_ghost-inline-alert-tone-color)
+        calc(100% * var(--ghost-state-mix-soft)),
+      var(--ghost-surface-bg)
+    );
+    --_ghost-inline-alert-border-color: color-mix(
+      in oklch,
+      var(--_ghost-inline-alert-tone-color)
+        calc(100% * var(--ghost-state-mix-border)),
+      var(--ghost-surface-bg)
+    );
+    --_ghost-inline-alert-color: var(--_ghost-inline-alert-tone-color);
+
+    background-color: var(--_ghost-inline-alert-background);
+    background-image: var(--_ghost-inline-alert-fill);
+    border: var(--ghost-border-hairline-width) solid
+      var(--_ghost-inline-alert-border-color);
+    border-radius: var(--ghost-radius-md);
+    box-sizing: border-box;
+    color: var(--ghost-surface-fg);
+    display: flex;
+    flex-direction: column;
+    gap: var(--ghost-space-sm);
+    max-inline-size: 100%;
+    padding: var(--ghost-space-inset-sm);
+  }
+
+  :where(
+    .ghost-theme .ghost-inline-alert [data-part='title'],
+    .ghost-themed-scope .ghost-inline-alert [data-part='title'],
+    .ghost-inline-alert[data-themed] [data-part='title']
+  ) {
+    color: var(--ghost-surface-fg);
+    font-size: var(--ghost-type-size-sm);
+    font-weight: var(--ghost-type-weight-semibold);
+    line-height: var(--ghost-type-line-snug);
+    margin: 0;
+  }
+
+  :where(
+    .ghost-theme .ghost-inline-alert [data-part='message'],
+    .ghost-themed-scope .ghost-inline-alert [data-part='message'],
+    .ghost-inline-alert[data-themed] [data-part='message']
+  ) {
+    color: var(--ghost-text-muted);
+    font-family: var(--ghost-type-family-sans);
+    font-size: var(--ghost-type-size-sm);
+    line-height: var(--ghost-type-line-snug);
+    margin: 0;
+  }
+
+  :where(
+    .ghost-theme .ghost-inline-alert [data-part='actions'],
+    .ghost-themed-scope .ghost-inline-alert [data-part='actions'],
+    .ghost-inline-alert[data-themed] [data-part='actions']
+  ) {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--ghost-space-sm);
+  }
+
+  :where(
+    .ghost-theme .ghost-inline-alert[data-tone='accent'],
+    .ghost-themed-scope .ghost-inline-alert[data-tone='accent'],
+    .ghost-inline-alert[data-themed][data-tone='accent']
+  ) {
+    --_ghost-inline-alert-tone-color: var(--ghost-action-primary-bg);
+    --_ghost-inline-alert-tone-contrast: var(--ghost-action-primary-fg);
+    --_ghost-inline-alert-tone-border: var(--ghost-action-primary-border);
+  }
+
+  :where(
+    .ghost-theme .ghost-inline-alert[data-tone='danger'],
+    .ghost-themed-scope .ghost-inline-alert[data-tone='danger'],
+    .ghost-inline-alert[data-themed][data-tone='danger']
+  ) {
+    --_ghost-inline-alert-tone-color: var(--ghost-action-danger-bg);
+    --_ghost-inline-alert-tone-contrast: var(--ghost-action-danger-fg);
+    --_ghost-inline-alert-tone-border: var(--ghost-action-danger-border);
+  }
+
+  :where(
+    .ghost-theme .ghost-inline-alert[data-variant='solid'],
+    .ghost-themed-scope .ghost-inline-alert[data-variant='solid'],
+    .ghost-inline-alert[data-themed][data-variant='solid']
+  ) {
+    --_ghost-inline-alert-background: var(--_ghost-inline-alert-tone-color);
+    --_ghost-inline-alert-border-color: var(--_ghost-inline-alert-tone-border);
+    --_ghost-inline-alert-color: var(--_ghost-inline-alert-tone-contrast);
+    --_ghost-inline-alert-fill: var(--ghost-gradient-action-neutral);
+  }
+
+  :where(
+    .ghost-theme .ghost-inline-alert[data-tone='accent'][data-variant='solid'],
+    .ghost-themed-scope
+      .ghost-inline-alert[data-tone='accent'][data-variant='solid'],
+    .ghost-inline-alert[data-themed][data-tone='accent'][data-variant='solid']
+  ) {
+    --_ghost-inline-alert-fill: var(--ghost-gradient-action-primary);
+  }
+
+  :where(
+    .ghost-theme .ghost-inline-alert[data-tone='danger'][data-variant='solid'],
+    .ghost-themed-scope
+      .ghost-inline-alert[data-tone='danger'][data-variant='solid'],
+    .ghost-inline-alert[data-themed][data-tone='danger'][data-variant='solid']
+  ) {
+    --_ghost-inline-alert-fill: var(--ghost-gradient-action-danger);
+  }
+
+  :where(
+    .ghost-theme .ghost-inline-alert[data-variant='outline'],
+    .ghost-themed-scope .ghost-inline-alert[data-variant='outline'],
+    .ghost-inline-alert[data-themed][data-variant='outline']
+  ) {
+    --_ghost-inline-alert-background: transparent;
+    --_ghost-inline-alert-border-color: var(--_ghost-inline-alert-tone-border);
+    --_ghost-inline-alert-color: var(--_ghost-inline-alert-tone-color);
+    --_ghost-inline-alert-fill: none;
+  }
+
+  :where(
+    .ghost-theme .ghost-inline-alert[data-variant='ghost'],
+    .ghost-themed-scope .ghost-inline-alert[data-variant='ghost'],
+    .ghost-inline-alert[data-themed][data-variant='ghost']
+  ) {
+    --_ghost-inline-alert-background: transparent;
+    --_ghost-inline-alert-border-color: transparent;
+    --_ghost-inline-alert-color: var(--_ghost-inline-alert-tone-color);
+    --_ghost-inline-alert-fill: none;
+  }
+
+  :where(
+    .ghost-theme
+      .ghost-inline-alert[data-variant='solid']
+      [data-part='message'],
+    .ghost-themed-scope
+      .ghost-inline-alert[data-variant='solid']
+      [data-part='message'],
+    .ghost-inline-alert[data-themed][data-variant='solid'] [data-part='message']
+  ) {
+    color: color-mix(
+      in oklch,
+      var(--_ghost-inline-alert-tone-contrast) 85%,
+      transparent
+    );
+  }
+
+  @media (forced-colors: active) {
+    :where(
+      .ghost-theme .ghost-inline-alert,
+      .ghost-themed-scope .ghost-inline-alert,
+      .ghost-inline-alert[data-themed]
+    ) {
+      --_ghost-inline-alert-fill: none;
+      background-color: Canvas;
+      background-image: none;
+      border-color: CanvasText;
+      color: CanvasText;
+    }
+  }
+}

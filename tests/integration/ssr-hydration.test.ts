@@ -5,6 +5,7 @@ import GhostButton from '../../packages/vue/src/GhostButton.vue'
 import GhostCollapsible from '../../packages/vue/src/GhostCollapsible.vue'
 import GhostCollapsibleContent from '../../packages/vue/src/GhostCollapsibleContent.vue'
 import GhostCollapsibleTrigger from '../../packages/vue/src/GhostCollapsibleTrigger.vue'
+import GhostInlineAlert from '../../packages/vue/src/GhostInlineAlert.vue'
 import { expectSsrHydration, ssrHydrationRoot } from '../support/ssr-hydration'
 
 describe('SSR hydration harness', () => {
@@ -105,6 +106,27 @@ describe('SSR hydration harness', () => {
         },
       }),
     ).rejects.toThrow()
+  })
+
+  it('hydrates GhostInlineAlert title id without mismatch', async () => {
+    await expectSsrHydration(
+      ssrHydrationRoot(
+        GhostInlineAlert,
+        { as: 'section', headingLevel: 2 },
+        {
+          title: () => 'Load failed',
+          message: () => 'Rows are unavailable.',
+        },
+      ),
+      {
+        assertServerHtml(html) {
+          expect(html).toContain('data-ghost-inline-alert')
+          expect(html).toContain('aria-labelledby=')
+          expect(html).toContain('<h2')
+          expect(html).toContain('Load failed')
+        },
+      },
+    )
   })
 
   it('rejects when hydrated ids disagree with SSR HTML', async () => {

@@ -35,11 +35,11 @@ content that appears or updates after mount.
 
 Headless `@ghostvue/vue` `GhostInlineAlert` / `useGhostInlineAlert`:
 
-| Prop           | Type                                   | Default  | Contract                                                                                                                                                                                                 |
-| -------------- | -------------------------------------- | -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `announce`     | `'off' \| 'status' \| 'alert'`         | `'off'`  | Live-region semantics. `off` is static feedback with no `role`. `status` sets `role="status"` (polite). `alert` sets `role="alert"` (assertive). Use `status`/`alert` only for copy that appears or changes after mount, not for always-present page chrome. |
-| `headingLevel` | `1 \| 2 \| 3 \| 4 \| 5 \| 6`           | `3`      | Level of the native heading wrapping the `#title` slot. Omitted `#title` skips the heading.                                                                                                              |
-| `as`           | `GhostInlineAlertElement`              | `'div'`  | Root element. Prefer `div` inside table cells; use `section` when the alert is a named landmark.                                                                                                       |
+| Prop           | Type                           | Default | Contract                                                                                                                                                                                                                                                     |
+| -------------- | ------------------------------ | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `announce`     | `'off' \| 'status' \| 'alert'` | `'off'` | Live-region semantics. `off` is static feedback with no `role`. `status` sets `role="status"` (polite). `alert` sets `role="alert"` (assertive). Use `status`/`alert` only for copy that appears or changes after mount, not for always-present page chrome. |
+| `headingLevel` | `1 \| 2 \| 3 \| 4 \| 5 \| 6`   | `3`     | Level of the native heading wrapping the `#title` slot. Omitted `#title` skips the heading.                                                                                                                                                                  |
+| `as`           | `GhostInlineAlertElement`      | `'div'` | Root element. Prefer `div` inside table cells; use `section` when the alert is a named landmark.                                                                                                                                                             |
 
 ```ts
 type GhostInlineAlertElement = 'div' | 'section'
@@ -65,11 +65,11 @@ There is no model. Visibility, copy, and live semantics are consumer-owned.
 
 ### Events, callbacks, slots, and exposed methods
 
-| Slot      | Part element | Contract                                                                                        |
-| --------- | ------------ | ----------------------------------------------------------------------------------------------- |
-| `title`   | `title`      | Optional short heading. Rendered as `h{headingLevel}` with generated `id`.                      |
-| `message` | `message`    | Primary supporting copy. Rendered in a `<div>` so paragraphs and lists are valid.               |
-| `actions` | `actions`    | Optional action controls (e.g. `GhostButton`). Children remain focusable; the root is not.    |
+| Slot      | Part element | Contract                                                                                   |
+| --------- | ------------ | ------------------------------------------------------------------------------------------ |
+| `title`   | `title`      | Optional short heading. Rendered as `h{headingLevel}` with generated `id`.                 |
+| `message` | `message`    | Primary supporting copy. Rendered in a `<div>` so paragraphs and lists are valid.          |
+| `actions` | `actions`    | Optional action controls (e.g. `GhostButton`). Children remain focusable; the root is not. |
 
 No default slot. No component-specific events. Template ref exposes:
 
@@ -79,10 +79,10 @@ No default slot. No component-specific events. Template ref exposes:
 
 Wraps the unstyled component. Behavioral props pass through. Visual props:
 
-| Prop      | Type                                        | Default     | Contract                                                                     |
-| --------- | ------------------------------------------- | ----------- | ---------------------------------------------------------------------------- |
-| `variant` | `'solid' \| 'soft' \| 'outline' \| 'ghost'` | `'soft'`    | Visual treatment (same set as `GhostBadge`).                                 |
-| `tone`    | `'accent' \| 'neutral' \| 'danger'`         | `'neutral'` | Semantic color intent, independent of `variant`. Not a status enum.          |
+| Prop      | Type                                        | Default     | Contract                                                            |
+| --------- | ------------------------------------------- | ----------- | ------------------------------------------------------------------- |
+| `variant` | `'solid' \| 'soft' \| 'outline' \| 'ghost'` | `'soft'`    | Visual treatment (same set as `GhostBadge`).                        |
+| `tone`    | `'accent' \| 'neutral' \| 'danger'`         | `'neutral'` | Semantic color intent, independent of `variant`. Not a status enum. |
 
 Sets `data-themed` on the inner root (same pattern as `GhostEmptyState`). Sets
 `data-variant` / `data-tone` when not the default so CSS can treat omitted hooks
