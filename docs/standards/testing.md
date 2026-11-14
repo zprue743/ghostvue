@@ -15,6 +15,42 @@ without rewriting assertions that mirror private structure.
   a subset of failures and never replaces semantic, keyboard, focus, or
   assistive-technology reasoning.
 
+### SSR and hydration (Vitest)
+
+Shared SSR hydration utilities live in `tests/support/ssr-hydration.ts`. Use
+`expectSsrHydration` to render a root component with `renderToString`, mount the
+HTML in jsdom, hydrate with `createSSRApp`, and fail when:
+
+- Vue logs a warning or error during SSR or hydration (including hydration
+  mismatch messages), or
+- any `id` attribute in the hydrated DOM differs from the SSR HTML.
+
+Pass a root `Component` (for example from `defineComponent`) or
+`ssrHydrationRoot` for a single child rendered with `h`. Optional
+`assertServerHtml` runs extra assertions on the server string before hydration.
+Covered examples live in
+`tests/integration/ssr-hydration.test.ts` (`GhostButton`, closed and
+`defaultOpen` `GhostCollapsible`).
+
+```typescript
+import { defineComponent, h } from 'vue'
+import { expectSsrHydration } from '../support/ssr-hydration'
+
+await expectSsrHydration(
+  defineComponent({
+    setup: () => () => h(MyComponent, { value: 'a' }),
+  }),
+  {
+    assertServerHtml(html) {
+      expect(html).toContain('data-part="root"')
+    },
+  },
+)
+```
+
+These tests run under the default Vitest jsdom environment and are included in
+`pnpm test`, `pnpm test:coverage`, and `pnpm verify`.
+
 ### E2E support helpers
 
 Shared Playwright utilities live under `tests/support/` (documented in
