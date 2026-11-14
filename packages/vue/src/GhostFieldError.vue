@@ -1,13 +1,24 @@
 <script setup lang="ts">
-import { computed, inject, shallowRef, useAttrs, useTemplateRef } from 'vue'
+import {
+  computed,
+  inject,
+  shallowRef,
+  useAttrs,
+  useSlots,
+  useTemplateRef,
+} from 'vue'
 
 import {
   ghostFieldContextKey,
   resolveFieldHtmlElement,
+  type GhostFieldContext,
   type GhostFieldErrorElement,
   type GhostFieldErrorExposed,
 } from './ghost-field'
-import { useGhostFieldPartContent } from './use-ghost-field-part-content'
+import {
+  fieldPartSlotHasRenderableContent,
+  useGhostFieldPartContent,
+} from './use-ghost-field-part-content'
 
 defineOptions({
   inheritAttrs: false,
@@ -22,23 +33,30 @@ withDefaults(
   },
 )
 
-const context = inject(ghostFieldContextKey)
-if (!context) {
+const injectedFieldContext = inject(ghostFieldContextKey)
+if (!injectedFieldContext) {
   throw new Error('GhostFieldError must be used inside GhostField')
 }
+const fieldContext: GhostFieldContext = injectedFieldContext
 
 const attrs = useAttrs()
+const slots = useSlots()
 const hostRef = useTemplateRef<HTMLElement>('host')
 const element = computed(() => resolveFieldHtmlElement(hostRef.value))
 const visible = shallowRef(false)
 
 useGhostFieldPartContent(hostRef, (next) => {
   visible.value = next
-  context.setErrorVisible(next)
-  context.setErrorRegistered(next)
+  fieldContext.setErrorVisible(next)
+  fieldContext.setErrorRegistered(next)
 })
 
-const errorAttrs = computed(() => {
+function buildErrorAttrs(): Record<string, unknown> {
+  const slotRender = slots['default']
+  const showInMarkup = slotRender
+    ? fieldPartSlotHasRenderableContent(slotRender())
+    : false
+
   const rest: Record<string, unknown> = {}
   for (const [key, value] of Object.entries(attrs)) {
     if (key !== 'id' && key !== 'hidden' && key !== 'role') {
@@ -50,7 +68,7 @@ const errorAttrs = computed(() => {
   const id =
     typeof customId === 'string' && customId.length > 0
       ? customId
-      : context.errorId.value
+      : fieldContext.errorId.value
 
   const result: Record<string, unknown> = {
     ...rest,
@@ -58,14 +76,14 @@ const errorAttrs = computed(() => {
     'data-part': 'error',
   }
 
-  if (visible.value) {
+  if (showInMarkup) {
     result['role'] = 'alert'
   } else {
     result['hidden'] = true
   }
 
   return result
-})
+}
 
 defineExpose<GhostFieldErrorExposed>({
   get element() {
@@ -81,7 +99,7 @@ defineExpose<GhostFieldErrorExposed>({
 </script>
 
 <template>
-  <component :is="as" ref="host" v-bind="errorAttrs">
+  <component :is="as" ref="host" v-bind="buildErrorAttrs()">
     <slot />
   </component>
 </template>

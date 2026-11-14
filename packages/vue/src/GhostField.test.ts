@@ -334,6 +334,66 @@ describe('GhostField', () => {
     wrapper.unmount()
   })
 
+  it('toggles error role and aria-describedby from a template parent', async () => {
+    const wrapper = mount(
+      defineComponent({
+        components: {
+          GhostField,
+          GhostFieldControl,
+          GhostFieldError,
+          GhostFieldLabel,
+        },
+        template: `
+          <GhostField :invalid="true">
+            <GhostFieldLabel>Name</GhostFieldLabel>
+            <GhostFieldControl v-slot="field">
+              <input type="text" v-bind="field" data-test="control" />
+            </GhostFieldControl>
+            <GhostFieldError v-if="showError">{{ message }}</GhostFieldError>
+          </GhostField>
+        `,
+        setup() {
+          const message = ref('')
+          const showError = ref(true)
+          return { message, showError }
+        },
+      }),
+    )
+
+    const error = () => wrapper.get('[data-part="error"]')
+    const input = () => wrapper.get('[data-test="control"]')
+
+    expect(error().attributes('hidden')).toBeDefined()
+    expect(error().attributes('role')).toBeUndefined()
+    expect(input().attributes('aria-describedby')).toBeUndefined()
+
+    wrapper.vm.message = 'Required'
+    await flushPromises()
+    const errorId = error().attributes('id')
+    expect(error().attributes('role')).toBe('alert')
+    expect(error().attributes('hidden')).toBeUndefined()
+    expect(input().attributes('aria-describedby')).toBe(errorId)
+
+    wrapper.vm.message = ''
+    await flushPromises()
+    expect(error().attributes('hidden')).toBeDefined()
+    expect(error().attributes('role')).toBeUndefined()
+    expect(input().attributes('aria-describedby')).toBeUndefined()
+
+    wrapper.vm.showError = false
+    await nextTick()
+    expect(wrapper.find('[data-part="error"]').exists()).toBe(false)
+    expect(input().attributes('aria-describedby')).toBeUndefined()
+
+    wrapper.vm.showError = true
+    wrapper.vm.message = 'Required'
+    await flushPromises()
+    expect(error().attributes('role')).toBe('alert')
+    expect(input().attributes('aria-describedby')).toBe(errorId)
+
+    wrapper.unmount()
+  })
+
   it('renders deterministic SSR markup without a mounted root ref', () => {
     const wrapper = mount(GhostField, {
       slots: { default: 'Child' },
