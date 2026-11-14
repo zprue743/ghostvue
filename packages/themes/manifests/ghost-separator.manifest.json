@@ -10,7 +10,7 @@
       "name": "as",
       "type": "'hr' | 'div' | 'li'",
       "required": false,
-      "description": "Rendered root element, forwarded to the unstyled GhostSeparator. Omit to get hr when horizontal and div when vertical.",
+      "description": "Rendered root element, forwarded to the unstyled GhostSeparator. Omit to get hr when horizontal and div when vertical. li is for list-shaped menus.",
       "deprecated": false
     },
     {

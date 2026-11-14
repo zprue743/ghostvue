@@ -26,7 +26,7 @@
     .ghost-theme .ghost-separator[data-orientation='vertical'],
     .ghost-themed-scope .ghost-separator[data-orientation='vertical']
   ) {
-    block-size: 100%;
+    /* Stretch, do not use 100% — percentage block-size collapses in height-auto flex rows. */
     inline-size: var(--ghost-border-hairline-width);
   }
 

@@ -10,7 +10,7 @@
       "name": "as",
       "type": "GhostSeparatorElement",
       "required": false,
-      "description": "Rendered root element. Omit to get hr when horizontal and div when vertical. li is valid inside a list.",
+      "description": "Rendered root element. Omit to get hr when horizontal and div when vertical. li is valid inside a list-shaped menu (role=menu).",
       "deprecated": false
     },
     {

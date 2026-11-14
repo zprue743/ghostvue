@@ -33,11 +33,13 @@ test.describe('GhostSeparator', () => {
       await expect(vertical).toHaveAttribute('data-orientation', 'vertical')
 
       const themed = page.getByTestId('separator-toolbar')
-      await expect(themed.locator('.ghost-separator').first()).toBeVisible()
-      await expect(themed.locator('.ghost-separator').first()).toHaveCSS(
-        'inline-size',
-        /^(1px|0\.5px)$/,
-      )
+      const themedRule = themed.locator('.ghost-separator').first()
+      await expect(themedRule).toHaveAttribute('data-orientation', 'vertical')
+      const box = await themedRule.boundingBox()
+      expect(box).not.toBeNull()
+      expect(box?.width).toBeGreaterThan(0)
+      expect(box?.width).toBeLessThanOrEqual(2)
+      expect(box?.height).toBeGreaterThan(8)
 
       const results = await new AxeBuilder({ page })
         .include('[aria-labelledby="separator-heading"]')

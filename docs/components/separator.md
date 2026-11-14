@@ -51,8 +51,9 @@ Do not mark menu or toolbar grouping separators decorative. Those need
 
 ## Lists and menus
 
-Inside a `<ul>` or `<ol>`, render the separator as an `li` so the markup stays
-valid:
+Inside a list-shaped menu, render the separator as an `li`. The parent should
+use `role="menu"` so the `li` is a grouping separator rather than a broken
+list item:
 
 <GhostExample id="separator/list" />
 

@@ -3,10 +3,10 @@ import { GhostSeparator } from '@ghostvue/vue'
 </script>
 
 <template>
-  <ul>
-    <li>New</li>
-    <li>Open</li>
+  <ul role="menu" aria-label="File">
+    <li role="menuitem">New</li>
+    <li role="menuitem">Open</li>
     <GhostSeparator as="li" />
-    <li>Quit</li>
+    <li role="menuitem">Quit</li>
   </ul>
 </template>

@@ -50,7 +50,9 @@ type GhostSeparatorOrientation = 'horizontal' | 'vertical'
 
 The `as` union is closed rather than `keyof HTMLElementTagNameMap`. `hr` is
 the native thematic break; `div` is the generic host for vertical rules and
-non-list layouts; `li` is valid inside a list or menu implemented as a list.
+non-list layouts; `li` is valid inside a list-shaped menu (`role="menu"`).
+Do not place `role="separator"` on an `li` inside a raw `<ul>`: that fails
+list structure checks.
 Widening later is additive; narrowing is not. Interactive, void-other-than-`hr`,
 and metadata tags are excluded because they cannot be a separator.
 

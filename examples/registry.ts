@@ -182,7 +182,7 @@ export const ghostExamples = [
   {
     id: 'separator/list',
     title: 'List',
-    description: 'Valid li separator between grouped list items.',
+    description: 'li separator inside a list-shaped menu.',
     layer: 'headless',
   },
   {

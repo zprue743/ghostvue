@@ -2,7 +2,7 @@ import type { MaybeRefOrGetter } from 'vue'
 
 /**
  * Closed union: `hr` is the native thematic break, `div` hosts vertical rules,
- * `li` is valid in a list or list-shaped menu. Widening is additive.
+ * `li` is valid in a list-shaped menu (`role="menu"`). Widening is additive.
  */
 export type GhostSeparatorElement = 'hr' | 'div' | 'li'
 
