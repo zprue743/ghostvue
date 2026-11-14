@@ -100,3 +100,22 @@ download the `coverage-report` artifact for the HTML, JSON summary, and LCOV
 reports (retained for 14 days). Reports are generated even when tests fail;
 failures before Vitest starts cannot produce coverage. Locally, run
 `pnpm test:coverage` and open `coverage/index.html`.
+
+## Packed export integrity
+
+After `pnpm build`, run `pnpm exports:check`. It packs every publishable package
+listed in `scripts/workspace-packages.mjs` into a temporary directory and checks
+the actual tarballs with publint and Are the Types Wrong (`attw --pack`). Temporary
+artifacts are removed even on failure. `pnpm verify` runs this immediately after
+`pnpm published-exports`; publint errors and attw problems fail the gate.
+
+Only attw's `cjs-resolves-to-esm` rule is ignored: these packages are ESM-only,
+so CommonJS consumers must use dynamic import. CSS and JSON asset subpaths are
+checked by publint but excluded from attw's JavaScript/type entrypoint analysis.
+The normal Node10, Node16, and bundler type-resolution checks remain enabled.
+
+Vue and theme builds finalize emitted declarations with explicit relative ESM
+extensions (including Vue declaration paths). CSS side-effect imports remain in
+JavaScript only. Their declaration maps are disabled because finalization changes
+the emitted text. Top-level `types` and the theme `define` type mapping also
+support consumers using legacy TypeScript resolution.

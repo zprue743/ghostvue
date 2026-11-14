@@ -3,7 +3,8 @@
   "compilerOptions": {
     "composite": false,
     "tsBuildInfoFile": null,
-    "rootDir": "src"
+    "rootDir": "src",
+    "declarationMap": false
   },
   "references": [],
   "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.vue"],
