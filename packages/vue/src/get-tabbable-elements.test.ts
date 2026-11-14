@@ -115,6 +115,33 @@ describe('getTabbableElements', () => {
     ])
   })
 
+  it('keeps a visibility:visible child tabbable inside a visibility:hidden parent', () => {
+    const root = mountRoot(`
+      <div style="visibility: hidden">
+        <button type="button" style="visibility: visible">Shown</button>
+      </div>
+      <button type="button">Plain</button>
+    `)
+
+    expect(getTabbableElements(root).map((el) => el.textContent)).toEqual([
+      'Shown',
+      'Plain',
+    ])
+  })
+
+  it('excludes elements with inherited visibility:hidden when not overridden', () => {
+    const root = mountRoot(`
+      <div style="visibility: hidden">
+        <button type="button">Hidden</button>
+      </div>
+      <button type="button">Plain</button>
+    `)
+
+    expect(getTabbableElements(root).map((el) => el.textContent)).toEqual([
+      'Plain',
+    ])
+  })
+
   it('excludes descendants inside display:none ancestors such as v-show', () => {
     const root = mountRoot(`
       <div style="display: none"><button type="button">Hidden</button></div>

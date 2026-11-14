@@ -122,16 +122,13 @@ function isHidden(element: HTMLElement): boolean {
     node;
     node = node.parentElement
   ) {
-    const style = getComputedStyle(node)
-    if (
-      style.display === 'none' ||
-      style.visibility === 'hidden' ||
-      style.visibility === 'collapse'
-    ) {
+    if (getComputedStyle(node).display === 'none') {
       return true
     }
   }
-  return false
+
+  const own = getComputedStyle(element)
+  return own.visibility === 'hidden' || own.visibility === 'collapse'
 }
 
 function hasDisabledProperty(
