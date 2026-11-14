@@ -47,15 +47,15 @@ Themed exports from `@ghostvue/themes`:
 
 #### `GhostSegmentedControl` (root)
 
-| Prop           | Type                          | Default        | Contract                                                                                |
-| -------------- | ----------------------------- | -------------- | --------------------------------------------------------------------------------------- |
-| `modelValue`   | `string \| undefined`         | `undefined`    | Controlled selection. Omit for uncontrolled.                                            |
-| `defaultValue` | `string \| undefined`         | `undefined`    | Initial selection when uncontrolled.                                                    |
-| `orientation`  | `'horizontal' \| 'vertical'`  | `'horizontal'` | Roving arrows and indicator slide axis.                                                 |
-| `dir`          | `'ltr' \| 'rtl' \| undefined` | `undefined`    | Explicit text direction for horizontal roving.                                          |
-| `as`           | `string \| Component`         | `'div'`        | Root host; must not be interactive.                                                     |
-| `disabled`     | `boolean`                     | `false`        | Disables every item.                                                                    |
-| `deselectable` | `boolean`                     | `false`        | When false, pressing the active segment keeps it pressed (typical view switching).      |
+| Prop           | Type                          | Default        | Contract                                                                           |
+| -------------- | ----------------------------- | -------------- | ---------------------------------------------------------------------------------- |
+| `modelValue`   | `string \| undefined`         | `undefined`    | Controlled selection. Omit for uncontrolled.                                       |
+| `defaultValue` | `string \| undefined`         | `undefined`    | Initial selection when uncontrolled.                                               |
+| `orientation`  | `'horizontal' \| 'vertical'`  | `'horizontal'` | Roving arrows and indicator slide axis.                                            |
+| `dir`          | `'ltr' \| 'rtl' \| undefined` | `undefined`    | Explicit text direction for horizontal roving.                                     |
+| `as`           | `string \| Component`         | `'div'`        | Root host; must not be interactive.                                                |
+| `disabled`     | `boolean`                     | `false`        | Disables every item.                                                               |
+| `deselectable` | `boolean`                     | `false`        | When false, pressing the active segment keeps it pressed (typical view switching). |
 
 #### `GhostSegmentedControlItem`
 

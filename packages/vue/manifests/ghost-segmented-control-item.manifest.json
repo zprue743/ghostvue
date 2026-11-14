@@ -1,0 +1,91 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "generated",
+  "name": "GhostSegmentedControlItem",
+  "package": "@ghostvue/vue",
+  "status": "experimental",
+  "description": "Segment toggle button with aria-pressed state inside GhostSegmentedControl.",
+  "props": [
+    {
+      "name": "as",
+      "type": "GhostSegmentedControlItemElement",
+      "default": "button",
+      "required": false,
+      "description": "Tag name or component for the segment control.",
+      "deprecated": false
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Disables toggling and roving focus for this item.",
+      "deprecated": false
+    },
+    {
+      "name": "value",
+      "type": "string",
+      "required": true,
+      "description": "Stable value for this item in the group model.",
+      "deprecated": false
+    }
+  ],
+  "models": [],
+  "events": [],
+  "slots": [
+    {
+      "name": "default",
+      "props": [],
+      "description": "Primary content."
+    }
+  ],
+  "exposed": [
+    {
+      "name": "blur",
+      "kind": "method",
+      "type": "() => void",
+      "description": "Exposed method `blur`."
+    },
+    {
+      "name": "element",
+      "kind": "property",
+      "type": "HTMLElement | null",
+      "description": "Exposed property `element`."
+    },
+    {
+      "name": "focus",
+      "kind": "method",
+      "type": "(options?: FocusOptions) => void",
+      "description": "Exposed method `focus`."
+    }
+  ],
+  "styling": {
+    "parts": [
+      {
+        "name": "item",
+        "description": "Toggle button host."
+      }
+    ],
+    "states": [
+      {
+        "name": "on",
+        "description": "Pressed segment."
+      },
+      {
+        "name": "off",
+        "description": "Unselected segment."
+      }
+    ],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "button",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/button/",
+    "keyboard": {
+      "Enter": "Toggle pressed state.",
+      "Space": "Toggle pressed state."
+    },
+    "requiredAriaAttributes": []
+  },
+  "examples": []
+}
