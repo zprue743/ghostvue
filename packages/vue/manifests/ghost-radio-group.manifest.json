@@ -7,10 +7,11 @@
   "description": "Headless native radio group root with roving focus, v-model, and form reset.",
   "props": [
     {
-      "name": "modelValue",
-      "type": "string",
+      "name": "as",
+      "type": "GhostRadioGroupElement",
+      "default": "fieldset",
       "required": false,
-      "description": "Declared prop `modelValue`.",
+      "description": "Declared prop `as`.",
       "deprecated": false
     },
     {
@@ -18,13 +19,6 @@
       "type": "string",
       "required": false,
       "description": "Declared prop `defaultValue`.",
-      "deprecated": false
-    },
-    {
-      "name": "name",
-      "type": "string",
-      "required": false,
-      "description": "Declared prop `name`.",
       "deprecated": false
     },
     {
@@ -36,19 +30,25 @@
       "deprecated": false
     },
     {
-      "name": "required",
-      "type": "boolean",
-      "default": false,
-      "required": false,
-      "description": "Declared prop `required`.",
-      "deprecated": false
-    },
-    {
       "name": "invalid",
       "type": "boolean",
       "default": false,
       "required": false,
       "description": "Declared prop `invalid`.",
+      "deprecated": false
+    },
+    {
+      "name": "modelValue",
+      "type": "string",
+      "required": false,
+      "description": "Declared prop `modelValue`.",
+      "deprecated": false
+    },
+    {
+      "name": "name",
+      "type": "string",
+      "required": false,
+      "description": "Declared prop `name`.",
       "deprecated": false
     },
     {
@@ -60,11 +60,11 @@
       "deprecated": false
     },
     {
-      "name": "as",
-      "type": "GhostRadioGroupElement",
-      "default": "fieldset",
+      "name": "required",
+      "type": "boolean",
+      "default": false,
       "required": false,
-      "description": "Declared prop `as`.",
+      "description": "Declared prop `required`.",
       "deprecated": false
     }
   ],
@@ -86,6 +86,12 @@
   ],
   "exposed": [
     {
+      "name": "blur",
+      "kind": "method",
+      "type": "() => void",
+      "description": "Exposed method `blur`."
+    },
+    {
       "name": "element",
       "kind": "property",
       "type": "HTMLElement | null",
@@ -96,12 +102,6 @@
       "kind": "method",
       "type": "(options?: FocusOptions) => void",
       "description": "Exposed method `focus`."
-    },
-    {
-      "name": "blur",
-      "kind": "method",
-      "type": "() => void",
-      "description": "Exposed method `blur`."
     }
   ],
   "styling": {

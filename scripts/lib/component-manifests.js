@@ -135,6 +135,56 @@ export function serializeManifest(manifest) {
   return `${JSON.stringify(manifest, null, 2)}\n`
 }
 
+const MANIFEST_NAME_COLLATOR = new Intl.Collator('en', { sensitivity: 'base' })
+
+export function compareManifestMemberNames(left, right) {
+  return MANIFEST_NAME_COLLATOR.compare(left, right)
+}
+
+function mapTypeDelimitedSegments(type, open, close, mapInner) {
+  let result = ''
+  let index = 0
+  while (index < type.length) {
+    const char = type[index]
+    if (char === open) {
+      let depth = 1
+      let end = index + 1
+      while (end < type.length && depth > 0) {
+        const next = type[end]
+        if (next === open) depth += 1
+        else if (next === close) depth -= 1
+        end += 1
+      }
+      const inner = type.slice(index + 1, end - 1)
+      result += open + mapInner(inner) + close
+      index = end
+      continue
+    }
+    result += char
+    index += 1
+  }
+  return result
+}
+
+function mapNestedTypeSegments(type, mapInner) {
+  let result = mapTypeDelimitedSegments(type, '(', ')', mapInner)
+  result = mapTypeDelimitedSegments(result, '<', '>', mapInner)
+  return mapTypeDelimitedSegments(result, '[', ']', mapInner)
+}
+
+/** Lexicographic order for every `|` union at each nesting depth in a type string. */
+export function sortUnionsInType(type) {
+  const trimmed = type.trim()
+  const parts = splitTopLevel(trimmed, '|')
+  if (parts.length > 1) {
+    return parts
+      .map((part) => sortUnionsInType(part.trim()))
+      .sort(compareManifestMemberNames)
+      .join(' | ')
+  }
+  return mapNestedTypeSegments(trimmed, sortUnionsInType)
+}
+
 export function normalizeType(type, { optional = false } = {}) {
   let result = type.trim()
   if (optional) {
@@ -143,7 +193,20 @@ export function normalizeType(type, { optional = false } = {}) {
   }
   result = result.replaceAll(/\?: ([^)|]+?) \| undefined/g, '?: $1')
   result = result.replaceAll(/"([^"]*)"/g, "'$1'")
-  return result
+  return sortUnionsInType(result)
+}
+
+// vue-component-meta prop/slot/emit order is not stable across TS builds; names are.
+function sortMembersByName(members) {
+  return [...members].sort((left, right) =>
+    compareManifestMemberNames(left.name, right.name),
+  )
+}
+
+function sortModelsByProp(models) {
+  return [...models].sort((left, right) =>
+    compareManifestMemberNames(left.prop, right.prop),
+  )
 }
 
 export function parseDefaultValue(raw) {
@@ -177,8 +240,8 @@ function splitTopLevel(value, separator) {
       current += char
       continue
     }
-    if (char === '(' || char === '[' || char === '{') depth += 1
-    if (char === ')' || char === ']' || char === '}') depth -= 1
+    if (char === '(' || char === '[' || char === '{' || char === '<') depth += 1
+    if (char === ')' || char === ']' || char === '}' || char === '>') depth -= 1
     if (char === separator && depth === 0) {
       parts.push(current)
       current = ''
@@ -239,13 +302,14 @@ function extractSlotProps(slot) {
   ) {
     return []
   }
-  return Object.values(schema.schema)
+  const props = Object.values(schema.schema)
     .filter((entry) => PROP_NAME.test(entry.name))
     .map((entry) => ({
       name: entry.name,
       type: normalizeType(entry.type, { optional: !entry.required }),
       description: entry.description,
     }))
+  return sortMembersByName(props)
 }
 
 export function buildDerivedContract(meta, { name, packageName }) {
@@ -346,11 +410,11 @@ export function buildDerivedContract(meta, { name, packageName }) {
       name,
       package: packageName,
       description: meta.description ?? '',
-      props,
-      models,
-      events,
-      slots,
-      exposed,
+      props: sortMembersByName(props),
+      models: sortModelsByProp(models),
+      events: sortMembersByName(events),
+      slots: sortMembersByName(slots),
+      exposed: sortMembersByName(exposed),
     },
   }
 }

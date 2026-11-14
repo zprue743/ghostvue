@@ -15,18 +15,18 @@
       "deprecated": false
     },
     {
-      "name": "value",
-      "type": "string",
-      "required": true,
-      "description": "Stable value identifying this tab and its panel.",
-      "deprecated": false
-    },
-    {
       "name": "disabled",
       "type": "boolean",
       "default": false,
       "required": false,
       "description": "Disables selection and removes the tab from roving focus.",
+      "deprecated": false
+    },
+    {
+      "name": "value",
+      "type": "string",
+      "required": true,
+      "description": "Stable value identifying this tab and its panel.",
       "deprecated": false
     }
   ],
@@ -41,6 +41,12 @@
   ],
   "exposed": [
     {
+      "name": "blur",
+      "kind": "method",
+      "type": "() => void",
+      "description": "Exposed method `blur`."
+    },
+    {
       "name": "element",
       "kind": "property",
       "type": "HTMLElement | null",
@@ -51,12 +57,6 @@
       "kind": "method",
       "type": "(options?: FocusOptions) => void",
       "description": "Exposed method `focus`."
-    },
-    {
-      "name": "blur",
-      "kind": "method",
-      "type": "() => void",
-      "description": "Exposed method `blur`."
     }
   ],
   "styling": {

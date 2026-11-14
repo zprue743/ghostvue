@@ -7,13 +7,6 @@
   "description": "Headless native text field. useGhostInput owns the string model and disabled/readonly/invalid/required; GhostInput is the thin unstyled element. Themed visual props live on @ghostvue/themes.",
   "props": [
     {
-      "name": "modelValue",
-      "type": "string",
-      "required": false,
-      "description": "Controlled value. Omit for uncontrolled mode. An empty string is a real controlled value, not unset.",
-      "deprecated": false
-    },
-    {
       "name": "defaultValue",
       "type": "string",
       "default": "",
@@ -30,19 +23,26 @@
       "deprecated": false
     },
     {
-      "name": "readonly",
-      "type": "boolean",
-      "default": false,
-      "required": false,
-      "description": "Applies native readonly semantics. The field stays focusable and is submitted, but cannot be edited.",
-      "deprecated": false
-    },
-    {
       "name": "invalid",
       "type": "boolean",
       "default": false,
       "required": false,
       "description": "Consumer-owned validity. Sets aria-invalid and data-state=invalid. Does not mirror native ValidityState.",
+      "deprecated": false
+    },
+    {
+      "name": "modelValue",
+      "type": "string",
+      "required": false,
+      "description": "Controlled value. Omit for uncontrolled mode. An empty string is a real controlled value, not unset.",
+      "deprecated": false
+    },
+    {
+      "name": "readonly",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Applies native readonly semantics. The field stays focusable and is submitted, but cannot be edited.",
       "deprecated": false
     },
     {
@@ -74,6 +74,12 @@
   "slots": [],
   "exposed": [
     {
+      "name": "blur",
+      "kind": "method",
+      "type": "() => void",
+      "description": "Removes focus from the native input when it is mounted."
+    },
+    {
       "name": "element",
       "kind": "property",
       "type": "HTMLInputElement | null",
@@ -84,12 +90,6 @@
       "kind": "method",
       "type": "(options?: FocusOptions) => void",
       "description": "Moves focus to the native input when it is mounted and not disabled."
-    },
-    {
-      "name": "blur",
-      "kind": "method",
-      "type": "() => void",
-      "description": "Removes focus from the native input when it is mounted."
     }
   ],
   "styling": {

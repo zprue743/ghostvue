@@ -7,19 +7,11 @@
   "description": "Headless APG toolbar container. useGhostToolbar owns role and orientation semantics; useRovingFocus moves among focusable slot children. Themed flex layout lives on @ghostvue/themes.",
   "props": [
     {
-      "name": "orientation",
-      "type": "GhostToolbarOrientation",
-      "default": "horizontal",
+      "name": "as",
+      "type": "GhostToolbarElement",
+      "default": "div",
       "required": false,
-      "description": "Toolbar layout and roving arrow axis. Sets aria-orientation when vertical.",
-      "deprecated": false
-    },
-    {
-      "name": "loop",
-      "type": "boolean",
-      "default": true,
-      "required": false,
-      "description": "Wrap arrow and Home/End movement from last enabled item to first.",
+      "description": "Root element tag for the toolbar container.",
       "deprecated": false
     },
     {
@@ -37,11 +29,19 @@
       "deprecated": false
     },
     {
-      "name": "as",
-      "type": "GhostToolbarElement",
-      "default": "div",
+      "name": "loop",
+      "type": "boolean",
+      "default": true,
       "required": false,
-      "description": "Root element tag for the toolbar container.",
+      "description": "Wrap arrow and Home/End movement from last enabled item to first.",
+      "deprecated": false
+    },
+    {
+      "name": "orientation",
+      "type": "GhostToolbarOrientation",
+      "default": "horizontal",
+      "required": false,
+      "description": "Toolbar layout and roving arrow axis. Sets aria-orientation when vertical.",
       "deprecated": false
     }
   ],
@@ -56,6 +56,12 @@
   ],
   "exposed": [
     {
+      "name": "blur",
+      "kind": "method",
+      "type": "() => void",
+      "description": "Exposed method `blur`."
+    },
+    {
       "name": "element",
       "kind": "property",
       "type": "HTMLElement | null",
@@ -66,12 +72,6 @@
       "kind": "method",
       "type": "(options?: FocusOptions) => void",
       "description": "Exposed method `focus`."
-    },
-    {
-      "name": "blur",
-      "kind": "method",
-      "type": "() => void",
-      "description": "Exposed method `blur`."
     }
   ],
   "styling": {

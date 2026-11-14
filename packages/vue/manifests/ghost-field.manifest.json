@@ -7,18 +7,18 @@
   "description": "Compound field primitive connecting GhostFieldLabel, GhostFieldDescription, GhostFieldError, and GhostFieldControl to a single control via useGhostId and scoped slot props. Composes with GhostInput, GhostTextarea, and GhostCheckbox without API changes.",
   "props": [
     {
-      "name": "id",
-      "type": "string",
-      "required": false,
-      "description": "Optional control id override for label association.",
-      "deprecated": false
-    },
-    {
       "name": "disabled",
       "type": "boolean",
       "default": false,
       "required": false,
       "description": "Propagates disabled semantics to the control.",
+      "deprecated": false
+    },
+    {
+      "name": "id",
+      "type": "string",
+      "required": false,
+      "description": "Optional control id override for label association.",
       "deprecated": false
     },
     {

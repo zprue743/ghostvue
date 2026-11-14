@@ -98,6 +98,8 @@ export function validateExampleManifests(
   componentNames?: string[],
 ): Promise<string[]>
 export function serializeManifest(manifest: unknown): string
+export function compareManifestMemberNames(left: string, right: string): number
+export function sortUnionsInType(type: string): string
 export function normalizeType(
   type: string,
   options?: { optional?: boolean },
