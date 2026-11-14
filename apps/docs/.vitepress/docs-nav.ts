@@ -115,6 +115,10 @@ export const docsSidebar: LlmsSidebarGroup[] = [
         link: '/components/separator-spec',
       },
       {
+        text: 'GhostSkeleton specification',
+        link: '/components/skeleton-spec',
+      },
+      {
         text: 'GhostSpinner specification',
         link: '/components/spinner-spec',
       },
