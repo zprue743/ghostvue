@@ -1,0 +1,105 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "generated",
+  "name": "GhostCheckbox",
+  "package": "@ghostvue/vue",
+  "status": "experimental",
+  "description": "Headless native checkbox. useGhostCheckbox owns boolean v-model and mixed state; GhostCheckbox is the thin unstyled input. Themed visual props live on @ghostvue/themes.",
+  "props": [
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Native disabled semantics: no activation, no sequential focus, and excluded from form submission.",
+      "deprecated": false
+    },
+    {
+      "name": "modelValue",
+      "type": "boolean",
+      "required": false,
+      "description": "Controlled checked state. Omit it for uncontrolled use. undefined is uncontrolled; false is unchecked. Mixed is the indeterminate prop, not a third model value.",
+      "deprecated": false
+    },
+    {
+      "name": "defaultValue",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Initial checked state when modelValue is omitted. Later changes are ignored.",
+      "deprecated": false
+    },
+    {
+      "name": "indeterminate",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Mixed state for select-all and similar. Applied through the DOM indeterminate property. Consumer-owned; not part of the v-model.",
+      "deprecated": false
+    }
+  ],
+  "models": [
+    {
+      "prop": "modelValue",
+      "event": "update:modelValue",
+      "type": "boolean",
+      "description": "Checked state. Activation emits the native post-click boolean."
+    }
+  ],
+  "events": [],
+  "slots": [],
+  "exposed": [
+    {
+      "name": "element",
+      "kind": "property",
+      "type": "HTMLInputElement | null",
+      "description": "The native checkbox after mount; null before mount and after unmount."
+    },
+    {
+      "name": "focus",
+      "kind": "method",
+      "type": "(options?: FocusOptions) => void",
+      "description": "Focuses the native checkbox when it is mounted and enabled. No-op before mount."
+    },
+    {
+      "name": "blur",
+      "kind": "method",
+      "type": "() => void",
+      "description": "Removes focus from the native checkbox when it is mounted. No-op before mount."
+    }
+  ],
+  "styling": {
+    "parts": [
+      {
+        "name": "root",
+        "description": "The native checkbox input."
+      }
+    ],
+    "states": [
+      {
+        "name": "checked",
+        "description": "Checked and not mixed. Omitted while unchecked."
+      },
+      {
+        "name": "indeterminate",
+        "description": "Mixed visual and AT state. Wins over checked when both apply."
+      }
+    ],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "checkbox",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/checkbox/",
+    "keyboard": {
+      "Space": "Toggle checked when the control is enabled. Follows native mixed activation.",
+      "Enter": "Does not toggle. In a form, submits."
+    },
+    "requiredAriaAttributes": []
+  },
+  "examples": [
+    "checkbox/basic",
+    "checkbox/composable",
+    "checkbox/indeterminate",
+    "checkbox/ref"
+  ]
+}

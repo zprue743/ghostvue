@@ -12,8 +12,10 @@ are not a component contract, so they do not take that prefix:
 - `useControllableState` is a generic Vue state helper, so the descriptive
   name is the public name.
 
-Using them from Collapsible and Checkbox is deferred until those components
-exist.
+`GhostCheckbox` uses `useControllableState` for `modelValue`. `useGhostId` is
+unused there: Field (GHO-71) will own label/control ids, and until then
+Checkbox passes `id` through as a native attribute. Using the helpers from
+Collapsible is still deferred.
 
 ## `useGhostId(prefix?, id?)`
 

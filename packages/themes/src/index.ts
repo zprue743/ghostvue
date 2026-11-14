@@ -36,6 +36,13 @@ export {
   type GhostButtonVariant,
 } from './ghost-button'
 
+export {
+  GhostCheckbox,
+  type GhostCheckboxExposed,
+  type GhostCheckboxSize,
+  type GhostCheckboxTone,
+} from './ghost-checkbox'
+
 export { GhostKbd, type GhostKbdPlatform, type GhostKbdSize } from './ghost-kbd'
 
 export {
