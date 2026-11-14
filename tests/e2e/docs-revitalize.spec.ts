@@ -8,12 +8,53 @@ function isTransparentColor(value: string): boolean {
   )
 }
 
-async function assertNoPageOverflow(page: Page) {
-  const overflow = await page.evaluate(() => {
-    const doc = document.documentElement
-    return doc.scrollWidth - doc.clientWidth
-  })
-  expect(overflow).toBeLessThanOrEqual(0)
+async function assertNoPageOverflow(page: Page): Promise<void> {
+  const viewport = page.viewportSize()
+  expect(viewport).not.toBeNull()
+  if (!viewport) return
+
+  const report = await page.evaluate((viewportWidth) => {
+    const root = document.documentElement
+    const scrollDelta = root.scrollWidth - root.clientWidth
+
+    const offenders: string[] = []
+
+    const isScrollableX = (element: Element): boolean => {
+      const style = getComputedStyle(element)
+      return (
+        style.overflowX === 'auto' ||
+        style.overflowX === 'scroll' ||
+        style.overflowX === 'overlay'
+      )
+    }
+
+    const walk = (element: Element, ancestorScrollable: boolean): void => {
+      const rect = element.getBoundingClientRect()
+      const scrollable = ancestorScrollable || isScrollableX(element)
+      if (!scrollable && rect.right > viewportWidth + 0.5) {
+        const classes =
+          typeof element.className === 'string'
+            ? element.className.split(/\s+/).slice(0, 2).join('.')
+            : ''
+        const label = classes
+          ? `${element.tagName.toLowerCase()}.${classes}`
+          : element.tagName.toLowerCase()
+        offenders.push(`${label} (right=${rect.right.toFixed(1)})`)
+      }
+      for (const child of element.children) {
+        walk(child, scrollable)
+      }
+    }
+
+    walk(document.body, false)
+
+    return { scrollDelta, offenders: offenders.slice(0, 8) }
+  }, viewport.width)
+
+  if (report.scrollDelta > 1) {
+    expect(report.scrollDelta).toBeLessThanOrEqual(1)
+  }
+  expect(report.offenders).toEqual([])
 }
 
 async function fieldChrome(locator: Locator): Promise<{
@@ -94,6 +135,35 @@ test.describe('docs revitalize phase 1', () => {
       ).toBeGreaterThan(0)
       expect(Number.parseFloat(textareaStyles.borderTopWidth)).toBeGreaterThan(0)
       expect(isTransparentColor(textareaStyles.backgroundColor)).toBe(false)
+    } finally {
+      await docs.close()
+    }
+  })
+
+  test('themed GhostCheckbox paints recipe chrome on ::before', async ({
+    page,
+  }) => {
+    const docs = await startStaticServer('apps/docs/.vitepress/dist')
+    try {
+      await page.goto(`${docs.url}/components/checkbox.html`)
+      const checkbox = page
+        .locator('[data-example-id="checkbox/themed"]')
+        .getByTestId('ghost-example-preview')
+        .locator('.ghost-checkbox')
+        .first()
+      await expect(checkbox).toBeVisible()
+
+      const mark = await checkbox.evaluate((element) => {
+        const before = getComputedStyle(element, '::before')
+        return {
+          content: before.content,
+          borderTopWidth: before.borderTopWidth,
+          backgroundColor: before.backgroundColor,
+        }
+      })
+      expect(mark.content).not.toBe('none')
+      expect(Number.parseFloat(mark.borderTopWidth)).toBeGreaterThan(0)
+      expect(isTransparentColor(mark.backgroundColor)).toBe(false)
     } finally {
       await docs.close()
     }

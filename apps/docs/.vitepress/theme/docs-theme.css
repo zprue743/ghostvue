@@ -155,23 +155,79 @@ html[data-ghost-theme='mono'] {
  * Narrow viewports: keep brand + menu in the header; theme pickers live in the
  * mobile nav panel (duplicate switcher in Layout.vue).
  */
+/*
+ * Below the desktop nav breakpoint (960px), the four-option switcher does not
+ * fit beside VP chrome. Narrow phones use the mobile menu copy; tablet widths
+ * use the compact strip below.
+ */
 @media (max-width: 767px) {
   .VPNavBar .ghost-docs-theme-switcher {
     display: none;
   }
 
-  .VPNav .wrapper {
-    max-inline-size: 100%;
-    overflow-x: clip;
+  .VPNavBar .content-body {
+    flex-wrap: nowrap;
+    min-inline-size: 0;
+  }
+
+  .VPNavBar .content {
+    flex: 1 1 auto;
+    min-inline-size: 0;
+    overflow: hidden;
+  }
+
+  .VPNavBar .title {
+    flex: 0 1 auto;
+    max-inline-size: 45%;
+    min-inline-size: 0;
+    overflow: hidden;
+  }
+
+  .VPNavBar .title :deep(.title) {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 }
 
-html,
-body {
-  overflow-x: clip;
+@media (min-width: 768px) and (max-width: 959px) {
+  .VPNavBar .ghost-docs-theme-switcher {
+    flex-shrink: 1;
+    gap: 0.05rem;
+    margin-inline-start: 0.35rem;
+    min-inline-size: 0;
+    padding: 0.1rem;
+  }
+
+  .VPNavBar .ghost-docs-theme-switcher__option {
+    font-size: 0.62rem;
+    padding: 0.2rem 0.35rem;
+  }
+
+  .VPNavBar .content-body {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    overflow: hidden;
+  }
+}
+
+@media (min-width: 960px) {
+  .VPNavBar .container {
+    max-inline-size: min(100%, calc(var(--vp-layout-max-width) - 64px));
+  }
 }
 
 .vp-doc :is(pre, div[class*='language-']) {
+  max-inline-size: 100%;
+  overflow-x: auto;
+}
+
+.ghost-example {
+  box-sizing: border-box;
+  max-inline-size: 100%;
+}
+
+.ghost-example__stage {
   max-inline-size: 100%;
   overflow-x: auto;
 }

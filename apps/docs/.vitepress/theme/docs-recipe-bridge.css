@@ -1,12 +1,20 @@
 /*
  * VitePress `base.css` zeros border, padding, and background on native
- * controls with unlayered rules. GhostVue recipes live in
- * `@layer ghostvue-theme` with `:where()`, so those resets win in docs.
+ * `button`, `input`, `textarea`, `select`, and `optgroup` with unlayered rules.
+ * GhostVue recipes live in `@layer ghostvue-theme` with `:where()`, so those
+ * resets win in docs.
  *
- * Restore presentation only under `.ghost-themed-scope` (themed wrappers and
- * explicit scopes), using the same private `--_ghost-*` wiring the layer still
- * sets on each instance. Do not target `html` or `.ghost-theme` on the canvas:
- * the docs host must not apply recipes to headless previews.
+ * Restore presentation only under `.ghost-themed-scope`, using the same private
+ * `--_ghost-*` wiring the layer still sets on each instance.
+ *
+ * Audit (native surface vs docs previews):
+ * - Bridged below: GhostButton, GhostInput, GhostTextarea, GhostTabsTrigger,
+ *   GhostCollapsibleTrigger (VP strips box model the recipes expect).
+ * - Unaffected: GhostCheckbox (themed chrome is on ::before; the input matches
+ *   VP's zero border/padding), GhostSwitch (chrome on [data-part] children),
+ *   GhostProgress/Skeleton/Badge/Kbd/Separator/Spinner (non-native or no VP
+ *   reset conflict), number/password/search input types (`.ghost-input`).
+ * - No GhostSelect on master.
  */
 .ghost-themed-scope .ghost-button {
   appearance: none;
@@ -66,4 +74,33 @@
   padding-block: var(--_ghost-textarea-padding-block);
   padding-inline: var(--_ghost-textarea-padding-inline);
   resize: vertical;
+}
+
+.ghost-themed-scope .ghost-tabs-trigger {
+  background-color: transparent;
+  border: var(--ghost-border-hairline-width) solid transparent;
+  border-radius: var(--ghost-radius-md);
+  color: var(--ghost-surface-fg-muted);
+  cursor: pointer;
+  font: inherit;
+  padding: var(--ghost-space-inset-sm) var(--ghost-space-inset-md);
+}
+
+.ghost-themed-scope .ghost-collapsible-trigger {
+  align-items: center;
+  background: transparent;
+  border: var(--ghost-border-hairline-width) solid var(--ghost-surface-border);
+  border-radius: var(--ghost-radius-md);
+  color: var(--ghost-surface-fg);
+  cursor: pointer;
+  display: inline-flex;
+  font-family: var(--ghost-type-family-sans);
+  font-feature-settings: var(--ghost-type-feature-default);
+  font-size: var(--ghost-type-size-sm);
+  font-weight: var(--ghost-type-weight-medium);
+  gap: var(--ghost-space-inline-xs);
+  line-height: var(--ghost-type-leading-snug);
+  padding: var(--ghost-space-inset-sm) var(--ghost-space-inset-md);
+  text-align: start;
+  width: 100%;
 }

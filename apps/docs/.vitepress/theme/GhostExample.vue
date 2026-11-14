@@ -95,9 +95,11 @@ onUnmounted(() => {
 
 <style scoped>
 .ghost-example {
+  box-sizing: border-box;
   display: grid;
   gap: 0;
   margin-block: 1.5rem 0;
+  max-inline-size: 100%;
   overflow: hidden;
   border: 1px solid var(--ghost-border-default, var(--vp-c-border));
   border-block-end: 0;
@@ -111,6 +113,8 @@ onUnmounted(() => {
 .ghost-example__header {
   display: grid;
   gap: 0.35rem;
+  max-inline-size: 100%;
+  min-inline-size: 0;
   padding: 1rem 1.15rem 0.85rem;
 }
 
@@ -119,12 +123,16 @@ onUnmounted(() => {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
+  max-inline-size: 100%;
+  min-inline-size: 0;
 }
 
 .ghost-example__title {
   color: var(--ghost-surface-fg, var(--vp-c-text-1));
+  flex: 1 1 auto;
   font-size: 0.95rem;
   font-weight: 650;
+  min-inline-size: 0;
   letter-spacing: 0.01em;
   line-height: 1.3;
 }
@@ -153,7 +161,9 @@ onUnmounted(() => {
 
 .ghost-example__preview {
   isolation: isolate;
+  max-inline-size: 100%;
   min-block-size: 8rem;
+  min-inline-size: 0;
   padding: 1.75rem 1.25rem;
   position: relative;
   background-color: var(--ghost-surface-bg, var(--vp-c-bg));
@@ -184,7 +194,9 @@ onUnmounted(() => {
   flex-wrap: wrap;
   gap: 0.75rem;
   justify-content: center;
+  max-inline-size: 100%;
   min-block-size: 4.5rem;
+  overflow-x: auto;
 }
 
 .ghost-example__preview :deep(table) {
