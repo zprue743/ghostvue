@@ -599,6 +599,12 @@ export const ghostExamples = [
     layer: 'headless',
   },
   {
+    id: 'number-input/form-locale',
+    title: 'Form locale',
+    description: 'Hidden submit value stays machine-readable in de-DE.',
+    layer: 'headless',
+  },
+  {
     id: 'number-input/ref',
     title: 'Component ref',
     description: 'Programmatic increment through the exposed API.',

@@ -228,4 +228,4 @@ export {
 export {
   GhostNumberInput,
   type GhostNumberInputExposed,
-} from './ghost-number-input')
+} from './ghost-number-input'

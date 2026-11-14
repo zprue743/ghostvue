@@ -117,7 +117,9 @@ describe('GhostNumberInput', () => {
       },
       { attachTo: document.body },
     )
-    const input = wrapper.get('input').element as HTMLInputElement
+    const input = wrapper.get('[role="spinbutton"]').element as HTMLInputElement
+    const hidden = wrapper.get('input[type="hidden"]')
+      .element as HTMLInputElement
 
     input.value = '8'
     input.dispatchEvent(new InputEvent('input', { bubbles: true }))
@@ -130,7 +132,125 @@ describe('GhostNumberInput', () => {
     await nextTick()
 
     expect(input.value).toBe('3')
+    expect(hidden.value).toBe('3')
     wrapper.unmount()
+  })
+
+  it('steps from a typed draft before ArrowUp commits it', async () => {
+    const wrapper = mount(GhostNumberInput, {
+      attachTo: document.body,
+      props: { defaultValue: 25, step: 5, min: 0, max: 100 },
+    })
+    const input = wrapper.get('[role="spinbutton"]')
+
+    await input.trigger('focus')
+    await input.setValue('50')
+    await input.trigger('keydown', { key: 'ArrowUp' })
+
+    expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual([55])
+    expect((input.element as HTMLInputElement).value).toBe('55')
+    wrapper.unmount()
+  })
+
+  it('steps from a typed draft under v-model before the parent re-renders', async () => {
+    const model = ref<number | null>(25)
+    const wrapper = mount(GhostNumberInput, {
+      attachTo: document.body,
+      props: {
+        modelValue: model.value,
+        step: 5,
+        min: 0,
+        max: 100,
+        'onUpdate:modelValue': (next: number | null) => {
+          model.value = next
+        },
+      },
+    })
+    const input = wrapper.get('[role="spinbutton"]')
+
+    await input.trigger('focus')
+    await input.setValue('50')
+    await input.trigger('keydown', { key: 'ArrowUp' })
+
+    expect(wrapper.emitted('update:modelValue')).toEqual([[50], [55]])
+    wrapper.unmount()
+  })
+
+  it('reverts invalid blur text to the last committed value', async () => {
+    const wrapper = mount(GhostNumberInput, {
+      props: { modelValue: 12 },
+      attachTo: document.body,
+    })
+    const input = wrapper.get('[role="spinbutton"]').element as HTMLInputElement
+
+    input.focus()
+    input.value = '12abc'
+    input.dispatchEvent(new InputEvent('input', { bubbles: true }))
+    input.dispatchEvent(new FocusEvent('blur', { bubbles: true }))
+    await nextTick()
+
+    expect(input.value).toBe('12')
+    expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+    wrapper.unmount()
+  })
+
+  it('commits on Enter so a form submit sees the latest value', async () => {
+    const amount = ref(10)
+    const wrapper = mount(
+      {
+        setup() {
+          return () =>
+            h(
+              'form',
+              {
+                onSubmit: (event: Event) => {
+                  event.preventDefault()
+                },
+              },
+              [
+                h(GhostNumberInput, {
+                  modelValue: amount.value,
+                  name: 'qty',
+                  step: 1,
+                  'onUpdate:modelValue': (value: number | null) => {
+                    amount.value = value ?? 0
+                  },
+                }),
+                h('button', { type: 'submit' }, 'Go'),
+              ],
+            )
+        },
+      },
+      { attachTo: document.body },
+    )
+    const input = wrapper.get('[role="spinbutton"]').element as HTMLInputElement
+    const hidden = wrapper.get('input[type="hidden"]')
+      .element as HTMLInputElement
+
+    input.focus()
+    input.value = '44'
+    input.dispatchEvent(new InputEvent('input', { bubbles: true }))
+    input.dispatchEvent(
+      new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }),
+    )
+    await nextTick()
+
+    expect(amount.value).toBe(44)
+    expect(hidden.value).toBe('44')
+    wrapper.unmount()
+  })
+
+  it('puts name on the hidden input and submits the machine value', () => {
+    const wrapper = mount(GhostNumberInput, {
+      props: { modelValue: 1234.5, name: 'amount', locale: 'de-DE' },
+    })
+    const spinbutton = wrapper.get('[role="spinbutton"]')
+    const hidden = wrapper.get('input[type="hidden"]')
+
+    expect(spinbutton.attributes('name')).toBeUndefined()
+    expect(hidden.attributes('name')).toBe('amount')
+    expect((hidden.element as HTMLInputElement).value).toBe('1234.5')
+    expect((spinbutton.element as HTMLInputElement).value).toContain('1')
   })
 
   it('exposes focus and increment through the template ref', async () => {

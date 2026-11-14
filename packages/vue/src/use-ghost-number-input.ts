@@ -40,6 +40,14 @@ export interface GhostNumberInputInputProps {
   onFocus: (event: FocusEvent) => void
 }
 
+export interface GhostNumberInputHiddenInputProps {
+  type: 'hidden'
+  name: string | undefined
+  value: string
+  form: string | undefined
+  disabled: boolean | undefined
+}
+
 export interface GhostNumberInputButtonProps {
   type: 'button'
   class: 'ghost-number-input__button'
@@ -49,6 +57,9 @@ export interface GhostNumberInputButtonProps {
   'data-part': 'decrement' | 'increment'
   onClick: (event: MouseEvent) => void
 }
+
+type DraftParseResult =
+  { kind: 'empty' } | { kind: 'invalid' } | { kind: 'valid'; value: number }
 
 const formatterCache = new Map<string, Intl.NumberFormat>()
 
@@ -94,15 +105,20 @@ function formatNumber(
   return getFormatter(locale, options).format(value)
 }
 
-function parseLocalizedNumber(
+/** Canonical string for native form submission, not the localized display. */
+function formSubmitValue(value: number | null): string {
+  return value === null ? '' : String(value)
+}
+
+function parseDraft(
   input: string,
   locale: string | undefined,
-  options: Intl.NumberFormatOptions,
-): number | null {
+  formatOptions: Intl.NumberFormatOptions,
+): DraftParseResult {
   const trimmed = input.trim()
-  if (!trimmed) return null
+  if (!trimmed) return { kind: 'empty' }
 
-  const formatter = getFormatter(locale, options)
+  const formatter = getFormatter(locale, formatOptions)
   const parts = formatter.formatToParts(-12345.67)
   const decimal = parts.find((part) => part.type === 'decimal')?.value ?? '.'
   const group = parts.find((part) => part.type === 'group')?.value ?? ','
@@ -117,7 +133,8 @@ function parseLocalizedNumber(
   }
 
   const parsed = Number(normalized)
-  return Number.isFinite(parsed) ? parsed : null
+  if (!Number.isFinite(parsed)) return { kind: 'invalid' }
+  return { kind: 'valid', value: parsed }
 }
 
 function stepFrom(
@@ -158,6 +175,7 @@ export function useGhostNumberInput(options: UseGhostNumberInputOptions = {}): {
   isRequired: ComputedRef<boolean>
   rootProps: ComputedRef<GhostNumberInputRootProps>
   inputProps: ComputedRef<GhostNumberInputInputProps>
+  hiddenInputProps: ComputedRef<GhostNumberInputHiddenInputProps>
   decrementProps: ComputedRef<GhostNumberInputButtonProps>
   incrementProps: ComputedRef<GhostNumberInputButtonProps>
   increment: () => void
@@ -191,57 +209,101 @@ export function useGhostNumberInput(options: UseGhostNumberInputOptions = {}): {
   const locale = computed(() => toValue(options.locale))
   const formatOptions = computed(() => toValue(options.formatOptions) ?? {})
 
-  function syncInputDisplay(nextValue: number | null): void {
+  function currentDraftText(): string {
+    const el = toValue(options.element)
+    if (editing.value) return el?.value ?? draftText.value
+    return el?.value ?? draftText.value
+  }
+
+  function syncHiddenInput(nextValue: number | null): void {
+    const hidden = toValue(options.formInput)
+    if (!hidden) return
+    const next = formSubmitValue(nextValue)
+    if (hidden.value !== next) hidden.value = next
+  }
+
+  function syncSpinbuttonDisplay(nextValue: number | null): void {
     const el = toValue(options.element)
     if (!el || editing.value) return
     const display = formatNumber(nextValue, locale.value, formatOptions.value)
-    if (el.value !== display) {
-      el.value = display
+    if (el.value !== display) el.value = display
+  }
+
+  function revertDraftToCommitted(target?: HTMLInputElement): void {
+    const display = formatNumber(value.value, locale.value, formatOptions.value)
+    draftText.value = display
+    const el = target ?? toValue(options.element)
+    if (el && el.value !== display) el.value = display
+  }
+
+  function commitDraft(target?: HTMLInputElement): number | null {
+    const parsed = parseDraft(
+      target?.value ?? currentDraftText(),
+      locale.value,
+      formatOptions.value,
+    )
+
+    if (parsed.kind === 'invalid') {
+      revertDraftToCommitted(target)
+      return value.value
     }
+
+    const committed =
+      parsed.kind === 'empty'
+        ? null
+        : clampNumber(parsed.value, min.value, max.value)
+
+    if (!Object.is(committed, value.value)) {
+      value.value = committed
+    }
+
+    draftText.value = formatNumber(
+      value.value,
+      locale.value,
+      formatOptions.value,
+    )
+    const el = target ?? toValue(options.element)
+    if (el && el.value !== draftText.value) el.value = draftText.value
+    syncHiddenInput(committed)
+    return committed
   }
 
   function applyFormReset(): void {
     value.value = seed
     editing.value = false
     draftText.value = ''
-    const el = toValue(options.element)
-    if (!el) return
+    syncSpinbuttonDisplay(seed)
+    syncHiddenInput(seed)
 
     const controlled = toValue(options.modelValue) !== undefined
-    const display = formatNumber(seed, locale.value, formatOptions.value)
-    if (!controlled) {
-      if (el.value !== display) el.value = display
-      return
-    }
+    if (!controlled) return
 
     void nextTick(() => {
-      if (!el.isConnected) return
-      const expected = formatNumber(
-        value.value,
-        locale.value,
-        formatOptions.value,
-      )
-      if (el.value === expected) return
-      el.value = expected
+      syncSpinbuttonDisplay(value.value)
+      syncHiddenInput(value.value)
     })
+  }
+
+  function setValueFromStep(next: number): void {
+    value.value = next
+    editing.value = false
+    draftText.value = formatNumber(next, locale.value, formatOptions.value)
+    syncSpinbuttonDisplay(next)
+    syncHiddenInput(next)
   }
 
   function increment(): void {
     if (isDisabled.value || isReadonly.value) return
-    if (!canStep(value.value, 1, step.value, min.value, max.value)) return
-    const next = stepFrom(value.value, 1, step.value, min.value, max.value)
-    value.value = next
-    editing.value = false
-    syncInputDisplay(next)
+    const current = commitDraft()
+    if (!canStep(current, 1, step.value, min.value, max.value)) return
+    setValueFromStep(stepFrom(current, 1, step.value, min.value, max.value))
   }
 
   function decrement(): void {
     if (isDisabled.value || isReadonly.value) return
-    if (!canStep(value.value, -1, step.value, min.value, max.value)) return
-    const next = stepFrom(value.value, -1, step.value, min.value, max.value)
-    value.value = next
-    editing.value = false
-    syncInputDisplay(next)
+    const current = commitDraft()
+    if (!canStep(current, -1, step.value, min.value, max.value)) return
+    setValueFromStep(stepFrom(current, -1, step.value, min.value, max.value))
   }
 
   function onFocus(): void {
@@ -263,24 +325,7 @@ export function useGhostNumberInput(options: UseGhostNumberInputOptions = {}): {
     const target = event.target
     if (!(target instanceof HTMLInputElement)) return
     editing.value = false
-
-    const parsed = parseLocalizedNumber(
-      draftText.value,
-      locale.value,
-      formatOptions.value,
-    )
-
-    const committed =
-      parsed === null ? null : clampNumber(parsed, min.value, max.value)
-
-    if (!Object.is(committed, value.value)) {
-      value.value = committed
-    }
-
-    const display = formatNumber(value.value, locale.value, formatOptions.value)
-    if (target.value !== display) {
-      target.value = display
-    }
+    commitDraft(target)
 
     void nextTick(() => {
       if (!target.isConnected) return
@@ -297,71 +342,82 @@ export function useGhostNumberInput(options: UseGhostNumberInputOptions = {}): {
   function onKeydown(event: KeyboardEvent): void {
     if (isDisabled.value || isReadonly.value) return
 
+    if (event.key === 'Enter') {
+      commitDraft(
+        event.target instanceof HTMLInputElement ? event.target : undefined,
+      )
+      return
+    }
+
+    const steppingKeys = [
+      'ArrowUp',
+      'ArrowDown',
+      'PageUp',
+      'PageDown',
+      'Home',
+      'End',
+    ]
+    if (!steppingKeys.includes(event.key)) return
+
+    const input =
+      event.target instanceof HTMLInputElement ? event.target : undefined
+    if (input) {
+      editing.value = true
+      draftText.value = input.value
+    }
+
+    const current = commitDraft(input)
+
     if (event.key === 'ArrowUp') {
       event.preventDefault()
-      if (canStep(value.value, 1, step.value, min.value, max.value)) {
-        const next = stepFrom(value.value, 1, step.value, min.value, max.value)
-        value.value = next
-        draftText.value = formatNumber(next, locale.value, formatOptions.value)
+      if (canStep(current, 1, step.value, min.value, max.value)) {
+        setValueFromStep(stepFrom(current, 1, step.value, min.value, max.value))
       }
       return
     }
     if (event.key === 'ArrowDown') {
       event.preventDefault()
-      if (canStep(value.value, -1, step.value, min.value, max.value)) {
-        const next = stepFrom(value.value, -1, step.value, min.value, max.value)
-        value.value = next
-        draftText.value = formatNumber(next, locale.value, formatOptions.value)
+      if (canStep(current, -1, step.value, min.value, max.value)) {
+        setValueFromStep(
+          stepFrom(current, -1, step.value, min.value, max.value),
+        )
       }
       return
     }
     if (event.key === 'PageUp') {
       event.preventDefault()
-      const next = stepFrom(value.value, 10, step.value, min.value, max.value)
-      value.value = next
-      draftText.value = formatNumber(next, locale.value, formatOptions.value)
+      setValueFromStep(stepFrom(current, 10, step.value, min.value, max.value))
       return
     }
     if (event.key === 'PageDown') {
       event.preventDefault()
-      const next = stepFrom(value.value, -10, step.value, min.value, max.value)
-      value.value = next
-      draftText.value = formatNumber(next, locale.value, formatOptions.value)
+      setValueFromStep(stepFrom(current, -10, step.value, min.value, max.value))
       return
     }
     if (event.key === 'Home' && min.value !== undefined) {
       event.preventDefault()
-      value.value = min.value
-      draftText.value = formatNumber(
-        min.value,
-        locale.value,
-        formatOptions.value,
-      )
+      setValueFromStep(min.value)
       return
     }
     if (event.key === 'End' && max.value !== undefined) {
       event.preventDefault()
-      value.value = max.value
-      draftText.value = formatNumber(
-        max.value,
-        locale.value,
-        formatOptions.value,
-      )
+      setValueFromStep(max.value)
     }
   }
 
   watch(
     () => value.value,
     (next) => {
+      syncHiddenInput(next)
       if (!editing.value) {
-        syncInputDisplay(next)
+        syncSpinbuttonDisplay(next)
       }
     },
   )
 
   watch([locale, formatOptions], () => {
     if (!editing.value) {
-      syncInputDisplay(value.value)
+      syncSpinbuttonDisplay(value.value)
     }
   })
 
@@ -416,6 +472,17 @@ export function useGhostNumberInput(options: UseGhostNumberInputOptions = {}): {
     }
   })
 
+  const hiddenInputProps = computed((): GhostNumberInputHiddenInputProps => {
+    const name = toValue(options.name)
+    return {
+      type: 'hidden',
+      name: name ?? undefined,
+      value: formSubmitValue(value.value),
+      form: toValue(options.form),
+      disabled: isDisabled.value || undefined,
+    }
+  })
+
   const decrementProps = computed((): GhostNumberInputButtonProps => ({
     type: 'button',
     class: 'ghost-number-input__button',
@@ -458,6 +525,7 @@ export function useGhostNumberInput(options: UseGhostNumberInputOptions = {}): {
     isRequired,
     rootProps,
     inputProps,
+    hiddenInputProps,
     decrementProps,
     incrementProps,
     increment,

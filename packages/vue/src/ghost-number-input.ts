@@ -5,8 +5,9 @@ export type GhostNumberInputFormatOptions = Intl.NumberFormatOptions
 
 /**
  * Unstyled {@link GhostNumberInput} props. Native attributes fall through to the
- * spinbutton input. `value` is omitted so the current number is `modelValue` /
- * `defaultValue`.
+ * spinbutton. `name` and `form` route to a hidden submit control; id and aria
+ * stay on the visible field. `value` is omitted so the model is
+ * `modelValue` / `defaultValue`.
  */
 export interface GhostNumberInputProps extends /* @vue-ignore */ Omit<
   InputHTMLAttributes,
@@ -82,6 +83,10 @@ export interface UseGhostNumberInputOptions {
   incrementLabel?: MaybeRefOrGetter<string | undefined>
   /** Spinbutton input for reset reconciliation and display sync. */
   element?: MaybeRefOrGetter<HTMLInputElement | null | undefined>
+  /** Hidden input that carries the machine `name` / submit value. */
+  formInput?: MaybeRefOrGetter<HTMLInputElement | null | undefined>
+  name?: MaybeRefOrGetter<string | undefined>
+  form?: MaybeRefOrGetter<string | undefined>
   onChange?: (value: number | null) => void
 }
 

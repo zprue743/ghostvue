@@ -45,11 +45,23 @@ const emit = defineEmits<{
 }>()
 
 const element = useTemplateRef<HTMLInputElement>('element')
+const formInput = useTemplateRef<HTMLInputElement>('formInput')
 const attrs = useAttrs()
+
+const resolvedName = computed(() => {
+  const name = attrs['name']
+  return typeof name === 'string' ? name : undefined
+})
+
+const resolvedForm = computed(() => {
+  const form = attrs['form']
+  return typeof form === 'string' ? form : undefined
+})
 
 const {
   rootProps,
   inputProps,
+  hiddenInputProps,
   decrementProps,
   incrementProps,
   increment,
@@ -69,13 +81,16 @@ const {
   required: () => props.required,
   decrementLabel: () => props.decrementLabel,
   incrementLabel: () => props.incrementLabel,
+  name: () => resolvedName.value,
+  form: () => resolvedForm.value,
   element,
+  formInput,
   onChange: (value) => {
     emit('update:modelValue', value)
   },
 })
 
-useNativeFormReset(() => element.value, applyFormReset)
+useNativeFormReset(() => formInput.value ?? element.value, applyFormReset)
 
 const rootBindings = computed(() => ({
   ...rootProps.value,
@@ -88,6 +103,8 @@ const inputBindings = computed(() => {
   const inputAttrs = { ...attrs }
   delete inputAttrs['data-size']
   delete inputAttrs['data-block']
+  delete inputAttrs['name']
+  delete inputAttrs['form']
   const extraClass = inputAttrs.class
   delete inputAttrs.class
   return {
@@ -161,5 +178,6 @@ defineExpose<GhostNumberInputExposed>({
     <button v-bind="decrementProps">−</button>
     <input ref="element" v-bind="inputBindings" />
     <button v-bind="incrementProps">+</button>
+    <input ref="formInput" v-bind="hiddenInputProps" />
   </span>
 </template>

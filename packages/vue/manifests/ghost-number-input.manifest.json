@@ -198,6 +198,7 @@
     "number-input/basic",
     "number-input/bounds",
     "number-input/field",
+    "number-input/form-locale",
     "number-input/ref",
     "number-input/themed"
   ]

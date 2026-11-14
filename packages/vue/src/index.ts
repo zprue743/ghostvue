@@ -324,4 +324,4 @@ export type {
   GhostNumberInputFormatOptions,
   GhostNumberInputProps,
   UseGhostNumberInputOptions,
-} from './ghost-number-input')
+} from './ghost-number-input'
