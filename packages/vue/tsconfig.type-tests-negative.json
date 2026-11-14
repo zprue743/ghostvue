@@ -1,0 +1,5 @@
+{
+  "extends": "./tsconfig.json",
+  "include": ["type-tests-negative/**/*.ts", "src/**/*.ts", "src/**/*.vue"],
+  "exclude": ["type-tests/**"]
+}

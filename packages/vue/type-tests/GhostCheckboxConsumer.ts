@@ -16,9 +16,24 @@ const nativeProps = {
   value: 'accepted',
 } satisfies GhostCheckboxProps
 
+const controlled = {
+  modelValue: true,
+} satisfies GhostCheckboxProps
+
+const uncontrolled = {
+  defaultValue: false,
+} satisfies GhostCheckboxProps
+
 const componentProps: InstanceType<typeof GhostCheckbox>['$props'] = nativeProps
 
 void componentProps
+void controlled
+void uncontrolled
+
+// @ts-expect-error modelValue must be boolean
+const rejectedModelType = { modelValue: 'yes' } satisfies GhostCheckboxProps
+
+void rejectedModelType
 
 // @ts-expect-error checked is owned by the model, not a fallthrough attribute
 const rejectedChecked = { checked: true } satisfies GhostCheckboxProps

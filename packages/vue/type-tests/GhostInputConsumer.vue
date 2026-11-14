@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { useTemplateRef } from 'vue'
+import { ref, useTemplateRef } from 'vue'
 
 import { GhostInput, type GhostInputExposed } from '../src'
 
+const query = ref('reports')
 const field = useTemplateRef<GhostInputExposed>('field')
 
 function handleInput(event: Event) {
@@ -20,6 +21,7 @@ void focusField
   <GhostInput
     id="global-search"
     ref="field"
+    v-model="query"
     class="product-input"
     type="search"
     name="q"

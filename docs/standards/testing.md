@@ -30,8 +30,18 @@ Shared Playwright utilities live under `tests/support/` (documented in
 `dark` mode in the non-visual Playwright project. Visual example snapshots stay
 in `examples-visual.spec.ts` (`@visual`).
 
-- **Type tests:** add compile-time assertions alongside the first public generic
-  or inference behavior worth preserving.
+- **Type tests:** compile-time consumer fixtures under
+  `packages/vue/type-tests/` exercise public props, v-model controlled and
+  uncontrolled modes, typed emits, and scoped slot props. They are included in
+  `pnpm verify` through `@ghostvue/vue`'s `typecheck` script (`vue-tsc` on
+  `packages/vue/tsconfig.json`). Invalid contracts use `// @ts-expect-error`; if
+  a regression makes the assignment typecheck, vue-tsc fails on an unused
+  directive. A separate negative project
+  (`packages/vue/tsconfig.type-tests-negative.json`) holds fixtures that must
+  not compile; `scripts/vue-type-tests-negative.mjs` runs after the positive
+  vue-tsc pass and fails when those diagnostics disappear. Add or extend a
+  `*Consumer.ts` / `*Consumer.vue` pair when a component's public inference
+  contract changes.
 
 Name tests after observable behavior. Avoid reaching into component internals or
 asserting exact implementation markup unless that markup is itself a semantic
@@ -40,7 +50,8 @@ practical.
 
 Run `pnpm test` for focused unit/integration checks, `pnpm test:coverage` (also
 run by `pnpm verify`) to enforce the 80% global and per-package (`packages/*/src/**`)
-line-coverage gates, and `pnpm test:e2e` for browser checks.
+line-coverage gates, `pnpm --filter @ghostvue/vue typecheck` to rerun only the
+Vue consumer type fixtures, and `pnpm test:e2e` for browser checks.
 The normal `pnpm verify` gate excludes browser tests to keep routine local and CI
 feedback fast; CI runs the `browser` job inside the pinned Playwright container
 image (`mcr.microsoft.com/playwright:<version>-noble`, matching
