@@ -26,10 +26,48 @@ Run `pnpm test` for focused unit/integration checks, `pnpm test:coverage` (also
 run by `pnpm verify`) to enforce the 80% global and per-package (`packages/*/src/**`)
 line-coverage gates, and `pnpm test:e2e` for browser checks.
 The normal `pnpm verify` gate excludes browser tests to keep routine local and CI
-feedback fast; CI runs the browser job separately after installing Chromium. That
-job caches `~/.cache/ms-playwright` by Playwright version and does not run
-`playwright install --with-deps`, because GitHub-hosted Ubuntu images already
-include Chromium's libraries and apt is a frequent stall.
+feedback fast; CI runs the `browser` job inside the pinned Playwright container
+image (`mcr.microsoft.com/playwright:<version>-noble`, matching
+`@playwright/test` in `package.json`) with its bundled Chromium binary and
+`--update-snapshots=none` so missing or drifted baselines always fail.
+
+## Visual regression
+
+Visual snapshot suites are tagged `@visual` and assert deterministic rendering
+with `animations: 'disabled'` and a default `maxDiffPixelRatio` of `0.03`
+(unless a suite documents a justified override):
+
+- **Playground visual suites:** `GhostButton` state matrices (light, dark, and
+  forced-colors across densities), flagship theme matrices (`calm`, `vibrant`,
+  `mono`), density and roundness matrix, visual reference recipes (elevation,
+  materials, gradients), and the frozen ambient spotlight opt-in snapshot.
+- **Public example baselines:** `tests/e2e/examples-visual.spec.ts` snapshots
+  every registered example in `examples/registry.ts` in `light` and `dark` mode
+  at `comfortable` density with the `default` theme.
+
+Run only the visual snapshot suites locally with:
+
+```bash
+pnpm test:visual
+```
+
+Committed baselines (`*-chromium-linux.png`) are generated inside the pinned
+Playwright Linux container so host OS font rendering cannot introduce drift. When
+a visual change is intentional or a new example is added, regenerate Linux
+baselines locally inside that image:
+
+```bash
+pnpm test:visual:docker
+```
+
+Commit regenerated baseline PNGs in a dedicated commit when updating existing
+snapshots so pixel churn is easy to review. Use `pnpm test:visual:update` only
+when already running inside the pinned Linux environment.
+
+When the CI `browser` job fails, Playwright's HTML report and diff outputs
+(`playwright-report/` and `test-results/`, including expected, actual, and diff
+PNGs) are uploaded as the `playwright-report` workflow artifact (retained for
+14 days) on the failed GitHub Actions run.
 
 ## Coverage reporting
 

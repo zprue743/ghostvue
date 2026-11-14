@@ -31,6 +31,9 @@
     "test": "vitest run --passWithNoTests",
     "test:coverage": "vitest run --coverage",
     "test:e2e": "pnpm --filter @ghostvue/playground build && pnpm --filter @ghostvue/docs build && playwright test",
+    "test:visual": "pnpm --filter @ghostvue/playground build && playwright test --grep @visual",
+    "test:visual:docker": "docker run --rm --ipc=host -v \"$PWD\":/work -v /work/node_modules -v /work/apps/docs/node_modules -v /work/apps/playground/node_modules -v /work/packages/core/node_modules -v /work/packages/themes/node_modules -v /work/packages/vue/node_modules -w /work -e HOME=/root -e COREPACK_ENABLE_DOWNLOAD_PROMPT=0 -e HOST_UID=\"$(id -u)\" -e HOST_GID=\"$(id -g)\" mcr.microsoft.com/playwright:v1.62.1-noble bash -lc 'corepack enable && pnpm install --frozen-lockfile && pnpm test:visual:update; rc=$?; chown -R \"$HOST_UID:$HOST_GID\" tests/e2e/*-snapshots apps/playground/dist playwright-report test-results 2>/dev/null || true; exit $rc'",
+    "test:visual:update": "pnpm test:visual --update-snapshots",
     "test:watch": "vitest",
     "typecheck": "pnpm -r --if-present typecheck",
     "verify": "pnpm lint && pnpm boundaries && pnpm adapters && pnpm manifests && pnpm typecheck && pnpm test:coverage && pnpm contrast && pnpm build && pnpm published-exports && pnpm docs:build && pnpm docs:links"
