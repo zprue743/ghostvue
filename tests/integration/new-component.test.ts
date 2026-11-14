@@ -108,24 +108,24 @@ function run(root: string, args: string[]) {
 
 describe('component scaffolding', () => {
   it('normalizes Ghost prefixes and rejects unsafe or non-PascalCase names', () => {
-    expect(componentIdentity('Switch')).toEqual({
-      name: 'GhostSwitch',
-      suffix: 'Switch',
-      slug: 'switch',
+    expect(componentIdentity('ScaffoldProbe')).toEqual({
+      name: 'GhostScaffoldProbe',
+      suffix: 'ScaffoldProbe',
+      slug: 'scaffold-probe',
     })
-    expect(componentIdentity('GhostSwitch')).toEqual(
-      componentIdentity('Switch'),
+    expect(componentIdentity('GhostScaffoldProbe')).toEqual(
+      componentIdentity('ScaffoldProbe'),
     )
     expect(componentIdentity('RadioGroup').slug).toBe('radio-group')
     for (const name of [
       '',
-      'switch',
+      'scaffold-probe',
       'X',
       'Ghost',
-      '../Switch',
-      'Switch.vue',
-      'Switch-Group',
-      'Switch;exit',
+      '../ScaffoldProbe',
+      'ScaffoldProbe.vue',
+      'ScaffoldProbe-Group',
+      'ScaffoldProbe;exit',
     ]) {
       expect(() => componentIdentity(name)).toThrow()
     }
@@ -134,15 +134,15 @@ describe('component scaffolding', () => {
   it('refuses partial collisions without touching existing files', async () => {
     const root = await mkdtemp(join(tmpdir(), 'ghost-collision-'))
     try {
-      const path = join(root, 'packages/vue/src/GhostSwitch.vue')
+      const path = join(root, 'packages/vue/src/ghost-scaffold-probe.ts')
       await mkdir(join(root, 'packages/vue/src'), { recursive: true })
       await writeFile(path, 'consumer work')
-      await expect(scaffoldComponent(root, 'Switch')).rejects.toThrow(
+      await expect(scaffoldComponent(root, 'ScaffoldProbe')).rejects.toThrow(
         'Refusing to overwrite',
       )
       expect(await readFile(path, 'utf8')).toBe('consumer work')
       await expect(
-        readFile(join(root, 'packages/vue/src/ghost-switch.ts')),
+        readFile(join(root, 'packages/vue/src/GhostScaffoldProbe.vue')),
       ).rejects.toThrow()
     } finally {
       await rm(root, { recursive: true, force: true })
@@ -156,26 +156,31 @@ describe('component scaffolding', () => {
         join(root, 'packages/vue/src/index.ts'),
         'utf8',
       )
-      const dryRun = await scaffoldComponent(root, 'Switch', { dryRun: true })
+      const dryRun = await scaffoldComponent(root, 'ScaffoldProbe', {
+        dryRun: true,
+      })
       expect(
         await readFile(join(root, 'packages/vue/src/index.ts'), 'utf8'),
       ).toBe(before)
       await expect(
-        readFile(join(root, 'packages/vue/src/GhostSwitch.vue')),
+        readFile(join(root, 'packages/vue/src/GhostScaffoldProbe.vue')),
       ).rejects.toThrow()
-      const result = await scaffoldComponent(root, 'Switch')
+      const result = await scaffoldComponent(root, 'ScaffoldProbe')
       expect(result.created).toEqual(dryRun.created)
       expect(result.updated).toEqual(dryRun.updated)
       const paths = [...result.created, ...result.updated]
       for (const path of paths)
         expect(relative(root, join(root, path))).toBe(path)
       expect(result.created).toContain(
-        'tests/integration/ghost-switch-themed.test.ts',
+        'tests/integration/ghost-scaffold-probe-themed.test.ts',
       )
       for (const pkg of ['vue', 'themes']) {
         const manifest: unknown = JSON.parse(
           await readFile(
-            join(root, `packages/${pkg}/manifests/ghost-switch.manifest.json`),
+            join(
+              root,
+              `packages/${pkg}/manifests/ghost-scaffold-probe.manifest.json`,
+            ),
             'utf8',
           ),
         )
@@ -195,12 +200,12 @@ describe('component scaffolding', () => {
       const contributing = nav
         .split("text: 'Contributing',")[1]
         ?.split("text: 'AI agents',")[0]
-      expect(contributing).toContain("text: 'GhostSwitch specification'")
-      expect(contributing).toContain("link: '/components/switch-spec'")
+      expect(contributing).toContain("text: 'GhostScaffoldProbe specification'")
+      expect(contributing).toContain("link: '/components/scaffold-probe-spec'")
       run(root, ['verify'])
-      await expect(scaffoldComponent(root, 'GhostSwitch')).rejects.toThrow(
-        'Refusing to overwrite',
-      )
+      await expect(
+        scaffoldComponent(root, 'GhostScaffoldProbe'),
+      ).rejects.toThrow('Refusing to overwrite')
       await expect(scaffoldComponent(root, 'Button')).rejects.toThrow(
         'Refusing to overwrite',
       )
