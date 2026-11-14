@@ -138,7 +138,22 @@ export function serializeManifest(manifest) {
 const MANIFEST_NAME_COLLATOR = new Intl.Collator('en', { sensitivity: 'base' })
 
 export function compareManifestMemberNames(left, right) {
-  return MANIFEST_NAME_COLLATOR.compare(left, right)
+  const primary = MANIFEST_NAME_COLLATOR.compare(left, right)
+  if (primary !== 0) return primary
+  // sensitivity: 'base' treats 'A' and 'a' as equal; break ties in code-unit order.
+  if (left < right) return -1
+  if (left > right) return 1
+  return 0
+}
+
+/** `=>` uses `>` but must not close an angle-bracket or nesting segment. */
+function isTypeNestingClose(char, prevChar) {
+  if (char === '>' && prevChar === '=') return false
+  return char === ')' || char === ']' || char === '}' || char === '>'
+}
+
+function isTypeNestingOpen(char) {
+  return char === '(' || char === '[' || char === '{' || char === '<'
 }
 
 function mapTypeDelimitedSegments(type, open, close, mapInner) {
@@ -152,7 +167,9 @@ function mapTypeDelimitedSegments(type, open, close, mapInner) {
       while (end < type.length && depth > 0) {
         const next = type[end]
         if (next === open) depth += 1
-        else if (next === close) depth -= 1
+        else if (next === close) {
+          if (!(close === '>' && type[end - 1] === '=')) depth -= 1
+        }
         end += 1
       }
       const inner = type.slice(index + 1, end - 1)
@@ -167,14 +184,58 @@ function mapTypeDelimitedSegments(type, open, close, mapInner) {
 }
 
 function mapNestedTypeSegments(type, mapInner) {
-  let result = mapTypeDelimitedSegments(type, '(', ')', mapInner)
-  result = mapTypeDelimitedSegments(result, '<', '>', mapInner)
+  let result = mapTypeDelimitedSegments(type, '<', '>', (inner) =>
+    splitTopLevel(inner, ',')
+      .map((part) => mapInner(part.trim()))
+      .join(', '),
+  )
+  result = mapTypeDelimitedSegments(result, '(', ')', mapInner)
   return mapTypeDelimitedSegments(result, '[', ']', mapInner)
+}
+
+function splitTopLevelArrowType(type) {
+  let depth = 0
+  let quote = null
+  for (let index = 0; index < type.length - 1; index += 1) {
+    const char = type[index]
+    const prev = index > 0 ? type[index - 1] : ''
+    if (quote) {
+      if (char === quote) quote = null
+      continue
+    }
+    if (char === "'" || char === '"') {
+      quote = char
+      continue
+    }
+    if (isTypeNestingOpen(char)) depth += 1
+    else if (isTypeNestingClose(char, prev)) depth -= 1
+    if (char === '=' && type[index + 1] === '>' && depth === 0) {
+      return {
+        params: type.slice(0, index).trim(),
+        ret: type.slice(index + 2).trim(),
+      }
+    }
+  }
+  return null
 }
 
 /** Lexicographic order for every `|` union at each nesting depth in a type string. */
 export function sortUnionsInType(type) {
   const trimmed = type.trim()
+  const labeled = trimmed.match(/^([A-Za-z_$][\w$]*)\s*:\s*(.+)$/s)
+  if (labeled) {
+    const name = labeled[1].trim()
+    const value = labeled[2].trim()
+    if (value !== '') {
+      return `${name}: ${sortUnionsInType(value)}`
+    }
+  }
+
+  const arrow = splitTopLevelArrowType(trimmed)
+  if (arrow) {
+    return `${sortUnionsInType(arrow.params)} => ${sortUnionsInType(arrow.ret)}`
+  }
+
   const parts = splitTopLevel(trimmed, '|')
   if (parts.length > 1) {
     return parts
@@ -182,6 +243,7 @@ export function sortUnionsInType(type) {
       .sort(compareManifestMemberNames)
       .join(' | ')
   }
+
   return mapNestedTypeSegments(trimmed, sortUnionsInType)
 }
 
@@ -229,7 +291,9 @@ function splitTopLevel(value, separator) {
   let current = ''
   let depth = 0
   let quote = null
-  for (const char of value) {
+  for (let index = 0; index < value.length; index += 1) {
+    const char = value[index]
+    const prev = index > 0 ? value[index - 1] : ''
     if (quote) {
       current += char
       if (char === quote) quote = null
@@ -240,8 +304,8 @@ function splitTopLevel(value, separator) {
       current += char
       continue
     }
-    if (char === '(' || char === '[' || char === '{' || char === '<') depth += 1
-    if (char === ')' || char === ']' || char === '}' || char === '>') depth -= 1
+    if (isTypeNestingOpen(char)) depth += 1
+    else if (isTypeNestingClose(char, prev)) depth -= 1
     if (char === separator && depth === 0) {
       parts.push(current)
       current = ''

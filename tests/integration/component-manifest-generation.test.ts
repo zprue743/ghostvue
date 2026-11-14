@@ -183,10 +183,31 @@ describe('manifest derivation helpers', () => {
     )
   })
 
+  it('ignores `=>` when tracking angle-bracket and nesting depth', () => {
+    expect(sortUnionsInType('(v: string) => string | undefined')).toBe(
+      '(v: string) => string | undefined',
+    )
+    expect(sortUnionsInType('((page: number) => string) | undefined')).toBe(
+      '((page: number) => string) | undefined',
+    )
+    expect(sortUnionsInType("(v: 'b' | 'a') => void")).toBe(
+      "(v: 'a' | 'b') => void",
+    )
+    expect(sortUnionsInType("Array<(x: number) => 'b' | 'a'>")).toBe(
+      "Array<(x: number) => 'a' | 'b'>",
+    )
+    expect(sortUnionsInType("Record<string, 'b' | 'a'>")).toBe(
+      "Record<string, 'a' | 'b'>",
+    )
+  })
+
   it('compares manifest member names with a stable locale', () => {
     expect(compareManifestMemberNames('default', 'icon')).toBeLessThan(0)
     expect(compareManifestMemberNames('icon', 'default')).toBeGreaterThan(0)
     expect(compareManifestMemberNames('disabled', 'disabled')).toBe(0)
+    expect(compareManifestMemberNames('ariaLabel', 'aria-label')).not.toBe(0)
+    expect(compareManifestMemberNames('A', 'a')).toBeLessThan(0)
+    expect(compareManifestMemberNames('a', 'A')).toBeGreaterThan(0)
   })
 
   it('parses literal defaults into JSON schema values', () => {
