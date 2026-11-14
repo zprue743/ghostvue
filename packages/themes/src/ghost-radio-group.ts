@@ -34,10 +34,6 @@ export const GhostRadioGroup = defineComponent({
       type: String as PropType<GhostRadioGroupOrientation>,
       default: 'vertical',
     },
-    dir: {
-      type: String as PropType<'ltr' | 'rtl' | undefined>,
-      default: undefined,
-    },
     size: { type: String as PropType<GhostRadioGroupSize>, default: 'md' },
   },
   emits: {
@@ -74,7 +70,6 @@ export const GhostRadioGroup = defineComponent({
             required: props.required,
             invalid: props.invalid,
             orientation: props.orientation,
-            dir: props.dir,
             'data-size': props.size === 'md' ? undefined : props.size,
             'onUpdate:modelValue': (value: string) => {
               emit('update:modelValue', value)

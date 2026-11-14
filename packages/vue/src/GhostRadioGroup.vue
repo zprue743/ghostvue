@@ -8,8 +8,8 @@ import {
   type GhostRadioGroupExposed,
   type GhostRadioGroupOrientation,
 } from './ghost-radio-group'
+import { useGhostId } from './use-ghost-id'
 import { useGhostRadioGroup } from './use-ghost-radio-group'
-import { useRovingFocus, type TextDirection } from './use-roving-focus'
 
 defineOptions({
   inheritAttrs: false,
@@ -24,7 +24,6 @@ const props = withDefaults(
     required?: boolean
     invalid?: boolean
     orientation?: GhostRadioGroupOrientation
-    dir?: TextDirection | undefined
     as?: GhostRadioGroupElement
   }>(),
   {
@@ -35,7 +34,6 @@ const props = withDefaults(
     required: false,
     invalid: false,
     orientation: 'vertical',
-    dir: undefined,
     as: 'fieldset',
   },
 )
@@ -48,29 +46,20 @@ defineSlots<{ default(): unknown }>()
 
 const attrs = useAttrs()
 const rootRef = useTemplateRef<HTMLElement>('root')
+const generatedName = useGhostId('ghost-radio-group-name')
+const resolvedName = computed(() => props.name ?? generatedName.value)
 
 const group = useGhostRadioGroup({
   modelValue: () => props.modelValue,
   defaultValue: () => props.defaultValue,
-  name: () => props.name,
+  name: () => resolvedName.value,
   disabled: () => props.disabled,
   required: () => props.required,
   invalid: () => props.invalid,
   orientation: () => props.orientation,
-  dir: () => props.dir,
   onValueChange: (value) => {
     emit('update:modelValue', value)
   },
-})
-
-useRovingFocus(rootRef, {
-  orientation: () => props.orientation,
-  loop: true,
-  ...(props.dir
-    ? {
-        dir: (): TextDirection => (props.dir === 'rtl' ? 'rtl' : 'ltr'),
-      }
-    : {}),
 })
 
 useNativeFormReset(() => rootRef.value, group.applyFormReset)

@@ -7,9 +7,11 @@ approves both in PR review.
 
 `GhostRadioGroup` is a native-first single-choice control for settings, filters,
 and forms. Sighted users pick one option from a short list. Assistive technology
-encounters a radiogroup with named options. Keyboard users get APG roving focus
-among enabled radios. The group participates in native HTML forms: shared `name`,
-one submitted value, and form reset restores the mounted default.
+encounters a radiogroup with named options. Keyboard users rely on native radio
+group behavior: one tab stop per group, arrow keys move focus and select among
+options (including RTL), and Space operates the focused radio when applicable. The
+group participates in native HTML forms: shared `name`, one submitted value, and
+form reset restores the mounted default.
 
 Consumers compose labeled options with `GhostRadioGroupItem` parts and optional
 `GhostField` for a group label, description, and error (Field supplies
@@ -21,6 +23,8 @@ per-option labels).
 - Multi-select or checkbox semantics. Use `GhostCheckbox` or a future checkbox
   group.
 - Card-style or button-role toggles. Use `GhostToggleGroup` (GHO-82).
+- Custom roving tabindex via `useRovingFocus`. Native same-name radios already
+  implement APG keyboard and tab-stop behavior; library roving conflicts with it.
 - Validation logic or message generation. Field and the consumer own invalid
   state.
 - Visual styling in the headless package. Themed appearance lives in
@@ -34,7 +38,7 @@ per-option labels).
 
 Headless `@ghostvue/vue`:
 
-- `GhostRadioGroup` — root container, v-model, roving focus, form reset
+- `GhostRadioGroup` — root container, v-model, form reset
 - `GhostRadioGroupItem` — native `input type="radio"` for one option
 - `useGhostRadioGroup` — state and registration helpers for advanced composition
 - Types for props, exposed refs, options, and context
@@ -47,17 +51,16 @@ Themed `@ghostvue/themes`:
 
 #### `GhostRadioGroup`
 
-| Prop           | Type                         | Default      | Contract                                                                                                       |
-| -------------- | ---------------------------- | ------------ | -------------------------------------------------------------------------------------------------------------- |
-| `modelValue`   | `string`                     | `undefined`  | Controlled selected value. `undefined` is uncontrolled.                                                        |
-| `defaultValue` | `string`                     | `undefined`  | Initial value when `modelValue` is omitted. Ignored after mount. Form reset restores this captured seed.       |
-| `name`         | `string`                     | `undefined`  | Shared native `name` on item inputs for submit.                                                                |
-| `disabled`     | `boolean`                    | `false`      | Disables the group (fieldset `disabled` or propagated to items).                                               |
-| `required`     | `boolean`                    | `false`      | Native `required` on items when the group is required.                                                         |
-| `invalid`      | `boolean`                    | `false`      | Sets `aria-invalid` on the group root for Field integration.                                                   |
-| `orientation`  | `'horizontal' \| 'vertical'` | `'vertical'` | Roving arrow keys via `useRovingFocus`. Maps to list layout in theme.                                          |
-| `dir`          | `'ltr' \| 'rtl'`             | `undefined`  | Explicit text direction for horizontal roving; otherwise inferred.                                             |
-| `as`           | `string \| Component`        | `'fieldset'` | Root element. Native `fieldset` does not need `role="radiogroup"`. Non-fieldset hosts set `role="radiogroup"`. |
+| Prop           | Type                         | Default      | Contract                                                                                                                                                                                                  |
+| -------------- | ---------------------------- | ------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `modelValue`   | `string`                     | `undefined`  | Controlled selected value. `undefined` is uncontrolled.                                                                                                                                                   |
+| `defaultValue` | `string`                     | `undefined`  | Initial value when `modelValue` is omitted. Ignored after mount. Form reset restores this captured seed.                                                                                                  |
+| `name`         | `string`                     | `undefined`  | Shared native `name` on item inputs for submit. When omitted, the group generates a stable `useGhostId` name so items still form a native group (pass an explicit `name` for forms you intend to submit). |
+| `disabled`     | `boolean`                    | `false`      | Disables the group (fieldset `disabled` or propagated to items).                                                                                                                                          |
+| `required`     | `boolean`                    | `false`      | Native `required` on items when the group is required.                                                                                                                                                    |
+| `invalid`      | `boolean`                    | `false`      | Sets `aria-invalid` on the group root for Field integration.                                                                                                                                              |
+| `orientation`  | `'horizontal' \| 'vertical'` | `'vertical'` | Themed layout only (`data-orientation` on the root). Does not change keyboard behavior.                                                                                                                   |
+| `as`           | `string \| Component`        | `'fieldset'` | Root element. Native `fieldset` does not need `role="radiogroup"`. Non-fieldset hosts set `role="radiogroup"`.                                                                                            |
 
 Native attributes on the root fall through except reserved wiring (`id` may be
 overridden by Field slot props intentionally). `GhostFieldControl` slot props
@@ -66,31 +69,35 @@ the group root.
 
 #### `GhostRadioGroupItem`
 
-| Prop       | Type      | Default | Contract                                                     |
-| ---------- | --------- | ------- | ------------------------------------------------------------ |
-| `value`    | `string`  | —       | Stable option value; drives checked state and form `value`.  |
-| `disabled` | `boolean` | `false` | Disables this option; skipped by roving focus and selection. |
+| Prop       | Type      | Default | Contract                                                          |
+| ---------- | --------- | ------- | ----------------------------------------------------------------- |
+| `value`    | `string`  | —       | Stable option value; drives checked state and form `value`.       |
+| `disabled` | `boolean` | `false` | Disables this option. Native group skips it for arrow navigation. |
 
-Each item renders a native radio input. `name` comes from the group. Optional
-fallthrough `id` (else `useGhostId('ghost-radio-group-item')`), `aria-*`, and
-listeners attach to the input. No default slot on the input; wrap in `<label>` or
-use `for`/`id` like `GhostCheckbox`.
+Each item renders a native radio input. `name` comes from the group (explicit or
+generated). Optional fallthrough `id` (else `useGhostId('ghost-radio-group-item')`),
+`aria-*`, and listeners attach to the input. No default slot on the input; wrap in
+`<label>` or use `for`/`id` like `GhostCheckbox`.
 
 ### v-model contracts
 
-| Role     | Prop         | Emit                | Uncontrolled initial         |
-| -------- | ------------ | ------------------- | ---------------------------- |
-| Selected | `modelValue` | `update:modelValue` | `defaultValue` or first item |
+| Role     | Prop         | Emit                | Uncontrolled initial      |
+| -------- | ------------ | ------------------- | ------------------------- |
+| Selected | `modelValue` | `update:modelValue` | `defaultValue`, else none |
 
 - **Uncontrolled:** omit `modelValue`. Seed from `defaultValue` when provided;
-  otherwise select the first mounted non-disabled item's `value`.
-- **Controlled:** defined `modelValue`. Activation emits `update:modelValue`
-  with the item's `value`. If the parent ignores the emit, restore native
-  `:checked` after `nextTick` on the activated input (same policy as
-  `GhostCheckbox`).
-- **Form reset:** captured `defaultValue` seed (not live props). Deferred DOM
-  reconciliation after full `reset` dispatch via `useNativeFormReset` on the
-  group root's owning form.
+  otherwise **no** item is checked at mount (native radios with no `checked`).
+- **Controlled:** defined `modelValue`. Activation (pointer or native keyboard)
+  emits `update:modelValue` with the item's `value`. If the parent ignores the
+  emit, restore native `:checked` after `nextTick` on the activated input (same
+  policy as `GhostCheckbox`).
+- **Unregistering items:** when the selected item unmounts, clear selection to
+  `undefined`. Do not pick another value. When controlled, do not emit; parent
+  model unchanged until it reacts to DOM. When uncontrolled, internal state
+  only.
+- **Form reset:** captured `defaultValue` seed (not live props; `undefined` means
+  none checked). Deferred DOM reconciliation after full `reset` dispatch via
+  `useNativeFormReset` on the group root's owning form.
 - Switching controlled ↔ uncontrolled after setup is unsupported ([GHOST001](../warnings.md#ghost001)).
 
 ### Events, slots, and exposed methods
@@ -102,7 +109,7 @@ use `for`/`id` like `GhostCheckbox`.
 Exposed template refs:
 
 - `GhostRadioGroup`: `element: HTMLElement | null` (root), `focus`/`blur` on the
-  selected or first enabled item input
+  selected item if any, else the first enabled item (native tab order)
 - `GhostRadioGroupItem`: `element: HTMLInputElement | null`, `focus`/`blur`
 
 ## State model
@@ -121,15 +128,17 @@ Group root `data-state`: `invalid` when `invalid` is true; `disabled` when
 ### Semantics
 
 - Default root: `fieldset` with consumer-provided `legend` or `aria-labelledby`.
-- Items: native `input type="radio"`. Implicit checkbox role is not used;
-  radios use implicit `radio` role.
-- `useRovingFocus` on the group root: one tab stop, Arrow/Home/End among
-  enabled radios per [Radio Group APG](https://www.w3.org/WAI/ARIA/apg/patterns/radio/).
+- Items: native `input type="radio"` with a shared `name` (consumer or
+  generated).
+- Keyboard and tab order follow the platform radio-group model per
+  [Radio Group APG](https://www.w3.org/WAI/ARIA/apg/patterns/radio/). Arrow keys
+  move focus **and** select. RTL is inherited from the root or ancestor `dir`.
 
 ### Keyboard
 
-Native `Space` selects focused radio. Arrow keys move focus (roving). Disabled
-items are skipped.
+Native behavior only: arrow keys within the group select among same-name radios;
+Tab enters/leaves the group at the appropriate single tab stop; Space activates
+when applicable. No `useRovingFocus`.
 
 ### Field integration
 
@@ -141,17 +150,18 @@ labels or `for` pointing at each item's `id`.
 ## Composition
 
 - `useControllableState` for the selected value
-- `useRovingFocus` on the mounted group root
 - `useNativeFormReset` on the group root (`HTMLFieldSetElement.form`)
-- `useGhostId` per item for label associations
-- Does not use `useFocusScope`
+- `useGhostId` for generated group `name` and per-item ids
+- Does not use `useRovingFocus` or `useFocusScope`
 
 ## Test plan
 
-- Vue: v-model, uncontrolled first-item default, disabled group/item, roving
-  tabindex, controlled emit ignore + nextTick restore, form reset seed,
-  `name` propagation, Field aria wiring, SSR markup
-- Browser: arrow navigation, form submit with selected value, axe on examples and
+- Vue: v-model, uncontrolled none-selected mount, `defaultValue` seed, disabled
+  group/item, controlled emit ignore + nextTick restore, form reset seed,
+  generated `name`, unregister clears selection without fallback emit, Field aria
+  wiring
+- Browser: arrow selects without Space, shared `name` when `name` prop omitted,
+  RTL horizontal arrows, form submit with selected value, axe on examples and
   playground
 - Integration: themed wrapper `element` ref
 - Type: consumer compile fixtures

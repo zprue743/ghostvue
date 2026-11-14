@@ -952,6 +952,44 @@ function submitPlaygroundComment(event: Event): void {
         </label>
       </GhostRadioGroup>
       <p>Cadence model: {{ digestCadence }}</p>
+      <GhostRadioGroup>
+        <label>
+          <GhostRadioGroupItem
+            value="alpha"
+            data-testid="radio-group-implicit-a"
+          />
+          Implicit alpha
+        </label>
+        <label>
+          <GhostRadioGroupItem
+            value="beta"
+            data-testid="radio-group-implicit-b"
+          />
+          Implicit beta
+        </label>
+      </GhostRadioGroup>
+      <div dir="rtl" data-testid="radio-group-rtl">
+        <GhostRadioGroup
+          orientation="horizontal"
+          name="rtl-cadence"
+          default-value="first"
+        >
+          <label>
+            <GhostRadioGroupItem
+              value="first"
+              data-testid="radio-group-rtl-first"
+            />
+            RTL first
+          </label>
+          <label>
+            <GhostRadioGroupItem
+              value="second"
+              data-testid="radio-group-rtl-second"
+            />
+            RTL second
+          </label>
+        </GhostRadioGroup>
+      </div>
       <form class="form-example" @submit="submitDigestCadenceForm">
         <span>Digest cadence submissions: {{ digestCadenceSubmissions }}</span>
         <GhostRadioGroup

@@ -29,13 +29,14 @@ function mountGroup(
 }
 
 describe('GhostRadioGroup', () => {
-  it('selects the first item when uncontrolled', () => {
+  it('leaves nothing checked when uncontrolled without defaultValue', () => {
     const wrapper = mountGroup()
-    const first = wrapper.get('#radio-a')
-    const second = wrapper.get('#radio-b')
-
-    expect((first.element as HTMLInputElement).checked).toBe(true)
-    expect((second.element as HTMLInputElement).checked).toBe(false)
+    expect((wrapper.get('#radio-a').element as HTMLInputElement).checked).toBe(
+      false,
+    )
+    expect((wrapper.get('#radio-b').element as HTMLInputElement).checked).toBe(
+      false,
+    )
   })
 
   it('seeds from defaultValue when uncontrolled', () => {
@@ -174,10 +175,95 @@ describe('GhostRadioGroup', () => {
     ).toEqual([['c']])
   })
 
-  it('propagates name to items', () => {
+  it('propagates an explicit name to items', () => {
     const wrapper = mountGroup({ name: 'plan' })
     expect(wrapper.get('#radio-a').attributes('name')).toBe('plan')
     expect(wrapper.get('#radio-b').attributes('name')).toBe('plan')
+  })
+
+  it('generates a shared name when the name prop is omitted', () => {
+    const wrapper = mountGroup()
+    const firstName = wrapper.get('#radio-a').attributes('name')
+    const secondName = wrapper.get('#radio-b').attributes('name')
+    expect(firstName).toBeTruthy()
+    expect(firstName).toBe(secondName)
+  })
+
+  it('clears selection when the selected item unmounts', async () => {
+    const showB = ref(true)
+    const model = ref<string | undefined>('b')
+    const wrapper = mount(
+      defineComponent({
+        components: { GhostRadioGroup, GhostRadioGroupItem },
+        setup() {
+          return () =>
+            h(
+              GhostRadioGroup,
+              {
+                modelValue: model.value,
+                'onUpdate:modelValue': (value: string) => {
+                  model.value = value
+                },
+              },
+              {
+                default: () => [
+                  h(GhostRadioGroupItem, { value: 'a', id: 'radio-a' }),
+                  showB.value
+                    ? h(GhostRadioGroupItem, { value: 'b', id: 'radio-b' })
+                    : null,
+                ],
+              },
+            )
+        },
+      }),
+    )
+
+    expect((wrapper.get('#radio-b').element as HTMLInputElement).checked).toBe(
+      true,
+    )
+    showB.value = false
+    await nextTick()
+    expect(model.value).toBe('b')
+    expect((wrapper.get('#radio-a').element as HTMLInputElement).checked).toBe(
+      false,
+    )
+    expect(
+      wrapper.findComponent(GhostRadioGroup).emitted('update:modelValue'),
+    ).toBeUndefined()
+  })
+
+  it('clears uncontrolled selection when the selected item unmounts', async () => {
+    const showB = ref(true)
+    const wrapper = mount(
+      defineComponent({
+        components: { GhostRadioGroup, GhostRadioGroupItem },
+        setup() {
+          return () =>
+            h(
+              GhostRadioGroup,
+              { defaultValue: 'b' },
+              {
+                default: () => [
+                  h(GhostRadioGroupItem, { value: 'a', id: 'radio-a' }),
+                  showB.value
+                    ? h(GhostRadioGroupItem, { value: 'b', id: 'radio-b' })
+                    : null,
+                ],
+              },
+            )
+        },
+      }),
+    )
+
+    showB.value = false
+    await nextTick()
+
+    expect((wrapper.get('#radio-a').element as HTMLInputElement).checked).toBe(
+      false,
+    )
+    expect(
+      wrapper.findComponent(GhostRadioGroup).emitted('update:modelValue'),
+    ).toBeUndefined()
   })
 
   it('disables items when the group is disabled', () => {

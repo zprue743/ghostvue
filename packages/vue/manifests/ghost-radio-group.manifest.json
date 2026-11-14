@@ -60,13 +60,6 @@
       "deprecated": false
     },
     {
-      "name": "dir",
-      "type": "TextDirection",
-      "required": false,
-      "description": "Declared prop `dir`.",
-      "deprecated": false
-    },
-    {
       "name": "as",
       "type": "GhostRadioGroupElement",
       "default": "fieldset",

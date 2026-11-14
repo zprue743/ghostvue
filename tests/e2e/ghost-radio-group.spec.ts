@@ -4,7 +4,9 @@ import { expect, test } from '@playwright/test'
 import { startStaticServer } from './static-server'
 
 test.describe('GhostRadioGroup', () => {
-  test('roves with arrows and submits the selected value', async ({ page }) => {
+  test('arrow keys select without Space and shared name is generated', async ({
+    page,
+  }) => {
     const playground = await startStaticServer('apps/playground/dist')
 
     try {
@@ -16,13 +18,19 @@ test.describe('GhostRadioGroup', () => {
       })
       await expect(heading).toBeVisible()
 
-      const second = page.getByTestId('radio-group-weekly')
-      const first = page.getByTestId('radio-group-daily')
-      await first.focus()
+      const daily = page.getByTestId('radio-group-daily')
+      const weekly = page.getByTestId('radio-group-weekly')
+      await daily.focus()
       await page.keyboard.press('ArrowDown')
-      await expect(second).toBeFocused()
-      await page.keyboard.press('Space')
-      await expect(second).toBeChecked()
+      await expect(weekly).toBeFocused()
+      await expect(weekly).toBeChecked()
+
+      const implicitA = page.getByTestId('radio-group-implicit-a')
+      const implicitB = page.getByTestId('radio-group-implicit-b')
+      const nameA = await implicitA.getAttribute('name')
+      const nameB = await implicitB.getAttribute('name')
+      expect(nameA).toBeTruthy()
+      expect(nameA).toBe(nameB)
 
       await page.getByRole('button', { name: 'Submit digest cadence' }).click()
       await expect(
@@ -32,6 +40,13 @@ test.describe('GhostRadioGroup', () => {
       await page.getByTestId('radio-group-form-weekly').check()
       await page.getByRole('button', { name: 'Submit digest cadence' }).click()
       await expect(page.getByText('Digest cadence value: weekly')).toBeVisible()
+
+      const rtlFirst = page.getByTestId('radio-group-rtl-first')
+      const rtlSecond = page.getByTestId('radio-group-rtl-second')
+      await rtlFirst.focus()
+      await page.keyboard.press('ArrowLeft')
+      await expect(rtlSecond).toBeFocused()
+      await expect(rtlSecond).toBeChecked()
 
       const results = await new AxeBuilder({ page })
         .include('[data-testid="radio-group-section"]')

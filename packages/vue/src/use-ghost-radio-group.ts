@@ -18,12 +18,10 @@ interface ItemRecord {
 export function useGhostRadioGroup(
   options: UseGhostRadioGroupOptions = {},
 ): UseGhostRadioGroupReturn {
-  const hasExplicitDefault = computed(
-    () => toValue(options.defaultValue) !== undefined,
-  )
-
   // Captured once so later defaultValue writes cannot retarget form reset.
   const resetSeed = toValue(options.defaultValue)
+
+  let suppressChange = false
 
   const selectedValue = useControllableState<string | undefined>({
     prop: () => toValue(options.modelValue),
@@ -36,39 +34,21 @@ export function useGhostRadioGroup(
     },
   })
 
-  const name = computed((): string | undefined => toValue(options.name))
+  const name = computed((): string => toValue(options.name) ?? '')
   const disabled = computed(() => Boolean(toValue(options.disabled)))
   const required = computed(() => Boolean(toValue(options.required)))
   const invalid = computed(() => Boolean(toValue(options.invalid)))
   const orientation = computed<GhostRadioGroupOrientation>(
     () => toValue(options.orientation) ?? 'vertical',
   )
-  const dir = computed(() => toValue(options.dir))
 
   const itemOrder = shallowRef<string[]>([])
   const items = shallowRef(new Map<string, ItemRecord>())
   const registryVersion = shallowRef(0)
-  let suppressChange = false
-
-  const defaultUncontrolled = computed(
-    () =>
-      toValue(options.modelValue) === undefined && !hasExplicitDefault.value,
-  )
 
   function bumpRegistry(): void {
     items.value = new Map(items.value)
     registryVersion.value += 1
-  }
-
-  function ensureInitialSelection(value: string): void {
-    if (!defaultUncontrolled.value) {
-      return
-    }
-    if (selectedValue.value === undefined) {
-      suppressChange = true
-      selectedValue.value = value
-      suppressChange = false
-    }
   }
 
   function registerItem(
@@ -80,7 +60,6 @@ export function useGhostRadioGroup(
     if (!nextOrder.includes(value)) {
       nextOrder.push(value)
       itemOrder.value = nextOrder
-      ensureInitialSelection(value)
     }
     items.value.set(value, { disabled: itemDisabled, getElement })
     bumpRegistry()
@@ -99,12 +78,21 @@ export function useGhostRadioGroup(
     itemOrder.value = itemOrder.value.filter((entry) => entry !== value)
     items.value.delete(value)
     bumpRegistry()
-    if (selectedValue.value === value) {
-      const fallback = itemOrder.value.find(
-        (entry) => !items.value.get(entry)?.disabled,
-      )
-      selectedValue.value = fallback
+    if (selectedValue.value !== value) {
+      return
     }
+
+    const controlled = toValue(options.modelValue) !== undefined
+    if (!controlled) {
+      suppressChange = true
+      selectedValue.value = undefined
+      suppressChange = false
+      restoreAllItemDom()
+      return
+    }
+    void nextTick(() => {
+      restoreAllItemDom()
+    })
   }
 
   function isItemDisabled(value: string): boolean {
@@ -116,6 +104,10 @@ export function useGhostRadioGroup(
       return
     }
     selectedValue.value = value
+    restoreAllItemDom()
+    void nextTick(() => {
+      restoreAllItemDom()
+    })
   }
 
   function isSelected(value: string): boolean {
@@ -166,7 +158,6 @@ export function useGhostRadioGroup(
     required,
     invalid,
     orientation,
-    dir,
     select,
     isSelected,
     isItemDisabled,

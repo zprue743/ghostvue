@@ -6,8 +6,6 @@ import type {
   Ref,
 } from 'vue'
 
-import type { TextDirection } from './use-roving-focus'
-
 export type GhostRadioGroupOrientation = 'horizontal' | 'vertical'
 
 /** Valid `as` targets for {@link GhostRadioGroup}. */
@@ -39,8 +37,6 @@ export interface GhostRadioGroupProps {
    * @default 'vertical'
    */
   orientation?: GhostRadioGroupOrientation
-  /** Explicit text direction for horizontal roving. */
-  dir?: TextDirection | undefined
   /**
    * Root host element.
    * @default 'fieldset'
@@ -79,19 +75,17 @@ export interface UseGhostRadioGroupOptions {
   required?: MaybeRefOrGetter<boolean | undefined>
   invalid?: MaybeRefOrGetter<boolean | undefined>
   orientation?: MaybeRefOrGetter<GhostRadioGroupOrientation | undefined>
-  dir?: MaybeRefOrGetter<TextDirection | undefined>
   onValueChange?: (value: string) => void
 }
 
 /** Reactive state returned by {@link useGhostRadioGroup}. */
 export interface UseGhostRadioGroupReturn {
   selectedValue: Ref<string | undefined>
-  name: ComputedRef<string | undefined>
+  name: ComputedRef<string>
   disabled: ComputedRef<boolean>
   required: ComputedRef<boolean>
   invalid: ComputedRef<boolean>
   orientation: ComputedRef<GhostRadioGroupOrientation>
-  dir: ComputedRef<TextDirection | undefined>
   select: (value: string) => void
   isSelected: (value: string) => boolean
   isItemDisabled: (value: string) => boolean
@@ -110,7 +104,7 @@ export interface UseGhostRadioGroupReturn {
 /** Shared context between radio group parts. */
 export interface GhostRadioGroupContext {
   readonly selectedValue: Ref<string | undefined>
-  name: ComputedRef<string | undefined>
+  name: ComputedRef<string>
   disabled: ComputedRef<boolean>
   required: ComputedRef<boolean>
   select: (value: string) => void
