@@ -604,6 +604,42 @@ export const ghostExamples = [
     layer: 'themed',
   },
   {
+    id: 'card/basic',
+    title: 'Card basics',
+    description: 'Header, content, and footer parts on a surface.',
+    layer: 'headless',
+  },
+  {
+    id: 'card/actions',
+    title: 'Card with actions',
+    description: 'Static root and footer buttons.',
+    layer: 'headless',
+  },
+  {
+    id: 'card/link',
+    title: 'Navigational card',
+    description: 'Whole-card link without nested interactives.',
+    layer: 'headless',
+  },
+  {
+    id: 'card/interactive',
+    title: 'Spotlight card',
+    description: 'Ambient pointer tracking on the card root.',
+    layer: 'headless',
+  },
+  {
+    id: 'card/themed',
+    title: 'Themed card',
+    description: 'Elevation chrome and optional spotlight from themes.',
+    layer: 'themed',
+  },
+  {
+    id: 'card/composable',
+    title: 'Composable card',
+    description: 'useGhostCard bindings on a custom host.',
+    layer: 'headless',
+  },
+  {
     id: 'radio-group/basic',
     title: 'Basic',
     description: 'Headless radio group with labeled items.',

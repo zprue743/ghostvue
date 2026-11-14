@@ -8,8 +8,7 @@ Spec and implementation ship together; Zac approves both in PR review.
 `GhostCard` is a composable surface container with optional **header**, **content**,
 and **footer** parts. Dashboards, settings panels, and catalog grids need a
 predictable structure and stable styling hooks without prescribing layout or
-chrome. Optional ambient **spotlight** reuses `useGhostInteractiveSurface` (ADR
-0009) so a resting card can feel alive while semantics stay on the root element the
+chrome. Optional ambient **spotlight** reuses `useGhostInteractiveSurface` (ADR 0009) so a resting card can feel alive while semantics stay on the root element the
 consumer chooses.
 
 The consumer owns copy, density, and whether the whole card navigates or only
@@ -33,19 +32,13 @@ guards for action roots, and token-driven themed defaults.
 
 Headless `@ghostvue/vue` `GhostCard` / `useGhostCard`:
 
-| Prop      | Type                     | Default | Contract                                                                                                                                 |
-| --------- | ------------------------ | ------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
-| `as`      | `GhostCardElement`       | `'article'` | Root element. Native `article` suits self-contained summaries; use `div` inside foreign contexts; `a` / `button` for whole-card actions. |
-| `effects` | `InteractiveEffect[]`    | `[]`    | Spotlight recipes on `data-interactive`. Empty array keeps the card inert (no glow, no pointer listeners).                               |
+| Prop      | Type                  | Default     | Contract                                                                                                                                 |
+| --------- | --------------------- | ----------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| `as`      | `GhostCardElement`    | `'article'` | Root element. Native `article` suits self-contained summaries; use `div` inside foreign contexts; `a` / `button` for whole-card actions. |
+| `effects` | `InteractiveEffect[]` | `[]`        | Spotlight recipes on `data-interactive`. Empty array keeps the card inert (no glow, no pointer listeners).                               |
 
 ```ts
-type GhostCardElement =
-  | 'div'
-  | 'article'
-  | 'section'
-  | 'aside'
-  | 'a'
-  | 'button'
+type GhostCardElement = 'div' | 'article' | 'section' | 'aside' | 'a' | 'button'
 
 type InteractiveEffect = 'spotlight' // from ghost-interactive-surface
 ```
@@ -66,11 +59,11 @@ None.
 
 ### Events, callbacks, slots, and exposed methods
 
-| Slot      | Part     | Contract                                                                                 |
-| --------- | -------- | ---------------------------------------------------------------------------------------- |
-| `header`  | `header` | Optional top region. No implicit heading; consumers supply headings in slot content.     |
-| `default` | `content`| Primary body copy or controls.                                                             |
-| `footer`  | `footer` | Optional bottom region for secondary actions when the root is **not** an action element. |
+| Slot      | Part      | Contract                                                                                 |
+| --------- | --------- | ---------------------------------------------------------------------------------------- |
+| `header`  | `header`  | Optional top region. No implicit heading; consumers supply headings in slot content.     |
+| `default` | `content` | Primary body copy or controls.                                                           |
+| `footer`  | `footer`  | Optional bottom region for secondary actions when the root is **not** an action element. |
 
 No component-specific events. Exposed API:
 
@@ -80,9 +73,9 @@ No component-specific events. Exposed API:
 
 Wraps the unstyled primitive. Adds optional ambient spotlight:
 
-| Prop          | Type                         | Default | Contract                                                          |
-| ------------- | ---------------------------- | ------- | ----------------------------------------------------------------- |
-| `interactive` | `'spotlight' \| undefined`   | omitted | When `'spotlight'`, forwards `effects: ['spotlight']` and glow.   |
+| Prop          | Type                       | Default | Contract                                                        |
+| ------------- | -------------------------- | ------- | --------------------------------------------------------------- |
+| `interactive` | `'spotlight' \| undefined` | omitted | When `'spotlight'`, forwards `effects: ['spotlight']` and glow. |
 
 Sets `data-themed` on the inner root (same pattern as `GhostEmptyState`).
 Elevation and padding use existing `--ghost-elevation-*` and spacing tokens only.

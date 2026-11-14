@@ -321,6 +321,14 @@ export type {
   GhostEmptyStateProps,
   UseGhostEmptyStateOptions,
 } from './ghost-empty-state'
+export { default as GhostCard } from './GhostCard.vue'
+export { useGhostCard, type GhostCardRootProps } from './use-ghost-card'
+export type {
+  GhostCardElement,
+  GhostCardExposed,
+  GhostCardProps,
+  UseGhostCardOptions,
+} from './ghost-card'
 export { default as GhostPagination } from './GhostPagination.vue'
 export {
   getPaginationRange,

@@ -224,6 +224,11 @@ export {
   type GhostEmptyStateExposed,
 } from './ghost-empty-state'
 export {
+  GhostCard,
+  type GhostCardExposed,
+  type GhostCardInteractive,
+} from './ghost-card'
+export {
   GhostInlineAlert,
   type GhostInlineAlertExposed,
   type GhostInlineAlertTone,
