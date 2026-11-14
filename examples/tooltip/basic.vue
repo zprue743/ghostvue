@@ -7,7 +7,7 @@ import {
 </script>
 
 <template>
-  <GhostTooltip :delay-duration="300" :skip-delay-duration="150">
+  <GhostTooltip :delay-duration="300" :close-delay="150">
     <GhostTooltipTrigger aria-label="Archive row">
       <span aria-hidden="true">📦</span>
     </GhostTooltipTrigger>

@@ -66,10 +66,10 @@ export interface GhostTooltipProps {
    */
   delayDuration?: number
   /**
-   * Milliseconds before hiding after hover/focus ends (WCAG hoverable grace).
+   * Milliseconds before hiding after hover/focus leaves the trigger and content.
    * @default 300
    */
-  skipDelayDuration?: number
+  closeDelay?: number
   /**
    * When `true`, hides immediately on pointer/focus leave.
    * @default false
@@ -174,11 +174,17 @@ export interface UseGhostTooltipReturn {
 export interface GhostTooltipContext {
   isOpen: Ref<boolean>
   delayDuration: ComputedRef<number>
-  skipDelayDuration: ComputedRef<number>
+  closeDelay: ComputedRef<number>
   disableHoverableContent: ComputedRef<boolean>
   scheduleShow: () => void
-  scheduleHide: () => void
+  cancelClose: () => void
   hideImmediate: () => void
+  notifyTriggerPointerEnter: () => void
+  notifyTriggerPointerLeave: () => void
+  notifyTriggerFocusIn: () => void
+  notifyTriggerFocusOut: () => void
+  notifyContentPointerEnter: () => void
+  notifyContentPointerLeave: () => void
   defaultTriggerId: ComputedRef<string>
   defaultContentId: ComputedRef<string>
   triggerId: ComputedRef<string>
@@ -200,4 +206,27 @@ export const ghostTooltipContextKey: InjectionKey<GhostTooltipContext> =
  */
 export function resolveTooltipHtmlElement(target: unknown): HTMLElement | null {
   return resolvePopoverHtmlElement(target)
+}
+
+/**
+ * Merges consumer `aria-describedby` token(s) with the tooltip content id while open.
+ */
+export function mergeTooltipDescribedBy(
+  consumer: unknown,
+  tooltipContentId: string,
+  open: boolean,
+): string | undefined {
+  const tokens: string[] = []
+  if (typeof consumer === 'string' && consumer.length > 0) {
+    for (const token of consumer.trim().split(/\s+/)) {
+      if (token.length > 0) {
+        tokens.push(token)
+      }
+    }
+  }
+  if (open && tooltipContentId.length > 0) {
+    tokens.push(tooltipContentId)
+  }
+  const unique = [...new Set(tokens)]
+  return unique.length > 0 ? unique.join(' ') : undefined
 }

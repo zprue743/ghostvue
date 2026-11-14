@@ -12,16 +12,16 @@ const props = withDefaults(
     defaultOpen?: boolean
     /** Milliseconds before showing after hover or focus begins. */
     delayDuration?: number
-    /** Milliseconds before hiding after hover/focus ends (WCAG hoverable grace). */
-    skipDelayDuration?: number
-    /** When `true`, hides immediately on pointer/focus leave. */
+    /** Milliseconds before hiding after hover/focus leaves the trigger and content. */
+    closeDelay?: number
+    /** When `true`, hides immediately on pointer/focus leave and disables content hover. */
     disableHoverableContent?: boolean
   }>(),
   {
     open: undefined,
     defaultOpen: false,
     delayDuration: 700,
-    skipDelayDuration: 300,
+    closeDelay: 300,
     disableHoverableContent: false,
   },
 )
@@ -52,43 +52,95 @@ const {
 let openTimer: ReturnType<typeof setTimeout> | null = null
 let closeTimer: ReturnType<typeof setTimeout> | null = null
 
-function clearTimers(): void {
+const triggerPointer = shallowRef(false)
+const triggerFocus = shallowRef(false)
+const contentPointer = shallowRef(false)
+
+function clearOpenTimer(): void {
   if (openTimer !== null) {
     clearTimeout(openTimer)
     openTimer = null
   }
+}
+
+function clearCloseTimer(): void {
   if (closeTimer !== null) {
     clearTimeout(closeTimer)
     closeTimer = null
   }
 }
 
+function shouldRemainOpen(): boolean {
+  return triggerPointer.value || triggerFocus.value || contentPointer.value
+}
+
 function scheduleShow(): void {
-  clearTimers()
+  clearCloseTimer()
   if (isOpen.value) {
     return
   }
+  clearOpenTimer()
   openTimer = setTimeout(() => {
     openTimer = null
     open()
   }, props.delayDuration)
 }
 
-function scheduleHide(): void {
-  clearTimers()
-  if (!isOpen.value) {
+function cancelClose(): void {
+  clearCloseTimer()
+}
+
+function maybeScheduleClose(): void {
+  if (!isOpen.value || shouldRemainOpen()) {
     return
   }
-  const delay = props.disableHoverableContent ? 0 : props.skipDelayDuration
+  clearCloseTimer()
+  const delay = props.disableHoverableContent ? 0 : props.closeDelay
   closeTimer = setTimeout(() => {
     closeTimer = null
-    close()
+    if (!shouldRemainOpen()) {
+      close()
+    }
   }, delay)
 }
 
 function hideImmediate(): void {
-  clearTimers()
+  clearOpenTimer()
+  clearCloseTimer()
   close()
+}
+
+function notifyTriggerPointerEnter(): void {
+  triggerPointer.value = true
+  scheduleShow()
+}
+
+function notifyTriggerPointerLeave(): void {
+  triggerPointer.value = false
+  maybeScheduleClose()
+}
+
+function notifyTriggerFocusIn(): void {
+  triggerFocus.value = true
+  scheduleShow()
+}
+
+function notifyTriggerFocusOut(): void {
+  triggerFocus.value = false
+  maybeScheduleClose()
+}
+
+function notifyContentPointerEnter(): void {
+  if (props.disableHoverableContent) {
+    return
+  }
+  contentPointer.value = true
+  cancelClose()
+}
+
+function notifyContentPointerLeave(): void {
+  contentPointer.value = false
+  maybeScheduleClose()
 }
 
 watchEffect((onCleanup) => {
@@ -110,8 +162,15 @@ watchEffect((onCleanup) => {
   })
 })
 
+watchEffect(() => {
+  if (!isOpen.value) {
+    contentPointer.value = false
+  }
+})
+
 onUnmounted(() => {
-  clearTimers()
+  clearOpenTimer()
+  clearCloseTimer()
 })
 
 const customTriggerId = shallowRef<string | null>(null)
@@ -122,11 +181,17 @@ const triggerElement = shallowRef<HTMLElement | null>(null)
 provide(ghostTooltipContextKey, {
   isOpen,
   delayDuration: computed(() => props.delayDuration),
-  skipDelayDuration: computed(() => props.skipDelayDuration),
+  closeDelay: computed(() => props.closeDelay),
   disableHoverableContent: computed(() => props.disableHoverableContent),
   scheduleShow,
-  scheduleHide,
+  cancelClose,
   hideImmediate,
+  notifyTriggerPointerEnter,
+  notifyTriggerPointerLeave,
+  notifyTriggerFocusIn,
+  notifyTriggerFocusOut,
+  notifyContentPointerEnter,
+  notifyContentPointerLeave,
   defaultTriggerId,
   defaultContentId,
   triggerId: computed(() => customTriggerId.value ?? defaultTriggerId.value),

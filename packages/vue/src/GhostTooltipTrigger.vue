@@ -10,6 +10,7 @@ import {
 
 import {
   ghostTooltipContextKey,
+  mergeTooltipDescribedBy,
   resolveTooltipHtmlElement,
   type GhostTooltipTriggerElement,
   type GhostTooltipTriggerExposed,
@@ -98,7 +99,11 @@ const triggerAttrs = computed(() => {
   const customType = attrs['type']
   const customRole = attrs['role']
   const customTabindex = attrs['tabindex']
-  const customDescribedBy = attrs['aria-describedby']
+  const describedBy = mergeTooltipDescribedBy(
+    attrs['aria-describedby'],
+    context.contentId.value,
+    context.isOpen.value,
+  )
 
   const base: Record<string, unknown> = {
     ...rest,
@@ -107,11 +112,8 @@ const triggerAttrs = computed(() => {
     'data-state': context.isOpen.value ? 'open' : 'closed',
   }
 
-  if (context.isOpen.value) {
-    base['aria-describedby'] =
-      typeof customDescribedBy === 'string' && customDescribedBy.length > 0
-        ? customDescribedBy
-        : context.contentId.value
+  if (describedBy !== undefined) {
+    base['aria-describedby'] = describedBy
   }
 
   if (isNativeButtonTag.value) {
@@ -153,7 +155,7 @@ function handlePointerEnter(event: PointerEvent): void {
   if (event.defaultPrevented) {
     return
   }
-  context.scheduleShow()
+  context.notifyTriggerPointerEnter()
 }
 
 function handlePointerLeave(event: PointerEvent): void {
@@ -161,7 +163,7 @@ function handlePointerLeave(event: PointerEvent): void {
   if (event.defaultPrevented) {
     return
   }
-  context.scheduleHide()
+  context.notifyTriggerPointerLeave()
 }
 
 function handleFocusIn(event: FocusEvent): void {
@@ -172,7 +174,7 @@ function handleFocusIn(event: FocusEvent): void {
   if (event.defaultPrevented) {
     return
   }
-  context.scheduleShow()
+  context.notifyTriggerFocusIn()
 }
 
 function handleFocusOut(event: FocusEvent): void {
@@ -185,7 +187,7 @@ function handleFocusOut(event: FocusEvent): void {
   if (el && next instanceof Node && el.contains(next)) {
     return
   }
-  context.scheduleHide()
+  context.notifyTriggerFocusOut()
 }
 
 defineExpose<GhostTooltipTriggerExposed>({

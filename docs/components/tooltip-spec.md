@@ -59,8 +59,8 @@ Themed exports from `@ghostvue/themes`:
 | `open`                    | `boolean \| undefined` | `undefined` | Controlled open state. Omit for uncontrolled mode.                                         |
 | `defaultOpen`             | `boolean`              | `false`     | Initial open state in uncontrolled mode (discouraged; for tests/SSR snapshots).            |
 | `delayDuration`           | `number`               | `700`       | Milliseconds before showing after hover or focus begins.                                   |
-| `skipDelayDuration`       | `number`               | `300`       | Milliseconds before hiding after hover/focus ends (WCAG 1.4.13 grace / hoverable content). |
-| `disableHoverableContent` | `boolean`              | `false`     | When `true`, hides immediately on pointer/focus leave (`skipDelayDuration` ignored).       |
+| `closeDelay`              | `number`               | `300`       | Milliseconds before hiding after hover/focus leaves the trigger and content.               |
+| `disableHoverableContent` | `boolean`              | `false`     | When `true`, hides immediately on leave (`closeDelay` ignored) and disables content hover. |
 
 #### `GhostTooltipTrigger`
 
@@ -137,8 +137,9 @@ Follows WAI-ARIA APG Tooltip pattern and WCAG 1.4.13 (Content on Hover or Focus)
 
 - `GhostTooltipTrigger` renders `type="button"` (when `as="button"`),
   `id` (from `useGhostId`, overridable by consumer `id`), `aria-describedby`
-  referencing the tooltip `id` while open, `data-part="trigger"`, and
-  `data-state="open" | "closed"`. No `aria-expanded` or `aria-haspopup`.
+  merging consumer-provided ids with the tooltip content id while open (deduped),
+  `data-part="trigger"`, and `data-state="open" | "closed"`. No `aria-expanded`
+  or `aria-haspopup`.
 - `GhostTooltipContent` renders `id` (matching `aria-describedby`, overridable by
   consumer `id`), `role="tooltip"`, no `tabindex`, `data-part="content"`,
   `data-state="open"`, and **must not** contain focusable or interactive
@@ -156,8 +157,9 @@ Tooltip content is not in the tab order and must not receive focus.
 ### Focus behavior
 
 - Opening a tooltip does **not** move focus.
-- Closing via `Escape`, pointer leave, or blur leaves focus on the trigger (or
-  the next focused element after blur).
+- The tooltip remains open while either the trigger has pointer hover or focus.
+- Closing via `Escape`, leaving both hover and focus, or the `closeDelay` timing
+  elapses after all leave.
 
 ### Assistive technology expectations
 
@@ -173,8 +175,9 @@ Tooltip content is not in the tab order and must not receive focus.
   `data-state`, `data-placement`).
 - Themed `@ghostvue/themes` CSS adds a compact elevation surface using
   `--ghost-elevation-2-*`, `--ghost-radius-md`, `--ghost-border-hairline-width`,
-  `--ghost-surface-fg`, `--ghost-space-inset-sm`, and `pointer-events: none` on
-  content so tooltips do not intercept pointer events.
+  `--ghost-surface-fg`, and `--ghost-space-inset-sm`. `pointer-events: none` by
+  default; `data-hoverable` on content enables `pointer-events: auto` for WCAG
+  hoverable movement unless `disableHoverableContent` is set.
 
 ## Environment behavior
 
@@ -203,7 +206,8 @@ Tooltip content is not in the tab order and must not receive focus.
 - `GhostPortal` for teleportation.
 - `useFloating` for anchor positioning, collision handling, `data-placement`,
   and `isPositioned`.
-- Root owns delay timers, `Escape` dismissal, and timer cleanup on unmount.
+- Root owns delay timers, pointer/focus/content hover tracking, `Escape`
+  dismissal, and timer cleanup on unmount.
 
 ## Test plan
 
@@ -239,4 +243,6 @@ Tooltip content is not in the tab order and must not receive focus.
 
 ## Open architectural questions
 
-None.
+- Radix-style **cross-tooltip `skipDelayDuration`** (delay-skipping between
+  adjacent tooltip providers) is out of scope for the initial release; `closeDelay`
+  names the hide grace window only.

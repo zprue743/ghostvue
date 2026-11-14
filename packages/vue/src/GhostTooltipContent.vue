@@ -118,11 +118,15 @@ const contentAttrs = computed(() => {
       key !== 'class' &&
       key !== 'style' &&
       key !== 'role' &&
-      key !== 'tabindex'
+      key !== 'tabindex' &&
+      key !== 'onPointerenter' &&
+      key !== 'onPointerleave'
     ) {
       rest[key] = value
     }
   }
+
+  const hoverable = !context.disableHoverableContent.value
 
   return {
     ...rest,
@@ -130,8 +134,37 @@ const contentAttrs = computed(() => {
     role: attrs['role'] ?? 'tooltip',
     'data-part': 'content',
     'data-state': context.isOpen.value ? 'open' : 'closed',
+    ...(hoverable ? { 'data-hoverable': '' } : {}),
   }
 })
+
+function invokeAttrHandler(handler: unknown, event: Event): void {
+  if (typeof handler === 'function') {
+    ;(handler as (event: Event) => void)(event)
+  } else if (Array.isArray(handler)) {
+    for (const fn of handler) {
+      if (typeof fn === 'function') {
+        ;(fn as (event: Event) => void)(event)
+      }
+    }
+  }
+}
+
+function handlePointerEnter(event: PointerEvent): void {
+  invokeAttrHandler(attrs['onPointerenter'], event)
+  if (event.defaultPrevented) {
+    return
+  }
+  context.notifyContentPointerEnter()
+}
+
+function handlePointerLeave(event: PointerEvent): void {
+  invokeAttrHandler(attrs['onPointerleave'], event)
+  if (event.defaultPrevented) {
+    return
+  }
+  context.notifyContentPointerLeave()
+}
 
 const contentStyle = computed(() => [
   {
@@ -139,6 +172,9 @@ const contentStyle = computed(() => [
     left: `${String(floating.x.value)}px`,
     top: `${String(floating.y.value)}px`,
     ...(isPositioned.value ? {} : { visibility: 'hidden' as const }),
+    ...(!context.disableHoverableContent.value
+      ? { pointerEvents: 'auto' as const }
+      : { pointerEvents: 'none' as const }),
   },
   attrs.style,
 ])
@@ -165,6 +201,8 @@ defineExpose<GhostTooltipContentExposed>({
       class="ghost-tooltip-content"
       :style="contentStyle"
       v-bind="contentAttrs"
+      @pointerenter="handlePointerEnter"
+      @pointerleave="handlePointerLeave"
     >
       <slot />
     </component>

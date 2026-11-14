@@ -30,7 +30,7 @@
       "deprecated": false
     },
     {
-      "name": "skipDelayDuration",
+      "name": "closeDelay",
       "type": "number",
       "default": 300,
       "required": false,

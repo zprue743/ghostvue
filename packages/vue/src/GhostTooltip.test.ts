@@ -7,9 +7,10 @@ import GhostButton from './GhostButton.vue'
 import GhostTooltip from './GhostTooltip.vue'
 import GhostTooltipContent from './GhostTooltipContent.vue'
 import GhostTooltipTrigger from './GhostTooltipTrigger.vue'
-import type {
-  GhostTooltipContentExposed,
-  GhostTooltipTriggerExposed,
+import {
+  mergeTooltipDescribedBy,
+  type GhostTooltipContentExposed,
+  type GhostTooltipTriggerExposed,
 } from './ghost-tooltip'
 
 let computePositionOverride:
@@ -67,6 +68,61 @@ afterEach(() => {
 })
 
 describe('GhostTooltip', () => {
+  it('merges consumer aria-describedby with tooltip content id when open', () => {
+    expect(mergeTooltipDescribedBy('field-help', 'tip-id', false)).toBe(
+      'field-help',
+    )
+    expect(mergeTooltipDescribedBy('field-help', 'tip-id', true)).toBe(
+      'field-help tip-id',
+    )
+    expect(mergeTooltipDescribedBy('field-help tip-id', 'tip-id', true)).toBe(
+      'field-help tip-id',
+    )
+  })
+
+  it('preserves consumer aria-describedby on the trigger when closed and merges while open', async () => {
+    const wrapper = mountAttached(
+      defineComponent({
+        setup() {
+          return () =>
+            h(
+              GhostTooltip,
+              { delayDuration: 0, closeDelay: 0 },
+              {
+                default: () => [
+                  h(
+                    GhostTooltipTrigger,
+                    {
+                      id: 'merge-trigger',
+                      'aria-describedby': 'field-help',
+                    },
+                    () => 'Label',
+                  ),
+                  h(
+                    GhostTooltipContent,
+                    { id: 'merge-content' },
+                    () => 'Extra',
+                  ),
+                ],
+              },
+            )
+        },
+      }),
+    )
+
+    const trigger = wrapper.get('#merge-trigger')
+    expect(trigger.attributes('aria-describedby')).toBe('field-help')
+
+    await trigger.trigger('pointerenter')
+    vi.runOnlyPendingTimers()
+    await flushPromises()
+    await nextTick()
+
+    expect(trigger.attributes('aria-describedby')).toBe(
+      'field-help merge-content',
+    )
+  })
+
   it('opens after delay on pointer/focus and wires aria-describedby and role=tooltip', async () => {
     const wrapper = mountAttached(
       defineComponent({
@@ -74,7 +130,7 @@ describe('GhostTooltip', () => {
           return () =>
             h(
               GhostTooltip,
-              { delayDuration: 300, skipDelayDuration: 0 },
+              { delayDuration: 300, closeDelay: 0 },
               {
                 default: () => [
                   h(GhostTooltipTrigger, { id: 'tt-trigger' }, () => 'Anchor'),
@@ -107,7 +163,7 @@ describe('GhostTooltip', () => {
     expect(trigger.attributes('data-state')).toBe('open')
   })
 
-  it('honors skipDelayDuration on pointer leave and closes on Escape', async () => {
+  it('honors closeDelay on pointer leave and closes on Escape', async () => {
     const updates: boolean[] = []
     const wrapper = mountAttached(
       defineComponent({
@@ -117,7 +173,7 @@ describe('GhostTooltip', () => {
               GhostTooltip,
               {
                 delayDuration: 0,
-                skipDelayDuration: 200,
+                closeDelay: 200,
                 'onUpdate:open': (open: boolean) => updates.push(open),
               },
               {
@@ -221,6 +277,93 @@ describe('GhostTooltip', () => {
     expect(document.querySelector('[role="tooltip"]')).not.toBeNull()
     wrapper.unmount()
     vi.runAllTimers()
+  })
+
+  it('stays open while the trigger stays focused after pointer leave', async () => {
+    const wrapper = mountAttached(
+      defineComponent({
+        setup() {
+          return () =>
+            h(
+              GhostTooltip,
+              { delayDuration: 0, closeDelay: 200 },
+              {
+                default: () => [
+                  h(
+                    GhostTooltipTrigger,
+                    { id: 'focus-stay-trigger' },
+                    () => 'Focus',
+                  ),
+                  h(
+                    GhostTooltipContent,
+                    { id: 'focus-stay-content' },
+                    () => 'Hint',
+                  ),
+                ],
+              },
+            )
+        },
+      }),
+    )
+
+    const trigger = wrapper.get('#focus-stay-trigger')
+    await trigger.trigger('focusin')
+    vi.runOnlyPendingTimers()
+    await flushPromises()
+    await nextTick()
+    expect(document.querySelector('#focus-stay-content')).not.toBeNull()
+
+    await trigger.trigger('pointerleave')
+    vi.advanceTimersByTime(400)
+    await flushPromises()
+    await nextTick()
+    expect(document.querySelector('#focus-stay-content')).not.toBeNull()
+  })
+
+  it('cancels close when pointer enters hoverable content during closeDelay', async () => {
+    mountAttached(
+      defineComponent({
+        setup() {
+          return () =>
+            h(
+              GhostTooltip,
+              { delayDuration: 0, closeDelay: 200 },
+              {
+                default: () => [
+                  h(
+                    GhostTooltipTrigger,
+                    { id: 'hoverable-trigger' },
+                    () => 'Move',
+                  ),
+                  h(
+                    GhostTooltipContent,
+                    { id: 'hoverable-content' },
+                    () => 'Hoverable',
+                  ),
+                ],
+              },
+            )
+        },
+      }),
+    )
+
+    const trigger = document.querySelector<HTMLElement>('#hoverable-trigger')
+    trigger?.dispatchEvent(new PointerEvent('pointerenter', { bubbles: true }))
+    vi.runOnlyPendingTimers()
+    await flushPromises()
+    await nextTick()
+
+    trigger?.dispatchEvent(new PointerEvent('pointerleave', { bubbles: true }))
+    vi.advanceTimersByTime(50)
+
+    const content = document.querySelector<HTMLElement>('#hoverable-content')
+    content?.dispatchEvent(new PointerEvent('pointerenter', { bubbles: true }))
+    vi.advanceTimersByTime(500)
+    await flushPromises()
+    await nextTick()
+
+    expect(document.querySelector('#hoverable-content')).not.toBeNull()
+    expect(content?.getAttribute('data-hoverable')).toBe('')
   })
 
   it('hides immediately when disableHoverableContent is true', async () => {

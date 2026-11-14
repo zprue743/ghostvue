@@ -30,13 +30,14 @@ exposed members, styling hooks, CSS variables, and executable examples.
 
 ### `GhostTooltip` (root)
 
-Supports `delayDuration`, `skipDelayDuration`, and `disableHoverableContent`.
+Supports `delayDuration`, `closeDelay`, and `disableHoverableContent`.
 Emits `update:open` with `(open: boolean)`. The default slot receives
 `{ open: boolean }`.
 
 ### `GhostTooltipTrigger`
 
-Sets `type="button"` (when `as="button"`), `aria-describedby` while open,
+Sets `type="button"` (when `as="button"`), `aria-describedby` merging consumer
+ids with the tooltip id while open,
 `data-part="trigger"`, and `data-state="open" | "closed"`. Schedules show on
 `pointerenter` / `focusin` and hide on `pointerleave` / `focusout` when not
 `disabled`. Exposes `{ element, focus, blur }`.
@@ -53,8 +54,9 @@ Keeps `visibility: hidden` until `useFloating().isPositioned` resolves. Sets
 - **Supplemental descriptions:** `aria-describedby` links the trigger to
   tooltip text while open; tooltips must not be the only source of required
   information.
-- **WCAG 1.4.13:** `skipDelayDuration` preserves a hover/focus grace period
-  before hiding. Press `Escape` to dismiss immediately (`hideImmediate`).
+- **WCAG 1.4.13:** `closeDelay` preserves a grace period before hiding;
+  hoverable content keeps the tooltip open while the pointer is over the trigger,
+  content, or while the trigger stays focused. Press `Escape` to dismiss immediately.
 - **No focus theft:** Opening does not move focus; tooltip content is not
   tabbable.
 

@@ -46,6 +46,34 @@ test.describe('GhostTooltip', () => {
     }
   })
 
+  test('keeps the tooltip open when the pointer moves onto hoverable content', async ({
+    page,
+  }) => {
+    const playground = await startStaticServer('apps/playground/dist')
+
+    try {
+      await page.goto(playground.url)
+
+      const trigger = page.getByTestId('tooltip-delay-trigger')
+      const content = page.getByTestId('tooltip-delay-content')
+
+      await trigger.hover()
+      await expect(content).toBeVisible({ timeout: 1000 })
+
+      const box = await content.boundingBox()
+      if (!box) {
+        throw new Error('Expected tooltip content bounding box')
+      }
+      await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2)
+      await expect(content).toBeVisible({ timeout: 1000 })
+
+      await page.mouse.move(0, 0)
+      await expect(content).toHaveCount(0, { timeout: 1000 })
+    } finally {
+      await playground.close()
+    }
+  })
+
   test('leaves disabled triggers without tooltip content', async ({ page }) => {
     const playground = await startStaticServer('apps/playground/dist')
 

@@ -22,7 +22,7 @@ import {
     <div class="tooltip-row">
       <GhostTooltip
         :delay-duration="200"
-        :skip-delay-duration="100"
+        :close-delay="100"
         data-testid="tooltip-delay-root"
       >
         <GhostTooltipTrigger data-testid="tooltip-delay-trigger">
@@ -56,7 +56,7 @@ import {
     </div>
 
     <div class="tooltip-offset-parent" data-testid="tooltip-inline-parent">
-      <GhostTooltip :delay-duration="0" :skip-delay-duration="0">
+      <GhostTooltip :delay-duration="0" :close-delay="0">
         <GhostTooltipTrigger data-testid="tooltip-inline-trigger">
           Inline portal-off sample
         </GhostTooltipTrigger>

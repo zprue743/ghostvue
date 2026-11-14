@@ -25,6 +25,14 @@
     z-index: 50;
   }
 
+  :where(
+    .ghost-theme .ghost-tooltip-content[data-hoverable],
+    .ghost-themed-scope .ghost-tooltip-content[data-hoverable],
+    .ghost-tooltip-content[data-themed][data-hoverable]
+  ) {
+    pointer-events: auto;
+  }
+
   @media (forced-colors: active) {
     :where(
       .ghost-theme .ghost-tooltip-content,
