@@ -12,7 +12,7 @@ const defaultToggleGroupTabStopSelectors: ToggleGroupTabStopSelectors = {
   valueDatasetKey: 'ghostToggleGroupValue',
 }
 
-const segmentedControlTabStopSelectors: ToggleGroupTabStopSelectors = {
+export const segmentedControlTabStopSelectors: ToggleGroupTabStopSelectors = {
   itemClass: 'ghost-segmented-control-item',
   rootClass: 'ghost-segmented-control',
   valueDatasetKey: 'ghostSegmentedControlValue',

@@ -117,6 +117,8 @@ export interface UseGhostSegmentedControlReturn {
   /** Selected index in `itemOrder`, or `-1` when none. */
   selectedIndex: ComputedRef<number>
   itemCount: ComputedRef<number>
+  /** Align `itemOrder` with DOM after mount; no-op when DOM has no items. */
+  reconcileItemOrderFromDom: (root: HTMLElement) => void
 }
 
 /** Internal context shared between segmented control parts. */

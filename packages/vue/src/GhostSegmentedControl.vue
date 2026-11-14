@@ -1,5 +1,13 @@
 <script setup lang="ts">
-import { computed, provide, useAttrs, useTemplateRef, watch } from 'vue'
+import {
+  computed,
+  onMounted,
+  onUpdated,
+  provide,
+  useAttrs,
+  useTemplateRef,
+  watch,
+} from 'vue'
 
 import {
   ghostSegmentedControlContextKey,
@@ -93,6 +101,15 @@ useRovingFocus(element, {
   loop: true,
 })
 
+function syncAfterDomUpdate(): void {
+  const root = element.value
+  if (!root) {
+    return
+  }
+  group.reconcileItemOrderFromDom(root)
+  applySegmentedControlSelectionTabStops(root, group.tabStopValue.value)
+}
+
 watch(
   () =>
     [
@@ -101,13 +118,18 @@ watch(
       group.registryVersion.value,
     ] as const,
   () => {
-    const root = element.value
-    if (root) {
-      applySegmentedControlSelectionTabStops(root, group.tabStopValue.value)
-    }
+    syncAfterDomUpdate()
   },
   { flush: 'post' },
 )
+
+onMounted(() => {
+  syncAfterDomUpdate()
+})
+
+onUpdated(() => {
+  syncAfterDomUpdate()
+})
 
 function onFocusOut(event: FocusEvent): void {
   const root = element.value

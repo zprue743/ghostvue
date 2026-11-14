@@ -70,6 +70,22 @@ function items(wrapper: ReturnType<typeof mount>) {
   return wrapper.findAll('.ghost-segmented-control-item')
 }
 
+function selectedIndexFromIndicator(wrapper: ReturnType<typeof mount>): number {
+  const style = wrapper.get('[data-part="indicator"]').attributes('style') ?? ''
+  const pattern = /--ghost-segmented-selected-index:\s*(-?\d+)/
+  const match = pattern.exec(style)
+  return match ? Number(match[1]) : Number.NaN
+}
+
+function domIndexForValue(
+  wrapper: ReturnType<typeof mount>,
+  value: string,
+): number {
+  return items(wrapper).findIndex(
+    (item) => item.attributes('data-ghost-segmented-control-value') === value,
+  )
+}
+
 describe('GhostSegmentedControl', () => {
   it('sets indicator CSS variables from selection without layout reads', async () => {
     const { wrapper } = mountSegmented({ defaultValue: 'b' })
@@ -133,6 +149,78 @@ describe('GhostSegmentedControl', () => {
     expect(html).toContain('data-part="indicator"')
     expect(html).toMatch(/--ghost-segmented-selected-index:\s*1/)
     expect(html).toContain('aria-pressed="true"')
+  })
+
+  it('reconciles indicator index when a segment is inserted before the selection', async () => {
+    const showLeading = ref(false)
+    const wrapper = mount(
+      defineComponent({
+        setup() {
+          return () =>
+            h(
+              GhostSegmentedControl,
+              { defaultValue: 'b', 'aria-label': 'Reorder test' },
+              {
+                default: () => [
+                  showLeading.value
+                    ? h(
+                        GhostSegmentedControlItem,
+                        { value: 'leading' },
+                        () => 'L',
+                      )
+                    : null,
+                  h(GhostSegmentedControlItem, { value: 'a' }, () => 'A'),
+                  h(GhostSegmentedControlItem, { value: 'b' }, () => 'B'),
+                  h(GhostSegmentedControlItem, { value: 'c' }, () => 'C'),
+                ],
+              },
+            )
+        },
+      }),
+      { attachTo: document.body },
+    )
+    attached.push(wrapper)
+    await flushPromises()
+    expect(selectedIndexFromIndicator(wrapper)).toBe(1)
+
+    showLeading.value = true
+    await flushPromises()
+    const domIndex = domIndexForValue(wrapper, 'b')
+    expect(domIndex).toBe(2)
+    expect(selectedIndexFromIndicator(wrapper)).toBe(domIndex)
+  })
+
+  it('reconciles indicator index when v-for item order changes', async () => {
+    const values = ref(['a', 'b', 'c'])
+    const wrapper = mount(
+      defineComponent({
+        setup() {
+          return () =>
+            h(
+              GhostSegmentedControl,
+              { defaultValue: 'c', 'aria-label': 'v-for test' },
+              {
+                default: () =>
+                  values.value.map((value) =>
+                    h(GhostSegmentedControlItem, { key: value, value }, () =>
+                      value.toUpperCase(),
+                    ),
+                  ),
+              },
+            )
+        },
+      }),
+      { attachTo: document.body },
+    )
+    attached.push(wrapper)
+    await flushPromises()
+    expect(selectedIndexFromIndicator(wrapper)).toBe(2)
+
+    values.value = ['c', 'b', 'a']
+    await flushPromises()
+    const domIndex = domIndexForValue(wrapper, 'c')
+    expect(domIndex).toBe(0)
+    expect(selectedIndexFromIndicator(wrapper)).toBe(domIndex)
   })
 
   it('exposes focus() on the group root', async () => {

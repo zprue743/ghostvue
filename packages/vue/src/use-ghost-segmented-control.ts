@@ -5,6 +5,7 @@ import type {
   UseGhostSegmentedControlOptions,
   UseGhostSegmentedControlReturn,
 } from './ghost-segmented-control'
+import { getSegmentedControlItemOrderFromDom } from './sync-segmented-control-item-order'
 import { useGhostToggleGroup } from './use-ghost-toggle-group'
 
 /**
@@ -66,6 +67,21 @@ export function useGhostSegmentedControl(
 
   const itemCount = computed(() => itemOrder.value.length)
 
+  function reconcileItemOrderFromDom(root: HTMLElement): void {
+    const domOrder = getSegmentedControlItemOrderFromDom(root)
+    if (domOrder.length === 0) {
+      return
+    }
+    const current = itemOrder.value
+    if (
+      domOrder.length === current.length &&
+      domOrder.every((value, index) => value === current[index])
+    ) {
+      return
+    }
+    itemOrder.value = domOrder
+  }
+
   return {
     modelValue: group.modelValue as Ref<GhostSegmentedControlValue>,
     orientation: group.orientation,
@@ -82,5 +98,6 @@ export function useGhostSegmentedControl(
     itemOrder,
     selectedIndex,
     itemCount,
+    reconcileItemOrderFromDom,
   }
 }
