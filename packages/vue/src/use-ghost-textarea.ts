@@ -1,5 +1,6 @@
 import {
   computed,
+  nextTick,
   onMounted,
   toValue,
   watch,
@@ -140,16 +141,30 @@ export function useGhostTextarea(options: UseGhostTextareaOptions = {}): {
     el.style.overflowY = contentHeight > maxHeight ? 'auto' : 'hidden'
   }
 
+  function restoreDomIfRejected(target: HTMLTextAreaElement): void {
+    if (target.value === value.value) return
+
+    const start = target.selectionStart
+    const end = target.selectionEnd
+    target.value = value.value
+    const length = target.value.length
+    target.setSelectionRange(Math.min(start, length), Math.min(end, length))
+    resize(target)
+  }
+
   function onInput(event: Event): void {
     const target = event.target
     if (!(target instanceof HTMLTextAreaElement)) return
     value.value = target.value
-    // Controlled mode does not write local state. If the parent ignores the
-    // emit, restore the DOM so the field still displays the prop.
-    if (target.value !== value.value) {
-      target.value = value.value
-    }
     resize(target)
+
+    // Controlled mode does not write local state. The getter still returns the
+    // pre-emit prop until the parent re-renders, so a synchronous restore would
+    // treat a normal v-model write as a rejection and move the caret to the end.
+    // Wait a tick for the parent to accept or ignore, then restore only if needed.
+    void nextTick(() => {
+      restoreDomIfRejected(target)
+    })
   }
 
   const rootProps = computed((): GhostTextareaRootProps => ({

@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils'
-import { h } from 'vue'
+import { defineComponent, h, nextTick, ref } from 'vue'
 import { renderToString } from 'vue/server-renderer'
 import { describe, expect, it, vi } from 'vitest'
 
@@ -40,9 +40,42 @@ describe('GhostTextarea', () => {
     const root = wrapper.get('textarea')
 
     await root.setValue('next')
+    await nextTick()
 
     expect(wrapper.emitted('update:modelValue')).toEqual([['next']])
     expect(root.element.value).toBe('locked')
+  })
+
+  it('keeps the caret when a v-model parent writes the emit back', async () => {
+    const wrapper = mount(
+      defineComponent({
+        setup() {
+          const notes = ref('abcd')
+          return () =>
+            h(GhostTextarea, {
+              'aria-label': 'Notes',
+              modelValue: notes.value,
+              'onUpdate:modelValue': (value: string) => {
+                notes.value = value
+              },
+            })
+        },
+      }),
+      { attachTo: document.body },
+    )
+    const textarea = wrapper.get('textarea').element
+
+    textarea.focus()
+    textarea.setSelectionRange(2, 2)
+    textarea.value = 'abxcd'
+    textarea.setSelectionRange(3, 3)
+    await wrapper.get('textarea').trigger('input')
+    await nextTick()
+
+    expect(textarea.value).toBe('abxcd')
+    expect(textarea.selectionStart).toBe(3)
+    expect(textarea.selectionEnd).toBe(3)
+    wrapper.unmount()
   })
 
   it('forwards native attributes and listeners for Field wiring', async () => {
