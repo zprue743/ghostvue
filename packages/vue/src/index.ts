@@ -155,3 +155,13 @@ export type {
   GhostSeparatorProps,
   UseGhostSeparatorOptions,
 } from './ghost-separator'
+export { default as GhostProgress } from './GhostProgress.vue'
+export {
+  useGhostProgress,
+  type GhostProgressIndicatorProps,
+  type GhostProgressRootProps,
+} from './use-ghost-progress'
+export type {
+  GhostProgressProps,
+  UseGhostProgressOptions,
+} from './ghost-progress'

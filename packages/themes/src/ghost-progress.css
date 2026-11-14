@@ -1,0 +1,115 @@
+/*
+ * Themed GhostProgress. Visual values come from semantic --ghost-* tokens.
+ * Private --_ghost-progress-* properties are per-instance wiring, not a public
+ * API. Indeterminate translation is CSS-only so reduced-motion can swap it for
+ * a pulse without a client motion query.
+ */
+@layer ghostvue-theme {
+  :where(.ghost-theme .ghost-progress, .ghost-themed-scope .ghost-progress) {
+    --_ghost-progress-track: var(--ghost-surface-muted-bg);
+    --_ghost-progress-fill: var(--ghost-action-primary-bg);
+    --_ghost-progress-size: var(--ghost-space-gap-sm);
+
+    background-color: var(--_ghost-progress-track);
+    block-size: var(--_ghost-progress-size);
+    border-radius: var(--ghost-radius-pill);
+    box-sizing: border-box;
+    display: block;
+    inline-size: 100%;
+    overflow: hidden;
+  }
+
+  :where(
+    .ghost-theme .ghost-progress [data-part='indicator'],
+    .ghost-themed-scope .ghost-progress [data-part='indicator']
+  ) {
+    background-color: var(--_ghost-progress-fill);
+    block-size: 100%;
+    border-radius: inherit;
+    transition: inline-size var(--ghost-motion-duration-fast)
+      var(--ghost-motion-easing-standard);
+  }
+
+  :where(
+    .ghost-theme .ghost-progress[data-tone='neutral'],
+    .ghost-themed-scope .ghost-progress[data-tone='neutral']
+  ) {
+    --_ghost-progress-fill: var(--ghost-action-neutral-bg);
+  }
+
+  :where(
+    .ghost-theme .ghost-progress[data-tone='danger'],
+    .ghost-themed-scope .ghost-progress[data-tone='danger']
+  ) {
+    --_ghost-progress-fill: var(--ghost-action-danger-bg);
+  }
+
+  :where(
+    .ghost-theme .ghost-progress[data-size='sm'],
+    .ghost-themed-scope .ghost-progress[data-size='sm']
+  ) {
+    --_ghost-progress-size: var(--ghost-space-gap-xs);
+  }
+
+  :where(
+    .ghost-theme .ghost-progress[data-size='lg'],
+    .ghost-themed-scope .ghost-progress[data-size='lg']
+  ) {
+    --_ghost-progress-size: var(--ghost-space-gap-md);
+  }
+
+  :where(
+    .ghost-theme
+      .ghost-progress[data-state='indeterminate']
+      [data-part='indicator'],
+    .ghost-themed-scope
+      .ghost-progress[data-state='indeterminate']
+      [data-part='indicator']
+  ) {
+    /* Looping duration matches GhostSpinner so the two do not drift. */
+    animation: ghost-progress-indeterminate var(--ghost-action-spinner-duration)
+      var(--ghost-motion-easing-standard) infinite;
+    /* Width is a fraction of the track; keyframes translate in units of this fill. */
+    inline-size: 40%;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    :where(
+      .ghost-theme
+        .ghost-progress[data-state='indeterminate']
+        [data-part='indicator'],
+      .ghost-themed-scope
+        .ghost-progress[data-state='indeterminate']
+        [data-part='indicator']
+    ) {
+      animation: ghost-progress-pulse var(--ghost-action-spinner-duration)
+        var(--ghost-motion-easing-standard) infinite;
+      inline-size: 100%;
+      transform: none;
+    }
+  }
+
+  @media (forced-colors: active) {
+    :where(.ghost-theme .ghost-progress, .ghost-themed-scope .ghost-progress) {
+      --_ghost-progress-track: Canvas;
+      --_ghost-progress-fill: Highlight;
+    }
+  }
+
+  @keyframes ghost-progress-indeterminate {
+    0% {
+      transform: translateX(-100%);
+    }
+
+    100% {
+      /* 40% fill: -100% of self starts off-start, 250% crosses the track, +100% exits. */
+      transform: translateX(350%);
+    }
+  }
+
+  @keyframes ghost-progress-pulse {
+    50% {
+      opacity: var(--ghost-action-spinner-opacity);
+    }
+  }
+}

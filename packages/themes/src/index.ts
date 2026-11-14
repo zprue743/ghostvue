@@ -126,3 +126,9 @@ export {
   type GhostSeparatorElement,
   type GhostSeparatorOrientation,
 } from './ghost-separator'
+
+export {
+  GhostProgress,
+  type GhostProgressSize,
+  type GhostProgressTone,
+} from './ghost-progress'

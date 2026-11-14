@@ -237,6 +237,36 @@ export const ghostExamples = [
     layer: 'themed',
   },
   {
+    id: 'progress/basic',
+    title: 'Basic',
+    description: 'Named determinate progressbar with value and max.',
+    layer: 'headless',
+  },
+  {
+    id: 'progress/composable',
+    title: 'Composable',
+    description: 'Same contract as GhostProgress, applied to a native host.',
+    layer: 'headless',
+  },
+  {
+    id: 'progress/indeterminate',
+    title: 'Indeterminate',
+    description: 'Fallback when the current value is unknown.',
+    layer: 'headless',
+  },
+  {
+    id: 'progress/value-text',
+    title: 'Value text',
+    description: 'Custom accessible value text instead of a percent.',
+    layer: 'headless',
+  },
+  {
+    id: 'progress/themed',
+    title: 'Themed',
+    description: 'Track thickness and tone on the @ghostvue/themes wrapper.',
+    layer: 'themed',
+  },
+  {
     id: 'separator/basic',
     title: 'Basic',
     description: 'Native horizontal thematic break with separator semantics.',
