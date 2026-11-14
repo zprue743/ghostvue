@@ -60,8 +60,15 @@
       "deprecated": false
     },
     {
+      "name": "name",
+      "type": "string",
+      "required": false,
+      "description": "Declared prop `name`.",
+      "deprecated": false
+    },
+    {
       "name": "orientation",
-      "type": "'horizontal' | 'vertical'",
+      "type": "'vertical' | 'horizontal'",
       "default": "horizontal",
       "required": false,
       "description": "Declared prop `orientation`.",
@@ -73,13 +80,6 @@
       "default": false,
       "required": false,
       "description": "Declared prop `range`.",
-      "deprecated": false
-    },
-    {
-      "name": "name",
-      "type": "string",
-      "required": false,
-      "description": "Declared prop `name`.",
       "deprecated": false
     },
     {
