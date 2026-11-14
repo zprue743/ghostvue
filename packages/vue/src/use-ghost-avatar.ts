@@ -1,6 +1,7 @@
 import {
   computed,
   onMounted,
+  onUnmounted,
   ref,
   toValue,
   watch,
@@ -27,6 +28,16 @@ export interface GhostAvatarImageProps {
   onError: () => void
 }
 
+/** First Unicode code point in a word (avoids splitting surrogate pairs). */
+function firstGrapheme(word: string): string {
+  return Array.from(word)[0] ?? ''
+}
+
+/** First two code points in a word. */
+function firstTwoGraphemes(word: string): string {
+  return Array.from(word).slice(0, 2).join('')
+}
+
 /** Derive up to two uppercase initials from a display name. */
 export function deriveGhostAvatarInitials(name: string): string {
   const trimmed = name.trim()
@@ -34,31 +45,29 @@ export function deriveGhostAvatarInitials(name: string): string {
 
   const parts = trimmed.split(/\s+/).filter(Boolean)
   if (parts.length >= 2) {
-    const first = parts[0]?.[0] ?? ''
-    const second = parts[1]?.[0] ?? ''
-    return (first + second).toLocaleUpperCase()
+    return (
+      firstGrapheme(parts[0] ?? '') + firstGrapheme(parts[1] ?? '')
+    ).toLocaleUpperCase()
   }
 
-  return (parts[0] ?? '').slice(0, 2).toLocaleUpperCase()
+  return firstTwoGraphemes(parts[0] ?? '').toLocaleUpperCase()
 }
 
 function initialStatus(src: string | undefined): GhostAvatarImageStatus {
   return src ? 'loading' : 'idle'
 }
 
-function probeImage(src: string, status: Ref<GhostAvatarImageStatus>): void {
-  status.value = 'loading'
-  const image = new Image()
-  image.onload = () => {
-    status.value = 'loaded'
-  }
-  image.onerror = () => {
-    status.value = 'error'
-  }
-  image.src = src
-  if (image.complete && image.naturalWidth > 0) {
-    status.value = 'loaded'
-  }
+interface ProbeImage {
+  onload: (() => void) | null
+  onerror: (() => void) | null
+  src: string
+  complete: boolean
+  naturalWidth: number
+}
+
+function detachProbeHandlers(image: ProbeImage): void {
+  image.onload = null
+  image.onerror = null
 }
 
 /**
@@ -77,6 +86,42 @@ export function useGhostAvatar(options: UseGhostAvatarOptions = {}): {
   const imageStatus = ref<GhostAvatarImageStatus>(
     initialStatus(toValue(options.src)),
   )
+
+  let activeProbeGeneration = 0
+  let detachActiveProbe: (() => void) | null = null
+
+  function cancelActiveProbe(): void {
+    detachActiveProbe?.()
+    detachActiveProbe = null
+    activeProbeGeneration += 1
+  }
+
+  function probeImage(src: string): void {
+    cancelActiveProbe()
+    imageStatus.value = 'loading'
+    const generation = activeProbeGeneration
+    const image = new Image() as ProbeImage
+
+    const commit = (next: GhostAvatarImageStatus): void => {
+      if (generation !== activeProbeGeneration) return
+      imageStatus.value = next
+    }
+
+    image.onload = () => {
+      commit('loaded')
+    }
+    image.onerror = () => {
+      commit('error')
+    }
+    detachActiveProbe = () => {
+      detachProbeHandlers(image)
+    }
+
+    image.src = src
+    if (image.complete && image.naturalWidth > 0) {
+      commit('loaded')
+    }
+  }
 
   const resolvedAlt = computed(() => {
     const alt = toValue(options.alt)
@@ -113,14 +158,16 @@ export function useGhostAvatar(options: UseGhostAvatarOptions = {}): {
       src,
       alt: resolvedAlt.value,
       onError: () => {
-        imageStatus.value = 'error'
+        if (toValue(options.src)?.trim() === src) {
+          imageStatus.value = 'error'
+        }
       },
     }
   })
 
   onMounted(() => {
     const src = toValue(options.src)?.trim()
-    if (src) probeImage(src, imageStatus)
+    if (src) probeImage(src)
   })
 
   watch(
@@ -128,12 +175,17 @@ export function useGhostAvatar(options: UseGhostAvatarOptions = {}): {
     (src) => {
       const trimmed = src?.trim()
       if (!trimmed) {
+        cancelActiveProbe()
         imageStatus.value = 'idle'
         return
       }
-      probeImage(trimmed, imageStatus)
+      probeImage(trimmed)
     },
   )
+
+  onUnmounted(() => {
+    cancelActiveProbe()
+  })
 
   return {
     imageStatus,
