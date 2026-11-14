@@ -12,6 +12,7 @@
 @import './ghost-dialog.css';
 @import './ghost-popover.css';
 @import './ghost-separator.css';
+@import './ghost-skeleton.css';
 @import './ghost-spinner.css';
 
 @layer ghostvue-theme {

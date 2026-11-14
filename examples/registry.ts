@@ -168,6 +168,33 @@ export const ghostExamples = [
     layer: 'headless',
   },
   {
+    id: 'skeleton/basic',
+    title: 'Basic',
+    description:
+      'Unstyled decorative loading placeholder. Hidden from assistive technology.',
+    layer: 'headless',
+  },
+  {
+    id: 'skeleton/composable',
+    title: 'Composable',
+    description: 'Same contract as GhostSkeleton, applied to a native host.',
+    layer: 'headless',
+  },
+  {
+    id: 'skeleton/themed',
+    title: 'Themed',
+    description:
+      'Text, rect, and circle shapes on the @ghostvue/themes wrapper.',
+    layer: 'themed',
+  },
+  {
+    id: 'skeleton/table',
+    title: 'Table loading',
+    description:
+      'Loading rows with aria-busy and a caption as the status text.',
+    layer: 'themed',
+  },
+  {
     id: 'popover/basic',
     title: 'Basic',
     description:

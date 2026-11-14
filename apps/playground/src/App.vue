@@ -5,6 +5,7 @@ import {
   GhostBadge as GhostBadgeThemed,
   GhostButton as GhostButtonThemed,
   GhostSeparator as GhostSeparatorThemed,
+  GhostSkeleton as GhostSkeletonThemed,
 } from '@ghostvue/themes'
 
 import AmbientReference from './AmbientReference.vue'
@@ -20,6 +21,7 @@ import {
   GhostBadge,
   GhostButton,
   GhostSeparator,
+  GhostSkeleton,
   GhostVisuallyHidden,
   useFocusScope,
   useRovingFocus,
@@ -527,6 +529,60 @@ function closeNested(): void {
         <button type="button">Middle</button>
         <button type="button">Leftmost</button>
       </div>
+    </section>
+
+    <section aria-labelledby="skeleton-heading">
+      <h2 id="skeleton-heading">GhostSkeleton</h2>
+      <p>
+        Decorative placeholders. Assistive technology should hear the caption,
+        not the bones.
+      </p>
+      <div class="examples">
+        <GhostSkeleton
+          data-testid="headless-skeleton"
+          style="display: inline-block; inline-size: 8rem; block-size: 1rem"
+        />
+      </div>
+      <fieldset class="ghost-theme" data-ghost-mode="light">
+        <legend>Skeleton theme</legend>
+        <div class="examples">
+          <GhostSkeletonThemed
+            data-testid="themed-skeleton-text"
+            style="inline-size: 8rem"
+          />
+          <GhostSkeletonThemed
+            shape="rect"
+            data-testid="themed-skeleton-rect"
+            style="inline-size: 8rem"
+          />
+          <GhostSkeletonThemed
+            shape="circle"
+            data-testid="themed-skeleton-circle"
+          />
+          <GhostSkeletonThemed
+            shape="circle"
+            data-testid="themed-skeleton-circle-sm"
+            style="inline-size: 1.5rem"
+          />
+        </div>
+        <table aria-busy="true" data-testid="skeleton-table">
+          <caption>
+            Loading invoices
+          </caption>
+          <thead>
+            <tr>
+              <th scope="col">Invoice</th>
+              <th scope="col">Owner</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <GhostSkeletonThemed as="td" />
+              <GhostSkeletonThemed as="td" style="inline-size: 6rem" />
+            </tr>
+          </tbody>
+        </table>
+      </fieldset>
     </section>
   </main>
 </template>

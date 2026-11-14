@@ -1,0 +1,92 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "handwritten",
+  "name": "GhostSkeleton",
+  "package": "@ghostvue/themes",
+  "status": "experimental",
+  "description": "Themed wrapper around headless GhostSkeleton. Same as prop plus shape. Sets data-themed so recipes apply without a wrapper element (required for as=td). Hand-written because the wrapper is a .ts defineComponent.",
+  "props": [
+    {
+      "name": "as",
+      "type": "'span' | 'div' | 'p' | 'li' | 'td' | 'th'",
+      "default": "span",
+      "required": false,
+      "description": "Rendered root element, forwarded to the unstyled GhostSkeleton.",
+      "deprecated": false
+    },
+    {
+      "name": "shape",
+      "type": "'text' | 'rect' | 'circle'",
+      "default": "text",
+      "required": false,
+      "description": "Visual treatment. The default omits data-shape so CSS can treat a missing hook as a text line.",
+      "deprecated": false
+    }
+  ],
+  "models": [],
+  "events": [],
+  "slots": [
+    {
+      "name": "default",
+      "props": [],
+      "description": "Optional. Leave empty. Slot content stays aria-hidden and inert with the root."
+    }
+  ],
+  "exposed": [],
+  "styling": {
+    "parts": [
+      {
+        "name": "root",
+        "description": "The element selected by as. data-themed attaches default recipes."
+      }
+    ],
+    "states": [],
+    "cssProperties": [
+      {
+        "name": "--ghost-surface-muted-bg",
+        "description": "Placeholder fill."
+      },
+      {
+        "name": "--ghost-surface-subtle-bg",
+        "description": "Shimmer highlight mixed over the muted fill."
+      },
+      {
+        "name": "--ghost-motion-duration-expressive",
+        "description": "Shimmer period. Collapses under reduced motion."
+      },
+      {
+        "name": "--ghost-motion-easing-standard",
+        "description": "Shimmer easing."
+      },
+      {
+        "name": "--ghost-radius-sm",
+        "description": "Corner radius of the default text shape."
+      },
+      {
+        "name": "--ghost-radius-md",
+        "description": "Corner radius of the rect shape."
+      },
+      {
+        "name": "--ghost-type-size-md",
+        "description": "Default block size of the text shape."
+      },
+      {
+        "name": "--ghost-control-size-md-min",
+        "description": "Default size of the rect block size and the circle."
+      },
+      {
+        "name": "--ghost-border-hairline-width",
+        "description": "Forced-colors outline width."
+      }
+    ]
+  },
+  "accessibility": {
+    "role": "generic",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/practices/hiding-semantics/",
+    "keyboard": {
+      "Tab": "Moves past the skeleton. The root is inert and is not a tab stop."
+    },
+    "requiredAriaAttributes": ["aria-hidden"]
+  },
+  "examples": ["skeleton/themed", "skeleton/table"]
+}

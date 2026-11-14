@@ -1,0 +1,52 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "generated",
+  "name": "GhostSkeleton",
+  "package": "@ghostvue/vue",
+  "status": "experimental",
+  "description": "Non-interactive loading placeholder. useGhostSkeleton owns aria-hidden and inert; GhostSkeleton is the thin unstyled element. Themed shape lives on @ghostvue/themes.",
+  "props": [
+    {
+      "name": "as",
+      "type": "GhostSkeletonElement",
+      "default": "span",
+      "required": false,
+      "description": "Rendered root element. Choose the tag that is valid in the parent context. Interactive and void elements are excluded.",
+      "deprecated": false
+    }
+  ],
+  "models": [],
+  "events": [],
+  "slots": [
+    {
+      "name": "default",
+      "props": [],
+      "description": "Optional. Leave empty. Content inside stays hidden from assistive technology with the root."
+    }
+  ],
+  "exposed": [],
+  "styling": {
+    "parts": [
+      {
+        "name": "root",
+        "description": "The single rendered element selected by as."
+      }
+    ],
+    "states": [],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "generic",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/practices/hiding-semantics/",
+    "keyboard": {
+      "Tab": "Moves past the skeleton. The root is inert and is not a tab stop."
+    },
+    "requiredAriaAttributes": [
+      "aria-hidden"
+    ]
+  },
+  "examples": [
+    "skeleton/basic",
+    "skeleton/composable"
+  ]
+}
