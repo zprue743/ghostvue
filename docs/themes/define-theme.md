@@ -4,7 +4,8 @@
 turns a small brand input into a complete token sheet scoped to
 `data-ghost-theme`. It is not re-exported from `@ghostvue/themes`, so application
 bundles cannot pull `culori` by accident. `culori` stays a themes
-`devDependency`.
+`devDependency`, but its code is bundled into `dist/define.js`; see
+`packages/themes/THIRD_PARTY_NOTICES.md` for the MIT license text.
 
 The signed-off contract is [ADR 0008](../adr/0008-define-theme.md). `default`
 remains hand-authored DTCG; flagships are checked-in `defineTheme` calls

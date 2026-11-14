@@ -28,7 +28,8 @@
   },
   "types": "./dist/index.d.ts",
   "files": [
-    "dist"
+    "dist",
+    "THIRD_PARTY_NOTICES.md"
   ],
   "scripts": {
     "build": "node scripts/compile-tokens.mjs && tsc -p tsconfig.build.json && node scripts/copy-css.mjs && node scripts/bundle-define.mjs && node ../../scripts/finalize-declarations.mjs dist",
