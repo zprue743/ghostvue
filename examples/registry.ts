@@ -368,6 +368,48 @@ export const ghostExamples = [
     description: 'Controlled type=search for DataTable-style filters.',
     layer: 'themed',
   },
+  {
+    id: 'textarea/basic',
+    title: 'Basic',
+    description: 'Labeled native textarea with v-model.',
+    layer: 'headless',
+  },
+  {
+    id: 'textarea/composable',
+    title: 'Composable',
+    description: 'Same contract as GhostTextarea, applied to a native host.',
+    layer: 'headless',
+  },
+  {
+    id: 'textarea/themed',
+    title: 'Themed',
+    description: 'Visual size on the @ghostvue/themes wrapper.',
+    layer: 'themed',
+  },
+  {
+    id: 'textarea/states',
+    title: 'States',
+    description: 'Disabled, readonly, invalid, and required fields.',
+    layer: 'themed',
+  },
+  {
+    id: 'textarea/auto-resize',
+    title: 'Auto-resize',
+    description: 'Grows with content until maxRows.',
+    layer: 'themed',
+  },
+  {
+    id: 'textarea/form',
+    title: 'Form',
+    description: 'Native form submission of the textarea value.',
+    layer: 'themed',
+  },
+  {
+    id: 'textarea/ref',
+    title: 'Component ref',
+    description: 'Template refs expose element, focus, and blur.',
+    layer: 'headless',
+  },
 ] as const satisfies readonly GhostExampleDefinition[]
 
 export type GhostExampleId = (typeof ghostExamples)[number]['id']

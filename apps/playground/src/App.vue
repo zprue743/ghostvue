@@ -9,6 +9,7 @@ import {
   GhostProgress as GhostProgressThemed,
   GhostSeparator as GhostSeparatorThemed,
   GhostSkeleton as GhostSkeletonThemed,
+  GhostTextarea as GhostTextareaThemed,
 } from '@ghostvue/themes'
 
 import AmbientReference from './AmbientReference.vue'
@@ -28,6 +29,7 @@ import {
   GhostProgress,
   GhostSeparator,
   GhostSkeleton,
+  GhostTextarea,
   GhostVisuallyHidden,
   useFocusScope,
   useRovingFocus,
@@ -54,6 +56,11 @@ const isPending = ref(false)
 const searchQuery = ref('')
 const submitName = ref('')
 const submittedName = ref('')
+const playgroundNotes = ref('Headless notes.')
+const playgroundBio = ref('Themed bio.')
+const playgroundDraft = ref('Auto-resize this draft.\nAdd more lines to grow.')
+const playgroundComment = ref('')
+const playgroundCommentSent = ref('')
 
 function remove(name: string) {
   reports.value = reports.value.filter((report) => report.name !== name)
@@ -103,6 +110,12 @@ useRovingFocus(rtl, { orientation: 'horizontal', dir: 'rtl', loop: true })
 function closeNested(): void {
   nestedInnerOpen.value = false
   nestedOpen.value = false
+}
+
+function submitPlaygroundComment(event: Event): void {
+  event.preventDefault()
+  const value = new FormData(event.target as HTMLFormElement).get('comment')
+  playgroundCommentSent.value = typeof value === 'string' ? value : ''
 }
 </script>
 
@@ -575,6 +588,80 @@ function closeNested(): void {
       </div>
     </section>
 
+    <section aria-labelledby="textarea-heading">
+      <h2 id="textarea-heading">GhostTextarea</h2>
+      <div class="textarea-stack">
+        <label for="pg-notes">Notes</label>
+        <GhostTextarea
+          id="pg-notes"
+          v-model="playgroundNotes"
+          name="notes"
+          data-testid="textarea-headless"
+        />
+
+        <label for="pg-bio">Bio</label>
+        <GhostTextareaThemed
+          id="pg-bio"
+          v-model="playgroundBio"
+          data-testid="textarea-themed"
+        />
+
+        <label for="pg-disabled">Disabled</label>
+        <GhostTextareaThemed
+          id="pg-disabled"
+          default-value="Cannot edit"
+          disabled
+          data-testid="textarea-disabled"
+        />
+
+        <label for="pg-readonly">Readonly</label>
+        <GhostTextareaThemed
+          id="pg-readonly"
+          default-value="Visible, not editable"
+          readonly
+          data-testid="textarea-readonly"
+        />
+
+        <label for="pg-invalid">Invalid</label>
+        <GhostTextareaThemed
+          id="pg-invalid"
+          default-value="Needs more detail"
+          invalid
+          required
+          data-testid="textarea-invalid"
+        />
+
+        <label for="pg-draft">Draft</label>
+        <GhostTextareaThemed
+          id="pg-draft"
+          v-model="playgroundDraft"
+          :rows="3"
+          :max-rows="6"
+          auto-resize
+          data-testid="textarea-auto-resize"
+        />
+      </div>
+
+      <form
+        class="form-example"
+        data-testid="textarea-form"
+        @submit="submitPlaygroundComment"
+      >
+        <label for="pg-comment">Comment</label>
+        <GhostTextareaThemed
+          id="pg-comment"
+          v-model="playgroundComment"
+          name="comment"
+          required
+          data-testid="textarea-comment"
+        />
+        <GhostButtonThemed type="submit">Send comment</GhostButtonThemed>
+        <p v-if="playgroundCommentSent" data-testid="textarea-comment-sent">
+          Sent: {{ playgroundCommentSent }}
+        </p>
+      </form>
+    </section>
+
     <section aria-labelledby="separator-heading">
       <h2 id="separator-heading">GhostSeparator</h2>
       <div data-testid="separator-stack">
@@ -828,5 +915,11 @@ fieldset {
   gap: 1rem;
   inline-size: min(100%, 24rem);
   margin-block-start: 1rem;
+}
+
+.textarea-stack {
+  display: grid;
+  gap: 0.75rem;
+  max-inline-size: 32rem;
 }
 </style>

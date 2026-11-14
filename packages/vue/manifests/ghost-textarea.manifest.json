@@ -1,0 +1,147 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "generated",
+  "name": "GhostTextarea",
+  "package": "@ghostvue/vue",
+  "status": "experimental",
+  "description": "Headless native multiline text control. useGhostTextarea owns v-model, disabled/readonly/invalid/required, and SSR-safe auto-resize; GhostTextarea is the thin unstyled textarea. Themed styles live on @ghostvue/themes.",
+  "props": [
+    {
+      "name": "modelValue",
+      "type": "string",
+      "required": false,
+      "description": "Controlled value. Omit for uncontrolled mode; an empty string is a defined empty value.",
+      "deprecated": false
+    },
+    {
+      "name": "defaultValue",
+      "type": "string",
+      "default": "",
+      "required": false,
+      "description": "Initial uncontrolled value. Later changes are ignored.",
+      "deprecated": false
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Native disabled semantics: not focusable, not editable, omitted from form submit.",
+      "deprecated": false
+    },
+    {
+      "name": "readonly",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Native readonly semantics: focusable and submitted, but the user agent rejects edits.",
+      "deprecated": false
+    },
+    {
+      "name": "invalid",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Sets aria-invalid=true. Error copy belongs to Field or the surrounding form.",
+      "deprecated": false
+    },
+    {
+      "name": "required",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Native required constraint. Validation messaging stays with the form.",
+      "deprecated": false
+    },
+    {
+      "name": "rows",
+      "type": "number",
+      "default": 2,
+      "required": false,
+      "description": "Native rows. Matches the HTML default. Auto-resize uses this as the minimum height.",
+      "deprecated": false
+    },
+    {
+      "name": "maxRows",
+      "type": "number",
+      "required": false,
+      "description": "Auto-resize ceiling in rows. Ignored unless autoResize is true. When set below rows, rows wins as both min and max.",
+      "deprecated": false
+    },
+    {
+      "name": "autoResize",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Grow the field with its content after mount. Off by default so native resize and a fixed rows height remain the ordinary path.",
+      "deprecated": false
+    }
+  ],
+  "models": [
+    {
+      "prop": "modelValue",
+      "event": "update:modelValue",
+      "type": "string",
+      "description": "v-model binding for the textarea string."
+    }
+  ],
+  "events": [],
+  "slots": [],
+  "exposed": [
+    {
+      "name": "element",
+      "kind": "property",
+      "type": "HTMLTextAreaElement | null",
+      "description": "The native textarea after mount; null before mount and after unmount."
+    },
+    {
+      "name": "focus",
+      "kind": "method",
+      "type": "(options?: FocusOptions) => void",
+      "description": "Focuses the native textarea when it is mounted and enabled. No-op before mount."
+    },
+    {
+      "name": "blur",
+      "kind": "method",
+      "type": "() => void",
+      "description": "Removes focus from the native textarea when it is mounted. No-op before mount."
+    }
+  ],
+  "styling": {
+    "parts": [
+      {
+        "name": "root",
+        "description": "The native textarea element."
+      }
+    ],
+    "states": [
+      {
+        "name": "disabled",
+        "description": "Unavailable field. Wins data-state when overlapping readonly or invalid. Prefer the native disabled attribute."
+      },
+      {
+        "name": "readonly",
+        "description": "Focusable but not editable. Wins data-state over invalid. Native readonly remains the semantic source of truth."
+      },
+      {
+        "name": "invalid",
+        "description": "Consumer-owned invalid. Used when the field is neither disabled nor readonly. Themed CSS also keys off aria-invalid."
+      }
+    ],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "textbox",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/textbox/",
+    "keyboard": {
+      "Enter": "Insert a newline. Does not submit the form.",
+      "Tab": "Leave the field. Native tab order."
+    },
+    "requiredAriaAttributes": []
+  },
+  "examples": [
+    "textarea/basic",
+    "textarea/composable",
+    "textarea/ref"
+  ]
+}

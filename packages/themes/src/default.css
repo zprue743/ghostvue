@@ -17,6 +17,7 @@
 @import './ghost-separator.css';
 @import './ghost-skeleton.css';
 @import './ghost-spinner.css';
+@import './ghost-textarea.css';
 
 @layer ghostvue-theme {
   :where(.ghost-themed-scope) {

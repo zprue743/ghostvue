@@ -139,3 +139,9 @@ export {
   type GhostInputSize,
   type GhostInputType,
 } from './ghost-input'
+
+export {
+  GhostTextarea,
+  type GhostTextareaExposed,
+  type GhostTextareaSize,
+} from './ghost-textarea'

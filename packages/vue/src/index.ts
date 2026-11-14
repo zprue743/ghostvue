@@ -173,3 +173,13 @@ export type {
   GhostInputType,
   UseGhostInputOptions,
 } from './ghost-input'
+export { default as GhostTextarea } from './GhostTextarea.vue'
+export {
+  useGhostTextarea,
+  type GhostTextareaRootProps,
+} from './use-ghost-textarea'
+export type {
+  GhostTextareaExposed,
+  GhostTextareaProps,
+  UseGhostTextareaOptions,
+} from './ghost-textarea'
