@@ -121,6 +121,62 @@ export type {
   UseGhostPopoverOptions,
   UseGhostPopoverReturn,
 } from './ghost-popover'
+export { default as GhostDropdownMenu } from './GhostDropdownMenu.vue'
+export { default as GhostDropdownMenuTrigger } from './GhostDropdownMenuTrigger.vue'
+export { default as GhostDropdownMenuContent } from './GhostDropdownMenuContent.vue'
+export { default as GhostDropdownMenuItem } from './GhostDropdownMenuItem.vue'
+export { default as GhostDropdownMenuGroup } from './GhostDropdownMenuGroup.vue'
+export { default as GhostDropdownMenuLabel } from './GhostDropdownMenuLabel.vue'
+export { default as GhostDropdownMenuSeparator } from './GhostDropdownMenuSeparator.vue'
+export { default as GhostDropdownMenuCheckboxItem } from './GhostDropdownMenuCheckboxItem.vue'
+export { default as GhostDropdownMenuRadioGroup } from './GhostDropdownMenuRadioGroup.vue'
+export { default as GhostDropdownMenuRadioItem } from './GhostDropdownMenuRadioItem.vue'
+export { useGhostDropdownMenu } from './use-ghost-dropdown-menu'
+export {
+  MENU_ITEM_SELECTOR,
+  focusFirstMenuItem,
+  focusLastMenuItem,
+  getMenuItems,
+  useGhostMenuCollection,
+  type UseGhostMenuCollectionOptions,
+} from './use-ghost-menu-collection'
+export type {
+  GhostDropdownMenuCheckboxItemElement,
+  GhostDropdownMenuCheckboxItemExposed,
+  GhostDropdownMenuCheckboxItemProps,
+  GhostDropdownMenuContentElement,
+  GhostDropdownMenuContentExposed,
+  GhostDropdownMenuContentProps,
+  GhostDropdownMenuContext,
+  GhostDropdownMenuFlipOptions,
+  GhostDropdownMenuGroupElement,
+  GhostDropdownMenuGroupProps,
+  GhostDropdownMenuItemElement,
+  GhostDropdownMenuItemExposed,
+  GhostDropdownMenuItemProps,
+  GhostDropdownMenuLabelElement,
+  GhostDropdownMenuLabelProps,
+  GhostDropdownMenuOffsetOptions,
+  GhostDropdownMenuPadding,
+  GhostDropdownMenuPlacement,
+  GhostDropdownMenuProps,
+  GhostDropdownMenuRadioGroupContext,
+  GhostDropdownMenuRadioGroupElement,
+  GhostDropdownMenuRadioGroupProps,
+  GhostDropdownMenuRadioItemElement,
+  GhostDropdownMenuRadioItemExposed,
+  GhostDropdownMenuRadioItemProps,
+  GhostDropdownMenuSeparatorElement,
+  GhostDropdownMenuSeparatorProps,
+  GhostDropdownMenuShiftOptions,
+  GhostDropdownMenuSlotProps,
+  GhostDropdownMenuStrategy,
+  GhostDropdownMenuTriggerElement,
+  GhostDropdownMenuTriggerExposed,
+  GhostDropdownMenuTriggerProps,
+  UseGhostDropdownMenuOptions,
+  UseGhostDropdownMenuReturn,
+} from './ghost-dropdown-menu'
 export { default as GhostDialog } from './GhostDialog.vue'
 export { default as GhostDialogTrigger } from './GhostDialogTrigger.vue'
 export { default as GhostDialogOverlay } from './GhostDialogOverlay.vue'

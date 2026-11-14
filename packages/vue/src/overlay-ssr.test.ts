@@ -18,6 +18,10 @@ import GhostPopover from './GhostPopover.vue'
 import GhostPopoverClose from './GhostPopoverClose.vue'
 import GhostPopoverContent from './GhostPopoverContent.vue'
 import GhostPopoverTrigger from './GhostPopoverTrigger.vue'
+import GhostDropdownMenu from './GhostDropdownMenu.vue'
+import GhostDropdownMenuContent from './GhostDropdownMenuContent.vue'
+import GhostDropdownMenuItem from './GhostDropdownMenuItem.vue'
+import GhostDropdownMenuTrigger from './GhostDropdownMenuTrigger.vue'
 import GhostTooltip from './GhostTooltip.vue'
 import GhostTooltipContent from './GhostTooltipContent.vue'
 import GhostTooltipTrigger from './GhostTooltipTrigger.vue'
@@ -70,6 +74,56 @@ describe('overlay primitives in Node SSR (no window or document)', () => {
     expect(html).toContain('Trigger')
     expect(html).toContain('Overlay content')
     expect(html).toContain('data-coords="0,0,right"')
+  })
+
+  it('renders GhostDropdownMenu closed and defaultOpen states cleanly in Node SSR', async () => {
+    expect(typeof window).toBe('undefined')
+    expect(typeof document).toBe('undefined')
+
+    const ClosedApp = defineComponent({
+      setup() {
+        return () =>
+          h(GhostDropdownMenu, null, {
+            default: () => [
+              h(GhostDropdownMenuTrigger, null, () => 'Closed menu'),
+              h(GhostDropdownMenuContent, null, () =>
+                h(GhostDropdownMenuItem, null, () => 'Hidden item'),
+              ),
+            ],
+          })
+      },
+    })
+
+    const closedHtml = await renderToString(createSSRApp(ClosedApp))
+    expect(closedHtml).toContain('Closed menu')
+    expect(closedHtml).toContain('aria-expanded="false"')
+    expect(closedHtml).toContain('aria-haspopup="menu"')
+    expect(closedHtml).not.toContain('Hidden item')
+
+    const OpenApp = defineComponent({
+      setup() {
+        return () =>
+          h(
+            GhostDropdownMenu,
+            { defaultOpen: true },
+            {
+              default: () => [
+                h(GhostDropdownMenuTrigger, null, () => 'Open menu'),
+                h(GhostDropdownMenuContent, null, () =>
+                  h(GhostDropdownMenuItem, null, () => 'Visible item'),
+                ),
+              ],
+            },
+          )
+      },
+    })
+
+    const openHtml = await renderToString(createSSRApp(OpenApp))
+    expect(openHtml).toContain('Open menu')
+    expect(openHtml).toContain('aria-expanded="true"')
+    expect(openHtml).toContain('Visible item')
+    expect(openHtml).toContain('role="menu"')
+    expect(openHtml).toContain('visibility:hidden')
   })
 
   it('renders GhostPopover closed and defaultOpen states cleanly in Node SSR', async () => {
