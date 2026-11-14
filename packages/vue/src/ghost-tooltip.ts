@@ -61,8 +61,9 @@ export interface GhostTooltipProps {
    */
   defaultOpen?: boolean
   /**
-   * Milliseconds before showing after hover or focus begins.
-   * @default 700
+   * Milliseconds before showing after hover or focus begins. Omit to inherit
+   * {@link GhostTooltipProvider} `delayDuration` when wrapped, otherwise `700`.
+   * @default undefined
    */
   delayDuration?: number
   /**

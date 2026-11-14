@@ -642,6 +642,13 @@ export const ghostExamples = [
     layer: 'headless',
   },
   {
+    id: 'tooltip-provider/skip-delay',
+    title: 'Provider skip delay',
+    description:
+      'Adjacent tooltips share skipDelayDuration under GhostTooltipProvider.',
+    layer: 'headless',
+  },
+  {
     id: 'tooltip/basic',
     title: 'Supplemental label',
     description:

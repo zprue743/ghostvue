@@ -241,8 +241,7 @@ Tooltip content is not in the tab order and must not receive focus.
 - Additive minor change (`minor` Changeset) for `@ghostvue/vue` and
   `@ghostvue/themes`.
 
-## Open architectural questions
+## Related primitives
 
-- Radix-style **cross-tooltip `skipDelayDuration`** (delay-skipping between
-  adjacent tooltip providers) is out of scope for the initial release; `closeDelay`
-  names the hide grace window only.
+- `GhostTooltipProvider` (GHO-118) coordinates open-delay skipping between
+  adjacent tooltips. See [GhostTooltipProvider specification](./tooltip-provider-spec.md).
