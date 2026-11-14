@@ -26,8 +26,9 @@
 @import './ghost-tabs.css';
 @import './ghost-tooltip.css';
 
-@import './ghost-pagination.css';
+@import './ghost-empty-state.css';
 @import './ghost-number-input.css';
+@import './ghost-pagination.css';
 @import './ghost-toolbar.css';
 @import './ghost-radio-group.css';
 

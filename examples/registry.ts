@@ -544,6 +544,36 @@ export const ghostExamples = [
     layer: 'themed',
   },
   {
+    id: 'empty-state/basic',
+    title: 'Empty state basics',
+    description: 'Title and description for an unused panel.',
+    layer: 'headless',
+  },
+  {
+    id: 'empty-state/filtered',
+    title: 'Filtered empty results',
+    description: 'Copy and an action when filters hide every row.',
+    layer: 'headless',
+  },
+  {
+    id: 'empty-state/table-cell',
+    title: 'Empty table body',
+    description: 'EmptyState inside a colspan cell.',
+    layer: 'headless',
+  },
+  {
+    id: 'empty-state/themed',
+    title: 'Themed empty state',
+    description: 'Visual, title, description, and actions with default CSS.',
+    layer: 'themed',
+  },
+  {
+    id: 'empty-state/composable',
+    title: 'Composable empty state',
+    description: 'useGhostEmptyState bindings on a custom host.',
+    layer: 'headless',
+  },
+  {
     id: 'radio-group/basic',
     title: 'Basic',
     description: 'Headless radio group with labeled items.',

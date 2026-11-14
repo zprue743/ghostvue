@@ -22,6 +22,7 @@ export const docsSidebar: LlmsSidebarGroup[] = [
       { text: 'GhostButton', link: '/components/button' },
       { text: 'GhostCheckbox', link: '/components/checkbox' },
       { text: 'GhostDialog', link: '/components/dialog' },
+      { text: 'GhostEmptyState', link: '/components/empty-state' },
       { text: 'GhostField', link: '/components/field' },
       { text: 'GhostInput', link: '/components/input' },
       { text: 'GhostNumberInput', link: '/components/number-input' },
@@ -114,6 +115,10 @@ export const docsSidebar: LlmsSidebarGroup[] = [
       {
         text: 'GhostNumberInput specification',
         link: '/components/number-input-spec',
+      },
+      {
+        text: 'GhostEmptyState specification',
+        link: '/components/empty-state-spec',
       },
       {
         text: 'GhostRadioGroup specification',

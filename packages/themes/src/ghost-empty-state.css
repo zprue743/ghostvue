@@ -1,0 +1,66 @@
+/*
+ * Themed GhostEmptyState. Visual values come from semantic --ghost-* tokens.
+ * Private --_ghost-empty-state-* properties are per-instance wiring, not a
+ * public API. data-themed is the instance hook so table cells need no wrapper.
+ */
+@layer ghostvue-theme {
+  :where(
+    .ghost-theme .ghost-empty-state,
+    .ghost-themed-scope .ghost-empty-state,
+    .ghost-empty-state[data-themed]
+  ) {
+    --_ghost-empty-state-gap: var(--ghost-space-md);
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    gap: var(--_ghost-empty-state-gap);
+    justify-content: center;
+    padding: var(--ghost-space-lg);
+    text-align: center;
+  }
+
+  :where(
+    .ghost-theme .ghost-empty-state [data-part='title'],
+    .ghost-themed-scope .ghost-empty-state [data-part='title'],
+    .ghost-empty-state[data-themed] [data-part='title']
+  ) {
+    color: var(--ghost-surface-fg);
+    font-size: var(--ghost-type-size-lg);
+    font-weight: var(--ghost-type-weight-semibold);
+    margin: 0;
+  }
+
+  :where(
+    .ghost-theme .ghost-empty-state [data-part='description'],
+    .ghost-themed-scope .ghost-empty-state [data-part='description'],
+    .ghost-empty-state[data-themed] [data-part='description']
+  ) {
+    color: var(--ghost-text-muted);
+    font-family: var(--ghost-type-family-sans);
+    font-size: var(--ghost-type-size-md);
+    line-height: var(--ghost-type-line-snug);
+    margin: 0;
+    max-inline-size: 28rem;
+  }
+
+  :where(
+    .ghost-theme .ghost-empty-state [data-part='visual'],
+    .ghost-themed-scope .ghost-empty-state [data-part='visual'],
+    .ghost-empty-state[data-themed] [data-part='visual']
+  ) {
+    color: var(--ghost-text-muted);
+    display: flex;
+    justify-content: center;
+  }
+
+  :where(
+    .ghost-theme .ghost-empty-state [data-part='actions'],
+    .ghost-themed-scope .ghost-empty-state [data-part='actions'],
+    .ghost-empty-state[data-themed] [data-part='actions']
+  ) {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--ghost-space-sm);
+    justify-content: center;
+  }
+}

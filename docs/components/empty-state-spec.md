@@ -29,8 +29,7 @@ not fixed copy or mode enums.
   the data widget.
 - `useControllableState` — there is no model.
 - A parallel styling-hooks vocabulary. GHO-38 remains undecided; this component
-  uses existing `data-part`, `data-ghost-empty-state`, and class hooks from ADR
-  0004.
+  uses existing `data-part`, `data-ghost-empty-state`, and class hooks from ADR 0004.
 - The unstyled component ships no layout or color styles. Spacing and typography
   belong to the themed wrapper or consumer CSS.
 
@@ -40,10 +39,10 @@ not fixed copy or mode enums.
 
 Headless `@ghostvue/vue` `GhostEmptyState` / `useGhostEmptyState`:
 
-| Prop            | Type                              | Default | Contract                                                                                                                                 |
-| --------------- | --------------------------------- | ------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
-| `headingLevel`  | `1 \| 2 \| 3 \| 4 \| 5 \| 6`      | `3`     | Level of the native heading element wrapping the `#title` slot. Omitted title slot skips the heading entirely.                             |
-| `as`            | `GhostEmptyStateElement`          | `'div'` | Root element. Use `section` when the empty region is a named document landmark; default `div` avoids nested landmarks in table cells.       |
+| Prop           | Type                         | Default | Contract                                                                                                                              |
+| -------------- | ---------------------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| `headingLevel` | `1 \| 2 \| 3 \| 4 \| 5 \| 6` | `3`     | Level of the native heading element wrapping the `#title` slot. Omitted title slot skips the heading entirely.                        |
+| `as`           | `GhostEmptyStateElement`     | `'div'` | Root element. Use `section` when the empty region is a named document landmark; default `div` avoids nested landmarks in table cells. |
 
 ```ts
 type GhostEmptyStateElement = 'div' | 'section'
@@ -56,10 +55,12 @@ and part wrappers.
 
 Native attributes and event listeners fall through to the root.
 `useGhostId('ghost-empty-state-title')` supplies the title heading `id` when the
-`#title` slot is rendered. When `#title` is present, the root receives
-`aria-labelledby` pointing at that id. When only `#description` is present, the
-root has no automatic accessible name; consumers name the region with fallthrough
-(`aria-label`, `aria-labelledby` to external copy) if a landmark is required.
+`#title` slot is rendered. When `#title` is present **and** `as` is `section`, the
+root receives `aria-labelledby` pointing at that id (the section becomes a named
+region). The default `div` root never gets `aria-labelledby`: generic/div has no
+nameable role and assistive technology would ignore it. When only `#description`
+is present, or the root is a `div`, consumers name a landmark with fallthrough if
+required (`aria-label`, or `as="section"` plus title).
 
 The `#visual` wrapper is `aria-hidden="true"` whenever that slot has content,
 so decorative icons do not duplicate the title in the accessibility tree.
@@ -71,12 +72,12 @@ There is no model. Mounting and copy are consumer-owned.
 
 ### Events, callbacks, slots, and exposed methods
 
-| Slot          | Part element | Contract                                                                                    |
-| ------------- | ------------ | ------------------------------------------------------------------------------------------- |
-| `visual`      | `visual`     | Optional decorative graphic or icon. Wrapper is `aria-hidden="true"`.                         |
-| `title`       | `title`      | Optional heading text. Rendered as `h{headingLevel}` with generated `id`.                    |
-| `description` | `description`| Optional supporting copy. Rendered as a native `<p>`.                                      |
-| `actions`     | `actions`    | Optional action controls (e.g. `GhostButton`). Not a tab stop itself; children are focusable. |
+| Slot          | Part element  | Contract                                                                                      |
+| ------------- | ------------- | --------------------------------------------------------------------------------------------- |
+| `visual`      | `visual`      | Optional decorative graphic or icon. Wrapper is `aria-hidden="true"`.                         |
+| `title`       | `title`       | Optional heading text. Rendered as `h{headingLevel}` with generated `id`.                     |
+| `description` | `description` | Optional supporting copy. Rendered in a `<div>` so lists and blocks are valid.                 |
+| `actions`     | `actions`     | Optional action controls (e.g. `GhostButton`). Not a tab stop itself; children are focusable. |
 
 No default slot. No component-specific events. No methods are exposed. The root
 is not interactive; consumers that need the element use a template ref on the
@@ -115,9 +116,10 @@ The title uses a native heading (`h1`–`h6` from `headingLevel`). That satisfie
 WCAG 1.3.1 for the primary label of the empty region.
 
 The root is a `div` or `section` with **no** redundant `role`. When `#title` is
-present, `aria-labelledby` references the heading id. Consumers may add
-`role="region"` and `aria-label` via fallthrough when a landmark is required
-without a visible title.
+present and `as` is `section`, `aria-labelledby` references the heading id.
+Default `div` roots omit it; the heading still provides document structure.
+Consumers may add `role="region"` and naming via fallthrough when they own the
+landmark contract.
 
 The visual wrapper is `aria-hidden="true"` when present. Action slots host
 native buttons and links from the consumer; this component does not wrap them in
@@ -179,8 +181,8 @@ Reuses `useGhostId` only.
 
 ## Test plan
 
-- WCAG 1.3.1: heading level follows `headingLevel`; `aria-labelledby` when title
-  present
+- WCAG 1.3.1: heading level follows `headingLevel`; `aria-labelledby` on section
+  only when title present; absent on div with title
 - WCAG 2.1.1: actions slot buttons remain keyboard reachable
 - WCAG 4.1.2: visual wrapper `aria-hidden`; root has no spurious role
 - Rendering: reading order of parts; optional sections omitted when slots empty

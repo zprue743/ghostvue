@@ -1,0 +1,98 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "generated",
+  "name": "GhostEmptyState",
+  "package": "@ghostvue/vue",
+  "status": "experimental",
+  "description": "Presentational empty region with title, description, visual, and actions slots. useGhostEmptyState supplies root and heading bindings.",
+  "props": [
+    {
+      "name": "as",
+      "type": "GhostEmptyStateElement",
+      "default": "div",
+      "required": false,
+      "description": "Root element. Prefer `div` inside table cells.",
+      "deprecated": false
+    },
+    {
+      "name": "headingLevel",
+      "type": "GhostEmptyStateHeadingLevel",
+      "default": 3,
+      "required": false,
+      "description": "Heading level wrapping the `title` slot.",
+      "deprecated": false
+    }
+  ],
+  "models": [],
+  "events": [],
+  "slots": [
+    {
+      "name": "visual",
+      "props": [],
+      "description": "Optional decorative graphic. Wrapper is aria-hidden."
+    },
+    {
+      "name": "title",
+      "props": [],
+      "description": "Optional heading copy. Rendered as h1–h6 from headingLevel."
+    },
+    {
+      "name": "description",
+      "props": [],
+      "description": "Optional supporting copy in a native paragraph."
+    },
+    {
+      "name": "actions",
+      "props": [],
+      "description": "Optional buttons or links; not a tab stop itself."
+    }
+  ],
+  "exposed": [
+    {
+      "name": "element",
+      "kind": "property",
+      "type": "HTMLElement | null",
+      "description": "Root element after mount; null before mount."
+    }
+  ],
+  "styling": {
+    "parts": [
+      {
+        "name": "root",
+        "description": "Outer empty-state container."
+      },
+      {
+        "name": "visual",
+        "description": "Decorative graphic wrapper."
+      },
+      {
+        "name": "title",
+        "description": "Heading element for the title slot."
+      },
+      {
+        "name": "description",
+        "description": "Supporting copy paragraph."
+      },
+      {
+        "name": "actions",
+        "description": "Action controls container."
+      }
+    ],
+    "states": [],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "generic",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/practices/names-and-descriptions/",
+    "keyboard": {
+      "Tab": "Moves through focusable content in the actions slot. The root is not focusable."
+    },
+    "requiredAriaAttributes": []
+  },
+  "examples": [
+    "empty-state/basic",
+    "empty-state/filtered",
+    "empty-state/table-cell",
+    "empty-state/composable"
+  ]
+}

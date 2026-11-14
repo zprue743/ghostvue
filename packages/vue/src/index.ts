@@ -273,6 +273,18 @@ export type {
   UseGhostTabsOptions,
   UseGhostTabsReturn,
 } from './ghost-tabs'
+export { default as GhostEmptyState } from './GhostEmptyState.vue'
+export {
+  useGhostEmptyState,
+  type GhostEmptyStateRootProps,
+} from './use-ghost-empty-state'
+export type {
+  GhostEmptyStateElement,
+  GhostEmptyStateExposed,
+  GhostEmptyStateHeadingLevel,
+  GhostEmptyStateProps,
+  UseGhostEmptyStateOptions,
+} from './ghost-empty-state'
 export { default as GhostPagination } from './GhostPagination.vue'
 export {
   getPaginationRange,
