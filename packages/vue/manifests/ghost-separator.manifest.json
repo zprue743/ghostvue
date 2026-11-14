@@ -1,0 +1,60 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "generated",
+  "name": "GhostSeparator",
+  "package": "@ghostvue/vue",
+  "status": "experimental",
+  "description": "Headless visual and semantic divider. useGhostSeparator owns orientation and decorative semantics; GhostSeparator is the thin unstyled element. Themed styles live on @ghostvue/themes.",
+  "props": [
+    {
+      "name": "as",
+      "type": "GhostSeparatorElement",
+      "required": false,
+      "description": "Rendered root element. Omit to get hr when horizontal and div when vertical. li is valid inside a list.",
+      "deprecated": false
+    },
+    {
+      "name": "decorative",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "When true, sets role=none so the line is omitted from the accessibility tree. Defaults false so native hr and menu/toolbar grouping keep separator semantics.",
+      "deprecated": false
+    },
+    {
+      "name": "orientation",
+      "type": "GhostSeparatorOrientation",
+      "default": "horizontal",
+      "required": false,
+      "description": "Axis of the line. Vertical has no native element, so the default as becomes div.",
+      "deprecated": false
+    }
+  ],
+  "models": [],
+  "events": [],
+  "slots": [],
+  "exposed": [],
+  "styling": {
+    "parts": [
+      {
+        "name": "root",
+        "description": "The single rendered element selected by as."
+      }
+    ],
+    "states": [],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "separator",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/menubar/",
+    "keyboard": {},
+    "requiredAriaAttributes": []
+  },
+  "examples": [
+    "separator/basic",
+    "separator/composable",
+    "separator/vertical",
+    "separator/decorative",
+    "separator/list"
+  ]
+}

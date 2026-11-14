@@ -6,9 +6,9 @@ approves both in PR review.
 ## Purpose and user problems
 
 `GhostSeparator` is a visual and semantic divider. It splits groups in menus,
-toolbars, and layouts without becoming a control. Sighted users see a line;
-assistive technology either encounters a `separator` landmark in the
-reading order or, when the line is purely decorative, ignores it.
+toolbars, and layouts without becoming a control. Sighted users see a line.
+Assistive technology encounters a `separator` in document order, or ignores
+the line when it is purely decorative.
 
 The immediate consumers are horizontal rules between stacked sections, vertical
 rules between toolbar actions, and list-item separators inside menus. Those
@@ -37,11 +37,11 @@ interactive panes.
 
 Headless `@ghostvue/vue` `GhostSeparator` / `useGhostSeparator`:
 
-| Prop          | Type                                  | Default                                                      | Contract                                                                                                                                                         |
-| ------------- | ------------------------------------- | ------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `orientation` | `'horizontal' \| 'vertical'`          | `'horizontal'`                                               | Axis of the line. Horizontal is a block-axis rule; vertical is an inline-axis rule.                                                                              |
-| `decorative`  | `boolean`                             | `false`                                                      | When `true`, the element is removed from the accessibility tree (`role="none"`). When `false`, it is a semantic separator.                                       |
-| `as`          | `GhostSeparatorElement`               | `'hr'` when `orientation` is `horizontal`; `'div'` otherwise | Selects the rendered root so the result is valid HTML in its parent.                                                                                             |
+| Prop          | Type                         | Default                                                      | Contract                                                                                                                   |
+| ------------- | ---------------------------- | ------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------- |
+| `orientation` | `'horizontal' \| 'vertical'` | `'horizontal'`                                               | Axis of the line. Horizontal is a block-axis rule; vertical is an inline-axis rule.                                        |
+| `decorative`  | `boolean`                    | `false`                                                      | When `true`, the element is removed from the accessibility tree (`role="none"`). When `false`, it is a semantic separator. |
+| `as`          | `GhostSeparatorElement`      | `'hr'` when `orientation` is `horizontal`; `'div'` otherwise | Selects the rendered root so the result is valid HTML in its parent.                                                       |
 
 ```ts
 type GhostSeparatorElement = 'hr' | 'div' | 'li'
@@ -121,12 +121,12 @@ grouping notes in the
 [Toolbar](https://www.w3.org/WAI/ARIA/apg/patterns/toolbar/) patterns, and
 native HTML when it already expresses that role.
 
-| `decorative` | `orientation` | `as` (resolved) | Role                                                                                         | `aria-orientation`                                                                 |
-| ------------ | ------------- | --------------- | -------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
-| `false`      | `horizontal`  | `hr`            | Omitted. Native `<hr>` is already `separator` with implicit horizontal orientation.          | Omitted.                                                                           |
-| `false`      | `horizontal`  | `div` or `li`   | `separator`                                                                                  | Omitted. ARIA default for `separator` is `horizontal`.                             |
-| `false`      | `vertical`    | any             | `separator` (including on `hr`, which would otherwise imply horizontal).                     | `vertical`                                                                         |
-| `true`       | any           | any             | `none`, so the line is not in the accessibility tree.                                        | Omitted. A presentational element must not expose separator properties.            |
+| `decorative` | `orientation` | `as` (resolved) | Role                                                                                | `aria-orientation`                                                      |
+| ------------ | ------------- | --------------- | ----------------------------------------------------------------------------------- | ----------------------------------------------------------------------- |
+| `false`      | `horizontal`  | `hr`            | Omitted. Native `<hr>` is already `separator` with implicit horizontal orientation. | Omitted.                                                                |
+| `false`      | `horizontal`  | `div` or `li`   | `separator`                                                                         | Omitted. ARIA default for `separator` is `horizontal`.                  |
+| `false`      | `vertical`    | any             | `separator` (including on `hr`, which would otherwise imply horizontal).            | `vertical`                                                              |
+| `true`       | any           | any             | `none`, so the line is not in the accessibility tree.                               | Omitted. A presentational element must not expose separator properties. |
 
 `role="none"` is the ARIA 1.1+ synonym of `presentation` and matches the
 issue's decorative contract. The component never sets `aria-hidden`; `role`
@@ -153,7 +153,7 @@ focus.
 A semantic separator is encountered in document order as a grouping break
 between the content on either side. A decorative instance is omitted from the
 accessibility tree, so surrounding content reads as contiguous. Automated
-checks cannot tell whether a given line *should* be semantic; that judgment
+checks cannot tell whether a given line _should_ be semantic; that judgment
 stays with the consumer and is documented as "when not to use decorative."
 
 ## Rendering and customization

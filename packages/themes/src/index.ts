@@ -98,3 +98,9 @@ export {
   type GhostDialogCloseElement,
   type GhostDialogCloseExposed,
 } from './ghost-dialog-close'
+
+export {
+  GhostSeparator,
+  type GhostSeparatorElement,
+  type GhostSeparatorOrientation,
+} from './ghost-separator'
