@@ -45,9 +45,81 @@
   }
 
   :where(
-    .ghost-theme .ghost-collapsible-content,
-    .ghost-themed-scope .ghost-collapsible-content,
-    .ghost-collapsible-content[data-themed]
+    .ghost-theme .ghost-collapsible-content:has([data-part='content-inner']),
+    .ghost-themed-scope
+      .ghost-collapsible-content:has([data-part='content-inner']),
+    .ghost-collapsible-content[data-themed]:has([data-part='content-inner'])
+  ) {
+    border: var(--ghost-border-hairline-width) solid var(--ghost-surface-border);
+    border-radius: var(--ghost-radius-md);
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    border-top: none;
+    box-sizing: border-box;
+    color: var(--ghost-surface-fg);
+    display: grid;
+    font-family: var(--ghost-type-family-sans);
+    font-feature-settings: var(--ghost-type-feature-default);
+    font-size: var(--ghost-type-size-sm);
+    grid-template-rows: 0fr;
+    line-height: var(--ghost-type-leading-normal);
+    overflow: hidden;
+  }
+
+  :where(
+    .ghost-theme
+      .ghost-collapsible-content[data-state='open']:has(
+        [data-part='content-inner']
+      ),
+    .ghost-themed-scope
+      .ghost-collapsible-content[data-state='open']:has(
+        [data-part='content-inner']
+      ),
+    .ghost-collapsible-content[data-themed][data-state='open']:has(
+        [data-part='content-inner']
+      )
+  ) {
+    grid-template-rows: 1fr;
+  }
+
+  @starting-style {
+    :where(
+      .ghost-theme
+        .ghost-collapsible-content[data-state='open']:has(
+          [data-part='content-inner']
+        ),
+      .ghost-themed-scope
+        .ghost-collapsible-content[data-state='open']:has(
+          [data-part='content-inner']
+        ),
+      .ghost-collapsible-content[data-themed][data-state='open']:has(
+          [data-part='content-inner']
+        )
+    ) {
+      grid-template-rows: 0fr;
+    }
+  }
+
+  :where(
+    .ghost-theme .ghost-collapsible-content [data-part='content-inner'],
+    .ghost-themed-scope .ghost-collapsible-content [data-part='content-inner'],
+    .ghost-collapsible-content[data-themed] [data-part='content-inner']
+  ) {
+    min-height: 0;
+    overflow: hidden;
+    padding: var(--ghost-space-inset-md);
+  }
+
+  /* Themed panels without the animation shell (for example list hosts) keep
+   * padding on the root and interpolate height when supported. */
+  :where(
+    .ghost-theme
+      .ghost-collapsible-content:not(:has([data-part='content-inner'])),
+    .ghost-themed-scope
+      .ghost-collapsible-content:not(:has([data-part='content-inner'])),
+    .ghost-collapsible-content[data-themed]:not(
+        :has([data-part='content-inner'])
+      )
   ) {
     border: var(--ghost-border-hairline-width) solid var(--ghost-surface-border);
     border-radius: var(--ghost-radius-md);
@@ -64,14 +136,85 @@
     padding: var(--ghost-space-inset-md);
   }
 
+  @supports (interpolate-size: allow-keywords) {
+    @media (prefers-reduced-motion: no-preference) {
+      :where(
+        .ghost-theme
+          .ghost-collapsible-content:not(:has([data-part='content-inner'])):not(
+            [data-animation='off']
+          ),
+        .ghost-themed-scope
+          .ghost-collapsible-content:not(:has([data-part='content-inner'])):not(
+            [data-animation='off']
+          ),
+        .ghost-collapsible-content[data-themed]:not(
+            :has([data-part='content-inner'])
+          ):not([data-animation='off'])
+      ) {
+        block-size: 0;
+        interpolate-size: allow-keywords;
+        padding-block: 0;
+        transition:
+          block-size var(--ghost-motion-duration-moderate)
+            var(--ghost-motion-ease-standard),
+          padding-block var(--ghost-motion-duration-moderate)
+            var(--ghost-motion-ease-standard);
+      }
+
+      :where(
+        .ghost-theme
+          .ghost-collapsible-content[data-state='open']:not(
+            :has([data-part='content-inner'])
+          ):not([data-animation='off']),
+        .ghost-themed-scope
+          .ghost-collapsible-content[data-state='open']:not(
+            :has([data-part='content-inner'])
+          ):not([data-animation='off']),
+        .ghost-collapsible-content[data-themed][data-state='open']:not(
+            :has([data-part='content-inner'])
+          ):not([data-animation='off'])
+      ) {
+        block-size: auto;
+        padding-block: var(--ghost-space-inset-md);
+      }
+
+      @starting-style {
+        :where(
+          .ghost-theme
+            .ghost-collapsible-content[data-state='open']:not(
+              :has([data-part='content-inner'])
+            ):not([data-animation='off']),
+          .ghost-themed-scope
+            .ghost-collapsible-content[data-state='open']:not(
+              :has([data-part='content-inner'])
+            ):not([data-animation='off']),
+          .ghost-collapsible-content[data-themed][data-state='open']:not(
+              :has([data-part='content-inner'])
+            ):not([data-animation='off'])
+        ) {
+          block-size: 0;
+          padding-block: 0;
+        }
+      }
+    }
+  }
+
   @media (prefers-reduced-motion: no-preference) {
     :where(
-      .ghost-theme .ghost-collapsible-content:not([data-animation='off']),
+      .ghost-theme
+        .ghost-collapsible-content:has([data-part='content-inner']):not(
+          [data-animation='off']
+        ),
       .ghost-themed-scope
-        .ghost-collapsible-content:not([data-animation='off']),
-      .ghost-collapsible-content[data-themed]:not([data-animation='off'])
+        .ghost-collapsible-content:has([data-part='content-inner']):not(
+          [data-animation='off']
+        ),
+      .ghost-collapsible-content[data-themed]:has(
+          [data-part='content-inner']
+        ):not([data-animation='off'])
     ) {
-      transition: max-height var(--ghost-motion-duration-moderate);
+      transition: grid-template-rows var(--ghost-motion-duration-moderate)
+        var(--ghost-motion-ease-standard);
     }
   }
 }

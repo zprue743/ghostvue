@@ -34,6 +34,35 @@ test.describe('GhostCollapsible @component:GhostCollapsible', () => {
     }
   })
 
+  test('themed example defers hidden until close animation finishes', async ({
+    page,
+  }) => {
+    const playground = await startStaticServer('apps/playground/dist')
+
+    try {
+      await page.emulateMedia({ reducedMotion: 'no-preference' })
+      await page.goto(`${playground.url}/examples.html?id=collapsible/themed`)
+
+      const trigger = page.getByRole('button', {
+        name: 'Reveal inventory adjustments',
+      })
+      const panel = page.locator('.ghost-collapsible-content')
+
+      await trigger.click()
+      await expect(panel).not.toHaveAttribute('hidden', '')
+      await expect(panel).toHaveAttribute('data-state', 'open')
+
+      await trigger.click()
+      await expect(panel).toHaveAttribute('data-state', 'closed')
+      await expect(panel).not.toHaveAttribute('hidden', '')
+      await expect
+        .poll(async () => panel.getAttribute('hidden'), { timeout: 2_000 })
+        .toBe('')
+    } finally {
+      await playground.close()
+    }
+  })
+
   test('themed example renders trigger and content with theme classes', async ({
     page,
   }) => {
