@@ -2,6 +2,7 @@
 import { ref, useTemplateRef } from 'vue'
 
 import {
+  GhostBadge as GhostBadgeThemed,
   GhostButton as GhostButtonThemed,
   GhostSeparator as GhostSeparatorThemed,
 } from '@ghostvue/themes'
@@ -16,6 +17,7 @@ import OverlayReference from './OverlayReference.vue'
 import PopoverReference from './PopoverReference.vue'
 import VisualReference from './VisualReference.vue'
 import {
+  GhostBadge,
   GhostButton,
   GhostSeparator,
   GhostVisuallyHidden,
@@ -308,6 +310,79 @@ function closeNested(): void {
               </GhostButtonThemed>
             </div>
           </div>
+        </fieldset>
+      </div>
+    </section>
+
+    <section aria-labelledby="badge-heading">
+      <h2 id="badge-heading">GhostBadge</h2>
+      <div class="comparison">
+        <fieldset>
+          <legend>Headless</legend>
+          <p>No theme styles are applied to these badges.</p>
+          <div class="examples">
+            <GhostBadge>Active</GhostBadge>
+            <GhostBadge>12</GhostBadge>
+            <GhostBadge>Status: Open</GhostBadge>
+          </div>
+        </fieldset>
+
+        <fieldset class="ghost-theme" data-ghost-mode="light">
+          <legend>Themed badges</legend>
+          <p>The same metadata with the themed wrapper enabled.</p>
+          <div class="examples">
+            <div class="example">
+              <span>Soft neutral default</span>
+              <GhostBadgeThemed data-testid="themed-badge">
+                Active
+              </GhostBadgeThemed>
+            </div>
+            <div class="example">
+              <span>Accent with icon</span>
+              <GhostBadgeThemed tone="accent">
+                <svg data-part="icon" aria-hidden="true" viewBox="0 0 16 16">
+                  <circle cx="8" cy="8" r="5" fill="currentColor" />
+                </svg>
+                Live
+              </GhostBadgeThemed>
+            </div>
+            <div class="example">
+              <span>Danger outline</span>
+              <GhostBadgeThemed variant="outline" tone="danger">
+                Overdue
+              </GhostBadgeThemed>
+            </div>
+            <div class="example">
+              <span>Solid md count</span>
+              <GhostBadgeThemed variant="solid" size="md">24</GhostBadgeThemed>
+            </div>
+            <div class="example">
+              <span>Icon with hidden name</span>
+              <GhostBadgeThemed>
+                <svg data-part="icon" aria-hidden="true" viewBox="0 0 16 16">
+                  <circle cx="8" cy="8" r="3" fill="currentColor" />
+                </svg>
+                <GhostVisuallyHidden>New</GhostVisuallyHidden>
+              </GhostBadgeThemed>
+            </div>
+          </div>
+          <table>
+            <caption>
+              Cell statuses
+            </caption>
+            <thead>
+              <tr>
+                <th scope="col">Report</th>
+                <th scope="col">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Q3 revenue</td>
+                <td><GhostBadgeThemed>Draft</GhostBadgeThemed></td>
+              </tr>
+            </tbody>
+          </table>
         </fieldset>
       </div>
     </section>

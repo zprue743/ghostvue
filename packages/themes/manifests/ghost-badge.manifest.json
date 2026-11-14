@@ -1,0 +1,175 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "handwritten",
+  "name": "GhostBadge",
+  "package": "@ghostvue/themes",
+  "status": "experimental",
+  "description": "Themed wrapper around headless GhostBadge. Same span semantics plus variant, tone, and size. Importing it loads the default stylesheet and scopes styles to this instance. Hand-written until GHO-13 generates manifests.",
+  "props": [
+    {
+      "name": "variant",
+      "type": "'solid' | 'soft' | 'outline' | 'ghost'",
+      "default": "soft",
+      "required": false,
+      "description": "Visual treatment. The default omits data-variant so CSS can treat a missing hook as soft.",
+      "deprecated": false
+    },
+    {
+      "name": "tone",
+      "type": "'accent' | 'neutral' | 'danger'",
+      "default": "neutral",
+      "required": false,
+      "description": "Semantic color intent, independent of variant and not a status vocabulary. The default omits data-tone.",
+      "deprecated": false
+    },
+    {
+      "name": "size",
+      "type": "'sm' | 'md'",
+      "default": "sm",
+      "required": false,
+      "description": "Compact type and padding. The default omits data-size so CSS can treat a missing hook as sm. Does not use control minimum sizes.",
+      "deprecated": false
+    }
+  ],
+  "models": [],
+  "events": [],
+  "slots": [
+    {
+      "name": "default",
+      "props": [],
+      "description": "Short status or metadata text and optional decorative icon content. Icon-only use needs real hidden text (GhostVisuallyHidden), not aria-label on the span."
+    }
+  ],
+  "exposed": [
+    {
+      "name": "element",
+      "kind": "property",
+      "type": "HTMLSpanElement | null",
+      "description": "The native span after mount; null before mount and after unmount. Delegates to the unstyled GhostBadge."
+    }
+  ],
+  "styling": {
+    "parts": [
+      {
+        "name": "root",
+        "description": "The native span inside the display:contents themed scope."
+      },
+      {
+        "name": "icon",
+        "description": "Optional decorative icon content inside the default slot."
+      }
+    ],
+    "states": [],
+    "cssProperties": [
+      {
+        "name": "--ghost-surface-bg",
+        "description": "Canvas background on .ghost-theme and the mix surface for soft, outline, and ghost treatments."
+      },
+      {
+        "name": "--ghost-action-primary-bg",
+        "description": "Solid background and outline/ghost foreground for the accent tone."
+      },
+      {
+        "name": "--ghost-action-primary-fg",
+        "description": "Content color on the solid accent treatment."
+      },
+      {
+        "name": "--ghost-action-primary-border",
+        "description": "Border color on the solid accent treatment."
+      },
+      {
+        "name": "--ghost-action-neutral-bg",
+        "description": "Solid background and outline/ghost foreground for the default neutral tone."
+      },
+      {
+        "name": "--ghost-action-neutral-fg",
+        "description": "Content color on the solid neutral treatment."
+      },
+      {
+        "name": "--ghost-action-neutral-border",
+        "description": "Border color on the solid and outline neutral treatments."
+      },
+      {
+        "name": "--ghost-action-danger-bg",
+        "description": "Solid background and outline/ghost foreground for the danger tone."
+      },
+      {
+        "name": "--ghost-action-danger-fg",
+        "description": "Content color on the solid danger treatment."
+      },
+      {
+        "name": "--ghost-action-danger-border",
+        "description": "Border color on the solid and outline danger treatments."
+      },
+      {
+        "name": "--ghost-gradient-action-primary",
+        "description": "Oklch gradient fill for solid accent badges."
+      },
+      {
+        "name": "--ghost-gradient-action-neutral",
+        "description": "Oklch gradient fill for solid neutral badges."
+      },
+      {
+        "name": "--ghost-gradient-action-danger",
+        "description": "Oklch gradient fill for solid danger badges."
+      },
+      {
+        "name": "--ghost-state-mix-soft",
+        "description": "Mix amount of the tone into the surface for the default soft treatment."
+      },
+      {
+        "name": "--ghost-state-mix-border",
+        "description": "Mix amount of the tone into the surface for the soft border."
+      },
+      {
+        "name": "--ghost-radius-pill",
+        "description": "Capsule corner radius of the themed badge."
+      },
+      {
+        "name": "--ghost-type-size-xs",
+        "description": "Font size for the default sm size."
+      },
+      {
+        "name": "--ghost-type-size-sm",
+        "description": "Font size for size md."
+      },
+      {
+        "name": "--ghost-type-weight-medium",
+        "description": "Badge label font weight."
+      },
+      {
+        "name": "--ghost-space-gap-xs",
+        "description": "Space between label and icon, and default block padding."
+      },
+      {
+        "name": "--ghost-space-inset-xs",
+        "description": "Default inline padding and md block padding."
+      },
+      {
+        "name": "--ghost-space-inset-sm",
+        "description": "Inline padding for size md."
+      },
+      {
+        "name": "--ghost-action-icon-size",
+        "description": "Size of content marked data-part=icon."
+      },
+      {
+        "name": "--ghost-focus-ring-color",
+        "description": "Outer color of the two-color keyboard focus indicator when a consumer supplies tabindex."
+      },
+      {
+        "name": "--ghost-focus-ring-contrast",
+        "description": "Inner color of the two-color keyboard focus indicator."
+      }
+    ]
+  },
+  "accessibility": {
+    "role": "generic",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/practices/names-and-descriptions/",
+    "keyboard": {
+      "Tab": "Does not land on the badge. The component is not a tab stop and adds no key handling."
+    },
+    "requiredAriaAttributes": []
+  },
+  "examples": ["badge/themed", "badge/icon", "badge/table"]
+}

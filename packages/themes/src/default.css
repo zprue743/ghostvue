@@ -1,12 +1,13 @@
 /*
  * Zero-specificity layer so consumer styles win. Two opt-in scopes leave
- * headless `.ghost-button` unstyled: `.ghost-theme` owns the canvas (not
+ * headless `.ghost-button` / `.ghost-badge` unstyled: `.ghost-theme` owns the canvas (not
  * per-instance); `.ghost-themed-scope` (`display: contents`) is a recipe
  * scope only so nested `data-ghost-theme` inherits into themed wrappers.
  * Token values come from generated CSS on `.ghost-theme` / `[data-ghost-theme]`.
  */
 @import './generated/tokens.css';
 @import './recipes.css';
+@import './ghost-badge.css';
 @import './ghost-button.css';
 @import './ghost-dialog.css';
 @import './ghost-popover.css';

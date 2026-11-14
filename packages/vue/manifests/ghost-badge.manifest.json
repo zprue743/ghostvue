@@ -1,0 +1,53 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "generated",
+  "name": "GhostBadge",
+  "package": "@ghostvue/vue",
+  "status": "experimental",
+  "description": "Headless compact status and metadata label. useGhostBadge owns styling-hook bindings; GhostBadge is the thin unstyled span. Themed visual props live on @ghostvue/themes.",
+  "props": [],
+  "models": [],
+  "events": [],
+  "slots": [
+    {
+      "name": "default",
+      "props": [],
+      "description": "Short status or metadata text and optional decorative icon content. Icon-only use needs real hidden text (GhostVisuallyHidden), not aria-label on the span."
+    }
+  ],
+  "exposed": [
+    {
+      "name": "element",
+      "kind": "property",
+      "type": "HTMLSpanElement | null",
+      "description": "The native span after mount; null before mount and after unmount."
+    }
+  ],
+  "styling": {
+    "parts": [
+      {
+        "name": "root",
+        "description": "The native span element."
+      },
+      {
+        "name": "icon",
+        "description": "Optional decorative icon content inside the default slot."
+      }
+    ],
+    "states": [],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "generic",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/practices/names-and-descriptions/",
+    "keyboard": {
+      "Tab": "Does not land on the badge. The component is not a tab stop and adds no key handling."
+    },
+    "requiredAriaAttributes": []
+  },
+  "examples": [
+    "badge/basic",
+    "badge/composable",
+    "badge/table"
+  ]
+}
