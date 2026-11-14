@@ -175,6 +175,113 @@ test.describe('docs revitalize phase 1', () => {
     }
   })
 
+  test('themed tab trigger active state differs from inactive in docs', async ({
+    page,
+  }) => {
+    const docs = await startStaticServer('apps/docs/.vitepress/dist')
+    try {
+      await page.goto(`${docs.url}/components/tabs.html`)
+      const preview = page.locator('[data-example-id="tabs/themed"]')
+      const active = preview.getByRole('tab', { name: 'Overview' })
+      const inactive = preview.getByRole('tab', { name: 'Members' })
+      await expect(active).toBeVisible()
+      await expect(inactive).toBeVisible()
+
+      const activeStyles = await active.evaluate((el) => {
+        const computed = getComputedStyle(el)
+        return {
+          backgroundColor: computed.backgroundColor,
+          borderTopColor: computed.borderTopColor,
+          boxShadow: computed.boxShadow,
+          color: computed.color,
+        }
+      })
+      const inactiveStyles = await inactive.evaluate((el) => {
+        const computed = getComputedStyle(el)
+        return {
+          backgroundColor: computed.backgroundColor,
+          borderTopColor: computed.borderTopColor,
+          boxShadow: computed.boxShadow,
+          color: computed.color,
+        }
+      })
+
+      expect(
+        activeStyles.backgroundColor !== inactiveStyles.backgroundColor ||
+          activeStyles.borderTopColor !== inactiveStyles.borderTopColor ||
+          activeStyles.boxShadow !== inactiveStyles.boxShadow ||
+          activeStyles.color !== inactiveStyles.color,
+      ).toBe(true)
+    } finally {
+      await docs.close()
+    }
+  })
+
+  test('invalid textarea border-color differs from readonly in docs', async ({
+    page,
+  }) => {
+    const docs = await startStaticServer('apps/docs/.vitepress/dist')
+    try {
+      await page.goto(`${docs.url}/components/textarea.html`)
+      const preview = page.locator('[data-example-id="textarea/states"]')
+      const invalid = preview.locator('#invalid-notes')
+      const readonly = preview.locator('#readonly-notes')
+      await expect(invalid).toBeVisible()
+      await expect(readonly).toBeVisible()
+
+      const invalidBorder = await invalid.evaluate(
+        (el) => getComputedStyle(el).borderTopColor,
+      )
+      const readonlyBorder = await readonly.evaluate(
+        (el) => getComputedStyle(el).borderTopColor,
+      )
+      expect(invalidBorder).not.toBe(readonlyBorder)
+    } finally {
+      await docs.close()
+    }
+  })
+
+  test('disabled themed button differs from enabled in docs', async ({
+    page,
+  }) => {
+    const docs = await startStaticServer('apps/docs/.vitepress/dist')
+    try {
+      await page.goto(`${docs.url}/components/button.html`)
+      const preview = page.locator('[data-example-id="button/loading"]')
+      const enabled = preview.getByRole('button', { name: 'Save changes' })
+      const disabled = preview.getByRole('button', {
+        name: 'Unavailable action',
+      })
+      await expect(enabled).toBeVisible()
+      await expect(disabled).toBeVisible()
+
+      const enabledStyles = await enabled.evaluate((el) => {
+        const computed = getComputedStyle(el)
+        return {
+          backgroundColor: computed.backgroundColor,
+          borderTopColor: computed.borderTopColor,
+          opacity: computed.opacity,
+        }
+      })
+      const disabledStyles = await disabled.evaluate((el) => {
+        const computed = getComputedStyle(el)
+        return {
+          backgroundColor: computed.backgroundColor,
+          borderTopColor: computed.borderTopColor,
+          opacity: computed.opacity,
+        }
+      })
+      expect(
+        enabledStyles.backgroundColor !== disabledStyles.backgroundColor ||
+          enabledStyles.borderTopColor !== disabledStyles.borderTopColor ||
+          Number.parseFloat(disabledStyles.opacity) <
+            Number.parseFloat(enabledStyles.opacity),
+      ).toBe(true)
+    } finally {
+      await docs.close()
+    }
+  })
+
   test('headless checkbox indeterminate preview is not recipe-themed', async ({
     page,
   }) => {
