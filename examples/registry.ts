@@ -332,6 +332,42 @@ export const ghostExamples = [
     description: 'Keycap chrome and size on the @ghostvue/themes wrapper.',
     layer: 'themed',
   },
+  {
+    id: 'input/basic',
+    title: 'Basic',
+    description: 'Native labeled text field. The default type is text.',
+    layer: 'headless',
+  },
+  {
+    id: 'input/composable',
+    title: 'Composable',
+    description: 'Same contract as GhostInput, applied to a native host.',
+    layer: 'headless',
+  },
+  {
+    id: 'input/ref',
+    title: 'Component ref',
+    description: 'Template refs expose element, focus, and blur.',
+    layer: 'headless',
+  },
+  {
+    id: 'input/themed',
+    title: 'Themed',
+    description: 'Size props on the @ghostvue/themes wrapper.',
+    layer: 'themed',
+  },
+  {
+    id: 'input/states',
+    title: 'States',
+    description: 'Disabled, readonly, invalid, and required.',
+    layer: 'themed',
+  },
+  {
+    id: 'input/search',
+    title: 'Search',
+    description: 'Controlled type=search for DataTable-style filters.',
+    layer: 'themed',
+  },
 ] as const satisfies readonly GhostExampleDefinition[]
 
 export type GhostExampleId = (typeof ghostExamples)[number]['id']

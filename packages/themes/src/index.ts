@@ -132,3 +132,10 @@ export {
   type GhostProgressSize,
   type GhostProgressTone,
 } from './ghost-progress'
+
+export {
+  GhostInput,
+  type GhostInputExposed,
+  type GhostInputSize,
+  type GhostInputType,
+} from './ghost-input'

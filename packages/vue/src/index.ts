@@ -165,3 +165,11 @@ export type {
   GhostProgressProps,
   UseGhostProgressOptions,
 } from './ghost-progress'
+export { default as GhostInput } from './GhostInput.vue'
+export { useGhostInput, type GhostInputRootProps } from './use-ghost-input'
+export type {
+  GhostInputExposed,
+  GhostInputProps,
+  GhostInputType,
+  UseGhostInputOptions,
+} from './ghost-input'

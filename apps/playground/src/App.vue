@@ -4,6 +4,7 @@ import { ref, useTemplateRef } from 'vue'
 import {
   GhostBadge as GhostBadgeThemed,
   GhostButton as GhostButtonThemed,
+  GhostInput as GhostInputThemed,
   GhostKbd as GhostKbdThemed,
   GhostProgress as GhostProgressThemed,
   GhostSeparator as GhostSeparatorThemed,
@@ -22,6 +23,7 @@ import VisualReference from './VisualReference.vue'
 import {
   GhostBadge,
   GhostButton,
+  GhostInput,
   GhostKbd,
   GhostProgress,
   GhostSeparator,
@@ -49,6 +51,9 @@ const activations = ref(0)
 const submissions = ref(0)
 const pendingActivations = ref(0)
 const isPending = ref(false)
+const searchQuery = ref('')
+const submitName = ref('')
+const submittedName = ref('')
 
 function remove(name: string) {
   reports.value = reports.value.filter((report) => report.name !== name)
@@ -516,6 +521,60 @@ function closeNested(): void {
       </div>
     </section>
 
+    <section aria-labelledby="input-heading">
+      <h2 id="input-heading">GhostInput</h2>
+      <div class="field">
+        <label for="playground-search">Search reports</label>
+        <GhostInput
+          id="playground-search"
+          v-model="searchQuery"
+          type="search"
+          name="q"
+          placeholder="Forecast"
+          data-testid="input-search"
+        />
+        <p data-testid="input-search-value">{{ searchQuery }}</p>
+      </div>
+      <div class="field">
+        <label for="playground-disabled">Disabled filter</label>
+        <GhostInput
+          id="playground-disabled"
+          disabled
+          default-value="cannot edit"
+        />
+      </div>
+      <div class="field">
+        <label for="playground-readonly">Readonly owner</label>
+        <GhostInput id="playground-readonly" readonly default-value="Priya" />
+      </div>
+      <div class="field">
+        <label for="playground-invalid">Invalid query</label>
+        <GhostInput id="playground-invalid" invalid default-value="???" />
+      </div>
+      <div class="field">
+        <label for="playground-required">Required name</label>
+        <GhostInput id="playground-required" required />
+      </div>
+      <form class="form-example" @submit.prevent="submittedName = submitName">
+        <div class="field">
+          <label for="playground-submit-name">Submit name</label>
+          <GhostInput
+            id="playground-submit-name"
+            v-model="submitName"
+            name="name"
+          />
+        </div>
+        <GhostButtonThemed data-testid="input-submit" type="submit">
+          Save name
+        </GhostButtonThemed>
+        <p data-testid="input-submitted">{{ submittedName }}</p>
+      </form>
+      <div class="field ghost-theme">
+        <label for="playground-themed">Themed filter</label>
+        <GhostInputThemed id="playground-themed" placeholder="Themed" block />
+      </div>
+    </section>
+
     <section aria-labelledby="separator-heading">
       <h2 id="separator-heading">GhostSeparator</h2>
       <div data-testid="separator-stack">
@@ -730,6 +789,12 @@ fieldset {
 
 .block-example {
   flex: 1 1 100%;
+}
+
+.field {
+  display: grid;
+  gap: 0.35rem;
+  margin-block-start: 1rem;
 }
 
 .separator-toolbar {
