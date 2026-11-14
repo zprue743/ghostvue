@@ -55,14 +55,7 @@ const slotVisible = computed(() => {
 })
 
 const errorAttrs = computed(() => {
-  const nextVisible = slotVisible.value
-  // Sibling controls read error registration during the same render pass; this must
-  // run while the default slot is evaluated, not from a post-setup watcher.
-  /* eslint-disable vue/no-side-effects-in-computed-properties -- SSR + aria-describedby wiring */
-  visible.value = nextVisible
-  context.setErrorVisible(nextVisible)
-  context.setErrorRegistered(nextVisible)
-  /* eslint-enable vue/no-side-effects-in-computed-properties */
+  const showInMarkup = slotVisible.value
 
   const rest: Record<string, unknown> = {}
   for (const [key, value] of Object.entries(attrs)) {
@@ -83,7 +76,7 @@ const errorAttrs = computed(() => {
     'data-part': 'error',
   }
 
-  if (nextVisible) {
+  if (showInMarkup) {
     result['role'] = 'alert'
   } else {
     result['hidden'] = true

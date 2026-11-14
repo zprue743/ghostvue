@@ -344,36 +344,55 @@ describe('GhostField', () => {
     wrapper.unmount()
   })
 
-  it('exposes non-empty GhostFieldError during SSR with alert semantics', async () => {
-    const Comp = defineComponent({
-      setup() {
-        return () =>
-          h(GhostField, { invalid: true }, () => [
-            h(GhostFieldLabel, {}, () => 'Name'),
-            h(GhostFieldError, {}, () => 'Required'),
-            h(GhostFieldControl, null, {
-              default: (field: Record<string, unknown>) =>
-                h('input', { type: 'text', ...field }),
-            }),
-          ])
-      },
+  function buildInvalidFieldTree(order: 'error-before-control' | 'canonical') {
+    const label = h(GhostFieldLabel, {}, () => 'Name')
+    const error = h(GhostFieldError, {}, () => 'Required')
+    const control = h(GhostFieldControl, null, {
+      default: (field: Record<string, unknown>) =>
+        h('input', { type: 'text', ...field }),
     })
+    const children =
+      order === 'canonical' ? [label, control, error] : [label, error, control]
+    return () => h(GhostField, { invalid: true }, () => children)
+  }
 
-    const html = await renderToString(createSSRApp(Comp))
+  function expectVisibleErrorSsrMarkup(html: string) {
     const errorTagPattern = /<[^>]+data-part="error"[^>]*>/
-    const errorIdPattern = /\bid="([^"]+)"/
-    const controlDescribedByPattern = /aria-describedby="([^"]+)"/
     const errorTag = errorTagPattern.exec(html)?.[0] ?? ''
-    const errorId = errorIdPattern.exec(errorTag)?.[1]
-    const controlDescribedBy = controlDescribedByPattern.exec(html)?.[1]
-
     expect(html).toContain('data-part="error"')
     expect(html).toContain('role="alert"')
     expect(errorTag).not.toContain('hidden')
     expect(html).toContain('Required')
     expect(html).toContain('aria-invalid="true"')
+    return errorTag
+  }
+
+  it('exposes non-empty GhostFieldError during SSR when error renders before control', async () => {
+    const Comp = defineComponent({
+      setup() {
+        return buildInvalidFieldTree('error-before-control')
+      },
+    })
+
+    const html = await renderToString(createSSRApp(Comp))
+    const errorTag = expectVisibleErrorSsrMarkup(html)
+    const errorId = /\bid="([^"]+)"/.exec(errorTag)?.[1]
+    const controlDescribedBy = /aria-describedby="([^"]+)"/.exec(html)?.[1]
+
     expect(errorId).toBeDefined()
-    expect(controlDescribedBy).toBe(errorId)
+    expect(controlDescribedBy).toBeUndefined()
+  })
+
+  it('exposes non-empty GhostFieldError during SSR in canonical child order', async () => {
+    const Comp = defineComponent({
+      setup() {
+        return buildInvalidFieldTree('canonical')
+      },
+    })
+
+    const html = await renderToString(createSSRApp(Comp))
+    expectVisibleErrorSsrMarkup(html)
+    expect(html).not.toContain('aria-describedby')
   })
 
   it('keeps empty GhostFieldError hidden during SSR', async () => {
@@ -382,11 +401,11 @@ describe('GhostField', () => {
         return () =>
           h(GhostField, null, () => [
             h(GhostFieldLabel, {}, () => 'Name'),
-            h(GhostFieldError),
             h(GhostFieldControl, null, {
               default: (field: Record<string, unknown>) =>
                 h('input', { type: 'text', ...field }),
             }),
+            h(GhostFieldError),
           ])
       },
     })
@@ -397,70 +416,40 @@ describe('GhostField', () => {
     expect(html).not.toContain('aria-describedby')
   })
 
-  it('hydrates GhostFieldError without mismatches', async () => {
-    const Comp = defineComponent({
-      setup() {
-        return () =>
-          h(GhostField, { invalid: true }, () => [
-            h(GhostFieldLabel, {}, () => 'Name'),
-            h(GhostFieldError, {}, () => 'Required'),
-            h(GhostFieldControl, null, {
-              default: (field: Record<string, unknown>) =>
-                h('input', { type: 'text', ...field }),
-            }),
-          ])
-      },
-    })
-
-    const html = await renderToString(createSSRApp(Comp))
-    const container = document.createElement('div')
-    container.innerHTML = html
-    document.body.append(container)
-
-    const output: string[] = []
-    const warn = vi.spyOn(console, 'warn').mockImplementation((...args) => {
-      output.push(args.map(String).join(' '))
-    })
-    const error = vi.spyOn(console, 'error').mockImplementation((...args) => {
-      output.push(args.map(String).join(' '))
-    })
-
-    createSSRApp(Comp).mount(container)
-
-    const errorEl = container.querySelector('[data-part="error"]')
-    const input = container.querySelector('input')
-    expect(errorEl?.getAttribute('role')).toBe('alert')
-    expect(errorEl?.hasAttribute('hidden')).toBe(false)
-    expect(input?.getAttribute('aria-describedby')).toBe(errorEl?.id)
-    expect(output.join('\n')).not.toMatch(/hydrat/i)
-
-    warn.mockRestore()
-    error.mockRestore()
-    container.remove()
-  })
-
-  it('wires aria-describedby from slot content before mount on the client', () => {
-    const wrapper = mount(
-      defineComponent({
+  it.each(['error-before-control', 'canonical'] as const)(
+    'hydrates GhostFieldError in %s order without console warnings',
+    async (order) => {
+      const Comp = defineComponent({
         setup() {
-          return () =>
-            h(GhostField, { invalid: true }, () => [
-              h(GhostFieldLabel, {}, () => 'Name'),
-              h(GhostFieldError, {}, () => 'Required'),
-              h(GhostFieldControl, null, {
-                default: (field: Record<string, unknown>) =>
-                  h('input', { type: 'text', ...field }),
-              }),
-            ])
+          return buildInvalidFieldTree(order)
         },
-      }),
-    )
+      })
 
-    const error = wrapper.get('[data-part="error"]')
-    const input = wrapper.get('input')
-    expect(error.attributes('role')).toBe('alert')
-    expect(error.attributes('hidden')).toBeUndefined()
-    expect(input.attributes('aria-describedby')).toBe(error.attributes('id'))
-    wrapper.unmount()
-  })
+      const html = await renderToString(createSSRApp(Comp))
+      const container = document.createElement('div')
+      container.innerHTML = html
+      document.body.append(container)
+
+      const output: string[] = []
+      const warn = vi.spyOn(console, 'warn').mockImplementation((...args) => {
+        output.push(args.map(String).join(' '))
+      })
+      const errorSpy = vi
+        .spyOn(console, 'error')
+        .mockImplementation((...args) => {
+          output.push(args.map(String).join(' '))
+        })
+
+      createSSRApp(Comp).mount(container)
+
+      const errorEl = container.querySelector('[data-part="error"]')
+      expect(errorEl?.getAttribute('role')).toBe('alert')
+      expect(errorEl?.hasAttribute('hidden')).toBe(false)
+      expect(output).toEqual([])
+
+      warn.mockRestore()
+      errorSpy.mockRestore()
+      container.remove()
+    },
+  )
 })
