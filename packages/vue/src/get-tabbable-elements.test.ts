@@ -1,6 +1,11 @@
 import { afterEach, describe, expect, it } from 'vitest'
 
-import { getTabbableElements } from './get-tabbable-elements'
+import {
+  getFocusableElements,
+  getTabbableElements,
+  isDisabledElement,
+  isFocusable,
+} from './get-tabbable-elements'
 
 const fixtures: HTMLElement[] = []
 
@@ -97,13 +102,69 @@ describe('getTabbableElements', () => {
     ])
   })
 
-  it('includes contenteditable hosts and skips aria-disabled controls', () => {
+  it('includes contenteditable hosts and aria-disabled loading controls', () => {
     const root = mountRoot(`
       <div contenteditable="true">Edit</div>
       <button type="button" aria-disabled="true">Busy</button>
       <a>No href</a>
     `)
 
-    expect(getTabbableElements(root).map((el) => el.tagName)).toEqual(['DIV'])
+    expect(getTabbableElements(root).map((el) => el.tagName)).toEqual([
+      'DIV',
+      'BUTTON',
+    ])
+  })
+
+  it('keeps a visibility:visible child tabbable inside a visibility:hidden parent', () => {
+    const root = mountRoot(`
+      <div style="visibility: hidden">
+        <button type="button" style="visibility: visible">Shown</button>
+      </div>
+      <button type="button">Plain</button>
+    `)
+
+    expect(getTabbableElements(root).map((el) => el.textContent)).toEqual([
+      'Shown',
+      'Plain',
+    ])
+  })
+
+  it('excludes elements with inherited visibility:hidden when not overridden', () => {
+    const root = mountRoot(`
+      <div style="visibility: hidden">
+        <button type="button">Hidden</button>
+      </div>
+      <button type="button">Plain</button>
+    `)
+
+    expect(getTabbableElements(root).map((el) => el.textContent)).toEqual([
+      'Plain',
+    ])
+  })
+
+  it('excludes descendants inside display:none ancestors such as v-show', () => {
+    const root = mountRoot(`
+      <div style="display: none"><button type="button">Hidden</button></div>
+      <button type="button">Visible</button>
+    `)
+
+    expect(getTabbableElements(root).map((el) => el.textContent)).toEqual([
+      'Visible',
+    ])
+  })
+
+  it('treats aria-disabled as a roving skip signal without removing native focus', () => {
+    const root = mountRoot(
+      `<button type="button" aria-disabled="true">Busy</button>`,
+    )
+    const button = root.querySelector<HTMLButtonElement>('button')
+    if (!button) {
+      throw new Error('expected a button')
+    }
+
+    expect(isFocusable(button)).toBe(true)
+    expect(getTabbableElements(root)).toHaveLength(1)
+    expect(isDisabledElement(button)).toBe(true)
+    expect(getFocusableElements(root)).toContain(button)
   })
 })

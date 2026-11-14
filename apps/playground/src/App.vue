@@ -133,6 +133,15 @@ useFocusScope(trap, {
   restoreFocus: true,
 })
 
+const trapHiddenOpen = ref(false)
+const trapHidden = useTemplateRef<HTMLElement>('trap-hidden')
+useFocusScope(trapHidden, {
+  trapped: true,
+  loop: true,
+  autoFocus: true,
+  restoreFocus: true,
+})
+
 const nestedOpen = ref(false)
 const nestedInnerOpen = ref(false)
 const nestedOuter = useTemplateRef<HTMLElement>('nested-outer')
@@ -558,6 +567,13 @@ function submitPlaygroundComment(event: Event): void {
       <button type="button" data-testid="open-trap" @click="trapOpen = true">
         Open trap
       </button>
+      <button
+        type="button"
+        data-testid="open-trap-hidden"
+        @click="trapHiddenOpen = true"
+      >
+        Open trap with hidden first stop
+      </button>
       <div
         v-if="trapOpen"
         ref="trap"
@@ -575,6 +591,32 @@ function submitPlaygroundComment(event: Event): void {
           @click="trapOpen = false"
         >
           Close trap
+        </button>
+      </div>
+      <div
+        v-if="trapHiddenOpen"
+        ref="trap-hidden"
+        tabindex="-1"
+        role="dialog"
+        aria-labelledby="trap-hidden-title"
+        data-testid="trap-hidden"
+      >
+        <h3 id="trap-hidden-title">Trap with v-show-like hidden item</h3>
+        <div style="display: none">
+          <button type="button" data-testid="trap-hidden-first">
+            Hidden first
+          </button>
+        </div>
+        <button type="button" data-testid="trap-hidden-visible">
+          Visible first
+        </button>
+        <button type="button" data-testid="trap-hidden-last">Trap last</button>
+        <button
+          type="button"
+          data-testid="close-trap-hidden"
+          @click="trapHiddenOpen = false"
+        >
+          Close trap hidden
         </button>
       </div>
 

@@ -49,7 +49,7 @@ export function getFocusableElements(root: ParentNode): HTMLElement[] {
 }
 
 export function isFocusable(element: HTMLElement): boolean {
-  if (isDisabledElement(element) || isHidden(element)) {
+  if (isNativelyDisabledElement(element) || isHidden(element)) {
     return false
   }
   if (element.matches(FOCUSABLE_SELECTOR)) {
@@ -58,14 +58,26 @@ export function isFocusable(element: HTMLElement): boolean {
   return element.tabIndex >= 0
 }
 
-export function isDisabledElement(element: HTMLElement): boolean {
+/** Native disabled state and fieldsets — excludes items from tab/focus queries. */
+function isNativelyDisabledElement(element: HTMLElement): boolean {
   if (hasDisabledProperty(element) && element.disabled) {
+    return true
+  }
+  return Boolean(element.closest('fieldset[disabled]'))
+}
+
+/**
+ * Composite navigation policy: roving widgets skip these items but loading
+ * controls may keep `aria-disabled` while remaining natively focusable.
+ */
+export function isDisabledElement(element: HTMLElement): boolean {
+  if (isNativelyDisabledElement(element)) {
     return true
   }
   if (element.getAttribute('aria-disabled') === 'true') {
     return true
   }
-  return Boolean(element.closest('fieldset[disabled]'))
+  return false
 }
 
 function isTabbable(element: HTMLElement): boolean {
@@ -103,12 +115,20 @@ function isHidden(element: HTMLElement): boolean {
     return true
   }
 
-  const style = getComputedStyle(element)
-  return (
-    style.display === 'none' ||
-    style.visibility === 'hidden' ||
-    style.visibility === 'collapse'
-  )
+  // Ancestor `display:none` (e.g. closed `v-show`) hides descendants even when
+  // their own computed display is still `inline-block`.
+  for (
+    let node: HTMLElement | null = element;
+    node;
+    node = node.parentElement
+  ) {
+    if (getComputedStyle(node).display === 'none') {
+      return true
+    }
+  }
+
+  const own = getComputedStyle(element)
+  return own.visibility === 'hidden' || own.visibility === 'collapse'
 }
 
 function hasDisabledProperty(

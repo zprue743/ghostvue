@@ -1,4 +1,4 @@
-import { isDisabledElement } from './get-tabbable-elements'
+import { isDisabledElement, isFocusable } from './get-tabbable-elements'
 
 /**
  * Applies the tabs selection tab stop: the active enabled tab (or fallback)
@@ -14,10 +14,18 @@ export function applyTabsSelectionTabStops(
     listRoot.querySelectorAll<HTMLElement>('[role="tab"]'),
   )
   const enabled = tabs.filter((tab) => !isDisabledElement(tab))
+  const enabledVisible = enabled.filter((tab) => isFocusable(tab))
+
+  const stopForValue = (pool: HTMLElement[], value: string | undefined) =>
+    value
+      ? pool.find((tab) => tab.dataset['ghostTabsValue'] === value)
+      : undefined
+
   const stop =
-    (tabStopValue
-      ? enabled.find((tab) => tab.dataset['ghostTabsValue'] === tabStopValue)
-      : undefined) ?? enabled[0]
+    stopForValue(enabledVisible, tabStopValue) ??
+    enabledVisible[0] ??
+    stopForValue(enabled, tabStopValue) ??
+    enabled[0]
 
   for (const tab of tabs) {
     if (isDisabledElement(tab)) {
