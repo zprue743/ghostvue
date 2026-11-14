@@ -5,6 +5,7 @@ import {
   GhostBadge as GhostBadgeThemed,
   GhostButton as GhostButtonThemed,
   GhostKbd as GhostKbdThemed,
+  GhostProgress as GhostProgressThemed,
   GhostSeparator as GhostSeparatorThemed,
   GhostSkeleton as GhostSkeletonThemed,
 } from '@ghostvue/themes'
@@ -22,6 +23,7 @@ import {
   GhostBadge,
   GhostButton,
   GhostKbd,
+  GhostProgress,
   GhostSeparator,
   GhostSkeleton,
   GhostVisuallyHidden,
@@ -474,6 +476,46 @@ function closeNested(): void {
       </div>
     </section>
 
+    <section aria-labelledby="progress-heading">
+      <h2 id="progress-heading">GhostProgress</h2>
+      <GhostProgress
+        class="playground-progress"
+        label="Uploading report"
+        :value="40"
+        data-testid="progress-determinate"
+      />
+      <GhostProgress
+        class="playground-progress"
+        label="Uploading files"
+        :value="3"
+        :max="10"
+        value-text="3 of 10 files"
+        data-testid="progress-value-text"
+      />
+      <GhostProgress
+        class="playground-progress"
+        label="Preparing export"
+        data-testid="progress-indeterminate"
+      />
+      <div
+        class="progress-themed ghost-theme"
+        data-testid="progress-themed-stack"
+      >
+        <GhostProgressThemed
+          label="Compact export"
+          size="sm"
+          tone="neutral"
+          :value="70"
+          data-testid="progress-themed"
+        />
+        <GhostProgressThemed
+          label="Deleting rows"
+          tone="danger"
+          data-testid="progress-themed-indeterminate"
+        />
+      </div>
+    </section>
+
     <section aria-labelledby="separator-heading">
       <h2 id="separator-heading">GhostSeparator</h2>
       <div data-testid="separator-stack">
@@ -694,6 +736,32 @@ fieldset {
   align-items: stretch;
   display: flex;
   gap: 0.75rem;
+  margin-block-start: 1rem;
+}
+
+/* Headless progress ships no visuals; playground-owned track, not the themed recipe. */
+.playground-progress {
+  background: Canvas;
+  block-size: 0.5rem;
+  border: 1px solid GrayText;
+  border-radius: 999px;
+  inline-size: min(100%, 24rem);
+  overflow: hidden;
+}
+
+.playground-progress [data-part='indicator'] {
+  background: CanvasText;
+  block-size: 100%;
+}
+
+.playground-progress[data-state='indeterminate'] [data-part='indicator'] {
+  inline-size: 40%;
+}
+
+.progress-themed {
+  display: grid;
+  gap: 1rem;
+  inline-size: min(100%, 24rem);
   margin-block-start: 1rem;
 }
 </style>

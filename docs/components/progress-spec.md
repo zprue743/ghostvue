@@ -41,12 +41,12 @@ unready layout. This primitive does not replace either.
 
 Headless `@ghostvue/vue` `GhostProgress` / `useGhostProgress`:
 
-| Prop        | Type               | Default     | Contract                                                                                                                                                                                                                              |
-| ----------- | ------------------ | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `value`     | `number \| null`   | omitted     | Current progress in the same unit as `max`. Omit or pass `null` for the indeterminate fallback. Non-finite numbers are treated as unknown (indeterminate). Finite values are clamped to `[0, max]`.                                    |
-| `max`       | `number`           | `100`       | Exclusive upper bound of the range. Must be a finite number greater than `0`; otherwise the ARIA default `100` is used so `aria-valuemax` is never `0` or `NaN`.                                                                      |
-| `label`     | `string`           | omitted     | Accessible name, applied as `aria-label`. `role="progressbar"` is `nameFrom: author`; contents are presentational and cannot name the widget. Prefer `aria-labelledby` fallthrough when a visible heading already names the task.     |
-| `valueText` | `string`           | omitted     | Accessible value text (`aria-valuetext`) for determinate instances. When omitted, the default is the rounded percent (`"40%"`). Ignored while indeterminate.                                                                          |
+| Prop        | Type             | Default | Contract                                                                                                                                                                                                                          |
+| ----------- | ---------------- | ------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `value`     | `number \| null` | omitted | Current progress in the same unit as `max`. Omit or pass `null` for the indeterminate fallback. Non-finite numbers are treated as unknown (indeterminate). Finite values are clamped to `[0, max]`.                               |
+| `max`       | `number`         | `100`   | Exclusive upper bound of the range. Must be a finite number greater than `0`; otherwise the ARIA default `100` is used so `aria-valuemax` is never `0` or `NaN`.                                                                  |
+| `label`     | `string`         | omitted | Accessible name, applied as `aria-label`. `role="progressbar"` is `nameFrom: author`; contents are presentational and cannot name the widget. Prefer `aria-labelledby` fallthrough when a visible heading already names the task. |
+| `valueText` | `string`         | omitted | Accessible value text (`aria-valuetext`) for determinate instances. When omitted, the default is the rounded percent (`"40%"`). Ignored while indeterminate.                                                                      |
 
 ```ts
 type GhostProgressMax = number
@@ -132,10 +132,10 @@ plain template ref through normal Vue attribute fallthrough.
 
 The component has two behavioral states derived from `value`:
 
-| `value`                         | State           | `data-state`      | ARIA value attributes                                      |
-| ------------------------------- | --------------- | ----------------- | ---------------------------------------------------------- |
-| omitted, `null`, or non-finite  | indeterminate   | `indeterminate`   | `aria-valuemin="0"`, `aria-valuemax` set; `aria-valuenow` and `aria-valuetext` omitted |
-| finite number (clamped)         | determinate     | omitted           | `aria-valuemin="0"`, `aria-valuemax`, `aria-valuenow`, `aria-valuetext` |
+| `value`                        | State         | `data-state`    | ARIA value attributes                                                                  |
+| ------------------------------ | ------------- | --------------- | -------------------------------------------------------------------------------------- |
+| omitted, `null`, or non-finite | indeterminate | `indeterminate` | `aria-valuemin="0"`, `aria-valuemax` set; `aria-valuenow` and `aria-valuetext` omitted |
+| finite number (clamped)        | determinate   | omitted         | `aria-valuemin="0"`, `aria-valuemax`, `aria-valuenow`, `aria-valuetext`                |
 
 There is no `data-state="complete"`. Completion is `value >= max` (after
 clamp) and is already visible as `aria-valuenow` equal to `aria-valuemax`.
@@ -177,14 +177,14 @@ dedicated Progress Bar pattern; the closest APG widget is
 [Meter](https://www.w3.org/WAI/ARIA/apg/patterns/meter/), which explicitly
 says a meter must not display task progress — use a progressbar instead.
 
-| Attribute          | Determinate                                      | Indeterminate            |
-| ------------------ | ------------------------------------------------ | ------------------------ |
-| `role`             | `progressbar`                                    | `progressbar`            |
-| `aria-valuemin`    | `"0"` (explicit; ARIA default is 0)              | `"0"`                    |
-| `aria-valuemax`    | string of resolved `max`                         | string of resolved `max` |
-| `aria-valuenow`    | string of the clamped `value`                    | omitted                  |
-| `aria-valuetext`   | `valueText` or the default rounded percent       | omitted                  |
-| `aria-label`       | `label` when that prop is set                    | same                     |
+| Attribute        | Determinate                                | Indeterminate            |
+| ---------------- | ------------------------------------------ | ------------------------ |
+| `role`           | `progressbar`                              | `progressbar`            |
+| `aria-valuemin`  | `"0"` (explicit; ARIA default is 0)        | `"0"`                    |
+| `aria-valuemax`  | string of resolved `max`                   | string of resolved `max` |
+| `aria-valuenow`  | string of the clamped `value`              | omitted                  |
+| `aria-valuetext` | `valueText` or the default rounded percent | omitted                  |
+| `aria-label`     | `label` when that prop is set              | same                     |
 
 `aria-labelledby` fallthrough wins in the accessible-name calculation when both
 it and `aria-label` are present, so a visible heading can name the bar without

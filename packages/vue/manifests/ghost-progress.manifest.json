@@ -1,0 +1,77 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "generated",
+  "name": "GhostProgress",
+  "package": "@ghostvue/vue",
+  "status": "experimental",
+  "description": "Headless determinate progress indicator with an indeterminate fallback. useGhostProgress owns progressbar semantics, clamping, and value text; GhostProgress is the thin unstyled element. Themed visual props live on @ghostvue/themes.",
+  "props": [
+    {
+      "name": "value",
+      "type": "number | null",
+      "required": false,
+      "description": "Current progress in the same unit as max. Omit or pass null for the indeterminate fallback. Non-finite numbers are treated as unknown. Finite values are clamped to [0, max].",
+      "deprecated": false
+    },
+    {
+      "name": "max",
+      "type": "number",
+      "default": 100,
+      "required": false,
+      "description": "Exclusive upper bound of the range. Defaults to 100 (ARIA progressbar valuemax), not HTML progress's 1. Invalid values fall back to 100.",
+      "deprecated": false
+    },
+    {
+      "name": "label",
+      "type": "string",
+      "required": false,
+      "description": "Accessible name applied as aria-label. role=progressbar is nameFrom author; contents are presentational and cannot name the widget.",
+      "deprecated": false
+    },
+    {
+      "name": "valueText",
+      "type": "string",
+      "required": false,
+      "description": "Accessible value text (aria-valuetext) for determinate instances. When omitted, the default is the rounded percent. Ignored while indeterminate.",
+      "deprecated": false
+    }
+  ],
+  "models": [],
+  "events": [],
+  "slots": [],
+  "exposed": [],
+  "styling": {
+    "parts": [
+      {
+        "name": "root",
+        "description": "The progressbar div. data-state=indeterminate is present only while the value is unknown."
+      },
+      {
+        "name": "indicator",
+        "description": "The fill. Determinate width is an inline inline-size percentage so headless consumers get a functional bar without the theme."
+      }
+    ],
+    "states": [
+      {
+        "name": "indeterminate",
+        "description": "Value is omitted, null, or non-finite. aria-valuenow and aria-valuetext are omitted."
+      }
+    ],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "progressbar",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/meter/",
+    "keyboard": {},
+    "requiredAriaAttributes": [
+      "aria-valuemin",
+      "aria-valuemax"
+    ]
+  },
+  "examples": [
+    "progress/basic",
+    "progress/composable",
+    "progress/indeterminate",
+    "progress/value-text"
+  ]
+}
