@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils'
-import { h, nextTick } from 'vue'
+import { defineComponent, h, nextTick, ref } from 'vue'
 import { renderToString } from 'vue/server-renderer'
 import { describe, expect, it, vi } from 'vitest'
 
@@ -51,6 +51,48 @@ describe('GhostInput', () => {
     expect(wrapper.emitted('update:modelValue')?.[0]).toEqual(['beta'])
     await wrapper.setProps({ modelValue: 'beta' })
     expect(input.element.value).toBe('beta')
+  })
+
+  it('restores a controlled field after a tick when the parent ignores the emit', async () => {
+    const wrapper = mount(GhostInput, {
+      attachTo: document.body,
+      props: { modelValue: 'locked' },
+    })
+    const input = wrapper.get('input')
+
+    await input.setValue('next')
+
+    expect(wrapper.emitted('update:modelValue')?.[0]).toEqual(['next'])
+    expect(input.element.value).toBe('locked')
+    wrapper.unmount()
+  })
+
+  it('keeps the caret when inserting in the middle of a v-model value', async () => {
+    const Host = defineComponent({
+      setup() {
+        const text = ref('hello')
+        return () =>
+          h(GhostInput, {
+            modelValue: text.value,
+            'onUpdate:modelValue': (value: string) => {
+              text.value = value
+            },
+          })
+      },
+    })
+    const wrapper = mount(Host, { attachTo: document.body })
+    const input = wrapper.get('input').element
+
+    input.focus()
+    input.value = 'hexllo'
+    input.setSelectionRange(3, 3)
+    input.dispatchEvent(new InputEvent('input', { bubbles: true }))
+    await nextTick()
+
+    expect(input.value).toBe('hexllo')
+    expect(input.selectionStart).toBe(3)
+    expect(input.selectionEnd).toBe(3)
+    wrapper.unmount()
   })
 
   it('ignores later defaultValue changes after setup', async () => {

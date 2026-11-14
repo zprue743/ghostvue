@@ -107,6 +107,12 @@ Update timing is the native `input` event, matching Vue's native `v-model` on
 `<input>`. There is no `change`-only model and no `lazy` modifier. Consumers
 who need blur-committed values listen to native `@change`.
 
+Do not restore the DOM synchronously in the input handler: `modelValue` still
+holds the previous string until the parent re-renders, so a same-turn write
+resets the caret to the end. If the parent ignores the emit, restore on
+`nextTick` only when the DOM still differs, and preserve `selectionStart` /
+`selectionEnd`.
+
 `defaultValue` seeds uncontrolled state at setup. Later `defaultValue`
 changes are ignored. Switching controlled ↔ uncontrolled after setup is
 unsupported; development reports GHOST001 and keeps the last rendered value.
@@ -321,12 +327,12 @@ The machine-readable contracts are
 ## Test plan
 
 - Vue tests cover defaults (`type="text"`, empty value), uncontrolled
-  `defaultValue`, controlled `v-model` (including `''`), ignored later
-  `defaultValue` changes, disabled / readonly / invalid / required
-  attributes, `data-state` precedence, typed fallthrough attributes and
-  native listeners, each `GhostInputType` member, exposed refs, form
-  submit of a named enabled field, uncontrolled form reset, SSR markup, and
-  `ghost-input` / `data-part` / `data-state`.
+  `defaultValue`, controlled `v-model` (including `''` and caret position
+  when inserting mid-value), ignored later `defaultValue` changes, disabled
+  / readonly / invalid / required attributes, `data-state` precedence, typed
+  fallthrough attributes and native listeners, each `GhostInputType` member,
+  exposed refs, form submit of a named enabled field, uncontrolled form
+  reset, SSR markup, and `ghost-input` / `data-part` / `data-state`.
 - Composable tests cover the same state matrix and `input`-event writes that
   skip when disabled or readonly.
 - Compile-time tests cover native attribute types on `GhostInputProps` (with

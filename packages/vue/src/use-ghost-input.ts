@@ -1,5 +1,6 @@
 import {
   computed,
+  nextTick,
   toValue,
   type ComputedRef,
   type WritableComputedRef,
@@ -63,6 +64,23 @@ export function useGhostInput(options: UseGhostInputOptions = {}): {
     // cannot bypass those states through the model.
     if (isDisabled.value || isReadonly.value) return
     value.value = target.value
+
+    // Controlled writes do not update local state. Restoring `target.value`
+    // here would use the still-stale prop and jump the caret to the end.
+    // After flush: parent followed → values match, skip; parent ignored →
+    // restore the prop and keep the selection.
+    void nextTick(() => {
+      if (!target.isConnected || target.value === value.value) return
+      const selectionStart = target.selectionStart
+      const selectionEnd = target.selectionEnd
+      target.value = value.value
+      if (selectionStart == null || selectionEnd == null) return
+      const max = target.value.length
+      target.setSelectionRange(
+        Math.min(selectionStart, max),
+        Math.min(selectionEnd, max),
+      )
+    })
   }
 
   const rootProps = computed((): GhostInputRootProps => ({
