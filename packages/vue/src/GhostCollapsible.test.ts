@@ -69,6 +69,7 @@ describe('GhostCollapsible', () => {
     await flushPromises()
     expect(uncontrolledUpdates).toEqual([true, false])
     expect(content.attributes('hidden')).toBe('')
+    expect(content.find('[data-part="content-inner"]').exists()).toBe(false)
 
     const open = ref(false)
     const controlledUpdates: boolean[] = []
@@ -280,6 +281,61 @@ describe('GhostCollapsible', () => {
     expect(() =>
       mount(GhostCollapsibleTrigger, { slots: { default: 'Orphan' } }),
     ).toThrow(/GhostCollapsibleTrigger must be used inside GhostCollapsible/)
+  })
+
+  it('renders the themed animation shell only with data-themed on block hosts', () => {
+    const themed = mount(
+      defineComponent({
+        setup() {
+          return () =>
+            h(
+              GhostCollapsible,
+              { defaultOpen: true },
+              {
+                default: () => [
+                  h(GhostCollapsibleTrigger, null, () => 'Toggle'),
+                  h(
+                    GhostCollapsibleContent,
+                    { 'data-themed': '' },
+                    () => 'Themed body',
+                  ),
+                ],
+              },
+            )
+        },
+      }),
+    )
+    expect(
+      themed.get('[data-part="content"]').find('[data-part="content-inner"]').exists(),
+    ).toBe(true)
+    themed.unmount()
+
+    const listHost = mount(
+      defineComponent({
+        setup() {
+          return () =>
+            h(
+              GhostCollapsible,
+              { defaultOpen: true },
+              {
+                default: () => [
+                  h(GhostCollapsibleTrigger, null, () => 'Toggle'),
+                  h(
+                    GhostCollapsibleContent,
+                    { as: 'ul', 'data-themed': '' },
+                    () => h('li', 'Row'),
+                  ),
+                ],
+              },
+            )
+        },
+      }),
+    )
+    expect(
+      listHost.get('[data-part="content"]').find('[data-part="content-inner"]').exists(),
+    ).toBe(false)
+    expect(listHost.get('[data-part="content"]').element.tagName).toBe('UL')
+    listHost.unmount()
   })
 
   it('sets data-animation off when disableAnimation is true', () => {

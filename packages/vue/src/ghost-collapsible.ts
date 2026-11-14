@@ -121,6 +121,30 @@ export const ghostCollapsibleContextKey: InjectionKey<GhostCollapsibleContext> =
  * (preferring exposed `.element` over `.$el` so themed wrappers resolve to
  * their inner control).
  */
+const COLLAPSIBLE_ANIMATION_SHELL_HOSTS = new Set([
+  'div',
+  'section',
+  'article',
+  'aside',
+  'nav',
+  'main',
+  'header',
+  'footer',
+])
+
+/**
+ * Themed height animation uses an inner grid row only on block hosts. List and
+ * definition hosts keep a direct slot so `as="ul"` / `"ol"` / `"dl"` stay valid.
+ */
+export function collapsibleHostAllowsAnimationShell(
+  as: GhostCollapsibleContentElement | undefined,
+): boolean {
+  if (typeof as === 'string') {
+    return COLLAPSIBLE_ANIMATION_SHELL_HOSTS.has(as)
+  }
+  return true
+}
+
 export function resolveCollapsibleHtmlElement(
   target: unknown,
 ): HTMLElement | null {

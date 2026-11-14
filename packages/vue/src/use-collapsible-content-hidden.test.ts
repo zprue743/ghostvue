@@ -6,10 +6,11 @@ import GhostCollapsible from './GhostCollapsible.vue'
 import GhostCollapsibleContent from './GhostCollapsibleContent.vue'
 import GhostCollapsibleTrigger from './GhostCollapsibleTrigger.vue'
 import {
-  COLLAPSIBLE_HEIGHT_TRANSITION_PROPERTY,
+  COLLAPSIBLE_CLOSE_FALLBACK_MS,
   collapsibleHeightAnimationEnabled,
   isThemedCollapsibleSurface,
 } from './use-collapsible-content-hidden'
+import { collapsibleHostAllowsAnimationShell } from './ghost-collapsible'
 
 describe('collapsibleHeightAnimationEnabled', () => {
   it('requires a themed surface and allows motion', () => {
@@ -53,6 +54,15 @@ describe('collapsibleHeightAnimationEnabled', () => {
         prefersReducedMotion: true,
       }),
     ).toBe(false)
+  })
+})
+
+describe('collapsibleHostAllowsAnimationShell', () => {
+  it('allows block hosts and rejects list or definition hosts', () => {
+    expect(collapsibleHostAllowsAnimationShell('div')).toBe(true)
+    expect(collapsibleHostAllowsAnimationShell('ul')).toBe(false)
+    expect(collapsibleHostAllowsAnimationShell('ol')).toBe(false)
+    expect(collapsibleHostAllowsAnimationShell('dl')).toBe(false)
   })
 })
 
@@ -137,7 +147,7 @@ describe('useCollapsibleContentHidden integration', () => {
 
     content.dispatchEvent(
       new TransitionEvent('transitionend', {
-        propertyName: COLLAPSIBLE_HEIGHT_TRANSITION_PROPERTY,
+        propertyName: 'grid-template-rows',
         bubbles: true,
       }),
     )
@@ -201,6 +211,55 @@ describe('useCollapsibleContentHidden integration', () => {
     await flushPromises()
 
     expect(wrapper.get('[data-part="content"]').attributes('hidden')).toBe('')
+    wrapper.unmount()
+  })
+
+  it('does not hide an open panel after close-then-reopen before transitionend', async () => {
+    matchMedia.mockImplementation((query: string) => ({
+      matches: false,
+      media: query,
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+    }))
+    vi.useFakeTimers()
+
+    const wrapper = mountThemed(true)
+    const trigger = wrapper.get('[data-part="trigger"]')
+    const content = wrapper.get('[data-part="content"]').element
+
+    await trigger.trigger('click')
+    await flushPromises()
+    await trigger.trigger('click')
+    await flushPromises()
+
+    expect(content.hasAttribute('hidden')).toBe(false)
+    expect(content.getAttribute('data-state')).toBe('open')
+
+    vi.advanceTimersByTime(COLLAPSIBLE_CLOSE_FALLBACK_MS)
+    await flushPromises()
+
+    expect(content.hasAttribute('hidden')).toBe(false)
+
+    wrapper.unmount()
+    vi.useRealTimers()
+  })
+
+  it('does not hide an open panel after close-then-reopen within one tick', async () => {
+    matchMedia.mockImplementation((query: string) => ({
+      matches: false,
+      media: query,
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+    }))
+
+    const wrapper = mountThemed(true)
+    const trigger = wrapper.get('[data-part="trigger"]')
+
+    await trigger.trigger('click')
+    await trigger.trigger('click')
+    await flushPromises()
+
+    expect(wrapper.get('[data-part="content"]').attributes('hidden')).toBeUndefined()
     wrapper.unmount()
   })
 })

@@ -9,6 +9,7 @@ import {
 } from 'vue'
 
 import {
+  collapsibleHostAllowsAnimationShell,
   ghostCollapsibleContextKey,
   resolveCollapsibleHtmlElement,
   type GhostCollapsibleContentElement,
@@ -73,6 +74,10 @@ onUnmounted(() => {
 })
 
 const hasDataThemed = computed(() => 'data-themed' in attrs)
+const useThemedAnimationShell = computed(
+  () =>
+    hasDataThemed.value && collapsibleHostAllowsAnimationShell(props.as),
+)
 const dataAnimationOff = computed(
   () => props.disableAnimation || attrs['data-animation'] === 'off',
 )
@@ -129,8 +134,9 @@ defineExpose<GhostCollapsibleContentExposed>({
     class="ghost-collapsible-content"
     v-bind="contentAttrs"
   >
-    <div data-part="content-inner">
+    <div v-if="useThemedAnimationShell" data-part="content-inner">
       <slot />
     </div>
+    <slot v-else />
   </component>
 </template>

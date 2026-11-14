@@ -11,8 +11,11 @@ import {
 
 import { resolveCollapsibleHtmlElement } from './ghost-collapsible'
 
-/** Grid row transition driven by themed collapsible CSS. */
-export const COLLAPSIBLE_HEIGHT_TRANSITION_PROPERTY = 'grid-template-rows'
+/** Transitions driven by themed collapsible CSS. */
+export const COLLAPSIBLE_HEIGHT_TRANSITION_PROPERTIES = [
+  'grid-template-rows',
+  'height',
+] as const
 
 /**
  * Fallback when `transitionend` never fires (for example when transitions are
@@ -100,6 +103,9 @@ export function useCollapsibleContentHidden(
 
   function finishClose(): void {
     clearCloseAnimationListeners()
+    if (toValue(options.isOpen)) {
+      return
+    }
     panelHidden.value = true
   }
 
@@ -114,7 +120,11 @@ export function useCollapsibleContentHidden(
       if (event.target !== element) {
         return
       }
-      if (event.propertyName !== COLLAPSIBLE_HEIGHT_TRANSITION_PROPERTY) {
+      if (
+        !(COLLAPSIBLE_HEIGHT_TRANSITION_PROPERTIES as readonly string[]).includes(
+          event.propertyName,
+        )
+      ) {
         return
       }
       finishClose()
@@ -155,6 +165,9 @@ export function useCollapsibleContentHidden(
 
       panelHidden.value = false
       await nextTick()
+      if (toValue(options.isOpen)) {
+        return
+      }
       scheduleDeferredClose()
     },
     { flush: 'post' },
