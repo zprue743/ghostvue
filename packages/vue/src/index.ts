@@ -205,3 +205,21 @@ export type {
   GhostTextareaProps,
   UseGhostTextareaOptions,
 } from './ghost-textarea'
+
+export { default as GhostCollapsible } from './GhostCollapsible.vue'
+export { default as GhostCollapsibleTrigger } from './GhostCollapsibleTrigger.vue'
+export { default as GhostCollapsibleContent } from './GhostCollapsibleContent.vue'
+export { useGhostCollapsible } from './use-ghost-collapsible'
+export type {
+  GhostCollapsibleContentElement,
+  GhostCollapsibleContentExposed,
+  GhostCollapsibleContentProps,
+  GhostCollapsibleContext,
+  GhostCollapsibleProps,
+  GhostCollapsibleSlotProps,
+  GhostCollapsibleTriggerElement,
+  GhostCollapsibleTriggerExposed,
+  GhostCollapsibleTriggerProps,
+  UseGhostCollapsibleOptions,
+  UseGhostCollapsibleReturn,
+} from './ghost-collapsible'

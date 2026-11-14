@@ -21,6 +21,7 @@ import DialogReference from './DialogReference.vue'
 import ModalPrimitivesReference from './ModalPrimitivesReference.vue'
 import MotionReference from './MotionReference.vue'
 import OverlayReference from './OverlayReference.vue'
+import CollapsibleReference from './CollapsibleReference.vue'
 import PopoverReference from './PopoverReference.vue'
 import VisualReference from './VisualReference.vue'
 import {
@@ -237,6 +238,7 @@ function submitPlaygroundComment(event: Event): void {
     <AmbientReference />
     <OverlayReference />
     <PopoverReference />
+    <CollapsibleReference />
     <DialogReference />
     <ModalPrimitivesReference />
 

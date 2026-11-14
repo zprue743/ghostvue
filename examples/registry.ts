@@ -477,6 +477,18 @@ export const ghostExamples = [
       'Template refs expose element, checked, toggle, focus, and blur.',
     layer: 'headless',
   },
+  {
+    id: 'collapsible/basic',
+    title: 'Collapsible disclosure',
+    description: 'Headless trigger and content linked with aria-controls.',
+    layer: 'headless',
+  },
+  {
+    id: 'collapsible/themed',
+    title: 'Themed collapsible',
+    description: 'Default surface styles with optional motion on expand.',
+    layer: 'themed',
+  },
 ] as const satisfies readonly GhostExampleDefinition[]
 
 export type GhostExampleId = (typeof ghostExamples)[number]['id']

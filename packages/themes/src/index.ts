@@ -159,3 +159,20 @@ export {
   type GhostTextareaExposed,
   type GhostTextareaSize,
 } from './ghost-textarea'
+
+export {
+  GhostCollapsible,
+  type GhostCollapsibleSlotProps,
+} from './ghost-collapsible'
+
+export {
+  GhostCollapsibleTrigger,
+  type GhostCollapsibleTriggerElement,
+  type GhostCollapsibleTriggerExposed,
+} from './ghost-collapsible-trigger'
+
+export {
+  GhostCollapsibleContent,
+  type GhostCollapsibleContentElement,
+  type GhostCollapsibleContentExposed,
+} from './ghost-collapsible-content'

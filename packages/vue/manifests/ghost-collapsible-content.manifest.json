@@ -1,0 +1,81 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "generated",
+  "name": "GhostCollapsibleContent",
+  "package": "@ghostvue/vue",
+  "status": "experimental",
+  "description": "In-flow disclosure panel hidden with the native hidden attribute when collapsed.",
+  "props": [
+    {
+      "name": "as",
+      "type": "GhostCollapsibleContentElement",
+      "default": "div",
+      "required": false,
+      "description": "Tag name or component rendered for the disclosure panel.",
+      "deprecated": false
+    },
+    {
+      "name": "disableAnimation",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Skips theme height animations even when motion is allowed.",
+      "deprecated": false
+    }
+  ],
+  "models": [],
+  "events": [],
+  "slots": [
+    {
+      "name": "default",
+      "props": [],
+      "description": "Primary content."
+    }
+  ],
+  "exposed": [
+    {
+      "name": "element",
+      "kind": "property",
+      "type": "HTMLElement | null",
+      "description": "Exposed property `element`."
+    },
+    {
+      "name": "focus",
+      "kind": "method",
+      "type": "(options?: FocusOptions) => void",
+      "description": "Exposed method `focus`."
+    },
+    {
+      "name": "blur",
+      "kind": "method",
+      "type": "() => void",
+      "description": "Exposed method `blur`."
+    }
+  ],
+  "styling": {
+    "parts": [
+      {
+        "name": "content",
+        "description": "Root element with class ghost-collapsible-content."
+      }
+    ],
+    "states": [
+      {
+        "name": "open",
+        "description": "data-state while visible."
+      },
+      {
+        "name": "closed",
+        "description": "data-state while hidden."
+      }
+    ],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "generic",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/",
+    "keyboard": {},
+    "requiredAriaAttributes": []
+  },
+  "examples": []
+}

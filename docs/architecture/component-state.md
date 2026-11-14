@@ -14,8 +14,7 @@ are not a component contract, so they do not take that prefix:
 
 `GhostCheckbox` uses `useControllableState` for `modelValue`. `useGhostId` is
 unused there: Field (GHO-71) will own label/control ids, and until then
-Checkbox passes `id` through as a native attribute. Using the helpers from
-Collapsible is still deferred.
+Checkbox passes `id` through as a native attribute. `GhostCollapsible` (GHO-86) uses both helpers for `open` and trigger/content ids.
 
 ## `useGhostId(prefix?, id?)`
 

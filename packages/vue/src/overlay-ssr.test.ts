@@ -11,6 +11,9 @@ import GhostDialogDescription from './GhostDialogDescription.vue'
 import GhostDialogOverlay from './GhostDialogOverlay.vue'
 import GhostDialogTitle from './GhostDialogTitle.vue'
 import GhostDialogTrigger from './GhostDialogTrigger.vue'
+import GhostCollapsible from './GhostCollapsible.vue'
+import GhostCollapsibleContent from './GhostCollapsibleContent.vue'
+import GhostCollapsibleTrigger from './GhostCollapsibleTrigger.vue'
 import GhostPopover from './GhostPopover.vue'
 import GhostPopoverClose from './GhostPopoverClose.vue'
 import GhostPopoverContent from './GhostPopoverContent.vue'
@@ -174,5 +177,54 @@ describe('overlay primitives in Node SSR (no window or document)', () => {
     expect(openHtml).toContain('role="dialog"')
     expect(openHtml).toContain('aria-modal="true"')
     expect(openHtml).toContain('data-part="overlay"')
+  })
+
+  it('renders GhostCollapsible closed and defaultOpen states cleanly in Node SSR', async () => {
+    expect(typeof window).toBe('undefined')
+    expect(typeof document).toBe('undefined')
+
+    const ClosedApp = defineComponent({
+      setup() {
+        return () =>
+          h(GhostCollapsible, null, {
+            default: () => [
+              h(GhostCollapsibleTrigger, null, () => 'Closed disclosure'),
+              h(GhostCollapsibleContent, null, () => 'Hidden SSR disclosure'),
+            ],
+          })
+      },
+    })
+
+    const closedHtml = await renderToString(createSSRApp(ClosedApp))
+    expect(closedHtml).toContain('Closed disclosure')
+    expect(closedHtml).toContain('aria-expanded="false"')
+    expect(closedHtml).toContain('Hidden SSR disclosure')
+    expect(closedHtml).toContain('hidden')
+
+    const OpenApp = defineComponent({
+      setup() {
+        return () =>
+          h(
+            GhostCollapsible,
+            { defaultOpen: true },
+            {
+              default: () => [
+                h(GhostCollapsibleTrigger, null, () => 'Open disclosure'),
+                h(
+                  GhostCollapsibleContent,
+                  null,
+                  () => 'Visible SSR disclosure',
+                ),
+              ],
+            },
+          )
+      },
+    })
+
+    const openHtml = await renderToString(createSSRApp(OpenApp))
+    expect(openHtml).toContain('Open disclosure')
+    expect(openHtml).toContain('aria-expanded="true"')
+    expect(openHtml).toContain('Visible SSR disclosure')
+    expect(openHtml).not.toContain(' hidden')
   })
 })
