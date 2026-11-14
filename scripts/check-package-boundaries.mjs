@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url'
 
 import { cruise } from 'dependency-cruiser'
 
-import dependencyCruiserConfig from '../.dependency-cruiser.mjs'
+import { createDependencyCruiserConfig } from '../.dependency-cruiser.mjs'
 import { workspacePackages } from './workspace-packages.mjs'
 
 const repositoryRootUrl = new URL('..', import.meta.url)
@@ -13,6 +13,8 @@ const repositoryRootUrl = new URL('..', import.meta.url)
 const repositoryRootPath = resolve(
   process.argv[2] ?? fileURLToPath(repositoryRootUrl),
 )
+const dependencyCruiserConfig =
+  createDependencyCruiserConfig(repositoryRootPath)
 const packageDirectories = await readdir(join(repositoryRootPath, 'packages'), {
   withFileTypes: true,
 })
@@ -82,7 +84,6 @@ const EXCLUDED_DIRS = new Set([
   'node_modules',
   'dist',
   'generated',
-  'fixtures',
   'coverage',
   'cache',
 ])
@@ -100,8 +101,9 @@ const SOURCE_EXTENSIONS = new Set([
 
 /**
  * Collects source files under the given roots while skipping build outputs,
- * generated files, and test fixtures so `dist` stays out of `from` entries
- * yet remains visible in `doNotFollow` for `no-dist-imports`.
+ * and generated files so `dist` stays out of `from` entries yet remains
+ * visible in `doNotFollow` for `no-dist-imports`. Fixture exclusion lives
+ * in the dependency-cruiser config and applies to both entries and imports.
  */
 async function collectSourceFiles(roots) {
   const files = []
@@ -140,7 +142,6 @@ const sourceFiles = await collectSourceFiles([
 const cruiseResult = await cruise(sourceFiles, {
   ...dependencyCruiserConfig.options,
   baseDir: repositoryRootPath,
-  tsConfig: { fileName: join(repositoryRootPath, 'tsconfig.json') },
   validate: true,
   ruleSet: {
     forbidden: dependencyCruiserConfig.forbidden,

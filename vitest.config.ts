@@ -1,7 +1,7 @@
 import { fileURLToPath } from 'node:url'
 
 import vue from '@vitejs/plugin-vue'
-import { defineConfig } from 'vitest/config'
+import { configDefaults, defineConfig } from 'vitest/config'
 
 import {
   coverageSourceDirectories,
@@ -22,6 +22,7 @@ export default defineConfig({
   test: {
     environment: 'jsdom',
     include: ['packages/**/*.test.ts', 'tests/integration/**/*.test.ts'],
+    exclude: [...configDefaults.exclude, '**/fixtures/**'],
     coverage: {
       provider: 'v8',
       reporter: ['text', 'html', 'json-summary', 'lcovonly'],

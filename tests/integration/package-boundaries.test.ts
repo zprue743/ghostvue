@@ -16,7 +16,7 @@ import { fileURLToPath } from 'node:url'
 import { promisify } from 'node:util'
 
 import type { ICruiseResult } from 'dependency-cruiser'
-import { afterAll, beforeAll, describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 
 const fixtureRoot = fileURLToPath(
   new URL('../fixtures/package-boundaries/', import.meta.url),
@@ -29,7 +29,7 @@ const checker = fileURLToPath(
 describe('source import boundaries', () => {
   let workspace: string
 
-  beforeAll(async () => {
+  beforeEach(async () => {
     workspace = await mkdtemp(resolve(tmpdir(), 'ghostvue-boundaries-'))
     await cp(resolve(fixtureRoot, 'packages'), resolve(workspace, 'packages'), {
       recursive: true,
@@ -70,7 +70,7 @@ describe('source import boundaries', () => {
     }
   })
 
-  afterAll(async () => {
+  afterEach(async () => {
     if (workspace) await rm(workspace, { recursive: true, force: true })
   })
 
@@ -94,7 +94,7 @@ describe('source import boundaries', () => {
       // without changing the cwd of other Vitest workers.
       const { stdout } = await execFileAsync(
         process.execPath,
-        [resolve(fixtureRoot, 'cruise.mjs'), entry],
+        [resolve(fixtureRoot, 'cruise.mjs'), workspace, entry],
         { cwd: workspace },
       )
       const output = JSON.parse(stdout) as ICruiseResult
@@ -143,6 +143,48 @@ describe('source import boundaries', () => {
       }
     },
   )
+
+  it('resolves the requested workspace tsconfig from another cwd', async () => {
+    const entry = 'packages/core/src/index.js'
+    await writeFile(
+      resolve(workspace, 'tsconfig.json'),
+      JSON.stringify({
+        compilerOptions: {
+          paths: { '@fixture/vue': ['./packages/vue/src/index.js'] },
+        },
+      }),
+    )
+    await writeFile(
+      resolve(workspace, entry),
+      "export { vue } from '@fixture/vue'\n",
+    )
+    const { stdout } = await execFileAsync(
+      process.execPath,
+      [resolve(fixtureRoot, 'cruise.mjs'), workspace, entry],
+      { cwd: workspace },
+    )
+    const output = JSON.parse(stdout) as ICruiseResult
+    expect(output.summary.violations).toContainEqual(
+      expect.objectContaining({
+        from: entry,
+        to: 'packages/vue/src/index.js',
+        rule: { name: 'core-no-vue-or-themes', severity: 'error' },
+      }),
+    )
+
+    // The fixture directory has its own unrelated tsconfig; the CLI must use
+    // the explicit workspace root instead of resolving relative to this cwd.
+    const check = execFileAsync(process.execPath, [checker, workspace], {
+      cwd: fixtureRoot,
+    })
+    await expect(check).rejects.toHaveProperty('code', 1)
+    await expect(check).rejects.toHaveProperty(
+      'stderr',
+      expect.stringContaining(
+        '[core-no-vue-or-themes] packages/core/src/index.js -> packages/vue/src/index.js',
+      ),
+    )
+  })
 
   it('rejects forbidden package.json dependencies through the real checker', async () => {
     await cp(
