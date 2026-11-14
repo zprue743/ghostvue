@@ -148,6 +148,13 @@ export {
 } from './ghost-input'
 
 export {
+  GhostSwitch,
+  type GhostSwitchExposed,
+  type GhostSwitchSize,
+  type GhostSwitchTone,
+} from './ghost-switch'
+
+export {
   GhostTextarea,
   type GhostTextareaExposed,
   type GhostTextareaSize,

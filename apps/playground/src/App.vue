@@ -10,6 +10,7 @@ import {
   GhostProgress as GhostProgressThemed,
   GhostSeparator as GhostSeparatorThemed,
   GhostSkeleton as GhostSkeletonThemed,
+  GhostSwitch as GhostSwitchThemed,
   GhostTextarea as GhostTextareaThemed,
 } from '@ghostvue/themes'
 
@@ -31,6 +32,7 @@ import {
   GhostProgress,
   GhostSeparator,
   GhostSkeleton,
+  GhostSwitch,
   GhostTextarea,
   GhostVisuallyHidden,
   useFocusScope,
@@ -90,6 +92,16 @@ function submitCheckboxForm(event: Event): void {
   if (new FormData(form).has('subscribe')) {
     checkboxSubmissions.value += 1
   }
+}
+
+const airplane = ref(false)
+const digestSubmitted = ref('')
+
+function onDigestSubmit(event: Event): void {
+  event.preventDefault()
+  const data = new FormData(event.target as HTMLFormElement)
+  const digest = data.get('digest')
+  digestSubmitted.value = typeof digest === 'string' ? digest : 'off'
 }
 
 function remove(name: string) {
@@ -764,6 +776,46 @@ function submitPlaygroundComment(event: Event): void {
       </form>
     </section>
 
+    <section aria-labelledby="switch-heading">
+      <h2 id="switch-heading">GhostSwitch</h2>
+      <p>Airplane: {{ airplane ? 'on' : 'off' }}</p>
+      <div class="switch-row">
+        <label for="playground-airplane">Airplane mode</label>
+        <GhostSwitch id="playground-airplane" v-model="airplane" />
+      </div>
+      <div class="switch-row">
+        <label for="playground-switch-disabled">Disabled alerts</label>
+        <GhostSwitch id="playground-switch-disabled" disabled default-value />
+      </div>
+      <div class="switch-row">
+        <label for="playground-switch-readonly">Read-only policy</label>
+        <GhostSwitch id="playground-switch-readonly" readonly default-value />
+      </div>
+      <form class="form-example" @submit="onDigestSubmit">
+        <div class="switch-row">
+          <label for="playground-digest">Daily digest</label>
+          <GhostSwitch
+            id="playground-digest"
+            name="digest"
+            value="daily"
+            default-value
+          />
+        </div>
+        <div class="examples">
+          <GhostButton type="submit">Save digest</GhostButton>
+          <GhostButton type="reset">Reset digest</GhostButton>
+        </div>
+        <p>Digest submitted: {{ digestSubmitted || 'none' }}</p>
+      </form>
+      <fieldset class="ghost-theme">
+        <legend>Themed switch</legend>
+        <div class="switch-row">
+          <label for="playground-dark">Dark mode</label>
+          <GhostSwitchThemed id="playground-dark" />
+        </div>
+      </fieldset>
+    </section>
+
     <section aria-labelledby="separator-heading">
       <h2 id="separator-heading">GhostSeparator</h2>
       <div data-testid="separator-stack">
@@ -1035,5 +1087,13 @@ fieldset {
   align-items: center;
   display: flex;
   gap: 0.5rem;
+}
+
+.switch-row {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-block: 0.5rem;
 }
 </style>
