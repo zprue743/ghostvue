@@ -259,7 +259,7 @@ issue confirms coverage via the tests below rather than new public API.
 | -------------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------------------------------ |
 | Controlled / uncontrolled `open` | `useControllableState` in `useGhostPopover` / `GhostPopover` | `GhostPopover.test.ts` — uncontrolled and controlled cases                           |
 | Trigger toggle                   | `GhostPopoverTrigger` click / `Enter` / `Space`              | `GhostPopover.test.ts`, `tests/e2e/popover.spec.ts`                                  |
-| Disabled trigger                 | Native `disabled` on `<button>`; no open on click / `Enter`  | `GhostPopover.test.ts` — `disabled` prop                                              |
+| Disabled trigger                 | Native `disabled` on `<button>`; no open on click / `Enter`  | `GhostPopover.test.ts` — `disabled` prop                                             |
 | Outside interaction              | `useDismissableLayer` + trigger `ignore`                     | `GhostPopover.test.ts` — outside `pointerdown`                                       |
 | `Escape` dismissal               | `useDismissableLayer` stack                                  | `GhostPopover.test.ts`, `tests/e2e/popover.spec.ts`                                  |
 | Focus entry / restoration        | `useFocusScope` (`trapped: false`)                           | `GhostPopover.test.ts` — open/close and outside-focusable clicks                     |
