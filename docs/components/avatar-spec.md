@@ -29,12 +29,12 @@ accessible names whether the photo loads or not.
 
 Headless `@ghostvue/vue` `GhostAvatar` / `useGhostAvatar`:
 
-| Prop   | Type            | Default  | Contract                                                                 |
-| ------ | --------------- | -------- | ------------------------------------------------------------------------ |
-| `src`  | `string`        | —        | Image URL. When set, the client probes load after mount. Omit for initials-only use. |
-| `alt`  | `string`        | —        | Accessible name for the `<img>` when loaded. Falls back to `name` when omitted. Use `""` when the surrounding context names the entity. |
-| `name` | `string`        | —        | Derives fallback initials (up to two graphemes from the first two words). Also used as `alt` when `alt` is omitted. |
-| `as`   | `'span' \| 'div'` | `'span'` | Root host. Must stay valid HTML phrasing or flow content for the chosen parent. |
+| Prop   | Type              | Default  | Contract                                                                                                                                |
+| ------ | ----------------- | -------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| `src`  | `string`          | —        | Image URL. When set, the client probes load after mount. Omit for initials-only use.                                                    |
+| `alt`  | `string`          | —        | Accessible name for the `<img>` when loaded. Falls back to `name` when omitted. Use `""` when the surrounding context names the entity. |
+| `name` | `string`          | —        | Derives fallback initials (up to two graphemes from the first two words). Also used as `alt` when `alt` is omitted.                     |
+| `as`   | `'span' \| 'div'` | `'span'` | Root host. Must stay valid HTML phrasing or flow content for the chosen parent.                                                         |
 
 Native attributes on the root host fall through. Named ESM exports: `GhostAvatar`,
 `useGhostAvatar`, `deriveGhostAvatarInitials`, and the types below.
@@ -60,8 +60,8 @@ server and client both paint the same fallback first.
 
 Themed `@ghostvue/themes` `GhostAvatar` wraps the unstyled component:
 
-| Prop   | Type                  | Default | Contract                                      |
-| ------ | --------------------- | ------- | --------------------------------------------- |
+| Prop   | Type                   | Default | Contract                                      |
+| ------ | ---------------------- | ------- | --------------------------------------------- |
 | `size` | `'sm' \| 'md' \| 'lg'` | `'md'`  | Square dimensions. Default omits `data-size`. |
 
 The themed wrapper sets `data-size` only for non-default values and scopes CSS
@@ -73,8 +73,8 @@ There is no model.
 
 ### Events, callbacks, slots, and exposed methods
 
-| Slot      | Contract                                                                 |
-| --------- | ------------------------------------------------------------------------ |
+| Slot       | Contract                                                                                      |
+| ---------- | --------------------------------------------------------------------------------------------- |
 | `fallback` | Custom fallback when the image is not shown. Default content is derived initials from `name`. |
 
 No component-specific events. Native root listeners receive native events.

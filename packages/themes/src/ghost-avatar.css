@@ -1,0 +1,87 @@
+/*
+ * Themed GhostAvatar. Visual values come from semantic --ghost-* tokens. Private
+ * --_ghost-avatar-* properties are per-instance wiring, not a public API.
+ * Defaults are md (omitted data-size). Circular frame with object-fit cover.
+ */
+@layer ghostvue-theme {
+  :where(.ghost-theme .ghost-avatar, .ghost-themed-scope .ghost-avatar) {
+    --_ghost-avatar-size: var(--ghost-control-size-md-min);
+    --_ghost-avatar-font-size: var(--ghost-control-size-md-font);
+
+    align-items: center;
+    background-color: color-mix(
+      in oklch,
+      var(--ghost-action-neutral-bg) calc(100% * var(--ghost-state-mix-soft)),
+      var(--ghost-surface-bg)
+    );
+    border-radius: 50%;
+    box-sizing: border-box;
+    color: var(--ghost-action-neutral-bg);
+    display: inline-flex;
+    flex: none;
+    font-family: var(--ghost-type-family-sans);
+    font-feature-settings: var(--ghost-type-feature-default);
+    font-size: var(--_ghost-avatar-font-size);
+    font-weight: var(--ghost-type-weight-medium);
+    block-size: var(--_ghost-avatar-size);
+    inline-size: var(--_ghost-avatar-size);
+    justify-content: center;
+    line-height: var(--ghost-type-line-tight);
+    overflow: hidden;
+    position: relative;
+    vertical-align: middle;
+  }
+
+  :where(
+    .ghost-theme .ghost-avatar [data-part='image'],
+    .ghost-themed-scope .ghost-avatar [data-part='image']
+  ) {
+    block-size: 100%;
+    display: block;
+    inline-size: 100%;
+    object-fit: cover;
+  }
+
+  :where(
+    .ghost-theme .ghost-avatar [data-part='fallback'],
+    .ghost-themed-scope .ghost-avatar [data-part='fallback']
+  ) {
+    align-items: center;
+    display: flex;
+    block-size: 100%;
+    inline-size: 100%;
+    justify-content: center;
+    user-select: none;
+  }
+
+  :where(
+    .ghost-theme .ghost-avatar[data-size='sm'],
+    .ghost-themed-scope .ghost-avatar[data-size='sm']
+  ) {
+    --_ghost-avatar-size: var(--ghost-control-size-sm-min);
+    --_ghost-avatar-font-size: var(--ghost-control-size-sm-font);
+  }
+
+  :where(
+    .ghost-theme .ghost-avatar[data-size='lg'],
+    .ghost-themed-scope .ghost-avatar[data-size='lg']
+  ) {
+    --_ghost-avatar-size: var(--ghost-control-size-lg-min);
+    --_ghost-avatar-font-size: var(--ghost-control-size-lg-font);
+  }
+
+  :where(
+    .ghost-theme .ghost-avatar[data-state='loading'],
+    .ghost-themed-scope .ghost-avatar[data-state='loading']
+  ) {
+    opacity: 0.92;
+  }
+
+  @media (forced-colors: active) {
+    :where(.ghost-theme .ghost-avatar, .ghost-themed-scope .ghost-avatar) {
+      background-color: Canvas;
+      border: var(--ghost-border-hairline-width) solid CanvasText;
+      color: CanvasText;
+    }
+  }
+}

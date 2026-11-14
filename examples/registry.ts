@@ -23,6 +23,36 @@ export interface GhostExampleDefinition {
 
 export const ghostExamples = [
   {
+    id: 'avatar/basic',
+    title: 'Initials',
+    description: 'Fallback initials from name without an image URL.',
+    layer: 'headless',
+  },
+  {
+    id: 'avatar/composable',
+    title: 'Composable',
+    description: 'Same contract as GhostAvatar, applied to a native host.',
+    layer: 'headless',
+  },
+  {
+    id: 'avatar/fallback',
+    title: 'Fallback slot',
+    description: 'Custom fallback when src is missing or fails to load.',
+    layer: 'headless',
+  },
+  {
+    id: 'avatar/image',
+    title: 'Loaded image',
+    description: 'Client image probe after SSR-safe loading fallback.',
+    layer: 'headless',
+  },
+  {
+    id: 'avatar/themed',
+    title: 'Themed',
+    description: 'Size hooks on the @ghostvue/themes wrapper.',
+    layer: 'themed',
+  },
+  {
     id: 'badge/basic',
     title: 'Basic',
     description: 'Unstyled compact status text.',
