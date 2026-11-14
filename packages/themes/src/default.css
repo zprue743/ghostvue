@@ -27,6 +27,7 @@
 @import './ghost-tooltip.css';
 
 @import './ghost-pagination.css';
+@import './ghost-number-input.css';
 
 @layer ghostvue-theme {
   :where(.ghost-themed-scope) {

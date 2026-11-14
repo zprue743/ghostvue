@@ -311,3 +311,17 @@ export {
   type UseGhostTooltipOptions,
   type UseGhostTooltipReturn,
 } from './ghost-tooltip'
+export { default as GhostNumberInput } from './GhostNumberInput.vue'
+export {
+  useGhostNumberInput,
+  type GhostNumberInputButtonProps,
+  type GhostNumberInputHiddenInputProps,
+  type GhostNumberInputInputProps,
+  type GhostNumberInputRootProps,
+} from './use-ghost-number-input'
+export type {
+  GhostNumberInputExposed,
+  GhostNumberInputFormatOptions,
+  GhostNumberInputProps,
+  UseGhostNumberInputOptions,
+} from './ghost-number-input')

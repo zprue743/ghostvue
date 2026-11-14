@@ -580,6 +580,36 @@ export const ghostExamples = [
     description: 'Default pagination styling from @ghostvue/themes.',
     layer: 'themed',
   },
+  {
+    id: 'number-input/basic',
+    title: 'Basic',
+    description: 'Labeled spinbutton with min, max, and step.',
+    layer: 'headless',
+  },
+  {
+    id: 'number-input/bounds',
+    title: 'Bounds',
+    description: 'Increment buttons disable at min and max.',
+    layer: 'headless',
+  },
+  {
+    id: 'number-input/field',
+    title: 'Field',
+    description: 'Currency formatting inside GhostField.',
+    layer: 'headless',
+  },
+  {
+    id: 'number-input/ref',
+    title: 'Component ref',
+    description: 'Programmatic increment through the exposed API.',
+    layer: 'headless',
+  },
+  {
+    id: 'number-input/themed',
+    title: 'Themed',
+    description: 'Large block layout from @ghostvue/themes.',
+    layer: 'themed',
+  },
 ] as const satisfies readonly GhostExampleDefinition[]
 
 export type GhostExampleId = (typeof ghostExamples)[number]['id']

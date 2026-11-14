@@ -24,6 +24,7 @@ export const docsSidebar: LlmsSidebarGroup[] = [
       { text: 'GhostDialog', link: '/components/dialog' },
       { text: 'GhostField', link: '/components/field' },
       { text: 'GhostInput', link: '/components/input' },
+      { text: 'GhostNumberInput', link: '/components/number-input' },
       {
         text: 'GhostInteractiveSurface',
         link: '/components/interactive-surface',
@@ -106,6 +107,10 @@ export const docsSidebar: LlmsSidebarGroup[] = [
       {
         text: 'GhostPagination specification',
         link: '/components/pagination-spec',
+      },
+      {
+        text: 'GhostNumberInput specification',
+        link: '/components/number-input-spec',
       },
       {
         text: 'GhostCollapsible specification',

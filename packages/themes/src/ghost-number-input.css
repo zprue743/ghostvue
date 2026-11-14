@@ -1,0 +1,149 @@
+/*
+ * Themed GhostNumberInput layout and control chrome aligned with ghost-input.
+ */
+@layer ghostvue-theme {
+  :where(
+    .ghost-theme .ghost-number-input,
+    .ghost-themed-scope .ghost-number-input
+  ) {
+    --_ghost-number-input-gap: var(--ghost-space-2);
+    align-items: stretch;
+    display: inline-flex;
+    gap: var(--_ghost-number-input-gap);
+    max-inline-size: 100%;
+  }
+
+  :where(
+    .ghost-theme .ghost-number-input[data-block],
+    .ghost-themed-scope .ghost-number-input[data-block]
+  ) {
+    display: flex;
+    inline-size: 100%;
+  }
+
+  :where(
+    .ghost-theme .ghost-number-input__input,
+    .ghost-themed-scope .ghost-number-input__input
+  ) {
+    --_ghost-number-input-min-size: var(--ghost-control-size-md-min);
+    --_ghost-number-input-padding-block: var(
+      --ghost-control-size-md-padding-block
+    );
+    --_ghost-number-input-padding-inline: var(
+      --ghost-control-size-md-padding-inline
+    );
+    --_ghost-number-input-font-size: var(--ghost-control-size-md-font);
+    --_ghost-number-input-background: var(--ghost-surface-bg);
+    --_ghost-number-input-border-color: var(--ghost-border-default);
+    --_ghost-number-input-color: var(--ghost-text-default);
+
+    appearance: none;
+    background-color: var(--_ghost-number-input-background);
+    border: var(--ghost-border-hairline-width) solid
+      var(--_ghost-number-input-border-color);
+    border-radius: var(--ghost-action-radius);
+    box-sizing: border-box;
+    color: var(--_ghost-number-input-color);
+    flex: 1 1 auto;
+    font-family: var(--ghost-type-family-sans);
+    font-size: var(--_ghost-number-input-font-size);
+    font-weight: var(--ghost-type-weight-regular);
+    letter-spacing: var(--ghost-type-letter-normal);
+    line-height: var(--ghost-type-line-normal);
+    margin: 0;
+    min-block-size: var(--_ghost-number-input-min-size);
+    min-inline-size: 4ch;
+    padding-block: var(--_ghost-number-input-padding-block);
+    padding-inline: var(--_ghost-number-input-padding-inline);
+    text-align: end;
+  }
+
+  :where(
+    .ghost-theme .ghost-number-input[data-size='sm'] .ghost-number-input__input,
+    .ghost-themed-scope
+      .ghost-number-input[data-size='sm']
+      .ghost-number-input__input
+  ) {
+    --_ghost-number-input-min-size: var(--ghost-control-size-sm-min);
+    --_ghost-number-input-padding-block: var(
+      --ghost-control-size-sm-padding-block
+    );
+    --_ghost-number-input-padding-inline: var(
+      --ghost-control-size-sm-padding-inline
+    );
+    --_ghost-number-input-font-size: var(--ghost-control-size-sm-font);
+  }
+
+  :where(
+    .ghost-theme .ghost-number-input[data-size='lg'] .ghost-number-input__input,
+    .ghost-themed-scope
+      .ghost-number-input[data-size='lg']
+      .ghost-number-input__input
+  ) {
+    --_ghost-number-input-min-size: var(--ghost-control-size-lg-min);
+    --_ghost-number-input-padding-block: var(
+      --ghost-control-size-lg-padding-block
+    );
+    --_ghost-number-input-padding-inline: var(
+      --ghost-control-size-lg-padding-inline
+    );
+    --_ghost-number-input-font-size: var(--ghost-control-size-lg-font);
+  }
+
+  :where(
+    .ghost-theme .ghost-number-input__button,
+    .ghost-themed-scope .ghost-number-input__button
+  ) {
+    align-items: center;
+    appearance: none;
+    background: var(--ghost-surface-muted-bg);
+    border: var(--ghost-border-hairline-width) solid var(--ghost-border-default);
+    border-radius: var(--ghost-action-radius);
+    color: var(--ghost-text-default);
+    cursor: pointer;
+    display: inline-flex;
+    font-family: var(--ghost-type-family-sans);
+    font-size: var(--ghost-control-size-md-font);
+    justify-content: center;
+    margin: 0;
+    min-inline-size: var(--ghost-control-size-md-min);
+    padding-inline: var(--ghost-space-2);
+  }
+
+  :where(
+    .ghost-theme .ghost-number-input__button:disabled,
+    .ghost-themed-scope .ghost-number-input__button:disabled
+  ) {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+
+  :where(
+    .ghost-theme .ghost-number-input__button:focus-visible,
+    .ghost-themed-scope .ghost-number-input__button:focus-visible
+  ) {
+    box-shadow: 0 0 0 var(--ghost-focus-ring-width)
+      var(--ghost-focus-ring-color);
+    outline: none;
+  }
+
+  :where(
+    .ghost-theme .ghost-number-input__input:focus-visible,
+    .ghost-themed-scope .ghost-number-input__input:focus-visible
+  ) {
+    box-shadow: 0 0 0 var(--ghost-focus-ring-width)
+      var(--ghost-focus-ring-color);
+    outline: none;
+  }
+
+  :where(
+    .ghost-theme
+      .ghost-number-input[data-state='invalid']
+      .ghost-number-input__input,
+    .ghost-themed-scope
+      .ghost-number-input[data-state='invalid']
+      .ghost-number-input__input
+  ) {
+    border-color: var(--ghost-border-danger);
+  }
+}

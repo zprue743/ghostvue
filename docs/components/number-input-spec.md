@@ -31,21 +31,21 @@ fallthrough on the spinbutton text field.
 
 Headless `@ghostvue/vue` `GhostNumberInput` / `useGhostNumberInput`:
 
-| Prop             | Type                         | Default     | Contract |
-| ---------------- | ---------------------------- | ----------- | -------- |
-| `modelValue`     | `number \| null`             | omitted     | Controlled numeric value. `undefined` is uncontrolled; `null` is an empty field. |
-| `defaultValue`   | `number \| null`             | `null`      | Initial uncontrolled value. Later changes ignored. Form-reset seed. |
-| `min`            | `number`                     | omitted     | Minimum inclusive bound. Sets `aria-valuemin` when defined. |
-| `max`            | `number`                     | omitted     | Maximum inclusive bound. Sets `aria-valuemax` when defined. |
-| `step`           | `number`                     | `1`         | Step for increment, decrement, and arrow keys. Must be &gt; 0. |
-| `locale`         | `string`                     | `undefined` | `Intl.NumberFormat` locale. Default is runtime default locale. |
-| `formatOptions`  | `Intl.NumberFormatOptions`   | `{}`        | Passed to `Intl.NumberFormat` (for example `maximumFractionDigits`). |
-| `disabled`       | `boolean`                    | `false`     | Disables editing, buttons, and sequential focus for the control. |
-| `readonly`       | `boolean`                    | `false`     | Focusable and submitted; typing and buttons do not change value. |
-| `invalid`        | `boolean`                    | `false`     | Consumer validity. Sets `aria-invalid` on the spinbutton. |
-| `required`       | `boolean`                    | `false`     | Native `required` on the spinbutton input. |
-| `decrementLabel` | `string`                     | `'Decrease'` | Accessible name for the decrement button when no visible text. |
-| `incrementLabel` | `string`                     | `'Increase'` | Accessible name for the increment button when no visible text. |
+| Prop             | Type                       | Default      | Contract                                                                         |
+| ---------------- | -------------------------- | ------------ | -------------------------------------------------------------------------------- |
+| `modelValue`     | `number \| null`           | omitted      | Controlled numeric value. `undefined` is uncontrolled; `null` is an empty field. |
+| `defaultValue`   | `number \| null`           | `null`       | Initial uncontrolled value. Later changes ignored. Form-reset seed.              |
+| `min`            | `number`                   | omitted      | Minimum inclusive bound. Sets `aria-valuemin` when defined.                      |
+| `max`            | `number`                   | omitted      | Maximum inclusive bound. Sets `aria-valuemax` when defined.                      |
+| `step`           | `number`                   | `1`          | Step for increment, decrement, and arrow keys. Must be &gt; 0.                   |
+| `locale`         | `string`                   | `undefined`  | `Intl.NumberFormat` locale. Default is runtime default locale.                   |
+| `formatOptions`  | `Intl.NumberFormatOptions` | `{}`         | Passed to `Intl.NumberFormat` (for example `maximumFractionDigits`).             |
+| `disabled`       | `boolean`                  | `false`      | Disables editing, buttons, and sequential focus for the control.                 |
+| `readonly`       | `boolean`                  | `false`      | Focusable and submitted; typing and buttons do not change value.                 |
+| `invalid`        | `boolean`                  | `false`      | Consumer validity. Sets `aria-invalid` on the spinbutton.                        |
+| `required`       | `boolean`                  | `false`      | Native `required` on the spinbutton input.                                       |
+| `decrementLabel` | `string`                   | `'Decrease'` | Accessible name for the decrement button when no visible text.                   |
+| `incrementLabel` | `string`                   | `'Increase'` | Accessible name for the increment button when no visible text.                   |
 
 Named exports: `GhostNumberInput`, `useGhostNumberInput`, and related types.
 The SFC is a three-part widget: decrement button, spinbutton text field, and
@@ -58,10 +58,10 @@ locale, labels, disabled/readonly/invalid/required, and model state.
 
 Themed `@ghostvue/themes` `GhostNumberInput` adds:
 
-| Prop    | Type                   | Default | Contract |
-| ------- | ---------------------- | ------- | -------- |
+| Prop    | Type                   | Default | Contract                                    |
+| ------- | ---------------------- | ------- | ------------------------------------------- |
 | `size`  | `'sm' \| 'md' \| 'lg'` | `'md'`  | Control density; default omits `data-size`. |
-| `block` | `boolean`              | `false` | Stretch via `data-block` on the root. |
+| `block` | `boolean`              | `false` | Stretch via `data-block` on the root.       |
 
 ### v-model contracts
 

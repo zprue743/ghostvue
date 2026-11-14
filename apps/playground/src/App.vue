@@ -7,6 +7,7 @@ import {
   GhostCheckbox as GhostCheckboxThemed,
   GhostField as GhostFieldThemed,
   GhostInput as GhostInputThemed,
+  GhostNumberInput as GhostNumberInputThemed,
   GhostKbd as GhostKbdThemed,
   GhostPagination as GhostPaginationThemed,
   GhostProgress as GhostProgressThemed,
@@ -38,6 +39,7 @@ import {
   GhostFieldError,
   GhostFieldLabel,
   GhostInput,
+  GhostNumberInput,
   GhostKbd,
   GhostPagination,
   GhostProgress,
@@ -80,6 +82,8 @@ const playgroundBio = ref('Themed bio.')
 const playgroundDraft = ref('Auto-resize this draft.\nAdd more lines to grow.')
 const playgroundComment = ref('')
 const playgroundCommentSent = ref('')
+const playgroundBatchSize = ref(25)
+const playgroundNumericFilter = ref<number | null>(100)
 const acceptedTerms = ref(false)
 const checkboxSubmissions = ref(0)
 const notifications = reactive([
@@ -872,6 +876,34 @@ function submitPlaygroundComment(event: Event): void {
           />
         </GhostFieldControl>
       </GhostFieldThemed>
+    </section>
+
+    <section aria-labelledby="number-input-heading">
+      <h2 id="number-input-heading">GhostNumberInput</h2>
+      <label for="pg-batch-size">Batch size</label>
+      <GhostNumberInput
+        id="pg-batch-size"
+        v-model="playgroundBatchSize"
+        :min="5"
+        :max="50"
+        :step="5"
+        name="batch-size"
+        data-testid="number-input-headless"
+      />
+      <p data-testid="number-input-batch-readout">
+        Batch commits: {{ playgroundBatchSize }}
+      </p>
+      <GhostNumberInputThemed
+        v-model="playgroundNumericFilter"
+        :min="0"
+        :step="10"
+        :format-options="{ style: 'decimal' }"
+        locale="en-US"
+        block
+        name="numeric-filter"
+        aria-label="Numeric filter threshold"
+        data-testid="number-input-themed"
+      />
     </section>
 
     <section aria-labelledby="textarea-heading">
