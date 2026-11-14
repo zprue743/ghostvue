@@ -238,49 +238,60 @@ html.dark .ghost-landing {
   margin: 0 0 1rem;
 }
 
-.ghost-landing__progression {
-  border-block-start: 1px solid var(--ghost-border-muted);
-  list-style: none;
-  margin: 1.25rem 0 0;
-  padding: 0;
+.ghost-landing__action-link {
+  color: inherit;
+  display: inline-flex;
+  text-decoration: none;
 }
 
-.ghost-landing__progression li {
-  border-block-end: 1px solid var(--ghost-border-muted);
+.ghost-landing__progression-tabs {
+  margin-block-start: 1.25rem;
 }
 
-.ghost-landing__progression-btn {
+.ghost-landing__progression-layout {
+  align-items: start;
+  display: grid;
+  gap: 2.75rem;
+  grid-template-columns: 5fr 7fr;
+}
+
+.ghost-landing__progression-trigger {
   align-items: baseline;
-  appearance: none;
-  background: transparent;
-  border: 0;
   border-inline-start: 2px solid transparent;
-  color: var(--ghost-text-muted);
-  cursor: pointer;
+  border-radius: 0;
   display: flex;
-  font: inherit;
   font-size: 0.88rem;
   justify-content: space-between;
-  padding: 0.75rem 0.4rem;
   text-align: start;
   width: 100%;
 }
 
-.ghost-landing__progression-btn:hover {
-  background: var(--ghost-surface-subtle-bg);
-  color: var(--ghost-surface-fg);
-}
-
-.ghost-landing__progression-btn[data-active] {
-  background: var(--ghost-surface-subtle-bg);
+.ghost-landing__progression-trigger[data-state='active'] {
   border-inline-start-color: var(--ghost-action-primary-bg);
-  color: var(--ghost-surface-fg);
   font-weight: 650;
 }
 
-.ghost-landing__progression-btn code {
+.ghost-landing__progression-trigger code {
   color: var(--ghost-action-primary-bg);
   font-size: 0.76rem;
+}
+
+.ghost-landing__progression-panel {
+  background: transparent;
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+.ghost-landing :deep(.ghost-landing__progression-tabs .ghost-tabs-list) {
+  border-block-start: 1px solid var(--ghost-border-muted);
+  gap: 0;
+}
+
+.ghost-landing :deep(.ghost-landing__progression-tabs .ghost-tabs-trigger) {
+  border-block-end: 1px solid var(--ghost-border-muted);
+  border-radius: 0;
+  box-shadow: none;
 }
 
 .ghost-landing__code-window {
@@ -431,6 +442,7 @@ html.dark .ghost-landing {
 @media (max-width: 820px) {
   .ghost-landing__comparison,
   .ghost-landing__section-split,
+  .ghost-landing__progression-layout,
   .ghost-landing__principles {
     grid-template-columns: 1fr;
   }

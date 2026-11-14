@@ -1,10 +1,17 @@
 <script setup lang="ts">
 import { GhostButton as HeadlessGhostButton } from '@ghostvue/vue'
-import { GhostButton as ThemedGhostButton } from '@ghostvue/themes'
-import { useRouter } from 'vitepress'
-import { computed, onMounted, onUnmounted, ref, shallowRef } from 'vue'
+import {
+  GhostButton as ThemedGhostButton,
+  GhostTabs,
+  GhostTabsContent,
+  GhostTabsList,
+  GhostTabsTrigger,
+} from '@ghostvue/themes'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
 
 import { exampleSource } from '../../../../examples/load'
+import LandingActionLink from './LandingActionLink.vue'
+import { landingComponentSurface } from './landing-surface'
 
 const INSTALL_CMD = 'pnpm add @ghostvue/vue @ghostvue/themes'
 
@@ -37,127 +44,47 @@ const stageCodes = [
 
 const stages = [
   {
+    id: 'props',
     file: 'examples/button/themed.vue',
     note: 'Safe default type="button"; preserves focus when loading',
     sourceId: 'button/themed',
   },
   {
+    id: 'controlled',
     file: 'examples/popover/basic.vue',
     note: 'Works controlled (v-model:open) or uncontrolled (defaultOpen)',
     sourceId: 'popover/basic',
   },
   {
+    id: 'slots',
     file: 'examples/button/loading.vue',
     note: 'Slot content owns icons and custom loading indicators via data-part',
     sourceId: 'button/loading',
   },
   {
+    id: 'composable',
     file: 'examples/button/composable.vue',
     note: 'Attach behavior directly to custom elements without wrapper SFCs',
     sourceId: 'button/composable',
   },
 ] as const
 
-const router = useRouter()
 const pending = ref(false)
-const activeStage = ref(0)
+const progressionStage = ref<(typeof stages)[number]['id']>('props')
 const installCopied = ref(false)
 const activeDocsTheme = ref('calm')
+
+const surfaceRows = landingComponentSurface()
 
 let themeObserver: MutationObserver | undefined
 let installTimer: ReturnType<typeof setTimeout> | undefined
 
-const activeStageMeta = computed(() => stages[activeStage.value] ?? stages[0])
-const stageSource = computed(
-  () => exampleSource(activeStageMeta.value.sourceId) ?? '',
-)
 const themeMetaLabel = computed(
   () => `@ghostvue/themes · ${activeDocsTheme.value}`,
 )
 
-const ledgerRows = shallowRef([
-  {
-    exportName: 'GhostButton',
-    pkg: '@ghostvue/vue · @ghostvue/themes',
-    parts: [
-      'Action control with safe form defaults, width-locked loading state, and icon-only accessible-name check (',
-      { code: 'GHOST001' },
-      ').',
-    ],
-    link: '/components/button',
-  },
-  {
-    exportName: 'GhostInteractiveSurface',
-    pkg: '@ghostvue/vue · @ghostvue/themes',
-    parts: [
-      'Pointer-coordinate carrier for ambient spotlight recipes, automatically disabled under reduced motion and coarse pointers.',
-    ],
-    link: '/components/interactive-surface',
-  },
-  {
-    exportName: 'GhostPopover',
-    pkg: '@ghostvue/vue · @ghostvue/themes',
-    parts: [
-      'Non-modal anchored overlay built on ',
-      { code: 'useFloating' },
-      ', ',
-      { code: 'useDismissableLayer' },
-      ', ',
-      { code: 'useFocusScope' },
-      ', and ',
-      { code: 'GhostPortal' },
-      '.',
-    ],
-    link: '/components/popover',
-  },
-  {
-    exportName: 'GhostVisuallyHidden',
-    pkg: '@ghostvue/vue',
-    parts: ['Screen-reader-only content and focusable skip-link primitive.'],
-    link: '/components/visually-hidden',
-  },
-  {
-    exportName: 'useFocusScope · useRovingFocus',
-    pkg: '@ghostvue/vue',
-    parts: [
-      'Overlay Tab trapping, focus restoration, and WAI-ARIA APG roving tabindex navigation.',
-    ],
-    link: '/architecture/focus',
-  },
-  {
-    exportName: 'useGhostId · useControllableState',
-    pkg: '@ghostvue/vue',
-    parts: [
-      'SSR-safe deterministic IDs and unified controlled/uncontrolled ',
-      { code: 'v-model' },
-      ' state.',
-    ],
-    link: '/architecture/component-state',
-  },
-  {
-    exportName: 'defineTheme',
-    pkg: '@ghostvue/themes/define',
-    parts: [
-      'Node-only generator for ',
-      { code: 'data-ghost-theme' },
-      ' stylesheets (',
-      { code: 'calm' },
-      ', ',
-      { code: 'vibrant' },
-      ', ',
-      { code: 'mono' },
-      ', or custom brand seeds).',
-    ],
-    link: '/themes/define-theme',
-  },
-] as const)
-
 function togglePending(): void {
   pending.value = !pending.value
-}
-
-function setStage(index: number): void {
-  activeStage.value = index
 }
 
 function readDocsTheme(): void {
@@ -179,10 +106,6 @@ async function copyInstall(): Promise<void> {
   } catch {
     installCopied.value = false
   }
-}
-
-function navigate(href: string): void {
-  void router.go(href)
 }
 
 onMounted(() => {
@@ -243,19 +166,12 @@ onUnmounted(() => {
         <code>@ghostvue/themes</code>.
       </p>
       <div class="ghost-landing__actions">
-        <ThemedGhostButton
-          type="button"
-          @click="navigate('/components/button')"
-        >
+        <LandingActionLink href="/components/button">
           Explore components
-        </ThemedGhostButton>
-        <ThemedGhostButton
-          type="button"
-          variant="outline"
-          @click="navigate('/philosophy')"
-        >
+        </LandingActionLink>
+        <LandingActionLink href="/philosophy" variant="outline">
           Project philosophy
-        </ThemedGhostButton>
+        </LandingActionLink>
         <button
           type="button"
           class="ghost-landing__install"
@@ -290,9 +206,8 @@ onUnmounted(() => {
           <HeadlessGhostButton>Cancel</HeadlessGhostButton>
           <HeadlessGhostButton disabled>Disabled</HeadlessGhostButton>
         </div>
-        <pre
-          class="ghost-landing-example__code"
-        ><code>{{ headlessSource }}</code></pre>
+        <pre class="ghost-landing-example__code" tabindex="0">
+<code>{{ headlessSource }}</code></pre>
       </figure>
 
       <figure class="ghost-landing-example">
@@ -306,53 +221,59 @@ onUnmounted(() => {
           </ThemedGhostButton>
           <ThemedGhostButton variant="soft">Soft</ThemedGhostButton>
           <ThemedGhostButton variant="outline">Outline</ThemedGhostButton>
-          <ThemedGhostButton variant="ghost" tone="danger"
-            >Danger</ThemedGhostButton
-          >
+          <ThemedGhostButton variant="ghost" tone="danger">
+            Danger
+          </ThemedGhostButton>
         </div>
-        <pre
-          class="ghost-landing-example__code"
-        ><code>{{ themedSource }}</code></pre>
+        <pre class="ghost-landing-example__code" tabindex="0">
+<code>{{ themedSource }}</code></pre>
       </figure>
     </section>
 
-    <section
-      id="progression"
-      class="ghost-landing__section ghost-landing__section-split"
-    >
-      <div>
-        <h2>Progressive escape hatches</h2>
-        <p>
-          Simple use should look simple; consumers meet complexity only when
-          their interface requires it. Configuration describes intent—not the
-          library's nested DOM.
-        </p>
-        <ul class="ghost-landing__progression" role="tablist">
-          <li v-for="(stage, index) in stages" :key="stage.file">
-            <button
-              type="button"
-              class="ghost-landing__progression-btn"
-              role="tab"
-              :data-active="index === activeStage ? '' : undefined"
-              :aria-selected="index === activeStage"
-              @click="setStage(index)"
+    <section id="progression" class="ghost-landing__section">
+      <h2>Progressive escape hatches</h2>
+      <p>
+        Simple use should look simple; consumers meet complexity only when their
+        interface requires it. Configuration describes intent—not the library's
+        nested DOM.
+      </p>
+      <GhostTabs
+        v-model="progressionStage"
+        orientation="vertical"
+        class="ghost-landing__progression-tabs ghost-themed-scope"
+      >
+        <div class="ghost-landing__progression-layout">
+          <GhostTabsList aria-label="Progressive escape hatch examples">
+            <GhostTabsTrigger
+              v-for="(stage, index) in stages"
+              :key="stage.id"
+              :value="stage.id"
+              class="ghost-landing__progression-trigger"
             >
               <span>{{ index + 1 }}. {{ stageTitles[index] }}</span>
               <code>{{ stageCodes[index] }}</code>
-            </button>
-          </li>
-        </ul>
-      </div>
-
-      <div class="ghost-landing__code-window">
-        <div class="ghost-landing__code-window-bar">
-          <span class="ghost-landing__code-window-file">{{
-            activeStageMeta.file
-          }}</span>
-          <span>{{ activeStageMeta.note }}</span>
+            </GhostTabsTrigger>
+          </GhostTabsList>
+          <GhostTabsContent
+            v-for="stage in stages"
+            :key="stage.id"
+            :value="stage.id"
+            class="ghost-landing__progression-panel"
+          >
+            <div class="ghost-landing__code-window">
+              <div class="ghost-landing__code-window-bar">
+                <span class="ghost-landing__code-window-file">{{
+                  stage.file
+                }}</span>
+                <span>{{ stage.note }}</span>
+              </div>
+              <pre
+                tabindex="0"
+              ><code>{{ exampleSource(stage.sourceId) }}</code></pre>
+            </div>
+          </GhostTabsContent>
         </div>
-        <pre><code>{{ stageSource }}</code></pre>
-      </div>
+      </GhostTabs>
     </section>
 
     <section id="principles" class="ghost-landing__section">
@@ -390,8 +311,10 @@ onUnmounted(() => {
     <section id="surface" class="ghost-landing__section">
       <h2>Current public surface</h2>
       <p>
-        Exported on <code>master</code> and sequenced toward
-        <code>DataTable</code> in the <a href="/roadmap">component roadmap</a>.
+        {{ surfaceRows.length }} documented components on <code>master</code>,
+        generated from component manifests and the docs catalog. Composable
+        exports and roadmap sequencing live in the
+        <a href="/roadmap">component roadmap</a>.
       </p>
 
       <div class="ghost-landing__ledger-wrap">
@@ -404,20 +327,12 @@ onUnmounted(() => {
             </tr>
           </thead>
           <tbody>
-            <tr v-for="row in ledgerRows" :key="row.exportName">
+            <tr v-for="row in surfaceRows" :key="row.exportName">
               <td>
                 <a :href="row.link">{{ row.exportName }}</a>
               </td>
               <td>{{ row.pkg }}</td>
-              <td>
-                <template
-                  v-for="(part, partIndex) in row.parts"
-                  :key="partIndex"
-                >
-                  <code v-if="typeof part !== 'string'">{{ part.code }}</code>
-                  <template v-else>{{ part }}</template>
-                </template>
-              </td>
+              <td>{{ row.description }}</td>
             </tr>
           </tbody>
         </table>

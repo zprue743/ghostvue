@@ -20,8 +20,9 @@ components ship only after passing the [component gate](/agents/COMPONENT_WORKFL
 
 ## Current public surface
 
-Exported packages and primitives are listed on the landing page and sequenced toward
-`DataTable` in the [component roadmap](/roadmap).
+The landing page lists every documented `Ghost*` component from generated
+manifests (same catalog as the docs sidebar). Composable exports and roadmap
+sequencing toward `DataTable` are in the [component roadmap](/roadmap).
 
 > [!WARNING]
 > **Pre-release:** GhostVue is under active development. Adding or promoting a
