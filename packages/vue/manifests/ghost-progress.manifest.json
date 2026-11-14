@@ -7,10 +7,10 @@
   "description": "Headless determinate progress indicator with an indeterminate fallback. useGhostProgress owns progressbar semantics, clamping, and value text; GhostProgress is the thin unstyled element. Themed visual props live on @ghostvue/themes.",
   "props": [
     {
-      "name": "value",
-      "type": "number | null",
+      "name": "label",
+      "type": "string",
       "required": false,
-      "description": "Current progress in the same unit as max. Omit or pass null for the indeterminate fallback. Non-finite numbers are treated as unknown. Finite values are clamped to [0, max].",
+      "description": "Accessible name applied as aria-label. role=progressbar is nameFrom author; contents are presentational and cannot name the widget.",
       "deprecated": false
     },
     {
@@ -22,10 +22,10 @@
       "deprecated": false
     },
     {
-      "name": "label",
-      "type": "string",
+      "name": "value",
+      "type": "null | number",
       "required": false,
-      "description": "Accessible name applied as aria-label. role=progressbar is nameFrom author; contents are presentational and cannot name the widget.",
+      "description": "Current progress in the same unit as max. Omit or pass null for the indeterminate fallback. Non-finite numbers are treated as unknown. Finite values are clamped to [0, max].",
       "deprecated": false
     },
     {

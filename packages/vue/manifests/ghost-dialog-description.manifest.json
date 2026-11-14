@@ -26,6 +26,12 @@
   ],
   "exposed": [
     {
+      "name": "blur",
+      "kind": "method",
+      "type": "() => void",
+      "description": "Blurs the resolved description element."
+    },
+    {
       "name": "element",
       "kind": "property",
       "type": "HTMLElement | null",
@@ -36,12 +42,6 @@
       "kind": "method",
       "type": "(options?: FocusOptions) => void",
       "description": "Focuses the resolved description element."
-    },
-    {
-      "name": "blur",
-      "kind": "method",
-      "type": "() => void",
-      "description": "Blurs the resolved description element."
     }
   ],
   "styling": {

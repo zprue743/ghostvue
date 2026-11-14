@@ -7,13 +7,6 @@
   "description": "Headless dialog root provider. Manages controlled/uncontrolled open state via useControllableState, modal mode (trapped focus, scroll lock, inert background siblings, overlay), and deterministic trigger/content/title/description IDs.",
   "props": [
     {
-      "name": "open",
-      "type": "boolean",
-      "required": false,
-      "description": "Controlled open state. Omit for uncontrolled mode.",
-      "deprecated": false
-    },
-    {
       "name": "defaultOpen",
       "type": "boolean",
       "default": false,
@@ -27,6 +20,13 @@
       "default": true,
       "required": false,
       "description": "Enables modal behavior (trapped focus, scroll lock, inert background, overlay).",
+      "deprecated": false
+    },
+    {
+      "name": "open",
+      "type": "boolean",
+      "required": false,
+      "description": "Controlled open state. Omit for uncontrolled mode.",
       "deprecated": false
     }
   ],
@@ -44,14 +44,14 @@
       "name": "default",
       "props": [
         {
-          "name": "open",
-          "type": "boolean",
-          "description": "Current open state."
-        },
-        {
           "name": "close",
           "type": "() => void",
           "description": "Closes the dialog."
+        },
+        {
+          "name": "open",
+          "type": "boolean",
+          "description": "Current open state."
         }
       ],
       "description": "Trigger, overlay, content, title, description, close parts, and optional custom UI reading the scoped state."

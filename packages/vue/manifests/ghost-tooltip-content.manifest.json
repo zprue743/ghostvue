@@ -15,11 +15,11 @@
       "deprecated": false
     },
     {
-      "name": "placement",
-      "type": "Placement",
-      "default": "top",
+      "name": "flip",
+      "type": "boolean | GhostTooltipFlipOptions",
+      "default": true,
       "required": false,
-      "description": "Preferred placement relative to the trigger.",
+      "description": "Flip to an opposite side when overflowing the viewport or boundary.",
       "deprecated": false
     },
     {
@@ -30,27 +30,11 @@
       "deprecated": false
     },
     {
-      "name": "flip",
-      "type": "boolean | GhostTooltipFlipOptions",
-      "default": true,
+      "name": "placement",
+      "type": "Placement",
+      "default": "top",
       "required": false,
-      "description": "Flip to an opposite side when overflowing the viewport or boundary.",
-      "deprecated": false
-    },
-    {
-      "name": "shift",
-      "type": "boolean | GhostTooltipShiftOptions",
-      "default": true,
-      "required": false,
-      "description": "Shift along the cross axis to keep the tooltip in view.",
-      "deprecated": false
-    },
-    {
-      "name": "strategy",
-      "type": "Strategy",
-      "default": "absolute",
-      "required": false,
-      "description": "CSS positioning strategy passed to `useFloating`.",
+      "description": "Preferred placement relative to the trigger.",
       "deprecated": false
     },
     {
@@ -68,6 +52,22 @@
       "required": false,
       "description": "Teleport target passed to `GhostPortal` when `portal` is `true`.",
       "deprecated": false
+    },
+    {
+      "name": "shift",
+      "type": "boolean | GhostTooltipShiftOptions",
+      "default": true,
+      "required": false,
+      "description": "Shift along the cross axis to keep the tooltip in view.",
+      "deprecated": false
+    },
+    {
+      "name": "strategy",
+      "type": "Strategy",
+      "default": "absolute",
+      "required": false,
+      "description": "CSS positioning strategy passed to `useFloating`.",
+      "deprecated": false
     }
   ],
   "models": [],
@@ -81,6 +81,12 @@
   ],
   "exposed": [
     {
+      "name": "blur",
+      "kind": "method",
+      "type": "() => void",
+      "description": "Exposed method `blur`."
+    },
+    {
       "name": "element",
       "kind": "property",
       "type": "HTMLElement | null",
@@ -91,12 +97,6 @@
       "kind": "method",
       "type": "(options?: FocusOptions) => void",
       "description": "Exposed method `focus`."
-    },
-    {
-      "name": "blur",
-      "kind": "method",
-      "type": "() => void",
-      "description": "Exposed method `blur`."
     }
   ],
   "styling": {

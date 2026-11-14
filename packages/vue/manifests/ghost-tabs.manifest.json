@@ -7,10 +7,11 @@
   "description": "Headless tabs root provider. Manages controlled/uncontrolled selection, activation mode, and orientation for APG tab composites.",
   "props": [
     {
-      "name": "modelValue",
-      "type": "string",
+      "name": "activationMode",
+      "type": "'automatic' | 'manual'",
+      "default": "automatic",
       "required": false,
-      "description": "Controlled selected tab value. Omit for uncontrolled mode.",
+      "description": "Focus-driven (`automatic`) vs explicit activation (`manual`) tab selection.",
       "deprecated": false
     },
     {
@@ -21,26 +22,25 @@
       "deprecated": false
     },
     {
-      "name": "activationMode",
-      "type": "'automatic' | 'manual'",
-      "default": "automatic",
-      "required": false,
-      "description": "Focus-driven (`automatic`) vs explicit activation (`manual`) tab selection.",
-      "deprecated": false
-    },
-    {
-      "name": "orientation",
-      "type": "'vertical' | 'horizontal'",
-      "default": "horizontal",
-      "required": false,
-      "description": "Tab list orientation for arrow-key roving and `aria-orientation`.",
-      "deprecated": false
-    },
-    {
       "name": "dir",
       "type": "'ltr' | 'rtl'",
       "required": false,
       "description": "Explicit text direction for roving focus within the tab list.",
+      "deprecated": false
+    },
+    {
+      "name": "modelValue",
+      "type": "string",
+      "required": false,
+      "description": "Controlled selected tab value. Omit for uncontrolled mode.",
+      "deprecated": false
+    },
+    {
+      "name": "orientation",
+      "type": "'horizontal' | 'vertical'",
+      "default": "horizontal",
+      "required": false,
+      "description": "Tab list orientation for arrow-key roving and `aria-orientation`.",
       "deprecated": false
     }
   ],

@@ -8,7 +8,7 @@
   "props": [
     {
       "name": "keys",
-      "type": "string | readonly string[]",
+      "type": "readonly string[] | string",
       "default": "[]",
       "required": false,
       "description": "Key tokens rendered as nested kbd elements. A string is one key; an array is a combination. Tokens are matched case-insensitively. Unknown tokens render as given, except a single letter is uppercased.",

@@ -15,14 +15,6 @@
       "deprecated": false
     },
     {
-      "name": "role",
-      "type": "GhostDialogContentRole",
-      "default": "dialog",
-      "required": false,
-      "description": "Semantic ARIA role for the dialog surface (`'dialog'` or `'alertdialog'`).",
-      "deprecated": false
-    },
-    {
       "name": "closeOnEscape",
       "type": "boolean",
       "default": true,
@@ -52,6 +44,14 @@
       "required": false,
       "description": "Teleport target passed to `GhostPortal` when `portal` is `true`.",
       "deprecated": false
+    },
+    {
+      "name": "role",
+      "type": "GhostDialogContentRole",
+      "default": "dialog",
+      "required": false,
+      "description": "Semantic ARIA role for the dialog surface (`'dialog'` or `'alertdialog'`).",
+      "deprecated": false
     }
   ],
   "models": [],
@@ -65,6 +65,12 @@
   ],
   "exposed": [
     {
+      "name": "blur",
+      "kind": "method",
+      "type": "() => void",
+      "description": "Removes focus from the dialog surface element."
+    },
+    {
       "name": "element",
       "kind": "property",
       "type": "HTMLElement | null",
@@ -75,12 +81,6 @@
       "kind": "method",
       "type": "(options?: FocusOptions) => void",
       "description": "Focuses the dialog surface element when mounted."
-    },
-    {
-      "name": "blur",
-      "kind": "method",
-      "type": "() => void",
-      "description": "Removes focus from the dialog surface element."
     }
   ],
   "styling": {

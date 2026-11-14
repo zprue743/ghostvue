@@ -7,54 +7,19 @@
   "description": "Headless locale-aware spinbutton with numeric v-model, min/max/step clamping, and increment and decrement buttons. useGhostNumberInput owns parsing and formatting; GhostNumberInput composes the control layout.",
   "props": [
     {
-      "name": "modelValue",
-      "type": "number | null",
+      "name": "decrementLabel",
+      "type": "string",
+      "default": "Decrease",
       "required": false,
-      "description": "Declared prop `modelValue`.",
+      "description": "Declared prop `decrementLabel`.",
       "deprecated": false
     },
     {
       "name": "defaultValue",
-      "type": "number | null",
+      "type": "null | number",
       "default": null,
       "required": false,
       "description": "Declared prop `defaultValue`.",
-      "deprecated": false
-    },
-    {
-      "name": "min",
-      "type": "number",
-      "required": false,
-      "description": "Declared prop `min`.",
-      "deprecated": false
-    },
-    {
-      "name": "max",
-      "type": "number",
-      "required": false,
-      "description": "Declared prop `max`.",
-      "deprecated": false
-    },
-    {
-      "name": "step",
-      "type": "number",
-      "default": 1,
-      "required": false,
-      "description": "Declared prop `step`.",
-      "deprecated": false
-    },
-    {
-      "name": "locale",
-      "type": "string",
-      "required": false,
-      "description": "Declared prop `locale`.",
-      "deprecated": false
-    },
-    {
-      "name": "formatOptions",
-      "type": "Intl.NumberFormatOptions",
-      "required": false,
-      "description": "Declared prop `formatOptions`.",
       "deprecated": false
     },
     {
@@ -66,11 +31,18 @@
       "deprecated": false
     },
     {
-      "name": "readonly",
-      "type": "boolean",
-      "default": false,
+      "name": "formatOptions",
+      "type": "Intl.NumberFormatOptions",
       "required": false,
-      "description": "Declared prop `readonly`.",
+      "description": "Declared prop `formatOptions`.",
+      "deprecated": false
+    },
+    {
+      "name": "incrementLabel",
+      "type": "string",
+      "default": "Increase",
+      "required": false,
+      "description": "Declared prop `incrementLabel`.",
       "deprecated": false
     },
     {
@@ -82,6 +54,42 @@
       "deprecated": false
     },
     {
+      "name": "locale",
+      "type": "string",
+      "required": false,
+      "description": "Declared prop `locale`.",
+      "deprecated": false
+    },
+    {
+      "name": "max",
+      "type": "number",
+      "required": false,
+      "description": "Declared prop `max`.",
+      "deprecated": false
+    },
+    {
+      "name": "min",
+      "type": "number",
+      "required": false,
+      "description": "Declared prop `min`.",
+      "deprecated": false
+    },
+    {
+      "name": "modelValue",
+      "type": "null | number",
+      "required": false,
+      "description": "Declared prop `modelValue`.",
+      "deprecated": false
+    },
+    {
+      "name": "readonly",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Declared prop `readonly`.",
+      "deprecated": false
+    },
+    {
       "name": "required",
       "type": "boolean",
       "default": false,
@@ -90,19 +98,11 @@
       "deprecated": false
     },
     {
-      "name": "decrementLabel",
-      "type": "string",
-      "default": "Decrease",
+      "name": "step",
+      "type": "number",
+      "default": 1,
       "required": false,
-      "description": "Declared prop `decrementLabel`.",
-      "deprecated": false
-    },
-    {
-      "name": "incrementLabel",
-      "type": "string",
-      "default": "Increase",
-      "required": false,
-      "description": "Declared prop `incrementLabel`.",
+      "description": "Declared prop `step`.",
       "deprecated": false
     }
   ],
@@ -110,13 +110,25 @@
     {
       "prop": "modelValue",
       "event": "update:modelValue",
-      "type": "number | null",
+      "type": "null | number",
       "description": "v-model binding for `modelValue`."
     }
   ],
   "events": [],
   "slots": [],
   "exposed": [
+    {
+      "name": "blur",
+      "kind": "method",
+      "type": "() => void",
+      "description": "Exposed method `blur`."
+    },
+    {
+      "name": "decrement",
+      "kind": "method",
+      "type": "() => void",
+      "description": "Exposed method `decrement`."
+    },
     {
       "name": "element",
       "kind": "property",
@@ -130,22 +142,10 @@
       "description": "Exposed method `focus`."
     },
     {
-      "name": "blur",
-      "kind": "method",
-      "type": "() => void",
-      "description": "Exposed method `blur`."
-    },
-    {
       "name": "increment",
       "kind": "method",
       "type": "() => void",
       "description": "Exposed method `increment`."
-    },
-    {
-      "name": "decrement",
-      "kind": "method",
-      "type": "() => void",
-      "description": "Exposed method `decrement`."
     }
   ],
   "styling": {

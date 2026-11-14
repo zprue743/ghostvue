@@ -27,14 +27,9 @@
   "events": [],
   "slots": [
     {
-      "name": "visual",
+      "name": "actions",
       "props": [],
-      "description": "Optional decorative graphic. Wrapper is aria-hidden."
-    },
-    {
-      "name": "title",
-      "props": [],
-      "description": "Optional heading copy. Rendered as h1–h6 from headingLevel."
+      "description": "Optional buttons or links; not a tab stop itself."
     },
     {
       "name": "description",
@@ -42,9 +37,14 @@
       "description": "Optional supporting copy in a div wrapper."
     },
     {
-      "name": "actions",
+      "name": "title",
       "props": [],
-      "description": "Optional buttons or links; not a tab stop itself."
+      "description": "Optional heading copy. Rendered as h1–h6 from headingLevel."
+    },
+    {
+      "name": "visual",
+      "props": [],
+      "description": "Optional decorative graphic. Wrapper is aria-hidden."
     }
   ],
   "exposed": [

@@ -7,18 +7,18 @@
   "description": "Native radio input part for GhostRadioGroup.",
   "props": [
     {
-      "name": "value",
-      "type": "string",
-      "required": true,
-      "description": "Declared prop `value`.",
-      "deprecated": false
-    },
-    {
       "name": "disabled",
       "type": "boolean",
       "default": false,
       "required": false,
       "description": "Declared prop `disabled`.",
+      "deprecated": false
+    },
+    {
+      "name": "value",
+      "type": "string",
+      "required": true,
+      "description": "Declared prop `value`.",
       "deprecated": false
     }
   ],
@@ -26,6 +26,12 @@
   "events": [],
   "slots": [],
   "exposed": [
+    {
+      "name": "blur",
+      "kind": "method",
+      "type": "() => void",
+      "description": "Exposed method `blur`."
+    },
     {
       "name": "element",
       "kind": "property",
@@ -37,12 +43,6 @@
       "kind": "method",
       "type": "(options?: FocusOptions) => void",
       "description": "Exposed method `focus`."
-    },
-    {
-      "name": "blur",
-      "kind": "method",
-      "type": "() => void",
-      "description": "Exposed method `blur`."
     }
   ],
   "styling": {

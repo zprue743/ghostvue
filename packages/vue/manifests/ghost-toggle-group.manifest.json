@@ -7,18 +7,11 @@
   "description": "Headless toggle group root with role=group, single/multiple aria-pressed selection, and roving focus among items.",
   "props": [
     {
-      "name": "type",
-      "type": "'single' | 'multiple'",
-      "default": "single",
+      "name": "as",
+      "type": "GhostToggleGroupElement",
+      "default": "div",
       "required": false,
-      "description": "Single vs multiple pressed items.",
-      "deprecated": false
-    },
-    {
-      "name": "modelValue",
-      "type": "GhostToggleGroupValue",
-      "required": false,
-      "description": "Controlled selection; shape follows `type`.",
+      "description": "Root host element.",
       "deprecated": false
     },
     {
@@ -29,26 +22,10 @@
       "deprecated": false
     },
     {
-      "name": "orientation",
-      "type": "'vertical' | 'horizontal'",
-      "default": "horizontal",
-      "required": false,
-      "description": "Arrow-key roving layout.",
-      "deprecated": false
-    },
-    {
       "name": "dir",
       "type": "'ltr' | 'rtl'",
       "required": false,
       "description": "Explicit text direction for horizontal roving.",
-      "deprecated": false
-    },
-    {
-      "name": "as",
-      "type": "GhostToggleGroupElement",
-      "default": "div",
-      "required": false,
-      "description": "Root host element.",
       "deprecated": false
     },
     {
@@ -57,6 +34,29 @@
       "default": false,
       "required": false,
       "description": "Disables every item.",
+      "deprecated": false
+    },
+    {
+      "name": "modelValue",
+      "type": "GhostToggleGroupValue",
+      "required": false,
+      "description": "Controlled selection; shape follows `type`.",
+      "deprecated": false
+    },
+    {
+      "name": "orientation",
+      "type": "'horizontal' | 'vertical'",
+      "default": "horizontal",
+      "required": false,
+      "description": "Arrow-key roving layout.",
+      "deprecated": false
+    },
+    {
+      "name": "type",
+      "type": "'multiple' | 'single'",
+      "default": "single",
+      "required": false,
+      "description": "Single vs multiple pressed items.",
       "deprecated": false
     }
   ],
@@ -78,6 +78,12 @@
   ],
   "exposed": [
     {
+      "name": "blur",
+      "kind": "method",
+      "type": "() => void",
+      "description": "Exposed method `blur`."
+    },
+    {
       "name": "element",
       "kind": "property",
       "type": "HTMLElement | null",
@@ -88,12 +94,6 @@
       "kind": "method",
       "type": "(options?: FocusOptions) => void",
       "description": "Exposed method `focus`."
-    },
-    {
-      "name": "blur",
-      "kind": "method",
-      "type": "() => void",
-      "description": "Exposed method `blur`."
     }
   ],
   "styling": {

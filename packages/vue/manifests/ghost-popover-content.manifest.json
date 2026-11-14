@@ -15,11 +15,11 @@
       "deprecated": false
     },
     {
-      "name": "placement",
-      "type": "Placement",
-      "default": "bottom",
+      "name": "flip",
+      "type": "boolean | GhostPopoverFlipOptions",
+      "default": true,
       "required": false,
-      "description": "Preferred placement relative to the trigger.",
+      "description": "Flip to an opposite side when overflowing the viewport or boundary.",
       "deprecated": false
     },
     {
@@ -30,27 +30,11 @@
       "deprecated": false
     },
     {
-      "name": "flip",
-      "type": "boolean | GhostPopoverFlipOptions",
-      "default": true,
+      "name": "placement",
+      "type": "Placement",
+      "default": "bottom",
       "required": false,
-      "description": "Flip to an opposite side when overflowing the viewport or boundary.",
-      "deprecated": false
-    },
-    {
-      "name": "shift",
-      "type": "boolean | GhostPopoverShiftOptions",
-      "default": true,
-      "required": false,
-      "description": "Shift along the cross axis to keep the popover in view.",
-      "deprecated": false
-    },
-    {
-      "name": "strategy",
-      "type": "Strategy",
-      "default": "absolute",
-      "required": false,
-      "description": "CSS positioning strategy passed to `useFloating`.",
+      "description": "Preferred placement relative to the trigger.",
       "deprecated": false
     },
     {
@@ -68,6 +52,22 @@
       "required": false,
       "description": "Teleport target passed to `GhostPortal` when `portal` is `true`.",
       "deprecated": false
+    },
+    {
+      "name": "shift",
+      "type": "boolean | GhostPopoverShiftOptions",
+      "default": true,
+      "required": false,
+      "description": "Shift along the cross axis to keep the popover in view.",
+      "deprecated": false
+    },
+    {
+      "name": "strategy",
+      "type": "Strategy",
+      "default": "absolute",
+      "required": false,
+      "description": "CSS positioning strategy passed to `useFloating`.",
+      "deprecated": false
     }
   ],
   "models": [],
@@ -81,6 +81,12 @@
   ],
   "exposed": [
     {
+      "name": "blur",
+      "kind": "method",
+      "type": "() => void",
+      "description": "Removes focus from the floating dialog element."
+    },
+    {
       "name": "element",
       "kind": "property",
       "type": "HTMLElement | null",
@@ -91,12 +97,6 @@
       "kind": "method",
       "type": "(options?: FocusOptions) => void",
       "description": "Focuses the floating dialog element when mounted."
-    },
-    {
-      "name": "blur",
-      "kind": "method",
-      "type": "() => void",
-      "description": "Removes focus from the floating dialog element."
     }
   ],
   "styling": {

@@ -7,11 +7,11 @@
   "description": "Thin SSR-safe wrapper around Vue Teleport for rendering overlay content outside the parent DOM hierarchy. Defers teleportation until after mount so SSR and initial hydration render inline without touching document.",
   "props": [
     {
-      "name": "to",
-      "type": "GhostPortalTarget",
-      "default": "body",
+      "name": "defer",
+      "type": "boolean",
+      "default": false,
       "required": false,
-      "description": "Target CSS selector, DOM element, or null (disables teleportation) to teleport children into after mount.",
+      "description": "Defer target lookup until after the current mount or update cycle so targets rendered later in the tree resolve.",
       "deprecated": false
     },
     {
@@ -23,11 +23,11 @@
       "deprecated": false
     },
     {
-      "name": "defer",
-      "type": "boolean",
-      "default": false,
+      "name": "to",
+      "type": "GhostPortalTarget",
+      "default": "body",
       "required": false,
-      "description": "Defer target lookup until after the current mount or update cycle so targets rendered later in the tree resolve.",
+      "description": "Target CSS selector, DOM element, or null (disables teleportation) to teleport children into after mount.",
       "deprecated": false
     }
   ],

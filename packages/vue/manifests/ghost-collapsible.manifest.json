@@ -7,13 +7,6 @@
   "description": "Headless disclosure root provider. Manages controlled/uncontrolled open state via useControllableState and deterministic trigger/content IDs via useGhostId.",
   "props": [
     {
-      "name": "open",
-      "type": "boolean",
-      "required": false,
-      "description": "Controlled open state. Omit for uncontrolled mode.",
-      "deprecated": false
-    },
-    {
       "name": "defaultOpen",
       "type": "boolean",
       "default": false,
@@ -27,6 +20,13 @@
       "default": false,
       "required": false,
       "description": "Disables toggling on the trigger when `true`.",
+      "deprecated": false
+    },
+    {
+      "name": "open",
+      "type": "boolean",
+      "required": false,
+      "description": "Controlled open state. Omit for uncontrolled mode.",
       "deprecated": false
     }
   ],

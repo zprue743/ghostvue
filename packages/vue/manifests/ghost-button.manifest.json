@@ -42,6 +42,12 @@
   ],
   "exposed": [
     {
+      "name": "blur",
+      "kind": "method",
+      "type": "() => void",
+      "description": "Removes focus from the native button when it is mounted. No-op before mount."
+    },
+    {
       "name": "element",
       "kind": "property",
       "type": "HTMLButtonElement | null",
@@ -52,12 +58,6 @@
       "kind": "method",
       "type": "(options?: FocusOptions) => void",
       "description": "Focuses the native button when it is mounted and enabled. No-op before mount."
-    },
-    {
-      "name": "blur",
-      "kind": "method",
-      "type": "() => void",
-      "description": "Removes focus from the native button when it is mounted. No-op before mount."
     }
   ],
   "styling": {

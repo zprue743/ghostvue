@@ -7,13 +7,6 @@
   "description": "Headless native checkbox. useGhostCheckbox owns boolean v-model and mixed state; GhostCheckbox is the thin unstyled input. Themed visual props live on @ghostvue/themes.",
   "props": [
     {
-      "name": "modelValue",
-      "type": "boolean",
-      "required": false,
-      "description": "Controlled checked state. Omit it for uncontrolled use. undefined is uncontrolled; false is unchecked. Mixed is the indeterminate prop, not a third model value.",
-      "deprecated": false
-    },
-    {
       "name": "defaultValue",
       "type": "boolean",
       "default": false,
@@ -36,6 +29,13 @@
       "required": false,
       "description": "Mixed state for select-all and similar. Applied through the DOM indeterminate property. Consumer-owned; not part of the v-model.",
       "deprecated": false
+    },
+    {
+      "name": "modelValue",
+      "type": "boolean",
+      "required": false,
+      "description": "Controlled checked state. Omit it for uncontrolled use. undefined is uncontrolled; false is unchecked. Mixed is the indeterminate prop, not a third model value.",
+      "deprecated": false
     }
   ],
   "models": [
@@ -50,6 +50,12 @@
   "slots": [],
   "exposed": [
     {
+      "name": "blur",
+      "kind": "method",
+      "type": "() => void",
+      "description": "Removes focus from the native checkbox when it is mounted. No-op before mount."
+    },
+    {
       "name": "element",
       "kind": "property",
       "type": "HTMLInputElement | null",
@@ -60,12 +66,6 @@
       "kind": "method",
       "type": "(options?: FocusOptions) => void",
       "description": "Focuses the native checkbox when it is mounted and enabled. No-op before mount."
-    },
-    {
-      "name": "blur",
-      "kind": "method",
-      "type": "() => void",
-      "description": "Removes focus from the native checkbox when it is mounted. No-op before mount."
     }
   ],
   "styling": {

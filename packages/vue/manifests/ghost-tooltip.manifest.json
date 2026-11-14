@@ -7,10 +7,11 @@
   "description": "Headless tooltip root provider composing delay timing, open state, and GhostTooltipTrigger/GhostTooltipContent context.",
   "props": [
     {
-      "name": "open",
-      "type": "boolean",
+      "name": "closeDelay",
+      "type": "number",
+      "default": 300,
       "required": false,
-      "description": "Controlled open state. Omit for uncontrolled mode.",
+      "description": "Milliseconds before hiding after hover/focus ends (WCAG hoverable grace).",
       "deprecated": false
     },
     {
@@ -30,19 +31,18 @@
       "deprecated": false
     },
     {
-      "name": "closeDelay",
-      "type": "number",
-      "default": 300,
-      "required": false,
-      "description": "Milliseconds before hiding after hover/focus ends (WCAG hoverable grace).",
-      "deprecated": false
-    },
-    {
       "name": "disableHoverableContent",
       "type": "boolean",
       "default": false,
       "required": false,
       "description": "When `true`, hides immediately on pointer/focus leave.",
+      "deprecated": false
+    },
+    {
+      "name": "open",
+      "type": "boolean",
+      "required": false,
+      "description": "Controlled open state. Omit for uncontrolled mode.",
       "deprecated": false
     }
   ],

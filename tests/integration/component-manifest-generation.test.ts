@@ -11,6 +11,8 @@ import {
   extractComponentMeta,
   mergeManifest,
   normalizeType,
+  compareManifestMemberNames,
+  sortUnionsInType,
   parseDefaultValue,
   pascalToKebab,
   resetMetaCheckers,
@@ -166,6 +168,48 @@ describe('manifest derivation helpers', () => {
     ).toBe('(options?: FocusOptions) => void')
   })
 
+  it('sorts union members into stable lexicographic order', () => {
+    expect(normalizeType("'vertical' | 'horizontal'")).toBe(
+      "'horizontal' | 'vertical'",
+    )
+    expect(normalizeType('"horizontal" | "vertical"')).toBe(
+      "'horizontal' | 'vertical'",
+    )
+    expect(sortUnionsInType('null | HTMLInputElement')).toBe(
+      'HTMLInputElement | null',
+    )
+    expect(sortUnionsInType("Array<'two' | 'one'>")).toBe(
+      "Array<'one' | 'two'>",
+    )
+  })
+
+  it('ignores `=>` when tracking angle-bracket and nesting depth', () => {
+    expect(sortUnionsInType('(v: string) => string | undefined')).toBe(
+      '(v: string) => string | undefined',
+    )
+    expect(sortUnionsInType('((page: number) => string) | undefined')).toBe(
+      '((page: number) => string) | undefined',
+    )
+    expect(sortUnionsInType("(v: 'b' | 'a') => void")).toBe(
+      "(v: 'a' | 'b') => void",
+    )
+    expect(sortUnionsInType("Array<(x: number) => 'b' | 'a'>")).toBe(
+      "Array<(x: number) => 'a' | 'b'>",
+    )
+    expect(sortUnionsInType("Record<string, 'b' | 'a'>")).toBe(
+      "Record<string, 'a' | 'b'>",
+    )
+  })
+
+  it('compares manifest member names with a stable locale', () => {
+    expect(compareManifestMemberNames('default', 'icon')).toBeLessThan(0)
+    expect(compareManifestMemberNames('icon', 'default')).toBeGreaterThan(0)
+    expect(compareManifestMemberNames('disabled', 'disabled')).toBe(0)
+    expect(compareManifestMemberNames('ariaLabel', 'aria-label')).not.toBe(0)
+    expect(compareManifestMemberNames('A', 'a')).toBeLessThan(0)
+    expect(compareManifestMemberNames('a', 'A')).toBeGreaterThan(0)
+  })
+
   it('parses literal defaults into JSON schema values', () => {
     expect(parseDefaultValue('"button"')).toEqual({
       present: true,
@@ -225,6 +269,11 @@ describe(
       )
       expect(derived.props.some((prop) => prop.name === 'class')).toBe(false)
       expect(derived.props.some((prop) => prop.name === 'key')).toBe(false)
+      expect(derived.props.map((prop) => prop.name)).toEqual(
+        [...derived.props.map((prop) => prop.name)].sort((left, right) =>
+          compareManifestMemberNames(left, right),
+        ),
+      )
 
       expect(derived.models).toEqual([
         expect.objectContaining({
@@ -233,10 +282,19 @@ describe(
           type: 'boolean',
         }),
       ])
-      expect(derived.events.map((event) => event.name).sort()).toEqual([
+      expect(derived.events.map((event) => event.name)).toEqual([
         'close',
         'select',
       ])
+      expect(derived.slots.map((slot) => slot.name)).toEqual([
+        'default',
+        'icon',
+      ])
+      expect(derived.exposed.map((member) => member.name)).toEqual(
+        [...derived.exposed.map((member) => member.name)].sort((left, right) =>
+          compareManifestMemberNames(left, right),
+        ),
+      )
       expect(derived.events).toEqual(
         expect.arrayContaining([
           expect.objectContaining({ name: 'close', payloadType: 'void' }),

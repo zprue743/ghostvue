@@ -135,6 +135,118 @@ export function serializeManifest(manifest) {
   return `${JSON.stringify(manifest, null, 2)}\n`
 }
 
+const MANIFEST_NAME_COLLATOR = new Intl.Collator('en', { sensitivity: 'base' })
+
+export function compareManifestMemberNames(left, right) {
+  const primary = MANIFEST_NAME_COLLATOR.compare(left, right)
+  if (primary !== 0) return primary
+  // sensitivity: 'base' treats 'A' and 'a' as equal; break ties in code-unit order.
+  if (left < right) return -1
+  if (left > right) return 1
+  return 0
+}
+
+/** `=>` uses `>` but must not close an angle-bracket or nesting segment. */
+function isTypeNestingClose(char, prevChar) {
+  if (char === '>' && prevChar === '=') return false
+  return char === ')' || char === ']' || char === '}' || char === '>'
+}
+
+function isTypeNestingOpen(char) {
+  return char === '(' || char === '[' || char === '{' || char === '<'
+}
+
+function mapTypeDelimitedSegments(type, open, close, mapInner) {
+  let result = ''
+  let index = 0
+  while (index < type.length) {
+    const char = type[index]
+    if (char === open) {
+      let depth = 1
+      let end = index + 1
+      while (end < type.length && depth > 0) {
+        const next = type[end]
+        if (next === open) depth += 1
+        else if (next === close) {
+          if (!(close === '>' && type[end - 1] === '=')) depth -= 1
+        }
+        end += 1
+      }
+      const inner = type.slice(index + 1, end - 1)
+      result += open + mapInner(inner) + close
+      index = end
+      continue
+    }
+    result += char
+    index += 1
+  }
+  return result
+}
+
+function mapNestedTypeSegments(type, mapInner) {
+  let result = mapTypeDelimitedSegments(type, '<', '>', (inner) =>
+    splitTopLevel(inner, ',')
+      .map((part) => mapInner(part.trim()))
+      .join(', '),
+  )
+  result = mapTypeDelimitedSegments(result, '(', ')', mapInner)
+  return mapTypeDelimitedSegments(result, '[', ']', mapInner)
+}
+
+function splitTopLevelArrowType(type) {
+  let depth = 0
+  let quote = null
+  for (let index = 0; index < type.length - 1; index += 1) {
+    const char = type[index]
+    const prev = index > 0 ? type[index - 1] : ''
+    if (quote) {
+      if (char === quote) quote = null
+      continue
+    }
+    if (char === "'" || char === '"') {
+      quote = char
+      continue
+    }
+    if (isTypeNestingOpen(char)) depth += 1
+    else if (isTypeNestingClose(char, prev)) depth -= 1
+    if (char === '=' && type[index + 1] === '>' && depth === 0) {
+      return {
+        params: type.slice(0, index).trim(),
+        ret: type.slice(index + 2).trim(),
+      }
+    }
+  }
+  return null
+}
+
+/** Lexicographic order for every `|` union at each nesting depth in a type string. */
+export function sortUnionsInType(type) {
+  const trimmed = type.trim()
+  const labeled = trimmed.match(/^([A-Za-z_$][\w$]*)\s*:\s*(.+)$/s)
+  if (labeled) {
+    const name = labeled[1].trim()
+    const value = labeled[2].trim()
+    if (value !== '') {
+      return `${name}: ${sortUnionsInType(value)}`
+    }
+  }
+
+  const arrow = splitTopLevelArrowType(trimmed)
+  if (arrow) {
+    return `${sortUnionsInType(arrow.params)} => ${sortUnionsInType(arrow.ret)}`
+  }
+
+  const parts = splitTopLevel(trimmed, '|')
+  if (parts.length > 1) {
+    return parts
+      .map((part) => sortUnionsInType(part.trim()))
+      .sort(compareManifestMemberNames)
+      .join(' | ')
+  }
+
+  return mapNestedTypeSegments(trimmed, sortUnionsInType)
+}
+
 export function normalizeType(type, { optional = false } = {}) {
   let result = type.trim()
   if (optional) {
@@ -143,7 +255,20 @@ export function normalizeType(type, { optional = false } = {}) {
   }
   result = result.replaceAll(/\?: ([^)|]+?) \| undefined/g, '?: $1')
   result = result.replaceAll(/"([^"]*)"/g, "'$1'")
-  return result
+  return sortUnionsInType(result)
+}
+
+// vue-component-meta prop/slot/emit order is not stable across TS builds; names are.
+function sortMembersByName(members) {
+  return [...members].sort((left, right) =>
+    compareManifestMemberNames(left.name, right.name),
+  )
+}
+
+function sortModelsByProp(models) {
+  return [...models].sort((left, right) =>
+    compareManifestMemberNames(left.prop, right.prop),
+  )
 }
 
 export function parseDefaultValue(raw) {
@@ -166,7 +291,9 @@ function splitTopLevel(value, separator) {
   let current = ''
   let depth = 0
   let quote = null
-  for (const char of value) {
+  for (let index = 0; index < value.length; index += 1) {
+    const char = value[index]
+    const prev = index > 0 ? value[index - 1] : ''
     if (quote) {
       current += char
       if (char === quote) quote = null
@@ -177,8 +304,8 @@ function splitTopLevel(value, separator) {
       current += char
       continue
     }
-    if (char === '(' || char === '[' || char === '{') depth += 1
-    if (char === ')' || char === ']' || char === '}') depth -= 1
+    if (isTypeNestingOpen(char)) depth += 1
+    else if (isTypeNestingClose(char, prev)) depth -= 1
     if (char === separator && depth === 0) {
       parts.push(current)
       current = ''
@@ -239,13 +366,14 @@ function extractSlotProps(slot) {
   ) {
     return []
   }
-  return Object.values(schema.schema)
+  const props = Object.values(schema.schema)
     .filter((entry) => PROP_NAME.test(entry.name))
     .map((entry) => ({
       name: entry.name,
       type: normalizeType(entry.type, { optional: !entry.required }),
       description: entry.description,
     }))
+  return sortMembersByName(props)
 }
 
 export function buildDerivedContract(meta, { name, packageName }) {
@@ -346,11 +474,11 @@ export function buildDerivedContract(meta, { name, packageName }) {
       name,
       package: packageName,
       description: meta.description ?? '',
-      props,
-      models,
-      events,
-      slots,
-      exposed,
+      props: sortMembersByName(props),
+      models: sortModelsByProp(models),
+      events: sortMembersByName(events),
+      slots: sortMembersByName(slots),
+      exposed: sortMembersByName(exposed),
     },
   }
 }
