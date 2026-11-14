@@ -166,11 +166,9 @@ onUnmounted(() => {
         <code>@ghostvue/themes</code>.
       </p>
       <div class="ghost-landing__actions">
-        <LandingActionLink href="/components/button">
-          Explore components
-        </LandingActionLink>
-        <LandingActionLink href="/philosophy" variant="outline">
-          Project philosophy
+        <LandingActionLink href="/philosophy"> Get started </LandingActionLink>
+        <LandingActionLink href="/components/button" variant="outline">
+          Browse components
         </LandingActionLink>
         <button
           type="button"
