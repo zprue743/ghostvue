@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test'
 
+import { waitForFormResetDeferral } from '../support'
 import { startStaticServer } from './static-server'
 
 test.describe('Native form reset', () => {
@@ -68,6 +69,7 @@ test.describe('Native form reset', () => {
       })
 
       await page.getByTestId('form-reset-trigger').click()
+      await waitForFormResetDeferral(page)
 
       await expect(input).toHaveValue('kept-input')
       await expect(toggle).toHaveAttribute('aria-checked', 'true')
@@ -105,6 +107,7 @@ test.describe('Native form reset', () => {
       })
 
       await page.getByTestId('form-reset-trigger').click()
+      await waitForFormResetDeferral(page)
 
       await expect(input).toHaveValue('kept-by-window')
       await expect(textarea).toHaveValue('kept-notes')
@@ -141,6 +144,7 @@ test.describe('Native form reset', () => {
       })
 
       await page.getByTestId('form-reset-trigger').click()
+      await waitForFormResetDeferral(page)
 
       await expect(input).toHaveValue('kept-by-document')
       await expect(toggle).toHaveAttribute('aria-checked', 'true')
