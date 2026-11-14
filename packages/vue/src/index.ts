@@ -271,6 +271,20 @@ export type {
   GhostSeparatorProps,
   UseGhostSeparatorOptions,
 } from './ghost-separator'
+export { default as GhostScrollArea } from './GhostScrollArea.vue'
+export {
+  useGhostScrollArea,
+  type GhostScrollAreaRootProps,
+} from './use-ghost-scroll-area'
+export type {
+  GhostScrollAreaElement,
+  GhostScrollAreaExposed,
+  GhostScrollAreaOrientation,
+  GhostScrollAreaOverflowState,
+  GhostScrollAreaOverflowType,
+  GhostScrollAreaProps,
+  UseGhostScrollAreaOptions,
+} from './ghost-scroll-area'
 export { default as GhostProgress } from './GhostProgress.vue'
 export {
   useGhostProgress,

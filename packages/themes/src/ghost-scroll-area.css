@@ -1,0 +1,31 @@
+/*
+ * Themed GhostScrollArea. Native scrolling only; no custom scrollbar parts.
+ * Logical sizing is left to the consumer; this recipe adds containment and
+ * platform scrollbar affordances under --ghost-* tokens.
+ */
+@layer ghostvue-theme {
+  :where(.ghost-theme .ghost-scroll-area, .ghost-scroll-area[data-themed]) {
+    box-sizing: border-box;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  :where(
+    .ghost-theme .ghost-scroll-area[style*='overflow-y: scroll'],
+    .ghost-scroll-area[data-themed][style*='overflow-y: scroll']
+  ) {
+    scrollbar-gutter: stable;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    :where(.ghost-theme .ghost-scroll-area, .ghost-scroll-area[data-themed]) {
+      scroll-behavior: auto;
+    }
+  }
+
+  @supports (scrollbar-color: CanvasText Canvas) {
+    :where(.ghost-theme .ghost-scroll-area, .ghost-scroll-area[data-themed]) {
+      scrollbar-color: var(--ghost-border-strong) transparent;
+    }
+  }
+}

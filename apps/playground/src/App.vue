@@ -13,6 +13,7 @@ import {
   GhostProgress as GhostProgressThemed,
   GhostSlider as GhostSliderThemed,
   GhostSeparator as GhostSeparatorThemed,
+  GhostScrollArea as GhostScrollAreaThemed,
   GhostEmptyState as GhostEmptyStateThemed,
   GhostInlineAlert as GhostInlineAlertThemed,
   GhostSkeleton as GhostSkeletonThemed,
@@ -57,6 +58,7 @@ import {
   GhostRadioGroupItem,
   GhostSlider,
   GhostSeparator,
+  GhostScrollArea,
   GhostTable,
   GhostTableBody,
   GhostTableCaption,
@@ -1308,6 +1310,50 @@ function submitPlaygroundComment(event: Event): void {
           </GhostTableRow>
         </GhostTableBody>
       </GhostTable>
+    </section>
+
+    <section
+      aria-labelledby="scroll-area-heading"
+      data-testid="scroll-area-playground"
+    >
+      <h2 id="scroll-area-heading">GhostScrollArea</h2>
+      <GhostScrollArea
+        label="Playground log"
+        data-testid="scroll-area-vertical"
+        style="max-block-size: 6rem; max-inline-size: 18rem"
+      >
+        <p v-for="line in 10" :key="line">Log line {{ line }}</p>
+      </GhostScrollArea>
+      <GhostScrollArea
+        label="Wide columns"
+        orientation="horizontal"
+        data-testid="scroll-area-horizontal"
+        style="max-inline-size: 12rem; margin-block-start: 1rem"
+      >
+        <div style="display: flex; gap: 1rem; width: max-content">
+          <span v-for="col in 8" :key="col">Col {{ col }}</span>
+        </div>
+      </GhostScrollArea>
+      <div class="ghost-theme" style="margin-block-start: 1rem">
+        <GhostScrollAreaThemed
+          label="Themed inbox"
+          data-testid="scroll-area-themed"
+          style="max-block-size: 5rem; max-inline-size: 14rem"
+        >
+          <p v-for="item in 6" :key="item">Item {{ item }}</p>
+        </GhostScrollAreaThemed>
+      </div>
+      <GhostScrollArea
+        data-testid="scroll-area-with-focusable"
+        style="
+          max-block-size: 5rem;
+          max-inline-size: 14rem;
+          margin-block-start: 1rem;
+        "
+      >
+        <button type="button">Inside control</button>
+        <p v-for="row in 6" :key="row">Row {{ row }}</p>
+      </GhostScrollArea>
     </section>
 
     <section aria-labelledby="separator-heading">

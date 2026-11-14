@@ -226,6 +226,12 @@ export {
 } from './ghost-separator'
 
 export {
+  GhostScrollArea,
+  type GhostScrollAreaOrientation,
+  type GhostScrollAreaOverflowType,
+} from './ghost-scroll-area'
+
+export {
   GhostProgress,
   type GhostProgressSize,
   type GhostProgressTone,

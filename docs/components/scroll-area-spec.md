@@ -39,12 +39,12 @@ native scrolling, stable layout, and axe-clean focus rules
 
 Headless `@ghostvue/vue` `GhostScrollArea` / `useGhostScrollArea`:
 
-| Prop          | Type                                              | Default      | Contract                                                                                                                                                                          |
-| ------------- | ------------------------------------------------- | ------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `orientation` | `'vertical' \| 'horizontal' \| 'both'`            | `'vertical'` | Which axes may scroll. Vertical is `overflow-y`; horizontal is `overflow-x`; both allow either axis when content exceeds the box.                                                   |
-| `type`        | `'auto' \| 'scroll'`                              | `'auto'`     | Maps to native `overflow-*: auto` vs `scroll`. `auto` shows scrollbars when needed; `scroll` always reserves the scrollable overflow mode on enabled axes.                        |
-| `as`          | `'div'`                                           | `'div'`      | Host element. Closed union; widened only additively.                                                                                                                              |
-| `label`       | `string`                                          | `undefined`  | Accessible name applied as `aria-label` when the root is keyboard-focusable (`tabindex="0"`). Omit when the root is not focusable or when the consumer supplies naming via attrs. |
+| Prop          | Type                                   | Default      | Contract                                                                                                                                                                          |
+| ------------- | -------------------------------------- | ------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `orientation` | `'vertical' \| 'horizontal' \| 'both'` | `'vertical'` | Which axes may scroll. Vertical is `overflow-y`; horizontal is `overflow-x`; both allow either axis when content exceeds the box.                                                 |
+| `type`        | `'auto' \| 'scroll'`                   | `'auto'`     | Maps to native `overflow-*: auto` vs `scroll`. `auto` shows scrollbars when needed; `scroll` always reserves the scrollable overflow mode on enabled axes.                        |
+| `as`          | `'div'`                                | `'div'`      | Host element. Closed union; widened only additively.                                                                                                                              |
+| `label`       | `string`                               | `undefined`  | Accessible name applied as `aria-label` when the root is keyboard-focusable (`tabindex="0"`). Omit when the root is not focusable or when the consumer supplies naming via attrs. |
 
 ```ts
 type GhostScrollAreaElement = 'div'
@@ -83,10 +83,10 @@ styling, not for v-model.
 Configuration props (`orientation`, `type`, `as`, `label`) are consumer-owned.
 Runtime state:
 
-| State        | Meaning                                                                                           |
-| ------------ | ------------------------------------------------------------------------------------------------- |
-| `data-overflow` | `none` when no enabled axis overflows; otherwise `vertical`, `horizontal`, or `both`.          |
-| Tab stop     | Root receives `tabindex="0"` only when at least one enabled axis overflows **and** the subtree has no tabbable descendants (excluding the root). Otherwise `tabindex` is omitted. |
+| State           | Meaning                                                                                                                                                                           |
+| --------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `data-overflow` | `none` when no enabled axis overflows; otherwise `vertical`, `horizontal`, or `both`.                                                                                             |
+| Tab stop        | Root receives `tabindex="0"` only when at least one enabled axis overflows **and** the subtree has no tabbable descendants (excluding the root). Otherwise `tabindex` is omitted. |
 
 Overflow and focusable-content detection run after mount and on resize, slot
 updates, and relevant attribute changes (`ResizeObserver` + `MutationObserver`
@@ -129,13 +129,13 @@ DataTable-adjacent scenario for horizontal overflow.
 
 When the root is focused and has overflow on an axis:
 
-| Key                               | Behavior                                                                 |
-| --------------------------------- | ------------------------------------------------------------------------ |
-| `ArrowUp` / `ArrowDown`           | Scroll vertically when `orientation` allows vertical overflow.           |
-| `ArrowLeft` / `ArrowRight`        | Scroll horizontally when `orientation` allows horizontal overflow. RTL follows native horizontal scroll direction. |
-| `PageUp` / `PageDown`             | Scroll vertically by one viewport height.                              |
-| `Home` / `End`                    | Scroll to the start/end of the vertical axis when enabled.             |
-| `Space`                           | Prevented default when the root is focused (no page scroll hijack).      |
+| Key                        | Behavior                                                                                                           |
+| -------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| `ArrowUp` / `ArrowDown`    | Scroll vertically when `orientation` allows vertical overflow.                                                     |
+| `ArrowLeft` / `ArrowRight` | Scroll horizontally when `orientation` allows horizontal overflow. RTL follows native horizontal scroll direction. |
+| `PageUp` / `PageDown`      | Scroll vertically by one viewport height.                                                                          |
+| `Home` / `End`             | Scroll to the start/end of the vertical axis when enabled.                                                         |
+| `Space`                    | Prevented default when the root is focused (no page scroll hijack).                                                |
 
 Arrow keys call `preventDefault` only when they actually scroll the root on
 that axis. The component does not implement roving tabindex.

@@ -42,6 +42,7 @@ export const docsSidebar: LlmsSidebarGroup[] = [
       { text: 'GhostProgress', link: '/components/progress' },
       { text: 'GhostRadioGroup', link: '/components/radio-group' },
       { text: 'GhostSeparator', link: '/components/separator' },
+      { text: 'GhostScrollArea', link: '/components/scroll-area' },
       {
         text: 'GhostSegmentedControl',
         link: '/components/segmented-control',
@@ -222,6 +223,10 @@ export const docsSidebar: LlmsSidebarGroup[] = [
       {
         text: 'GhostSeparator specification',
         link: '/components/separator-spec',
+      },
+      {
+        text: 'GhostScrollArea specification',
+        link: '/components/scroll-area-spec',
       },
       {
         text: 'GhostSkeleton specification',
