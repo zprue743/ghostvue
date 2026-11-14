@@ -1,0 +1,50 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "generated",
+  "name": "GhostTooltipProvider",
+  "package": "@ghostvue/vue",
+  "status": "experimental",
+  "description": "Groups adjacent GhostTooltip instances so pointer moves between triggers can skip the open delay within skipDelayDuration.",
+  "props": [
+    {
+      "name": "delayDuration",
+      "type": "number",
+      "default": 700,
+      "required": false,
+      "description": "Default open delay for descendant {@link GhostTooltip } roots that omit\ntheir own `delayDuration`.",
+      "deprecated": false
+    },
+    {
+      "name": "skipDelayDuration",
+      "type": "number",
+      "default": 300,
+      "required": false,
+      "description": "Milliseconds after a descendant tooltip closes during which the next\npointer-driven show may skip the open delay.",
+      "deprecated": false
+    }
+  ],
+  "models": [],
+  "events": [],
+  "slots": [
+    {
+      "name": "default",
+      "props": [],
+      "description": "Primary content."
+    }
+  ],
+  "exposed": [],
+  "styling": {
+    "parts": [],
+    "states": [],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "generic",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/",
+    "keyboard": {},
+    "requiredAriaAttributes": []
+  },
+  "examples": [
+    "tooltip-provider/skip-delay"
+  ]
+}
