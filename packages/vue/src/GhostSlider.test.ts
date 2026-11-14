@@ -172,7 +172,9 @@ describe('GhostSlider', () => {
     const [low, high] = wrapper.findAll('[role="slider"]')
     expect(low?.attributes('aria-label')).toBe('Price range minimum')
     expect(high?.attributes('aria-label')).toBe('Price range maximum')
-    expect(wrapper.findAll('span', { text: 'minimum' })).toHaveLength(0)
+    expect(
+      wrapper.findAll('span').filter((node) => node.text() === 'minimum'),
+    ).toHaveLength(0)
   })
 
   it('maps vertical arrow keys to value changes', async () => {
@@ -236,7 +238,7 @@ describe('GhostSlider', () => {
     thumb.element.setPointerCapture = vi.fn()
     thumb.element.releasePointerCapture = vi.fn()
 
-    const focusSpy = vi.spyOn(thumb.element, 'focus')
+    const focusSpy = vi.spyOn(thumb.element as HTMLElement, 'focus')
     track.element.dispatchEvent(
       new PointerEvent('pointerdown', {
         clientX: 100,
