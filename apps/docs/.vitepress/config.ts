@@ -9,6 +9,7 @@ import {
   applyDocsThemeHost,
   restoreDocsThemeScript,
 } from './theme/restore-theme'
+import { renderLocalSearchDocument } from './search-local'
 
 function packageSrc(relative: string): string {
   return fileURLToPath(
@@ -93,6 +94,12 @@ export default defineConfig({
     },
   },
   themeConfig: {
+    search: {
+      provider: 'local',
+      options: {
+        _render: renderLocalSearchDocument,
+      },
+    },
     logo: {
       light: '/logo-light.svg',
       dark: '/logo-dark.svg',
