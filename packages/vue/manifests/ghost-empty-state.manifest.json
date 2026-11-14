@@ -39,7 +39,7 @@
     {
       "name": "description",
       "props": [],
-      "description": "Optional supporting copy in a native paragraph."
+      "description": "Optional supporting copy in a div wrapper."
     },
     {
       "name": "actions",
@@ -71,7 +71,7 @@
       },
       {
         "name": "description",
-        "description": "Supporting copy paragraph."
+        "description": "Supporting copy wrapper."
       },
       {
         "name": "actions",
