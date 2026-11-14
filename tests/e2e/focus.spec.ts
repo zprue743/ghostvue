@@ -29,6 +29,29 @@ test.describe('focus primitives', () => {
     }
   })
 
+  test('autofocuses the visible tab stop when an earlier candidate is in a hidden subtree', async ({
+    page,
+  }) => {
+    const playground = await startStaticServer('apps/playground/dist')
+
+    try {
+      await page.goto(playground.url)
+      await page.getByTestId('open-trap-hidden').focus()
+      await page.getByTestId('open-trap-hidden').click()
+
+      await expect(page.getByTestId('trap-hidden-visible')).toBeFocused()
+      await page.keyboard.press('Tab')
+      await expect(page.getByTestId('trap-hidden-last')).toBeFocused()
+      await page.keyboard.press('Shift+Tab')
+      await expect(page.getByTestId('trap-hidden-visible')).toBeFocused()
+
+      await page.getByTestId('close-trap-hidden').click()
+      await expect(page.getByTestId('open-trap-hidden')).toBeFocused()
+    } finally {
+      await playground.close()
+    }
+  })
+
   test('nested traps keep Tab in the inner scope until it closes', async ({
     page,
   }) => {

@@ -109,6 +109,57 @@ describe('useRovingFocus', () => {
     expect(indexes.filter((value) => value === -1)).toHaveLength(2)
   })
 
+  it('skips aria-disabled items while keeping them in the focusable set', async () => {
+    const container = ref<HTMLElement | null>(null)
+    const wrapper = mount(
+      defineComponent({
+        setup() {
+          useRovingFocus(container, { orientation: 'horizontal', loop: true })
+          return () =>
+            h('div', { ref: container, role: 'toolbar' }, [
+              h('button', { type: 'button' }, 'One'),
+              h('button', { type: 'button', 'aria-disabled': 'true' }, 'Busy'),
+              h('button', { type: 'button' }, 'Three'),
+            ])
+        },
+      }),
+      { attachTo: document.body },
+    )
+    attached.push(wrapper)
+    await nextTick()
+
+    const first = buttonElement(wrapper, 0)
+    first.focus()
+    key(first, 'ArrowRight')
+    expect(document.activeElement?.textContent).toBe('Three')
+  })
+
+  it('does not treat items in display:none subtrees as roving tab stops', async () => {
+    const container = ref<HTMLElement | null>(null)
+    const wrapper = mount(
+      defineComponent({
+        setup() {
+          useRovingFocus(container, { orientation: 'horizontal', loop: true })
+          return () =>
+            h('div', { ref: container, role: 'toolbar' }, [
+              h(
+                'div',
+                { style: { display: 'none' } },
+                h('button', { type: 'button' }, 'Hidden'),
+              ),
+              h('button', { type: 'button' }, 'Visible'),
+            ])
+        },
+      }),
+      { attachTo: document.body },
+    )
+    attached.push(wrapper)
+    await nextTick()
+
+    const visible = buttonElement(wrapper, 'last')
+    expect(visible.tabIndex).toBe(0)
+  })
+
   it('moves horizontally with arrows and skips disabled items', async () => {
     const wrapper = mountRoving(
       { orientation: 'horizontal', loop: true },

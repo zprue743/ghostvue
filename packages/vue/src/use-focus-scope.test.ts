@@ -90,6 +90,27 @@ describe('useFocusScope', () => {
     expect(document.activeElement?.textContent).toBe('First')
   })
 
+  it('autofocuses the first visible tabbable when earlier stops sit in a hidden subtree', async () => {
+    const container = ref<HTMLElement | null>(null)
+    mountScope(
+      () => {
+        useFocusScope(container, { trapped: true, loop: true, autoFocus: true })
+      },
+      () =>
+        h('div', { ref: container, tabindex: '-1', role: 'dialog' }, [
+          h(
+            'div',
+            { style: { display: 'none' } },
+            h('button', { type: 'button' }, 'Hidden'),
+          ),
+          h('button', { type: 'button', 'data-testid': 'visible' }, 'Visible'),
+        ]),
+    )
+
+    await nextTick()
+    expect(document.activeElement?.textContent).toBe('Visible')
+  })
+
   it('prefers a data-autofocus element over the first tabbable', async () => {
     const container = ref<HTMLElement | null>(null)
     mountScope(
