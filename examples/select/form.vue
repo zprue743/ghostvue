@@ -11,7 +11,7 @@ import {
 <template>
   <form data-testid="select-form">
     <GhostSelect name="cadence" default-value="weekly">
-      <GhostSelectTrigger>
+      <GhostSelectTrigger aria-label="Email cadence">
         <GhostSelectValue placeholder="How often" />
       </GhostSelectTrigger>
       <GhostSelectContent :portal="false">

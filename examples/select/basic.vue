@@ -14,7 +14,10 @@ const fruit = ref('banana')
 
 <template>
   <GhostSelect v-model="fruit" data-testid="select-basic">
-    <GhostSelectTrigger data-testid="select-basic-trigger">
+    <GhostSelectTrigger
+      data-testid="select-basic-trigger"
+      aria-label="Pick a fruit"
+    >
       <GhostSelectValue placeholder="Pick a fruit" />
     </GhostSelectTrigger>
     <GhostSelectContent :offset="6" data-testid="select-basic-content">

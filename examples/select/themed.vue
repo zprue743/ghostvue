@@ -15,7 +15,7 @@ const pageSize = ref('25')
 <template>
   <div class="ghost-themed-scope">
     <GhostSelect v-model="pageSize">
-      <GhostSelectTrigger>
+      <GhostSelectTrigger aria-label="Rows per page">
         <GhostSelectValue placeholder="Rows per page" />
       </GhostSelectTrigger>
       <GhostSelectContent :offset="6">
