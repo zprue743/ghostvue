@@ -7,7 +7,9 @@ const screenshotOptions = {
   maxDiffPixelRatio: 0.03,
 }
 
-test.describe('ambient interactivity', () => {
+const tag = '@component:GhostInteractiveSurface'
+
+test.describe('ambient interactivity', { tag }, () => {
   test.use({
     viewport: { width: 1280, height: 900 },
     deviceScaleFactor: 1,
@@ -119,34 +121,36 @@ test.describe('ambient interactivity', () => {
     },
   )
 
-  test('prefers-reduced-motion keeps surfaces off and still', async ({
-    page,
-  }) => {
-    const playground = await startStaticServer('apps/playground/dist')
+  test(
+    'prefers-reduced-motion keeps surfaces off and still',
+    { tag: '@component:GhostButton' },
+    async ({ page }) => {
+      const playground = await startStaticServer('apps/playground/dist')
 
-    try {
-      await page.emulateMedia({ reducedMotion: 'reduce' })
-      await page.goto(playground.url)
+      try {
+        await page.emulateMedia({ reducedMotion: 'reduce' })
+        await page.goto(playground.url)
 
-      const spotlight = page.getByTestId('ambient-spotlight')
-      const button = page.getByTestId('ambient-button-spotlight')
+        const spotlight = page.getByTestId('ambient-spotlight')
+        const button = page.getByTestId('ambient-button-spotlight')
 
-      await expect(spotlight).toHaveAttribute('data-state', 'off')
-      await expect(button).toHaveAttribute('data-interactive-state', 'off')
+        await expect(spotlight).toHaveAttribute('data-state', 'off')
+        await expect(button).toHaveAttribute('data-interactive-state', 'off')
 
-      await spotlight.hover({ position: { x: 48, y: 36 } })
-      await expect(spotlight).toHaveAttribute('data-state', 'off')
-      expect(
-        await spotlight.evaluate((element) => {
-          const glow = element.querySelector('[data-part="glow"]')
-          return glow ? getComputedStyle(glow).opacity : 'missing'
-        }),
-      ).toBe('0')
+        await spotlight.hover({ position: { x: 48, y: 36 } })
+        await expect(spotlight).toHaveAttribute('data-state', 'off')
+        expect(
+          await spotlight.evaluate((element) => {
+            const glow = element.querySelector('[data-part="glow"]')
+            return glow ? getComputedStyle(glow).opacity : 'missing'
+          }),
+        ).toBe('0')
 
-      await button.hover({ position: { x: 24, y: 12 } })
-      await expect(button).toHaveAttribute('data-interactive-state', 'off')
-    } finally {
-      await playground.close()
-    }
-  })
+        await button.hover({ position: { x: 24, y: 12 } })
+        await expect(button).toHaveAttribute('data-interactive-state', 'off')
+      } finally {
+        await playground.close()
+      }
+    },
+  )
 })

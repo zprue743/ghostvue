@@ -2,7 +2,9 @@ import { expect, test } from '@playwright/test'
 
 import { startStaticServer } from './static-server'
 
-test.describe('overlay primitives', () => {
+const tag = '@component:GhostPopover'
+
+test.describe('overlay primitives', { tag }, () => {
   test('flips to top and shifts inside viewport edges', async ({ page }) => {
     const playground = await startStaticServer('apps/playground/dist')
 
@@ -115,65 +117,67 @@ test.describe('overlay primitives', () => {
     }
   })
 
-  test('nested layers close only the top layer on Escape and outside-click, and trigger click toggles cleanly', async ({
-    page,
-  }) => {
-    const playground = await startStaticServer('apps/playground/dist')
+  test(
+    'nested layers close only the top layer on Escape and outside-click, and trigger click toggles cleanly',
+    { tag: '@component:GhostDialog' },
+    async ({ page }) => {
+      const playground = await startStaticServer('apps/playground/dist')
 
-    try {
-      await page.goto(playground.url)
+      try {
+        await page.goto(playground.url)
 
-      const outerTrigger = page.getByTestId('outer-trigger')
-      await outerTrigger.scrollIntoViewIfNeeded()
+        const outerTrigger = page.getByTestId('outer-trigger')
+        await outerTrigger.scrollIntoViewIfNeeded()
 
-      // Clicking the trigger opens, and clicking it again closes without reopening.
-      await outerTrigger.click()
-      const outerLayer = page.getByTestId('outer-layer')
-      await expect(outerLayer).toBeVisible()
-      await expect(outerTrigger).toHaveAttribute('aria-expanded', 'true')
+        // Clicking the trigger opens, and clicking it again closes without reopening.
+        await outerTrigger.click()
+        const outerLayer = page.getByTestId('outer-layer')
+        await expect(outerLayer).toBeVisible()
+        await expect(outerTrigger).toHaveAttribute('aria-expanded', 'true')
 
-      // Verify GhostPortal moved the layer into document.body (outside <main>).
-      const inMain = await outerLayer.evaluate((el) =>
-        Boolean(el.closest('main')),
-      )
-      expect(inMain).toBe(false)
+        // Verify GhostPortal moved the layer into document.body (outside <main>).
+        const inMain = await outerLayer.evaluate((el) =>
+          Boolean(el.closest('main')),
+        )
+        expect(inMain).toBe(false)
 
-      await outerTrigger.click()
-      await expect(outerLayer).toHaveCount(0)
-      await expect(outerTrigger).toHaveAttribute('aria-expanded', 'false')
+        await outerTrigger.click()
+        await expect(outerLayer).toHaveCount(0)
+        await expect(outerTrigger).toHaveAttribute('aria-expanded', 'false')
 
-      // Open outer then inner layer, then dismiss via Escape one layer at a time.
-      await outerTrigger.click()
-      await expect(outerLayer).toBeVisible()
+        // Open outer then inner layer, then dismiss via Escape one layer at a time.
+        await outerTrigger.click()
+        await expect(outerLayer).toBeVisible()
 
-      const innerTrigger = page.getByTestId('inner-trigger')
-      await innerTrigger.click()
-      const innerLayer = page.getByTestId('inner-layer')
-      await expect(innerLayer).toBeVisible()
+        const innerTrigger = page.getByTestId('inner-trigger')
+        await innerTrigger.click()
+        const innerLayer = page.getByTestId('inner-layer')
+        await expect(innerLayer).toBeVisible()
 
-      await page.keyboard.press('Escape')
-      await expect(innerLayer).toHaveCount(0)
-      await expect(outerLayer).toBeVisible()
+        await page.keyboard.press('Escape')
+        await expect(innerLayer).toHaveCount(0)
+        await expect(outerLayer).toBeVisible()
 
-      await page.keyboard.press('Escape')
-      await expect(outerLayer).toHaveCount(0)
+        await page.keyboard.press('Escape')
+        await expect(outerLayer).toHaveCount(0)
 
-      // Reopen both layers and dismiss via outside clicks one layer at a time.
-      await outerTrigger.click()
-      await expect(outerLayer).toBeVisible()
-      await innerTrigger.click()
-      await expect(innerLayer).toBeVisible()
+        // Reopen both layers and dismiss via outside clicks one layer at a time.
+        await outerTrigger.click()
+        await expect(outerLayer).toBeVisible()
+        await innerTrigger.click()
+        await expect(innerLayer).toBeVisible()
 
-      // Clicking inside outer layer (outside inner layer) closes only inner.
-      await page.getByTestId('outer-layer-body').click()
-      await expect(innerLayer).toHaveCount(0)
-      await expect(outerLayer).toBeVisible()
+        // Clicking inside outer layer (outside inner layer) closes only inner.
+        await page.getByTestId('outer-layer-body').click()
+        await expect(innerLayer).toHaveCount(0)
+        await expect(outerLayer).toBeVisible()
 
-      // Clicking completely outside outer layer closes outer.
-      await page.getByRole('heading', { name: 'Overlay primitives' }).click()
-      await expect(outerLayer).toHaveCount(0)
-    } finally {
-      await playground.close()
-    }
-  })
+        // Clicking completely outside outer layer closes outer.
+        await page.getByRole('heading', { name: 'Overlay primitives' }).click()
+        await expect(outerLayer).toHaveCount(0)
+      } finally {
+        await playground.close()
+      }
+    },
+  )
 })
