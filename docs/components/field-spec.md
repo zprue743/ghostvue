@@ -54,36 +54,36 @@ Themed exports from `@ghostvue/themes`:
 
 #### `GhostField` (root)
 
-| Prop       | Type      | Default | Contract                                                                                       |
-| ---------- | --------- | ------- | ---------------------------------------------------------------------------------------------- |
-| `id`       | `string`  | —       | Optional control id override. Otherwise `useGhostId('ghost-field-control')` supplies the id.   |
+| Prop       | Type      | Default | Contract                                                                                         |
+| ---------- | --------- | ------- | ------------------------------------------------------------------------------------------------ |
+| `id`       | `string`  | —       | Optional control id override. Otherwise `useGhostId('ghost-field-control')` supplies the id.     |
 | `disabled` | `boolean` | `false` | Propagates `disabled` to the control via `GhostFieldControl` slot props. Sets root `data-state`. |
-| `invalid`  | `boolean` | `false` | Propagates `invalid` / `aria-invalid` to the control. Sets root `data-state` when true.         |
-| `required` | `boolean` | `false` | Propagates native `required` / `aria-required` to the control.                                 |
+| `invalid`  | `boolean` | `false` | Propagates `invalid` / `aria-invalid` to the control. Sets root `data-state` when true.          |
+| `required` | `boolean` | `false` | Propagates native `required` / `aria-required` to the control.                                   |
 
 Native attributes fall through to the root grouping element except `id`, which
 is reserved for the control id contract.
 
 #### `GhostFieldLabel`
 
-| Prop         | Type                                               | Default     | Contract                                                                                              |
-| ------------ | -------------------------------------------------- | ----------- | ----------------------------------------------------------------------------------------------------- |
-| `as`         | `GhostFieldLabelElement` (`Component \| string`) | `'label'`   | Root element. Use native `label` for the default associated pattern.                                  |
-| `associate`  | `'reference' \| 'wrap'`                            | `reference` | `reference` sets `for` to the control id. `wrap` omits `for` when the control is nested in the label. |
-| `required`   | `boolean`                                          | `false`     | Visual required indicator only (e.g. asterisk). Does not set `required` on the control; root does.   |
+| Prop           | Type                                             | Default     | Contract                                                                                              |
+| -------------- | ------------------------------------------------ | ----------- | ----------------------------------------------------------------------------------------------------- |
+| `as`           | `GhostFieldLabelElement` (`Component \| string`) | `'label'`   | Root element. Use native `label` for the default associated pattern.                                  |
+| `associate`    | `'reference' \| 'wrap'`                          | `reference` | `reference` sets `for` to the control id. `wrap` omits `for` when the control is nested in the label. |
+| `required`     | `boolean`                                        | `false`     | Visual required indicator only (e.g. asterisk). Does not set `required` on the control; root does.    |
 | `showRequired` | `boolean`                                        | `true`      | Renders the required marker when `required` or root `required` is true.                               |
 
 #### `GhostFieldDescription`
 
-| Prop | Type                                                     | Default | Contract                              |
-| ---- | -------------------------------------------------------- | ------- | ------------------------------------- |
-| `as` | `GhostFieldDescriptionElement` (`Component \| string`) | `'p'`   | Hint element with a stable `id`.      |
+| Prop | Type                                                   | Default | Contract                         |
+| ---- | ------------------------------------------------------ | ------- | -------------------------------- |
+| `as` | `GhostFieldDescriptionElement` (`Component \| string`) | `'p'`   | Hint element with a stable `id`. |
 
 #### `GhostFieldError`
 
-| Prop | Type                                               | Default  | Contract                                                                 |
-| ---- | -------------------------------------------------- | -------- | ------------------------------------------------------------------------ |
-| `as` | `GhostFieldErrorElement` (`Component \| string`) | `'span'` | Error element with `id` and `role="alert"` when non-empty.               |
+| Prop | Type                                             | Default  | Contract                                                   |
+| ---- | ------------------------------------------------ | -------- | ---------------------------------------------------------- |
+| `as` | `GhostFieldErrorElement` (`Component \| string`) | `'span'` | Error element with `id` and `role="alert"` when non-empty. |
 
 Renders nothing in the accessibility tree when the default slot is empty.
 
@@ -92,14 +92,14 @@ Renders nothing in the accessibility tree when the default slot is empty.
 No props beyond native fallthrough on the bridge. The default slot receives
 `GhostFieldControlSlotProps`:
 
-| Slot prop           | Type      | Description                                                                 |
-| ------------------- | --------- | --------------------------------------------------------------------------- |
-| `id`                | `string`  | Control id shared with `GhostFieldLabel`.                                   |
-| `disabled`          | `boolean` | From root.                                                                  |
-| `invalid`           | `boolean` | From root.                                                                  |
-| `required`          | `boolean` | From root.                                                                  |
-| `aria-describedby`  | `string`  | Space-separated ids of mounted description and error parts, merged with any id already on the control. |
-| `aria-invalid`      | `boolean` | `true` when root `invalid` is true.                                         |
+| Slot prop          | Type      | Description                                                                                            |
+| ------------------ | --------- | ------------------------------------------------------------------------------------------------------ |
+| `id`               | `string`  | Control id shared with `GhostFieldLabel`.                                                              |
+| `disabled`         | `boolean` | From root.                                                                                             |
+| `invalid`          | `boolean` | From root.                                                                                             |
+| `required`         | `boolean` | From root.                                                                                             |
+| `aria-describedby` | `string`  | Space-separated ids of mounted description and error parts, merged with any id already on the control. |
+| `aria-invalid`     | `boolean` | `true` when root `invalid` is true.                                                                    |
 
 Library controls accept these as existing props (`disabled`, `invalid`,
 `required`) and native attributes without API changes.

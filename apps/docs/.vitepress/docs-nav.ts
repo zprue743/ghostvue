@@ -18,6 +18,7 @@ export const docsSidebar: LlmsSidebarGroup[] = [
     text: 'Components',
     items: [
       { text: 'GhostCollapsible', link: '/components/collapsible' },
+      { text: 'GhostField', link: '/components/field' },
       { text: 'GhostBadge', link: '/components/badge' },
       { text: 'GhostButton', link: '/components/button' },
       { text: 'GhostCheckbox', link: '/components/checkbox' },
@@ -103,6 +104,7 @@ export const docsSidebar: LlmsSidebarGroup[] = [
         text: 'GhostCollapsible specification',
         link: '/components/collapsible-spec',
       },
+      { text: 'GhostField specification', link: '/components/field-spec' },
       { text: 'Workflow', link: '/contributing/workflow' },
       {
         text: 'Component verification',

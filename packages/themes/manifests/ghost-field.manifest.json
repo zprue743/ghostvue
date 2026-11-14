@@ -1,0 +1,98 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "handwritten",
+  "name": "GhostField",
+  "package": "@ghostvue/themes",
+  "status": "experimental",
+  "description": "Themed GhostField wrapper and re-exported field parts. Adds default vertical stack spacing for label, control, hint, and error under ghost-theme or ghost-themed-scope.",
+  "props": [
+    {
+      "name": "id",
+      "type": "string",
+      "required": false,
+      "description": "Optional control id override.",
+      "deprecated": false
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Propagates disabled semantics to the control.",
+      "deprecated": false
+    },
+    {
+      "name": "invalid",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Propagates invalid semantics.",
+      "deprecated": false
+    },
+    {
+      "name": "required",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Propagates required semantics.",
+      "deprecated": false
+    }
+  ],
+  "models": [],
+  "events": [],
+  "slots": [
+    {
+      "name": "default",
+      "props": [],
+      "description": "Field parts; same contract as the headless root."
+    }
+  ],
+  "exposed": [
+    {
+      "name": "element",
+      "kind": "property",
+      "type": "HTMLElement | null",
+      "description": "Root grouping element after mount."
+    }
+  ],
+  "styling": {
+    "parts": [
+      {
+        "name": "root",
+        "description": "Vertical stack on .ghost-field inside ghost-theme."
+      },
+      {
+        "name": "label",
+        "description": "Medium weight label text."
+      },
+      {
+        "name": "description",
+        "description": "Muted hint text."
+      },
+      {
+        "name": "error",
+        "description": "Danger-colored alert text."
+      }
+    ],
+    "states": [],
+    "cssProperties": [
+      {
+        "name": "--ghost-space-stack-sm",
+        "description": "Gap between field parts in the themed stack."
+      },
+      {
+        "name": "--ghost-status-danger-fg",
+        "description": "Error and required indicator color."
+      }
+    ]
+  },
+  "accessibility": {
+    "role": "generic",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/textfield/",
+    "keyboard": {},
+    "requiredAriaAttributes": []
+  },
+  "examples": [
+    "field/themed"
+  ]
+}
