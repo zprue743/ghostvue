@@ -4,6 +4,7 @@ import { ref, useTemplateRef } from 'vue'
 import {
   GhostBadge as GhostBadgeThemed,
   GhostButton as GhostButtonThemed,
+  GhostKbd as GhostKbdThemed,
   GhostSeparator as GhostSeparatorThemed,
   GhostSkeleton as GhostSkeletonThemed,
 } from '@ghostvue/themes'
@@ -20,6 +21,7 @@ import VisualReference from './VisualReference.vue'
 import {
   GhostBadge,
   GhostButton,
+  GhostKbd,
   GhostSeparator,
   GhostSkeleton,
   GhostVisuallyHidden,
@@ -158,6 +160,21 @@ function closeNested(): void {
       <GhostVisuallyHidden role="status" aria-live="polite">
         {{ status }}
       </GhostVisuallyHidden>
+    </section>
+
+    <section aria-labelledby="kbd-heading">
+      <h2 id="kbd-heading">GhostKbd</h2>
+      <p>
+        Reload with <GhostKbd>F5</GhostKbd>. Command palette:
+        <GhostKbd :keys="['mod']" platform="pc">K</GhostKbd>
+        versus
+        <GhostKbd :keys="['mod']" platform="apple">K</GhostKbd>.
+      </p>
+      <p class="ghost-theme">
+        Themed:
+        <GhostKbdThemed :keys="['mod', 's']" platform="pc" />
+        <GhostKbdThemed size="sm">Esc</GhostKbdThemed>
+      </p>
     </section>
 
     <VisualReference />

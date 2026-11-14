@@ -48,6 +48,15 @@ export type {
   GhostVisuallyHiddenProps,
   UseGhostVisuallyHiddenOptions,
 } from './ghost-visually-hidden'
+export { default as GhostKbd } from './GhostKbd.vue'
+export { useGhostKbd, type GhostKbdRootProps } from './use-ghost-kbd'
+export type {
+  GhostKbdKeyItem,
+  GhostKbdPlatform,
+  GhostKbdProps,
+  GhostKbdResolvedPlatform,
+  UseGhostKbdOptions,
+} from './ghost-kbd'
 export { default as GhostSkeleton } from './GhostSkeleton.vue'
 export {
   useGhostSkeleton,

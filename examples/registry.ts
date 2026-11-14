@@ -272,6 +272,36 @@ export const ghostExamples = [
     description: 'Hairline rules on the @ghostvue/themes wrapper.',
     layer: 'themed',
   },
+  {
+    id: 'kbd/basic',
+    title: 'Basic',
+    description: 'Native kbd chrome for a single key.',
+    layer: 'headless',
+  },
+  {
+    id: 'kbd/composable',
+    title: 'Composable',
+    description: 'Same contract as GhostKbd, applied to a native host.',
+    layer: 'headless',
+  },
+  {
+    id: 'kbd/combination',
+    title: 'Combination',
+    description: 'Key tokens plus a trailing slot key.',
+    layer: 'headless',
+  },
+  {
+    id: 'kbd/platform',
+    title: 'Platform labels',
+    description: 'Explicit Apple and PC modifier labels.',
+    layer: 'headless',
+  },
+  {
+    id: 'kbd/themed',
+    title: 'Themed',
+    description: 'Keycap chrome and size on the @ghostvue/themes wrapper.',
+    layer: 'themed',
+  },
 ] as const satisfies readonly GhostExampleDefinition[]
 
 export type GhostExampleId = (typeof ghostExamples)[number]['id']

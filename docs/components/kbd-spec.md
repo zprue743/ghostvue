@@ -39,28 +39,28 @@ match the reader's platform (`Ctrl` versus `⌘`) without breaking SSR.
 
 Headless `@ghostvue/vue` `GhostKbd` / `useGhostKbd`:
 
-| Prop       | Type                            | Default  | Contract                                                                                                                                                                                                                         |
-| ---------- | ------------------------------- | -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `keys`     | `string \| readonly string[]`   | omitted  | Key tokens rendered as nested `<kbd data-part="key">` elements. A string is one key; an array is a combination. Tokens are matched case-insensitively. Unknown tokens render as given, except a single letter is uppercased.     |
-| `platform` | `'auto' \| 'apple' \| 'pc'`     | `'auto'` | Selects modifier labels. `'apple'` and `'pc'` are deterministic from the prop. `'auto'` uses the PC labels until after mount, then Apple labels when the browser looks like Apple. See [SSR and hydration](#ssr-and-hydration). |
+| Prop       | Type                          | Default  | Contract                                                                                                                                                                                                                        |
+| ---------- | ----------------------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `keys`     | `string \| readonly string[]` | omitted  | Key tokens rendered as nested `<kbd data-part="key">` elements. A string is one key; an array is a combination. Tokens are matched case-insensitively. Unknown tokens render as given, except a single letter is uppercased.    |
+| `platform` | `'auto' \| 'apple' \| 'pc'`   | `'auto'` | Selects modifier labels. `'apple'` and `'pc'` are deterministic from the prop. `'auto'` uses the PC labels until after mount, then Apple labels when the browser looks like Apple. See [SSR and hydration](#ssr-and-hydration). |
 
 Known tokens and aliases:
 
-| Token                       | Canonical | Apple label (abbr title) | PC label |
-| --------------------------- | --------- | ------------------------ | -------- |
-| `mod`                       | `mod`     | `⌘` (Command)            | `Ctrl`   |
-| `meta`, `command`, `cmd`    | `meta`    | `⌘` (Command)            | `Win`    |
-| `ctrl`, `control`           | `ctrl`    | `⌃` (Control)            | `Ctrl`   |
-| `alt`, `option`             | `alt`     | `⌥` (Option)             | `Alt`    |
-| `shift`                     | `shift`   | `⇧` (Shift)              | `Shift`  |
-| `win`, `super`              | `win`     | `Super`                  | `Win`    |
-| `enter`, `return`           | `enter`   | `⏎` (Return)             | `Enter`  |
-| `esc`, `escape`             | `esc`     | `Esc`                    | `Esc`    |
-| `tab`                       | `tab`     | `Tab`                    | `Tab`    |
-| `space`                     | `space`   | `Space`                  | `Space`  |
-| `backspace`                 | `backspace` | `⌫` (Backspace)        | `Backspace` |
-| `delete`                    | `delete`  | `⌦` (Delete)             | `Delete` |
-| `up`, `down`, `left`, `right` | same    | `↑` `↓` `←` `→`          | same arrows |
+| Token                         | Canonical   | Apple label (abbr title) | PC label    |
+| ----------------------------- | ----------- | ------------------------ | ----------- |
+| `mod`                         | `mod`       | `⌘` (Command)            | `Ctrl`      |
+| `meta`, `command`, `cmd`      | `meta`      | `⌘` (Command)            | `Win`       |
+| `ctrl`, `control`             | `ctrl`      | `⌃` (Control)            | `Ctrl`      |
+| `alt`, `option`               | `alt`       | `⌥` (Option)             | `Alt`       |
+| `shift`                       | `shift`     | `⇧` (Shift)              | `Shift`     |
+| `win`, `super`                | `win`       | `Super`                  | `Win`       |
+| `enter`, `return`             | `enter`     | `⏎` (Return)             | `Enter`     |
+| `esc`, `escape`               | `esc`       | `Esc`                    | `Esc`       |
+| `tab`                         | `tab`       | `Tab`                    | `Tab`       |
+| `space`                       | `space`     | `Space`                  | `Space`     |
+| `backspace`                   | `backspace` | `⌫` (Backspace)          | `Backspace` |
+| `delete`                      | `delete`    | `⌦` (Delete)             | `Delete`    |
+| `up`, `down`, `left`, `right` | same        | `↑` `↓` `←` `→`          | same arrows |
 
 `mod` is the platform primary modifier (Command on Apple, Control on PC). `meta`
 is specifically Meta / Command / Windows and is **not** remapped to Control on
@@ -74,8 +74,8 @@ Themed `@ghostvue/themes` `GhostKbd` wraps the unstyled component and adds one
 visual prop. Same `keys` / `platform` contract; this exists only on the themed
 wrapper:
 
-| Prop   | Type                  | Default | Contract                                                                              |
-| ------ | --------------------- | ------- | ------------------------------------------------------------------------------------- |
+| Prop   | Type                   | Default | Contract                                                                                     |
+| ------ | ---------------------- | ------- | -------------------------------------------------------------------------------------------- |
 | `size` | `'sm' \| 'md' \| 'lg'` | `'md'`  | Type and inset scale. The default omits `data-size` so CSS can treat a missing hook as `md`. |
 
 The themed wrapper wraps the unstyled root in `.ghost-themed-scope`

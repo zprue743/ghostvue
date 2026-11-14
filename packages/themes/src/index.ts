@@ -36,6 +36,8 @@ export {
   type GhostButtonVariant,
 } from './ghost-button'
 
+export { GhostKbd, type GhostKbdPlatform, type GhostKbdSize } from './ghost-kbd'
+
 export {
   GhostSpinner,
   type GhostSpinnerSize,
