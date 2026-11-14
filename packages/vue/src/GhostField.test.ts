@@ -1,6 +1,7 @@
 import { flushPromises, mount, type VueWrapper } from '@vue/test-utils'
-import { defineComponent, h, nextTick, ref } from 'vue'
-import { describe, expect, it } from 'vitest'
+import { createSSRApp, defineComponent, h, nextTick, ref } from 'vue'
+import { renderToString } from 'vue/server-renderer'
+import { describe, expect, it, vi } from 'vitest'
 
 import GhostCheckbox from './GhostCheckbox.vue'
 import GhostField from './GhostField.vue'
@@ -340,6 +341,126 @@ describe('GhostField', () => {
     })
     expect(wrapper.get('.ghost-field').attributes('data-ghost-field')).toBe('')
     expect(wrapper.get('.ghost-field').attributes('data-part')).toBe('root')
+    wrapper.unmount()
+  })
+
+  it('exposes non-empty GhostFieldError during SSR with alert semantics', async () => {
+    const Comp = defineComponent({
+      setup() {
+        return () =>
+          h(GhostField, { invalid: true }, () => [
+            h(GhostFieldLabel, {}, () => 'Name'),
+            h(GhostFieldError, {}, () => 'Required'),
+            h(GhostFieldControl, null, {
+              default: (field: Record<string, unknown>) =>
+                h('input', { type: 'text', ...field }),
+            }),
+          ])
+      },
+    })
+
+    const html = await renderToString(createSSRApp(Comp))
+    const errorTagPattern = /<[^>]+data-part="error"[^>]*>/
+    const errorIdPattern = /\bid="([^"]+)"/
+    const controlDescribedByPattern = /aria-describedby="([^"]+)"/
+    const errorTag = errorTagPattern.exec(html)?.[0] ?? ''
+    const errorId = errorIdPattern.exec(errorTag)?.[1]
+    const controlDescribedBy = controlDescribedByPattern.exec(html)?.[1]
+
+    expect(html).toContain('data-part="error"')
+    expect(html).toContain('role="alert"')
+    expect(errorTag).not.toContain('hidden')
+    expect(html).toContain('Required')
+    expect(html).toContain('aria-invalid="true"')
+    expect(errorId).toBeDefined()
+    expect(controlDescribedBy).toBe(errorId)
+  })
+
+  it('keeps empty GhostFieldError hidden during SSR', async () => {
+    const Comp = defineComponent({
+      setup() {
+        return () =>
+          h(GhostField, null, () => [
+            h(GhostFieldLabel, {}, () => 'Name'),
+            h(GhostFieldError),
+            h(GhostFieldControl, null, {
+              default: (field: Record<string, unknown>) =>
+                h('input', { type: 'text', ...field }),
+            }),
+          ])
+      },
+    })
+
+    const html = await renderToString(createSSRApp(Comp))
+    expect(html).toMatch(/data-part="error"[^>]*hidden/)
+    expect(html).not.toMatch(/data-part="error"[^>]*role="alert"/)
+    expect(html).not.toContain('aria-describedby')
+  })
+
+  it('hydrates GhostFieldError without mismatches', async () => {
+    const Comp = defineComponent({
+      setup() {
+        return () =>
+          h(GhostField, { invalid: true }, () => [
+            h(GhostFieldLabel, {}, () => 'Name'),
+            h(GhostFieldError, {}, () => 'Required'),
+            h(GhostFieldControl, null, {
+              default: (field: Record<string, unknown>) =>
+                h('input', { type: 'text', ...field }),
+            }),
+          ])
+      },
+    })
+
+    const html = await renderToString(createSSRApp(Comp))
+    const container = document.createElement('div')
+    container.innerHTML = html
+    document.body.append(container)
+
+    const output: string[] = []
+    const warn = vi.spyOn(console, 'warn').mockImplementation((...args) => {
+      output.push(args.map(String).join(' '))
+    })
+    const error = vi.spyOn(console, 'error').mockImplementation((...args) => {
+      output.push(args.map(String).join(' '))
+    })
+
+    createSSRApp(Comp).mount(container)
+
+    const errorEl = container.querySelector('[data-part="error"]')
+    const input = container.querySelector('input')
+    expect(errorEl?.getAttribute('role')).toBe('alert')
+    expect(errorEl?.hasAttribute('hidden')).toBe(false)
+    expect(input?.getAttribute('aria-describedby')).toBe(errorEl?.id)
+    expect(output.join('\n')).not.toMatch(/hydrat/i)
+
+    warn.mockRestore()
+    error.mockRestore()
+    container.remove()
+  })
+
+  it('wires aria-describedby from slot content before mount on the client', () => {
+    const wrapper = mount(
+      defineComponent({
+        setup() {
+          return () =>
+            h(GhostField, { invalid: true }, () => [
+              h(GhostFieldLabel, {}, () => 'Name'),
+              h(GhostFieldError, {}, () => 'Required'),
+              h(GhostFieldControl, null, {
+                default: (field: Record<string, unknown>) =>
+                  h('input', { type: 'text', ...field }),
+              }),
+            ])
+        },
+      }),
+    )
+
+    const error = wrapper.get('[data-part="error"]')
+    const input = wrapper.get('input')
+    expect(error.attributes('role')).toBe('alert')
+    expect(error.attributes('hidden')).toBeUndefined()
+    expect(input.attributes('aria-describedby')).toBe(error.attributes('id'))
     wrapper.unmount()
   })
 })
