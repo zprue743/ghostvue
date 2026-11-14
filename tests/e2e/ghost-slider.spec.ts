@@ -34,6 +34,19 @@ test.describe('GhostSlider', () => {
       await page.getByRole('button', { name: 'Apply filter' }).click()
       await expect(page.getByText('Filter applied: 30–80')).toBeVisible()
 
+      const singleTrack = page
+        .getByTestId('slider-single')
+        .locator('[data-part="track"]')
+      const trackBox = await singleTrack.boundingBox()
+      expect(trackBox).not.toBeNull()
+      if (!trackBox) return
+      const trackY = trackBox.y + trackBox.height / 2
+      await page.mouse.move(trackBox.x + trackBox.width * 0.15, trackY)
+      await page.mouse.down()
+      await page.mouse.move(trackBox.x + trackBox.width * 0.75, trackY)
+      await page.mouse.up()
+      await expect(page.getByText('Price ceiling: 150')).toBeVisible()
+
       const themed = page.getByRole('slider', { name: 'Master volume' })
       await themed.focus()
       await page.keyboard.press('PageUp')

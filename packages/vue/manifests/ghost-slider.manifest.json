@@ -183,6 +183,7 @@
   "examples": [
     "slider/basic",
     "slider/range",
-    "slider/vertical"
+    "slider/vertical",
+    "slider/value-text"
   ]
 }

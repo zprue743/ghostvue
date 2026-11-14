@@ -43,6 +43,8 @@ export interface GhostSliderThumbProps {
   'aria-valuenow': string
   'aria-valuetext': string | undefined
   'aria-label': string | undefined
+  'aria-labelledby': string | undefined
+  'aria-disabled': 'true' | undefined
   'aria-orientation': 'vertical' | undefined
   style: CSSProperties
   onKeydown: (event: KeyboardEvent) => void
@@ -386,12 +388,29 @@ export function useGhostSlider(options: UseGhostSliderOptions = {}): {
     return snapValue(min + ratio * span, min, max, step.value)
   }
 
-  function startPointerDrag(index: 0 | 1, event: PointerEvent): void {
+  function thumbElement(index: 0 | 1): HTMLElement | null {
+    const root = toValue(options.root)
+    if (!root) return null
+    return root.querySelector<HTMLElement>(
+      `[data-part="thumb"][data-thumb-index="${String(index)}"]`,
+    )
+  }
+
+  function startPointerDrag(
+    index: 0 | 1,
+    event: PointerEvent,
+    captureTarget?: HTMLElement,
+  ): void {
     if (isDisabled.value || event.button !== 0) return
-    const target = event.currentTarget
-    if (!(target instanceof HTMLElement)) return
+    const fromEvent = event.currentTarget
+    const target =
+      captureTarget ??
+      (fromEvent instanceof HTMLElement ? fromEvent : undefined)
+    if (!target) return
     event.preventDefault()
-    target.setPointerCapture(event.pointerId)
+    if (typeof target.setPointerCapture === 'function') {
+      target.setPointerCapture(event.pointerId)
+    }
 
     const onMove = (moveEvent: PointerEvent): void => {
       setThumbValue(
@@ -403,10 +422,12 @@ export function useGhostSlider(options: UseGhostSliderOptions = {}): {
       target.removeEventListener('pointermove', onMove)
       target.removeEventListener('pointerup', onUp)
       target.removeEventListener('pointercancel', onUp)
-      try {
-        target.releasePointerCapture(event.pointerId)
-      } catch {
-        // Already released.
+      if (typeof target.releasePointerCapture === 'function') {
+        try {
+          target.releasePointerCapture(event.pointerId)
+        } catch {
+          // Already released.
+        }
       }
     }
     target.addEventListener('pointermove', onMove)
@@ -418,15 +439,18 @@ export function useGhostSlider(options: UseGhostSliderOptions = {}): {
   function onTrackPointerDown(event: PointerEvent): void {
     if (isDisabled.value || event.button !== 0) return
     const next = positionFromPointer(event.clientX, event.clientY)
-    if (!isRange.value) {
-      setThumbValue(0, next)
-      focusThumb(0)
+    const index: 0 | 1 = (() => {
+      if (!isRange.value) return 0
+      const [low, high] = value.value as readonly [number, number]
+      return Math.abs(next - low) <= Math.abs(next - high) ? 0 : 1
+    })()
+    setThumbValue(index, next)
+    const thumb = thumbElement(index)
+    if (thumb) {
+      startPointerDrag(index, event, thumb)
       return
     }
-    const [low, high] = value.value as readonly [number, number]
-    const pickLow = Math.abs(next - low) <= Math.abs(next - high)
-    setThumbValue(pickLow ? 0 : 1, next)
-    focusThumb(pickLow ? 0 : 1)
+    focusThumb(index)
   }
 
   const rootProps = computed((): GhostSliderRootProps => ({
@@ -455,6 +479,11 @@ export function useGhostSlider(options: UseGhostSliderOptions = {}): {
       const aria = thumbAriaBounds(thumbIndex)
       const customText = toValue(options.valueText)
       const thumbLabel = toValue(options.label)
+      const labelledBy = toValue(options.ariaLabelledby)
+      const thumbAccessibleName =
+        thumbLabel && isRange.value
+          ? `${thumbLabel} ${thumbIndex === 0 ? 'minimum' : 'maximum'}`
+          : thumbLabel
       items.push({
         'data-part': 'thumb',
         'data-thumb-index': thumbIndex === 0 ? '0' : '1',
@@ -464,12 +493,10 @@ export function useGhostSlider(options: UseGhostSliderOptions = {}): {
         'aria-valuemax': String(aria.max),
         'aria-valuenow': String(thumbValueAt(thumbIndex)),
         'aria-valuetext': !isRange.value ? customText : undefined,
-        'aria-label':
-          thumbLabel && (isRange.value || !customText)
-            ? isRange.value
-              ? `${thumbLabel} ${thumbIndex === 0 ? 'minimum' : 'maximum'}`
-              : thumbLabel
-            : undefined,
+        // Name and value text are separate: valuetext never substitutes for a name.
+        'aria-labelledby': labelledBy,
+        'aria-label': labelledBy == null ? thumbAccessibleName : undefined,
+        'aria-disabled': isDisabled.value ? 'true' : undefined,
         'aria-orientation':
           orientation.value === 'vertical' ? 'vertical' : undefined,
         style: thumbStyle(thumbIndex),

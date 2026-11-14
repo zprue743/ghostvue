@@ -41,10 +41,19 @@ const thumb0 = useTemplateRef<HTMLElement>('thumb0')
 const formInput0 = useTemplateRef<HTMLInputElement>('formInput0')
 const attrs = useAttrs()
 
-const accessibleLabel = computed(() => {
-  const fromAttrs = attrs['aria-label']
-  if (typeof fromAttrs === 'string' && fromAttrs.length > 0) return fromAttrs
-  return undefined
+const thumbNamingAttrs = computed(() => {
+  const ariaLabel = attrs['aria-label']
+  const ariaLabelledby = attrs['aria-labelledby']
+  return {
+    label:
+      typeof ariaLabel === 'string' && ariaLabel.length > 0
+        ? ariaLabel
+        : undefined,
+    ariaLabelledby:
+      typeof ariaLabelledby === 'string' && ariaLabelledby.length > 0
+        ? ariaLabelledby
+        : undefined,
+  }
 })
 
 const {
@@ -70,7 +79,8 @@ const {
   nameMax: () => props.nameMax,
   form: () => props.form,
   valueText: () => props.valueText,
-  label: () => accessibleLabel.value,
+  label: () => thumbNamingAttrs.value.label,
+  ariaLabelledby: () => thumbNamingAttrs.value.ariaLabelledby,
   root,
   onChange: (next) => {
     emit('update:modelValue', next)
@@ -108,9 +118,14 @@ const railStyle = computed(() =>
 const rootBindings = computed(() => {
   const base = rootProps.value
   const extraClass = attrs.class
+  const passthrough = { ...attrs } as Record<string, unknown>
+  delete passthrough['aria-label']
+  delete passthrough['aria-labelledby']
+  delete passthrough['class']
+  delete passthrough['style']
   return {
     ...base,
-    ...attrs,
+    ...passthrough,
     class: extraClass ? [base.class, extraClass] : base.class,
     style: {
       position: 'relative' as const,

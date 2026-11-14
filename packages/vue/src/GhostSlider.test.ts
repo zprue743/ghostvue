@@ -1,6 +1,6 @@
 import { mount } from '@vue/test-utils'
 import { h, nextTick, ref } from 'vue'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
 import { waitForFormResetDeferral } from './form-reset'
 import GhostSlider from './GhostSlider.vue'
@@ -104,12 +104,37 @@ describe('GhostSlider', () => {
     wrapper.unmount()
   })
 
-  it('omits tabindex on disabled thumbs', () => {
+  it('marks disabled thumbs inert for assistive technology', () => {
     const wrapper = mount(GhostSlider, {
       props: { disabled: true },
       attrs: { 'aria-label': 'Amount' },
     })
-    expect(wrapper.get('[role="slider"]').attributes('tabindex')).toBe('-1')
+    const thumb = wrapper.get('[role="slider"]')
+    expect(thumb.attributes('tabindex')).toBe('-1')
+    expect(thumb.attributes('aria-disabled')).toBe('true')
+    expect(thumb.attributes('aria-label')).toBe('Amount')
+  })
+
+  it('keeps aria-label when valueText is set', () => {
+    const wrapper = mount(GhostSlider, {
+      props: { valueText: '72 percent match', modelValue: 72 },
+      attrs: { 'aria-label': 'Match quality' },
+    })
+    const thumb = wrapper.get('[role="slider"]')
+    expect(thumb.attributes('aria-label')).toBe('Match quality')
+    expect(thumb.attributes('aria-valuetext')).toBe('72 percent match')
+  })
+
+  it('forwards aria-labelledby to the thumb', () => {
+    const wrapper = mount(GhostSlider, {
+      attrs: { 'aria-labelledby': 'price-label', id: 'price-slider' },
+    })
+    const thumb = wrapper.get('[role="slider"]')
+    expect(thumb.attributes('aria-labelledby')).toBe('price-label')
+    expect(thumb.attributes('aria-label')).toBeUndefined()
+    expect(
+      wrapper.get('[data-part="root"]').attributes('aria-labelledby'),
+    ).toBe(undefined)
   })
 
   it('maps vertical arrow keys to value changes', async () => {
@@ -159,18 +184,29 @@ describe('GhostSlider', () => {
       toJSON: () => ({}),
     })
 
+    const thumb = wrapper.get('[role="slider"]')
+    thumb.element.setPointerCapture = vi.fn()
+    thumb.element.releasePointerCapture = vi.fn()
     track.element.dispatchEvent(
       new PointerEvent('pointerdown', {
         clientX: 120,
         clientY: 4,
         button: 0,
         bubbles: true,
+        pointerId: 1,
+      }),
+    )
+    thumb.element.dispatchEvent(
+      new PointerEvent('pointermove', {
+        clientX: 160,
+        clientY: 4,
+        button: 0,
+        bubbles: true,
+        pointerId: 1,
       }),
     )
     await nextTick()
-    expect(wrapper.get('[role="slider"]').attributes('aria-valuenow')).toBe(
-      '60',
-    )
+    expect(thumb.attributes('aria-valuenow')).toBe('80')
     wrapper.unmount()
   })
 

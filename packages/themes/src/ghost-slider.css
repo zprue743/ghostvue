@@ -119,8 +119,8 @@
   }
 
   :where(
-    .ghost-theme .ghost-slider [data-part='thumb'][tabindex='-1'],
-    .ghost-themed-scope .ghost-slider [data-part='thumb'][tabindex='-1']
+    .ghost-theme .ghost-slider [data-part='thumb'][aria-disabled='true'],
+    .ghost-themed-scope .ghost-slider [data-part='thumb'][aria-disabled='true']
   ) {
     cursor: not-allowed;
     opacity: var(--ghost-action-disabled-opacity);

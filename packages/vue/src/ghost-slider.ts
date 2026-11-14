@@ -65,6 +65,8 @@ export interface UseGhostSliderOptions {
   form?: MaybeRefOrGetter<string | undefined>
   valueText?: MaybeRefOrGetter<string | undefined>
   label?: MaybeRefOrGetter<string | undefined>
+  /** Copied from root `aria-labelledby` for thumb sliders. */
+  ariaLabelledby?: MaybeRefOrGetter<string | undefined>
   onChange?: (value: GhostSliderValue) => void
   root?: MaybeRefOrGetter<HTMLElement | null | undefined>
 }

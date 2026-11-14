@@ -616,6 +616,13 @@ export const ghostExamples = [
     layer: 'themed',
   },
   {
+    id: 'slider/value-text',
+    title: 'Value text',
+    description:
+      'Named slider with aria-valuetext alongside the numeric value.',
+    layer: 'headless',
+  },
+  {
     id: 'tooltip/basic',
     title: 'Supplemental label',
     description:
