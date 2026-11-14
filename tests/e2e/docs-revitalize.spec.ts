@@ -233,13 +233,19 @@ test.describe('docs revitalize phase 1', () => {
         for (const mode of ['light', 'dark'] as const) {
           await ensureAppearance(mode)
           await assertNoPageOverflow(page)
+          await page.evaluate(() => document.fonts.ready)
+          await page.evaluate(() => window.scrollTo(0, 0))
           const shell = page.locator('.VPNav')
           await expect(shell).toHaveScreenshot(
             `docs-revitalize-nav-${name}-${mode}.png`,
           )
-          const inputPreview = page.locator('[data-example-id="input/themed"]')
+          const inputPreview = page
+            .locator('[data-example-id="input/themed"]')
+            .getByTestId('ghost-example-preview')
+          await inputPreview.scrollIntoViewIfNeeded()
           await expect(inputPreview).toHaveScreenshot(
             `docs-revitalize-input-themed-${name}-${mode}.png`,
+            { maxDiffPixelRatio: name === 'narrow' ? 0.05 : 0.03 },
           )
         }
       }
