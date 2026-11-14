@@ -5,6 +5,9 @@ import GhostButton from '../../packages/vue/src/GhostButton.vue'
 import GhostCollapsible from '../../packages/vue/src/GhostCollapsible.vue'
 import GhostCollapsibleContent from '../../packages/vue/src/GhostCollapsibleContent.vue'
 import GhostCollapsibleTrigger from '../../packages/vue/src/GhostCollapsibleTrigger.vue'
+import GhostDropdownMenu from '../../packages/vue/src/GhostDropdownMenu.vue'
+import GhostDropdownMenuContent from '../../packages/vue/src/GhostDropdownMenuContent.vue'
+import GhostDropdownMenuTrigger from '../../packages/vue/src/GhostDropdownMenuTrigger.vue'
 import GhostInlineAlert from '../../packages/vue/src/GhostInlineAlert.vue'
 import { expectSsrHydration, ssrHydrationRoot } from '../support/ssr-hydration'
 
@@ -49,6 +52,30 @@ describe('SSR hydration harness', () => {
         expect(html).toContain('aria-expanded="false"')
         expect(html).toContain('Hidden SSR disclosure')
         expect(html).toContain('hidden')
+      },
+    })
+  })
+
+  it('hydrates closed GhostDropdownMenu without mismatch', async () => {
+    const ClosedMenu = defineComponent({
+      name: 'ClosedDropdownMenuFixture',
+      setup() {
+        return () =>
+          h(GhostDropdownMenu, null, {
+            default: () => [
+              h(GhostDropdownMenuTrigger, null, () => 'Menu trigger'),
+              h(GhostDropdownMenuContent, null, () => 'Hidden menu panel'),
+            ],
+          })
+      },
+    })
+
+    await expectSsrHydration(ClosedMenu, {
+      assertServerHtml(html) {
+        expect(html).toContain('Menu trigger')
+        expect(html).toContain('aria-expanded="false"')
+        expect(html).toContain('aria-haspopup="menu"')
+        expect(html).not.toContain('Hidden menu panel')
       },
     })
   })

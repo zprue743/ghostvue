@@ -1,0 +1,114 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "generated",
+  "name": "GhostDropdownMenuContent",
+  "package": "@ghostvue/vue",
+  "status": "experimental",
+  "description": "Public GhostDropdownMenuContent component.",
+  "props": [
+    {
+      "name": "as",
+      "type": "GhostDropdownMenuContentElement",
+      "default": "div",
+      "required": false,
+      "description": "Declared prop `as`.",
+      "deprecated": false
+    },
+    {
+      "name": "flip",
+      "type": "boolean | GhostDropdownMenuFlipOptions",
+      "default": true,
+      "required": false,
+      "description": "Declared prop `flip`.",
+      "deprecated": false
+    },
+    {
+      "name": "offset",
+      "type": "boolean | GhostDropdownMenuOffsetOptions",
+      "required": false,
+      "description": "Declared prop `offset`.",
+      "deprecated": false
+    },
+    {
+      "name": "placement",
+      "type": "Placement",
+      "default": "bottom",
+      "required": false,
+      "description": "Declared prop `placement`.",
+      "deprecated": false
+    },
+    {
+      "name": "portal",
+      "type": "boolean",
+      "default": true,
+      "required": false,
+      "description": "Declared prop `portal`.",
+      "deprecated": false
+    },
+    {
+      "name": "portalTo",
+      "type": "GhostPortalTarget",
+      "default": "body",
+      "required": false,
+      "description": "Declared prop `portalTo`.",
+      "deprecated": false
+    },
+    {
+      "name": "shift",
+      "type": "boolean | GhostDropdownMenuShiftOptions",
+      "default": true,
+      "required": false,
+      "description": "Declared prop `shift`.",
+      "deprecated": false
+    },
+    {
+      "name": "strategy",
+      "type": "Strategy",
+      "default": "absolute",
+      "required": false,
+      "description": "Declared prop `strategy`.",
+      "deprecated": false
+    }
+  ],
+  "models": [],
+  "events": [],
+  "slots": [
+    {
+      "name": "default",
+      "props": [],
+      "description": "Primary content."
+    }
+  ],
+  "exposed": [
+    {
+      "name": "blur",
+      "kind": "method",
+      "type": "() => void",
+      "description": "Exposed method `blur`."
+    },
+    {
+      "name": "element",
+      "kind": "property",
+      "type": "HTMLElement | null",
+      "description": "Exposed property `element`."
+    },
+    {
+      "name": "focus",
+      "kind": "method",
+      "type": "(options?: FocusOptions) => void",
+      "description": "Exposed method `focus`."
+    }
+  ],
+  "styling": {
+    "parts": [],
+    "states": [],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "generic",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/",
+    "keyboard": {},
+    "requiredAriaAttributes": []
+  },
+  "examples": []
+}
