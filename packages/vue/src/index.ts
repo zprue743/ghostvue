@@ -364,3 +364,12 @@ export type {
   GhostNumberInputProps,
   UseGhostNumberInputOptions,
 } from './ghost-number-input'
+
+export { default as GhostSlider } from './GhostSlider.vue'
+export { useGhostSlider, type GhostSliderRootProps } from './use-ghost-slider'
+export type {
+  GhostSliderExposed,
+  GhostSliderProps,
+  GhostSliderValue,
+  GhostSliderOrientation,
+} from './ghost-slider'

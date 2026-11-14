@@ -37,6 +37,7 @@ export const docsSidebar: LlmsSidebarGroup[] = [
       { text: 'GhostRadioGroup', link: '/components/radio-group' },
       { text: 'GhostSeparator', link: '/components/separator' },
       { text: 'GhostSkeleton', link: '/components/skeleton' },
+      { text: 'GhostSlider', link: '/components/slider' },
       { text: 'GhostSpinner', link: '/components/spinner' },
       { text: 'GhostSwitch', link: '/components/switch' },
       { text: 'GhostTabs', link: '/components/tabs' },
@@ -107,6 +108,7 @@ export const docsSidebar: LlmsSidebarGroup[] = [
   {
     text: 'Contributing',
     items: [
+      { text: 'GhostSlider specification', link: '/components/slider-spec' },
       { text: 'GhostToolbar specification', link: '/components/toolbar-spec' },
       {
         text: 'GhostPagination specification',

@@ -240,4 +240,5 @@ export {
   GhostNumberInput,
   type GhostNumberInputExposed,
 } from './ghost-number-input'
+export { GhostSlider, type GhostSliderExposed } from './ghost-slider'
 export { GhostToolbar, type GhostToolbarExposed } from './ghost-toolbar'

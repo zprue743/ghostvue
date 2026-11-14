@@ -11,6 +11,7 @@ import {
   GhostKbd as GhostKbdThemed,
   GhostPagination as GhostPaginationThemed,
   GhostProgress as GhostProgressThemed,
+  GhostSlider as GhostSliderThemed,
   GhostSeparator as GhostSeparatorThemed,
   GhostEmptyState as GhostEmptyStateThemed,
   GhostSkeleton as GhostSkeletonThemed,
@@ -49,6 +50,7 @@ import {
   GhostProgress,
   GhostRadioGroup,
   GhostRadioGroupItem,
+  GhostSlider,
   GhostSeparator,
   GhostEmptyState,
   GhostSkeleton,
@@ -126,6 +128,21 @@ const digestSubmitted = ref('')
 const digestCadence = ref('daily')
 const digestCadenceSubmissions = ref(0)
 const digestCadenceFormValue = ref('')
+
+const priceFilter = ref(40)
+const priceInterval = ref<readonly [number, number]>([20, 80])
+const volumeLevel = ref(55)
+const sliderBoundSubmitted = ref('')
+
+function onSliderFilterSubmit(event: Event): void {
+  event.preventDefault()
+  const data = new FormData(event.target as HTMLFormElement)
+  const low = data.get('price-min')
+  const high = data.get('price-max')
+  const lowText = typeof low === 'string' ? low : ''
+  const highText = typeof high === 'string' ? high : ''
+  sliderBoundSubmitted.value = `${lowText}–${highText}`
+}
 
 function onDigestSubmit(event: Event): void {
   event.preventDefault()
@@ -784,6 +801,72 @@ function submitPlaygroundComment(event: Event): void {
           label="Deleting rows"
           tone="danger"
           data-testid="progress-themed-indeterminate"
+        />
+      </div>
+    </section>
+
+    <section aria-labelledby="slider-heading">
+      <h2 id="slider-heading">GhostSlider</h2>
+      <p>Price ceiling: {{ priceFilter }}</p>
+      <GhostSlider
+        v-model="priceFilter"
+        aria-label="Price ceiling"
+        :min="0"
+        :max="200"
+        :step="10"
+        data-testid="slider-single"
+      />
+      <p>
+        Interval:
+        {{ priceInterval[0] }}–{{ priceInterval[1] }}
+      </p>
+      <GhostSlider
+        v-model="priceInterval"
+        range
+        aria-label="Price band"
+        :min="0"
+        :max="200"
+        :step="10"
+        data-testid="slider-range"
+      />
+      <form
+        class="form-example"
+        data-testid="slider-filter-form"
+        @submit.prevent="onSliderFilterSubmit"
+      >
+        <GhostSlider
+          v-model="priceInterval"
+          range
+          aria-label="Filter bounds"
+          name="price-min"
+          name-max="price-max"
+          :min="0"
+          :max="200"
+          :step="10"
+        />
+        <GhostButtonThemed type="submit">Apply filter</GhostButtonThemed>
+      </form>
+      <p data-testid="slider-filter-result">
+        Filter applied: {{ sliderBoundSubmitted || 'none' }}
+      </p>
+      <div
+        class="slider-themed ghost-theme"
+        data-testid="slider-themed-stack"
+        style="display: flex; gap: 1.5rem; align-items: flex-end"
+      >
+        <GhostSliderThemed
+          v-model="volumeLevel"
+          aria-label="Master volume"
+          tone="neutral"
+          data-testid="slider-themed"
+        />
+        <GhostSliderThemed
+          :model-value="30"
+          orientation="vertical"
+          aria-label="Vertical fader"
+          size="lg"
+          disabled
+          data-testid="slider-themed-vertical"
         />
       </div>
     </section>

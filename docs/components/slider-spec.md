@@ -39,20 +39,20 @@ The control participates in native HTML forms through hidden inputs, and
 
 Headless `@ghostvue/vue` `GhostSlider` / `useGhostSlider`:
 
-| Prop           | Type                        | Default   | Contract                                                                                                                                 |
-| -------------- | --------------------------- | --------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
-| `modelValue`   | `number \| [number, number]` | omitted   | Controlled value. Single-thumb mode uses a number; `range` mode uses a readonly two-tuple `[minThumb, maxThumb]`. Omitted is uncontrolled. |
-| `defaultValue` | same as `modelValue`        | `min` or `[min, max]` in range mode | Initial value when `modelValue` is omitted. Captured at mount for reset; later prop changes ignored.                      |
-| `min`          | `number`                    | `0`       | Lower bound. Must be finite and `<= max` after coercion.                                                                               |
-| `max`          | `number`                    | `100`     | Upper bound. Must be finite and `>= min`.                                                                                                |
-| `step`         | `number`                    | `1`       | Snap increment. Must be finite and `> 0`; invalid values fall back to `1`.                                                               |
-| `range`        | `boolean`                   | `false`   | When `true`, two thumbs select an interval; `modelValue` / `defaultValue` use tuples.                                                    |
-| `orientation`  | `'horizontal' \| 'vertical'` | `'horizontal'` | Maps to `aria-orientation` and keyboard axis.                                                                     |
-| `disabled`     | `boolean`                   | `false`   | Native disabled: thumbs not operable, not focusable, hidden inputs not submitted.                                                        |
-| `name`         | `string`                    | omitted   | Form field name for the primary (or only) value. Hidden `type="hidden"`.                                                                 |
-| `nameMax`      | `string`                    | omitted   | In `range` mode, form field name for the high thumb. Ignored when `range` is false.                                                      |
-| `form`         | `string`                    | omitted   | Associates hidden inputs with an external form id.                                                                                       |
-| `valueText`    | `string`                    | omitted   | Optional `aria-valuetext` for the focused thumb when set; per-thumb overrides may use fallthrough on a thumb.                            |
+| Prop           | Type                         | Default                             | Contract                                                                                                                                   |
+| -------------- | ---------------------------- | ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| `modelValue`   | `number \| [number, number]` | omitted                             | Controlled value. Single-thumb mode uses a number; `range` mode uses a readonly two-tuple `[minThumb, maxThumb]`. Omitted is uncontrolled. |
+| `defaultValue` | same as `modelValue`         | `min` or `[min, max]` in range mode | Initial value when `modelValue` is omitted. Captured at mount for reset; later prop changes ignored.                                       |
+| `min`          | `number`                     | `0`                                 | Lower bound. Must be finite and `<= max` after coercion.                                                                                   |
+| `max`          | `number`                     | `100`                               | Upper bound. Must be finite and `>= min`.                                                                                                  |
+| `step`         | `number`                     | `1`                                 | Snap increment. Must be finite and `> 0`; invalid values fall back to `1`.                                                                 |
+| `range`        | `boolean`                    | `false`                             | When `true`, two thumbs select an interval; `modelValue` / `defaultValue` use tuples.                                                      |
+| `orientation`  | `'horizontal' \| 'vertical'` | `'horizontal'`                      | Maps to `aria-orientation` and keyboard axis.                                                                                              |
+| `disabled`     | `boolean`                    | `false`                             | Native disabled: thumbs not operable, not focusable, hidden inputs not submitted.                                                          |
+| `name`         | `string`                     | omitted                             | Form field name for the primary (or only) value. Hidden `type="hidden"`.                                                                   |
+| `nameMax`      | `string`                     | omitted                             | In `range` mode, form field name for the high thumb. Ignored when `range` is false.                                                        |
+| `form`         | `string`                     | omitted                             | Associates hidden inputs with an external form id.                                                                                         |
+| `valueText`    | `string`                     | omitted                             | Optional `aria-valuetext` for the focused thumb when set; per-thumb overrides may use fallthrough on a thumb.                              |
 
 Native attributes and listeners fall through to the **root** track container
 (`data-part="root"`). The component owns `aria-orientation` on the root when
@@ -68,10 +68,10 @@ Headless behavior lives in the composable; the SFC renders root, track, optional
 Themed `@ghostvue/themes` `GhostSlider` wraps the unstyled component and adds
 visual props:
 
-| Prop   | Type                                | Default    | Contract                                                                             |
-| ------ | ----------------------------------- | ---------- | ------------------------------------------------------------------------------------ |
-| `size` | `'sm' \| 'md' \| 'lg'`              | `'md'`     | Track thickness and thumb size. Default omits `data-size`.                           |
-| `tone` | `'accent' \| 'neutral' \| 'danger'` | `'accent'` | Selected range and thumb color intent. Default omits `data-tone`.                  |
+| Prop   | Type                                | Default    | Contract                                                          |
+| ------ | ----------------------------------- | ---------- | ----------------------------------------------------------------- |
+| `size` | `'sm' \| 'md' \| 'lg'`              | `'md'`     | Track thickness and thumb size. Default omits `data-size`.        |
+| `tone` | `'accent' \| 'neutral' \| 'danger'` | `'accent'` | Selected range and thumb color intent. Default omits `data-tone`. |
 
 ### v-model contracts
 
@@ -143,14 +143,14 @@ patterns.
 
 On the focused thumb (APG slider):
 
-| Key                    | Horizontal LTR     | Horizontal RTL | Vertical        |
-| ---------------------- | ------------------ | -------------- | --------------- |
-| Arrow toward max       | ArrowRight         | ArrowLeft      | ArrowUp         |
-| Arrow toward min       | ArrowLeft          | ArrowRight     | ArrowDown       |
-| Large step toward max  | PageUp             | PageUp         | PageUp          |
-| Large step toward min  | PageDown           | PageDown       | PageDown        |
-| Minimum                | Home               | Home           | Home            |
-| Maximum                | End                | End            | End             |
+| Key                   | Horizontal LTR | Horizontal RTL | Vertical  |
+| --------------------- | -------------- | -------------- | --------- |
+| Arrow toward max      | ArrowRight     | ArrowLeft      | ArrowUp   |
+| Arrow toward min      | ArrowLeft      | ArrowRight     | ArrowDown |
+| Large step toward max | PageUp         | PageUp         | PageUp    |
+| Large step toward min | PageDown       | PageDown       | PageDown  |
+| Minimum               | Home           | Home           | Home      |
+| Maximum               | End            | End            | End       |
 
 RTL is resolved from `dir` on the root or an ancestor, same as
 `useRovingFocus`. Arrow keys do **not** move focus between thumbs; Tab moves to
@@ -170,12 +170,12 @@ accessible name on the root via fallthrough `aria-label` / `aria-labelledby`.
 
 Headless `data-part` hooks:
 
-| Part    | Description                                      |
-| ------- | ------------------------------------------------ |
-| `root`  | Positioning context and attribute fallthrough host |
-| `track` | Full span of the axis                            |
+| Part    | Description                                                 |
+| ------- | ----------------------------------------------------------- |
+| `root`  | Positioning context and attribute fallthrough host          |
+| `track` | Full span of the axis                                       |
 | `range` | Selected interval fill (range mode or single fill from min) |
-| `thumb` | Draggable value handle (`data-thumb-index` `0` \| `1`) |
+| `thumb` | Draggable value handle (`data-thumb-index` `0` \| `1`)      |
 
 Thumbs are positioned with inline axis percentage. Vertical sliders use block
 axis percentage on the thumb.

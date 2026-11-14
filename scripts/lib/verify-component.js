@@ -251,12 +251,13 @@ export async function verifyComponent({
           ]
         : [],
       manifests: async () => {
-        const sync = await syncRepositoryManifests({
-          repositoryRoot,
-          componentNames: component.names,
-        })
+        const sync = await syncRepositoryManifests({ repositoryRoot })
         const violations = [
-          ...sync.violations,
+          ...sync.violations.filter((violation) =>
+            component.manifests.some((manifestPath) =>
+              violation.includes(manifestPath),
+            ),
+          ),
           ...(await validateExampleManifests(repositoryRoot, component.names)),
           ...(await validateManifestSchemas(
             repositoryRoot,

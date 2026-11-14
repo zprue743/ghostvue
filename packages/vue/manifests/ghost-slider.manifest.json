@@ -1,0 +1,188 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "generated",
+  "name": "GhostSlider",
+  "package": "@ghostvue/vue",
+  "status": "experimental",
+  "description": "Headless range input with APG slider semantics, optional two-thumb range mode, stepped keyboard interaction, and hidden form inputs. GhostSlider is the unstyled root; useGhostSlider owns the model.",
+  "props": [
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Declared prop `disabled`.",
+      "deprecated": false
+    },
+    {
+      "name": "modelValue",
+      "type": "GhostSliderValue",
+      "required": false,
+      "description": "Declared prop `modelValue`.",
+      "deprecated": false
+    },
+    {
+      "name": "defaultValue",
+      "type": "GhostSliderValue",
+      "required": false,
+      "description": "Declared prop `defaultValue`.",
+      "deprecated": false
+    },
+    {
+      "name": "max",
+      "type": "number",
+      "default": 100,
+      "required": false,
+      "description": "Declared prop `max`.",
+      "deprecated": false
+    },
+    {
+      "name": "valueText",
+      "type": "string",
+      "required": false,
+      "description": "Declared prop `valueText`.",
+      "deprecated": false
+    },
+    {
+      "name": "orientation",
+      "type": "'horizontal' | 'vertical'",
+      "default": "horizontal",
+      "required": false,
+      "description": "Declared prop `orientation`.",
+      "deprecated": false
+    },
+    {
+      "name": "min",
+      "type": "number",
+      "default": 0,
+      "required": false,
+      "description": "Declared prop `min`.",
+      "deprecated": false
+    },
+    {
+      "name": "step",
+      "type": "number",
+      "default": 1,
+      "required": false,
+      "description": "Declared prop `step`.",
+      "deprecated": false
+    },
+    {
+      "name": "range",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Declared prop `range`.",
+      "deprecated": false
+    },
+    {
+      "name": "name",
+      "type": "string",
+      "required": false,
+      "description": "Declared prop `name`.",
+      "deprecated": false
+    },
+    {
+      "name": "nameMax",
+      "type": "string",
+      "required": false,
+      "description": "Declared prop `nameMax`.",
+      "deprecated": false
+    },
+    {
+      "name": "form",
+      "type": "string",
+      "required": false,
+      "description": "Declared prop `form`.",
+      "deprecated": false
+    }
+  ],
+  "models": [
+    {
+      "prop": "modelValue",
+      "event": "update:modelValue",
+      "type": "GhostSliderValue",
+      "description": "v-model binding for `modelValue`."
+    }
+  ],
+  "events": [],
+  "slots": [
+    {
+      "name": "default",
+      "props": [],
+      "description": "Optional inner content. Prefer aria-labelledby or an external label."
+    }
+  ],
+  "exposed": [
+    {
+      "name": "element",
+      "kind": "property",
+      "type": "HTMLElement | null",
+      "description": "Root element after mount; null before mount."
+    },
+    {
+      "name": "value",
+      "kind": "property",
+      "type": "GhostSliderValue",
+      "description": "Exposed property `value`."
+    },
+    {
+      "name": "focus",
+      "kind": "method",
+      "type": "(options?: FocusOptions) => void",
+      "description": "Exposed method `focus`."
+    },
+    {
+      "name": "blur",
+      "kind": "method",
+      "type": "() => void",
+      "description": "Exposed method `blur`."
+    }
+  ],
+  "styling": {
+    "parts": [
+      {
+        "name": "root",
+        "description": "Track container; native attributes fall through here."
+      },
+      {
+        "name": "track",
+        "description": "Full axis span; pointer press moves the nearest thumb."
+      },
+      {
+        "name": "range",
+        "description": "Selected interval or fill from min to the value."
+      },
+      {
+        "name": "thumb",
+        "description": "role=slider handle; data-thumb-index 0 or 1 in range mode."
+      }
+    ],
+    "states": [],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "slider",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/slider/",
+    "keyboard": {
+      "ArrowRight": "Increase (horizontal LTR); flips in RTL",
+      "ArrowLeft": "Decrease (horizontal LTR); flips in RTL",
+      "ArrowUp": "Increase on vertical",
+      "ArrowDown": "Decrease on vertical",
+      "PageUp": "Large step toward maximum",
+      "PageDown": "Large step toward minimum",
+      "Home": "Minimum",
+      "End": "Maximum"
+    },
+    "requiredAriaAttributes": [
+      "aria-valuemin",
+      "aria-valuemax",
+      "aria-valuenow"
+    ]
+  },
+  "examples": [
+    "slider/basic",
+    "slider/range",
+    "slider/vertical"
+  ]
+}

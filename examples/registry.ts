@@ -598,6 +598,24 @@ export const ghostExamples = [
     layer: 'themed',
   },
   {
+    id: 'slider/basic',
+    title: 'Single value',
+    description: 'Headless numeric slider with stepped values.',
+    layer: 'headless',
+  },
+  {
+    id: 'slider/range',
+    title: 'Range filter',
+    description: 'Two-thumb interval selection for tables.',
+    layer: 'headless',
+  },
+  {
+    id: 'slider/vertical',
+    title: 'Vertical themed',
+    description: 'Themed vertical orientation and tokens.',
+    layer: 'themed',
+  },
+  {
     id: 'tooltip/basic',
     title: 'Supplemental label',
     description:
