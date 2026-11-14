@@ -19,7 +19,15 @@ export default defineConfig({
   },
   projects: [
     {
+      // Preserve the existing chromium snapshot names for visual baselines.
       name: 'chromium',
+      grep: /@visual/,
+      retries: 0,
+      use: { ...devices['Desktop Chrome'] },
+    },
+    {
+      name: 'chromium-e2e',
+      grepInvert: /@visual/,
       use: { ...devices['Desktop Chrome'] },
     },
   ],
