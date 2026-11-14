@@ -8,7 +8,7 @@ import { isDisabledElement, isFocusable } from './get-tabbable-elements'
 export function applyToggleGroupSelectionTabStops(
   groupRoot: HTMLElement,
   tabStopValue: string | undefined,
-): void {
+): HTMLElement | undefined {
   const items = Array.from(
     groupRoot.querySelectorAll<HTMLElement>('.ghost-toggle-group-item'),
   ).filter((item) => item.closest('.ghost-toggle-group') === groupRoot)
@@ -33,4 +33,6 @@ export function applyToggleGroupSelectionTabStops(
     }
     item.tabIndex = item === stop ? 0 : -1
   }
+
+  return stop
 }

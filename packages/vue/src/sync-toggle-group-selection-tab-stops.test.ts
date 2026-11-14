@@ -13,9 +13,10 @@ describe('applyToggleGroupSelectionTabStops', () => {
     second.className = 'ghost-toggle-group-item'
     second.dataset['ghostToggleGroupValue'] = 'two'
     root.append(first, second)
-    applyToggleGroupSelectionTabStops(root, 'two')
+    const stop = applyToggleGroupSelectionTabStops(root, 'two')
     expect(first.tabIndex).toBe(-1)
     expect(second.tabIndex).toBe(0)
+    expect(stop).toBe(second)
   })
 
   it('ignores items that belong to a nested toggle group', () => {

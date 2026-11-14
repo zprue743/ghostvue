@@ -30,7 +30,7 @@
     },
     {
       "name": "orientation",
-      "type": "'horizontal' | 'vertical'",
+      "type": "'vertical' | 'horizontal'",
       "default": "horizontal",
       "required": false,
       "description": "Arrow-key roving layout.",

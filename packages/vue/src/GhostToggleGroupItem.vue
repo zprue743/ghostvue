@@ -106,7 +106,6 @@ const itemAttrs = computed(() => {
   }
 
   const customType = attrs['type']
-  const customTabindex = attrs['tabindex']
   const extraClass = attrs.class
 
   const base: Record<string, unknown> = {
@@ -120,10 +119,6 @@ const itemAttrs = computed(() => {
     'data-part': 'item',
     'data-ghost-toggle-group': '',
     'data-state': pressed.value ? 'on' : 'off',
-  }
-
-  if (customTabindex !== undefined) {
-    base['tabindex'] = customTabindex
   }
 
   if (isNativeButtonTag.value) {

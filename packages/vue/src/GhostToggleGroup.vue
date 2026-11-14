@@ -162,11 +162,10 @@ defineExpose<GhostToggleGroupExposed>({
     if (!root) {
       return
     }
-    applyToggleGroupSelectionTabStops(root, group.tabStopValue.value)
-    const stop =
-      root.querySelector<HTMLElement>(
-        '.ghost-toggle-group-item[tabindex="0"]',
-      ) ?? root.querySelector<HTMLElement>('.ghost-toggle-group-item')
+    const stop = applyToggleGroupSelectionTabStops(
+      root,
+      group.tabStopValue.value,
+    )
     stop?.focus(options)
   },
   blur() {

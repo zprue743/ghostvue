@@ -340,6 +340,47 @@ describe('GhostToggleGroup', () => {
     expect(item.attributes('aria-pressed')).toBe('false')
   })
 
+  it('focus() targets the outer stop when a nested group appears first in the DOM', async () => {
+    const component = ref<GhostToggleGroupExposed | null>(null)
+    const wrapper = mount(
+      defineComponent({
+        setup() {
+          return () =>
+            h(
+              GhostToggleGroup,
+              {
+                ref: component,
+                'aria-label': 'Outer',
+                defaultValue: 'outer',
+              },
+              {
+                default: () => [
+                  h(
+                    GhostToggleGroup,
+                    { 'aria-label': 'Inner', defaultValue: 'inner' },
+                    {
+                      default: () =>
+                        h(
+                          GhostToggleGroupItem,
+                          { value: 'inner' },
+                          () => 'Inner',
+                        ),
+                    },
+                  ),
+                  h(GhostToggleGroupItem, { value: 'outer' }, () => 'Outer'),
+                ],
+              },
+            )
+        },
+      }),
+      { attachTo: document.body },
+    )
+    attached.push(wrapper)
+    await flushPromises()
+    component.value?.focus()
+    expect(document.activeElement?.textContent).toBe('Outer')
+  })
+
   it('exposes focus() on the group root', async () => {
     const component = ref<GhostToggleGroupExposed | null>(null)
     const wrapper = mount(
