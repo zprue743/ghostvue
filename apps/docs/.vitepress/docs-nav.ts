@@ -20,6 +20,7 @@ export const docsSidebar: LlmsSidebarGroup[] = [
       { text: 'GhostBadge', link: '/components/badge' },
       { text: 'GhostButton', link: '/components/button' },
       { text: 'GhostDialog', link: '/components/dialog' },
+      { text: 'GhostInput', link: '/components/input' },
       {
         text: 'GhostInteractiveSurface',
         link: '/components/interactive-surface',
@@ -109,6 +110,10 @@ export const docsSidebar: LlmsSidebarGroup[] = [
       {
         text: 'GhostDialog specification',
         link: '/components/dialog-spec',
+      },
+      {
+        text: 'GhostInput specification',
+        link: '/components/input-spec',
       },
       {
         text: 'GhostInteractiveSurface specification',

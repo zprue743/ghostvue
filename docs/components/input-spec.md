@@ -41,15 +41,15 @@ descriptions with native `id` / `aria-*` fallthrough.
 
 Headless `@ghostvue/vue` `GhostInput` / `useGhostInput`:
 
-| Prop           | Type              | Default     | Contract                                                                                                                                                         |
-| -------------- | ----------------- | ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `modelValue`   | `string`          | omitted     | Controlled value. `undefined` is uncontrolled; `''` is a real empty value.                                                                                       |
-| `defaultValue` | `string`          | `''`        | Initial uncontrolled value only. Later changes are ignored, matching `useControllableState`.                                                                     |
-| `type`         | `GhostInputType`  | `'text'`    | Native text-like input type.                                                                                                                                     |
-| `disabled`     | `boolean`         | `false`     | Native disabled: not focusable, not editable, omitted from form submit.                                                                                          |
-| `readonly`     | `boolean`         | `false`     | Native readonly: focusable and submitted, not editable.                                                                                                          |
-| `invalid`      | `boolean`         | `false`     | Consumer-owned validity. Sets `aria-invalid="true"` and `data-state="invalid"`. Does not run or replace native constraint validation.                            |
-| `required`     | `boolean`         | `false`     | Native required constraint.                                                                                                                                      |
+| Prop           | Type             | Default  | Contract                                                                                                                              |
+| -------------- | ---------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| `modelValue`   | `string`         | omitted  | Controlled value. `undefined` is uncontrolled; `''` is a real empty value.                                                            |
+| `defaultValue` | `string`         | `''`     | Initial uncontrolled value only. Later changes are ignored, matching `useControllableState`.                                          |
+| `type`         | `GhostInputType` | `'text'` | Native text-like input type.                                                                                                          |
+| `disabled`     | `boolean`        | `false`  | Native disabled: not focusable, not editable, omitted from form submit.                                                               |
+| `readonly`     | `boolean`        | `false`  | Native readonly: focusable and submitted, not editable.                                                                               |
+| `invalid`      | `boolean`        | `false`  | Consumer-owned validity. Sets `aria-invalid="true"` and `data-state="invalid"`. Does not run or replace native constraint validation. |
+| `required`     | `boolean`        | `false`  | Native required constraint.                                                                                                           |
 
 ```ts
 type GhostInputType = 'text' | 'search' | 'email' | 'password' | 'tel' | 'url'
@@ -80,10 +80,10 @@ association stays native so Field can own id wiring later.
 Themed `@ghostvue/themes` `GhostInput` wraps the unstyled component and adds
 visual props. Same behavioral props; these exist only on the themed wrapper:
 
-| Prop    | Type                    | Default | Contract                                                                    |
-| ------- | ----------------------- | ------- | --------------------------------------------------------------------------- |
-| `size`  | `'sm' \| 'md' \| 'lg'`  | `'md'`  | Control size. The default omits `data-size` so CSS treats a missing hook as `md`. |
-| `block` | `boolean`               | `false` | Stretch to the available inline size via `data-block`.                      |
+| Prop    | Type                   | Default | Contract                                                                          |
+| ------- | ---------------------- | ------- | --------------------------------------------------------------------------------- |
+| `size`  | `'sm' \| 'md' \| 'lg'` | `'md'`  | Control size. The default omits `data-size` so CSS treats a missing hook as `md`. |
+| `block` | `boolean`              | `false` | Stretch to the available inline size via `data-block`.                            |
 
 Importing the themed component loads the default stylesheet and wraps the
 instance in `.ghost-themed-scope` so recipe CSS applies without forcing every
