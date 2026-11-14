@@ -135,34 +135,6 @@ export function serializeManifest(manifest) {
   return `${JSON.stringify(manifest, null, 2)}\n`
 }
 
-function sortByNameOrProp(items) {
-  if (!Array.isArray(items)) return items
-  return [...items].sort((left, right) => {
-    const leftKey =
-      left && typeof left === 'object' ? (left.name ?? left.prop ?? '') : ''
-    const rightKey =
-      right && typeof right === 'object' ? (right.name ?? right.prop ?? '') : ''
-    return String(leftKey).localeCompare(String(rightKey))
-  })
-}
-
-/** Stale check only: vue-component-meta prop order can drift without API changes. */
-export function canonicalManifestSerialization(manifest) {
-  const normalized = structuredClone(manifest)
-  normalized.props = sortByNameOrProp(normalized.props)
-  normalized.models = sortByNameOrProp(normalized.models)
-  normalized.events = sortByNameOrProp(normalized.events)
-  normalized.exposed = sortByNameOrProp(normalized.exposed)
-  if (Array.isArray(normalized.slots)) {
-    normalized.slots = normalized.slots.map((slot) => ({
-      ...slot,
-      props: sortByNameOrProp(slot.props),
-    }))
-    normalized.slots = sortByNameOrProp(normalized.slots)
-  }
-  return serializeManifest(normalized)
-}
-
 export function normalizeType(type, { optional = false } = {}) {
   let result = type.trim()
   if (optional) {
@@ -706,11 +678,12 @@ export async function syncRepositoryManifests({
         ? await readJsonObject(absoluteManifest)
         : null
       const next = mergeManifest(derived, existing)
+      const serialized = serializeManifest(next)
       checked.push(relativeManifest)
 
       if (write) {
         await mkdir(pkg.manifestsDir, { recursive: true })
-        await writeFile(absoluteManifest, serializeManifest(next))
+        await writeFile(absoluteManifest, serialized)
         written.push(relativeManifest)
         continue
       }
@@ -723,11 +696,7 @@ export async function syncRepositoryManifests({
       }
 
       const current = await readFile(absoluteManifest, 'utf8')
-      const onDisk = JSON.parse(current)
-      if (
-        canonicalManifestSerialization(next) !==
-        canonicalManifestSerialization(onDisk)
-      ) {
+      if (current !== serialized) {
         violations.push(
           `${relativeManifest} is stale versus ${relative}. Run pnpm manifests:write`,
         )

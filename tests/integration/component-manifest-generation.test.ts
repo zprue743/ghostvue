@@ -369,32 +369,6 @@ describe(
       expect(check.violations.some((item) => item.includes('stale'))).toBe(true)
     })
 
-    it('treats prop order-only drift as fresh when checking staleness', async () => {
-      const manifestsDir = await mkdtemp(join(tmpdir(), 'ghost-manifests-'))
-      const packages = await fixturePackages(manifestsDir)
-
-      await syncRepositoryManifests({
-        repositoryRoot,
-        write: true,
-        packages,
-      })
-
-      const manifestPath = join(manifestsDir, 'ghost-widget.manifest.json')
-      const fresh = parseJsonObject(await readFile(manifestPath, 'utf8'))
-      const reordered = {
-        ...fresh,
-        props: [...asPropList(fresh.props)].reverse(),
-      }
-      await writeFile(manifestPath, serializeManifest(reordered))
-
-      const check = await syncRepositoryManifests({
-        repositoryRoot,
-        write: false,
-        packages,
-      })
-      expect(check.ok).toBe(true)
-    })
-
     it('rewrites machine fields without dropping later hand-authored edits', async () => {
       const manifestsDir = await mkdtemp(join(tmpdir(), 'ghost-manifests-'))
       const packages = await fixturePackages(manifestsDir)
