@@ -7,14 +7,6 @@
   "description": "Headless range input with APG slider semantics, optional two-thumb range mode, stepped keyboard interaction, and hidden form inputs. GhostSlider is the unstyled root; useGhostSlider owns the model.",
   "props": [
     {
-      "name": "disabled",
-      "type": "boolean",
-      "default": false,
-      "required": false,
-      "description": "Declared prop `disabled`.",
-      "deprecated": false
-    },
-    {
       "name": "modelValue",
       "type": "GhostSliderValue",
       "required": false,
@@ -26,6 +18,14 @@
       "type": "GhostSliderValue",
       "required": false,
       "description": "Declared prop `defaultValue`.",
+      "deprecated": false
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Declared prop `disabled`.",
       "deprecated": false
     },
     {
