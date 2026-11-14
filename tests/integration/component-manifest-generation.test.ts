@@ -11,6 +11,8 @@ import {
   extractComponentMeta,
   mergeManifest,
   normalizeType,
+  compareManifestMemberNames,
+  sortUnionsInType,
   parseDefaultValue,
   pascalToKebab,
   resetMetaCheckers,
@@ -166,6 +168,27 @@ describe('manifest derivation helpers', () => {
     ).toBe('(options?: FocusOptions) => void')
   })
 
+  it('sorts union members into stable lexicographic order', () => {
+    expect(normalizeType("'vertical' | 'horizontal'")).toBe(
+      "'horizontal' | 'vertical'",
+    )
+    expect(normalizeType('"horizontal" | "vertical"')).toBe(
+      "'horizontal' | 'vertical'",
+    )
+    expect(sortUnionsInType('null | HTMLInputElement')).toBe(
+      'HTMLInputElement | null',
+    )
+    expect(sortUnionsInType("Array<'two' | 'one'>")).toBe(
+      "Array<'one' | 'two'>",
+    )
+  })
+
+  it('compares manifest member names with a stable locale', () => {
+    expect(compareManifestMemberNames('default', 'icon')).toBeLessThan(0)
+    expect(compareManifestMemberNames('icon', 'default')).toBeGreaterThan(0)
+    expect(compareManifestMemberNames('disabled', 'disabled')).toBe(0)
+  })
+
   it('parses literal defaults into JSON schema values', () => {
     expect(parseDefaultValue('"button"')).toEqual({
       present: true,
@@ -225,6 +248,11 @@ describe(
       )
       expect(derived.props.some((prop) => prop.name === 'class')).toBe(false)
       expect(derived.props.some((prop) => prop.name === 'key')).toBe(false)
+      expect(derived.props.map((prop) => prop.name)).toEqual(
+        [...derived.props.map((prop) => prop.name)].sort((left, right) =>
+          compareManifestMemberNames(left, right),
+        ),
+      )
 
       expect(derived.models).toEqual([
         expect.objectContaining({
@@ -233,10 +261,19 @@ describe(
           type: 'boolean',
         }),
       ])
-      expect(derived.events.map((event) => event.name).sort()).toEqual([
+      expect(derived.events.map((event) => event.name)).toEqual([
         'close',
         'select',
       ])
+      expect(derived.slots.map((slot) => slot.name)).toEqual([
+        'default',
+        'icon',
+      ])
+      expect(derived.exposed.map((member) => member.name)).toEqual(
+        [...derived.exposed.map((member) => member.name)].sort((left, right) =>
+          compareManifestMemberNames(left, right),
+        ),
+      )
       expect(derived.events).toEqual(
         expect.arrayContaining([
           expect.objectContaining({ name: 'close', payloadType: 'void' }),
