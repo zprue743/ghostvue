@@ -57,9 +57,10 @@ Native attributes fall through to the `nav`. Template refs expose `element`,
 ## Keyboard and focus
 
 Each control stays in the native tab order (no roving tabindex). `Enter` /
-`Space` activate the focused button. Edge controls and the current page use
+`Space` activate the focused button. Inactive edge controls use
 `aria-disabled="true"` so focus is not lost when a control becomes inactive.
-Native `disabled` is reserved for the whole component.
+The current page is marked with `aria-current="page"` only. Native `disabled` is
+reserved for the whole component.
 
 ## See also
 

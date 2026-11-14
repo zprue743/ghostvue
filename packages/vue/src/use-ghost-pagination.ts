@@ -164,13 +164,10 @@ export function useGhostPagination(options: UseGhostPaginationOptions): {
 
   function pageButtonProps(target: number): GhostPaginationControlProps {
     const label = getPageLabel.value(target)
-    return makeControl(
-      'page',
-      label,
-      target,
-      target === effectivePage.value,
-      target === effectivePage.value,
-    )
+    const isCurrent = target === effectivePage.value
+    // Current page stays focusable and actionable-looking: aria-current conveys
+    // selection; aria-disabled is only for edge controls with no destination.
+    return makeControl('page', label, target, false, isCurrent)
   }
 
   const ellipsisMarkerProps = computed(

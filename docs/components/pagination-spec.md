@@ -100,11 +100,11 @@ Exposed instance API:
 
 ## State model
 
-Effective page is always clamped to `[1, pageCount]`. Edge controls and the
-current page become visually inactive with `aria-disabled="true"` and
-`data-disabled` when their action would not change the page, but they stay
-focusable. Native `disabled` applies only when the whole component `disabled`
-prop is `true`.
+Effective page is always clamped to `[1, pageCount]`. Edge controls become
+visually inactive with `aria-disabled="true"` and `data-disabled` when their
+action would not change the page, but they stay focusable. The current numbered
+page uses `aria-current="page"` only (no `aria-disabled`). Native `disabled`
+applies only when the whole component `disabled` prop is `true`.
 
 ### Loading, empty, disabled, read-only, and error states
 
