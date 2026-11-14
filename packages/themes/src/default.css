@@ -26,6 +26,8 @@
 @import './ghost-tabs.css';
 @import './ghost-tooltip.css';
 
+@import './ghost-pagination.css';
+
 @layer ghostvue-theme {
   :where(.ghost-themed-scope) {
     display: contents;

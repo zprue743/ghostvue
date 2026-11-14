@@ -273,6 +273,18 @@ export type {
   UseGhostTabsOptions,
   UseGhostTabsReturn,
 } from './ghost-tabs'
+export { default as GhostPagination } from './GhostPagination.vue'
+export {
+  getPaginationRange,
+  type GhostPaginationRangeEntry,
+} from './get-pagination-range'
+export { useGhostPagination } from './use-ghost-pagination'
+export type {
+  GhostPaginationExposed,
+  GhostPaginationProps,
+  GhostPaginationRootProps,
+  UseGhostPaginationOptions,
+} from './ghost-pagination'
 export { default as GhostTooltip } from './GhostTooltip.vue'
 export { default as GhostTooltipTrigger } from './GhostTooltipTrigger.vue'
 export { default as GhostTooltipContent } from './GhostTooltipContent.vue'

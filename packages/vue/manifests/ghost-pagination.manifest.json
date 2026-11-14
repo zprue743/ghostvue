@@ -1,0 +1,242 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "generated",
+  "name": "GhostPagination",
+  "package": "@ghostvue/vue",
+  "status": "experimental",
+  "description": "Headless pagination navigation with first, previous, next, last, and numbered page controls. useGhostPagination owns page state; getPaginationRange builds ellipsis markers.",
+  "props": [
+    {
+      "name": "modelValue",
+      "type": "number",
+      "required": false,
+      "description": "Declared prop `modelValue`.",
+      "deprecated": false
+    },
+    {
+      "name": "defaultPage",
+      "type": "number",
+      "default": 1,
+      "required": false,
+      "description": "Declared prop `defaultPage`.",
+      "deprecated": false
+    },
+    {
+      "name": "pageCount",
+      "type": "number",
+      "required": true,
+      "description": "Declared prop `pageCount`.",
+      "deprecated": false
+    },
+    {
+      "name": "siblingCount",
+      "type": "number",
+      "default": 1,
+      "required": false,
+      "description": "Declared prop `siblingCount`.",
+      "deprecated": false
+    },
+    {
+      "name": "boundaryCount",
+      "type": "number",
+      "default": 1,
+      "required": false,
+      "description": "Declared prop `boundaryCount`.",
+      "deprecated": false
+    },
+    {
+      "name": "showEdges",
+      "type": "boolean",
+      "default": true,
+      "required": false,
+      "description": "Declared prop `showEdges`.",
+      "deprecated": false
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Declared prop `disabled`.",
+      "deprecated": false
+    },
+    {
+      "name": "ariaLabel",
+      "type": "string",
+      "default": "Pagination",
+      "required": false,
+      "description": "Declared prop `ariaLabel`.",
+      "deprecated": false
+    },
+    {
+      "name": "getPageLabel",
+      "type": "((page: number) => string)",
+      "required": false,
+      "description": "Declared prop `getPageLabel`.",
+      "deprecated": false
+    },
+    {
+      "name": "previousLabel",
+      "type": "string",
+      "default": "Previous page",
+      "required": false,
+      "description": "Declared prop `previousLabel`.",
+      "deprecated": false
+    },
+    {
+      "name": "nextLabel",
+      "type": "string",
+      "default": "Next page",
+      "required": false,
+      "description": "Declared prop `nextLabel`.",
+      "deprecated": false
+    },
+    {
+      "name": "firstLabel",
+      "type": "string",
+      "default": "First page",
+      "required": false,
+      "description": "Declared prop `firstLabel`.",
+      "deprecated": false
+    },
+    {
+      "name": "lastLabel",
+      "type": "string",
+      "default": "Last page",
+      "required": false,
+      "description": "Declared prop `lastLabel`.",
+      "deprecated": false
+    },
+    {
+      "name": "ellipsisLabel",
+      "type": "string",
+      "default": "More pages",
+      "required": false,
+      "description": "Declared prop `ellipsisLabel`.",
+      "deprecated": false
+    }
+  ],
+  "models": [
+    {
+      "prop": "modelValue",
+      "event": "update:modelValue",
+      "type": "number",
+      "description": "v-model binding for `modelValue`."
+    }
+  ],
+  "events": [],
+  "slots": [
+    {
+      "name": "page",
+      "props": [
+        {
+          "name": "page",
+          "type": "number",
+          "description": "Slot prop `page`."
+        },
+        {
+          "name": "current",
+          "type": "boolean",
+          "description": "Slot prop `current`."
+        }
+      ],
+      "description": "Named slot `page`."
+    },
+    {
+      "name": "ellipsis",
+      "props": [
+        {
+          "name": "placement",
+          "type": "'start' | 'end'",
+          "description": "Slot prop `placement`."
+        }
+      ],
+      "description": "Named slot `ellipsis`."
+    }
+  ],
+  "exposed": [
+    {
+      "name": "element",
+      "kind": "property",
+      "type": "HTMLElement | null",
+      "description": "Root element after mount; null before mount."
+    },
+    {
+      "name": "focus",
+      "kind": "method",
+      "type": "(options?: FocusOptions) => void",
+      "description": "Exposed method `focus`."
+    },
+    {
+      "name": "blur",
+      "kind": "method",
+      "type": "() => void",
+      "description": "Exposed method `blur`."
+    }
+  ],
+  "styling": {
+    "parts": [
+      {
+        "name": "root",
+        "description": "Navigation landmark."
+      },
+      {
+        "name": "list",
+        "description": "Horizontal list of page controls."
+      },
+      {
+        "name": "item",
+        "description": "List item wrapping a control or ellipsis."
+      },
+      {
+        "name": "first",
+        "description": "First page control."
+      },
+      {
+        "name": "previous",
+        "description": "Previous page control."
+      },
+      {
+        "name": "next",
+        "description": "Next page control."
+      },
+      {
+        "name": "last",
+        "description": "Last page control."
+      },
+      {
+        "name": "page",
+        "description": "Numbered page control."
+      },
+      {
+        "name": "ellipsis",
+        "description": "Non-interactive ellipsis affordance."
+      }
+    ],
+    "states": [
+      {
+        "name": "disabled",
+        "description": "Root while every control is disabled."
+      }
+    ],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "navigation",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/practices/landmark-regions/",
+    "keyboard": {
+      "Tab": "Move focus among pagination controls.",
+      "Enter": "Activate the focused control.",
+      "Space": "Activate the focused control."
+    },
+    "requiredAriaAttributes": [
+      "aria-label"
+    ]
+  },
+  "examples": [
+    "pagination/basic",
+    "pagination/controlled",
+    "pagination/ellipsis",
+    "pagination/themed"
+  ]
+}

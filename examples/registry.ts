@@ -556,6 +556,30 @@ export const ghostExamples = [
     description: 'Elevation-2 tooltip surface inside a ghost-theme fieldset.',
     layer: 'themed',
   },
+  {
+    id: 'pagination/basic',
+    title: 'Basic',
+    description: 'Numbered page navigation with previous and next.',
+    layer: 'headless',
+  },
+  {
+    id: 'pagination/controlled',
+    title: 'Controlled',
+    description: 'Parent-owned page index and page count.',
+    layer: 'headless',
+  },
+  {
+    id: 'pagination/ellipsis',
+    title: 'Ellipsis',
+    description: 'Large page counts collapse into start and end ellipsis.',
+    layer: 'headless',
+  },
+  {
+    id: 'pagination/themed',
+    title: 'Themed',
+    description: 'Default pagination styling from @ghostvue/themes.',
+    layer: 'themed',
+  },
 ] as const satisfies readonly GhostExampleDefinition[]
 
 export type GhostExampleId = (typeof ghostExamples)[number]['id']

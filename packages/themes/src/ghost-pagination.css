@@ -1,0 +1,115 @@
+/*
+ * Themed GhostPagination. Reuses action control tokens for page buttons.
+ */
+@layer ghostvue-theme {
+  :where(
+    .ghost-theme .ghost-pagination,
+    .ghost-themed-scope .ghost-pagination
+  ) {
+    --_ghost-pagination-gap: var(--ghost-space-gap-xs);
+    --_ghost-pagination-min-size: var(--ghost-control-size-md-min);
+    --_ghost-pagination-font-size: var(--ghost-control-size-md-font);
+    --_ghost-pagination-padding-block: var(
+      --ghost-control-size-md-padding-block
+    );
+    --_ghost-pagination-padding-inline: var(
+      --ghost-control-size-md-padding-inline
+    );
+  }
+
+  :where(
+    .ghost-theme .ghost-pagination__list,
+    .ghost-themed-scope .ghost-pagination__list
+  ) {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--_ghost-pagination-gap);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  :where(
+    .ghost-theme .ghost-pagination button,
+    .ghost-themed-scope .ghost-pagination button
+  ) {
+    align-items: center;
+    appearance: none;
+    background-color: var(--ghost-surface-muted-bg);
+    border: var(--ghost-border-hairline-width) solid var(--ghost-border-default);
+    border-radius: var(--ghost-action-radius);
+    box-sizing: border-box;
+    color: var(--ghost-surface-fg);
+    cursor: pointer;
+    display: inline-flex;
+    font-family: var(--ghost-action-label-family);
+    font-size: var(--_ghost-pagination-font-size);
+    font-weight: var(--ghost-action-label-weight);
+    justify-content: center;
+    line-height: var(--ghost-action-label-line);
+    min-block-size: var(--_ghost-pagination-min-size);
+    min-inline-size: var(--_ghost-pagination-min-size);
+    padding-block: var(--_ghost-pagination-padding-block);
+    padding-inline: var(--_ghost-pagination-padding-inline);
+  }
+
+  :where(
+    .ghost-theme .ghost-pagination button[aria-current='page'],
+    .ghost-themed-scope .ghost-pagination button[aria-current='page']
+  ) {
+    background-color: var(--ghost-action-primary-bg);
+    border-color: var(--ghost-action-primary-border);
+    color: var(--ghost-action-primary-fg);
+    cursor: default;
+  }
+
+  :where(
+    .ghost-theme .ghost-pagination button:disabled,
+    .ghost-themed-scope .ghost-pagination button:disabled,
+    .ghost-theme .ghost-pagination button[aria-disabled='true'],
+    .ghost-themed-scope .ghost-pagination button[aria-disabled='true']
+  ) {
+    cursor: not-allowed;
+    opacity: var(--ghost-disabled-opacity);
+  }
+
+  :where(
+    .ghost-theme .ghost-pagination [data-part='ellipsis'],
+    .ghost-themed-scope .ghost-pagination [data-part='ellipsis']
+  ) {
+    align-items: center;
+    color: var(--ghost-surface-muted-fg);
+    display: inline-flex;
+    min-block-size: var(--_ghost-pagination-min-size);
+    min-inline-size: var(--_ghost-pagination-min-size);
+    justify-content: center;
+  }
+
+  :where(
+    .ghost-theme .ghost-pagination[data-size='sm'],
+    .ghost-themed-scope .ghost-pagination[data-size='sm']
+  ) {
+    --_ghost-pagination-min-size: var(--ghost-control-size-sm-min);
+    --_ghost-pagination-font-size: var(--ghost-control-size-sm-font);
+    --_ghost-pagination-padding-block: var(
+      --ghost-control-size-sm-padding-block
+    );
+    --_ghost-pagination-padding-inline: var(
+      --ghost-control-size-sm-padding-inline
+    );
+  }
+
+  :where(
+    .ghost-theme .ghost-pagination[data-size='lg'],
+    .ghost-themed-scope .ghost-pagination[data-size='lg']
+  ) {
+    --_ghost-pagination-min-size: var(--ghost-control-size-lg-min);
+    --_ghost-pagination-font-size: var(--ghost-control-size-lg-font);
+    --_ghost-pagination-padding-block: var(
+      --ghost-control-size-lg-padding-block
+    );
+    --_ghost-pagination-padding-inline: var(
+      --ghost-control-size-lg-padding-inline
+    );
+  }
+}
