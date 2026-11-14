@@ -26,7 +26,9 @@ test.describe('registered examples accessibility', () => {
     ).toBeVisible()
 
     for (const example of ghostExamples) {
-      await expect(page.getByRole('link', { name: example.id })).toBeVisible()
+      await expect(
+        page.getByRole('link', { name: example.id, exact: true }),
+      ).toBeVisible()
     }
 
     await expectNoAxeViolations(page)
