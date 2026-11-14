@@ -59,6 +59,30 @@ export const ghostExamples = [
     layer: 'headless',
   },
   {
+    id: 'spinner/basic',
+    title: 'Basic',
+    description: 'Named status. The default label is Loading.',
+    layer: 'headless',
+  },
+  {
+    id: 'spinner/composable',
+    title: 'Composable',
+    description: 'Same contract as GhostSpinner, applied to a native host.',
+    layer: 'headless',
+  },
+  {
+    id: 'spinner/themed',
+    title: 'Themed',
+    description: 'Visual size and tone on the @ghostvue/themes wrapper.',
+    layer: 'themed',
+  },
+  {
+    id: 'spinner/table-refresh',
+    title: 'Table refresh',
+    description: 'Localized pending status; the table owns aria-busy.',
+    layer: 'themed',
+  },
+  {
     id: 'interactive-surface/basic',
     title: 'Basic',
     description: 'Pointer spotlight on a content surface.',

@@ -44,5 +44,6 @@ describe('executable examples', () => {
     expect(componentExamplePrefix('GhostVisuallyHidden')).toBe(
       'visually-hidden',
     )
+    expect(componentExamplePrefix('GhostSpinner')).toBe('spinner')
   })
 })
