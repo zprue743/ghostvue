@@ -15,10 +15,8 @@ Headless use of the same contract without the SFC:
 
 ## API
 
-| Prop      | Type                                         | Default         | Description                                             |
-| --------- | -------------------------------------------- | --------------- | ------------------------------------------------------- |
-| `as`      | `'div' \| 'article' \| 'section' \| 'aside'` | `'div'`         | Root tag.                                               |
-| `effects` | `InteractiveEffect[]`                        | `['spotlight']` | Recipes on `data-interactive`. v1 supports `spotlight`. |
+See the [generated component references](/reference/) for props, emits, slots,
+exposed members, styling hooks, CSS variables, and executable examples.
 
 `InteractiveEffect` is `'spotlight'`. Native attributes fall through to the
 root. The default slot is the content. A template ref exposes `element`.

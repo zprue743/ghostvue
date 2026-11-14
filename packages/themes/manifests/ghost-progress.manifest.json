@@ -1,0 +1,134 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "handwritten",
+  "name": "GhostProgress",
+  "package": "@ghostvue/themes",
+  "status": "experimental",
+  "description": "Themed wrapper around headless GhostProgress. Same behavioral props plus tone and size. Importing it loads the default stylesheet and scopes styles to this instance. Hand-written because the wrapper is a .ts defineComponent.",
+  "props": [
+    {
+      "name": "value",
+      "type": "number | null",
+      "required": false,
+      "description": "Current progress forwarded to the unstyled GhostProgress. Omit or pass null for the indeterminate fallback.",
+      "deprecated": false
+    },
+    {
+      "name": "max",
+      "type": "number",
+      "default": 100,
+      "required": false,
+      "description": "Exclusive upper bound forwarded to the unstyled GhostProgress.",
+      "deprecated": false
+    },
+    {
+      "name": "label",
+      "type": "string",
+      "required": false,
+      "description": "Accessible name forwarded as aria-label on the progressbar.",
+      "deprecated": false
+    },
+    {
+      "name": "valueText",
+      "type": "string",
+      "required": false,
+      "description": "Accessible value text forwarded as aria-valuetext while determinate.",
+      "deprecated": false
+    },
+    {
+      "name": "tone",
+      "type": "'accent' | 'neutral' | 'danger'",
+      "default": "accent",
+      "required": false,
+      "description": "Semantic color intent. The default omits data-tone so CSS can treat a missing hook as accent.",
+      "deprecated": false
+    },
+    {
+      "name": "size",
+      "type": "'sm' | 'md' | 'lg'",
+      "default": "md",
+      "required": false,
+      "description": "Track thickness. The default omits data-size so CSS can treat a missing hook as md.",
+      "deprecated": false
+    }
+  ],
+  "models": [],
+  "events": [],
+  "slots": [],
+  "exposed": [],
+  "styling": {
+    "parts": [
+      {
+        "name": "root",
+        "description": "The progressbar element inside the display:contents themed scope."
+      },
+      {
+        "name": "indicator",
+        "description": "The fill. Determinate width is an inline percentage; indeterminate motion is CSS."
+      }
+    ],
+    "states": [
+      {
+        "name": "indeterminate",
+        "description": "Present on the root when value is unknown. Recipe swaps translation for a reduced-motion pulse."
+      }
+    ],
+    "cssProperties": [
+      {
+        "name": "--ghost-surface-muted-bg",
+        "description": "Track fill behind the indicator."
+      },
+      {
+        "name": "--ghost-action-primary-bg",
+        "description": "Accent fill color. Default tone."
+      },
+      {
+        "name": "--ghost-action-neutral-bg",
+        "description": "Neutral fill color."
+      },
+      {
+        "name": "--ghost-action-danger-bg",
+        "description": "Danger fill color."
+      },
+      {
+        "name": "--ghost-space-gap-xs",
+        "description": "Track thickness for size sm."
+      },
+      {
+        "name": "--ghost-space-gap-sm",
+        "description": "Track thickness for size md."
+      },
+      {
+        "name": "--ghost-space-gap-md",
+        "description": "Track thickness for size lg."
+      },
+      {
+        "name": "--ghost-radius-pill",
+        "description": "Track and fill corner rounding."
+      },
+      {
+        "name": "--ghost-motion-duration-fast",
+        "description": "Determinate fill-width transition."
+      },
+      {
+        "name": "--ghost-motion-easing-standard",
+        "description": "Easing for determinate transitions and indeterminate motion."
+      },
+      {
+        "name": "--ghost-action-spinner-duration",
+        "description": "Indeterminate loop period. The reduced-motion pulse uses the same period so it does not flicker."
+      },
+      {
+        "name": "--ghost-action-spinner-opacity",
+        "description": "Reduced-motion pulse trough opacity."
+      }
+    ]
+  },
+  "accessibility": {
+    "role": "progressbar",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/meter/",
+    "keyboard": {},
+    "requiredAriaAttributes": ["aria-valuemin", "aria-valuemax"]
+  },
+  "examples": ["progress/themed"]
+}

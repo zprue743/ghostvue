@@ -1,0 +1,100 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "handwritten",
+  "name": "GhostSpinner",
+  "package": "@ghostvue/themes",
+  "status": "experimental",
+  "description": "Themed wrapper around headless GhostSpinner. Same label plus tone and size. Importing it loads the default stylesheet and scopes styles to this instance. Hand-written because the wrapper is a .ts defineComponent.",
+  "props": [
+    {
+      "name": "label",
+      "type": "string",
+      "default": "Loading",
+      "required": false,
+      "description": "Status message forwarded to the unstyled GhostSpinner as visually hidden live-region content.",
+      "deprecated": false
+    },
+    {
+      "name": "tone",
+      "type": "'accent' | 'neutral' | 'danger'",
+      "default": "accent",
+      "required": false,
+      "description": "Semantic color intent. The default omits data-tone so CSS can treat a missing hook as accent.",
+      "deprecated": false
+    },
+    {
+      "name": "size",
+      "type": "'sm' | 'md' | 'lg'",
+      "default": "md",
+      "required": false,
+      "description": "Compact status size. The default omits data-size so CSS can treat a missing hook as md.",
+      "deprecated": false
+    }
+  ],
+  "models": [],
+  "events": [],
+  "slots": [],
+  "exposed": [],
+  "styling": {
+    "parts": [
+      {
+        "name": "root",
+        "description": "The status span inside the display:contents themed scope. The spinning ring is a ::before pseudo-element so the hidden label is not transformed."
+      }
+    ],
+    "states": [],
+    "cssProperties": [
+      {
+        "name": "--ghost-action-spinner-size",
+        "description": "Em-relative ring size. Themed sm/md/lg change font-size so this scales."
+      },
+      {
+        "name": "--ghost-action-spinner-width",
+        "description": "Stroke width of the spinning ring."
+      },
+      {
+        "name": "--ghost-action-spinner-duration",
+        "description": "Rotation period. The reduced-motion pulse uses the same period so it does not flicker."
+      },
+      {
+        "name": "--ghost-action-spinner-opacity",
+        "description": "Reduced-motion pulse trough opacity."
+      },
+      {
+        "name": "--ghost-action-primary-bg",
+        "description": "Accent ring color. Default tone."
+      },
+      {
+        "name": "--ghost-action-neutral-bg",
+        "description": "Neutral ring color."
+      },
+      {
+        "name": "--ghost-action-danger-bg",
+        "description": "Danger ring color."
+      },
+      {
+        "name": "--ghost-control-size-sm-font",
+        "description": "Font size that scales the em-relative ring for size sm."
+      },
+      {
+        "name": "--ghost-control-size-md-font",
+        "description": "Font size that scales the em-relative ring for size md."
+      },
+      {
+        "name": "--ghost-control-size-lg-font",
+        "description": "Font size that scales the em-relative ring for size lg."
+      },
+      {
+        "name": "--ghost-motion-easing-standard",
+        "description": "Easing for the reduced-motion pulse."
+      }
+    ]
+  },
+  "accessibility": {
+    "role": "status",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/practices/live-regions/",
+    "keyboard": {},
+    "requiredAriaAttributes": []
+  },
+  "examples": ["spinner/themed", "spinner/table-refresh"]
+}

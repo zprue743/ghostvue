@@ -1,0 +1,169 @@
+/*
+ * Themed GhostInput. Visual values come from semantic --ghost-* tokens. Private
+ * --_ghost-input-* properties are per-instance wiring, not a public API.
+ */
+@layer ghostvue-theme {
+  :where(.ghost-theme .ghost-input, .ghost-themed-scope .ghost-input) {
+    --_ghost-input-min-size: var(--ghost-control-size-md-min);
+    --_ghost-input-padding-block: var(--ghost-control-size-md-padding-block);
+    --_ghost-input-padding-inline: var(--ghost-control-size-md-padding-inline);
+    --_ghost-input-font-size: var(--ghost-control-size-md-font);
+    --_ghost-input-background: var(--ghost-surface-bg);
+    --_ghost-input-border-color: var(--ghost-border-default);
+    --_ghost-input-color: var(--ghost-text-default);
+
+    appearance: none;
+    background-color: var(--_ghost-input-background);
+    border: var(--ghost-border-hairline-width) solid
+      var(--_ghost-input-border-color);
+    border-radius: var(--ghost-action-radius);
+    box-sizing: border-box;
+    color: var(--_ghost-input-color);
+    display: inline-block;
+    font-family: var(--ghost-type-family-sans);
+    font-feature-settings: var(--ghost-type-feature-default);
+    font-size: var(--_ghost-input-font-size);
+    font-weight: var(--ghost-type-weight-regular);
+    letter-spacing: var(--ghost-type-letter-normal);
+    line-height: var(--ghost-type-line-normal);
+    margin: 0;
+    max-inline-size: 100%;
+    min-block-size: var(--_ghost-input-min-size);
+    padding-block: var(--_ghost-input-padding-block);
+    padding-inline: var(--_ghost-input-padding-inline);
+    transition:
+      background-color var(--ghost-action-duration)
+        var(--ghost-motion-easing-standard),
+      border-color var(--ghost-action-duration)
+        var(--ghost-motion-easing-standard),
+      color var(--ghost-action-duration) var(--ghost-motion-easing-standard),
+      box-shadow var(--ghost-action-duration)
+        var(--ghost-motion-easing-standard);
+  }
+
+  :where(
+    .ghost-theme .ghost-input::placeholder,
+    .ghost-themed-scope .ghost-input::placeholder
+  ) {
+    color: var(--ghost-text-muted);
+    opacity: 1;
+  }
+
+  :where(
+    .ghost-theme .ghost-input[data-size='sm'],
+    .ghost-themed-scope .ghost-input[data-size='sm']
+  ) {
+    --_ghost-input-min-size: var(--ghost-control-size-sm-min);
+    --_ghost-input-padding-block: var(--ghost-control-size-sm-padding-block);
+    --_ghost-input-padding-inline: var(--ghost-control-size-sm-padding-inline);
+    --_ghost-input-font-size: var(--ghost-control-size-sm-font);
+  }
+
+  :where(
+    .ghost-theme .ghost-input[data-size='lg'],
+    .ghost-themed-scope .ghost-input[data-size='lg']
+  ) {
+    --_ghost-input-min-size: var(--ghost-control-size-lg-min);
+    --_ghost-input-padding-block: var(--ghost-control-size-lg-padding-block);
+    --_ghost-input-padding-inline: var(--ghost-control-size-lg-padding-inline);
+    --_ghost-input-font-size: var(--ghost-control-size-lg-font);
+  }
+
+  :where(
+    .ghost-theme .ghost-input:hover:not(:disabled):not([data-state='disabled']),
+    .ghost-themed-scope
+      .ghost-input:hover:not(:disabled):not([data-state='disabled'])
+  ) {
+    --_ghost-input-border-color: var(--ghost-border-strong);
+  }
+
+  :where(
+    .ghost-theme
+      .ghost-input:is(:focus-visible, [data-visual-state='focus-visible']),
+    .ghost-themed-scope
+      .ghost-input:is(:focus-visible, [data-visual-state='focus-visible'])
+  ) {
+    animation: ghost-input-focus-enter var(--ghost-focus-ring-duration)
+      var(--ghost-motion-easing-decelerate) both;
+    box-shadow: 0 0 0 var(--ghost-focus-ring-offset)
+      var(--ghost-focus-ring-contrast);
+    outline: var(--ghost-focus-ring-width) solid var(--ghost-focus-ring-color);
+    outline-offset: var(--ghost-focus-ring-offset);
+  }
+
+  :where(
+    .ghost-theme .ghost-input:is([readonly], [data-state='readonly']),
+    .ghost-themed-scope .ghost-input:is([readonly], [data-state='readonly'])
+  ) {
+    --_ghost-input-background: var(--ghost-surface-muted-bg);
+  }
+
+  :where(
+    .ghost-theme .ghost-input:is(:disabled, [data-state='disabled']),
+    .ghost-themed-scope .ghost-input:is(:disabled, [data-state='disabled'])
+  ) {
+    --_ghost-input-background: var(--ghost-action-disabled-bg);
+    --_ghost-input-border-color: var(--ghost-action-disabled-border);
+    --_ghost-input-color: var(--ghost-action-disabled-fg);
+
+    cursor: not-allowed;
+  }
+
+  :where(
+    .ghost-theme .ghost-input:is([aria-invalid='true'], [data-state='invalid']),
+    .ghost-themed-scope
+      .ghost-input:is([aria-invalid='true'], [data-state='invalid'])
+  ) {
+    --_ghost-input-background: var(--ghost-status-danger-bg);
+    --_ghost-input-border-color: var(--ghost-border-danger);
+    --_ghost-input-color: var(--ghost-status-danger-fg);
+  }
+
+  :where(
+    .ghost-theme .ghost-input[data-block],
+    .ghost-themed-scope .ghost-input[data-block]
+  ) {
+    display: block;
+    inline-size: 100%;
+  }
+
+  @media (forced-colors: active) {
+    :where(.ghost-theme .ghost-input, .ghost-themed-scope .ghost-input) {
+      background-color: Field;
+      border-color: FieldText;
+      color: FieldText;
+    }
+
+    :where(
+      .ghost-theme .ghost-input:is(:disabled, [data-state='disabled']),
+      .ghost-themed-scope .ghost-input:is(:disabled, [data-state='disabled'])
+    ) {
+      border-color: GrayText;
+      color: GrayText;
+    }
+
+    :where(
+      .ghost-theme
+        .ghost-input:is(:focus-visible, [data-visual-state='focus-visible']),
+      .ghost-themed-scope
+        .ghost-input:is(:focus-visible, [data-visual-state='focus-visible'])
+    ) {
+      animation: none;
+      box-shadow: none;
+      outline-color: Highlight;
+    }
+  }
+
+  @keyframes ghost-input-focus-enter {
+    from {
+      box-shadow: 0 0 0 0 var(--ghost-focus-ring-contrast);
+      outline-offset: 0;
+    }
+
+    to {
+      box-shadow: 0 0 0 var(--ghost-focus-ring-offset)
+        var(--ghost-focus-ring-contrast);
+      outline-offset: var(--ghost-focus-ring-offset);
+    }
+  }
+}

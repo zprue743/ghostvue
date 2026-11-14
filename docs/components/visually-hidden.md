@@ -14,10 +14,8 @@ an icon. No stylesheet import or bundler configuration is required.
 
 ## API
 
-| Prop        | Type                                             | Default  | Description                                                          |
-| ----------- | ------------------------------------------------ | -------- | -------------------------------------------------------------------- |
-| `as`        | `'span' \| 'div' \| 'p' \| 'li' \| 'td' \| 'th'` | `'span'` | Selects the rendered element so the result is valid in its parent.   |
-| `focusable` | `boolean`                                        | `false`  | Reveals the content while focus is inside it, then hides it on blur. |
+See the [generated component references](/reference/) for props, emits, slots,
+exposed members, styling hooks, CSS variables, and executable examples.
 
 The default slot is the only slot. Native attributes and listeners fall through
 to the single root element, which is how you attach `id`, `role`, `lang`,

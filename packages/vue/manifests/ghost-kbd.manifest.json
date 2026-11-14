@@ -1,0 +1,66 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "generated",
+  "name": "GhostKbd",
+  "package": "@ghostvue/vue",
+  "status": "experimental",
+  "description": "Headless native kbd for inline keyboard-shortcut display. useGhostKbd owns key-token labels and SSR-safe platform detection; GhostKbd is the thin unstyled element. Themed keycap chrome lives on @ghostvue/themes.",
+  "props": [
+    {
+      "name": "keys",
+      "type": "string | readonly string[]",
+      "default": "[]",
+      "required": false,
+      "description": "Key tokens rendered as nested kbd elements. A string is one key; an array is a combination. Tokens are matched case-insensitively. Unknown tokens render as given, except a single letter is uppercased.",
+      "deprecated": false
+    },
+    {
+      "name": "platform",
+      "type": "GhostKbdPlatform",
+      "default": "auto",
+      "required": false,
+      "description": "Modifier label set. auto uses PC labels until after mount, then Apple labels when the browser looks like Apple. Explicit apple and pc are deterministic from the prop.",
+      "deprecated": false
+    }
+  ],
+  "models": [],
+  "events": [],
+  "slots": [
+    {
+      "name": "default",
+      "props": [],
+      "description": "Key content. When keys is omitted, this is the entire kbd contents. When keys is set, this is appended after a plus separator as extra combination content."
+    }
+  ],
+  "exposed": [],
+  "styling": {
+    "parts": [
+      {
+        "name": "root",
+        "description": "The outer native kbd element."
+      },
+      {
+        "name": "key",
+        "description": "Nested kbd for one token from the keys prop."
+      },
+      {
+        "name": "separator",
+        "description": "Literal plus between keys. Stays in the accessibility tree."
+      }
+    ],
+    "states": [],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "generic",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/practices/names-and-descriptions/",
+    "keyboard": {},
+    "requiredAriaAttributes": []
+  },
+  "examples": [
+    "kbd/basic",
+    "kbd/composable",
+    "kbd/combination",
+    "kbd/platform"
+  ]
+}

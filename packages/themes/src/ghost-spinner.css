@@ -1,0 +1,93 @@
+/*
+ * Themed GhostSpinner. Visual values come from semantic --ghost-* tokens.
+ * Private --_ghost-spinner-* properties are per-instance wiring, not a public
+ * API. The ring is ::before so the visually hidden label is not transformed.
+ */
+@layer ghostvue-theme {
+  :where(.ghost-theme .ghost-spinner, .ghost-themed-scope .ghost-spinner) {
+    --_ghost-spinner-color: var(--ghost-action-primary-bg);
+    --_ghost-spinner-size: var(--ghost-action-spinner-size);
+    --_ghost-spinner-width: var(--ghost-action-spinner-width);
+
+    block-size: var(--_ghost-spinner-size);
+    color: var(--_ghost-spinner-color);
+    display: inline-block;
+    flex: none;
+    font-size: var(--ghost-control-size-md-font);
+    inline-size: var(--_ghost-spinner-size);
+    position: relative;
+    vertical-align: middle;
+  }
+
+  :where(
+    .ghost-theme .ghost-spinner,
+    .ghost-themed-scope .ghost-spinner
+  )::before {
+    animation: ghost-spinner-spin var(--ghost-action-spinner-duration) linear
+      infinite;
+    block-size: 100%;
+    border: var(--_ghost-spinner-width) solid currentColor;
+    border-inline-end-color: transparent;
+    border-radius: 50%;
+    box-sizing: border-box;
+    content: '';
+    display: block;
+    inline-size: 100%;
+  }
+
+  :where(
+    .ghost-theme .ghost-spinner[data-tone='neutral'],
+    .ghost-themed-scope .ghost-spinner[data-tone='neutral']
+  ) {
+    --_ghost-spinner-color: var(--ghost-action-neutral-bg);
+  }
+
+  :where(
+    .ghost-theme .ghost-spinner[data-tone='danger'],
+    .ghost-themed-scope .ghost-spinner[data-tone='danger']
+  ) {
+    --_ghost-spinner-color: var(--ghost-action-danger-bg);
+  }
+
+  :where(
+    .ghost-theme .ghost-spinner[data-size='sm'],
+    .ghost-themed-scope .ghost-spinner[data-size='sm']
+  ) {
+    font-size: var(--ghost-control-size-sm-font);
+  }
+
+  :where(
+    .ghost-theme .ghost-spinner[data-size='lg'],
+    .ghost-themed-scope .ghost-spinner[data-size='lg']
+  ) {
+    font-size: var(--ghost-control-size-lg-font);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    :where(
+      .ghost-theme .ghost-spinner,
+      .ghost-themed-scope .ghost-spinner
+    )::before {
+      animation: ghost-spinner-pulse var(--ghost-action-spinner-duration)
+        var(--ghost-motion-easing-standard) infinite;
+    }
+  }
+
+  @media (forced-colors: active) {
+    :where(.ghost-theme .ghost-spinner, .ghost-themed-scope .ghost-spinner) {
+      --_ghost-spinner-color: CanvasText;
+    }
+  }
+
+  @keyframes ghost-spinner-spin {
+    to {
+      transform: rotate(1turn);
+    }
+  }
+
+  @keyframes ghost-spinner-pulse {
+    50% {
+      opacity: var(--ghost-action-spinner-opacity);
+    }
+  }
+}

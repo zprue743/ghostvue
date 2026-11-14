@@ -100,6 +100,18 @@ Supported values are `solid`, `soft`, `outline`, and `ghost`; omitting it select
 `solid`. `tone` accepts `accent`, `neutral`, and `danger`; omitting it selects
 `accent`. Supported sizes are `sm`, `md`, and `lg`; omitting it selects `md`.
 
+## Kbd examples
+
+Themed `GhostKbd` uses elevation-0 keycaps and type/space sizes, not control
+minimums. A slot-only instance is one keycap; a `keys` combination paints each
+nested key instead.
+
+```vue
+<GhostKbd>F5</GhostKbd>
+<GhostKbd :keys="['mod', 's']" />
+<GhostKbd size="sm">Esc</GhostKbd>
+```
+
 Solid treatments paint an oklch gradient (`--ghost-gradient-action-primary`,
 `--ghost-gradient-action-neutral`, `--ghost-gradient-action-danger`), an inset
 highlight, and the elevation-2 shadow. Hover, press, selected, and dragged

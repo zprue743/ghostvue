@@ -1,0 +1,233 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "handwritten",
+  "name": "GhostInput",
+  "package": "@ghostvue/themes",
+  "status": "experimental",
+  "description": "Themed wrapper around headless GhostInput. Same behavioral props plus size and block. Importing it loads the default stylesheet and scopes styles to this instance. Hand-written until GHO-13 generates manifests.",
+  "props": [
+    {
+      "name": "modelValue",
+      "type": "string",
+      "required": false,
+      "description": "Controlled value, forwarded to the unstyled GhostInput. Omit for uncontrolled mode.",
+      "deprecated": false
+    },
+    {
+      "name": "defaultValue",
+      "type": "string",
+      "default": "",
+      "required": false,
+      "description": "Initial uncontrolled value, forwarded to the unstyled GhostInput.",
+      "deprecated": false
+    },
+    {
+      "name": "type",
+      "type": "'text' | 'search' | 'email' | 'password' | 'tel' | 'url'",
+      "default": "text",
+      "required": false,
+      "description": "Native text-like type, forwarded to the unstyled GhostInput.",
+      "deprecated": false
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Forwards native disabled semantics to the unstyled GhostInput.",
+      "deprecated": false
+    },
+    {
+      "name": "readonly",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Forwards native readonly semantics to the unstyled GhostInput.",
+      "deprecated": false
+    },
+    {
+      "name": "invalid",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Forwards consumer-owned validity to the unstyled GhostInput.",
+      "deprecated": false
+    },
+    {
+      "name": "required",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Forwards native required to the unstyled GhostInput.",
+      "deprecated": false
+    },
+    {
+      "name": "size",
+      "type": "'sm' | 'md' | 'lg'",
+      "default": "md",
+      "required": false,
+      "description": "Control size. The default omits data-size so CSS can treat a missing hook as md.",
+      "deprecated": false
+    },
+    {
+      "name": "block",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Stretch to the available inline size via data-block.",
+      "deprecated": false
+    }
+  ],
+  "models": [
+    {
+      "prop": "modelValue",
+      "event": "update:modelValue",
+      "type": "string",
+      "description": "v-model binding for the input string."
+    }
+  ],
+  "events": [],
+  "slots": [],
+  "exposed": [
+    {
+      "name": "element",
+      "kind": "property",
+      "type": "HTMLInputElement | null",
+      "description": "The native input after mount; null before mount and after unmount. Delegates to the unstyled GhostInput."
+    },
+    {
+      "name": "focus",
+      "kind": "method",
+      "type": "(options?: FocusOptions) => void",
+      "description": "Focuses the native input when it is mounted and not disabled. Delegates to the unstyled GhostInput."
+    },
+    {
+      "name": "blur",
+      "kind": "method",
+      "type": "() => void",
+      "description": "Removes focus from the native input when it is mounted. Delegates to the unstyled GhostInput."
+    }
+  ],
+  "styling": {
+    "parts": [
+      {
+        "name": "root",
+        "description": "The native input inside the display:contents themed scope."
+      }
+    ],
+    "states": [
+      {
+        "name": "invalid",
+        "description": "Consumer-owned invalid appearance. Wins data-state when overlapping disabled or readonly."
+      },
+      {
+        "name": "disabled",
+        "description": "Unavailable appearance. Prefer the native disabled attribute when both apply."
+      },
+      {
+        "name": "readonly",
+        "description": "Read-only appearance. Omitted while invalid or disabled."
+      }
+    ],
+    "cssProperties": [
+      {
+        "name": "--ghost-surface-bg",
+        "description": "Resting field fill."
+      },
+      {
+        "name": "--ghost-surface-muted-bg",
+        "description": "Readonly field fill."
+      },
+      {
+        "name": "--ghost-text-default",
+        "description": "Typed text color."
+      },
+      {
+        "name": "--ghost-text-muted",
+        "description": "Placeholder text color."
+      },
+      {
+        "name": "--ghost-border-default",
+        "description": "Resting field border."
+      },
+      {
+        "name": "--ghost-border-strong",
+        "description": "Hover field border."
+      },
+      {
+        "name": "--ghost-border-danger",
+        "description": "Invalid field border."
+      },
+      {
+        "name": "--ghost-border-hairline-width",
+        "description": "Field border thickness."
+      },
+      {
+        "name": "--ghost-status-danger-bg",
+        "description": "Invalid field fill."
+      },
+      {
+        "name": "--ghost-status-danger-fg",
+        "description": "Invalid field text."
+      },
+      {
+        "name": "--ghost-action-disabled-bg",
+        "description": "Disabled field fill."
+      },
+      {
+        "name": "--ghost-action-disabled-fg",
+        "description": "Disabled field text."
+      },
+      {
+        "name": "--ghost-action-disabled-border",
+        "description": "Disabled field border."
+      },
+      {
+        "name": "--ghost-action-radius",
+        "description": "Field corner radius."
+      },
+      {
+        "name": "--ghost-action-duration",
+        "description": "Color and shadow transition duration."
+      },
+      {
+        "name": "--ghost-focus-ring-color",
+        "description": "Outer color of the two-color keyboard focus indicator."
+      },
+      {
+        "name": "--ghost-focus-ring-contrast",
+        "description": "Inner color of the two-color keyboard focus indicator."
+      },
+      {
+        "name": "--ghost-focus-ring-offset",
+        "description": "Gap between the field edge and the focus ring."
+      },
+      {
+        "name": "--ghost-focus-ring-width",
+        "description": "Thickness of the focus outline."
+      },
+      {
+        "name": "--ghost-control-size-sm-min",
+        "description": "Minimum block size for size sm."
+      },
+      {
+        "name": "--ghost-control-size-md-min",
+        "description": "Minimum block size for size md."
+      },
+      {
+        "name": "--ghost-control-size-lg-min",
+        "description": "Minimum block size for size lg."
+      }
+    ]
+  },
+  "accessibility": {
+    "role": "textbox",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/textfield/",
+    "keyboard": {
+      "Tab": "Move sequential focus into or out of the field when it is not disabled.",
+      "Enter": "May submit an ancestor form for text and search types."
+    },
+    "requiredAriaAttributes": []
+  },
+  "examples": ["input/themed", "input/states", "input/search"]
+}

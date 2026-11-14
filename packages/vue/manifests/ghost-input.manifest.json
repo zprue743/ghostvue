@@ -1,0 +1,132 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "generated",
+  "name": "GhostInput",
+  "package": "@ghostvue/vue",
+  "status": "experimental",
+  "description": "Headless native text field. useGhostInput owns the string model and disabled/readonly/invalid/required; GhostInput is the thin unstyled element. Themed visual props live on @ghostvue/themes.",
+  "props": [
+    {
+      "name": "modelValue",
+      "type": "string",
+      "required": false,
+      "description": "Controlled value. Omit for uncontrolled mode. An empty string is a real controlled value, not unset.",
+      "deprecated": false
+    },
+    {
+      "name": "defaultValue",
+      "type": "string",
+      "default": "",
+      "required": false,
+      "description": "Initial uncontrolled value. Later changes are ignored. Also the form-reset seed.",
+      "deprecated": false
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Applies native disabled semantics, prevents editing and sequential focus, and omits the field from form submit.",
+      "deprecated": false
+    },
+    {
+      "name": "readonly",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Applies native readonly semantics. The field stays focusable and is submitted, but cannot be edited.",
+      "deprecated": false
+    },
+    {
+      "name": "invalid",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Consumer-owned validity. Sets aria-invalid and data-state=invalid. Does not mirror native ValidityState.",
+      "deprecated": false
+    },
+    {
+      "name": "required",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Applies the native required constraint.",
+      "deprecated": false
+    },
+    {
+      "name": "type",
+      "type": "GhostInputType",
+      "default": "text",
+      "required": false,
+      "description": "Native text-like type (text, search, email, password, tel, url). Checkbox, radio, file, and number are out of scope.",
+      "deprecated": false
+    }
+  ],
+  "models": [
+    {
+      "prop": "modelValue",
+      "event": "update:modelValue",
+      "type": "string",
+      "description": "v-model binding for the input string. Updates on the native input event."
+    }
+  ],
+  "events": [],
+  "slots": [],
+  "exposed": [
+    {
+      "name": "element",
+      "kind": "property",
+      "type": "HTMLInputElement | null",
+      "description": "The native input after mount, or `null` before mount."
+    },
+    {
+      "name": "focus",
+      "kind": "method",
+      "type": "(options?: FocusOptions) => void",
+      "description": "Moves focus to the native input when it is mounted and not disabled."
+    },
+    {
+      "name": "blur",
+      "kind": "method",
+      "type": "() => void",
+      "description": "Removes focus from the native input when it is mounted."
+    }
+  ],
+  "styling": {
+    "parts": [
+      {
+        "name": "root",
+        "description": "The native input element."
+      }
+    ],
+    "states": [
+      {
+        "name": "invalid",
+        "description": "Consumer-owned invalid. Wins over disabled and readonly when more than one applies."
+      },
+      {
+        "name": "disabled",
+        "description": "Unavailable field. Prefer the native disabled attribute when both apply. Omitted while invalid."
+      },
+      {
+        "name": "readonly",
+        "description": "Read-only field. Omitted while invalid or disabled."
+      }
+    ],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "textbox",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/textfield/",
+    "keyboard": {
+      "Tab": "Move sequential focus into or out of the field when it is not disabled.",
+      "Enter": "May submit an ancestor form for text and search types."
+    },
+    "requiredAriaAttributes": []
+  },
+  "examples": [
+    "input/basic",
+    "input/composable",
+    "input/ref"
+  ]
+}

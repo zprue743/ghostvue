@@ -38,6 +38,7 @@
     "typecheck": "pnpm -r --if-present typecheck",
     "verify": "pnpm lint && pnpm boundaries && pnpm adapters && pnpm manifests && pnpm typecheck && pnpm test:coverage && pnpm contrast && pnpm build && pnpm published-exports && pnpm exports:check && pnpm docs:build && pnpm docs:links",
     "exports:check": "node scripts/check-export-integrity.mjs",
+    "new:component": "node scripts/new-component.mjs",
     "verify:component": "node scripts/verify-component.mjs"
   },
   "devDependencies": {

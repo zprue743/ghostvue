@@ -1,0 +1,63 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "handwritten",
+  "name": "GhostSeparator",
+  "package": "@ghostvue/themes",
+  "status": "experimental",
+  "description": "Themed wrapper around headless GhostSeparator. Same behavioral props; no extra visual props. Importing it loads the default stylesheet and scopes styles to this instance. Hand-written until GHO-13 generates manifests.",
+  "props": [
+    {
+      "name": "as",
+      "type": "'hr' | 'div' | 'li'",
+      "required": false,
+      "description": "Rendered root element, forwarded to the unstyled GhostSeparator. Omit to get hr when horizontal and div when vertical. li is for list-shaped menus.",
+      "deprecated": false
+    },
+    {
+      "name": "decorative",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Forwards presentational semantics to the unstyled GhostSeparator.",
+      "deprecated": false
+    },
+    {
+      "name": "orientation",
+      "type": "'horizontal' | 'vertical'",
+      "default": "horizontal",
+      "required": false,
+      "description": "Axis of the line, forwarded to the unstyled GhostSeparator.",
+      "deprecated": false
+    }
+  ],
+  "models": [],
+  "events": [],
+  "slots": [],
+  "exposed": [],
+  "styling": {
+    "parts": [
+      {
+        "name": "root",
+        "description": "The divider element inside the display:contents themed scope."
+      }
+    ],
+    "states": [],
+    "cssProperties": [
+      {
+        "name": "--ghost-border-default",
+        "description": "Color of the divider line."
+      },
+      {
+        "name": "--ghost-border-hairline-width",
+        "description": "Thickness of the divider line."
+      }
+    ]
+  },
+  "accessibility": {
+    "role": "separator",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/menubar/",
+    "keyboard": {},
+    "requiredAriaAttributes": []
+  },
+  "examples": ["separator/themed"]
+}

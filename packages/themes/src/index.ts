@@ -1,4 +1,4 @@
-/** Themed wrappers and default CSS. One `GhostButton` import loads the stylesheet. */
+/** Themed wrappers and default CSS. One `GhostBadge` or `GhostButton` import loads the stylesheet. */
 import './default.css'
 
 export {
@@ -19,6 +19,14 @@ export {
 } from './flagship-themes'
 
 export {
+  GhostBadge,
+  type GhostBadgeExposed,
+  type GhostBadgeSize,
+  type GhostBadgeTone,
+  type GhostBadgeVariant,
+} from './ghost-badge'
+
+export {
   GhostButton,
   type GhostButtonExposed,
   type GhostButtonInteractive,
@@ -29,11 +37,32 @@ export {
 } from './ghost-button'
 
 export {
+  GhostCheckbox,
+  type GhostCheckboxExposed,
+  type GhostCheckboxSize,
+  type GhostCheckboxTone,
+} from './ghost-checkbox'
+
+export { GhostKbd, type GhostKbdPlatform, type GhostKbdSize } from './ghost-kbd'
+
+export {
+  GhostSpinner,
+  type GhostSpinnerSize,
+  type GhostSpinnerTone,
+} from './ghost-spinner'
+
+export {
   GhostInteractiveSurface,
   type InteractiveEffect,
   type InteractiveSurfaceElement,
   type GhostInteractiveSurfaceExposed,
 } from './ghost-interactive-surface'
+
+export {
+  GhostSkeleton,
+  type GhostSkeletonElement,
+  type GhostSkeletonShape,
+} from './ghost-skeleton'
 
 export { GhostPopover, type GhostPopoverSlotProps } from './ghost-popover'
 
@@ -98,3 +127,35 @@ export {
   type GhostDialogCloseElement,
   type GhostDialogCloseExposed,
 } from './ghost-dialog-close'
+
+export {
+  GhostSeparator,
+  type GhostSeparatorElement,
+  type GhostSeparatorOrientation,
+} from './ghost-separator'
+
+export {
+  GhostProgress,
+  type GhostProgressSize,
+  type GhostProgressTone,
+} from './ghost-progress'
+
+export {
+  GhostInput,
+  type GhostInputExposed,
+  type GhostInputSize,
+  type GhostInputType,
+} from './ghost-input'
+
+export {
+  GhostSwitch,
+  type GhostSwitchExposed,
+  type GhostSwitchSize,
+  type GhostSwitchTone,
+} from './ghost-switch'
+
+export {
+  GhostTextarea,
+  type GhostTextareaExposed,
+  type GhostTextareaSize,
+} from './ghost-textarea'

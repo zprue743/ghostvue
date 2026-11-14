@@ -37,6 +37,7 @@ describe('executable examples', () => {
   })
 
   it('derives GhostButton example prefixes from the public name', () => {
+    expect(componentExamplePrefix('GhostBadge')).toBe('badge')
     expect(componentExamplePrefix('GhostButton')).toBe('button')
     expect(componentExamplePrefix('GhostInteractiveSurface')).toBe(
       'interactive-surface',
@@ -44,5 +45,7 @@ describe('executable examples', () => {
     expect(componentExamplePrefix('GhostVisuallyHidden')).toBe(
       'visually-hidden',
     )
+    expect(componentExamplePrefix('GhostKbd')).toBe('kbd')
+    expect(componentExamplePrefix('GhostSpinner')).toBe('spinner')
   })
 })

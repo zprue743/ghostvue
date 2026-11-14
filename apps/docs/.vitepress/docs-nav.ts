@@ -17,13 +17,23 @@ export const docsSidebar: LlmsSidebarGroup[] = [
   {
     text: 'Components',
     items: [
+      { text: 'GhostBadge', link: '/components/badge' },
       { text: 'GhostButton', link: '/components/button' },
+      { text: 'GhostCheckbox', link: '/components/checkbox' },
       { text: 'GhostDialog', link: '/components/dialog' },
+      { text: 'GhostInput', link: '/components/input' },
       {
         text: 'GhostInteractiveSurface',
         link: '/components/interactive-surface',
       },
+      { text: 'GhostKbd', link: '/components/kbd' },
       { text: 'GhostPopover', link: '/components/popover' },
+      { text: 'GhostProgress', link: '/components/progress' },
+      { text: 'GhostSeparator', link: '/components/separator' },
+      { text: 'GhostSkeleton', link: '/components/skeleton' },
+      { text: 'GhostSpinner', link: '/components/spinner' },
+      { text: 'GhostSwitch', link: '/components/switch' },
+      { text: 'GhostTextarea', link: '/components/textarea' },
       { text: 'GhostVisuallyHidden', link: '/components/visually-hidden' },
       { text: 'Default theme', link: '/themes/default' },
       {
@@ -94,23 +104,64 @@ export const docsSidebar: LlmsSidebarGroup[] = [
         link: '/contributing/verify-component',
       },
       { text: 'Executable examples', link: '/contributing/examples' },
+      { text: 'Scaffolding components', link: '/contributing/new-component' },
       { text: 'Releases', link: '/contributing/releases' },
       { text: 'Component specs', link: '/components/spec-template' },
       {
+        text: 'GhostBadge specification',
+        link: '/components/badge-spec',
+      },
+      {
         text: 'GhostButton specification',
         link: '/components/button-spec',
+      },
+      {
+        text: 'GhostCheckbox specification',
+        link: '/components/checkbox-spec',
       },
       {
         text: 'GhostDialog specification',
         link: '/components/dialog-spec',
       },
       {
+        text: 'GhostInput specification',
+        link: '/components/input-spec',
+      },
+      {
         text: 'GhostInteractiveSurface specification',
         link: '/components/interactive-surface-spec',
       },
       {
+        text: 'GhostKbd specification',
+        link: '/components/kbd-spec',
+      },
+      {
         text: 'GhostPopover specification',
         link: '/components/popover-spec',
+      },
+      {
+        text: 'GhostProgress specification',
+        link: '/components/progress-spec',
+      },
+      {
+        text: 'GhostSeparator specification',
+        link: '/components/separator-spec',
+      },
+      {
+        text: 'GhostSkeleton specification',
+        link: '/components/skeleton-spec',
+      },
+      {
+        text: 'GhostSpinner specification',
+        link: '/components/spinner-spec',
+      },
+      {
+        text: 'GhostSwitch specification',
+        link: '/components/switch-spec',
+      },
+      {
+        text: 'GhostTextarea specification',
+        link: '/components/textarea-spec',
       },
       {
         text: 'GhostVisuallyHidden specification',

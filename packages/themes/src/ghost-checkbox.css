@@ -1,0 +1,262 @@
+/*
+ * Themed GhostCheckbox. Visual values come from semantic --ghost-* tokens.
+ * Private --_ghost-checkbox-* properties are per-instance wiring, not a public API.
+ * The hit target is the control-size token; the painted box is the action icon size.
+ */
+@layer ghostvue-theme {
+  :where(.ghost-theme .ghost-checkbox, .ghost-themed-scope .ghost-checkbox) {
+    --_ghost-checkbox-tone-color: var(--ghost-action-primary-bg);
+    --_ghost-checkbox-tone-contrast: var(--ghost-action-primary-fg);
+    --_ghost-checkbox-tone-border: var(--ghost-action-primary-border);
+    --_ghost-checkbox-fill: var(--ghost-surface-bg);
+    --_ghost-checkbox-mark: var(--_ghost-checkbox-tone-contrast);
+    --_ghost-checkbox-hit: var(--ghost-control-size-md-min);
+    --_ghost-checkbox-box: var(--ghost-action-icon-size);
+
+    appearance: none;
+    background-color: transparent;
+    block-size: var(--_ghost-checkbox-hit);
+    border: none;
+    box-sizing: border-box;
+    color: var(--_ghost-checkbox-mark);
+    cursor: pointer;
+    display: inline-grid;
+    flex: none;
+    inline-size: var(--_ghost-checkbox-hit);
+    margin: 0;
+    padding: 0;
+    place-items: center;
+    position: relative;
+    vertical-align: middle;
+  }
+
+  :where(
+    .ghost-theme .ghost-checkbox,
+    .ghost-themed-scope .ghost-checkbox
+  )::before {
+    background-color: var(--_ghost-checkbox-fill);
+    border: var(--ghost-border-hairline-width) solid
+      var(--_ghost-checkbox-tone-border);
+    /* radius.sm, not action-radius: the latter is sized for buttons and
+       would pill a 1.1em box into a circle. */
+    border-radius: var(--ghost-radius-sm);
+    box-sizing: border-box;
+    content: '';
+    display: grid;
+    grid-area: 1 / 1;
+    block-size: var(--_ghost-checkbox-box);
+    inline-size: var(--_ghost-checkbox-box);
+    place-items: center;
+    transition:
+      background-color var(--ghost-action-duration)
+        var(--ghost-motion-easing-standard),
+      border-color var(--ghost-action-duration)
+        var(--ghost-motion-easing-standard);
+  }
+
+  :where(
+    .ghost-theme .ghost-checkbox[data-tone='neutral'],
+    .ghost-themed-scope .ghost-checkbox[data-tone='neutral']
+  ) {
+    --_ghost-checkbox-tone-color: var(--ghost-action-neutral-bg);
+    --_ghost-checkbox-tone-contrast: var(--ghost-action-neutral-fg);
+    --_ghost-checkbox-tone-border: var(--ghost-action-neutral-border);
+  }
+
+  :where(
+    .ghost-theme .ghost-checkbox[data-tone='danger'],
+    .ghost-themed-scope .ghost-checkbox[data-tone='danger']
+  ) {
+    --_ghost-checkbox-tone-color: var(--ghost-action-danger-bg);
+    --_ghost-checkbox-tone-contrast: var(--ghost-action-danger-fg);
+    --_ghost-checkbox-tone-border: var(--ghost-action-danger-border);
+  }
+
+  :where(
+    .ghost-theme .ghost-checkbox[data-size='sm'],
+    .ghost-themed-scope .ghost-checkbox[data-size='sm']
+  ) {
+    --_ghost-checkbox-hit: var(--ghost-control-size-sm-min);
+  }
+
+  :where(
+    .ghost-theme .ghost-checkbox[data-size='lg'],
+    .ghost-themed-scope .ghost-checkbox[data-size='lg']
+  ) {
+    --_ghost-checkbox-hit: var(--ghost-control-size-lg-min);
+  }
+
+  :where(
+    .ghost-theme .ghost-checkbox:is(:checked, :indeterminate, [data-state]),
+    .ghost-themed-scope
+      .ghost-checkbox:is(:checked, :indeterminate, [data-state])
+  ) {
+    --_ghost-checkbox-fill: var(--_ghost-checkbox-tone-color);
+  }
+
+  :where(
+    .ghost-theme
+      .ghost-checkbox:is(:hover, [data-visual-state='hover']):not(:disabled),
+    .ghost-themed-scope
+      .ghost-checkbox:is(:hover, [data-visual-state='hover']):not(:disabled)
+  ) {
+    --_ghost-checkbox-fill: color-mix(
+      in oklch,
+      var(--_ghost-checkbox-tone-color)
+        calc(100% * var(--ghost-state-layer-hover)),
+      var(--ghost-surface-bg)
+    );
+  }
+
+  :where(
+    .ghost-theme
+      .ghost-checkbox:is(:checked, :indeterminate, [data-state]):is(
+        :hover,
+        [data-visual-state='hover']
+      ):not(:disabled),
+    .ghost-themed-scope
+      .ghost-checkbox:is(:checked, :indeterminate, [data-state]):is(
+        :hover,
+        [data-visual-state='hover']
+      ):not(:disabled)
+  ) {
+    --_ghost-checkbox-fill: color-mix(
+      in oklch,
+      var(--ghost-surface-fg) calc(100% * var(--ghost-state-layer-hover)),
+      var(--_ghost-checkbox-tone-color)
+    );
+  }
+
+  :where(
+    .ghost-theme
+      .ghost-checkbox:is(:active, [data-visual-state='active']):not(:disabled),
+    .ghost-themed-scope
+      .ghost-checkbox:is(:active, [data-visual-state='active']):not(:disabled)
+  ) {
+    scale: var(--ghost-motion-press-scale);
+  }
+
+  /* ::before stays outside :where(); LightningCSS drops :where(.x::before). */
+  :where(
+    .ghost-theme
+      .ghost-checkbox:is(:focus-visible, [data-visual-state='focus-visible']),
+    .ghost-themed-scope
+      .ghost-checkbox:is(:focus-visible, [data-visual-state='focus-visible'])
+  )::before {
+    box-shadow: 0 0 0 var(--ghost-focus-ring-offset)
+      var(--ghost-focus-ring-contrast);
+    outline: var(--ghost-focus-ring-width) solid var(--ghost-focus-ring-color);
+    outline-offset: var(--ghost-focus-ring-offset);
+  }
+
+  /*
+   * Chromium paints one ::before on appearance:none checkboxes and ignores
+   * ::after / :checked::before. Marks key off data-state on ::before.
+   */
+  :where(
+    .ghost-theme .ghost-checkbox[data-state='checked'],
+    .ghost-themed-scope .ghost-checkbox[data-state='checked']
+  )::before {
+    color: var(--_ghost-checkbox-mark);
+    content: '\2713';
+    font-family: var(--ghost-action-label-family);
+    font-size: calc(var(--_ghost-checkbox-box) * 0.72);
+    font-weight: var(--ghost-action-label-weight);
+    line-height: 1;
+  }
+
+  :where(
+    .ghost-theme .ghost-checkbox[data-state='indeterminate'],
+    .ghost-themed-scope .ghost-checkbox[data-state='indeterminate']
+  )::before {
+    background-image: linear-gradient(
+      var(--_ghost-checkbox-mark),
+      var(--_ghost-checkbox-mark)
+    );
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 50% var(--ghost-action-spinner-width);
+  }
+
+  :where(
+    .ghost-theme .ghost-checkbox:disabled,
+    .ghost-themed-scope .ghost-checkbox:disabled
+  ) {
+    --_ghost-checkbox-fill: var(--ghost-action-disabled-bg);
+    --_ghost-checkbox-mark: var(--ghost-action-disabled-fg);
+    --_ghost-checkbox-tone-border: var(--ghost-action-disabled-border);
+
+    cursor: not-allowed;
+    scale: 1;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    :where(.ghost-theme .ghost-checkbox, .ghost-themed-scope .ghost-checkbox) {
+      scale: 1;
+    }
+
+    :where(
+      .ghost-theme .ghost-checkbox,
+      .ghost-themed-scope .ghost-checkbox
+    )::before {
+      transition-duration: var(--ghost-motion-duration-instant);
+    }
+  }
+
+  @media (forced-colors: active) {
+    :where(
+      .ghost-theme .ghost-checkbox,
+      .ghost-themed-scope .ghost-checkbox
+    )::before {
+      background-color: ButtonFace;
+      border-color: ButtonText;
+    }
+
+    :where(
+      .ghost-theme .ghost-checkbox:is(:checked, :indeterminate, [data-state]),
+      .ghost-themed-scope
+        .ghost-checkbox:is(:checked, :indeterminate, [data-state])
+    )::before {
+      background-color: Highlight;
+      border-color: Highlight;
+    }
+
+    :where(.ghost-theme .ghost-checkbox, .ghost-themed-scope .ghost-checkbox) {
+      color: HighlightText;
+      forced-color-adjust: none;
+    }
+
+    :where(
+      .ghost-theme .ghost-checkbox:not(:checked, :indeterminate, [data-state]),
+      .ghost-themed-scope
+        .ghost-checkbox:not(:checked, :indeterminate, [data-state])
+    ) {
+      color: ButtonText;
+    }
+
+    :where(
+      .ghost-theme .ghost-checkbox:disabled,
+      .ghost-themed-scope .ghost-checkbox:disabled
+    )::before {
+      background-color: ButtonFace;
+      border-color: GrayText;
+    }
+
+    :where(
+      .ghost-theme .ghost-checkbox:disabled,
+      .ghost-themed-scope .ghost-checkbox:disabled
+    ) {
+      color: GrayText;
+    }
+
+    :where(
+      .ghost-theme
+        .ghost-checkbox:is(:focus-visible, [data-visual-state='focus-visible']),
+      .ghost-themed-scope
+        .ghost-checkbox:is(:focus-visible, [data-visual-state='focus-visible'])
+    )::before {
+      box-shadow: none;
+      outline-color: Highlight;
+    }
+  }
+}

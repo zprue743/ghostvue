@@ -1,0 +1,113 @@
+/*
+ * Themed GhostKbd. Visual values come from semantic --ghost-* tokens. Private
+ * --_ghost-kbd-* properties are per-instance wiring, not a public API.
+ * Combination roots (`:has(> [data-part='key'])`) drop keycap chrome so each
+ * nested key paints its own cap.
+ */
+@layer ghostvue-theme {
+  :where(
+    .ghost-theme .ghost-kbd,
+    .ghost-themed-scope .ghost-kbd,
+    .ghost-theme .ghost-kbd [data-part='key'],
+    .ghost-themed-scope .ghost-kbd [data-part='key']
+  ) {
+    --_ghost-kbd-font-size: var(--ghost-type-size-sm);
+    --_ghost-kbd-padding-block: var(--ghost-space-gap-xs);
+    --_ghost-kbd-padding-inline: var(--ghost-space-gap-sm);
+    --_ghost-kbd-radius: var(--ghost-radius-sm);
+
+    align-items: center;
+    background-color: var(--ghost-elevation-0-bg);
+    border: var(--ghost-border-hairline-width) solid
+      var(--ghost-elevation-0-border);
+    border-radius: var(--_ghost-kbd-radius);
+    box-shadow:
+      var(--ghost-elevation-0-shadow), var(--ghost-elevation-0-highlight);
+    box-sizing: border-box;
+    color: var(--ghost-surface-fg);
+    display: inline-flex;
+    font-family: var(--ghost-type-family-sans);
+    font-feature-settings: var(--ghost-type-feature-default);
+    font-size: var(--_ghost-kbd-font-size);
+    font-weight: var(--ghost-type-weight-medium);
+    gap: var(--ghost-space-gap-xs);
+    letter-spacing: var(--ghost-type-letter-tight);
+    line-height: var(--ghost-type-line-tight);
+    padding-block: var(--_ghost-kbd-padding-block);
+    padding-inline: var(--_ghost-kbd-padding-inline);
+    vertical-align: middle;
+    white-space: nowrap;
+  }
+
+  :where(
+    .ghost-theme .ghost-kbd:has(> [data-part='key']),
+    .ghost-themed-scope .ghost-kbd:has(> [data-part='key'])
+  ) {
+    background-color: transparent;
+    border-color: transparent;
+    border-width: 0;
+    box-shadow: none;
+    padding: 0;
+  }
+
+  :where(
+    .ghost-theme .ghost-kbd [data-part='separator'],
+    .ghost-themed-scope .ghost-kbd [data-part='separator']
+  ) {
+    color: var(--ghost-text-muted);
+    font-weight: var(--ghost-type-weight-regular);
+  }
+
+  :where(
+    .ghost-theme .ghost-kbd[data-size='sm'],
+    .ghost-themed-scope .ghost-kbd[data-size='sm'],
+    .ghost-theme .ghost-kbd[data-size='sm'] [data-part='key'],
+    .ghost-themed-scope .ghost-kbd[data-size='sm'] [data-part='key']
+  ) {
+    --_ghost-kbd-font-size: var(--ghost-type-size-xs);
+    --_ghost-kbd-padding-block: var(--ghost-space-gap-xs);
+    --_ghost-kbd-padding-inline: var(--ghost-space-gap-xs);
+  }
+
+  :where(
+    .ghost-theme .ghost-kbd[data-size='lg'],
+    .ghost-themed-scope .ghost-kbd[data-size='lg'],
+    .ghost-theme .ghost-kbd[data-size='lg'] [data-part='key'],
+    .ghost-themed-scope .ghost-kbd[data-size='lg'] [data-part='key']
+  ) {
+    --_ghost-kbd-font-size: var(--ghost-type-size-md);
+    --_ghost-kbd-padding-block: var(--ghost-space-inset-xs);
+    --_ghost-kbd-padding-inline: var(--ghost-space-inset-xs);
+    --_ghost-kbd-radius: var(--ghost-radius-md);
+  }
+
+  @media (forced-colors: active) {
+    :where(
+      .ghost-theme .ghost-kbd,
+      .ghost-themed-scope .ghost-kbd,
+      .ghost-theme .ghost-kbd [data-part='key'],
+      .ghost-themed-scope .ghost-kbd [data-part='key']
+    ) {
+      background-color: ButtonFace;
+      border-color: ButtonText;
+      box-shadow: none;
+      color: ButtonText;
+    }
+
+    :where(
+      .ghost-theme .ghost-kbd:has(> [data-part='key']),
+      .ghost-themed-scope .ghost-kbd:has(> [data-part='key'])
+    ) {
+      background-color: Canvas;
+      border-color: Canvas;
+      color: CanvasText;
+    }
+
+    :where(
+      .ghost-theme .ghost-kbd [data-part='separator'],
+      .ghost-themed-scope .ghost-kbd [data-part='separator']
+    ) {
+      color: CanvasText;
+    }
+  }
+}

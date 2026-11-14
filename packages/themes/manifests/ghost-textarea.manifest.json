@@ -1,0 +1,237 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "handwritten",
+  "name": "GhostTextarea",
+  "package": "@ghostvue/themes",
+  "status": "experimental",
+  "description": "Themed wrapper around headless GhostTextarea. Same behavioral props plus size. Importing it loads the default stylesheet and scopes styles to this instance. Hand-written until GHO-13 generates manifests.",
+  "props": [
+    {
+      "name": "modelValue",
+      "type": "string",
+      "required": false,
+      "description": "Controlled value, forwarded to the unstyled GhostTextarea.",
+      "deprecated": false
+    },
+    {
+      "name": "defaultValue",
+      "type": "string",
+      "default": "",
+      "required": false,
+      "description": "Initial uncontrolled value, forwarded to the unstyled GhostTextarea.",
+      "deprecated": false
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Forwards native disabled semantics to the unstyled GhostTextarea.",
+      "deprecated": false
+    },
+    {
+      "name": "readonly",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Forwards native readonly semantics to the unstyled GhostTextarea.",
+      "deprecated": false
+    },
+    {
+      "name": "invalid",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Forwards invalid semantics to the unstyled GhostTextarea.",
+      "deprecated": false
+    },
+    {
+      "name": "required",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Forwards native required to the unstyled GhostTextarea.",
+      "deprecated": false
+    },
+    {
+      "name": "rows",
+      "type": "number",
+      "default": 2,
+      "required": false,
+      "description": "Native rows, forwarded to the unstyled GhostTextarea.",
+      "deprecated": false
+    },
+    {
+      "name": "maxRows",
+      "type": "number",
+      "required": false,
+      "description": "Auto-resize ceiling, forwarded to the unstyled GhostTextarea.",
+      "deprecated": false
+    },
+    {
+      "name": "autoResize",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Forwards auto-resize to the unstyled GhostTextarea.",
+      "deprecated": false
+    },
+    {
+      "name": "size",
+      "type": "'sm' | 'md' | 'lg'",
+      "default": "md",
+      "required": false,
+      "description": "Control size. The default omits data-size so CSS can treat a missing hook as md.",
+      "deprecated": false
+    }
+  ],
+  "models": [
+    {
+      "prop": "modelValue",
+      "event": "update:modelValue",
+      "type": "string",
+      "description": "v-model binding forwarded to the unstyled GhostTextarea."
+    }
+  ],
+  "events": [],
+  "slots": [],
+  "exposed": [
+    {
+      "name": "element",
+      "kind": "property",
+      "type": "HTMLTextAreaElement | null",
+      "description": "The native textarea after mount; null before mount and after unmount. Delegates to the unstyled GhostTextarea."
+    },
+    {
+      "name": "focus",
+      "kind": "method",
+      "type": "(options?: FocusOptions) => void",
+      "description": "Focuses the native textarea when it is mounted and enabled. Delegates to the unstyled GhostTextarea."
+    },
+    {
+      "name": "blur",
+      "kind": "method",
+      "type": "() => void",
+      "description": "Removes focus from the native textarea when it is mounted. Delegates to the unstyled GhostTextarea."
+    }
+  ],
+  "styling": {
+    "parts": [
+      {
+        "name": "root",
+        "description": "The textarea element inside the display:contents themed scope."
+      }
+    ],
+    "states": [
+      {
+        "name": "disabled",
+        "description": "Unavailable appearance from native disabled and data-state."
+      },
+      {
+        "name": "readonly",
+        "description": "Inset appearance for readonly fields."
+      },
+      {
+        "name": "invalid",
+        "description": "Danger border from aria-invalid, including when readonly."
+      }
+    ],
+    "cssProperties": [
+      {
+        "name": "--ghost-elevation-1-bg",
+        "description": "Field fill at rest."
+      },
+      {
+        "name": "--ghost-surface-fg",
+        "description": "Field text color."
+      },
+      {
+        "name": "--ghost-text-muted",
+        "description": "Placeholder color."
+      },
+      {
+        "name": "--ghost-border-default",
+        "description": "Resting border color."
+      },
+      {
+        "name": "--ghost-border-hairline-width",
+        "description": "Border thickness."
+      },
+      {
+        "name": "--ghost-border-danger",
+        "description": "Invalid border color."
+      },
+      {
+        "name": "--ghost-border-focus",
+        "description": "Focused border color."
+      },
+      {
+        "name": "--ghost-action-disabled-bg",
+        "description": "Disabled fill."
+      },
+      {
+        "name": "--ghost-action-disabled-border",
+        "description": "Disabled border color."
+      },
+      {
+        "name": "--ghost-action-disabled-fg",
+        "description": "Disabled text color."
+      },
+      {
+        "name": "--ghost-action-radius",
+        "description": "Corner radius."
+      },
+      {
+        "name": "--ghost-control-size-md-padding-block",
+        "description": "Default block padding. sm/lg swap the matching control size tokens."
+      },
+      {
+        "name": "--ghost-control-size-md-padding-inline",
+        "description": "Default inline padding."
+      },
+      {
+        "name": "--ghost-control-size-md-font",
+        "description": "Default font size."
+      },
+      {
+        "name": "--ghost-type-family-sans",
+        "description": "Field font family."
+      },
+      {
+        "name": "--ghost-type-line-normal",
+        "description": "Field line height, also used as the auto-resize fallback for line-height: normal."
+      },
+      {
+        "name": "--ghost-focus-ring-color",
+        "description": "Outer focus ring color."
+      },
+      {
+        "name": "--ghost-focus-ring-contrast",
+        "description": "Inner focus ring contrast."
+      },
+      {
+        "name": "--ghost-focus-ring-width",
+        "description": "Focus ring thickness."
+      },
+      {
+        "name": "--ghost-focus-ring-offset",
+        "description": "Focus ring offset."
+      }
+    ]
+  },
+  "accessibility": {
+    "role": "textbox",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/textbox/",
+    "keyboard": {
+      "Enter": "Insert a newline. Does not submit the form.",
+      "Tab": "Leave the field. Native tab order."
+    },
+    "requiredAriaAttributes": []
+  },
+  "examples": [
+    "textarea/themed",
+    "textarea/states",
+    "textarea/auto-resize",
+    "textarea/form"
+  ]
+}

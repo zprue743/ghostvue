@@ -1,0 +1,170 @@
+/*
+ * Themed GhostBadge. Visual values come from semantic --ghost-* tokens. Private
+ * --_ghost-badge-* properties are per-instance wiring, not a public API.
+ * Defaults are soft / neutral / sm (omitted data-* hooks). No hover or press:
+ * the contract is non-interactive. No control-size min: those minima are
+ * touch targets and would make table-cell badges too tall.
+ */
+@layer ghostvue-theme {
+  :where(.ghost-theme .ghost-badge, .ghost-themed-scope .ghost-badge) {
+    --_ghost-badge-tone-color: var(--ghost-action-neutral-bg);
+    --_ghost-badge-tone-contrast: var(--ghost-action-neutral-fg);
+    --_ghost-badge-tone-border: var(--ghost-action-neutral-border);
+    --_ghost-badge-fill: none;
+    --_ghost-badge-background: color-mix(
+      in oklch,
+      var(--_ghost-badge-tone-color) calc(100% * var(--ghost-state-mix-soft)),
+      var(--ghost-surface-bg)
+    );
+    --_ghost-badge-border-color: color-mix(
+      in oklch,
+      var(--_ghost-badge-tone-color) calc(100% * var(--ghost-state-mix-border)),
+      var(--ghost-surface-bg)
+    );
+    --_ghost-badge-color: var(--_ghost-badge-tone-color);
+    --_ghost-badge-font-size: var(--ghost-type-size-xs);
+    --_ghost-badge-padding-block: var(--ghost-space-gap-xs);
+    --_ghost-badge-padding-inline: var(--ghost-space-inset-xs);
+
+    align-items: center;
+    background-color: var(--_ghost-badge-background);
+    background-image: var(--_ghost-badge-fill);
+    border: var(--ghost-border-hairline-width) solid
+      var(--_ghost-badge-border-color);
+    border-radius: var(--ghost-radius-pill);
+    box-sizing: border-box;
+    color: var(--_ghost-badge-color);
+    display: inline-flex;
+    font-family: var(--ghost-action-label-family);
+    font-feature-settings: var(--ghost-type-feature-default);
+    font-size: var(--_ghost-badge-font-size);
+    font-weight: var(--ghost-type-weight-medium);
+    gap: var(--ghost-space-gap-xs);
+    letter-spacing: var(--ghost-action-label-letter);
+    line-height: var(--ghost-type-line-tight);
+    max-inline-size: 100%;
+    padding-block: var(--_ghost-badge-padding-block);
+    padding-inline: var(--_ghost-badge-padding-inline);
+    vertical-align: middle;
+    white-space: nowrap;
+  }
+
+  :where(
+    .ghost-theme .ghost-badge[data-tone='accent'],
+    .ghost-themed-scope .ghost-badge[data-tone='accent']
+  ) {
+    --_ghost-badge-tone-color: var(--ghost-action-primary-bg);
+    --_ghost-badge-tone-contrast: var(--ghost-action-primary-fg);
+    --_ghost-badge-tone-border: var(--ghost-action-primary-border);
+  }
+
+  :where(
+    .ghost-theme .ghost-badge[data-tone='danger'],
+    .ghost-themed-scope .ghost-badge[data-tone='danger']
+  ) {
+    --_ghost-badge-tone-color: var(--ghost-action-danger-bg);
+    --_ghost-badge-tone-contrast: var(--ghost-action-danger-fg);
+    --_ghost-badge-tone-border: var(--ghost-action-danger-border);
+  }
+
+  :where(
+    .ghost-theme .ghost-badge[data-variant='solid'],
+    .ghost-themed-scope .ghost-badge[data-variant='solid']
+  ) {
+    --_ghost-badge-background: var(--_ghost-badge-tone-color);
+    --_ghost-badge-border-color: var(--_ghost-badge-tone-border);
+    --_ghost-badge-color: var(--_ghost-badge-tone-contrast);
+    --_ghost-badge-fill: var(--ghost-gradient-action-neutral);
+  }
+
+  :where(
+    .ghost-theme .ghost-badge[data-tone='accent'][data-variant='solid'],
+    .ghost-themed-scope .ghost-badge[data-tone='accent'][data-variant='solid']
+  ) {
+    --_ghost-badge-fill: var(--ghost-gradient-action-primary);
+  }
+
+  :where(
+    .ghost-theme .ghost-badge[data-tone='danger'][data-variant='solid'],
+    .ghost-themed-scope .ghost-badge[data-tone='danger'][data-variant='solid']
+  ) {
+    --_ghost-badge-fill: var(--ghost-gradient-action-danger);
+  }
+
+  :where(
+    .ghost-theme .ghost-badge[data-variant='outline'],
+    .ghost-themed-scope .ghost-badge[data-variant='outline']
+  ) {
+    --_ghost-badge-background: transparent;
+    --_ghost-badge-border-color: var(--_ghost-badge-tone-border);
+    --_ghost-badge-color: var(--_ghost-badge-tone-color);
+    --_ghost-badge-fill: none;
+  }
+
+  :where(
+    .ghost-theme .ghost-badge[data-variant='ghost'],
+    .ghost-themed-scope .ghost-badge[data-variant='ghost']
+  ) {
+    --_ghost-badge-background: transparent;
+    --_ghost-badge-border-color: transparent;
+    --_ghost-badge-color: var(--_ghost-badge-tone-color);
+    --_ghost-badge-fill: none;
+  }
+
+  :where(
+    .ghost-theme .ghost-badge[data-size='md'],
+    .ghost-themed-scope .ghost-badge[data-size='md']
+  ) {
+    --_ghost-badge-font-size: var(--ghost-type-size-sm);
+    --_ghost-badge-padding-block: var(--ghost-space-inset-xs);
+    --_ghost-badge-padding-inline: var(--ghost-space-inset-sm);
+  }
+
+  :where(
+    .ghost-theme .ghost-badge:focus-visible,
+    .ghost-themed-scope .ghost-badge:focus-visible
+  ) {
+    box-shadow: 0 0 0 var(--ghost-focus-ring-offset)
+      var(--ghost-focus-ring-contrast);
+    outline: var(--ghost-focus-ring-width) solid var(--ghost-focus-ring-color);
+    outline-offset: var(--ghost-focus-ring-offset);
+  }
+
+  :where(
+    .ghost-theme .ghost-badge [data-part='icon'],
+    .ghost-themed-scope .ghost-badge [data-part='icon']
+  ) {
+    block-size: var(--ghost-action-icon-size);
+    flex: none;
+    inline-size: var(--ghost-action-icon-size);
+  }
+
+  :where(
+    .ghost-theme .ghost-badge [data-part='icon'] svg,
+    .ghost-themed-scope .ghost-badge [data-part='icon'] svg
+  ) {
+    block-size: 100%;
+    display: block;
+    inline-size: 100%;
+  }
+
+  @media (forced-colors: active) {
+    :where(.ghost-theme .ghost-badge, .ghost-themed-scope .ghost-badge) {
+      --_ghost-badge-fill: none;
+
+      background-color: Canvas;
+      background-image: none;
+      border-color: CanvasText;
+      box-shadow: none;
+      color: CanvasText;
+    }
+
+    :where(
+      .ghost-theme .ghost-badge:focus-visible,
+      .ghost-themed-scope .ghost-badge:focus-visible
+    ) {
+      box-shadow: none;
+      outline-color: Highlight;
+    }
+  }
+}
