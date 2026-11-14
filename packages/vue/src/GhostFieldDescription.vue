@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, inject, onUnmounted, useAttrs, useTemplateRef } from 'vue'
+import { computed, inject, shallowRef, useAttrs, useTemplateRef } from 'vue'
 
 import {
   ghostFieldContextKey,
@@ -7,6 +7,7 @@ import {
   type GhostFieldDescriptionElement,
   type GhostFieldDescriptionExposed,
 } from './ghost-field'
+import { useGhostFieldPartContent } from './use-ghost-field-part-content'
 
 defineOptions({
   inheritAttrs: false,
@@ -26,19 +27,20 @@ if (!context) {
   throw new Error('GhostFieldDescription must be used inside GhostField')
 }
 
-context.setDescriptionRegistered(true)
-onUnmounted(() => {
-  context.setDescriptionRegistered(false)
-})
-
 const attrs = useAttrs()
-const hostRef = useTemplateRef('host')
+const hostRef = useTemplateRef<HTMLElement>('host')
 const element = computed(() => resolveFieldHtmlElement(hostRef.value))
+const visible = shallowRef(false)
+
+useGhostFieldPartContent(hostRef, (next) => {
+  visible.value = next
+  context.setDescriptionRegistered(next)
+})
 
 const descriptionAttrs = computed(() => {
   const rest: Record<string, unknown> = {}
   for (const [key, value] of Object.entries(attrs)) {
-    if (key !== 'id') {
+    if (key !== 'id' && key !== 'hidden') {
       rest[key] = value
     }
   }
@@ -53,12 +55,13 @@ const descriptionAttrs = computed(() => {
     ...rest,
     id,
     'data-part': 'description',
+    hidden: visible.value ? undefined : true,
   }
 })
 
 defineExpose<GhostFieldDescriptionExposed>({
   get element() {
-    return element.value
+    return visible.value ? element.value : null
   },
   focus(options?: FocusOptions) {
     element.value?.focus(options)

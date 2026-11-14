@@ -1,7 +1,6 @@
-import { mount } from '@vue/test-utils'
-import { nextTick } from 'vue'
+import { flushPromises, mount, type VueWrapper } from '@vue/test-utils'
+import { defineComponent, h, nextTick, ref } from 'vue'
 import { describe, expect, it } from 'vitest'
-import { defineComponent, h, ref } from 'vue'
 
 import GhostCheckbox from './GhostCheckbox.vue'
 import GhostField from './GhostField.vue'
@@ -10,6 +9,22 @@ import GhostFieldDescription from './GhostFieldDescription.vue'
 import GhostFieldError from './GhostFieldError.vue'
 import GhostFieldLabel from './GhostFieldLabel.vue'
 import GhostInput from './GhostInput.vue'
+
+function mountWithNoVueWarnings(
+  component: ReturnType<typeof defineComponent>,
+): { wrapper: VueWrapper; warnings: string[] } {
+  const warnings: string[] = []
+  const wrapper = mount(component, {
+    global: {
+      config: {
+        warnHandler: (message: string) => {
+          warnings.push(message)
+        },
+      },
+    },
+  })
+  return { wrapper, warnings }
+}
 
 function mountInputField(options?: {
   invalid?: boolean
@@ -35,13 +50,13 @@ function mountInputField(options?: {
               options?.description
                 ? h(GhostFieldDescription, {}, () => options.description ?? '')
                 : null,
+              options?.error !== undefined
+                ? h(GhostFieldError, {}, () => options.error ?? '')
+                : null,
               h(GhostFieldControl, null, {
                 default: (field: Record<string, unknown>) =>
                   h(GhostInput, { ...field, modelValue: value.value }),
               }),
-              options?.error
-                ? h(GhostFieldError, {}, () => options.error ?? '')
-                : null,
             ],
           )
       },
@@ -50,10 +65,11 @@ function mountInputField(options?: {
 }
 
 describe('GhostField', () => {
-  it('wires label for, control id, and describedby', () => {
+  it('wires label for, control id, and describedby', async () => {
     const wrapper = mountInputField({
       description: 'Shown on invoices.',
     })
+    await flushPromises()
     const input = wrapper.get('input')
     const label = wrapper.get('label')
     expect(label.attributes('for')).toBe(input.attributes('id'))
@@ -68,8 +84,7 @@ describe('GhostField', () => {
       invalid: true,
       error: 'Enter at least three characters.',
     })
-    await nextTick()
-    await nextTick()
+    await flushPromises()
     const input = wrapper.get('input')
     const error = wrapper.get('[data-part="error"]')
     expect(input.attributes('aria-invalid')).toBe('true')
@@ -96,8 +111,153 @@ describe('GhostField', () => {
         },
       }),
     )
-    expect(wrapper.find('[data-part="error"]').exists()).toBe(false)
+    const error = wrapper.get('[data-part="error"]')
+    expect(error.attributes('hidden')).toBeDefined()
+    expect(error.attributes('role')).toBeUndefined()
+    expect(wrapper.get('input').attributes('aria-describedby')).toBeUndefined()
     wrapper.unmount()
+  })
+
+  it('toggles reactive error text in aria-describedby', async () => {
+    const errorMessage = ref('')
+    const wrapper = mount(
+      defineComponent({
+        setup() {
+          return () =>
+            h(GhostField, { invalid: true }, () => [
+              h(GhostFieldLabel, {}, () => 'Name'),
+              h(GhostFieldControl, null, {
+                default: (field: Record<string, unknown>) =>
+                  h(GhostInput, field),
+              }),
+              h(GhostFieldError, {}, () => errorMessage.value),
+            ])
+        },
+      }),
+    )
+
+    const input = () => wrapper.get('input')
+    await nextTick()
+    expect(input().attributes('aria-describedby')).toBeUndefined()
+    expect(
+      wrapper.get('[data-part="error"]').attributes('hidden'),
+    ).toBeDefined()
+
+    errorMessage.value = 'Too short'
+    await nextTick()
+    const errorId = wrapper.get('[data-part="error"]').attributes('id')
+    expect(
+      wrapper.get('[data-part="error"]').attributes('hidden'),
+    ).toBeUndefined()
+    expect(input().attributes('aria-describedby')).toBe(errorId)
+
+    errorMessage.value = ''
+    await nextTick()
+    expect(
+      wrapper.get('[data-part="error"]').attributes('hidden'),
+    ).toBeDefined()
+    expect(input().attributes('aria-describedby')).toBeUndefined()
+    wrapper.unmount()
+  })
+
+  it('toggles GhostFieldError with v-if', async () => {
+    const showError = ref(false)
+    const wrapper = mount(
+      defineComponent({
+        setup() {
+          return () =>
+            h(GhostField, { invalid: true }, () => [
+              h(GhostFieldLabel, {}, () => 'Name'),
+              h(GhostFieldControl, null, {
+                default: (field: Record<string, unknown>) =>
+                  h(GhostInput, field),
+              }),
+              showError.value ? h(GhostFieldError, {}, () => 'Required') : null,
+            ])
+        },
+      }),
+    )
+
+    const input = () => wrapper.get('input')
+    await nextTick()
+    expect(wrapper.find('[data-part="error"]').exists()).toBe(false)
+    expect(input().attributes('aria-describedby')).toBeUndefined()
+
+    showError.value = true
+    await flushPromises()
+    const errorId = wrapper.get('[data-part="error"]').attributes('id')
+    expect(input().attributes('aria-describedby')).toBe(errorId)
+
+    showError.value = false
+    await nextTick()
+    expect(wrapper.find('[data-part="error"]').exists()).toBe(false)
+    expect(input().attributes('aria-describedby')).toBeUndefined()
+    wrapper.unmount()
+  })
+
+  it('includes description in aria-describedby only when visible', async () => {
+    const hint = ref('')
+    const wrapper = mount(
+      defineComponent({
+        setup() {
+          return () =>
+            h(GhostField, null, () => [
+              h(GhostFieldLabel, {}, () => 'Name'),
+              h(GhostFieldDescription, {}, () => hint.value),
+              h(GhostFieldControl, null, {
+                default: (field: Record<string, unknown>) =>
+                  h(GhostInput, field),
+              }),
+            ])
+        },
+      }),
+    )
+
+    await nextTick()
+    expect(wrapper.get('input').attributes('aria-describedby')).toBeUndefined()
+
+    hint.value = 'Visible on receipts'
+    await nextTick()
+    const descriptionId = wrapper
+      .get('[data-part="description"]')
+      .attributes('id')
+    expect(wrapper.get('input').attributes('aria-describedby')).toBe(
+      descriptionId,
+    )
+
+    hint.value = ''
+    await nextTick()
+    expect(
+      wrapper.get('[data-part="description"]').attributes('hidden'),
+    ).toBeDefined()
+    expect(wrapper.get('input').attributes('aria-describedby')).toBeUndefined()
+    wrapper.unmount()
+  })
+
+  it('emits no Vue warnings when error text changes', async () => {
+    const errorMessage = ref('')
+    const { wrapper, warnings } = mountWithNoVueWarnings(
+      defineComponent({
+        setup() {
+          return () =>
+            h(GhostField, { invalid: true }, () => [
+              h(GhostFieldLabel, {}, () => 'Name'),
+              h(GhostFieldControl, null, {
+                default: (field: Record<string, unknown>) =>
+                  h(GhostInput, field),
+              }),
+              h(GhostFieldError, {}, () => errorMessage.value),
+            ])
+        },
+      }),
+    )
+
+    errorMessage.value = 'Too short'
+    await nextTick()
+    errorMessage.value = ''
+    await nextTick()
+    wrapper.unmount()
+    expect(warnings).toEqual([])
   })
 
   it('propagates disabled and required to the control', () => {
