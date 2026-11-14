@@ -24,7 +24,7 @@ function onHeadlessChange(value: string) {
 <template>
   <section aria-labelledby="tabs-heading" class="tabs-section">
     <h2 id="tabs-heading">GhostTabs</h2>
-    <p class="tabs-status" role="status">{{ tabsStatus }}</p>
+    <p class="tabs-status" aria-live="polite">{{ tabsStatus }}</p>
 
     <fieldset>
       <legend>Headless workspace views</legend>
