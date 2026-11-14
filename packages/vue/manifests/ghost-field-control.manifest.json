@@ -13,14 +13,14 @@
       "name": "default",
       "props": [
         {
-          "name": "id",
-          "type": "string",
-          "description": "Slot prop `id`."
-        },
-        {
           "name": "disabled",
           "type": "boolean",
           "description": "Slot prop `disabled`."
+        },
+        {
+          "name": "id",
+          "type": "string",
+          "description": "Slot prop `id`."
         },
         {
           "name": "invalid",

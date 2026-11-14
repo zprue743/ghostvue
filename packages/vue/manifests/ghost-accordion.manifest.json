@@ -7,14 +7,6 @@
   "description": "Headless accordion root coordinating single or multiple expansion over GhostCollapsible items with vertical roving focus.",
   "props": [
     {
-      "name": "type",
-      "type": "GhostAccordionType",
-      "default": "single",
-      "required": false,
-      "description": "Single or multiple expanded panels.",
-      "deprecated": false
-    },
-    {
       "name": "collapsible",
       "type": "boolean",
       "default": false,
@@ -23,17 +15,18 @@
       "deprecated": false
     },
     {
-      "name": "modelValue",
-      "type": "GhostAccordionValue",
-      "required": false,
-      "description": "Controlled expansion value. Omit for uncontrolled mode.",
-      "deprecated": false
-    },
-    {
       "name": "defaultValue",
       "type": "GhostAccordionValue",
       "required": false,
       "description": "Initial expansion when `modelValue` is omitted.",
+      "deprecated": false
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Disables toggling on every item when `true`.",
       "deprecated": false
     },
     {
@@ -45,11 +38,18 @@
       "deprecated": false
     },
     {
-      "name": "disabled",
-      "type": "boolean",
-      "default": false,
+      "name": "modelValue",
+      "type": "GhostAccordionValue",
       "required": false,
-      "description": "Disables toggling on every item when `true`.",
+      "description": "Controlled expansion value. Omit for uncontrolled mode.",
+      "deprecated": false
+    },
+    {
+      "name": "type",
+      "type": "GhostAccordionType",
+      "default": "single",
+      "required": false,
+      "description": "Single or multiple expanded panels.",
       "deprecated": false
     }
   ],
@@ -71,6 +71,12 @@
   ],
   "exposed": [
     {
+      "name": "blur",
+      "kind": "method",
+      "type": "() => void",
+      "description": "Exposed method `blur`."
+    },
+    {
       "name": "element",
       "kind": "property",
       "type": "HTMLElement | null",
@@ -81,12 +87,6 @@
       "kind": "method",
       "type": "(options?: FocusOptions) => void",
       "description": "Exposed method `focus`."
-    },
-    {
-      "name": "blur",
-      "kind": "method",
-      "type": "() => void",
-      "description": "Exposed method `blur`."
     }
   ],
   "styling": {

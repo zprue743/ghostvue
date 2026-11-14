@@ -7,13 +7,6 @@
   "description": "Headless range input with APG slider semantics, optional two-thumb range mode, stepped keyboard interaction, and hidden form inputs. GhostSlider is the unstyled root; useGhostSlider owns the model.",
   "props": [
     {
-      "name": "modelValue",
-      "type": "GhostSliderValue",
-      "required": false,
-      "description": "Declared prop `modelValue`.",
-      "deprecated": false
-    },
-    {
       "name": "defaultValue",
       "type": "GhostSliderValue",
       "required": false,
@@ -29,11 +22,10 @@
       "deprecated": false
     },
     {
-      "name": "min",
-      "type": "number",
-      "default": 0,
+      "name": "form",
+      "type": "string",
       "required": false,
-      "description": "Declared prop `min`.",
+      "description": "Declared prop `form`.",
       "deprecated": false
     },
     {
@@ -42,6 +34,51 @@
       "default": 100,
       "required": false,
       "description": "Declared prop `max`.",
+      "deprecated": false
+    },
+    {
+      "name": "min",
+      "type": "number",
+      "default": 0,
+      "required": false,
+      "description": "Declared prop `min`.",
+      "deprecated": false
+    },
+    {
+      "name": "modelValue",
+      "type": "GhostSliderValue",
+      "required": false,
+      "description": "Declared prop `modelValue`.",
+      "deprecated": false
+    },
+    {
+      "name": "name",
+      "type": "string",
+      "required": false,
+      "description": "Declared prop `name`.",
+      "deprecated": false
+    },
+    {
+      "name": "nameMax",
+      "type": "string",
+      "required": false,
+      "description": "Declared prop `nameMax`.",
+      "deprecated": false
+    },
+    {
+      "name": "orientation",
+      "type": "'horizontal' | 'vertical'",
+      "default": "horizontal",
+      "required": false,
+      "description": "Declared prop `orientation`.",
+      "deprecated": false
+    },
+    {
+      "name": "range",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Declared prop `range`.",
       "deprecated": false
     },
     {
@@ -57,43 +94,6 @@
       "type": "string",
       "required": false,
       "description": "Declared prop `valueText`.",
-      "deprecated": false
-    },
-    {
-      "name": "name",
-      "type": "string",
-      "required": false,
-      "description": "Declared prop `name`.",
-      "deprecated": false
-    },
-    {
-      "name": "orientation",
-      "type": "'vertical' | 'horizontal'",
-      "default": "horizontal",
-      "required": false,
-      "description": "Declared prop `orientation`.",
-      "deprecated": false
-    },
-    {
-      "name": "range",
-      "type": "boolean",
-      "default": false,
-      "required": false,
-      "description": "Declared prop `range`.",
-      "deprecated": false
-    },
-    {
-      "name": "nameMax",
-      "type": "string",
-      "required": false,
-      "description": "Declared prop `nameMax`.",
-      "deprecated": false
-    },
-    {
-      "name": "form",
-      "type": "string",
-      "required": false,
-      "description": "Declared prop `form`.",
       "deprecated": false
     }
   ],
@@ -115,16 +115,16 @@
   ],
   "exposed": [
     {
+      "name": "blur",
+      "kind": "method",
+      "type": "() => void",
+      "description": "Exposed method `blur`."
+    },
+    {
       "name": "element",
       "kind": "property",
       "type": "HTMLElement | null",
       "description": "Root element after mount; null before mount."
-    },
-    {
-      "name": "value",
-      "kind": "property",
-      "type": "GhostSliderValue",
-      "description": "Exposed property `value`."
     },
     {
       "name": "focus",
@@ -133,10 +133,10 @@
       "description": "Exposed method `focus`."
     },
     {
-      "name": "blur",
-      "kind": "method",
-      "type": "() => void",
-      "description": "Exposed method `blur`."
+      "name": "value",
+      "kind": "property",
+      "type": "GhostSliderValue",
+      "description": "Exposed property `value`."
     }
   ],
   "styling": {

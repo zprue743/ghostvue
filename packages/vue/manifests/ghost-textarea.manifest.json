@@ -7,10 +7,11 @@
   "description": "Headless native multiline text control. useGhostTextarea owns v-model, disabled/readonly/invalid/required, and SSR-safe auto-resize; GhostTextarea is the thin unstyled textarea. Themed styles live on @ghostvue/themes.",
   "props": [
     {
-      "name": "modelValue",
-      "type": "string",
+      "name": "autoResize",
+      "type": "boolean",
+      "default": false,
       "required": false,
-      "description": "Controlled value. Omit for uncontrolled mode; an empty string is a defined empty value.",
+      "description": "Grow the field with its content after mount. Off by default so native resize and a fixed rows height remain the ordinary path.",
       "deprecated": false
     },
     {
@@ -30,19 +31,33 @@
       "deprecated": false
     },
     {
-      "name": "readonly",
-      "type": "boolean",
-      "default": false,
-      "required": false,
-      "description": "Native readonly semantics: focusable and submitted, but the user agent rejects edits.",
-      "deprecated": false
-    },
-    {
       "name": "invalid",
       "type": "boolean",
       "default": false,
       "required": false,
       "description": "Sets aria-invalid=true. Error copy belongs to Field or the surrounding form.",
+      "deprecated": false
+    },
+    {
+      "name": "maxRows",
+      "type": "number",
+      "required": false,
+      "description": "Auto-resize ceiling in rows. Ignored unless autoResize is true. When set below rows, rows wins as both min and max.",
+      "deprecated": false
+    },
+    {
+      "name": "modelValue",
+      "type": "string",
+      "required": false,
+      "description": "Controlled value. Omit for uncontrolled mode; an empty string is a defined empty value.",
+      "deprecated": false
+    },
+    {
+      "name": "readonly",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Native readonly semantics: focusable and submitted, but the user agent rejects edits.",
       "deprecated": false
     },
     {
@@ -60,21 +75,6 @@
       "required": false,
       "description": "Native rows. Matches the HTML default. Auto-resize uses this as the minimum height.",
       "deprecated": false
-    },
-    {
-      "name": "maxRows",
-      "type": "number",
-      "required": false,
-      "description": "Auto-resize ceiling in rows. Ignored unless autoResize is true. When set below rows, rows wins as both min and max.",
-      "deprecated": false
-    },
-    {
-      "name": "autoResize",
-      "type": "boolean",
-      "default": false,
-      "required": false,
-      "description": "Grow the field with its content after mount. Off by default so native resize and a fixed rows height remain the ordinary path.",
-      "deprecated": false
     }
   ],
   "models": [
@@ -89,6 +89,12 @@
   "slots": [],
   "exposed": [
     {
+      "name": "blur",
+      "kind": "method",
+      "type": "() => void",
+      "description": "Removes focus from the native textarea when it is mounted. No-op before mount."
+    },
+    {
       "name": "element",
       "kind": "property",
       "type": "HTMLTextAreaElement | null",
@@ -99,12 +105,6 @@
       "kind": "method",
       "type": "(options?: FocusOptions) => void",
       "description": "Focuses the native textarea when it is mounted and enabled. No-op before mount."
-    },
-    {
-      "name": "blur",
-      "kind": "method",
-      "type": "() => void",
-      "description": "Removes focus from the native textarea when it is mounted. No-op before mount."
     }
   ],
   "styling": {

@@ -7,13 +7,6 @@
   "description": "Headless on/off switch. useGhostSwitch owns v-model, APG switch semantics, disabled/readonly, and form submit/reset; GhostSwitch is the thin unstyled button. Themed visual props live on @ghostvue/themes.",
   "props": [
     {
-      "name": "modelValue",
-      "type": "boolean",
-      "required": false,
-      "description": "Controlled on/off. Omit for uncontrolled mode.",
-      "deprecated": false
-    },
-    {
       "name": "defaultValue",
       "type": "boolean",
       "default": false,
@@ -30,11 +23,17 @@
       "deprecated": false
     },
     {
-      "name": "readonly",
-      "type": "boolean",
-      "default": false,
+      "name": "form",
+      "type": "string",
       "required": false,
-      "description": "Focusable and submitted, but not user-operable. Expressed as aria-readonly.",
+      "description": "Associates the hidden input with an external form id.",
+      "deprecated": false
+    },
+    {
+      "name": "modelValue",
+      "type": "boolean",
+      "required": false,
+      "description": "Controlled on/off. Omit for uncontrolled mode.",
       "deprecated": false
     },
     {
@@ -45,18 +44,19 @@
       "deprecated": false
     },
     {
+      "name": "readonly",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Focusable and submitted, but not user-operable. Expressed as aria-readonly.",
+      "deprecated": false
+    },
+    {
       "name": "value",
       "type": "string",
       "default": "on",
       "required": false,
       "description": "Submitted string when on. Same default as a native checkbox.",
-      "deprecated": false
-    },
-    {
-      "name": "form",
-      "type": "string",
-      "required": false,
-      "description": "Associates the hidden input with an external form id.",
       "deprecated": false
     }
   ],
@@ -78,10 +78,10 @@
   ],
   "exposed": [
     {
-      "name": "element",
-      "kind": "property",
-      "type": "HTMLButtonElement | null",
-      "description": "The native switch button after mount; null before mount and after unmount."
+      "name": "blur",
+      "kind": "method",
+      "type": "() => void",
+      "description": "Removes focus from the native button when it is mounted. No-op before mount."
     },
     {
       "name": "checked",
@@ -90,10 +90,10 @@
       "description": "Current on/off."
     },
     {
-      "name": "toggle",
-      "kind": "method",
-      "type": "() => void",
-      "description": "User-activation toggle. No-op when disabled or readonly."
+      "name": "element",
+      "kind": "property",
+      "type": "HTMLButtonElement | null",
+      "description": "The native switch button after mount; null before mount and after unmount."
     },
     {
       "name": "focus",
@@ -102,10 +102,10 @@
       "description": "Focuses the native button when it is mounted and enabled. No-op before mount."
     },
     {
-      "name": "blur",
+      "name": "toggle",
       "kind": "method",
       "type": "() => void",
-      "description": "Removes focus from the native button when it is mounted. No-op before mount."
+      "description": "User-activation toggle. No-op when disabled or readonly."
     }
   ],
   "styling": {

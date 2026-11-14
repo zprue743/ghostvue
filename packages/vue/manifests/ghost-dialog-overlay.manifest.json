@@ -42,6 +42,12 @@
   ],
   "exposed": [
     {
+      "name": "blur",
+      "kind": "method",
+      "type": "() => void",
+      "description": "Blurs the resolved overlay element."
+    },
+    {
       "name": "element",
       "kind": "property",
       "type": "HTMLElement | null",
@@ -52,12 +58,6 @@
       "kind": "method",
       "type": "(options?: FocusOptions) => void",
       "description": "Focuses the resolved overlay element when mounted."
-    },
-    {
-      "name": "blur",
-      "kind": "method",
-      "type": "() => void",
-      "description": "Blurs the resolved overlay element."
     }
   ],
   "styling": {
