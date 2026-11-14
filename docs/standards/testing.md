@@ -14,6 +14,22 @@ without rewriting assertions that mirror private structure.
 - **Automated accessibility:** axe is configured with Playwright. It detects only
   a subset of failures and never replaces semantic, keyboard, focus, or
   assistive-technology reasoning.
+
+### E2E support helpers
+
+Shared Playwright utilities live under `tests/support/` (documented in
+`tests/support/README.md` at the repo root):
+
+- `playgroundTest` / `playgroundUrl` — static server lifecycle for
+  `apps/playground/dist`.
+- `expectFocus`, `pressSequence` — keyboard and focus assertions.
+- `axeScan`, `expectNoAxeViolations` — axe scans for example previews and the
+  current page.
+
+`tests/e2e/examples.spec.ts` axe-scans every registered example in `light` and
+`dark` mode in the non-visual Playwright project. Visual example snapshots stay
+in `examples-visual.spec.ts` (`@visual`).
+
 - **Type tests:** add compile-time assertions alongside the first public generic
   or inference behavior worth preserving.
 
