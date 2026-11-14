@@ -137,6 +137,43 @@ describe('GhostSlider', () => {
     ).toBe(undefined)
   })
 
+  it('distinguishes range thumbs when aria-labelledby is set', () => {
+    const wrapper = mount(GhostSlider, {
+      props: { range: true, modelValue: [25, 75] as const },
+      attrs: { 'aria-labelledby': 'price-range-label' },
+    })
+    const [low, high] = wrapper.findAll('[role="slider"]')
+    const minHintId = wrapper
+      .findAll('span')
+      .find((node) => node.text() === 'minimum')
+      ?.attributes('id')
+    const maxHintId = wrapper
+      .findAll('span')
+      .find((node) => node.text() === 'maximum')
+      ?.attributes('id')
+    expect(minHintId).toBeTruthy()
+    expect(maxHintId).toBeTruthy()
+    expect(low?.attributes('aria-labelledby')).toBe(
+      `price-range-label ${minHintId}`,
+    )
+    expect(high?.attributes('aria-labelledby')).toBe(
+      `price-range-label ${maxHintId}`,
+    )
+    expect(low?.attributes('aria-label')).toBeUndefined()
+    expect(high?.attributes('aria-label')).toBeUndefined()
+  })
+
+  it('uses aria-label suffixes for range thumbs without aria-labelledby', () => {
+    const wrapper = mount(GhostSlider, {
+      props: { range: true, modelValue: [20, 80] as const },
+      attrs: { 'aria-label': 'Price range' },
+    })
+    const [low, high] = wrapper.findAll('[role="slider"]')
+    expect(low?.attributes('aria-label')).toBe('Price range minimum')
+    expect(high?.attributes('aria-label')).toBe('Price range maximum')
+    expect(wrapper.findAll('span', { text: 'minimum' })).toHaveLength(0)
+  })
+
   it('maps vertical arrow keys to value changes', async () => {
     const model = ref(50)
     const wrapper = mount({
@@ -163,6 +200,58 @@ describe('GhostSlider', () => {
     expect(wrapper.get('[role="slider"]').attributes('aria-label')).toBe(
       'Price',
     )
+  })
+
+  it('focuses the dragged thumb after track press for keyboard input', async () => {
+    const model = ref(50)
+    const wrapper = mount({
+      setup() {
+        return () =>
+          h(GhostSlider, {
+            'aria-label': 'Price',
+            modelValue: model.value,
+            step: 1,
+            'onUpdate:modelValue': (next) => {
+              if (typeof next === 'number') model.value = next
+            },
+          })
+      },
+      attachTo: document.body,
+    })
+
+    const track = wrapper.get('[data-part="track"]')
+    const thumb = wrapper.get('[role="slider"]')
+    track.element.getBoundingClientRect = () => ({
+      x: 0,
+      y: 0,
+      left: 0,
+      top: 0,
+      width: 200,
+      height: 8,
+      right: 200,
+      bottom: 8,
+      toJSON: () => ({}),
+    })
+    thumb.element.setPointerCapture = vi.fn()
+    thumb.element.releasePointerCapture = vi.fn()
+
+    const focusSpy = vi.spyOn(thumb.element, 'focus')
+    track.element.dispatchEvent(
+      new PointerEvent('pointerdown', {
+        clientX: 100,
+        clientY: 4,
+        button: 0,
+        bubbles: true,
+        pointerId: 1,
+      }),
+    )
+    await nextTick()
+    expect(focusSpy).toHaveBeenCalled()
+
+    thumb.element.focus()
+    await thumb.trigger('keydown', { key: 'ArrowRight' })
+    expect(model.value).toBe(51)
+    wrapper.unmount()
   })
 
   it('updates from track pointer coordinates', async () => {

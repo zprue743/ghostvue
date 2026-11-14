@@ -67,6 +67,14 @@ export interface UseGhostSliderOptions {
   label?: MaybeRefOrGetter<string | undefined>
   /** Copied from root `aria-labelledby` for thumb sliders. */
   ariaLabelledby?: MaybeRefOrGetter<string | undefined>
+  /** Visually hidden range-end hint ids paired with `ariaLabelledby` on each thumb. */
+  rangeEndLabelIds?: MaybeRefOrGetter<
+    | {
+        minimum: string
+        maximum: string
+      }
+    | undefined
+  >
   onChange?: (value: GhostSliderValue) => void
   root?: MaybeRefOrGetter<HTMLElement | null | undefined>
 }

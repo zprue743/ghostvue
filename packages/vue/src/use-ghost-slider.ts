@@ -448,6 +448,8 @@ export function useGhostSlider(options: UseGhostSliderOptions = {}): {
     const thumb = thumbElement(index)
     if (thumb) {
       startPointerDrag(index, event, thumb)
+      // preventDefault on the drag target blocks implicit focus; move focus manually.
+      focusThumb(index)
       return
     }
     focusThumb(index)
@@ -480,10 +482,17 @@ export function useGhostSlider(options: UseGhostSliderOptions = {}): {
       const customText = toValue(options.valueText)
       const thumbLabel = toValue(options.label)
       const labelledBy = toValue(options.ariaLabelledby)
+      const endLabelIds = toValue(options.rangeEndLabelIds)
       const thumbAccessibleName =
         thumbLabel && isRange.value
           ? `${thumbLabel} ${thumbIndex === 0 ? 'minimum' : 'maximum'}`
           : thumbLabel
+      const thumbLabelledBy =
+        labelledBy && isRange.value && endLabelIds
+          ? thumbIndex === 0
+            ? `${labelledBy} ${endLabelIds.minimum}`
+            : `${labelledBy} ${endLabelIds.maximum}`
+          : labelledBy
       items.push({
         'data-part': 'thumb',
         'data-thumb-index': thumbIndex === 0 ? '0' : '1',
@@ -494,8 +503,8 @@ export function useGhostSlider(options: UseGhostSliderOptions = {}): {
         'aria-valuenow': String(thumbValueAt(thumbIndex)),
         'aria-valuetext': !isRange.value ? customText : undefined,
         // Name and value text are separate: valuetext never substitutes for a name.
-        'aria-labelledby': labelledBy,
-        'aria-label': labelledBy == null ? thumbAccessibleName : undefined,
+        'aria-labelledby': thumbLabelledBy,
+        'aria-label': thumbLabelledBy == null ? thumbAccessibleName : undefined,
         'aria-disabled': isDisabled.value ? 'true' : undefined,
         'aria-orientation':
           orientation.value === 'vertical' ? 'vertical' : undefined,

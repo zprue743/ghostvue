@@ -3,6 +3,8 @@ import { computed, useAttrs, useTemplateRef, type PropType } from 'vue'
 
 import type { GhostSliderExposed, GhostSliderValue } from './ghost-slider'
 import { useNativeFormReset } from './form-reset'
+import GhostVisuallyHidden from './GhostVisuallyHidden.vue'
+import { useGhostId } from './use-ghost-id'
 import { useGhostSlider } from './use-ghost-slider'
 
 defineOptions({ inheritAttrs: false })
@@ -41,6 +43,9 @@ const thumb0 = useTemplateRef<HTMLElement>('thumb0')
 const formInput0 = useTemplateRef<HTMLInputElement>('formInput0')
 const attrs = useAttrs()
 
+const minimumEndLabelId = useGhostId('ghost-slider-minimum')
+const maximumEndLabelId = useGhostId('ghost-slider-maximum')
+
 const thumbNamingAttrs = computed(() => {
   const ariaLabel = attrs['aria-label']
   const ariaLabelledby = attrs['aria-labelledby']
@@ -55,6 +60,15 @@ const thumbNamingAttrs = computed(() => {
         : undefined,
   }
 })
+
+const rangeEndLabelHints = computed(() =>
+  props.range && thumbNamingAttrs.value.ariaLabelledby
+    ? {
+        minimum: minimumEndLabelId.value,
+        maximum: maximumEndLabelId.value,
+      }
+    : undefined,
+)
 
 const {
   value,
@@ -81,6 +95,7 @@ const {
   valueText: () => props.valueText,
   label: () => thumbNamingAttrs.value.label,
   ariaLabelledby: () => thumbNamingAttrs.value.ariaLabelledby,
+  rangeEndLabelIds: () => rangeEndLabelHints.value,
   root,
   onChange: (next) => {
     emit('update:modelValue', next)
@@ -182,6 +197,10 @@ defineExpose<GhostSliderExposed>({
       />
     </div>
     <slot />
+    <template v-if="rangeEndLabelHints">
+      <GhostVisuallyHidden :id="minimumEndLabelId">minimum</GhostVisuallyHidden>
+      <GhostVisuallyHidden :id="maximumEndLabelId">maximum</GhostVisuallyHidden>
+    </template>
     <input v-if="inputProps[0]" ref="formInput0" v-bind="inputProps[0]" />
     <input v-if="inputProps[1]" v-bind="inputProps[1]" />
   </div>
