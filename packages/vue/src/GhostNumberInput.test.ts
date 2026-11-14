@@ -304,6 +304,54 @@ describe('GhostNumberInput', () => {
     wrapper.unmount()
   })
 
+  it('treats Home as a caret move when min is unset', async () => {
+    const wrapper = mount(GhostNumberInput, {
+      props: { modelValue: 1200.5, locale: 'en-US', max: 9999 },
+      attachTo: document.body,
+    })
+    const input = wrapper.get('[role="spinbutton"]').element as HTMLInputElement
+    input.focus()
+    await nextTick()
+    const before = input.value
+    input.setSelectionRange(3, 3)
+
+    const event = new KeyboardEvent('keydown', {
+      key: 'Home',
+      bubbles: true,
+      cancelable: true,
+    })
+    input.dispatchEvent(event)
+
+    expect(event.defaultPrevented).toBe(false)
+    expect(input.value).toBe(before)
+    expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+    wrapper.unmount()
+  })
+
+  it('treats End as a caret move when max is unset', async () => {
+    const wrapper = mount(GhostNumberInput, {
+      props: { modelValue: 1200.5, locale: 'en-US', min: 0 },
+      attachTo: document.body,
+    })
+    const input = wrapper.get('[role="spinbutton"]').element as HTMLInputElement
+    input.focus()
+    await nextTick()
+    const before = input.value
+    input.setSelectionRange(3, 3)
+
+    const event = new KeyboardEvent('keydown', {
+      key: 'End',
+      bubbles: true,
+      cancelable: true,
+    })
+    input.dispatchEvent(event)
+
+    expect(event.defaultPrevented).toBe(false)
+    expect(input.value).toBe(before)
+    expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+    wrapper.unmount()
+  })
+
   it('steps ten times with PageUp and PageDown', async () => {
     const wrapper = mount(GhostNumberInput, {
       props: { modelValue: 0, step: 1, max: 100 },
