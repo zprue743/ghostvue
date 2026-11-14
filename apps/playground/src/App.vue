@@ -162,21 +162,6 @@ function closeNested(): void {
       </GhostVisuallyHidden>
     </section>
 
-    <section aria-labelledby="kbd-heading">
-      <h2 id="kbd-heading">GhostKbd</h2>
-      <p>
-        Reload with <GhostKbd>F5</GhostKbd>. Command palette:
-        <GhostKbd :keys="['mod']" platform="pc">K</GhostKbd>
-        versus
-        <GhostKbd :keys="['mod']" platform="apple">K</GhostKbd>.
-      </p>
-      <p class="ghost-theme">
-        Themed:
-        <GhostKbdThemed :keys="['mod', 's']" platform="pc" />
-        <GhostKbdThemed size="sm">Esc</GhostKbdThemed>
-      </p>
-    </section>
-
     <VisualReference />
     <MotionReference />
     <DensityReference />
@@ -600,6 +585,22 @@ function closeNested(): void {
           </tbody>
         </table>
       </fieldset>
+    </section>
+
+    <!-- After visual fixtures so extra page height does not shift snapshot
+         clips. PC labels only: Apple glyphs can load a fallback font and
+         change rasterization of earlier shots. -->
+    <section aria-labelledby="kbd-heading">
+      <h2 id="kbd-heading">GhostKbd</h2>
+      <p>
+        Reload with <GhostKbd>F5</GhostKbd>. Save:
+        <GhostKbd :keys="['mod', 's']" platform="pc" />.
+      </p>
+      <p class="ghost-theme">
+        Themed:
+        <GhostKbdThemed :keys="['mod', 's']" platform="pc" />
+        <GhostKbdThemed size="sm">Esc</GhostKbdThemed>
+      </p>
     </section>
   </main>
 </template>
