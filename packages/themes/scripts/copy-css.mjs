@@ -13,7 +13,6 @@ const defineTypesPath = resolve(
 const outputCssPath = resolve(packageRoot, 'dist/default.css')
 const outputTokensPath = resolve(packageRoot, 'dist/tokens.css')
 const outputManifestPath = resolve(packageRoot, 'dist/tokens.json')
-const outputDefineJsPath = resolve(packageRoot, 'dist/define.js')
 const outputDefineTypesPath = resolve(packageRoot, 'dist/define.d.ts')
 const flagshipNames = ['calm', 'vibrant', 'mono']
 
@@ -54,10 +53,4 @@ for (const name of flagshipNames) {
   )
 }
 
-// Node-only public entry. Re-exports the generator from scripts so the main
-// tsc graph never sees culori.
-await writeFile(
-  outputDefineJsPath,
-  `export {\n  defineTheme,\n  FLAGSHIP_THEME_INPUTS,\n  flagshipThemes,\n  DefineThemeError,\n} from '../scripts/lib/define-theme.js'\n`,
-)
 await copyFile(defineTypesPath, outputDefineTypesPath)

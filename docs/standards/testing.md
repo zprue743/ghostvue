@@ -123,7 +123,9 @@ After `pnpm build`, run `pnpm exports:check`. It packs every publishable package
 listed in `scripts/workspace-packages.mjs` into a temporary directory and checks
 the actual tarballs with publint and Are the Types Wrong (`attw --pack`). Temporary
 artifacts are removed even on failure. `pnpm verify` runs this immediately after
-`pnpm published-exports`; publint errors and attw problems fail the gate.
+`pnpm published-exports`; publint errors, attw problems, and the packed
+`@ghostvue/themes/define` consumer smoke (see `scripts/themes-define-packed-smoke.mjs`)
+fail the gate.
 
 Only attw's `cjs-resolves-to-esm` rule is ignored: these packages are ESM-only,
 so CommonJS consumers must use dynamic import. CSS and JSON asset subpaths are

@@ -115,6 +115,9 @@ importers:
       culori:
         specifier: 4.0.2
         version: 4.0.2
+      esbuild:
+        specifier: 0.21.5
+        version: 0.21.5
       vue:
         specifier: 3.5.41
         version: 3.5.41(typescript@6.0.3)

@@ -31,7 +31,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "node scripts/compile-tokens.mjs && tsc -p tsconfig.build.json && node scripts/copy-css.mjs && node ../../scripts/finalize-declarations.mjs dist",
+    "build": "node scripts/compile-tokens.mjs && tsc -p tsconfig.build.json && node scripts/copy-css.mjs && node scripts/bundle-define.mjs && node ../../scripts/finalize-declarations.mjs dist",
     "define-theme": "node scripts/define-theme.mjs",
     "typecheck": "node scripts/compile-tokens.mjs && vue-tsc -p tsconfig.json --noEmit"
   },
@@ -43,6 +43,7 @@
   },
   "devDependencies": {
     "culori": "4.0.2",
+    "esbuild": "0.21.5",
     "vue": "3.5.41"
   },
   "typesVersions": {
