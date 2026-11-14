@@ -51,6 +51,11 @@ Run only the visual snapshot suites locally with:
 pnpm test:visual
 ```
 
+The `chromium` project runs only `@visual` tests with zero retries, including in
+CI, so a flaky screenshot fails the job. The `chromium-e2e` project runs all
+non-visual browser tests and retains two retries in CI (zero locally).
+`pnpm test:e2e` runs both projects; existing Chromium snapshot names are preserved.
+
 Committed baselines (`*-chromium-linux.png`) are generated inside the pinned
 Playwright Linux container so host OS font rendering cannot introduce drift. When
 a visual change is intentional or a new example is added, regenerate Linux
@@ -58,6 +63,18 @@ baselines locally inside that image:
 
 ```bash
 pnpm test:visual:docker
+```
+
+The Docker command masks the host's root, app, and package `node_modules` with
+anonymous volumes, including `packages/shared/node_modules`, so container installs
+cannot follow workspace links into host dependencies. Keep this list aligned
+with the workspace directories when adding packages or apps.
+
+To check repeatability without updating baselines, run the following inside the
+same pinned image after `pnpm install --frozen-lockfile`:
+
+```bash
+pnpm test:visual --repeat-each=5 --retries=0
 ```
 
 Commit regenerated baseline PNGs in a dedicated commit when updating existing
