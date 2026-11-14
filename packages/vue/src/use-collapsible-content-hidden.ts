@@ -121,9 +121,9 @@ export function useCollapsibleContentHidden(
         return
       }
       if (
-        !(COLLAPSIBLE_HEIGHT_TRANSITION_PROPERTIES as readonly string[]).includes(
-          event.propertyName,
-        )
+        !(
+          COLLAPSIBLE_HEIGHT_TRANSITION_PROPERTIES as readonly string[]
+        ).includes(event.propertyName)
       ) {
         return
       }

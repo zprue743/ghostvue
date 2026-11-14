@@ -75,8 +75,7 @@ onUnmounted(() => {
 
 const hasDataThemed = computed(() => 'data-themed' in attrs)
 const useThemedAnimationShell = computed(
-  () =>
-    hasDataThemed.value && collapsibleHostAllowsAnimationShell(props.as),
+  () => hasDataThemed.value && collapsibleHostAllowsAnimationShell(props.as),
 )
 const dataAnimationOff = computed(
   () => props.disableAnimation || attrs['data-animation'] === 'off',

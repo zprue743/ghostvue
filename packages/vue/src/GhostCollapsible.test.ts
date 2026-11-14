@@ -306,7 +306,10 @@ describe('GhostCollapsible', () => {
       }),
     )
     expect(
-      themed.get('[data-part="content"]').find('[data-part="content-inner"]').exists(),
+      themed
+        .get('[data-part="content"]')
+        .find('[data-part="content-inner"]')
+        .exists(),
     ).toBe(true)
     themed.unmount()
 
@@ -332,7 +335,10 @@ describe('GhostCollapsible', () => {
       }),
     )
     expect(
-      listHost.get('[data-part="content"]').find('[data-part="content-inner"]').exists(),
+      listHost
+        .get('[data-part="content"]')
+        .find('[data-part="content-inner"]')
+        .exists(),
     ).toBe(false)
     expect(listHost.get('[data-part="content"]').element.tagName).toBe('UL')
     listHost.unmount()

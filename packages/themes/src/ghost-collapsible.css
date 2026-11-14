@@ -46,7 +46,8 @@
 
   :where(
     .ghost-theme .ghost-collapsible-content:has([data-part='content-inner']),
-    .ghost-themed-scope .ghost-collapsible-content:has([data-part='content-inner']),
+    .ghost-themed-scope
+      .ghost-collapsible-content:has([data-part='content-inner']),
     .ghost-collapsible-content[data-themed]:has([data-part='content-inner'])
   ) {
     border: var(--ghost-border-hairline-width) solid var(--ghost-surface-border);
@@ -66,9 +67,14 @@
   }
 
   :where(
-    .ghost-theme .ghost-collapsible-content[data-state='open']:has([data-part='content-inner']),
+    .ghost-theme
+      .ghost-collapsible-content[data-state='open']:has(
+        [data-part='content-inner']
+      ),
     .ghost-themed-scope
-      .ghost-collapsible-content[data-state='open']:has([data-part='content-inner']),
+      .ghost-collapsible-content[data-state='open']:has(
+        [data-part='content-inner']
+      ),
     .ghost-collapsible-content[data-themed][data-state='open']:has(
         [data-part='content-inner']
       )
@@ -78,9 +84,14 @@
 
   @starting-style {
     :where(
-      .ghost-theme .ghost-collapsible-content[data-state='open']:has([data-part='content-inner']),
+      .ghost-theme
+        .ghost-collapsible-content[data-state='open']:has(
+          [data-part='content-inner']
+        ),
       .ghost-themed-scope
-        .ghost-collapsible-content[data-state='open']:has([data-part='content-inner']),
+        .ghost-collapsible-content[data-state='open']:has(
+          [data-part='content-inner']
+        ),
       .ghost-collapsible-content[data-themed][data-state='open']:has(
           [data-part='content-inner']
         )
@@ -106,7 +117,9 @@
       .ghost-collapsible-content:not(:has([data-part='content-inner'])),
     .ghost-themed-scope
       .ghost-collapsible-content:not(:has([data-part='content-inner'])),
-    .ghost-collapsible-content[data-themed]:not(:has([data-part='content-inner']))
+    .ghost-collapsible-content[data-themed]:not(
+        :has([data-part='content-inner'])
+      )
   ) {
     border: var(--ghost-border-hairline-width) solid var(--ghost-surface-border);
     border-radius: var(--ghost-radius-md);
@@ -150,13 +163,13 @@
 
       :where(
         .ghost-theme
-          .ghost-collapsible-content[data-state='open']:not(:has([data-part='content-inner'])):not(
-            [data-animation='off']
-          ),
+          .ghost-collapsible-content[data-state='open']:not(
+            :has([data-part='content-inner'])
+          ):not([data-animation='off']),
         .ghost-themed-scope
-          .ghost-collapsible-content[data-state='open']:not(:has([data-part='content-inner'])):not(
-            [data-animation='off']
-          ),
+          .ghost-collapsible-content[data-state='open']:not(
+            :has([data-part='content-inner'])
+          ):not([data-animation='off']),
         .ghost-collapsible-content[data-themed][data-state='open']:not(
             :has([data-part='content-inner'])
           ):not([data-animation='off'])
@@ -168,13 +181,13 @@
       @starting-style {
         :where(
           .ghost-theme
-            .ghost-collapsible-content[data-state='open']:not(:has([data-part='content-inner'])):not(
-              [data-animation='off']
-            ),
+            .ghost-collapsible-content[data-state='open']:not(
+              :has([data-part='content-inner'])
+            ):not([data-animation='off']),
           .ghost-themed-scope
-            .ghost-collapsible-content[data-state='open']:not(:has([data-part='content-inner'])):not(
-              [data-animation='off']
-            ),
+            .ghost-collapsible-content[data-state='open']:not(
+              :has([data-part='content-inner'])
+            ):not([data-animation='off']),
           .ghost-collapsible-content[data-themed][data-state='open']:not(
               :has([data-part='content-inner'])
             ):not([data-animation='off'])
@@ -196,9 +209,9 @@
         .ghost-collapsible-content:has([data-part='content-inner']):not(
           [data-animation='off']
         ),
-      .ghost-collapsible-content[data-themed]:has([data-part='content-inner']):not(
-          [data-animation='off']
-        )
+      .ghost-collapsible-content[data-themed]:has(
+          [data-part='content-inner']
+        ):not([data-animation='off'])
     ) {
       transition: grid-template-rows var(--ghost-motion-duration-moderate)
         var(--ghost-motion-ease-standard);

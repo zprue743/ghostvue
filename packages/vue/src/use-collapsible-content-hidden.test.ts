@@ -259,7 +259,9 @@ describe('useCollapsibleContentHidden integration', () => {
     await trigger.trigger('click')
     await flushPromises()
 
-    expect(wrapper.get('[data-part="content"]').attributes('hidden')).toBeUndefined()
+    expect(
+      wrapper.get('[data-part="content"]').attributes('hidden'),
+    ).toBeUndefined()
     wrapper.unmount()
   })
 })
