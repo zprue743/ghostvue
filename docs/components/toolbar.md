@@ -11,7 +11,8 @@ headless use, or from `@ghostvue/themes` for a default flex layout.
 Compose `GhostButton`, `GhostSwitch`, and other focusable primitives in the
 default slot. Disabled items are skipped when moving with arrow keys.
 
-Headless use of the same contract without the SFC:
+Headless use of the same contract without the SFC. Pass a template ref as
+`element` so roving focus attaches to the root:
 
 <GhostExample id="toolbar/composable" />
 

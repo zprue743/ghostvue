@@ -26,7 +26,7 @@ function key(target: EventTarget, keyName: string): void {
 describe('useGhostToolbar', () => {
   it('focus() moves to the roving tab stop instead of the toolbar root', async () => {
     const root = ref<HTMLElement | null>(null)
-    const focusRef = ref<(options?: FocusOptions) => void>(() => {})
+    let focusToolbar: ((options?: FocusOptions) => void) | undefined
     const wrapper = mount(
       defineComponent({
         setup() {
@@ -34,16 +34,12 @@ describe('useGhostToolbar', () => {
             element: root,
             label: 'Actions',
           })
-          focusRef.value = focus
+          focusToolbar = focus
           return () =>
-            h(
-              'div',
-              { ref: root, ...rootProps.value },
-              [
-                h('button', { type: 'button' }, 'One'),
-                h('button', { type: 'button' }, 'Two'),
-              ],
-            )
+            h('div', { ref: root, ...rootProps.value }, [
+              h('button', { type: 'button' }, 'One'),
+              h('button', { type: 'button' }, 'Two'),
+            ])
         },
       }),
       { attachTo: document.body },
@@ -52,7 +48,7 @@ describe('useGhostToolbar', () => {
     await nextTick()
     await nextTick()
 
-    focusRef.value()
+    focusToolbar?.()
     expect(document.activeElement?.textContent).toBe('One')
     expect(document.activeElement).not.toBe(root.value)
   })
