@@ -89,6 +89,36 @@ export const ghostExamples = [
     layer: 'headless',
   },
   {
+    id: 'checkbox/basic',
+    title: 'Basic',
+    description: 'Labeled native checkbox with a boolean v-model.',
+    layer: 'headless',
+  },
+  {
+    id: 'checkbox/composable',
+    title: 'Composable',
+    description: 'Same contract as GhostCheckbox, applied to a native host.',
+    layer: 'headless',
+  },
+  {
+    id: 'checkbox/themed',
+    title: 'Themed',
+    description: 'Visual size and tone on the @ghostvue/themes wrapper.',
+    layer: 'themed',
+  },
+  {
+    id: 'checkbox/indeterminate',
+    title: 'Indeterminate',
+    description: 'Select-all mixed state computed from child checkboxes.',
+    layer: 'headless',
+  },
+  {
+    id: 'checkbox/ref',
+    title: 'Component ref',
+    description: 'Template refs expose element, focus, and blur.',
+    layer: 'headless',
+  },
+  {
     id: 'spinner/basic',
     title: 'Basic',
     description: 'Named status. The default label is Loading.',

@@ -24,6 +24,17 @@ export type {
   GhostButtonType,
   UseGhostButtonOptions,
 } from './ghost-button'
+export { default as GhostCheckbox } from './GhostCheckbox.vue'
+export {
+  useGhostCheckbox,
+  type GhostCheckboxRootProps,
+} from './use-ghost-checkbox'
+export type {
+  GhostCheckboxDataState,
+  GhostCheckboxExposed,
+  GhostCheckboxProps,
+  UseGhostCheckboxOptions,
+} from './ghost-checkbox'
 export { default as GhostInteractiveSurface } from './GhostInteractiveSurface.vue'
 export {
   useGhostInteractiveSurface,

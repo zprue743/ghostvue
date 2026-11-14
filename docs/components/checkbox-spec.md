@@ -44,12 +44,12 @@ selection orchestration stays with DataTable.
 
 Headless `@ghostvue/vue` `GhostCheckbox` / `useGhostCheckbox`:
 
-| Prop            | Type      | Default       | Contract                                                                                                                                                          |
-| --------------- | --------- | ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `modelValue`    | `boolean` | `undefined`   | Controlled checked state. `undefined` is uncontrolled; `false` is a defined unchecked value. Never `'indeterminate'`.                                             |
-| `defaultValue`  | `boolean` | `false`       | Initial unchecked/checked value when `modelValue` is `undefined`. Later changes are ignored.                                                                      |
-| `indeterminate` | `boolean` | `false`       | Mixed visual and AT state. Consumer-owned; not part of the v-model. Applied through the DOM `indeterminate` property, which HTML cannot express as an attribute. |
-| `disabled`      | `boolean` | `false`       | Native disabled semantics: no activation, no sequential focus, excluded from submission.                                                                          |
+| Prop            | Type      | Default     | Contract                                                                                                                                                         |
+| --------------- | --------- | ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `modelValue`    | `boolean` | `undefined` | Controlled checked state. `undefined` is uncontrolled; `false` is a defined unchecked value. Never `'indeterminate'`.                                            |
+| `defaultValue`  | `boolean` | `false`     | Initial unchecked/checked value when `modelValue` is `undefined`. Later changes are ignored.                                                                     |
+| `indeterminate` | `boolean` | `false`     | Mixed visual and AT state. Consumer-owned; not part of the v-model. Applied through the DOM `indeterminate` property, which HTML cannot express as an attribute. |
+| `disabled`      | `boolean` | `false`     | Native disabled semantics: no activation, no sequential focus, excluded from submission.                                                                         |
 
 ```ts
 type GhostCheckboxState = 'checked' | 'indeterminate' | undefined
@@ -75,9 +75,9 @@ Themed `@ghostvue/themes` `GhostCheckbox` wraps the unstyled component and
 adds visual props. Same behavioral props and v-model; these exist only on
 the themed wrapper:
 
-| Prop   | Type                                | Default    | Contract                                                                 |
-| ------ | ----------------------------------- | ---------- | ------------------------------------------------------------------------ |
-| `size` | `'sm' \| 'md' \| 'lg'`              | `'md'`     | Control size. Maps to existing `data-size` used by `GhostButton`.        |
+| Prop   | Type                                | Default    | Contract                                                                   |
+| ------ | ----------------------------------- | ---------- | -------------------------------------------------------------------------- |
+| `size` | `'sm' \| 'md' \| 'lg'`              | `'md'`     | Control size. Maps to existing `data-size` used by `GhostButton`.          |
 | `tone` | `'accent' \| 'neutral' \| 'danger'` | `'accent'` | Semantic color intent. Maps to existing `data-tone` used by `GhostButton`. |
 
 The themed wrapper sets matching `data-size` and `data-tone` on the inner
@@ -167,11 +167,11 @@ is not a public layout surface).
 
 Three check states plus disabled:
 
-| `indeterminate` | `checked` (`modelValue` / internal) | `data-state`     | Native DOM                                      |
-| --------------- | ----------------------------------- | ---------------- | ----------------------------------------------- |
-| `false`         | `false`                             | omitted          | `checked === false`, `indeterminate === false`  |
-| `false`         | `true`                              | `checked`        | `checked === true`, `indeterminate === false`   |
-| `true`          | `true` or `false`                   | `indeterminate`  | `indeterminate === true` (visual mixed wins)    |
+| `indeterminate` | `checked` (`modelValue` / internal) | `data-state`    | Native DOM                                     |
+| --------------- | ----------------------------------- | --------------- | ---------------------------------------------- |
+| `false`         | `false`                             | omitted         | `checked === false`, `indeterminate === false` |
+| `false`         | `true`                              | `checked`       | `checked === true`, `indeterminate === false`  |
+| `true`          | `true` or `false`                   | `indeterminate` | `indeterminate === true` (visual mixed wins)   |
 
 Disabled is the native attribute. It composes with any check state.
 `data-state` reports the check triad only; native `disabled` is already
@@ -225,10 +225,10 @@ property, not `aria-checked="mixed"`.
 
 Enabled checkboxes use native platform behavior:
 
-| Key     | Behavior                                                                 |
-| ------- | ------------------------------------------------------------------------ |
-| `Space` | Toggle checked. Follows the native mixed rule above.                     |
-| `Enter` | Does not toggle. In a form, submits (platform / user-agent behavior).    |
+| Key     | Behavior                                                              |
+| ------- | --------------------------------------------------------------------- |
+| `Space` | Toggle checked. Follows the native mixed rule above.                  |
+| `Enter` | Does not toggle. In a form, submits (platform / user-agent behavior). |
 
 Disabled checkboxes cannot be activated and are not in sequential tab
 order. The component does not listen for keys; it does not reimplement
@@ -282,7 +282,8 @@ tokens):
 - `--ghost-action-disabled-*` for unavailable
 - `--ghost-control-size-*-min` for the hit target
 - `--ghost-action-icon-size` for the painted box
-- `--ghost-action-radius` for the box corner
+- `--ghost-radius-sm` for the box corner (`--ghost-action-radius` is
+  sized for buttons and would pill a 1.1em box)
 - `--ghost-border-hairline-width` for the box stroke
 - `--ghost-state-layer-*` for hover / press
 - `--ghost-focus-ring-*` for `:focus-visible`

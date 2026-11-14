@@ -1,0 +1,241 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "handwritten",
+  "name": "GhostCheckbox",
+  "package": "@ghostvue/themes",
+  "status": "experimental",
+  "description": "Themed wrapper around headless GhostCheckbox. Same behavioral props plus size and tone. Importing it loads the default stylesheet and scopes styles to this instance. Hand-written until GHO-13 generates manifests.",
+  "props": [
+    {
+      "name": "modelValue",
+      "type": "boolean",
+      "required": false,
+      "description": "Controlled checked state, forwarded to the unstyled GhostCheckbox.",
+      "deprecated": false
+    },
+    {
+      "name": "defaultValue",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Initial checked state when modelValue is omitted, forwarded to the unstyled GhostCheckbox.",
+      "deprecated": false
+    },
+    {
+      "name": "indeterminate",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Mixed state, forwarded to the unstyled GhostCheckbox.",
+      "deprecated": false
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Forwards native disabled semantics to the unstyled GhostCheckbox.",
+      "deprecated": false
+    },
+    {
+      "name": "size",
+      "type": "'sm' | 'md' | 'lg'",
+      "default": "md",
+      "required": false,
+      "description": "Control size. The default omits data-size so CSS can treat a missing hook as md.",
+      "deprecated": false
+    },
+    {
+      "name": "tone",
+      "type": "'accent' | 'neutral' | 'danger'",
+      "default": "accent",
+      "required": false,
+      "description": "Semantic color intent. The default omits data-tone.",
+      "deprecated": false
+    }
+  ],
+  "models": [
+    {
+      "prop": "modelValue",
+      "event": "update:modelValue",
+      "type": "boolean",
+      "description": "Checked state. Forwards update:modelValue from the unstyled GhostCheckbox."
+    }
+  ],
+  "events": [],
+  "slots": [],
+  "exposed": [
+    {
+      "name": "element",
+      "kind": "property",
+      "type": "HTMLInputElement | null",
+      "description": "The native checkbox after mount; null before mount and after unmount. Delegates to the unstyled GhostCheckbox."
+    },
+    {
+      "name": "focus",
+      "kind": "method",
+      "type": "(options?: FocusOptions) => void",
+      "description": "Focuses the native checkbox when it is mounted and enabled. Delegates to the unstyled GhostCheckbox."
+    },
+    {
+      "name": "blur",
+      "kind": "method",
+      "type": "() => void",
+      "description": "Removes focus from the native checkbox when it is mounted. Delegates to the unstyled GhostCheckbox."
+    }
+  ],
+  "styling": {
+    "parts": [
+      {
+        "name": "root",
+        "description": "The native checkbox input inside the display:contents themed scope."
+      }
+    ],
+    "states": [
+      {
+        "name": "checked",
+        "description": "Checked and not mixed. Fills the box and draws a checkmark."
+      },
+      {
+        "name": "indeterminate",
+        "description": "Mixed visual state. Fills the box and draws a dash. Wins over checked."
+      }
+    ],
+    "cssProperties": [
+      {
+        "name": "--ghost-surface-bg",
+        "description": "Unchecked box fill and mix surface for hover."
+      },
+      {
+        "name": "--ghost-action-primary-bg",
+        "description": "Checked and mixed fill for the accent tone."
+      },
+      {
+        "name": "--ghost-action-primary-fg",
+        "description": "Checkmark and dash color on the accent tone."
+      },
+      {
+        "name": "--ghost-action-primary-border",
+        "description": "Box border on the accent tone."
+      },
+      {
+        "name": "--ghost-action-neutral-bg",
+        "description": "Checked and mixed fill for the neutral tone."
+      },
+      {
+        "name": "--ghost-action-neutral-fg",
+        "description": "Checkmark and dash color on the neutral tone."
+      },
+      {
+        "name": "--ghost-action-neutral-border",
+        "description": "Box border on the neutral tone."
+      },
+      {
+        "name": "--ghost-action-danger-bg",
+        "description": "Checked and mixed fill for the danger tone."
+      },
+      {
+        "name": "--ghost-action-danger-fg",
+        "description": "Checkmark and dash color on the danger tone."
+      },
+      {
+        "name": "--ghost-action-danger-border",
+        "description": "Box border on the danger tone."
+      },
+      {
+        "name": "--ghost-action-disabled-bg",
+        "description": "Unavailable box fill."
+      },
+      {
+        "name": "--ghost-action-disabled-fg",
+        "description": "Unavailable checkmark and dash color."
+      },
+      {
+        "name": "--ghost-action-disabled-border",
+        "description": "Unavailable box border."
+      },
+      {
+        "name": "--ghost-action-icon-size",
+        "description": "Painted box size inside the hit target."
+      },
+      {
+        "name": "--ghost-action-label-family",
+        "description": "Font for the checked glyph painted on ::before."
+      },
+      {
+        "name": "--ghost-action-label-weight",
+        "description": "Weight for the checked glyph."
+      },
+      {
+        "name": "--ghost-radius-sm",
+        "description": "Corner radius of the painted box. Smaller than action-radius so the 1.1em box stays square."
+      },
+      {
+        "name": "--ghost-action-spinner-width",
+        "description": "Thickness of the mixed-state dash."
+      },
+      {
+        "name": "--ghost-action-duration",
+        "description": "Duration of color transitions on the painted box."
+      },
+      {
+        "name": "--ghost-border-hairline-width",
+        "description": "Box border thickness."
+      },
+      {
+        "name": "--ghost-state-layer-hover",
+        "description": "Hover mix amount on the current tone."
+      },
+      {
+        "name": "--ghost-motion-press-scale",
+        "description": "Pressed scale. 1 under reduced motion."
+      },
+      {
+        "name": "--ghost-motion-easing-standard",
+        "description": "Easing for color transitions."
+      },
+      {
+        "name": "--ghost-motion-duration-instant",
+        "description": "Reduced-motion color transition duration."
+      },
+      {
+        "name": "--ghost-focus-ring-color",
+        "description": "Outer color of the two-color keyboard focus indicator."
+      },
+      {
+        "name": "--ghost-focus-ring-contrast",
+        "description": "Inner color of the two-color keyboard focus indicator."
+      },
+      {
+        "name": "--ghost-focus-ring-offset",
+        "description": "Gap between the painted box and the focus ring."
+      },
+      {
+        "name": "--ghost-focus-ring-width",
+        "description": "Thickness of the focus outline."
+      },
+      {
+        "name": "--ghost-control-size-sm-min",
+        "description": "Hit target size for size sm."
+      },
+      {
+        "name": "--ghost-control-size-md-min",
+        "description": "Hit target size for size md."
+      },
+      {
+        "name": "--ghost-control-size-lg-min",
+        "description": "Hit target size for size lg."
+      }
+    ]
+  },
+  "accessibility": {
+    "role": "checkbox",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/checkbox/",
+    "keyboard": {
+      "Space": "Toggle checked when the control is enabled. Follows native mixed activation.",
+      "Enter": "Does not toggle. In a form, submits."
+    },
+    "requiredAriaAttributes": []
+  },
+  "examples": ["checkbox/themed"]
+}

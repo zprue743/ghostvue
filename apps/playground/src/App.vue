@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { ref, useTemplateRef } from 'vue'
+import { computed, reactive, ref, useTemplateRef } from 'vue'
 
 import {
   GhostBadge as GhostBadgeThemed,
   GhostButton as GhostButtonThemed,
+  GhostCheckbox as GhostCheckboxThemed,
   GhostInput as GhostInputThemed,
   GhostKbd as GhostKbdThemed,
   GhostProgress as GhostProgressThemed,
@@ -24,6 +25,7 @@ import VisualReference from './VisualReference.vue'
 import {
   GhostBadge,
   GhostButton,
+  GhostCheckbox,
   GhostInput,
   GhostKbd,
   GhostProgress,
@@ -61,6 +63,34 @@ const playgroundBio = ref('Themed bio.')
 const playgroundDraft = ref('Auto-resize this draft.\nAdd more lines to grow.')
 const playgroundComment = ref('')
 const playgroundCommentSent = ref('')
+const acceptedTerms = ref(false)
+const checkboxSubmissions = ref(0)
+const notifications = reactive([
+  { id: 'product', label: 'Product updates', selected: true },
+  { id: 'digest', label: 'Weekly digest', selected: false },
+])
+
+const allNotifications = computed(() =>
+  notifications.every((item) => item.selected),
+)
+const someNotifications = computed(
+  () => notifications.some((item) => item.selected) && !allNotifications.value,
+)
+
+function toggleAllNotifications(checked: boolean): void {
+  for (const item of notifications) {
+    item.selected = checked
+  }
+}
+
+function submitCheckboxForm(event: Event): void {
+  const form = event.target
+  if (!(form instanceof HTMLFormElement)) return
+  // Count only when the named checkbox is checked and therefore in FormData.
+  if (new FormData(form).has('subscribe')) {
+    checkboxSubmissions.value += 1
+  }
+}
 
 function remove(name: string) {
   reports.value = reports.value.filter((report) => report.name !== name)
@@ -407,6 +437,78 @@ function submitPlaygroundComment(event: Event): void {
               </tr>
             </tbody>
           </table>
+        </fieldset>
+      </div>
+    </section>
+
+    <section aria-labelledby="checkbox-heading">
+      <h2 id="checkbox-heading">GhostCheckbox</h2>
+      <div class="comparison">
+        <fieldset>
+          <legend>Headless</legend>
+          <div class="checkbox-list">
+            <label>
+              <GhostCheckbox
+                v-model="acceptedTerms"
+                data-testid="checkbox-terms"
+              />
+              Accept terms
+            </label>
+            <label>
+              <GhostCheckbox
+                :model-value="allNotifications"
+                :indeterminate="someNotifications"
+                data-testid="checkbox-select-all"
+                @update:model-value="toggleAllNotifications"
+              />
+              All notifications
+            </label>
+            <label v-for="item in notifications" :key="item.id">
+              <GhostCheckbox
+                v-model="item.selected"
+                :data-testid="`checkbox-${item.id}`"
+              />
+              {{ item.label }}
+            </label>
+            <label>
+              <GhostCheckbox disabled data-testid="checkbox-disabled" />
+              Disabled option
+            </label>
+          </div>
+          <form class="form-example" @submit.prevent="submitCheckboxForm">
+            <span>Checkbox form submissions: {{ checkboxSubmissions }}</span>
+            <label>
+              <GhostCheckbox name="subscribe" data-testid="checkbox-form" />
+              Subscribe
+            </label>
+            <GhostButton type="submit">Submit checkbox form</GhostButton>
+          </form>
+        </fieldset>
+
+        <fieldset class="ghost-theme" data-ghost-mode="light">
+          <legend>Default theme</legend>
+          <div class="checkbox-list">
+            <label>
+              <GhostCheckboxThemed data-testid="checkbox-themed" />
+              Accent
+            </label>
+            <label>
+              <GhostCheckboxThemed
+                size="sm"
+                tone="neutral"
+                data-testid="checkbox-themed-neutral"
+              />
+              Neutral small
+            </label>
+            <label>
+              <GhostCheckboxThemed
+                size="lg"
+                tone="danger"
+                data-testid="checkbox-themed-danger"
+              />
+              Danger large
+            </label>
+          </div>
         </fieldset>
       </div>
     </section>
@@ -921,5 +1023,17 @@ fieldset {
   display: grid;
   gap: 0.75rem;
   max-inline-size: 32rem;
+}
+
+.checkbox-list {
+  display: grid;
+  gap: 0.5rem;
+  justify-items: start;
+}
+
+.checkbox-list label {
+  align-items: center;
+  display: flex;
+  gap: 0.5rem;
 }
 </style>
