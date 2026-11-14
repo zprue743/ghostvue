@@ -11,6 +11,9 @@ import { runThemesDefinePackedSmoke } from './themes-define-packed-smoke.mjs'
 const root = fileURLToPath(new URL('..', import.meta.url))
 const temporary = await mkdtemp(join(tmpdir(), 'ghostvue-exports-'))
 
+/** @type {Record<string, string>} */
+const packedTarballsByName = {}
+
 try {
   for (const { directory, name } of workspacePackages) {
     const destination = join(temporary, directory)
@@ -23,6 +26,7 @@ try {
       file.endsWith('.tgz'),
     )
     const tarball = join(destination, archive)
+    packedTarballsByName[name] = tarball
     execFileSync('pnpm', ['exec', 'publint', tarball, '--level', 'error'], {
       cwd: root,
       stdio: 'inherit',
@@ -60,7 +64,7 @@ try {
     )
   }
   console.log('\nRunning packed @ghostvue/themes/define smoke test…')
-  await runThemesDefinePackedSmoke()
+  await runThemesDefinePackedSmoke({ prepackedTarballs: packedTarballsByName })
   console.log('Packed @ghostvue/themes/define smoke passed.')
 
   console.log(
