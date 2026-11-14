@@ -1,0 +1,109 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "generated",
+  "name": "GhostField",
+  "package": "@ghostvue/vue",
+  "status": "experimental",
+  "description": "Compound field primitive connecting GhostFieldLabel, GhostFieldDescription, GhostFieldError, and GhostFieldControl to a single control via useGhostId and scoped slot props. Composes with GhostInput, GhostTextarea, and GhostCheckbox without API changes.",
+  "props": [
+    {
+      "name": "id",
+      "type": "string",
+      "required": false,
+      "description": "Optional control id override for label association.",
+      "deprecated": false
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Propagates disabled semantics to the control.",
+      "deprecated": false
+    },
+    {
+      "name": "invalid",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Propagates invalid semantics and root data-state.",
+      "deprecated": false
+    },
+    {
+      "name": "required",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Propagates required semantics to the control.",
+      "deprecated": false
+    }
+  ],
+  "models": [],
+  "events": [],
+  "slots": [
+    {
+      "name": "default",
+      "props": [],
+      "description": "Field parts (label, description, control, error) in consumer-chosen order."
+    }
+  ],
+  "exposed": [
+    {
+      "name": "element",
+      "kind": "property",
+      "type": "HTMLElement | null",
+      "description": "Root grouping element after mount."
+    }
+  ],
+  "styling": {
+    "parts": [
+      {
+        "name": "root",
+        "description": "Grouping container on GhostField."
+      },
+      {
+        "name": "label",
+        "description": "Rendered by GhostFieldLabel."
+      },
+      {
+        "name": "description",
+        "description": "Rendered by GhostFieldDescription."
+      },
+      {
+        "name": "error",
+        "description": "Rendered by GhostFieldError when the slot has content."
+      },
+      {
+        "name": "control",
+        "description": "Scoped slot bridge from GhostFieldControl (no DOM host)."
+      }
+    ],
+    "states": [
+      {
+        "name": "invalid",
+        "description": "Root invalid state; wins over disabled."
+      },
+      {
+        "name": "disabled",
+        "description": "Root disabled state when not invalid."
+      }
+    ],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "generic",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/textfield/",
+    "keyboard": {},
+    "requiredAriaAttributes": [
+      "aria-describedby",
+      "aria-invalid"
+    ]
+  },
+  "examples": [
+    "field/basic",
+    "field/invalid",
+    "field/textarea",
+    "field/checkbox",
+    "field/themed"
+  ]
+}

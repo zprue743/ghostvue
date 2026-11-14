@@ -22,6 +22,7 @@
 @import './ghost-textarea.css';
 
 @import './ghost-collapsible.css';
+@import './ghost-field.css';
 
 @layer ghostvue-theme {
   :where(.ghost-themed-scope) {

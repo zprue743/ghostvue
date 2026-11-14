@@ -1,0 +1,83 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "generated",
+  "name": "GhostFieldLabel",
+  "package": "@ghostvue/vue",
+  "status": "experimental",
+  "description": "Public GhostFieldLabel component.",
+  "props": [
+    {
+      "name": "as",
+      "type": "GhostFieldLabelElement",
+      "default": "label",
+      "required": false,
+      "description": "Declared prop `as`.",
+      "deprecated": false
+    },
+    {
+      "name": "associate",
+      "type": "GhostFieldLabelAssociate",
+      "default": "reference",
+      "required": false,
+      "description": "Declared prop `associate`.",
+      "deprecated": false
+    },
+    {
+      "name": "required",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Declared prop `required`.",
+      "deprecated": false
+    },
+    {
+      "name": "showRequired",
+      "type": "boolean",
+      "default": true,
+      "required": false,
+      "description": "Declared prop `showRequired`.",
+      "deprecated": false
+    }
+  ],
+  "models": [],
+  "events": [],
+  "slots": [
+    {
+      "name": "default",
+      "props": [],
+      "description": "Primary content."
+    }
+  ],
+  "exposed": [
+    {
+      "name": "element",
+      "kind": "property",
+      "type": "HTMLElement | null",
+      "description": "Exposed property `element`."
+    },
+    {
+      "name": "focus",
+      "kind": "method",
+      "type": "(options?: FocusOptions) => void",
+      "description": "Exposed method `focus`."
+    },
+    {
+      "name": "blur",
+      "kind": "method",
+      "type": "() => void",
+      "description": "Exposed method `blur`."
+    }
+  ],
+  "styling": {
+    "parts": [],
+    "states": [],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "generic",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/",
+    "keyboard": {},
+    "requiredAriaAttributes": []
+  },
+  "examples": []
+}

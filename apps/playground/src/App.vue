@@ -5,6 +5,7 @@ import {
   GhostBadge as GhostBadgeThemed,
   GhostButton as GhostButtonThemed,
   GhostCheckbox as GhostCheckboxThemed,
+  GhostField as GhostFieldThemed,
   GhostInput as GhostInputThemed,
   GhostKbd as GhostKbdThemed,
   GhostProgress as GhostProgressThemed,
@@ -28,6 +29,11 @@ import {
   GhostBadge,
   GhostButton,
   GhostCheckbox,
+  GhostField,
+  GhostFieldControl,
+  GhostFieldDescription,
+  GhostFieldError,
+  GhostFieldLabel,
   GhostInput,
   GhostKbd,
   GhostProgress,
@@ -61,6 +67,8 @@ const isPending = ref(false)
 const searchQuery = ref('')
 const submitName = ref('')
 const submittedName = ref('')
+const opsEmail = ref('')
+const distributionOptIn = ref(false)
 const playgroundNotes = ref('Headless notes.')
 const playgroundBio = ref('Themed bio.')
 const playgroundDraft = ref('Auto-resize this draft.\nAdd more lines to grow.')
@@ -702,6 +710,63 @@ function submitPlaygroundComment(event: Event): void {
         <label for="playground-themed">Themed filter</label>
         <GhostInputThemed id="playground-themed" placeholder="Themed" block />
       </div>
+    </section>
+
+    <section aria-labelledby="field-heading">
+      <h2 id="field-heading">GhostField</h2>
+      <GhostField data-testid="field-headless">
+        <GhostFieldLabel>Ops contact email</GhostFieldLabel>
+        <GhostFieldDescription>
+          Escalation address for on-call rotations.
+        </GhostFieldDescription>
+        <GhostFieldControl v-slot="field">
+          <GhostInput
+            v-bind="field"
+            v-model="opsEmail"
+            name="ops-email"
+            data-testid="field-input"
+          />
+        </GhostFieldControl>
+      </GhostField>
+      <p data-testid="field-input-value">{{ opsEmail }}</p>
+      <GhostField invalid data-testid="field-invalid">
+        <GhostFieldLabel required>Distribution list</GhostFieldLabel>
+        <GhostFieldControl v-slot="field">
+          <GhostInput
+            v-bind="field"
+            default-value="incomplete"
+            name="distribution"
+            data-testid="field-invalid-input"
+          />
+        </GhostFieldControl>
+        <GhostFieldError>Provide a complete mailing list id.</GhostFieldError>
+      </GhostField>
+      <GhostField>
+        <GhostFieldLabel associate="wrap">
+          <GhostFieldControl v-slot="field">
+            <GhostCheckbox
+              v-bind="field"
+              v-model="distributionOptIn"
+              name="distribution-opt-in"
+              data-testid="field-checkbox"
+            />
+          </GhostFieldControl>
+          Include me on distribution digests
+        </GhostFieldLabel>
+      </GhostField>
+      <GhostFieldThemed class="ghost-theme" data-testid="field-themed">
+        <GhostFieldLabel>Billing contact</GhostFieldLabel>
+        <GhostFieldDescription>
+          Receives renewal paperwork only.
+        </GhostFieldDescription>
+        <GhostFieldControl v-slot="field">
+          <GhostInputThemed
+            v-bind="field"
+            name="billing-contact"
+            data-testid="field-themed-input"
+          />
+        </GhostFieldControl>
+      </GhostFieldThemed>
     </section>
 
     <section aria-labelledby="textarea-heading">

@@ -489,6 +489,36 @@ export const ghostExamples = [
     description: 'Default surface styles with optional motion on expand.',
     layer: 'themed',
   },
+  {
+    id: 'field/basic',
+    title: 'Labeled input',
+    description: 'Label, hint, and control id wiring for GhostInput.',
+    layer: 'headless',
+  },
+  {
+    id: 'field/invalid',
+    title: 'Invalid field',
+    description: 'Required filter with error copy and aria-invalid.',
+    layer: 'headless',
+  },
+  {
+    id: 'field/textarea',
+    title: 'Textarea field',
+    description: 'GhostTextarea composed with description.',
+    layer: 'headless',
+  },
+  {
+    id: 'field/checkbox',
+    title: 'Wrapping checkbox',
+    description: 'associate=wrap label pattern for GhostCheckbox.',
+    layer: 'headless',
+  },
+  {
+    id: 'field/themed',
+    title: 'Themed stack',
+    description: 'Default vertical spacing from @ghostvue/themes.',
+    layer: 'themed',
+  },
 ] as const satisfies readonly GhostExampleDefinition[]
 
 export type GhostExampleId = (typeof ghostExamples)[number]['id']

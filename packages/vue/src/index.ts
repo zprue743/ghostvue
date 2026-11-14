@@ -223,3 +223,30 @@ export type {
   UseGhostCollapsibleOptions,
   UseGhostCollapsibleReturn,
 } from './ghost-collapsible'
+export { default as GhostField } from './GhostField.vue'
+export { default as GhostFieldLabel } from './GhostFieldLabel.vue'
+export { default as GhostFieldDescription } from './GhostFieldDescription.vue'
+export { default as GhostFieldError } from './GhostFieldError.vue'
+export { default as GhostFieldControl } from './GhostFieldControl.vue'
+export { useGhostField, type GhostFieldRootProps } from './use-ghost-field'
+export type {
+  GhostFieldControlProps,
+  GhostFieldControlSlotProps,
+  GhostFieldControlExposed,
+  GhostFieldContext,
+  GhostFieldDescriptionElement,
+  GhostFieldDescriptionExposed,
+  GhostFieldDescriptionProps,
+  GhostFieldErrorElement,
+  GhostFieldErrorExposed,
+  GhostFieldErrorProps,
+  GhostFieldExposed,
+  GhostFieldInternalContext,
+  GhostFieldLabelAssociate,
+  GhostFieldLabelElement,
+  GhostFieldLabelExposed,
+  GhostFieldLabelProps,
+  GhostFieldProps,
+  UseGhostFieldOptions,
+  UseGhostFieldReturn,
+} from './ghost-field'
