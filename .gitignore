@@ -9,3 +9,6 @@ test-results/
 .DS_Store
 *.local
 
+
+# Scoped component reports and temporary checker configs.
+reports/verify-component/

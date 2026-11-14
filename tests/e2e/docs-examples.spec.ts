@@ -22,7 +22,7 @@ function isTransparentColor(value: string): boolean {
 }
 
 test.describe('docs example previews', () => {
-  test('themed button has recipe chrome and highlighted source', async ({
+  test('GhostButton themed preview has recipe chrome and highlighted source', async ({
     page,
   }) => {
     const docs = await startStaticServer('apps/docs/.vitepress/dist')
@@ -65,7 +65,7 @@ test.describe('docs example previews', () => {
     }
   })
 
-  test('headless preview states that the unstyled look is intentional', async ({
+  test('GhostButton headless preview describes the unstyled look', async ({
     page,
   }) => {
     const docs = await startStaticServer('apps/docs/.vitepress/dist')
@@ -83,7 +83,7 @@ test.describe('docs example previews', () => {
     }
   })
 
-  test('popover docs demos open/close interactively in production build and pass Axe', async ({
+  test('GhostPopover docs demos open/close interactively and pass Axe', async ({
     page,
   }) => {
     const docs = await startStaticServer('apps/docs/.vitepress/dist')

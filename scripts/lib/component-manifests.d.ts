@@ -95,6 +95,7 @@ export function pascalToKebab(name: string): string
 export function componentExamplePrefix(name: string): string
 export function validateExampleManifests(
   repositoryRoot: string,
+  componentNames?: string[],
 ): Promise<string[]>
 export function serializeManifest(manifest: unknown): string
 export function normalizeType(
@@ -125,4 +126,10 @@ export function syncRepositoryManifests(options?: {
   repositoryRoot?: string
   write?: boolean
   packages?: ManifestPackageSpec[]
+  componentNames?: string[]
 }): Promise<SyncResult>
+
+export function validateManifestSchemas(
+  repositoryRoot: string,
+  files: string[],
+): Promise<string[]>

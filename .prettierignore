@@ -14,3 +14,6 @@ playwright-report
 test-results
 pnpm-lock.yaml
 
+
+# Scoped component reports and temporary checker configs.
+reports/verify-component/
