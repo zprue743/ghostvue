@@ -1,5 +1,12 @@
 <script setup lang="ts">
-import { computed, inject, shallowRef, useAttrs, useTemplateRef } from 'vue'
+import {
+  computed,
+  inject,
+  shallowRef,
+  useAttrs,
+  useSlots,
+  useTemplateRef,
+} from 'vue'
 
 import {
   ghostFieldContextKey,
@@ -7,7 +14,10 @@ import {
   type GhostFieldErrorElement,
   type GhostFieldErrorExposed,
 } from './ghost-field'
-import { useGhostFieldPartContent } from './use-ghost-field-part-content'
+import {
+  fieldPartSlotHasRenderableContent,
+  useGhostFieldPartContent,
+} from './use-ghost-field-part-content'
 
 defineOptions({
   inheritAttrs: false,
@@ -28,6 +38,7 @@ if (!context) {
 }
 
 const attrs = useAttrs()
+const slots = useSlots()
 const hostRef = useTemplateRef<HTMLElement>('host')
 const element = computed(() => resolveFieldHtmlElement(hostRef.value))
 const visible = shallowRef(false)
@@ -38,7 +49,21 @@ useGhostFieldPartContent(hostRef, (next) => {
   context.setErrorRegistered(next)
 })
 
+const slotVisible = computed(() => {
+  const slotRender = slots['default']
+  return slotRender ? fieldPartSlotHasRenderableContent(slotRender()) : false
+})
+
 const errorAttrs = computed(() => {
+  const nextVisible = slotVisible.value
+  // Sibling controls read error registration during the same render pass; this must
+  // run while the default slot is evaluated, not from a post-setup watcher.
+  /* eslint-disable vue/no-side-effects-in-computed-properties -- SSR + aria-describedby wiring */
+  visible.value = nextVisible
+  context.setErrorVisible(nextVisible)
+  context.setErrorRegistered(nextVisible)
+  /* eslint-enable vue/no-side-effects-in-computed-properties */
+
   const rest: Record<string, unknown> = {}
   for (const [key, value] of Object.entries(attrs)) {
     if (key !== 'id' && key !== 'hidden' && key !== 'role') {
@@ -58,7 +83,7 @@ const errorAttrs = computed(() => {
     'data-part': 'error',
   }
 
-  if (visible.value) {
+  if (nextVisible) {
     result['role'] = 'alert'
   } else {
     result['hidden'] = true
