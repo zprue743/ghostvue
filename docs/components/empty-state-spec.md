@@ -76,7 +76,7 @@ There is no model. Mounting and copy are consumer-owned.
 | ------------- | ------------- | --------------------------------------------------------------------------------------------- |
 | `visual`      | `visual`      | Optional decorative graphic or icon. Wrapper is `aria-hidden="true"`.                         |
 | `title`       | `title`       | Optional heading text. Rendered as `h{headingLevel}` with generated `id`.                     |
-| `description` | `description` | Optional supporting copy. Rendered in a `<div>` so lists and blocks are valid.                 |
+| `description` | `description` | Optional supporting copy. Rendered in a `<div>` so lists and blocks are valid.                |
 | `actions`     | `actions`     | Optional action controls (e.g. `GhostButton`). Not a tab stop itself; children are focusable. |
 
 No default slot. No component-specific events. No methods are exposed. The root

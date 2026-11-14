@@ -52,8 +52,7 @@ export function useGhostEmptyState(options: UseGhostEmptyStateOptions = {}): {
 
     // aria-labelledby names the root; generic/div has no nameable role (axe
     // aria-prohibited-attr). section becomes a region once labelled.
-    const labelledRoot =
-      toValue(options.hasTitle) && as.value === 'section'
+    const labelledRoot = toValue(options.hasTitle) && as.value === 'section'
 
     if (labelledRoot) {
       return {
