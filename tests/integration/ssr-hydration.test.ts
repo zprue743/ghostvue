@@ -83,4 +83,48 @@ describe('SSR hydration harness', () => {
       },
     })
   })
+
+  it('rejects when client render text disagrees with SSR HTML', async () => {
+    const phase = { value: 'server' as 'server' | 'client' }
+    const MismatchContent = defineComponent({
+      name: 'MismatchContentFixture',
+      setup() {
+        return () =>
+          h(
+            'div',
+            null,
+            phase.value === 'server' ? 'server markup' : 'client markup',
+          )
+      },
+    })
+
+    await expect(
+      expectSsrHydration(MismatchContent, {
+        beforeHydrate: () => {
+          phase.value = 'client'
+        },
+      }),
+    ).rejects.toThrow()
+  })
+
+  it('rejects when hydrated ids disagree with SSR HTML', async () => {
+    const phase = { value: 'server' as 'server' | 'client' }
+    const MismatchId = defineComponent({
+      name: 'MismatchIdFixture',
+      setup() {
+        return () =>
+          phase.value === 'server'
+            ? h('div', { id: 'ssr-only-id' }, 'stable copy')
+            : h('div', { id: 'client-only-id' }, 'stable copy')
+      },
+    })
+
+    await expect(
+      expectSsrHydration(MismatchId, {
+        beforeHydrate: () => {
+          phase.value = 'client'
+        },
+      }),
+    ).rejects.toThrow()
+  })
 })

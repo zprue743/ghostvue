@@ -4,8 +4,8 @@
 
 `tests/support/ssr-hydration.ts` provides `expectSsrHydration`, which renders with
 `vue/server-renderer`, mounts the HTML in jsdom, hydrates with `createSSRApp`, and
-asserts that SSR logged no errors, hydration emits no mismatch warnings, and `id`
-values match. Import it directly (not from `index.ts`, which is Playwright-only).
+asserts that SSR and hydration log no warnings or errors and that `id` values
+match. Import it directly (not from `index.ts`, which is Playwright-only).
 
 See `docs/standards/testing.md` and `tests/integration/ssr-hydration.test.ts`.
 

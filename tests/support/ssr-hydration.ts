@@ -9,6 +9,11 @@ export interface ExpectSsrHydrationOptions {
    * required attributes or absence of client-only markup).
    */
   assertServerHtml?: (html: string) => void
+  /**
+   * Runs after SSR string render and before client hydration. Negative fixtures
+   * flip a shared flag here so the client render can diverge from the server.
+   */
+  beforeHydrate?: () => void
 }
 
 /**
@@ -42,8 +47,8 @@ function collectVueRenderOutput(args: unknown[], bucket: string[]): void {
 export async function expectSsrHydration(
   root: Component,
   options: ExpectSsrHydrationOptions = {},
-): Promise<{ html: string; container: HTMLElement }> {
-  const app = createSSRApp(root)
+): Promise<{ html: string }> {
+  const ssrApp = createSSRApp(root)
 
   const renderOutput: string[] = []
   const renderWarn = vi.spyOn(console, 'warn').mockImplementation((...args) => {
@@ -57,7 +62,7 @@ export async function expectSsrHydration(
 
   let html: string
   try {
-    html = await renderToString(app)
+    html = await renderToString(ssrApp)
   } finally {
     renderWarn.mockRestore()
     renderError.mockRestore()
@@ -69,6 +74,8 @@ export async function expectSsrHydration(
   ).toBe('')
 
   options.assertServerHtml?.(html)
+
+  options.beforeHydrate?.()
 
   const serverIds = collectElementIds(
     (() => {
@@ -94,23 +101,27 @@ export async function expectSsrHydration(
       collectVueRenderOutput(args, hydrationOutput)
     })
 
+  const hydratedApp = createSSRApp(root)
   try {
-    createSSRApp(root).mount(container)
+    hydratedApp.mount(container)
 
     const clientIds = collectElementIds(container)
     expect(clientIds, 'Hydrated DOM must preserve SSR id values').toEqual(
       serverIds,
     )
 
-    const hydrationMessages = hydrationOutput.join('\n')
-    expect(hydrationMessages).not.toMatch(/hydrat/i)
+    expect(
+      hydrationOutput.join('\n'),
+      'Client hydration must not log warnings or errors',
+    ).toBe('')
   } finally {
     hydrationWarn.mockRestore()
     hydrationError.mockRestore()
+    hydratedApp.unmount()
     container.remove()
   }
 
-  return { html, container }
+  return { html }
 }
 
 /** Fixture root that renders a single child via `h(Component, props, children)`. */
