@@ -1,0 +1,163 @@
+/*
+ * Themed GhostSlider. Track, range fill, and thumb use semantic --ghost-* tokens.
+ * Private --_ghost-slider-* are per-instance wiring, not a public API.
+ */
+@layer ghostvue-theme {
+  :where(.ghost-theme .ghost-slider, .ghost-themed-scope .ghost-slider) {
+    --_ghost-slider-track: var(--ghost-surface-muted-bg);
+    --_ghost-slider-fill: var(--ghost-action-primary-bg);
+    --_ghost-slider-thumb: var(--ghost-surface-bg);
+    --_ghost-slider-thumb-ring: var(--ghost-action-primary-bg);
+    --_ghost-slider-track-size: var(--ghost-space-gap-sm);
+
+    color: inherit;
+    font: inherit;
+    touch-action: none;
+  }
+
+  :where(
+    .ghost-theme .ghost-slider [data-part='track'],
+    .ghost-themed-scope .ghost-slider [data-part='track']
+  ) {
+    background-color: var(--_ghost-slider-track);
+    border-radius: var(--ghost-radius-pill);
+    box-sizing: border-box;
+  }
+
+  :where(
+    .ghost-theme
+      .ghost-slider[data-orientation='horizontal']
+      [data-part='track'],
+    .ghost-themed-scope
+      .ghost-slider[data-orientation='horizontal']
+      [data-part='track']
+  ) {
+    block-size: var(--_ghost-slider-track-size);
+  }
+
+  :where(
+    .ghost-theme .ghost-slider[data-orientation='vertical'] [data-part='track'],
+    .ghost-themed-scope
+      .ghost-slider[data-orientation='vertical']
+      [data-part='track']
+  ) {
+    inline-size: var(--_ghost-slider-track-size);
+  }
+
+  :where(
+    .ghost-theme .ghost-slider [data-part='range'],
+    .ghost-themed-scope .ghost-slider [data-part='range']
+  ) {
+    background-color: var(--_ghost-slider-fill);
+    border-radius: inherit;
+    pointer-events: none;
+  }
+
+  :where(
+    .ghost-theme .ghost-slider [data-part='thumb'],
+    .ghost-themed-scope .ghost-slider [data-part='thumb']
+  ) {
+    background-color: var(--_ghost-slider-thumb);
+    block-size: calc(var(--_ghost-slider-track-size) * 2);
+    border: var(--ghost-border-hairline-width) solid
+      var(--_ghost-slider-thumb-ring);
+    border-radius: 50%;
+    box-shadow: var(--ghost-action-shadow);
+    box-sizing: border-box;
+    cursor: grab;
+    display: block;
+    inline-size: calc(var(--_ghost-slider-track-size) * 2);
+    touch-action: none;
+  }
+
+  :where(
+    .ghost-theme .ghost-slider [data-part='thumb']:active,
+    .ghost-themed-scope .ghost-slider [data-part='thumb']:active
+  ) {
+    cursor: grabbing;
+  }
+
+  :where(
+    .ghost-theme .ghost-slider [data-part='thumb']:focus-visible,
+    .ghost-themed-scope .ghost-slider [data-part='thumb']:focus-visible
+  ) {
+    box-shadow:
+      var(--ghost-action-shadow),
+      0 0 0 var(--ghost-focus-ring-offset) var(--ghost-focus-ring-contrast);
+    outline: var(--ghost-focus-ring-width) solid var(--ghost-focus-ring-color);
+    outline-offset: var(--ghost-focus-ring-offset);
+  }
+
+  :where(
+    .ghost-theme .ghost-slider[data-tone='neutral'],
+    .ghost-themed-scope .ghost-slider[data-tone='neutral']
+  ) {
+    --_ghost-slider-fill: var(--ghost-action-neutral-bg);
+    --_ghost-slider-thumb-ring: var(--ghost-action-neutral-bg);
+  }
+
+  :where(
+    .ghost-theme .ghost-slider[data-tone='danger'],
+    .ghost-themed-scope .ghost-slider[data-tone='danger']
+  ) {
+    --_ghost-slider-fill: var(--ghost-action-danger-bg);
+    --_ghost-slider-thumb-ring: var(--ghost-action-danger-bg);
+  }
+
+  :where(
+    .ghost-theme .ghost-slider[data-size='sm'],
+    .ghost-themed-scope .ghost-slider[data-size='sm']
+  ) {
+    --_ghost-slider-track-size: var(--ghost-space-gap-xs);
+  }
+
+  :where(
+    .ghost-theme .ghost-slider[data-size='lg'],
+    .ghost-themed-scope .ghost-slider[data-size='lg']
+  ) {
+    --_ghost-slider-track-size: var(--ghost-space-gap-md);
+  }
+
+  :where(
+    .ghost-theme .ghost-slider [data-part='thumb'][aria-disabled='true'],
+    .ghost-themed-scope .ghost-slider [data-part='thumb'][aria-disabled='true']
+  ) {
+    cursor: not-allowed;
+    opacity: var(--ghost-action-disabled-opacity);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    :where(
+      .ghost-theme .ghost-slider [data-part='thumb'],
+      .ghost-themed-scope .ghost-slider [data-part='thumb']
+    ) {
+      transition: none;
+    }
+  }
+
+  @media (forced-colors: active) {
+    :where(
+      .ghost-theme .ghost-slider [data-part='track'],
+      .ghost-themed-scope .ghost-slider [data-part='track']
+    ) {
+      background-color: Canvas;
+      border: var(--ghost-border-hairline-width) solid ButtonText;
+    }
+
+    :where(
+      .ghost-theme .ghost-slider [data-part='range'],
+      .ghost-themed-scope .ghost-slider [data-part='range']
+    ) {
+      background-color: Highlight;
+    }
+
+    :where(
+      .ghost-theme .ghost-slider [data-part='thumb'],
+      .ghost-themed-scope .ghost-slider [data-part='thumb']
+    ) {
+      background-color: ButtonFace;
+      border-color: Highlight;
+      box-shadow: none;
+    }
+  }
+}

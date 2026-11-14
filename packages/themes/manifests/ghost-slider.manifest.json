@@ -1,0 +1,88 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "handwritten",
+  "name": "GhostSlider",
+  "package": "@ghostvue/themes",
+  "status": "experimental",
+  "description": "Themed wrapper around headless GhostSlider. Same behavioral props plus tone and size. Importing it loads the default stylesheet and scopes track, range, and thumb recipes to this instance.",
+  "props": [
+    {
+      "name": "tone",
+      "type": "'accent' | 'neutral' | 'danger'",
+      "default": "accent",
+      "required": false,
+      "description": "Semantic color intent for the range fill and thumb ring.",
+      "deprecated": false
+    },
+    {
+      "name": "size",
+      "type": "'sm' | 'md' | 'lg'",
+      "default": "md",
+      "required": false,
+      "description": "Track thickness and thumb diameter.",
+      "deprecated": false
+    }
+  ],
+  "models": [
+    {
+      "prop": "modelValue",
+      "event": "update:modelValue",
+      "type": "GhostSliderValue",
+      "description": "Forwarded v-model binding."
+    }
+  ],
+  "events": [],
+  "slots": [],
+  "exposed": [
+    {
+      "name": "element",
+      "kind": "property",
+      "type": "HTMLElement | null",
+      "description": "Unstyled root inside the themed scope."
+    },
+    {
+      "name": "value",
+      "kind": "property",
+      "type": "GhostSliderValue",
+      "description": "Current slider value."
+    }
+  ],
+  "styling": {
+    "parts": [
+      {
+        "name": "root",
+        "description": "ghost-themed-scope wrapper; display contents."
+      },
+      {
+        "name": "track",
+        "description": "Muted track background."
+      },
+      {
+        "name": "range",
+        "description": "Accent fill between thumbs or from min."
+      },
+      {
+        "name": "thumb",
+        "description": "Circular handle with focus ring."
+      }
+    ],
+    "states": [],
+    "cssProperties": [
+      {
+        "name": "--ghost-surface-muted-bg",
+        "description": "Track background."
+      },
+      {
+        "name": "--ghost-action-primary-bg",
+        "description": "Default range fill and thumb ring."
+      }
+    ]
+  },
+  "accessibility": {
+    "role": "slider",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/slider/",
+    "keyboard": {},
+    "requiredAriaAttributes": []
+  },
+  "examples": ["slider/vertical"]
+}
