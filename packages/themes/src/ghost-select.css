@@ -1,0 +1,125 @@
+/*
+ * Themed GhostSelect surfaces. Uses semantic --ghost-* tokens only.
+ */
+@layer ghostvue-theme {
+  :where(
+    .ghost-theme .ghost-select-trigger,
+    .ghost-themed-scope .ghost-select-trigger,
+    .ghost-select-trigger[data-themed]
+  ) {
+    align-items: center;
+    background-color: var(--ghost-surface-bg);
+    border: var(--ghost-border-hairline-width) solid var(--ghost-border-default);
+    border-radius: var(--ghost-action-radius);
+    box-sizing: border-box;
+    color: var(--ghost-text-default);
+    cursor: default;
+    display: inline-flex;
+    font-family: var(--ghost-type-family-sans);
+    font-feature-settings: var(--ghost-type-feature-default);
+    font-size: var(--ghost-control-size-md-font);
+    gap: var(--ghost-space-inline-sm);
+    justify-content: space-between;
+    min-block-size: var(--ghost-control-size-md-min);
+    min-inline-size: 12rem;
+    padding-block: var(--ghost-control-size-md-padding-block);
+    padding-inline: var(--ghost-control-size-md-padding-inline);
+    text-align: start;
+    width: 100%;
+  }
+
+  :where(
+    .ghost-theme .ghost-select-trigger[data-state='open'],
+    .ghost-themed-scope .ghost-select-trigger[data-state='open'],
+    .ghost-select-trigger[data-themed][data-state='open']
+  ) {
+    border-color: var(--ghost-border-strong);
+    box-shadow: 0 0 0 var(--ghost-focus-ring-offset)
+      var(--ghost-focus-ring-contrast);
+    outline: var(--ghost-focus-ring-width) solid var(--ghost-focus-ring-color);
+    outline-offset: var(--ghost-focus-ring-offset);
+  }
+
+  :where(
+    .ghost-theme .ghost-select-content,
+    .ghost-themed-scope .ghost-select-content,
+    .ghost-select-content[data-themed]
+  ) {
+    background-color: var(--ghost-elevation-3-bg);
+    border: var(--ghost-border-hairline-width) solid
+      var(--ghost-elevation-3-border);
+    border-radius: var(--ghost-radius-lg);
+    box-shadow:
+      var(--ghost-elevation-3-shadow), var(--ghost-elevation-3-highlight);
+    box-sizing: border-box;
+    color: var(--ghost-surface-fg);
+    font-family: var(--ghost-type-family-sans);
+    max-block-size: min(20rem, var(--ghost-overlay-max-height, 20rem));
+    overflow: auto;
+    padding: var(--ghost-space-inset-xs);
+    z-index: 50;
+  }
+
+  :where(
+    .ghost-theme .ghost-select-content [data-part='option'],
+    .ghost-themed-scope .ghost-select-content [data-part='option'],
+    .ghost-select-content[data-themed] [data-part='option']
+  ) {
+    border-radius: var(--ghost-radius-md);
+    cursor: default;
+    min-block-size: var(--ghost-control-size-md-min);
+    padding-block: var(--ghost-control-size-sm-padding-block);
+    padding-inline: var(--ghost-space-inset-sm);
+  }
+
+  :where(
+    .ghost-theme
+      .ghost-select-content
+      [data-part='option'][data-state='checked'],
+    .ghost-themed-scope
+      .ghost-select-content
+      [data-part='option'][data-state='checked'],
+    .ghost-select-content[data-themed]
+      [data-part='option'][data-state='checked']
+  ) {
+    background-color: var(--ghost-surface-muted-bg);
+    font-weight: var(--ghost-type-weight-medium);
+  }
+
+  :where(
+    .ghost-theme .ghost-select-content [data-part='option']:focus-visible,
+    .ghost-themed-scope
+      .ghost-select-content
+      [data-part='option']:focus-visible,
+    .ghost-select-content[data-themed] [data-part='option']:focus-visible
+  ) {
+    outline: var(--ghost-focus-ring-width) solid var(--ghost-focus-ring-color);
+    outline-offset: calc(var(--ghost-focus-ring-offset) * -1);
+  }
+
+  :where(
+    .ghost-theme
+      .ghost-select-content
+      [data-part='option'][data-state='disabled'],
+    .ghost-themed-scope
+      .ghost-select-content
+      [data-part='option'][data-state='disabled'],
+    .ghost-select-content[data-themed]
+      [data-part='option'][data-state='disabled']
+  ) {
+    color: var(--ghost-text-muted);
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+
+  :where(
+    .ghost-theme .ghost-select-content [data-part='label'],
+    .ghost-themed-scope .ghost-select-content [data-part='label'],
+    .ghost-select-content[data-themed] [data-part='label']
+  ) {
+    color: var(--ghost-text-muted);
+    font-size: var(--ghost-type-size-sm);
+    padding-block: var(--ghost-space-inset-xs);
+    padding-inline: var(--ghost-space-inset-sm);
+  }
+}

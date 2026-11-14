@@ -1,0 +1,36 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "generated",
+  "name": "GhostSelectValue",
+  "package": "@ghostvue/vue",
+  "status": "experimental",
+  "description": "Public GhostSelectValue component.",
+  "props": [],
+  "models": [],
+  "events": [],
+  "slots": [
+    {
+      "name": "default",
+      "props": [],
+      "description": "Primary content."
+    },
+    {
+      "name": "placeholder",
+      "props": [],
+      "description": "Named slot `placeholder`."
+    }
+  ],
+  "exposed": [],
+  "styling": {
+    "parts": [],
+    "states": [],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "generic",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/",
+    "keyboard": {},
+    "requiredAriaAttributes": []
+  },
+  "examples": []
+}

@@ -53,52 +53,52 @@ Themed `@ghostvue/themes`:
 
 #### `GhostSelect` (root)
 
-| Prop           | Type                         | Default     | Contract                                                                                                                              |
-| -------------- | ---------------------------- | ----------- | ------------------------------------------------------------------------------------------------------------------------------------- |
-| `modelValue`   | `string \| undefined`        | `undefined` | Controlled selected value. `undefined` is uncontrolled.                                                                               |
-| `defaultValue` | `string \| undefined`        | `undefined` | Initial value when uncontrolled; omitted means no selection. Form reset restores this captured seed.                                 |
-| `name`         | `string`                     | `undefined` | Hidden input `name` for native submit. When omitted, the control does not submit.                                                     |
-| `disabled`     | `boolean`                    | `false`     | Disables trigger and options; omits value from submit.                                                                                |
-| `required`     | `boolean`                    | `false`     | Native `required` on the hidden submit input when `name` is set.                                                                      |
-| `invalid`      | `boolean`                    | `false`     | Sets `aria-invalid` on the trigger for Field integration.                                                                             |
-| `open`         | `boolean \| undefined`       | `undefined` | Controlled listbox open state. Omit for uncontrolled.                                                                                  |
-| `defaultOpen`  | `boolean`                    | `false`     | Initial open state when `open` is omitted.                                                                                            |
-| `placeholder`  | `string`                     | `undefined` | Placeholder text when nothing is selected (also exposed to assistive tech via trigger `aria-label` composition when no selection).    |
+| Prop           | Type                   | Default     | Contract                                                                                                                           |
+| -------------- | ---------------------- | ----------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| `modelValue`   | `string \| undefined`  | `undefined` | Controlled selected value. `undefined` is uncontrolled.                                                                            |
+| `defaultValue` | `string \| undefined`  | `undefined` | Initial value when uncontrolled; omitted means no selection. Form reset restores this captured seed.                               |
+| `name`         | `string`               | `undefined` | Hidden input `name` for native submit. When omitted, the control does not submit.                                                  |
+| `disabled`     | `boolean`              | `false`     | Disables trigger and options; omits value from submit.                                                                             |
+| `required`     | `boolean`              | `false`     | Native `required` on the hidden submit input when `name` is set.                                                                   |
+| `invalid`      | `boolean`              | `false`     | Sets `aria-invalid` on the trigger for Field integration.                                                                          |
+| `open`         | `boolean \| undefined` | `undefined` | Controlled listbox open state. Omit for uncontrolled.                                                                              |
+| `defaultOpen`  | `boolean`              | `false`     | Initial open state when `open` is omitted.                                                                                         |
+| `placeholder`  | `string`               | `undefined` | Placeholder text when nothing is selected (also exposed to assistive tech via trigger `aria-label` composition when no selection). |
 
 `GhostFieldControl` slot props (`id`, `disabled`, `required`, `aria-describedby`,
 `aria-invalid`) spread onto `GhostSelectTrigger` (the single tab stop).
 
 #### `GhostSelectTrigger`
 
-| Prop       | Type                         | Default    | Contract                                                                                     |
-| ---------- | ---------------------------- | ---------- | -------------------------------------------------------------------------------------------- |
-| `as`       | `string \| Component`        | `'button'` | Focusable combobox host. Native `button` uses `type="button"`.                               |
-| `disabled` | `boolean`                    | `false`    | Disables open/close and selection. Combines with root `disabled`.                          |
+| Prop       | Type                  | Default    | Contract                                                          |
+| ---------- | --------------------- | ---------- | ----------------------------------------------------------------- |
+| `as`       | `string \| Component` | `'button'` | Focusable combobox host. Native `button` uses `type="button"`.    |
+| `disabled` | `boolean`             | `false`    | Disables open/close and selection. Combines with root `disabled`. |
 
 #### `GhostSelectValue`
 
-| Prop | Type | Default | Contract |
-| ---- | ---- | ------- | -------- |
+| Prop | Type | Default | Contract                                                                                                                   |
+| ---- | ---- | ------- | -------------------------------------------------------------------------------------------------------------------------- |
 | —    | —    | —       | Renders the registered `textValue` of the selected option, else root `placeholder`, else default slot placeholder content. |
 
 #### `GhostSelectContent`
 
-| Prop        | Type           | Default      | Contract |
-| ----------- | -------------- | ------------ | -------- |
-| `as`        | `string \| Component` | `'div'` | Listbox host. |
-| `placement` | `Placement`    | `'bottom'`   | Passed to `useFloating`. |
-| `offset`    | same as Popover | `undefined` | Floating offset. |
-| `flip` / `shift` / `strategy` | same as Popover | defaults match Popover | Collision handling. |
-| `portal`    | `boolean`      | `true`       | `GhostPortal` when open. |
-| `portalTo`  | `GhostPortalTarget` | `'body'` | Teleport target. |
+| Prop                          | Type                  | Default                | Contract                 |
+| ----------------------------- | --------------------- | ---------------------- | ------------------------ |
+| `as`                          | `string \| Component` | `'div'`                | Listbox host.            |
+| `placement`                   | `Placement`           | `'bottom'`             | Passed to `useFloating`. |
+| `offset`                      | same as Popover       | `undefined`            | Floating offset.         |
+| `flip` / `shift` / `strategy` | same as Popover       | defaults match Popover | Collision handling.      |
+| `portal`                      | `boolean`             | `true`                 | `GhostPortal` when open. |
+| `portalTo`                    | `GhostPortalTarget`   | `'body'`               | Teleport target.         |
 
 #### `GhostSelectOption`
 
-| Prop         | Type      | Default | Contract |
-| ------------ | --------- | ------- | -------- |
-| `value`      | `string`  | —       | Stable option value; unique within the root. |
-| `disabled`   | `boolean` | `false` | Skipped by pointer, keyboard, and typeahead. |
-| `textValue`  | `string`  | —       | Typeahead string; defaults to trimmed text content when omitted. |
+| Prop        | Type      | Default | Contract                                                         |
+| ----------- | --------- | ------- | ---------------------------------------------------------------- |
+| `value`     | `string`  | —       | Stable option value; unique within the root.                     |
+| `disabled`  | `boolean` | `false` | Skipped by pointer, keyboard, and typeahead.                     |
+| `textValue` | `string`  | —       | Typeahead string; defaults to trimmed text content when omitted. |
 
 #### `GhostSelectGroup` / `GhostSelectLabel`
 
@@ -129,12 +129,12 @@ without selecting another value (same policy as `GhostRadioGroup`).
 
 ## State model
 
-| Surface            | Attribute / state                                      |
-| ------------------ | ------------------------------------------------------ |
-| Trigger            | `data-part="trigger"`, `data-state="open" \| "closed"` |
-| Content (mounted)  | `data-part="content"`, `data-state="open"`, `data-placement` |
-| Option             | `data-part="option"`, `data-state="checked" \| "disabled"` |
-| Root (Field)       | `data-state="invalid" \| "disabled"` when applicable   |
+| Surface           | Attribute / state                                            |
+| ----------------- | ------------------------------------------------------------ |
+| Trigger           | `data-part="trigger"`, `data-state="open" \| "closed"`       |
+| Content (mounted) | `data-part="content"`, `data-state="open"`, `data-placement` |
+| Option            | `data-part="option"`, `data-state="checked" \| "disabled"`   |
+| Root (Field)      | `data-state="invalid" \| "disabled"` when applicable         |
 
 Open listbox content mounts with `v-if="open"` (not `v-show`) so floating and
 dismiss layers stay clean while closed.
@@ -154,14 +154,14 @@ dismiss layers stay clean while closed.
 
 ### Keyboard
 
-| Key | Where | Behavior |
-| --- | ----- | -------- |
-| `Enter` / `Space` / `ArrowDown` / `ArrowUp` | Trigger (closed) | Opens listbox; focus moves to selected enabled option or first/last enabled option for Up/Down. |
-| `Escape` | Content | Closes listbox; focus returns to trigger. |
-| `Tab` | Content | Closes listbox; default tab navigation. |
-| Arrow keys / `Home` / `End` | Content | `useRovingFocus` among enabled options. |
-| Printable keys | Content | Typeahead: accumulate within ~500ms, match `textValue` prefix, cycle matches; focus moves to match. |
-| `Enter` / `Space` | Focused option | Selects option, closes listbox, focuses trigger. |
+| Key                                         | Where            | Behavior                                                                                            |
+| ------------------------------------------- | ---------------- | --------------------------------------------------------------------------------------------------- |
+| `Enter` / `Space` / `ArrowDown` / `ArrowUp` | Trigger (closed) | Opens listbox; focus moves to selected enabled option or first/last enabled option for Up/Down.     |
+| `Escape`                                    | Content          | Closes listbox; focus returns to trigger.                                                           |
+| `Tab`                                       | Content          | Closes listbox; default tab navigation.                                                             |
+| Arrow keys / `Home` / `End`                 | Content          | `useRovingFocus` among enabled options.                                                             |
+| Printable keys                              | Content          | Typeahead: accumulate within ~500ms, match `textValue` prefix, cycle matches; focus moves to match. |
+| `Enter` / `Space`                           | Focused option   | Selects option, closes listbox, focuses trigger.                                                    |
 
 Native `button` trigger: `Space`/`Enter` on the closed trigger opens without
 duplicate activation from native button semantics (same guard pattern as

@@ -1,0 +1,181 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "generated",
+  "name": "GhostSelect",
+  "package": "@ghostvue/vue",
+  "status": "experimental",
+  "description": "Headless single-value listbox combobox root with v-model, hidden form input, and overlay listbox content.",
+  "props": [
+    {
+      "name": "defaultOpen",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Declared prop `defaultOpen`.",
+      "deprecated": false
+    },
+    {
+      "name": "defaultValue",
+      "type": "string",
+      "required": false,
+      "description": "Declared prop `defaultValue`.",
+      "deprecated": false
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Declared prop `disabled`.",
+      "deprecated": false
+    },
+    {
+      "name": "form",
+      "type": "string",
+      "required": false,
+      "description": "Declared prop `form`.",
+      "deprecated": false
+    },
+    {
+      "name": "invalid",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Declared prop `invalid`.",
+      "deprecated": false
+    },
+    {
+      "name": "modelValue",
+      "type": "string",
+      "required": false,
+      "description": "Declared prop `modelValue`.",
+      "deprecated": false
+    },
+    {
+      "name": "name",
+      "type": "string",
+      "required": false,
+      "description": "Declared prop `name`.",
+      "deprecated": false
+    },
+    {
+      "name": "open",
+      "type": "boolean",
+      "required": false,
+      "description": "Declared prop `open`.",
+      "deprecated": false
+    },
+    {
+      "name": "placeholder",
+      "type": "string",
+      "required": false,
+      "description": "Declared prop `placeholder`.",
+      "deprecated": false
+    },
+    {
+      "name": "required",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Declared prop `required`.",
+      "deprecated": false
+    }
+  ],
+  "models": [
+    {
+      "prop": "modelValue",
+      "event": "update:modelValue",
+      "type": "string",
+      "description": "v-model binding for `modelValue`."
+    },
+    {
+      "prop": "open",
+      "event": "update:open",
+      "type": "boolean",
+      "description": "v-model binding for `open`."
+    }
+  ],
+  "events": [],
+  "slots": [
+    {
+      "name": "default",
+      "props": [],
+      "description": "Primary content."
+    }
+  ],
+  "exposed": [
+    {
+      "name": "blur",
+      "kind": "method",
+      "type": "() => void",
+      "description": "Exposed method `blur`."
+    },
+    {
+      "name": "element",
+      "kind": "property",
+      "type": "HTMLElement | null",
+      "description": "Exposed property `element`."
+    },
+    {
+      "name": "focus",
+      "kind": "method",
+      "type": "(options?: FocusOptions) => void",
+      "description": "Exposed method `focus`."
+    }
+  ],
+  "styling": {
+    "parts": [
+      {
+        "name": "trigger",
+        "description": "Combobox control from GhostSelectTrigger."
+      },
+      {
+        "name": "content",
+        "description": "Portaled listbox surface from GhostSelectContent."
+      },
+      {
+        "name": "option",
+        "description": "Selectable option from GhostSelectOption."
+      },
+      {
+        "name": "value",
+        "description": "Selected label from GhostSelectValue."
+      }
+    ],
+    "states": [
+      {
+        "name": "open",
+        "description": "Listbox is expanded."
+      },
+      {
+        "name": "checked",
+        "description": "Option or value reflects the current selection."
+      }
+    ],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "combobox",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/combobox/examples/combobox-select-only/",
+    "keyboard": {
+      "ArrowDown": "Opens the listbox or moves among options.",
+      "ArrowUp": "Opens the listbox toward the last option or moves among options.",
+      "Enter": "Opens the listbox or selects the focused option.",
+      "Space": "Opens the listbox or selects the focused option.",
+      "Escape": "Closes the listbox and restores focus to the trigger.",
+      "Home": "Moves focus to the first enabled option.",
+      "End": "Moves focus to the last enabled option."
+    },
+    "requiredAriaAttributes": [
+      "aria-expanded",
+      "aria-controls",
+      "aria-haspopup",
+      "aria-selected"
+    ]
+  },
+  "examples": [
+    "select/basic",
+    "select/field",
+    "select/form"
+  ]
+}

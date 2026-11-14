@@ -9,6 +9,11 @@ import GhostDropdownMenu from '../../packages/vue/src/GhostDropdownMenu.vue'
 import GhostDropdownMenuContent from '../../packages/vue/src/GhostDropdownMenuContent.vue'
 import GhostDropdownMenuTrigger from '../../packages/vue/src/GhostDropdownMenuTrigger.vue'
 import GhostInlineAlert from '../../packages/vue/src/GhostInlineAlert.vue'
+import GhostSelect from '../../packages/vue/src/GhostSelect.vue'
+import GhostSelectContent from '../../packages/vue/src/GhostSelectContent.vue'
+import GhostSelectOption from '../../packages/vue/src/GhostSelectOption.vue'
+import GhostSelectTrigger from '../../packages/vue/src/GhostSelectTrigger.vue'
+import GhostSelectValue from '../../packages/vue/src/GhostSelectValue.vue'
 import { expectSsrHydration, ssrHydrationRoot } from '../support/ssr-hydration'
 
 describe('SSR hydration harness', () => {
@@ -108,6 +113,45 @@ describe('SSR hydration harness', () => {
         expect(html).toContain('aria-expanded="true"')
         expect(html).toContain('Visible SSR disclosure')
         expect(html).not.toContain(' hidden')
+      },
+    })
+  })
+
+  it('hydrates closed GhostSelect with defaultValue label without mismatch', async () => {
+    const ClosedSelect = defineComponent({
+      name: 'ClosedSelectFixture',
+      setup() {
+        return () =>
+          h(
+            GhostSelect,
+            { defaultValue: 'b', name: 'fruit' },
+            {
+              default: () => [
+                h(GhostSelectTrigger, null, () => h(GhostSelectValue)),
+                h(GhostSelectContent, { portal: false }, () => [
+                  h(
+                    GhostSelectOption,
+                    { value: 'a', textValue: 'Apple' },
+                    () => 'Apple',
+                  ),
+                  h(
+                    GhostSelectOption,
+                    { value: 'b', textValue: 'Banana' },
+                    () => 'Banana',
+                  ),
+                ]),
+              ],
+            },
+          )
+      },
+    })
+
+    await expectSsrHydration(ClosedSelect, {
+      assertServerHtml(html) {
+        expect(html).toContain('role="combobox"')
+        expect(html).toContain('aria-expanded="false"')
+        expect(html).toContain('Banana')
+        expect(html).toContain('role="listbox"')
       },
     })
   })
