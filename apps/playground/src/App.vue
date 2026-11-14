@@ -476,7 +476,7 @@ function submitPlaygroundComment(event: Event): void {
             </label>
           </div>
           <form class="form-example" @submit.prevent="submitCheckboxForm">
-            <span>Checkbox form submissions: {{ checkboxSubmissions }}</span>
+            <span>Subscribe submissions: {{ checkboxSubmissions }}</span>
             <label>
               <GhostCheckbox name="subscribe" data-testid="checkbox-form" />
               Subscribe
@@ -486,7 +486,7 @@ function submitPlaygroundComment(event: Event): void {
         </fieldset>
 
         <fieldset class="ghost-theme" data-ghost-mode="light">
-          <legend>Default theme</legend>
+          <legend>Themed checkboxes</legend>
           <div class="checkbox-list">
             <label>
               <GhostCheckboxThemed data-testid="checkbox-themed" />

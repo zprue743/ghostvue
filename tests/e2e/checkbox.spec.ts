@@ -39,10 +39,10 @@ test.describe('GhostCheckbox', () => {
       await expect(page.getByTestId('checkbox-disabled')).toBeDisabled()
 
       await page.getByRole('button', { name: 'Submit checkbox form' }).click()
-      await expect(page.getByText('Checkbox form submissions: 0')).toBeVisible()
+      await expect(page.getByText('Subscribe submissions: 0')).toBeVisible()
       await page.getByTestId('checkbox-form').click()
       await page.getByRole('button', { name: 'Submit checkbox form' }).click()
-      await expect(page.getByText('Checkbox form submissions: 1')).toBeVisible()
+      await expect(page.getByText('Subscribe submissions: 1')).toBeVisible()
 
       const themed = page.getByTestId('checkbox-themed')
       await expect(themed).toHaveClass(/ghost-checkbox/)
