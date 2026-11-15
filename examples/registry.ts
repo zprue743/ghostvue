@@ -267,6 +267,19 @@ export const ghostExamples = [
     layer: 'themed',
   },
   {
+    id: 'hover-card/basic',
+    title: 'Basic',
+    description:
+      'Unstyled hover/focus preview card with delays, interactive content, and Escape dismissal.',
+    layer: 'headless',
+  },
+  {
+    id: 'hover-card/themed',
+    title: 'Themed',
+    description: 'Elevation-3 surface tokens for rich preview cards.',
+    layer: 'themed',
+  },
+  {
     id: 'popover/basic',
     title: 'Basic',
     description:

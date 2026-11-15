@@ -22,6 +22,9 @@ import GhostDropdownMenu from './GhostDropdownMenu.vue'
 import GhostDropdownMenuContent from './GhostDropdownMenuContent.vue'
 import GhostDropdownMenuItem from './GhostDropdownMenuItem.vue'
 import GhostDropdownMenuTrigger from './GhostDropdownMenuTrigger.vue'
+import GhostHoverCard from './GhostHoverCard.vue'
+import GhostHoverCardContent from './GhostHoverCardContent.vue'
+import GhostHoverCardTrigger from './GhostHoverCardTrigger.vue'
 import GhostTooltip from './GhostTooltip.vue'
 import GhostTooltipContent from './GhostTooltipContent.vue'
 import GhostTooltipTrigger from './GhostTooltipTrigger.vue'
@@ -216,6 +219,51 @@ describe('overlay primitives in Node SSR (no window or document)', () => {
     expect(openHtml).toContain('aria-describedby')
     expect(openHtml).toContain('Visible SSR hint')
     expect(openHtml).toContain('role="tooltip"')
+    expect(openHtml).toContain('visibility:hidden')
+  })
+
+  it('renders GhostHoverCard closed and defaultOpen states cleanly in Node SSR', async () => {
+    expect(typeof window).toBe('undefined')
+    expect(typeof document).toBe('undefined')
+
+    const ClosedApp = defineComponent({
+      setup() {
+        return () =>
+          h(GhostHoverCard, null, {
+            default: () => [
+              h(GhostHoverCardTrigger, null, () => 'Closed trigger'),
+              h(GhostHoverCardContent, null, () => 'Hidden SSR card'),
+            ],
+          })
+      },
+    })
+
+    const closedHtml = await renderToString(createSSRApp(ClosedApp))
+    expect(closedHtml).toContain('Closed trigger')
+    expect(closedHtml).toContain('aria-expanded="false"')
+    expect(closedHtml).not.toContain('Hidden SSR card')
+
+    const OpenApp = defineComponent({
+      setup() {
+        return () =>
+          h(
+            GhostHoverCard,
+            { defaultOpen: true },
+            {
+              default: () => [
+                h(GhostHoverCardTrigger, null, () => 'Open trigger'),
+                h(GhostHoverCardContent, null, () => 'Visible SSR card'),
+              ],
+            },
+          )
+      },
+    })
+
+    const openHtml = await renderToString(createSSRApp(OpenApp))
+    expect(openHtml).toContain('Open trigger')
+    expect(openHtml).toContain('aria-expanded="true"')
+    expect(openHtml).toContain('Visible SSR card')
+    expect(openHtml).toContain('role="dialog"')
     expect(openHtml).toContain('visibility:hidden')
   })
 

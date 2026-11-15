@@ -1,0 +1,116 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "generated",
+  "name": "GhostHoverCardContent",
+  "package": "@ghostvue/vue",
+  "status": "experimental",
+  "description": "Positioned floating hover-card surface with role=\"dialog\".",
+  "props": [
+    {
+      "name": "as",
+      "type": "GhostHoverCardContentElement",
+      "default": "div",
+      "required": false,
+      "description": "Tag name or component rendered for the card surface.",
+      "deprecated": false
+    },
+    {
+      "name": "flip",
+      "type": "boolean | GhostHoverCardFlipOptions",
+      "default": true,
+      "required": false,
+      "description": "Flip to an opposite side when overflowing the viewport or boundary.",
+      "deprecated": false
+    },
+    {
+      "name": "offset",
+      "type": "boolean | GhostHoverCardOffsetOptions",
+      "required": false,
+      "description": "Distance or axis offsets passed to `useFloating`.",
+      "deprecated": false
+    },
+    {
+      "name": "placement",
+      "type": "Placement",
+      "default": "bottom",
+      "required": false,
+      "description": "Preferred placement relative to the trigger.",
+      "deprecated": false
+    },
+    {
+      "name": "portal",
+      "type": "boolean",
+      "default": true,
+      "required": false,
+      "description": "Teleport content through `GhostPortal` when `true`, or render inline when `false`.",
+      "deprecated": false
+    },
+    {
+      "name": "portalTo",
+      "type": "GhostPortalTarget",
+      "default": "body",
+      "required": false,
+      "description": "Teleport target passed to `GhostPortal` when `portal` is `true`.",
+      "deprecated": false
+    },
+    {
+      "name": "shift",
+      "type": "boolean | GhostHoverCardShiftOptions",
+      "default": true,
+      "required": false,
+      "description": "Shift along the cross axis to keep the card in view.",
+      "deprecated": false
+    },
+    {
+      "name": "strategy",
+      "type": "Strategy",
+      "default": "absolute",
+      "required": false,
+      "description": "CSS positioning strategy passed to `useFloating`.",
+      "deprecated": false
+    }
+  ],
+  "models": [],
+  "events": [],
+  "slots": [
+    {
+      "name": "default",
+      "props": [],
+      "description": "Primary content."
+    }
+  ],
+  "exposed": [
+    {
+      "name": "blur",
+      "kind": "method",
+      "type": "() => void",
+      "description": "Exposed method `blur`."
+    },
+    {
+      "name": "element",
+      "kind": "property",
+      "type": "HTMLElement | null",
+      "description": "Exposed property `element`."
+    },
+    {
+      "name": "focus",
+      "kind": "method",
+      "type": "(options?: FocusOptions) => void",
+      "description": "Exposed method `focus`."
+    }
+  ],
+  "styling": {
+    "parts": [],
+    "states": [],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "dialog",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/disclosure/",
+    "keyboard": {
+      "Escape": "Dismisses the hover card via useDismissableLayer."
+    },
+    "requiredAriaAttributes": []
+  },
+  "examples": []
+}

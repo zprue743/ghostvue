@@ -362,6 +362,25 @@ export {
   type GhostToggleGroupItemElement,
   type GhostToggleGroupItemExposed,
 } from './ghost-toggle-group-item'
+export {
+  GhostHoverCard,
+  type GhostHoverCardSlotProps,
+} from './ghost-hover-card'
+export {
+  GhostHoverCardTrigger,
+  type GhostHoverCardTriggerElement,
+  type GhostHoverCardTriggerExposed,
+} from './ghost-hover-card-trigger'
+export {
+  GhostHoverCardContent,
+  type GhostHoverCardContentElement,
+  type GhostHoverCardContentExposed,
+  type GhostHoverCardFlipOptions,
+  type GhostHoverCardOffsetOptions,
+  type GhostHoverCardPlacement,
+  type GhostHoverCardShiftOptions,
+  type GhostHoverCardStrategy,
+} from './ghost-hover-card-content'
 export { GhostTooltip, type GhostTooltipSlotProps } from './ghost-tooltip'
 export {
   GhostTooltipTrigger,

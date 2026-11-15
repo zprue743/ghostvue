@@ -269,6 +269,32 @@ export type {
   UseGhostDialogOptions,
   UseGhostDialogReturn,
 } from './ghost-dialog'
+export { default as GhostHoverCard } from './GhostHoverCard.vue'
+export { default as GhostHoverCardTrigger } from './GhostHoverCardTrigger.vue'
+export { default as GhostHoverCardContent } from './GhostHoverCardContent.vue'
+export { useGhostHoverCard } from './use-ghost-hover-card'
+export {
+  ghostHoverCardContextKey,
+  hoverCardFocusStaysInside,
+  resolveHoverCardHtmlElement,
+  type GhostHoverCardContentElement,
+  type GhostHoverCardContentExposed,
+  type GhostHoverCardContentProps,
+  type GhostHoverCardContext,
+  type GhostHoverCardFlipOptions,
+  type GhostHoverCardOffsetOptions,
+  type GhostHoverCardPadding,
+  type GhostHoverCardPlacement,
+  type GhostHoverCardProps,
+  type GhostHoverCardShiftOptions,
+  type GhostHoverCardSlotProps,
+  type GhostHoverCardStrategy,
+  type GhostHoverCardTriggerElement,
+  type GhostHoverCardTriggerExposed,
+  type GhostHoverCardTriggerProps,
+  type UseGhostHoverCardOptions,
+  type UseGhostHoverCardReturn,
+} from './ghost-hover-card'
 export { default as GhostSeparator } from './GhostSeparator.vue'
 export {
   useGhostSeparator,

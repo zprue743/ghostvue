@@ -38,6 +38,7 @@ import TabsReference from './TabsReference.vue'
 import SegmentedControlReference from './SegmentedControlReference.vue'
 import ToggleGroupReference from './ToggleGroupReference.vue'
 import TooltipReference from './TooltipReference.vue'
+import HoverCardReference from './HoverCardReference.vue'
 import VisualReference from './VisualReference.vue'
 import {
   GhostBadge,
@@ -321,6 +322,7 @@ function submitPlaygroundComment(event: Event): void {
     <CollapsibleReference />
     <AccordionReference />
     <TooltipReference />
+    <HoverCardReference />
     <DialogReference />
     <TabsReference />
     <SegmentedControlReference />

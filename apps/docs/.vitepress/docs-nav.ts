@@ -29,6 +29,7 @@ export const docsSidebar: LlmsSidebarGroup[] = [
       { text: 'GhostDropdownMenu', link: '/components/dropdown-menu' },
       { text: 'GhostEmptyState', link: '/components/empty-state' },
       { text: 'GhostField', link: '/components/field' },
+      { text: 'GhostHoverCard', link: '/components/hover-card' },
       { text: 'GhostInlineAlert', link: '/components/inline-alert' },
       { text: 'GhostInput', link: '/components/input' },
       { text: 'GhostNumberInput', link: '/components/number-input' },
@@ -164,8 +165,12 @@ export const docsSidebar: LlmsSidebarGroup[] = [
         link: '/components/collapsible-spec',
       },
       { text: 'GhostField specification', link: '/components/field-spec' },
-      { text: 'GhostTabs specification', link: '/components/tabs-spec' },
+      {
+        text: 'GhostHoverCard specification',
+        link: '/components/hover-card-spec',
+      },
       { text: 'GhostTable specification', link: '/components/table-spec' },
+      { text: 'GhostTabs specification', link: '/components/tabs-spec' },
       { text: 'GhostTooltip specification', link: '/components/tooltip-spec' },
       { text: 'Workflow', link: '/contributing/workflow' },
       {
