@@ -61,6 +61,12 @@ jobs:
     if: success() && needs.changes.outputs.skip_heavy != 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2]
+    env:
+      VITEST_BLOB_LABEL: unit-${{ matrix.shard }}
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -82,17 +88,55 @@ jobs:
             build-cache-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}-
             build-cache-${{ runner.os }}-
       - run: pnpm install --frozen-lockfile
-      - run: pnpm verify:unit
-      - name: Summarize coverage
-        if: always() && hashFiles('coverage/coverage-summary.json') != ''
-        run: node scripts/coverage-summary.mjs >> "$GITHUB_STEP_SUMMARY"
+      - name: Run unit coverage shard
+        run: pnpm exec vitest run --coverage --reporter=blob --shard=${{ matrix.shard }}/2 $(node scripts/vitest-ci-args.mjs unit-exclude)
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: coverage-report
-          path: coverage/
-          retention-days: 14
-          if-no-files-found: ignore
+          name: vitest-blob-unit-${{ matrix.shard }}
+          path: .vitest
+          include-hidden-files: true
+          retention-days: 1
+          if-no-files-found: error
+
+  verify-integration:
+    needs: changes
+    if: success() && needs.changes.outputs.skip_heavy != 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      VITEST_BLOB_LABEL: integration
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          run_install: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - name: Restore Vite / VitePress / tsbuildinfo cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            **/node_modules/.vite
+            apps/docs/.vitepress/cache
+            **/*.tsbuildinfo
+          key: build-cache-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}-${{ hashFiles('packages/**', 'apps/**', 'examples/**', 'scripts/**', 'tests/**') }}
+          restore-keys: |
+            build-cache-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}-
+            build-cache-${{ runner.os }}-
+      - run: pnpm install --frozen-lockfile
+      - name: Run heavy integration coverage
+        run: pnpm exec vitest run --coverage --reporter=blob $(node scripts/vitest-ci-args.mjs integration-heavy)
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: vitest-blob-integration
+          path: .vitest
+          include-hidden-files: true
+          retention-days: 1
+          if-no-files-found: error
 
   verify-build:
     needs: changes
@@ -123,10 +167,11 @@ jobs:
       - run: pnpm verify:build
 
   verify:
-    needs: [changes, verify-static, verify-unit, verify-build]
+    needs:
+      [changes, verify-static, verify-unit, verify-integration, verify-build]
     if: always() && !cancelled()
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 10
     steps:
       - name: Require path classification
         if: needs.changes.result != 'success'
@@ -142,9 +187,10 @@ jobs:
           results=(
             "${{ needs.verify-static.result }}"
             "${{ needs.verify-unit.result }}"
+            "${{ needs.verify-integration.result }}"
             "${{ needs.verify-build.result }}"
           )
-          names=(verify-static verify-unit verify-build)
+          names=(verify-static verify-unit verify-integration verify-build)
           for i in "${!results[@]}"; do
             if [[ "${results[$i]}" != "success" ]]; then
               echo "Required partition ${names[$i]} finished as: ${results[$i]}"
@@ -152,6 +198,41 @@ jobs:
             fi
           done
           echo "All verify partitions succeeded."
+      - uses: actions/checkout@v4
+        if: needs.changes.outputs.skip_heavy != 'true'
+      - uses: pnpm/action-setup@v4
+        if: needs.changes.outputs.skip_heavy != 'true'
+        with:
+          run_install: false
+      - uses: actions/setup-node@v4
+        if: needs.changes.outputs.skip_heavy != 'true'
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+        if: needs.changes.outputs.skip_heavy != 'true'
+      - uses: actions/download-artifact@v4
+        if: needs.changes.outputs.skip_heavy != 'true'
+        with:
+          pattern: vitest-blob-*
+          path: .vitest
+          merge-multiple: true
+      - name: Merge Vitest coverage and enforce thresholds
+        if: needs.changes.outputs.skip_heavy != 'true'
+        run: pnpm test:coverage:merge
+      - name: Summarize coverage
+        if: always() && needs.changes.outputs.skip_heavy != 'true' && hashFiles('coverage/coverage-summary.json') != ''
+        run: node scripts/coverage-summary.mjs >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        if: always() && needs.changes.outputs.skip_heavy != 'true'
+        with:
+          name: coverage-report
+          path: coverage/
+          retention-days: 14
+          if-no-files-found: ignore
+      - name: Contrast check
+        if: needs.changes.outputs.skip_heavy != 'true'
+        run: pnpm verify:contrast
 
   browser-prebuild:
     needs: changes
