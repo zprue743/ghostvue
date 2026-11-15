@@ -19,7 +19,7 @@ describe('GhostLink SSR hydration', () => {
         assertServerHtml(html) {
           expect(html).toContain('rel="noopener noreferrer"')
           expect(html).toContain('data-part="external-icon"')
-          expect(html).toContain('Opens in new tab')
+          expect(html).toMatch(/Example.*\(Opens in new tab\)/)
         },
       },
     )

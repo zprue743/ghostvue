@@ -50,6 +50,8 @@ const relAttr = computed(() => {
   return typeof value === 'string' ? value : undefined
 })
 
+const newTabHintText = computed(() => ` (${props.newTabLabel})`)
+
 const {
   isDisabled,
   isComponentHost,
@@ -144,7 +146,7 @@ defineExpose<GhostLinkExposed>({
       </slot>
     </span>
     <GhostVisuallyHidden v-if="showNewTabHint">
-      {{ newTabLabel }}
+      {{ newTabHintText }}
     </GhostVisuallyHidden>
   </component>
 </template>

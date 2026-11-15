@@ -81,7 +81,8 @@ describe('GhostLink', () => {
     expect(link.attributes('rel')).toBe('noopener noreferrer')
     expect(link.attributes('target')).toBe('_blank')
     expect(link.find('[data-part="external-icon"]').exists()).toBe(true)
-    expect(wrapper.text()).toContain('Opens in new tab')
+    expect(wrapper.text()).toMatch(/Example\s+\(Opens in new tab\)/)
+    expect(wrapper.text()).not.toMatch(/ExampleOpens/)
   })
 
   it('composes with a router link component without importing vue-router', () => {

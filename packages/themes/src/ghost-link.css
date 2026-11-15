@@ -5,7 +5,6 @@
 @layer ghostvue-theme {
   :where(.ghost-theme .ghost-link, .ghost-themed-scope .ghost-link) {
     --_ghost-link-color: var(--ghost-action-primary-bg);
-    --_ghost-link-underline: transparent;
     --_ghost-link-underline-active: currentColor;
     --_ghost-link-gap: var(--ghost-space-gap-xs);
 
@@ -21,7 +20,11 @@
     gap: var(--_ghost-link-gap);
     line-height: inherit;
     text-decoration: underline;
-    text-decoration-color: var(--_ghost-link-underline);
+    text-decoration-color: color-mix(
+      in oklch,
+      var(--_ghost-link-color) calc(100% * var(--ghost-state-mix-border)),
+      transparent
+    );
     text-decoration-thickness: var(--ghost-border-hairline-width);
     text-underline-offset: var(--ghost-space-gap-xs);
     transition:
@@ -42,8 +45,7 @@
     .ghost-theme .ghost-link[data-variant='subtle'],
     .ghost-themed-scope .ghost-link[data-variant='subtle']
   ) {
-    --_ghost-link-underline: transparent;
-    text-decoration-color: var(--_ghost-link-underline);
+    text-decoration-color: transparent;
   }
 
   :where(
@@ -52,17 +54,6 @@
       .ghost-link[data-variant='subtle']:is(:hover, :focus-visible)
   ) {
     text-decoration-color: var(--_ghost-link-underline-active);
-  }
-
-  :where(
-    .ghost-theme .ghost-link[data-variant='inline'],
-    .ghost-themed-scope .ghost-link[data-variant='inline']
-  ) {
-    text-decoration-color: color-mix(
-      in oklch,
-      var(--_ghost-link-color) calc(100% * var(--ghost-state-mix-border)),
-      transparent
-    );
   }
 
   :where(

@@ -31,6 +31,27 @@ describe('themed GhostLink', () => {
     expect(root.attributes('data-tone')).toBe('neutral')
   })
 
+  it('keeps inline as the default variant hook', () => {
+    const defaultLink = mount(GhostLink, {
+      attrs: { href: '/docs' },
+      slots: { default: 'Inline default' },
+    })
+    const explicitInline = mount(GhostLink, {
+      props: { variant: 'inline' },
+      attrs: { href: '/docs' },
+      slots: { default: 'Inline explicit' },
+    })
+
+    expect(
+      defaultLink.get('.ghost-link').attributes('data-variant'),
+    ).toBeUndefined()
+    expect(
+      explicitInline.get('.ghost-link').attributes('data-variant'),
+    ).toBeUndefined()
+    defaultLink.unmount()
+    explicitInline.unmount()
+  })
+
   it('forwards expose methods to the inner link', () => {
     const wrapper = mount(GhostLink, {
       attachTo: document.body,
@@ -43,6 +64,9 @@ describe('themed GhostLink', () => {
     exposed.focus()
     expect(exposed.element).toBe(root.element)
     expect(document.activeElement).toBe(root.element)
+
+    exposed.blur()
+    expect(document.activeElement).not.toBe(root.element)
     wrapper.unmount()
   })
 })

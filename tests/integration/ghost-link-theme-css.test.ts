@@ -43,6 +43,14 @@ describe('GhostLink theme CSS tokens', () => {
     const css = await readFile(cssPath, 'utf8')
     expect(css).toContain('--ghost-action-primary-bg')
     expect(css).toContain('--ghost-focus-ring-color')
+    expect(css).toContain('--ghost-state-mix-border')
+    expect(css).not.toMatch(/\[data-variant='inline'\]/)
+    expect(css).toMatch(
+      /\[data-variant='subtle'\][\s\S]*text-decoration-color:\s*transparent/,
+    )
+    expect(css).toMatch(
+      /:where\(\.ghost-theme \.ghost-link[\s\S]*text-decoration-color:\s*color-mix/,
+    )
     expect(findHardcodedVisuals(css)).toEqual([])
   })
 })

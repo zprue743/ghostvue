@@ -38,6 +38,36 @@ test.describe('GhostLink', () => {
     }
   })
 
+  test('themed example paints inline and subtle underlines differently', async ({
+    page,
+  }) => {
+    const playground = await startStaticServer('apps/playground/dist')
+    try {
+      await page.goto(`${playground.url}/examples.html?id=link/themed`)
+      await page.evaluate(() => {
+        document.documentElement.classList.add('ghost-theme')
+        document.documentElement.setAttribute('data-ghost-theme', 'default')
+        document.documentElement.setAttribute('data-ghost-mode', 'light')
+      })
+
+      const inline = page.getByRole('link', { name: /inline\)/i })
+      const subtle = page.getByRole('link', { name: /subtle\)/i })
+      const inlineDecoration = await inline.evaluate(
+        (element) => getComputedStyle(element).textDecorationColor,
+      )
+      const subtleDecoration = await subtle.evaluate(
+        (element) => getComputedStyle(element).textDecorationColor,
+      )
+
+      expect(inlineDecoration).not.toBe(subtleDecoration)
+      expect(subtleDecoration).toMatch(
+        /rgba?\(\s*0,\s*0,\s*0,\s*0\)|transparent/,
+      )
+    } finally {
+      await playground.close()
+    }
+  })
+
   test('basic example supports keyboard focus', async ({ page }) => {
     const playground = await startStaticServer('apps/playground/dist')
     try {
