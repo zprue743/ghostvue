@@ -182,12 +182,16 @@ jobs:
       - run: pnpm --filter @ghostvue/playground build && pnpm --filter @ghostvue/docs build
       - name: Assert e2e dist outputs exist
         run: test -f apps/playground/dist/index.html && test -f apps/docs/.vitepress/dist/index.html
+      - name: Stage e2e dist for artifact upload
+        run: |
+          rm -rf .artifacts/e2e-prebuilt
+          mkdir -p .artifacts/e2e-prebuilt/playground .artifacts/e2e-prebuilt/docs
+          cp -a apps/playground/dist/. .artifacts/e2e-prebuilt/playground/
+          cp -a apps/docs/.vitepress/dist/. .artifacts/e2e-prebuilt/docs/
       - uses: actions/upload-artifact@v4
         with:
           name: e2e-prebuilt-dist
-          path: |
-            apps/playground/dist
-            apps/docs/.vitepress/dist
+          path: .artifacts/e2e-prebuilt
           retention-days: 1
 
   browser-shard:
@@ -218,7 +222,12 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: e2e-prebuilt-dist
-          path: .
+          path: .artifacts/e2e-prebuilt
+      - name: Install prebuilt dist into app paths
+        run: |
+          mkdir -p apps/playground/dist apps/docs/.vitepress/dist
+          cp -a .artifacts/e2e-prebuilt/playground/. apps/playground/dist/
+          cp -a .artifacts/e2e-prebuilt/docs/. apps/docs/.vitepress/dist/
       - name: Assert prebuilt dist
         run: test -f apps/playground/dist/index.html && test -f apps/docs/.vitepress/dist/index.html
       - run: pnpm test:e2e:prebuilt --update-snapshots=none --shard=${{ matrix.shard }}/3
