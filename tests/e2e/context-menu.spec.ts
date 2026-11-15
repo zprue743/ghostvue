@@ -1,12 +1,12 @@
 import AxeBuilder from '@axe-core/playwright'
-import { expect, test } from '@playwright/test'
+import { expect, test, type Locator } from '@playwright/test'
 
 import { startStaticServer } from './static-server'
 
 const POSITION_TOLERANCE_PX = 12
 
 async function openContextMenuOnTrigger(
-  trigger: import('@playwright/test').Locator,
+  trigger: Locator,
   offsetX: number,
   offsetY: number,
 ): Promise<void> {
@@ -17,7 +17,7 @@ async function openContextMenuOnTrigger(
 }
 
 async function dispatchContextMenuOnTrigger(
-  trigger: import('@playwright/test').Locator,
+  trigger: Locator,
   offsetX: number,
   offsetY: number,
 ): Promise<void> {
@@ -114,10 +114,12 @@ test.describe('GhostContextMenu', () => {
       await expect(content).toBeVisible()
       const triggerBounds = await trigger.boundingBox()
       expect(triggerBounds).not.toBeNull()
-      await page.mouse.click(
-        Math.max(4, triggerBounds!.x - 12),
-        Math.max(4, triggerBounds!.y - 12),
-      )
+      if (triggerBounds) {
+        await page.mouse.click(
+          Math.max(4, triggerBounds.x - 12),
+          Math.max(4, triggerBounds.y - 12),
+        )
+      }
       await expect(content).toHaveCount(0)
 
       await trigger.click({ button: 'right' })
@@ -152,6 +154,9 @@ test.describe('GhostContextMenu', () => {
 
       const triggerBox = await trigger.boundingBox()
       expect(triggerBox).not.toBeNull()
+      if (!triggerBox) {
+        return
+      }
       const firstOffset = { x: 24, y: 28 }
       const secondOffset = { x: 120, y: 90 }
 
@@ -159,14 +164,17 @@ test.describe('GhostContextMenu', () => {
       await expect(content).toBeVisible()
       let contentBox = await content.boundingBox()
       const firstAnchor = {
-        x: triggerBox!.x + firstOffset.x,
-        y: triggerBox!.y + firstOffset.y,
+        x: triggerBox.x + firstOffset.x,
+        y: triggerBox.y + firstOffset.y,
       }
       expect(contentBox).not.toBeNull()
-      expect(Math.abs(contentBox!.x - firstAnchor.x)).toBeLessThanOrEqual(
+      if (!contentBox) {
+        return
+      }
+      expect(Math.abs(contentBox.x - firstAnchor.x)).toBeLessThanOrEqual(
         POSITION_TOLERANCE_PX,
       )
-      expect(Math.abs(contentBox!.y - firstAnchor.y)).toBeLessThanOrEqual(
+      expect(Math.abs(contentBox.y - firstAnchor.y)).toBeLessThanOrEqual(
         POSITION_TOLERANCE_PX + 8,
       )
 
@@ -177,14 +185,17 @@ test.describe('GhostContextMenu', () => {
       await expect(content).toBeVisible()
       contentBox = await content.boundingBox()
       const secondAnchor = {
-        x: triggerBox!.x + secondOffset.x,
-        y: triggerBox!.y + secondOffset.y,
+        x: triggerBox.x + secondOffset.x,
+        y: triggerBox.y + secondOffset.y,
       }
       expect(contentBox).not.toBeNull()
-      expect(Math.abs(contentBox!.x - secondAnchor.x)).toBeLessThanOrEqual(
+      if (!contentBox) {
+        return
+      }
+      expect(Math.abs(contentBox.x - secondAnchor.x)).toBeLessThanOrEqual(
         POSITION_TOLERANCE_PX,
       )
-      expect(Math.abs(contentBox!.y - secondAnchor.y)).toBeLessThanOrEqual(
+      expect(Math.abs(contentBox.y - secondAnchor.y)).toBeLessThanOrEqual(
         POSITION_TOLERANCE_PX + 8,
       )
 
@@ -223,6 +234,9 @@ test.describe('GhostContextMenu', () => {
       await trigger.scrollIntoViewIfNeeded()
       const triggerBox = await trigger.boundingBox()
       expect(triggerBox).not.toBeNull()
+      if (!triggerBox) {
+        return
+      }
 
       const firstOffset = { x: 20, y: 24 }
       const secondOffset = { x: 160, y: 100 }
@@ -231,7 +245,11 @@ test.describe('GhostContextMenu', () => {
       await expect(content).toBeVisible()
       const firstBox = await content.boundingBox()
 
-      await dispatchContextMenuOnTrigger(trigger, secondOffset.x, secondOffset.y)
+      await dispatchContextMenuOnTrigger(
+        trigger,
+        secondOffset.x,
+        secondOffset.y,
+      )
       await expect(content).toBeVisible()
       await expect
         .poll(async () => {
@@ -239,22 +257,25 @@ test.describe('GhostContextMenu', () => {
           if (!box) {
             return false
           }
-          const anchorX = triggerBox!.x + secondOffset.x
+          const anchorX = triggerBox.x + secondOffset.x
           return Math.abs(box.x - anchorX) <= POSITION_TOLERANCE_PX
         })
         .toBe(true)
       const secondBox = await content.boundingBox()
       const secondAnchor = {
-        x: triggerBox!.x + secondOffset.x,
-        y: triggerBox!.y + secondOffset.y,
+        x: triggerBox.x + secondOffset.x,
+        y: triggerBox.y + secondOffset.y,
       }
       expect(firstBox).not.toBeNull()
       expect(secondBox).not.toBeNull()
-      expect(Math.abs(secondBox!.x - secondAnchor.x)).toBeLessThanOrEqual(
+      if (!firstBox || !secondBox) {
+        return
+      }
+      expect(Math.abs(secondBox.x - secondAnchor.x)).toBeLessThanOrEqual(
         POSITION_TOLERANCE_PX,
       )
       expect(
-        Math.abs(firstBox!.x - secondBox!.x) + Math.abs(firstBox!.y - secondBox!.y),
+        Math.abs(firstBox.x - secondBox.x) + Math.abs(firstBox.y - secondBox.y),
       ).toBeGreaterThan(20)
     } finally {
       await playground.close()
@@ -276,25 +297,34 @@ test.describe('GhostContextMenu', () => {
       await trigger.scrollIntoViewIfNeeded()
       const triggerBox = await trigger.boundingBox()
       expect(triggerBox).not.toBeNull()
+      if (!triggerBox) {
+        return
+      }
 
       const viewport = page.viewportSize()
       expect(viewport).not.toBeNull()
+      if (!viewport) {
+        return
+      }
       await openContextMenuOnTrigger(
         trigger,
-        Math.max(8, triggerBox!.width - 8),
-        Math.max(8, triggerBox!.height - 8),
+        Math.max(8, triggerBox.width - 8),
+        Math.max(8, triggerBox.height - 8),
       )
       await expect(content).toBeVisible()
 
       const contentBox = await content.boundingBox()
       expect(contentBox).not.toBeNull()
-      expect(contentBox!.x).toBeGreaterThanOrEqual(-1)
-      expect(contentBox!.y).toBeGreaterThanOrEqual(-1)
-      expect(contentBox!.x + contentBox!.width).toBeLessThanOrEqual(
-        viewport!.width + 1,
+      if (!contentBox) {
+        return
+      }
+      expect(contentBox.x).toBeGreaterThanOrEqual(-1)
+      expect(contentBox.y).toBeGreaterThanOrEqual(-1)
+      expect(contentBox.x + contentBox.width).toBeLessThanOrEqual(
+        viewport.width + 1,
       )
-      expect(contentBox!.y + contentBox!.height).toBeLessThanOrEqual(
-        viewport!.height + 1,
+      expect(contentBox.y + contentBox.height).toBeLessThanOrEqual(
+        viewport.height + 1,
       )
     } finally {
       await playground.close()

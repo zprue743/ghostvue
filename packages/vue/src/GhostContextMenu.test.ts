@@ -307,7 +307,7 @@ describe('GhostContextMenu', () => {
     expect(event.defaultPrevented).toBe(false)
   })
 
-  it('gives the default span trigger tabindex 0 for keyboard access', async () => {
+  it('gives the default span trigger tabindex 0 for keyboard access', () => {
     stubFloatingPosition()
     mountAttached(
       defineComponent({
