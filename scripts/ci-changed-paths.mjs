@@ -3,7 +3,8 @@
  * Classifies CI diffs so docs/agent-adapter-only pull requests can skip heavy jobs
  * while required checks keep reporting success.
  */
-import { appendFileSync, execFileSync, readFileSync } from 'node:fs'
+import { execFileSync } from 'node:child_process'
+import { appendFileSync, readFileSync } from 'node:fs'
 
 const eventPath = process.env.GITHUB_EVENT_PATH
 if (!eventPath) {

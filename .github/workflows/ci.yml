@@ -30,7 +30,7 @@ jobs:
 
   verify-static:
     needs: changes
-    if: needs.changes.outputs.skip_heavy != 'true'
+    if: success() && needs.changes.outputs.skip_heavy != 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -58,7 +58,7 @@ jobs:
 
   verify-unit:
     needs: changes
-    if: needs.changes.outputs.skip_heavy != 'true'
+    if: success() && needs.changes.outputs.skip_heavy != 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -96,7 +96,7 @@ jobs:
 
   verify-build:
     needs: changes
-    if: needs.changes.outputs.skip_heavy != 'true'
+    if: success() && needs.changes.outputs.skip_heavy != 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -128,6 +128,11 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
+      - name: Require path classification
+        if: needs.changes.result != 'success'
+        run: |
+          echo "changes job did not succeed (${{ needs.changes.result }})."
+          exit 1
       - name: Skip heavy verify (eligible path-only PR)
         if: needs.changes.outputs.skip_heavy == 'true'
         run: echo "Heavy verify skipped for eligible path-only changes."
@@ -150,7 +155,7 @@ jobs:
 
   browser-prebuild:
     needs: changes
-    if: needs.changes.outputs.skip_heavy != 'true'
+    if: success() && needs.changes.outputs.skip_heavy != 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -187,7 +192,7 @@ jobs:
 
   browser-shard:
     needs: [changes, browser-prebuild]
-    if: needs.changes.outputs.skip_heavy != 'true'
+    if: success() && needs.changes.outputs.skip_heavy != 'true'
     runs-on: ubuntu-latest
     # Keep the image tag aligned with @playwright/test in package.json so Chromium and system fonts stay pinned.
     container:
@@ -231,6 +236,11 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
+      - name: Require path classification
+        if: needs.changes.result != 'success'
+        run: |
+          echo "changes job did not succeed (${{ needs.changes.result }})."
+          exit 1
       - name: Skip heavy browser (eligible path-only PR)
         if: needs.changes.outputs.skip_heavy == 'true'
         run: echo "Heavy browser checks skipped for eligible path-only changes."
