@@ -49,6 +49,17 @@ run `pnpm adapters:write` rather than hand-editing them.
 - Before writing docs-side CSS overrides, read the upstream reset you are undoing
   (for example VitePress `base.css`) and restore only those properties under the
   narrowest scope.
+- **Out-of-scope gate failures.** If lint, typecheck, coverage, or a test fails
+  for a cause outside your diff (pre-existing on `master`, or from another merged
+  PR), run that same gate on `origin/master` once. Then stop, push your branch, and
+  report the failure and evidence in your final report or PR comment. Do not
+  investigate or fix code outside your scope.
+- **Rebase-only tasks.** Resolve conflicts, regenerate generated files
+  (`pnpm registries:write`, `pnpm manifests:write`), run targeted tests for the
+  touched area, then push with `--force-with-lease` and let CI be the full gate. Do
+  not block on a full local `pnpm verify`.
+- **Time box.** If you have spent about 15 minutes on something that is not moving
+  the assigned task forward, push what you have and report it.
 
 ## Before you open or update a PR
 
