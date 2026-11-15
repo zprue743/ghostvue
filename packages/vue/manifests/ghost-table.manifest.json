@@ -1,0 +1,69 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "generated",
+  "name": "GhostTable",
+  "package": "@ghostvue/vue",
+  "status": "experimental",
+  "description": "Headless native table root. Optional horizontal scroll containment; sub-parts supply caption, sections, rows, and cells. Themed styles live on @ghostvue/themes GhostTable.",
+  "props": [
+    {
+      "name": "containHorizontal",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "When true, wraps the table in a scroll container for explicit horizontal overflow. The table itself never receives implicit overflow.",
+      "deprecated": false
+    },
+    {
+      "name": "scrollLabel",
+      "type": "string",
+      "required": false,
+      "description": "Accessible name for the horizontal scroll region. When omitted and GhostTableCaption is rendered, the scroll region uses aria-labelledby on the caption id.",
+      "deprecated": false
+    }
+  ],
+  "models": [],
+  "events": [],
+  "slots": [
+    {
+      "name": "default",
+      "props": [],
+      "description": "GhostTableCaption, GhostTableHead, GhostTableBody, and GhostTableFoot content."
+    }
+  ],
+  "exposed": [
+    {
+      "name": "element",
+      "kind": "property",
+      "type": "HTMLTableElement | null",
+      "description": "The native table after mount, or null before mount and after unmount."
+    }
+  ],
+  "styling": {
+    "parts": [
+      {
+        "name": "root",
+        "description": "The native table element."
+      },
+      {
+        "name": "scroll-container",
+        "description": "Optional wrapper when containHorizontal is true."
+      }
+    ],
+    "states": [],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "table",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/table/",
+    "keyboard": {},
+    "requiredAriaAttributes": []
+  },
+  "examples": [
+    "table/basic",
+    "table/composable",
+    "table/contain-horizontal",
+    "table/row-headers",
+    "table/themed"
+  ]
+}

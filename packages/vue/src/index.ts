@@ -391,6 +391,45 @@ export type {
   UseGhostTabsOptions,
   UseGhostTabsReturn,
 } from './ghost-tabs'
+export { default as GhostTable } from './GhostTable.vue'
+export { default as GhostTableCaption } from './GhostTableCaption.vue'
+export { default as GhostTableHead } from './GhostTableHead.vue'
+export { default as GhostTableBody } from './GhostTableBody.vue'
+export { default as GhostTableFoot } from './GhostTableFoot.vue'
+export { default as GhostTableRow } from './GhostTableRow.vue'
+export { default as GhostTableHeaderCell } from './GhostTableHeaderCell.vue'
+export { default as GhostTableCell } from './GhostTableCell.vue'
+export {
+  useGhostTable,
+  useGhostTableCaption,
+  useGhostTableBody,
+  useGhostTableCell,
+  useGhostTableFoot,
+  useGhostTableHead,
+  useGhostTableHeaderCell,
+  useGhostTableRow,
+  mergeGhostTablePartAttrs,
+  type GhostTableRootProps,
+  type GhostTableScrollContainerProps,
+  type GhostTableHeaderCellRootProps,
+} from './use-ghost-table'
+export type {
+  GhostTableCaptionExposed,
+  GhostTableCaptionProps,
+  GhostTableCellExposed,
+  GhostTableCellProps,
+  GhostTableExposed,
+  GhostTableHeaderCellExposed,
+  GhostTableHeaderCellProps,
+  GhostTableHeaderScope,
+  GhostTableProps,
+  GhostTableRowExposed,
+  GhostTableRowProps,
+  GhostTableSectionExposed,
+  GhostTableSectionProps,
+  UseGhostTableHeaderCellOptions,
+  UseGhostTableOptions,
+} from './ghost-table'
 export { default as GhostAccordion } from './GhostAccordion.vue'
 export { default as GhostAccordionItem } from './GhostAccordionItem.vue'
 export { default as GhostAccordionTrigger } from './GhostAccordionTrigger.vue'

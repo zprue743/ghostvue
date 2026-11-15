@@ -1,0 +1,47 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "handwritten",
+  "name": "GhostTable",
+  "package": "@ghostvue/themes",
+  "status": "experimental",
+  "description": "Themed wrapper for GhostTable. Loads default table CSS and scopes recipes under ghost-themed-scope.",
+  "props": [
+    {
+      "name": "containHorizontal",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Wraps the table in an explicit horizontal scroll container.",
+      "deprecated": false
+    }
+  ],
+  "models": [],
+  "events": [],
+  "slots": [
+    {
+      "name": "default",
+      "props": [],
+      "description": "Table sections and rows."
+    }
+  ],
+  "exposed": [
+    {
+      "name": "element",
+      "kind": "property",
+      "type": "HTMLTableElement | null",
+      "description": "The native table after mount."
+    }
+  ],
+  "styling": {
+    "parts": [],
+    "states": [],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "table",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/table/",
+    "keyboard": {},
+    "requiredAriaAttributes": []
+  },
+  "examples": ["table/basic", "table/contain-horizontal", "table/themed"]
+}

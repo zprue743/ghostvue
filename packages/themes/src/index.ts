@@ -295,6 +295,7 @@ export {
   type GhostTabsContentElement,
   type GhostTabsContentExposed,
 } from './ghost-tabs-content'
+export { GhostTable, type GhostTableExposed } from './ghost-table'
 export {
   GhostAccordion,
   GhostAccordionItem,
