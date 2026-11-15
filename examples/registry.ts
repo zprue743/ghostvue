@@ -402,6 +402,30 @@ export const ghostExamples = [
     layer: 'themed',
   },
   {
+    id: 'scroll-area/basic',
+    title: 'Basic',
+    description: 'Bounded vertical overflow with native scrolling.',
+    layer: 'headless',
+  },
+  {
+    id: 'scroll-area/horizontal',
+    title: 'Horizontal',
+    description: 'Inline-axis overflow for wide table previews.',
+    layer: 'headless',
+  },
+  {
+    id: 'scroll-area/composable',
+    title: 'Composable',
+    description: 'Same contract as GhostScrollArea on a native host.',
+    layer: 'headless',
+  },
+  {
+    id: 'scroll-area/themed',
+    title: 'Themed',
+    description: 'Native scrollbar containment on @ghostvue/themes.',
+    layer: 'themed',
+  },
+  {
     id: 'kbd/basic',
     title: 'Basic',
     description: 'Native kbd chrome for a single key.',
