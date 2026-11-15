@@ -1,0 +1,73 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "generated",
+  "name": "GhostContextMenu",
+  "package": "@ghostvue/vue",
+  "status": "experimental",
+  "description": "Root provider for GhostContextMenu open state and pointer anchor.",
+  "props": [
+    {
+      "name": "defaultOpen",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Declared prop `defaultOpen`.",
+      "deprecated": false
+    },
+    {
+      "name": "open",
+      "type": "boolean",
+      "required": false,
+      "description": "Declared prop `open`.",
+      "deprecated": false
+    }
+  ],
+  "models": [
+    {
+      "prop": "open",
+      "event": "update:open",
+      "type": "boolean",
+      "description": "v-model binding for `open`."
+    }
+  ],
+  "events": [],
+  "slots": [
+    {
+      "name": "default",
+      "props": [
+        {
+          "name": "close",
+          "type": "() => void",
+          "description": "Slot prop `close`."
+        },
+        {
+          "name": "open",
+          "type": "boolean",
+          "description": "Slot prop `open`."
+        }
+      ],
+      "description": "Container content."
+    }
+  ],
+  "exposed": [],
+  "styling": {
+    "parts": [
+      {
+        "name": "root",
+        "description": "Neutral content container."
+      }
+    ],
+    "states": [],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "generic",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/",
+    "keyboard": {},
+    "requiredAriaAttributes": []
+  },
+  "examples": [
+    "context-menu/basic",
+    "context-menu/themed"
+  ]
+}

@@ -59,11 +59,11 @@ via `default.css`.
 
 #### `GhostContextMenuTrigger`
 
-| Prop              | Type                                         | Default | Contract                                                                                         |
-| ----------------- | -------------------------------------------- | ------- | ------------------------------------------------------------------------------------------------ |
-| `as`              | `GhostContextMenuTriggerElement`             | `'span'` | Host element wrapping the context target.                                                       |
-| `disabled`        | `boolean`                                    | `false` | Suppresses open gestures and keyboard shortcuts.                                                 |
-| `longPressDelay`  | `number`                                     | `500`   | Milliseconds before a long-press opens the menu (touch/pen only).                                |
+| Prop             | Type                             | Default  | Contract                                                          |
+| ---------------- | -------------------------------- | -------- | ----------------------------------------------------------------- |
+| `as`             | `GhostContextMenuTriggerElement` | `'span'` | Host element wrapping the context target.                         |
+| `disabled`       | `boolean`                        | `false`  | Suppresses open gestures and keyboard shortcuts.                  |
+| `longPressDelay` | `number`                         | `500`    | Milliseconds before a long-press opens the menu (touch/pen only). |
 
 Opens on `contextmenu` (right-click), long-press (pointer hold without scroll),
 `Shift+F10`, and the `ContextMenu` key when focused. Does not open on primary click
@@ -115,13 +115,13 @@ WAI-ARIA APG **Menu** pattern (context menu variant):
 
 ### Keyboard interaction
 
-| Key                     | Where            | Behavior                                                |
-| ----------------------- | ---------------- | ------------------------------------------------------- |
-| `ContextMenu`           | Focused trigger  | Open at trigger focus rect center or last pointer.      |
-| `Shift+F10`             | Focused trigger  | Open at trigger focus rect center or last pointer.      |
-| `Escape`                | Open menu        | Close; restore focus to trigger.                        |
-| Arrow/Home/End/typeable | Open menu        | Same as `useGhostMenuCollection` (shared with dropdown). |
-| `Tab`                   | Open menu        | Close without restoring focus to trigger.               |
+| Key                     | Where           | Behavior                                                 |
+| ----------------------- | --------------- | -------------------------------------------------------- |
+| `ContextMenu`           | Focused trigger | Open at trigger focus rect center or last pointer.       |
+| `Shift+F10`             | Focused trigger | Open at trigger focus rect center or last pointer.       |
+| `Escape`                | Open menu       | Close; restore focus to trigger.                         |
+| Arrow/Home/End/typeable | Open menu       | Same as `useGhostMenuCollection` (shared with dropdown). |
+| `Tab`                   | Open menu       | Close without restoring focus to trigger.                |
 
 ### Focus behavior
 

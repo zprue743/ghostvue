@@ -1,0 +1,89 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "generated",
+  "name": "GhostContextMenuCheckboxItem",
+  "package": "@ghostvue/vue",
+  "status": "experimental",
+  "description": "Public GhostContextMenuCheckboxItem component.",
+  "props": [
+    {
+      "name": "as",
+      "type": "GhostContextMenuCheckboxItemElement",
+      "default": "div",
+      "required": false,
+      "description": "Declared prop `as`.",
+      "deprecated": false
+    },
+    {
+      "name": "checked",
+      "type": "boolean",
+      "required": false,
+      "description": "Declared prop `checked`.",
+      "deprecated": false
+    },
+    {
+      "name": "defaultChecked",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Declared prop `defaultChecked`.",
+      "deprecated": false
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Declared prop `disabled`.",
+      "deprecated": false
+    }
+  ],
+  "models": [
+    {
+      "prop": "checked",
+      "event": "update:checked",
+      "type": "boolean",
+      "description": "v-model binding for `checked`."
+    }
+  ],
+  "events": [],
+  "slots": [
+    {
+      "name": "default",
+      "props": [],
+      "description": "Primary content."
+    }
+  ],
+  "exposed": [
+    {
+      "name": "blur",
+      "kind": "method",
+      "type": "() => void",
+      "description": "Exposed method `blur`."
+    },
+    {
+      "name": "element",
+      "kind": "property",
+      "type": "HTMLElement | null",
+      "description": "Exposed property `element`."
+    },
+    {
+      "name": "focus",
+      "kind": "method",
+      "type": "(options?: FocusOptions) => void",
+      "description": "Exposed method `focus`."
+    }
+  ],
+  "styling": {
+    "parts": [],
+    "states": [],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "generic",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/",
+    "keyboard": {},
+    "requiredAriaAttributes": []
+  },
+  "examples": []
+}
