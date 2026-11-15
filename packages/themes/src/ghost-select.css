@@ -21,7 +21,7 @@
     gap: var(--ghost-space-inline-sm);
     justify-content: space-between;
     min-block-size: var(--ghost-control-size-md-min);
-    min-inline-size: 12rem;
+    min-inline-size: var(--ghost-control-size-md-min);
     padding-block: var(--ghost-control-size-md-padding-block);
     padding-inline: var(--ghost-control-size-md-padding-inline);
     text-align: start;
@@ -54,7 +54,7 @@
     box-sizing: border-box;
     color: var(--ghost-surface-fg);
     font-family: var(--ghost-type-family-sans);
-    max-block-size: min(20rem, var(--ghost-overlay-max-height, 20rem));
+    max-block-size: min(100%, calc(100dvh - 2 * var(--ghost-space-inset-lg)));
     overflow: auto;
     padding: var(--ghost-space-inset-xs);
     z-index: 50;
