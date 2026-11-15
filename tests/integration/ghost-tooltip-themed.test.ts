@@ -9,6 +9,7 @@ import {
   type GhostTooltipContentExposed,
   type GhostTooltipTriggerExposed,
 } from '../../packages/themes/src/index'
+import { GhostTooltipProvider } from '../../packages/vue/src/index'
 
 const attached: ReturnType<typeof mount>[] = []
 
@@ -79,5 +80,130 @@ describe('themed GhostTooltip wrappers', () => {
     expect(mounted).not.toBeNull()
     expect(content.value?.element).toBe(mounted)
     expect(mounted?.classList.contains('ghost-tooltip-content')).toBe(true)
+  })
+
+  it('inherits provider delayDuration when themed GhostTooltip omits delayDuration', async () => {
+    vi.useFakeTimers()
+    const trigger = ref<GhostTooltipTriggerExposed | null>(null)
+
+    mountAttached(
+      defineComponent({
+        setup() {
+          return () =>
+            h(
+              GhostTooltipProvider,
+              { delayDuration: 20 },
+              {
+                default: () =>
+                  h(GhostTooltip, null, {
+                    default: () => [
+                      h(
+                        GhostTooltipTrigger,
+                        {
+                          ref: trigger,
+                          'data-testid': 'themed-provider-trigger',
+                        },
+                        () => 'Hint anchor',
+                      ),
+                      h(
+                        GhostTooltipContent,
+                        {
+                          'data-testid': 'themed-provider-content',
+                        },
+                        () => 'Inherited delay',
+                      ),
+                    ],
+                  }),
+              },
+            )
+        },
+      }),
+    )
+
+    trigger.value?.element?.dispatchEvent(
+      new PointerEvent('pointerenter', { bubbles: true }),
+    )
+
+    vi.advanceTimersByTime(19)
+    await flushPromises()
+    await nextTick()
+    expect(
+      document.querySelector('[data-testid="themed-provider-content"]'),
+    ).toBeNull()
+
+    vi.advanceTimersByTime(1)
+    await flushPromises()
+    await nextTick()
+    expect(
+      document.querySelector('[data-testid="themed-provider-content"]'),
+    ).not.toBeNull()
+  })
+
+  it('preserves explicit delayDuration override on themed GhostTooltip under a provider', async () => {
+    vi.useFakeTimers()
+    const trigger = ref<GhostTooltipTriggerExposed | null>(null)
+
+    mountAttached(
+      defineComponent({
+        setup() {
+          return () =>
+            h(
+              GhostTooltipProvider,
+              { delayDuration: 20 },
+              {
+                default: () =>
+                  h(
+                    GhostTooltip,
+                    { delayDuration: 150 },
+                    {
+                      default: () => [
+                        h(
+                          GhostTooltipTrigger,
+                          {
+                            ref: trigger,
+                            'data-testid': 'themed-override-trigger',
+                          },
+                          () => 'Hint anchor',
+                        ),
+                        h(
+                          GhostTooltipContent,
+                          {
+                            'data-testid': 'themed-override-content',
+                          },
+                          () => 'Overridden delay',
+                        ),
+                      ],
+                    },
+                  ),
+              },
+            )
+        },
+      }),
+    )
+
+    trigger.value?.element?.dispatchEvent(
+      new PointerEvent('pointerenter', { bubbles: true }),
+    )
+
+    vi.advanceTimersByTime(20)
+    await flushPromises()
+    await nextTick()
+    expect(
+      document.querySelector('[data-testid="themed-override-content"]'),
+    ).toBeNull()
+
+    vi.advanceTimersByTime(129)
+    await flushPromises()
+    await nextTick()
+    expect(
+      document.querySelector('[data-testid="themed-override-content"]'),
+    ).toBeNull()
+
+    vi.advanceTimersByTime(1)
+    await flushPromises()
+    await nextTick()
+    expect(
+      document.querySelector('[data-testid="themed-override-content"]'),
+    ).not.toBeNull()
   })
 })
