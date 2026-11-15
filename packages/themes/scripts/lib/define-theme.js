@@ -13,7 +13,6 @@ import {
   compileTokenDocuments,
   DEFAULT_DENSITY,
   DEFAULT_THEME_NAME,
-  renderTokenCss,
   TOKEN_DENSITIES,
 } from './compile-tokens.js'
 import {
@@ -804,6 +803,58 @@ export function applyContrastAdjustments(tokens) {
   return tokens
 }
 
+function setOverlayTokenValue(tree, path, type, value) {
+  const parts = path.split('.')
+  let node = tree
+  for (let i = 0; i < parts.length - 1; i += 1) {
+    const part = parts[i]
+    if (!isPlainObject(node[part])) {
+      node[part] = {}
+    }
+    node = node[part]
+  }
+  const leaf = parts[parts.length - 1]
+  node[leaf] = {
+    ...(isPlainObject(node[leaf]) ? node[leaf] : {}),
+    $type: type,
+    $value: value,
+  }
+}
+
+function snapshotTokenValues(tokens) {
+  return new Map(
+    tokens.map((token) => [
+      token.name,
+      { light: token.value.light, dark: token.value.dark },
+    ]),
+  )
+}
+
+function syncChangedTokens(before, tokens, semantic, semanticDark) {
+  let changed = false
+  for (const token of tokens) {
+    if (token.tier !== 'semantic') continue
+    const prev = before.get(token.name)
+    if (!prev) continue
+    const lightChanged = token.value.light !== prev.light
+    const darkChanged = token.value.dark !== prev.dark
+    if (lightChanged) {
+      setTokenValue(semantic, token.name, token.value.light)
+      changed = true
+    }
+    if (lightChanged || darkChanged) {
+      setOverlayTokenValue(
+        semanticDark,
+        token.name,
+        token.type,
+        token.value.dark,
+      )
+      changed = true
+    }
+  }
+  return changed
+}
+
 /**
  * Compile a complete theme from brand knobs. Node-only; returns CSS scoped to
  * `[data-ghost-theme='name']`.
@@ -835,45 +886,61 @@ export function defineTheme(input) {
   applyInteractivityFlavor(semantic, interactivity)
   applyInteractivityFlavor(semanticDark, interactivity)
 
-  const compiled = compileTokenDocuments(
-    [
-      {
-        file: 'generated/ramps.json',
-        tier: 'primitive',
-        tree: generateRampDocument(seeds),
-      },
-      { file: 'primitives.json', tier: 'primitive', tree: primitives },
-      { file: 'semantic.json', tier: 'semantic', tree: semantic },
-      {
-        file: 'semantic.dark.json',
-        tier: 'semantic',
-        overlayMode: 'dark',
-        tree: semanticDark,
-      },
-      {
-        file: 'semantic.compact.json',
-        tier: 'semantic',
-        overlayDensity: 'compact',
-        tree: clone(semanticCompactTemplate),
-      },
-      {
-        file: 'semantic.spacious.json',
-        tier: 'semantic',
-        overlayDensity: 'spacious',
-        tree: clone(semanticSpaciousTemplate),
-      },
-    ],
-    { themeName: input.name, defaultDensity: density },
-  )
+  const documents = [
+    {
+      file: 'generated/ramps.json',
+      tier: 'primitive',
+      tree: generateRampDocument(seeds),
+    },
+    { file: 'primitives.json', tier: 'primitive', tree: primitives },
+    { file: 'semantic.json', tier: 'semantic', tree: semantic },
+    {
+      file: 'semantic.dark.json',
+      tier: 'semantic',
+      overlayMode: 'dark',
+      tree: semanticDark,
+    },
+    {
+      file: 'semantic.compact.json',
+      tier: 'semantic',
+      overlayDensity: 'compact',
+      tree: clone(semanticCompactTemplate),
+    },
+    {
+      file: 'semantic.spacious.json',
+      tier: 'semantic',
+      overlayDensity: 'spacious',
+      tree: clone(semanticSpaciousTemplate),
+    },
+  ]
 
+  const compileOptions = { themeName: input.name, defaultDensity: density }
+  let compiled = compileTokenDocuments(documents, compileOptions)
+
+  const beforeFill = snapshotTokenValues(compiled.tokens)
   ensureReadableActionFills(compiled.tokens)
+  if (syncChangedTokens(beforeFill, compiled.tokens, semantic, semanticDark)) {
+    compiled = compileTokenDocuments(documents, compileOptions)
+  }
+
+  const beforeContrast = snapshotTokenValues(compiled.tokens)
   applyContrastAdjustments(compiled.tokens)
-  compiled.css = renderTokenCss(compiled.tokens, {
-    themeName: input.name,
-    defaultDensity: density,
-  })
-  compiled.manifest.theme = input.name
-  compiled.manifest.defaultDensity = density
+  if (
+    syncChangedTokens(beforeContrast, compiled.tokens, semantic, semanticDark)
+  ) {
+    compiled = compileTokenDocuments(documents, compileOptions)
+    const remaining = evaluateContrast(compiled.tokens).filter(
+      (row) => !row.passesWcagAa,
+    )
+    if (remaining.length > 0) {
+      const summary = remaining
+        .map((row) => `${row.fg} on ${row.bg} (${row.mode})`)
+        .join('; ')
+      throw new DefineThemeError(
+        `Theme contrast still fails WCAG AA after composite rebuild: ${summary}`,
+      )
+    }
+  }
 
   return {
     name: input.name,

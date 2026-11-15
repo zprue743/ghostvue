@@ -18,6 +18,8 @@ export interface ContrastResult extends ContrastPair {
 
 export function isHexColor(value: unknown): value is string
 
+export function extractGradientStopColors(gradientCss: string): string[]
+
 export function contrastPairs(
   tokens: { name: string; tier: string; type: string }[],
 ): ContrastPair[]
