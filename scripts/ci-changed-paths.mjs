@@ -1,10 +1,14 @@
 #!/usr/bin/env node
 /**
- * Classifies CI diffs so docs/agent-adapter-only pull requests can skip heavy jobs
- * while required checks keep reporting success.
+ * Classifies CI diffs so prose-only docs and agent-adapter pull requests can
+ * skip heavy jobs while required checks keep reporting success. Executable
+ * Markdown pages (containing live `<script>`, `<style>`, `<GhostExample />`,
+ * etc.) still trigger full verification.
  */
 import { execFileSync } from 'node:child_process'
 import { appendFileSync, readFileSync } from 'node:fs'
+
+import { classifyChangedPaths } from './lib/ci-changed-paths.js'
 
 const eventPath = process.env.GITHUB_EVENT_PATH
 if (!eventPath) {
@@ -13,14 +17,6 @@ if (!eventPath) {
 
 const event = JSON.parse(readFileSync(eventPath, 'utf8'))
 const eventName = process.env.GITHUB_EVENT_NAME ?? 'unknown'
-
-/** @param {string} file */
-function isHeavySkipEligible(file) {
-  if (file === 'AGENTS.md') return true
-  if (file.startsWith('.cursor/')) return true
-  if (/^docs\/.*\.md$/u.test(file)) return true
-  return false
-}
 
 function resolveBaseHead() {
   if (event.pull_request) {
@@ -42,14 +38,38 @@ function resolveBaseHead() {
   return { base, head: 'HEAD' }
 }
 
-const { base, head } = resolveBaseHead()
-const diff = execFileSync('git', ['diff', '--name-only', base, head], {
-  encoding: 'utf8',
-}).trim()
-const files = diff ? diff.split('\n') : []
+/**
+ * @param {string} ref
+ * @param {string} file
+ * @returns {string | null}
+ */
+function readFileAtRef(ref, file) {
+  try {
+    return execFileSync('git', ['show', `${ref}:${file}`], {
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'ignore'],
+    })
+  } catch {
+    return null
+  }
+}
 
-const skipHeavy =
-  eventName !== 'push' && files.length > 0 && files.every(isHeavySkipEligible)
+const { base, head } = resolveBaseHead()
+const diff = execFileSync(
+  'git',
+  ['diff', '--name-only', '--no-renames', base, head],
+  {
+    encoding: 'utf8',
+  },
+).trim()
+const files = diff ? diff.split('\n').filter(Boolean) : []
+
+const { skipHeavy } = classifyChangedPaths({
+  eventName,
+  files,
+  readAtBase: (file) => readFileAtRef(base, file),
+  readAtHead: (file) => readFileAtRef(head, file),
+})
 
 const summary = skipHeavy
   ? `Skipping heavy CI for ${files.length} eligible path-only file(s).`
