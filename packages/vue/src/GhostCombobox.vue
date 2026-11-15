@@ -1,5 +1,12 @@
 <script setup lang="ts">
-import { computed, provide, shallowRef, useTemplateRef, watch } from 'vue'
+import {
+  computed,
+  provide,
+  shallowRef,
+  useTemplateRef,
+  watch,
+  type ComponentPublicInstance,
+} from 'vue'
 
 import {
   ghostComboboxContextKey,
@@ -57,7 +64,7 @@ const emit = defineEmits<{
   search: [payload: { query: string; requestId: number }]
 }>()
 
-const formInput = useTemplateRef<HTMLInputElement>('formInput')
+const primaryFormMirror = shallowRef<HTMLInputElement | null>(null)
 const inputElement = shallowRef<HTMLElement | null>(null)
 
 const combobox = useGhostCombobox({
@@ -89,13 +96,13 @@ const combobox = useGhostCombobox({
   onOpenChange: (next) => {
     emit('update:open', next)
   },
-  getFormInput: () => formInput.value,
+  getFormInput: () => primaryFormMirror.value,
 })
 
-const { liveRegionId, announceMessage, formInputProps } = combobox
+const { liveRegionId, announceMessage, formMirrorInputs } = combobox
 
 useNativeFormReset(
-  () => formInput.value ?? inputElement.value,
+  () => primaryFormMirror.value ?? inputElement.value,
   combobox.applyFormReset,
 )
 
@@ -107,7 +114,7 @@ watch(combobox.isOpen, (next) => {
 })
 
 watch(
-  () => formInput.value,
+  () => primaryFormMirror.value,
   (el) => {
     if (el) {
       combobox.syncFormValidity()
@@ -116,12 +123,35 @@ watch(
   { flush: 'post', immediate: true },
 )
 
+watch(
+  () => formMirrorInputs.value,
+  () => {
+    void Promise.resolve().then(() => {
+      if (primaryFormMirror.value) {
+        combobox.syncFormValidity()
+      }
+    })
+  },
+  { deep: true },
+)
+
 function onFormInputInvalid(event: Event): void {
   combobox.handleFormInputInvalid()
   inputElement.value?.focus()
   if (event.cancelable) {
     event.preventDefault()
   }
+}
+
+function setPrimaryFormMirror(
+  el: Element | ComponentPublicInstance | null,
+  index: number,
+): void {
+  if (index !== 0) {
+    return
+  }
+  primaryFormMirror.value =
+    el instanceof HTMLInputElement ? el : null
 }
 
 const customInputId = shallowRef<string | null>(null)
@@ -199,7 +229,7 @@ provide(ghostComboboxContextKey, {
 
 defineExpose<GhostComboboxExposed>({
   get element() {
-    return inputElement.value ?? formInput.value
+    return inputElement.value ?? primaryFormMirror.value
   },
   focus(options?: FocusOptions) {
     inputElement.value?.focus(options)
@@ -222,9 +252,10 @@ defineExpose<GhostComboboxExposed>({
     {{ announceMessage }}
   </div>
   <input
-    v-if="formInputProps.name !== undefined"
-    ref="formInput"
-    v-bind="formInputProps"
+    v-for="(mirror, index) in formMirrorInputs"
+    :key="`${mirror.name}-${mirror.value}-${index}`"
+    :ref="(el) => setPrimaryFormMirror(el, index)"
+    v-bind="mirror"
     @keydown.prevent
     @beforeinput.prevent
     @paste.prevent

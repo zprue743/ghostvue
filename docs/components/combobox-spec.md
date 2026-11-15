@@ -50,8 +50,8 @@ Headless `@ghostvue/vue`:
 - `GhostComboboxEmpty` — visible when the list is open, not loading, and zero
   registered options
 - `useGhostCombobox` — state, registry, keyboard highlight, form helpers
-- `useGhostComboboxAsyncSearch` — request-id helper so stale fetch responses
-  never apply after a newer query
+- `useGhostComboboxAsyncSearch` — tracks the root-emitted `search.requestId` so
+  stale fetch responses never apply after a newer query
 - Types for props, exposed refs, context, and composable options
 
 Themed `@ghostvue/themes`:
@@ -139,11 +139,11 @@ uncontrolled after setup is unsupported ([GHOST001](../warnings.md#ghost001)).
 
 ### `useGhostComboboxAsyncSearch`
 
-Returns `{ nextRequestId(), isLatest(requestId) }`. Consumers call `nextRequestId`
-when starting a fetch for the current query; in the response handler they apply
-option data only when `isLatest(requestId)` is true. Unit tests cover stale
-discard. The root’s emitted `requestId` matches the value from `nextRequestId` at
-emit time (root owns the counter; the helper mirrors it for consumer fetches).
+Returns `{ begin(requestId), isLatest(requestId) }`. The root owns the monotonic
+`searchRequestId` and emits it on every `search` event. At the start of an async
+handler, call `begin(payload.requestId)`. When the fetch completes, apply options
+and clear `loading` only when `isLatest(payload.requestId)` is still true. Stale
+responses must not touch `loading`, options, or any other UI state.
 
 ## State model
 
@@ -179,8 +179,8 @@ The component does not await fetches. Consumers:
 
 1. Listen to `search` / `update:search`.
 2. Set `loading` while fetching.
-3. Use `useGhostComboboxAsyncSearch` (or compare `requestId` from the event) before
-   updating which `GhostComboboxOption` nodes render.
+3. Call `begin(payload.requestId)` then, after the fetch, update options only when
+   `isLatest(payload.requestId)`.
 
 Stale responses must not replace newer results: the helper’s `isLatest` gate is
 the supported contract; tests demonstrate a fast-then-slow race.
@@ -289,4 +289,18 @@ Additive Changesets for `@ghostvue/vue` and `@ghostvue/themes`.
 
 ## Open architectural questions
 
-None blocking. **Follow-ups:** creatable options, inline multi-value tags.
+None blocking.
+
+## Follow-ups
+
+- Creatable options and inline multi-value tags.
+- [GHO-43](https://linear.app/ghost-vue/issue/GHO-43): i18n for polite
+  announcement strings (“Loading results”, “N results available”, “No results
+  available”) — v1 uses fixed English in the announcer live region.
+
+### Form submit (multiple)
+
+`multiple` with `name` renders one visually hidden `input[type=text]` per selected
+value, each sharing the same `name` (native `<select multiple>` semantics). Values
+containing commas are submitted without encoding ambiguity. Required validation uses
+a single empty mirror when nothing is selected.

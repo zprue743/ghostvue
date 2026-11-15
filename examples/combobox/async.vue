@@ -17,7 +17,7 @@ const options = ref<{ value: string; label: string }[]>([
   { value: 'orange', label: 'Orange' },
 ])
 
-const { nextRequestId, isLatest } = useGhostComboboxAsyncSearch()
+const { begin, isLatest } = useGhostComboboxAsyncSearch()
 
 const source = [
   { value: 'apple', label: 'Apple' },
@@ -27,14 +27,14 @@ const source = [
 ]
 
 async function onSearch(payload: { query: string; requestId: number }) {
-  const requestId = nextRequestId()
+  const { query, requestId } = payload
+  begin(requestId)
   loading.value = true
   await new Promise((resolve) => setTimeout(resolve, 200))
   if (!isLatest(requestId)) {
-    loading.value = false
     return
   }
-  const lowered = payload.query.toLowerCase()
+  const lowered = query.toLowerCase()
   options.value = source.filter((entry) =>
     entry.label.toLowerCase().includes(lowered),
   )

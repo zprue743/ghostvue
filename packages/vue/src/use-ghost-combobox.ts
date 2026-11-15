@@ -62,7 +62,7 @@ export function useGhostCombobox(options: UseGhostComboboxOptions = {}): {
   moveActiveFirst: () => void
   moveActiveLast: () => void
   onInputSearch: (query: string) => void
-  formInputProps: ComputedRef<GhostComboboxFormInputProps>
+  formMirrorInputs: ComputedRef<GhostComboboxFormInputProps[]>
   applyFormReset: () => void
   syncFormValidity: () => void
   handleFormInputInvalid: () => void
@@ -127,6 +127,7 @@ export function useGhostCombobox(options: UseGhostComboboxOptions = {}): {
   const labelVersion = shallowRef(0)
   const activeOptionValue = shallowRef<string | undefined>(undefined)
   const announceMessage = shallowRef('')
+  const announcedLoading = shallowRef(false)
 
   let searchRequestId = 0
 
@@ -151,9 +152,14 @@ export function useGhostCombobox(options: UseGhostComboboxOptions = {}): {
       return
     }
     if (loading.value) {
+      if (announcedLoading.value) {
+        return
+      }
+      announcedLoading.value = true
       announceMessage.value = 'Loading results'
       return
     }
+    announcedLoading.value = false
     const count = enabledOptionsInOrder().length
     announceMessage.value =
       count === 0
@@ -161,18 +167,30 @@ export function useGhostCombobox(options: UseGhostComboboxOptions = {}): {
         : `${String(count)} results available`
   }
 
-  watch(loading, () => {
-    queueAnnouncement()
-  })
-
-  watch(isOpen, (open) => {
-    if (open) {
+  watch(
+    loading,
+    (isLoading) => {
+      if (!isLoading) {
+        announcedLoading.value = false
+      }
       queueAnnouncement()
-      return
-    }
-    activeOptionValue.value = undefined
-    announceMessage.value = ''
-  })
+    },
+    { immediate: true },
+  )
+
+  watch(
+    isOpen,
+    (open) => {
+      if (open) {
+        queueAnnouncement()
+        return
+      }
+      activeOptionValue.value = undefined
+      announceMessage.value = ''
+      announcedLoading.value = false
+    },
+    { immediate: true },
+  )
 
   function registerOption(
     value: string,
@@ -410,28 +428,50 @@ export function useGhostCombobox(options: UseGhostComboboxOptions = {}): {
     queueAnnouncement()
   }
 
-  const formInputProps = computed((): GhostComboboxFormInputProps => {
+  const formMirrorInputs = computed((): GhostComboboxFormInputProps[] => {
     const name = toValue(options.name)
     const form = toValue(options.form)
-    let value = ''
-    if (multiple.value) {
-      value = selectedArray().join(',')
-    } else if (typeof selectedValue.value === 'string') {
-      value = selectedValue.value
+    if (!name) {
+      return []
     }
-    const named = Boolean(name)
-    return {
-      type: 'text',
-      name: named ? name : undefined,
-      value,
+    const base = {
+      type: 'text' as const,
       form: form ?? undefined,
       disabled: disabled.value || undefined,
-      required: named && required.value ? true : undefined,
-      tabindex: -1,
-      'aria-hidden': true,
-      class: 'ghost-visually-hidden',
-      autocomplete: 'off',
+      tabindex: -1 as const,
+      'aria-hidden': true as const,
+      class: 'ghost-visually-hidden' as const,
+      autocomplete: 'off' as const,
     }
+    if (multiple.value) {
+      const values = selectedArray()
+      if (values.length === 0) {
+        return [
+          {
+            ...base,
+            name,
+            value: '',
+            required: required.value ? true : undefined,
+          },
+        ]
+      }
+      return values.map((value, index) => ({
+        ...base,
+        name,
+        value,
+        required: index === 0 && required.value ? true : undefined,
+      }))
+    }
+    const value =
+      typeof selectedValue.value === 'string' ? selectedValue.value : ''
+    return [
+      {
+        ...base,
+        name,
+        value,
+        required: required.value ? true : undefined,
+      },
+    ]
   })
 
   function applyFormReset(): void {
@@ -506,7 +546,7 @@ export function useGhostCombobox(options: UseGhostComboboxOptions = {}): {
     moveActiveFirst,
     moveActiveLast,
     onInputSearch,
-    formInputProps,
+    formMirrorInputs,
     applyFormReset,
     syncFormValidity,
     handleFormInputInvalid,
@@ -524,16 +564,18 @@ type GhostComboboxRegisterOption = (
   getElement: () => HTMLElement | null,
 ) => void
 
-/** Discard stale async search responses using a monotonic request id. */
+/**
+ * Tracks the latest `search` event `requestId` from {@link GhostCombobox} so
+ * async handlers can ignore stale responses without a second id source.
+ */
 export function useGhostComboboxAsyncSearch(): {
-  nextRequestId: () => number
+  begin: (requestId: number) => void
   isLatest: (requestId: number) => boolean
 } {
   let latest = 0
   return {
-    nextRequestId() {
-      latest += 1
-      return latest
+    begin(requestId: number) {
+      latest = requestId
     },
     isLatest(requestId: number) {
       return requestId === latest

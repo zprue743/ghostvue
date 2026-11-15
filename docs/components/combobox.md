@@ -15,7 +15,8 @@ The input is `role="combobox"`; suggestions live in a portaled listbox.
 
 <GhostExample id="combobox/async" />
 
-Listen for `search` (with `requestId`) and use `useGhostComboboxAsyncSearch` so
+Listen for `search` (with `requestId`), call `begin(payload.requestId)` at fetch
+start, and use `isLatest(payload.requestId)` before applying results so
 stale responses do not overwrite newer results.
 
 ## Multiple selection

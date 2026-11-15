@@ -204,13 +204,193 @@ describe('GhostCombobox', () => {
     expect(value.value).toEqual([])
   })
 
-  it('useGhostComboboxAsyncSearch discards stale request ids', () => {
-    const { nextRequestId, isLatest } = useGhostComboboxAsyncSearch()
-    const first = nextRequestId()
-    const second = nextRequestId()
-    expect(isLatest(first)).toBe(false)
-    expect(isLatest(second)).toBe(true)
-    expect(nextRequestId()).toBeGreaterThan(second)
+  it('useGhostComboboxAsyncSearch tracks root search requestIds', () => {
+    const { begin, isLatest } = useGhostComboboxAsyncSearch()
+    begin(1)
+    expect(isLatest(1)).toBe(true)
+    begin(2)
+    expect(isLatest(1)).toBe(false)
+    expect(isLatest(2)).toBe(true)
+  })
+
+  it('ignores stale async search results for options and loading', async () => {
+    const loading = ref(false)
+    const options = ref<string[]>(['apple', 'banana', 'orange'])
+    const { begin, isLatest } = useGhostComboboxAsyncSearch()
+  const pending: Array<{
+      requestId: number
+      resolve: () => void
+    }> = []
+
+    const wrapper = mountAttached(
+      defineComponent({
+        setup() {
+          async function onSearch(payload: {
+            query: string
+            requestId: number
+          }) {
+            const { requestId } = payload
+            begin(requestId)
+            loading.value = true
+            await new Promise<void>((resolve) => {
+              pending.push({ requestId, resolve })
+            })
+            if (!isLatest(requestId)) {
+              return
+            }
+            options.value =
+              payload.query.length > 0
+                ? ['apple', 'banana', 'orange', 'grape']
+                : ['apple', 'banana', 'orange']
+            loading.value = false
+          }
+          return () =>
+            h(
+              GhostCombobox,
+              {
+                loading: loading.value,
+                open: true,
+                onSearch,
+              },
+              {
+                default: () => [
+                  h(GhostComboboxInput),
+                  h(GhostComboboxContent, { portal: false }, () =>
+                    options.value.map((value) =>
+                      h(
+                        GhostComboboxOption,
+                        { value, textValue: value },
+                        () => value,
+                      ),
+                    ),
+                  ),
+                ],
+              },
+            )
+        },
+      }),
+    )
+
+    const input = wrapper.get('[data-part="input"]')
+    await input.setValue('g')
+    await flushPromises()
+    expect(loading.value).toBe(true)
+    await input.setValue('gr')
+    await flushPromises()
+    expect(loading.value).toBe(true)
+    const slow = pending[0]
+    const fast = pending[1]
+    expect(slow).toBeDefined()
+    expect(fast).toBeDefined()
+    slow?.resolve()
+    await flushPromises()
+    await nextTick()
+    expect(loading.value).toBe(true)
+    expect(wrapper.findAll('[data-part="option"]').length).toBe(3)
+    fast?.resolve()
+    await flushPromises()
+    await nextTick()
+    expect(loading.value).toBe(false)
+    expect(wrapper.findAll('[data-part="option"]').length).toBe(4)
+  })
+
+  it('announces loading once and then results without repeating loading per keystroke', async () => {
+    const loading = ref(true)
+    const wrapper = mountAttached(
+      defineComponent({
+        setup() {
+          return () =>
+            h(
+              GhostCombobox,
+              { loading: loading.value, open: true },
+              {
+                default: () => [
+                  h(GhostComboboxInput),
+                  h(GhostComboboxContent, { portal: false }, () =>
+                    h(
+                      GhostComboboxOption,
+                      { value: 'a', textValue: 'Apple' },
+                      () => 'Apple',
+                    ),
+                  ),
+                ],
+              },
+            )
+        },
+      }),
+    )
+
+    const announcer = wrapper.get('[data-part="announcer"]')
+    expect(announcer.text()).toBe('Loading results')
+    const input = wrapper.get('[data-part="input"]')
+    await input.setValue('a')
+    await input.setValue('ap')
+    await flushPromises()
+    expect(announcer.text()).toBe('Loading results')
+
+    loading.value = false
+    await flushPromises()
+    await nextTick()
+    expect(announcer.text()).toBe('1 results available')
+  })
+
+  it('submits multi-select with one mirror input per value (comma-safe)', async () => {
+    const onSubmit = vi.fn((event: Event) => {
+      event.preventDefault()
+      const form = event.target as HTMLFormElement
+      const data = new FormData(form)
+      const tags = data.getAll('tags')
+      expect(tags).toEqual(['a,b', 'plain'])
+    })
+    const wrapper = mountAttached(
+      defineComponent({
+        setup() {
+          const value = ref<string[]>(['a,b', 'plain'])
+          return () =>
+            h('form', { onSubmit }, [
+              h(
+                GhostCombobox,
+                {
+                  name: 'tags',
+                  multiple: true,
+                  modelValue: value.value,
+                  'onUpdate:modelValue': (next: GhostComboboxValue) => {
+                    value.value = Array.isArray(next) ? next : []
+                  },
+                },
+                {
+                  default: () => [
+                    h(GhostComboboxInput),
+                    h(GhostComboboxContent, { portal: false }, () => [
+                      h(
+                        GhostComboboxOption,
+                        { value: 'a,b', textValue: 'A, B' },
+                        () => 'A, B',
+                      ),
+                      h(
+                        GhostComboboxOption,
+                        { value: 'plain', textValue: 'plain' },
+                        () => 'plain',
+                      ),
+                    ]),
+                  ],
+                },
+              ),
+              h('button', { type: 'submit' }, 'Send'),
+            ])
+        },
+      }),
+    )
+
+    await flushPromises()
+    await nextTick()
+    const mirrors = wrapper.findAll('input.ghost-visually-hidden')
+    expect(mirrors.length).toBe(2)
+    expect(
+      mirrors.map((m) => (m.element as HTMLInputElement).value).sort(),
+    ).toEqual(['a,b', 'plain'])
+    await wrapper.get('form').trigger('submit')
+    expect(onSubmit).toHaveBeenCalled()
   })
 
   it('shows empty results when open with no options and hides while loading', async () => {
