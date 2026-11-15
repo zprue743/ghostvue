@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "1.0.0",
+  "slug": "combobox",
+  "docs": {
+    "title": "GhostCombobox",
+    "specStatus": "proposed",
+    "link": "/components/combobox",
+    "specLink": "/specs/combobox",
+    "category": "forms",
+    "sidebarLabel": "Combobox"
+  },
+  "vueBarrel": [
+    "export { default as GhostCombobox } from './GhostCombobox.vue'",
+    "export { useGhostCombobox, type GhostComboboxRootProps } from './use-ghost-combobox'",
+    "export type { GhostComboboxExposed } from './ghost-combobox'"
+  ],
+  "themesBarrel": [
+    "export { GhostCombobox, type GhostComboboxExposed } from './ghost-combobox'"
+  ],
+  "examples": [
+    {
+      "id": "combobox/basic",
+      "title": "Combobox scaffold",
+      "description": "Neutral scaffold; specification approval required.",
+      "layer": "headless"
+    }
+  ]
+}
