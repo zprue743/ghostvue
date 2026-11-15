@@ -5,7 +5,9 @@
     "title": "GhostRadioGroup",
     "specStatus": "approved",
     "link": "/components/radio-group",
-    "specLink": "/components/radio-group-spec"
+    "specLink": "/specs/radio-group",
+    "category": "forms",
+    "sidebarLabel": "Radio group"
   },
   "vueBarrel": [
     "export { default as GhostRadioGroup } from './GhostRadioGroup.vue'",

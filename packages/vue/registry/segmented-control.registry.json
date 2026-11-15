@@ -5,7 +5,9 @@
     "title": "GhostSegmentedControl",
     "specStatus": "approved",
     "link": "/components/segmented-control",
-    "specLink": "/components/segmented-control-spec"
+    "specLink": "/specs/segmented-control",
+    "category": "actions",
+    "sidebarLabel": "Segmented control"
   },
   "vueBarrel": [
     "export { default as GhostSegmentedControl } from './GhostSegmentedControl.vue'",

@@ -5,7 +5,9 @@
     "title": "GhostDropdownMenu",
     "specStatus": "approved",
     "link": "/components/dropdown-menu",
-    "specLink": "/components/dropdown-menu-spec"
+    "specLink": "/specs/dropdown-menu",
+    "category": "overlays",
+    "sidebarLabel": "Dropdown menu"
   },
   "vueBarrel": [
     "export { default as GhostDropdownMenu } from './GhostDropdownMenu.vue'",

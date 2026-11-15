@@ -5,7 +5,9 @@
     "title": "GhostTextarea",
     "specStatus": "approved",
     "link": "/components/textarea",
-    "specLink": "/components/textarea-spec"
+    "specLink": "/specs/textarea",
+    "category": "forms",
+    "sidebarLabel": "Textarea"
   },
   "vueBarrel": [
     "export { default as GhostTextarea } from './GhostTextarea.vue'",

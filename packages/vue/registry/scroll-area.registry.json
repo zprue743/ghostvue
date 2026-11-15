@@ -5,7 +5,9 @@
     "title": "GhostScrollArea",
     "specStatus": "approved",
     "link": "/components/scroll-area",
-    "specLink": "/components/scroll-area-spec"
+    "specLink": "/specs/scroll-area",
+    "category": "utilities",
+    "sidebarLabel": "Scroll area"
   },
   "vueBarrel": [
     "export { default as GhostScrollArea } from './GhostScrollArea.vue'",

@@ -5,7 +5,9 @@
     "title": "GhostMenubar",
     "specStatus": "approved",
     "link": "/components/menubar",
-    "specLink": "/components/menubar-spec"
+    "specLink": "/specs/menubar",
+    "category": "navigation-disclosure",
+    "sidebarLabel": "Menubar"
   },
   "vueBarrel": [
     "export { default as GhostMenubar } from './GhostMenubar.vue'",

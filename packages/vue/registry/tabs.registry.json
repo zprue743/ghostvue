@@ -5,7 +5,9 @@
     "title": "GhostTabs",
     "specStatus": "approved",
     "link": "/components/tabs",
-    "specLink": "/components/tabs-spec"
+    "specLink": "/specs/tabs",
+    "category": "navigation-disclosure",
+    "sidebarLabel": "Tabs"
   },
   "vueBarrel": [
     "export { default as GhostTabs } from './GhostTabs.vue'",

@@ -5,7 +5,9 @@
     "title": "GhostSelect",
     "specStatus": "approved",
     "link": "/components/select",
-    "specLink": "/components/select-spec"
+    "specLink": "/specs/select",
+    "category": "forms",
+    "sidebarLabel": "Select"
   },
   "vueBarrel": [
     "export { default as GhostSelect } from './GhostSelect.vue'",

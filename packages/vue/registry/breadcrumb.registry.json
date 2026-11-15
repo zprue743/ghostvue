@@ -5,7 +5,9 @@
     "title": "GhostBreadcrumb",
     "specStatus": "approved",
     "link": "/components/breadcrumb",
-    "specLink": "/components/breadcrumb-spec"
+    "specLink": "/specs/breadcrumb",
+    "category": "navigation-disclosure",
+    "sidebarLabel": "Breadcrumb"
   },
   "vueBarrel": [
     "export { default as GhostBreadcrumb } from './GhostBreadcrumb.vue'",

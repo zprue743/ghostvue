@@ -5,7 +5,9 @@
     "title": "GhostInteractiveSurface",
     "specStatus": "approved",
     "link": "/components/interactive-surface",
-    "specLink": "/components/interactive-surface-spec"
+    "specLink": "/specs/interactive-surface",
+    "category": "utilities",
+    "sidebarLabel": "Interactive surface"
   },
   "vueBarrel": [
     "export { default as GhostInteractiveSurface } from './GhostInteractiveSurface.vue'",

@@ -5,7 +5,9 @@
     "title": "GhostField",
     "specStatus": "approved",
     "link": "/components/field",
-    "specLink": "/components/field-spec"
+    "specLink": "/specs/field",
+    "category": "forms",
+    "sidebarLabel": "Field"
   },
   "vueBarrel": [
     "export { default as GhostField } from './GhostField.vue'",

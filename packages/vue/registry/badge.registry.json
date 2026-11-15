@@ -5,7 +5,9 @@
     "title": "GhostBadge",
     "specStatus": "approved",
     "link": "/components/badge",
-    "specLink": "/components/badge-spec"
+    "specLink": "/specs/badge",
+    "category": "feedback",
+    "sidebarLabel": "Badge"
   },
   "vueBarrel": [
     "export { default as GhostBadge } from './GhostBadge.vue'",

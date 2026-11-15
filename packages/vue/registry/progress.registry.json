@@ -5,7 +5,9 @@
     "title": "GhostProgress",
     "specStatus": "approved",
     "link": "/components/progress",
-    "specLink": "/components/progress-spec"
+    "specLink": "/specs/progress",
+    "category": "feedback",
+    "sidebarLabel": "Progress"
   },
   "vueBarrel": [
     "export { default as GhostProgress } from './GhostProgress.vue'",

@@ -5,7 +5,9 @@
     "title": "GhostInlineAlert",
     "specStatus": "approved",
     "link": "/components/inline-alert",
-    "specLink": "/components/inline-alert-spec"
+    "specLink": "/specs/inline-alert",
+    "category": "feedback",
+    "sidebarLabel": "Inline alert"
   },
   "vueBarrel": [
     "export { default as GhostInlineAlert } from './GhostInlineAlert.vue'",

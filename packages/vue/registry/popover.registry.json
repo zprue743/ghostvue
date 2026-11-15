@@ -5,7 +5,9 @@
     "title": "GhostPopover",
     "specStatus": "approved",
     "link": "/components/popover",
-    "specLink": "/components/popover-spec"
+    "specLink": "/specs/popover",
+    "category": "overlays",
+    "sidebarLabel": "Popover"
   },
   "vueBarrel": [
     "export { default as GhostPopover } from './GhostPopover.vue'",
