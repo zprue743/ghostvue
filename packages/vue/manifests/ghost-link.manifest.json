@@ -1,0 +1,112 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "generated",
+  "name": "GhostLink",
+  "package": "@ghostvue/vue",
+  "status": "experimental",
+  "description": "Headless styled anchor with external and disabled contracts. useGhostLink owns behavior; GhostLink is the thin host. Themed visual props live on @ghostvue/themes.",
+  "props": [
+    {
+      "name": "as",
+      "type": "GhostLinkElement",
+      "default": "a",
+      "required": false,
+      "description": "Declared prop `as`.",
+      "deprecated": false
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Declared prop `disabled`.",
+      "deprecated": false
+    },
+    {
+      "name": "external",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Declared prop `external`.",
+      "deprecated": false
+    },
+    {
+      "name": "newTabLabel",
+      "type": "string",
+      "default": "Opens in new tab",
+      "required": false,
+      "description": "Declared prop `newTabLabel`.",
+      "deprecated": false
+    }
+  ],
+  "models": [],
+  "events": [],
+  "slots": [
+    {
+      "name": "default",
+      "props": [],
+      "description": "Visible link text. Provide aria-label or aria-labelledby when the slot is empty."
+    },
+    {
+      "name": "externalIndicator",
+      "props": [],
+      "description": "Decorative external icon inside data-part=external-icon. Hidden from assistive technology."
+    }
+  ],
+  "exposed": [
+    {
+      "name": "blur",
+      "kind": "method",
+      "type": "() => void",
+      "description": "Removes focus from the host when mounted."
+    },
+    {
+      "name": "element",
+      "kind": "property",
+      "type": "HTMLElement | null",
+      "description": "The navigable host element after mount, or `null` before mount."
+    },
+    {
+      "name": "focus",
+      "kind": "method",
+      "type": "(options?: FocusOptions) => void",
+      "description": "Moves focus to the host when mounted and not disabled."
+    }
+  ],
+  "styling": {
+    "parts": [
+      {
+        "name": "root",
+        "description": "The navigable host element."
+      },
+      {
+        "name": "external-icon",
+        "description": "Decorative external navigation icon."
+      }
+    ],
+    "states": [
+      {
+        "name": "disabled",
+        "description": "Navigation is unavailable; href is removed on native anchors."
+      }
+    ],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "link",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/link/",
+    "keyboard": {
+      "Tab": "Moves focus to enabled links in document order.",
+      "Enter": "Activates the native link when focused."
+    },
+    "requiredAriaAttributes": []
+  },
+  "examples": [
+    "link/basic",
+    "link/composable",
+    "link/themed",
+    "link/external",
+    "link/disabled",
+    "link/router"
+  ]
+}

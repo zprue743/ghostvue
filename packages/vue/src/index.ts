@@ -116,6 +116,15 @@ export type {
   GhostKbdResolvedPlatform,
   UseGhostKbdOptions,
 } from './ghost-kbd'
+export { default as GhostLink } from './GhostLink.vue'
+export { useGhostLink, type GhostLinkRootProps } from './use-ghost-link'
+export type {
+  GhostLinkElement,
+  GhostLinkExposed,
+  GhostLinkProps,
+  UseGhostLinkOptions,
+} from './ghost-link'
+export { resolveGhostLinkHtmlElement, mergeLinkRel } from './ghost-link'
 export { default as GhostSkeleton } from './GhostSkeleton.vue'
 export {
   useGhostSkeleton,
