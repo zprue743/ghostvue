@@ -11,18 +11,59 @@
   },
   "vueBarrel": [
     "export { default as GhostCombobox } from './GhostCombobox.vue'",
-    "export { useGhostCombobox, type GhostComboboxRootProps } from './use-ghost-combobox'",
-    "export type { GhostComboboxExposed } from './ghost-combobox'"
+    "export { default as GhostComboboxInput } from './GhostComboboxInput.vue'",
+    "export { default as GhostComboboxTrigger } from './GhostComboboxTrigger.vue'",
+    "export { default as GhostComboboxContent } from './GhostComboboxContent.vue'",
+    "export { default as GhostComboboxOption } from './GhostComboboxOption.vue'",
+    "export { default as GhostComboboxGroup } from './GhostComboboxGroup.vue'",
+    "export { default as GhostComboboxLabel } from './GhostComboboxLabel.vue'",
+    "export { default as GhostComboboxEmpty } from './GhostComboboxEmpty.vue'",
+    "export { useGhostCombobox, useGhostComboboxAsyncSearch, type GhostComboboxRootProps } from './use-ghost-combobox'",
+    "export type {\n  GhostComboboxContentElement,\n  GhostComboboxContentExposed,\n  GhostComboboxContext,\n  GhostComboboxEmptyElement,\n  GhostComboboxFlipOptions,\n  GhostComboboxGroupElement,\n  GhostComboboxInputElement,\n  GhostComboboxInputExposed,\n  GhostComboboxLabelElement,\n  GhostComboboxOffsetOptions,\n  GhostComboboxOptionElement,\n  GhostComboboxOptionExposed,\n  GhostComboboxPlacement,\n  GhostComboboxSearchPayload,\n  GhostComboboxShiftOptions,\n  GhostComboboxStrategy,\n  GhostComboboxTriggerElement,\n  GhostComboboxTriggerExposed,\n  GhostComboboxValue,\n  GhostComboboxExposed,\n  UseGhostComboboxOptions,\n} from './ghost-combobox'"
   ],
   "themesBarrel": [
-    "export { GhostCombobox, type GhostComboboxExposed } from './ghost-combobox'"
+    "export { GhostCombobox, type GhostComboboxExposed } from './ghost-combobox'",
+    "export {\n  GhostComboboxInput,\n  type GhostComboboxInputElement,\n  type GhostComboboxInputExposed,\n} from './ghost-combobox-input'",
+    "export {\n  GhostComboboxTrigger,\n  type GhostComboboxTriggerElement,\n  type GhostComboboxTriggerExposed,\n} from './ghost-combobox-trigger'",
+    "export {\n  GhostComboboxContent,\n  type GhostComboboxContentElement,\n  type GhostComboboxContentExposed,\n  type GhostComboboxFlipOptions,\n  type GhostComboboxOffsetOptions,\n  type GhostComboboxPlacement,\n  type GhostComboboxShiftOptions,\n  type GhostComboboxStrategy,\n} from './ghost-combobox-content'",
+    "export {\n  GhostComboboxOption,\n  GhostComboboxGroup,\n  GhostComboboxLabel,\n  GhostComboboxEmpty,\n  useGhostCombobox,\n  useGhostComboboxAsyncSearch,\n} from '@ghostvue/vue'"
   ],
   "examples": [
     {
       "id": "combobox/basic",
-      "title": "Combobox scaffold",
-      "description": "Neutral scaffold; specification approval required.",
+      "title": "Basic",
+      "description": "Editable combobox with client-provided options and keyboard highlight.",
       "layer": "headless"
+    },
+    {
+      "id": "combobox/async",
+      "title": "Async search",
+      "description": "Loading state, empty results, and stale-response guard with useGhostComboboxAsyncSearch.",
+      "layer": "headless"
+    },
+    {
+      "id": "combobox/multi",
+      "title": "Multiple",
+      "description": "Toggle multiple values without closing the listbox.",
+      "layer": "headless"
+    },
+    {
+      "id": "combobox/field",
+      "title": "Field",
+      "description": "GhostField wiring for label, description, and required state.",
+      "layer": "headless"
+    },
+    {
+      "id": "combobox/form",
+      "title": "Form",
+      "description": "Hidden input submit value and native form reset.",
+      "layer": "headless"
+    },
+    {
+      "id": "combobox/themed",
+      "title": "Themed",
+      "description": "Input and list surface tokens from @ghostvue/themes.",
+      "layer": "themed"
     }
   ]
 }

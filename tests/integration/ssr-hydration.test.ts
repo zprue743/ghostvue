@@ -14,6 +14,10 @@ import GhostMenubarItem from '../../packages/vue/src/GhostMenubarItem.vue'
 import GhostMenubarMenu from '../../packages/vue/src/GhostMenubarMenu.vue'
 import GhostMenubarTrigger from '../../packages/vue/src/GhostMenubarTrigger.vue'
 import GhostInlineAlert from '../../packages/vue/src/GhostInlineAlert.vue'
+import GhostCombobox from '../../packages/vue/src/GhostCombobox.vue'
+import GhostComboboxContent from '../../packages/vue/src/GhostComboboxContent.vue'
+import GhostComboboxInput from '../../packages/vue/src/GhostComboboxInput.vue'
+import GhostComboboxOption from '../../packages/vue/src/GhostComboboxOption.vue'
 import GhostSelect from '../../packages/vue/src/GhostSelect.vue'
 import GhostSelectContent from '../../packages/vue/src/GhostSelectContent.vue'
 import GhostSelectOption from '../../packages/vue/src/GhostSelectOption.vue'
@@ -182,6 +186,45 @@ describe('SSR hydration harness', () => {
     })
 
     await expectSsrHydration(ClosedSelect, {
+      assertServerHtml(html) {
+        expect(html).toContain('role="combobox"')
+        expect(html).toContain('aria-expanded="false"')
+        expect(html).toContain('Banana')
+        expect(html).toContain('role="listbox"')
+      },
+    })
+  })
+
+  it('hydrates closed GhostCombobox with defaultValue label without mismatch', async () => {
+    const ClosedCombobox = defineComponent({
+      name: 'ClosedComboboxFixture',
+      setup() {
+        return () =>
+          h(
+            GhostCombobox,
+            { defaultValue: 'b', name: 'fruit' },
+            {
+              default: () => [
+                h(GhostComboboxInput),
+                h(GhostComboboxContent, { portal: false }, () => [
+                  h(
+                    GhostComboboxOption,
+                    { value: 'a', textValue: 'Apple' },
+                    () => 'Apple',
+                  ),
+                  h(
+                    GhostComboboxOption,
+                    { value: 'b', textValue: 'Banana' },
+                    () => 'Banana',
+                  ),
+                ]),
+              ],
+            },
+          )
+      },
+    })
+
+    await expectSsrHydration(ClosedCombobox, {
       assertServerHtml(html) {
         expect(html).toContain('role="combobox"')
         expect(html).toContain('aria-expanded="false"')
