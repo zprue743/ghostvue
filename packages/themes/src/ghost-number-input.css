@@ -6,7 +6,7 @@
     .ghost-theme .ghost-number-input,
     .ghost-themed-scope .ghost-number-input
   ) {
-    --_ghost-number-input-gap: var(--ghost-space-2);
+    --_ghost-number-input-gap: var(--ghost-space-gap-sm);
     align-items: stretch;
     display: inline-flex;
     gap: var(--_ghost-number-input-gap);
@@ -107,7 +107,7 @@
     justify-content: center;
     margin: 0;
     min-inline-size: var(--ghost-control-size-md-min);
-    padding-inline: var(--ghost-space-2);
+    padding-inline: var(--ghost-space-inset-xs);
   }
 
   :where(

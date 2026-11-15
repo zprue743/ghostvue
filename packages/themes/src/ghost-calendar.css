@@ -85,7 +85,7 @@
     .ghost-themed-scope .ghost-calendar-weekday,
     .ghost-calendar-weekday[data-themed]
   ) {
-    color: var(--ghost-surface-fg-muted);
+    color: var(--ghost-text-muted);
     font-size: var(--ghost-type-size-xs);
     font-weight: var(--ghost-type-weight-semibold);
     text-align: center;
@@ -126,7 +126,7 @@
     .ghost-themed-scope .ghost-calendar-cell[data-outside-month],
     .ghost-calendar-cell[data-themed][data-outside-month]
   ) {
-    color: var(--ghost-surface-fg-muted);
+    color: var(--ghost-text-muted);
     opacity: 0.55;
   }
 

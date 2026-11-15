@@ -61,7 +61,7 @@
     outline: none;
     padding: var(--ghost-space-inset-sm) var(--ghost-space-inset-md);
     transition: background-color var(--ghost-motion-duration-fast)
-      var(--ghost-motion-ease-standard);
+      var(--ghost-motion-easing-standard);
     user-select: none;
   }
 
@@ -135,7 +135,7 @@
   ) {
     color: var(--ghost-text-muted);
     cursor: not-allowed;
-    opacity: var(--ghost-opacity-disabled);
+    opacity: var(--ghost-action-disabled-opacity);
   }
 
   :where(

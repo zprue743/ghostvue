@@ -9,13 +9,13 @@
     .ghost-themed-scope .ghost-empty-state,
     .ghost-empty-state[data-themed]
   ) {
-    --_ghost-empty-state-gap: var(--ghost-space-md);
+    --_ghost-empty-state-gap: var(--ghost-space-gap-md);
     align-items: center;
     display: flex;
     flex-direction: column;
     gap: var(--_ghost-empty-state-gap);
     justify-content: center;
-    padding: var(--ghost-space-lg);
+    padding: var(--ghost-space-inset-lg);
     text-align: center;
   }
 
@@ -60,7 +60,7 @@
   ) {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--ghost-space-sm);
+    gap: var(--ghost-space-gap-sm);
     justify-content: center;
   }
 }

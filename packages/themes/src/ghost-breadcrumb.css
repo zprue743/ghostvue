@@ -33,11 +33,11 @@
     .ghost-themed-scope .ghost-breadcrumb-link,
     .ghost-breadcrumb-link[data-themed]
   ) {
-    color: var(--ghost-surface-fg-muted);
+    color: var(--ghost-text-muted);
     font: inherit;
     text-decoration: none;
     transition: color var(--ghost-motion-duration-fast)
-      var(--ghost-motion-ease-standard);
+      var(--ghost-motion-easing-standard);
   }
 
   :where(
@@ -74,7 +74,7 @@
     .ghost-themed-scope .ghost-breadcrumb-separator,
     .ghost-breadcrumb-separator[data-themed]
   ) {
-    color: var(--ghost-surface-fg-subtle);
+    color: var(--ghost-text-subtle);
     user-select: none;
   }
 
@@ -86,7 +86,7 @@
     background: transparent;
     border: var(--ghost-border-hairline-width) solid transparent;
     border-radius: var(--ghost-radius-sm);
-    color: var(--ghost-surface-fg-muted);
+    color: var(--ghost-text-muted);
     cursor: pointer;
     font: inherit;
     line-height: 1;

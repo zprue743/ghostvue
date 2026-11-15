@@ -18,7 +18,7 @@
     font-family: var(--ghost-type-family-sans);
     font-feature-settings: var(--ghost-type-feature-default);
     font-size: var(--ghost-control-size-md-font);
-    gap: var(--ghost-space-inline-sm);
+    gap: var(--ghost-space-gap-sm);
     justify-content: space-between;
     min-block-size: var(--ghost-control-size-md-min);
     min-inline-size: var(--ghost-control-size-md-min);

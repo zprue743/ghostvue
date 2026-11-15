@@ -10,7 +10,7 @@
   ) {
     align-items: center;
     background: transparent;
-    border: var(--ghost-border-hairline-width) solid var(--ghost-surface-border);
+    border: var(--ghost-border-hairline-width) solid var(--ghost-border-default);
     border-radius: var(--ghost-radius-md);
     color: var(--ghost-surface-fg);
     cursor: pointer;
@@ -19,8 +19,8 @@
     font-feature-settings: var(--ghost-type-feature-default);
     font-size: var(--ghost-type-size-sm);
     font-weight: var(--ghost-type-weight-medium);
-    gap: var(--ghost-space-inline-xs);
-    line-height: var(--ghost-type-leading-snug);
+    gap: var(--ghost-space-gap-xs);
+    line-height: var(--ghost-type-line-snug);
     padding: var(--ghost-space-inset-sm) var(--ghost-space-inset-md);
     text-align: start;
     width: 100%;
@@ -41,7 +41,7 @@
     .ghost-collapsible-trigger[data-themed]:disabled
   ) {
     cursor: not-allowed;
-    opacity: var(--ghost-state-disabled-opacity);
+    opacity: var(--ghost-action-disabled-opacity);
   }
 
   :where(
@@ -50,7 +50,7 @@
       .ghost-collapsible-content:has([data-part='content-inner']),
     .ghost-collapsible-content[data-themed]:has([data-part='content-inner'])
   ) {
-    border: var(--ghost-border-hairline-width) solid var(--ghost-surface-border);
+    border: var(--ghost-border-hairline-width) solid var(--ghost-border-default);
     border-radius: var(--ghost-radius-md);
     border-top-left-radius: 0;
     border-top-right-radius: 0;
@@ -62,7 +62,7 @@
     font-feature-settings: var(--ghost-type-feature-default);
     font-size: var(--ghost-type-size-sm);
     grid-template-rows: 0fr;
-    line-height: var(--ghost-type-leading-normal);
+    line-height: var(--ghost-type-line-normal);
     overflow: hidden;
   }
 
@@ -121,7 +121,7 @@
         :has([data-part='content-inner'])
       )
   ) {
-    border: var(--ghost-border-hairline-width) solid var(--ghost-surface-border);
+    border: var(--ghost-border-hairline-width) solid var(--ghost-border-default);
     border-radius: var(--ghost-radius-md);
     border-top-left-radius: 0;
     border-top-right-radius: 0;
@@ -131,7 +131,7 @@
     font-family: var(--ghost-type-family-sans);
     font-feature-settings: var(--ghost-type-feature-default);
     font-size: var(--ghost-type-size-sm);
-    line-height: var(--ghost-type-leading-normal);
+    line-height: var(--ghost-type-line-normal);
     overflow: hidden;
     padding: var(--ghost-space-inset-md);
   }
@@ -156,9 +156,9 @@
         padding-block: 0;
         transition:
           block-size var(--ghost-motion-duration-moderate)
-            var(--ghost-motion-ease-standard),
+            var(--ghost-motion-easing-standard),
           padding-block var(--ghost-motion-duration-moderate)
-            var(--ghost-motion-ease-standard);
+            var(--ghost-motion-easing-standard);
       }
 
       :where(
@@ -214,7 +214,7 @@
         ):not([data-animation='off'])
     ) {
       transition: grid-template-rows var(--ghost-motion-duration-moderate)
-        var(--ghost-motion-ease-standard);
+        var(--ghost-motion-easing-standard);
     }
   }
 }
