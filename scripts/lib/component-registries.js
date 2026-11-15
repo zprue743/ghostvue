@@ -106,40 +106,24 @@ async function readFamily(path) {
  * @param {'vue' | 'themes'} kind
  */
 function buildPackageBarrelBody(primitives, families, kind) {
-  const barrelSourceKey =
-    kind === 'vue' ? 'vueBarrelSource' : 'themesBarrelSource'
   const barrelKey = kind === 'vue' ? 'vueBarrel' : 'themesBarrel'
-  const orderedKey = kind === 'vue' ? 'vueBarrelOrdered' : 'themesBarrelOrdered'
   const defaultHeader =
     kind === 'vue'
       ? '/**\n * Public Vue package entry point. Named ESM exports are the primary API.\n */'
-      : '/** Themed wrappers and default CSS. One `GhostBadge` or `GhostButton` import loads the stylesheet. */'
+      : "/** Themed wrappers and default CSS. One `GhostBadge` or `GhostButton` import loads the stylesheet. */\nimport './default.css'\n"
 
-  const barrelSource = primitives[barrelSourceKey]
-  if (barrelSource) {
-    let source = barrelSource.endsWith('\n')
-      ? barrelSource
-      : `${barrelSource}\n`
-    const bySlug = new Map(families.map((family) => [family.slug, family]))
-    for (const slug of primitives.familyOrder ?? []) {
-      const family = bySlug.get(slug)
-      const first = family?.[barrelKey]?.[0]
-      if (first && !source.includes(first)) {
-        source = `${source.trimEnd()}\n${family[barrelKey].join('\n')}\n`
-      }
-    }
-    return source
-  }
   const lines = [defaultHeader]
-  if (primitives[orderedKey]?.length) {
-    lines.push(...primitives[orderedKey])
-  } else {
-    const bySlug = new Map(families.map((family) => [family.slug, family]))
-    if (primitives[barrelKey]?.length) lines.push(...primitives[barrelKey])
-    for (const slug of primitives.familyOrder ?? []) {
-      const family = bySlug.get(slug)
-      if (family?.[barrelKey]?.length) lines.push(...family[barrelKey])
-    }
+  const bySlug = new Map(families.map((family) => [family.slug, family]))
+  const seenSlugs = new Set()
+  if (primitives[barrelKey]?.length) lines.push(...primitives[barrelKey])
+  for (const slug of primitives.familyOrder ?? []) {
+    seenSlugs.add(slug)
+    const family = bySlug.get(slug)
+    if (family?.[barrelKey]?.length) lines.push(...family[barrelKey])
+  }
+  for (const family of families) {
+    if (seenSlugs.has(family.slug)) continue
+    if (family[barrelKey]?.length) lines.push(...family[barrelKey])
   }
   return `${lines.join('\n')}\n`
 }
