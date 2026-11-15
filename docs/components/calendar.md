@@ -1,0 +1,67 @@
+# GhostCalendar
+
+`GhostCalendar` implements a locale-aware month grid for single-date or range
+selection, following the WAI-ARIA APG date-picker dialog grid keyboard model.
+Import the compound parts from `@ghostvue/vue` for headless use, or from
+`@ghostvue/themes` for default surfaces.
+
+Values are [`CalendarDate`](https://react-spectrum.adobe.com/internationalized/date/CalendarDate.html)
+objects from `@internationalized/date` (shipped as a runtime dependency of
+`@ghostvue/vue`). Use `date.toString()` for ISO `YYYY-MM-DD` strings and
+`parseDate(iso)` when reading user input.
+
+## Basic use
+
+<GhostExample id="calendar/basic" />
+
+Pass `today` when you need deterministic “today” styling in SSR, tests, or
+snapshots. When `today` is omitted, no implicit runtime clock is used during
+render.
+
+## Range selection
+
+<GhostExample id="calendar/range" />
+
+Set `selection-mode="range"` and bind `v-model` to `{ start, end }` (inclusive).
+A third activation starts a new range.
+
+## Controlled month
+
+<GhostExample id="calendar/controlled" />
+
+`v-model:visible-month` controls which month is displayed. Combine with
+`min-value` / `max-value` and `is-date-disabled` for business rules.
+
+## Locale
+
+<GhostExample id="calendar/locale" />
+
+`locale` drives `Intl` labels; override week layout with `week-starts-on`
+(0 = Sunday).
+
+## Themed use
+
+<GhostExample id="calendar/themed" />
+
+Themed parts set `data-themed` so calendar CSS applies under `.ghost-theme` or
+`.ghost-themed-scope`.
+
+## API
+
+See the [specification](/specs/calendar). Generated manifest data lives under
+`packages/vue/manifests/ghost-calendar.manifest.json` and themed
+`packages/themes/manifests/ghost-calendar.manifest.json`.
+
+| Part                      | Role       | Key attributes                         |
+| ------------------------- | ---------- | -------------------------------------- |
+| `GhostCalendar`           | —          | `v-model`, `selectionMode`, `locale`   |
+| `GhostCalendarGrid`       | `grid`     | `aria-labelledby`, keyboard navigation |
+| `GhostCalendarCell`       | `gridcell` | `date`, `aria-selected`, `data-state`  |
+| `GhostCalendarPrevButton` | `button`   | Previous month                         |
+| `GhostCalendarNextButton` | `button`   | Next month                             |
+
+## Accessibility
+
+Keyboard support on the grid includes arrow keys (day/week), Home/End (week
+boundaries), Page Up/Down (month), and Shift+Page Up/Down (year). The focused
+date uses roving `tabindex`. See [the calendar specification](/specs/calendar#keyboard-interaction-on-grid-with-focus-inside).

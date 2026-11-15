@@ -1,0 +1,73 @@
+{
+  "schemaVersion": "1.0.0",
+  "slug": "calendar",
+  "docs": {
+    "title": "GhostCalendar",
+    "specStatus": "approved",
+    "link": "/components/calendar",
+    "specLink": "/specs/calendar",
+    "category": "forms",
+    "sidebarLabel": "Calendar"
+  },
+  "vueBarrel": [
+    "export { default as GhostCalendar } from './GhostCalendar.vue'",
+    "export { default as GhostCalendarHeader } from './GhostCalendarHeader.vue'",
+    "export { default as GhostCalendarHeading } from './GhostCalendarHeading.vue'",
+    "export { default as GhostCalendarPrevButton } from './GhostCalendarPrevButton.vue'",
+    "export { default as GhostCalendarNextButton } from './GhostCalendarNextButton.vue'",
+    "export { default as GhostCalendarGrid } from './GhostCalendarGrid.vue'",
+    "export { default as GhostCalendarCell } from './GhostCalendarCell.vue'",
+    "export { useGhostCalendar } from './use-ghost-calendar'",
+    "export { CalendarDate, parseDate } from './calendar-public-date'",
+    "export type { DateValue } from '@internationalized/date'",
+    "export type {\n  GhostCalendarCellState,\n  GhostCalendarExposed,\n  GhostCalendarGridCellSlotProps,\n  GhostCalendarHeaderElement,\n  GhostCalendarHeadingElement,\n  GhostCalendarHeadingSlotProps,\n  GhostCalendarNavButtonElement,\n  GhostCalendarGridElement,\n  GhostCalendarCellElement,\n  GhostCalendarPartExposed,\n  GhostCalendarProps,\n  GhostCalendarRangeValue,\n  GhostCalendarSelectionMode,\n  GhostCalendarSlotProps,\n  GhostCalendarValue,\n  UseGhostCalendarOptions,\n  UseGhostCalendarReturn,\n} from './ghost-calendar'"
+  ],
+  "themesBarrel": [
+    "export { CalendarDate, parseDate, type DateValue } from '@ghostvue/vue'",
+    "export { GhostCalendar, type GhostCalendarSlotProps } from './ghost-calendar'",
+    "export { GhostCalendarHeader } from './ghost-calendar-header'",
+    "export { GhostCalendarHeading } from './ghost-calendar-heading'",
+    "export { GhostCalendarPrevButton } from './ghost-calendar-prev-button'",
+    "export { GhostCalendarNextButton } from './ghost-calendar-next-button'",
+    "export { GhostCalendarGrid } from './ghost-calendar-grid'",
+    "export { GhostCalendarCell } from './ghost-calendar-cell'"
+  ],
+  "examples": [
+    {
+      "id": "calendar/basic",
+      "title": "Basic",
+      "description": "Single-date month grid with keyboard and pointer selection.",
+      "layer": "headless"
+    },
+    {
+      "id": "calendar/range",
+      "title": "Range",
+      "description": "Inclusive range selection across a month grid.",
+      "layer": "headless"
+    },
+    {
+      "id": "calendar/controlled",
+      "title": "Controlled",
+      "description": "Controlled month with min, max, and unavailable dates.",
+      "layer": "headless"
+    },
+    {
+      "id": "calendar/unselected",
+      "title": "Unselected",
+      "description": "Roving focus starts on today when no value is set.",
+      "layer": "headless"
+    },
+    {
+      "id": "calendar/locale",
+      "title": "Locale",
+      "description": "Monday week start with a non-US locale.",
+      "layer": "headless"
+    },
+    {
+      "id": "calendar/themed",
+      "title": "Themed",
+      "description": "Styled calendar from @ghostvue/themes.",
+      "layer": "themed"
+    }
+  ]
+}
