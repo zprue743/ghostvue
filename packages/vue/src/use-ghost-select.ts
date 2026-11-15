@@ -63,6 +63,7 @@ export function useGhostSelect(options: UseGhostSelectOptions = {}): {
   formInputProps: ComputedRef<GhostSelectFormInputProps>
   applyFormReset: () => void
   syncFormValidity: () => void
+  handleFormInputInvalid: () => void
 } {
   let suppressValueChange = false
 
@@ -87,7 +88,10 @@ export function useGhostSelect(options: UseGhostSelectOptions = {}): {
 
   const disabled = computed(() => Boolean(toValue(options.disabled)))
   const required = computed(() => Boolean(toValue(options.required)))
-  const invalid = computed(() => Boolean(toValue(options.invalid)))
+  const constraintInvalid = shallowRef(false)
+  const invalid = computed(
+    () => Boolean(toValue(options.invalid)) || constraintInvalid.value,
+  )
   const placeholder = computed(() => toValue(options.placeholder))
 
   const triggerId = useGhostId('ghost-select-trigger')
@@ -327,7 +331,13 @@ export function useGhostSelect(options: UseGhostSelectOptions = {}): {
       el.setCustomValidity('Select a value.')
     } else {
       el.setCustomValidity('')
+      constraintInvalid.value = false
     }
+  }
+
+  /** Native `invalid` on the mirror input — surfacing invalid state on the trigger. */
+  function handleFormInputInvalid(): void {
+    constraintInvalid.value = true
   }
 
   watch([selectedValue, required], () => {
@@ -364,6 +374,7 @@ export function useGhostSelect(options: UseGhostSelectOptions = {}): {
     formInputProps,
     applyFormReset,
     syncFormValidity,
+    handleFormInputInvalid,
     labelVersion,
   }
 }

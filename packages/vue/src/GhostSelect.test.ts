@@ -289,6 +289,53 @@ describe('GhostSelect', () => {
     expect(form.checkValidity()).toBe(false)
   })
 
+  it('moves focus to the trigger and marks invalid on failed submit', async () => {
+    const onSubmit = vi.fn((event: Event) => event.preventDefault())
+    const wrapper = mountAttached(
+      defineComponent({
+        setup() {
+          return () =>
+            h(
+              'form',
+              { onSubmit },
+              [
+                h(
+                  GhostSelect,
+                  { name: 'fruit', required: true },
+                  {
+                    default: () => [
+                      h(GhostSelectTrigger, null, () => h(GhostSelectValue)),
+                      h(GhostSelectContent, { portal: false }, () => [
+                        h(
+                          GhostSelectOption,
+                          { value: 'a', textValue: 'Apple' },
+                          () => 'Apple',
+                        ),
+                      ]),
+                    ],
+                  },
+                ),
+                h('button', { type: 'submit' }, 'Send'),
+              ],
+            )
+        },
+      }),
+    )
+
+    await flushPromises()
+    await nextTick()
+    const trigger = wrapper.get('[data-part="trigger"]').element as HTMLElement
+    const form = wrapper.get('form').element as HTMLFormElement
+    form.requestSubmit()
+    await flushPromises()
+    await nextTick()
+    expect(onSubmit).not.toHaveBeenCalled()
+    expect(document.activeElement).toBe(trigger)
+    expect(wrapper.get('[data-part="trigger"]').attributes('aria-invalid')).toBe(
+      'true',
+    )
+  })
+
   it('restores defaultValue on native form reset', async () => {
     const wrapper = mountAttached(
       defineComponent({

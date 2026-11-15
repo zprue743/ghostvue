@@ -68,6 +68,7 @@ const {
   formInputProps,
   applyFormReset,
   syncFormValidity,
+  handleFormInputInvalid,
   labelVersion,
 } = useGhostSelect({
   modelValue: () => props.modelValue,
@@ -110,6 +111,14 @@ watch(
   },
   { flush: 'post', immediate: true },
 )
+
+function onFormInputInvalid(event: Event): void {
+  handleFormInputInvalid()
+  triggerElement.value?.focus()
+  if (event.cancelable) {
+    event.preventDefault()
+  }
+}
 
 const customTriggerId = shallowRef<string | null>(null)
 const customContentId = shallowRef<string | null>(null)
@@ -185,5 +194,6 @@ defineExpose({
     @keydown.prevent
     @beforeinput.prevent
     @paste.prevent
+    @invalid="onFormInputInvalid"
   />
 </template>
