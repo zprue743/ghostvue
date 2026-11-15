@@ -9,6 +9,7 @@ import {
   docsSidebar,
   docsTitle,
 } from '../../apps/docs/.vitepress/docs-nav'
+import type { LlmsSidebarItem } from '../../apps/docs/.vitepress/generate-llms-txt'
 import {
   expandExampleTags,
   generateLlmsDocuments,
@@ -19,12 +20,18 @@ import {
 
 const docsRoot = resolve(process.cwd(), 'docs')
 
+function collectSidebarLinks(
+  items: readonly LlmsSidebarItem[],
+): { title: string; link: string }[] {
+  return items.flatMap((item) => {
+    const links = item.link ? [{ title: item.text, link: item.link }] : []
+    const nested = item.items ? collectSidebarLinks(item.items) : []
+    return [...links, ...nested]
+  })
+}
+
 function sidebarPages(): { title: string; link: string }[] {
-  return docsSidebar.flatMap((group) =>
-    group.items.flatMap((item) =>
-      item.link ? [{ title: item.text, link: item.link }] : [],
-    ),
-  )
+  return docsSidebar.flatMap((group) => collectSidebarLinks(group.items))
 }
 
 describe('llms.txt generation', () => {

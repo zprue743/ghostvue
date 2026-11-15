@@ -1,19 +1,10 @@
 import AxeBuilder from '@axe-core/playwright'
 import { expect, test } from '@playwright/test'
 
-import { docsSidebar } from '../../apps/docs/.vitepress/docs-nav'
+import { generatedComponentPageLinks } from '../../apps/docs/.vitepress/docs-nav'
 import { startStaticServer } from './static-server'
 
-// Every GhostX component page in the sidebar, excluding its spec page.
-const componentPages = docsSidebar
-  .flatMap((group) => group.items)
-  .flatMap(({ text, link }) =>
-    text.startsWith('Ghost') &&
-    link?.startsWith('/components/') &&
-    !link.endsWith('-spec')
-      ? [link]
-      : [],
-  )
+const componentPages = [...generatedComponentPageLinks]
 
 function isTransparentColor(value: string): boolean {
   return /^(transparent|rgba\(\s*0,\s*0,\s*0,\s*0\s*\)|oklab\(\s*0\s+0\s+0\s*\/\s*0\s*\))$/i.test(
