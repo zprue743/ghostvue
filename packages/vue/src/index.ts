@@ -333,6 +333,21 @@ export type {
   GhostPaginationRootProps,
   UseGhostPaginationOptions,
 } from './ghost-pagination'
+export { default as GhostSegmentedControl } from './GhostSegmentedControl.vue'
+export { default as GhostSegmentedControlItem } from './GhostSegmentedControlItem.vue'
+export { useGhostSegmentedControl } from './use-ghost-segmented-control'
+export type {
+  GhostSegmentedControlElement,
+  GhostSegmentedControlItemElement,
+  GhostSegmentedControlExposed,
+  GhostSegmentedControlItemExposed,
+  GhostSegmentedControlProps,
+  GhostSegmentedControlItemProps,
+  GhostSegmentedControlOrientation,
+  GhostSegmentedControlValue,
+  UseGhostSegmentedControlOptions,
+  UseGhostSegmentedControlReturn,
+} from './ghost-segmented-control'
 export { default as GhostToggleGroup } from './GhostToggleGroup.vue'
 export { default as GhostToggleGroupItem } from './GhostToggleGroupItem.vue'
 export { useGhostToggleGroup } from './use-ghost-toggle-group'

@@ -1,0 +1,147 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "generated",
+  "name": "GhostSegmentedControl",
+  "package": "@ghostvue/vue",
+  "status": "experimental",
+  "description": "Headless single-select segmented control with sliding indicator CSS variables and toggle-group roving focus.",
+  "props": [
+    {
+      "name": "as",
+      "type": "GhostSegmentedControlElement",
+      "default": "div",
+      "required": false,
+      "description": "Root host element.",
+      "deprecated": false
+    },
+    {
+      "name": "defaultValue",
+      "type": "GhostSegmentedControlValue",
+      "required": false,
+      "description": "Initial selection when `modelValue` is omitted.",
+      "deprecated": false
+    },
+    {
+      "name": "deselectable",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "When false, pressing the active segment keeps it selected (default view\nswitching).",
+      "deprecated": false
+    },
+    {
+      "name": "dir",
+      "type": "'ltr' | 'rtl'",
+      "required": false,
+      "description": "Explicit text direction for horizontal roving.",
+      "deprecated": false
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Disables every item.",
+      "deprecated": false
+    },
+    {
+      "name": "modelValue",
+      "type": "GhostSegmentedControlValue",
+      "required": false,
+      "description": "Controlled selection.",
+      "deprecated": false
+    },
+    {
+      "name": "orientation",
+      "type": "'horizontal' | 'vertical'",
+      "default": "horizontal",
+      "required": false,
+      "description": "Arrow-key roving layout and indicator slide axis.",
+      "deprecated": false
+    }
+  ],
+  "models": [
+    {
+      "prop": "modelValue",
+      "event": "update:modelValue",
+      "type": "GhostSegmentedControlValue",
+      "description": "v-model binding for `modelValue`."
+    }
+  ],
+  "events": [],
+  "slots": [
+    {
+      "name": "default",
+      "props": [],
+      "description": "Segment items."
+    }
+  ],
+  "exposed": [
+    {
+      "name": "blur",
+      "kind": "method",
+      "type": "() => void",
+      "description": "Exposed method `blur`."
+    },
+    {
+      "name": "element",
+      "kind": "property",
+      "type": "HTMLElement | null",
+      "description": "Exposed property `element`."
+    },
+    {
+      "name": "focus",
+      "kind": "method",
+      "type": "(options?: FocusOptions) => void",
+      "description": "Exposed method `focus`."
+    }
+  ],
+  "styling": {
+    "parts": [
+      {
+        "name": "root",
+        "description": "Group host with indicator CSS variables."
+      },
+      {
+        "name": "indicator",
+        "description": "Decorative sliding thumb; aria-hidden."
+      }
+    ],
+    "states": [
+      {
+        "name": "disabled",
+        "description": "Group-level disabled via aria-disabled."
+      }
+    ],
+    "cssProperties": [
+      {
+        "name": "--ghost-segmented-item-count",
+        "description": "Registered item count for indicator geometry."
+      },
+      {
+        "name": "--ghost-segmented-selected-index",
+        "description": "Zero-based index of the pressed item."
+      }
+    ]
+  },
+  "accessibility": {
+    "role": "group",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/button/",
+    "keyboard": {
+      "ArrowLeft": "Previous enabled item (horizontal).",
+      "ArrowRight": "Next enabled item (horizontal).",
+      "ArrowUp": "Previous enabled item (vertical).",
+      "ArrowDown": "Next enabled item (vertical).",
+      "Home": "First enabled item.",
+      "End": "Last enabled item."
+    },
+    "requiredAriaAttributes": [
+      "aria-label",
+      "aria-labelledby"
+    ]
+  },
+  "examples": [
+    "segmented-control/basic",
+    "segmented-control/themed"
+  ]
+}

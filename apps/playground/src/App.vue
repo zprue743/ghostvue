@@ -34,6 +34,7 @@ import CollapsibleReference from './CollapsibleReference.vue'
 import AccordionReference from './AccordionReference.vue'
 import PopoverReference from './PopoverReference.vue'
 import TabsReference from './TabsReference.vue'
+import SegmentedControlReference from './SegmentedControlReference.vue'
 import ToggleGroupReference from './ToggleGroupReference.vue'
 import TooltipReference from './TooltipReference.vue'
 import VisualReference from './VisualReference.vue'
@@ -312,6 +313,7 @@ function submitPlaygroundComment(event: Event): void {
     <TooltipReference />
     <DialogReference />
     <TabsReference />
+    <SegmentedControlReference />
     <ToggleGroupReference />
     <ModalPrimitivesReference />
 

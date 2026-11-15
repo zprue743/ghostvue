@@ -782,6 +782,18 @@ export const ghostExamples = [
     layer: 'themed',
   },
   {
+    id: 'segmented-control/basic',
+    title: 'Segmented control',
+    description: 'Single-select view switcher with sliding indicator vars.',
+    layer: 'headless',
+  },
+  {
+    id: 'segmented-control/themed',
+    title: 'Segmented control themed',
+    description: 'Token-driven thumb with reduced-motion support.',
+    layer: 'themed',
+  },
+  {
     id: 'toggle-group/basic',
     title: 'Toggle group single',
     description: 'Exclusive aria-pressed density controls.',

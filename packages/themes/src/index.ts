@@ -241,6 +241,15 @@ export {
   type GhostRadioGroupSize,
 } from './ghost-radio-group'
 export {
+  GhostSegmentedControl,
+  type GhostSegmentedControlExposed,
+} from './ghost-segmented-control'
+export {
+  GhostSegmentedControlItem,
+  type GhostSegmentedControlItemElement,
+  type GhostSegmentedControlItemExposed,
+} from './ghost-segmented-control-item'
+export {
   GhostToggleGroup,
   type GhostToggleGroupExposed,
 } from './ghost-toggle-group'

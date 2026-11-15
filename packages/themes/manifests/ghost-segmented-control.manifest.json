@@ -1,0 +1,68 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "handwritten",
+  "name": "GhostSegmentedControl",
+  "package": "@ghostvue/themes",
+  "status": "experimental",
+  "description": "Themed GhostSegmentedControl root with sliding indicator and equal-width segments.",
+  "props": [],
+  "models": [],
+  "events": [],
+  "slots": [
+    {
+      "name": "default",
+      "props": [],
+      "description": "Segment items."
+    }
+  ],
+  "exposed": [
+    {
+      "name": "element",
+      "kind": "property",
+      "type": "HTMLElement | null",
+      "description": "Headless group root element."
+    },
+    {
+      "name": "focus",
+      "kind": "method",
+      "type": "(options?: FocusOptions) => void",
+      "description": "Focus the primary item tab stop."
+    },
+    {
+      "name": "blur",
+      "kind": "method",
+      "type": "() => void",
+      "description": "Blur the focused item within the group."
+    }
+  ],
+  "styling": {
+    "parts": [
+      {
+        "name": "root",
+        "description": "Segmented track."
+      },
+      {
+        "name": "indicator",
+        "description": "Sliding thumb behind items."
+      }
+    ],
+    "states": [],
+    "cssProperties": [
+      {
+        "name": "--ghost-elevation-2-bg",
+        "description": "Indicator surface."
+      },
+      {
+        "name": "--ghost-motion-duration-fast",
+        "description": "Indicator slide duration; disabled under reduced motion."
+      }
+    ]
+  },
+  "accessibility": {
+    "role": "group",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/button/",
+    "keyboard": {},
+    "requiredAriaAttributes": []
+  },
+  "examples": ["segmented-control/themed"]
+}

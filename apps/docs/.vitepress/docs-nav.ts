@@ -38,6 +38,10 @@ export const docsSidebar: LlmsSidebarGroup[] = [
       { text: 'GhostProgress', link: '/components/progress' },
       { text: 'GhostRadioGroup', link: '/components/radio-group' },
       { text: 'GhostSeparator', link: '/components/separator' },
+      {
+        text: 'GhostSegmentedControl',
+        link: '/components/segmented-control',
+      },
       { text: 'GhostSkeleton', link: '/components/skeleton' },
       { text: 'GhostSlider', link: '/components/slider' },
       { text: 'GhostSpinner', link: '/components/spinner' },
@@ -128,6 +132,10 @@ export const docsSidebar: LlmsSidebarGroup[] = [
       {
         text: 'GhostToggleGroup specification',
         link: '/components/toggle-group-spec',
+      },
+      {
+        text: 'GhostSegmentedControl specification',
+        link: '/components/segmented-control-spec',
       },
       {
         text: 'GhostEmptyState specification',
