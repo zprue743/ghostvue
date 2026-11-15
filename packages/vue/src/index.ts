@@ -16,6 +16,54 @@ export {
 export { default as GhostBadge } from './GhostBadge.vue'
 export { useGhostBadge, type GhostBadgeRootProps } from './use-ghost-badge'
 export type { GhostBadgeExposed, GhostBadgeProps } from './ghost-badge'
+export { default as GhostAvatar } from './GhostAvatar.vue'
+export {
+  deriveGhostAvatarInitials,
+  useGhostAvatar,
+  type GhostAvatarImageProps,
+  type GhostAvatarRootProps,
+} from './use-ghost-avatar'
+export type {
+  GhostAvatarDataState,
+  GhostAvatarElement,
+  GhostAvatarExposed,
+  GhostAvatarImageStatus,
+  GhostAvatarProps,
+  UseGhostAvatarOptions,
+} from './ghost-avatar'
+export { default as GhostBreadcrumb } from './GhostBreadcrumb.vue'
+export { default as GhostBreadcrumbList } from './GhostBreadcrumbList.vue'
+export { default as GhostBreadcrumbItem } from './GhostBreadcrumbItem.vue'
+export { default as GhostBreadcrumbLink } from './GhostBreadcrumbLink.vue'
+export { default as GhostBreadcrumbPage } from './GhostBreadcrumbPage.vue'
+export { default as GhostBreadcrumbSeparator } from './GhostBreadcrumbSeparator.vue'
+export { default as GhostBreadcrumbEllipsis } from './GhostBreadcrumbEllipsis.vue'
+export {
+  useGhostBreadcrumb,
+  type GhostBreadcrumbRootProps,
+} from './use-ghost-breadcrumb'
+export type {
+  GhostBreadcrumbElement,
+  GhostBreadcrumbListElement,
+  GhostBreadcrumbItemElement,
+  GhostBreadcrumbLinkElement,
+  GhostBreadcrumbPageElement,
+  GhostBreadcrumbSeparatorElement,
+  GhostBreadcrumbEllipsisProps,
+  GhostBreadcrumbExposed,
+  GhostBreadcrumbListExposed,
+  GhostBreadcrumbItemExposed,
+  GhostBreadcrumbLinkExposed,
+  GhostBreadcrumbPageExposed,
+  GhostBreadcrumbSeparatorExposed,
+  GhostBreadcrumbEllipsisExposed,
+  GhostBreadcrumbProps,
+  GhostBreadcrumbListProps,
+  GhostBreadcrumbItemProps,
+  GhostBreadcrumbLinkProps,
+  GhostBreadcrumbPageProps,
+  GhostBreadcrumbSeparatorProps,
+} from './ghost-breadcrumb'
 export { default as GhostButton } from './GhostButton.vue'
 export { useGhostButton, type GhostButtonRootProps } from './use-ghost-button'
 export type {
@@ -68,6 +116,15 @@ export type {
   GhostKbdResolvedPlatform,
   UseGhostKbdOptions,
 } from './ghost-kbd'
+export { default as GhostLink } from './GhostLink.vue'
+export { useGhostLink, type GhostLinkRootProps } from './use-ghost-link'
+export type {
+  GhostLinkElement,
+  GhostLinkExposed,
+  GhostLinkProps,
+  UseGhostLinkOptions,
+} from './ghost-link'
+export { resolveGhostLinkHtmlElement, mergeLinkRel } from './ghost-link'
 export { default as GhostSkeleton } from './GhostSkeleton.vue'
 export {
   useGhostSkeleton,
@@ -121,6 +178,63 @@ export type {
   UseGhostPopoverOptions,
   UseGhostPopoverReturn,
 } from './ghost-popover'
+export { default as GhostDropdownMenu } from './GhostDropdownMenu.vue'
+export { default as GhostDropdownMenuTrigger } from './GhostDropdownMenuTrigger.vue'
+export { default as GhostDropdownMenuContent } from './GhostDropdownMenuContent.vue'
+export { default as GhostDropdownMenuItem } from './GhostDropdownMenuItem.vue'
+export { default as GhostDropdownMenuGroup } from './GhostDropdownMenuGroup.vue'
+export { default as GhostDropdownMenuLabel } from './GhostDropdownMenuLabel.vue'
+export { default as GhostDropdownMenuSeparator } from './GhostDropdownMenuSeparator.vue'
+export { default as GhostDropdownMenuCheckboxItem } from './GhostDropdownMenuCheckboxItem.vue'
+export { default as GhostDropdownMenuRadioGroup } from './GhostDropdownMenuRadioGroup.vue'
+export { default as GhostDropdownMenuRadioItem } from './GhostDropdownMenuRadioItem.vue'
+export { useGhostDropdownMenu } from './use-ghost-dropdown-menu'
+export {
+  MENU_ITEM_SELECTOR,
+  focusFirstMenuItem,
+  focusLastMenuItem,
+  getMenuItems,
+  useGhostMenuCollection,
+  type GhostMenuCollectionCloseReason,
+  type UseGhostMenuCollectionOptions,
+} from './use-ghost-menu-collection'
+export type {
+  GhostDropdownMenuCheckboxItemElement,
+  GhostDropdownMenuCheckboxItemExposed,
+  GhostDropdownMenuCheckboxItemProps,
+  GhostDropdownMenuContentElement,
+  GhostDropdownMenuContentExposed,
+  GhostDropdownMenuContentProps,
+  GhostDropdownMenuContext,
+  GhostDropdownMenuFlipOptions,
+  GhostDropdownMenuGroupElement,
+  GhostDropdownMenuGroupProps,
+  GhostDropdownMenuItemElement,
+  GhostDropdownMenuItemExposed,
+  GhostDropdownMenuItemProps,
+  GhostDropdownMenuLabelElement,
+  GhostDropdownMenuLabelProps,
+  GhostDropdownMenuOffsetOptions,
+  GhostDropdownMenuPadding,
+  GhostDropdownMenuPlacement,
+  GhostDropdownMenuProps,
+  GhostDropdownMenuRadioGroupContext,
+  GhostDropdownMenuRadioGroupElement,
+  GhostDropdownMenuRadioGroupProps,
+  GhostDropdownMenuRadioItemElement,
+  GhostDropdownMenuRadioItemExposed,
+  GhostDropdownMenuRadioItemProps,
+  GhostDropdownMenuSeparatorElement,
+  GhostDropdownMenuSeparatorProps,
+  GhostDropdownMenuShiftOptions,
+  GhostDropdownMenuSlotProps,
+  GhostDropdownMenuStrategy,
+  GhostDropdownMenuTriggerElement,
+  GhostDropdownMenuTriggerExposed,
+  GhostDropdownMenuTriggerProps,
+  UseGhostDropdownMenuOptions,
+  UseGhostDropdownMenuReturn,
+} from './ghost-dropdown-menu'
 export { default as GhostDialog } from './GhostDialog.vue'
 export { default as GhostDialogTrigger } from './GhostDialogTrigger.vue'
 export { default as GhostDialogOverlay } from './GhostDialogOverlay.vue'
@@ -155,6 +269,32 @@ export type {
   UseGhostDialogOptions,
   UseGhostDialogReturn,
 } from './ghost-dialog'
+export { default as GhostHoverCard } from './GhostHoverCard.vue'
+export { default as GhostHoverCardTrigger } from './GhostHoverCardTrigger.vue'
+export { default as GhostHoverCardContent } from './GhostHoverCardContent.vue'
+export { useGhostHoverCard } from './use-ghost-hover-card'
+export {
+  ghostHoverCardContextKey,
+  hoverCardFocusStaysInside,
+  resolveHoverCardHtmlElement,
+  type GhostHoverCardContentElement,
+  type GhostHoverCardContentExposed,
+  type GhostHoverCardContentProps,
+  type GhostHoverCardContext,
+  type GhostHoverCardFlipOptions,
+  type GhostHoverCardOffsetOptions,
+  type GhostHoverCardPadding,
+  type GhostHoverCardPlacement,
+  type GhostHoverCardProps,
+  type GhostHoverCardShiftOptions,
+  type GhostHoverCardSlotProps,
+  type GhostHoverCardStrategy,
+  type GhostHoverCardTriggerElement,
+  type GhostHoverCardTriggerExposed,
+  type GhostHoverCardTriggerProps,
+  type UseGhostHoverCardOptions,
+  type UseGhostHoverCardReturn,
+} from './ghost-hover-card'
 export { default as GhostSeparator } from './GhostSeparator.vue'
 export {
   useGhostSeparator,
@@ -166,6 +306,20 @@ export type {
   GhostSeparatorProps,
   UseGhostSeparatorOptions,
 } from './ghost-separator'
+export { default as GhostScrollArea } from './GhostScrollArea.vue'
+export {
+  useGhostScrollArea,
+  type GhostScrollAreaRootProps,
+} from './use-ghost-scroll-area'
+export type {
+  GhostScrollAreaElement,
+  GhostScrollAreaExposed,
+  GhostScrollAreaOrientation,
+  GhostScrollAreaOverflowState,
+  GhostScrollAreaOverflowType,
+  GhostScrollAreaProps,
+  UseGhostScrollAreaOptions,
+} from './ghost-scroll-area'
 export { default as GhostProgress } from './GhostProgress.vue'
 export {
   useGhostProgress,
@@ -184,6 +338,19 @@ export type {
   GhostInputType,
   UseGhostInputOptions,
 } from './ghost-input'
+export { default as GhostInlineAlert } from './GhostInlineAlert.vue'
+export {
+  useGhostInlineAlert,
+  type GhostInlineAlertRootProps,
+} from './use-ghost-inline-alert'
+export type {
+  GhostInlineAlertAnnounce,
+  GhostInlineAlertElement,
+  GhostInlineAlertExposed,
+  GhostInlineAlertHeadingLevel,
+  GhostInlineAlertProps,
+  UseGhostInlineAlertOptions,
+} from './ghost-inline-alert'
 export { default as GhostSwitch } from './GhostSwitch.vue'
 export {
   useGhostSwitch,
@@ -273,6 +440,45 @@ export type {
   UseGhostTabsOptions,
   UseGhostTabsReturn,
 } from './ghost-tabs'
+export { default as GhostTable } from './GhostTable.vue'
+export { default as GhostTableCaption } from './GhostTableCaption.vue'
+export { default as GhostTableHead } from './GhostTableHead.vue'
+export { default as GhostTableBody } from './GhostTableBody.vue'
+export { default as GhostTableFoot } from './GhostTableFoot.vue'
+export { default as GhostTableRow } from './GhostTableRow.vue'
+export { default as GhostTableHeaderCell } from './GhostTableHeaderCell.vue'
+export { default as GhostTableCell } from './GhostTableCell.vue'
+export {
+  useGhostTable,
+  useGhostTableCaption,
+  useGhostTableBody,
+  useGhostTableCell,
+  useGhostTableFoot,
+  useGhostTableHead,
+  useGhostTableHeaderCell,
+  useGhostTableRow,
+  mergeGhostTablePartAttrs,
+  type GhostTableRootProps,
+  type GhostTableScrollContainerProps,
+  type GhostTableHeaderCellRootProps,
+} from './use-ghost-table'
+export type {
+  GhostTableCaptionExposed,
+  GhostTableCaptionProps,
+  GhostTableCellExposed,
+  GhostTableCellProps,
+  GhostTableExposed,
+  GhostTableHeaderCellExposed,
+  GhostTableHeaderCellProps,
+  GhostTableHeaderScope,
+  GhostTableProps,
+  GhostTableRowExposed,
+  GhostTableRowProps,
+  GhostTableSectionExposed,
+  GhostTableSectionProps,
+  UseGhostTableHeaderCellOptions,
+  UseGhostTableOptions,
+} from './ghost-table'
 export { default as GhostAccordion } from './GhostAccordion.vue'
 export { default as GhostAccordionItem } from './GhostAccordionItem.vue'
 export { default as GhostAccordionTrigger } from './GhostAccordionTrigger.vue'
@@ -308,6 +514,14 @@ export type {
   GhostEmptyStateProps,
   UseGhostEmptyStateOptions,
 } from './ghost-empty-state'
+export { default as GhostCard } from './GhostCard.vue'
+export { useGhostCard, type GhostCardRootProps } from './use-ghost-card'
+export type {
+  GhostCardElement,
+  GhostCardExposed,
+  GhostCardProps,
+  UseGhostCardOptions,
+} from './ghost-card'
 export { default as GhostPagination } from './GhostPagination.vue'
 export {
   getPaginationRange,
@@ -320,6 +534,21 @@ export type {
   GhostPaginationRootProps,
   UseGhostPaginationOptions,
 } from './ghost-pagination'
+export { default as GhostSegmentedControl } from './GhostSegmentedControl.vue'
+export { default as GhostSegmentedControlItem } from './GhostSegmentedControlItem.vue'
+export { useGhostSegmentedControl } from './use-ghost-segmented-control'
+export type {
+  GhostSegmentedControlElement,
+  GhostSegmentedControlItemElement,
+  GhostSegmentedControlExposed,
+  GhostSegmentedControlItemExposed,
+  GhostSegmentedControlProps,
+  GhostSegmentedControlItemProps,
+  GhostSegmentedControlOrientation,
+  GhostSegmentedControlValue,
+  UseGhostSegmentedControlOptions,
+  UseGhostSegmentedControlReturn,
+} from './ghost-segmented-control'
 export { default as GhostToggleGroup } from './GhostToggleGroup.vue'
 export { default as GhostToggleGroupItem } from './GhostToggleGroupItem.vue'
 export { useGhostToggleGroup } from './use-ghost-toggle-group'

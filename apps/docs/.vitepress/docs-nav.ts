@@ -18,13 +18,19 @@ export const docsSidebar: LlmsSidebarGroup[] = [
     text: 'Components',
     items: [
       { text: 'GhostAccordion', link: '/components/accordion' },
+      { text: 'GhostAvatar', link: '/components/avatar' },
       { text: 'GhostBadge', link: '/components/badge' },
+      { text: 'GhostBreadcrumb', link: '/components/breadcrumb' },
       { text: 'GhostCollapsible', link: '/components/collapsible' },
       { text: 'GhostButton', link: '/components/button' },
+      { text: 'GhostCard', link: '/components/card' },
       { text: 'GhostCheckbox', link: '/components/checkbox' },
       { text: 'GhostDialog', link: '/components/dialog' },
+      { text: 'GhostDropdownMenu', link: '/components/dropdown-menu' },
       { text: 'GhostEmptyState', link: '/components/empty-state' },
       { text: 'GhostField', link: '/components/field' },
+      { text: 'GhostHoverCard', link: '/components/hover-card' },
+      { text: 'GhostInlineAlert', link: '/components/inline-alert' },
       { text: 'GhostInput', link: '/components/input' },
       { text: 'GhostNumberInput', link: '/components/number-input' },
       {
@@ -32,16 +38,23 @@ export const docsSidebar: LlmsSidebarGroup[] = [
         link: '/components/interactive-surface',
       },
       { text: 'GhostKbd', link: '/components/kbd' },
+      { text: 'GhostLink', link: '/components/link' },
       { text: 'GhostPopover', link: '/components/popover' },
       { text: 'GhostPagination', link: '/components/pagination' },
       { text: 'GhostProgress', link: '/components/progress' },
       { text: 'GhostRadioGroup', link: '/components/radio-group' },
       { text: 'GhostSeparator', link: '/components/separator' },
+      { text: 'GhostScrollArea', link: '/components/scroll-area' },
+      {
+        text: 'GhostSegmentedControl',
+        link: '/components/segmented-control',
+      },
       { text: 'GhostSkeleton', link: '/components/skeleton' },
       { text: 'GhostSlider', link: '/components/slider' },
       { text: 'GhostSpinner', link: '/components/spinner' },
       { text: 'GhostSwitch', link: '/components/switch' },
       { text: 'GhostTabs', link: '/components/tabs' },
+      { text: 'GhostTable', link: '/components/table' },
       { text: 'GhostTextarea', link: '/components/textarea' },
       { text: 'GhostToggleGroup', link: '/components/toggle-group' },
       { text: 'GhostToolbar', link: '/components/toolbar' },
@@ -129,8 +142,20 @@ export const docsSidebar: LlmsSidebarGroup[] = [
         link: '/components/toggle-group-spec',
       },
       {
+        text: 'GhostSegmentedControl specification',
+        link: '/components/segmented-control-spec',
+      },
+      {
         text: 'GhostEmptyState specification',
         link: '/components/empty-state-spec',
+      },
+      {
+        text: 'GhostCard specification',
+        link: '/components/card-spec',
+      },
+      {
+        text: 'GhostInlineAlert specification',
+        link: '/components/inline-alert-spec',
       },
       {
         text: 'GhostRadioGroup specification',
@@ -141,6 +166,11 @@ export const docsSidebar: LlmsSidebarGroup[] = [
         link: '/components/collapsible-spec',
       },
       { text: 'GhostField specification', link: '/components/field-spec' },
+      {
+        text: 'GhostHoverCard specification',
+        link: '/components/hover-card-spec',
+      },
+      { text: 'GhostTable specification', link: '/components/table-spec' },
       { text: 'GhostTabs specification', link: '/components/tabs-spec' },
       { text: 'GhostTooltip specification', link: '/components/tooltip-spec' },
       { text: 'Workflow', link: '/contributing/workflow' },
@@ -157,6 +187,10 @@ export const docsSidebar: LlmsSidebarGroup[] = [
         link: '/components/badge-spec',
       },
       {
+        text: 'GhostBreadcrumb specification',
+        link: '/components/breadcrumb-spec',
+      },
+      {
         text: 'GhostButton specification',
         link: '/components/button-spec',
       },
@@ -167,6 +201,10 @@ export const docsSidebar: LlmsSidebarGroup[] = [
       {
         text: 'GhostDialog specification',
         link: '/components/dialog-spec',
+      },
+      {
+        text: 'GhostDropdownMenu specification',
+        link: '/components/dropdown-menu-spec',
       },
       {
         text: 'GhostInput specification',
@@ -181,6 +219,10 @@ export const docsSidebar: LlmsSidebarGroup[] = [
         link: '/components/kbd-spec',
       },
       {
+        text: 'GhostLink specification',
+        link: '/components/link-spec',
+      },
+      {
         text: 'GhostPopover specification',
         link: '/components/popover-spec',
       },
@@ -191,6 +233,10 @@ export const docsSidebar: LlmsSidebarGroup[] = [
       {
         text: 'GhostSeparator specification',
         link: '/components/separator-spec',
+      },
+      {
+        text: 'GhostScrollArea specification',
+        link: '/components/scroll-area-spec',
       },
       {
         text: 'GhostSkeleton specification',

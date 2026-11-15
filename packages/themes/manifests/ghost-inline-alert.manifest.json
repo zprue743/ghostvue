@@ -1,0 +1,69 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "handwritten",
+  "name": "GhostInlineAlert",
+  "package": "@ghostvue/themes",
+  "status": "experimental",
+  "description": "Themed wrapper around headless GhostInlineAlert. Adds variant and tone visual props plus data-themed scoping.",
+  "props": [
+    {
+      "name": "variant",
+      "type": "'solid' | 'soft' | 'outline' | 'ghost'",
+      "default": "soft",
+      "required": false,
+      "description": "Visual treatment. The default omits data-variant.",
+      "deprecated": false
+    },
+    {
+      "name": "tone",
+      "type": "'accent' | 'neutral' | 'danger'",
+      "default": "neutral",
+      "required": false,
+      "description": "Semantic color intent. The default omits data-tone.",
+      "deprecated": false
+    }
+  ],
+  "models": [],
+  "events": [],
+  "slots": [
+    {
+      "name": "actions",
+      "props": [],
+      "description": "Optional action controls."
+    },
+    {
+      "name": "message",
+      "props": [],
+      "description": "Primary supporting copy."
+    },
+    {
+      "name": "title",
+      "props": [],
+      "description": "Optional heading text."
+    }
+  ],
+  "exposed": [
+    {
+      "name": "element",
+      "kind": "property",
+      "type": "HTMLElement | null",
+      "description": "Delegates to the unstyled GhostInlineAlert root."
+    }
+  ],
+  "styling": {
+    "parts": [],
+    "states": [],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "generic",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/practices/names-and-descriptions/",
+    "keyboard": {},
+    "requiredAriaAttributes": []
+  },
+  "examples": [
+    "inline-alert/themed",
+    "inline-alert/live",
+    "inline-alert/table-error"
+  ]
+}

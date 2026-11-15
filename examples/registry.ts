@@ -23,6 +23,36 @@ export interface GhostExampleDefinition {
 
 export const ghostExamples = [
   {
+    id: 'avatar/basic',
+    title: 'Initials',
+    description: 'Fallback initials from name without an image URL.',
+    layer: 'headless',
+  },
+  {
+    id: 'avatar/composable',
+    title: 'Composable',
+    description: 'Same contract as GhostAvatar, applied to a native host.',
+    layer: 'headless',
+  },
+  {
+    id: 'avatar/fallback',
+    title: 'Fallback slot',
+    description: 'Custom fallback when src is missing or fails to load.',
+    layer: 'headless',
+  },
+  {
+    id: 'avatar/image',
+    title: 'Loaded image',
+    description: 'Client image probe after SSR-safe loading fallback.',
+    layer: 'headless',
+  },
+  {
+    id: 'avatar/themed',
+    title: 'Themed',
+    description: 'Size hooks on the @ghostvue/themes wrapper.',
+    layer: 'themed',
+  },
+  {
     id: 'badge/basic',
     title: 'Basic',
     description: 'Unstyled compact status text.',
@@ -50,6 +80,18 @@ export const ghostExamples = [
     id: 'badge/table',
     title: 'Table and filters',
     description: 'Cell statuses, counts, and active-filter summaries.',
+    layer: 'themed',
+  },
+  {
+    id: 'breadcrumb/basic',
+    title: 'Basic',
+    description: 'Ordered navigation trail with current page semantics.',
+    layer: 'headless',
+  },
+  {
+    id: 'breadcrumb/collapsed',
+    title: 'Collapsed segments',
+    description: 'Ellipsis popover exposes middle ancestors.',
     layer: 'themed',
   },
   {
@@ -225,6 +267,19 @@ export const ghostExamples = [
     layer: 'themed',
   },
   {
+    id: 'hover-card/basic',
+    title: 'Basic',
+    description:
+      'Unstyled hover/focus preview card with delays, interactive content, and Escape dismissal.',
+    layer: 'headless',
+  },
+  {
+    id: 'hover-card/themed',
+    title: 'Themed',
+    description: 'Elevation-3 surface tokens for rich preview cards.',
+    layer: 'themed',
+  },
+  {
     id: 'popover/basic',
     title: 'Basic',
     description:
@@ -236,6 +291,20 @@ export const ghostExamples = [
     title: 'Themed',
     description:
       'Elevated surface tokens and themed button controls composed via the as prop.',
+    layer: 'themed',
+  },
+  {
+    id: 'dropdown-menu/basic',
+    title: 'Basic',
+    description:
+      'Headless menu button with items, checkbox, radio group, label, separator, and disabled item.',
+    layer: 'headless',
+  },
+  {
+    id: 'dropdown-menu/themed',
+    title: 'Themed',
+    description:
+      'Elevation-3 menu surface and interactive item tokens with a themed trigger button.',
     layer: 'themed',
   },
   {
@@ -333,6 +402,30 @@ export const ghostExamples = [
     layer: 'themed',
   },
   {
+    id: 'scroll-area/basic',
+    title: 'Basic',
+    description: 'Bounded vertical overflow with native scrolling.',
+    layer: 'headless',
+  },
+  {
+    id: 'scroll-area/horizontal',
+    title: 'Horizontal',
+    description: 'Inline-axis overflow for wide table previews.',
+    layer: 'headless',
+  },
+  {
+    id: 'scroll-area/composable',
+    title: 'Composable',
+    description: 'Same contract as GhostScrollArea on a native host.',
+    layer: 'headless',
+  },
+  {
+    id: 'scroll-area/themed',
+    title: 'Themed',
+    description: 'Native scrollbar containment on @ghostvue/themes.',
+    layer: 'themed',
+  },
+  {
     id: 'kbd/basic',
     title: 'Basic',
     description: 'Native kbd chrome for a single key.',
@@ -361,6 +454,42 @@ export const ghostExamples = [
     title: 'Themed',
     description: 'Keycap chrome and size on the @ghostvue/themes wrapper.',
     layer: 'themed',
+  },
+  {
+    id: 'link/basic',
+    title: 'Basic',
+    description: 'Native anchor with headless styling hooks.',
+    layer: 'headless',
+  },
+  {
+    id: 'link/composable',
+    title: 'Composable',
+    description: 'Same contract as GhostLink, applied to a native host.',
+    layer: 'headless',
+  },
+  {
+    id: 'link/themed',
+    title: 'Themed',
+    description: 'Default inline link visuals from @ghostvue/themes.',
+    layer: 'themed',
+  },
+  {
+    id: 'link/external',
+    title: 'External',
+    description: 'New-tab safety, indicator, and accessible hint.',
+    layer: 'themed',
+  },
+  {
+    id: 'link/disabled',
+    title: 'Disabled',
+    description: 'No href, not focusable, and activation cancelled.',
+    layer: 'themed',
+  },
+  {
+    id: 'link/router',
+    title: 'Router composition',
+    description: 'Render through as without importing vue-router.',
+    layer: 'headless',
   },
   {
     id: 'input/basic',
@@ -544,6 +673,36 @@ export const ghostExamples = [
     layer: 'themed',
   },
   {
+    id: 'table/basic',
+    title: 'Basic table',
+    description: 'Caption, header row, and explicit tbody semantics.',
+    layer: 'headless',
+  },
+  {
+    id: 'table/composable',
+    title: 'Composable',
+    description: 'Native table hosts with useGhostTable hooks.',
+    layer: 'headless',
+  },
+  {
+    id: 'table/contain-horizontal',
+    title: 'Horizontal containment',
+    description: 'Optional scroll container for wide static tables.',
+    layer: 'headless',
+  },
+  {
+    id: 'table/row-headers',
+    title: 'Row headers',
+    description: 'th scope=row inside the table body.',
+    layer: 'headless',
+  },
+  {
+    id: 'table/themed',
+    title: 'Themed',
+    description: 'Default table chrome from @ghostvue/themes.',
+    layer: 'themed',
+  },
+  {
     id: 'empty-state/basic',
     title: 'Empty state basics',
     description: 'Title and description for an unused panel.',
@@ -571,6 +730,72 @@ export const ghostExamples = [
     id: 'empty-state/composable',
     title: 'Composable empty state',
     description: 'useGhostEmptyState bindings on a custom host.',
+    layer: 'headless',
+  },
+  {
+    id: 'inline-alert/basic',
+    title: 'Static inline alert',
+    description: 'Title and message without live-region semantics.',
+    layer: 'headless',
+  },
+  {
+    id: 'inline-alert/composable',
+    title: 'Composable inline alert',
+    description: 'useGhostInlineAlert bindings on a section root.',
+    layer: 'headless',
+  },
+  {
+    id: 'inline-alert/themed',
+    title: 'Themed inline alert',
+    description: 'Soft danger styling from @ghostvue/themes.',
+    layer: 'themed',
+  },
+  {
+    id: 'inline-alert/live',
+    title: 'Post-mount alert',
+    description: 'announce=alert after a simulated failure.',
+    layer: 'headless',
+  },
+  {
+    id: 'inline-alert/table-error',
+    title: 'Table load failure',
+    description: 'Recoverable table error with a retry action.',
+    layer: 'themed',
+  },
+  {
+    id: 'card/basic',
+    title: 'Card basics',
+    description: 'Header, content, and footer parts on a surface.',
+    layer: 'headless',
+  },
+  {
+    id: 'card/actions',
+    title: 'Card with actions',
+    description: 'Static root and footer buttons.',
+    layer: 'headless',
+  },
+  {
+    id: 'card/link',
+    title: 'Navigational card',
+    description: 'Whole-card link without nested interactives.',
+    layer: 'headless',
+  },
+  {
+    id: 'card/interactive',
+    title: 'Spotlight card',
+    description: 'Ambient pointer tracking on the card root.',
+    layer: 'headless',
+  },
+  {
+    id: 'card/themed',
+    title: 'Themed card',
+    description: 'Elevation chrome and optional spotlight from themes.',
+    layer: 'themed',
+  },
+  {
+    id: 'card/composable',
+    title: 'Composable card',
+    description: 'useGhostCard bindings on a custom host.',
     layer: 'headless',
   },
   {
@@ -749,6 +974,18 @@ export const ghostExamples = [
     id: 'toolbar/themed',
     title: 'Themed',
     description: 'Flex layout from @ghostvue/themes.',
+    layer: 'themed',
+  },
+  {
+    id: 'segmented-control/basic',
+    title: 'Segmented control',
+    description: 'Single-select view switcher with sliding indicator vars.',
+    layer: 'headless',
+  },
+  {
+    id: 'segmented-control/themed',
+    title: 'Segmented control themed',
+    description: 'Token-driven thumb with reduced-motion support.',
     layer: 'themed',
   },
   {

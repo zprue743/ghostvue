@@ -1,0 +1,102 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "generated",
+  "name": "GhostAvatar",
+  "package": "@ghostvue/vue",
+  "status": "experimental",
+  "description": "Headless user or entity avatar with SSR-safe image loading and initials or slot fallback. useGhostAvatar owns styling hooks and the client image probe; GhostAvatar is the thin unstyled host. Themed size hooks live on @ghostvue/themes.",
+  "props": [
+    {
+      "name": "alt",
+      "type": "string",
+      "required": false,
+      "description": "Declared prop `alt`.",
+      "deprecated": false
+    },
+    {
+      "name": "as",
+      "type": "GhostAvatarElement",
+      "default": "span",
+      "required": false,
+      "description": "Declared prop `as`.",
+      "deprecated": false
+    },
+    {
+      "name": "name",
+      "type": "string",
+      "required": false,
+      "description": "Declared prop `name`.",
+      "deprecated": false
+    },
+    {
+      "name": "src",
+      "type": "string",
+      "required": false,
+      "description": "Declared prop `src`.",
+      "deprecated": false
+    }
+  ],
+  "models": [],
+  "events": [],
+  "slots": [
+    {
+      "name": "fallback",
+      "props": [],
+      "description": "Named slot `fallback`."
+    }
+  ],
+  "exposed": [
+    {
+      "name": "element",
+      "kind": "property",
+      "type": "HTMLElement | null",
+      "description": "The root host element after mount, or `null` before mount."
+    }
+  ],
+  "styling": {
+    "parts": [
+      {
+        "name": "root",
+        "description": "Native span or div host when using the default as prop."
+      },
+      {
+        "name": "image",
+        "description": "img element when the src load succeeded."
+      },
+      {
+        "name": "fallback",
+        "description": "Inner host for initials or fallback slot content."
+      }
+    ],
+    "states": [
+      {
+        "name": "loading",
+        "description": "src is set and the client has not finished probing yet."
+      },
+      {
+        "name": "loaded",
+        "description": "src loaded and the img is shown."
+      },
+      {
+        "name": "error",
+        "description": "src failed to load; fallback is shown."
+      }
+    ],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "generic",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/practices/names-and-descriptions/",
+    "keyboard": {
+      "Tab": "Does not land on the avatar unless the consumer adds tabindex."
+    },
+    "requiredAriaAttributes": []
+  },
+  "examples": [
+    "avatar/basic",
+    "avatar/composable",
+    "avatar/fallback",
+    "avatar/image",
+    "avatar/themed"
+  ]
+}

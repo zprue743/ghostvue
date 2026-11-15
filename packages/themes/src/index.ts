@@ -27,6 +27,37 @@ export {
 } from './ghost-badge'
 
 export {
+  GhostAvatar,
+  type GhostAvatarExposed,
+  type GhostAvatarSize,
+} from './ghost-avatar'
+
+export {
+  GhostBreadcrumb,
+  GhostBreadcrumbEllipsis,
+  GhostBreadcrumbItem,
+  GhostBreadcrumbLink,
+  GhostBreadcrumbList,
+  GhostBreadcrumbPage,
+  GhostBreadcrumbSeparator,
+  type GhostBreadcrumbElement,
+  type GhostBreadcrumbEllipsisExposed,
+  type GhostBreadcrumbEllipsisProps,
+  type GhostBreadcrumbExposed,
+  type GhostBreadcrumbItemElement,
+  type GhostBreadcrumbItemExposed,
+  type GhostBreadcrumbLinkElement,
+  type GhostBreadcrumbLinkExposed,
+  type GhostBreadcrumbListElement,
+  type GhostBreadcrumbListExposed,
+  type GhostBreadcrumbPageElement,
+  type GhostBreadcrumbPageExposed,
+  type GhostBreadcrumbProps,
+  type GhostBreadcrumbSeparatorElement,
+  type GhostBreadcrumbSeparatorExposed,
+} from './ghost-breadcrumb'
+
+export {
   GhostButton,
   type GhostButtonExposed,
   type GhostButtonInteractive,
@@ -44,6 +75,13 @@ export {
 } from './ghost-checkbox'
 
 export { GhostKbd, type GhostKbdPlatform, type GhostKbdSize } from './ghost-kbd'
+
+export {
+  GhostLink,
+  type GhostLinkExposed,
+  type GhostLinkTone,
+  type GhostLinkVariant,
+} from './ghost-link'
 
 export {
   GhostSpinner,
@@ -129,10 +167,76 @@ export {
 } from './ghost-dialog-close'
 
 export {
+  GhostDropdownMenu,
+  type GhostDropdownMenuSlotProps,
+} from './ghost-dropdown-menu'
+
+export {
+  GhostDropdownMenuTrigger,
+  type GhostDropdownMenuTriggerElement,
+  type GhostDropdownMenuTriggerExposed,
+} from './ghost-dropdown-menu-trigger'
+
+export {
+  GhostDropdownMenuContent,
+  type GhostDropdownMenuContentElement,
+  type GhostDropdownMenuContentExposed,
+  type GhostDropdownMenuFlipOptions,
+  type GhostDropdownMenuOffsetOptions,
+  type GhostDropdownMenuPlacement,
+  type GhostDropdownMenuShiftOptions,
+  type GhostDropdownMenuStrategy,
+} from './ghost-dropdown-menu-content'
+
+export {
+  GhostDropdownMenuItem,
+  type GhostDropdownMenuItemElement,
+  type GhostDropdownMenuItemExposed,
+} from './ghost-dropdown-menu-item'
+
+export {
+  GhostDropdownMenuCheckboxItem,
+  type GhostDropdownMenuCheckboxItemElement,
+  type GhostDropdownMenuCheckboxItemExposed,
+} from './ghost-dropdown-menu-checkbox-item'
+
+export {
+  GhostDropdownMenuRadioItem,
+  type GhostDropdownMenuRadioItemElement,
+  type GhostDropdownMenuRadioItemExposed,
+} from './ghost-dropdown-menu-radio-item'
+
+export {
+  GhostDropdownMenuRadioGroup,
+  type GhostDropdownMenuRadioGroupElement,
+} from './ghost-dropdown-menu-radio-group'
+
+export {
+  GhostDropdownMenuLabel,
+  type GhostDropdownMenuLabelElement,
+} from './ghost-dropdown-menu-label'
+
+export {
+  GhostDropdownMenuSeparator,
+  type GhostDropdownMenuSeparatorElement,
+} from './ghost-dropdown-menu-separator'
+
+export {
+  GhostDropdownMenuGroup,
+  type GhostDropdownMenuGroupElement,
+} from './ghost-dropdown-menu-group'
+
+export {
   GhostSeparator,
   type GhostSeparatorElement,
   type GhostSeparatorOrientation,
 } from './ghost-separator'
+
+export {
+  GhostScrollArea,
+  type GhostScrollAreaOrientation,
+  type GhostScrollAreaOverflowType,
+} from './ghost-scroll-area'
 
 export {
   GhostProgress,
@@ -204,6 +308,7 @@ export {
   type GhostTabsContentElement,
   type GhostTabsContentExposed,
 } from './ghost-tabs-content'
+export { GhostTable, type GhostTableExposed } from './ghost-table'
 export {
   GhostAccordion,
   GhostAccordionItem,
@@ -224,6 +329,17 @@ export {
   type GhostEmptyStateExposed,
 } from './ghost-empty-state'
 export {
+  GhostCard,
+  type GhostCardExposed,
+  type GhostCardInteractive,
+} from './ghost-card'
+export {
+  GhostInlineAlert,
+  type GhostInlineAlertExposed,
+  type GhostInlineAlertTone,
+  type GhostInlineAlertVariant,
+} from './ghost-inline-alert'
+export {
   GhostPagination,
   type GhostPaginationExposed,
 } from './ghost-pagination'
@@ -235,6 +351,15 @@ export {
   type GhostRadioGroupSize,
 } from './ghost-radio-group'
 export {
+  GhostSegmentedControl,
+  type GhostSegmentedControlExposed,
+} from './ghost-segmented-control'
+export {
+  GhostSegmentedControlItem,
+  type GhostSegmentedControlItemElement,
+  type GhostSegmentedControlItemExposed,
+} from './ghost-segmented-control-item'
+export {
   GhostToggleGroup,
   type GhostToggleGroupExposed,
 } from './ghost-toggle-group'
@@ -243,6 +368,25 @@ export {
   type GhostToggleGroupItemElement,
   type GhostToggleGroupItemExposed,
 } from './ghost-toggle-group-item'
+export {
+  GhostHoverCard,
+  type GhostHoverCardSlotProps,
+} from './ghost-hover-card'
+export {
+  GhostHoverCardTrigger,
+  type GhostHoverCardTriggerElement,
+  type GhostHoverCardTriggerExposed,
+} from './ghost-hover-card-trigger'
+export {
+  GhostHoverCardContent,
+  type GhostHoverCardContentElement,
+  type GhostHoverCardContentExposed,
+  type GhostHoverCardFlipOptions,
+  type GhostHoverCardOffsetOptions,
+  type GhostHoverCardPlacement,
+  type GhostHoverCardShiftOptions,
+  type GhostHoverCardStrategy,
+} from './ghost-hover-card-content'
 export { GhostTooltip, type GhostTooltipSlotProps } from './ghost-tooltip'
 export {
   GhostTooltipTrigger,

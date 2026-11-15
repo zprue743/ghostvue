@@ -1,0 +1,54 @@
+/*
+ * Themed GhostCard. Visual values come from semantic --ghost-* tokens.
+ * Private --_ghost-card-* properties are per-instance wiring, not a public API.
+ * Layout is minimal: surface chrome only; consumers own internal structure.
+ */
+@layer ghostvue-theme {
+  :where(
+    .ghost-theme .ghost-card,
+    .ghost-themed-scope .ghost-card,
+    .ghost-card[data-themed]
+  ) {
+    --_ghost-card-bg: var(--ghost-elevation-1-bg);
+    --_ghost-card-border: var(--ghost-elevation-1-border);
+    --_ghost-card-radius: var(--ghost-radius-md);
+    --_ghost-card-shadow: var(--ghost-elevation-1-shadow);
+    --_ghost-card-padding: var(--ghost-space-md);
+
+    background-color: var(--_ghost-card-bg);
+    border: var(--ghost-border-hairline-width) solid var(--_ghost-card-border);
+    border-radius: var(--_ghost-card-radius);
+    box-shadow: var(--_ghost-card-shadow);
+    box-sizing: border-box;
+    color: var(--ghost-surface-fg);
+    display: block;
+    padding: var(--_ghost-card-padding);
+    position: relative;
+  }
+
+  :where(
+    .ghost-theme .ghost-card > [data-part='header'],
+    .ghost-themed-scope .ghost-card > [data-part='header'],
+    .ghost-card[data-themed] > [data-part='header']
+  ) {
+    display: block;
+    margin-block-end: var(--ghost-space-sm);
+  }
+
+  :where(
+    .ghost-theme .ghost-card > [data-part='content'],
+    .ghost-themed-scope .ghost-card > [data-part='content'],
+    .ghost-card[data-themed] > [data-part='content']
+  ) {
+    display: block;
+  }
+
+  :where(
+    .ghost-theme .ghost-card > [data-part='footer'],
+    .ghost-themed-scope .ghost-card > [data-part='footer'],
+    .ghost-card[data-themed] > [data-part='footer']
+  ) {
+    display: block;
+    margin-block-start: var(--ghost-space-md);
+  }
+}

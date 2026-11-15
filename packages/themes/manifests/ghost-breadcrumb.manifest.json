@@ -1,0 +1,46 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "handwritten",
+  "name": "GhostBreadcrumb",
+  "package": "@ghostvue/themes",
+  "status": "experimental",
+  "description": "Themed wrappers for GhostBreadcrumb compound parts. Importing any part loads ghost-breadcrumb.css via default.css.",
+  "props": [],
+  "models": [],
+  "events": [],
+  "slots": [],
+  "exposed": [],
+  "styling": {
+    "parts": [
+      {
+        "name": "list",
+        "description": "Horizontal ordered trail list."
+      },
+      {
+        "name": "link",
+        "description": "Ancestor breadcrumb hyperlink."
+      },
+      {
+        "name": "page",
+        "description": "Current page segment."
+      },
+      {
+        "name": "separator",
+        "description": "Decorative separator glyph."
+      },
+      {
+        "name": "ellipsis",
+        "description": "Collapsed-segment disclosure trigger."
+      }
+    ],
+    "states": [],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "navigation",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/breadcrumb/",
+    "keyboard": {},
+    "requiredAriaAttributes": ["aria-label", "aria-current"]
+  },
+  "examples": ["breadcrumb/basic", "breadcrumb/collapsed"]
+}

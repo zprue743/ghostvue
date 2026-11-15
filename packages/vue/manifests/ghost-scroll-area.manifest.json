@@ -1,0 +1,82 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "generated",
+  "name": "GhostScrollArea",
+  "package": "@ghostvue/vue",
+  "status": "experimental",
+  "description": "Headless native overflow container. useGhostScrollArea owns overflow measurement, tabindex policy, and data-type hooks; GhostScrollArea is the scroll root with a default slot. Native keyboard scrolling is left to the platform. Themed recipes live on @ghostvue/themes.",
+  "props": [
+    {
+      "name": "as",
+      "type": "'div'",
+      "default": "div",
+      "required": false,
+      "description": "Scroll root host. Closed union; only div is supported initially.",
+      "deprecated": false
+    },
+    {
+      "name": "label",
+      "type": "string",
+      "required": false,
+      "description": "When the root is a tab stop with no inner focusables, sets role=region and aria-label.",
+      "deprecated": false
+    },
+    {
+      "name": "orientation",
+      "type": "GhostScrollAreaOrientation",
+      "default": "vertical",
+      "required": false,
+      "description": "Which axes may scroll when content exceeds the box.",
+      "deprecated": false
+    },
+    {
+      "name": "type",
+      "type": "GhostScrollAreaOverflowType",
+      "default": "auto",
+      "required": false,
+      "description": "Native overflow mode on enabled axes: auto or scroll.",
+      "deprecated": false
+    }
+  ],
+  "models": [],
+  "events": [],
+  "slots": [
+    {
+      "name": "default",
+      "props": [],
+      "description": "Scrollable content inside the native overflow root."
+    }
+  ],
+  "exposed": [
+    {
+      "name": "element",
+      "kind": "property",
+      "type": "HTMLElement",
+      "description": "Scroll root element."
+    }
+  ],
+  "styling": {
+    "parts": [
+      {
+        "name": "root",
+        "description": "Native overflow host. data-orientation and data-type configure axes; data-overflow reflects measured overflow (none, vertical, horizontal, both)."
+      }
+    ],
+    "states": [],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "native scrolling",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/",
+    "keyboard": {},
+    "requiredAriaAttributes": [
+      "aria-label"
+    ]
+  },
+  "examples": [
+    "scroll-area/basic",
+    "scroll-area/horizontal",
+    "scroll-area/composable",
+    "scroll-area/themed"
+  ]
+}

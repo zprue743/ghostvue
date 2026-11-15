@@ -1,0 +1,63 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "handwritten",
+  "name": "GhostScrollArea",
+  "package": "@ghostvue/themes",
+  "status": "experimental",
+  "description": "Themed native scroll container. Adds data-themed and scrollbar containment recipes; behavior matches @ghostvue/vue GhostScrollArea.",
+  "props": [
+    {
+      "name": "as",
+      "type": "'div'",
+      "default": "div",
+      "required": false,
+      "description": "Forwarded to the unstyled scroll root.",
+      "deprecated": false
+    },
+    {
+      "name": "label",
+      "type": "string",
+      "required": false,
+      "description": "Forwarded accessible name when the root is focusable.",
+      "deprecated": false
+    },
+    {
+      "name": "orientation",
+      "type": "GhostScrollAreaOrientation",
+      "default": "vertical",
+      "required": false,
+      "description": "Forwarded scroll axes.",
+      "deprecated": false
+    },
+    {
+      "name": "type",
+      "type": "GhostScrollAreaOverflowType",
+      "default": "auto",
+      "required": false,
+      "description": "Forwarded overflow mode.",
+      "deprecated": false
+    }
+  ],
+  "models": [],
+  "events": [],
+  "slots": [
+    {
+      "name": "default",
+      "props": [],
+      "description": "Scrollable content."
+    }
+  ],
+  "exposed": [],
+  "styling": {
+    "parts": [],
+    "states": [],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "native scrolling",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/",
+    "keyboard": {},
+    "requiredAriaAttributes": []
+  },
+  "examples": ["scroll-area/themed"]
+}

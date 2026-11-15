@@ -1,0 +1,130 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "handwritten",
+  "name": "GhostDropdownMenu",
+  "package": "@ghostvue/themes",
+  "status": "experimental",
+  "description": "Themed wrappers around headless GhostDropdownMenu parts. Importing from @ghostvue/themes loads the default elevation-3 menu surface and item stylesheet.",
+  "props": [
+    {
+      "name": "open",
+      "type": "boolean",
+      "required": false,
+      "description": "Controlled open state forwarded to headless GhostDropdownMenu.",
+      "deprecated": false
+    },
+    {
+      "name": "defaultOpen",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Initial open state when `open` is omitted.",
+      "deprecated": false
+    }
+  ],
+  "models": [
+    {
+      "prop": "open",
+      "event": "update:open",
+      "type": "boolean",
+      "description": "v-model binding for `open`."
+    }
+  ],
+  "events": [],
+  "slots": [
+    {
+      "name": "default",
+      "props": [
+        {
+          "name": "close",
+          "type": "() => void",
+          "description": "Closes the menu."
+        },
+        {
+          "name": "open",
+          "type": "boolean",
+          "description": "Current open state."
+        }
+      ],
+      "description": "Trigger, content, and menu items."
+    }
+  ],
+  "exposed": [],
+  "styling": {
+    "parts": [
+      {
+        "name": "trigger",
+        "description": "Menu button rendered by GhostDropdownMenuTrigger."
+      },
+      {
+        "name": "content",
+        "description": "Floating menu surface rendered by GhostDropdownMenuContent."
+      },
+      {
+        "name": "item",
+        "description": "Menu action rendered by GhostDropdownMenuItem."
+      },
+      {
+        "name": "checkbox-item",
+        "description": "Toggle item rendered by GhostDropdownMenuCheckboxItem."
+      },
+      {
+        "name": "radio-item",
+        "description": "Single-choice item rendered by GhostDropdownMenuRadioItem."
+      },
+      {
+        "name": "label",
+        "description": "Section label rendered by GhostDropdownMenuLabel."
+      },
+      {
+        "name": "separator",
+        "description": "Divider rendered by GhostDropdownMenuSeparator."
+      }
+    ],
+    "states": [
+      {
+        "name": "open",
+        "description": "Applied on data-state while the menu is open."
+      },
+      {
+        "name": "closed",
+        "description": "Applied on GhostDropdownMenuTrigger data-state while closed."
+      },
+      {
+        "name": "checked",
+        "description": "Applied on checkbox and radio items when selected."
+      }
+    ],
+    "cssProperties": [
+      {
+        "name": "--ghost-elevation-3-bg",
+        "description": "Menu panel background."
+      },
+      {
+        "name": "--ghost-elevation-2-bg",
+        "description": "Item hover/focus background."
+      },
+      {
+        "name": "--ghost-focus-ring-color",
+        "description": "Focus-visible outline color on items."
+      }
+    ]
+  },
+  "accessibility": {
+    "role": "menu",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/menubutton/",
+    "keyboard": {
+      "ArrowDown": "Opens from the trigger or moves to the next enabled item.",
+      "ArrowUp": "Opens from the trigger focusing the last item, or moves to the previous item.",
+      "Escape": "Closes the menu and restores focus to the trigger."
+    },
+    "requiredAriaAttributes": [
+      "aria-expanded",
+      "aria-controls",
+      "aria-haspopup"
+    ]
+  },
+  "examples": [
+    "dropdown-menu/themed"
+  ]
+}

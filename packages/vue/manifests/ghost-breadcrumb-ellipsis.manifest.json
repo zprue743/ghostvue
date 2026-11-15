@@ -1,0 +1,75 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "generated",
+  "name": "GhostBreadcrumbEllipsis",
+  "package": "@ghostvue/vue",
+  "status": "experimental",
+  "description": "Popover disclosure for collapsed middle breadcrumb segments.",
+  "props": [
+    {
+      "name": "label",
+      "type": "string",
+      "default": "Show more breadcrumb segments",
+      "required": false,
+      "description": "Accessible name for the ellipsis disclosure trigger.",
+      "deprecated": false
+    }
+  ],
+  "models": [],
+  "events": [],
+  "slots": [
+    {
+      "name": "default",
+      "props": [],
+      "description": "Primary content."
+    },
+    {
+      "name": "icon",
+      "props": [],
+      "description": "Named slot `icon`."
+    }
+  ],
+  "exposed": [
+    {
+      "name": "blur",
+      "kind": "method",
+      "type": "() => void",
+      "description": "Exposed method `blur`."
+    },
+    {
+      "name": "element",
+      "kind": "property",
+      "type": "HTMLElement | null",
+      "description": "Exposed property `element`."
+    },
+    {
+      "name": "focus",
+      "kind": "method",
+      "type": "(options?: FocusOptions) => void",
+      "description": "Exposed method `focus`."
+    }
+  ],
+  "styling": {
+    "parts": [
+      {
+        "name": "ellipsis",
+        "description": "Collapsed segment disclosure trigger."
+      }
+    ],
+    "states": [],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "button",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/breadcrumb/",
+    "keyboard": {
+      "Enter": "Opens the collapsed segment popover.",
+      "Space": "Opens the collapsed segment popover.",
+      "Escape": "Closes the popover via nested GhostPopover."
+    },
+    "requiredAriaAttributes": [
+      "aria-label"
+    ]
+  },
+  "examples": []
+}

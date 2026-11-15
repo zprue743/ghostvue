@@ -1,0 +1,32 @@
+<script setup lang="ts">
+import { computed, useAttrs, useTemplateRef } from 'vue'
+
+import type { GhostTableSectionExposed } from './ghost-table'
+import { mergeGhostTablePartAttrs, useGhostTableFoot } from './use-ghost-table'
+
+defineOptions({
+  inheritAttrs: false,
+})
+
+defineSlots<{ default(): unknown }>()
+
+const attrs = useAttrs()
+const element = useTemplateRef<HTMLTableSectionElement>('element')
+const { rootProps } = useGhostTableFoot()
+
+const mergedAttrs = computed(() =>
+  mergeGhostTablePartAttrs(attrs, rootProps.value),
+)
+
+defineExpose<GhostTableSectionExposed>({
+  get element() {
+    return element.value
+  },
+})
+</script>
+
+<template>
+  <tfoot ref="element" v-bind="mergedAttrs">
+    <slot />
+  </tfoot>
+</template>

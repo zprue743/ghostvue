@@ -13,7 +13,9 @@ import {
   GhostProgress as GhostProgressThemed,
   GhostSlider as GhostSliderThemed,
   GhostSeparator as GhostSeparatorThemed,
+  GhostScrollArea as GhostScrollAreaThemed,
   GhostEmptyState as GhostEmptyStateThemed,
+  GhostInlineAlert as GhostInlineAlertThemed,
   GhostSkeleton as GhostSkeletonThemed,
   GhostRadioGroup as GhostRadioGroupThemed,
   GhostRadioGroupItem as GhostRadioGroupItemThemed,
@@ -32,9 +34,12 @@ import OverlayReference from './OverlayReference.vue'
 import CollapsibleReference from './CollapsibleReference.vue'
 import AccordionReference from './AccordionReference.vue'
 import PopoverReference from './PopoverReference.vue'
+import DropdownMenuReference from './DropdownMenuReference.vue'
 import TabsReference from './TabsReference.vue'
+import SegmentedControlReference from './SegmentedControlReference.vue'
 import ToggleGroupReference from './ToggleGroupReference.vue'
 import TooltipReference from './TooltipReference.vue'
+import HoverCardReference from './HoverCardReference.vue'
 import VisualReference from './VisualReference.vue'
 import {
   GhostBadge,
@@ -54,7 +59,17 @@ import {
   GhostRadioGroupItem,
   GhostSlider,
   GhostSeparator,
+  GhostScrollArea,
+  GhostTable,
+  GhostTableBody,
+  GhostTableCaption,
+  GhostTableCell,
+  GhostTableFoot,
+  GhostTableHead,
+  GhostTableHeaderCell,
+  GhostTableRow,
   GhostEmptyState,
+  GhostInlineAlert,
   GhostSkeleton,
   GhostSwitch,
   GhostTextarea,
@@ -305,11 +320,14 @@ function submitPlaygroundComment(event: Event): void {
     <AmbientReference />
     <OverlayReference />
     <PopoverReference />
+    <DropdownMenuReference />
     <CollapsibleReference />
     <AccordionReference />
     <TooltipReference />
+    <HoverCardReference />
     <DialogReference />
     <TabsReference />
+    <SegmentedControlReference />
     <ToggleGroupReference />
     <ModalPrimitivesReference />
 
@@ -1239,6 +1257,107 @@ function submitPlaygroundComment(event: Event): void {
       </fieldset>
     </section>
 
+    <section aria-labelledby="table-heading">
+      <h2 id="table-heading">GhostTable</h2>
+      <GhostTable data-testid="table-invoices">
+        <GhostTableCaption>Open invoices</GhostTableCaption>
+        <GhostTableHead>
+          <GhostTableRow>
+            <GhostTableHeaderCell scope="col">Invoice</GhostTableHeaderCell>
+            <GhostTableHeaderCell scope="col">Status</GhostTableHeaderCell>
+          </GhostTableRow>
+        </GhostTableHead>
+        <GhostTableBody>
+          <GhostTableRow>
+            <GhostTableCell>INV-9</GhostTableCell>
+            <GhostTableCell>Open</GhostTableCell>
+          </GhostTableRow>
+        </GhostTableBody>
+      </GhostTable>
+      <GhostTable data-testid="table-metrics">
+        <GhostTableHead>
+          <GhostTableRow>
+            <GhostTableHeaderCell scope="col">Metric</GhostTableHeaderCell>
+            <GhostTableHeaderCell scope="col">Value</GhostTableHeaderCell>
+          </GhostTableRow>
+        </GhostTableHead>
+        <GhostTableBody>
+          <GhostTableRow>
+            <GhostTableHeaderCell scope="row">Errors</GhostTableHeaderCell>
+            <GhostTableCell>0</GhostTableCell>
+          </GhostTableRow>
+        </GhostTableBody>
+        <GhostTableFoot>
+          <GhostTableRow>
+            <GhostTableCell colspan="2">Last 24h</GhostTableCell>
+          </GhostTableRow>
+        </GhostTableFoot>
+      </GhostTable>
+      <GhostTable contain-horizontal data-testid="table-contained">
+        <GhostTableCaption>Wide columns</GhostTableCaption>
+        <GhostTableHead>
+          <GhostTableRow>
+            <GhostTableHeaderCell scope="col">Alpha</GhostTableHeaderCell>
+            <GhostTableHeaderCell scope="col">Beta</GhostTableHeaderCell>
+            <GhostTableHeaderCell scope="col">Gamma</GhostTableHeaderCell>
+            <GhostTableHeaderCell scope="col">Delta</GhostTableHeaderCell>
+          </GhostTableRow>
+        </GhostTableHead>
+        <GhostTableBody>
+          <GhostTableRow>
+            <GhostTableCell>1</GhostTableCell>
+            <GhostTableCell>2</GhostTableCell>
+            <GhostTableCell>3</GhostTableCell>
+            <GhostTableCell>4</GhostTableCell>
+          </GhostTableRow>
+        </GhostTableBody>
+      </GhostTable>
+    </section>
+
+    <section
+      aria-labelledby="scroll-area-heading"
+      data-testid="scroll-area-playground"
+    >
+      <h2 id="scroll-area-heading">GhostScrollArea</h2>
+      <GhostScrollArea
+        label="Playground log"
+        data-testid="scroll-area-vertical"
+        style="max-block-size: 6rem; max-inline-size: 18rem"
+      >
+        <p v-for="line in 10" :key="line">Log line {{ line }}</p>
+      </GhostScrollArea>
+      <GhostScrollArea
+        label="Horizontal column scroll"
+        orientation="horizontal"
+        data-testid="scroll-area-horizontal"
+        style="max-inline-size: 12rem; margin-block-start: 1rem"
+      >
+        <div style="display: flex; gap: 1rem; width: max-content">
+          <span v-for="col in 8" :key="col">Col {{ col }}</span>
+        </div>
+      </GhostScrollArea>
+      <div class="ghost-theme" style="margin-block-start: 1rem">
+        <GhostScrollAreaThemed
+          label="Themed inbox"
+          data-testid="scroll-area-themed"
+          style="max-block-size: 5rem; max-inline-size: 14rem"
+        >
+          <p v-for="item in 6" :key="item">Item {{ item }}</p>
+        </GhostScrollAreaThemed>
+      </div>
+      <GhostScrollArea
+        data-testid="scroll-area-with-focusable"
+        style="
+          max-block-size: 5rem;
+          max-inline-size: 14rem;
+          margin-block-start: 1rem;
+        "
+      >
+        <button type="button">Inside control</button>
+        <p v-for="row in 6" :key="row">Row {{ row }}</p>
+      </GhostScrollArea>
+    </section>
+
     <section aria-labelledby="separator-heading">
       <h2 id="separator-heading">GhostSeparator</h2>
       <div data-testid="separator-stack">
@@ -1328,6 +1447,38 @@ function submitPlaygroundComment(event: Event): void {
         <button type="button">Rightmost</button>
         <button type="button">Middle</button>
         <button type="button">Leftmost</button>
+      </div>
+    </section>
+
+    <section aria-labelledby="inline-alert-heading">
+      <h2 id="inline-alert-heading">GhostInlineAlert</h2>
+      <div class="comparison">
+        <fieldset>
+          <legend>Headless static alert</legend>
+          <GhostInlineAlert as="section" data-testid="headless-inline-alert">
+            <template #title>Filters are active</template>
+            <template #message>
+              Showing rows that match your current search.
+            </template>
+          </GhostInlineAlert>
+        </fieldset>
+
+        <fieldset class="ghost-theme" data-ghost-mode="light">
+          <legend>Themed load failure</legend>
+          <GhostInlineAlertThemed
+            tone="danger"
+            variant="outline"
+            data-testid="themed-inline-alert"
+          >
+            <template #title>Unable to load table</template>
+            <template #message>
+              A network error prevented rows from loading.
+            </template>
+            <template #actions>
+              <GhostButtonThemed type="button">Retry load</GhostButtonThemed>
+            </template>
+          </GhostInlineAlertThemed>
+        </fieldset>
       </div>
     </section>
 

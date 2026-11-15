@@ -1,0 +1,107 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "generated",
+  "name": "GhostCard",
+  "package": "@ghostvue/vue",
+  "status": "experimental",
+  "description": "Composable surface with header, content, and footer parts. Optional spotlight composes useGhostInteractiveSurface on data-interactive-state.",
+  "props": [
+    {
+      "name": "as",
+      "type": "GhostCardElement",
+      "default": "article",
+      "required": false,
+      "description": "Root element. Use `a` only when the whole card navigates without nested controls.",
+      "deprecated": false
+    },
+    {
+      "name": "effects",
+      "type": "'spotlight'[]",
+      "default": "[]",
+      "required": false,
+      "description": "Ambient spotlight recipes. Empty list keeps the card inert.",
+      "deprecated": false
+    }
+  ],
+  "models": [],
+  "events": [],
+  "slots": [
+    {
+      "name": "default",
+      "props": [],
+      "description": "Primary body; rendered in data-part=\"content\"."
+    },
+    {
+      "name": "footer",
+      "props": [],
+      "description": "Optional bottom region for actions on static roots."
+    },
+    {
+      "name": "header",
+      "props": [],
+      "description": "Optional top region."
+    }
+  ],
+  "exposed": [
+    {
+      "name": "element",
+      "kind": "property",
+      "type": "HTMLElement | null",
+      "description": "Root element after mount; null before mount."
+    }
+  ],
+  "styling": {
+    "parts": [
+      {
+        "name": "root",
+        "description": "Card surface host."
+      },
+      {
+        "name": "header",
+        "description": "Header slot wrapper."
+      },
+      {
+        "name": "content",
+        "description": "Default slot wrapper."
+      },
+      {
+        "name": "footer",
+        "description": "Footer slot wrapper."
+      },
+      {
+        "name": "glow",
+        "description": "Decorative spotlight layer when effects includes spotlight."
+      }
+    ],
+    "states": [
+      {
+        "name": "off",
+        "description": "Spotlight inactive (empty effects, reduced motion, or coarse pointer)."
+      },
+      {
+        "name": "idle",
+        "description": "Spotlight capable but pointer outside the host."
+      },
+      {
+        "name": "tracking",
+        "description": "Pointer over the host; glow follows CSS variables."
+      }
+    ],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "generic",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/practices/names-and-descriptions/",
+    "keyboard": {
+      "Tab": "Moves through focusable descendants on static roots. `a`/`button` roots are a single tab stop."
+    },
+    "requiredAriaAttributes": []
+  },
+  "examples": [
+    "card/basic",
+    "card/actions",
+    "card/link",
+    "card/interactive",
+    "card/composable"
+  ]
+}
