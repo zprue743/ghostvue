@@ -1,4 +1,4 @@
-import { mount } from '@vue/test-utils'
+import { mount, flushPromises } from '@vue/test-utils'
 import { h } from 'vue'
 import { renderToString } from 'vue/server-renderer'
 import { describe, expect, it } from 'vitest'
@@ -37,6 +37,46 @@ describe('GhostTable', () => {
     expect(table.classes()).toContain('ghost-table')
     expect(table.attributes('data-part')).toBe('root')
     expect(table.attributes('data-ghost-table')).toBe('')
+  })
+
+  it('preserves consumer classes on the root and row parts', () => {
+    const wrapper = mount(GhostTable, {
+      attrs: { class: 'reports-table' },
+      slots: {
+        default: () => [
+          h(GhostTableBody, () =>
+            h(GhostTableRow, { class: 'is-selected' }, () =>
+              h(GhostTableCell, () => 'Row'),
+            ),
+          ),
+        ],
+      },
+    })
+    expect(wrapper.get('table').classes()).toEqual(
+      expect.arrayContaining(['ghost-table', 'reports-table']),
+    )
+    expect(wrapper.get('tr').classes()).toEqual(
+      expect.arrayContaining(['ghost-table-row', 'is-selected']),
+    )
+  })
+
+  it('names the scroll region from the caption when containHorizontal is true', async () => {
+    const wrapper = mount(GhostTable, {
+      props: { containHorizontal: true },
+      slots: {
+        default: () => [
+          h(GhostTableCaption, () => 'Rates'),
+          h(GhostTableBody, () =>
+            h(GhostTableRow, () => h(GhostTableCell, () => 'Cell')),
+          ),
+        ],
+      },
+    })
+    await flushPromises()
+    const captionId = wrapper.get('caption').attributes('id')
+    const scroll = wrapper.find('.ghost-table-scroll-container')
+    expect(scroll.attributes('role')).toBe('region')
+    expect(scroll.attributes('aria-labelledby')).toBe(captionId)
   })
 
   it('wraps the table when containHorizontal is true', () => {

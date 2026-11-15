@@ -2,7 +2,7 @@
 import { computed, useAttrs, useTemplateRef } from 'vue'
 
 import type { GhostTableSectionExposed } from './ghost-table'
-import { useGhostTableFoot } from './use-ghost-table'
+import { mergeGhostTablePartAttrs, useGhostTableFoot } from './use-ghost-table'
 
 defineOptions({
   inheritAttrs: false,
@@ -14,10 +14,9 @@ const attrs = useAttrs()
 const element = useTemplateRef<HTMLTableSectionElement>('element')
 const { rootProps } = useGhostTableFoot()
 
-const mergedAttrs = computed(() => ({
-  ...attrs,
-  ...rootProps.value,
-}))
+const mergedAttrs = computed(() =>
+  mergeGhostTablePartAttrs(attrs, rootProps.value),
+)
 
 defineExpose<GhostTableSectionExposed>({
   get element() {

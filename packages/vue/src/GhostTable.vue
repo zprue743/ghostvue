@@ -1,8 +1,12 @@
 <script setup lang="ts">
-import { computed, useAttrs, useTemplateRef } from 'vue'
+import { computed, provide, shallowRef, useAttrs, useTemplateRef } from 'vue'
 
-import type { GhostTableExposed, GhostTableProps } from './ghost-table'
-import { useGhostTable } from './use-ghost-table'
+import {
+  ghostTableContextKey,
+  type GhostTableExposed,
+  type GhostTableProps,
+} from './ghost-table'
+import { mergeGhostTablePartAttrs, useGhostTable } from './use-ghost-table'
 
 defineOptions({
   inheritAttrs: false,
@@ -10,21 +14,31 @@ defineOptions({
 
 const props = withDefaults(defineProps<GhostTableProps>(), {
   containHorizontal: false,
+  scrollLabel: undefined,
 })
 
 defineSlots<{ default(): unknown }>()
 
 const attrs = useAttrs()
 const element = useTemplateRef<HTMLTableElement>('element')
+const captionId = shallowRef<string | undefined>()
+
+provide(ghostTableContextKey, {
+  captionId,
+  setCaptionId(id: string | undefined) {
+    captionId.value = id
+  },
+})
 
 const { containHorizontal, tableProps, scrollContainerProps } = useGhostTable({
   containHorizontal: () => props.containHorizontal,
+  scrollLabel: () => props.scrollLabel,
+  captionId: () => captionId.value,
 })
 
-const mergedTableAttrs = computed(() => ({
-  ...attrs,
-  ...tableProps.value,
-}))
+const mergedTableAttrs = computed(() =>
+  mergeGhostTablePartAttrs(attrs, tableProps.value),
+)
 
 defineExpose<GhostTableExposed>({
   get element() {

@@ -1290,6 +1290,7 @@ function submitPlaygroundComment(event: Event): void {
         </GhostTableFoot>
       </GhostTable>
       <GhostTable contain-horizontal data-testid="table-contained">
+        <GhostTableCaption>Wide columns</GhostTableCaption>
         <GhostTableHead>
           <GhostTableRow>
             <GhostTableHeaderCell scope="col">Alpha</GhostTableHeaderCell>

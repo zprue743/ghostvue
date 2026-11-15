@@ -1,4 +1,14 @@
-import type { HTMLAttributes } from 'vue'
+import type { HTMLAttributes, InjectionKey, Ref } from 'vue'
+
+/** Shared {@link GhostTable} context for caption id registration. */
+export interface GhostTableContext {
+  captionId: Ref<string | undefined>
+  setCaptionId(id: string | undefined): void
+}
+
+export const ghostTableContextKey = Symbol(
+  'ghostTableContext',
+) as InjectionKey<GhostTableContext>
 
 /** Valid `scope` values for {@link GhostTableHeaderCell}. */
 export type GhostTableHeaderScope = 'col' | 'row' | 'colgroup' | 'rowgroup'
@@ -11,6 +21,12 @@ export interface GhostTableProps {
    * @default false
    */
   containHorizontal?: boolean
+  /**
+   * Accessible name for the horizontal scroll region. When omitted and a
+   * {@link GhostTableCaption} is rendered, the scroll region uses `aria-labelledby`
+   * on the caption id.
+   */
+  scrollLabel?: string
 }
 
 /** Props for {@link GhostTableHeaderCell}. */
@@ -28,6 +44,8 @@ export type GhostTableCellProps = HTMLAttributes
 
 export interface UseGhostTableOptions {
   containHorizontal?: () => boolean | undefined
+  scrollLabel?: () => string | undefined
+  captionId?: () => string | undefined
 }
 
 export interface UseGhostTableHeaderCellOptions {

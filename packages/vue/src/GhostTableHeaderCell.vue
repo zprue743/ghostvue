@@ -5,7 +5,10 @@ import type {
   GhostTableHeaderCellExposed,
   GhostTableHeaderCellProps,
 } from './ghost-table'
-import { useGhostTableHeaderCell } from './use-ghost-table'
+import {
+  mergeGhostTablePartAttrs,
+  useGhostTableHeaderCell,
+} from './use-ghost-table'
 
 defineOptions({
   inheritAttrs: false,
@@ -22,10 +25,9 @@ const { rootProps } = useGhostTableHeaderCell({
   scope: () => props.scope,
 })
 
-const mergedAttrs = computed(() => ({
-  ...attrs,
-  ...rootProps.value,
-}))
+const mergedAttrs = computed(() =>
+  mergeGhostTablePartAttrs(attrs, rootProps.value),
+)
 
 defineExpose<GhostTableHeaderCellExposed>({
   get element() {

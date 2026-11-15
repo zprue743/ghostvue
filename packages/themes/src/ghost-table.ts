@@ -17,6 +17,10 @@ export const GhostTable = defineComponent({
       type: Boolean,
       default: false,
     },
+    scrollLabel: {
+      type: String,
+      default: undefined,
+    },
   },
   setup(props, { attrs, slots, expose }) {
     const inner = ref<GhostTableExposed | null>(null)
@@ -28,12 +32,13 @@ export const GhostTable = defineComponent({
     } satisfies GhostTableExposed)
 
     return () =>
-      h('span', { class: 'ghost-themed-scope' }, [
+      h('div', { class: 'ghost-themed-scope' }, [
         h(
           GhostUnstyledTable,
           {
             ...attrs,
             containHorizontal: props.containHorizontal,
+            scrollLabel: props.scrollLabel,
             ref: inner,
           },
           slots,

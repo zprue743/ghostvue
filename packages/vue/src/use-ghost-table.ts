@@ -1,4 +1,4 @@
-import { computed, toValue, type ComputedRef } from 'vue'
+import { computed, toValue, type ComputedRef, type StyleValue } from 'vue'
 
 import type {
   GhostTableHeaderScope,
@@ -37,6 +37,32 @@ function tablePartProps(
   }))
 }
 
+/** Preserve consumer `class` and `style` when applying GhostTable part hooks. */
+export function mergeGhostTablePartAttrs<
+  TRoot extends Record<string, unknown>,
+  TAttrs extends Record<string, unknown>,
+>(attrs: TAttrs, rootProps: TRoot): Omit<TAttrs, 'class' | 'style'> & TRoot {
+  const { class: rootClass, style: rootStyle, ...rootRest } = rootProps
+  const { class: attrClass, style: attrStyle, ...attrRest } = attrs
+
+  const merged: Record<string, unknown> = {
+    ...attrRest,
+    ...rootRest,
+  }
+
+  const classes = [attrClass, rootClass].filter(Boolean)
+  if (classes.length > 0) {
+    merged.class = classes.length === 1 ? classes[0] : classes
+  }
+
+  const styles = [attrStyle, rootStyle].filter(Boolean) as StyleValue[]
+  if (styles.length > 0) {
+    merged.style = styles.length === 1 ? styles[0] : styles
+  }
+
+  return merged as Omit<TAttrs, 'class' | 'style'> & TRoot
+}
+
 export interface GhostTableRootProps {
   class: 'ghost-table'
   'data-part': 'root'
@@ -47,6 +73,9 @@ export interface GhostTableScrollContainerProps {
   class: 'ghost-table-scroll-container'
   'data-part': 'scroll-container'
   tabindex: 0
+  role: 'region'
+  'aria-label'?: string
+  'aria-labelledby'?: string
 }
 
 /**
@@ -67,11 +96,22 @@ export function useGhostTable(options: UseGhostTableOptions = {}): {
     'data-ghost-table': '',
   }))
 
-  const scrollContainerProps = computed((): GhostTableScrollContainerProps => ({
-    class: 'ghost-table-scroll-container',
-    'data-part': 'scroll-container',
-    tabindex: 0,
-  }))
+  const scrollContainerProps = computed((): GhostTableScrollContainerProps => {
+    const base: GhostTableScrollContainerProps = {
+      class: 'ghost-table-scroll-container',
+      'data-part': 'scroll-container',
+      tabindex: 0,
+      role: 'region',
+    }
+    const label = toValue(options.scrollLabel)
+    const captionId = toValue(options.captionId)
+    if (label) {
+      base['aria-label'] = label
+    } else if (captionId) {
+      base['aria-labelledby'] = captionId
+    }
+    return base
+  })
 
   return { containHorizontal, tableProps, scrollContainerProps }
 }

@@ -30,7 +30,15 @@ test.describe('GhostTable', () => {
         'row',
       )
 
-      await expect(page.locator('[data-part="scroll-container"]')).toBeVisible()
+      const scrollRegion = page.locator('[data-part="scroll-container"]')
+      await expect(scrollRegion).toBeVisible()
+      await expect(scrollRegion).toHaveAttribute('role', 'region')
+      const containedCaption = page
+        .getByTestId('table-contained')
+        .locator('caption')
+      const captionId = await containedCaption.getAttribute('id')
+      expect(captionId).toBeTruthy()
+      await expect(scrollRegion).toHaveAttribute('aria-labelledby', captionId!)
       await expect(page.getByTestId('table-contained')).toHaveAttribute(
         'data-part',
         'root',

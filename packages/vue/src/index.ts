@@ -393,6 +393,7 @@ export {
   useGhostTableHead,
   useGhostTableHeaderCell,
   useGhostTableRow,
+  mergeGhostTablePartAttrs,
   type GhostTableRootProps,
   type GhostTableScrollContainerProps,
   type GhostTableHeaderCellRootProps,

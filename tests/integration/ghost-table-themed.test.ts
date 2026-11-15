@@ -27,7 +27,7 @@ describe('themed GhostTable', () => {
       },
     })
 
-    expect(wrapper.find('.ghost-themed-scope').exists()).toBe(true)
+    expect(wrapper.find('div.ghost-themed-scope').exists()).toBe(true)
     expect(wrapper.find('.ghost-table-scroll-container').exists()).toBe(true)
     expect(wrapper.get('table').classes()).toContain('ghost-table')
     expect(wrapper.get('th').attributes('scope')).toBe('col')

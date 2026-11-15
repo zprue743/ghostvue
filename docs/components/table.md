@@ -16,9 +16,10 @@ during SSR hydration.
 
 ### `GhostTable`
 
-| Prop                | Type      | Default | Description                                                              |
-| ------------------- | --------- | ------- | ------------------------------------------------------------------------ |
-| `containHorizontal` | `boolean` | `false` | Wraps the table in `data-part="scroll-container"` for horizontal scroll. |
+| Prop                | Type      | Default | Description                                                                                    |
+| ------------------- | --------- | ------- | ---------------------------------------------------------------------------------------------- |
+| `containHorizontal` | `boolean` | `false` | Wraps the table in `data-part="scroll-container"` for horizontal scroll.                       |
+| `scrollLabel`       | `string`  | —       | Accessible name for the scroll region; otherwise uses `GhostTableCaption` via `aria-labelledby`. |
 
 Native attributes fall through to the `<table>` element. Exposes `element`:
 `HTMLTableElement | null`.
@@ -44,8 +45,8 @@ Each part exposes `element` for its native host.
 ## Horizontal containment
 
 Wide tables opt in to a scroll container. Overflow is never implied on the
-`<table>` itself. The scroll container is focusable (`tabindex="0"`) so keyboard
-users can pan horizontally.
+`<table>` itself. The scroll container is a `role="region"` with `tabindex="0"`, named via
+`scrollLabel` or the table caption, so keyboard users can pan horizontally.
 
 <GhostExample id="table/contain-horizontal" />
 
