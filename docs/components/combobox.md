@@ -73,5 +73,5 @@ input submits the selection and participates in native `required` validation.
 - `GhostComboboxOption`, `GhostComboboxGroup`, `GhostComboboxLabel`, `GhostComboboxEmpty`
 - `useGhostCombobox`, `useGhostComboboxAsyncSearch`
 
-See the [specification](./combobox-spec.md) for keyboard, highlight, portal, and
+See the [specification](/specs/combobox) for keyboard, highlight, portal, and
 SSR behavior.
