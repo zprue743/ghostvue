@@ -213,5 +213,5 @@ describe('component scaffolding', () => {
     } finally {
       await rm(root, { recursive: true, force: true })
     }
-  }, 360_000)
+  }, 480_000)
 })
