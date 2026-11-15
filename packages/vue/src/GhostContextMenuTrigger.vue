@@ -90,11 +90,11 @@ onUnmounted(() => {
 })
 
 function openAtClientPoint(clientX: number, clientY: number): boolean {
-  if (props.disabled || context.isOpen.value) {
+  if (props.disabled) {
     return false
   }
   const el = element.value
-  if (el && document.activeElement !== el) {
+  if (el && document.activeElement !== el && !context.isOpen.value) {
     el.focus({ preventScroll: true })
   }
   context.openAtPointer(clientX, clientY)

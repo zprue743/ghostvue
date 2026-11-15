@@ -19,7 +19,10 @@ const sort = ref('name')
 
 <template>
   <GhostContextMenu>
-    <GhostContextMenuTrigger data-testid="context-basic-trigger" tabindex="0">
+    <GhostContextMenuTrigger
+      data-testid="context-basic-trigger"
+      class="context-menu-e2e-target"
+    >
       Right-click this row for actions
     </GhostContextMenuTrigger>
     <GhostContextMenuContent data-testid="context-basic-content" :offset="4">
@@ -56,3 +59,11 @@ const sort = ref('name')
     </GhostContextMenuContent>
   </GhostContextMenu>
 </template>
+
+<style scoped>
+.context-menu-e2e-target {
+  display: block;
+  min-height: 12rem;
+  width: 100%;
+}
+</style>

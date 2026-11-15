@@ -238,6 +238,7 @@ export interface GhostContextMenuContext {
   contentId: ComputedRef<string>
   triggerElement: Ref<HTMLElement | null>
   virtualReference: ComputedRef<ReferenceElement>
+  pointerPosition: Ref<GhostContextMenuPointerPosition>
   setTriggerElement: (element: HTMLElement | null) => void
   setTriggerId: (id: string | null) => void
   setContentId: (id: string | null) => void

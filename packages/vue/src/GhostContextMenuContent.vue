@@ -109,6 +109,16 @@ const floating = useFloating(
   },
 )
 
+watch(
+  () =>
+    [context.pointerPosition.value.x, context.pointerPosition.value.y] as const,
+  () => {
+    if (context.isOpen.value) {
+      void floating.update()
+    }
+  },
+)
+
 const shouldRestoreFocus = shallowRef(true)
 
 watch(

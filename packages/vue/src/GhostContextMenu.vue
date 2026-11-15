@@ -31,6 +31,7 @@ const {
   triggerId: defaultTriggerId,
   contentId: defaultContentId,
   virtualReference,
+  pointerPosition,
 } = useGhostContextMenu({
   open: () => props.open,
   defaultOpen: () => props.defaultOpen,
@@ -54,6 +55,7 @@ provide(ghostContextMenuContextKey, {
   contentId: computed(() => customContentId.value ?? defaultContentId.value),
   triggerElement,
   virtualReference,
+  pointerPosition,
   setTriggerElement(element) {
     triggerElement.value = element
   },

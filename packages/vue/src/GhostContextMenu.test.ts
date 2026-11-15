@@ -102,6 +102,36 @@ function pointerMoveTouch(
   return event
 }
 
+function pointerDownMouse(
+  target: EventTarget,
+  clientX = 20,
+  clientY = 30,
+  pointerId = 1,
+): PointerEvent {
+  const event = new PointerEvent('pointerdown', {
+    bubbles: true,
+    cancelable: true,
+    button: 0,
+    pointerId,
+    pointerType: 'mouse',
+    clientX,
+    clientY,
+  })
+  target.dispatchEvent(event)
+  return event
+}
+
+function pointerUpMouse(target: EventTarget, pointerId = 1): PointerEvent {
+  const event = new PointerEvent('pointerup', {
+    bubbles: true,
+    cancelable: true,
+    pointerId,
+    pointerType: 'mouse',
+  })
+  target.dispatchEvent(event)
+  return event
+}
+
 function pointerUpTouch(target: EventTarget, pointerId = 1): PointerEvent {
   const event = new PointerEvent('pointerup', {
     bubbles: true,
@@ -277,6 +307,73 @@ describe('GhostContextMenu', () => {
     expect(event.defaultPrevented).toBe(false)
   })
 
+  it('gives the default span trigger tabindex 0 for keyboard access', async () => {
+    stubFloatingPosition()
+    mountAttached(
+      defineComponent({
+        setup() {
+          return () =>
+            h(GhostContextMenu, null, {
+              default: () => [
+                h(GhostContextMenuTrigger, null, () => 'Target'),
+                h(GhostContextMenuContent, null, () =>
+                  h(GhostContextMenuItem, null, () => 'Action'),
+                ),
+              ],
+            })
+        },
+      }),
+    )
+
+    const trigger = getHtmlPart('trigger')
+    expect(trigger.tagName).toBe('SPAN')
+    expect(trigger.getAttribute('tabindex')).toBe('0')
+  })
+
+  it('repositions and preventDefaults when contextmenu fires while open', async () => {
+    computePositionOverride = (reference) => {
+      const rect = reference.getBoundingClientRect()
+      return Promise.resolve({
+        x: rect.x,
+        y: rect.y,
+        placement: 'bottom-start',
+        strategy: 'fixed',
+        middlewareData: {},
+      } satisfies ComputeResult)
+    }
+
+    mountAttached(
+      defineComponent({
+        setup() {
+          return () =>
+            h(GhostContextMenu, null, {
+              default: () => [
+                h(GhostContextMenuTrigger, null, () => 'Target'),
+                h(GhostContextMenuContent, null, () =>
+                  h(GhostContextMenuItem, null, () => 'Action'),
+                ),
+              ],
+            })
+        },
+      }),
+    )
+
+    const trigger = getHtmlPart('trigger')
+    dispatchContextMenu(trigger, 40, 50)
+    await flushPromises()
+
+    const content = getHtmlPart('content')
+    expect(content.style.left).toBe('40px')
+    expect(content.style.top).toBe('50px')
+
+    const event = dispatchContextMenu(trigger, 120, 140)
+    await flushPromises()
+    expect(event.defaultPrevented).toBe(true)
+    expect(content.style.left).toBe('120px')
+    expect(content.style.top).toBe('140px')
+    expect(document.querySelector('[data-part="content"]')).not.toBeNull()
+  })
+
   it('opens with Shift+F10 and ContextMenu keys', async () => {
     stubFloatingPosition()
     mountAttached(
@@ -427,6 +524,32 @@ describe('GhostContextMenu', () => {
     beforeEach(() => {
       vi.useFakeTimers()
       stubFloatingPosition()
+    })
+
+    it('does not open on mouse press-and-hold', async () => {
+      mountAttached(
+        defineComponent({
+          setup() {
+            return () =>
+              h(GhostContextMenu, null, {
+                default: () => [
+                  h(GhostContextMenuTrigger, null, () => 'Mouse'),
+                  h(GhostContextMenuContent, null, () =>
+                    h(GhostContextMenuItem, null, () => 'Action'),
+                  ),
+                ],
+              })
+          },
+        }),
+      )
+
+      const trigger = getHtmlPart('trigger')
+      pointerDownMouse(trigger)
+      vi.advanceTimersByTime(800)
+      await flushPromises()
+      expect(document.querySelector('[data-part="content"]')).toBeNull()
+
+      pointerUpMouse(trigger)
     })
 
     it('opens after the delay and cancels when pointerup fires first', async () => {
