@@ -1,6 +1,6 @@
 # GhostHoverCard specification
 
-**Status:** Approved for minimal `GhostHoverCard` (GHO-100).
+**Status:** Approved for minimal `GhostHoverCard` (GHO-100). Visual baselines use `pnpm test:visual:docker`.
 
 ## Purpose and user problems
 
