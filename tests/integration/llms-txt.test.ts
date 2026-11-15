@@ -2,7 +2,9 @@ import { mkdtemp, readFile, rm } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join, resolve } from 'node:path'
 
-import { afterEach, describe, expect, it } from 'vitest'
+import { afterEach, beforeAll, describe, expect, it } from 'vitest'
+
+import { writeComponentReferences } from '../../scripts/lib/component-reference.js'
 
 import {
   docsDescription,
@@ -36,6 +38,12 @@ function sidebarPages(): { title: string; link: string }[] {
 
 describe('llms.txt generation', () => {
   const tempDirs: string[] = []
+
+  beforeAll(async () => {
+    // API reference pages are generated at docs build time; materialize them
+    // so sidebar links resolve the same way in unit/integration shards.
+    await writeComponentReferences(process.cwd())
+  })
 
   afterEach(async () => {
     await Promise.all(
