@@ -81,4 +81,50 @@ describe('themed GhostHoverCard wrappers', () => {
     expect(mounted?.classList.contains('ghost-hover-card-content')).toBe(true)
     expect(mounted?.getAttribute('data-themed')).toBe('')
   })
+
+  it('forwards controlled open, delays, and closeOnEscape on the themed root', async () => {
+    vi.useFakeTimers()
+    const open = ref(false)
+    const updates: boolean[] = []
+
+    mountAttached(
+      defineComponent({
+        setup() {
+          return () =>
+            h(
+              GhostHoverCard,
+              {
+                open: open.value,
+                defaultOpen: false,
+                openDelay: 0,
+                closeDelay: 50,
+                closeOnEscape: false,
+                'onUpdate:open': (next: boolean) => {
+                  open.value = next
+                  updates.push(next)
+                },
+              },
+              {
+                default: () => [
+                  h(
+                    GhostHoverCardTrigger,
+                    { id: 'themed-root-trigger' },
+                    () => 'T',
+                  ),
+                  h(GhostHoverCardContent, null, () => 'Body'),
+                ],
+              },
+            )
+        },
+      }),
+    )
+
+    const trigger = document.querySelector<HTMLElement>('#themed-root-trigger')
+    trigger?.dispatchEvent(new PointerEvent('pointerenter', { bubbles: true }))
+    vi.runOnlyPendingTimers()
+    await flushPromises()
+    await nextTick()
+    expect(updates).toContain(true)
+    expect(document.querySelector('[role="dialog"]')).not.toBeNull()
+  })
 })
