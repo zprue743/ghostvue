@@ -40,7 +40,7 @@ test.describe('GhostCombobox', () => {
       await page.keyboard.press('ArrowDown')
       await expect(input).toHaveAttribute(
         'aria-activedescendant',
-        option25Id!,
+        option25Id ?? '',
       )
 
       await page.keyboard.press('ArrowUp')
@@ -48,7 +48,7 @@ test.describe('GhostCombobox', () => {
       const option10Id = await option10.getAttribute('id')
       await expect(input).toHaveAttribute(
         'aria-activedescendant',
-        option10Id!,
+        option10Id ?? '',
       )
 
       await page.keyboard.press('End')
@@ -60,7 +60,7 @@ test.describe('GhostCombobox', () => {
       await page.keyboard.press('Home')
       await expect(input).toHaveAttribute(
         'aria-activedescendant',
-        option10Id!,
+        option10Id ?? '',
       )
 
       await page.keyboard.type('5')
@@ -72,7 +72,7 @@ test.describe('GhostCombobox', () => {
       const option50Id = await option50.getAttribute('id')
       await expect(input).toHaveAttribute(
         'aria-activedescendant',
-        option50Id!,
+        option50Id ?? '',
       )
 
       await page.keyboard.press('Enter')
@@ -102,7 +102,7 @@ test.describe('GhostCombobox', () => {
       const multi25Id = await multi25.getAttribute('id')
       await expect(multiInput).toHaveAttribute(
         'aria-activedescendant',
-        multi25Id!,
+        multi25Id ?? '',
       )
       await page.keyboard.press('Enter')
       await expect(multiContent).toBeVisible()

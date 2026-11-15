@@ -217,10 +217,7 @@ describe('GhostCombobox', () => {
     const loading = ref(false)
     const options = ref<string[]>(['apple', 'banana', 'orange'])
     const { begin, isLatest } = useGhostComboboxAsyncSearch()
-  const pending: Array<{
-      requestId: number
-      resolve: () => void
-    }> = []
+    const pending: { requestId: number; resolve: () => void }[] = []
 
     const wrapper = mountAttached(
       defineComponent({

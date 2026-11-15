@@ -3,7 +3,6 @@ import {
   computed,
   provide,
   shallowRef,
-  useTemplateRef,
   watch,
   type ComponentPublicInstance,
 } from 'vue'
@@ -150,8 +149,7 @@ function setPrimaryFormMirror(
   if (index !== 0) {
     return
   }
-  primaryFormMirror.value =
-    el instanceof HTMLInputElement ? el : null
+  primaryFormMirror.value = el instanceof HTMLInputElement ? el : null
 }
 
 const customInputId = shallowRef<string | null>(null)
