@@ -26,6 +26,7 @@ export interface GhostSelectFormInputProps {
   disabled: boolean | undefined
   required: boolean | undefined
   tabindex: -1
+  'aria-hidden': true
   class: 'ghost-visually-hidden'
   autocomplete: 'off'
 }
@@ -305,6 +306,7 @@ export function useGhostSelect(options: UseGhostSelectOptions = {}): {
       disabled: disabled.value || undefined,
       required: named && required.value ? true : undefined,
       tabindex: -1,
+      'aria-hidden': true,
       class: 'ghost-visually-hidden',
       autocomplete: 'off',
     }
