@@ -9,6 +9,7 @@ reports/verify-component/
 .vitepress/dist/
 playwright-report/
 test-results/
+packages/vue/.cache/
 *.tsbuildinfo
 .DS_Store
 *.local
@@ -21,7 +22,6 @@ docs/reference/
 packages/vue/src/.registries/
 packages/vue/src/.publish-index.generated.ts
 packages/vue/src/.publish-build/
-packages/vue/.declaration-build/
 packages/themes/src/.registries/
 packages/themes/src/.publish-index.generated.ts
 examples/.registries/

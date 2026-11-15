@@ -44,6 +44,9 @@ export default defineConfig({
         '**/*.d.ts',
         '**/*.test.ts',
         '**/*.spec.ts',
+        '**/.registries/**',
+        '**/.declaration-build/**',
+        '**/.cache/**',
       ],
       // Sharded CI runs merge coverage in the required `verify` job; defer gates there.
       thresholds: deferCoverageThresholds

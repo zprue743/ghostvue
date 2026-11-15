@@ -10,10 +10,11 @@ import {
 import { basename, dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
-const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
-const vueRoot = join(root, 'packages/vue')
+const repositoryRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..')
+const vueRoot = join(repositoryRoot, 'packages/vue')
 const srcRoot = join(vueRoot, 'src')
-const stageRoot = join(vueRoot, '.declaration-build/src')
+// Gitignored under the package so module resolution stays in `packages/vue`, but outside `src/`.
+const stageRoot = join(vueRoot, '.cache/declaration-build/src')
 
 const skipNames = new Set([
   'index.ts',

@@ -18,6 +18,7 @@ export default tseslint.config(
       '**/.publish-index.generated.ts',
       '**/.publish-build/**',
       '**/.declaration-build/**',
+      '**/.cache/declaration-build/**',
       'packages/vue/type-tests-negative/**',
     ],
   },

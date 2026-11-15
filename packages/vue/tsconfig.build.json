@@ -14,6 +14,6 @@
     "src/.registries/**/*.ts",
     "src/.publish-index.generated.ts",
     "src/.publish-build/**",
-    ".declaration-build/**"
+    ".cache/**"
   ]
 }

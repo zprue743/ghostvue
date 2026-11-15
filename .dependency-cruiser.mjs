@@ -106,6 +106,8 @@ const config = {
         '(^|/)fixtures/',
         '(^|/)coverage/',
         '(^|/)\\.vitepress/(dist|cache)/',
+        '(^|/)\\.registries/',
+        '(^|/)\\.cache/declaration-build/',
       ],
     },
     enhancedResolveOptions: {
