@@ -24,16 +24,15 @@ defineSlots<{
 const attrs = useAttrs()
 const element = useTemplateRef<HTMLElement>('element')
 
-const { as, onKeyDown, rootProps, scheduleOverflowMeasure } =
-  useGhostScrollArea(
-    {
-      as: () => props.as,
-      label: () => props.label,
-      orientation: () => props.orientation,
-      type: () => props.type,
-    },
-    element,
-  )
+const { as, rootProps, scheduleOverflowMeasure } = useGhostScrollArea(
+  {
+    as: () => props.as,
+    label: () => props.label,
+    orientation: () => props.orientation,
+    type: () => props.type,
+  },
+  element,
+)
 
 const hostAttrs = computed(() => ({
   ...attrs,
@@ -57,7 +56,7 @@ defineExpose<GhostScrollAreaExposed>({
 </script>
 
 <template>
-  <component :is="as" ref="element" v-bind="hostAttrs" @keydown="onKeyDown">
+  <component :is="as" ref="element" v-bind="hostAttrs">
     <slot />
   </component>
 </template>

@@ -16,8 +16,9 @@ export type GhostScrollAreaOverflowState =
 /** Props for the unstyled {@link GhostScrollArea} component. */
 export interface GhostScrollAreaProps {
   /**
-   * Accessible name when the root is keyboard-focusable. Maps to `aria-label`
-   * only while `tabindex="0"` is present.
+   * When the root is a tab stop with no inner focusables, sets `role="region"`
+   * and `aria-label`. Provide this whenever overflowed static content has no
+   * tab stops inside.
    */
   label?: string
   /**

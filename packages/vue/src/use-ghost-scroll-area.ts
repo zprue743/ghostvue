@@ -19,15 +19,15 @@ import type {
 import { hasTabbableDescendants } from './has-tabbable-descendants'
 import { measureScrollOverflow } from './measure-scroll-overflow'
 
-const LINE_SCROLL_DELTA = 40
-
 export interface GhostScrollAreaRootProps {
   class: 'ghost-scroll-area'
   'data-part': 'root'
   'data-orientation': GhostScrollAreaOrientation
   'data-overflow': GhostScrollAreaOverflowState
+  'data-type': GhostScrollAreaOverflowType
   style: Record<string, string>
   tabindex?: 0
+  role?: 'region'
   'aria-label'?: string
 }
 
@@ -48,26 +48,21 @@ function overflowStyles(
   }
 }
 
-function axisAllowsVertical(orientation: GhostScrollAreaOrientation): boolean {
-  return orientation === 'vertical' || orientation === 'both'
+function observeElementResize(target: ResizeObserver, node: Node): void {
+  if (node instanceof HTMLElement) {
+    target.observe(node)
+  }
 }
 
-function axisAllowsHorizontal(
-  orientation: GhostScrollAreaOrientation,
-): boolean {
-  return orientation === 'horizontal' || orientation === 'both'
-}
-
-function prefersReducedMotion(): boolean {
-  return (
-    typeof window.matchMedia === 'function' &&
-    window.matchMedia('(prefers-reduced-motion: reduce)').matches
-  )
+function unobserveElementResize(target: ResizeObserver, node: Node): void {
+  if (node instanceof HTMLElement) {
+    target.unobserve(node)
+  }
 }
 
 /**
- * Native overflow container: measures overflow, applies tabindex for axe, and
- * handles arrow/page keys when the root is focused.
+ * Native overflow container: measures overflow and applies tabindex for axe.
+ * Keyboard scrolling is left to the platform on the focused scroll root.
  */
 export function useGhostScrollArea(
   options: UseGhostScrollAreaOptions,
@@ -75,7 +70,6 @@ export function useGhostScrollArea(
 ): {
   as: ComputedRef<GhostScrollAreaElement>
   overflow: Ref<GhostScrollAreaOverflowState>
-  onKeyDown: (event: KeyboardEvent) => void
   rootProps: ComputedRef<GhostScrollAreaRootProps>
   scheduleOverflowMeasure: () => void
 } {
@@ -100,6 +94,7 @@ export function useGhostScrollArea(
       'data-part': 'root',
       'data-orientation': orientation.value,
       'data-overflow': overflow.value,
+      'data-type': type.value,
       style: overflowStyles(orientation.value, type.value),
     }
 
@@ -107,6 +102,7 @@ export function useGhostScrollArea(
       base.tabindex = 0
       const name = label.value?.trim()
       if (name) {
+        base.role = 'region'
         base['aria-label'] = name
       }
     }
@@ -141,79 +137,26 @@ export function useGhostScrollArea(
     })
   }
 
-  function scrollWithKeys(event: KeyboardEvent): void {
-    const el = element.value
-    if (!el || !tabStop.value || event.defaultPrevented) {
+  function syncResizeObservation(root: HTMLElement): void {
+    if (!resizeObserver) {
       return
     }
-
-    const behavior: ScrollBehavior = prefersReducedMotion() ? 'auto' : 'auto'
-    const orient = orientation.value
-    let handled = false
-
-    switch (event.key) {
-      case 'ArrowDown':
-        if (axisAllowsVertical(orient) && overflow.value !== 'horizontal') {
-          el.scrollBy({ top: LINE_SCROLL_DELTA, behavior })
-          handled = true
-        }
-        break
-      case 'ArrowUp':
-        if (axisAllowsVertical(orient) && overflow.value !== 'horizontal') {
-          el.scrollBy({ top: -LINE_SCROLL_DELTA, behavior })
-          handled = true
-        }
-        break
-      case 'ArrowRight':
-        if (axisAllowsHorizontal(orient) && overflow.value !== 'vertical') {
-          el.scrollBy({ left: LINE_SCROLL_DELTA, behavior })
-          handled = true
-        }
-        break
-      case 'ArrowLeft':
-        if (axisAllowsHorizontal(orient) && overflow.value !== 'vertical') {
-          el.scrollBy({ left: -LINE_SCROLL_DELTA, behavior })
-          handled = true
-        }
-        break
-      case 'PageDown':
-        if (axisAllowsVertical(orient) && overflow.value !== 'horizontal') {
-          el.scrollBy({ top: el.clientHeight, behavior })
-          handled = true
-        }
-        break
-      case 'PageUp':
-        if (axisAllowsVertical(orient) && overflow.value !== 'horizontal') {
-          el.scrollBy({ top: -el.clientHeight, behavior })
-          handled = true
-        }
-        break
-      case 'Home':
-        if (axisAllowsVertical(orient) && overflow.value !== 'horizontal') {
-          el.scrollTo({ top: 0, behavior })
-          handled = true
-        }
-        break
-      case 'End':
-        if (axisAllowsVertical(orient) && overflow.value !== 'horizontal') {
-          el.scrollTo({ top: el.scrollHeight, behavior })
-          handled = true
-        }
-        break
-      case ' ':
-        event.preventDefault()
-        return
-      default:
-        break
-    }
-
-    if (handled) {
-      event.preventDefault()
+    resizeObserver.observe(root)
+    for (const child of root.children) {
+      observeElementResize(resizeObserver, child)
     }
   }
 
-  function onKeyDown(event: KeyboardEvent): void {
-    scrollWithKeys(event)
+  function handleChildListMutation(record: MutationRecord): void {
+    if (!resizeObserver) {
+      return
+    }
+    for (const node of record.removedNodes) {
+      unobserveElementResize(resizeObserver, node)
+    }
+    for (const node of record.addedNodes) {
+      observeElementResize(resizeObserver, node)
+    }
   }
 
   onMounted(() => {
@@ -228,20 +171,20 @@ export function useGhostScrollArea(
       resizeObserver = new ResizeObserver(() => {
         scheduleOverflowMeasure()
       })
-      resizeObserver.observe(el)
-      for (const child of el.children) {
-        if (child instanceof HTMLElement) {
-          resizeObserver.observe(child)
-        }
-      }
+      syncResizeObservation(el)
     }
 
     if (typeof MutationObserver === 'function') {
-      mutationObserver = new MutationObserver(() => {
+      mutationObserver = new MutationObserver((records) => {
+        for (const record of records) {
+          if (record.type === 'childList') {
+            handleChildListMutation(record)
+          }
+        }
         scheduleOverflowMeasure()
       })
       mutationObserver.observe(el, {
-        attributes: true,
+        characterData: true,
         childList: true,
         subtree: true,
       })
@@ -261,7 +204,6 @@ export function useGhostScrollArea(
   return {
     as,
     overflow,
-    onKeyDown,
     rootProps,
     scheduleOverflowMeasure,
   }

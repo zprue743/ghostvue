@@ -27,6 +27,7 @@ test.describe('GhostScrollArea', () => {
         .poll(async () => vertical.getAttribute('data-overflow'))
         .not.toBe('none')
       await expect(vertical).toHaveAttribute('tabindex', '0')
+      await expect(vertical).toHaveAttribute('role', 'region')
       await expect(vertical).toHaveAttribute('aria-label', 'Playground log')
 
       const horizontal = page.getByTestId('scroll-area-horizontal')
@@ -48,6 +49,37 @@ test.describe('GhostScrollArea', () => {
         .include('[data-testid="scroll-area-playground"]')
         .analyze()
       expect(results.violations).toEqual([])
+    } finally {
+      await playground.close()
+    }
+  })
+
+  test('scrolls with native Page Down and Space when the root is focused', async ({
+    page,
+  }) => {
+    const playground = await startStaticServer('apps/playground/dist')
+
+    try {
+      await page.goto(playground.url)
+
+      const vertical = page.getByTestId('scroll-area-vertical')
+      await expect
+        .poll(async () => vertical.getAttribute('data-overflow'))
+        .not.toBe('none')
+
+      await vertical.focus()
+
+      const topBeforePage = await vertical.evaluate((el) => el.scrollTop)
+      await page.keyboard.press('PageDown')
+      await expect
+        .poll(async () => vertical.evaluate((el) => el.scrollTop))
+        .toBeGreaterThan(topBeforePage)
+
+      const topBeforeSpace = await vertical.evaluate((el) => el.scrollTop)
+      await page.keyboard.press('Space')
+      await expect
+        .poll(async () => vertical.evaluate((el) => el.scrollTop))
+        .toBeGreaterThan(topBeforeSpace)
     } finally {
       await playground.close()
     }

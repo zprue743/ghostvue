@@ -39,12 +39,12 @@ native scrolling, stable layout, and axe-clean focus rules
 
 Headless `@ghostvue/vue` `GhostScrollArea` / `useGhostScrollArea`:
 
-| Prop          | Type                                   | Default      | Contract                                                                                                                                                                          |
-| ------------- | -------------------------------------- | ------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `orientation` | `'vertical' \| 'horizontal' \| 'both'` | `'vertical'` | Which axes may scroll. Vertical is `overflow-y`; horizontal is `overflow-x`; both allow either axis when content exceeds the box.                                                 |
-| `type`        | `'auto' \| 'scroll'`                   | `'auto'`     | Maps to native `overflow-*: auto` vs `scroll`. `auto` shows scrollbars when needed; `scroll` always reserves the scrollable overflow mode on enabled axes.                        |
-| `as`          | `'div'`                                | `'div'`      | Host element. Closed union; widened only additively.                                                                                                                              |
-| `label`       | `string`                               | `undefined`  | Accessible name applied as `aria-label` when the root is keyboard-focusable (`tabindex="0"`). Omit when the root is not focusable or when the consumer supplies naming via attrs. |
+| Prop          | Type                                   | Default      | Contract                                                                                                                                                          |
+| ------------- | -------------------------------------- | ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `orientation` | `'vertical' \| 'horizontal' \| 'both'` | `'vertical'` | Which axes may scroll. Vertical is `overflow-y`; horizontal is `overflow-x`; both allow either axis when content exceeds the box.                                 |
+| `type`        | `'auto' \| 'scroll'`                   | `'auto'`     | Maps to native `overflow-*: auto` vs `scroll`. `auto` shows scrollbars when needed; `scroll` always reserves the scrollable overflow mode on enabled axes.        |
+| `as`          | `'div'`                                | `'div'`      | Host element. Closed union; widened only additively.                                                                                                              |
+| `label`       | `string`                               | `undefined`  | When the root is a tab stop with no tabbable descendants, sets `role="region"` and `aria-label`. Provide whenever case (1) applies so the name is valid for ARIA. |
 
 ```ts
 type GhostScrollAreaElement = 'div'
@@ -54,13 +54,13 @@ type GhostScrollAreaOverflowType = 'auto' | 'scroll'
 
 Named ESM exports: `GhostScrollArea`, `useGhostScrollArea`, and the types above.
 Headless behavior lives in the composable; the SFC is a thin root that merges
-`rootProps`, keyboard handlers, and the default slot.
+`rootProps` and the default slot.
 
 Native attributes and listeners fall through to the single root (`id`, `class`,
 `data-*`, `aria-labelledby`, `style`, `dir`, etc.). The component owns `class`,
-`data-part`, `data-orientation`, `data-overflow`, overflow-related inline
-style, conditional `tabindex`, conditional `aria-label` from `label`, and
-scroll keyboard handling on the root.
+`data-part`, `data-orientation`, `data-type`, `data-overflow`, overflow-related
+inline style, conditional `tabindex`, and when `label` is set on an active tab
+stop, `role="region"` with `aria-label`.
 
 Themed `@ghostvue/themes` `GhostScrollArea` wraps the unstyled component. Same
 behavioral props; no extra visual props. Importing it loads the default
@@ -88,9 +88,11 @@ Runtime state:
 | `data-overflow` | `none` when no enabled axis overflows; otherwise `vertical`, `horizontal`, or `both`.                                                                                             |
 | Tab stop        | Root receives `tabindex="0"` only when at least one enabled axis overflows **and** the subtree has no tabbable descendants (excluding the root). Otherwise `tabindex` is omitted. |
 
-Overflow and focusable-content detection run after mount and on resize, slot
-updates, and relevant attribute changes (`ResizeObserver` + `MutationObserver`
-where available). Server render omits `tabindex` and `data-overflow="none"`.
+Overflow and focusable-content detection run after mount and on resize or slot
+text/content changes (`ResizeObserver` on the root and added element children;
+`MutationObserver` limited to `childList` and `characterData` with `subtree`, not
+attribute churn on the root). Server render omits `tabindex` and uses
+`data-overflow="none"`.
 
 ### Loading, empty, disabled, read-only, and error states
 
@@ -109,9 +111,9 @@ It measures its own layout box and subtree focusability.
 
 ### Semantics and relationships
 
-Native scrolling on a `div` (or other host) without a dedicated WAI-ARIA
-pattern. The root is not assigned `role="region"` unless the consumer adds it
-via fallthrough.
+Native scrolling on a `div` (or other host). When the root is a tab stop and
+`label` is set, the component assigns `role="region"` with `aria-label` so the
+name is valid under ARIA.
 
 Focusable scroll container rules (axe `scrollable-region-focusable`):
 
@@ -127,18 +129,10 @@ DataTable-adjacent scenario for horizontal overflow.
 
 ### Keyboard interaction
 
-When the root is focused and has overflow on an axis:
-
-| Key                        | Behavior                                                                                                           |
-| -------------------------- | ------------------------------------------------------------------------------------------------------------------ |
-| `ArrowUp` / `ArrowDown`    | Scroll vertically when `orientation` allows vertical overflow.                                                     |
-| `ArrowLeft` / `ArrowRight` | Scroll horizontally when `orientation` allows horizontal overflow. RTL follows native horizontal scroll direction. |
-| `PageUp` / `PageDown`      | Scroll vertically by one viewport height.                                                                          |
-| `Home` / `End`             | Scroll to the start/end of the vertical axis when enabled.                                                         |
-| `Space`                    | Prevented default when the root is focused (no page scroll hijack).                                                |
-
-Arrow keys call `preventDefault` only when they actually scroll the root on
-that axis. The component does not implement roving tabindex.
+No component key handlers. When the root is focused (`tabindex="0"`) with
+overflow, the user agent scrolls the native overflow container (arrows, Page
+Up/Down, Home/End, Space, and equivalent assistive-technology scroll gestures).
+The component does not call `preventDefault` on keyboard events.
 
 ### Focus behavior
 
@@ -160,6 +154,7 @@ Single root element with a default slot. Stable styling hooks:
 - class `ghost-scroll-area`
 - `data-part="root"`
 - `data-orientation="vertical" | "horizontal" | "both"`
+- `data-type="auto" | "scroll"`
 - `data-overflow="none" | "vertical" | "horizontal" | "both"`
 
 Overflow axes use inline `overflow-x` / `overflow-y` from `orientation` and
@@ -170,7 +165,7 @@ Themed CSS under `.ghost-theme` / `.ghost-themed-scope` adds:
 
 - `overscroll-behavior: contain` on the root to reduce scroll chaining into the page
 - touch-friendly momentum scrolling where supported
-- `scrollbar-gutter: stable` when `type="scroll"` on enabled axes
+- `scrollbar-gutter: stable` when `data-type="scroll"`
 - native scrollbar color tokens where the engine supports `scrollbar-color`
 - `scroll-behavior: auto` under `prefers-reduced-motion: reduce`
 
@@ -200,9 +195,8 @@ modest DOM subtrees (hundreds of nodes), not million-row tables.
 ## Composition
 
 `useGhostScrollArea` owns orientation/type styles, overflow measurement,
-tabindex policy, keyboard scrolling, and `data-*` hooks. `GhostScrollArea`
-binds the composable to a template ref and slot. Themed wrapper adds scoped
-stylesheet load only.
+tabindex policy, and `data-*` hooks. `GhostScrollArea` binds the composable to a
+template ref and slot. Themed wrapper adds scoped stylesheet load only.
 
 Manifests: `packages/vue/manifests/ghost-scroll-area.manifest.json` and
 `packages/themes/manifests/ghost-scroll-area.manifest.json`.
@@ -212,8 +206,8 @@ Manifests: `packages/vue/manifests/ghost-scroll-area.manifest.json` and
 - Vue tests: default hooks, orientation/type overflow styles, `data-overflow`
   updates when layout overflows (stubbed metrics), tabindex when overflow without
   tabbables, no tabindex with tabbable children, `label` → `aria-label` when
-  focusable, keyboard scroll keys, attribute fallthrough, SSR HTML without
-  `tabindex`.
+  region role when labeled tab stop, no key interception, attribute fallthrough,
+  SSR HTML without `tabindex`.
 - Composable tests: overflow axis matrix, focusable-descendant detection,
   tabindex and `aria-label` policy.
 - Integration: `expectSsrHydration` with slotted static content.

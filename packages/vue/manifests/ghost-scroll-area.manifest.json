@@ -4,7 +4,7 @@
   "name": "GhostScrollArea",
   "package": "@ghostvue/vue",
   "status": "experimental",
-  "description": "Headless native overflow container. useGhostScrollArea owns overflow measurement, tabindex policy, and keyboard scrolling; GhostScrollArea is the scroll root with a default slot. Themed recipes live on @ghostvue/themes.",
+  "description": "Headless native overflow container. useGhostScrollArea owns overflow measurement, tabindex policy, and data-type hooks; GhostScrollArea is the scroll root with a default slot. Native keyboard scrolling is left to the platform. Themed recipes live on @ghostvue/themes.",
   "props": [
     {
       "name": "as",
@@ -18,7 +18,7 @@
       "name": "label",
       "type": "string",
       "required": false,
-      "description": "Maps to aria-label when the root is keyboard-focusable (tabindex=0).",
+      "description": "When the root is a tab stop with no inner focusables, sets role=region and aria-label.",
       "deprecated": false
     },
     {
@@ -59,7 +59,7 @@
     "parts": [
       {
         "name": "root",
-        "description": "Native overflow host. data-orientation configures axes; data-overflow reflects measured overflow (none, vertical, horizontal, both)."
+        "description": "Native overflow host. data-orientation and data-type configure axes; data-overflow reflects measured overflow (none, vertical, horizontal, both)."
       }
     ],
     "states": [],
@@ -68,17 +68,7 @@
   "accessibility": {
     "role": "native scrolling",
     "apgPattern": "https://www.w3.org/WAI/ARIA/apg/",
-    "keyboard": {
-      "ArrowDown": "Scrolls down when the root is focused and vertical overflow is enabled.",
-      "ArrowUp": "Scrolls up when the root is focused and vertical overflow is enabled.",
-      "ArrowLeft": "Scrolls toward inline start when horizontal overflow is enabled.",
-      "ArrowRight": "Scrolls toward inline end when horizontal overflow is enabled.",
-      "PageDown": "Scrolls down one viewport height.",
-      "PageUp": "Scrolls up one viewport height.",
-      "Home": "Scrolls to block start.",
-      "End": "Scrolls to block end.",
-      "Space": "Prevented default on the focused root to avoid page scroll."
-    },
+    "keyboard": {},
     "requiredAriaAttributes": [
       "aria-label"
     ]

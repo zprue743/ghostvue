@@ -11,8 +11,8 @@
   }
 
   :where(
-    .ghost-theme .ghost-scroll-area[style*='overflow-y: scroll'],
-    .ghost-scroll-area[data-themed][style*='overflow-y: scroll']
+    .ghost-theme .ghost-scroll-area[data-type='scroll'],
+    .ghost-scroll-area[data-themed][data-type='scroll']
   ) {
     scrollbar-gutter: stable;
   }
