@@ -172,10 +172,19 @@ function handleTab(
   }
 
   const active = document.activeElement
+  const isOutside = !active || !root.contains(active)
+  const isNonTabbableInside =
+    !isOutside && !(active instanceof HTMLElement && tabbables.includes(active))
   const leavingStart =
-    event.shiftKey && (active === first || !root.contains(active))
+    event.shiftKey &&
+    (isOutside ||
+      active === first ||
+      (isNonTabbableInside && isBeforeTabbables(active, tabbables)))
   const leavingEnd =
-    !event.shiftKey && (active === last || !root.contains(active))
+    !event.shiftKey &&
+    (isOutside ||
+      active === last ||
+      (isNonTabbableInside && isAfterTabbables(active, tabbables)))
 
   if (!leavingStart && !leavingEnd) {
     return
@@ -188,4 +197,22 @@ function handleTab(
 
   const target = event.shiftKey ? last : first
   target.focus({ preventScroll: true })
+}
+
+function isBeforeTabbables(active: Element, tabbables: HTMLElement[]): boolean {
+  return tabbables.every((tabbable) =>
+    Boolean(
+      tabbable.compareDocumentPosition(active) &
+      Node.DOCUMENT_POSITION_PRECEDING,
+    ),
+  )
+}
+
+function isAfterTabbables(active: Element, tabbables: HTMLElement[]): boolean {
+  return tabbables.every((tabbable) =>
+    Boolean(
+      tabbable.compareDocumentPosition(active) &
+      Node.DOCUMENT_POSITION_FOLLOWING,
+    ),
+  )
 }

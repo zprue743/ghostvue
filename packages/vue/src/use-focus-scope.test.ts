@@ -759,4 +759,113 @@ describe('useFocusScope', () => {
       wrapper.get<HTMLElement>('[data-testid="dialog-first"]').element,
     )
   })
+
+  it('contains Shift+Tab from a tabindex=-1 data-autofocus heading before the first tabbable', async () => {
+    const loop = ref(true)
+    const container = ref<HTMLElement | null>(null)
+    const wrapper = mountScope(
+      () => {
+        useFocusScope(container, { trapped: true, loop, autoFocus: true })
+      },
+      () =>
+        h('div', { ref: container, tabindex: '-1' }, [
+          h(
+            'h2',
+            { tabindex: '-1', 'data-autofocus': '', 'data-testid': 'heading' },
+            'Dialog heading',
+          ),
+          h('button', { type: 'button' }, 'First'),
+          h('button', { type: 'button' }, 'Last'),
+        ]),
+    )
+
+    await nextTick()
+    const heading = wrapper.get<HTMLElement>('[data-testid="heading"]').element
+    expect(document.activeElement).toBe(heading)
+
+    const forward = tab(heading)
+    expect(forward.defaultPrevented).toBe(false)
+
+    const backwardLoop = tab(heading, true)
+    expect(backwardLoop.defaultPrevented).toBe(true)
+    expect(document.activeElement).toBe(buttonElement(wrapper, 'last'))
+
+    loop.value = false
+    heading.focus()
+    const backwardNoLoop = tab(heading, true)
+    expect(backwardNoLoop.defaultPrevented).toBe(true)
+    expect(document.activeElement).toBe(heading)
+  })
+
+  it('contains Shift+Tab when focus rests on the non-tabbable scope root', () => {
+    const loop = ref(true)
+    const container = ref<HTMLElement | null>(null)
+    const wrapper = mountScope(
+      () => {
+        useFocusScope(container, { trapped: true, loop, autoFocus: false })
+      },
+      () =>
+        h('div', { ref: container, tabindex: '-1', 'data-testid': 'root' }, [
+          h('button', { type: 'button' }, 'First'),
+          h('button', { type: 'button' }, 'Last'),
+        ]),
+    )
+
+    const root = wrapper.get<HTMLElement>('[data-testid="root"]').element
+    root.focus()
+    expect(document.activeElement).toBe(root)
+
+    const forward = tab(root)
+    expect(forward.defaultPrevented).toBe(false)
+
+    const backwardLoop = tab(root, true)
+    expect(backwardLoop.defaultPrevented).toBe(true)
+    expect(document.activeElement).toBe(buttonElement(wrapper, 'last'))
+
+    loop.value = false
+    root.focus()
+    const backwardNoLoop = tab(root, true)
+    expect(backwardNoLoop.defaultPrevented).toBe(true)
+    expect(document.activeElement).toBe(root)
+  })
+
+  it('contains Tab from a non-tabbable element after the last tabbable and allows internal movement from middle non-tabbables', async () => {
+    const container = ref<HTMLElement | null>(null)
+    const wrapper = mountScope(
+      () => {
+        useFocusScope(container, { trapped: true, loop: true, autoFocus: true })
+      },
+      () =>
+        h('div', { ref: container, tabindex: '-1' }, [
+          h('button', { type: 'button' }, 'First'),
+          h(
+            'p',
+            { tabindex: '-1', 'data-autofocus': '', 'data-testid': 'middle' },
+            'Middle note',
+          ),
+          h('button', { type: 'button' }, 'Last'),
+          h(
+            'p',
+            { tabindex: '-1', 'data-testid': 'trailing' },
+            'Trailing note',
+          ),
+        ]),
+    )
+
+    await nextTick()
+    const middle = wrapper.get<HTMLElement>('[data-testid="middle"]').element
+    expect(document.activeElement).toBe(middle)
+    expect(tab(middle).defaultPrevented).toBe(false)
+    expect(tab(middle, true).defaultPrevented).toBe(false)
+
+    const trailing = wrapper.get<HTMLElement>(
+      '[data-testid="trailing"]',
+    ).element
+    trailing.focus()
+    expect(tab(trailing, true).defaultPrevented).toBe(false)
+
+    const forwardTrailing = tab(trailing)
+    expect(forwardTrailing.defaultPrevented).toBe(true)
+    expect(document.activeElement).toBe(buttonElement(wrapper, 0))
+  })
 })
