@@ -1,0 +1,101 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "handwritten",
+  "name": "GhostCard",
+  "package": "@ghostvue/themes",
+  "status": "experimental",
+  "description": "Themed GhostCard with elevation-1 chrome and optional interactive spotlight. Sets data-themed on the inner root.",
+  "props": [
+    {
+      "name": "as",
+      "type": "GhostCardElement",
+      "default": "article",
+      "required": false,
+      "description": "Root element passed to the unstyled primitive.",
+      "deprecated": false
+    },
+    {
+      "name": "interactive",
+      "type": "'spotlight'",
+      "default": null,
+      "required": false,
+      "description": "Opt-in ambient spotlight on the card.",
+      "deprecated": false
+    }
+  ],
+  "models": [],
+  "events": [],
+  "slots": [
+    {
+      "name": "default",
+      "props": [],
+      "description": "Primary content."
+    },
+    {
+      "name": "footer",
+      "props": [],
+      "description": "Optional footer region."
+    },
+    {
+      "name": "header",
+      "props": [],
+      "description": "Optional header region."
+    }
+  ],
+  "exposed": [
+    {
+      "name": "element",
+      "kind": "property",
+      "type": "HTMLElement | null",
+      "description": "Inner unstyled root after mount."
+    }
+  ],
+  "styling": {
+    "parts": [
+      {
+        "name": "root",
+        "description": "Themed card root with data-themed."
+      },
+      {
+        "name": "header",
+        "description": "Header slot wrapper."
+      },
+      {
+        "name": "content",
+        "description": "Content slot wrapper."
+      },
+      {
+        "name": "footer",
+        "description": "Footer slot wrapper."
+      },
+      {
+        "name": "glow",
+        "description": "Spotlight glow when interactive is spotlight."
+      }
+    ],
+    "states": [
+      {
+        "name": "off",
+        "description": "Spotlight inactive."
+      },
+      {
+        "name": "idle",
+        "description": "Spotlight idle at the host."
+      },
+      {
+        "name": "tracking",
+        "description": "Pointer tracking active."
+      }
+    ],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "generic",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/practices/names-and-descriptions/",
+    "keyboard": {
+      "Tab": "Same contract as the unstyled GhostCard."
+    },
+    "requiredAriaAttributes": []
+  },
+  "examples": ["card/themed"]
+}

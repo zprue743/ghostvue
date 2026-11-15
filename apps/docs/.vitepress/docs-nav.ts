@@ -22,6 +22,7 @@ export const docsSidebar: LlmsSidebarGroup[] = [
       { text: 'GhostBreadcrumb', link: '/components/breadcrumb' },
       { text: 'GhostCollapsible', link: '/components/collapsible' },
       { text: 'GhostButton', link: '/components/button' },
+      { text: 'GhostCard', link: '/components/card' },
       { text: 'GhostCheckbox', link: '/components/checkbox' },
       { text: 'GhostDialog', link: '/components/dialog' },
       { text: 'GhostDropdownMenu', link: '/components/dropdown-menu' },
@@ -142,6 +143,10 @@ export const docsSidebar: LlmsSidebarGroup[] = [
       {
         text: 'GhostEmptyState specification',
         link: '/components/empty-state-spec',
+      },
+      {
+        text: 'GhostCard specification',
+        link: '/components/card-spec',
       },
       {
         text: 'GhostInlineAlert specification',
