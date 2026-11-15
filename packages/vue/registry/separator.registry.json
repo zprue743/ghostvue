@@ -5,7 +5,9 @@
     "title": "GhostSeparator",
     "specStatus": "approved",
     "link": "/components/separator",
-    "specLink": "/components/separator-spec"
+    "specLink": "/specs/separator",
+    "category": "utilities",
+    "sidebarLabel": "Separator"
   },
   "vueBarrel": [
     "export { default as GhostSeparator } from './GhostSeparator.vue'",

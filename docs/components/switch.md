@@ -121,5 +121,5 @@ SSR markup is deterministic from props and slot content. The form-reset
 listener is registered after mount. No other listeners, timers, or
 observers require cleanup.
 
-See the [GhostSwitch specification](./switch-spec.md) for the complete
+See the [GhostSwitch specification](/specs/switch) for the complete
 behavior and compatibility contract, including the host-element decision.

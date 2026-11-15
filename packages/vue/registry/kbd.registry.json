@@ -5,7 +5,9 @@
     "title": "GhostKbd",
     "specStatus": "approved",
     "link": "/components/kbd",
-    "specLink": "/components/kbd-spec"
+    "specLink": "/specs/kbd",
+    "category": "utilities",
+    "sidebarLabel": "Kbd"
   },
   "vueBarrel": [
     "export { default as GhostKbd } from './GhostKbd.vue'",

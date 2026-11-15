@@ -64,4 +64,4 @@ up the default ring and dot styles.
 - Native group: one tab stop; arrow keys move focus and select among items with a
   shared `name`. RTL follows the root or ancestor `dir`.
 
-See the [specification](./radio-group-spec.md) for the full contract.
+See the [specification](/specs/radio-group) for the full contract.

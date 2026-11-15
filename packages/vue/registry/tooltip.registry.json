@@ -5,7 +5,9 @@
     "title": "GhostTooltip",
     "specStatus": "approved",
     "link": "/components/tooltip",
-    "specLink": "/components/tooltip-spec"
+    "specLink": "/specs/tooltip",
+    "category": "overlays",
+    "sidebarLabel": "Tooltip"
   },
   "vueBarrel": [
     "export { default as GhostTooltip } from './GhostTooltip.vue'",

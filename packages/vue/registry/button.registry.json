@@ -5,7 +5,9 @@
     "title": "GhostButton",
     "specStatus": "approved",
     "link": "/components/button",
-    "specLink": "/components/button-spec"
+    "specLink": "/specs/button",
+    "category": "actions",
+    "sidebarLabel": "Button"
   },
   "vueBarrel": [
     "export { default as GhostButton } from './GhostButton.vue'",

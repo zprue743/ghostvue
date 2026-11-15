@@ -5,7 +5,9 @@
     "title": "GhostCard",
     "specStatus": "approved",
     "link": "/components/card",
-    "specLink": "/components/card-spec"
+    "specLink": "/specs/card",
+    "category": "utilities",
+    "sidebarLabel": "Card"
   },
   "vueBarrel": [
     "export { default as GhostCard } from './GhostCard.vue'",

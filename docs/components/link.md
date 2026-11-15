@@ -73,4 +73,4 @@ Defaults omit matching `data-*` hooks so CSS can treat a missing attribute as
   `GhostVisuallyHidden` text.
 - Disabled links are not in the tab order and must not retain an `href`.
 
-Specification: [GhostLink specification](./link-spec.md).
+Specification: [GhostLink specification](/specs/link).

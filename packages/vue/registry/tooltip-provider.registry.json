@@ -3,7 +3,10 @@
   "slug": "tooltip-provider",
   "docs": {
     "title": "GhostTooltip Provider",
-    "specStatus": "approved"
+    "specStatus": "approved",
+    "category": "overlays",
+    "sidebarLabel": "Tooltip provider",
+    "specLink": "/specs/tooltip-provider"
   },
   "vueBarrel": [
     "export { default as GhostTooltipProvider } from './GhostTooltipProvider.vue'",

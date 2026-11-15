@@ -76,5 +76,5 @@ Keeps `visibility: hidden` until `useFloating().isPositioned` resolves. Sets
 
 ## Specification
 
-See [GhostDropdownMenu specification](./dropdown-menu-spec.md) and
+See [GhostDropdownMenu specification](/specs/dropdown-menu) and
 [ADR 0011](../adr/0011-overlay-primitives.md).

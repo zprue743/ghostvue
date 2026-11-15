@@ -5,7 +5,9 @@
     "title": "GhostDialog",
     "specStatus": "approved",
     "link": "/components/dialog",
-    "specLink": "/components/dialog-spec"
+    "specLink": "/specs/dialog",
+    "category": "overlays",
+    "sidebarLabel": "Dialog"
   },
   "vueBarrel": [
     "export { default as GhostDialog } from './GhostDialog.vue'",

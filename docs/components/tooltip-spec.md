@@ -244,4 +244,4 @@ Tooltip content is not in the tab order and must not receive focus.
 ## Related primitives
 
 - `GhostTooltipProvider` (GHO-118) coordinates open-delay skipping between
-  adjacent tooltips. See [GhostTooltipProvider specification](./tooltip-provider-spec.md).
+  adjacent tooltips. See [GhostTooltipProvider specification](/specs/tooltip-provider).

@@ -5,7 +5,9 @@
     "title": "GhostNumberInput",
     "specStatus": "approved",
     "link": "/components/number-input",
-    "specLink": "/components/number-input-spec"
+    "specLink": "/specs/number-input",
+    "category": "forms",
+    "sidebarLabel": "Number input"
   },
   "vueBarrel": [
     "export { default as GhostNumberInput } from './GhostNumberInput.vue'",

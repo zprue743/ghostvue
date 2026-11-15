@@ -91,5 +91,5 @@ component is not focusable and adds no keyboard behavior. Window splitters
 
 SSR markup is deterministic from props. Setup does not read browser globals.
 
-See the [GhostSeparator specification](./separator-spec.md) for the complete
+See the [GhostSeparator specification](/specs/separator) for the complete
 behavior and compatibility contract.

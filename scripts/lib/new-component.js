@@ -185,7 +185,7 @@ export type { ${name}Exposed }
 
 Scaffold only: a neutral content container with a default slot, native attribute
 fallthrough, and headless/themed \`element\` refs. It does not implement ${suffix} widget
-semantics. Complete and approve the [specification](./${slug}-spec.md) before
+semantics. Complete and approve the [specification](/specs/${slug}) before
 using it in production.
 
 ## Example
@@ -210,7 +210,7 @@ state, SSR requirements, and meaningful behavior tests in the specification.
 
 Status: draft; approval required before implementing production behavior.
 
-Use the [component specification template](./spec-template.md) to resolve:
+Use the [component specification template](/components/spec-template) to resolve:
 
 - Purpose, supported composition, and non-goals.
 - Props, events, slots, exposed members, and state ownership.
@@ -330,7 +330,9 @@ test('${name} scaffold renders accessible content', async ({ page }) => {
       title: name,
       specStatus: 'draft',
       link: `/components/${slug}`,
-      specLink: `/components/${slug}-spec`,
+      specLink: `/specs/${slug}`,
+      category: 'utilities',
+      sidebarLabel: suffix.replace(/([a-z])([A-Z])/g, '$1 $2'),
     },
     vueBarrel: [
       `export { default as ${name} } from './${name}.vue'`,
@@ -364,11 +366,6 @@ test('${name} scaffold renders accessible content', async ({ page }) => {
   primitives.familyOrder.push(slug)
   primitives.docsComponentNavOrder ??= []
   primitives.docsComponentNavOrder.push(slug)
-  primitives.docsSpecNavItems ??= []
-  primitives.docsSpecNavItems.push({
-    title: `${name} specification`,
-    link: `/components/${slug}-spec`,
-  })
   primitives.themesCssImports ??= []
   if (!primitives.themesCssImports.includes(`${base}.css`)) {
     primitives.themesCssImports.push(`${base}.css`)

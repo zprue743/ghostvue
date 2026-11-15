@@ -5,7 +5,9 @@
     "title": "GhostEmptyState",
     "specStatus": "approved",
     "link": "/components/empty-state",
-    "specLink": "/components/empty-state-spec"
+    "specLink": "/specs/empty-state",
+    "category": "feedback",
+    "sidebarLabel": "Empty state"
   },
   "vueBarrel": [
     "export { default as GhostEmptyState } from './GhostEmptyState.vue'",

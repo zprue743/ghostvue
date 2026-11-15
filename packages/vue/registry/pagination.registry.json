@@ -5,7 +5,9 @@
     "title": "GhostPagination",
     "specStatus": "approved",
     "link": "/components/pagination",
-    "specLink": "/components/pagination-spec"
+    "specLink": "/specs/pagination",
+    "category": "navigation-disclosure",
+    "sidebarLabel": "Pagination"
   },
   "vueBarrel": [
     "export { default as GhostPagination } from './GhostPagination.vue'",

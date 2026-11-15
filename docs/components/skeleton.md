@@ -114,5 +114,5 @@ is CSS, so it does not affect hydration.
 muted fill. `forced-colors: active` maps the fill to `Canvas`, strokes
 `CanvasText`, and drops the overlay.
 
-See the [GhostSkeleton specification](./skeleton-spec.md) for the complete
+See the [GhostSkeleton specification](/specs/skeleton) for the complete
 behavior and compatibility contract.

@@ -5,7 +5,9 @@
     "title": "GhostSpinner",
     "specStatus": "approved",
     "link": "/components/spinner",
-    "specLink": "/components/spinner-spec"
+    "specLink": "/specs/spinner",
+    "category": "feedback",
+    "sidebarLabel": "Spinner"
   },
   "vueBarrel": [
     "export { default as GhostSpinner } from './GhostSpinner.vue'",

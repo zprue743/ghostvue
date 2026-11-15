@@ -5,7 +5,9 @@
     "title": "GhostAccordion",
     "specStatus": "approved",
     "link": "/components/accordion",
-    "specLink": "/components/accordion-spec"
+    "specLink": "/specs/accordion",
+    "category": "navigation-disclosure",
+    "sidebarLabel": "Accordion"
   },
   "vueBarrel": [
     "export { default as GhostAccordion } from './GhostAccordion.vue'",

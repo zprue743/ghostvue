@@ -2,13 +2,16 @@ import { mkdtemp, readFile, rm } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join, resolve } from 'node:path'
 
-import { afterEach, describe, expect, it } from 'vitest'
+import { afterEach, beforeAll, describe, expect, it } from 'vitest'
+
+import { writeComponentReferences } from '../../scripts/lib/component-reference.js'
 
 import {
   docsDescription,
   docsSidebar,
   docsTitle,
 } from '../../apps/docs/.vitepress/docs-nav'
+import type { LlmsSidebarItem } from '../../apps/docs/.vitepress/generate-llms-txt'
 import {
   expandExampleTags,
   generateLlmsDocuments,
@@ -19,16 +22,28 @@ import {
 
 const docsRoot = resolve(process.cwd(), 'docs')
 
+function collectSidebarLinks(
+  items: readonly LlmsSidebarItem[],
+): { title: string; link: string }[] {
+  return items.flatMap((item) => {
+    const links = item.link ? [{ title: item.text, link: item.link }] : []
+    const nested = item.items ? collectSidebarLinks(item.items) : []
+    return [...links, ...nested]
+  })
+}
+
 function sidebarPages(): { title: string; link: string }[] {
-  return docsSidebar.flatMap((group) =>
-    group.items.flatMap((item) =>
-      item.link ? [{ title: item.text, link: item.link }] : [],
-    ),
-  )
+  return docsSidebar.flatMap((group) => collectSidebarLinks(group.items))
 }
 
 describe('llms.txt generation', () => {
   const tempDirs: string[] = []
+
+  beforeAll(async () => {
+    // API reference pages are generated at docs build time; materialize them
+    // so sidebar links resolve the same way in unit/integration shards.
+    await writeComponentReferences(process.cwd())
+  })
 
   afterEach(async () => {
     await Promise.all(

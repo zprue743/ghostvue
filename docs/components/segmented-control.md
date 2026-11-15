@@ -5,7 +5,7 @@ layout modes, or filters. It reuses `useGhostToggleGroup` toggle-button
 semantics (`aria-pressed`, roving focus) and adds a sliding `data-part="indicator"`
 positioned from CSS variables—no layout reads during SSR.
 
-See the [specification](./segmented-control-spec.md) for the accessibility contract.
+See the [specification](/specs/segmented-control) for the accessibility contract.
 
 ## Examples
 

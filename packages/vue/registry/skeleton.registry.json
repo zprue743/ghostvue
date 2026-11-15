@@ -5,7 +5,9 @@
     "title": "GhostSkeleton",
     "specStatus": "approved",
     "link": "/components/skeleton",
-    "specLink": "/components/skeleton-spec"
+    "specLink": "/specs/skeleton",
+    "category": "feedback",
+    "sidebarLabel": "Skeleton"
   },
   "vueBarrel": [
     "export { default as GhostSkeleton } from './GhostSkeleton.vue'",

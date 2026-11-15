@@ -5,7 +5,9 @@
     "title": "GhostTable",
     "specStatus": "approved",
     "link": "/components/table",
-    "specLink": "/components/table-spec"
+    "specLink": "/specs/table",
+    "category": "utilities",
+    "sidebarLabel": "Table"
   },
   "vueBarrel": [
     "export { default as GhostTable } from './GhostTable.vue'",

@@ -22,10 +22,35 @@ const GENERATED_BANNER =
  * }} PrimitivesRegistry
  */
 
+const DOC_CATEGORY_ORDER = [
+  'actions',
+  'forms',
+  'navigation-disclosure',
+  'overlays',
+  'feedback',
+  'utilities',
+]
+
+const DOC_CATEGORY_LABELS = {
+  actions: 'Actions',
+  forms: 'Forms',
+  'navigation-disclosure': 'Navigation & disclosure',
+  overlays: 'Overlays',
+  feedback: 'Feedback',
+  utilities: 'Utilities',
+}
+
 /** @typedef {{
  *   schemaVersion: string
  *   slug: string
- *   docs?: { title: string; specStatus?: string; link?: string; specLink?: string }
+ *   docs?: {
+ *     title: string
+ *     specStatus?: string
+ *     link?: string
+ *     specLink?: string
+ *     category?: string
+ *     sidebarLabel?: string
+ *   }
  *   vueBarrel?: string[]
  *   themesBarrel?: string[]
  *   themesCss?: string
@@ -230,48 +255,163 @@ ${entries.join('\n')}
 }
 
 /**
- * @param {PrimitivesRegistry} primitives
- * @param {FamilyRegistry[]} families
+ * @param {string} value
  */
+function escapeTsString(value) {
+  return value.replaceAll("'", "\\'")
+}
+
 /**
- * @param {PrimitivesRegistry} primitives
  * @param {FamilyRegistry[]} families
  */
-function buildDocsNavComponents(primitives, families) {
-  const bySlug = new Map(families.map((family) => [family.slug, family]))
-  const order = primitives.docsComponentNavOrder ?? families.map((f) => f.slug)
-  const items = []
-  for (const slug of order) {
-    const family = bySlug.get(slug)
-    if (!family?.docs?.link) continue
-    const title = family.docs.title
-    const link = family.docs.link
-    const needsMultiline =
-      title === 'GhostInteractiveSurface' || title === 'GhostSegmentedControl'
-    if (needsMultiline) {
-      items.push(
-        `      {\n        text: '${title}',\n        link: '${link}',\n      },`,
+function documentedComponentFamilies(families) {
+  return families.filter((family) => family.docs?.link)
+}
+
+/**
+ * @param {FamilyRegistry[]} families
+ */
+function componentFamiliesByCategory(families) {
+  const documented = documentedComponentFamilies(families)
+  /** @type {Map<string, FamilyRegistry[]>} */
+  const byCategory = new Map()
+  for (const family of documented) {
+    const category = family.docs?.category
+    if (!category) {
+      throw new Error(
+        `packages/vue/registry/${family.slug}.registry.json is missing docs.category`,
       )
-    } else {
-      items.push(`      { text: '${title}', link: '${link}' },`)
     }
+    const bucket = byCategory.get(category) ?? []
+    bucket.push(family)
+    byCategory.set(category, bucket)
   }
+  for (const members of byCategory.values()) {
+    members.sort((left, right) =>
+      (left.docs?.sidebarLabel ?? left.slug).localeCompare(
+        right.docs?.sidebarLabel ?? right.slug,
+      ),
+    )
+  }
+  return byCategory
+}
+
+/**
+ * @param {FamilyRegistry[]} families
+ */
+function buildDocsNavComponents(families) {
+  const byCategory = componentFamiliesByCategory(families)
+  const lines = [
+    "      { text: 'Overview', link: '/components/' },",
+    ...DOC_CATEGORY_ORDER.flatMap((categoryKey) => {
+      const members = byCategory.get(categoryKey) ?? []
+      if (members.length === 0) return []
+      return [
+        '      {',
+        `        text: '${escapeTsString(DOC_CATEGORY_LABELS[categoryKey])}',`,
+        '        items: [',
+        ...members.map(
+          (family) =>
+            `          { text: '${escapeTsString(family.docs.sidebarLabel)}', link: '${family.docs.link}' },`,
+        ),
+        '        ],',
+        '      },',
+      ]
+    }),
+  ]
+  const flatLinks = documentedComponentFamilies(families)
+    .sort((left, right) => left.docs.link.localeCompare(right.docs.link))
+    .map((family) => `  '${family.docs.link}',`)
   return `${GENERATED_BANNER}
 import type { LlmsSidebarGroup } from '../generate-llms-txt'
 
-export const generatedComponentSidebarItems: LlmsSidebarGroup['items'] = [
-${items.join('\n')}
+export const generatedComponentSidebar: LlmsSidebarGroup['items'] = [
+${lines.join('\n')}
+]
+
+export const generatedComponentPageLinks = [
+${flatLinks.join('\n')}
+] as const
+`
+}
+
+/**
+ * @param {string} repositoryRoot
+ * @param {FamilyRegistry[]} families
+ */
+async function buildDocsNavCatalog(repositoryRoot, families) {
+  const byCategory = componentFamiliesByCategory(families)
+  const categoryBlocks = []
+  for (const categoryKey of DOC_CATEGORY_ORDER) {
+    const members = byCategory.get(categoryKey) ?? []
+    if (members.length === 0) continue
+    const itemLines = []
+    for (const family of members) {
+      const manifestPath = join(
+        repositoryRoot,
+        `packages/vue/manifests/ghost-${family.slug}.manifest.json`,
+      )
+      let description = ''
+      try {
+        const manifest = JSON.parse(await readFile(manifestPath, 'utf8'))
+        if (typeof manifest.description === 'string') {
+          description = manifest.description
+        }
+      } catch {
+        description = ''
+      }
+      itemLines.push(
+        '        {',
+        `          label: '${escapeTsString(family.docs.sidebarLabel)}',`,
+        `          link: '${family.docs.link}',`,
+        `          description: '${escapeTsString(description)}',`,
+        '        },',
+      )
+    }
+    categoryBlocks.push(
+      '    {',
+      `      category: '${escapeTsString(DOC_CATEGORY_LABELS[categoryKey])}',`,
+      `      categoryKey: '${categoryKey}',`,
+      '      items: [',
+      ...itemLines,
+      '      ],',
+      '    },',
+    )
+  }
+  return `${GENERATED_BANNER}
+export interface GeneratedComponentCatalogEntry {
+  label: string
+  link: string
+  description: string
+}
+
+export interface GeneratedComponentCatalogGroup {
+  category: string
+  categoryKey: string
+  items: GeneratedComponentCatalogEntry[]
+}
+
+export const generatedComponentCatalog: GeneratedComponentCatalogGroup[] = [
+${categoryBlocks.join('\n')}
 ]
 `
 }
 
 /**
- * @param {PrimitivesRegistry} primitives
+ * @param {FamilyRegistry[]} families
  */
-function buildDocsNavSpecs(primitives) {
-  const items = (primitives.docsSpecNavItems ?? []).map(
-    (entry) => `      { text: '${entry.title}', link: '${entry.link}' },`,
-  )
+function buildDocsNavSpecs(families) {
+  const items = families
+    .filter((family) => family.docs?.specLink)
+    .sort((left, right) =>
+      (left.docs?.sidebarLabel ?? left.slug).localeCompare(
+        right.docs?.sidebarLabel ?? right.slug,
+      ),
+    )
+    .map(
+      (family) =>
+        `      { text: '${escapeTsString(family.docs.sidebarLabel)}', link: '${family.docs.specLink}' },`,
+    )
   return `${GENERATED_BANNER}
 import type { LlmsSidebarGroup } from '../generate-llms-txt'
 
@@ -332,14 +472,21 @@ export async function syncRepositoryRegistries({ repositoryRoot, write }) {
     [
       'apps/docs/.vitepress/.registries/docs-nav.components.generated.ts',
       await formatTypescript(
-        buildDocsNavComponents(primitives, families),
+        buildDocsNavComponents(families),
+        join(repositoryRoot, 'apps/docs/.vitepress/docs-nav.ts'),
+      ),
+    ],
+    [
+      'apps/docs/.vitepress/.registries/docs-nav.catalog.generated.ts',
+      await formatTypescript(
+        await buildDocsNavCatalog(repositoryRoot, families),
         join(repositoryRoot, 'apps/docs/.vitepress/docs-nav.ts'),
       ),
     ],
     [
       'apps/docs/.vitepress/.registries/docs-nav.specs.generated.ts',
       await formatTypescript(
-        buildDocsNavSpecs(primitives),
+        buildDocsNavSpecs(families),
         join(repositoryRoot, 'apps/docs/.vitepress/docs-nav.ts'),
       ),
     ],

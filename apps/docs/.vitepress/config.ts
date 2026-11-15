@@ -2,7 +2,13 @@ import { fileURLToPath } from 'node:url'
 
 import { defineConfig } from 'vitepress'
 
-import { docsDescription, docsSidebar, docsTitle } from './docs-nav'
+import {
+  docsDescription,
+  docsSidebar,
+  docsSidebars,
+  docsTitle,
+} from './docs-nav'
+import { buildSpecRewrites } from './spec-rewrites'
 import { expandExampleSnippets } from './expand-example-snippets'
 import { writeLlmsTxtFiles } from './generate-llms-txt'
 import {
@@ -25,11 +31,9 @@ export default defineConfig({
   cleanUrls: true,
   // Vercel static hosting only strips `.html` when `apps/docs/vercel.json`
   // also sets `cleanUrls`. Keep the two flags together.
-  rewrites: {
-    // Sidebar links to `/adr/`; VitePress would otherwise emit README.html.
-    // Leave docs/adr/README.md in place so GitHub still renders the index.
-    'adr/README.md': 'adr/index.md',
-  },
+  rewrites: buildSpecRewrites(
+    fileURLToPath(new URL('../../../docs', import.meta.url)),
+  ),
   // Restore a persisted theme before paint; first paint dogfoods calm (ADR 0008).
   head: [
     ['link', { rel: 'icon', href: '/favicon.svg', type: 'image/svg+xml' }],
@@ -115,7 +119,7 @@ export default defineConfig({
       },
       {
         text: 'Components',
-        link: '/components/button',
+        link: '/components/',
         activeMatch: '^/components/(?!.*-spec)',
       },
       {
@@ -127,10 +131,10 @@ export default defineConfig({
         text: 'Contribute',
         link: '/contributing/workflow',
         activeMatch:
-          '^/(contributing/|architecture/|standards/|agents/|adr/|components/.*-spec)',
+          '^/(contributing/|architecture/|standards/|agents/|adr/|specs/)',
       },
     ],
-    sidebar: docsSidebar,
+    sidebar: docsSidebars,
     socialLinks: [
       { icon: 'github', link: 'https://github.com/zprue743/ghostvue' },
     ],

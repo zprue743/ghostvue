@@ -108,7 +108,7 @@ baseline at mount for predictable uncontrolled instances. Reusing the same
 control for another record without remounting keeps the original baseline — use
 controlled state or `:key` when the baseline must follow the record.
 
-**Form reset reconciliation** matches [GhostInput](./input-spec.md#v-model-contracts):
+**Form reset reconciliation** matches [GhostInput](/specs/input#v-model-contracts):
 emit the captured baseline (skip redundant emit via `Object.is`), parent-owned
 controlled values, `nextTick` DOM restore when ignored, microtask after full
 `reset` dispatch (late `document` / `window` cancel is a no-op). The root

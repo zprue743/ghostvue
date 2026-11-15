@@ -5,7 +5,9 @@
     "title": "GhostCollapsible",
     "specStatus": "approved",
     "link": "/components/collapsible",
-    "specLink": "/components/collapsible-spec"
+    "specLink": "/specs/collapsible",
+    "category": "navigation-disclosure",
+    "sidebarLabel": "Collapsible"
   },
   "vueBarrel": [
     "export { default as GhostCollapsible } from './GhostCollapsible.vue'",

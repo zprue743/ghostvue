@@ -5,7 +5,9 @@
     "title": "GhostInput",
     "specStatus": "approved",
     "link": "/components/input",
-    "specLink": "/components/input-spec"
+    "specLink": "/specs/input",
+    "category": "forms",
+    "sidebarLabel": "Input"
   },
   "vueBarrel": [
     "export { default as GhostInput } from './GhostInput.vue'",

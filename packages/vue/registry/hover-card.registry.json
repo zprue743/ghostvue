@@ -5,7 +5,9 @@
     "title": "GhostHoverCard",
     "specStatus": "approved",
     "link": "/components/hover-card",
-    "specLink": "/components/hover-card-spec"
+    "specLink": "/specs/hover-card",
+    "category": "overlays",
+    "sidebarLabel": "Hover card"
   },
   "vueBarrel": [
     "export { default as GhostHoverCard } from './GhostHoverCard.vue'",

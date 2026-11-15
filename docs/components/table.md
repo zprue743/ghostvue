@@ -76,4 +76,4 @@ Use `GhostTableCaption` when the table needs a name. Set `scope` on
 filtering, and selection are out of scope; compose controls inside cells when
 needed.
 
-Specification: [GhostTable specification](./table-spec.md).
+Specification: [GhostTable specification](/specs/table).

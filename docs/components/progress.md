@@ -117,5 +117,5 @@ tokenized reduced-motion recipe. See the spec for the full justification.
 SSR markup is deterministic from props. Reduced motion is a CSS media query,
 not a client-only JavaScript branch.
 
-See the [GhostProgress specification](./progress-spec.md) for the complete
+See the [GhostProgress specification](/specs/progress) for the complete
 behavior and compatibility contract.

@@ -102,5 +102,5 @@ SSR markup is deterministic from props for checked and disabled. Mixed cannot
 be an HTML attribute; SSR still sets `data-state="indeterminate"`, and the
 DOM property is written after mount.
 
-See the [GhostCheckbox specification](./checkbox-spec.md) for the complete
+See the [GhostCheckbox specification](/specs/checkbox) for the complete
 behavior and compatibility contract.

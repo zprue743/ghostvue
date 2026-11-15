@@ -127,5 +127,5 @@ deterministic IDs.
 
 ## Specification
 
-See [GhostDialog specification](./dialog-spec.md) and
+See [GhostDialog specification](/specs/dialog) and
 [ADR 0012: Modal overlays](../adr/0012-modal-overlays.md).

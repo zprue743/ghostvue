@@ -65,4 +65,4 @@ reserved for the whole component.
 ## See also
 
 - [`GhostButton`](./button.md) — shared action semantics for custom layouts.
-- [Specification](./pagination-spec.md)
+- [Specification](/specs/pagination)

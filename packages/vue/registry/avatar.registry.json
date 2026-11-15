@@ -4,7 +4,9 @@
   "docs": {
     "title": "GhostAvatar",
     "specStatus": "approved",
-    "link": "/components/avatar"
+    "link": "/components/avatar",
+    "category": "feedback",
+    "sidebarLabel": "Avatar"
   },
   "vueBarrel": [
     "export { default as GhostAvatar } from './GhostAvatar.vue'",

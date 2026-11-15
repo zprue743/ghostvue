@@ -5,7 +5,9 @@
     "title": "GhostToolbar",
     "specStatus": "approved",
     "link": "/components/toolbar",
-    "specLink": "/components/toolbar-spec"
+    "specLink": "/specs/toolbar",
+    "category": "actions",
+    "sidebarLabel": "Toolbar"
   },
   "vueBarrel": [
     "export { default as GhostToolbar } from './GhostToolbar.vue'",

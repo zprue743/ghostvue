@@ -147,7 +147,7 @@ checked (`true`) on click. If a consumer sets both `modelValue` and
 library cycle.
 
 **Reset baseline and form reset** follow the same GhostVue policy as
-[GhostInput](./input-spec.md#v-model-contracts): captured `defaultValue`
+[GhostInput](/specs/input#v-model-contracts): captured `defaultValue`
 baseline (not live native defaults), reset requests that baseline rather than
 the displayed `modelValue`, parent authority with deferred DOM restore
 (including `indeterminate` when applicable), microtask after full `reset`

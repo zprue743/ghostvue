@@ -51,5 +51,5 @@ native `required` validation.
 - `GhostSelectOption`, `GhostSelectGroup`, `GhostSelectLabel`
 - `useGhostSelect` for advanced composition
 
-See the [specification](./select-spec.md) for keyboard, typeahead, portal, and
+See the [specification](/specs/select) for keyboard, typeahead, portal, and
 SSR behavior.

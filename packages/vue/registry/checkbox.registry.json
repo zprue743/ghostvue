@@ -5,7 +5,9 @@
     "title": "GhostCheckbox",
     "specStatus": "approved",
     "link": "/components/checkbox",
-    "specLink": "/components/checkbox-spec"
+    "specLink": "/specs/checkbox",
+    "category": "forms",
+    "sidebarLabel": "Checkbox"
   },
   "vueBarrel": [
     "export { default as GhostCheckbox } from './GhostCheckbox.vue'",

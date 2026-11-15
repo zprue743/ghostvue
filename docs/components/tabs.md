@@ -37,7 +37,7 @@ and focus rings apply under `.ghost-theme` or `.ghost-themed-scope`.
 
 ## API
 
-See the [specification](./tabs-spec.md) for the full contract. Generated manifest
+See the [specification](/specs/tabs) for the full contract. Generated manifest
 data is available under `packages/vue/manifests/ghost-tabs*.manifest.json`.
 
 | Part               | Role       | Key attributes                                     |
@@ -49,6 +49,6 @@ data is available under `packages/vue/manifests/ghost-tabs*.manifest.json`.
 
 ## Accessibility
 
-Follow the [tabs specification](./tabs-spec.md#accessibility-contract) for the
+Follow the [tabs specification](/specs/tabs#accessibility-contract) for the
 keyboard map and assistive-technology relationships. Disabled triggers are
 skipped during roving navigation.

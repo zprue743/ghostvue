@@ -72,5 +72,5 @@ exposes `{ element, focus, blur }`.
 
 ## Specification
 
-See [GhostPopover specification](./popover-spec.md) and
+See [GhostPopover specification](/specs/popover) and
 [ADR 0011](../adr/0011-overlay-primitives.md).

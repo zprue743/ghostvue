@@ -39,7 +39,7 @@ exposed members, styling hooks, and executable examples.
   `GhostDropdownMenu` semantics inside each menu.
 
 Nested submenus inside a menu are not supported yet (see
-[specification](./menubar-spec.md)).
+[specification](/specs/menubar)).
 
-See [GhostMenubar specification](./menubar-spec.md) for the full accessibility
+See [GhostMenubar specification](/specs/menubar) for the full accessibility
 contract and keyboard table.

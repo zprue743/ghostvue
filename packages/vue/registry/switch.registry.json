@@ -5,7 +5,9 @@
     "title": "GhostSwitch",
     "specStatus": "approved",
     "link": "/components/switch",
-    "specLink": "/components/switch-spec"
+    "specLink": "/specs/switch",
+    "category": "forms",
+    "sidebarLabel": "Switch"
   },
   "vueBarrel": [
     "export { default as GhostSwitch } from './GhostSwitch.vue'",

@@ -5,7 +5,9 @@
     "title": "GhostVisuallyHidden",
     "specStatus": "approved",
     "link": "/components/visually-hidden",
-    "specLink": "/components/visually-hidden-spec"
+    "specLink": "/specs/visually-hidden",
+    "category": "utilities",
+    "sidebarLabel": "Visually hidden"
   },
   "vueBarrel": [
     "export { default as GhostVisuallyHidden } from './GhostVisuallyHidden.vue'",

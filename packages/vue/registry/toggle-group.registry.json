@@ -5,7 +5,9 @@
     "title": "GhostToggleGroup",
     "specStatus": "approved",
     "link": "/components/toggle-group",
-    "specLink": "/components/toggle-group-spec"
+    "specLink": "/specs/toggle-group",
+    "category": "actions",
+    "sidebarLabel": "Toggle group"
   },
   "vueBarrel": [
     "export { default as GhostToggleGroup } from './GhostToggleGroup.vue'",

@@ -201,7 +201,12 @@ describe('component scaffolding', () => {
         ),
       )
       expect(familyRegistry).toMatchObject({
-        docs: { title: 'GhostScaffoldProbe' },
+        docs: {
+          title: 'GhostScaffoldProbe',
+          category: 'utilities',
+          sidebarLabel: 'Scaffold Probe',
+          specLink: '/specs/scaffold-probe',
+        },
         examples: [{ id: 'scaffold-probe/basic' }],
       })
       run(root, ['registries:write'])

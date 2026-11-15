@@ -102,5 +102,5 @@ field. Disabled fields are not in sequential tab order; readonly fields are.
 SSR markup is deterministic from props and the current value. Auto-resize
 does not read browser globals during setup.
 
-See the [GhostTextarea specification](./textarea-spec.md) for the complete
+See the [GhostTextarea specification](/specs/textarea) for the complete
 behavior and compatibility contract.

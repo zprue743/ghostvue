@@ -86,4 +86,4 @@ The unstyled root uses class `ghost-inline-alert`, `data-part="root"`, and
 - Use `announce="status"` for recoverable informational updates after load.
 - Interactive controls belong in `#actions`; the root is not focusable.
 
-Specification: [GhostInlineAlert specification](./inline-alert-spec).
+Specification: [GhostInlineAlert specification](/specs/inline-alert).

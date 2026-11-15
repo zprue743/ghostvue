@@ -5,7 +5,9 @@
     "title": "GhostSlider",
     "specStatus": "approved",
     "link": "/components/slider",
-    "specLink": "/components/slider-spec"
+    "specLink": "/specs/slider",
+    "category": "forms",
+    "sidebarLabel": "Slider"
   },
   "vueBarrel": [
     "export { default as GhostSlider } from './GhostSlider.vue'",

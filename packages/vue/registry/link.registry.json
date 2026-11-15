@@ -5,7 +5,9 @@
     "title": "GhostLink",
     "specStatus": "approved",
     "link": "/components/link",
-    "specLink": "/components/link-spec"
+    "specLink": "/specs/link",
+    "category": "navigation-disclosure",
+    "sidebarLabel": "Link"
   },
   "vueBarrel": [
     "export { default as GhostLink } from './GhostLink.vue'",

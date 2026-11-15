@@ -126,5 +126,5 @@ visible focus indication, sufficient contrast, and an adequate touch target.
 SSR markup is deterministic from props and slot content, and setup does not read
 browser globals. No listeners, timers, or observers require cleanup.
 
-See the [approved GhostButton specification](./button-spec.md) for the complete
+See the [approved GhostButton specification](/specs/button) for the complete
 behavior and compatibility contract.

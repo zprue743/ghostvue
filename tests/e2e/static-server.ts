@@ -37,10 +37,16 @@ export async function startStaticServer(relativeRoot: string): Promise<{
 
       try {
         // Mirror Vercel `cleanUrls`: `/components/button` serves `button.html`.
-        const servedPath =
-          extname(requestedPath) === ''
-            ? `${requestedPath}.html`
-            : requestedPath
+        let servedPath = requestedPath
+        if (extname(requestedPath) === '') {
+          const clean = requestedPath.replace(/\/$/, '')
+          try {
+            await readFile(`${clean}.html`)
+            servedPath = `${clean}.html`
+          } catch {
+            servedPath = resolve(clean, 'index.html')
+          }
+        }
         const body = await readFile(servedPath)
         response
           .writeHead(200, {
