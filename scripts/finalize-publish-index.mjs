@@ -11,7 +11,8 @@ async function renamePublishArtifact(from, to) {
   try {
     await rename(from, to)
   } catch (error) {
-    if (/** @type {NodeJS.ErrnoException} */ (error).code !== 'ENOENT') throw error
+    if (/** @type {NodeJS.ErrnoException} */ (error).code !== 'ENOENT')
+      throw error
   }
 }
 
@@ -37,7 +38,8 @@ try {
   )
   await writeFile(indexJs, source)
 } catch (error) {
-  if (/** @type {NodeJS.ErrnoException} */ (error).code !== 'ENOENT') throw error
+  if (/** @type {NodeJS.ErrnoException} */ (error).code !== 'ENOENT')
+    throw error
 }
 
 const indexMap = join(dist, 'index.js.map')
@@ -48,7 +50,8 @@ try {
     .replaceAll(`${publishStem}.ts`, 'index.ts')
   await writeFile(indexMap, map)
 } catch (error) {
-  if (/** @type {NodeJS.ErrnoException} */ (error).code !== 'ENOENT') throw error
+  if (/** @type {NodeJS.ErrnoException} */ (error).code !== 'ENOENT')
+    throw error
 }
 
 await rm(join(dist, '.registries'), { recursive: true, force: true })

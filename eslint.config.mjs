@@ -14,6 +14,8 @@ export default tseslint.config(
       'test-results/**',
       'reports/verify-component/**',
       'packages/themes/src/generated/**',
+      '**/.registries/**',
+      '**/.publish-index.generated.ts',
       'packages/vue/type-tests-negative/**',
     ],
   },

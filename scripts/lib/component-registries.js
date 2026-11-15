@@ -92,7 +92,9 @@ function buildPackageBarrelBody(primitives, families, kind) {
 
   const barrelSource = primitives[barrelSourceKey]
   if (barrelSource) {
-    let source = barrelSource.endsWith('\n') ? barrelSource : `${barrelSource}\n`
+    let source = barrelSource.endsWith('\n')
+      ? barrelSource
+      : `${barrelSource}\n`
     const bySlug = new Map(families.map((family) => [family.slug, family]))
     for (const slug of primitives.familyOrder ?? []) {
       const family = bySlug.get(slug)
@@ -122,7 +124,9 @@ function buildPackageBarrelBody(primitives, families, kind) {
  * @param {FamilyRegistry[]} families
  */
 function buildVuePublicApi(primitives, families) {
-  return relocateBarrelImports(buildPackageBarrelBody(primitives, families, 'vue'))
+  return relocateBarrelImports(
+    buildPackageBarrelBody(primitives, families, 'vue'),
+  )
 }
 
 /**
