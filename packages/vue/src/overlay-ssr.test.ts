@@ -22,6 +22,11 @@ import GhostDropdownMenu from './GhostDropdownMenu.vue'
 import GhostDropdownMenuContent from './GhostDropdownMenuContent.vue'
 import GhostDropdownMenuItem from './GhostDropdownMenuItem.vue'
 import GhostDropdownMenuTrigger from './GhostDropdownMenuTrigger.vue'
+import GhostMenubar from './GhostMenubar.vue'
+import GhostMenubarContent from './GhostMenubarContent.vue'
+import GhostMenubarItem from './GhostMenubarItem.vue'
+import GhostMenubarMenu from './GhostMenubarMenu.vue'
+import GhostMenubarTrigger from './GhostMenubarTrigger.vue'
 import GhostHoverCard from './GhostHoverCard.vue'
 import GhostHoverCardContent from './GhostHoverCardContent.vue'
 import GhostHoverCardTrigger from './GhostHoverCardTrigger.vue'
@@ -132,6 +137,36 @@ describe('overlay primitives in Node SSR (no window or document)', () => {
     expect(openHtml).toContain('Visible item')
     expect(openHtml).toContain('role="menu"')
     expect(openHtml).toContain('visibility:hidden')
+  })
+
+  it('renders GhostMenubar closed menus cleanly in Node SSR', async () => {
+    expect(typeof window).toBe('undefined')
+    expect(typeof document).toBe('undefined')
+
+    const ClosedApp = defineComponent({
+      setup() {
+        return () =>
+          h(GhostMenubar, null, {
+            default: () =>
+              h(GhostMenubarMenu, null, {
+                default: () => [
+                  h(GhostMenubarTrigger, null, () => 'File'),
+                  h(GhostMenubarContent, null, () =>
+                    h(GhostMenubarItem, null, () => 'Hidden item'),
+                  ),
+                ],
+              }),
+          })
+      },
+    })
+
+    const closedHtml = await renderToString(createSSRApp(ClosedApp))
+    expect(closedHtml).toContain('role="menubar"')
+    expect(closedHtml).toContain('File')
+    expect(closedHtml).toContain('aria-expanded="false"')
+    expect(closedHtml).toContain('aria-haspopup="menu"')
+    expect(closedHtml).toContain('role="menuitem"')
+    expect(closedHtml).not.toContain('Hidden item')
   })
 
   it('renders GhostPopover closed and defaultOpen states cleanly in Node SSR', async () => {

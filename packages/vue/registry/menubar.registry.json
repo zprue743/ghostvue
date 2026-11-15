@@ -1,0 +1,53 @@
+{
+  "schemaVersion": "1.0.0",
+  "slug": "menubar",
+  "docs": {
+    "title": "GhostMenubar",
+    "specStatus": "approved",
+    "link": "/components/menubar",
+    "specLink": "/components/menubar-spec"
+  },
+  "vueBarrel": [
+    "export { default as GhostMenubar } from './GhostMenubar.vue'",
+    "export { default as GhostMenubarMenu } from './GhostMenubarMenu.vue'",
+    "export { default as GhostMenubarTrigger } from './GhostMenubarTrigger.vue'",
+    "export { default as GhostMenubarContent } from './GhostMenubarContent.vue'",
+    "export { default as GhostMenubarItem } from './GhostMenubarItem.vue'",
+    "export { default as GhostMenubarGroup } from './GhostMenubarGroup.vue'",
+    "export { default as GhostMenubarLabel } from './GhostMenubarLabel.vue'",
+    "export { default as GhostMenubarSeparator } from './GhostMenubarSeparator.vue'",
+    "export { default as GhostMenubarCheckboxItem } from './GhostMenubarCheckboxItem.vue'",
+    "export { default as GhostMenubarRadioGroup } from './GhostMenubarRadioGroup.vue'",
+    "export { default as GhostMenubarRadioItem } from './GhostMenubarRadioItem.vue'",
+    "export { useGhostMenubar } from './use-ghost-menubar'",
+    "export { useGhostMenubarMenu } from './use-ghost-menubar-menu'",
+    "export type {\n  GhostMenubarCheckboxItemElement,\n  GhostMenubarCheckboxItemExposed,\n  GhostMenubarCheckboxItemProps,\n  GhostMenubarContentElement,\n  GhostMenubarContentExposed,\n  GhostMenubarContentProps,\n  GhostMenubarContext,\n  GhostMenubarElement,\n  GhostMenubarExposed,\n  GhostMenubarFlipOptions,\n  GhostMenubarGroupElement,\n  GhostMenubarGroupProps,\n  GhostMenubarItemElement,\n  GhostMenubarItemExposed,\n  GhostMenubarItemProps,\n  GhostMenubarLabelElement,\n  GhostMenubarLabelProps,\n  GhostMenubarMenuContext,\n  GhostMenubarMenuInternalContext,\n  GhostMenubarMenuProps,\n  GhostMenubarMenuRadioGroupContext,\n  GhostMenubarMenuRegistration,\n  GhostMenubarMenuSlotProps,\n  GhostMenubarOffsetOptions,\n  GhostMenubarPadding,\n  GhostMenubarPlacement,\n  GhostMenubarProps,\n  GhostMenubarRadioGroupElement,\n  GhostMenubarRadioGroupProps,\n  GhostMenubarRadioItemElement,\n  GhostMenubarRadioItemExposed,\n  GhostMenubarRadioItemProps,\n  GhostMenubarSeparatorElement,\n  GhostMenubarSeparatorProps,\n  GhostMenubarShiftOptions,\n  GhostMenubarStrategy,\n  GhostMenubarTriggerElement,\n  GhostMenubarTriggerExposed,\n  GhostMenubarTriggerProps,\n  UseGhostMenubarMenuOptions,\n  UseGhostMenubarMenuReturn,\n} from './ghost-menubar'"
+  ],
+  "themesBarrel": [
+    "export {\n  GhostMenubar,\n  type GhostMenubarExposed,\n  type GhostMenubarProps,\n} from './ghost-menubar'",
+    "export {\n  GhostMenubarMenu,\n  type GhostMenubarMenuSlotProps,\n} from './ghost-menubar-menu'",
+    "export {\n  GhostMenubarTrigger,\n  type GhostMenubarTriggerElement,\n  type GhostMenubarTriggerExposed,\n} from './ghost-menubar-trigger'",
+    "export {\n  GhostMenubarContent,\n  type GhostMenubarContentElement,\n  type GhostMenubarContentExposed,\n  type GhostMenubarFlipOptions,\n  type GhostMenubarOffsetOptions,\n  type GhostMenubarPlacement,\n  type GhostMenubarShiftOptions,\n  type GhostMenubarStrategy,\n} from './ghost-menubar-content'",
+    "export {\n  GhostMenubarItem,\n  type GhostMenubarItemElement,\n  type GhostMenubarItemExposed,\n} from './ghost-menubar-item'",
+    "export {\n  GhostMenubarCheckboxItem,\n  type GhostMenubarCheckboxItemElement,\n  type GhostMenubarCheckboxItemExposed,\n} from './ghost-menubar-checkbox-item'",
+    "export {\n  GhostMenubarRadioItem,\n  type GhostMenubarRadioItemElement,\n  type GhostMenubarRadioItemExposed,\n} from './ghost-menubar-radio-item'",
+    "export {\n  GhostMenubarRadioGroup,\n  type GhostMenubarRadioGroupElement,\n} from './ghost-menubar-radio-group'",
+    "export {\n  GhostMenubarLabel,\n  type GhostMenubarLabelElement,\n} from './ghost-menubar-label'",
+    "export {\n  GhostMenubarSeparator,\n  type GhostMenubarSeparatorElement,\n} from './ghost-menubar-separator'",
+    "export {\n  GhostMenubarGroup,\n  type GhostMenubarGroupElement,\n} from './ghost-menubar-group'"
+  ],
+  "examples": [
+    {
+      "id": "menubar/basic",
+      "title": "Basic",
+      "description": "Headless menubar with items, checkbox, radio group, label, separator, and disabled item.",
+      "layer": "headless"
+    },
+    {
+      "id": "menubar/themed",
+      "title": "Themed",
+      "description": "Elevation-3 menu surfaces and interactive item tokens with themed trigger buttons.",
+      "layer": "themed"
+    }
+  ]
+}

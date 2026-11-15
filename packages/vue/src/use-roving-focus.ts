@@ -21,6 +21,8 @@ export interface UseRovingFocusOptions {
   loop?: MaybeRefOrGetter<boolean>
   /** Explicit text direction. When omitted, read from the container or document. */
   dir?: MaybeRefOrGetter<TextDirection>
+  /** Fires whenever the roving tab stop moves among items. */
+  onTabStopChange?: (current: HTMLElement | undefined) => void
 }
 
 /**
@@ -43,7 +45,7 @@ export function useRovingFocus(
           return
         }
 
-        syncTabStops(element)
+        syncTabStops(element, options)
 
         const onKeyDown = (event: KeyboardEvent): void => {
           handleRovingKey(event, element, options)
@@ -55,7 +57,7 @@ export function useRovingFocus(
           }
           const items = getItems(element)
           if (items.includes(target)) {
-            applyTabStops(items, target)
+            applyTabStops(items, target, options)
           }
         }
 
@@ -83,21 +85,26 @@ function enabledItems(items: HTMLElement[]): HTMLElement[] {
   return items.filter((item) => !isDisabledElement(item))
 }
 
-function syncTabStops(root: HTMLElement): void {
+function syncTabStops(
+  root: HTMLElement,
+  options: UseRovingFocusOptions | undefined,
+): void {
   const items = getItems(root)
   const current =
     enabledItems(items).find((item) => item.tabIndex >= 0) ??
     enabledItems(items)[0]
-  applyTabStops(items, current)
+  applyTabStops(items, current, options)
 }
 
 function applyTabStops(
   items: HTMLElement[],
   current: HTMLElement | undefined,
+  options: UseRovingFocusOptions | undefined,
 ): void {
   for (const item of items) {
     item.tabIndex = item === current ? 0 : -1
   }
+  options?.onTabStopChange?.(current)
 }
 
 function handleRovingKey(
@@ -139,7 +146,7 @@ function handleRovingKey(
   if (!next) {
     return
   }
-  applyTabStops(items, next)
+  applyTabStops(items, next, options)
   next.focus({ preventScroll: true })
 }
 
