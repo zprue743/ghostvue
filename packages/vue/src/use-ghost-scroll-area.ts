@@ -31,6 +31,18 @@ export interface GhostScrollAreaRootProps {
   'aria-label'?: string
 }
 
+const FOCUSABILITY_ATTRIBUTES = [
+  'disabled',
+  'tabindex',
+  'inert',
+  'hidden',
+  'aria-hidden',
+  'contenteditable',
+  'href',
+  'controls',
+  'type',
+]
+
 function overflowStyles(
   orientation: GhostScrollAreaOrientation,
   type: GhostScrollAreaOverflowType,
@@ -176,14 +188,26 @@ export function useGhostScrollArea(
 
     if (typeof MutationObserver === 'function') {
       mutationObserver = new MutationObserver((records) => {
+        let shouldMeasure = false
         for (const record of records) {
           if (record.type === 'childList') {
             handleChildListMutation(record)
+            shouldMeasure = true
+          } else if (
+            record.type !== 'attributes' ||
+            record.target !== el ||
+            record.attributeName !== 'tabindex'
+          ) {
+            shouldMeasure = true
           }
         }
-        scheduleOverflowMeasure()
+        if (shouldMeasure) {
+          scheduleOverflowMeasure()
+        }
       })
       mutationObserver.observe(el, {
+        attributes: true,
+        attributeFilter: FOCUSABILITY_ATTRIBUTES,
         characterData: true,
         childList: true,
         subtree: true,
