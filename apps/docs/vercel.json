@@ -1,5 +1,11 @@
 {
   "cleanUrls": true,
+  "git": {
+    "deploymentEnabled": {
+      "**": false,
+      "master": true
+    }
+  },
   "redirects": [
     {
       "source": "/components/:slug-spec",
