@@ -1,13 +1,13 @@
 import {
+  copyFile,
   lstat,
   mkdir,
   readdir,
   readFile,
   rm,
-  symlink,
   writeFile,
 } from 'node:fs/promises'
-import { dirname, join, relative, resolve } from 'node:path'
+import { basename, dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
@@ -47,9 +47,9 @@ async function mirrorPath(sourcePath, targetPath) {
     }
     return
   }
-  if (shouldSkipFile(sourcePath.split('/').pop() ?? '')) return
+  if (shouldSkipFile(basename(sourcePath))) return
   await mkdir(dirname(targetPath), { recursive: true })
-  await symlink(relative(dirname(targetPath), sourcePath), targetPath)
+  await copyFile(sourcePath, targetPath)
 }
 
 await rm(stageRoot, { recursive: true, force: true })
