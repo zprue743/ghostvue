@@ -159,7 +159,9 @@ test.describe('docs example previews', () => {
       await page.goto(`${docs.url}/components/hover-card.html`)
 
       const basicExample = page.locator('[data-example-id="hover-card/basic"]')
-      await expect(basicExample.getByText('Unstyled. Headless.')).toBeVisible()
+      await expect(basicExample.locator('.ghost-example__badge')).toHaveText(
+        'Headless',
+      )
 
       const basicTrigger = basicExample.getByRole('button', {
         name: 'Contributor profile preview',
