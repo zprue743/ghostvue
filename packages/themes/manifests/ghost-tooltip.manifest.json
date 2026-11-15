@@ -25,7 +25,7 @@
       "name": "delayDuration",
       "type": "number",
       "required": false,
-      "description": "Show delay forwarded to headless GhostTooltip.",
+      "description": "Show delay forwarded to headless GhostTooltip; inherits from GhostTooltipProvider when omitted.",
       "deprecated": false
     },
     {
