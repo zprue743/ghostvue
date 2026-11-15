@@ -65,6 +65,11 @@ run `pnpm adapters:write` rather than hand-editing them.
   labels. Native `<button>` defaults to `type="button"`.
 - Theme selectors target the component's own parts (child combinator), not nested parts.
 - Tests assert behavior; cover reorder/insert and async races for stateful components.
+- Interactive widgets (menus, comboboxes, calendars, dialogs): Playwright presses every
+  documented key and asserts real focus (`toBeFocused()`) plus ARIA state, not
+  `tabindex` or pointer-only checks; run axe with overlays open and closed; composite
+  controls use roving tabindex with a single Tab stop (say so in the spec); cover RTL
+  when arrow direction matters; async paths need an out-of-order response test.
 - Run `pnpm verify` and `pnpm test:e2e` before reporting done; cite the head SHA only
   after `verify` and browser checks are green on that commit.
 
