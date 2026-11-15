@@ -1,223 +1,111 @@
 # GHO-123: Shared registry generation from per-component metadata
 
-**Status:** proposal (Zac approval required before implementation)  
-**Goal:** Parallel component PRs stop editing the same shared barrels; each PR adds one committed metadata file (and component source), then runs `pnpm registries:write`.
+**Status:** proposal (Zac approval required)  
+**Goal:** Parallel component PRs commit only per-family metadata; shared barrels are produced deterministically, without merge fights on orchestrator files.
 
 ## 1. Inventory — shared files today
 
-Evidence: `git show --stat` on merged PRs **Link** (`2807bd1a`), **Select** (`3b44059e`), **ScrollArea** (`c25da3bc`), **HoverCard** (`4a994900`).
+Evidence: `git show --stat` on **Link** (`2807bd1a`), **Select** (`3b44059e`), **ScrollArea** (`c25da3bc`), **HoverCard** (`4a994900`).
 
-| Shared target | Touched by | Today | Conflict shape |
-| --- | --- | --- | --- |
-| `packages/vue/src/index.ts` | all four | Hand-appended export blocks (~635 lines total) | Same file tail; overlapping import regions |
-| `packages/themes/src/index.ts` | all four | Hand-appended themed exports | Same |
-| `packages/themes/src/default.css` | all four | Hand `@import './ghost-*.css'` | Adjacent import lines |
-| `examples/registry.ts` | all four | Hand object literals in one array (~1000 lines) | Same closing anchor |
-| `apps/docs/.vitepress/docs-nav.ts` | all four | Two hand sidebar inserts (Components + Contributing) | Same `items: [` anchors |
-| `docs/roadmap.md` | all four | Hand tier row + occasional export paragraph refresh ([GHO-114](https://github.com/zprue743/ghostvue/pull/113)) | Table row + prose list |
-| `packages/vue/src/overlay-ssr.test.ts` | Select, HoverCard | Hand imports + per-widget SSR `it` blocks | Top import block + middle of file |
-| `apps/playground/src/App.vue` | Select, ScrollArea, HoverCard | Hand demo wiring (reference import or inline section) | Ad hoc; **not** in scaffold |
-| `packages/*/manifests/*.manifest.json` | all four | **`pnpm manifests:write`** from `Ghost*.vue` | Per-file; already low conflict |
-| Scaffold (`scripts/lib/new-component.js`) | n/a | Appends to six targets above; no roadmap / overlay / playground | Same as manual PR |
+| Shared target | Touched by | Today |
+| --- | --- | --- |
+| `packages/vue/src/index.ts`, `packages/themes/src/index.ts`, `default.css` | all four | Hand-appended exports / imports |
+| `examples/registry.ts`, `apps/docs/.vitepress/docs-nav.ts` | all four | Hand inserts into one file each |
+| `docs/roadmap.md`, `packages/vue/src/overlay-ssr.test.ts` | most | Hand rows / imports / tests |
+| `apps/playground/src/App.vue` | Select, ScrollArea, HoverCard | Hand only (not in scaffold) |
+| `packages/*/manifests/*.manifest.json` | all four | **`pnpm manifests:write`** (already per-file) |
 
-**Derived today:** manifests (vue-component-meta), adapter catalog (similar staleness check).  
-**Hand-written today:** everything in the table except manifests.
+## 2. Per-family metadata (only merge surface)
 
-## 2. Per-family metadata (source of truth)
+**Location:** `packages/vue/registry/<slug>.registry.json` — one file per *family* (`link`, `hover-card`, …), not per SFC. Scaffold and component PRs **add or update this file only** (plus component source). Manifests stay API-focused via existing `pnpm manifests`.
 
-**Location:** one committed file per *family* (not per SFC):
-
-`packages/vue/registry/<slug>.registry.json`
-
-Families align with docs slugs (`link`, `hover-card`, `select`). Subcomponents (`GhostSelectTrigger`, …) are listed in the family file, not separate registry files. The file is **hand-authored** when a component is added (scaffold creates a minimal stub); manifests remain generated separately for API prose.
-
-**TypeScript shape** (JSON Schema `schemas/component-family-registry.schema.json`, validated in check mode):
+**Shape** (JSON Schema `schemas/component-family-registry.schema.json`):
 
 ```ts
 interface ComponentFamilyRegistry {
   schemaVersion: '1.0.0'
-  slug: string // kebab, matches docs + examples dir
-  linearIssue?: string // e.g. GHO-98
-  roadmap?: {
-    tier: 'shared' | 'tier-1' | 'tier-2' | 'tier-3'
-    order: number
-    status: 'merged' | 'in-progress' | 'planned'
-    issueUrl: string
-    dependsOn?: string[] // other Ghost* names, prose for humans
-  }
-  docs: {
-    title: string // GhostLink
-    specStatus: 'draft' | 'approved'
-  }
-  vue: {
-    exports: RegistryExport[] // symbols + stable sort key
-  }
-  themes?: {
-    cssFile: string // ghost-link.css under packages/themes/src
-    exports: RegistryExport[]
-  }
-  examples: GhostExampleDefinition[] // same ids as examples/*.vue
-  overlaySsr?: OverlaySsrFixture // absent for non-overlays
-  playground?: { referenceVue?: string } // optional; stays sparse
+  slug: string
+  linearIssue?: string
+  roadmap?: { tier: string; order: number; status: string; issueUrl: string; dependsOn?: string[] }
+  docs: { title: string; specStatus: 'draft' | 'approved' }
+  vue: { exports: RegistryExport[] }
+  themes?: { cssFile: string; exports: RegistryExport[] }
+  examples: GhostExampleDefinition[]
+  overlaySsr?: { id: string; parts: string[]; scenario: 'closed-and-open' | 'custom' }
+  playground?: { referenceVue?: string }
 }
-
 interface RegistryExport {
-  kind: 'value' | 'type'
-  name: string
-  module: string // relative path from package src, e.g. ./GhostLink.vue
-  group: 'component' | 'composable' | 'primitive' // controls barrel section
-}
-
-interface OverlaySsrFixture {
-  id: string // stable test name slug
-  parts: string[] // Ghost* SFC names to import
-  scenario: 'closed-and-open' | 'custom'
-  customModule?: string // when scenario === custom, path to fixture data
+  kind: 'value' | 'type'; name: string; module: string; group: 'component' | 'composable' | 'primitive'
 }
 ```
 
-**Example — `packages/vue/registry/link.registry.json` (simple leaf):**
+**`link.registry.json` (leaf):** `vue.exports` lists `GhostLink`, `useGhostLink`, types; `themes` lists CSS file + themed exports; `examples` lists `link/basic`, ….
 
-```json
-{
-  "schemaVersion": "1.0.0",
-  "slug": "link",
-  "linearIssue": "GHO-98",
-  "roadmap": {
-    "tier": "tier-2",
-    "order": 14,
-    "status": "merged",
-    "issueUrl": "https://linear.app/ghost-vue/issue/GHO-98"
-  },
-  "docs": { "title": "GhostLink", "specStatus": "approved" },
-  "vue": {
-    "exports": [
-      { "kind": "value", "name": "GhostLink", "module": "./GhostLink.vue", "group": "component" },
-      { "kind": "value", "name": "useGhostLink", "module": "./use-ghost-link", "group": "composable" },
-      { "kind": "type", "name": "GhostLinkExposed", "module": "./ghost-link", "group": "component" },
-      { "kind": "type", "name": "GhostLinkRootProps", "module": "./use-ghost-link", "group": "composable" }
-    ]
-  },
-  "themes": {
-    "cssFile": "ghost-link.css",
-    "exports": [
-      { "kind": "value", "name": "GhostLink", "module": "./ghost-link", "group": "component" },
-      { "kind": "type", "name": "GhostLinkExposed", "module": "./ghost-link", "group": "component" }
-    ]
-  },
-  "examples": [
-    { "id": "link/basic", "title": "Basic", "description": "…", "layer": "headless" }
-  ]
-}
-```
+**`hover-card.registry.json` (overlay):** multiple `vue.exports` for root/trigger/content; `overlaySsr: { scenario: 'closed-and-open', parts: [...] }`; optional `playground.referenceVue`.
 
-**Example — `packages/vue/registry/hover-card.registry.json` (overlay family):**
+## 3. Generator and conflict-free orchestrators
 
-```json
-{
-  "schemaVersion": "1.0.0",
-  "slug": "hover-card",
-  "linearIssue": "GHO-100",
-  "docs": { "title": "GhostHoverCard", "specStatus": "approved" },
-  "vue": {
-    "exports": [
-      { "kind": "value", "name": "GhostHoverCard", "module": "./GhostHoverCard.vue", "group": "component" },
-      { "kind": "value", "name": "GhostHoverCardContent", "module": "./GhostHoverCardContent.vue", "group": "component" },
-      { "kind": "value", "name": "GhostHoverCardTrigger", "module": "./GhostHoverCardTrigger.vue", "group": "component" }
-    ]
-  },
-  "themes": {
-    "cssFile": "ghost-hover-card.css",
-    "exports": [ "…" ]
-  },
-  "examples": [ "…" ],
-  "overlaySsr": {
-    "id": "hover-card",
-    "parts": ["GhostHoverCard", "GhostHoverCardContent", "GhostHoverCardTrigger"],
-    "scenario": "closed-and-open"
-  },
-  "playground": { "referenceVue": "HoverCardReference.vue" }
-}
-```
+**Commands:** `pnpm registries` (check, in `pnpm verify`) and `pnpm registries:write`.
 
-## 3. Generator design
+**Wrong assumption (rejected):** Sorted “one line per family” orchestrators that are **committed** are *not* conflict-free. Git merges on insertion context: families that sort adjacent (`link` + `list`, or two names that both land at the end) edit the **same hunk** in `index.ts`, `examples/registry.ts`, and a single `docs-nav.generated.ts`. A committed monolithic nav file has the same problem; “rare conflicts” fails GHO-123.
 
-**Scripts:** extend `scripts/write-component-manifests.mjs` pattern → new `scripts/write-component-registries.mjs` + `scripts/lib/component-registries.js`.
+**Option (a) — generated orchestrators, not in git (recommended)**
 
-**Commands:** `pnpm registries` (check, wired into `pnpm verify` after `pnpm manifests`) and `pnpm registries:write`.
+| Committed | Generated (gitignored, deterministic) |
+| --- | --- |
+| `packages/vue/registry/*.registry.json` | `packages/*/src/.registries/**` (full `index.ts`, theme barrel, `default.css` import block, example bundles + `examples/registry.ts`) |
+| Hand `docs-nav.ts` (non-component sections) | `docs-nav.component-items.generated.ts` (imported by hand nav) |
+| Hand `docs/roadmap.md` prose | `docs/roadmap.generated.md` fragment |
+| Hand `overlay-ssr.test.ts` harness | `overlay-ssr.fixtures.generated.ts` |
 
-**Generated outputs (committed, like manifests):**
+- **Pre-step:** `pnpm registries:write` before Vitest, Vite/VitePress, `vue-tsc`, and `packages/*/build`. Root `package.json` wires this into `verify`, `test`, `typecheck`, `docs:build`, and package `prebuild` scripts (same pattern as token generation today).
+- **Staleness:** `pnpm registries` recomputes from all `*.registry.json` and byte-compares to on-disk generated output; fails with “run `pnpm registries:write`” if missing or stale (verify runs write or requires it immediately before check — same effective gate as committed manifests).
+- **Published `@ghostvue/vue` / `@ghostvue/themes`:** package `build` always runs `registries:write` first, then `vite build` + `vue-tsc` on the **generated** `index.ts`. **Byte identity** of `dist` is validated by existing `published-exports`, `exports:check`, publint/attw against pre-migration checksums — not by treating repo `index.ts` as the publish source.
+- **Why conflict-free:** Branch A adds `list.registry.json`; branch B adds `link.registry.json`. Merge touches **disjoint paths** only; `git merge` exits 0 in either order. Combined metadata deterministically yields one nav and one barrel — no orchestrator file in the merge.
 
-| Output | Strategy | Merge-friendly why |
+**Option (b) — committed orchestrators + `merge=union`**
+
+`.gitattributes`: one line per family, no shared trailing-comma array, `merge=union` on orchestrator paths. After every merge, `pnpm registries` in verify re-sorts, dedupes, and normalizes so union junk cannot land on `master`. **Still committed** — union hides conflict markers but relies on git attributes and post-merge normalization; adjacent slug inserts are exactly the case union is meant for, yet duplicate/malformed lines are possible until CI runs.
+
+**Recommendation: (a).** Trade-offs:
+
+| | (a) Gitignored orchestrators | (b) `merge=union` committed |
 | --- | --- | --- |
-| `packages/vue/src/registry/bundles/<slug>.ts` | One **new file per family** from metadata | Disjoint paths per PR |
-| `packages/vue/src/index.ts` | Thin orchestrator: fixed primitive block + sorted `export … from './registry/bundles/<slug>'` | One new sorted line per family |
-| Same pattern for `packages/themes/src/` | bundles + `default.css` one sorted `@import` per line | Disjoint bundle files |
-| `examples/registry/bundles/<slug>.ts` | Re-export example defs | Disjoint |
-| `examples/registry.ts` | Sorted re-exports only | One import line per family |
-| `apps/docs/.vitepress/docs-nav.generated.ts` | Nav slice from all `docs.title` + `slug` | Single generated file — regen is deterministic; conflicts rare if families disjoint |
-| `packages/vue/src/overlay-ssr.generated.ts` | Imports + fixture table from `overlaySsr` metadata | One fixture block per overlay family |
-| `docs/roadmap.generated.md` | Tier table rows from `roadmap.*` | Sorted by `tier`, `order`, `slug` |
+| Parallel PR merge | Only JSON paths overlap | Union + verify normalize |
+| IDE / fresh clone | Need `pnpm registries:write` (document; optional `prepare` hook) | Editors see full `index.ts` in git |
+| Typecheck | Points at generated barrels under `.registries/` | Standard paths |
+| Publishing | Dist built from generator output; byte-stable if sort rules fixed | Same if generator is source of truth |
+| Risk | Forgotten local regen | Bad union merge without running verify |
 
-Each generated file starts with a fixed header (`// @generated by pnpm registries:write — do not edit`).
+`import.meta.glob` for barrels is **not** recommended: export order and conditional `type` exports must match today’s public surface; glob order is not a stable publish contract without the same generator anyway.
 
-**Determinism:** sort families by `slug`; within a family sort exports by `(group, name)`; Prettier pass with repo config; JSON manifests use stable key order via `serializeManifest`-style helper.
-
-**Staleness (verify):** check mode reads every `*.registry.json`, recomputes outputs in memory, byte-compares to disk (same failure UX as `pnpm manifests` / `pnpm adapters`).
-
-**Build-time vs commit:** all of the above are **committed**. Docs build and Vitest consume them directly; no runtime generator dependency.
-
-**Conflict proof:** branches A adds `foo.registry.json` + bundle `foo.ts`; B adds `bar.*`. Merges touch disjoint bundle paths; orchestrators gain two sorted lines in different alphabetical positions — Git merges cleanly in either order. Integration test in implementation PR: two throwaway branches each add a synthetic family, merge `A` then `B` and `B` then `A`, expect `pnpm registries` clean and `git merge` without conflicts on bundle paths.
+**Determinism:** sort families by `slug`; exports by `(group, name)`; Prettier with repo config; stable JSON key order.
 
 ## 4. Roadmap and overlay SSR
 
-**`docs/roadmap.md`:** Keep human prose (tiers narrative, primitive table, ADR links) in the hand file. Replace the volatile **component status table** and the opening **export inventory paragraph** with:
+**Roadmap:** Hand narrative stays in `docs/roadmap.md`; **status table** and **export inventory paragraph** come from generated `roadmap.generated.md` (included via marked region). Status lives in `roadmap` on each registry JSON.
 
-```md
-<!-- registries:begin roadmap-table -->
-@include ./roadmap.generated.md
-<!-- registries:end -->
-```
+**Overlay SSR:** Thin committed `overlay-ssr.test.ts` imports `overlay-ssr.fixtures.generated.ts`; overlay families declare `overlaySsr` in metadata (`closed-and-open` template for Select/HoverCard/Dialog).
 
-Status moves into `roadmap` on each `*.registry.json` (no duplicate table edits in component PRs). Export paragraph is generated from the same export list that builds `index.ts` (fixes [GHO-114](https://github.com/zprue743/ghostvue/pull/113) drift permanently).
+## 5. Migration, scaffold, verification
 
-**`overlay-ssr.test.ts`:** shrink to a stable harness file importing `overlay-ssr.generated.ts` (fixture list + shared imports). Each overlay family declares `overlaySsr` in metadata; generator emits scenario tests (`closed-and-open` template covers Select/HoverCard/Dialog pattern). Custom scenarios reference a colocated `overlay-ssr/<slug>.ts` data file.
+**Migration (one PR):** schema + generator; extract all `*.registry.json` from current barrels; gitignore orchestrators; add pre-steps; `registries:write` + prove `dist` byte-identical to snapshots.
 
-## 5. Migration (single PR after approval)
+**Scaffold / AGENTS.md:** create registry JSON stub only; never hand-edit gitignored paths.
 
-1. Add schema, generator, verify hook, and empty orchestrator shells.
-2. Author `*.registry.json` for every existing family by **mechanical extraction** from current barrels (scripted, reviewed in PR).
-3. `pnpm registries:write` → replace monolithic sections with bundle layout.
-4. **Byte identity:** run `pnpm published-exports`, `pnpm exports:check`, publint/attw — outputs must match pre-migration snapshots (store checksums in the migration PR description).
-5. Delete redundant hand-edited regions; leave only non-family exports (primitives, shared composables) in the fixed head of `packages/vue/src/index.ts`.
+**Merge proof (required):** On throwaway branches from `master`, add synthetic families **`ghost-list`** and **`ghost-link`** (adjacent sort keys) with nav + example metadata. Merge A→B and B→A; assert `git merge` exit 0 with **no conflicted orchestrator paths in git** (orchestrators absent from git under (a)). Run `pnpm registries:write` and `pnpm registries`; both orders produce identical bytes.
 
-**Estimated diff:** ~2.8k lines removed/replaced across shared files, ~+40–55 small `registry.json` files (~30–80 lines each), ~+55 bundle shards, ~+600–900 lines generator + tests. Net similar LOC, far fewer merge hotspots.
+Also: `tests/integration/component-registries.test.ts`; updated `new-component` test; full `pnpm verify`.
 
-## 6. Scaffold and agent docs
+**Estimated diff:** ~2.8k lines removed from hand barrels; ~45 registry JSON files; generator ~600–900 lines; gitignore + script wiring.
 
-- **`pnpm new:component`:** create `packages/vue/registry/<slug>.registry.json` stub (mirror current manifest stub); stop editing `index.ts`, `examples/registry.ts`, `docs-nav.ts`, `default.css` directly — run `pnpm registries:write` instead.
-- **`tests/integration/new-component.test.ts`:** assert registry stub + generated bundles; keep full `pnpm verify` in copied workspace.
-- **`AGENTS.md` / `docs/contributing/new-component.md`:** document metadata file, `pnpm registries` / `registries:write`, and the rule that component PRs must not hand-edit generated paths.
+**New dependency:** none. **Public API change:** none intended.
 
-## 7. Risks, verification, non-goals
+## 6. Decisions for Zac
 
-| Risk | Mitigation |
-| --- | --- |
-| Export order is public API | Migration checksums; generator preserves extracted order within each `group` before alphabetizing new families |
-| Playground inconsistency | `playground.referenceVue` optional metadata; no generator for `App.vue` until a second reference pattern appears |
-| Nav single-file conflicts | Accept rare whole-file regen; primary merge surface stays per-family bundles |
-| Duplication with manifests | Manifests = SFC API; registry = wiring/exports/examples/roadmap — cross-validate example ids in both checks |
-
-**Verification plan:** `pnpm verify`; focused test `tests/integration/component-registries.test.ts` (staleness, schema, example id parity with manifests); merge-order proof branches; existing `new-component` integration test updated.
-
-**New dependency:** none (reuse Prettier, Ajv, existing `component-manifests` utilities).
-
-**Public API change:** none intended — published export surface stays identical; only authoring workflow changes.
-
-## 8. Decisions for Zac
-
-1. **Family metadata in `packages/vue/registry/*.json` vs extending manifest JSON** — proposal keeps manifests API-focused and registries wiring-focused (smaller PR diffs on manifests).
-2. **Committed generated bundles vs one monolithic `index.ts` regen** — proposal: per-family bundle files (strongest merge story).
-3. **`docs-nav`:** fully generated slice vs hand-maintained ordering groups — proposal: generated Components list sorted by `slug`, manual sections for non-component pages unchanged.
-4. **Playground:** remain manual vs add `playground.registry.json` later — proposal: manual for now.
-5. **Roadmap:** partial include of generated table vs entire `roadmap.md` generated — proposal: partial include to keep narrative hand-written.
+1. **Registry JSON separate from manifests** (wiring vs API) — recommended yes.
+2. **Conflict strategy:** **(a) gitignored orchestrators** vs **(b) committed + `merge=union`** — recommended **(a)**.
+3. **`prepare` / postinstall `registries:write`** vs document-only for local IDE — trade speed vs friction.
+4. **Roadmap:** partial generated include vs full generate — recommended partial.
+5. **Playground:** manual for now vs future registry field — recommended manual.
+6. **Primitive exports** in a committed `registry/primitives.registry.json` vs hand header file — needed so families never edit shared primitive blocks.
