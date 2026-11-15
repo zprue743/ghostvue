@@ -6,7 +6,9 @@ export default defineConfig({
   forbidOnly: Boolean(process.env.CI),
   retries: process.env.CI ? 2 : 0,
   reporter: process.env.CI
-    ? [['github'], ['html', { open: 'never' }]]
+    ? process.env.PLAYWRIGHT_BLOB_REPORT === '1'
+      ? 'blob'
+      : [['github'], ['html', { open: 'never' }]]
     : [['list'], ['html', { open: 'never' }]],
   expect: {
     toHaveScreenshot: {

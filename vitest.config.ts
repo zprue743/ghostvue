@@ -8,6 +8,10 @@ import {
   lineCoverageThreshold,
 } from './scripts/coverage-policy.mjs'
 
+const deferCoverageThresholds = Boolean(
+  process.env.VITEST_DEFER_COVERAGE_THRESHOLDS,
+)
+
 export default defineConfig({
   // SFC tests need the same Vue compiler the package build uses.
   plugins: [vue()],
@@ -41,17 +45,18 @@ export default defineConfig({
         '**/*.test.ts',
         '**/*.spec.ts',
       ],
-      // Keep the workspace-wide threshold (which includes packages/themes/scripts/lib)
-      // alongside per-package src/** gates so one package cannot mask another.
-      thresholds: {
-        lines: lineCoverageThreshold,
-        ...Object.fromEntries(
-          coverageSourceDirectories.map((directory) => [
-            `${directory}/**`,
-            { lines: lineCoverageThreshold },
-          ]),
-        ),
-      },
+      // Sharded CI runs merge coverage in the required `verify` job; defer gates there.
+      thresholds: deferCoverageThresholds
+        ? undefined
+        : {
+            lines: lineCoverageThreshold,
+            ...Object.fromEntries(
+              coverageSourceDirectories.map((directory) => [
+                `${directory}/**`,
+                { lines: lineCoverageThreshold },
+              ]),
+            ),
+          },
     },
   },
 })
