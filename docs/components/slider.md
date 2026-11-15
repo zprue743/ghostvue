@@ -50,4 +50,4 @@ through to the root (`data-part="root"`). Thumbs expose `role="slider"` with
 Provide an accessible name on the root (`aria-label` or `aria-labelledby`).
 In range mode, each thumb is its own slider with constrained min/max. Arrow keys
 adjust the focused thumb; RTL flips horizontal arrows. See
-[slider-spec.md](./slider-spec.md) for the full contract.
+[slider-spec.md](/specs/slider) for the full contract.

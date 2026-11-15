@@ -54,4 +54,4 @@ Keeps the panel in the DOM with `hidden` when collapsed. Sets `data-part="conten
 
 ## Specification
 
-See [GhostCollapsible specification](./collapsible-spec.md).
+See [GhostCollapsible specification](/specs/collapsible).

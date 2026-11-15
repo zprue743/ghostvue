@@ -127,7 +127,7 @@ on the page.
   native `defaultChecked` timing: [native `form.reset()`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLFormElement/reset)
   uses the control's current default attributes. Reuse across records needs
   controlled state or `:key` when the baseline must change.
-- **Form reset reconciliation** matches [GhostInput](./input-spec.md#v-model-contracts):
+- **Form reset reconciliation** matches [GhostInput](/specs/input#v-model-contracts):
   request the captured baseline, not the displayed `modelValue`; skip redundant
   emit; parent-owned controlled state; microtask after full dispatch (late cancel
   on `document` / `window` is a no-op).

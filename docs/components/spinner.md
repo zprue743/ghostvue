@@ -121,5 +121,5 @@ semantics.
 Automated checks cannot tell you whether "Loading" is the right copy for the
 workflow. Verify announcement timing with a screen reader.
 
-See the [approved GhostSpinner specification](./spinner-spec.md) for the complete
+See the [approved GhostSpinner specification](/specs/spinner) for the complete
 behavior and compatibility contract.

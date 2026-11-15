@@ -81,4 +81,4 @@ the inner root.
 - Never nest interactive elements inside an `a` or `button` card root.
 - The spotlight glow is `aria-hidden`; reduced motion disables tracking.
 
-See the [specification](./card-spec.md) for the full contract.
+See the [specification](/specs/card) for the full contract.

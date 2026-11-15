@@ -107,5 +107,5 @@ fields are not in the tab order; readonly fields are.
 SSR markup is deterministic from props and the current string. Setup does not
 read browser globals. An owner form `reset` restores the uncontrolled seed.
 
-See the [GhostInput specification](./input-spec.md) for the complete behavior
+See the [GhostInput specification](/specs/input) for the complete behavior
 and compatibility contract.

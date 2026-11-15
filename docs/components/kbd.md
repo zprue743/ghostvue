@@ -110,5 +110,5 @@ SSR markup is deterministic from props. `'auto'` equals `'pc'` until `onMounted`
 Setup does not read browser globals. No listeners, timers, or observers require
 cleanup.
 
-See the [GhostKbd specification](./kbd-spec.md) for the complete behavior and
+See the [GhostKbd specification](/specs/kbd) for the complete behavior and
 compatibility contract.

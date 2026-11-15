@@ -1,3 +1,10 @@
 {
-  "cleanUrls": true
+  "cleanUrls": true,
+  "redirects": [
+    {
+      "source": "/components/:slug-spec",
+      "destination": "/specs/:slug",
+      "permanent": true
+    }
+  ]
 }

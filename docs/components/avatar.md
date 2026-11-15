@@ -76,7 +76,7 @@ avatar in a link or button when it should activate something.
 ## SSR
 
 SSR and hydration render the fallback first when `src` is set, avoiding
-mismatches from client-only load state. See [avatar-spec](./avatar-spec.md).
+mismatches from client-only load state. See [avatar-spec](/specs/avatar).
 
 ## When not to use it
 

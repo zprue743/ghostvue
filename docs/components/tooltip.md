@@ -71,5 +71,5 @@ Keeps `visibility: hidden` until `useFloating().isPositioned` resolves. Sets
 
 ## Specification
 
-See [GhostTooltip specification](./tooltip-spec.md) and
+See [GhostTooltip specification](/specs/tooltip) and
 [ADR 0011](../adr/0011-overlay-primitives.md).

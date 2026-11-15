@@ -144,5 +144,5 @@ size and spacing of any content that becomes visible.
 Automated checks cannot tell you whether hidden text is correct, sufficient, or
 appropriately terse. Verify it with a screen reader.
 
-See the [approved GhostVisuallyHidden specification](./visually-hidden-spec.md) for
+See the [approved GhostVisuallyHidden specification](/specs/visually-hidden) for
 the complete behavior and compatibility contract.

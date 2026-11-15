@@ -33,7 +33,7 @@ Decorative separators are always `aria-hidden="true"`.
 
 ## API
 
-See the [specification](./breadcrumb-spec.md). Generated manifests live under
+See the [specification](/specs/breadcrumb). Generated manifests live under
 `packages/vue/manifests/ghost-breadcrumb*.manifest.json`.
 
 | Part                       | Element | Key semantics                    |
@@ -48,5 +48,5 @@ See the [specification](./breadcrumb-spec.md). Generated manifests live under
 
 ## Accessibility
 
-Follow the [breadcrumb specification](./breadcrumb-spec.md#accessibility-contract)
+Follow the [breadcrumb specification](/specs/breadcrumb#accessibility-contract)
 for landmark naming, current-page semantics, and ellipsis keyboard support.

@@ -8,6 +8,7 @@ import '@ghostvue/themes/mono.css'
 import './docs-theme.css'
 import './docs-recipe-bridge.css'
 import './landing-page-global.css'
+import ComponentCatalog from './ComponentCatalog.vue'
 import GhostExample from './GhostExample.vue'
 import GhostLanding from './GhostLanding.vue'
 import Layout from './Layout.vue'
@@ -26,6 +27,7 @@ const theme: Theme = {
   extends: DefaultTheme,
   Layout,
   enhanceApp({ app }) {
+    app.component('ComponentCatalog', ComponentCatalog)
     app.component('GhostExample', GhostExample)
     app.component('GhostLanding', GhostLanding)
     app.component('MotionReplayDemo', MotionReplayDemo)

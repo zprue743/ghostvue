@@ -96,5 +96,5 @@ Assistive technology encounters ordinary phrasing content. The badge is not a
 tab stop and adds no keyboard behavior. SSR markup is deterministic from slot
 content and themed visual props. Setup does not read browser globals.
 
-See the [GhostBadge specification](./badge-spec.md) for the complete behavior
+See the [GhostBadge specification](/specs/badge) for the complete behavior
 and compatibility contract.

@@ -63,4 +63,4 @@ Spotlight is decoration. Reduced motion and coarse pointers are fully off.
 SSR markup is `data-state="off"`; capable surfaces become `idle` after
 mount. Setup does not read browser globals.
 
-See the [approved specification](./interactive-surface-spec.md).
+See the [approved specification](/specs/interactive-surface).

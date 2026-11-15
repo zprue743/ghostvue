@@ -56,5 +56,5 @@ Exposes `{ element, focus, blur }`.
 
 ## Specification
 
-See [GhostHoverCard specification](./hover-card-spec.md) and
+See [GhostHoverCard specification](/specs/hover-card) and
 [ADR 0011](../adr/0011-overlay-primitives.md).

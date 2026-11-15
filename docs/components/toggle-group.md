@@ -6,7 +6,7 @@ and formatting controls. It is **not** a radio group: a pressed item in single
 mode can be toggled off. Keyboard arrow keys rove among items via
 `useRovingFocus`; selection uses `useControllableState`.
 
-See the [specification](./toggle-group-spec.md) for the accessibility contract.
+See the [specification](/specs/toggle-group) for the accessibility contract.
 
 ## Examples
 

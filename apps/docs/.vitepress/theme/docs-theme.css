@@ -241,3 +241,67 @@ html[data-ghost-theme='mono'] {
   max-inline-size: 100%;
   overflow-x: auto;
 }
+
+/* Component catalog overview (`/components/`). */
+.ghost-component-catalog__lede {
+  margin-block: 0 1.25rem;
+  color: var(--vp-c-text-2);
+  max-inline-size: 48rem;
+}
+
+.ghost-component-catalog__grid {
+  display: grid;
+  gap: 2rem;
+}
+
+.ghost-component-catalog__heading {
+  margin: 0 0 0.75rem;
+  font-size: 1.0625rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.ghost-component-catalog__cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 16rem), 1fr));
+  gap: 0.75rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.ghost-component-catalog__card {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  min-block-size: 100%;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: var(--ghost-radius-md, 0.5rem);
+  background: var(--vp-c-bg-elv);
+  color: var(--vp-c-text-1);
+  text-decoration: none;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.ghost-component-catalog__card:hover {
+  border-color: var(--vp-c-brand-1);
+}
+
+.ghost-component-catalog__card:focus-visible {
+  outline: 2px solid var(--vp-c-brand-1);
+  outline-offset: 2px;
+}
+
+.ghost-component-catalog__card-title {
+  font-weight: 600;
+}
+
+.ghost-component-catalog__card-description {
+  font-size: 0.875rem;
+  line-height: 1.45;
+  color: var(--vp-c-text-2);
+}

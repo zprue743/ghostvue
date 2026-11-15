@@ -75,4 +75,4 @@ without an extra element between table structures.
 - Pair with table captions or grid counts on the data widget, not inside this
   primitive.
 
-See the [specification](./empty-state-spec.md) for the full contract.
+See the [specification](/specs/empty-state) for the full contract.

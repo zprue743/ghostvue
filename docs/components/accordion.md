@@ -55,4 +55,4 @@ behavior.
 
 ## Specification
 
-See [GhostAccordion specification](./accordion-spec.md).
+See [GhostAccordion specification](/specs/accordion).

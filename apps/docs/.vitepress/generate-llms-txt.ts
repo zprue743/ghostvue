@@ -14,11 +14,13 @@ export interface LlmsSidebarItem {
   text: string
   link?: string
   items?: LlmsSidebarItem[]
+  collapsed?: boolean
 }
 
 export interface LlmsSidebarGroup {
   text: string
   items: LlmsSidebarItem[]
+  collapsed?: boolean
 }
 
 export interface GenerateLlmsDocumentsOptions {
@@ -111,10 +113,12 @@ export async function resolveDocsPagePath(
   link: string,
 ): Promise<string> {
   const relativeLink = link.replace(/\/+$/, '').replace(/^\//, '')
+  const specSlug = /^specs\/([^/]+)$/.exec(relativeLink)?.[1]
   const candidates =
     relativeLink === ''
       ? ['index.md', 'README.md']
       : [
+          ...(specSlug ? [`components/${specSlug}-spec.md`] : []),
           `${relativeLink}.md`,
           `${relativeLink}/index.md`,
           `${relativeLink}/README.md`,
