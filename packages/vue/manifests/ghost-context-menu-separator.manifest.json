@@ -1,0 +1,42 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "generated",
+  "name": "GhostContextMenuSeparator",
+  "package": "@ghostvue/vue",
+  "status": "experimental",
+  "description": "Public GhostContextMenuSeparator component.",
+  "props": [
+    {
+      "name": "as",
+      "type": "GhostContextMenuSeparatorElement",
+      "default": "div",
+      "required": false,
+      "description": "Declared prop `as`.",
+      "deprecated": false
+    },
+    {
+      "name": "decorative",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Declared prop `decorative`.",
+      "deprecated": false
+    }
+  ],
+  "models": [],
+  "events": [],
+  "slots": [],
+  "exposed": [],
+  "styling": {
+    "parts": [],
+    "states": [],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "generic",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/",
+    "keyboard": {},
+    "requiredAriaAttributes": []
+  },
+  "examples": []
+}

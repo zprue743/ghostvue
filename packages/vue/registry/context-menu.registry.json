@@ -1,0 +1,52 @@
+{
+  "schemaVersion": "1.0.0",
+  "slug": "context-menu",
+  "docs": {
+    "title": "GhostContextMenu",
+    "specStatus": "approved",
+    "link": "/components/context-menu",
+    "specLink": "/specs/context-menu",
+    "category": "overlays",
+    "sidebarLabel": "Context menu"
+  },
+  "vueBarrel": [
+    "export { default as GhostContextMenu } from './GhostContextMenu.vue'",
+    "export { default as GhostContextMenuTrigger } from './GhostContextMenuTrigger.vue'",
+    "export { default as GhostContextMenuContent } from './GhostContextMenuContent.vue'",
+    "export { default as GhostContextMenuItem } from './GhostContextMenuItem.vue'",
+    "export { default as GhostContextMenuGroup } from './GhostContextMenuGroup.vue'",
+    "export { default as GhostContextMenuLabel } from './GhostContextMenuLabel.vue'",
+    "export { default as GhostContextMenuSeparator } from './GhostContextMenuSeparator.vue'",
+    "export { default as GhostContextMenuCheckboxItem } from './GhostContextMenuCheckboxItem.vue'",
+    "export { default as GhostContextMenuRadioGroup } from './GhostContextMenuRadioGroup.vue'",
+    "export { default as GhostContextMenuRadioItem } from './GhostContextMenuRadioItem.vue'",
+    "export { useGhostContextMenu } from './use-ghost-context-menu'",
+    "export type {\n  GhostContextMenuCheckboxItemElement,\n  GhostContextMenuCheckboxItemExposed,\n  GhostContextMenuCheckboxItemProps,\n  GhostContextMenuContentElement,\n  GhostContextMenuContentExposed,\n  GhostContextMenuContentProps,\n  GhostContextMenuContext,\n  GhostContextMenuFlipOptions,\n  GhostContextMenuGroupElement,\n  GhostContextMenuGroupProps,\n  GhostContextMenuItemElement,\n  GhostContextMenuItemExposed,\n  GhostContextMenuItemProps,\n  GhostContextMenuLabelElement,\n  GhostContextMenuLabelProps,\n  GhostContextMenuOffsetOptions,\n  GhostContextMenuPadding,\n  GhostContextMenuPlacement,\n  GhostContextMenuProps,\n  GhostContextMenuRadioGroupContext,\n  GhostContextMenuRadioGroupElement,\n  GhostContextMenuRadioGroupProps,\n  GhostContextMenuRadioItemElement,\n  GhostContextMenuRadioItemExposed,\n  GhostContextMenuRadioItemProps,\n  GhostContextMenuSeparatorElement,\n  GhostContextMenuSeparatorProps,\n  GhostContextMenuShiftOptions,\n  GhostContextMenuSlotProps,\n  GhostContextMenuStrategy,\n  GhostContextMenuTriggerElement,\n  GhostContextMenuTriggerExposed,\n  GhostContextMenuTriggerProps,\n  UseGhostContextMenuOptions,\n  UseGhostContextMenuReturn,\n} from './ghost-context-menu'"
+  ],
+  "themesBarrel": [
+    "export {\n  GhostContextMenu,\n  type GhostContextMenuSlotProps,\n} from './ghost-context-menu'",
+    "export {\n  GhostContextMenuTrigger,\n  type GhostContextMenuTriggerElement,\n  type GhostContextMenuTriggerExposed,\n} from './ghost-context-menu-trigger'",
+    "export {\n  GhostContextMenuContent,\n  type GhostContextMenuContentElement,\n  type GhostContextMenuContentExposed,\n  type GhostContextMenuFlipOptions,\n  type GhostContextMenuOffsetOptions,\n  type GhostContextMenuPlacement,\n  type GhostContextMenuShiftOptions,\n  type GhostContextMenuStrategy,\n} from './ghost-context-menu-content'",
+    "export {\n  GhostContextMenuItem,\n  type GhostContextMenuItemElement,\n  type GhostContextMenuItemExposed,\n} from './ghost-context-menu-item'",
+    "export {\n  GhostContextMenuCheckboxItem,\n  type GhostContextMenuCheckboxItemElement,\n  type GhostContextMenuCheckboxItemExposed,\n} from './ghost-context-menu-checkbox-item'",
+    "export {\n  GhostContextMenuRadioItem,\n  type GhostContextMenuRadioItemElement,\n  type GhostContextMenuRadioItemExposed,\n} from './ghost-context-menu-radio-item'",
+    "export {\n  GhostContextMenuRadioGroup,\n  type GhostContextMenuRadioGroupElement,\n} from './ghost-context-menu-radio-group'",
+    "export {\n  GhostContextMenuLabel,\n  type GhostContextMenuLabelElement,\n} from './ghost-context-menu-label'",
+    "export {\n  GhostContextMenuSeparator,\n  type GhostContextMenuSeparatorElement,\n} from './ghost-context-menu-separator'",
+    "export {\n  GhostContextMenuGroup,\n  type GhostContextMenuGroupElement,\n} from './ghost-context-menu-group'"
+  ],
+  "examples": [
+    {
+      "id": "context-menu/basic",
+      "title": "Basic",
+      "description": "Headless context menu on a row target with items, checkbox, radio group, label, separator, and disabled item.",
+      "layer": "headless"
+    },
+    {
+      "id": "context-menu/themed",
+      "title": "Themed",
+      "description": "Elevation-3 context menu surface on a DataTable-style row.",
+      "layer": "themed"
+    }
+  ]
+}

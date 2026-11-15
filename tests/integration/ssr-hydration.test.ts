@@ -5,6 +5,9 @@ import GhostButton from '../../packages/vue/src/GhostButton.vue'
 import GhostCollapsible from '../../packages/vue/src/GhostCollapsible.vue'
 import GhostCollapsibleContent from '../../packages/vue/src/GhostCollapsibleContent.vue'
 import GhostCollapsibleTrigger from '../../packages/vue/src/GhostCollapsibleTrigger.vue'
+import GhostContextMenu from '../../packages/vue/src/GhostContextMenu.vue'
+import GhostContextMenuContent from '../../packages/vue/src/GhostContextMenuContent.vue'
+import GhostContextMenuTrigger from '../../packages/vue/src/GhostContextMenuTrigger.vue'
 import GhostDropdownMenu from '../../packages/vue/src/GhostDropdownMenu.vue'
 import GhostDropdownMenuContent from '../../packages/vue/src/GhostDropdownMenuContent.vue'
 import GhostDropdownMenuTrigger from '../../packages/vue/src/GhostDropdownMenuTrigger.vue'
@@ -124,6 +127,35 @@ describe('SSR hydration harness', () => {
         expect(html).toContain('aria-expanded="false"')
         expect(html).toContain('role="menuitem"')
         expect(html).not.toContain('Hidden menu item')
+      },
+    })
+  })
+
+  it('hydrates closed GhostContextMenu without mismatch', async () => {
+    const ClosedContextMenu = defineComponent({
+      name: 'ClosedContextMenuFixture',
+      setup() {
+        return () =>
+          h(GhostContextMenu, null, {
+            default: () => [
+              h(GhostContextMenuTrigger, null, () => 'Context trigger'),
+              h(
+                GhostContextMenuContent,
+                { portal: false },
+                () => 'Hidden context menu panel',
+              ),
+            ],
+          })
+      },
+    })
+
+    await expectSsrHydration(ClosedContextMenu, {
+      assertServerHtml(html) {
+        expect(html).toContain('Context trigger')
+        expect(html).toContain('aria-haspopup="menu"')
+        expect(html).not.toContain('Hidden context menu panel')
+        expect(html).toContain('data-part="trigger"')
+        expect(html).not.toContain('data-part="content"')
       },
     })
   })
