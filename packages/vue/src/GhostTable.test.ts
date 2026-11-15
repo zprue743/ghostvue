@@ -45,9 +45,9 @@ describe('GhostTable', () => {
       slots: { default: '<tbody />' },
     })
     expect(wrapper.find('.ghost-table-scroll-container').exists()).toBe(true)
-    expect(
-      wrapper.find('.ghost-table-scroll-container').attributes('data-part'),
-    ).toBe('scroll-container')
+    const scroll = wrapper.find('.ghost-table-scroll-container')
+    expect(scroll.attributes('data-part')).toBe('scroll-container')
+    expect(scroll.attributes('tabindex')).toBe('0')
     expect(wrapper.find('table').exists()).toBe(true)
   })
 

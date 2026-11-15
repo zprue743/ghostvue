@@ -46,6 +46,7 @@ export interface GhostTableRootProps {
 export interface GhostTableScrollContainerProps {
   class: 'ghost-table-scroll-container'
   'data-part': 'scroll-container'
+  tabindex: 0
 }
 
 /**
@@ -69,6 +70,7 @@ export function useGhostTable(options: UseGhostTableOptions = {}): {
   const scrollContainerProps = computed((): GhostTableScrollContainerProps => ({
     class: 'ghost-table-scroll-container',
     'data-part': 'scroll-container',
+    tabindex: 0,
   }))
 
   return { containHorizontal, tableProps, scrollContainerProps }

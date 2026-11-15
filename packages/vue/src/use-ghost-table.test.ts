@@ -23,6 +23,7 @@ describe('useGhostTable', () => {
     expect(contained.scrollContainerProps.value).toEqual({
       class: 'ghost-table-scroll-container',
       'data-part': 'scroll-container',
+      tabindex: 0,
     })
   })
 

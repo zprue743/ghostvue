@@ -44,7 +44,8 @@ Each part exposes `element` for its native host.
 ## Horizontal containment
 
 Wide tables opt in to a scroll container. Overflow is never implied on the
-`<table>` itself.
+`<table>` itself. The scroll container is focusable (`tabindex="0"`) so keyboard
+users can pan horizontally.
 
 <GhostExample id="table/contain-horizontal" />
 
