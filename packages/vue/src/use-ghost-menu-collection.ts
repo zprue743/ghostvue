@@ -11,9 +11,12 @@ import { isDisabledElement } from './get-tabbable-elements'
 export const MENU_ITEM_SELECTOR =
   '[role="menuitem"],[role="menuitemcheckbox"],[role="menuitemradio"]'
 
+export type GhostMenuCollectionCloseReason = 'tab'
+
 export interface UseGhostMenuCollectionOptions {
   onItemSelect?: (element: HTMLElement) => void
-  onClose?: () => void
+  /** APG: Tab closes the menu without restoring focus to the trigger. */
+  onClose?: (reason?: GhostMenuCollectionCloseReason) => void
 }
 
 /** Enabled menu items inside `root`, in DOM order. */
@@ -164,6 +167,11 @@ function handleMenuKeyDown(
   typeaheadState: TypeaheadState,
 ): void {
   if (event.defaultPrevented || isEditableTarget(event.target)) {
+    return
+  }
+
+  if (event.key === 'Tab') {
+    options?.onClose?.('tab')
     return
   }
 

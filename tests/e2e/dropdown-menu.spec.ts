@@ -89,6 +89,10 @@ test.describe('GhostDropdownMenu', () => {
       await page.keyboard.press('ArrowDown')
       await expect(disabledItem).not.toBeFocused()
       await expect(checkbox).toBeFocused()
+
+      await page.keyboard.press('Tab')
+      await expect(content).toHaveCount(0)
+      await expect(trigger).toHaveAttribute('aria-expanded', 'false')
     } finally {
       await playground.close()
     }

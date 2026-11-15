@@ -53,11 +53,13 @@ Keeps `visibility: hidden` until `useFloating().isPositioned` resolves. Sets
 
 ### Items and groups
 
-- `GhostDropdownMenuItem` — `role="menuitem"`; emits `select` and closes the menu.
+- `GhostDropdownMenuItem` — `role="menuitem"`; emits `select` with the activating
+  event. The menu closes unless the handler calls `event.preventDefault()`.
 - `GhostDropdownMenuCheckboxItem` — `role="menuitemcheckbox"` with
   `v-model:checked`; toggles without closing.
 - `GhostDropdownMenuRadioGroup` / `GhostDropdownMenuRadioItem` —
-  `menuitemradio` collection with `v-model`; selecting a radio closes the menu.
+  `menuitemradio` collection with `v-model`; selecting a radio emits
+  `(value, event)` and closes unless `event.preventDefault()`.
 - `GhostDropdownMenuLabel`, `GhostDropdownMenuSeparator`, `GhostDropdownMenuGroup`
   — structural parts with `data-part` hooks only (no roving focus).
 

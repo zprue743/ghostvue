@@ -138,6 +138,7 @@ export {
   focusLastMenuItem,
   getMenuItems,
   useGhostMenuCollection,
+  type GhostMenuCollectionCloseReason,
   type UseGhostMenuCollectionOptions,
 } from './use-ghost-menu-collection'
 export type {

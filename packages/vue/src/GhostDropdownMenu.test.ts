@@ -309,6 +309,92 @@ describe('GhostDropdownMenu', () => {
     expect(document.activeElement?.textContent).toBe('Also enabled')
   })
 
+  it('keeps the menu open when select is defaultPrevented', async () => {
+    computePositionOverride = () =>
+      Promise.resolve({
+        x: 0,
+        y: 0,
+        placement: 'bottom',
+        strategy: 'absolute',
+        middlewareData: {},
+      })
+
+    mountAttached(
+      defineComponent({
+        setup() {
+          return () =>
+            h(
+              GhostDropdownMenu,
+              { defaultOpen: true },
+              {
+                default: () => [
+                  h(GhostDropdownMenuTrigger, null, () => 'Menu'),
+                  h(GhostDropdownMenuContent, null, () =>
+                    h(
+                      GhostDropdownMenuItem,
+                      {
+                        onSelect: (event: Event) => {
+                          event.preventDefault()
+                        },
+                      },
+                      () => 'Stay open',
+                    ),
+                  ),
+                ],
+              },
+            )
+        },
+      }),
+    )
+    await flushPromises()
+
+    getHtmlPart('item').click()
+    await flushPromises()
+    expect(document.querySelector('[data-part="content"]')).not.toBeNull()
+  })
+
+  it('closes on Tab without restoring focus to the trigger', async () => {
+    computePositionOverride = () =>
+      Promise.resolve({
+        x: 0,
+        y: 0,
+        placement: 'bottom',
+        strategy: 'absolute',
+        middlewareData: {},
+      })
+
+    mountAttached(
+      defineComponent({
+        setup() {
+          return () =>
+            h(
+              GhostDropdownMenu,
+              { defaultOpen: true },
+              {
+                default: () => [
+                  h(GhostDropdownMenuTrigger, null, () => 'Menu'),
+                  h(GhostDropdownMenuContent, null, () =>
+                    h(GhostDropdownMenuItem, null, () => 'Action'),
+                  ),
+                ],
+              },
+            )
+        },
+      }),
+    )
+    await flushPromises()
+
+    const trigger = getHtmlPart('trigger')
+    const item = getHtmlPart('item')
+    item.focus()
+    pressKey('Tab', item)
+    await flushPromises()
+
+    expect(document.querySelector('[data-part="content"]')).toBeNull()
+    // jsdom does not advance Tab focus; closing without restoring to the trigger is enough here.
+    expect(document.activeElement).not.toBe(trigger)
+  })
+
   it('closes on escape, outside pointer, and item select', async () => {
     computePositionOverride = () =>
       Promise.resolve({

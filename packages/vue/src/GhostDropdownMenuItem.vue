@@ -66,13 +66,14 @@ function handleClick(event: MouseEvent): void {
       }
     }
   }
-  if (props.disabled || event.defaultPrevented) {
-    if (props.disabled) {
-      event.preventDefault()
-    }
+  if (props.disabled) {
+    event.preventDefault()
     return
   }
   emit('select', event)
+  if (event.defaultPrevented) {
+    return
+  }
   context.close()
 }
 

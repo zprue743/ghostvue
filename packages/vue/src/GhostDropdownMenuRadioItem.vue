@@ -26,7 +26,7 @@ const props = withDefaults(
 )
 
 const emit = defineEmits<{
-  select: [value: string]
+  select: [value: string, event: Event]
 }>()
 
 const menuContext = inject(ghostDropdownMenuContextKey)
@@ -83,14 +83,15 @@ function handleClick(event: MouseEvent): void {
       }
     }
   }
-  if (isDisabled.value || event.defaultPrevented) {
-    if (isDisabled.value) {
-      event.preventDefault()
-    }
+  if (isDisabled.value) {
+    event.preventDefault()
     return
   }
   group.select(props.value)
-  emit('select', props.value)
+  emit('select', props.value, event)
+  if (event.defaultPrevented) {
+    return
+  }
   menu.close()
 }
 

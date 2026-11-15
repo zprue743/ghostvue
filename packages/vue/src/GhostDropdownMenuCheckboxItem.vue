@@ -86,10 +86,11 @@ function handleClick(event: MouseEvent): void {
       }
     }
   }
-  if (props.disabled || event.defaultPrevented) {
-    if (props.disabled) {
-      event.preventDefault()
-    }
+  if (props.disabled) {
+    event.preventDefault()
+    return
+  }
+  if (event.defaultPrevented) {
     return
   }
   isChecked.value = !isChecked.value

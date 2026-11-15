@@ -29,7 +29,8 @@ export const GhostDropdownMenuRadioItem = defineComponent({
     },
   },
   emits: {
-    select: (value: string) => typeof value === 'string',
+    select: (value: string, event: Event) =>
+      typeof value === 'string' && event instanceof Event,
   },
   setup(props, { attrs, slots, emit, expose }) {
     const inner = ref<GhostDropdownMenuRadioItemExposed | null>(null)
@@ -57,8 +58,8 @@ export const GhostDropdownMenuRadioItem = defineComponent({
           as: props.as,
           value: props.value,
           disabled: props.disabled,
-          onSelect: (value: string) => {
-            emit('select', value)
+          onSelect: (value: string, event: Event) => {
+            emit('select', value, event)
           },
         },
         slots,

@@ -89,7 +89,9 @@ Themed exports from `@ghostvue/themes`:
 | `as`       | `GhostDropdownMenuItemElement` | `'div'` | Item element.                       |
 | `disabled` | `boolean`                      | `false` | Skipped in roving; not activatable. |
 
-Emits `select` when activated; closes the menu after a successful activation.
+Emits `select` with the activating `Event` when activated. The menu closes after
+activation unless the consumer calls `event.preventDefault()` on that event (or on
+`click` for checkbox toggles).
 
 #### `GhostDropdownMenuCheckboxItem`
 
@@ -103,14 +105,14 @@ Toggles on click or `Space` / `Enter` without closing the menu.
 
 #### `GhostDropdownMenuRadioGroup` / `GhostDropdownMenuRadioItem`
 
-| Part        | Prop / emit        | Contract                               |
-| ----------- | ------------------ | -------------------------------------- |
-| Radio group | `modelValue`       | Controlled selected value (`v-model`). |
-| Radio group | `defaultValue`     | Uncontrolled initial value.            |
-| Radio group | `disabled`         | Disables all items when `true`.        |
-| Radio item  | `value` (required) | Value reported on selection.           |
-| Radio item  | `disabled`         | Skipped in roving.                     |
-| Radio item  | emits `select`     | Selecting closes the menu.             |
+| Part        | Prop / emit        | Contract                                                        |
+| ----------- | ------------------ | --------------------------------------------------------------- |
+| Radio group | `modelValue`       | Controlled selected value (`v-model`).                          |
+| Radio group | `defaultValue`     | Uncontrolled initial value.                                     |
+| Radio group | `disabled`         | Disables all items when `true`.                                 |
+| Radio item  | `value` (required) | Value reported on selection.                                    |
+| Radio item  | `disabled`         | Skipped in roving.                                              |
+| Radio item  | emits `select`     | Emits `(value, event)`; closes unless `event.preventDefault()`. |
 
 #### Structural parts
 
@@ -161,17 +163,17 @@ WAI-ARIA APG **Menu Button** pattern (flat menu):
 
 ### Keyboard interaction
 
-| Key                     | Where          | Behavior                                                            |
-| ----------------------- | -------------- | ------------------------------------------------------------------- |
-| `Enter` / `Space`       | Trigger        | Toggle open (non-anchor `as`).                                      |
-| `ArrowDown` / `ArrowUp` | Closed trigger | Open; focus first / last item.                                      |
-| `ArrowDown` / `ArrowUp` | Open menu      | Roving focus among enabled items.                                   |
-| `Home` / `End`          | Open menu      | First / last enabled item.                                          |
-| Printable key           | Open menu      | Typeahead among item labels.                                        |
-| `Space`                 | Checkbox item  | Toggle checked; menu stays open.                                    |
-| `Enter` / `Space`       | Item / radio   | Activate (radio closes menu).                                       |
-| `Escape`                | Open menu      | Close; restore focus to trigger.                                    |
-| `Tab`                   | Open menu      | Not trapped; ordinary tab order (`useFocusScope` `trapped: false`). |
+| Key                     | Where          | Behavior                                                                      |
+| ----------------------- | -------------- | ----------------------------------------------------------------------------- |
+| `Enter` / `Space`       | Trigger        | Toggle open (non-anchor `as`).                                                |
+| `ArrowDown` / `ArrowUp` | Closed trigger | Open; focus first / last item.                                                |
+| `ArrowDown` / `ArrowUp` | Open menu      | Roving focus among enabled items.                                             |
+| `Home` / `End`          | Open menu      | First / last enabled item.                                                    |
+| Printable key           | Open menu      | Typeahead among item labels.                                                  |
+| `Space`                 | Checkbox item  | Toggle checked; menu stays open.                                              |
+| `Enter` / `Space`       | Item / radio   | Activate (radio closes menu).                                                 |
+| `Escape`                | Open menu      | Close; restore focus to trigger.                                              |
+| `Tab` / `Shift+Tab`     | Open menu      | Closes the menu and moves focus to the next tab stop (no restore to trigger). |
 
 Disabled items are omitted from roving and typeahead.
 

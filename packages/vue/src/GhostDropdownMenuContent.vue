@@ -215,7 +215,10 @@ useFocusScope(focusTarget, {
 })
 
 useGhostMenuCollection(contentElement, {
-  onClose: () => {
+  onClose: (reason) => {
+    if (reason === 'tab') {
+      shouldRestoreFocus.value = false
+    }
     context.close()
   },
 })

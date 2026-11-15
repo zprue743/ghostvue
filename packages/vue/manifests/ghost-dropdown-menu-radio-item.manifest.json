@@ -34,7 +34,7 @@
   "events": [
     {
       "name": "select",
-      "payloadType": "string",
+      "payloadType": "[string, Event]",
       "description": "Emitted as `select`."
     }
   ],
