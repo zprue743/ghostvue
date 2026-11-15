@@ -1,0 +1,243 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "generated",
+  "name": "GhostCombobox",
+  "package": "@ghostvue/vue",
+  "status": "experimental",
+  "description": "Headless editable combobox with list autocomplete, consumer-owned filtering, async loading hooks, and single or multiple selection.",
+  "props": [
+    {
+      "name": "allowDeselect",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Declared prop `allowDeselect`.",
+      "deprecated": false
+    },
+    {
+      "name": "defaultOpen",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Declared prop `defaultOpen`.",
+      "deprecated": false
+    },
+    {
+      "name": "defaultSearch",
+      "type": "string",
+      "default": "",
+      "required": false,
+      "description": "Declared prop `defaultSearch`.",
+      "deprecated": false
+    },
+    {
+      "name": "defaultValue",
+      "type": "GhostComboboxValue",
+      "required": false,
+      "description": "Declared prop `defaultValue`.",
+      "deprecated": false
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Declared prop `disabled`.",
+      "deprecated": false
+    },
+    {
+      "name": "form",
+      "type": "string",
+      "required": false,
+      "description": "Declared prop `form`.",
+      "deprecated": false
+    },
+    {
+      "name": "invalid",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Declared prop `invalid`.",
+      "deprecated": false
+    },
+    {
+      "name": "loading",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Declared prop `loading`.",
+      "deprecated": false
+    },
+    {
+      "name": "modelValue",
+      "type": "GhostComboboxValue",
+      "required": false,
+      "description": "Declared prop `modelValue`.",
+      "deprecated": false
+    },
+    {
+      "name": "multiple",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Declared prop `multiple`.",
+      "deprecated": false
+    },
+    {
+      "name": "name",
+      "type": "string",
+      "required": false,
+      "description": "Declared prop `name`.",
+      "deprecated": false
+    },
+    {
+      "name": "open",
+      "type": "boolean",
+      "required": false,
+      "description": "Declared prop `open`.",
+      "deprecated": false
+    },
+    {
+      "name": "placeholder",
+      "type": "string",
+      "required": false,
+      "description": "Declared prop `placeholder`.",
+      "deprecated": false
+    },
+    {
+      "name": "required",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Declared prop `required`.",
+      "deprecated": false
+    },
+    {
+      "name": "search",
+      "type": "string",
+      "required": false,
+      "description": "Declared prop `search`.",
+      "deprecated": false
+    },
+    {
+      "name": "virtualized",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Declared prop `virtualized`.",
+      "deprecated": false
+    }
+  ],
+  "models": [
+    {
+      "prop": "modelValue",
+      "event": "update:modelValue",
+      "type": "GhostComboboxValue",
+      "description": "v-model binding for `modelValue`."
+    },
+    {
+      "prop": "open",
+      "event": "update:open",
+      "type": "boolean",
+      "description": "v-model binding for `open`."
+    },
+    {
+      "prop": "search",
+      "event": "update:search",
+      "type": "string",
+      "description": "v-model binding for `search`."
+    }
+  ],
+  "events": [
+    {
+      "name": "search",
+      "payloadType": "{ query: string; requestId: number; }",
+      "description": "Emitted as `search`."
+    }
+  ],
+  "slots": [
+    {
+      "name": "default",
+      "props": [],
+      "description": "Container content."
+    }
+  ],
+  "exposed": [
+    {
+      "name": "blur",
+      "kind": "method",
+      "type": "() => void",
+      "description": "Exposed method `blur`."
+    },
+    {
+      "name": "element",
+      "kind": "property",
+      "type": "HTMLElement | null",
+      "description": "Root element after mount; null before mount."
+    },
+    {
+      "name": "focus",
+      "kind": "method",
+      "type": "(options?: FocusOptions) => void",
+      "description": "Exposed method `focus`."
+    }
+  ],
+  "styling": {
+    "parts": [
+      {
+        "name": "input",
+        "description": "Editable combobox control from GhostComboboxInput."
+      },
+      {
+        "name": "content",
+        "description": "Portaled listbox surface from GhostComboboxContent."
+      },
+      {
+        "name": "option",
+        "description": "Selectable option from GhostComboboxOption."
+      },
+      {
+        "name": "empty",
+        "description": "Empty state from GhostComboboxEmpty when no options are registered."
+      }
+    ],
+    "states": [
+      {
+        "name": "open",
+        "description": "Listbox is expanded."
+      },
+      {
+        "name": "checked",
+        "description": "Option reflects the current selection."
+      }
+    ],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "combobox",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/combobox/examples/combobox-autocomplete-list/",
+    "keyboard": {
+      "ArrowDown": "Opens the listbox or moves the active option highlight.",
+      "ArrowUp": "Opens the listbox or moves the active option highlight.",
+      "Enter": "Selects the highlighted option.",
+      "Escape": "Closes the listbox.",
+      "Home": "Highlights the first enabled option.",
+      "End": "Highlights the last enabled option."
+    },
+    "requiredAriaAttributes": [
+      "aria-expanded",
+      "aria-controls",
+      "aria-autocomplete",
+      "aria-activedescendant",
+      "aria-selected"
+    ]
+  },
+  "examples": [
+    "combobox/basic",
+    "combobox/async",
+    "combobox/multi",
+    "combobox/field",
+    "combobox/form",
+    "combobox/themed"
+  ]
+}
