@@ -248,6 +248,116 @@ describe('GhostMenubar', () => {
     expect(document.activeElement?.textContent).toBe('New')
   })
 
+  it('uses a single roving tab stop among triggers', async () => {
+    stubFloatingPosition()
+    mountFileEditMenubar()
+    await flushPromises()
+
+    const [fileTrigger, editTrigger] = getMenubarTriggers()
+    expect(fileTrigger.tabIndex).toBe(0)
+    expect(editTrigger.tabIndex).toBe(-1)
+  })
+
+  it('ArrowRight with all menus closed moves focus without opening a menu', async () => {
+    stubFloatingPosition()
+    mountFileEditMenubar()
+    await flushPromises()
+
+    const [fileTrigger, editTrigger] = getMenubarTriggers()
+    fileTrigger.focus()
+    pressKey('ArrowRight', fileTrigger)
+    await flushPromises()
+
+    expect(document.activeElement).toBe(editTrigger)
+    expect(document.querySelector('[data-part="content"]')).toBeNull()
+    expect(editTrigger.tabIndex).toBe(0)
+  })
+
+  it('ArrowRight from inside menu content opens the adjacent menu', async () => {
+    stubFloatingPosition()
+    mountFileEditMenubar({ fileDefaultOpen: true })
+    await flushPromises()
+
+    const [fileTrigger, editTrigger] = getMenubarTriggers()
+    const firstItem = getHtmlPart('item')
+    firstItem.focus()
+    pressKey('ArrowRight', firstItem)
+    await flushPromises()
+
+    expect(fileTrigger.getAttribute('aria-expanded')).toBe('false')
+    expect(editTrigger.getAttribute('aria-expanded')).toBe('true')
+    expect(document.activeElement?.textContent).toBe('Show hidden')
+  })
+
+  it('Tab from inside an open menu moves focus to the next tab stop after the menubar', async () => {
+    stubFloatingPosition()
+    mountAttached(
+      defineComponent({
+        setup() {
+          return () =>
+            h('div', null, [
+              h(GhostMenubar, null, {
+                default: () => [
+                  h(
+                    GhostMenubarMenu,
+                    { defaultOpen: true },
+                    {
+                      default: () => [
+                        h(GhostMenubarTrigger, null, () => 'File'),
+                        h(GhostMenubarContent, null, () =>
+                          h(GhostMenubarItem, null, () => 'New'),
+                        ),
+                      ],
+                    },
+                  ),
+                  h(GhostMenubarMenu, null, {
+                    default: () => [
+                      h(GhostMenubarTrigger, null, () => 'Edit'),
+                      h(GhostMenubarContent, null, () =>
+                        h(GhostMenubarItem, null, () => 'Cut'),
+                      ),
+                    ],
+                  }),
+                ],
+              }),
+              h(
+                'button',
+                { type: 'button', 'data-testid': 'after-menubar' },
+                () => 'After',
+              ),
+            ])
+        },
+      }),
+    )
+    await flushPromises()
+
+    const menuItem = document.querySelector('[data-part="item"]')
+    expect(menuItem).not.toBeNull()
+    ;(menuItem as HTMLElement).focus()
+
+    pressKey('Tab', menuItem ?? document.body)
+    await flushPromises()
+
+    const after = document.querySelector('[data-testid="after-menubar"]')
+    expect(document.activeElement).toBe(after)
+    expect(document.querySelector('[data-part="content"]')).toBeNull()
+  })
+
+  it('hovering another trigger while a menu is open switches menus', async () => {
+    stubFloatingPosition()
+    mountFileEditMenubar({ fileDefaultOpen: true })
+    await flushPromises()
+
+    const [, editTrigger] = getMenubarTriggers()
+    editTrigger.dispatchEvent(
+      new PointerEvent('pointerenter', { bubbles: true }),
+    )
+    await flushPromises()
+
+    expect(editTrigger.getAttribute('aria-expanded')).toBe('true')
+    expect(getHtmlPart('content').textContent).toContain('Show hidden')
+  })
+
   it('ArrowRight with an open menu moves to the next trigger and opens it', async () => {
     stubFloatingPosition()
     mountFileEditMenubar({ fileDefaultOpen: true })

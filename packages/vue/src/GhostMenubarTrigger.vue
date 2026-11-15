@@ -3,6 +3,7 @@ import {
   computed,
   inject,
   onUnmounted,
+  shallowRef,
   useAttrs,
   useTemplateRef,
   watch,
@@ -45,6 +46,7 @@ const menubar = menubarContext
 
 const attrs = useAttrs()
 const hostRef = useTemplateRef('host')
+const openedByHover = shallowRef(false)
 
 const element = computed(() => resolveMenubarHtmlElement(hostRef.value))
 
@@ -74,6 +76,15 @@ watch(
     context.setTriggerElement(el)
   },
   { immediate: true, flush: 'post' },
+)
+
+watch(
+  () => context.isOpen.value,
+  (open) => {
+    if (!open) {
+      openedByHover.value = false
+    }
+  },
 )
 
 onUnmounted(() => {
@@ -112,16 +123,27 @@ const triggerAttrs = computed(() => {
     'data-state': context.isOpen.value ? 'open' : 'closed',
   }
 
+  const rovingTabIndex =
+    customTabindex ??
+    (element.value &&
+    menubar.triggerTabStop.value &&
+    menubar.triggerTabStop.value === element.value
+      ? 0
+      : -1)
+
   if (isNativeButtonTag.value) {
     base['type'] = customType ?? 'button'
     base['disabled'] = props.disabled
+    if (!props.disabled) {
+      base['tabindex'] = rovingTabIndex
+    }
   } else if (isComponentHost.value) {
     base['disabled'] = props.disabled
     if (customType !== undefined) {
       base['type'] = customType
     }
   } else {
-    base['tabindex'] = customTabindex ?? (props.disabled ? undefined : 0)
+    base['tabindex'] = props.disabled ? undefined : rovingTabIndex
     if (props.disabled) {
       base['aria-disabled'] = 'true'
     }
@@ -142,6 +164,15 @@ function invokeAttrHandler(handler: unknown, event: Event): void {
   }
 }
 
+function handlePointerEnter(): void {
+  if (props.disabled || !menubar.hasOpenMenu() || context.isOpen.value) {
+    return
+  }
+  context.setFocusLastOnOpen(false)
+  context.open()
+  openedByHover.value = true
+}
+
 function handleClick(event: MouseEvent): void {
   if (props.disabled) {
     event.preventDefault()
@@ -152,12 +183,17 @@ function handleClick(event: MouseEvent): void {
   if (event.defaultPrevented) {
     return
   }
-  if (
-    !context.isOpen.value &&
-    element.value &&
-    document.activeElement !== element.value
-  ) {
+  if (openedByHover.value) {
+    openedByHover.value = false
+    return
+  }
+  if (element.value && document.activeElement !== element.value) {
     element.value.focus({ preventScroll: true })
+  }
+  if (menubar.hasOpenMenu() && !context.isOpen.value) {
+    context.setFocusLastOnOpen(false)
+    context.open()
+    return
   }
   context.toggle()
 }
@@ -176,15 +212,26 @@ function handleKeydown(event: KeyboardEvent): void {
     return
   }
 
-  if (
-    context.isOpen.value &&
-    (event.key === 'ArrowLeft' || event.key === 'ArrowRight')
-  ) {
-    const el = element.value
-    if (el) {
-      event.preventDefault()
-      menubar.navigateAdjacentFromTrigger(el, event.key)
+  const el = element.value
+  const horizontalKey =
+    event.key === 'ArrowLeft' ||
+    event.key === 'ArrowRight' ||
+    event.key === 'Home' ||
+    event.key === 'End'
+
+  if (el && horizontalKey) {
+    event.preventDefault()
+    if (
+      context.isOpen.value &&
+      (event.key === 'ArrowLeft' || event.key === 'ArrowRight')
+    ) {
+      menubar.openAdjacentMenu(el, event.key)
+      return
     }
+    if (context.isOpen.value) {
+      context.close()
+    }
+    menubar.moveTriggerFocus(el, event.key)
     return
   }
 
@@ -214,7 +261,6 @@ function handleKeydown(event: KeyboardEvent): void {
   if (event.key !== 'Enter' && event.key !== ' ') {
     return
   }
-  const el = element.value
   if (el instanceof HTMLButtonElement) {
     return
   }
@@ -249,6 +295,7 @@ defineExpose<GhostMenubarTriggerExposed>({
     v-bind="triggerAttrs"
     @click="handleClick"
     @keydown="handleKeydown"
+    @pointerenter="handlePointerEnter"
   >
     <slot />
   </component>

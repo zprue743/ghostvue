@@ -12,6 +12,7 @@ import {
 
 import { isFocusable } from './get-tabbable-elements'
 import {
+  ghostMenubarContextKey,
   ghostMenubarMenuContextKey,
   resolveMenubarHtmlElement,
   type GhostMenubarContentElement,
@@ -65,6 +66,12 @@ if (!injected) {
   throw new Error('GhostMenubarContent must be used inside GhostMenubarMenu')
 }
 const context = injected
+
+const menubarContext = inject(ghostMenubarContextKey)
+if (!menubarContext) {
+  throw new Error('GhostMenubarContent must be used inside GhostMenubar')
+}
+const menubar = menubarContext
 
 const attrs = useAttrs()
 const hostRef = useTemplateRef('host')
@@ -212,11 +219,39 @@ useFocusScope(focusTarget, {
 useGhostMenuCollection(contentElement, {
   onClose: (reason) => {
     if (reason === 'tab') {
-      shouldRestoreFocus.value = false
+      return
     }
     context.close()
   },
 })
+
+function handleKeydown(event: KeyboardEvent): void {
+  if (event.key === 'Tab') {
+    event.preventDefault()
+    if (!context.isOpen.value) {
+      return
+    }
+    shouldRestoreFocus.value = false
+    const focused =
+      document.activeElement instanceof HTMLElement
+        ? document.activeElement
+        : null
+    context.close()
+    void nextTick(() => {
+      menubar.focusNextTabStopAfterMenubar(focused)
+    })
+    return
+  }
+  if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') {
+    return
+  }
+  const trigger = context.triggerElement.value
+  if (!trigger) {
+    return
+  }
+  event.preventDefault()
+  menubar.openAdjacentMenu(trigger, event.key)
+}
 
 const contentAttrs = computed(() => {
   const rest: Record<string, unknown> = {}
@@ -274,6 +309,7 @@ defineExpose<GhostMenubarContentExposed>({
       class="ghost-menubar-content"
       :style="contentStyle"
       v-bind="contentAttrs"
+      @keydown.capture="handleKeydown"
     >
       <slot />
     </component>

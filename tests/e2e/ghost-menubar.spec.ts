@@ -29,6 +29,22 @@ test.describe('GhostMenubar', () => {
       await expect(fileTrigger).toHaveAttribute('role', 'menuitem')
       await expect(fileTrigger).toHaveAttribute('aria-haspopup', 'menu')
 
+      await expect(fileTrigger).toHaveAttribute('tabindex', '0')
+      await expect(editTrigger).toHaveAttribute('tabindex', '-1')
+
+      await outsideTarget.focus()
+      await page.keyboard.press('Shift+Tab')
+      await expect(fileTrigger).toBeFocused()
+      await page.keyboard.press('Tab')
+      await expect(outsideTarget).toBeFocused()
+      await expect(editTrigger).not.toBeFocused()
+
+      await fileTrigger.focus()
+      await page.keyboard.press('ArrowRight')
+      await expect(editTrigger).toBeFocused()
+      await expect(fileContent).toHaveCount(0)
+      await expect(editContent).toHaveCount(0)
+
       const closedAxe = await new AxeBuilder({ page })
         .include('[data-ghost-menubar]')
         .analyze()
@@ -61,12 +77,26 @@ test.describe('GhostMenubar', () => {
       await expect(fileContent).toBeVisible()
       await expect(fileNew).toBeFocused()
 
-      await fileTrigger.focus()
       await page.keyboard.press('ArrowRight')
       await expect(fileContent).toHaveCount(0)
       await expect(editContent).toBeVisible()
       await expect(editTrigger).toHaveAttribute('aria-expanded', 'true')
       await expect(checkbox).toBeFocused()
+
+      await fileTrigger.focus()
+      await page.keyboard.press('ArrowDown')
+      await expect(fileContent).toBeVisible()
+      await expect(fileNew).toBeFocused()
+      await page.keyboard.press('Tab')
+      await expect(fileContent).toHaveCount(0)
+      await expect(outsideTarget).toBeFocused()
+
+      await fileTrigger.click()
+      await expect(fileContent).toBeVisible()
+      await editTrigger.hover()
+      await expect(fileContent).toHaveCount(0)
+      await expect(editContent).toBeVisible()
+      await expect(editTrigger).toHaveAttribute('aria-expanded', 'true')
 
       await page.keyboard.press('ArrowDown')
       await expect(radioA).toBeFocused()

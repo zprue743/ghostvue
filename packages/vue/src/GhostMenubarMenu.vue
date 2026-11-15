@@ -76,6 +76,9 @@ onMounted(() => {
     isOpen,
     open: openMenu,
     close,
+    setFocusLastOnOpen(value) {
+      focusLastOnOpen.value = value
+    },
   })
 })
 

@@ -280,16 +280,26 @@ export interface GhostMenubarMenuRegistration {
   isOpen: Ref<boolean>
   open: () => void
   close: () => void
+  setFocusLastOnOpen: (value: boolean) => void
 }
 
 /** Menubar root coordination context. */
 export interface GhostMenubarContext {
   registerMenu: (id: symbol, entry: GhostMenubarMenuRegistration) => void
   unregisterMenu: (id: symbol) => void
-  navigateAdjacentFromTrigger: (
+  /** Roving trigger with tabindex `0`; others are `-1`. */
+  triggerTabStop: Ref<HTMLElement | null>
+  hasOpenMenu: () => boolean
+  moveTriggerFocus: (
+    currentTrigger: HTMLElement,
+    key: 'ArrowLeft' | 'ArrowRight' | 'Home' | 'End',
+  ) => void
+  /** Close current, open adjacent menu, focus its first item (menubar or menu focus). */
+  openAdjacentMenu: (
     currentTrigger: HTMLElement,
     key: 'ArrowLeft' | 'ArrowRight',
   ) => void
+  focusNextTabStopAfterMenubar: (from?: HTMLElement | null) => void
   closeAllExcept: (exceptId: symbol | null) => void
   getMenubarElement: () => HTMLElement | null
 }
