@@ -19,6 +19,7 @@ export const docsSidebar: LlmsSidebarGroup[] = [
     items: [
       { text: 'GhostAccordion', link: '/components/accordion' },
       { text: 'GhostBadge', link: '/components/badge' },
+      { text: 'GhostBreadcrumb', link: '/components/breadcrumb' },
       { text: 'GhostCollapsible', link: '/components/collapsible' },
       { text: 'GhostButton', link: '/components/button' },
       { text: 'GhostCheckbox', link: '/components/checkbox' },
@@ -168,6 +169,10 @@ export const docsSidebar: LlmsSidebarGroup[] = [
       {
         text: 'GhostBadge specification',
         link: '/components/badge-spec',
+      },
+      {
+        text: 'GhostBreadcrumb specification',
+        link: '/components/breadcrumb-spec',
       },
       {
         text: 'GhostButton specification',

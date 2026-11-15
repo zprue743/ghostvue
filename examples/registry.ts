@@ -53,6 +53,18 @@ export const ghostExamples = [
     layer: 'themed',
   },
   {
+    id: 'breadcrumb/basic',
+    title: 'Basic',
+    description: 'Ordered navigation trail with current page semantics.',
+    layer: 'headless',
+  },
+  {
+    id: 'breadcrumb/collapsed',
+    title: 'Collapsed segments',
+    description: 'Ellipsis popover exposes middle ancestors.',
+    layer: 'themed',
+  },
+  {
     id: 'button/basic',
     title: 'Basic',
     description: 'Native action control. The default type is button.',

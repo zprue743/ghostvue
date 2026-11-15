@@ -1,0 +1,64 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "generated",
+  "name": "GhostBreadcrumbList",
+  "package": "@ghostvue/vue",
+  "status": "experimental",
+  "description": "Ordered list (`ol`) container for breadcrumb items.",
+  "props": [
+    {
+      "name": "as",
+      "type": "GhostBreadcrumbListElement",
+      "default": "ol",
+      "required": false,
+      "description": "Tag name or component rendered for the ordered list.",
+      "deprecated": false
+    }
+  ],
+  "models": [],
+  "events": [],
+  "slots": [
+    {
+      "name": "default",
+      "props": [],
+      "description": "Primary content."
+    }
+  ],
+  "exposed": [
+    {
+      "name": "blur",
+      "kind": "method",
+      "type": "() => void",
+      "description": "Exposed method `blur`."
+    },
+    {
+      "name": "element",
+      "kind": "property",
+      "type": "HTMLElement | null",
+      "description": "Exposed property `element`."
+    },
+    {
+      "name": "focus",
+      "kind": "method",
+      "type": "(options?: FocusOptions) => void",
+      "description": "Exposed method `focus`."
+    }
+  ],
+  "styling": {
+    "parts": [
+      {
+        "name": "list",
+        "description": "Ordered trail list marked data-part=\"list\"."
+      }
+    ],
+    "states": [],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "list",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/breadcrumb/",
+    "keyboard": {},
+    "requiredAriaAttributes": []
+  },
+  "examples": []
+}

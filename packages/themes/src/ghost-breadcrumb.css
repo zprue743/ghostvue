@@ -1,0 +1,118 @@
+/*
+ * Themed GhostBreadcrumb trail. Values use semantic --ghost-* tokens only.
+ */
+@layer ghostvue-theme {
+  :where(
+    .ghost-theme .ghost-breadcrumb-list,
+    .ghost-themed-scope .ghost-breadcrumb-list,
+    .ghost-breadcrumb-list[data-themed]
+  ) {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    font-family: var(--ghost-type-family-sans);
+    font-feature-settings: var(--ghost-type-feature-default);
+    gap: var(--ghost-space-gap-xs);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  :where(
+    .ghost-theme .ghost-breadcrumb-item,
+    .ghost-themed-scope .ghost-breadcrumb-item,
+    .ghost-breadcrumb-item[data-themed]
+  ) {
+    align-items: center;
+    display: inline-flex;
+    gap: var(--ghost-space-gap-xs);
+  }
+
+  :where(
+    .ghost-theme .ghost-breadcrumb-link,
+    .ghost-themed-scope .ghost-breadcrumb-link,
+    .ghost-breadcrumb-link[data-themed]
+  ) {
+    color: var(--ghost-surface-fg-muted);
+    font: inherit;
+    text-decoration: none;
+    transition: color var(--ghost-motion-duration-fast)
+      var(--ghost-motion-ease-standard);
+  }
+
+  :where(
+    .ghost-theme .ghost-breadcrumb-link:hover,
+    .ghost-themed-scope .ghost-breadcrumb-link:hover,
+    .ghost-breadcrumb-link[data-themed]:hover
+  ) {
+    color: var(--ghost-surface-fg);
+    text-decoration: underline;
+  }
+
+  :where(
+    .ghost-theme .ghost-breadcrumb-link:focus-visible,
+    .ghost-themed-scope .ghost-breadcrumb-link:focus-visible,
+    .ghost-breadcrumb-link[data-themed]:focus-visible
+  ) {
+    border-radius: var(--ghost-radius-sm);
+    outline: var(--ghost-focus-ring-width) solid var(--ghost-focus-ring-color);
+    outline-offset: var(--ghost-focus-ring-offset);
+  }
+
+  :where(
+    .ghost-theme .ghost-breadcrumb-page,
+    .ghost-themed-scope .ghost-breadcrumb-page,
+    .ghost-breadcrumb-page[data-themed]
+  ) {
+    color: var(--ghost-surface-fg);
+    font: inherit;
+    font-weight: var(--ghost-type-weight-medium);
+  }
+
+  :where(
+    .ghost-theme .ghost-breadcrumb-separator,
+    .ghost-themed-scope .ghost-breadcrumb-separator,
+    .ghost-breadcrumb-separator[data-themed]
+  ) {
+    color: var(--ghost-surface-fg-subtle);
+    user-select: none;
+  }
+
+  :where(
+    .ghost-theme .ghost-breadcrumb-ellipsis button,
+    .ghost-themed-scope .ghost-breadcrumb-ellipsis button,
+    .ghost-breadcrumb-ellipsis[data-themed] button
+  ) {
+    background: transparent;
+    border: var(--ghost-border-hairline-width) solid transparent;
+    border-radius: var(--ghost-radius-sm);
+    color: var(--ghost-surface-fg-muted);
+    cursor: pointer;
+    font: inherit;
+    line-height: 1;
+    min-height: var(--ghost-control-size-sm-min);
+    min-width: var(--ghost-control-size-sm-min);
+    padding: var(--ghost-space-inset-xs);
+  }
+
+  :where(
+    .ghost-theme .ghost-breadcrumb-ellipsis button:focus-visible,
+    .ghost-themed-scope .ghost-breadcrumb-ellipsis button:focus-visible,
+    .ghost-breadcrumb-ellipsis[data-themed] button:focus-visible
+  ) {
+    outline: var(--ghost-focus-ring-width) solid var(--ghost-focus-ring-color);
+    outline-offset: var(--ghost-focus-ring-offset);
+  }
+
+  :where(
+    .ghost-theme .ghost-breadcrumb-ellipsis-content,
+    .ghost-themed-scope .ghost-breadcrumb-ellipsis-content,
+    .ghost-breadcrumb-ellipsis-content[data-themed]
+  ) {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ghost-space-gap-xs);
+    min-width: 10rem;
+    padding: var(--ghost-space-inset-sm);
+  }
+}

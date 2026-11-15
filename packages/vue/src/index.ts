@@ -16,6 +16,39 @@ export {
 export { default as GhostBadge } from './GhostBadge.vue'
 export { useGhostBadge, type GhostBadgeRootProps } from './use-ghost-badge'
 export type { GhostBadgeExposed, GhostBadgeProps } from './ghost-badge'
+export { default as GhostBreadcrumb } from './GhostBreadcrumb.vue'
+export { default as GhostBreadcrumbList } from './GhostBreadcrumbList.vue'
+export { default as GhostBreadcrumbItem } from './GhostBreadcrumbItem.vue'
+export { default as GhostBreadcrumbLink } from './GhostBreadcrumbLink.vue'
+export { default as GhostBreadcrumbPage } from './GhostBreadcrumbPage.vue'
+export { default as GhostBreadcrumbSeparator } from './GhostBreadcrumbSeparator.vue'
+export { default as GhostBreadcrumbEllipsis } from './GhostBreadcrumbEllipsis.vue'
+export {
+  useGhostBreadcrumb,
+  type GhostBreadcrumbRootProps,
+} from './use-ghost-breadcrumb'
+export type {
+  GhostBreadcrumbElement,
+  GhostBreadcrumbListElement,
+  GhostBreadcrumbItemElement,
+  GhostBreadcrumbLinkElement,
+  GhostBreadcrumbPageElement,
+  GhostBreadcrumbSeparatorElement,
+  GhostBreadcrumbEllipsisProps,
+  GhostBreadcrumbExposed,
+  GhostBreadcrumbListExposed,
+  GhostBreadcrumbItemExposed,
+  GhostBreadcrumbLinkExposed,
+  GhostBreadcrumbPageExposed,
+  GhostBreadcrumbSeparatorExposed,
+  GhostBreadcrumbEllipsisExposed,
+  GhostBreadcrumbProps,
+  GhostBreadcrumbListProps,
+  GhostBreadcrumbItemProps,
+  GhostBreadcrumbLinkProps,
+  GhostBreadcrumbPageProps,
+  GhostBreadcrumbSeparatorProps,
+} from './ghost-breadcrumb'
 export { default as GhostButton } from './GhostButton.vue'
 export { useGhostButton, type GhostButtonRootProps } from './use-ghost-button'
 export type {
