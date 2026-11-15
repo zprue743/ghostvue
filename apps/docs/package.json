@@ -4,7 +4,9 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "prebuild": "pnpm -w registries:write",
     "build": "node ../../scripts/write-component-references.mjs && vitepress build .",
+    "predev": "pnpm -w registries:write",
     "dev": "node ../../scripts/write-component-references.mjs && vitepress dev ."
   }
 }

@@ -1,0 +1,38 @@
+{
+  "schemaVersion": "1.0.0",
+  "slug": "popover",
+  "docs": {
+    "title": "GhostPopover",
+    "specStatus": "approved",
+    "link": "/components/popover",
+    "specLink": "/components/popover-spec"
+  },
+  "vueBarrel": [
+    "export { default as GhostPopover } from './GhostPopover.vue'",
+    "export { default as GhostPopoverTrigger } from './GhostPopoverTrigger.vue'",
+    "export { default as GhostPopoverContent } from './GhostPopoverContent.vue'",
+    "export { default as GhostPopoverClose } from './GhostPopoverClose.vue'",
+    "export { useGhostPopover } from './use-ghost-popover'",
+    "export type {\n  GhostPopoverCloseElement,\n  GhostPopoverCloseExposed,\n  GhostPopoverCloseProps,\n  GhostPopoverContentElement,\n  GhostPopoverContentExposed,\n  GhostPopoverContentProps,\n  GhostPopoverContext,\n  GhostPopoverFlipOptions,\n  GhostPopoverOffsetOptions,\n  GhostPopoverPadding,\n  GhostPopoverPlacement,\n  GhostPopoverProps,\n  GhostPopoverShiftOptions,\n  GhostPopoverSlotProps,\n  GhostPopoverStrategy,\n  GhostPopoverTriggerElement,\n  GhostPopoverTriggerExposed,\n  GhostPopoverTriggerProps,\n  UseGhostPopoverOptions,\n  UseGhostPopoverReturn,\n} from './ghost-popover'"
+  ],
+  "themesBarrel": [
+    "export { GhostPopover, type GhostPopoverSlotProps } from './ghost-popover'",
+    "export {\n  GhostPopoverTrigger,\n  type GhostPopoverTriggerElement,\n  type GhostPopoverTriggerExposed,\n} from './ghost-popover-trigger'",
+    "export {\n  GhostPopoverContent,\n  type GhostPopoverContentElement,\n  type GhostPopoverContentExposed,\n  type GhostPopoverFlipOptions,\n  type GhostPopoverOffsetOptions,\n  type GhostPopoverPlacement,\n  type GhostPopoverShiftOptions,\n  type GhostPopoverStrategy,\n} from './ghost-popover-content'",
+    "export {\n  GhostPopoverClose,\n  type GhostPopoverCloseElement,\n  type GhostPopoverCloseExposed,\n} from './ghost-popover-close'"
+  ],
+  "examples": [
+    {
+      "id": "popover/basic",
+      "title": "Basic",
+      "description": "Unstyled non-modal disclosure anchored to its trigger with Escape and outside-click dismissal.",
+      "layer": "headless"
+    },
+    {
+      "id": "popover/themed",
+      "title": "Themed",
+      "description": "Elevated surface tokens and themed button controls composed via the as prop.",
+      "layer": "themed"
+    }
+  ]
+}

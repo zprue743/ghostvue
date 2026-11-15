@@ -194,15 +194,17 @@ describe('component scaffolding', () => {
           },
         ])
       }
-      const nav = await readFile(
-        join(root, 'apps/docs/.vitepress/docs-nav.ts'),
-        'utf8',
+      const familyRegistry: unknown = JSON.parse(
+        await readFile(
+          join(root, 'packages/vue/registry/scaffold-probe.registry.json'),
+          'utf8',
+        ),
       )
-      const contributing = nav
-        .split("text: 'Contributing',")[1]
-        ?.split("text: 'AI agents',")[0]
-      expect(contributing).toContain("text: 'GhostScaffoldProbe specification'")
-      expect(contributing).toContain("link: '/components/scaffold-probe-spec'")
+      expect(familyRegistry).toMatchObject({
+        docs: { title: 'GhostScaffoldProbe' },
+        examples: [{ id: 'scaffold-probe/basic' }],
+      })
+      run(root, ['registries:write'])
       run(root, ['verify'])
       await expect(
         scaffoldComponent(root, 'GhostScaffoldProbe'),

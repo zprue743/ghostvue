@@ -1,0 +1,1543 @@
+{
+  "schemaVersion": "1.0.0",
+  "slug": "primitives",
+  "familyOrder": [
+    "badge",
+    "avatar",
+    "breadcrumb",
+    "button",
+    "checkbox",
+    "interactive-surface",
+    "visually-hidden",
+    "kbd",
+    "link",
+    "skeleton",
+    "spinner",
+    "portal",
+    "popover",
+    "dropdown-menu",
+    "select",
+    "dialog",
+    "hover-card",
+    "separator",
+    "scroll-area",
+    "progress",
+    "input",
+    "inline-alert",
+    "switch",
+    "textarea",
+    "collapsible",
+    "field",
+    "tabs",
+    "table",
+    "accordion",
+    "empty-state",
+    "card",
+    "pagination",
+    "segmented-control",
+    "toggle-group",
+    "toolbar",
+    "radio-group",
+    "tooltip",
+    "tooltip-provider",
+    "number-input",
+    "slider"
+  ],
+  "vueBarrel": [
+    "export { useGhostId } from './use-ghost-id'",
+    "export {\n  useControllableState,\n  type UseControllableStateOptions,\n} from './use-controllable-state'",
+    "export { useFocusScope, type UseFocusScopeOptions } from './use-focus-scope'",
+    "export {\n  useRovingFocus,\n  type RovingOrientation,\n  type TextDirection,\n  type UseRovingFocusOptions,\n} from './use-roving-focus'",
+    "export {\n  useDismissableLayer,\n  type DismissableLayerIgnore,\n  type DismissableLayerTarget,\n  type DismissReason,\n  type UseDismissableLayerOptions,\n} from './use-dismissable-layer'",
+    "export {\n  useFloating,\n  type UseFloatingOptions,\n  type UseFloatingReturn,\n} from './use-floating'",
+    "export {\n  MENU_ITEM_SELECTOR,\n  focusFirstMenuItem,\n  focusLastMenuItem,\n  getMenuItems,\n  useGhostMenuCollection,\n  type GhostMenuCollectionCloseReason,\n  type UseGhostMenuCollectionOptions,\n} from './use-ghost-menu-collection'",
+    "export {\n  getPaginationRange,\n  type GhostPaginationRangeEntry,\n} from './get-pagination-range'"
+  ],
+  "vueBarrelOrdered": [
+    "export { useGhostId } from './use-ghost-id'",
+    "export {\n  useControllableState,\n  type UseControllableStateOptions,\n} from './use-controllable-state'",
+    "export { useFocusScope, type UseFocusScopeOptions } from './use-focus-scope'",
+    "export {\n  useRovingFocus,\n  type RovingOrientation,\n  type TextDirection,\n  type UseRovingFocusOptions,\n} from './use-roving-focus'",
+    "export { default as GhostBadge } from './GhostBadge.vue'",
+    "export { useGhostBadge, type GhostBadgeRootProps } from './use-ghost-badge'",
+    "export type { GhostBadgeExposed, GhostBadgeProps } from './ghost-badge'",
+    "export { default as GhostAvatar } from './GhostAvatar.vue'",
+    "export {\n  deriveGhostAvatarInitials,\n  useGhostAvatar,\n  type GhostAvatarImageProps,\n  type GhostAvatarRootProps,\n} from './use-ghost-avatar'",
+    "export type {\n  GhostAvatarDataState,\n  GhostAvatarElement,\n  GhostAvatarExposed,\n  GhostAvatarImageStatus,\n  GhostAvatarProps,\n  UseGhostAvatarOptions,\n} from './ghost-avatar'",
+    "export { default as GhostBreadcrumb } from './GhostBreadcrumb.vue'",
+    "export { default as GhostBreadcrumbList } from './GhostBreadcrumbList.vue'",
+    "export { default as GhostBreadcrumbItem } from './GhostBreadcrumbItem.vue'",
+    "export { default as GhostBreadcrumbLink } from './GhostBreadcrumbLink.vue'",
+    "export { default as GhostBreadcrumbPage } from './GhostBreadcrumbPage.vue'",
+    "export { default as GhostBreadcrumbSeparator } from './GhostBreadcrumbSeparator.vue'",
+    "export { default as GhostBreadcrumbEllipsis } from './GhostBreadcrumbEllipsis.vue'",
+    "export {\n  useGhostBreadcrumb,\n  type GhostBreadcrumbRootProps,\n} from './use-ghost-breadcrumb'",
+    "export type {\n  GhostBreadcrumbElement,\n  GhostBreadcrumbListElement,\n  GhostBreadcrumbItemElement,\n  GhostBreadcrumbLinkElement,\n  GhostBreadcrumbPageElement,\n  GhostBreadcrumbSeparatorElement,\n  GhostBreadcrumbEllipsisProps,\n  GhostBreadcrumbExposed,\n  GhostBreadcrumbListExposed,\n  GhostBreadcrumbItemExposed,\n  GhostBreadcrumbLinkExposed,\n  GhostBreadcrumbPageExposed,\n  GhostBreadcrumbSeparatorExposed,\n  GhostBreadcrumbEllipsisExposed,\n  GhostBreadcrumbProps,\n  GhostBreadcrumbListProps,\n  GhostBreadcrumbItemProps,\n  GhostBreadcrumbLinkProps,\n  GhostBreadcrumbPageProps,\n  GhostBreadcrumbSeparatorProps,\n} from './ghost-breadcrumb'",
+    "export { default as GhostButton } from './GhostButton.vue'",
+    "export { useGhostButton, type GhostButtonRootProps } from './use-ghost-button'",
+    "export type {\n  GhostButtonExposed,\n  GhostButtonProps,\n  GhostButtonType,\n  UseGhostButtonOptions,\n} from './ghost-button'",
+    "export { default as GhostCheckbox } from './GhostCheckbox.vue'",
+    "export {\n  useGhostCheckbox,\n  type GhostCheckboxRootProps,\n} from './use-ghost-checkbox'",
+    "export type {\n  GhostCheckboxDataState,\n  GhostCheckboxExposed,\n  GhostCheckboxProps,\n  UseGhostCheckboxOptions,\n} from './ghost-checkbox'",
+    "export { default as GhostInteractiveSurface } from './GhostInteractiveSurface.vue'",
+    "export {\n  useGhostInteractiveSurface,\n  type GhostInteractiveSurfaceRootProps,\n} from './use-ghost-interactive-surface'",
+    "export type {\n  InteractiveEffect,\n  InteractiveStateAttribute,\n  InteractiveSurfaceElement,\n  InteractiveSurfaceState,\n  GhostInteractiveSurfaceExposed,\n  GhostInteractiveSurfaceProps,\n  UseGhostInteractiveSurfaceOptions,\n} from './ghost-interactive-surface'",
+    "export { default as GhostVisuallyHidden } from './GhostVisuallyHidden.vue'",
+    "export {\n  useGhostVisuallyHidden,\n  type GhostVisuallyHiddenRootProps,\n} from './use-ghost-visually-hidden'",
+    "export type {\n  GhostVisuallyHiddenElement,\n  GhostVisuallyHiddenProps,\n  UseGhostVisuallyHiddenOptions,\n} from './ghost-visually-hidden'",
+    "export { default as GhostKbd } from './GhostKbd.vue'",
+    "export { useGhostKbd, type GhostKbdRootProps } from './use-ghost-kbd'",
+    "export type {\n  GhostKbdKeyItem,\n  GhostKbdPlatform,\n  GhostKbdProps,\n  GhostKbdResolvedPlatform,\n  UseGhostKbdOptions,\n} from './ghost-kbd'",
+    "export { default as GhostLink } from './GhostLink.vue'",
+    "export { useGhostLink, type GhostLinkRootProps } from './use-ghost-link'",
+    "export type {\n  GhostLinkElement,\n  GhostLinkExposed,\n  GhostLinkProps,\n  UseGhostLinkOptions,\n} from './ghost-link'",
+    "export { resolveGhostLinkHtmlElement, mergeLinkRel } from './ghost-link'",
+    "export { default as GhostSkeleton } from './GhostSkeleton.vue'",
+    "export {\n  useGhostSkeleton,\n  type GhostSkeletonRootProps,\n} from './use-ghost-skeleton'",
+    "export type { GhostSkeletonElement, GhostSkeletonProps } from './ghost-skeleton'",
+    "export { default as GhostSpinner } from './GhostSpinner.vue'",
+    "export {\n  useGhostSpinner,\n  type GhostSpinnerRootProps,\n} from './use-ghost-spinner'",
+    "export type { GhostSpinnerProps, UseGhostSpinnerOptions } from './ghost-spinner'",
+    "export {\n  useDismissableLayer,\n  type DismissableLayerIgnore,\n  type DismissableLayerTarget,\n  type DismissReason,\n  type UseDismissableLayerOptions,\n} from './use-dismissable-layer'",
+    "export {\n  useFloating,\n  type UseFloatingOptions,\n  type UseFloatingReturn,\n} from './use-floating'",
+    "export { default as GhostPortal } from './GhostPortal.vue'",
+    "export type { GhostPortalProps, GhostPortalTarget } from './ghost-portal'",
+    "export { default as GhostPopover } from './GhostPopover.vue'",
+    "export { default as GhostPopoverTrigger } from './GhostPopoverTrigger.vue'",
+    "export { default as GhostPopoverContent } from './GhostPopoverContent.vue'",
+    "export { default as GhostPopoverClose } from './GhostPopoverClose.vue'",
+    "export { useGhostPopover } from './use-ghost-popover'",
+    "export type {\n  GhostPopoverCloseElement,\n  GhostPopoverCloseExposed,\n  GhostPopoverCloseProps,\n  GhostPopoverContentElement,\n  GhostPopoverContentExposed,\n  GhostPopoverContentProps,\n  GhostPopoverContext,\n  GhostPopoverFlipOptions,\n  GhostPopoverOffsetOptions,\n  GhostPopoverPadding,\n  GhostPopoverPlacement,\n  GhostPopoverProps,\n  GhostPopoverShiftOptions,\n  GhostPopoverSlotProps,\n  GhostPopoverStrategy,\n  GhostPopoverTriggerElement,\n  GhostPopoverTriggerExposed,\n  GhostPopoverTriggerProps,\n  UseGhostPopoverOptions,\n  UseGhostPopoverReturn,\n} from './ghost-popover'",
+    "export { default as GhostDropdownMenu } from './GhostDropdownMenu.vue'",
+    "export { default as GhostDropdownMenuTrigger } from './GhostDropdownMenuTrigger.vue'",
+    "export { default as GhostDropdownMenuContent } from './GhostDropdownMenuContent.vue'",
+    "export { default as GhostDropdownMenuItem } from './GhostDropdownMenuItem.vue'",
+    "export { default as GhostDropdownMenuGroup } from './GhostDropdownMenuGroup.vue'",
+    "export { default as GhostDropdownMenuLabel } from './GhostDropdownMenuLabel.vue'",
+    "export { default as GhostDropdownMenuSeparator } from './GhostDropdownMenuSeparator.vue'",
+    "export { default as GhostDropdownMenuCheckboxItem } from './GhostDropdownMenuCheckboxItem.vue'",
+    "export { default as GhostDropdownMenuRadioGroup } from './GhostDropdownMenuRadioGroup.vue'",
+    "export { default as GhostDropdownMenuRadioItem } from './GhostDropdownMenuRadioItem.vue'",
+    "export { useGhostDropdownMenu } from './use-ghost-dropdown-menu'",
+    "export {\n  MENU_ITEM_SELECTOR,\n  focusFirstMenuItem,\n  focusLastMenuItem,\n  getMenuItems,\n  useGhostMenuCollection,\n  type GhostMenuCollectionCloseReason,\n  type UseGhostMenuCollectionOptions,\n} from './use-ghost-menu-collection'",
+    "export type {\n  GhostDropdownMenuCheckboxItemElement,\n  GhostDropdownMenuCheckboxItemExposed,\n  GhostDropdownMenuCheckboxItemProps,\n  GhostDropdownMenuContentElement,\n  GhostDropdownMenuContentExposed,\n  GhostDropdownMenuContentProps,\n  GhostDropdownMenuContext,\n  GhostDropdownMenuFlipOptions,\n  GhostDropdownMenuGroupElement,\n  GhostDropdownMenuGroupProps,\n  GhostDropdownMenuItemElement,\n  GhostDropdownMenuItemExposed,\n  GhostDropdownMenuItemProps,\n  GhostDropdownMenuLabelElement,\n  GhostDropdownMenuLabelProps,\n  GhostDropdownMenuOffsetOptions,\n  GhostDropdownMenuPadding,\n  GhostDropdownMenuPlacement,\n  GhostDropdownMenuProps,\n  GhostDropdownMenuRadioGroupContext,\n  GhostDropdownMenuRadioGroupElement,\n  GhostDropdownMenuRadioGroupProps,\n  GhostDropdownMenuRadioItemElement,\n  GhostDropdownMenuRadioItemExposed,\n  GhostDropdownMenuRadioItemProps,\n  GhostDropdownMenuSeparatorElement,\n  GhostDropdownMenuSeparatorProps,\n  GhostDropdownMenuShiftOptions,\n  GhostDropdownMenuSlotProps,\n  GhostDropdownMenuStrategy,\n  GhostDropdownMenuTriggerElement,\n  GhostDropdownMenuTriggerExposed,\n  GhostDropdownMenuTriggerProps,\n  UseGhostDropdownMenuOptions,\n  UseGhostDropdownMenuReturn,\n} from './ghost-dropdown-menu'",
+    "export { default as GhostSelect } from './GhostSelect.vue'",
+    "export { default as GhostSelectTrigger } from './GhostSelectTrigger.vue'",
+    "export { default as GhostSelectValue } from './GhostSelectValue.vue'",
+    "export { default as GhostSelectContent } from './GhostSelectContent.vue'",
+    "export { default as GhostSelectOption } from './GhostSelectOption.vue'",
+    "export { default as GhostSelectGroup } from './GhostSelectGroup.vue'",
+    "export { default as GhostSelectLabel } from './GhostSelectLabel.vue'",
+    "export { useGhostSelect } from './use-ghost-select'",
+    "export type {\n  GhostSelectContentElement,\n  GhostSelectContentExposed,\n  GhostSelectContext,\n  GhostSelectFlipOptions,\n  GhostSelectGroupElement,\n  GhostSelectLabelElement,\n  GhostSelectOffsetOptions,\n  GhostSelectOptionElement,\n  GhostSelectOptionExposed,\n  GhostSelectPlacement,\n  GhostSelectShiftOptions,\n  GhostSelectStrategy,\n  GhostSelectTriggerElement,\n  GhostSelectTriggerExposed,\n  GhostSelectExposed,\n  UseGhostSelectOptions,\n} from './ghost-select'",
+    "export { default as GhostDialog } from './GhostDialog.vue'",
+    "export { default as GhostDialogTrigger } from './GhostDialogTrigger.vue'",
+    "export { default as GhostDialogOverlay } from './GhostDialogOverlay.vue'",
+    "export { default as GhostDialogContent } from './GhostDialogContent.vue'",
+    "export { default as GhostDialogTitle } from './GhostDialogTitle.vue'",
+    "export { default as GhostDialogDescription } from './GhostDialogDescription.vue'",
+    "export { default as GhostDialogClose } from './GhostDialogClose.vue'",
+    "export { useGhostDialog } from './use-ghost-dialog'",
+    "export type {\n  GhostDialogCloseElement,\n  GhostDialogCloseExposed,\n  GhostDialogCloseProps,\n  GhostDialogContentElement,\n  GhostDialogContentExposed,\n  GhostDialogContentProps,\n  GhostDialogContentRole,\n  GhostDialogContext,\n  GhostDialogDescriptionElement,\n  GhostDialogDescriptionExposed,\n  GhostDialogDescriptionProps,\n  GhostDialogOverlayElement,\n  GhostDialogOverlayExposed,\n  GhostDialogOverlayProps,\n  GhostDialogProps,\n  GhostDialogSlotProps,\n  GhostDialogTitleElement,\n  GhostDialogTitleExposed,\n  GhostDialogTitleProps,\n  GhostDialogTriggerElement,\n  GhostDialogTriggerExposed,\n  GhostDialogTriggerProps,\n  UseGhostDialogOptions,\n  UseGhostDialogReturn,\n} from './ghost-dialog'",
+    "export { default as GhostHoverCard } from './GhostHoverCard.vue'",
+    "export { default as GhostHoverCardTrigger } from './GhostHoverCardTrigger.vue'",
+    "export { default as GhostHoverCardContent } from './GhostHoverCardContent.vue'",
+    "export { useGhostHoverCard } from './use-ghost-hover-card'",
+    "export {\n  ghostHoverCardContextKey,\n  hoverCardFocusStaysInside,\n  resolveHoverCardHtmlElement,\n  type GhostHoverCardContentElement,\n  type GhostHoverCardContentExposed,\n  type GhostHoverCardContentProps,\n  type GhostHoverCardContext,\n  type GhostHoverCardFlipOptions,\n  type GhostHoverCardOffsetOptions,\n  type GhostHoverCardPadding,\n  type GhostHoverCardPlacement,\n  type GhostHoverCardProps,\n  type GhostHoverCardShiftOptions,\n  type GhostHoverCardSlotProps,\n  type GhostHoverCardStrategy,\n  type GhostHoverCardTriggerElement,\n  type GhostHoverCardTriggerExposed,\n  type GhostHoverCardTriggerProps,\n  type UseGhostHoverCardOptions,\n  type UseGhostHoverCardReturn,\n} from './ghost-hover-card'",
+    "export { default as GhostSeparator } from './GhostSeparator.vue'",
+    "export {\n  useGhostSeparator,\n  type GhostSeparatorRootProps,\n} from './use-ghost-separator'",
+    "export type {\n  GhostSeparatorElement,\n  GhostSeparatorOrientation,\n  GhostSeparatorProps,\n  UseGhostSeparatorOptions,\n} from './ghost-separator'",
+    "export { default as GhostScrollArea } from './GhostScrollArea.vue'",
+    "export {\n  useGhostScrollArea,\n  type GhostScrollAreaRootProps,\n} from './use-ghost-scroll-area'",
+    "export type {\n  GhostScrollAreaElement,\n  GhostScrollAreaExposed,\n  GhostScrollAreaOrientation,\n  GhostScrollAreaOverflowState,\n  GhostScrollAreaOverflowType,\n  GhostScrollAreaProps,\n  UseGhostScrollAreaOptions,\n} from './ghost-scroll-area'",
+    "export { default as GhostProgress } from './GhostProgress.vue'",
+    "export {\n  useGhostProgress,\n  type GhostProgressIndicatorProps,\n  type GhostProgressRootProps,\n} from './use-ghost-progress'",
+    "export type {\n  GhostProgressProps,\n  UseGhostProgressOptions,\n} from './ghost-progress'",
+    "export { default as GhostInput } from './GhostInput.vue'",
+    "export { useGhostInput, type GhostInputRootProps } from './use-ghost-input'",
+    "export type {\n  GhostInputExposed,\n  GhostInputProps,\n  GhostInputType,\n  UseGhostInputOptions,\n} from './ghost-input'",
+    "export { default as GhostInlineAlert } from './GhostInlineAlert.vue'",
+    "export {\n  useGhostInlineAlert,\n  type GhostInlineAlertRootProps,\n} from './use-ghost-inline-alert'",
+    "export type {\n  GhostInlineAlertAnnounce,\n  GhostInlineAlertElement,\n  GhostInlineAlertExposed,\n  GhostInlineAlertHeadingLevel,\n  GhostInlineAlertProps,\n  UseGhostInlineAlertOptions,\n} from './ghost-inline-alert'",
+    "export { default as GhostSwitch } from './GhostSwitch.vue'",
+    "export {\n  useGhostSwitch,\n  type GhostSwitchInputProps,\n  type GhostSwitchRootProps,\n} from './use-ghost-switch'",
+    "export type {\n  GhostSwitchExposed,\n  GhostSwitchProps,\n  UseGhostSwitchOptions,\n} from './ghost-switch'",
+    "export { default as GhostTextarea } from './GhostTextarea.vue'",
+    "export {\n  useGhostTextarea,\n  type GhostTextareaRootProps,\n} from './use-ghost-textarea'",
+    "export type {\n  GhostTextareaExposed,\n  GhostTextareaProps,\n  UseGhostTextareaOptions,\n} from './ghost-textarea'",
+    "export { default as GhostCollapsible } from './GhostCollapsible.vue'",
+    "export { default as GhostCollapsibleTrigger } from './GhostCollapsibleTrigger.vue'",
+    "export { default as GhostCollapsibleContent } from './GhostCollapsibleContent.vue'",
+    "export { useGhostCollapsible } from './use-ghost-collapsible'",
+    "export type {\n  GhostCollapsibleContentElement,\n  GhostCollapsibleContentExposed,\n  GhostCollapsibleContentProps,\n  GhostCollapsibleContext,\n  GhostCollapsibleProps,\n  GhostCollapsibleSlotProps,\n  GhostCollapsibleTriggerElement,\n  GhostCollapsibleTriggerExposed,\n  GhostCollapsibleTriggerProps,\n  UseGhostCollapsibleOptions,\n  UseGhostCollapsibleReturn,\n} from './ghost-collapsible'",
+    "export { default as GhostField } from './GhostField.vue'",
+    "export { default as GhostFieldLabel } from './GhostFieldLabel.vue'",
+    "export { default as GhostFieldDescription } from './GhostFieldDescription.vue'",
+    "export { default as GhostFieldError } from './GhostFieldError.vue'",
+    "export { default as GhostFieldControl } from './GhostFieldControl.vue'",
+    "export { useGhostField, type GhostFieldRootProps } from './use-ghost-field'",
+    "export type {\n  GhostFieldControlProps,\n  GhostFieldControlSlotProps,\n  GhostFieldControlExposed,\n  GhostFieldContext,\n  GhostFieldDescriptionElement,\n  GhostFieldDescriptionExposed,\n  GhostFieldDescriptionProps,\n  GhostFieldErrorElement,\n  GhostFieldErrorExposed,\n  GhostFieldErrorProps,\n  GhostFieldExposed,\n  GhostFieldInternalContext,\n  GhostFieldLabelAssociate,\n  GhostFieldLabelElement,\n  GhostFieldLabelExposed,\n  GhostFieldLabelProps,\n  GhostFieldProps,\n  UseGhostFieldOptions,\n  UseGhostFieldReturn,\n} from './ghost-field'",
+    "export { default as GhostTabs } from './GhostTabs.vue'",
+    "export { default as GhostTabsList } from './GhostTabsList.vue'",
+    "export { default as GhostTabsTrigger } from './GhostTabsTrigger.vue'",
+    "export { default as GhostTabsContent } from './GhostTabsContent.vue'",
+    "export { useGhostTabs } from './use-ghost-tabs'",
+    "export type {\n  GhostTabsExposed,\n  GhostTabsListElement,\n  GhostTabsListExposed,\n  GhostTabsTriggerElement,\n  GhostTabsTriggerExposed,\n  GhostTabsContentElement,\n  GhostTabsContentExposed,\n  GhostTabsProps,\n  GhostTabsSlotProps,\n  GhostTabsListProps,\n  GhostTabsTriggerProps,\n  GhostTabsContentProps,\n  GhostTabsActivationMode,\n  GhostTabsOrientation,\n  UseGhostTabsOptions,\n  UseGhostTabsReturn,\n} from './ghost-tabs'",
+    "export { default as GhostTable } from './GhostTable.vue'",
+    "export { default as GhostTableCaption } from './GhostTableCaption.vue'",
+    "export { default as GhostTableHead } from './GhostTableHead.vue'",
+    "export { default as GhostTableBody } from './GhostTableBody.vue'",
+    "export { default as GhostTableFoot } from './GhostTableFoot.vue'",
+    "export { default as GhostTableRow } from './GhostTableRow.vue'",
+    "export { default as GhostTableHeaderCell } from './GhostTableHeaderCell.vue'",
+    "export { default as GhostTableCell } from './GhostTableCell.vue'",
+    "export {\n  useGhostTable,\n  useGhostTableCaption,\n  useGhostTableBody,\n  useGhostTableCell,\n  useGhostTableFoot,\n  useGhostTableHead,\n  useGhostTableHeaderCell,\n  useGhostTableRow,\n  mergeGhostTablePartAttrs,\n  type GhostTableRootProps,\n  type GhostTableScrollContainerProps,\n  type GhostTableHeaderCellRootProps,\n} from './use-ghost-table'",
+    "export type {\n  GhostTableCaptionExposed,\n  GhostTableCaptionProps,\n  GhostTableCellExposed,\n  GhostTableCellProps,\n  GhostTableExposed,\n  GhostTableHeaderCellExposed,\n  GhostTableHeaderCellProps,\n  GhostTableHeaderScope,\n  GhostTableProps,\n  GhostTableRowExposed,\n  GhostTableRowProps,\n  GhostTableSectionExposed,\n  GhostTableSectionProps,\n  UseGhostTableHeaderCellOptions,\n  UseGhostTableOptions,\n} from './ghost-table'",
+    "export { default as GhostAccordion } from './GhostAccordion.vue'",
+    "export { default as GhostAccordionItem } from './GhostAccordionItem.vue'",
+    "export { default as GhostAccordionTrigger } from './GhostAccordionTrigger.vue'",
+    "export { default as GhostAccordionContent } from './GhostAccordionContent.vue'",
+    "export { useGhostAccordion } from './use-ghost-accordion'",
+    "export type {\n  GhostAccordionContentElement,\n  GhostAccordionContentExposed,\n  GhostAccordionContentProps,\n  GhostAccordionContext,\n  GhostAccordionExposed,\n  GhostAccordionHeadingLevel,\n  GhostAccordionItemContext,\n  GhostAccordionItemProps,\n  GhostAccordionProps,\n  GhostAccordionTriggerElement,\n  GhostAccordionTriggerExposed,\n  GhostAccordionTriggerProps,\n  GhostAccordionType,\n  GhostAccordionValue,\n  UseGhostAccordionOptions,\n  UseGhostAccordionReturn,\n} from './ghost-accordion'",
+    "export { default as GhostEmptyState } from './GhostEmptyState.vue'",
+    "export {\n  useGhostEmptyState,\n  type GhostEmptyStateRootProps,\n} from './use-ghost-empty-state'",
+    "export type {\n  GhostEmptyStateElement,\n  GhostEmptyStateExposed,\n  GhostEmptyStateHeadingLevel,\n  GhostEmptyStateProps,\n  UseGhostEmptyStateOptions,\n} from './ghost-empty-state'",
+    "export { default as GhostCard } from './GhostCard.vue'",
+    "export { useGhostCard, type GhostCardRootProps } from './use-ghost-card'",
+    "export type {\n  GhostCardElement,\n  GhostCardExposed,\n  GhostCardProps,\n  UseGhostCardOptions,\n} from './ghost-card'",
+    "export { default as GhostPagination } from './GhostPagination.vue'",
+    "export {\n  getPaginationRange,\n  type GhostPaginationRangeEntry,\n} from './get-pagination-range'",
+    "export { useGhostPagination } from './use-ghost-pagination'",
+    "export type {\n  GhostPaginationExposed,\n  GhostPaginationProps,\n  GhostPaginationRootProps,\n  UseGhostPaginationOptions,\n} from './ghost-pagination'",
+    "export { default as GhostSegmentedControl } from './GhostSegmentedControl.vue'",
+    "export { default as GhostSegmentedControlItem } from './GhostSegmentedControlItem.vue'",
+    "export { useGhostSegmentedControl } from './use-ghost-segmented-control'",
+    "export type {\n  GhostSegmentedControlElement,\n  GhostSegmentedControlItemElement,\n  GhostSegmentedControlExposed,\n  GhostSegmentedControlItemExposed,\n  GhostSegmentedControlProps,\n  GhostSegmentedControlItemProps,\n  GhostSegmentedControlOrientation,\n  GhostSegmentedControlValue,\n  UseGhostSegmentedControlOptions,\n  UseGhostSegmentedControlReturn,\n} from './ghost-segmented-control'",
+    "export { default as GhostToggleGroup } from './GhostToggleGroup.vue'",
+    "export { default as GhostToggleGroupItem } from './GhostToggleGroupItem.vue'",
+    "export { useGhostToggleGroup } from './use-ghost-toggle-group'",
+    "export type {\n  GhostToggleGroupElement,\n  GhostToggleGroupItemElement,\n  GhostToggleGroupExposed,\n  GhostToggleGroupItemExposed,\n  GhostToggleGroupProps,\n  GhostToggleGroupItemProps,\n  GhostToggleGroupType,\n  GhostToggleGroupOrientation,\n  GhostToggleGroupValue,\n  UseGhostToggleGroupOptions,\n  UseGhostToggleGroupReturn,\n} from './ghost-toggle-group'",
+    "export { default as GhostToolbar } from './GhostToolbar.vue'",
+    "export {\n  useGhostToolbar,\n  type GhostToolbarRootProps,\n  type UseGhostToolbarReturn,\n} from './use-ghost-toolbar'",
+    "export type {\n  GhostToolbarDirection,\n  GhostToolbarElement,\n  GhostToolbarExposed,\n  GhostToolbarOrientation,\n  UseGhostToolbarOptions,\n} from './ghost-toolbar'",
+    "export { default as GhostRadioGroup } from './GhostRadioGroup.vue'",
+    "export { default as GhostRadioGroupItem } from './GhostRadioGroupItem.vue'",
+    "export { useGhostRadioGroup } from './use-ghost-radio-group'",
+    "export type {\n  GhostRadioGroupExposed,\n  GhostRadioGroupItemExposed,\n  GhostRadioGroupElement,\n  GhostRadioGroupItemProps,\n  GhostRadioGroupOrientation,\n  GhostRadioGroupProps,\n  UseGhostRadioGroupOptions,\n  UseGhostRadioGroupReturn,\n} from './ghost-radio-group'",
+    "export { default as GhostTooltip } from './GhostTooltip.vue'",
+    "export { default as GhostTooltipProvider } from './GhostTooltipProvider.vue'",
+    "export { default as GhostTooltipTrigger } from './GhostTooltipTrigger.vue'",
+    "export { default as GhostTooltipContent } from './GhostTooltipContent.vue'",
+    "export { useGhostTooltip } from './use-ghost-tooltip'",
+    "export {\n  ghostTooltipProviderContextKey,\n  type GhostTooltipProviderContext,\n  type GhostTooltipProviderProps,\n} from './ghost-tooltip-provider'",
+    "export {\n  ghostTooltipContextKey,\n  mergeTooltipDescribedBy,\n  resolveTooltipHtmlElement,\n  type GhostTooltipContentElement,\n  type GhostTooltipContentExposed,\n  type GhostTooltipContentProps,\n  type GhostTooltipContext,\n  type GhostTooltipFlipOptions,\n  type GhostTooltipOffsetOptions,\n  type GhostTooltipPadding,\n  type GhostTooltipPlacement,\n  type GhostTooltipProps,\n  type GhostTooltipShiftOptions,\n  type GhostTooltipSlotProps,\n  type GhostTooltipStrategy,\n  type GhostTooltipTriggerElement,\n  type GhostTooltipTriggerExposed,\n  type GhostTooltipTriggerProps,\n  type UseGhostTooltipOptions,\n  type UseGhostTooltipReturn,\n} from './ghost-tooltip'",
+    "export { default as GhostNumberInput } from './GhostNumberInput.vue'",
+    "export {\n  useGhostNumberInput,\n  type GhostNumberInputButtonProps,\n  type GhostNumberInputHiddenInputProps,\n  type GhostNumberInputInputProps,\n  type GhostNumberInputRootProps,\n} from './use-ghost-number-input'",
+    "export type {\n  GhostNumberInputExposed,\n  GhostNumberInputFormatOptions,\n  GhostNumberInputProps,\n  UseGhostNumberInputOptions,\n} from './ghost-number-input'",
+    "export { default as GhostSlider } from './GhostSlider.vue'",
+    "export { useGhostSlider, type GhostSliderRootProps } from './use-ghost-slider'",
+    "export type {\n  GhostSliderExposed,\n  GhostSliderProps,\n  GhostSliderValue,\n  GhostSliderOrientation,\n} from './ghost-slider'"
+  ],
+  "vueBarrelSource": "/**\n * Public Vue package entry point. Named ESM exports are the primary API.\n */\nexport { useGhostId } from './use-ghost-id'\nexport {\n  useControllableState,\n  type UseControllableStateOptions,\n} from './use-controllable-state'\nexport { useFocusScope, type UseFocusScopeOptions } from './use-focus-scope'\nexport {\n  useRovingFocus,\n  type RovingOrientation,\n  type TextDirection,\n  type UseRovingFocusOptions,\n} from './use-roving-focus'\nexport { default as GhostBadge } from './GhostBadge.vue'\nexport { useGhostBadge, type GhostBadgeRootProps } from './use-ghost-badge'\nexport type { GhostBadgeExposed, GhostBadgeProps } from './ghost-badge'\nexport { default as GhostAvatar } from './GhostAvatar.vue'\nexport {\n  deriveGhostAvatarInitials,\n  useGhostAvatar,\n  type GhostAvatarImageProps,\n  type GhostAvatarRootProps,\n} from './use-ghost-avatar'\nexport type {\n  GhostAvatarDataState,\n  GhostAvatarElement,\n  GhostAvatarExposed,\n  GhostAvatarImageStatus,\n  GhostAvatarProps,\n  UseGhostAvatarOptions,\n} from './ghost-avatar'\nexport { default as GhostBreadcrumb } from './GhostBreadcrumb.vue'\nexport { default as GhostBreadcrumbList } from './GhostBreadcrumbList.vue'\nexport { default as GhostBreadcrumbItem } from './GhostBreadcrumbItem.vue'\nexport { default as GhostBreadcrumbLink } from './GhostBreadcrumbLink.vue'\nexport { default as GhostBreadcrumbPage } from './GhostBreadcrumbPage.vue'\nexport { default as GhostBreadcrumbSeparator } from './GhostBreadcrumbSeparator.vue'\nexport { default as GhostBreadcrumbEllipsis } from './GhostBreadcrumbEllipsis.vue'\nexport {\n  useGhostBreadcrumb,\n  type GhostBreadcrumbRootProps,\n} from './use-ghost-breadcrumb'\nexport type {\n  GhostBreadcrumbElement,\n  GhostBreadcrumbListElement,\n  GhostBreadcrumbItemElement,\n  GhostBreadcrumbLinkElement,\n  GhostBreadcrumbPageElement,\n  GhostBreadcrumbSeparatorElement,\n  GhostBreadcrumbEllipsisProps,\n  GhostBreadcrumbExposed,\n  GhostBreadcrumbListExposed,\n  GhostBreadcrumbItemExposed,\n  GhostBreadcrumbLinkExposed,\n  GhostBreadcrumbPageExposed,\n  GhostBreadcrumbSeparatorExposed,\n  GhostBreadcrumbEllipsisExposed,\n  GhostBreadcrumbProps,\n  GhostBreadcrumbListProps,\n  GhostBreadcrumbItemProps,\n  GhostBreadcrumbLinkProps,\n  GhostBreadcrumbPageProps,\n  GhostBreadcrumbSeparatorProps,\n} from './ghost-breadcrumb'\nexport { default as GhostButton } from './GhostButton.vue'\nexport { useGhostButton, type GhostButtonRootProps } from './use-ghost-button'\nexport type {\n  GhostButtonExposed,\n  GhostButtonProps,\n  GhostButtonType,\n  UseGhostButtonOptions,\n} from './ghost-button'\nexport { default as GhostCheckbox } from './GhostCheckbox.vue'\nexport {\n  useGhostCheckbox,\n  type GhostCheckboxRootProps,\n} from './use-ghost-checkbox'\nexport type {\n  GhostCheckboxDataState,\n  GhostCheckboxExposed,\n  GhostCheckboxProps,\n  UseGhostCheckboxOptions,\n} from './ghost-checkbox'\nexport { default as GhostInteractiveSurface } from './GhostInteractiveSurface.vue'\nexport {\n  useGhostInteractiveSurface,\n  type GhostInteractiveSurfaceRootProps,\n} from './use-ghost-interactive-surface'\nexport type {\n  InteractiveEffect,\n  InteractiveStateAttribute,\n  InteractiveSurfaceElement,\n  InteractiveSurfaceState,\n  GhostInteractiveSurfaceExposed,\n  GhostInteractiveSurfaceProps,\n  UseGhostInteractiveSurfaceOptions,\n} from './ghost-interactive-surface'\nexport { default as GhostVisuallyHidden } from './GhostVisuallyHidden.vue'\nexport {\n  useGhostVisuallyHidden,\n  type GhostVisuallyHiddenRootProps,\n} from './use-ghost-visually-hidden'\nexport type {\n  GhostVisuallyHiddenElement,\n  GhostVisuallyHiddenProps,\n  UseGhostVisuallyHiddenOptions,\n} from './ghost-visually-hidden'\nexport { default as GhostKbd } from './GhostKbd.vue'\nexport { useGhostKbd, type GhostKbdRootProps } from './use-ghost-kbd'\nexport type {\n  GhostKbdKeyItem,\n  GhostKbdPlatform,\n  GhostKbdProps,\n  GhostKbdResolvedPlatform,\n  UseGhostKbdOptions,\n} from './ghost-kbd'\nexport { default as GhostLink } from './GhostLink.vue'\nexport { useGhostLink, type GhostLinkRootProps } from './use-ghost-link'\nexport type {\n  GhostLinkElement,\n  GhostLinkExposed,\n  GhostLinkProps,\n  UseGhostLinkOptions,\n} from './ghost-link'\nexport { resolveGhostLinkHtmlElement, mergeLinkRel } from './ghost-link'\nexport { default as GhostSkeleton } from './GhostSkeleton.vue'\nexport {\n  useGhostSkeleton,\n  type GhostSkeletonRootProps,\n} from './use-ghost-skeleton'\nexport type { GhostSkeletonElement, GhostSkeletonProps } from './ghost-skeleton'\nexport { default as GhostSpinner } from './GhostSpinner.vue'\nexport {\n  useGhostSpinner,\n  type GhostSpinnerRootProps,\n} from './use-ghost-spinner'\nexport type { GhostSpinnerProps, UseGhostSpinnerOptions } from './ghost-spinner'\nexport {\n  useDismissableLayer,\n  type DismissableLayerIgnore,\n  type DismissableLayerTarget,\n  type DismissReason,\n  type UseDismissableLayerOptions,\n} from './use-dismissable-layer'\nexport {\n  useFloating,\n  type UseFloatingOptions,\n  type UseFloatingReturn,\n} from './use-floating'\nexport { default as GhostPortal } from './GhostPortal.vue'\nexport type { GhostPortalProps, GhostPortalTarget } from './ghost-portal'\nexport { default as GhostPopover } from './GhostPopover.vue'\nexport { default as GhostPopoverTrigger } from './GhostPopoverTrigger.vue'\nexport { default as GhostPopoverContent } from './GhostPopoverContent.vue'\nexport { default as GhostPopoverClose } from './GhostPopoverClose.vue'\nexport { useGhostPopover } from './use-ghost-popover'\nexport type {\n  GhostPopoverCloseElement,\n  GhostPopoverCloseExposed,\n  GhostPopoverCloseProps,\n  GhostPopoverContentElement,\n  GhostPopoverContentExposed,\n  GhostPopoverContentProps,\n  GhostPopoverContext,\n  GhostPopoverFlipOptions,\n  GhostPopoverOffsetOptions,\n  GhostPopoverPadding,\n  GhostPopoverPlacement,\n  GhostPopoverProps,\n  GhostPopoverShiftOptions,\n  GhostPopoverSlotProps,\n  GhostPopoverStrategy,\n  GhostPopoverTriggerElement,\n  GhostPopoverTriggerExposed,\n  GhostPopoverTriggerProps,\n  UseGhostPopoverOptions,\n  UseGhostPopoverReturn,\n} from './ghost-popover'\nexport { default as GhostDropdownMenu } from './GhostDropdownMenu.vue'\nexport { default as GhostDropdownMenuTrigger } from './GhostDropdownMenuTrigger.vue'\nexport { default as GhostDropdownMenuContent } from './GhostDropdownMenuContent.vue'\nexport { default as GhostDropdownMenuItem } from './GhostDropdownMenuItem.vue'\nexport { default as GhostDropdownMenuGroup } from './GhostDropdownMenuGroup.vue'\nexport { default as GhostDropdownMenuLabel } from './GhostDropdownMenuLabel.vue'\nexport { default as GhostDropdownMenuSeparator } from './GhostDropdownMenuSeparator.vue'\nexport { default as GhostDropdownMenuCheckboxItem } from './GhostDropdownMenuCheckboxItem.vue'\nexport { default as GhostDropdownMenuRadioGroup } from './GhostDropdownMenuRadioGroup.vue'\nexport { default as GhostDropdownMenuRadioItem } from './GhostDropdownMenuRadioItem.vue'\nexport { useGhostDropdownMenu } from './use-ghost-dropdown-menu'\nexport {\n  MENU_ITEM_SELECTOR,\n  focusFirstMenuItem,\n  focusLastMenuItem,\n  getMenuItems,\n  useGhostMenuCollection,\n  type GhostMenuCollectionCloseReason,\n  type UseGhostMenuCollectionOptions,\n} from './use-ghost-menu-collection'\nexport type {\n  GhostDropdownMenuCheckboxItemElement,\n  GhostDropdownMenuCheckboxItemExposed,\n  GhostDropdownMenuCheckboxItemProps,\n  GhostDropdownMenuContentElement,\n  GhostDropdownMenuContentExposed,\n  GhostDropdownMenuContentProps,\n  GhostDropdownMenuContext,\n  GhostDropdownMenuFlipOptions,\n  GhostDropdownMenuGroupElement,\n  GhostDropdownMenuGroupProps,\n  GhostDropdownMenuItemElement,\n  GhostDropdownMenuItemExposed,\n  GhostDropdownMenuItemProps,\n  GhostDropdownMenuLabelElement,\n  GhostDropdownMenuLabelProps,\n  GhostDropdownMenuOffsetOptions,\n  GhostDropdownMenuPadding,\n  GhostDropdownMenuPlacement,\n  GhostDropdownMenuProps,\n  GhostDropdownMenuRadioGroupContext,\n  GhostDropdownMenuRadioGroupElement,\n  GhostDropdownMenuRadioGroupProps,\n  GhostDropdownMenuRadioItemElement,\n  GhostDropdownMenuRadioItemExposed,\n  GhostDropdownMenuRadioItemProps,\n  GhostDropdownMenuSeparatorElement,\n  GhostDropdownMenuSeparatorProps,\n  GhostDropdownMenuShiftOptions,\n  GhostDropdownMenuSlotProps,\n  GhostDropdownMenuStrategy,\n  GhostDropdownMenuTriggerElement,\n  GhostDropdownMenuTriggerExposed,\n  GhostDropdownMenuTriggerProps,\n  UseGhostDropdownMenuOptions,\n  UseGhostDropdownMenuReturn,\n} from './ghost-dropdown-menu'\nexport { default as GhostSelect } from './GhostSelect.vue'\nexport { default as GhostSelectTrigger } from './GhostSelectTrigger.vue'\nexport { default as GhostSelectValue } from './GhostSelectValue.vue'\nexport { default as GhostSelectContent } from './GhostSelectContent.vue'\nexport { default as GhostSelectOption } from './GhostSelectOption.vue'\nexport { default as GhostSelectGroup } from './GhostSelectGroup.vue'\nexport { default as GhostSelectLabel } from './GhostSelectLabel.vue'\nexport { useGhostSelect } from './use-ghost-select'\nexport type {\n  GhostSelectContentElement,\n  GhostSelectContentExposed,\n  GhostSelectContext,\n  GhostSelectFlipOptions,\n  GhostSelectGroupElement,\n  GhostSelectLabelElement,\n  GhostSelectOffsetOptions,\n  GhostSelectOptionElement,\n  GhostSelectOptionExposed,\n  GhostSelectPlacement,\n  GhostSelectShiftOptions,\n  GhostSelectStrategy,\n  GhostSelectTriggerElement,\n  GhostSelectTriggerExposed,\n  GhostSelectExposed,\n  UseGhostSelectOptions,\n} from './ghost-select'\nexport { default as GhostDialog } from './GhostDialog.vue'\nexport { default as GhostDialogTrigger } from './GhostDialogTrigger.vue'\nexport { default as GhostDialogOverlay } from './GhostDialogOverlay.vue'\nexport { default as GhostDialogContent } from './GhostDialogContent.vue'\nexport { default as GhostDialogTitle } from './GhostDialogTitle.vue'\nexport { default as GhostDialogDescription } from './GhostDialogDescription.vue'\nexport { default as GhostDialogClose } from './GhostDialogClose.vue'\nexport { useGhostDialog } from './use-ghost-dialog'\nexport type {\n  GhostDialogCloseElement,\n  GhostDialogCloseExposed,\n  GhostDialogCloseProps,\n  GhostDialogContentElement,\n  GhostDialogContentExposed,\n  GhostDialogContentProps,\n  GhostDialogContentRole,\n  GhostDialogContext,\n  GhostDialogDescriptionElement,\n  GhostDialogDescriptionExposed,\n  GhostDialogDescriptionProps,\n  GhostDialogOverlayElement,\n  GhostDialogOverlayExposed,\n  GhostDialogOverlayProps,\n  GhostDialogProps,\n  GhostDialogSlotProps,\n  GhostDialogTitleElement,\n  GhostDialogTitleExposed,\n  GhostDialogTitleProps,\n  GhostDialogTriggerElement,\n  GhostDialogTriggerExposed,\n  GhostDialogTriggerProps,\n  UseGhostDialogOptions,\n  UseGhostDialogReturn,\n} from './ghost-dialog'\nexport { default as GhostHoverCard } from './GhostHoverCard.vue'\nexport { default as GhostHoverCardTrigger } from './GhostHoverCardTrigger.vue'\nexport { default as GhostHoverCardContent } from './GhostHoverCardContent.vue'\nexport { useGhostHoverCard } from './use-ghost-hover-card'\nexport {\n  ghostHoverCardContextKey,\n  hoverCardFocusStaysInside,\n  resolveHoverCardHtmlElement,\n  type GhostHoverCardContentElement,\n  type GhostHoverCardContentExposed,\n  type GhostHoverCardContentProps,\n  type GhostHoverCardContext,\n  type GhostHoverCardFlipOptions,\n  type GhostHoverCardOffsetOptions,\n  type GhostHoverCardPadding,\n  type GhostHoverCardPlacement,\n  type GhostHoverCardProps,\n  type GhostHoverCardShiftOptions,\n  type GhostHoverCardSlotProps,\n  type GhostHoverCardStrategy,\n  type GhostHoverCardTriggerElement,\n  type GhostHoverCardTriggerExposed,\n  type GhostHoverCardTriggerProps,\n  type UseGhostHoverCardOptions,\n  type UseGhostHoverCardReturn,\n} from './ghost-hover-card'\nexport { default as GhostSeparator } from './GhostSeparator.vue'\nexport {\n  useGhostSeparator,\n  type GhostSeparatorRootProps,\n} from './use-ghost-separator'\nexport type {\n  GhostSeparatorElement,\n  GhostSeparatorOrientation,\n  GhostSeparatorProps,\n  UseGhostSeparatorOptions,\n} from './ghost-separator'\nexport { default as GhostScrollArea } from './GhostScrollArea.vue'\nexport {\n  useGhostScrollArea,\n  type GhostScrollAreaRootProps,\n} from './use-ghost-scroll-area'\nexport type {\n  GhostScrollAreaElement,\n  GhostScrollAreaExposed,\n  GhostScrollAreaOrientation,\n  GhostScrollAreaOverflowState,\n  GhostScrollAreaOverflowType,\n  GhostScrollAreaProps,\n  UseGhostScrollAreaOptions,\n} from './ghost-scroll-area'\nexport { default as GhostProgress } from './GhostProgress.vue'\nexport {\n  useGhostProgress,\n  type GhostProgressIndicatorProps,\n  type GhostProgressRootProps,\n} from './use-ghost-progress'\nexport type {\n  GhostProgressProps,\n  UseGhostProgressOptions,\n} from './ghost-progress'\nexport { default as GhostInput } from './GhostInput.vue'\nexport { useGhostInput, type GhostInputRootProps } from './use-ghost-input'\nexport type {\n  GhostInputExposed,\n  GhostInputProps,\n  GhostInputType,\n  UseGhostInputOptions,\n} from './ghost-input'\nexport { default as GhostInlineAlert } from './GhostInlineAlert.vue'\nexport {\n  useGhostInlineAlert,\n  type GhostInlineAlertRootProps,\n} from './use-ghost-inline-alert'\nexport type {\n  GhostInlineAlertAnnounce,\n  GhostInlineAlertElement,\n  GhostInlineAlertExposed,\n  GhostInlineAlertHeadingLevel,\n  GhostInlineAlertProps,\n  UseGhostInlineAlertOptions,\n} from './ghost-inline-alert'\nexport { default as GhostSwitch } from './GhostSwitch.vue'\nexport {\n  useGhostSwitch,\n  type GhostSwitchInputProps,\n  type GhostSwitchRootProps,\n} from './use-ghost-switch'\nexport type {\n  GhostSwitchExposed,\n  GhostSwitchProps,\n  UseGhostSwitchOptions,\n} from './ghost-switch'\nexport { default as GhostTextarea } from './GhostTextarea.vue'\nexport {\n  useGhostTextarea,\n  type GhostTextareaRootProps,\n} from './use-ghost-textarea'\nexport type {\n  GhostTextareaExposed,\n  GhostTextareaProps,\n  UseGhostTextareaOptions,\n} from './ghost-textarea'\n\nexport { default as GhostCollapsible } from './GhostCollapsible.vue'\nexport { default as GhostCollapsibleTrigger } from './GhostCollapsibleTrigger.vue'\nexport { default as GhostCollapsibleContent } from './GhostCollapsibleContent.vue'\nexport { useGhostCollapsible } from './use-ghost-collapsible'\nexport type {\n  GhostCollapsibleContentElement,\n  GhostCollapsibleContentExposed,\n  GhostCollapsibleContentProps,\n  GhostCollapsibleContext,\n  GhostCollapsibleProps,\n  GhostCollapsibleSlotProps,\n  GhostCollapsibleTriggerElement,\n  GhostCollapsibleTriggerExposed,\n  GhostCollapsibleTriggerProps,\n  UseGhostCollapsibleOptions,\n  UseGhostCollapsibleReturn,\n} from './ghost-collapsible'\nexport { default as GhostField } from './GhostField.vue'\nexport { default as GhostFieldLabel } from './GhostFieldLabel.vue'\nexport { default as GhostFieldDescription } from './GhostFieldDescription.vue'\nexport { default as GhostFieldError } from './GhostFieldError.vue'\nexport { default as GhostFieldControl } from './GhostFieldControl.vue'\nexport { useGhostField, type GhostFieldRootProps } from './use-ghost-field'\nexport type {\n  GhostFieldControlProps,\n  GhostFieldControlSlotProps,\n  GhostFieldControlExposed,\n  GhostFieldContext,\n  GhostFieldDescriptionElement,\n  GhostFieldDescriptionExposed,\n  GhostFieldDescriptionProps,\n  GhostFieldErrorElement,\n  GhostFieldErrorExposed,\n  GhostFieldErrorProps,\n  GhostFieldExposed,\n  GhostFieldInternalContext,\n  GhostFieldLabelAssociate,\n  GhostFieldLabelElement,\n  GhostFieldLabelExposed,\n  GhostFieldLabelProps,\n  GhostFieldProps,\n  UseGhostFieldOptions,\n  UseGhostFieldReturn,\n} from './ghost-field'\nexport { default as GhostTabs } from './GhostTabs.vue'\nexport { default as GhostTabsList } from './GhostTabsList.vue'\nexport { default as GhostTabsTrigger } from './GhostTabsTrigger.vue'\nexport { default as GhostTabsContent } from './GhostTabsContent.vue'\nexport { useGhostTabs } from './use-ghost-tabs'\nexport type {\n  GhostTabsExposed,\n  GhostTabsListElement,\n  GhostTabsListExposed,\n  GhostTabsTriggerElement,\n  GhostTabsTriggerExposed,\n  GhostTabsContentElement,\n  GhostTabsContentExposed,\n  GhostTabsProps,\n  GhostTabsSlotProps,\n  GhostTabsListProps,\n  GhostTabsTriggerProps,\n  GhostTabsContentProps,\n  GhostTabsActivationMode,\n  GhostTabsOrientation,\n  UseGhostTabsOptions,\n  UseGhostTabsReturn,\n} from './ghost-tabs'\nexport { default as GhostTable } from './GhostTable.vue'\nexport { default as GhostTableCaption } from './GhostTableCaption.vue'\nexport { default as GhostTableHead } from './GhostTableHead.vue'\nexport { default as GhostTableBody } from './GhostTableBody.vue'\nexport { default as GhostTableFoot } from './GhostTableFoot.vue'\nexport { default as GhostTableRow } from './GhostTableRow.vue'\nexport { default as GhostTableHeaderCell } from './GhostTableHeaderCell.vue'\nexport { default as GhostTableCell } from './GhostTableCell.vue'\nexport {\n  useGhostTable,\n  useGhostTableCaption,\n  useGhostTableBody,\n  useGhostTableCell,\n  useGhostTableFoot,\n  useGhostTableHead,\n  useGhostTableHeaderCell,\n  useGhostTableRow,\n  mergeGhostTablePartAttrs,\n  type GhostTableRootProps,\n  type GhostTableScrollContainerProps,\n  type GhostTableHeaderCellRootProps,\n} from './use-ghost-table'\nexport type {\n  GhostTableCaptionExposed,\n  GhostTableCaptionProps,\n  GhostTableCellExposed,\n  GhostTableCellProps,\n  GhostTableExposed,\n  GhostTableHeaderCellExposed,\n  GhostTableHeaderCellProps,\n  GhostTableHeaderScope,\n  GhostTableProps,\n  GhostTableRowExposed,\n  GhostTableRowProps,\n  GhostTableSectionExposed,\n  GhostTableSectionProps,\n  UseGhostTableHeaderCellOptions,\n  UseGhostTableOptions,\n} from './ghost-table'\nexport { default as GhostAccordion } from './GhostAccordion.vue'\nexport { default as GhostAccordionItem } from './GhostAccordionItem.vue'\nexport { default as GhostAccordionTrigger } from './GhostAccordionTrigger.vue'\nexport { default as GhostAccordionContent } from './GhostAccordionContent.vue'\nexport { useGhostAccordion } from './use-ghost-accordion'\nexport type {\n  GhostAccordionContentElement,\n  GhostAccordionContentExposed,\n  GhostAccordionContentProps,\n  GhostAccordionContext,\n  GhostAccordionExposed,\n  GhostAccordionHeadingLevel,\n  GhostAccordionItemContext,\n  GhostAccordionItemProps,\n  GhostAccordionProps,\n  GhostAccordionTriggerElement,\n  GhostAccordionTriggerExposed,\n  GhostAccordionTriggerProps,\n  GhostAccordionType,\n  GhostAccordionValue,\n  UseGhostAccordionOptions,\n  UseGhostAccordionReturn,\n} from './ghost-accordion'\nexport { default as GhostEmptyState } from './GhostEmptyState.vue'\nexport {\n  useGhostEmptyState,\n  type GhostEmptyStateRootProps,\n} from './use-ghost-empty-state'\nexport type {\n  GhostEmptyStateElement,\n  GhostEmptyStateExposed,\n  GhostEmptyStateHeadingLevel,\n  GhostEmptyStateProps,\n  UseGhostEmptyStateOptions,\n} from './ghost-empty-state'\nexport { default as GhostCard } from './GhostCard.vue'\nexport { useGhostCard, type GhostCardRootProps } from './use-ghost-card'\nexport type {\n  GhostCardElement,\n  GhostCardExposed,\n  GhostCardProps,\n  UseGhostCardOptions,\n} from './ghost-card'\nexport { default as GhostPagination } from './GhostPagination.vue'\nexport {\n  getPaginationRange,\n  type GhostPaginationRangeEntry,\n} from './get-pagination-range'\nexport { useGhostPagination } from './use-ghost-pagination'\nexport type {\n  GhostPaginationExposed,\n  GhostPaginationProps,\n  GhostPaginationRootProps,\n  UseGhostPaginationOptions,\n} from './ghost-pagination'\nexport { default as GhostSegmentedControl } from './GhostSegmentedControl.vue'\nexport { default as GhostSegmentedControlItem } from './GhostSegmentedControlItem.vue'\nexport { useGhostSegmentedControl } from './use-ghost-segmented-control'\nexport type {\n  GhostSegmentedControlElement,\n  GhostSegmentedControlItemElement,\n  GhostSegmentedControlExposed,\n  GhostSegmentedControlItemExposed,\n  GhostSegmentedControlProps,\n  GhostSegmentedControlItemProps,\n  GhostSegmentedControlOrientation,\n  GhostSegmentedControlValue,\n  UseGhostSegmentedControlOptions,\n  UseGhostSegmentedControlReturn,\n} from './ghost-segmented-control'\nexport { default as GhostToggleGroup } from './GhostToggleGroup.vue'\nexport { default as GhostToggleGroupItem } from './GhostToggleGroupItem.vue'\nexport { useGhostToggleGroup } from './use-ghost-toggle-group'\nexport type {\n  GhostToggleGroupElement,\n  GhostToggleGroupItemElement,\n  GhostToggleGroupExposed,\n  GhostToggleGroupItemExposed,\n  GhostToggleGroupProps,\n  GhostToggleGroupItemProps,\n  GhostToggleGroupType,\n  GhostToggleGroupOrientation,\n  GhostToggleGroupValue,\n  UseGhostToggleGroupOptions,\n  UseGhostToggleGroupReturn,\n} from './ghost-toggle-group'\nexport { default as GhostToolbar } from './GhostToolbar.vue'\nexport {\n  useGhostToolbar,\n  type GhostToolbarRootProps,\n  type UseGhostToolbarReturn,\n} from './use-ghost-toolbar'\nexport type {\n  GhostToolbarDirection,\n  GhostToolbarElement,\n  GhostToolbarExposed,\n  GhostToolbarOrientation,\n  UseGhostToolbarOptions,\n} from './ghost-toolbar'\n\nexport { default as GhostRadioGroup } from './GhostRadioGroup.vue'\nexport { default as GhostRadioGroupItem } from './GhostRadioGroupItem.vue'\nexport { useGhostRadioGroup } from './use-ghost-radio-group'\nexport type {\n  GhostRadioGroupExposed,\n  GhostRadioGroupItemExposed,\n  GhostRadioGroupElement,\n  GhostRadioGroupItemProps,\n  GhostRadioGroupOrientation,\n  GhostRadioGroupProps,\n  UseGhostRadioGroupOptions,\n  UseGhostRadioGroupReturn,\n} from './ghost-radio-group'\nexport { default as GhostTooltip } from './GhostTooltip.vue'\nexport { default as GhostTooltipProvider } from './GhostTooltipProvider.vue'\nexport { default as GhostTooltipTrigger } from './GhostTooltipTrigger.vue'\nexport { default as GhostTooltipContent } from './GhostTooltipContent.vue'\nexport { useGhostTooltip } from './use-ghost-tooltip'\nexport {\n  ghostTooltipProviderContextKey,\n  type GhostTooltipProviderContext,\n  type GhostTooltipProviderProps,\n} from './ghost-tooltip-provider'\nexport {\n  ghostTooltipContextKey,\n  mergeTooltipDescribedBy,\n  resolveTooltipHtmlElement,\n  type GhostTooltipContentElement,\n  type GhostTooltipContentExposed,\n  type GhostTooltipContentProps,\n  type GhostTooltipContext,\n  type GhostTooltipFlipOptions,\n  type GhostTooltipOffsetOptions,\n  type GhostTooltipPadding,\n  type GhostTooltipPlacement,\n  type GhostTooltipProps,\n  type GhostTooltipShiftOptions,\n  type GhostTooltipSlotProps,\n  type GhostTooltipStrategy,\n  type GhostTooltipTriggerElement,\n  type GhostTooltipTriggerExposed,\n  type GhostTooltipTriggerProps,\n  type UseGhostTooltipOptions,\n  type UseGhostTooltipReturn,\n} from './ghost-tooltip'\nexport { default as GhostNumberInput } from './GhostNumberInput.vue'\nexport {\n  useGhostNumberInput,\n  type GhostNumberInputButtonProps,\n  type GhostNumberInputHiddenInputProps,\n  type GhostNumberInputInputProps,\n  type GhostNumberInputRootProps,\n} from './use-ghost-number-input'\nexport type {\n  GhostNumberInputExposed,\n  GhostNumberInputFormatOptions,\n  GhostNumberInputProps,\n  UseGhostNumberInputOptions,\n} from './ghost-number-input'\n\nexport { default as GhostSlider } from './GhostSlider.vue'\nexport { useGhostSlider, type GhostSliderRootProps } from './use-ghost-slider'\nexport type {\n  GhostSliderExposed,\n  GhostSliderProps,\n  GhostSliderValue,\n  GhostSliderOrientation,\n} from './ghost-slider'\n",
+  "themesBarrel": [
+    "export {\n  tokens,\n  tokenModes,\n  type DesignToken,\n  type TokenMode,\n  type TokenName,\n} from './generated/tokens'",
+    "export { startThemeTransition } from './start-theme-transition'",
+    "export {\n  flagshipThemes,\n  themeNames,\n  type FlagshipThemeName,\n  type ThemeName,\n} from './flagship-themes'"
+  ],
+  "themesBarrelOrdered": [
+    "export {\n  tokens,\n  tokenModes,\n  type DesignToken,\n  type TokenMode,\n  type TokenName,\n} from './generated/tokens'",
+    "export { startThemeTransition } from './start-theme-transition'",
+    "export {\n  flagshipThemes,\n  themeNames,\n  type FlagshipThemeName,\n  type ThemeName,\n} from './flagship-themes'",
+    "export {\n  GhostBadge,\n  type GhostBadgeExposed,\n  type GhostBadgeSize,\n  type GhostBadgeTone,\n  type GhostBadgeVariant,\n} from './ghost-badge'",
+    "export {\n  GhostAvatar,\n  type GhostAvatarExposed,\n  type GhostAvatarSize,\n} from './ghost-avatar'",
+    "export {\n  GhostBreadcrumb,\n  GhostBreadcrumbEllipsis,\n  GhostBreadcrumbItem,\n  GhostBreadcrumbLink,\n  GhostBreadcrumbList,\n  GhostBreadcrumbPage,\n  GhostBreadcrumbSeparator,\n  type GhostBreadcrumbElement,\n  type GhostBreadcrumbEllipsisExposed,\n  type GhostBreadcrumbEllipsisProps,\n  type GhostBreadcrumbExposed,\n  type GhostBreadcrumbItemElement,\n  type GhostBreadcrumbItemExposed,\n  type GhostBreadcrumbLinkElement,\n  type GhostBreadcrumbLinkExposed,\n  type GhostBreadcrumbListElement,\n  type GhostBreadcrumbListExposed,\n  type GhostBreadcrumbPageElement,\n  type GhostBreadcrumbPageExposed,\n  type GhostBreadcrumbProps,\n  type GhostBreadcrumbSeparatorElement,\n  type GhostBreadcrumbSeparatorExposed,\n} from './ghost-breadcrumb'",
+    "export {\n  GhostButton,\n  type GhostButtonExposed,\n  type GhostButtonInteractive,\n  type GhostButtonSize,\n  type GhostButtonTone,\n  type GhostButtonType,\n  type GhostButtonVariant,\n} from './ghost-button'",
+    "export {\n  GhostCheckbox,\n  type GhostCheckboxExposed,\n  type GhostCheckboxSize,\n  type GhostCheckboxTone,\n} from './ghost-checkbox'",
+    "export { GhostKbd, type GhostKbdPlatform, type GhostKbdSize } from './ghost-kbd'",
+    "export {\n  GhostLink,\n  type GhostLinkExposed,\n  type GhostLinkTone,\n  type GhostLinkVariant,\n} from './ghost-link'",
+    "export {\n  GhostSpinner,\n  type GhostSpinnerSize,\n  type GhostSpinnerTone,\n} from './ghost-spinner'",
+    "export {\n  GhostInteractiveSurface,\n  type InteractiveEffect,\n  type InteractiveSurfaceElement,\n  type GhostInteractiveSurfaceExposed,\n} from './ghost-interactive-surface'",
+    "export {\n  GhostSkeleton,\n  type GhostSkeletonElement,\n  type GhostSkeletonShape,\n} from './ghost-skeleton'",
+    "export { GhostPopover, type GhostPopoverSlotProps } from './ghost-popover'",
+    "export {\n  GhostPopoverTrigger,\n  type GhostPopoverTriggerElement,\n  type GhostPopoverTriggerExposed,\n} from './ghost-popover-trigger'",
+    "export {\n  GhostPopoverContent,\n  type GhostPopoverContentElement,\n  type GhostPopoverContentExposed,\n  type GhostPopoverFlipOptions,\n  type GhostPopoverOffsetOptions,\n  type GhostPopoverPlacement,\n  type GhostPopoverShiftOptions,\n  type GhostPopoverStrategy,\n} from './ghost-popover-content'",
+    "export {\n  GhostPopoverClose,\n  type GhostPopoverCloseElement,\n  type GhostPopoverCloseExposed,\n} from './ghost-popover-close'",
+    "export { GhostSelect, type GhostSelectExposed } from './ghost-select'",
+    "export {\n  GhostSelectTrigger,\n  type GhostSelectTriggerElement,\n  type GhostSelectTriggerExposed,\n} from './ghost-select-trigger'",
+    "export {\n  GhostSelectContent,\n  type GhostSelectContentElement,\n  type GhostSelectContentExposed,\n  type GhostSelectFlipOptions,\n  type GhostSelectOffsetOptions,\n  type GhostSelectPlacement,\n  type GhostSelectShiftOptions,\n  type GhostSelectStrategy,\n} from './ghost-select-content'",
+    "export {\n  GhostSelectValue,\n  GhostSelectOption,\n  GhostSelectGroup,\n  GhostSelectLabel,\n  useGhostSelect,\n} from '@ghostvue/vue'",
+    "export { GhostDialog, type GhostDialogSlotProps } from './ghost-dialog'",
+    "export {\n  GhostDialogTrigger,\n  type GhostDialogTriggerElement,\n  type GhostDialogTriggerExposed,\n} from './ghost-dialog-trigger'",
+    "export {\n  GhostDialogOverlay,\n  type GhostDialogOverlayElement,\n  type GhostDialogOverlayExposed,\n} from './ghost-dialog-overlay'",
+    "export {\n  GhostDialogContent,\n  type GhostDialogContentElement,\n  type GhostDialogContentExposed,\n  type GhostDialogContentRole,\n} from './ghost-dialog-content'",
+    "export {\n  GhostDialogTitle,\n  type GhostDialogTitleElement,\n  type GhostDialogTitleExposed,\n} from './ghost-dialog-title'",
+    "export {\n  GhostDialogDescription,\n  type GhostDialogDescriptionElement,\n  type GhostDialogDescriptionExposed,\n} from './ghost-dialog-description'",
+    "export {\n  GhostDialogClose,\n  type GhostDialogCloseElement,\n  type GhostDialogCloseExposed,\n} from './ghost-dialog-close'",
+    "export {\n  GhostDropdownMenu,\n  type GhostDropdownMenuSlotProps,\n} from './ghost-dropdown-menu'",
+    "export {\n  GhostDropdownMenuTrigger,\n  type GhostDropdownMenuTriggerElement,\n  type GhostDropdownMenuTriggerExposed,\n} from './ghost-dropdown-menu-trigger'",
+    "export {\n  GhostDropdownMenuContent,\n  type GhostDropdownMenuContentElement,\n  type GhostDropdownMenuContentExposed,\n  type GhostDropdownMenuFlipOptions,\n  type GhostDropdownMenuOffsetOptions,\n  type GhostDropdownMenuPlacement,\n  type GhostDropdownMenuShiftOptions,\n  type GhostDropdownMenuStrategy,\n} from './ghost-dropdown-menu-content'",
+    "export {\n  GhostDropdownMenuItem,\n  type GhostDropdownMenuItemElement,\n  type GhostDropdownMenuItemExposed,\n} from './ghost-dropdown-menu-item'",
+    "export {\n  GhostDropdownMenuCheckboxItem,\n  type GhostDropdownMenuCheckboxItemElement,\n  type GhostDropdownMenuCheckboxItemExposed,\n} from './ghost-dropdown-menu-checkbox-item'",
+    "export {\n  GhostDropdownMenuRadioItem,\n  type GhostDropdownMenuRadioItemElement,\n  type GhostDropdownMenuRadioItemExposed,\n} from './ghost-dropdown-menu-radio-item'",
+    "export {\n  GhostDropdownMenuRadioGroup,\n  type GhostDropdownMenuRadioGroupElement,\n} from './ghost-dropdown-menu-radio-group'",
+    "export {\n  GhostDropdownMenuLabel,\n  type GhostDropdownMenuLabelElement,\n} from './ghost-dropdown-menu-label'",
+    "export {\n  GhostDropdownMenuSeparator,\n  type GhostDropdownMenuSeparatorElement,\n} from './ghost-dropdown-menu-separator'",
+    "export {\n  GhostDropdownMenuGroup,\n  type GhostDropdownMenuGroupElement,\n} from './ghost-dropdown-menu-group'",
+    "export {\n  GhostSeparator,\n  type GhostSeparatorElement,\n  type GhostSeparatorOrientation,\n} from './ghost-separator'",
+    "export {\n  GhostScrollArea,\n  type GhostScrollAreaOrientation,\n  type GhostScrollAreaOverflowType,\n} from './ghost-scroll-area'",
+    "export {\n  GhostProgress,\n  type GhostProgressSize,\n  type GhostProgressTone,\n} from './ghost-progress'",
+    "export {\n  GhostInput,\n  type GhostInputExposed,\n  type GhostInputSize,\n  type GhostInputType,\n} from './ghost-input'",
+    "export {\n  GhostSwitch,\n  type GhostSwitchExposed,\n  type GhostSwitchSize,\n  type GhostSwitchTone,\n} from './ghost-switch'",
+    "export {\n  GhostTextarea,\n  type GhostTextareaExposed,\n  type GhostTextareaSize,\n} from './ghost-textarea'",
+    "export {\n  GhostCollapsible,\n  type GhostCollapsibleSlotProps,\n} from './ghost-collapsible'",
+    "export {\n  GhostCollapsibleTrigger,\n  type GhostCollapsibleTriggerElement,\n  type GhostCollapsibleTriggerExposed,\n} from './ghost-collapsible-trigger'",
+    "export {\n  GhostCollapsibleContent,\n  type GhostCollapsibleContentElement,\n  type GhostCollapsibleContentExposed,\n} from './ghost-collapsible-content'",
+    "export {\n  GhostField,\n  GhostFieldControl,\n  GhostFieldDescription,\n  GhostFieldError,\n  GhostFieldLabel,\n  type GhostFieldControlSlotProps,\n  type GhostFieldExposed,\n  type GhostFieldLabelAssociate,\n} from './ghost-field'",
+    "export { GhostTabs, type GhostTabsSlotProps } from './ghost-tabs'",
+    "export {\n  GhostTabsList,\n  type GhostTabsListElement,\n  type GhostTabsListExposed,\n} from './ghost-tabs-list'",
+    "export {\n  GhostTabsTrigger,\n  type GhostTabsTriggerElement,\n  type GhostTabsTriggerExposed,\n} from './ghost-tabs-trigger'",
+    "export {\n  GhostTabsContent,\n  type GhostTabsContentElement,\n  type GhostTabsContentExposed,\n} from './ghost-tabs-content'",
+    "export { GhostTable, type GhostTableExposed } from './ghost-table'",
+    "export {\n  GhostAccordion,\n  GhostAccordionItem,\n  GhostAccordionTrigger,\n  GhostAccordionContent,\n  type GhostAccordionContentElement,\n  type GhostAccordionContentExposed,\n  type GhostAccordionExposed,\n  type GhostAccordionHeadingLevel,\n  type GhostAccordionItemProps,\n  type GhostAccordionTriggerElement,\n  type GhostAccordionTriggerExposed,\n  type GhostAccordionType,\n  type GhostAccordionValue,\n} from './ghost-accordion'",
+    "export {\n  GhostEmptyState,\n  type GhostEmptyStateExposed,\n} from './ghost-empty-state'",
+    "export {\n  GhostCard,\n  type GhostCardExposed,\n  type GhostCardInteractive,\n} from './ghost-card'",
+    "export {\n  GhostInlineAlert,\n  type GhostInlineAlertExposed,\n  type GhostInlineAlertTone,\n  type GhostInlineAlertVariant,\n} from './ghost-inline-alert'",
+    "export {\n  GhostPagination,\n  type GhostPaginationExposed,\n} from './ghost-pagination'",
+    "export {\n  GhostRadioGroup,\n  GhostRadioGroupItem,\n  type GhostRadioGroupExposed,\n  type GhostRadioGroupItemExposed,\n  type GhostRadioGroupSize,\n} from './ghost-radio-group'",
+    "export {\n  GhostSegmentedControl,\n  type GhostSegmentedControlExposed,\n} from './ghost-segmented-control'",
+    "export {\n  GhostSegmentedControlItem,\n  type GhostSegmentedControlItemElement,\n  type GhostSegmentedControlItemExposed,\n} from './ghost-segmented-control-item'",
+    "export {\n  GhostToggleGroup,\n  type GhostToggleGroupExposed,\n} from './ghost-toggle-group'",
+    "export {\n  GhostToggleGroupItem,\n  type GhostToggleGroupItemElement,\n  type GhostToggleGroupItemExposed,\n} from './ghost-toggle-group-item'",
+    "export {\n  GhostHoverCard,\n  type GhostHoverCardSlotProps,\n} from './ghost-hover-card'",
+    "export {\n  GhostHoverCardTrigger,\n  type GhostHoverCardTriggerElement,\n  type GhostHoverCardTriggerExposed,\n} from './ghost-hover-card-trigger'",
+    "export {\n  GhostHoverCardContent,\n  type GhostHoverCardContentElement,\n  type GhostHoverCardContentExposed,\n  type GhostHoverCardFlipOptions,\n  type GhostHoverCardOffsetOptions,\n  type GhostHoverCardPlacement,\n  type GhostHoverCardShiftOptions,\n  type GhostHoverCardStrategy,\n} from './ghost-hover-card-content'",
+    "export { GhostTooltip, type GhostTooltipSlotProps } from './ghost-tooltip'",
+    "export {\n  GhostTooltipTrigger,\n  type GhostTooltipTriggerElement,\n  type GhostTooltipTriggerExposed,\n} from './ghost-tooltip-trigger'",
+    "export {\n  GhostTooltipContent,\n  type GhostTooltipContentElement,\n  type GhostTooltipContentExposed,\n  type GhostTooltipFlipOptions,\n  type GhostTooltipOffsetOptions,\n  type GhostTooltipPlacement,\n  type GhostTooltipShiftOptions,\n  type GhostTooltipStrategy,\n  type GhostPortalTarget,\n} from './ghost-tooltip-content'",
+    "export {\n  GhostNumberInput,\n  type GhostNumberInputExposed,\n} from './ghost-number-input'",
+    "export { GhostSlider, type GhostSliderExposed } from './ghost-slider'",
+    "export { GhostToolbar, type GhostToolbarExposed } from './ghost-toolbar'"
+  ],
+  "themesBarrelSource": "/** Themed wrappers and default CSS. One `GhostBadge` or `GhostButton` import loads the stylesheet. */\nimport './default.css'\n\nexport {\n  tokens,\n  tokenModes,\n  type DesignToken,\n  type TokenMode,\n  type TokenName,\n} from './generated/tokens'\n\nexport { startThemeTransition } from './start-theme-transition'\n\nexport {\n  flagshipThemes,\n  themeNames,\n  type FlagshipThemeName,\n  type ThemeName,\n} from './flagship-themes'\n\nexport {\n  GhostBadge,\n  type GhostBadgeExposed,\n  type GhostBadgeSize,\n  type GhostBadgeTone,\n  type GhostBadgeVariant,\n} from './ghost-badge'\n\nexport {\n  GhostAvatar,\n  type GhostAvatarExposed,\n  type GhostAvatarSize,\n} from './ghost-avatar'\n\nexport {\n  GhostBreadcrumb,\n  GhostBreadcrumbEllipsis,\n  GhostBreadcrumbItem,\n  GhostBreadcrumbLink,\n  GhostBreadcrumbList,\n  GhostBreadcrumbPage,\n  GhostBreadcrumbSeparator,\n  type GhostBreadcrumbElement,\n  type GhostBreadcrumbEllipsisExposed,\n  type GhostBreadcrumbEllipsisProps,\n  type GhostBreadcrumbExposed,\n  type GhostBreadcrumbItemElement,\n  type GhostBreadcrumbItemExposed,\n  type GhostBreadcrumbLinkElement,\n  type GhostBreadcrumbLinkExposed,\n  type GhostBreadcrumbListElement,\n  type GhostBreadcrumbListExposed,\n  type GhostBreadcrumbPageElement,\n  type GhostBreadcrumbPageExposed,\n  type GhostBreadcrumbProps,\n  type GhostBreadcrumbSeparatorElement,\n  type GhostBreadcrumbSeparatorExposed,\n} from './ghost-breadcrumb'\n\nexport {\n  GhostButton,\n  type GhostButtonExposed,\n  type GhostButtonInteractive,\n  type GhostButtonSize,\n  type GhostButtonTone,\n  type GhostButtonType,\n  type GhostButtonVariant,\n} from './ghost-button'\n\nexport {\n  GhostCheckbox,\n  type GhostCheckboxExposed,\n  type GhostCheckboxSize,\n  type GhostCheckboxTone,\n} from './ghost-checkbox'\n\nexport { GhostKbd, type GhostKbdPlatform, type GhostKbdSize } from './ghost-kbd'\n\nexport {\n  GhostLink,\n  type GhostLinkExposed,\n  type GhostLinkTone,\n  type GhostLinkVariant,\n} from './ghost-link'\n\nexport {\n  GhostSpinner,\n  type GhostSpinnerSize,\n  type GhostSpinnerTone,\n} from './ghost-spinner'\n\nexport {\n  GhostInteractiveSurface,\n  type InteractiveEffect,\n  type InteractiveSurfaceElement,\n  type GhostInteractiveSurfaceExposed,\n} from './ghost-interactive-surface'\n\nexport {\n  GhostSkeleton,\n  type GhostSkeletonElement,\n  type GhostSkeletonShape,\n} from './ghost-skeleton'\n\nexport { GhostPopover, type GhostPopoverSlotProps } from './ghost-popover'\n\nexport {\n  GhostPopoverTrigger,\n  type GhostPopoverTriggerElement,\n  type GhostPopoverTriggerExposed,\n} from './ghost-popover-trigger'\n\nexport {\n  GhostPopoverContent,\n  type GhostPopoverContentElement,\n  type GhostPopoverContentExposed,\n  type GhostPopoverFlipOptions,\n  type GhostPopoverOffsetOptions,\n  type GhostPopoverPlacement,\n  type GhostPopoverShiftOptions,\n  type GhostPopoverStrategy,\n} from './ghost-popover-content'\n\nexport {\n  GhostPopoverClose,\n  type GhostPopoverCloseElement,\n  type GhostPopoverCloseExposed,\n} from './ghost-popover-close'\nexport { GhostSelect, type GhostSelectExposed } from './ghost-select'\nexport {\n  GhostSelectTrigger,\n  type GhostSelectTriggerElement,\n  type GhostSelectTriggerExposed,\n} from './ghost-select-trigger'\nexport {\n  GhostSelectContent,\n  type GhostSelectContentElement,\n  type GhostSelectContentExposed,\n  type GhostSelectFlipOptions,\n  type GhostSelectOffsetOptions,\n  type GhostSelectPlacement,\n  type GhostSelectShiftOptions,\n  type GhostSelectStrategy,\n} from './ghost-select-content'\nexport {\n  GhostSelectValue,\n  GhostSelectOption,\n  GhostSelectGroup,\n  GhostSelectLabel,\n  useGhostSelect,\n} from '@ghostvue/vue'\n\nexport { GhostDialog, type GhostDialogSlotProps } from './ghost-dialog'\n\nexport {\n  GhostDialogTrigger,\n  type GhostDialogTriggerElement,\n  type GhostDialogTriggerExposed,\n} from './ghost-dialog-trigger'\n\nexport {\n  GhostDialogOverlay,\n  type GhostDialogOverlayElement,\n  type GhostDialogOverlayExposed,\n} from './ghost-dialog-overlay'\n\nexport {\n  GhostDialogContent,\n  type GhostDialogContentElement,\n  type GhostDialogContentExposed,\n  type GhostDialogContentRole,\n} from './ghost-dialog-content'\n\nexport {\n  GhostDialogTitle,\n  type GhostDialogTitleElement,\n  type GhostDialogTitleExposed,\n} from './ghost-dialog-title'\n\nexport {\n  GhostDialogDescription,\n  type GhostDialogDescriptionElement,\n  type GhostDialogDescriptionExposed,\n} from './ghost-dialog-description'\n\nexport {\n  GhostDialogClose,\n  type GhostDialogCloseElement,\n  type GhostDialogCloseExposed,\n} from './ghost-dialog-close'\n\nexport {\n  GhostDropdownMenu,\n  type GhostDropdownMenuSlotProps,\n} from './ghost-dropdown-menu'\n\nexport {\n  GhostDropdownMenuTrigger,\n  type GhostDropdownMenuTriggerElement,\n  type GhostDropdownMenuTriggerExposed,\n} from './ghost-dropdown-menu-trigger'\n\nexport {\n  GhostDropdownMenuContent,\n  type GhostDropdownMenuContentElement,\n  type GhostDropdownMenuContentExposed,\n  type GhostDropdownMenuFlipOptions,\n  type GhostDropdownMenuOffsetOptions,\n  type GhostDropdownMenuPlacement,\n  type GhostDropdownMenuShiftOptions,\n  type GhostDropdownMenuStrategy,\n} from './ghost-dropdown-menu-content'\n\nexport {\n  GhostDropdownMenuItem,\n  type GhostDropdownMenuItemElement,\n  type GhostDropdownMenuItemExposed,\n} from './ghost-dropdown-menu-item'\n\nexport {\n  GhostDropdownMenuCheckboxItem,\n  type GhostDropdownMenuCheckboxItemElement,\n  type GhostDropdownMenuCheckboxItemExposed,\n} from './ghost-dropdown-menu-checkbox-item'\n\nexport {\n  GhostDropdownMenuRadioItem,\n  type GhostDropdownMenuRadioItemElement,\n  type GhostDropdownMenuRadioItemExposed,\n} from './ghost-dropdown-menu-radio-item'\n\nexport {\n  GhostDropdownMenuRadioGroup,\n  type GhostDropdownMenuRadioGroupElement,\n} from './ghost-dropdown-menu-radio-group'\n\nexport {\n  GhostDropdownMenuLabel,\n  type GhostDropdownMenuLabelElement,\n} from './ghost-dropdown-menu-label'\n\nexport {\n  GhostDropdownMenuSeparator,\n  type GhostDropdownMenuSeparatorElement,\n} from './ghost-dropdown-menu-separator'\n\nexport {\n  GhostDropdownMenuGroup,\n  type GhostDropdownMenuGroupElement,\n} from './ghost-dropdown-menu-group'\n\nexport {\n  GhostSeparator,\n  type GhostSeparatorElement,\n  type GhostSeparatorOrientation,\n} from './ghost-separator'\n\nexport {\n  GhostScrollArea,\n  type GhostScrollAreaOrientation,\n  type GhostScrollAreaOverflowType,\n} from './ghost-scroll-area'\n\nexport {\n  GhostProgress,\n  type GhostProgressSize,\n  type GhostProgressTone,\n} from './ghost-progress'\n\nexport {\n  GhostInput,\n  type GhostInputExposed,\n  type GhostInputSize,\n  type GhostInputType,\n} from './ghost-input'\n\nexport {\n  GhostSwitch,\n  type GhostSwitchExposed,\n  type GhostSwitchSize,\n  type GhostSwitchTone,\n} from './ghost-switch'\n\nexport {\n  GhostTextarea,\n  type GhostTextareaExposed,\n  type GhostTextareaSize,\n} from './ghost-textarea'\n\nexport {\n  GhostCollapsible,\n  type GhostCollapsibleSlotProps,\n} from './ghost-collapsible'\n\nexport {\n  GhostCollapsibleTrigger,\n  type GhostCollapsibleTriggerElement,\n  type GhostCollapsibleTriggerExposed,\n} from './ghost-collapsible-trigger'\n\nexport {\n  GhostCollapsibleContent,\n  type GhostCollapsibleContentElement,\n  type GhostCollapsibleContentExposed,\n} from './ghost-collapsible-content'\n\nexport {\n  GhostField,\n  GhostFieldControl,\n  GhostFieldDescription,\n  GhostFieldError,\n  GhostFieldLabel,\n  type GhostFieldControlSlotProps,\n  type GhostFieldExposed,\n  type GhostFieldLabelAssociate,\n} from './ghost-field'\n\nexport { GhostTabs, type GhostTabsSlotProps } from './ghost-tabs'\nexport {\n  GhostTabsList,\n  type GhostTabsListElement,\n  type GhostTabsListExposed,\n} from './ghost-tabs-list'\nexport {\n  GhostTabsTrigger,\n  type GhostTabsTriggerElement,\n  type GhostTabsTriggerExposed,\n} from './ghost-tabs-trigger'\nexport {\n  GhostTabsContent,\n  type GhostTabsContentElement,\n  type GhostTabsContentExposed,\n} from './ghost-tabs-content'\nexport { GhostTable, type GhostTableExposed } from './ghost-table'\nexport {\n  GhostAccordion,\n  GhostAccordionItem,\n  GhostAccordionTrigger,\n  GhostAccordionContent,\n  type GhostAccordionContentElement,\n  type GhostAccordionContentExposed,\n  type GhostAccordionExposed,\n  type GhostAccordionHeadingLevel,\n  type GhostAccordionItemProps,\n  type GhostAccordionTriggerElement,\n  type GhostAccordionTriggerExposed,\n  type GhostAccordionType,\n  type GhostAccordionValue,\n} from './ghost-accordion'\nexport {\n  GhostEmptyState,\n  type GhostEmptyStateExposed,\n} from './ghost-empty-state'\nexport {\n  GhostCard,\n  type GhostCardExposed,\n  type GhostCardInteractive,\n} from './ghost-card'\nexport {\n  GhostInlineAlert,\n  type GhostInlineAlertExposed,\n  type GhostInlineAlertTone,\n  type GhostInlineAlertVariant,\n} from './ghost-inline-alert'\nexport {\n  GhostPagination,\n  type GhostPaginationExposed,\n} from './ghost-pagination'\nexport {\n  GhostRadioGroup,\n  GhostRadioGroupItem,\n  type GhostRadioGroupExposed,\n  type GhostRadioGroupItemExposed,\n  type GhostRadioGroupSize,\n} from './ghost-radio-group'\nexport {\n  GhostSegmentedControl,\n  type GhostSegmentedControlExposed,\n} from './ghost-segmented-control'\nexport {\n  GhostSegmentedControlItem,\n  type GhostSegmentedControlItemElement,\n  type GhostSegmentedControlItemExposed,\n} from './ghost-segmented-control-item'\nexport {\n  GhostToggleGroup,\n  type GhostToggleGroupExposed,\n} from './ghost-toggle-group'\nexport {\n  GhostToggleGroupItem,\n  type GhostToggleGroupItemElement,\n  type GhostToggleGroupItemExposed,\n} from './ghost-toggle-group-item'\nexport {\n  GhostHoverCard,\n  type GhostHoverCardSlotProps,\n} from './ghost-hover-card'\nexport {\n  GhostHoverCardTrigger,\n  type GhostHoverCardTriggerElement,\n  type GhostHoverCardTriggerExposed,\n} from './ghost-hover-card-trigger'\nexport {\n  GhostHoverCardContent,\n  type GhostHoverCardContentElement,\n  type GhostHoverCardContentExposed,\n  type GhostHoverCardFlipOptions,\n  type GhostHoverCardOffsetOptions,\n  type GhostHoverCardPlacement,\n  type GhostHoverCardShiftOptions,\n  type GhostHoverCardStrategy,\n} from './ghost-hover-card-content'\nexport { GhostTooltip, type GhostTooltipSlotProps } from './ghost-tooltip'\nexport {\n  GhostTooltipTrigger,\n  type GhostTooltipTriggerElement,\n  type GhostTooltipTriggerExposed,\n} from './ghost-tooltip-trigger'\nexport {\n  GhostTooltipContent,\n  type GhostTooltipContentElement,\n  type GhostTooltipContentExposed,\n  type GhostTooltipFlipOptions,\n  type GhostTooltipOffsetOptions,\n  type GhostTooltipPlacement,\n  type GhostTooltipShiftOptions,\n  type GhostTooltipStrategy,\n  type GhostPortalTarget,\n} from './ghost-tooltip-content'\nexport {\n  GhostNumberInput,\n  type GhostNumberInputExposed,\n} from './ghost-number-input'\nexport { GhostSlider, type GhostSliderExposed } from './ghost-slider'\nexport { GhostToolbar, type GhostToolbarExposed } from './ghost-toolbar'\n",
+  "themesCssImports": [
+    "ghost-badge.css",
+    "ghost-breadcrumb.css",
+    "ghost-button.css",
+    "ghost-card.css",
+    "ghost-checkbox.css",
+    "ghost-dialog.css",
+    "ghost-dropdown-menu.css",
+    "ghost-input.css",
+    "ghost-inline-alert.css",
+    "ghost-kbd.css",
+    "ghost-link.css",
+    "ghost-popover.css",
+    "ghost-progress.css",
+    "ghost-separator.css",
+    "ghost-scroll-area.css",
+    "ghost-segmented-control.css",
+    "ghost-skeleton.css",
+    "ghost-spinner.css",
+    "ghost-switch.css",
+    "ghost-textarea.css",
+    "ghost-collapsible.css",
+    "ghost-field.css",
+    "ghost-tabs.css",
+    "ghost-table.css",
+    "ghost-tooltip.css",
+    "ghost-hover-card.css",
+    "ghost-avatar.css",
+    "ghost-accordion.css",
+    "ghost-empty-state.css",
+    "ghost-number-input.css",
+    "ghost-pagination.css",
+    "ghost-slider.css",
+    "ghost-toggle-group.css",
+    "ghost-toolbar.css",
+    "ghost-radio-group.css",
+    "ghost-select.css"
+  ],
+  "docsComponentNavOrder": [
+    "accordion",
+    "avatar",
+    "badge",
+    "breadcrumb",
+    "collapsible",
+    "button",
+    "card",
+    "checkbox",
+    "dialog",
+    "dropdown-menu",
+    "empty-state",
+    "field",
+    "hover-card",
+    "inline-alert",
+    "input",
+    "number-input",
+    "interactive-surface",
+    "kbd",
+    "link",
+    "popover",
+    "pagination",
+    "progress",
+    "radio-group",
+    "select",
+    "separator",
+    "scroll-area",
+    "segmented-control",
+    "skeleton",
+    "slider",
+    "spinner",
+    "switch",
+    "tabs",
+    "table",
+    "textarea",
+    "toggle-group",
+    "toolbar",
+    "tooltip",
+    "visually-hidden"
+  ],
+  "docsSpecNavItems": [
+    {
+      "title": "GhostSlider specification",
+      "link": "/components/slider-spec"
+    },
+    {
+      "title": "GhostToolbar specification",
+      "link": "/components/toolbar-spec"
+    },
+    {
+      "title": "GhostAccordion specification",
+      "link": "/components/accordion-spec"
+    },
+    {
+      "title": "GhostNumberInput specification",
+      "link": "/components/number-input-spec"
+    },
+    {
+      "title": "GhostPagination specification",
+      "link": "/components/pagination-spec"
+    },
+    {
+      "title": "GhostToggleGroup specification",
+      "link": "/components/toggle-group-spec"
+    },
+    {
+      "title": "GhostSegmentedControl specification",
+      "link": "/components/segmented-control-spec"
+    },
+    {
+      "title": "GhostEmptyState specification",
+      "link": "/components/empty-state-spec"
+    },
+    {
+      "title": "GhostCard specification",
+      "link": "/components/card-spec"
+    },
+    {
+      "title": "GhostInlineAlert specification",
+      "link": "/components/inline-alert-spec"
+    },
+    {
+      "title": "GhostRadioGroup specification",
+      "link": "/components/radio-group-spec"
+    },
+    {
+      "title": "GhostCollapsible specification",
+      "link": "/components/collapsible-spec"
+    },
+    {
+      "title": "GhostField specification",
+      "link": "/components/field-spec"
+    },
+    {
+      "title": "GhostHoverCard specification",
+      "link": "/components/hover-card-spec"
+    },
+    {
+      "title": "GhostTable specification",
+      "link": "/components/table-spec"
+    },
+    {
+      "title": "GhostTabs specification",
+      "link": "/components/tabs-spec"
+    },
+    {
+      "title": "GhostTooltip specification",
+      "link": "/components/tooltip-spec"
+    },
+    {
+      "title": "GhostBadge specification",
+      "link": "/components/badge-spec"
+    },
+    {
+      "title": "GhostBreadcrumb specification",
+      "link": "/components/breadcrumb-spec"
+    },
+    {
+      "title": "GhostButton specification",
+      "link": "/components/button-spec"
+    },
+    {
+      "title": "GhostCheckbox specification",
+      "link": "/components/checkbox-spec"
+    },
+    {
+      "title": "GhostDialog specification",
+      "link": "/components/dialog-spec"
+    },
+    {
+      "title": "GhostDropdownMenu specification",
+      "link": "/components/dropdown-menu-spec"
+    },
+    {
+      "title": "GhostInput specification",
+      "link": "/components/input-spec"
+    },
+    {
+      "title": "GhostInteractiveSurface specification",
+      "link": "/components/interactive-surface-spec"
+    },
+    {
+      "title": "GhostKbd specification",
+      "link": "/components/kbd-spec"
+    },
+    {
+      "title": "GhostLink specification",
+      "link": "/components/link-spec"
+    },
+    {
+      "title": "GhostPopover specification",
+      "link": "/components/popover-spec"
+    },
+    {
+      "title": "GhostProgress specification",
+      "link": "/components/progress-spec"
+    },
+    {
+      "title": "GhostSelect specification",
+      "link": "/components/select-spec"
+    },
+    {
+      "title": "GhostSeparator specification",
+      "link": "/components/separator-spec"
+    },
+    {
+      "title": "GhostScrollArea specification",
+      "link": "/components/scroll-area-spec"
+    },
+    {
+      "title": "GhostSkeleton specification",
+      "link": "/components/skeleton-spec"
+    },
+    {
+      "title": "GhostSpinner specification",
+      "link": "/components/spinner-spec"
+    },
+    {
+      "title": "GhostSwitch specification",
+      "link": "/components/switch-spec"
+    },
+    {
+      "title": "GhostTextarea specification",
+      "link": "/components/textarea-spec"
+    },
+    {
+      "title": "GhostVisuallyHidden specification",
+      "link": "/components/visually-hidden-spec"
+    }
+  ],
+  "roadmapTablesMarkdown": "## Tier 1 — primitives\n\nIndependent leaves. Optional action slots on alert/empty content can render `GhostButton` but the issues do not require that import.\n\n| Order | Component               | Issue                                                 | Primitive dependencies                                                                                                                                                                                                                                | Status                                                                                                                                                   |\n| ----- | ----------------------- | ----------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |\n| 1     | `GhostVisuallyHidden`   | [#2](https://github.com/zprue743/ghostvue/issues/2)   | None named. [PR #33](https://github.com/zprue743/ghostvue/pull/33) states `useGhostId` and `useControllableState` are unused.                                                                                                                         | merged ([#33](https://github.com/zprue743/ghostvue/pull/33) `GhostVisuallyHidden`; older [#21](https://github.com/zprue743/ghostvue/pull/21) unprefixed) |\n| 2     | `GhostButton`           | [#1](https://github.com/zprue743/ghostvue/issues/1)   | None named. Icon-only accessible-name contract; [#2](https://github.com/zprue743/ghostvue/issues/2) is the visually hidden utility. [PR #34](https://github.com/zprue743/ghostvue/pull/34) states `useGhostId` and `useControllableState` are unused. | merged ([#34](https://github.com/zprue743/ghostvue/pull/34) `GhostButton`; older [#20](https://github.com/zprue743/ghostvue/pull/20) unprefixed)         |\n| 3     | `GhostSpinner`          | [GHO-72](https://linear.app/ghost-vue/issue/GHO-72)   | None named. Loading orchestration is out of scope.                                                                                                                                                                                                    | merged ([GHO-72](https://linear.app/ghost-vue/issue/GHO-72))                                                                                             |\n| 4     | `GhostSkeleton`         | [GHO-73](https://linear.app/ghost-vue/issue/GHO-73)   | None named.                                                                                                                                                                                                                                           | merged ([GHO-73](https://linear.app/ghost-vue/issue/GHO-73))                                                                                             |\n| 5     | `GhostBadge`            | [GHO-75](https://linear.app/ghost-vue/issue/GHO-75)   | None named. Interactive/dismissible behavior out of scope.                                                                                                                                                                                            | merged ([GHO-75](https://linear.app/ghost-vue/issue/GHO-75))                                                                                             |\n| 6     | `GhostInlineAlert`      | [GHO-76](https://linear.app/ghost-vue/issue/GHO-76)   | None named. Optional action content; toast/global notifications out of scope.                                                                                                                                                                         | in progress                                                                                                                                              |\n| 7     | `GhostToast`            | [GHO-33](https://linear.app/ghost-vue/issue/GHO-33)   | Live region; `useToast`.                                                                                                                                                                                                                              | planned                                                                                                                                                  |\n| 8     | `GhostEmptyState`       | [GHO-77](https://linear.app/ghost-vue/issue/GHO-77)   | Title, description, visual, and actions slots; configurable heading level. DataTable orchestration out of scope.                                                                                                                                      | merged ([GHO-77](https://linear.app/ghost-vue/issue/GHO-77))                                                                                             |\n| 9     | `GhostCollapsible`      | [GHO-86](https://linear.app/ghost-vue/issue/GHO-86)   | `useControllableState`, `useGhostId` ([component-state.md](./architecture/component-state.md); issue: controlled/uncontrolled open, deterministic IDs). Accordion coordination out of scope.                                                          | merged ([GHO-86](https://linear.app/ghost-vue/issue/GHO-86))                                                                                             |\n| 10    | `GhostAccordion`        | [GHO-34](https://linear.app/ghost-vue/issue/GHO-34)   | Built on `GhostCollapsible` ([GHO-86](https://linear.app/ghost-vue/issue/GHO-86)).                                                                                                                                                                    | merged ([GHO-34](https://linear.app/ghost-vue/issue/GHO-34))                                                                                             |\n| 11    | `GhostToggleGroup`      | [GHO-82](https://linear.app/ghost-vue/issue/GHO-82)   | `useRovingFocus` ([focus.md](./architecture/focus.md)); `useControllableState` (issue: controlled Vue model).                                                                                                                                         | merged ([GHO-82](https://linear.app/ghost-vue/issue/GHO-82))                                                                                             |\n| 12    | `GhostSegmentedControl` | [GHO-101](https://linear.app/ghost-vue/issue/GHO-101) | `useGhostToggleGroup` (toggle semantics).                                                                                                                                                                                                             | in progress                                                                                                                                              |\n| 13    | `GhostTabs`             | [GHO-29](https://linear.app/ghost-vue/issue/GHO-29)   | `useRovingFocus` ([focus.md](./architecture/focus.md)).                                                                                                                                                                                               | merged ([GHO-29](https://linear.app/ghost-vue/issue/GHO-29))                                                                                             |\n| 14    | `GhostScrollArea`       | [GHO-84](https://linear.app/ghost-vue/issue/GHO-84)   | None named. Virtualization and DataTable sticky behavior out of scope.                                                                                                                                                                                | in progress                                                                                                                                              |\n| 15    | `GhostProgress`         | [GHO-90](https://linear.app/ghost-vue/issue/GHO-90)   | None named.                                                                                                                                                                                                                                           | merged ([GHO-90](https://linear.app/ghost-vue/issue/GHO-90))                                                                                             |\n| 16    | `GhostSeparator`        | [GHO-94](https://linear.app/ghost-vue/issue/GHO-94)   | None named.                                                                                                                                                                                                                                           | merged ([GHO-94](https://linear.app/ghost-vue/issue/GHO-94))                                                                                             |\n| 17    | `GhostAvatar`           | [GHO-95](https://linear.app/ghost-vue/issue/GHO-95)   | None named.                                                                                                                                                                                                                                           | in progress                                                                                                                                              |\n| 18    | `GhostCard`             | [GHO-96](https://linear.app/ghost-vue/issue/GHO-96)   | `useGhostInteractiveSurface` for optional spotlight.                                                                                                                                                                                                  | merged ([GHO-96](https://linear.app/ghost-vue/issue/GHO-96))                                                                                             |\n| 19    | `GhostKbd`              | [GHO-97](https://linear.app/ghost-vue/issue/GHO-97)   | None named.                                                                                                                                                                                                                                           | merged ([GHO-97](https://linear.app/ghost-vue/issue/GHO-97))                                                                                             |\n| 20    | `GhostLink`             | [GHO-98](https://linear.app/ghost-vue/issue/GHO-98)   | None named.                                                                                                                                                                                                                                           | in progress (feat/gho-98-link)                                                                                                                           |\n| 21    | `GhostToolbar`          | [GHO-93](https://linear.app/ghost-vue/issue/GHO-93)   | None named.                                                                                                                                                                                                                                           | merged ([GHO-93](https://linear.app/ghost-vue/issue/GHO-93))                                                                                             |\n| 22    | `GhostBreadcrumb`       | [GHO-99](https://linear.app/ghost-vue/issue/GHO-99)   | None named.                                                                                                                                                                                                                                           | merged ([GHO-99](https://linear.app/ghost-vue/issue/GHO-99))                                                                                             |\n\n## Tier 2 — forms\n\n| Order | Component          | Issue                                                 | Primitive dependencies                                                                                                                                                                                                                                                                                                              | Status                                                       |\n| ----- | ------------------ | ----------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------ |\n| 23    | `GhostInput`       | [GHO-70](https://linear.app/ghost-vue/issue/GHO-70)   | `useControllableState` (issue: controlled Vue model; [component-state.md](./architecture/component-state.md) `modelValue`). `useGhostId` not named.                                                                                                                                                                                 | merged ([GHO-70](https://linear.app/ghost-vue/issue/GHO-70)) |\n| 24    | `GhostTextarea`    | [GHO-87](https://linear.app/ghost-vue/issue/GHO-87)   | None named.                                                                                                                                                                                                                                                                                                                         | merged ([GHO-87](https://linear.app/ghost-vue/issue/GHO-87)) |\n| 25    | `GhostNumberInput` | [GHO-89](https://linear.app/ghost-vue/issue/GHO-89)   | `useControllableState`, `useNativeFormReset`.                                                                                                                                                                                                                                                                                       | merged ([GHO-89](https://linear.app/ghost-vue/issue/GHO-89)) |\n| 26    | `GhostCheckbox`    | [GHO-74](https://linear.app/ghost-vue/issue/GHO-74)   | `useControllableState` ([component-state.md](./architecture/component-state.md); issue: checked/unchecked/indeterminate, controlled model). `useGhostId` unused until Field (GHO-71). DataTable selection orchestration out of scope.                                                                                               | merged ([GHO-74](https://linear.app/ghost-vue/issue/GHO-74)) |\n| 27    | `GhostSwitch`      | [GHO-31](https://linear.app/ghost-vue/issue/GHO-31)   | None named.                                                                                                                                                                                                                                                                                                                         | merged ([GHO-31](https://linear.app/ghost-vue/issue/GHO-31)) |\n| 28    | `GhostSlider`      | [GHO-88](https://linear.app/ghost-vue/issue/GHO-88)   | None named.                                                                                                                                                                                                                                                                                                                         | merged ([GHO-88](https://linear.app/ghost-vue/issue/GHO-88)) |\n| 29    | `GhostField`       | [GHO-71](https://linear.app/ghost-vue/issue/GHO-71)   | Issue: label, description, error, and control relationships. `useGhostId` is the library id helper; Field is **not** named in [component-state.md](./architecture/component-state.md). Composes with native and library controls; does not require `GhostInput` / `GhostCheckbox`, but those are the library controls it will wrap. | merged ([GHO-71](https://linear.app/ghost-vue/issue/GHO-71)) |\n| 30    | `GhostRadioGroup`  | [GHO-30](https://linear.app/ghost-vue/issue/GHO-30)   | `useRovingFocus` ([focus.md](./architecture/focus.md)). `GhostField` ([GHO-71](https://linear.app/ghost-vue/issue/GHO-71)).                                                                                                                                                                                                         | merged ([GHO-30](https://linear.app/ghost-vue/issue/GHO-30)) |\n| 31    | `GhostFileUpload`  | [GHO-106](https://linear.app/ghost-vue/issue/GHO-106) | None named.                                                                                                                                                                                                                                                                                                                         | planned                                                      |\n\n## Tier 3 — overlays\n\nDo not start these before [GHO-27](https://linear.app/ghost-vue/issue/GHO-27). [focus.md](./architecture/focus.md) lists Popover, DropdownMenu, and Select as focus-primitive consumers. Popover [GHO-78](https://linear.app/ghost-vue/issue/GHO-78) says it must not inherit Menu, Tooltip, or Dialog semantics.\n\n| Order | Component                             | Issue                                                 | Primitive dependencies                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     | Status                                                                                |\n| ----- | ------------------------------------- | ----------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |\n| 32    | `GhostTooltip`                        | [GHO-79](https://linear.app/ghost-vue/issue/GHO-79)   | [GHO-27](https://linear.app/ghost-vue/issue/GHO-27) (issue: delay, Escape dismissal, positioning, portal, SSR). Not listed in [focus.md](./architecture/focus.md). Required or interactive content forbidden.                                                                                                                                                                                                                                                                                              | merged ([GHO-79](https://linear.app/ghost-vue/issue/GHO-79))                          |\n| 33    | `GhostPopover`                        | [GHO-78](https://linear.app/ghost-vue/issue/GHO-78)   | `useControllableState` (issue: controlled/uncontrolled open). `useFocusScope` ([focus.md](./architecture/focus.md); issue: focus and restoration). [GHO-27](https://linear.app/ghost-vue/issue/GHO-27) (issue: outside interaction, Escape, positioning, portal, collision, nesting, SSR).                                                                                                                                                                                                                 | merged ([#61](https://github.com/zprue743/ghostvue/pull/61), GHO-78 gate on `master`) |\n| 34    | `GhostHoverCard`                      | [GHO-100](https://linear.app/ghost-vue/issue/GHO-100) | [GHO-27](https://linear.app/ghost-vue/issue/GHO-27) (overlay primitives).                                                                                                                                                                                                                                                                                                                                                                                                                                  | merged ([GHO-100](https://linear.app/ghost-vue/issue/GHO-100))                        |\n| 35    | `GhostDialog` / `GhostModal`          | [GHO-28](https://linear.app/ghost-vue/issue/GHO-28)   | `useFocusScope` ([focus.md](./architecture/focus.md)). [GHO-27](https://linear.app/ghost-vue/issue/GHO-27) (dismissable layer), [ADR 0012](./adr/0012-modal-overlays.md) ([PR #66](https://github.com/zprue743/ghostvue/pull/66) internal modal primitives). Blocks `GhostDrawer` ([GHO-91](https://linear.app/ghost-vue/issue/GHO-91)) and `GhostCommandPalette` ([GHO-104](https://linear.app/ghost-vue/issue/GHO-104)).                                                                                 | merged ([GHO-28](https://linear.app/ghost-vue/issue/GHO-28))                          |\n| 36    | `GhostDropdownMenu`                   | [GHO-80](https://linear.app/ghost-vue/issue/GHO-80)   | `useControllableState` (issue: controlled/uncontrolled open). `useRovingFocus`, `useFocusScope` ([focus.md](./architecture/focus.md); issue: arrow navigation, typeahead, Escape, focus restoration). [GHO-27](https://linear.app/ghost-vue/issue/GHO-27) not named; Escape dismissal and floating menu implied by the issue, **unknown** whether that is [GHO-27](https://linear.app/ghost-vue/issue/GHO-27) or Popover reuse. Issue: reuse lower-level capabilities only where semantics remain correct. | in progress ([GHO-80](https://linear.app/ghost-vue/issue/GHO-80) / PR #135)           |\n| 37    | `GhostContextMenu`                    | [GHO-92](https://linear.app/ghost-vue/issue/GHO-92)   | [GHO-27](https://linear.app/ghost-vue/issue/GHO-27) (overlay primitives).                                                                                                                                                                                                                                                                                                                                                                                                                                  | planned                                                                               |\n| 38    | `GhostMenubar`                        | [GHO-107](https://linear.app/ghost-vue/issue/GHO-107) | [GHO-27](https://linear.app/ghost-vue/issue/GHO-27) (overlay primitives).                                                                                                                                                                                                                                                                                                                                                                                                                                  | planned                                                                               |\n| 39    | `GhostSelect`                         | [GHO-83](https://linear.app/ghost-vue/issue/GHO-83)   | `useControllableState` (issue: controlled Vue model). `useRovingFocus` ([focus.md](./architecture/focus.md); issue: keyboard, typeahead). [GHO-27](https://linear.app/ghost-vue/issue/GHO-27) (issue: portal, positioning, SSR). `useGhostId` not named (issue: labeling). Multi-select and combobox out of scope. Native fallback / mobile: documented in spec (custom listbox only).                                                                                                                     | in review (GHO-83)                                                                    |\n| 40    | `GhostCombobox` / `GhostAutocomplete` | [GHO-32](https://linear.app/ghost-vue/issue/GHO-32)   | [GHO-27](https://linear.app/ghost-vue/issue/GHO-27) (overlay primitives). Blocks `GhostCommandPalette` ([GHO-104](https://linear.app/ghost-vue/issue/GHO-104)).                                                                                                                                                                                                                                                                                                                                            | planned                                                                               |\n| 41    | `GhostDrawer` / `GhostSheet`          | [GHO-91](https://linear.app/ghost-vue/issue/GHO-91)   | [GHO-27](https://linear.app/ghost-vue/issue/GHO-27) (overlay primitives). Blocked by `GhostDialog` ([GHO-28](https://linear.app/ghost-vue/issue/GHO-28)).                                                                                                                                                                                                                                                                                                                                                  | planned                                                                               |\n| 42    | `GhostCommandPalette`                 | [GHO-104](https://linear.app/ghost-vue/issue/GHO-104) | [GHO-27](https://linear.app/ghost-vue/issue/GHO-27) (overlay primitives). Blocked by `GhostDialog` ([GHO-28](https://linear.app/ghost-vue/issue/GHO-28)) and `GhostCombobox` ([GHO-32](https://linear.app/ghost-vue/issue/GHO-32)).                                                                                                                                                                                                                                                                        | planned                                                                               |\n| 43    | `GhostDatePicker`                     | [GHO-103](https://linear.app/ghost-vue/issue/GHO-103) | [GHO-27](https://linear.app/ghost-vue/issue/GHO-27) (overlay primitives). Date math via `@internationalized/date` (approved by Zac for DatePicker and Calendar).                                                                                                                                                                                                                                                                                                                                           | planned                                                                               |\n\n## Tier 4 — data\n\nDataTable ([GHO-35](https://linear.app/ghost-vue/issue/GHO-35)) is the north star of the original catalog. It is blocked by [GHO-27](https://linear.app/ghost-vue/issue/GHO-27) (overlay primitives) and Table, ScrollArea, Checkbox, Input, Select, Pagination, Toolbar, DropdownMenu, Popover, Tooltip, Skeleton, Spinner, and EmptyState.\n\n| Order | Component         | Issue                                                 | Primitive dependencies                                                                                                                                                                                                                                                                                                                                                                                                                                                                     | Status                                                       |\n| ----- | ----------------- | ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------ |\n| 44    | `GhostTable`      | [GHO-85](https://linear.app/ghost-vue/issue/GHO-85)   | None named. Native table semantics only. Sorting, filtering, pagination, selection, and virtualization out of scope.                                                                                                                                                                                                                                                                                                                                                                       | in progress                                                  |\n| 45    | `GhostPagination` | [GHO-81](https://linear.app/ghost-vue/issue/GHO-81)   | Previous/next/first/last/numbered pages; controlled page state; `getPaginationRange` ellipsis helper. Fetching and server state out of scope.                                                                                                                                                                                                                                                                                                                                              | merged ([GHO-81](https://linear.app/ghost-vue/issue/GHO-81)) |\n| 46    | `GhostTree`       | [GHO-105](https://linear.app/ghost-vue/issue/GHO-105) | None named.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                | planned                                                      |\n| 47    | `GhostCalendar`   | [GHO-102](https://linear.app/ghost-vue/issue/GHO-102) | Date math via `@internationalized/date` (approved by Zac for Calendar and DatePicker).                                                                                                                                                                                                                                                                                                                                                                                                     | planned                                                      |\n| 48    | DataTable         | [GHO-35](https://linear.app/ghost-vue/issue/GHO-35)   | Blocked by [GHO-27](https://linear.app/ghost-vue/issue/GHO-27) (overlay primitives) and `GhostTable`, `GhostScrollArea`, `GhostCheckbox`, `GhostInput`, `GhostSelect`, `GhostPagination`, `GhostToolbar`, `GhostDropdownMenu`, `GhostPopover`, `GhostTooltip`, `GhostSkeleton`, `GhostSpinner`, `GhostEmptyState`. Query builders and virtualization are mentioned in [philosophy.md](./philosophy.md) / [performance.md](./standards/performance.md) as directional, not as this catalog. | planned                                                      |\n\nPublic `Ghost*` names for DataTable are not recorded in ADR 0003 examples. ADR 0003 would require a DataTable `Ghost*` name if that component ships.\n",
+  "examplesOrdered": [
+    {
+      "id": "avatar/basic",
+      "title": "Initials",
+      "description": "Fallback initials from name without an image URL.",
+      "layer": "headless"
+    },
+    {
+      "id": "avatar/composable",
+      "title": "Composable",
+      "description": "Same contract as GhostAvatar, applied to a native host.",
+      "layer": "headless"
+    },
+    {
+      "id": "avatar/fallback",
+      "title": "Fallback slot",
+      "description": "Custom fallback when src is missing or fails to load.",
+      "layer": "headless"
+    },
+    {
+      "id": "avatar/image",
+      "title": "Loaded image",
+      "description": "Client image probe after SSR-safe loading fallback.",
+      "layer": "headless"
+    },
+    {
+      "id": "avatar/themed",
+      "title": "Themed",
+      "description": "Size hooks on the @ghostvue/themes wrapper.",
+      "layer": "themed"
+    },
+    {
+      "id": "badge/basic",
+      "title": "Basic",
+      "description": "Unstyled compact status text.",
+      "layer": "headless"
+    },
+    {
+      "id": "badge/composable",
+      "title": "Composable",
+      "description": "Same contract as GhostBadge, applied to a native host.",
+      "layer": "headless"
+    },
+    {
+      "id": "badge/themed",
+      "title": "Themed",
+      "description": "Visual props on the @ghostvue/themes wrapper.",
+      "layer": "themed"
+    },
+    {
+      "id": "badge/icon",
+      "title": "Icon",
+      "description": "Optional decorative icon marked data-part=icon.",
+      "layer": "themed"
+    },
+    {
+      "id": "badge/table",
+      "title": "Table and filters",
+      "description": "Cell statuses, counts, and active-filter summaries.",
+      "layer": "themed"
+    },
+    {
+      "id": "breadcrumb/basic",
+      "title": "Basic",
+      "description": "Ordered navigation trail with current page semantics.",
+      "layer": "headless"
+    },
+    {
+      "id": "breadcrumb/collapsed",
+      "title": "Collapsed segments",
+      "description": "Ellipsis popover exposes middle ancestors.",
+      "layer": "themed"
+    },
+    {
+      "id": "button/basic",
+      "title": "Basic",
+      "description": "Native action control. The default type is button.",
+      "layer": "headless"
+    },
+    {
+      "id": "button/composable",
+      "title": "Composable",
+      "description": "Same contract as GhostButton, applied to a native host.",
+      "layer": "headless"
+    },
+    {
+      "id": "button/themed",
+      "title": "Themed",
+      "description": "Visual props on the @ghostvue/themes wrapper.",
+      "layer": "themed"
+    },
+    {
+      "id": "button/loading",
+      "title": "Loading and disabled",
+      "description": "Pending actions stay focusable; disabled ones do not.",
+      "layer": "themed"
+    },
+    {
+      "id": "button/icon-only",
+      "title": "Icon only",
+      "description": "Square treatment with an accessible name from aria-label.",
+      "layer": "themed"
+    },
+    {
+      "id": "button/ref",
+      "title": "Component ref",
+      "description": "Template refs expose element, focus, and blur.",
+      "layer": "headless"
+    },
+    {
+      "id": "checkbox/basic",
+      "title": "Basic",
+      "description": "Labeled native checkbox with a boolean v-model.",
+      "layer": "headless"
+    },
+    {
+      "id": "checkbox/composable",
+      "title": "Composable",
+      "description": "Same contract as GhostCheckbox, applied to a native host.",
+      "layer": "headless"
+    },
+    {
+      "id": "checkbox/themed",
+      "title": "Themed",
+      "description": "Visual size and tone on the @ghostvue/themes wrapper.",
+      "layer": "themed"
+    },
+    {
+      "id": "checkbox/indeterminate",
+      "title": "Indeterminate",
+      "description": "Select-all mixed state computed from child checkboxes.",
+      "layer": "headless"
+    },
+    {
+      "id": "checkbox/ref",
+      "title": "Component ref",
+      "description": "Template refs expose element, focus, and blur.",
+      "layer": "headless"
+    },
+    {
+      "id": "spinner/basic",
+      "title": "Basic",
+      "description": "Named status. The default label is Loading.",
+      "layer": "headless"
+    },
+    {
+      "id": "spinner/composable",
+      "title": "Composable",
+      "description": "Same contract as GhostSpinner, applied to a native host.",
+      "layer": "headless"
+    },
+    {
+      "id": "spinner/themed",
+      "title": "Themed",
+      "description": "Visual size and tone on the @ghostvue/themes wrapper.",
+      "layer": "themed"
+    },
+    {
+      "id": "spinner/table-refresh",
+      "title": "Table refresh",
+      "description": "Localized pending status; the table owns aria-busy.",
+      "layer": "themed"
+    },
+    {
+      "id": "interactive-surface/basic",
+      "title": "Basic",
+      "description": "Pointer spotlight on a content surface.",
+      "layer": "themed"
+    },
+    {
+      "id": "interactive-surface/composable",
+      "title": "Composable",
+      "description": "Spotlight tracking on a native host with a glow layer.",
+      "layer": "headless"
+    },
+    {
+      "id": "interactive-surface/button",
+      "title": "Button opt-in",
+      "description": "Themed GhostButton stays inert until interactive is set.",
+      "layer": "themed"
+    },
+    {
+      "id": "visually-hidden/basic",
+      "title": "Basic",
+      "description": "Hidden text names an icon-only control.",
+      "layer": "headless"
+    },
+    {
+      "id": "visually-hidden/composable",
+      "title": "Composable",
+      "description": "Clip-technique hiding on a native element.",
+      "layer": "headless"
+    },
+    {
+      "id": "visually-hidden/icon-name",
+      "title": "Interpolated name",
+      "description": "Hidden text interpolates so translation tools can see it.",
+      "layer": "headless"
+    },
+    {
+      "id": "visually-hidden/table-header",
+      "title": "Table header",
+      "description": "A real th that only assistive technology encounters.",
+      "layer": "headless"
+    },
+    {
+      "id": "visually-hidden/skip-link",
+      "title": "Skip link",
+      "description": "Focusable hidden content reveals while it has focus.",
+      "layer": "headless"
+    },
+    {
+      "id": "visually-hidden/live-region",
+      "title": "Live region",
+      "description": "A visually hidden status that assistive technology announces.",
+      "layer": "headless"
+    },
+    {
+      "id": "skeleton/basic",
+      "title": "Basic",
+      "description": "Unstyled decorative loading placeholder. Hidden from assistive technology.",
+      "layer": "headless"
+    },
+    {
+      "id": "skeleton/composable",
+      "title": "Composable",
+      "description": "Same contract as GhostSkeleton, applied to a native host.",
+      "layer": "headless"
+    },
+    {
+      "id": "skeleton/themed",
+      "title": "Themed",
+      "description": "Text, rect, and circle shapes on the @ghostvue/themes wrapper.",
+      "layer": "themed"
+    },
+    {
+      "id": "skeleton/table",
+      "title": "Table loading",
+      "description": "Loading rows with aria-busy and a caption as the status text.",
+      "layer": "themed"
+    },
+    {
+      "id": "hover-card/basic",
+      "title": "Basic",
+      "description": "Unstyled hover/focus preview card with delays, interactive content, and Escape dismissal.",
+      "layer": "headless"
+    },
+    {
+      "id": "hover-card/themed",
+      "title": "Themed",
+      "description": "Elevation-3 surface tokens for rich preview cards.",
+      "layer": "themed"
+    },
+    {
+      "id": "select/basic",
+      "title": "Basic",
+      "description": "Single-value combobox with listbox options, typeahead, and portaled content.",
+      "layer": "headless"
+    },
+    {
+      "id": "select/field",
+      "title": "Field",
+      "description": "GhostField wiring for label, description, and required state.",
+      "layer": "headless"
+    },
+    {
+      "id": "select/form",
+      "title": "Form",
+      "description": "Hidden input submit value and native form reset.",
+      "layer": "headless"
+    },
+    {
+      "id": "select/themed",
+      "title": "Themed",
+      "description": "Trigger and list surface tokens from @ghostvue/themes.",
+      "layer": "themed"
+    },
+    {
+      "id": "popover/basic",
+      "title": "Basic",
+      "description": "Unstyled non-modal disclosure anchored to its trigger with Escape and outside-click dismissal.",
+      "layer": "headless"
+    },
+    {
+      "id": "popover/themed",
+      "title": "Themed",
+      "description": "Elevated surface tokens and themed button controls composed via the as prop.",
+      "layer": "themed"
+    },
+    {
+      "id": "dropdown-menu/basic",
+      "title": "Basic",
+      "description": "Headless menu button with items, checkbox, radio group, label, separator, and disabled item.",
+      "layer": "headless"
+    },
+    {
+      "id": "dropdown-menu/themed",
+      "title": "Themed",
+      "description": "Elevation-3 menu surface and interactive item tokens with a themed trigger button.",
+      "layer": "themed"
+    },
+    {
+      "id": "dialog/basic",
+      "title": "Basic",
+      "description": "Unstyled modal dialog with overlay, trapped Tab focus, scroll lock, and inert background.",
+      "layer": "headless"
+    },
+    {
+      "id": "dialog/themed",
+      "title": "Themed",
+      "description": "Elevation-4 modal surface, scrim overlay, and themed button actions.",
+      "layer": "themed"
+    },
+    {
+      "id": "dialog/nested",
+      "title": "Nested",
+      "description": "Stacked modal dialogs where Escape dismisses only the innermost open dialog.",
+      "layer": "themed"
+    },
+    {
+      "id": "dialog/alert",
+      "title": "Alert dialog",
+      "description": "Confirmation dialog with role=\"alertdialog\" and outside-click dismissal disabled by default.",
+      "layer": "themed"
+    },
+    {
+      "id": "progress/basic",
+      "title": "Basic",
+      "description": "Named determinate progressbar with value and max.",
+      "layer": "headless"
+    },
+    {
+      "id": "progress/composable",
+      "title": "Composable",
+      "description": "Same contract as GhostProgress, applied to a native host.",
+      "layer": "headless"
+    },
+    {
+      "id": "progress/indeterminate",
+      "title": "Indeterminate",
+      "description": "Fallback when the current value is unknown.",
+      "layer": "headless"
+    },
+    {
+      "id": "progress/value-text",
+      "title": "Value text",
+      "description": "Custom accessible value text instead of a percent.",
+      "layer": "headless"
+    },
+    {
+      "id": "progress/themed",
+      "title": "Themed",
+      "description": "Track thickness and tone on the @ghostvue/themes wrapper.",
+      "layer": "themed"
+    },
+    {
+      "id": "separator/basic",
+      "title": "Basic",
+      "description": "Native horizontal thematic break with separator semantics.",
+      "layer": "headless"
+    },
+    {
+      "id": "separator/composable",
+      "title": "Composable",
+      "description": "Same contract as GhostSeparator, applied to a native host.",
+      "layer": "headless"
+    },
+    {
+      "id": "separator/vertical",
+      "title": "Vertical",
+      "description": "Inline-axis rule between neighboring items.",
+      "layer": "headless"
+    },
+    {
+      "id": "separator/decorative",
+      "title": "Decorative",
+      "description": "Visual line omitted from the accessibility tree.",
+      "layer": "headless"
+    },
+    {
+      "id": "separator/list",
+      "title": "List",
+      "description": "li separator inside a list-shaped menu.",
+      "layer": "headless"
+    },
+    {
+      "id": "separator/themed",
+      "title": "Themed",
+      "description": "Hairline rules on the @ghostvue/themes wrapper.",
+      "layer": "themed"
+    },
+    {
+      "id": "scroll-area/basic",
+      "title": "Basic",
+      "description": "Bounded vertical overflow with native scrolling.",
+      "layer": "headless"
+    },
+    {
+      "id": "scroll-area/horizontal",
+      "title": "Horizontal",
+      "description": "Inline-axis overflow for wide table previews.",
+      "layer": "headless"
+    },
+    {
+      "id": "scroll-area/composable",
+      "title": "Composable",
+      "description": "Same contract as GhostScrollArea on a native host.",
+      "layer": "headless"
+    },
+    {
+      "id": "scroll-area/themed",
+      "title": "Themed",
+      "description": "Native scrollbar containment on @ghostvue/themes.",
+      "layer": "themed"
+    },
+    {
+      "id": "kbd/basic",
+      "title": "Basic",
+      "description": "Native kbd chrome for a single key.",
+      "layer": "headless"
+    },
+    {
+      "id": "kbd/composable",
+      "title": "Composable",
+      "description": "Same contract as GhostKbd, applied to a native host.",
+      "layer": "headless"
+    },
+    {
+      "id": "kbd/combination",
+      "title": "Combination",
+      "description": "Key tokens plus a trailing slot key.",
+      "layer": "headless"
+    },
+    {
+      "id": "kbd/platform",
+      "title": "Platform labels",
+      "description": "Explicit Apple and PC modifier labels.",
+      "layer": "headless"
+    },
+    {
+      "id": "kbd/themed",
+      "title": "Themed",
+      "description": "Keycap chrome and size on the @ghostvue/themes wrapper.",
+      "layer": "themed"
+    },
+    {
+      "id": "link/basic",
+      "title": "Basic",
+      "description": "Native anchor with headless styling hooks.",
+      "layer": "headless"
+    },
+    {
+      "id": "link/composable",
+      "title": "Composable",
+      "description": "Same contract as GhostLink, applied to a native host.",
+      "layer": "headless"
+    },
+    {
+      "id": "link/themed",
+      "title": "Themed",
+      "description": "Default inline link visuals from @ghostvue/themes.",
+      "layer": "themed"
+    },
+    {
+      "id": "link/external",
+      "title": "External",
+      "description": "New-tab safety, indicator, and accessible hint.",
+      "layer": "themed"
+    },
+    {
+      "id": "link/disabled",
+      "title": "Disabled",
+      "description": "No href, not focusable, and activation cancelled.",
+      "layer": "themed"
+    },
+    {
+      "id": "link/router",
+      "title": "Router composition",
+      "description": "Render through as without importing vue-router.",
+      "layer": "headless"
+    },
+    {
+      "id": "input/basic",
+      "title": "Basic",
+      "description": "Native labeled text field. The default type is text.",
+      "layer": "headless"
+    },
+    {
+      "id": "input/composable",
+      "title": "Composable",
+      "description": "Same contract as GhostInput, applied to a native host.",
+      "layer": "headless"
+    },
+    {
+      "id": "input/ref",
+      "title": "Component ref",
+      "description": "Template refs expose element, focus, and blur.",
+      "layer": "headless"
+    },
+    {
+      "id": "input/themed",
+      "title": "Themed",
+      "description": "Size props on the @ghostvue/themes wrapper.",
+      "layer": "themed"
+    },
+    {
+      "id": "input/states",
+      "title": "States",
+      "description": "Disabled, readonly, invalid, and required.",
+      "layer": "themed"
+    },
+    {
+      "id": "input/search",
+      "title": "Search",
+      "description": "Controlled type=search for DataTable-style filters.",
+      "layer": "themed"
+    },
+    {
+      "id": "textarea/basic",
+      "title": "Basic",
+      "description": "Labeled native textarea with v-model.",
+      "layer": "headless"
+    },
+    {
+      "id": "textarea/composable",
+      "title": "Composable",
+      "description": "Same contract as GhostTextarea, applied to a native host.",
+      "layer": "headless"
+    },
+    {
+      "id": "textarea/themed",
+      "title": "Themed",
+      "description": "Visual size on the @ghostvue/themes wrapper.",
+      "layer": "themed"
+    },
+    {
+      "id": "textarea/states",
+      "title": "States",
+      "description": "Disabled, readonly, invalid, and required fields.",
+      "layer": "themed"
+    },
+    {
+      "id": "textarea/auto-resize",
+      "title": "Auto-resize",
+      "description": "Grows with content until maxRows.",
+      "layer": "themed"
+    },
+    {
+      "id": "textarea/form",
+      "title": "Form",
+      "description": "Native form submission of the textarea value.",
+      "layer": "themed"
+    },
+    {
+      "id": "textarea/ref",
+      "title": "Component ref",
+      "description": "Template refs expose element, focus, and blur.",
+      "layer": "headless"
+    },
+    {
+      "id": "switch/basic",
+      "title": "Basic",
+      "description": "Labeled native switch. The default state is off.",
+      "layer": "headless"
+    },
+    {
+      "id": "switch/composable",
+      "title": "Composable",
+      "description": "Same contract as GhostSwitch, applied to a native host.",
+      "layer": "headless"
+    },
+    {
+      "id": "switch/themed",
+      "title": "Themed",
+      "description": "Visual size and tone on the @ghostvue/themes wrapper.",
+      "layer": "themed"
+    },
+    {
+      "id": "switch/states",
+      "title": "Disabled and read-only",
+      "description": "Disabled switches leave the tab order; read-only ones stay.",
+      "layer": "themed"
+    },
+    {
+      "id": "switch/form",
+      "title": "Form value",
+      "description": "Named switches submit while on and restore on reset.",
+      "layer": "themed"
+    },
+    {
+      "id": "switch/ref",
+      "title": "Component ref",
+      "description": "Template refs expose element, checked, toggle, focus, and blur.",
+      "layer": "headless"
+    },
+    {
+      "id": "collapsible/basic",
+      "title": "Collapsible disclosure",
+      "description": "Headless trigger and content linked with aria-controls.",
+      "layer": "headless"
+    },
+    {
+      "id": "collapsible/themed",
+      "title": "Themed collapsible",
+      "description": "Default surface styles with optional motion on expand.",
+      "layer": "themed"
+    },
+    {
+      "id": "field/basic",
+      "title": "Labeled input",
+      "description": "Label, hint, and control id wiring for GhostInput.",
+      "layer": "headless"
+    },
+    {
+      "id": "field/invalid",
+      "title": "Invalid field",
+      "description": "Required filter with error copy and aria-invalid.",
+      "layer": "headless"
+    },
+    {
+      "id": "field/textarea",
+      "title": "Textarea field",
+      "description": "GhostTextarea composed with description.",
+      "layer": "headless"
+    },
+    {
+      "id": "field/checkbox",
+      "title": "Wrapping checkbox",
+      "description": "associate=wrap label pattern for GhostCheckbox.",
+      "layer": "headless"
+    },
+    {
+      "id": "field/themed",
+      "title": "Themed stack",
+      "description": "Default vertical spacing from @ghostvue/themes.",
+      "layer": "themed"
+    },
+    {
+      "id": "tabs/basic",
+      "title": "Basic",
+      "description": "Controlled compound tabs with automatic activation.",
+      "layer": "headless"
+    },
+    {
+      "id": "tabs/manual",
+      "title": "Manual activation",
+      "description": "Tabs activate on click or Enter/Space instead of focus.",
+      "layer": "headless"
+    },
+    {
+      "id": "tabs/vertical",
+      "title": "Vertical",
+      "description": "Vertical tab list with arrow-key roving focus.",
+      "layer": "headless"
+    },
+    {
+      "id": "tabs/themed",
+      "title": "Themed",
+      "description": "Styled tab list and panels from @ghostvue/themes.",
+      "layer": "themed"
+    },
+    {
+      "id": "table/basic",
+      "title": "Basic table",
+      "description": "Caption, header row, and explicit tbody semantics.",
+      "layer": "headless"
+    },
+    {
+      "id": "table/composable",
+      "title": "Composable",
+      "description": "Native table hosts with useGhostTable hooks.",
+      "layer": "headless"
+    },
+    {
+      "id": "table/contain-horizontal",
+      "title": "Horizontal containment",
+      "description": "Optional scroll container for wide static tables.",
+      "layer": "headless"
+    },
+    {
+      "id": "table/row-headers",
+      "title": "Row headers",
+      "description": "th scope=row inside the table body.",
+      "layer": "headless"
+    },
+    {
+      "id": "table/themed",
+      "title": "Themed",
+      "description": "Default table chrome from @ghostvue/themes.",
+      "layer": "themed"
+    },
+    {
+      "id": "empty-state/basic",
+      "title": "Empty state basics",
+      "description": "Title and description for an unused panel.",
+      "layer": "headless"
+    },
+    {
+      "id": "empty-state/filtered",
+      "title": "Filtered empty results",
+      "description": "Copy and an action when filters hide every row.",
+      "layer": "headless"
+    },
+    {
+      "id": "empty-state/table-cell",
+      "title": "Empty table body",
+      "description": "EmptyState inside a colspan cell.",
+      "layer": "headless"
+    },
+    {
+      "id": "empty-state/themed",
+      "title": "Themed empty state",
+      "description": "Visual, title, description, and actions with default CSS.",
+      "layer": "themed"
+    },
+    {
+      "id": "empty-state/composable",
+      "title": "Composable empty state",
+      "description": "useGhostEmptyState bindings on a custom host.",
+      "layer": "headless"
+    },
+    {
+      "id": "inline-alert/basic",
+      "title": "Static inline alert",
+      "description": "Title and message without live-region semantics.",
+      "layer": "headless"
+    },
+    {
+      "id": "inline-alert/composable",
+      "title": "Composable inline alert",
+      "description": "useGhostInlineAlert bindings on a section root.",
+      "layer": "headless"
+    },
+    {
+      "id": "inline-alert/themed",
+      "title": "Themed inline alert",
+      "description": "Soft danger styling from @ghostvue/themes.",
+      "layer": "themed"
+    },
+    {
+      "id": "inline-alert/live",
+      "title": "Post-mount alert",
+      "description": "announce=alert after a simulated failure.",
+      "layer": "headless"
+    },
+    {
+      "id": "inline-alert/table-error",
+      "title": "Table load failure",
+      "description": "Recoverable table error with a retry action.",
+      "layer": "themed"
+    },
+    {
+      "id": "card/basic",
+      "title": "Card basics",
+      "description": "Header, content, and footer parts on a surface.",
+      "layer": "headless"
+    },
+    {
+      "id": "card/actions",
+      "title": "Card with actions",
+      "description": "Static root and footer buttons.",
+      "layer": "headless"
+    },
+    {
+      "id": "card/link",
+      "title": "Navigational card",
+      "description": "Whole-card link without nested interactives.",
+      "layer": "headless"
+    },
+    {
+      "id": "card/interactive",
+      "title": "Spotlight card",
+      "description": "Ambient pointer tracking on the card root.",
+      "layer": "headless"
+    },
+    {
+      "id": "card/themed",
+      "title": "Themed card",
+      "description": "Elevation chrome and optional spotlight from themes.",
+      "layer": "themed"
+    },
+    {
+      "id": "card/composable",
+      "title": "Composable card",
+      "description": "useGhostCard bindings on a custom host.",
+      "layer": "headless"
+    },
+    {
+      "id": "radio-group/basic",
+      "title": "Basic",
+      "description": "Headless radio group with labeled items.",
+      "layer": "headless"
+    },
+    {
+      "id": "radio-group/field",
+      "title": "Field wiring",
+      "description": "Group label, description, and error through GhostField.",
+      "layer": "headless"
+    },
+    {
+      "id": "radio-group/form",
+      "title": "Form reset",
+      "description": "Native submit and reset with a shared name.",
+      "layer": "headless"
+    },
+    {
+      "id": "radio-group/themed",
+      "title": "Themed",
+      "description": "Styled radio dots from @ghostvue/themes.",
+      "layer": "themed"
+    },
+    {
+      "id": "accordion/basic",
+      "title": "Accordion sections",
+      "description": "Single expansion with collapsible coordination over panels.",
+      "layer": "headless"
+    },
+    {
+      "id": "accordion/themed",
+      "title": "Themed accordion",
+      "description": "Multiple expansion with default surface styles.",
+      "layer": "themed"
+    },
+    {
+      "id": "accordion/navigation",
+      "title": "Accordion navigation",
+      "description": "Tab order across headers and panel links; nested accordion isolation.",
+      "layer": "headless"
+    },
+    {
+      "id": "slider/basic",
+      "title": "Single value",
+      "description": "Headless numeric slider with stepped values.",
+      "layer": "headless"
+    },
+    {
+      "id": "slider/range",
+      "title": "Range filter",
+      "description": "Two-thumb interval selection for tables.",
+      "layer": "headless"
+    },
+    {
+      "id": "slider/vertical",
+      "title": "Vertical themed",
+      "description": "Themed vertical orientation and tokens.",
+      "layer": "themed"
+    },
+    {
+      "id": "slider/value-text",
+      "title": "Value text",
+      "description": "Named slider with aria-valuetext alongside the numeric value.",
+      "layer": "headless"
+    },
+    {
+      "id": "tooltip-provider/skip-delay",
+      "title": "Provider skip delay",
+      "description": "Adjacent tooltips share skipDelayDuration under GhostTooltipProvider.",
+      "layer": "headless"
+    },
+    {
+      "id": "tooltip/basic",
+      "title": "Supplemental label",
+      "description": "Icon-only trigger with delay timing, floating placement, and aria-describedby.",
+      "layer": "headless"
+    },
+    {
+      "id": "tooltip/themed",
+      "title": "Themed",
+      "description": "Elevation-2 tooltip surface inside a ghost-theme fieldset.",
+      "layer": "themed"
+    },
+    {
+      "id": "pagination/basic",
+      "title": "Basic",
+      "description": "Numbered page navigation with previous and next.",
+      "layer": "headless"
+    },
+    {
+      "id": "pagination/controlled",
+      "title": "Controlled",
+      "description": "Parent-owned page index and page count.",
+      "layer": "headless"
+    },
+    {
+      "id": "pagination/ellipsis",
+      "title": "Ellipsis",
+      "description": "Large page counts collapse into start and end ellipsis.",
+      "layer": "headless"
+    },
+    {
+      "id": "pagination/themed",
+      "title": "Themed",
+      "description": "Default pagination styling from @ghostvue/themes.",
+      "layer": "themed"
+    },
+    {
+      "id": "number-input/basic",
+      "title": "Basic",
+      "description": "Labeled spinbutton with min, max, and step.",
+      "layer": "headless"
+    },
+    {
+      "id": "number-input/bounds",
+      "title": "Bounds",
+      "description": "Increment buttons disable at min and max.",
+      "layer": "headless"
+    },
+    {
+      "id": "number-input/field",
+      "title": "Field",
+      "description": "Currency formatting inside GhostField.",
+      "layer": "headless"
+    },
+    {
+      "id": "number-input/form-locale",
+      "title": "Form locale",
+      "description": "Hidden submit value stays machine-readable in de-DE.",
+      "layer": "headless"
+    },
+    {
+      "id": "number-input/ref",
+      "title": "Component ref",
+      "description": "Programmatic increment through the exposed API.",
+      "layer": "headless"
+    },
+    {
+      "id": "number-input/themed",
+      "title": "Themed",
+      "description": "Large block layout from @ghostvue/themes.",
+      "layer": "themed"
+    },
+    {
+      "id": "toolbar/basic",
+      "title": "Basic",
+      "description": "Horizontal action bar with roving focus among buttons.",
+      "layer": "headless"
+    },
+    {
+      "id": "toolbar/composable",
+      "title": "Composable",
+      "description": "Same contract as GhostToolbar on a native host.",
+      "layer": "headless"
+    },
+    {
+      "id": "toolbar/vertical",
+      "title": "Vertical",
+      "description": "Vertical toolbar with up and down arrow movement.",
+      "layer": "headless"
+    },
+    {
+      "id": "toolbar/separators",
+      "title": "Separators",
+      "description": "Group controls with semantic vertical separators.",
+      "layer": "headless"
+    },
+    {
+      "id": "toolbar/themed",
+      "title": "Themed",
+      "description": "Flex layout from @ghostvue/themes.",
+      "layer": "themed"
+    },
+    {
+      "id": "segmented-control/basic",
+      "title": "Segmented control",
+      "description": "Single-select view switcher with sliding indicator vars.",
+      "layer": "headless"
+    },
+    {
+      "id": "segmented-control/themed",
+      "title": "Segmented control themed",
+      "description": "Token-driven thumb with reduced-motion support.",
+      "layer": "themed"
+    },
+    {
+      "id": "toggle-group/basic",
+      "title": "Toggle group single",
+      "description": "Exclusive aria-pressed density controls.",
+      "layer": "headless"
+    },
+    {
+      "id": "toggle-group/multiple",
+      "title": "Toggle group multiple",
+      "description": "Independent formatting toggles in one group.",
+      "layer": "headless"
+    },
+    {
+      "id": "toggle-group/themed",
+      "title": "Toggle group themed",
+      "description": "Segmented layout switcher with default styles.",
+      "layer": "themed"
+    }
+  ]
+}

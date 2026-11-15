@@ -1,0 +1,53 @@
+{
+  "schemaVersion": "1.0.0",
+  "slug": "select",
+  "docs": {
+    "title": "GhostSelect",
+    "specStatus": "approved",
+    "link": "/components/select",
+    "specLink": "/components/select-spec"
+  },
+  "vueBarrel": [
+    "export { default as GhostSelect } from './GhostSelect.vue'",
+    "export { default as GhostSelectTrigger } from './GhostSelectTrigger.vue'",
+    "export { default as GhostSelectValue } from './GhostSelectValue.vue'",
+    "export { default as GhostSelectContent } from './GhostSelectContent.vue'",
+    "export { default as GhostSelectOption } from './GhostSelectOption.vue'",
+    "export { default as GhostSelectGroup } from './GhostSelectGroup.vue'",
+    "export { default as GhostSelectLabel } from './GhostSelectLabel.vue'",
+    "export { useGhostSelect } from './use-ghost-select'",
+    "export type {\n  GhostSelectContentElement,\n  GhostSelectContentExposed,\n  GhostSelectContext,\n  GhostSelectFlipOptions,\n  GhostSelectGroupElement,\n  GhostSelectLabelElement,\n  GhostSelectOffsetOptions,\n  GhostSelectOptionElement,\n  GhostSelectOptionExposed,\n  GhostSelectPlacement,\n  GhostSelectShiftOptions,\n  GhostSelectStrategy,\n  GhostSelectTriggerElement,\n  GhostSelectTriggerExposed,\n  GhostSelectExposed,\n  UseGhostSelectOptions,\n} from './ghost-select'"
+  ],
+  "themesBarrel": [
+    "export { GhostSelect, type GhostSelectExposed } from './ghost-select'",
+    "export {\n  GhostSelectTrigger,\n  type GhostSelectTriggerElement,\n  type GhostSelectTriggerExposed,\n} from './ghost-select-trigger'",
+    "export {\n  GhostSelectContent,\n  type GhostSelectContentElement,\n  type GhostSelectContentExposed,\n  type GhostSelectFlipOptions,\n  type GhostSelectOffsetOptions,\n  type GhostSelectPlacement,\n  type GhostSelectShiftOptions,\n  type GhostSelectStrategy,\n} from './ghost-select-content'",
+    "export {\n  GhostSelectValue,\n  GhostSelectOption,\n  GhostSelectGroup,\n  GhostSelectLabel,\n  useGhostSelect,\n} from '@ghostvue/vue'"
+  ],
+  "examples": [
+    {
+      "id": "select/basic",
+      "title": "Basic",
+      "description": "Single-value combobox with listbox options, typeahead, and portaled content.",
+      "layer": "headless"
+    },
+    {
+      "id": "select/field",
+      "title": "Field",
+      "description": "GhostField wiring for label, description, and required state.",
+      "layer": "headless"
+    },
+    {
+      "id": "select/form",
+      "title": "Form",
+      "description": "Hidden input submit value and native form reset.",
+      "layer": "headless"
+    },
+    {
+      "id": "select/themed",
+      "title": "Themed",
+      "description": "Trigger and list surface tokens from @ghostvue/themes.",
+      "layer": "themed"
+    }
+  ]
+}

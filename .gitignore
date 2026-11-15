@@ -9,6 +9,7 @@ reports/verify-component/
 .vitepress/dist/
 playwright-report/
 test-results/
+packages/vue/.cache/
 *.tsbuildinfo
 .DS_Store
 *.local
@@ -16,3 +17,13 @@ test-results/
 
 # Generated from component manifests before docs build/dev.
 docs/reference/
+
+# Generated from packages/vue/registry/*.registry.json (pnpm registries:write).
+packages/vue/src/.registries/
+packages/vue/src/.publish-index.generated.ts
+packages/vue/src/.publish-build/
+packages/themes/src/.registries/
+packages/themes/src/.publish-index.generated.ts
+examples/.registries/
+apps/docs/.vitepress/.registries/
+docs/.registries/

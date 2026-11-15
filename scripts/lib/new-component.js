@@ -1,9 +1,14 @@
+import { execFileSync } from 'node:child_process'
 import { lstat, mkdir, readFile, writeFile } from 'node:fs/promises'
 import { dirname, join } from 'node:path'
 
 import { format, resolveConfig } from 'prettier'
 
 import { pascalToKebab, serializeManifest } from './component-manifests.js'
+
+function stableStringify(value) {
+  return `${JSON.stringify(value, null, 2)}\n`
+}
 
 /** Normalize the optional Ghost prefix, rejecting paths and invalid identifiers. */
 export function componentIdentity(input) {
@@ -305,66 +310,75 @@ test('${name} scaffold renders accessible content', async ({ page }) => {
     }
     throw new Error(`Refusing to overwrite ${path}`)
   }
-  const edits = new Map()
-  for (const [path, addition] of [
-    [
-      'packages/vue/src/index.ts',
-      `\nexport { default as ${name} } from './${name}.vue'\nexport { use${name}, type ${name}RootProps } from './use-${base}'\nexport type { ${name}Exposed } from './${base}'\n`,
-    ],
-    [
-      'packages/themes/src/index.ts',
-      `\nexport { ${name}, type ${name}Exposed } from './${base}'\n`,
-    ],
-    ['packages/themes/src/default.css', `\n@import './${base}.css';\n`],
-  ]) {
-    const original = await readFile(join(repositoryRoot, path), 'utf8')
-    if (
-      new RegExp(`\\b${name}\\b`).test(original) ||
-      original.includes(`./${base}.css`)
-    ) {
-      throw new Error(`${name} already exists in ${path}`)
-    }
-    edits.set(
-      path,
-      path.endsWith('.css')
-        ? original.replace(/(?=@layer)/, `${addition.trim()}\n\n`)
-        : original + addition,
+  const familyRegistryPath = join(
+    repositoryRoot,
+    `packages/vue/registry/${slug}.registry.json`,
+  )
+  try {
+    await lstat(familyRegistryPath)
+    throw new Error(
+      `Refusing to overwrite packages/vue/registry/${slug}.registry.json`,
     )
-    if (path.endsWith('.css') && !original.includes('@layer'))
-      throw new Error(`No CSS layer anchor in ${path}`)
+  } catch (error) {
+    if (error.code !== 'ENOENT') throw error
   }
-  const registryPath = 'examples/registry.ts'
-  const registry = await readFile(join(repositoryRoot, registryPath), 'utf8')
-  const anchor = '] as const satisfies readonly GhostExampleDefinition[]'
-  if (!registry.includes(anchor) || registry.includes(`'${slug}/basic'`))
-    throw new Error('Example registry anchor missing or id already exists.')
-  edits.set(
-    registryPath,
-    registry.replace(
-      anchor,
-      `  { id: '${slug}/basic', title: '${suffix} scaffold', description: 'Neutral scaffold; specification approval required.', layer: 'headless' },\n${anchor}`,
-    ),
+
+  const familyRegistry = {
+    schemaVersion: '1.0.0',
+    slug,
+    docs: {
+      title: name,
+      specStatus: 'draft',
+      link: `/components/${slug}`,
+      specLink: `/components/${slug}-spec`,
+    },
+    vueBarrel: [
+      `export { default as ${name} } from './${name}.vue'`,
+      `export { use${name}, type ${name}RootProps } from './use-${base}'`,
+      `export type { ${name}Exposed } from './${base}'`,
+    ],
+    themesBarrel: [`export { ${name}, type ${name}Exposed } from './${base}'`],
+    examples: [
+      {
+        id: `${slug}/basic`,
+        title: `${suffix} scaffold`,
+        description: 'Neutral scaffold; specification approval required.',
+        layer: 'headless',
+      },
+    ],
+  }
+  files.set(
+    `packages/vue/registry/${slug}.registry.json`,
+    stableStringify(familyRegistry),
   )
-  const navPath = 'apps/docs/.vitepress/docs-nav.ts'
-  const nav = await readFile(join(repositoryRoot, navPath), 'utf8')
-  const marker = "text: 'Components',\n    items: ["
-  const contributingMarker = "text: 'Contributing',\n    items: ["
-  if (!nav.includes(marker))
-    throw new Error('Component sidebar anchor missing.')
-  if (!nav.includes(contributingMarker))
-    throw new Error('Contributing sidebar anchor missing.')
-  edits.set(
-    navPath,
-    nav
-      .replace(
-        marker,
-        `${marker}\n      { text: '${name}', link: '/components/${slug}' },`,
-      )
-      .replace(
-        contributingMarker,
-        `${contributingMarker}\n      { text: '${name} specification', link: '/components/${slug}-spec' },`,
-      ),
+
+  const primitivesPath = join(
+    repositoryRoot,
+    'packages/vue/registry/primitives.registry.json',
   )
+  const primitives = JSON.parse(await readFile(primitivesPath, 'utf8'))
+  if (primitives.familyOrder?.includes(slug)) {
+    throw new Error(`${name} already exists in primitives.familyOrder`)
+  }
+  primitives.familyOrder ??= []
+  primitives.familyOrder.push(slug)
+  primitives.docsComponentNavOrder ??= []
+  primitives.docsComponentNavOrder.push(slug)
+  primitives.docsSpecNavItems ??= []
+  primitives.docsSpecNavItems.push({
+    title: `${name} specification`,
+    link: `/components/${slug}-spec`,
+  })
+  primitives.themesCssImports ??= []
+  if (!primitives.themesCssImports.includes(`${base}.css`)) {
+    primitives.themesCssImports.push(`${base}.css`)
+  }
+  const edits = new Map([
+    [
+      'packages/vue/registry/primitives.registry.json',
+      stableStringify(primitives),
+    ],
+  ])
 
   for (const [path, source] of [...files, ...edits]) {
     if (!path.endsWith('.manifest.json')) {
@@ -382,6 +396,10 @@ test('${name} scaffold renders accessible content', async ({ page }) => {
     }
     for (const [path, source] of edits)
       await writeFile(join(repositoryRoot, path), source)
+    execFileSync('pnpm', ['registries:write'], {
+      cwd: repositoryRoot,
+      stdio: 'pipe',
+    })
   }
   return {
     name,

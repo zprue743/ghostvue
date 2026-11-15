@@ -1,0 +1,38 @@
+{
+  "schemaVersion": "1.0.0",
+  "slug": "breadcrumb",
+  "docs": {
+    "title": "GhostBreadcrumb",
+    "specStatus": "approved",
+    "link": "/components/breadcrumb",
+    "specLink": "/components/breadcrumb-spec"
+  },
+  "vueBarrel": [
+    "export { default as GhostBreadcrumb } from './GhostBreadcrumb.vue'",
+    "export { default as GhostBreadcrumbList } from './GhostBreadcrumbList.vue'",
+    "export { default as GhostBreadcrumbItem } from './GhostBreadcrumbItem.vue'",
+    "export { default as GhostBreadcrumbLink } from './GhostBreadcrumbLink.vue'",
+    "export { default as GhostBreadcrumbPage } from './GhostBreadcrumbPage.vue'",
+    "export { default as GhostBreadcrumbSeparator } from './GhostBreadcrumbSeparator.vue'",
+    "export { default as GhostBreadcrumbEllipsis } from './GhostBreadcrumbEllipsis.vue'",
+    "export {\n  useGhostBreadcrumb,\n  type GhostBreadcrumbRootProps,\n} from './use-ghost-breadcrumb'",
+    "export type {\n  GhostBreadcrumbElement,\n  GhostBreadcrumbListElement,\n  GhostBreadcrumbItemElement,\n  GhostBreadcrumbLinkElement,\n  GhostBreadcrumbPageElement,\n  GhostBreadcrumbSeparatorElement,\n  GhostBreadcrumbEllipsisProps,\n  GhostBreadcrumbExposed,\n  GhostBreadcrumbListExposed,\n  GhostBreadcrumbItemExposed,\n  GhostBreadcrumbLinkExposed,\n  GhostBreadcrumbPageExposed,\n  GhostBreadcrumbSeparatorExposed,\n  GhostBreadcrumbEllipsisExposed,\n  GhostBreadcrumbProps,\n  GhostBreadcrumbListProps,\n  GhostBreadcrumbItemProps,\n  GhostBreadcrumbLinkProps,\n  GhostBreadcrumbPageProps,\n  GhostBreadcrumbSeparatorProps,\n} from './ghost-breadcrumb'"
+  ],
+  "themesBarrel": [
+    "export {\n  GhostBreadcrumb,\n  GhostBreadcrumbEllipsis,\n  GhostBreadcrumbItem,\n  GhostBreadcrumbLink,\n  GhostBreadcrumbList,\n  GhostBreadcrumbPage,\n  GhostBreadcrumbSeparator,\n  type GhostBreadcrumbElement,\n  type GhostBreadcrumbEllipsisExposed,\n  type GhostBreadcrumbEllipsisProps,\n  type GhostBreadcrumbExposed,\n  type GhostBreadcrumbItemElement,\n  type GhostBreadcrumbItemExposed,\n  type GhostBreadcrumbLinkElement,\n  type GhostBreadcrumbLinkExposed,\n  type GhostBreadcrumbListElement,\n  type GhostBreadcrumbListExposed,\n  type GhostBreadcrumbPageElement,\n  type GhostBreadcrumbPageExposed,\n  type GhostBreadcrumbProps,\n  type GhostBreadcrumbSeparatorElement,\n  type GhostBreadcrumbSeparatorExposed,\n} from './ghost-breadcrumb'"
+  ],
+  "examples": [
+    {
+      "id": "breadcrumb/basic",
+      "title": "Basic",
+      "description": "Ordered navigation trail with current page semantics.",
+      "layer": "headless"
+    },
+    {
+      "id": "breadcrumb/collapsed",
+      "title": "Collapsed segments",
+      "description": "Ellipsis popover exposes middle ancestors.",
+      "layer": "themed"
+    }
+  ]
+}

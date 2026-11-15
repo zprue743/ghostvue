@@ -1,0 +1,44 @@
+{
+  "schemaVersion": "1.0.0",
+  "slug": "skeleton",
+  "docs": {
+    "title": "GhostSkeleton",
+    "specStatus": "approved",
+    "link": "/components/skeleton",
+    "specLink": "/components/skeleton-spec"
+  },
+  "vueBarrel": [
+    "export { default as GhostSkeleton } from './GhostSkeleton.vue'",
+    "export {\n  useGhostSkeleton,\n  type GhostSkeletonRootProps,\n} from './use-ghost-skeleton'",
+    "export type { GhostSkeletonElement, GhostSkeletonProps } from './ghost-skeleton'"
+  ],
+  "themesBarrel": [
+    "export {\n  GhostSkeleton,\n  type GhostSkeletonElement,\n  type GhostSkeletonShape,\n} from './ghost-skeleton'"
+  ],
+  "examples": [
+    {
+      "id": "skeleton/basic",
+      "title": "Basic",
+      "description": "Unstyled decorative loading placeholder. Hidden from assistive technology.",
+      "layer": "headless"
+    },
+    {
+      "id": "skeleton/composable",
+      "title": "Composable",
+      "description": "Same contract as GhostSkeleton, applied to a native host.",
+      "layer": "headless"
+    },
+    {
+      "id": "skeleton/themed",
+      "title": "Themed",
+      "description": "Text, rect, and circle shapes on the @ghostvue/themes wrapper.",
+      "layer": "themed"
+    },
+    {
+      "id": "skeleton/table",
+      "title": "Table loading",
+      "description": "Loading rows with aria-busy and a caption as the status text.",
+      "layer": "themed"
+    }
+  ]
+}

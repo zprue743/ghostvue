@@ -1,0 +1,16 @@
+{
+  "extends": "./tsconfig.build.json",
+  "compilerOptions": {
+    "rootDir": ".cache/declaration-build/src",
+    "outDir": "dist"
+  },
+  "include": [
+    ".cache/declaration-build/src/**/*.ts",
+    ".cache/declaration-build/src/**/*.vue"
+  ],
+  "exclude": [
+    ".cache/declaration-build/src/**/*.test.ts",
+    ".cache/declaration-build/src/dev-codes-docs.ts",
+    ".cache/declaration-build/src/overlay-ssr.test.ts"
+  ]
+}

@@ -1,4 +1,6 @@
 node_modules
+**/.registries/
+**/.cache/declaration-build/
 .pnpm-store
 # Manifest layout is owned by serializeManifest (JSON.stringify indent 2).
 # Prettier would collapse short examples arrays and fight pnpm manifests.

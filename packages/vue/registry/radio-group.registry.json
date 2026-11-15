@@ -1,0 +1,45 @@
+{
+  "schemaVersion": "1.0.0",
+  "slug": "radio-group",
+  "docs": {
+    "title": "GhostRadioGroup",
+    "specStatus": "approved",
+    "link": "/components/radio-group",
+    "specLink": "/components/radio-group-spec"
+  },
+  "vueBarrel": [
+    "export { default as GhostRadioGroup } from './GhostRadioGroup.vue'",
+    "export { default as GhostRadioGroupItem } from './GhostRadioGroupItem.vue'",
+    "export { useGhostRadioGroup } from './use-ghost-radio-group'",
+    "export type {\n  GhostRadioGroupExposed,\n  GhostRadioGroupItemExposed,\n  GhostRadioGroupElement,\n  GhostRadioGroupItemProps,\n  GhostRadioGroupOrientation,\n  GhostRadioGroupProps,\n  UseGhostRadioGroupOptions,\n  UseGhostRadioGroupReturn,\n} from './ghost-radio-group'"
+  ],
+  "themesBarrel": [
+    "export {\n  GhostRadioGroup,\n  GhostRadioGroupItem,\n  type GhostRadioGroupExposed,\n  type GhostRadioGroupItemExposed,\n  type GhostRadioGroupSize,\n} from './ghost-radio-group'"
+  ],
+  "examples": [
+    {
+      "id": "radio-group/basic",
+      "title": "Basic",
+      "description": "Headless radio group with labeled items.",
+      "layer": "headless"
+    },
+    {
+      "id": "radio-group/field",
+      "title": "Field wiring",
+      "description": "Group label, description, and error through GhostField.",
+      "layer": "headless"
+    },
+    {
+      "id": "radio-group/form",
+      "title": "Form reset",
+      "description": "Native submit and reset with a shared name.",
+      "layer": "headless"
+    },
+    {
+      "id": "radio-group/themed",
+      "title": "Themed",
+      "description": "Styled radio dots from @ghostvue/themes.",
+      "layer": "themed"
+    }
+  ]
+}

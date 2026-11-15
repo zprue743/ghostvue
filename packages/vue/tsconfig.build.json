@@ -8,5 +8,12 @@
   },
   "references": [],
   "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.vue"],
-  "exclude": ["src/**/*.test.ts", "src/dev-codes-docs.ts"]
+  "exclude": [
+    "src/**/*.test.ts",
+    "src/dev-codes-docs.ts",
+    "src/.registries/**/*.ts",
+    "src/.publish-index.generated.ts",
+    "src/.publish-build/**",
+    ".cache/**"
+  ]
 }

@@ -1,0 +1,57 @@
+{
+  "schemaVersion": "1.0.0",
+  "slug": "link",
+  "docs": {
+    "title": "GhostLink",
+    "specStatus": "approved",
+    "link": "/components/link",
+    "specLink": "/components/link-spec"
+  },
+  "vueBarrel": [
+    "export { default as GhostLink } from './GhostLink.vue'",
+    "export { useGhostLink, type GhostLinkRootProps } from './use-ghost-link'",
+    "export type {\n  GhostLinkElement,\n  GhostLinkExposed,\n  GhostLinkProps,\n  UseGhostLinkOptions,\n} from './ghost-link'",
+    "export { resolveGhostLinkHtmlElement, mergeLinkRel } from './ghost-link'"
+  ],
+  "themesBarrel": [
+    "export {\n  GhostLink,\n  type GhostLinkExposed,\n  type GhostLinkTone,\n  type GhostLinkVariant,\n} from './ghost-link'"
+  ],
+  "examples": [
+    {
+      "id": "link/basic",
+      "title": "Basic",
+      "description": "Native anchor with headless styling hooks.",
+      "layer": "headless"
+    },
+    {
+      "id": "link/composable",
+      "title": "Composable",
+      "description": "Same contract as GhostLink, applied to a native host.",
+      "layer": "headless"
+    },
+    {
+      "id": "link/themed",
+      "title": "Themed",
+      "description": "Default inline link visuals from @ghostvue/themes.",
+      "layer": "themed"
+    },
+    {
+      "id": "link/external",
+      "title": "External",
+      "description": "New-tab safety, indicator, and accessible hint.",
+      "layer": "themed"
+    },
+    {
+      "id": "link/disabled",
+      "title": "Disabled",
+      "description": "No href, not focusable, and activation cancelled.",
+      "layer": "themed"
+    },
+    {
+      "id": "link/router",
+      "title": "Router composition",
+      "description": "Render through as without importing vue-router.",
+      "layer": "headless"
+    }
+  ]
+}

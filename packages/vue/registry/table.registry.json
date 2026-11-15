@@ -1,0 +1,57 @@
+{
+  "schemaVersion": "1.0.0",
+  "slug": "table",
+  "docs": {
+    "title": "GhostTable",
+    "specStatus": "approved",
+    "link": "/components/table",
+    "specLink": "/components/table-spec"
+  },
+  "vueBarrel": [
+    "export { default as GhostTable } from './GhostTable.vue'",
+    "export { default as GhostTableCaption } from './GhostTableCaption.vue'",
+    "export { default as GhostTableHead } from './GhostTableHead.vue'",
+    "export { default as GhostTableBody } from './GhostTableBody.vue'",
+    "export { default as GhostTableFoot } from './GhostTableFoot.vue'",
+    "export { default as GhostTableRow } from './GhostTableRow.vue'",
+    "export { default as GhostTableHeaderCell } from './GhostTableHeaderCell.vue'",
+    "export { default as GhostTableCell } from './GhostTableCell.vue'",
+    "export {\n  useGhostTable,\n  useGhostTableCaption,\n  useGhostTableBody,\n  useGhostTableCell,\n  useGhostTableFoot,\n  useGhostTableHead,\n  useGhostTableHeaderCell,\n  useGhostTableRow,\n  mergeGhostTablePartAttrs,\n  type GhostTableRootProps,\n  type GhostTableScrollContainerProps,\n  type GhostTableHeaderCellRootProps,\n} from './use-ghost-table'",
+    "export type {\n  GhostTableCaptionExposed,\n  GhostTableCaptionProps,\n  GhostTableCellExposed,\n  GhostTableCellProps,\n  GhostTableExposed,\n  GhostTableHeaderCellExposed,\n  GhostTableHeaderCellProps,\n  GhostTableHeaderScope,\n  GhostTableProps,\n  GhostTableRowExposed,\n  GhostTableRowProps,\n  GhostTableSectionExposed,\n  GhostTableSectionProps,\n  UseGhostTableHeaderCellOptions,\n  UseGhostTableOptions,\n} from './ghost-table'"
+  ],
+  "themesBarrel": [
+    "export { GhostTable, type GhostTableExposed } from './ghost-table'"
+  ],
+  "examples": [
+    {
+      "id": "table/basic",
+      "title": "Basic table",
+      "description": "Caption, header row, and explicit tbody semantics.",
+      "layer": "headless"
+    },
+    {
+      "id": "table/composable",
+      "title": "Composable",
+      "description": "Native table hosts with useGhostTable hooks.",
+      "layer": "headless"
+    },
+    {
+      "id": "table/contain-horizontal",
+      "title": "Horizontal containment",
+      "description": "Optional scroll container for wide static tables.",
+      "layer": "headless"
+    },
+    {
+      "id": "table/row-headers",
+      "title": "Row headers",
+      "description": "th scope=row inside the table body.",
+      "layer": "headless"
+    },
+    {
+      "id": "table/themed",
+      "title": "Themed",
+      "description": "Default table chrome from @ghostvue/themes.",
+      "layer": "themed"
+    }
+  ]
+}

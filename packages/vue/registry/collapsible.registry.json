@@ -1,0 +1,36 @@
+{
+  "schemaVersion": "1.0.0",
+  "slug": "collapsible",
+  "docs": {
+    "title": "GhostCollapsible",
+    "specStatus": "approved",
+    "link": "/components/collapsible",
+    "specLink": "/components/collapsible-spec"
+  },
+  "vueBarrel": [
+    "export { default as GhostCollapsible } from './GhostCollapsible.vue'",
+    "export { default as GhostCollapsibleTrigger } from './GhostCollapsibleTrigger.vue'",
+    "export { default as GhostCollapsibleContent } from './GhostCollapsibleContent.vue'",
+    "export { useGhostCollapsible } from './use-ghost-collapsible'",
+    "export type {\n  GhostCollapsibleContentElement,\n  GhostCollapsibleContentExposed,\n  GhostCollapsibleContentProps,\n  GhostCollapsibleContext,\n  GhostCollapsibleProps,\n  GhostCollapsibleSlotProps,\n  GhostCollapsibleTriggerElement,\n  GhostCollapsibleTriggerExposed,\n  GhostCollapsibleTriggerProps,\n  UseGhostCollapsibleOptions,\n  UseGhostCollapsibleReturn,\n} from './ghost-collapsible'"
+  ],
+  "themesBarrel": [
+    "export {\n  GhostCollapsible,\n  type GhostCollapsibleSlotProps,\n} from './ghost-collapsible'",
+    "export {\n  GhostCollapsibleTrigger,\n  type GhostCollapsibleTriggerElement,\n  type GhostCollapsibleTriggerExposed,\n} from './ghost-collapsible-trigger'",
+    "export {\n  GhostCollapsibleContent,\n  type GhostCollapsibleContentElement,\n  type GhostCollapsibleContentExposed,\n} from './ghost-collapsible-content'"
+  ],
+  "examples": [
+    {
+      "id": "collapsible/basic",
+      "title": "Collapsible disclosure",
+      "description": "Headless trigger and content linked with aria-controls.",
+      "layer": "headless"
+    },
+    {
+      "id": "collapsible/themed",
+      "title": "Themed collapsible",
+      "description": "Default surface styles with optional motion on expand.",
+      "layer": "themed"
+    }
+  ]
+}

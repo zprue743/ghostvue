@@ -1,0 +1,56 @@
+{
+  "schemaVersion": "1.0.0",
+  "slug": "card",
+  "docs": {
+    "title": "GhostCard",
+    "specStatus": "approved",
+    "link": "/components/card",
+    "specLink": "/components/card-spec"
+  },
+  "vueBarrel": [
+    "export { default as GhostCard } from './GhostCard.vue'",
+    "export { useGhostCard, type GhostCardRootProps } from './use-ghost-card'",
+    "export type {\n  GhostCardElement,\n  GhostCardExposed,\n  GhostCardProps,\n  UseGhostCardOptions,\n} from './ghost-card'"
+  ],
+  "themesBarrel": [
+    "export {\n  GhostCard,\n  type GhostCardExposed,\n  type GhostCardInteractive,\n} from './ghost-card'"
+  ],
+  "examples": [
+    {
+      "id": "card/basic",
+      "title": "Card basics",
+      "description": "Header, content, and footer parts on a surface.",
+      "layer": "headless"
+    },
+    {
+      "id": "card/actions",
+      "title": "Card with actions",
+      "description": "Static root and footer buttons.",
+      "layer": "headless"
+    },
+    {
+      "id": "card/link",
+      "title": "Navigational card",
+      "description": "Whole-card link without nested interactives.",
+      "layer": "headless"
+    },
+    {
+      "id": "card/interactive",
+      "title": "Spotlight card",
+      "description": "Ambient pointer tracking on the card root.",
+      "layer": "headless"
+    },
+    {
+      "id": "card/themed",
+      "title": "Themed card",
+      "description": "Elevation chrome and optional spotlight from themes.",
+      "layer": "themed"
+    },
+    {
+      "id": "card/composable",
+      "title": "Composable card",
+      "description": "useGhostCard bindings on a custom host.",
+      "layer": "headless"
+    }
+  ]
+}

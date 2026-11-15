@@ -1,5 +1,8 @@
 import type { LlmsSidebarGroup } from './generate-llms-txt'
 
+import { generatedComponentSidebarItems } from './.registries/docs-nav.components.generated'
+import { generatedContributingSpecItems } from './.registries/docs-nav.specs.generated'
+
 export const docsTitle = 'GhostVue'
 
 export const docsDescription =
@@ -18,50 +21,7 @@ export const docsSidebar: LlmsSidebarGroup[] = [
   {
     text: 'Components',
     items: [
-      { text: 'GhostAccordion', link: '/components/accordion' },
-      { text: 'GhostAvatar', link: '/components/avatar' },
-      { text: 'GhostBadge', link: '/components/badge' },
-      { text: 'GhostBreadcrumb', link: '/components/breadcrumb' },
-      { text: 'GhostCollapsible', link: '/components/collapsible' },
-      { text: 'GhostButton', link: '/components/button' },
-      { text: 'GhostCard', link: '/components/card' },
-      { text: 'GhostCheckbox', link: '/components/checkbox' },
-      { text: 'GhostDialog', link: '/components/dialog' },
-      { text: 'GhostDropdownMenu', link: '/components/dropdown-menu' },
-      { text: 'GhostEmptyState', link: '/components/empty-state' },
-      { text: 'GhostField', link: '/components/field' },
-      { text: 'GhostHoverCard', link: '/components/hover-card' },
-      { text: 'GhostInlineAlert', link: '/components/inline-alert' },
-      { text: 'GhostInput', link: '/components/input' },
-      { text: 'GhostNumberInput', link: '/components/number-input' },
-      {
-        text: 'GhostInteractiveSurface',
-        link: '/components/interactive-surface',
-      },
-      { text: 'GhostKbd', link: '/components/kbd' },
-      { text: 'GhostLink', link: '/components/link' },
-      { text: 'GhostPopover', link: '/components/popover' },
-      { text: 'GhostPagination', link: '/components/pagination' },
-      { text: 'GhostProgress', link: '/components/progress' },
-      { text: 'GhostRadioGroup', link: '/components/radio-group' },
-      { text: 'GhostSelect', link: '/components/select' },
-      { text: 'GhostSeparator', link: '/components/separator' },
-      { text: 'GhostScrollArea', link: '/components/scroll-area' },
-      {
-        text: 'GhostSegmentedControl',
-        link: '/components/segmented-control',
-      },
-      { text: 'GhostSkeleton', link: '/components/skeleton' },
-      { text: 'GhostSlider', link: '/components/slider' },
-      { text: 'GhostSpinner', link: '/components/spinner' },
-      { text: 'GhostSwitch', link: '/components/switch' },
-      { text: 'GhostTabs', link: '/components/tabs' },
-      { text: 'GhostTable', link: '/components/table' },
-      { text: 'GhostTextarea', link: '/components/textarea' },
-      { text: 'GhostToggleGroup', link: '/components/toggle-group' },
-      { text: 'GhostToolbar', link: '/components/toolbar' },
-      { text: 'GhostTooltip', link: '/components/tooltip' },
-      { text: 'GhostVisuallyHidden', link: '/components/visually-hidden' },
+      ...generatedComponentSidebarItems,
       { text: 'Default theme', link: '/themes/default' },
       {
         text: 'defineTheme and flagships',
@@ -125,56 +85,7 @@ export const docsSidebar: LlmsSidebarGroup[] = [
   {
     text: 'Contributing',
     items: [
-      { text: 'GhostSlider specification', link: '/components/slider-spec' },
-      { text: 'GhostToolbar specification', link: '/components/toolbar-spec' },
-      {
-        text: 'GhostAccordion specification',
-        link: '/components/accordion-spec',
-      },
-      {
-        text: 'GhostNumberInput specification',
-        link: '/components/number-input-spec',
-      },
-      {
-        text: 'GhostPagination specification',
-        link: '/components/pagination-spec',
-      },
-      {
-        text: 'GhostToggleGroup specification',
-        link: '/components/toggle-group-spec',
-      },
-      {
-        text: 'GhostSegmentedControl specification',
-        link: '/components/segmented-control-spec',
-      },
-      {
-        text: 'GhostEmptyState specification',
-        link: '/components/empty-state-spec',
-      },
-      {
-        text: 'GhostCard specification',
-        link: '/components/card-spec',
-      },
-      {
-        text: 'GhostInlineAlert specification',
-        link: '/components/inline-alert-spec',
-      },
-      {
-        text: 'GhostRadioGroup specification',
-        link: '/components/radio-group-spec',
-      },
-      {
-        text: 'GhostCollapsible specification',
-        link: '/components/collapsible-spec',
-      },
-      { text: 'GhostField specification', link: '/components/field-spec' },
-      {
-        text: 'GhostHoverCard specification',
-        link: '/components/hover-card-spec',
-      },
-      { text: 'GhostTable specification', link: '/components/table-spec' },
-      { text: 'GhostTabs specification', link: '/components/tabs-spec' },
-      { text: 'GhostTooltip specification', link: '/components/tooltip-spec' },
+      ...generatedContributingSpecItems,
       { text: 'Workflow', link: '/contributing/workflow' },
       {
         text: 'Component verification',
@@ -184,86 +95,6 @@ export const docsSidebar: LlmsSidebarGroup[] = [
       { text: 'Scaffolding components', link: '/contributing/new-component' },
       { text: 'Releases', link: '/contributing/releases' },
       { text: 'Component specs', link: '/components/spec-template' },
-      {
-        text: 'GhostBadge specification',
-        link: '/components/badge-spec',
-      },
-      {
-        text: 'GhostBreadcrumb specification',
-        link: '/components/breadcrumb-spec',
-      },
-      {
-        text: 'GhostButton specification',
-        link: '/components/button-spec',
-      },
-      {
-        text: 'GhostCheckbox specification',
-        link: '/components/checkbox-spec',
-      },
-      {
-        text: 'GhostDialog specification',
-        link: '/components/dialog-spec',
-      },
-      {
-        text: 'GhostDropdownMenu specification',
-        link: '/components/dropdown-menu-spec',
-      },
-      {
-        text: 'GhostInput specification',
-        link: '/components/input-spec',
-      },
-      {
-        text: 'GhostInteractiveSurface specification',
-        link: '/components/interactive-surface-spec',
-      },
-      {
-        text: 'GhostKbd specification',
-        link: '/components/kbd-spec',
-      },
-      {
-        text: 'GhostLink specification',
-        link: '/components/link-spec',
-      },
-      {
-        text: 'GhostPopover specification',
-        link: '/components/popover-spec',
-      },
-      {
-        text: 'GhostProgress specification',
-        link: '/components/progress-spec',
-      },
-      {
-        text: 'GhostSelect specification',
-        link: '/components/select-spec',
-      },
-      {
-        text: 'GhostSeparator specification',
-        link: '/components/separator-spec',
-      },
-      {
-        text: 'GhostScrollArea specification',
-        link: '/components/scroll-area-spec',
-      },
-      {
-        text: 'GhostSkeleton specification',
-        link: '/components/skeleton-spec',
-      },
-      {
-        text: 'GhostSpinner specification',
-        link: '/components/spinner-spec',
-      },
-      {
-        text: 'GhostSwitch specification',
-        link: '/components/switch-spec',
-      },
-      {
-        text: 'GhostTextarea specification',
-        link: '/components/textarea-spec',
-      },
-      {
-        text: 'GhostVisuallyHidden specification',
-        link: '/components/visually-hidden-spec',
-      },
       { text: 'ADRs', link: '/adr/' },
     ],
   },

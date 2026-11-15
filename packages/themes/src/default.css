@@ -7,44 +7,7 @@
  */
 @import './generated/tokens.css';
 @import './recipes.css';
-@import './ghost-badge.css';
-@import './ghost-breadcrumb.css';
-@import './ghost-button.css';
-@import './ghost-card.css';
-@import './ghost-checkbox.css';
-@import './ghost-dialog.css';
-@import './ghost-dropdown-menu.css';
-@import './ghost-input.css';
-@import './ghost-inline-alert.css';
-@import './ghost-kbd.css';
-@import './ghost-link.css';
-@import './ghost-popover.css';
-@import './ghost-progress.css';
-@import './ghost-separator.css';
-@import './ghost-scroll-area.css';
-@import './ghost-segmented-control.css';
-@import './ghost-skeleton.css';
-@import './ghost-spinner.css';
-@import './ghost-switch.css';
-@import './ghost-textarea.css';
-
-@import './ghost-collapsible.css';
-@import './ghost-field.css';
-@import './ghost-tabs.css';
-@import './ghost-table.css';
-@import './ghost-tooltip.css';
-@import './ghost-hover-card.css';
-
-@import './ghost-avatar.css';
-@import './ghost-accordion.css';
-@import './ghost-empty-state.css';
-@import './ghost-number-input.css';
-@import './ghost-pagination.css';
-@import './ghost-slider.css';
-@import './ghost-toggle-group.css';
-@import './ghost-toolbar.css';
-@import './ghost-radio-group.css';
-@import './ghost-select.css';
+@import './.registries/component-imports.generated.css';
 
 @layer ghostvue-theme {
   :where(.ghost-themed-scope) {

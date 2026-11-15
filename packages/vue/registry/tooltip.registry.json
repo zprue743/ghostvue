@@ -1,0 +1,36 @@
+{
+  "schemaVersion": "1.0.0",
+  "slug": "tooltip",
+  "docs": {
+    "title": "GhostTooltip",
+    "specStatus": "approved",
+    "link": "/components/tooltip",
+    "specLink": "/components/tooltip-spec"
+  },
+  "vueBarrel": [
+    "export { default as GhostTooltip } from './GhostTooltip.vue'",
+    "export { default as GhostTooltipTrigger } from './GhostTooltipTrigger.vue'",
+    "export { default as GhostTooltipContent } from './GhostTooltipContent.vue'",
+    "export { useGhostTooltip } from './use-ghost-tooltip'",
+    "export {\n  ghostTooltipContextKey,\n  mergeTooltipDescribedBy,\n  resolveTooltipHtmlElement,\n  type GhostTooltipContentElement,\n  type GhostTooltipContentExposed,\n  type GhostTooltipContentProps,\n  type GhostTooltipContext,\n  type GhostTooltipFlipOptions,\n  type GhostTooltipOffsetOptions,\n  type GhostTooltipPadding,\n  type GhostTooltipPlacement,\n  type GhostTooltipProps,\n  type GhostTooltipShiftOptions,\n  type GhostTooltipSlotProps,\n  type GhostTooltipStrategy,\n  type GhostTooltipTriggerElement,\n  type GhostTooltipTriggerExposed,\n  type GhostTooltipTriggerProps,\n  type UseGhostTooltipOptions,\n  type UseGhostTooltipReturn,\n} from './ghost-tooltip'"
+  ],
+  "themesBarrel": [
+    "export { GhostTooltip, type GhostTooltipSlotProps } from './ghost-tooltip'",
+    "export {\n  GhostTooltipTrigger,\n  type GhostTooltipTriggerElement,\n  type GhostTooltipTriggerExposed,\n} from './ghost-tooltip-trigger'",
+    "export {\n  GhostTooltipContent,\n  type GhostTooltipContentElement,\n  type GhostTooltipContentExposed,\n  type GhostTooltipFlipOptions,\n  type GhostTooltipOffsetOptions,\n  type GhostTooltipPlacement,\n  type GhostTooltipShiftOptions,\n  type GhostTooltipStrategy,\n  type GhostPortalTarget,\n} from './ghost-tooltip-content'"
+  ],
+  "examples": [
+    {
+      "id": "tooltip/basic",
+      "title": "Supplemental label",
+      "description": "Icon-only trigger with delay timing, floating placement, and aria-describedby.",
+      "layer": "headless"
+    },
+    {
+      "id": "tooltip/themed",
+      "title": "Themed",
+      "description": "Elevation-2 tooltip surface inside a ghost-theme fieldset.",
+      "layer": "themed"
+    }
+  ]
+}

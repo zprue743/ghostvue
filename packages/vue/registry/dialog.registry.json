@@ -1,0 +1,56 @@
+{
+  "schemaVersion": "1.0.0",
+  "slug": "dialog",
+  "docs": {
+    "title": "GhostDialog",
+    "specStatus": "approved",
+    "link": "/components/dialog",
+    "specLink": "/components/dialog-spec"
+  },
+  "vueBarrel": [
+    "export { default as GhostDialog } from './GhostDialog.vue'",
+    "export { default as GhostDialogTrigger } from './GhostDialogTrigger.vue'",
+    "export { default as GhostDialogOverlay } from './GhostDialogOverlay.vue'",
+    "export { default as GhostDialogContent } from './GhostDialogContent.vue'",
+    "export { default as GhostDialogTitle } from './GhostDialogTitle.vue'",
+    "export { default as GhostDialogDescription } from './GhostDialogDescription.vue'",
+    "export { default as GhostDialogClose } from './GhostDialogClose.vue'",
+    "export { useGhostDialog } from './use-ghost-dialog'",
+    "export type {\n  GhostDialogCloseElement,\n  GhostDialogCloseExposed,\n  GhostDialogCloseProps,\n  GhostDialogContentElement,\n  GhostDialogContentExposed,\n  GhostDialogContentProps,\n  GhostDialogContentRole,\n  GhostDialogContext,\n  GhostDialogDescriptionElement,\n  GhostDialogDescriptionExposed,\n  GhostDialogDescriptionProps,\n  GhostDialogOverlayElement,\n  GhostDialogOverlayExposed,\n  GhostDialogOverlayProps,\n  GhostDialogProps,\n  GhostDialogSlotProps,\n  GhostDialogTitleElement,\n  GhostDialogTitleExposed,\n  GhostDialogTitleProps,\n  GhostDialogTriggerElement,\n  GhostDialogTriggerExposed,\n  GhostDialogTriggerProps,\n  UseGhostDialogOptions,\n  UseGhostDialogReturn,\n} from './ghost-dialog'"
+  ],
+  "themesBarrel": [
+    "export { GhostDialog, type GhostDialogSlotProps } from './ghost-dialog'",
+    "export {\n  GhostDialogTrigger,\n  type GhostDialogTriggerElement,\n  type GhostDialogTriggerExposed,\n} from './ghost-dialog-trigger'",
+    "export {\n  GhostDialogOverlay,\n  type GhostDialogOverlayElement,\n  type GhostDialogOverlayExposed,\n} from './ghost-dialog-overlay'",
+    "export {\n  GhostDialogContent,\n  type GhostDialogContentElement,\n  type GhostDialogContentExposed,\n  type GhostDialogContentRole,\n} from './ghost-dialog-content'",
+    "export {\n  GhostDialogTitle,\n  type GhostDialogTitleElement,\n  type GhostDialogTitleExposed,\n} from './ghost-dialog-title'",
+    "export {\n  GhostDialogDescription,\n  type GhostDialogDescriptionElement,\n  type GhostDialogDescriptionExposed,\n} from './ghost-dialog-description'",
+    "export {\n  GhostDialogClose,\n  type GhostDialogCloseElement,\n  type GhostDialogCloseExposed,\n} from './ghost-dialog-close'"
+  ],
+  "examples": [
+    {
+      "id": "dialog/basic",
+      "title": "Basic",
+      "description": "Unstyled modal dialog with overlay, trapped Tab focus, scroll lock, and inert background.",
+      "layer": "headless"
+    },
+    {
+      "id": "dialog/themed",
+      "title": "Themed",
+      "description": "Elevation-4 modal surface, scrim overlay, and themed button actions.",
+      "layer": "themed"
+    },
+    {
+      "id": "dialog/nested",
+      "title": "Nested",
+      "description": "Stacked modal dialogs where Escape dismisses only the innermost open dialog.",
+      "layer": "themed"
+    },
+    {
+      "id": "dialog/alert",
+      "title": "Alert dialog",
+      "description": "Confirmation dialog with role=\"alertdialog\" and outside-click dismissal disabled by default.",
+      "layer": "themed"
+    }
+  ]
+}

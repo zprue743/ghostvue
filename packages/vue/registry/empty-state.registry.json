@@ -1,0 +1,50 @@
+{
+  "schemaVersion": "1.0.0",
+  "slug": "empty-state",
+  "docs": {
+    "title": "GhostEmptyState",
+    "specStatus": "approved",
+    "link": "/components/empty-state",
+    "specLink": "/components/empty-state-spec"
+  },
+  "vueBarrel": [
+    "export { default as GhostEmptyState } from './GhostEmptyState.vue'",
+    "export {\n  useGhostEmptyState,\n  type GhostEmptyStateRootProps,\n} from './use-ghost-empty-state'",
+    "export type {\n  GhostEmptyStateElement,\n  GhostEmptyStateExposed,\n  GhostEmptyStateHeadingLevel,\n  GhostEmptyStateProps,\n  UseGhostEmptyStateOptions,\n} from './ghost-empty-state'"
+  ],
+  "themesBarrel": [
+    "export {\n  GhostEmptyState,\n  type GhostEmptyStateExposed,\n} from './ghost-empty-state'"
+  ],
+  "examples": [
+    {
+      "id": "empty-state/basic",
+      "title": "Empty state basics",
+      "description": "Title and description for an unused panel.",
+      "layer": "headless"
+    },
+    {
+      "id": "empty-state/filtered",
+      "title": "Filtered empty results",
+      "description": "Copy and an action when filters hide every row.",
+      "layer": "headless"
+    },
+    {
+      "id": "empty-state/table-cell",
+      "title": "Empty table body",
+      "description": "EmptyState inside a colspan cell.",
+      "layer": "headless"
+    },
+    {
+      "id": "empty-state/themed",
+      "title": "Themed empty state",
+      "description": "Visual, title, description, and actions with default CSS.",
+      "layer": "themed"
+    },
+    {
+      "id": "empty-state/composable",
+      "title": "Composable empty state",
+      "description": "useGhostEmptyState bindings on a custom host.",
+      "layer": "headless"
+    }
+  ]
+}

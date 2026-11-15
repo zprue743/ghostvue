@@ -16,7 +16,7 @@ const outputManifestPath = resolve(packageRoot, 'dist/tokens.json')
 const outputDefineTypesPath = resolve(packageRoot, 'dist/define.d.ts')
 const flagshipNames = ['calm', 'vibrant', 'mono']
 
-const localImport = /@import\s+['"](\.\/[^'"]+)['"]\s*;\s*/g
+const localImport = /@import\s+['"](\.[^'"]+)['"]\s*;\s*/g
 
 async function inlineLocalImports(css, fromDir) {
   let result = ''
