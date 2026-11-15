@@ -42,7 +42,9 @@ describe('GhostCard theme CSS tokens', () => {
     expect(css).toContain('--ghost-elevation-1-bg')
     expect(css).toContain('--ghost-elevation-1-border')
     expect(css).toContain('--ghost-elevation-1-shadow')
-    expect(css).toContain('--ghost-space-md')
+    expect(css).toContain('--ghost-space-inset-md')
+    expect(css).toContain('--ghost-space-stack-sm')
+    expect(css).toContain('--ghost-space-stack-md')
     expect(findHardcodedVisuals(css)).toEqual([])
   })
 

@@ -31,12 +31,12 @@
     background-color: transparent;
     border: var(--ghost-border-hairline-width) solid transparent;
     border-radius: var(--ghost-radius-md);
-    color: var(--ghost-surface-fg-muted);
+    color: var(--ghost-text-muted);
     cursor: pointer;
     font: inherit;
     padding: var(--ghost-space-inset-sm) var(--ghost-space-inset-md);
     transition: background-color var(--ghost-motion-duration-fast)
-      var(--ghost-motion-ease-standard);
+      var(--ghost-motion-easing-standard);
   }
 
   :where(

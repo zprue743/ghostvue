@@ -85,7 +85,7 @@
         "description": "Trigger and panel text color."
       },
       {
-        "name": "--ghost-surface-border",
+        "name": "--ghost-border-default",
         "description": "Trigger and panel borders."
       },
       {

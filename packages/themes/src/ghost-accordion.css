@@ -9,7 +9,7 @@
   ) {
     display: flex;
     flex-direction: column;
-    gap: var(--ghost-space-stack-xs);
+    gap: var(--ghost-space-gap-xs);
     width: 100%;
   }
 

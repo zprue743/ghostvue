@@ -13,7 +13,7 @@
     --_ghost-card-border: var(--ghost-elevation-1-border);
     --_ghost-card-radius: var(--ghost-radius-md);
     --_ghost-card-shadow: var(--ghost-elevation-1-shadow);
-    --_ghost-card-padding: var(--ghost-space-md);
+    --_ghost-card-padding: var(--ghost-space-inset-md);
 
     background-color: var(--_ghost-card-bg);
     border: var(--ghost-border-hairline-width) solid var(--_ghost-card-border);
@@ -32,7 +32,7 @@
     .ghost-card[data-themed] > [data-part='header']
   ) {
     display: block;
-    margin-block-end: var(--ghost-space-sm);
+    margin-block-end: var(--ghost-space-stack-sm);
   }
 
   :where(
@@ -49,6 +49,6 @@
     .ghost-card[data-themed] > [data-part='footer']
   ) {
     display: block;
-    margin-block-start: var(--ghost-space-md);
+    margin-block-start: var(--ghost-space-stack-md);
   }
 }

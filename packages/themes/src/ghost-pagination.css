@@ -70,7 +70,7 @@
     .ghost-themed-scope .ghost-pagination button[aria-disabled='true']
   ) {
     cursor: not-allowed;
-    opacity: var(--ghost-disabled-opacity);
+    opacity: var(--ghost-action-disabled-opacity);
   }
 
   :where(
@@ -78,7 +78,7 @@
     .ghost-themed-scope .ghost-pagination [data-part='ellipsis']
   ) {
     align-items: center;
-    color: var(--ghost-surface-muted-fg);
+    color: var(--ghost-text-muted);
     display: inline-flex;
     min-block-size: var(--_ghost-pagination-min-size);
     min-inline-size: var(--_ghost-pagination-min-size);
