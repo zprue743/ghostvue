@@ -14,7 +14,7 @@ Sighted users get a compact trigger showing the current choice and a positioned
 list of options. Keyboard and assistive-technology users get combobox + listbox
 semantics, arrow-key roving among options, printable-character typeahead, and
 labeled options inside `GhostField`. The control participates in native HTML
-forms via a hidden submit input and `useNativeFormReset`, consistent with
+forms via a visually hidden submit input and `useNativeFormReset`, consistent with
 `GhostSwitch` and `GhostNumberInput`.
 
 ## Non-goals
@@ -35,7 +35,7 @@ forms via a hidden submit input and `useNativeFormReset`, consistent with
 
 Headless `@ghostvue/vue`:
 
-- `GhostSelect` — root provider, value model, form hidden input
+- `GhostSelect` — root provider, value model, form submit input
 - `GhostSelectTrigger` — `role="combobox"` anchor
 - `GhostSelectValue` — selected label / placeholder slot
 - `GhostSelectContent` — portaled listbox surface
@@ -56,10 +56,10 @@ Themed `@ghostvue/themes`:
 | Prop           | Type                   | Default     | Contract                                                                                                                           |
 | -------------- | ---------------------- | ----------- | ---------------------------------------------------------------------------------------------------------------------------------- |
 | `modelValue`   | `string \| undefined`  | `undefined` | Controlled selected value. `undefined` is uncontrolled.                                                                            |
-| `defaultValue` | `string \| undefined`  | `undefined` | Initial value when uncontrolled; omitted means no selection. Form reset restores this captured seed.                               |
-| `name`         | `string`               | `undefined` | Hidden input `name` for native submit. When omitted, the control does not submit.                                                  |
+| `defaultValue` | `string \| undefined`  | `undefined` | Initial value when uncontrolled; omitted means no selection. Form reset restores the current `defaultValue`.                       |
+| `name`         | `string`               | `undefined` | Visually hidden input `name` for native submit. When omitted, the control does not submit.                                         |
 | `disabled`     | `boolean`              | `false`     | Disables trigger and options; omits value from submit.                                                                             |
-| `required`     | `boolean`              | `false`     | Native `required` on the hidden submit input when `name` is set.                                                                   |
+| `required`     | `boolean`              | `false`     | Native `required` and constraint validation on the submit input when `name` is set (not `type=hidden`).                            |
 | `invalid`      | `boolean`              | `false`     | Sets `aria-invalid` on the trigger for Field integration.                                                                          |
 | `open`         | `boolean \| undefined` | `undefined` | Controlled listbox open state. Omit for uncontrolled.                                                                              |
 | `defaultOpen`  | `boolean`              | `false`     | Initial open state when `open` is omitted.                                                                                         |
@@ -187,8 +187,8 @@ Themed CSS uses existing `--ghost-*` tokens only.
 ### SSR and hydration
 
 - `useGhostId` for trigger, listbox, and option ids.
-- Closed select: SSR outputs trigger (+ hidden input when `name` set) only;
-  listbox omitted via `v-if`.
+- Closed select: SSR outputs trigger, closed listbox (`hidden` / `data-state="closed"`,
+  options registered), and submit input when `name` is set so labels resolve without opening.
 - `defaultOpen: true` may render listbox through deferred `GhostPortal` without
   touching `window`/`document` in setup; browser listeners attach in `onMounted`
   (`overlay-ssr.test.ts` pattern).
@@ -214,13 +214,15 @@ does not interact with the listbox (no text field).
 
 ## Performance
 
-Floating observers and dismiss listeners run only while content is mounted/open.
+Floating observers and dismiss listeners run only while the listbox is open; content
+stays mounted while closed so option labels remain registered.
 
 ## Composition
 
 - `useControllableState` — value and open
 - `useGhostId` — ids
-- `useNativeFormReset` + hidden `input[type="hidden"]` — submit + reset
+- `useNativeFormReset` + visually hidden `input[type="text"]` — submit, `required`,
+  and reset
 - `useFloating`, `GhostPortal`, `useDismissableLayer`, `useFocusScope` — overlay
 - `useRovingFocus` — option keyboard navigation
 - Local typeahead helper in `useGhostSelect` (no new package dependency)
@@ -228,8 +230,9 @@ Floating observers and dismiss listeners run only while content is mounted/open.
 ## Test plan
 
 - **Vue unit tests:** v-model, uncontrolled/defaultValue, disabled options,
-  controlled emit ignore, open/close, typeahead, roving keys, required hidden
-  input, form reset, Field aria wiring, unregister selected option
+  controlled emit ignore, open/close, typeahead, roving keys, required submit
+  input constraint validation, form reset, Field aria wiring, value survives
+  close, defaultValue label while closed, SSR hydration
 - **SSR:** `overlay-ssr.test.ts` closed/open; `expectSsrHydration` integration
 - **E2E + axe:** open/select/close keyboard paths, form submit, docs example
 - **Visual:** `examples/select/themed` baselines via `pnpm test:visual:docker`

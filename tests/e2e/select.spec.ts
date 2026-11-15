@@ -26,14 +26,16 @@ test.describe('GhostSelect', () => {
       await expect(trigger).toHaveAttribute('aria-expanded', 'true')
 
       await page.getByRole('option', { name: '50 rows' }).click()
-      await expect(content).toHaveCount(0)
+      await expect(content).toBeHidden()
+      await expect(content).toHaveAttribute('data-state', 'closed')
       await expect(trigger).toContainText('50 rows')
 
       await trigger.focus()
       await page.keyboard.press('ArrowDown')
       await expect(content).toBeVisible()
       await page.keyboard.press('Escape')
-      await expect(content).toHaveCount(0)
+      await expect(content).toBeHidden()
+      await expect(content).toHaveAttribute('data-state', 'closed')
       await expect(trigger).toBeFocused()
     } finally {
       await playground.close()

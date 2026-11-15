@@ -257,7 +257,7 @@ const contentAttrs = computed(() => {
 const listboxAttrs = computed(() => ({
   role: 'listbox',
   tabindex: isOpen.value ? -1 : undefined,
-  'aria-hidden': isOpen.value ? undefined : 'true',
+  'aria-hidden': isOpen.value ? undefined : true,
   inert: isOpen.value ? undefined : true,
   'aria-labelledby': context.triggerId.value,
   'data-part': 'listbox',

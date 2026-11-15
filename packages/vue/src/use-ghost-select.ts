@@ -319,7 +319,8 @@ export function useGhostSelect(options: UseGhostSelectOptions = {}): {
     if (!el) {
       return
     }
-    const empty = selectedValue.value === undefined || selectedValue.value === ''
+    const empty =
+      selectedValue.value === undefined || selectedValue.value === ''
     if (required.value && empty) {
       el.setCustomValidity('Select a value.')
     } else {

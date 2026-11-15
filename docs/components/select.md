@@ -21,8 +21,9 @@ trigger is the primary tab stop.
 
 <GhostExample id="select/form" />
 
-`defaultValue` is the form-reset seed. Set `name` on the root so a hidden input
-submits the selected value.
+`defaultValue` is the form-reset seed (read at reset time). Set `name` on the
+root so a visually hidden input submits the selected value and participates in
+native `required` validation.
 
 ## Themed use
 
@@ -36,7 +37,7 @@ submits the selected value.
 | -------------- | --------------------- | ----------- | ---------------------------------- |
 | `modelValue`   | `string \| undefined` | `undefined` | Controlled value.                  |
 | `defaultValue` | `string \| undefined` | `undefined` | Uncontrolled seed and reset value. |
-| `name`         | `string`              | `undefined` | Hidden input name for submit.      |
+| `name`         | `string`              | `undefined` | Submit input name.                 |
 | `disabled`     | `boolean`             | `false`     | Disables the control.              |
 | `required`     | `boolean`             | `false`     | Required when `name` is set.       |
 | `invalid`      | `boolean`             | `false`     | `aria-invalid` on the trigger.     |

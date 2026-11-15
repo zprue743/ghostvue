@@ -1,11 +1,5 @@
 <script setup lang="ts">
-import {
-  computed,
-  provide,
-  shallowRef,
-  useTemplateRef,
-  watch,
-} from 'vue'
+import { computed, provide, shallowRef, useTemplateRef, watch } from 'vue'
 
 import { ghostSelectContextKey } from './ghost-select'
 import { useNativeFormReset } from './form-reset'
