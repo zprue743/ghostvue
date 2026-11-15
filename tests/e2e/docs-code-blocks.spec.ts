@@ -109,7 +109,7 @@ test.describe('docs code blocks', () => {
     }
   })
 
-  test('light fences keep the muted surface mapping', async ({ page }) => {
+  test('light fences keep Shiki tokens at least 4.5:1', async ({ page }) => {
     const docs = await startStaticServer('apps/docs/.vitepress/dist')
     try {
       await page.emulateMedia({
@@ -133,26 +133,67 @@ test.describe('docs code blocks', () => {
         .toBe('light')
 
       const colors = await page.evaluate(() => {
+        const toSrgb = (cssColor: string): [number, number, number] => {
+          const canvas = document.createElement('canvas')
+          canvas.width = 1
+          canvas.height = 1
+          const context = canvas.getContext('2d')
+          if (!context) {
+            throw new Error('2D canvas context is required to resolve colors')
+          }
+          context.fillStyle = cssColor
+          context.fillRect(0, 0, 1, 1)
+          const [red, green, blue] = context.getImageData(0, 0, 1, 1).data
+          return [red, green, blue]
+        }
+        const block = document.querySelector(
+          '[data-example-id="button/themed"] + div[class*="language-"]',
+        )
+        const span = block?.querySelector('.vp-code span[style*="--shiki-"]')
+        const codeBlockBg = block ? getComputedStyle(block).backgroundColor : ''
+        const tokenColor = span ? getComputedStyle(span).color : ''
+        return {
+          codeBlockBg: toSrgb(codeBlockBg),
+          tokenColor: toSrgb(tokenColor),
+        }
+      })
+
+      expect(
+        contrastRatio(colors.tokenColor, colors.codeBlockBg),
+      ).toBeGreaterThanOrEqual(4.5)
+    } finally {
+      await docs.close()
+    }
+  })
+
+  test('light fences stay darker than the page canvas', async ({ page }) => {
+    const docs = await startStaticServer('apps/docs/.vitepress/dist')
+    try {
+      await page.emulateMedia({
+        colorScheme: 'light',
+        reducedMotion: 'reduce',
+      })
+      await page.goto(`${docs.url}/components/button.html`)
+
+      const source = page.locator(
+        '[data-example-id="button/themed"] + div[class*="language-"]',
+      )
+      await expect(source).toBeVisible()
+
+      const colors = await page.evaluate(() => {
         const root = document.documentElement
         const block = document.querySelector(
           '[data-example-id="button/themed"] + div[class*="language-"]',
         )
         return {
           codeBlockBg: block ? getComputedStyle(block).backgroundColor : '',
-          muted: getComputedStyle(root)
-            .getPropertyValue('--ghost-surface-muted-bg')
-            .trim(),
+          pageBg: getComputedStyle(root).backgroundColor,
         }
       })
 
-      const muted = colors.muted.replace('#', '')
-      expect(muted).toMatch(/^[0-9a-f]{6}$/i)
-      const mutedRgb = [
-        Number.parseInt(muted.slice(0, 2), 16),
-        Number.parseInt(muted.slice(2, 4), 16),
-        Number.parseInt(muted.slice(4, 6), 16),
-      ] as const
-      expect(parseRgb(colors.codeBlockBg)).toEqual([...mutedRgb])
+      const codeBlockBg = parseRgb(colors.codeBlockBg)
+      const pageBg = parseRgb(colors.pageBg)
+      expect(channelDistance(codeBlockBg, pageBg)).toBeGreaterThan(8)
     } finally {
       await docs.close()
     }

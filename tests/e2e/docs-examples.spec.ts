@@ -74,7 +74,9 @@ test.describe('docs example previews', () => {
       await page.goto(`${docs.url}/components/button.html`)
 
       const preview = page.locator('[data-example-id="button/basic"]')
-      await expect(preview.getByText('Unstyled. Headless.')).toBeVisible()
+      await expect(preview.locator('.ghost-example__badge')).toHaveText(
+        'Headless',
+      )
       await expect(
         preview.getByTestId('ghost-example-preview').locator('.ghost-button'),
       ).toBeVisible()
@@ -92,7 +94,9 @@ test.describe('docs example previews', () => {
       await page.goto(`${docs.url}/components/popover.html`)
 
       const basicExample = page.locator('[data-example-id="popover/basic"]')
-      await expect(basicExample.getByText('Unstyled. Headless.')).toBeVisible()
+      await expect(basicExample.locator('.ghost-example__badge')).toHaveText(
+        'Headless',
+      )
 
       const basicTrigger = basicExample.getByRole('button', {
         name: 'Toggle details',
@@ -155,7 +159,9 @@ test.describe('docs example previews', () => {
       await page.goto(`${docs.url}/components/hover-card.html`)
 
       const basicExample = page.locator('[data-example-id="hover-card/basic"]')
-      await expect(basicExample.getByText('Unstyled. Headless.')).toBeVisible()
+      await expect(basicExample.locator('.ghost-example__badge')).toHaveText(
+        'Headless',
+      )
 
       const basicTrigger = basicExample.getByRole('button', {
         name: 'Contributor profile preview',
@@ -208,7 +214,9 @@ test.describe('docs example previews', () => {
       await page.goto(`${docs.url}/components/tooltip.html`)
 
       const basicExample = page.locator('[data-example-id="tooltip/basic"]')
-      await expect(basicExample.getByText('Unstyled. Headless.')).toBeVisible()
+      await expect(basicExample.locator('.ghost-example__badge')).toHaveText(
+        'Headless',
+      )
 
       const basicTrigger = basicExample.getByRole('button', {
         name: 'Archive row',

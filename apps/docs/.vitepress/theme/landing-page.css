@@ -244,54 +244,85 @@ html.dark .ghost-landing {
   text-decoration: none;
 }
 
-.ghost-landing__progression-tabs {
-  margin-block-start: 1.25rem;
-}
-
 .ghost-landing__progression-layout {
   align-items: start;
   display: grid;
   gap: 2.75rem;
-  grid-template-columns: 5fr 7fr;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  margin-block-start: 1.25rem;
+  max-inline-size: 100%;
+  min-inline-size: 0;
 }
 
-.ghost-landing__progression-trigger {
+#progression .ghost-tabs-list {
+  grid-column: 1;
+  grid-row: 1 / -1;
+  max-inline-size: 100%;
+  min-inline-size: 0;
+}
+
+#progression .ghost-tabs-content {
+  grid-column: 2;
+  max-inline-size: 100%;
+  min-inline-size: 0;
+}
+
+/*
+ * GhostTabsTrigger/List/Content replace the consumer `class` instead of merging it
+ * (see GhostTabsTrigger.vue). Style tabs from the landing wrapper until the library
+ * merges attrs.class.
+ */
+#progression .ghost-tabs-trigger {
   align-items: baseline;
   border-inline-start: 2px solid transparent;
   border-radius: 0;
   display: flex;
+  flex-wrap: wrap;
   font-size: 0.88rem;
+  gap: 0.35rem 0.75rem;
   justify-content: space-between;
+  max-inline-size: 100%;
+  min-inline-size: 0;
   text-align: start;
   width: 100%;
 }
 
-.ghost-landing__progression-trigger[data-state='active'] {
+#progression .ghost-tabs-trigger[data-state='active'] {
   border-inline-start-color: var(--ghost-action-primary-bg);
   font-weight: 650;
 }
 
-.ghost-landing__progression-trigger code {
+#progression .ghost-tabs-trigger code {
   color: var(--ghost-action-primary-bg);
   font-size: 0.76rem;
+  overflow-wrap: anywhere;
+  white-space: normal;
 }
 
-.ghost-landing__progression-panel {
+#progression .ghost-tabs-content {
   background: transparent;
   border: 0;
   margin: 0;
+  max-inline-size: 100%;
+  min-inline-size: 0;
   padding: 0;
 }
 
-.ghost-landing :deep(.ghost-landing__progression-tabs .ghost-tabs-list) {
+#progression .ghost-tabs-list {
   border-block-start: 1px solid var(--ghost-border-muted);
   gap: 0;
+  max-inline-size: 100%;
+  min-inline-size: 0;
 }
 
-.ghost-landing :deep(.ghost-landing__progression-tabs .ghost-tabs-trigger) {
+#progression .ghost-tabs-trigger {
   border-block-end: 1px solid var(--ghost-border-muted);
-  border-radius: 0;
   box-shadow: none;
+}
+
+#progression .ghost-tabs-trigger span {
+  flex: 1 1 12rem;
+  min-inline-size: 0;
 }
 
 .ghost-landing__code-window {
@@ -299,6 +330,8 @@ html.dark .ghost-landing {
   border: 1px solid var(--ghost-border-default);
   border-radius: calc(0.75rem * var(--ghost-roundness, 1));
   box-shadow: var(--ghost-landing-card-shadow);
+  max-inline-size: 100%;
+  min-inline-size: 0;
   overflow: hidden;
 }
 
@@ -308,8 +341,11 @@ html.dark .ghost-landing {
   border-block-end: 1px solid var(--ghost-border-muted);
   color: var(--ghost-text-muted);
   display: flex;
+  flex-wrap: wrap;
   font-size: 0.78rem;
+  gap: 0.35rem 0.75rem;
   justify-content: space-between;
+  max-inline-size: 100%;
   padding: 0.65rem 1.1rem;
 }
 
@@ -324,8 +360,11 @@ html.dark .ghost-landing {
   font-size: 0.8125rem;
   line-height: 1.6;
   margin: 0;
+  max-inline-size: 100%;
   overflow-x: auto;
+  overflow-wrap: anywhere;
   padding: 1.15rem 1.25rem;
+  white-space: pre-wrap;
 }
 
 .ghost-landing__principles {
@@ -444,6 +483,66 @@ html.dark .ghost-landing {
   .ghost-landing__section-split,
   .ghost-landing__progression-layout,
   .ghost-landing__principles {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  #progression .ghost-tabs-list,
+  #progression .ghost-tabs-content {
+    grid-column: 1;
+    grid-row: auto;
+    width: 100%;
+  }
+}
+
+@media (max-width: 639px) {
+  .ghost-landing__ledger-wrap {
+    overflow: visible;
+  }
+
+  .ghost-landing__ledger thead {
+    display: none;
+  }
+
+  .ghost-landing__ledger,
+  .ghost-landing__ledger tbody,
+  .ghost-landing__ledger tr {
+    display: block;
+    width: 100%;
+  }
+
+  .ghost-landing__ledger tr {
+    border-block-end: 1px solid var(--ghost-border-muted);
+    padding: 0.85rem 1rem;
+  }
+
+  .ghost-landing__ledger tr:last-child {
+    border-block-end: 0;
+  }
+
+  .ghost-landing__ledger :is(th, td) {
+    border: 0;
+    display: block;
+    overflow-wrap: anywhere;
+    padding: 0.15rem 0;
+    white-space: normal;
+  }
+
+  .ghost-landing__ledger td:first-child {
+    font-size: 0.95rem;
+    margin-block-end: 0.35rem;
+  }
+
+  .ghost-landing__ledger td:nth-child(2) {
+    font-size: 0.75rem;
+    margin-block-end: 0.35rem;
+  }
+
+  .ghost-landing__progression-layout {
+    gap: 1.25rem;
+  }
+
+  #progression .ghost-tabs-trigger {
+    align-items: flex-start;
+    flex-direction: column;
   }
 }

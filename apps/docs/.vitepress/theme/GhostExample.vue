@@ -83,9 +83,6 @@ onUnmounted(() => {
     </figcaption>
 
     <div class="ghost-example__preview" data-testid="ghost-example-preview">
-      <p v-if="meta?.layer === 'headless'" class="ghost-example__hint">
-        Unstyled. Headless.
-      </p>
       <div class="ghost-example__stage">
         <Preview />
       </div>
@@ -166,26 +163,8 @@ onUnmounted(() => {
   min-inline-size: 0;
   padding: 1.75rem 1.25rem;
   position: relative;
-  background-color: var(--ghost-surface-bg, var(--vp-c-bg));
-  background-image: radial-gradient(
-    var(--ghost-border-muted, var(--vp-c-divider)) 1px,
-    transparent 1px
-  );
-  background-size: 0.85rem 0.85rem;
+  background-color: var(--ghost-surface-subtle-bg, var(--vp-c-bg-alt));
   border-block-start: 1px solid var(--ghost-border-muted, var(--vp-c-divider));
-}
-
-.ghost-example__hint {
-  color: var(--ghost-text-subtle, var(--vp-c-text-3));
-  font-size: 0.68rem;
-  font-weight: 650;
-  letter-spacing: 0.06em;
-  line-height: 1.2;
-  margin: 0;
-  position: absolute;
-  inset-block-start: 0.7rem;
-  inset-inline-start: 0.9rem;
-  text-transform: uppercase;
 }
 
 .ghost-example__stage {

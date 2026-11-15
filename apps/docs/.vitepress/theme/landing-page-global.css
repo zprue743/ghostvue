@@ -8,3 +8,13 @@
   max-width: 100%;
   padding: 0;
 }
+
+/* Home uses a full-width canvas; the global sidebar would duplicate navigation. */
+.VPContent:has(.ghost-landing) ~ .VPSidebar,
+.VPDoc.has-sidebar:has(.ghost-landing) .aside {
+  display: none;
+}
+
+.Layout:has(.ghost-landing) .VPSidebar {
+  display: none;
+}
