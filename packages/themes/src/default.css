@@ -44,6 +44,7 @@
 @import './ghost-toggle-group.css';
 @import './ghost-toolbar.css';
 @import './ghost-radio-group.css';
+@import './ghost-select.css';
 
 @layer ghostvue-theme {
   :where(.ghost-themed-scope) {

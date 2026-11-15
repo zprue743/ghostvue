@@ -126,6 +126,29 @@ export {
   type GhostPopoverCloseElement,
   type GhostPopoverCloseExposed,
 } from './ghost-popover-close'
+export { GhostSelect, type GhostSelectExposed } from './ghost-select'
+export {
+  GhostSelectTrigger,
+  type GhostSelectTriggerElement,
+  type GhostSelectTriggerExposed,
+} from './ghost-select-trigger'
+export {
+  GhostSelectContent,
+  type GhostSelectContentElement,
+  type GhostSelectContentExposed,
+  type GhostSelectFlipOptions,
+  type GhostSelectOffsetOptions,
+  type GhostSelectPlacement,
+  type GhostSelectShiftOptions,
+  type GhostSelectStrategy,
+} from './ghost-select-content'
+export {
+  GhostSelectValue,
+  GhostSelectOption,
+  GhostSelectGroup,
+  GhostSelectLabel,
+  useGhostSelect,
+} from '@ghostvue/vue'
 
 export { GhostDialog, type GhostDialogSlotProps } from './ghost-dialog'
 

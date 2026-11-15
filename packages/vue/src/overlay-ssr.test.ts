@@ -25,6 +25,11 @@ import GhostDropdownMenuTrigger from './GhostDropdownMenuTrigger.vue'
 import GhostHoverCard from './GhostHoverCard.vue'
 import GhostHoverCardContent from './GhostHoverCardContent.vue'
 import GhostHoverCardTrigger from './GhostHoverCardTrigger.vue'
+import GhostSelect from './GhostSelect.vue'
+import GhostSelectContent from './GhostSelectContent.vue'
+import GhostSelectOption from './GhostSelectOption.vue'
+import GhostSelectTrigger from './GhostSelectTrigger.vue'
+import GhostSelectValue from './GhostSelectValue.vue'
 import GhostTooltip from './GhostTooltip.vue'
 import GhostTooltipContent from './GhostTooltipContent.vue'
 import GhostTooltipTrigger from './GhostTooltipTrigger.vue'
@@ -174,6 +179,57 @@ describe('overlay primitives in Node SSR (no window or document)', () => {
     expect(openHtml).toContain('aria-expanded="true"')
     expect(openHtml).toContain('Visible SSR panel')
     expect(openHtml).toContain('role="dialog"')
+    expect(openHtml).toContain('visibility:hidden')
+  })
+
+  it('renders GhostSelect closed and defaultOpen states cleanly in Node SSR', async () => {
+    expect(typeof window).toBe('undefined')
+    expect(typeof document).toBe('undefined')
+
+    const ClosedApp = defineComponent({
+      setup() {
+        return () =>
+          h(
+            GhostSelect,
+            { name: 'fruit', defaultValue: 'a' },
+            {
+              default: () => [
+                h(GhostSelectTrigger, null, () => h(GhostSelectValue)),
+                h(GhostSelectContent, null, () =>
+                  h(GhostSelectOption, { value: 'a' }, () => 'Apple'),
+                ),
+              ],
+            },
+          )
+      },
+    })
+
+    const closedHtml = await renderToString(createSSRApp(ClosedApp))
+    expect(closedHtml).toContain('aria-expanded="false"')
+    expect(closedHtml).toContain('role="listbox"')
+    expect(closedHtml).toContain('hidden')
+
+    const OpenApp = defineComponent({
+      setup() {
+        return () =>
+          h(
+            GhostSelect,
+            { defaultOpen: true, name: 'fruit' },
+            {
+              default: () => [
+                h(GhostSelectTrigger, null, () => h(GhostSelectValue)),
+                h(GhostSelectContent, null, () =>
+                  h(GhostSelectOption, { value: 'a' }, () => 'Apple'),
+                ),
+              ],
+            },
+          )
+      },
+    })
+
+    const openHtml = await renderToString(createSSRApp(OpenApp))
+    expect(openHtml).toContain('aria-expanded="true"')
+    expect(openHtml).toContain('role="listbox"')
     expect(openHtml).toContain('visibility:hidden')
   })
 

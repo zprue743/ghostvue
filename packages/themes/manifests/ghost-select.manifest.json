@@ -1,0 +1,36 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "handwritten",
+  "name": "GhostSelect",
+  "package": "@ghostvue/themes",
+  "status": "experimental",
+  "description": "Themed GhostSelect trigger and listbox surfaces using semantic --ghost-* tokens.",
+  "props": [],
+  "models": [],
+  "events": [],
+  "slots": [],
+  "exposed": [],
+  "styling": {
+    "parts": [
+      {
+        "name": "trigger",
+        "description": "ghost-select-trigger surface aligned to control tokens."
+      },
+      {
+        "name": "content",
+        "description": "Elevated listbox panel."
+      }
+    ],
+    "states": [],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "combobox",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/combobox/examples/combobox-select-only/",
+    "keyboard": {},
+    "requiredAriaAttributes": []
+  },
+  "examples": [
+    "select/themed"
+  ]
+}

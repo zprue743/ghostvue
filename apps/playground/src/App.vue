@@ -35,6 +35,7 @@ import CollapsibleReference from './CollapsibleReference.vue'
 import AccordionReference from './AccordionReference.vue'
 import PopoverReference from './PopoverReference.vue'
 import DropdownMenuReference from './DropdownMenuReference.vue'
+import SelectReference from './SelectReference.vue'
 import TabsReference from './TabsReference.vue'
 import SegmentedControlReference from './SegmentedControlReference.vue'
 import ToggleGroupReference from './ToggleGroupReference.vue'
@@ -321,6 +322,7 @@ function submitPlaygroundComment(event: Event): void {
     <OverlayReference />
     <PopoverReference />
     <DropdownMenuReference />
+    <SelectReference />
     <CollapsibleReference />
     <AccordionReference />
     <TooltipReference />

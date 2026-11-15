@@ -235,6 +235,32 @@ export type {
   UseGhostDropdownMenuOptions,
   UseGhostDropdownMenuReturn,
 } from './ghost-dropdown-menu'
+export { default as GhostSelect } from './GhostSelect.vue'
+export { default as GhostSelectTrigger } from './GhostSelectTrigger.vue'
+export { default as GhostSelectValue } from './GhostSelectValue.vue'
+export { default as GhostSelectContent } from './GhostSelectContent.vue'
+export { default as GhostSelectOption } from './GhostSelectOption.vue'
+export { default as GhostSelectGroup } from './GhostSelectGroup.vue'
+export { default as GhostSelectLabel } from './GhostSelectLabel.vue'
+export { useGhostSelect } from './use-ghost-select'
+export type {
+  GhostSelectContentElement,
+  GhostSelectContentExposed,
+  GhostSelectContext,
+  GhostSelectFlipOptions,
+  GhostSelectGroupElement,
+  GhostSelectLabelElement,
+  GhostSelectOffsetOptions,
+  GhostSelectOptionElement,
+  GhostSelectOptionExposed,
+  GhostSelectPlacement,
+  GhostSelectShiftOptions,
+  GhostSelectStrategy,
+  GhostSelectTriggerElement,
+  GhostSelectTriggerExposed,
+  GhostSelectExposed,
+  UseGhostSelectOptions,
+} from './ghost-select'
 export { default as GhostDialog } from './GhostDialog.vue'
 export { default as GhostDialogTrigger } from './GhostDialogTrigger.vue'
 export { default as GhostDialogOverlay } from './GhostDialogOverlay.vue'

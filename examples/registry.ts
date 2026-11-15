@@ -280,6 +280,32 @@ export const ghostExamples = [
     layer: 'themed',
   },
   {
+    id: 'select/basic',
+    title: 'Basic',
+    description:
+      'Single-value combobox with listbox options, typeahead, and portaled content.',
+    layer: 'headless',
+  },
+  {
+    id: 'select/field',
+    title: 'Field',
+    description:
+      'GhostField wiring for label, description, and required state.',
+    layer: 'headless',
+  },
+  {
+    id: 'select/form',
+    title: 'Form',
+    description: 'Hidden input submit value and native form reset.',
+    layer: 'headless',
+  },
+  {
+    id: 'select/themed',
+    title: 'Themed',
+    description: 'Trigger and list surface tokens from @ghostvue/themes.',
+    layer: 'themed',
+  },
+  {
     id: 'popover/basic',
     title: 'Basic',
     description:
