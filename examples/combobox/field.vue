@@ -21,10 +21,7 @@ const operator = ref<string | undefined>(undefined)
     <GhostFieldDescription>Type to narrow operators.</GhostFieldDescription>
     <GhostFieldControl v-slot="field">
       <GhostCombobox v-model="operator">
-        <GhostComboboxInput
-          v-bind="field"
-          placeholder="Choose operator"
-        />
+        <GhostComboboxInput v-bind="field" placeholder="Choose operator" />
         <GhostComboboxContent :portal="false">
           <GhostComboboxOption value="eq" text-value="Equals">
             Equals

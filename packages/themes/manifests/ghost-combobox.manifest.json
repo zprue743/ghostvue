@@ -4,7 +4,7 @@
   "name": "GhostCombobox",
   "package": "@ghostvue/themes",
   "status": "experimental",
-  "description": "Scaffold only: neutral content container. Approve the component specification before implementing widget behavior.",
+  "description": "Themed GhostCombobox root, input, trigger, and list surfaces using --ghost-* tokens.",
   "props": [],
   "models": [],
   "events": [],
@@ -12,7 +12,7 @@
     {
       "name": "default",
       "props": [],
-      "description": "Container content."
+      "description": "Combobox parts composed by the consumer."
     }
   ],
   "exposed": [
@@ -20,31 +20,60 @@
       "name": "element",
       "kind": "property",
       "type": "HTMLElement | null",
-      "description": "Root element after mount; null before mount."
+      "description": "Combobox input element after mount."
+    },
+    {
+      "name": "focus",
+      "kind": "method",
+      "type": "(options?: FocusOptions) => void",
+      "description": "Focuses the combobox input."
+    },
+    {
+      "name": "blur",
+      "kind": "method",
+      "type": "() => void",
+      "description": "Blurs the combobox input."
     }
   ],
   "styling": {
     "parts": [
       {
-        "name": "root",
-        "description": "Neutral content container."
+        "name": "input",
+        "description": "Themed text field with .ghost-combobox-input."
+      },
+      {
+        "name": "content",
+        "description": "Elevated list surface with .ghost-combobox-content."
+      },
+      {
+        "name": "trigger",
+        "description": "Optional toggle button with .ghost-combobox-trigger."
       }
     ],
-    "states": [],
+    "states": [
+      {
+        "name": "open",
+        "description": "Input or trigger data-state when the listbox is open."
+      }
+    ],
     "cssProperties": [
       {
-        "name": "--ghost-surface-fg",
-        "description": "Inherited text color."
+        "name": "--ghost-surface-bg",
+        "description": "Input and trigger background."
+      },
+      {
+        "name": "--ghost-elevation-3-bg",
+        "description": "List surface background."
       }
     ]
   },
   "accessibility": {
-    "role": "generic",
-    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/",
+    "role": "combobox",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/combobox/examples/combobox-autocomplete-list/",
     "keyboard": {},
     "requiredAriaAttributes": []
   },
   "examples": [
-    "combobox/basic"
+    "combobox/themed"
   ]
 }

@@ -2,6 +2,7 @@ import { flushPromises, mount } from '@vue/test-utils'
 import { defineComponent, h, nextTick, ref } from 'vue'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
+import type { GhostComboboxValue } from './ghost-combobox'
 import GhostCombobox from './GhostCombobox.vue'
 import GhostComboboxContent from './GhostComboboxContent.vue'
 import GhostComboboxEmpty from './GhostComboboxEmpty.vue'
@@ -27,8 +28,10 @@ function comboboxFixture(extra?: Record<string, unknown>) {
           GhostCombobox,
           {
             modelValue: value.value,
-            'onUpdate:modelValue': (next: string | undefined) => {
-              value.value = next
+            'onUpdate:modelValue': (next: GhostComboboxValue) => {
+              if (typeof next === 'string' || next === undefined) {
+                value.value = next
+              }
             },
             name: 'fruit',
             ...extra,
@@ -72,10 +75,11 @@ describe('GhostCombobox', () => {
   it('selects a single value with keyboard highlight and Enter', async () => {
     const wrapper = mountAttached(comboboxFixture())
     const input = wrapper.get('[data-part="input"]')
+    const inputEl = input.element as HTMLInputElement
     expect(input.attributes('role')).toBe('combobox')
     expect(input.attributes('aria-expanded')).toBe('false')
 
-    input.element.focus()
+    inputEl.focus()
     input.element.dispatchEvent(
       new KeyboardEvent('keydown', {
         key: 'ArrowDown',
@@ -163,7 +167,9 @@ describe('GhostCombobox', () => {
               {
                 multiple: true,
                 modelValue: value.value,
-                'onUpdate:modelValue': (next: string | string[] | undefined) => {
+                'onUpdate:modelValue': (
+                  next: string | string[] | undefined,
+                ) => {
                   value.value = Array.isArray(next) ? next : []
                 },
               },
@@ -354,8 +360,10 @@ describe('GhostCombobox', () => {
                   defaultValue: 'b',
                   defaultSearch: '',
                   name: 'fruit',
-                  'onUpdate:modelValue': (next: string | undefined) => {
-                    fruit.value = next ?? ''
+                  'onUpdate:modelValue': (next: GhostComboboxValue) => {
+                    if (typeof next === 'string' || next === undefined) {
+                      fruit.value = next ?? ''
+                    }
                   },
                 },
                 {
@@ -401,8 +409,9 @@ describe('GhostCombobox', () => {
   it('closes on Escape and restores focus to the input', async () => {
     const wrapper = mountAttached(comboboxFixture())
     const input = wrapper.get('[data-part="input"]')
-    input.element.focus()
-    input.element.dispatchEvent(
+    const inputEl = input.element as HTMLInputElement
+    inputEl.focus()
+    inputEl.dispatchEvent(
       new KeyboardEvent('keydown', {
         key: 'ArrowDown',
         bubbles: true,
@@ -411,7 +420,7 @@ describe('GhostCombobox', () => {
     )
     await flushPromises()
 
-    input.element.dispatchEvent(
+    inputEl.dispatchEvent(
       new KeyboardEvent('keydown', {
         key: 'Escape',
         bubbles: true,

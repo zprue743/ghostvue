@@ -1,7 +1,11 @@
 <script setup lang="ts">
 import { computed, provide, shallowRef, useTemplateRef, watch } from 'vue'
 
-import { ghostComboboxContextKey, type GhostComboboxExposed, type GhostComboboxValue } from './ghost-combobox'
+import {
+  ghostComboboxContextKey,
+  type GhostComboboxExposed,
+  type GhostComboboxValue,
+} from './ghost-combobox'
 import { useNativeFormReset } from './form-reset'
 import { useGhostCombobox } from './use-ghost-combobox'
 
@@ -88,57 +92,15 @@ const combobox = useGhostCombobox({
   getFormInput: () => formInput.value,
 })
 
-const {
-  multiple,
-  virtualized,
-  selectedValue,
-  searchValue,
-  isOpen,
-  loading,
-  open,
-  close,
-  toggleOpen,
-  disabled,
-  required: isRequired,
-  invalid: isInvalid,
-  allowDeselect,
-  placeholder,
-  defaultInputId,
-  defaultContentId,
-  optionOrder,
-  optionCount,
-  registerOption,
-  unregisterOption,
-  setOptionDisabled,
-  setOptionTextValue,
-  select,
-  isSelected,
-  isOptionDisabled,
-  getOptionText,
-  getOptionId,
-  activeOptionValue,
-  activeDescendantId,
-  moveActive,
-  setActiveOptionByValue,
-  moveActiveFirst,
-  moveActiveLast,
-  onInputSearch,
-  formInputProps,
-  applyFormReset,
-  syncFormValidity,
-  handleFormInputInvalid,
-  labelVersion,
-  announceMessage,
-  liveRegionId,
-} = combobox
+const { liveRegionId, announceMessage, formInputProps } = combobox
 
 useNativeFormReset(
   () => formInput.value ?? inputElement.value,
-  applyFormReset,
+  combobox.applyFormReset,
 )
 
-const openedAtMount = shallowRef(isOpen.value)
-watch(isOpen, (next) => {
+const openedAtMount = shallowRef(combobox.isOpen.value)
+watch(combobox.isOpen, (next) => {
   if (!next) {
     openedAtMount.value = false
   }
@@ -148,14 +110,14 @@ watch(
   () => formInput.value,
   (el) => {
     if (el) {
-      syncFormValidity()
+      combobox.syncFormValidity()
     }
   },
   { flush: 'post', immediate: true },
 )
 
 function onFormInputInvalid(event: Event): void {
-  handleFormInputInvalid()
+  combobox.handleFormInputInvalid()
   inputElement.value?.focus()
   if (event.cancelable) {
     event.preventDefault()
@@ -169,24 +131,26 @@ const contentElement = shallowRef<HTMLElement | null>(null)
 const listboxElement = shallowRef<HTMLElement | null>(null)
 
 provide(ghostComboboxContextKey, {
-  multiple,
-  virtualized,
-  selectedValue,
-  searchValue,
-  isOpen,
-  loading,
-  open,
-  close,
-  toggleOpen,
-  disabled,
-  required: isRequired,
-  invalid: isInvalid,
-  allowDeselect,
-  placeholder,
-  defaultInputId,
-  defaultContentId,
-  inputId: computed(() => customInputId.value ?? defaultInputId.value),
-  contentId: computed(() => customContentId.value ?? defaultContentId.value),
+  multiple: combobox.multiple,
+  virtualized: combobox.virtualized,
+  selectedValue: combobox.selectedValue,
+  searchValue: combobox.searchValue,
+  isOpen: combobox.isOpen,
+  loading: combobox.loading,
+  open: combobox.open,
+  close: combobox.close,
+  toggleOpen: combobox.toggleOpen,
+  disabled: combobox.disabled,
+  required: combobox.required,
+  invalid: combobox.invalid,
+  allowDeselect: combobox.allowDeselect,
+  placeholder: combobox.placeholder,
+  defaultInputId: combobox.defaultInputId,
+  defaultContentId: combobox.defaultContentId,
+  inputId: computed(() => customInputId.value ?? combobox.defaultInputId.value),
+  contentId: computed(
+    () => customContentId.value ?? combobox.defaultContentId.value,
+  ),
   inputElement,
   contentElement,
   listboxElement,
@@ -210,27 +174,27 @@ provide(ghostComboboxContextKey, {
   setInputRegistered(registered) {
     inputRegistered.value = registered
   },
-  registerOption,
-  unregisterOption,
-  setOptionDisabled,
-  setOptionTextValue,
-  select,
-  isSelected,
-  isOptionDisabled,
-  optionOrder,
-  optionCount,
-  getOptionText,
-  getOptionId,
-  activeOptionValue,
-  activeDescendantId,
-  moveActive,
-  setActiveOptionByValue,
-  moveActiveFirst,
-  moveActiveLast,
-  onInputSearch,
-  labelVersion,
-  announceMessage,
-  liveRegionId,
+  registerOption: combobox.registerOption,
+  unregisterOption: combobox.unregisterOption,
+  setOptionDisabled: combobox.setOptionDisabled,
+  setOptionTextValue: combobox.setOptionTextValue,
+  select: combobox.select,
+  isSelected: combobox.isSelected,
+  isOptionDisabled: combobox.isOptionDisabled,
+  optionOrder: combobox.optionOrder,
+  optionCount: combobox.optionCount,
+  getOptionText: combobox.getOptionText,
+  getOptionId: combobox.getOptionId,
+  activeOptionValue: combobox.activeOptionValue,
+  activeDescendantId: combobox.activeDescendantId,
+  moveActive: combobox.moveActive,
+  setActiveOptionByValue: combobox.setActiveOptionByValue,
+  moveActiveFirst: combobox.moveActiveFirst,
+  moveActiveLast: combobox.moveActiveLast,
+  onInputSearch: combobox.onInputSearch,
+  labelVersion: combobox.labelVersion,
+  announceMessage: combobox.announceMessage,
+  liveRegionId: combobox.liveRegionId,
 })
 
 defineExpose<GhostComboboxExposed>({

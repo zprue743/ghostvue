@@ -32,8 +32,8 @@ const visible = computed(
 
 <template>
   <component
-    v-show="visible"
     :is="props.as"
+    v-show="visible"
     role="status"
     data-part="empty"
     class="ghost-combobox-empty"

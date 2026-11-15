@@ -1,11 +1,5 @@
 <script setup lang="ts">
-import {
-  computed,
-  inject,
-  onUnmounted,
-  useAttrs,
-  useTemplateRef,
-} from 'vue'
+import { computed, inject, useAttrs, useTemplateRef } from 'vue'
 
 import {
   ghostComboboxContextKey,
@@ -59,9 +53,11 @@ const triggerAttrs = computed(() => {
     'data-part': 'trigger',
     'data-state': open ? 'open' : 'closed',
     disabled: isNativeButtonTag.value ? isEffectivelyDisabled.value : undefined,
-    'aria-disabled': !isNativeButtonTag.value && isEffectivelyDisabled.value
-      ? 'true'
-      : undefined,
+    'aria-disabled':
+      !isNativeButtonTag.value && isEffectivelyDisabled.value
+        ? 'true'
+        : undefined,
+    // eslint-disable-next-line @typescript-eslint/dot-notation -- fallthrough attrs use an index signature
     class: ['ghost-combobox-trigger', attrs['class']],
   }
 })

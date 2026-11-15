@@ -119,7 +119,9 @@ export function useGhostCombobox(options: UseGhostComboboxOptions = {}): {
   const liveRegionId = useGhostId('ghost-combobox-announcer')
 
   const optionOrder = shallowRef<string[]>([])
-  const optionRegistry = shallowRef(new Map<string, GhostComboboxOptionRecord>())
+  const optionRegistry = shallowRef(
+    new Map<string, GhostComboboxOptionRecord>(),
+  )
   const optionLabels = shallowRef(new Map<string, string>())
   const registryVersion = shallowRef(0)
   const labelVersion = shallowRef(0)
@@ -138,7 +140,9 @@ export function useGhostCombobox(options: UseGhostComboboxOptions = {}): {
     void registryVersion.value
     return optionOrder.value
       .map((value) => optionRegistry.value.get(value))
-      .filter((entry): entry is GhostComboboxOptionRecord => entry !== undefined)
+      .filter(
+        (entry): entry is GhostComboboxOptionRecord => entry !== undefined,
+      )
       .filter((entry) => !isOptionDisabled(entry.value))
   }
 
@@ -152,7 +156,9 @@ export function useGhostCombobox(options: UseGhostComboboxOptions = {}): {
     }
     const count = enabledOptionsInOrder().length
     announceMessage.value =
-      count === 0 ? 'No results available' : `${String(count)} results available`
+      count === 0
+        ? 'No results available'
+        : `${String(count)} results available`
   }
 
   watch(loading, () => {
@@ -310,11 +316,7 @@ export function useGhostCombobox(options: UseGhostComboboxOptions = {}): {
       }
       return
     }
-    if (
-      allowDeselect.value &&
-      selectedValue.value === value &&
-      isOpen.value
-    ) {
+    if (allowDeselect.value && selectedValue.value === value && isOpen.value) {
       selectedValue.value = undefined
       close()
       return
@@ -444,7 +446,7 @@ export function useGhostCombobox(options: UseGhostComboboxOptions = {}): {
     if (!el) {
       return
     }
-  const empty = multiple.value
+    const empty = multiple.value
       ? selectedArray().length === 0
       : selectedValue.value === undefined || selectedValue.value === ''
     if (required.value && empty) {

@@ -19,9 +19,15 @@ const fruit = ref('banana')
       placeholder="Type to search fruits"
     />
     <GhostComboboxContent :offset="6" data-testid="combobox-basic-content">
-      <GhostComboboxOption value="apple" text-value="Apple">Apple</GhostComboboxOption>
-      <GhostComboboxOption value="banana" text-value="Banana">Banana</GhostComboboxOption>
-      <GhostComboboxOption value="orange" text-value="Orange">Orange</GhostComboboxOption>
+      <GhostComboboxOption value="apple" text-value="Apple"
+        >Apple</GhostComboboxOption
+      >
+      <GhostComboboxOption value="banana" text-value="Banana"
+        >Banana</GhostComboboxOption
+      >
+      <GhostComboboxOption value="orange" text-value="Orange"
+        >Orange</GhostComboboxOption
+      >
     </GhostComboboxContent>
   </GhostCombobox>
 </template>

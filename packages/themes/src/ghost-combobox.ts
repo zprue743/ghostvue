@@ -44,10 +44,13 @@ export const GhostCombobox = defineComponent({
     },
   },
   emits: {
-    'update:modelValue': (_value: GhostComboboxValue) => true,
+    'update:modelValue': (value: GhostComboboxValue) =>
+      value === undefined || typeof value === 'string' || Array.isArray(value),
     'update:search': (query: string) => typeof query === 'string',
     'update:open': (open: boolean) => typeof open === 'boolean',
-    search: (_payload: { query: string; requestId: number }) => true,
+    search: (payload: { query: string; requestId: number }) =>
+      typeof payload.query === 'string' &&
+      typeof payload.requestId === 'number',
   },
   setup(props, { attrs, emit, slots, expose }) {
     const inner = ref<GhostComboboxExposed | null>(null)

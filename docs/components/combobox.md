@@ -45,21 +45,21 @@ input submits the selection and participates in native `required` validation.
 
 ### `GhostCombobox`
 
-| Prop            | Type                               | Default     | Description                                      |
-| --------------- | ---------------------------------- | ----------- | ------------------------------------------------ |
-| `modelValue`    | `string \| string[] \| undefined`  | `undefined` | Controlled selection.                          |
-| `defaultValue`  | same                               | `undefined` | Uncontrolled seed and reset value.               |
-| `multiple`      | `boolean`                          | `false`     | Multi-select toggles membership in `string[]`.   |
-| `search`        | `string \| undefined`              | `undefined` | Controlled query in the input.                 |
-| `defaultSearch` | `string`                           | `''`        | Initial query when `search` is omitted.        |
-| `name`          | `string`                           | `undefined` | Submit input name.                             |
-| `disabled`      | `boolean`                          | `false`     | Disables input, trigger, and options.          |
-| `required`      | `boolean`                          | `false`     | Required when `name` is set.                     |
-| `invalid`       | `boolean`                          | `false`     | `aria-invalid` on the input.                     |
-| `loading`       | `boolean`                          | `false`     | Hides empty slot; sets listbox `aria-busy`.       |
-| `open`          | `boolean \| undefined`             | `undefined` | Controlled listbox open state.                   |
-| `defaultOpen`   | `boolean`                          | `false`     | Initial open state.                            |
-| `placeholder`   | `string`                           | `undefined` | Input placeholder.                               |
+| Prop            | Type                              | Default     | Description                                    |
+| --------------- | --------------------------------- | ----------- | ---------------------------------------------- |
+| `modelValue`    | `string \| string[] \| undefined` | `undefined` | Controlled selection.                          |
+| `defaultValue`  | same                              | `undefined` | Uncontrolled seed and reset value.             |
+| `multiple`      | `boolean`                         | `false`     | Multi-select toggles membership in `string[]`. |
+| `search`        | `string \| undefined`             | `undefined` | Controlled query in the input.                 |
+| `defaultSearch` | `string`                          | `''`        | Initial query when `search` is omitted.        |
+| `name`          | `string`                          | `undefined` | Submit input name.                             |
+| `disabled`      | `boolean`                         | `false`     | Disables input, trigger, and options.          |
+| `required`      | `boolean`                         | `false`     | Required when `name` is set.                   |
+| `invalid`       | `boolean`                         | `false`     | `aria-invalid` on the input.                   |
+| `loading`       | `boolean`                         | `false`     | Hides empty slot; sets listbox `aria-busy`.    |
+| `open`          | `boolean \| undefined`            | `undefined` | Controlled listbox open state.                 |
+| `defaultOpen`   | `boolean`                         | `false`     | Initial open state.                            |
+| `placeholder`   | `string`                          | `undefined` | Input placeholder.                             |
 
 ### Events
 

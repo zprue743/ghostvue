@@ -80,9 +80,15 @@ onUnmounted(() => {
 
 const displayValue = computed(() => {
   void context.labelVersion.value
-  if (!context.multiple.value && typeof context.selectedValue.value === 'string') {
+  if (
+    !context.multiple.value &&
+    typeof context.selectedValue.value === 'string'
+  ) {
     if (!context.isOpen.value) {
-      return context.getOptionText(context.selectedValue.value) ?? context.searchValue.value
+      return (
+        context.getOptionText(context.selectedValue.value) ??
+        context.searchValue.value
+      )
     }
   }
   return context.searchValue.value
@@ -125,20 +131,22 @@ const inputAttrs = computed(() => {
     autocomplete: attrs['autocomplete'] ?? 'off',
   }
 
+  // eslint-disable-next-line @typescript-eslint/dot-notation -- fallthrough attrs use an index signature
+  const className = ['ghost-combobox-input', attrs['class']]
   if (isNativeInput.value) {
     base['type'] = attrs['type'] ?? 'text'
     base['value'] = displayValue.value
     base['disabled'] = isEffectivelyDisabled.value
-    base['class'] = ['ghost-combobox-input', attrs['class']]
+    base['class'] = className
   } else if (isComponentHost.value) {
     base['value'] = displayValue.value
     base['disabled'] = isEffectivelyDisabled.value
-    base['class'] = ['ghost-combobox-input', attrs['class']]
+    base['class'] = className
   } else {
     base['tabindex'] =
       attrs['tabindex'] ?? (isEffectivelyDisabled.value ? undefined : 0)
     base['aria-disabled'] = isEffectivelyDisabled.value ? 'true' : undefined
-    base['class'] = ['ghost-combobox-input', attrs['class']]
+    base['class'] = className
   }
 
   return base

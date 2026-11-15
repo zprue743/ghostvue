@@ -3,7 +3,7 @@
   "slug": "combobox",
   "docs": {
     "title": "GhostCombobox",
-    "specStatus": "proposed",
+    "specStatus": "approved",
     "link": "/components/combobox",
     "specLink": "/specs/combobox",
     "category": "forms",

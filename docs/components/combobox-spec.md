@@ -62,32 +62,32 @@ Themed `@ghostvue/themes`:
 
 #### `GhostCombobox` (root)
 
-| Prop                     | Type                                      | Default      | Contract                                                                                                                              |
-| ------------------------ | ----------------------------------------- | ------------ | ------------------------------------------------------------------------------------------------------------------------------------- |
-| `modelValue`             | `string \| string[] \| undefined`         | `undefined`  | Controlled selection. Shape follows `multiple`.                                                                                       |
-| `defaultValue`           | same                                      | `undefined`  | Uncontrolled initial selection. Form reset restores `defaultValue`.                                                                   |
-| `multiple`               | `boolean`                                 | `false`      | Multi-select toggles membership in `string[]`; single keeps `string`.                                                                  |
-| `search`                 | `string \| undefined`                     | `undefined`  | Controlled query text in the input. Omit for uncontrolled search field.                                                               |
-| `defaultSearch`          | `string`                                  | `''`         | Initial query when `search` is omitted.                                                                                               |
-| `name`                   | `string`                                  | `undefined`  | Hidden input `name` for native submit. When omitted, no submit mirror.                                                                |
-| `disabled`               | `boolean`                                 | `false`      | Disables input, trigger, and options.                                                                                                 |
-| `required`               | `boolean`                                 | `false`      | Native `required` on submit mirror when `name` is set.                                                                                |
-| `invalid`                | `boolean`                                 | `false`      | Sets `aria-invalid` on the combobox input.                                                                                            |
-| `open`                   | `boolean \| undefined`                    | `undefined`  | Controlled listbox open state.                                                                                                        |
-| `defaultOpen`            | `boolean`                                 | `false`      | Initial open when `open` is omitted.                                                                                                  |
-| `loading`                | `boolean`                                 | `false`      | Announces loading and sets `aria-busy` on the listbox while true.                                                                     |
-| `placeholder`            | `string`                                  | `undefined`  | Passed through to the input when no selection label occupies the field.                                                               |
-| `allowDeselect`          | `boolean`                                 | `false`      | Single mode: re-selecting the active option clears selection.                                                                        |
-| `virtualized`            | `boolean`                                 | `false`      | Documents windowed lists: highlight moves only among **mounted** options; consumer renders a slice and keeps ids stable per value. |
+| Prop            | Type                              | Default     | Contract                                                                                                                           |
+| --------------- | --------------------------------- | ----------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| `modelValue`    | `string \| string[] \| undefined` | `undefined` | Controlled selection. Shape follows `multiple`.                                                                                    |
+| `defaultValue`  | same                              | `undefined` | Uncontrolled initial selection. Form reset restores `defaultValue`.                                                                |
+| `multiple`      | `boolean`                         | `false`     | Multi-select toggles membership in `string[]`; single keeps `string`.                                                              |
+| `search`        | `string \| undefined`             | `undefined` | Controlled query text in the input. Omit for uncontrolled search field.                                                            |
+| `defaultSearch` | `string`                          | `''`        | Initial query when `search` is omitted.                                                                                            |
+| `name`          | `string`                          | `undefined` | Hidden input `name` for native submit. When omitted, no submit mirror.                                                             |
+| `disabled`      | `boolean`                         | `false`     | Disables input, trigger, and options.                                                                                              |
+| `required`      | `boolean`                         | `false`     | Native `required` on submit mirror when `name` is set.                                                                             |
+| `invalid`       | `boolean`                         | `false`     | Sets `aria-invalid` on the combobox input.                                                                                         |
+| `open`          | `boolean \| undefined`            | `undefined` | Controlled listbox open state.                                                                                                     |
+| `defaultOpen`   | `boolean`                         | `false`     | Initial open when `open` is omitted.                                                                                               |
+| `loading`       | `boolean`                         | `false`     | Announces loading and sets `aria-busy` on the listbox while true.                                                                  |
+| `placeholder`   | `string`                          | `undefined` | Passed through to the input when no selection label occupies the field.                                                            |
+| `allowDeselect` | `boolean`                         | `false`     | Single mode: re-selecting the active option clears selection.                                                                      |
+| `virtualized`   | `boolean`                         | `false`     | Documents windowed lists: highlight moves only among **mounted** options; consumer renders a slice and keeps ids stable per value. |
 
 `GhostFieldControl` slot props spread onto `GhostComboboxInput`.
 
 #### `GhostComboboxInput`
 
-| Prop       | Type                  | Default | Contract                                                                                     |
-| ---------- | --------------------- | ------- | -------------------------------------------------------------------------------------------- |
-| `as`       | `string \| Component` | `'input'` | Native `input` uses `type="text"`. Combobox host (`role="combobox"`).                     |
-| `disabled` | `boolean`             | `false` | Combines with root `disabled`.                                                               |
+| Prop       | Type                  | Default   | Contract                                                              |
+| ---------- | --------------------- | --------- | --------------------------------------------------------------------- |
+| `as`       | `string \| Component` | `'input'` | Native `input` uses `type="text"`. Combobox host (`role="combobox"`). |
+| `disabled` | `boolean`             | `false`   | Combines with root `disabled`.                                        |
 
 #### `GhostComboboxTrigger`
 
@@ -116,11 +116,11 @@ disabled options count toward “has options”; empty slot only when registry e
 
 ### v-model contracts
 
-| Role       | Prop         | Emit                  | Uncontrolled initial |
-| ---------- | ------------ | --------------------- | -------------------- |
-| Selection  | `modelValue` | `update:modelValue`   | `defaultValue`       |
-| Search     | `search`     | `update:search`       | `defaultSearch`      |
-| Open       | `open`       | `update:open`         | `defaultOpen`        |
+| Role      | Prop         | Emit                | Uncontrolled initial |
+| --------- | ------------ | ------------------- | -------------------- |
+| Selection | `modelValue` | `update:modelValue` | `defaultValue`       |
+| Search    | `search`     | `update:search`     | `defaultSearch`      |
+| Open      | `open`       | `update:open`       | `defaultOpen`        |
 
 `search` updates on input `input` events (every keystroke). Root increments an
 internal `searchRequestId` on each change and emits `search` with payload
@@ -147,14 +147,14 @@ emit time (root owns the counter; the helper mirrors it for consumer fetches).
 
 ## State model
 
-| Surface   | Attribute / state                                           |
-| --------- | ----------------------------------------------------------- |
-| Input     | `data-part="input"`, `data-state="open" \| "closed"`        |
-| Trigger   | `data-part="trigger"`, `data-state="open" \| "closed"`      |
-| Content   | `data-part="content"`, `data-state`, `data-placement`       |
-| Listbox   | `data-part="listbox"`                                       |
-| Option    | `data-part="option"`, `data-state="checked" \| "disabled"`  |
-| Empty     | `data-part="empty"`                                         |
+| Surface | Attribute / state                                          |
+| ------- | ---------------------------------------------------------- |
+| Input   | `data-part="input"`, `data-state="open" \| "closed"`       |
+| Trigger | `data-part="trigger"`, `data-state="open" \| "closed"`     |
+| Content | `data-part="content"`, `data-state`, `data-placement`      |
+| Listbox | `data-part="listbox"`                                      |
+| Option  | `data-part="option"`, `data-state="checked" \| "disabled"` |
+| Empty   | `data-part="empty"`                                        |
 
 Open content stays mounted while closed with `hidden` / `inert` (options register).
 Floating and dismiss layers attach while open.
@@ -165,13 +165,13 @@ registered options; pointer hover may move highlight (optional, matches APG).
 
 ### Loading, empty, disabled, read-only, and error states
 
-| State    | Precedence / behavior                                                                 |
-| -------- | ------------------------------------------------------------------------------------- |
-| Disabled | Blocks open, search, and selection; `aria-disabled` on input.                          |
-| Loading  | `GhostComboboxEmpty` hidden; live region “Loading results”; listbox `aria-busy`.      |
-| Empty    | Open + !loading + zero options → show `GhostComboboxEmpty`.                         |
-| Invalid  | Root `invalid` → `aria-invalid` on input.                                             |
-| Required | Empty selection fails constraint validation on submit mirror.                         |
+| State    | Precedence / behavior                                                            |
+| -------- | -------------------------------------------------------------------------------- |
+| Disabled | Blocks open, search, and selection; `aria-disabled` on input.                    |
+| Loading  | `GhostComboboxEmpty` hidden; live region “Loading results”; listbox `aria-busy`. |
+| Empty    | Open + !loading + zero options → show `GhostComboboxEmpty`.                      |
+| Invalid  | Root `invalid` → `aria-invalid` on input.                                        |
+| Required | Empty selection fails constraint validation on submit mirror.                    |
 
 ### Async behavior
 
@@ -207,13 +207,13 @@ does not read arbitrary object arrays.
 
 ### Keyboard
 
-| Key                          | Where (focus on input) | Behavior                                                                 |
-| ---------------------------- | ---------------------- | ------------------------------------------------------------------------ |
-| `ArrowDown` / `ArrowUp`      | Input                  | Opens if closed; moves `aria-activedescendant` among enabled options.   |
-| `Enter`                      | Input                  | Selects highlighted option (toggle in multiple); single closes list.    |
-| `Escape`                     | Input                  | Closes list; clears highlight.                                           |
-| Printable keys               | Input                  | Updates search; consumer replaces options.                               |
-| `Home` / `End`               | Input (open)           | First / last enabled option highlight.                                   |
+| Key                     | Where (focus on input) | Behavior                                                              |
+| ----------------------- | ---------------------- | --------------------------------------------------------------------- |
+| `ArrowDown` / `ArrowUp` | Input                  | Opens if closed; moves `aria-activedescendant` among enabled options. |
+| `Enter`                 | Input                  | Selects highlighted option (toggle in multiple); single closes list.  |
+| `Escape`                | Input                  | Closes list; clears highlight.                                        |
+| Printable keys          | Input                  | Updates search; consumer replaces options.                            |
+| `Home` / `End`          | Input (open)           | First / last enabled option highlight.                                |
 
 `GhostComboboxTrigger` is a single tab stop; activation toggles open without
 stealing combobox role.

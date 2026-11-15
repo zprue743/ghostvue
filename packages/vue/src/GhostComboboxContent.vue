@@ -89,17 +89,13 @@ onUnmounted(() => {
   context.setContentId(null)
 })
 
-const floating = useFloating(
-  () => context.inputElement.value,
-  contentElement,
-  {
-    placement: () => props.placement,
-    offset: () => props.offset,
-    flip: () => props.flip,
-    shift: () => props.shift,
-    strategy: () => props.strategy,
-  },
-)
+const floating = useFloating(() => context.inputElement.value, contentElement, {
+  placement: () => props.placement,
+  offset: () => props.offset,
+  flip: () => props.flip,
+  shift: () => props.shift,
+  strategy: () => props.strategy,
+})
 
 const shouldRestoreFocus = shallowRef(true)
 
@@ -124,7 +120,8 @@ function hasFocusableAncestor(target: EventTarget | null): boolean {
 }
 
 useDismissableLayer(contentElement, {
-  ignore: () => [context.inputElement.value, context.contentElement.value].filter(Boolean),
+  ignore: () =>
+    [context.inputElement.value, context.contentElement.value].filter(Boolean),
   onDismiss: (reason, event) => {
     if (!isOpen.value) {
       return
@@ -188,13 +185,6 @@ onUnmounted(() => {
   context.setContentElement(null)
   context.setListboxElement(null)
 })
-
-function handleOptionPointerMove(value: string): void {
-  if (context.isOptionDisabled(value)) {
-    return
-  }
-  context.setActiveOptionByValue(value)
-}
 
 const contentAttrs = computed(() => {
   const open = isOpen.value

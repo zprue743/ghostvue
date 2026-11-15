@@ -18,9 +18,15 @@ const tags = ref<string[]>(['vue'])
       placeholder="Add frameworks"
     />
     <GhostComboboxContent :portal="false">
-      <GhostComboboxOption value="vue" text-value="Vue">Vue</GhostComboboxOption>
-      <GhostComboboxOption value="react" text-value="React">React</GhostComboboxOption>
-      <GhostComboboxOption value="svelte" text-value="Svelte">Svelte</GhostComboboxOption>
+      <GhostComboboxOption value="vue" text-value="Vue"
+        >Vue</GhostComboboxOption
+      >
+      <GhostComboboxOption value="react" text-value="React"
+        >React</GhostComboboxOption
+      >
+      <GhostComboboxOption value="svelte" text-value="Svelte"
+        >Svelte</GhostComboboxOption
+      >
     </GhostComboboxContent>
   </GhostCombobox>
 </template>

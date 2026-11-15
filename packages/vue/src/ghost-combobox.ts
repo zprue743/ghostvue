@@ -24,8 +24,7 @@ export type GhostComboboxPlacement = Placement
 export type GhostComboboxStrategy = Strategy
 
 export type GhostComboboxPadding =
-  | number
-  | { top?: number; right?: number; bottom?: number; left?: number }
+  number | { top?: number; right?: number; bottom?: number; left?: number }
 
 export type GhostComboboxOffsetOptions =
   | number

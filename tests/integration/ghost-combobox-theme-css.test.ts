@@ -5,10 +5,7 @@ import { resolve } from 'node:path'
 
 import { describe, expect, it } from 'vitest'
 
-const cssPath = resolve(
-  process.cwd(),
-  'packages/themes/src/ghost-combobox.css',
-)
+const cssPath = resolve(process.cwd(), 'packages/themes/src/ghost-combobox.css')
 
 function stripComments(css: string) {
   return css.replace(/\/\*[\s\S]*?\*\//g, '')
