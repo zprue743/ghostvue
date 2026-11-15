@@ -13,8 +13,6 @@ import { exampleSource } from '../../../../examples/load'
 import LandingActionLink from './LandingActionLink.vue'
 import { landingComponentSurface } from './landing-surface'
 
-const INSTALL_CMD = 'pnpm add @ghostvue/vue @ghostvue/themes'
-
 const headlessSource = `import { GhostButton } from '@ghostvue/vue'
 
 <GhostButton :loading="pending">Save changes</GhostButton>
@@ -71,14 +69,11 @@ const stages = [
 
 const pending = ref(false)
 const progressionStage = ref<(typeof stages)[number]['id']>('props')
-const installCopied = ref(false)
 const activeDocsTheme = ref('calm')
 
 const surfaceRows = landingComponentSurface()
 
 let themeObserver: MutationObserver | undefined
-let installTimer: ReturnType<typeof setTimeout> | undefined
-
 const themeMetaLabel = computed(
   () => `@ghostvue/themes · ${activeDocsTheme.value}`,
 )
@@ -90,22 +85,6 @@ function togglePending(): void {
 function readDocsTheme(): void {
   const theme = document.documentElement.getAttribute('data-ghost-theme')
   activeDocsTheme.value = theme ?? 'calm'
-}
-
-async function copyInstall(): Promise<void> {
-  try {
-    await navigator.clipboard.writeText(INSTALL_CMD)
-    installCopied.value = true
-    if (installTimer !== undefined) {
-      clearTimeout(installTimer)
-    }
-    installTimer = setTimeout(() => {
-      installCopied.value = false
-      installTimer = undefined
-    }, 1400)
-  } catch {
-    installCopied.value = false
-  }
 }
 
 onMounted(() => {
@@ -121,9 +100,6 @@ onMounted(() => {
 
 onUnmounted(() => {
   themeObserver?.disconnect()
-  if (installTimer !== undefined) {
-    clearTimeout(installTimer)
-  }
 })
 </script>
 
@@ -166,22 +142,15 @@ onUnmounted(() => {
         <code>@ghostvue/themes</code>.
       </p>
       <div class="ghost-landing__actions">
-        <LandingActionLink href="/philosophy"> Get started </LandingActionLink>
+        <LandingActionLink href="/getting-started">
+          Get started
+        </LandingActionLink>
         <LandingActionLink href="/components/button" variant="outline">
           Browse components
         </LandingActionLink>
-        <button
-          type="button"
-          class="ghost-landing__install"
-          :aria-label="
-            installCopied
-              ? 'Install command copied'
-              : 'Copy install command to clipboard'
-          "
-          @click="copyInstall"
-        >
-          <code>{{ installCopied ? 'Copied to clipboard' : INSTALL_CMD }}</code>
-        </button>
+        <a href="/getting-started" class="ghost-landing__install">
+          <code>Pre-release — install once published</code>
+        </a>
       </div>
     </section>
 
