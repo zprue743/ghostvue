@@ -107,10 +107,28 @@ export default defineConfig({
       alt: '',
     },
     nav: [
-      { text: 'Philosophy', link: '/philosophy' },
-      { text: 'Architecture', link: '/architecture/overview' },
-      { text: 'Standards', link: '/standards/code-style' },
-      { text: 'Contributing', link: '/contributing/workflow' },
+      {
+        text: 'Docs',
+        link: '/getting-started',
+        activeMatch:
+          '^/(getting-started|philosophy|roadmap|reference/|warnings)',
+      },
+      {
+        text: 'Components',
+        link: '/components/button',
+        activeMatch: '^/components/(?!.*-spec)',
+      },
+      {
+        text: 'Theming',
+        link: '/themes/default',
+        activeMatch: '^/themes/',
+      },
+      {
+        text: 'Contribute',
+        link: '/contributing/workflow',
+        activeMatch:
+          '^/(contributing/|architecture/|standards/|agents/|adr/|components/.*-spec)',
+      },
     ],
     sidebar: docsSidebar,
     socialLinks: [
