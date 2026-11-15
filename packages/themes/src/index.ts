@@ -27,6 +27,12 @@ export {
 } from './ghost-badge'
 
 export {
+  GhostAvatar,
+  type GhostAvatarExposed,
+  type GhostAvatarSize,
+} from './ghost-avatar'
+
+export {
   GhostBreadcrumb,
   GhostBreadcrumbEllipsis,
   GhostBreadcrumbItem,

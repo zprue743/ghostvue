@@ -16,6 +16,21 @@ export {
 export { default as GhostBadge } from './GhostBadge.vue'
 export { useGhostBadge, type GhostBadgeRootProps } from './use-ghost-badge'
 export type { GhostBadgeExposed, GhostBadgeProps } from './ghost-badge'
+export { default as GhostAvatar } from './GhostAvatar.vue'
+export {
+  deriveGhostAvatarInitials,
+  useGhostAvatar,
+  type GhostAvatarImageProps,
+  type GhostAvatarRootProps,
+} from './use-ghost-avatar'
+export type {
+  GhostAvatarDataState,
+  GhostAvatarElement,
+  GhostAvatarExposed,
+  GhostAvatarImageStatus,
+  GhostAvatarProps,
+  UseGhostAvatarOptions,
+} from './ghost-avatar'
 export { default as GhostBreadcrumb } from './GhostBreadcrumb.vue'
 export { default as GhostBreadcrumbList } from './GhostBreadcrumbList.vue'
 export { default as GhostBreadcrumbItem } from './GhostBreadcrumbItem.vue'

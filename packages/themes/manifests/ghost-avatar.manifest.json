@@ -1,0 +1,128 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "handwritten",
+  "name": "GhostAvatar",
+  "package": "@ghostvue/themes",
+  "status": "experimental",
+  "description": "Themed wrapper around headless GhostAvatar. Same host semantics plus size. Importing it loads the default stylesheet and scopes styles to this instance. Hand-written until GHO-13 generates manifests.",
+  "props": [
+    {
+      "name": "src",
+      "type": "string",
+      "default": null,
+      "required": false,
+      "description": "Image URL passed to the unstyled avatar.",
+      "deprecated": false
+    },
+    {
+      "name": "alt",
+      "type": "string",
+      "default": null,
+      "required": false,
+      "description": "Accessible name for the loaded img.",
+      "deprecated": false
+    },
+    {
+      "name": "name",
+      "type": "string",
+      "default": null,
+      "required": false,
+      "description": "Initials source and default alt.",
+      "deprecated": false
+    },
+    {
+      "name": "as",
+      "type": "'span' | 'div'",
+      "default": "span",
+      "required": false,
+      "description": "Root host forwarded to the unstyled avatar.",
+      "deprecated": false
+    },
+    {
+      "name": "size",
+      "type": "'sm' | 'md' | 'lg'",
+      "default": "md",
+      "required": false,
+      "description": "Square dimensions. Default omits data-size.",
+      "deprecated": false
+    }
+  ],
+  "models": [],
+  "events": [],
+  "slots": [
+    {
+      "name": "fallback",
+      "props": [],
+      "description": "Custom fallback when the image is not shown."
+    }
+  ],
+  "exposed": [
+    {
+      "name": "element",
+      "kind": "property",
+      "type": "HTMLElement | null",
+      "description": "Root host after mount; null before mount. Delegates to the unstyled GhostAvatar."
+    }
+  ],
+  "styling": {
+    "parts": [
+      {
+        "name": "root",
+        "description": "Circular frame on the native host inside ghost-themed-scope."
+      },
+      {
+        "name": "image",
+        "description": "Cover-fit photo when loaded."
+      },
+      {
+        "name": "fallback",
+        "description": "Centered initials or slot content."
+      }
+    ],
+    "states": [
+      {
+        "name": "loading",
+        "description": "Subtle opacity while the client probes src."
+      },
+      {
+        "name": "loaded",
+        "description": "Image visible."
+      },
+      {
+        "name": "error",
+        "description": "Fallback visible after load failure."
+      }
+    ],
+    "cssProperties": [
+      {
+        "name": "--ghost-control-size-md-min",
+        "description": "Default square size for md."
+      },
+      {
+        "name": "--ghost-control-size-sm-min",
+        "description": "Square size for sm."
+      },
+      {
+        "name": "--ghost-control-size-lg-min",
+        "description": "Square size for lg."
+      },
+      {
+        "name": "--ghost-action-neutral-bg",
+        "description": "Fallback initials color."
+      },
+      {
+        "name": "--ghost-surface-bg",
+        "description": "Fallback background mix surface."
+      }
+    ]
+  },
+  "accessibility": {
+    "role": "generic",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/practices/names-and-descriptions/",
+    "keyboard": {
+      "Tab": "Does not land on the avatar unless the consumer adds tabindex."
+    },
+    "requiredAriaAttributes": []
+  },
+  "examples": ["avatar/themed"]
+}

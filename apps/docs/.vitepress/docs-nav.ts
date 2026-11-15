@@ -18,6 +18,7 @@ export const docsSidebar: LlmsSidebarGroup[] = [
     text: 'Components',
     items: [
       { text: 'GhostAccordion', link: '/components/accordion' },
+      { text: 'GhostAvatar', link: '/components/avatar' },
       { text: 'GhostBadge', link: '/components/badge' },
       { text: 'GhostBreadcrumb', link: '/components/breadcrumb' },
       { text: 'GhostCollapsible', link: '/components/collapsible' },
