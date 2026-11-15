@@ -1053,6 +1053,114 @@ describe('GhostDialog', () => {
     )
   })
 
+  it('refreshes inert isolation when portal or portalTo changes while open', async () => {
+    const appRoot = document.createElement('div')
+    appRoot.id = 'app-root'
+    const customPortal = document.createElement('div')
+    customPortal.id = 'custom-portal'
+    document.body.append(appRoot, customPortal)
+
+    const portal = ref(true)
+    const portalTo = ref<string>('body')
+
+    const wrapper = mount(
+      defineComponent({
+        setup() {
+          return () =>
+            h('div', { id: 'shell' }, [
+              h('main', { 'data-testid': 'app-main' }, 'App main'),
+              h(
+                GhostDialog,
+                { defaultOpen: true },
+                {
+                  default: () => [
+                    h(GhostDialogOverlay, {
+                      'data-testid': 'portal-toggle-overlay',
+                      portal: portal.value,
+                      portalTo: portalTo.value,
+                    }),
+                    h(
+                      GhostDialogContent,
+                      {
+                        'aria-label': 'Portal toggle dialog',
+                        'data-testid': 'portal-toggle-content',
+                        portal: portal.value,
+                        portalTo: portalTo.value,
+                      },
+                      () => [
+                        h(
+                          'button',
+                          { type: 'button', 'data-testid': 'portal-btn' },
+                          'Action',
+                        ),
+                        h(
+                          GhostDialogClose,
+                          { 'data-testid': 'portal-close' },
+                          () => 'Close',
+                        ),
+                      ],
+                    ),
+                  ],
+                },
+              ),
+            ])
+        },
+      }),
+      { attachTo: appRoot },
+    )
+    attached.push(wrapper)
+    await flushPromises()
+
+    const appMain = wrapper.get('[data-testid="app-main"]').element
+    const content = queryHtml('[data-testid="portal-toggle-content"]')
+    const actionBtn = queryHtml('[data-testid="portal-btn"]')
+
+    // Initially portaled to body: appRoot and customPortal are inert; content is not.
+    expect(content.parentElement).toBe(document.body)
+    expect(appRoot.hasAttribute('inert')).toBe(true)
+    expect(customPortal.hasAttribute('inert')).toBe(true)
+    expect(content.closest('[inert]')).toBeNull()
+    expect(actionBtn.closest('[inert]')).toBeNull()
+
+    // Toggle portal from true -> false while open: content moves inline under appRoot.
+    portal.value = false
+    await nextTick()
+
+    expect(appRoot.contains(content)).toBe(true)
+    expect(appRoot.hasAttribute('inert')).toBe(false)
+    expect(appMain.hasAttribute('inert')).toBe(true)
+    expect(customPortal.hasAttribute('inert')).toBe(true)
+    expect(content.closest('[inert]')).toBeNull()
+    expect(actionBtn.closest('[inert]')).toBeNull()
+
+    // Toggle portal back from false -> true while open.
+    portal.value = true
+    await nextTick()
+
+    expect(content.parentElement).toBe(document.body)
+    expect(appRoot.hasAttribute('inert')).toBe(true)
+    expect(appMain.hasAttribute('inert')).toBe(false)
+    expect(customPortal.hasAttribute('inert')).toBe(true)
+    expect(content.closest('[inert]')).toBeNull()
+
+    // Change portalTo target while open.
+    portalTo.value = '#custom-portal'
+    await nextTick()
+
+    expect(content.parentElement).toBe(customPortal)
+    expect(appRoot.hasAttribute('inert')).toBe(true)
+    expect(customPortal.hasAttribute('inert')).toBe(false)
+    expect(content.closest('[inert]')).toBeNull()
+    expect(actionBtn.closest('[inert]')).toBeNull()
+
+    // Close dialog and verify all inert attributes are cleared.
+    queryHtml('[data-testid="portal-close"]').click()
+    await flushPromises()
+    expect(appRoot.hasAttribute('inert')).toBe(false)
+    expect(appMain.hasAttribute('inert')).toBe(false)
+    expect(customPortal.hasAttribute('inert')).toBe(false)
+  })
+
   it('throws clear errors when dialog sub-parts are rendered outside GhostDialog', () => {
     for (const part of [
       GhostDialogTrigger,

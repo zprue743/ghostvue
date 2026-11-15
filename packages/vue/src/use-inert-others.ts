@@ -5,6 +5,7 @@ import {
   toValue,
   watch,
   type MaybeRefOrGetter,
+  type WatchSource,
 } from 'vue'
 
 /** Element or nullable target accepted by {@link useInertOthers}. */
@@ -127,19 +128,69 @@ function applyInertOthers(kept: readonly HTMLElement[]): () => void {
   }
 }
 
+/** Options accepted by {@link useInertOthers}. */
+export interface UseInertOthersOptions {
+  /** Reactive source(s) whose post-flush changes re-check kept element DOM placement. */
+  watch?: WatchSource<unknown> | readonly WatchSource<unknown>[]
+}
+
+function getAncestorChains(kept: readonly HTMLElement[]): Element[][] {
+  const body = document.body as HTMLBodyElement | null
+  if (!body) {
+    return kept.map(() => [])
+  }
+  return kept.map((element) => {
+    const chain: Element[] = []
+    if (element !== body && body.contains(element)) {
+      let current: HTMLElement | null = element.parentElement
+      while (current && current !== body) {
+        chain.push(current)
+        current = current.parentElement
+      }
+      chain.push(body)
+    }
+    return chain
+  })
+}
+
+function sameAncestorChains(
+  a: readonly (readonly Element[])[],
+  b: readonly (readonly Element[])[],
+): boolean {
+  if (a.length !== b.length) {
+    return false
+  }
+  for (let i = 0; i < a.length; i += 1) {
+    const chainA = a[i]
+    const chainB = b[i]
+    if (!chainA || chainA.length !== chainB?.length) {
+      return false
+    }
+    for (let j = 0; j < chainA.length; j += 1) {
+      if (chainA[j] !== chainB[j]) {
+        return false
+      }
+    }
+  }
+  return true
+}
+
 /**
  * Walks from each kept element up to `document.body` and marks every sibling
  * that does not contain a kept element as `inert` while `enabled` is `true`.
  *
  * Skips `[data-ghost-live]` elements, leaves pre-existing `inert` attributes
  * untouched, ref-counts per element across nested activations, ignores DOM
- * nodes added after activation, and defers all DOM access until `onMounted`.
+ * nodes added after activation, refreshes if a kept element moves in the DOM,
+ * and defers all DOM access until `onMounted`.
  */
 export function useInertOthers(
   elements: InertOthersElements,
   enabled: MaybeRefOrGetter<boolean> = true,
+  options?: UseInertOthersOptions,
 ): void {
   let stopWatch: (() => void) | undefined
+  let stopRefreshWatch: (() => void) | undefined
 
   onMounted(() => {
     const isEnabled = computed(() => toValue(enabled))
@@ -156,20 +207,60 @@ export function useInertOthers(
       return next
     })
 
+    let activeRefresh: (() => void) | undefined
+
     stopWatch = watch(
       [isEnabled, resolvedElements],
       ([active, kept], _previous, onCleanup) => {
         if (!active || kept.length === 0) {
+          activeRefresh = undefined
           return
         }
-        const release = applyInertOthers(kept)
-        onCleanup(release)
+
+        let lastChains = getAncestorChains(kept)
+        let release = applyInertOthers(kept)
+
+        const refresh = (): void => {
+          const nextChains = getAncestorChains(kept)
+          if (sameAncestorChains(lastChains, nextChains)) {
+            return
+          }
+          lastChains = nextChains
+          release()
+          release = applyInertOthers(kept)
+        }
+        activeRefresh = refresh
+
+        let observer: MutationObserver | undefined
+        if (typeof MutationObserver !== 'undefined') {
+          observer = new MutationObserver(refresh)
+          observer.observe(document.body, { childList: true, subtree: true })
+        }
+
+        onCleanup(() => {
+          if (activeRefresh === refresh) {
+            activeRefresh = undefined
+          }
+          observer?.disconnect()
+          release()
+        })
       },
       { immediate: true },
     )
+
+    if (options?.watch) {
+      stopRefreshWatch = watch(
+        options.watch,
+        () => {
+          activeRefresh?.()
+        },
+        { flush: 'post' },
+      )
+    }
   })
 
   onUnmounted(() => {
+    stopRefreshWatch?.()
     stopWatch?.()
   })
 }
