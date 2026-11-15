@@ -251,6 +251,20 @@ export const ghostExamples = [
     layer: 'themed',
   },
   {
+    id: 'dropdown-menu/basic',
+    title: 'Basic',
+    description:
+      'Headless menu button with items, checkbox, radio group, label, separator, and disabled item.',
+    layer: 'headless',
+  },
+  {
+    id: 'dropdown-menu/themed',
+    title: 'Themed',
+    description:
+      'Elevation-3 menu surface and interactive item tokens with a themed trigger button.',
+    layer: 'themed',
+  },
+  {
     id: 'dialog/basic',
     title: 'Basic',
     description:

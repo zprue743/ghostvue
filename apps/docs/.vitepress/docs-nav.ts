@@ -24,6 +24,7 @@ export const docsSidebar: LlmsSidebarGroup[] = [
       { text: 'GhostButton', link: '/components/button' },
       { text: 'GhostCheckbox', link: '/components/checkbox' },
       { text: 'GhostDialog', link: '/components/dialog' },
+      { text: 'GhostDropdownMenu', link: '/components/dropdown-menu' },
       { text: 'GhostEmptyState', link: '/components/empty-state' },
       { text: 'GhostField', link: '/components/field' },
       { text: 'GhostInlineAlert', link: '/components/inline-alert' },
@@ -185,6 +186,10 @@ export const docsSidebar: LlmsSidebarGroup[] = [
       {
         text: 'GhostDialog specification',
         link: '/components/dialog-spec',
+      },
+      {
+        text: 'GhostDropdownMenu specification',
+        link: '/components/dropdown-menu-spec',
       },
       {
         text: 'GhostInput specification',
