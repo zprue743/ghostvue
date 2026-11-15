@@ -78,33 +78,40 @@ async function readFamily(path) {
 /**
  * @param {PrimitivesRegistry} primitives
  * @param {FamilyRegistry[]} families
+ * @param {'vue' | 'themes'} kind
  */
-function buildVuePublicApi(primitives, families) {
-  if (primitives.vueBarrelSource) {
-    let source = primitives.vueBarrelSource.endsWith('\n')
-      ? primitives.vueBarrelSource
-      : `${primitives.vueBarrelSource}\n`
+function buildPackageBarrelBody(primitives, families, kind) {
+  const barrelSourceKey =
+    kind === 'vue' ? 'vueBarrelSource' : 'themesBarrelSource'
+  const barrelKey = kind === 'vue' ? 'vueBarrel' : 'themesBarrel'
+  const orderedKey = kind === 'vue' ? 'vueBarrelOrdered' : 'themesBarrelOrdered'
+  const defaultHeader =
+    kind === 'vue'
+      ? '/**\n * Public Vue package entry point. Named ESM exports are the primary API.\n */'
+      : '/** Themed wrappers and default CSS. One `GhostBadge` or `GhostButton` import loads the stylesheet. */'
+
+  const barrelSource = primitives[barrelSourceKey]
+  if (barrelSource) {
+    let source = barrelSource.endsWith('\n') ? barrelSource : `${barrelSource}\n`
     const bySlug = new Map(families.map((family) => [family.slug, family]))
     for (const slug of primitives.familyOrder ?? []) {
       const family = bySlug.get(slug)
-      const first = family?.vueBarrel?.[0]
+      const first = family?.[barrelKey]?.[0]
       if (first && !source.includes(first)) {
-        source = `${source.trimEnd()}\n${family.vueBarrel.join('\n')}\n`
+        source = `${source.trimEnd()}\n${family[barrelKey].join('\n')}\n`
       }
     }
-    return relocateBarrelImports(source)
+    return source
   }
-  const lines = [
-    '/**\n * Public Vue package entry point. Named ESM exports are the primary API.\n */',
-  ]
-  if (primitives.vueBarrelOrdered?.length) {
-    lines.push(...primitives.vueBarrelOrdered)
+  const lines = [defaultHeader]
+  if (primitives[orderedKey]?.length) {
+    lines.push(...primitives[orderedKey])
   } else {
     const bySlug = new Map(families.map((family) => [family.slug, family]))
-    if (primitives.vueBarrel?.length) lines.push(...primitives.vueBarrel)
+    if (primitives[barrelKey]?.length) lines.push(...primitives[barrelKey])
     for (const slug of primitives.familyOrder ?? []) {
       const family = bySlug.get(slug)
-      if (family?.vueBarrel?.length) lines.push(...family.vueBarrel)
+      if (family?.[barrelKey]?.length) lines.push(...family[barrelKey])
     }
   }
   return `${lines.join('\n')}\n`
@@ -114,35 +121,36 @@ function buildVuePublicApi(primitives, families) {
  * @param {PrimitivesRegistry} primitives
  * @param {FamilyRegistry[]} families
  */
+function buildVuePublicApi(primitives, families) {
+  return relocateBarrelImports(buildPackageBarrelBody(primitives, families, 'vue'))
+}
+
+/**
+ * Published declaration emit matches the pre-shim index.ts export surface.
+ *
+ * @param {PrimitivesRegistry} primitives
+ * @param {FamilyRegistry[]} families
+ */
+function buildVuePublishIndex(primitives, families) {
+  return buildPackageBarrelBody(primitives, families, 'vue')
+}
+
+/**
+ * @param {PrimitivesRegistry} primitives
+ * @param {FamilyRegistry[]} families
+ */
 function buildThemesPublicApi(primitives, families) {
-  if (primitives.themesBarrelSource) {
-    let source = primitives.themesBarrelSource.endsWith('\n')
-      ? primitives.themesBarrelSource
-      : `${primitives.themesBarrelSource}\n`
-    const bySlug = new Map(families.map((family) => [family.slug, family]))
-    for (const slug of primitives.familyOrder ?? []) {
-      const family = bySlug.get(slug)
-      const first = family?.themesBarrel?.[0]
-      if (first && !source.includes(first)) {
-        source = `${source.trimEnd()}\n${family.themesBarrel.join('\n')}\n`
-      }
-    }
-    return relocateBarrelImports(source)
-  }
-  const lines = [
-    '/** Themed wrappers and default CSS. One `GhostBadge` or `GhostButton` import loads the stylesheet. */',
-  ]
-  if (primitives.themesBarrelOrdered?.length) {
-    lines.push(...primitives.themesBarrelOrdered)
-  } else {
-    const bySlug = new Map(families.map((family) => [family.slug, family]))
-    if (primitives.themesBarrel?.length) lines.push(...primitives.themesBarrel)
-    for (const slug of primitives.familyOrder ?? []) {
-      const family = bySlug.get(slug)
-      if (family?.themesBarrel?.length) lines.push(...family.themesBarrel)
-    }
-  }
-  return `${lines.join('\n')}\n`
+  return relocateBarrelImports(
+    buildPackageBarrelBody(primitives, families, 'themes'),
+  )
+}
+
+/**
+ * @param {PrimitivesRegistry} primitives
+ * @param {FamilyRegistry[]} families
+ */
+function buildThemesPublishIndex(primitives, families) {
+  return buildPackageBarrelBody(primitives, families, 'themes')
 }
 
 /**
@@ -295,8 +303,16 @@ export async function syncRepositoryRegistries({ repositoryRoot, write }) {
       GENERATED_BANNER + buildVuePublicApi(primitives, families),
     ],
     [
+      'packages/vue/src/.publish-index.generated.ts',
+      buildVuePublishIndex(primitives, families),
+    ],
+    [
       'packages/themes/src/.registries/public-api.generated.ts',
       GENERATED_BANNER + buildThemesPublicApi(primitives, families),
+    ],
+    [
+      'packages/themes/src/.publish-index.generated.ts',
+      buildThemesPublishIndex(primitives, families),
     ],
     [
       'packages/themes/src/.registries/component-imports.generated.css',

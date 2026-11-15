@@ -1,5 +1,6 @@
 ---
 layout: GhostLanding
+sidebar: false
 ---
 
 # Vue-first, headless-first UI.

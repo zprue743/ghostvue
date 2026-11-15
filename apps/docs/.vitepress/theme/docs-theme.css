@@ -36,7 +36,16 @@ html[data-ghost-theme] {
     transparent
   );
   --vp-code-bg: var(--ghost-surface-muted-bg);
-  --vp-code-block-bg: var(--ghost-surface-muted-bg);
+  /*
+   * Light Shiki tokens on the muted ramp sit just under 4.5:1; nudge the fence
+   * canvas toward ink so syntax colors keep AA contrast without re-tuning Shiki.
+   */
+  --vp-code-block-bg: color-mix(
+    in oklch,
+    var(--ghost-surface-muted-bg) 82%,
+    var(--ghost-surface-fg)
+  );
+  --vp-code-bg: var(--vp-code-block-bg);
   --vp-code-copy-code-bg: var(--ghost-surface-bg);
   --vp-code-copy-code-hover-bg: var(--ghost-surface-subtle-bg);
 }
@@ -176,14 +185,15 @@ html[data-ghost-theme='mono'] {
     overflow: hidden;
   }
 
-  .VPNavBar .title {
+  /* VPNavBar wraps VPNavBarTitle in `.container > .title`; do not target the inner link. */
+  .VPNavBar .container > .title {
     flex: 0 1 auto;
     max-inline-size: 45%;
     min-inline-size: 0;
     overflow: hidden;
   }
 
-  .VPNavBar .title :deep(.title) {
+  .VPNavBar .VPNavBarTitle .title {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;

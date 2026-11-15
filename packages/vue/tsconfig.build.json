@@ -7,11 +7,11 @@
     "declarationMap": false
   },
   "references": [],
-  "include": [
-    "src/**/*.ts",
-    "src/**/*.tsx",
-    "src/**/*.vue",
-    "src/.registries/**/*.ts"
-  ],
-  "exclude": ["src/**/*.test.ts", "src/dev-codes-docs.ts"]
+  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.vue"],
+  "exclude": [
+    "src/**/*.test.ts",
+    "src/dev-codes-docs.ts",
+    "src/.registries/**/*.ts",
+    "src/.publish-index.generated.ts"
+  ]
 }

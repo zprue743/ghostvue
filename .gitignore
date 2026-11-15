@@ -19,7 +19,9 @@ docs/reference/
 
 # Generated from packages/vue/registry/*.registry.json (pnpm registries:write).
 packages/vue/src/.registries/
+packages/vue/src/.publish-index.generated.ts
 packages/themes/src/.registries/
+packages/themes/src/.publish-index.generated.ts
 examples/.registries/
 apps/docs/.vitepress/.registries/
 docs/.registries/

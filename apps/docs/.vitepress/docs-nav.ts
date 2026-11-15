@@ -13,6 +13,7 @@ export const docsSidebar: LlmsSidebarGroup[] = [
     text: 'Project',
     items: [
       { text: 'Overview', link: '/' },
+      { text: 'Getting started', link: '/getting-started' },
       { text: 'Philosophy', link: '/philosophy' },
       { text: 'Component roadmap', link: '/roadmap' },
     ],

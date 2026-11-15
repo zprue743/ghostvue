@@ -7,5 +7,10 @@
     "declarationMap": false,
     "sourceMap": true
   },
-  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/.registries/**/*.ts"]
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.d.ts",
+    "src/.publish-index.generated.ts"
+  ],
+  "exclude": ["src/index.ts", "src/.registries/**/*.ts"]
 }
