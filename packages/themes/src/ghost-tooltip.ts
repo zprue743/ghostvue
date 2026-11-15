@@ -22,8 +22,8 @@ export const GhostTooltip = defineComponent({
       default: false,
     },
     delayDuration: {
-      type: Number,
-      default: 700,
+      type: Number as PropType<number | undefined>,
+      default: undefined,
     },
     closeDelay: {
       type: Number,
@@ -45,7 +45,9 @@ export const GhostTooltip = defineComponent({
           ...attrs,
           open: props.open,
           defaultOpen: props.defaultOpen,
-          delayDuration: props.delayDuration,
+          ...(props.delayDuration !== undefined
+            ? { delayDuration: props.delayDuration }
+            : {}),
           closeDelay: props.closeDelay,
           disableHoverableContent: props.disableHoverableContent,
           'onUpdate:open': (next: boolean) => {

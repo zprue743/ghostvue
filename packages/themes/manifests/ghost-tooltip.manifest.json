@@ -24,7 +24,6 @@
     {
       "name": "delayDuration",
       "type": "number",
-      "default": 700,
       "required": false,
       "description": "Show delay forwarded to headless GhostTooltip.",
       "deprecated": false
