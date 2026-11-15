@@ -7,17 +7,17 @@
 
 Evidence: `git show --stat` on **Link** (`2807bd1a`), **Select** (`3b44059e`), **ScrollArea** (`c25da3bc`), **HoverCard** (`4a994900`).
 
-| Shared target | Touched by | Today |
-| --- | --- | --- |
-| `packages/vue/src/index.ts`, `packages/themes/src/index.ts`, `default.css` | all four | Hand-appended exports / imports |
-| `examples/registry.ts`, `apps/docs/.vitepress/docs-nav.ts` | all four | Hand inserts into one file each |
-| `docs/roadmap.md`, `packages/vue/src/overlay-ssr.test.ts` | most | Hand rows / imports / tests |
-| `apps/playground/src/App.vue` | Select, ScrollArea, HoverCard | Hand only (not in scaffold) |
-| `packages/*/manifests/*.manifest.json` | all four | **`pnpm manifests:write`** (already per-file) |
+| Shared target                                                              | Touched by                    | Today                                         |
+| -------------------------------------------------------------------------- | ----------------------------- | --------------------------------------------- |
+| `packages/vue/src/index.ts`, `packages/themes/src/index.ts`, `default.css` | all four                      | Hand-appended exports / imports               |
+| `examples/registry.ts`, `apps/docs/.vitepress/docs-nav.ts`                 | all four                      | Hand inserts into one file each               |
+| `docs/roadmap.md`, `packages/vue/src/overlay-ssr.test.ts`                  | most                          | Hand rows / imports / tests                   |
+| `apps/playground/src/App.vue`                                              | Select, ScrollArea, HoverCard | Hand only (not in scaffold)                   |
+| `packages/*/manifests/*.manifest.json`                                     | all four                      | **`pnpm manifests:write`** (already per-file) |
 
 ## 2. Per-family metadata (only merge surface)
 
-**Location:** `packages/vue/registry/<slug>.registry.json` — one file per *family* (`link`, `hover-card`, …), not per SFC. Scaffold and component PRs **add or update this file only** (plus component source). Manifests stay API-focused via existing `pnpm manifests`.
+**Location:** `packages/vue/registry/<slug>.registry.json` — one file per _family_ (`link`, `hover-card`, …), not per SFC. Scaffold and component PRs **add or update this file only** (plus component source). Manifests stay API-focused via existing `pnpm manifests`.
 
 **Shape** (JSON Schema `schemas/component-family-registry.schema.json`):
 
@@ -26,16 +26,29 @@ interface ComponentFamilyRegistry {
   schemaVersion: '1.0.0'
   slug: string
   linearIssue?: string
-  roadmap?: { tier: string; order: number; status: string; issueUrl: string; dependsOn?: string[] }
+  roadmap?: {
+    tier: string
+    order: number
+    status: string
+    issueUrl: string
+    dependsOn?: string[]
+  }
   docs: { title: string; specStatus: 'draft' | 'approved' }
   vue: { exports: RegistryExport[] }
   themes?: { cssFile: string; exports: RegistryExport[] }
   examples: GhostExampleDefinition[]
-  overlaySsr?: { id: string; parts: string[]; scenario: 'closed-and-open' | 'custom' }
+  overlaySsr?: {
+    id: string
+    parts: string[]
+    scenario: 'closed-and-open' | 'custom'
+  }
   playground?: { referenceVue?: string }
 }
 interface RegistryExport {
-  kind: 'value' | 'type'; name: string; module: string; group: 'component' | 'composable' | 'primitive'
+  kind: 'value' | 'type'
+  name: string
+  module: string
+  group: 'component' | 'composable' | 'primitive'
 }
 ```
 
@@ -47,16 +60,16 @@ interface RegistryExport {
 
 **Commands:** `pnpm registries` (check, in `pnpm verify`) and `pnpm registries:write`.
 
-**Wrong assumption (rejected):** Sorted “one line per family” orchestrators that are **committed** are *not* conflict-free. Git merges on insertion context: families that sort adjacent (`link` + `list`, or two names that both land at the end) edit the **same hunk** in `index.ts`, `examples/registry.ts`, and a single `docs-nav.generated.ts`. A committed monolithic nav file has the same problem; “rare conflicts” fails GHO-123.
+**Wrong assumption (rejected):** Sorted “one line per family” orchestrators that are **committed** are _not_ conflict-free. Git merges on insertion context: families that sort adjacent (`link` + `list`, or two names that both land at the end) edit the **same hunk** in `index.ts`, `examples/registry.ts`, and a single `docs-nav.generated.ts`. A committed monolithic nav file has the same problem; “rare conflicts” fails GHO-123.
 
 **Option (a) — generated orchestrators, not in git (recommended)**
 
-| Committed | Generated (gitignored, deterministic) |
-| --- | --- |
-| `packages/vue/registry/*.registry.json` | `packages/*/src/.registries/**` (full `index.ts`, theme barrel, `default.css` import block, example bundles + `examples/registry.ts`) |
-| Hand `docs-nav.ts` (non-component sections) | `docs-nav.component-items.generated.ts` (imported by hand nav) |
-| Hand `docs/roadmap.md` prose | `docs/roadmap.generated.md` fragment |
-| Hand `overlay-ssr.test.ts` harness | `overlay-ssr.fixtures.generated.ts` |
+| Committed                                   | Generated (gitignored, deterministic)                                                                                                 |
+| ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| `packages/vue/registry/*.registry.json`     | `packages/*/src/.registries/**` (full `index.ts`, theme barrel, `default.css` import block, example bundles + `examples/registry.ts`) |
+| Hand `docs-nav.ts` (non-component sections) | `docs-nav.component-items.generated.ts` (imported by hand nav)                                                                        |
+| Hand `docs/roadmap.md` prose                | `docs/roadmap.generated.md` fragment                                                                                                  |
+| Hand `overlay-ssr.test.ts` harness          | `overlay-ssr.fixtures.generated.ts`                                                                                                   |
 
 - **Pre-step:** `pnpm registries:write` before Vitest, Vite/VitePress, `vue-tsc`, and `packages/*/build`. Root `package.json` wires this into `verify`, `test`, `typecheck`, `docs:build`, and package `prebuild` scripts (same pattern as token generation today).
 - **Staleness:** `pnpm registries` recomputes from all `*.registry.json` and byte-compares to on-disk generated output; fails with “run `pnpm registries:write`” if missing or stale (verify runs write or requires it immediately before check — same effective gate as committed manifests).
@@ -69,13 +82,13 @@ interface RegistryExport {
 
 **Recommendation: (a).** Trade-offs:
 
-| | (a) Gitignored orchestrators | (b) `merge=union` committed |
-| --- | --- | --- |
-| Parallel PR merge | Only JSON paths overlap | Union + verify normalize |
-| IDE / fresh clone | Need `pnpm registries:write` (document; optional `prepare` hook) | Editors see full `index.ts` in git |
-| Typecheck | Points at generated barrels under `.registries/` | Standard paths |
-| Publishing | Dist built from generator output; byte-stable if sort rules fixed | Same if generator is source of truth |
-| Risk | Forgotten local regen | Bad union merge without running verify |
+|                   | (a) Gitignored orchestrators                                      | (b) `merge=union` committed            |
+| ----------------- | ----------------------------------------------------------------- | -------------------------------------- |
+| Parallel PR merge | Only JSON paths overlap                                           | Union + verify normalize               |
+| IDE / fresh clone | Need `pnpm registries:write` (document; optional `prepare` hook)  | Editors see full `index.ts` in git     |
+| Typecheck         | Points at generated barrels under `.registries/`                  | Standard paths                         |
+| Publishing        | Dist built from generator output; byte-stable if sort rules fixed | Same if generator is source of truth   |
+| Risk              | Forgotten local regen                                             | Bad union merge without running verify |
 
 `import.meta.glob` for barrels is **not** recommended: export order and conditional `type` exports must match today’s public surface; glob order is not a stable publish contract without the same generator anyway.
 

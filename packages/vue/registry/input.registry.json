@@ -1,0 +1,56 @@
+{
+  "schemaVersion": "1.0.0",
+  "slug": "input",
+  "docs": {
+    "title": "GhostInput",
+    "specStatus": "approved",
+    "link": "/components/input",
+    "specLink": "/components/input-spec"
+  },
+  "vueBarrel": [
+    "export { default as GhostInput } from './GhostInput.vue'",
+    "export { useGhostInput, type GhostInputRootProps } from './use-ghost-input'",
+    "export type {\n  GhostInputExposed,\n  GhostInputProps,\n  GhostInputType,\n  UseGhostInputOptions,\n} from './ghost-input'"
+  ],
+  "themesBarrel": [
+    "export {\n  GhostInput,\n  type GhostInputExposed,\n  type GhostInputSize,\n  type GhostInputType,\n} from './ghost-input'"
+  ],
+  "examples": [
+    {
+      "id": "input/basic",
+      "title": "Basic",
+      "description": "Native labeled text field. The default type is text.",
+      "layer": "headless"
+    },
+    {
+      "id": "input/composable",
+      "title": "Composable",
+      "description": "Same contract as GhostInput, applied to a native host.",
+      "layer": "headless"
+    },
+    {
+      "id": "input/ref",
+      "title": "Component ref",
+      "description": "Template refs expose element, focus, and blur.",
+      "layer": "headless"
+    },
+    {
+      "id": "input/themed",
+      "title": "Themed",
+      "description": "Size props on the @ghostvue/themes wrapper.",
+      "layer": "themed"
+    },
+    {
+      "id": "input/states",
+      "title": "States",
+      "description": "Disabled, readonly, invalid, and required.",
+      "layer": "themed"
+    },
+    {
+      "id": "input/search",
+      "title": "Search",
+      "description": "Controlled type=search for DataTable-style filters.",
+      "layer": "themed"
+    }
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "schemaVersion": "1.0.0",
+  "slug": "segmented-control",
+  "docs": {
+    "title": "GhostSegmentedControl",
+    "specStatus": "approved",
+    "link": "/components/segmented-control",
+    "specLink": "/components/segmented-control-spec"
+  },
+  "vueBarrel": [
+    "export { default as GhostSegmentedControl } from './GhostSegmentedControl.vue'",
+    "export { default as GhostSegmentedControlItem } from './GhostSegmentedControlItem.vue'",
+    "export { useGhostSegmentedControl } from './use-ghost-segmented-control'",
+    "export type {\n  GhostSegmentedControlElement,\n  GhostSegmentedControlItemElement,\n  GhostSegmentedControlExposed,\n  GhostSegmentedControlItemExposed,\n  GhostSegmentedControlProps,\n  GhostSegmentedControlItemProps,\n  GhostSegmentedControlOrientation,\n  GhostSegmentedControlValue,\n  UseGhostSegmentedControlOptions,\n  UseGhostSegmentedControlReturn,\n} from './ghost-segmented-control'"
+  ],
+  "themesBarrel": [
+    "export {\n  GhostSegmentedControl,\n  type GhostSegmentedControlExposed,\n} from './ghost-segmented-control'",
+    "export {\n  GhostSegmentedControlItem,\n  type GhostSegmentedControlItemElement,\n  type GhostSegmentedControlItemExposed,\n} from './ghost-segmented-control-item'"
+  ],
+  "examples": [
+    {
+      "id": "segmented-control/basic",
+      "title": "Segmented control",
+      "description": "Single-select view switcher with sliding indicator vars.",
+      "layer": "headless"
+    },
+    {
+      "id": "segmented-control/themed",
+      "title": "Segmented control themed",
+      "description": "Token-driven thumb with reduced-motion support.",
+      "layer": "themed"
+    }
+  ]
+}

@@ -16,3 +16,10 @@ test-results/
 
 # Generated from component manifests before docs build/dev.
 docs/reference/
+
+# Generated from packages/vue/registry/*.registry.json (pnpm registries:write).
+packages/vue/src/.registries/
+packages/themes/src/.registries/
+examples/.registries/
+apps/docs/.vitepress/.registries/
+docs/.registries/

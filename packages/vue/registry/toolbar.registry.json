@@ -1,0 +1,50 @@
+{
+  "schemaVersion": "1.0.0",
+  "slug": "toolbar",
+  "docs": {
+    "title": "GhostToolbar",
+    "specStatus": "approved",
+    "link": "/components/toolbar",
+    "specLink": "/components/toolbar-spec"
+  },
+  "vueBarrel": [
+    "export { default as GhostToolbar } from './GhostToolbar.vue'",
+    "export {\n  useGhostToolbar,\n  type GhostToolbarRootProps,\n  type UseGhostToolbarReturn,\n} from './use-ghost-toolbar'",
+    "export type {\n  GhostToolbarDirection,\n  GhostToolbarElement,\n  GhostToolbarExposed,\n  GhostToolbarOrientation,\n  UseGhostToolbarOptions,\n} from './ghost-toolbar'"
+  ],
+  "themesBarrel": [
+    "export { GhostToolbar, type GhostToolbarExposed } from './ghost-toolbar'"
+  ],
+  "examples": [
+    {
+      "id": "toolbar/basic",
+      "title": "Basic",
+      "description": "Horizontal action bar with roving focus among buttons.",
+      "layer": "headless"
+    },
+    {
+      "id": "toolbar/composable",
+      "title": "Composable",
+      "description": "Same contract as GhostToolbar on a native host.",
+      "layer": "headless"
+    },
+    {
+      "id": "toolbar/vertical",
+      "title": "Vertical",
+      "description": "Vertical toolbar with up and down arrow movement.",
+      "layer": "headless"
+    },
+    {
+      "id": "toolbar/separators",
+      "title": "Separators",
+      "description": "Group controls with semantic vertical separators.",
+      "layer": "headless"
+    },
+    {
+      "id": "toolbar/themed",
+      "title": "Themed",
+      "description": "Flex layout from @ghostvue/themes.",
+      "layer": "themed"
+    }
+  ]
+}

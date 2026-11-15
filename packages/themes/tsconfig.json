@@ -11,8 +11,10 @@
   "include": [
     "src/**/*.ts",
     "src/**/*.d.ts",
+    "src/.registries/**/*.ts",
     "../vue/src/**/*.ts",
-    "../vue/src/**/*.vue"
+    "../vue/src/**/*.vue",
+    "../vue/src/.registries/**/*.ts"
   ],
   "exclude": ["../vue/src/**/*.test.ts"]
 }

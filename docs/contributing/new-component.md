@@ -18,8 +18,10 @@ The scaffold creates:
   `examples/switch/basic.vue` registered in `examples/registry.ts`.
 - A runnable Playwright/Axe smoke test at `tests/e2e/ghost-switch.spec.ts`.
 
-It wires both public barrels, the default CSS imports and the docs sidebar:
-the component under Components and its draft specification under Contributing.
+It adds `packages/vue/registry/<slug>.registry.json`, updates
+`registry/primitives.registry.json`, and runs `pnpm registries:write` so public
+barrels, examples, and docs sidebar slices regenerate locally (gitignored
+`.registries/` output).
 Vue refs and composables stay in `vue`; a neutral scaffold has no useful
 framework-independent behavior to put in `core` or `shared`.
 

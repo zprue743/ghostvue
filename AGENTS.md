@@ -59,6 +59,8 @@ pnpm boundaries
 pnpm adapters
 pnpm manifests
 pnpm manifests:write
+pnpm registries
+pnpm registries:write
 pnpm typecheck
 pnpm test
 pnpm test:coverage

@@ -19,10 +19,13 @@
     "../../examples/**/*.ts",
     "../../examples/**/*.vue",
     "../../examples/**/*.d.ts",
+    "../../examples/.registries/**/*.ts",
     "../../packages/vue/src/**/*.ts",
     "../../packages/vue/src/**/*.vue",
+    "../../packages/vue/src/.registries/**/*.ts",
     "../../packages/themes/src/**/*.ts",
-    "../../packages/themes/src/**/*.d.ts"
+    "../../packages/themes/src/**/*.d.ts",
+    "../../packages/themes/src/.registries/**/*.ts"
   ],
   "exclude": [
     "../../packages/vue/src/**/*.test.ts",

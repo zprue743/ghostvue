@@ -17,7 +17,9 @@
     "dist"
   ],
   "scripts": {
+    "prebuild": "pnpm -w registries:write",
     "build": "vite build && vue-tsc -p tsconfig.build.json --emitDeclarationOnly && node ../../scripts/finalize-declarations.mjs dist",
+    "pretypecheck": "pnpm -w registries:write",
     "typecheck": "vue-tsc -p tsconfig.json --noEmit && node ../../scripts/vue-type-tests-negative.mjs"
   },
   "dependencies": {

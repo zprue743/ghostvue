@@ -1,0 +1,38 @@
+{
+  "schemaVersion": "1.0.0",
+  "slug": "interactive-surface",
+  "docs": {
+    "title": "GhostInteractiveSurface",
+    "specStatus": "approved",
+    "link": "/components/interactive-surface",
+    "specLink": "/components/interactive-surface-spec"
+  },
+  "vueBarrel": [
+    "export { default as GhostInteractiveSurface } from './GhostInteractiveSurface.vue'",
+    "export {\n  useGhostInteractiveSurface,\n  type GhostInteractiveSurfaceRootProps,\n} from './use-ghost-interactive-surface'",
+    "export type {\n  InteractiveEffect,\n  InteractiveStateAttribute,\n  InteractiveSurfaceElement,\n  InteractiveSurfaceState,\n  GhostInteractiveSurfaceExposed,\n  GhostInteractiveSurfaceProps,\n  UseGhostInteractiveSurfaceOptions,\n} from './ghost-interactive-surface'"
+  ],
+  "themesBarrel": [
+    "export {\n  GhostInteractiveSurface,\n  type InteractiveEffect,\n  type InteractiveSurfaceElement,\n  type GhostInteractiveSurfaceExposed,\n} from './ghost-interactive-surface'"
+  ],
+  "examples": [
+    {
+      "id": "interactive-surface/basic",
+      "title": "Basic",
+      "description": "Pointer spotlight on a content surface.",
+      "layer": "themed"
+    },
+    {
+      "id": "interactive-surface/composable",
+      "title": "Composable",
+      "description": "Spotlight tracking on a native host with a glow layer.",
+      "layer": "headless"
+    },
+    {
+      "id": "interactive-surface/button",
+      "title": "Button opt-in",
+      "description": "Themed GhostButton stays inert until interactive is set.",
+      "layer": "themed"
+    }
+  ]
+}

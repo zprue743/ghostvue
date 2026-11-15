@@ -1,0 +1,56 @@
+{
+  "schemaVersion": "1.0.0",
+  "slug": "button",
+  "docs": {
+    "title": "GhostButton",
+    "specStatus": "approved",
+    "link": "/components/button",
+    "specLink": "/components/button-spec"
+  },
+  "vueBarrel": [
+    "export { default as GhostButton } from './GhostButton.vue'",
+    "export { useGhostButton, type GhostButtonRootProps } from './use-ghost-button'",
+    "export type {\n  GhostButtonExposed,\n  GhostButtonProps,\n  GhostButtonType,\n  UseGhostButtonOptions,\n} from './ghost-button'"
+  ],
+  "themesBarrel": [
+    "export {\n  GhostButton,\n  type GhostButtonExposed,\n  type GhostButtonInteractive,\n  type GhostButtonSize,\n  type GhostButtonTone,\n  type GhostButtonType,\n  type GhostButtonVariant,\n} from './ghost-button'"
+  ],
+  "examples": [
+    {
+      "id": "button/basic",
+      "title": "Basic",
+      "description": "Native action control. The default type is button.",
+      "layer": "headless"
+    },
+    {
+      "id": "button/composable",
+      "title": "Composable",
+      "description": "Same contract as GhostButton, applied to a native host.",
+      "layer": "headless"
+    },
+    {
+      "id": "button/themed",
+      "title": "Themed",
+      "description": "Visual props on the @ghostvue/themes wrapper.",
+      "layer": "themed"
+    },
+    {
+      "id": "button/loading",
+      "title": "Loading and disabled",
+      "description": "Pending actions stay focusable; disabled ones do not.",
+      "layer": "themed"
+    },
+    {
+      "id": "button/icon-only",
+      "title": "Icon only",
+      "description": "Square treatment with an accessible name from aria-label.",
+      "layer": "themed"
+    },
+    {
+      "id": "button/ref",
+      "title": "Component ref",
+      "description": "Template refs expose element, focus, and blur.",
+      "layer": "headless"
+    }
+  ]
+}

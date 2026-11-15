@@ -1,0 +1,44 @@
+{
+  "schemaVersion": "1.0.0",
+  "slug": "pagination",
+  "docs": {
+    "title": "GhostPagination",
+    "specStatus": "approved",
+    "link": "/components/pagination",
+    "specLink": "/components/pagination-spec"
+  },
+  "vueBarrel": [
+    "export { default as GhostPagination } from './GhostPagination.vue'",
+    "export { useGhostPagination } from './use-ghost-pagination'",
+    "export type {\n  GhostPaginationExposed,\n  GhostPaginationProps,\n  GhostPaginationRootProps,\n  UseGhostPaginationOptions,\n} from './ghost-pagination'"
+  ],
+  "themesBarrel": [
+    "export {\n  GhostPagination,\n  type GhostPaginationExposed,\n} from './ghost-pagination'"
+  ],
+  "examples": [
+    {
+      "id": "pagination/basic",
+      "title": "Basic",
+      "description": "Numbered page navigation with previous and next.",
+      "layer": "headless"
+    },
+    {
+      "id": "pagination/controlled",
+      "title": "Controlled",
+      "description": "Parent-owned page index and page count.",
+      "layer": "headless"
+    },
+    {
+      "id": "pagination/ellipsis",
+      "title": "Ellipsis",
+      "description": "Large page counts collapse into start and end ellipsis.",
+      "layer": "headless"
+    },
+    {
+      "id": "pagination/themed",
+      "title": "Themed",
+      "description": "Default pagination styling from @ghostvue/themes.",
+      "layer": "themed"
+    }
+  ]
+}

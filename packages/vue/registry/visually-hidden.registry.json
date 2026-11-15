@@ -1,0 +1,53 @@
+{
+  "schemaVersion": "1.0.0",
+  "slug": "visually-hidden",
+  "docs": {
+    "title": "GhostVisuallyHidden",
+    "specStatus": "approved",
+    "link": "/components/visually-hidden",
+    "specLink": "/components/visually-hidden-spec"
+  },
+  "vueBarrel": [
+    "export { default as GhostVisuallyHidden } from './GhostVisuallyHidden.vue'",
+    "export {\n  useGhostVisuallyHidden,\n  type GhostVisuallyHiddenRootProps,\n} from './use-ghost-visually-hidden'",
+    "export type {\n  GhostVisuallyHiddenElement,\n  GhostVisuallyHiddenProps,\n  UseGhostVisuallyHiddenOptions,\n} from './ghost-visually-hidden'"
+  ],
+  "examples": [
+    {
+      "id": "visually-hidden/basic",
+      "title": "Basic",
+      "description": "Hidden text names an icon-only control.",
+      "layer": "headless"
+    },
+    {
+      "id": "visually-hidden/composable",
+      "title": "Composable",
+      "description": "Clip-technique hiding on a native element.",
+      "layer": "headless"
+    },
+    {
+      "id": "visually-hidden/icon-name",
+      "title": "Interpolated name",
+      "description": "Hidden text interpolates so translation tools can see it.",
+      "layer": "headless"
+    },
+    {
+      "id": "visually-hidden/table-header",
+      "title": "Table header",
+      "description": "A real th that only assistive technology encounters.",
+      "layer": "headless"
+    },
+    {
+      "id": "visually-hidden/skip-link",
+      "title": "Skip link",
+      "description": "Focusable hidden content reveals while it has focus.",
+      "layer": "headless"
+    },
+    {
+      "id": "visually-hidden/live-region",
+      "title": "Live region",
+      "description": "A visually hidden status that assistive technology announces.",
+      "layer": "headless"
+    }
+  ]
+}

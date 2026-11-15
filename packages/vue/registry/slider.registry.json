@@ -1,0 +1,44 @@
+{
+  "schemaVersion": "1.0.0",
+  "slug": "slider",
+  "docs": {
+    "title": "GhostSlider",
+    "specStatus": "approved",
+    "link": "/components/slider",
+    "specLink": "/components/slider-spec"
+  },
+  "vueBarrel": [
+    "export { default as GhostSlider } from './GhostSlider.vue'",
+    "export { useGhostSlider, type GhostSliderRootProps } from './use-ghost-slider'",
+    "export type {\n  GhostSliderExposed,\n  GhostSliderProps,\n  GhostSliderValue,\n  GhostSliderOrientation,\n} from './ghost-slider'"
+  ],
+  "themesBarrel": [
+    "export { GhostSlider, type GhostSliderExposed } from './ghost-slider'"
+  ],
+  "examples": [
+    {
+      "id": "slider/basic",
+      "title": "Single value",
+      "description": "Headless numeric slider with stepped values.",
+      "layer": "headless"
+    },
+    {
+      "id": "slider/range",
+      "title": "Range filter",
+      "description": "Two-thumb interval selection for tables.",
+      "layer": "headless"
+    },
+    {
+      "id": "slider/vertical",
+      "title": "Vertical themed",
+      "description": "Themed vertical orientation and tokens.",
+      "layer": "themed"
+    },
+    {
+      "id": "slider/value-text",
+      "title": "Value text",
+      "description": "Named slider with aria-valuetext alongside the numeric value.",
+      "layer": "headless"
+    }
+  ]
+}

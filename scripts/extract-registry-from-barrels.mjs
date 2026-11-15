@@ -5,7 +5,11 @@
  *   node scripts/extract-registry-from-barrels.mjs          # summary only
  *   node scripts/extract-registry-from-barrels.mjs --write  # emit packages/vue/registry/*.json
  */
+import { execFile } from 'node:child_process'
 import { mkdir, readFile, writeFile } from 'node:fs/promises'
+import { promisify } from 'node:util'
+
+const execFileAsync = promisify(execFile)
 import { dirname, join } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 
@@ -315,6 +319,10 @@ function parseDocsNavGhostLinks(source) {
   const componentLinks = new Map()
   /** @type {Map<string, { title: string, link: string }>} */
   const specLinks = new Map()
+  /** @type {string[]} */
+  const docsComponentNavOrder = []
+  /** @type {{ title: string, link: string }[]} */
+  const docsSpecNavItems = []
 
   const itemRegex = /\{\s*text:\s*'([^']+)',\s*link:\s*'([^']+)'/gs
 
@@ -324,6 +332,7 @@ function parseDocsNavGhostLinks(source) {
     const slug = link.replace(/^\/components\//, '').replace(/\/$/, '')
     if (slug.endsWith('-spec')) continue
     componentLinks.set(slug, { title, link })
+    docsComponentNavOrder.push(slug)
   }
 
   for (const match of contributingSection.matchAll(itemRegex)) {
@@ -334,9 +343,15 @@ function parseDocsNavGhostLinks(source) {
       .replace(/-spec$/, '')
       .replace(/\/$/, '')
     specLinks.set(slug, { title, link })
+    docsSpecNavItems.push({ title, link })
   }
 
-  return { componentLinks, specLinks }
+  return {
+    componentLinks,
+    specLinks,
+    docsComponentNavOrder,
+    docsSpecNavItems,
+  }
 }
 
 /**
@@ -373,21 +388,33 @@ function pushStatement(families, slug, kind, statement) {
   }
 }
 
-async function main() {
-  const vueBarrelPath = join(repositoryRoot, 'packages/vue/src/index.ts')
-  const themesBarrelPath = join(repositoryRoot, 'packages/themes/src/index.ts')
-  const examplesPath = join(repositoryRoot, 'examples/registry.ts')
-  const docsNavPath = join(
-    repositoryRoot,
-    'apps/docs/.vitepress/docs-nav.ts',
+async function readGitFile(relativePath) {
+  const { stdout } = await execFileAsync(
+    'git',
+    ['show', `origin/master:${relativePath}`],
+    { cwd: repositoryRoot, encoding: 'utf8' },
   )
+  return stdout
+}
+
+async function main() {
+  const fromMaster = process.argv.includes('--from-master')
+  const readSource = (relativePath) =>
+    fromMaster
+      ? readGitFile(relativePath)
+      : readFile(join(repositoryRoot, relativePath), 'utf8')
+
+  const vueBarrelPath = 'packages/vue/src/index.ts'
+  const themesBarrelPath = 'packages/themes/src/index.ts'
+  const examplesPath = 'examples/registry.ts'
+  const docsNavPath = 'apps/docs/.vitepress/docs-nav.ts'
 
   const [vueSource, themesSource, examplesSource, docsNavSource] =
     await Promise.all([
-      readFile(vueBarrelPath, 'utf8'),
-      readFile(themesBarrelPath, 'utf8'),
-      readFile(examplesPath, 'utf8'),
-      readFile(docsNavPath, 'utf8'),
+      readSource(vueBarrelPath),
+      readSource(themesBarrelPath),
+      readSource(examplesPath),
+      readSource(docsNavPath),
     ])
 
   const examples = parseExamplesRegistry(examplesSource)
@@ -397,7 +424,27 @@ async function main() {
 
   const vueStatements = splitExportStatements(vueSource)
   const themesStatements = splitExportStatements(themesSource)
-  const { componentLinks, specLinks } = parseDocsNavGhostLinks(docsNavSource)
+  const { componentLinks, specLinks, docsComponentNavOrder, docsSpecNavItems } =
+    parseDocsNavGhostLinks(docsNavSource)
+
+  const defaultCssSource = fromMaster
+    ? await readGitFile('packages/themes/src/default.css')
+    : await readFile(
+        join(repositoryRoot, 'packages/themes/src/default.css'),
+        'utf8',
+      )
+  const themesCssImports = defaultCssSource
+    .split('\n')
+    .map((line) => line.trim())
+    .filter((line) => line.startsWith("@import './") && line.includes('ghost-'))
+    .map((line) => line.replace(/^@import '\.\//, '').replace(/';$/, ''))
+
+  const roadmapSource = fromMaster
+    ? await readGitFile('docs/roadmap.md')
+    : await readFile(join(repositoryRoot, 'docs/roadmap.md'), 'utf8')
+  const roadmapTablesStart = roadmapSource.indexOf('## Tier 1')
+  const roadmapTablesMarkdown =
+    roadmapTablesStart === -1 ? '' : roadmapSource.slice(roadmapTablesStart)
 
   /** @type {Map<string, { vueBarrel: string[], themesBarrel: string[] }>} */
   const families = new Map()
@@ -406,7 +453,11 @@ async function main() {
 
   for (const statement of vueStatements) {
     const moduleSpecifier = extractModuleSpecifier(statement)
-    const slug = vueFamilySlug(moduleSpecifier ?? '', statement, exampleFamilies)
+    const slug = vueFamilySlug(
+      moduleSpecifier ?? '',
+      statement,
+      exampleFamilies,
+    )
     pushStatement(families, slug, 'vue', statement)
     if (slug !== 'primitives' && !familyOrder.includes(slug)) {
       familyOrder.push(slug)
@@ -416,11 +467,7 @@ async function main() {
   for (const statement of themesStatements) {
     const moduleSpecifier = extractModuleSpecifier(statement)
     if (!moduleSpecifier) continue
-    const slug = themesFamilySlug(
-      moduleSpecifier,
-      statement,
-      exampleFamilies,
-    )
+    const slug = themesFamilySlug(moduleSpecifier, statement, exampleFamilies)
     pushStatement(families, slug, 'themes', statement)
   }
 
@@ -445,7 +492,21 @@ async function main() {
     slug: 'primitives',
     familyOrder,
     vueBarrel: primitives.vueBarrel,
+    vueBarrelOrdered: vueStatements,
+    vueBarrelSource: vueSource,
     themesBarrel: primitives.themesBarrel,
+    themesBarrelOrdered: themesStatements,
+    themesBarrelSource: themesSource
+      .replace(/^import '\.\/default\.css'\n\n?/, '')
+      .replace(
+        /^\/\*\* Themed wrappers.*\n/,
+        '/** Themed wrappers and default CSS. One `GhostBadge` or `GhostButton` import loads the stylesheet. */\n',
+      ),
+    themesCssImports,
+    docsComponentNavOrder,
+    docsSpecNavItems,
+    roadmapTablesMarkdown,
+    examplesOrdered: examples,
   }
 
   const familySlugs = [...families.keys()]
@@ -480,11 +541,11 @@ async function main() {
       const spec = specLinks.get(slug)
       const title =
         nav?.title ??
-        (slug
+        slug
           .split('-')
           .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
           .join(' ')
-          .replace(/^/, 'Ghost'))
+          .replace(/^/, 'Ghost')
 
       /** @type {Record<string, unknown>} */
       const payload = {
@@ -510,7 +571,10 @@ async function main() {
 
       const path = join(registryDir, `${slug}.registry.json`)
       await writeRegistryJson(path, payload)
-      written.push({ slug, path: `packages/vue/registry/${slug}.registry.json` })
+      written.push({
+        slug,
+        path: `packages/vue/registry/${slug}.registry.json`,
+      })
     }
   }
 

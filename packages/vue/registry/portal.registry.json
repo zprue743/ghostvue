@@ -1,0 +1,12 @@
+{
+  "schemaVersion": "1.0.0",
+  "slug": "portal",
+  "docs": {
+    "title": "GhostPortal",
+    "specStatus": "approved"
+  },
+  "vueBarrel": [
+    "export { default as GhostPortal } from './GhostPortal.vue'",
+    "export type { GhostPortalProps, GhostPortalTarget } from './ghost-portal'"
+  ]
+}

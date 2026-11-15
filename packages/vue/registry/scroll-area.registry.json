@@ -1,0 +1,44 @@
+{
+  "schemaVersion": "1.0.0",
+  "slug": "scroll-area",
+  "docs": {
+    "title": "GhostScrollArea",
+    "specStatus": "approved",
+    "link": "/components/scroll-area",
+    "specLink": "/components/scroll-area-spec"
+  },
+  "vueBarrel": [
+    "export { default as GhostScrollArea } from './GhostScrollArea.vue'",
+    "export {\n  useGhostScrollArea,\n  type GhostScrollAreaRootProps,\n} from './use-ghost-scroll-area'",
+    "export type {\n  GhostScrollAreaElement,\n  GhostScrollAreaExposed,\n  GhostScrollAreaOrientation,\n  GhostScrollAreaOverflowState,\n  GhostScrollAreaOverflowType,\n  GhostScrollAreaProps,\n  UseGhostScrollAreaOptions,\n} from './ghost-scroll-area'"
+  ],
+  "themesBarrel": [
+    "export {\n  GhostScrollArea,\n  type GhostScrollAreaOrientation,\n  type GhostScrollAreaOverflowType,\n} from './ghost-scroll-area'"
+  ],
+  "examples": [
+    {
+      "id": "scroll-area/basic",
+      "title": "Basic",
+      "description": "Bounded vertical overflow with native scrolling.",
+      "layer": "headless"
+    },
+    {
+      "id": "scroll-area/horizontal",
+      "title": "Horizontal",
+      "description": "Inline-axis overflow for wide table previews.",
+      "layer": "headless"
+    },
+    {
+      "id": "scroll-area/composable",
+      "title": "Composable",
+      "description": "Same contract as GhostScrollArea on a native host.",
+      "layer": "headless"
+    },
+    {
+      "id": "scroll-area/themed",
+      "title": "Themed",
+      "description": "Native scrollbar containment on @ghostvue/themes.",
+      "layer": "themed"
+    }
+  ]
+}

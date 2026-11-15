@@ -1,0 +1,20 @@
+{
+  "schemaVersion": "1.0.0",
+  "slug": "tooltip-provider",
+  "docs": {
+    "title": "GhostTooltip Provider",
+    "specStatus": "approved"
+  },
+  "vueBarrel": [
+    "export { default as GhostTooltipProvider } from './GhostTooltipProvider.vue'",
+    "export {\n  ghostTooltipProviderContextKey,\n  type GhostTooltipProviderContext,\n  type GhostTooltipProviderProps,\n} from './ghost-tooltip-provider'"
+  ],
+  "examples": [
+    {
+      "id": "tooltip-provider/skip-delay",
+      "title": "Provider skip delay",
+      "description": "Adjacent tooltips share skipDelayDuration under GhostTooltipProvider.",
+      "layer": "headless"
+    }
+  ]
+}

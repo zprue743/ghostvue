@@ -1,0 +1,41 @@
+{
+  "schemaVersion": "1.0.0",
+  "slug": "accordion",
+  "docs": {
+    "title": "GhostAccordion",
+    "specStatus": "approved",
+    "link": "/components/accordion",
+    "specLink": "/components/accordion-spec"
+  },
+  "vueBarrel": [
+    "export { default as GhostAccordion } from './GhostAccordion.vue'",
+    "export { default as GhostAccordionItem } from './GhostAccordionItem.vue'",
+    "export { default as GhostAccordionTrigger } from './GhostAccordionTrigger.vue'",
+    "export { default as GhostAccordionContent } from './GhostAccordionContent.vue'",
+    "export { useGhostAccordion } from './use-ghost-accordion'",
+    "export type {\n  GhostAccordionContentElement,\n  GhostAccordionContentExposed,\n  GhostAccordionContentProps,\n  GhostAccordionContext,\n  GhostAccordionExposed,\n  GhostAccordionHeadingLevel,\n  GhostAccordionItemContext,\n  GhostAccordionItemProps,\n  GhostAccordionProps,\n  GhostAccordionTriggerElement,\n  GhostAccordionTriggerExposed,\n  GhostAccordionTriggerProps,\n  GhostAccordionType,\n  GhostAccordionValue,\n  UseGhostAccordionOptions,\n  UseGhostAccordionReturn,\n} from './ghost-accordion'"
+  ],
+  "themesBarrel": [
+    "export {\n  GhostAccordion,\n  GhostAccordionItem,\n  GhostAccordionTrigger,\n  GhostAccordionContent,\n  type GhostAccordionContentElement,\n  type GhostAccordionContentExposed,\n  type GhostAccordionExposed,\n  type GhostAccordionHeadingLevel,\n  type GhostAccordionItemProps,\n  type GhostAccordionTriggerElement,\n  type GhostAccordionTriggerExposed,\n  type GhostAccordionType,\n  type GhostAccordionValue,\n} from './ghost-accordion'"
+  ],
+  "examples": [
+    {
+      "id": "accordion/basic",
+      "title": "Accordion sections",
+      "description": "Single expansion with collapsible coordination over panels.",
+      "layer": "headless"
+    },
+    {
+      "id": "accordion/themed",
+      "title": "Themed accordion",
+      "description": "Multiple expansion with default surface styles.",
+      "layer": "themed"
+    },
+    {
+      "id": "accordion/navigation",
+      "title": "Accordion navigation",
+      "description": "Tab order across headers and panel links; nested accordion isolation.",
+      "layer": "headless"
+    }
+  ]
+}

@@ -1,0 +1,50 @@
+{
+  "schemaVersion": "1.0.0",
+  "slug": "progress",
+  "docs": {
+    "title": "GhostProgress",
+    "specStatus": "approved",
+    "link": "/components/progress",
+    "specLink": "/components/progress-spec"
+  },
+  "vueBarrel": [
+    "export { default as GhostProgress } from './GhostProgress.vue'",
+    "export {\n  useGhostProgress,\n  type GhostProgressIndicatorProps,\n  type GhostProgressRootProps,\n} from './use-ghost-progress'",
+    "export type {\n  GhostProgressProps,\n  UseGhostProgressOptions,\n} from './ghost-progress'"
+  ],
+  "themesBarrel": [
+    "export {\n  GhostProgress,\n  type GhostProgressSize,\n  type GhostProgressTone,\n} from './ghost-progress'"
+  ],
+  "examples": [
+    {
+      "id": "progress/basic",
+      "title": "Basic",
+      "description": "Named determinate progressbar with value and max.",
+      "layer": "headless"
+    },
+    {
+      "id": "progress/composable",
+      "title": "Composable",
+      "description": "Same contract as GhostProgress, applied to a native host.",
+      "layer": "headless"
+    },
+    {
+      "id": "progress/indeterminate",
+      "title": "Indeterminate",
+      "description": "Fallback when the current value is unknown.",
+      "layer": "headless"
+    },
+    {
+      "id": "progress/value-text",
+      "title": "Value text",
+      "description": "Custom accessible value text instead of a percent.",
+      "layer": "headless"
+    },
+    {
+      "id": "progress/themed",
+      "title": "Themed",
+      "description": "Track thickness and tone on the @ghostvue/themes wrapper.",
+      "layer": "themed"
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "schemaVersion": "1.0.0",
+  "slug": "hover-card",
+  "docs": {
+    "title": "GhostHoverCard",
+    "specStatus": "approved",
+    "link": "/components/hover-card",
+    "specLink": "/components/hover-card-spec"
+  },
+  "vueBarrel": [
+    "export { default as GhostHoverCard } from './GhostHoverCard.vue'",
+    "export { default as GhostHoverCardTrigger } from './GhostHoverCardTrigger.vue'",
+    "export { default as GhostHoverCardContent } from './GhostHoverCardContent.vue'",
+    "export { useGhostHoverCard } from './use-ghost-hover-card'",
+    "export {\n  ghostHoverCardContextKey,\n  hoverCardFocusStaysInside,\n  resolveHoverCardHtmlElement,\n  type GhostHoverCardContentElement,\n  type GhostHoverCardContentExposed,\n  type GhostHoverCardContentProps,\n  type GhostHoverCardContext,\n  type GhostHoverCardFlipOptions,\n  type GhostHoverCardOffsetOptions,\n  type GhostHoverCardPadding,\n  type GhostHoverCardPlacement,\n  type GhostHoverCardProps,\n  type GhostHoverCardShiftOptions,\n  type GhostHoverCardSlotProps,\n  type GhostHoverCardStrategy,\n  type GhostHoverCardTriggerElement,\n  type GhostHoverCardTriggerExposed,\n  type GhostHoverCardTriggerProps,\n  type UseGhostHoverCardOptions,\n  type UseGhostHoverCardReturn,\n} from './ghost-hover-card'"
+  ],
+  "themesBarrel": [
+    "export {\n  GhostHoverCard,\n  type GhostHoverCardSlotProps,\n} from './ghost-hover-card'",
+    "export {\n  GhostHoverCardTrigger,\n  type GhostHoverCardTriggerElement,\n  type GhostHoverCardTriggerExposed,\n} from './ghost-hover-card-trigger'",
+    "export {\n  GhostHoverCardContent,\n  type GhostHoverCardContentElement,\n  type GhostHoverCardContentExposed,\n  type GhostHoverCardFlipOptions,\n  type GhostHoverCardOffsetOptions,\n  type GhostHoverCardPlacement,\n  type GhostHoverCardShiftOptions,\n  type GhostHoverCardStrategy,\n} from './ghost-hover-card-content'"
+  ],
+  "examples": [
+    {
+      "id": "hover-card/basic",
+      "title": "Basic",
+      "description": "Unstyled hover/focus preview card with delays, interactive content, and Escape dismissal.",
+      "layer": "headless"
+    },
+    {
+      "id": "hover-card/themed",
+      "title": "Themed",
+      "description": "Elevation-3 surface tokens for rich preview cards.",
+      "layer": "themed"
+    }
+  ]
+}

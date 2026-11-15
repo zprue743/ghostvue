@@ -1,0 +1,50 @@
+{
+  "schemaVersion": "1.0.0",
+  "slug": "dropdown-menu",
+  "docs": {
+    "title": "GhostDropdownMenu",
+    "specStatus": "approved",
+    "link": "/components/dropdown-menu",
+    "specLink": "/components/dropdown-menu-spec"
+  },
+  "vueBarrel": [
+    "export { default as GhostDropdownMenu } from './GhostDropdownMenu.vue'",
+    "export { default as GhostDropdownMenuTrigger } from './GhostDropdownMenuTrigger.vue'",
+    "export { default as GhostDropdownMenuContent } from './GhostDropdownMenuContent.vue'",
+    "export { default as GhostDropdownMenuItem } from './GhostDropdownMenuItem.vue'",
+    "export { default as GhostDropdownMenuGroup } from './GhostDropdownMenuGroup.vue'",
+    "export { default as GhostDropdownMenuLabel } from './GhostDropdownMenuLabel.vue'",
+    "export { default as GhostDropdownMenuSeparator } from './GhostDropdownMenuSeparator.vue'",
+    "export { default as GhostDropdownMenuCheckboxItem } from './GhostDropdownMenuCheckboxItem.vue'",
+    "export { default as GhostDropdownMenuRadioGroup } from './GhostDropdownMenuRadioGroup.vue'",
+    "export { default as GhostDropdownMenuRadioItem } from './GhostDropdownMenuRadioItem.vue'",
+    "export { useGhostDropdownMenu } from './use-ghost-dropdown-menu'",
+    "export type {\n  GhostDropdownMenuCheckboxItemElement,\n  GhostDropdownMenuCheckboxItemExposed,\n  GhostDropdownMenuCheckboxItemProps,\n  GhostDropdownMenuContentElement,\n  GhostDropdownMenuContentExposed,\n  GhostDropdownMenuContentProps,\n  GhostDropdownMenuContext,\n  GhostDropdownMenuFlipOptions,\n  GhostDropdownMenuGroupElement,\n  GhostDropdownMenuGroupProps,\n  GhostDropdownMenuItemElement,\n  GhostDropdownMenuItemExposed,\n  GhostDropdownMenuItemProps,\n  GhostDropdownMenuLabelElement,\n  GhostDropdownMenuLabelProps,\n  GhostDropdownMenuOffsetOptions,\n  GhostDropdownMenuPadding,\n  GhostDropdownMenuPlacement,\n  GhostDropdownMenuProps,\n  GhostDropdownMenuRadioGroupContext,\n  GhostDropdownMenuRadioGroupElement,\n  GhostDropdownMenuRadioGroupProps,\n  GhostDropdownMenuRadioItemElement,\n  GhostDropdownMenuRadioItemExposed,\n  GhostDropdownMenuRadioItemProps,\n  GhostDropdownMenuSeparatorElement,\n  GhostDropdownMenuSeparatorProps,\n  GhostDropdownMenuShiftOptions,\n  GhostDropdownMenuSlotProps,\n  GhostDropdownMenuStrategy,\n  GhostDropdownMenuTriggerElement,\n  GhostDropdownMenuTriggerExposed,\n  GhostDropdownMenuTriggerProps,\n  UseGhostDropdownMenuOptions,\n  UseGhostDropdownMenuReturn,\n} from './ghost-dropdown-menu'"
+  ],
+  "themesBarrel": [
+    "export {\n  GhostDropdownMenu,\n  type GhostDropdownMenuSlotProps,\n} from './ghost-dropdown-menu'",
+    "export {\n  GhostDropdownMenuTrigger,\n  type GhostDropdownMenuTriggerElement,\n  type GhostDropdownMenuTriggerExposed,\n} from './ghost-dropdown-menu-trigger'",
+    "export {\n  GhostDropdownMenuContent,\n  type GhostDropdownMenuContentElement,\n  type GhostDropdownMenuContentExposed,\n  type GhostDropdownMenuFlipOptions,\n  type GhostDropdownMenuOffsetOptions,\n  type GhostDropdownMenuPlacement,\n  type GhostDropdownMenuShiftOptions,\n  type GhostDropdownMenuStrategy,\n} from './ghost-dropdown-menu-content'",
+    "export {\n  GhostDropdownMenuItem,\n  type GhostDropdownMenuItemElement,\n  type GhostDropdownMenuItemExposed,\n} from './ghost-dropdown-menu-item'",
+    "export {\n  GhostDropdownMenuCheckboxItem,\n  type GhostDropdownMenuCheckboxItemElement,\n  type GhostDropdownMenuCheckboxItemExposed,\n} from './ghost-dropdown-menu-checkbox-item'",
+    "export {\n  GhostDropdownMenuRadioItem,\n  type GhostDropdownMenuRadioItemElement,\n  type GhostDropdownMenuRadioItemExposed,\n} from './ghost-dropdown-menu-radio-item'",
+    "export {\n  GhostDropdownMenuRadioGroup,\n  type GhostDropdownMenuRadioGroupElement,\n} from './ghost-dropdown-menu-radio-group'",
+    "export {\n  GhostDropdownMenuLabel,\n  type GhostDropdownMenuLabelElement,\n} from './ghost-dropdown-menu-label'",
+    "export {\n  GhostDropdownMenuSeparator,\n  type GhostDropdownMenuSeparatorElement,\n} from './ghost-dropdown-menu-separator'",
+    "export {\n  GhostDropdownMenuGroup,\n  type GhostDropdownMenuGroupElement,\n} from './ghost-dropdown-menu-group'"
+  ],
+  "examples": [
+    {
+      "id": "dropdown-menu/basic",
+      "title": "Basic",
+      "description": "Headless menu button with items, checkbox, radio group, label, separator, and disabled item.",
+      "layer": "headless"
+    },
+    {
+      "id": "dropdown-menu/themed",
+      "title": "Themed",
+      "description": "Elevation-3 menu surface and interactive item tokens with a themed trigger button.",
+      "layer": "themed"
+    }
+  ]
+}

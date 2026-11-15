@@ -1,0 +1,54 @@
+{
+  "schemaVersion": "1.0.0",
+  "slug": "field",
+  "docs": {
+    "title": "GhostField",
+    "specStatus": "approved",
+    "link": "/components/field",
+    "specLink": "/components/field-spec"
+  },
+  "vueBarrel": [
+    "export { default as GhostField } from './GhostField.vue'",
+    "export { default as GhostFieldLabel } from './GhostFieldLabel.vue'",
+    "export { default as GhostFieldDescription } from './GhostFieldDescription.vue'",
+    "export { default as GhostFieldError } from './GhostFieldError.vue'",
+    "export { default as GhostFieldControl } from './GhostFieldControl.vue'",
+    "export { useGhostField, type GhostFieldRootProps } from './use-ghost-field'",
+    "export type {\n  GhostFieldControlProps,\n  GhostFieldControlSlotProps,\n  GhostFieldControlExposed,\n  GhostFieldContext,\n  GhostFieldDescriptionElement,\n  GhostFieldDescriptionExposed,\n  GhostFieldDescriptionProps,\n  GhostFieldErrorElement,\n  GhostFieldErrorExposed,\n  GhostFieldErrorProps,\n  GhostFieldExposed,\n  GhostFieldInternalContext,\n  GhostFieldLabelAssociate,\n  GhostFieldLabelElement,\n  GhostFieldLabelExposed,\n  GhostFieldLabelProps,\n  GhostFieldProps,\n  UseGhostFieldOptions,\n  UseGhostFieldReturn,\n} from './ghost-field'"
+  ],
+  "themesBarrel": [
+    "export {\n  GhostField,\n  GhostFieldControl,\n  GhostFieldDescription,\n  GhostFieldError,\n  GhostFieldLabel,\n  type GhostFieldControlSlotProps,\n  type GhostFieldExposed,\n  type GhostFieldLabelAssociate,\n} from './ghost-field'"
+  ],
+  "examples": [
+    {
+      "id": "field/basic",
+      "title": "Labeled input",
+      "description": "Label, hint, and control id wiring for GhostInput.",
+      "layer": "headless"
+    },
+    {
+      "id": "field/invalid",
+      "title": "Invalid field",
+      "description": "Required filter with error copy and aria-invalid.",
+      "layer": "headless"
+    },
+    {
+      "id": "field/textarea",
+      "title": "Textarea field",
+      "description": "GhostTextarea composed with description.",
+      "layer": "headless"
+    },
+    {
+      "id": "field/checkbox",
+      "title": "Wrapping checkbox",
+      "description": "associate=wrap label pattern for GhostCheckbox.",
+      "layer": "headless"
+    },
+    {
+      "id": "field/themed",
+      "title": "Themed stack",
+      "description": "Default vertical spacing from @ghostvue/themes.",
+      "layer": "themed"
+    }
+  ]
+}

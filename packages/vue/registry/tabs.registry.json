@@ -1,0 +1,50 @@
+{
+  "schemaVersion": "1.0.0",
+  "slug": "tabs",
+  "docs": {
+    "title": "GhostTabs",
+    "specStatus": "approved",
+    "link": "/components/tabs",
+    "specLink": "/components/tabs-spec"
+  },
+  "vueBarrel": [
+    "export { default as GhostTabs } from './GhostTabs.vue'",
+    "export { default as GhostTabsList } from './GhostTabsList.vue'",
+    "export { default as GhostTabsTrigger } from './GhostTabsTrigger.vue'",
+    "export { default as GhostTabsContent } from './GhostTabsContent.vue'",
+    "export { useGhostTabs } from './use-ghost-tabs'",
+    "export type {\n  GhostTabsExposed,\n  GhostTabsListElement,\n  GhostTabsListExposed,\n  GhostTabsTriggerElement,\n  GhostTabsTriggerExposed,\n  GhostTabsContentElement,\n  GhostTabsContentExposed,\n  GhostTabsProps,\n  GhostTabsSlotProps,\n  GhostTabsListProps,\n  GhostTabsTriggerProps,\n  GhostTabsContentProps,\n  GhostTabsActivationMode,\n  GhostTabsOrientation,\n  UseGhostTabsOptions,\n  UseGhostTabsReturn,\n} from './ghost-tabs'"
+  ],
+  "themesBarrel": [
+    "export { GhostTabs, type GhostTabsSlotProps } from './ghost-tabs'",
+    "export {\n  GhostTabsList,\n  type GhostTabsListElement,\n  type GhostTabsListExposed,\n} from './ghost-tabs-list'",
+    "export {\n  GhostTabsTrigger,\n  type GhostTabsTriggerElement,\n  type GhostTabsTriggerExposed,\n} from './ghost-tabs-trigger'",
+    "export {\n  GhostTabsContent,\n  type GhostTabsContentElement,\n  type GhostTabsContentExposed,\n} from './ghost-tabs-content'"
+  ],
+  "examples": [
+    {
+      "id": "tabs/basic",
+      "title": "Basic",
+      "description": "Controlled compound tabs with automatic activation.",
+      "layer": "headless"
+    },
+    {
+      "id": "tabs/manual",
+      "title": "Manual activation",
+      "description": "Tabs activate on click or Enter/Space instead of focus.",
+      "layer": "headless"
+    },
+    {
+      "id": "tabs/vertical",
+      "title": "Vertical",
+      "description": "Vertical tab list with arrow-key roving focus.",
+      "layer": "headless"
+    },
+    {
+      "id": "tabs/themed",
+      "title": "Themed",
+      "description": "Styled tab list and panels from @ghostvue/themes.",
+      "layer": "themed"
+    }
+  ]
+}

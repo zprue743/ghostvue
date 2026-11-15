@@ -1,0 +1,49 @@
+{
+  "schemaVersion": "1.0.0",
+  "slug": "avatar",
+  "docs": {
+    "title": "GhostAvatar",
+    "specStatus": "approved",
+    "link": "/components/avatar"
+  },
+  "vueBarrel": [
+    "export { default as GhostAvatar } from './GhostAvatar.vue'",
+    "export {\n  deriveGhostAvatarInitials,\n  useGhostAvatar,\n  type GhostAvatarImageProps,\n  type GhostAvatarRootProps,\n} from './use-ghost-avatar'",
+    "export type {\n  GhostAvatarDataState,\n  GhostAvatarElement,\n  GhostAvatarExposed,\n  GhostAvatarImageStatus,\n  GhostAvatarProps,\n  UseGhostAvatarOptions,\n} from './ghost-avatar'"
+  ],
+  "themesBarrel": [
+    "export {\n  GhostAvatar,\n  type GhostAvatarExposed,\n  type GhostAvatarSize,\n} from './ghost-avatar'"
+  ],
+  "examples": [
+    {
+      "id": "avatar/basic",
+      "title": "Initials",
+      "description": "Fallback initials from name without an image URL.",
+      "layer": "headless"
+    },
+    {
+      "id": "avatar/composable",
+      "title": "Composable",
+      "description": "Same contract as GhostAvatar, applied to a native host.",
+      "layer": "headless"
+    },
+    {
+      "id": "avatar/fallback",
+      "title": "Fallback slot",
+      "description": "Custom fallback when src is missing or fails to load.",
+      "layer": "headless"
+    },
+    {
+      "id": "avatar/image",
+      "title": "Loaded image",
+      "description": "Client image probe after SSR-safe loading fallback.",
+      "layer": "headless"
+    },
+    {
+      "id": "avatar/themed",
+      "title": "Themed",
+      "description": "Size hooks on the @ghostvue/themes wrapper.",
+      "layer": "themed"
+    }
+  ]
+}
