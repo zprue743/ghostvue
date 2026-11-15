@@ -20,6 +20,8 @@ docs/reference/
 # Generated from packages/vue/registry/*.registry.json (pnpm registries:write).
 packages/vue/src/.registries/
 packages/vue/src/.publish-index.generated.ts
+packages/vue/src/.publish-build/
+packages/vue/.declaration-build/
 packages/themes/src/.registries/
 packages/themes/src/.publish-index.generated.ts
 examples/.registries/
