@@ -222,7 +222,8 @@ stays mounted while closed so option labels remain registered.
 - `useControllableState` — value and open
 - `useGhostId` — ids
 - `useNativeFormReset` + visually hidden `input[type="text"]` — submit, `required`,
-  and reset
+  and reset (`aria-hidden` so axe ignores the mirror; the combobox trigger is the
+  accessible control)
 - `useFloating`, `GhostPortal`, `useDismissableLayer`, `useFocusScope` — overlay
 - `useRovingFocus` — option keyboard navigation
 - Local typeahead helper in `useGhostSelect` (no new package dependency)
