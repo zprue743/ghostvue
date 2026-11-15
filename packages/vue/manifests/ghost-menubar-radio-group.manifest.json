@@ -1,0 +1,69 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "generated",
+  "name": "GhostMenubarRadioGroup",
+  "package": "@ghostvue/vue",
+  "status": "experimental",
+  "description": "Public GhostMenubarRadioGroup component.",
+  "props": [
+    {
+      "name": "as",
+      "type": "GhostMenubarRadioGroupElement",
+      "default": "div",
+      "required": false,
+      "description": "Declared prop `as`.",
+      "deprecated": false
+    },
+    {
+      "name": "defaultValue",
+      "type": "string",
+      "required": false,
+      "description": "Declared prop `defaultValue`.",
+      "deprecated": false
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Declared prop `disabled`.",
+      "deprecated": false
+    },
+    {
+      "name": "modelValue",
+      "type": "string",
+      "required": false,
+      "description": "Declared prop `modelValue`.",
+      "deprecated": false
+    }
+  ],
+  "models": [
+    {
+      "prop": "modelValue",
+      "event": "update:modelValue",
+      "type": "string",
+      "description": "v-model binding for `modelValue`."
+    }
+  ],
+  "events": [],
+  "slots": [
+    {
+      "name": "default",
+      "props": [],
+      "description": "Primary content."
+    }
+  ],
+  "exposed": [],
+  "styling": {
+    "parts": [],
+    "states": [],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "generic",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/",
+    "keyboard": {},
+    "requiredAriaAttributes": []
+  },
+  "examples": []
+}

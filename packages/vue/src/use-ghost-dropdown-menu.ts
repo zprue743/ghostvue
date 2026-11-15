@@ -21,8 +21,9 @@ export function useGhostDropdownMenu(
     },
   })
 
-  const triggerId = useGhostId('ghost-dropdown-menu-trigger')
-  const contentId = useGhostId('ghost-dropdown-menu-content')
+  const idNamespace = options.idNamespace ?? 'ghost-dropdown-menu'
+  const triggerId = useGhostId(`${idNamespace}-trigger`)
+  const contentId = useGhostId(`${idNamespace}-content`)
 
   function open(): void {
     if (!isOpen.value) {

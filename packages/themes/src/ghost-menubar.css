@@ -1,0 +1,215 @@
+/*
+ * Themed GhostMenubar surface, triggers, and menu items. Visual values use
+ * semantic --ghost-* tokens with no component-specific literals.
+ */
+@layer ghostvue-theme {
+  :where(
+    .ghost-theme .ghost-menubar-content,
+    .ghost-themed-scope .ghost-menubar-content,
+    .ghost-menubar-content[data-themed]
+  ) {
+    background-color: var(--ghost-elevation-3-bg);
+    border: var(--ghost-border-hairline-width) solid
+      var(--ghost-elevation-3-border);
+    border-radius: var(--ghost-radius-lg);
+    box-shadow:
+      var(--ghost-elevation-3-shadow), var(--ghost-elevation-3-highlight);
+    box-sizing: border-box;
+    color: var(--ghost-surface-fg);
+    display: flex;
+    flex-direction: column;
+    font-family: var(--ghost-type-family-sans);
+    font-feature-settings: var(--ghost-type-feature-default);
+    gap: var(--ghost-space-gap-xs);
+    min-inline-size: max-content;
+    padding: var(--ghost-space-inset-xs);
+    z-index: 50;
+  }
+
+  :where(
+    .ghost-theme .ghost-menubar-content [data-part='label'],
+    .ghost-themed-scope .ghost-menubar-content [data-part='label'],
+    .ghost-menubar-content[data-themed] [data-part='label']
+  ) {
+    color: var(--ghost-text-muted);
+    font-size: var(--ghost-type-size-sm);
+    font-weight: var(--ghost-type-weight-semibold);
+    padding: var(--ghost-space-inset-xs) var(--ghost-space-inset-sm);
+    user-select: none;
+  }
+
+  :where(
+    .ghost-theme .ghost-menubar-content [data-part='item'],
+    .ghost-themed-scope .ghost-menubar-content [data-part='item'],
+    .ghost-menubar-content[data-themed] [data-part='item'],
+    .ghost-theme .ghost-menubar-content [data-part='checkbox-item'],
+    .ghost-themed-scope .ghost-menubar-content [data-part='checkbox-item'],
+    .ghost-menubar-content[data-themed] [data-part='checkbox-item'],
+    .ghost-theme .ghost-menubar-content [data-part='radio-item'],
+    .ghost-themed-scope .ghost-menubar-content [data-part='radio-item'],
+    .ghost-menubar-content[data-themed] [data-part='radio-item']
+  ) {
+    align-items: center;
+    border: var(--ghost-border-hairline-width) solid transparent;
+    border-radius: var(--ghost-radius-md);
+    box-sizing: border-box;
+    color: var(--ghost-surface-fg);
+    cursor: default;
+    display: flex;
+    font: inherit;
+    gap: var(--ghost-space-gap-sm);
+    outline: none;
+    padding: var(--ghost-space-inset-sm) var(--ghost-space-inset-md);
+    transition: background-color var(--ghost-motion-duration-fast)
+      var(--ghost-motion-ease-standard);
+    user-select: none;
+  }
+
+  :where(
+    .ghost-theme .ghost-menubar-content [data-part='item']:hover,
+    .ghost-themed-scope .ghost-menubar-content [data-part='item']:hover,
+    .ghost-menubar-content[data-themed] [data-part='item']:hover,
+    .ghost-theme .ghost-menubar-content [data-part='checkbox-item']:hover,
+    .ghost-themed-scope
+      .ghost-menubar-content
+      [data-part='checkbox-item']:hover,
+    .ghost-menubar-content[data-themed] [data-part='checkbox-item']:hover,
+    .ghost-theme .ghost-menubar-content [data-part='radio-item']:hover,
+    .ghost-themed-scope .ghost-menubar-content [data-part='radio-item']:hover,
+    .ghost-menubar-content[data-themed] [data-part='radio-item']:hover
+  ) {
+    background-color: var(--ghost-elevation-2-bg);
+  }
+
+  :where(
+    .ghost-theme .ghost-menubar-content [data-part='item']:focus-visible,
+    .ghost-themed-scope .ghost-menubar-content [data-part='item']:focus-visible,
+    .ghost-menubar-content[data-themed] [data-part='item']:focus-visible,
+    .ghost-theme
+      .ghost-menubar-content
+      [data-part='checkbox-item']:focus-visible,
+    .ghost-themed-scope
+      .ghost-menubar-content
+      [data-part='checkbox-item']:focus-visible,
+    .ghost-menubar-content[data-themed]
+      [data-part='checkbox-item']:focus-visible,
+    .ghost-theme .ghost-menubar-content [data-part='radio-item']:focus-visible,
+    .ghost-themed-scope
+      .ghost-menubar-content
+      [data-part='radio-item']:focus-visible,
+    .ghost-menubar-content[data-themed] [data-part='radio-item']:focus-visible
+  ) {
+    outline: var(--ghost-focus-ring-width) solid var(--ghost-focus-ring-color);
+    outline-offset: var(--ghost-focus-ring-offset);
+  }
+
+  :where(
+    .ghost-theme .ghost-menubar-content [data-part='item'][data-disabled],
+    .ghost-themed-scope
+      .ghost-menubar-content
+      [data-part='item'][data-disabled],
+    .ghost-menubar-content[data-themed] [data-part='item'][data-disabled],
+    .ghost-theme
+      .ghost-menubar-content
+      [data-part='checkbox-item'][data-disabled],
+    .ghost-themed-scope
+      .ghost-menubar-content
+      [data-part='checkbox-item'][data-disabled],
+    .ghost-menubar-content[data-themed]
+      [data-part='checkbox-item'][data-disabled],
+    .ghost-theme .ghost-menubar-content [data-part='radio-item'][data-disabled],
+    .ghost-themed-scope
+      .ghost-menubar-content
+      [data-part='radio-item'][data-disabled],
+    .ghost-menubar-content[data-themed] [data-part='radio-item'][data-disabled]
+  ) {
+    color: var(--ghost-text-muted);
+    cursor: not-allowed;
+    opacity: var(--ghost-opacity-disabled);
+  }
+
+  :where(
+    .ghost-theme .ghost-menubar-content [data-part='separator'],
+    .ghost-themed-scope .ghost-menubar-content [data-part='separator'],
+    .ghost-menubar-content[data-themed] [data-part='separator']
+  ) {
+    align-self: stretch;
+    background-color: var(--ghost-border-default);
+    block-size: var(--ghost-border-hairline-width);
+    border: none;
+    margin-block: var(--ghost-space-gap-xs);
+    padding: 0;
+  }
+
+  @media (forced-colors: active) {
+    :where(
+      .ghost-theme .ghost-menubar-content,
+      .ghost-themed-scope .ghost-menubar-content,
+      .ghost-menubar-content[data-themed]
+    ) {
+      background-color: Canvas;
+      border-color: CanvasText;
+      box-shadow: none;
+      color: CanvasText;
+    }
+
+    :where(
+      .ghost-theme .ghost-menubar-content [data-part='item']:focus-visible,
+      .ghost-themed-scope
+        .ghost-menubar-content
+        [data-part='item']:focus-visible,
+      .ghost-menubar-content[data-themed] [data-part='item']:focus-visible,
+      .ghost-theme
+        .ghost-menubar-content
+        [data-part='checkbox-item']:focus-visible,
+      .ghost-themed-scope
+        .ghost-menubar-content
+        [data-part='checkbox-item']:focus-visible,
+      .ghost-menubar-content[data-themed]
+        [data-part='checkbox-item']:focus-visible,
+      .ghost-theme
+        .ghost-menubar-content
+        [data-part='radio-item']:focus-visible,
+      .ghost-themed-scope
+        .ghost-menubar-content
+        [data-part='radio-item']:focus-visible,
+      .ghost-menubar-content[data-themed] [data-part='radio-item']:focus-visible
+    ) {
+      outline-color: Highlight;
+    }
+
+    :where(
+      .ghost-theme .ghost-menubar-content [data-part='separator'],
+      .ghost-themed-scope .ghost-menubar-content [data-part='separator'],
+      .ghost-menubar-content[data-themed] [data-part='separator']
+    ) {
+      background-color: CanvasText;
+    }
+  }
+
+  :where(.ghost-theme .ghost-menubar, .ghost-themed-scope .ghost-menubar) {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    font-family: var(--ghost-type-family-sans);
+    gap: var(--ghost-space-gap-xs);
+  }
+
+  :where(
+    .ghost-theme .ghost-menubar [data-part='trigger'],
+    .ghost-themed-scope .ghost-menubar [data-part='trigger']
+  ) {
+    border-radius: var(--ghost-radius-md);
+    color: var(--ghost-surface-fg);
+    font: inherit;
+    padding: var(--ghost-space-inset-sm) var(--ghost-space-inset-md);
+  }
+
+  :where(
+    .ghost-theme .ghost-menubar [data-part='trigger']:focus-visible,
+    .ghost-themed-scope .ghost-menubar [data-part='trigger']:focus-visible
+  ) {
+    outline: var(--ghost-focus-ring-width) solid var(--ghost-focus-ring-color);
+    outline-offset: var(--ghost-focus-ring-offset);
+  }
+}

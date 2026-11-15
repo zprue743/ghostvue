@@ -1,0 +1,62 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "generated",
+  "name": "GhostMenubar",
+  "package": "@ghostvue/vue",
+  "status": "experimental",
+  "description": "Scaffold only: neutral content container. Approve the component specification before implementing widget behavior.",
+  "props": [
+    {
+      "name": "as",
+      "type": "Component | string",
+      "default": "div",
+      "required": false,
+      "description": "Declared prop `as`.",
+      "deprecated": false
+    },
+    {
+      "name": "dir",
+      "type": "'ltr' | 'rtl'",
+      "required": false,
+      "description": "Declared prop `dir`.",
+      "deprecated": false
+    }
+  ],
+  "models": [],
+  "events": [],
+  "slots": [
+    {
+      "name": "default",
+      "props": [],
+      "description": "Container content."
+    }
+  ],
+  "exposed": [
+    {
+      "name": "element",
+      "kind": "property",
+      "type": "HTMLElement | null",
+      "description": "Root element after mount; null before mount."
+    }
+  ],
+  "styling": {
+    "parts": [
+      {
+        "name": "root",
+        "description": "Neutral content container."
+      }
+    ],
+    "states": [],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "generic",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/",
+    "keyboard": {},
+    "requiredAriaAttributes": []
+  },
+  "examples": [
+    "menubar/basic",
+    "menubar/themed"
+  ]
+}

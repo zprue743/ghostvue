@@ -8,6 +8,11 @@ import GhostCollapsibleTrigger from '../../packages/vue/src/GhostCollapsibleTrig
 import GhostDropdownMenu from '../../packages/vue/src/GhostDropdownMenu.vue'
 import GhostDropdownMenuContent from '../../packages/vue/src/GhostDropdownMenuContent.vue'
 import GhostDropdownMenuTrigger from '../../packages/vue/src/GhostDropdownMenuTrigger.vue'
+import GhostMenubar from '../../packages/vue/src/GhostMenubar.vue'
+import GhostMenubarContent from '../../packages/vue/src/GhostMenubarContent.vue'
+import GhostMenubarItem from '../../packages/vue/src/GhostMenubarItem.vue'
+import GhostMenubarMenu from '../../packages/vue/src/GhostMenubarMenu.vue'
+import GhostMenubarTrigger from '../../packages/vue/src/GhostMenubarTrigger.vue'
 import GhostInlineAlert from '../../packages/vue/src/GhostInlineAlert.vue'
 import GhostSelect from '../../packages/vue/src/GhostSelect.vue'
 import GhostSelectContent from '../../packages/vue/src/GhostSelectContent.vue'
@@ -81,6 +86,36 @@ describe('SSR hydration harness', () => {
         expect(html).toContain('aria-expanded="false"')
         expect(html).toContain('aria-haspopup="menu"')
         expect(html).not.toContain('Hidden menu panel')
+      },
+    })
+  })
+
+  it('hydrates closed GhostMenubar without mismatch', async () => {
+    const ClosedMenubar = defineComponent({
+      name: 'ClosedMenubarFixture',
+      setup() {
+        return () =>
+          h(GhostMenubar, null, {
+            default: () =>
+              h(GhostMenubarMenu, null, {
+                default: () => [
+                  h(GhostMenubarTrigger, null, () => 'File'),
+                  h(GhostMenubarContent, null, () =>
+                    h(GhostMenubarItem, null, () => 'Hidden menu item'),
+                  ),
+                ],
+              }),
+          })
+      },
+    })
+
+    await expectSsrHydration(ClosedMenubar, {
+      assertServerHtml(html) {
+        expect(html).toContain('role="menubar"')
+        expect(html).toContain('File')
+        expect(html).toContain('aria-expanded="false"')
+        expect(html).toContain('role="menuitem"')
+        expect(html).not.toContain('Hidden menu item')
       },
     })
   })

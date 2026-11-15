@@ -50,24 +50,24 @@ wrappers plus `ghost-menubar.css` via `default.css`.
 
 #### `GhostMenubar` (root)
 
-| Prop  | Type                    | Default   | Contract                                    |
-| ----- | ----------------------- | --------- | ------------------------------------------- |
-| `as`  | `string \| Component`   | `'div'`   | Menubar container element.                  |
-| `dir` | `'ltr' \| 'rtl'`        | omitted   | Text direction for horizontal arrow keys. |
+| Prop  | Type                  | Default | Contract                                  |
+| ----- | --------------------- | ------- | ----------------------------------------- |
+| `as`  | `string \| Component` | `'div'` | Menubar container element.                |
+| `dir` | `'ltr' \| 'rtl'`      | omitted | Text direction for horizontal arrow keys. |
 
 #### `GhostMenubarMenu` (menu root)
 
-| Prop          | Type                   | Default     | Contract                                           |
-| ------------- | ---------------------- | ----------- | -------------------------------------------------- |
-| `open`        | `boolean \| undefined` | `undefined` | Controlled open state.                             |
-| `defaultOpen` | `boolean`              | `false`     | Initial open in uncontrolled mode.                 |
+| Prop          | Type                   | Default     | Contract                           |
+| ------------- | ---------------------- | ----------- | ---------------------------------- |
+| `open`        | `boolean \| undefined` | `undefined` | Controlled open state.             |
+| `defaultOpen` | `boolean`              | `false`     | Initial open in uncontrolled mode. |
 
 #### `GhostMenubarTrigger`
 
-| Prop       | Type                               | Default    | Contract                                                                 |
-| ---------- | ---------------------------------- | ---------- | ------------------------------------------------------------------------ |
-| `as`       | `GhostMenubarTriggerElement`       | `'button'` | Host element; `role="menuitem"` on the menubar.                          |
-| `disabled` | `boolean`                          | `false`    | Skips roving; not activatable.                                           |
+| Prop       | Type                         | Default    | Contract                                        |
+| ---------- | ---------------------------- | ---------- | ----------------------------------------------- |
+| `as`       | `GhostMenubarTriggerElement` | `'button'` | Host element; `role="menuitem"` on the menubar. |
+| `disabled` | `boolean`                    | `false`    | Skips roving; not activatable.                  |
 
 #### `GhostMenubarContent`
 
@@ -112,14 +112,14 @@ WAI-ARIA APG **Menubar** pattern (flat menus per top-level item):
 
 ### Keyboard interaction
 
-| Key                     | Where              | Behavior                                                                 |
-| ----------------------- | ------------------ | ------------------------------------------------------------------------ |
-| `Tab`                   | Menubar            | Single tab stop into the bar; Tab moves out.                             |
-| `ArrowLeft` / `Right`   | Menubar (trigger)  | Roving focus among triggers (wrap); if a menu is open, close it and open the adjacent menu. |
-| `ArrowDown` / `Enter` / `Space` | Closed trigger | Open menu; focus first item (`ArrowUp` on trigger focuses last item).   |
-| Menu keys               | Open menu          | Same as `GhostDropdownMenu` via `useGhostMenuCollection`.                |
-| `Home` / `End`          | Menubar triggers   | First / last enabled trigger.                                            |
-| `Escape`                | Open menu          | Close; restore focus to owning trigger.                                  |
+| Key                             | Where             | Behavior                                                                                    |
+| ------------------------------- | ----------------- | ------------------------------------------------------------------------------------------- |
+| `Tab`                           | Menubar           | Single tab stop into the bar; Tab moves out.                                                |
+| `ArrowLeft` / `Right`           | Menubar (trigger) | Roving focus among triggers (wrap); if a menu is open, close it and open the adjacent menu. |
+| `ArrowDown` / `Enter` / `Space` | Closed trigger    | Open menu; focus first item (`ArrowUp` on trigger focuses last item).                       |
+| Menu keys                       | Open menu         | Same as `GhostDropdownMenu` via `useGhostMenuCollection`.                                   |
+| `Home` / `End`                  | Menubar triggers  | First / last enabled trigger.                                                               |
+| `Escape`                        | Open menu         | Close; restore focus to owning trigger.                                                     |
 
 ### Focus behavior
 

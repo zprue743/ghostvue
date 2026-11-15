@@ -204,6 +204,11 @@ export interface UseGhostDropdownMenuOptions {
   open?: MaybeRefOrGetter<boolean | undefined>
   defaultOpen?: MaybeRefOrGetter<boolean | undefined>
   onOpenChange?: (open: boolean) => void
+  /**
+   * Prefix for SSR-safe part IDs (`{namespace}-trigger`, `{namespace}-content`).
+   * @default 'ghost-dropdown-menu'
+   */
+  idNamespace?: string
 }
 
 /** Reactive state and helpers returned by {@link useGhostDropdownMenu}. */
