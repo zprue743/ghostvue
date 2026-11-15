@@ -43,7 +43,8 @@
     "number-input",
     "slider",
     "combobox",
-    "menubar"
+    "menubar",
+    "calendar"
   ],
   "vueBarrel": [
     "export { useGhostId } from './use-ghost-id'",

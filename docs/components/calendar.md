@@ -48,7 +48,7 @@ Themed parts set `data-themed` so calendar CSS applies under `.ghost-theme` or
 
 ## API
 
-See the [specification](./calendar-spec.md). Generated manifest data lives under
+See the [specification](/specs/calendar). Generated manifest data lives under
 `packages/vue/manifests/ghost-calendar.manifest.json` and themed
 `packages/themes/manifests/ghost-calendar.manifest.json`.
 
@@ -64,4 +64,4 @@ See the [specification](./calendar-spec.md). Generated manifest data lives under
 
 Keyboard support on the grid includes arrow keys (day/week), Home/End (week
 boundaries), Page Up/Down (month), and Shift+Page Up/Down (year). The focused
-date uses roving `tabindex`. See [the calendar specification](./calendar-spec.md#keyboard-interaction-on-grid-with-focus-inside).
+date uses roving `tabindex`. See [the calendar specification](/specs/calendar#keyboard-interaction-on-grid-with-focus-inside).
