@@ -111,6 +111,8 @@ export interface UseGhostCalendarReturn {
   weekdayLabels: ComputedRef<string[]>
   monthYearLabel: ComputedRef<string>
   selectDate: (date: CalendarDate) => void
+  isDateFocusDisabled: (date: CalendarDate) => boolean
+  isDateUnavailable: (date: CalendarDate) => boolean
   isDateDisabledForInteraction: (date: CalendarDate) => boolean
   isDateSelectionDisabled: (date: CalendarDate) => boolean
   getCellState: (date: CalendarDate) => GhostCalendarCellState

@@ -4,6 +4,7 @@ import {
   inject,
   onMounted,
   onUnmounted,
+  shallowRef,
   useTemplateRef,
   watch,
 } from 'vue'
@@ -16,6 +17,7 @@ import {
   type GhostCalendarGridElement,
   type GhostCalendarPartExposed,
 } from './ghost-calendar'
+import { applyCalendarFocusTabStops } from './sync-calendar-focus-tab-stops'
 import GhostCalendarCell from './GhostCalendarCell.vue'
 
 defineOptions({ inheritAttrs: false })
@@ -35,6 +37,9 @@ const context: GhostCalendarContext = injected
 
 const hostRef = useTemplateRef('host')
 const element = computed(() => resolveCalendarHtmlElement(hostRef.value))
+/** Set during grid keyboard moves so post-flush focus follows re-rendered cells. */
+const pendingKeyboardFocus = shallowRef(false)
+const visibleMonthAtKeyboard = shallowRef('')
 
 const gridAttrs = computed(() => ({
   role: 'grid',
@@ -63,6 +68,23 @@ function resolveRtl(): boolean {
   return document.documentElement.dir === 'rtl'
 }
 
+function focusRovingTabStop(): void {
+  const grid = element.value
+  if (!grid) {
+    return
+  }
+  applyCalendarFocusTabStops(grid, context.focusedDate.value.toString())
+  grid
+    .querySelector<HTMLElement>('[data-ghost-calendar-date][tabindex="0"]')
+    ?.focus()
+}
+
+function moveKeyboardFocus(action: () => void): void {
+  visibleMonthAtKeyboard.value = context.visibleMonth.value.toString()
+  pendingKeyboardFocus.value = true
+  action()
+}
+
 function onKeydown(event: KeyboardEvent) {
   if (context.disabled.value) {
     return
@@ -73,49 +95,69 @@ function onKeydown(event: KeyboardEvent) {
 
   if (key === 'ArrowRight') {
     event.preventDefault()
-    context.focusNextDay(rtl)
+    moveKeyboardFocus(() => {
+      context.focusNextDay(rtl)
+    })
     return
   }
   if (key === 'ArrowLeft') {
     event.preventDefault()
-    context.focusNextDay(!rtl)
+    moveKeyboardFocus(() => {
+      context.focusNextDay(!rtl)
+    })
     return
   }
   if (key === 'ArrowDown') {
     event.preventDefault()
-    context.focusNextWeek(false)
+    moveKeyboardFocus(() => {
+      context.focusNextWeek(false)
+    })
     return
   }
   if (key === 'ArrowUp') {
     event.preventDefault()
-    context.focusNextWeek(true)
+    moveKeyboardFocus(() => {
+      context.focusNextWeek(true)
+    })
     return
   }
   if (key === 'Home') {
     event.preventDefault()
-    context.focusWeekBoundary(false)
+    moveKeyboardFocus(() => {
+      context.focusWeekBoundary(false)
+    })
     return
   }
   if (key === 'End') {
     event.preventDefault()
-    context.focusWeekBoundary(true)
+    moveKeyboardFocus(() => {
+      context.focusWeekBoundary(true)
+    })
     return
   }
   if (key === 'PageDown') {
     event.preventDefault()
     if (shift) {
-      context.focusNextYear(false)
+      moveKeyboardFocus(() => {
+        context.focusNextYear(false)
+      })
     } else {
-      context.focusNextMonth(false)
+      moveKeyboardFocus(() => {
+        context.focusNextMonth(false)
+      })
     }
     return
   }
   if (key === 'PageUp') {
     event.preventDefault()
     if (shift) {
-      context.focusNextYear(true)
+      moveKeyboardFocus(() => {
+        context.focusNextYear(true)
+      })
     } else {
-      context.focusNextMonth(true)
+      moveKeyboardFocus(() => {
+        context.focusNextMonth(true)
+      })
     }
   }
 }
@@ -137,6 +179,20 @@ watch(
     ] as const,
   () => {
     syncTabStops()
+    if (pendingKeyboardFocus.value) {
+      pendingKeyboardFocus.value = false
+      const monthChanged =
+        visibleMonthAtKeyboard.value !== context.visibleMonth.value.toString()
+      if (monthChanged && typeof requestAnimationFrame === 'function') {
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            focusRovingTabStop()
+          })
+        })
+      } else {
+        focusRovingTabStop()
+      }
+    }
   },
   { flush: 'post' },
 )

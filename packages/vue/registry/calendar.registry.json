@@ -48,7 +48,13 @@
     {
       "id": "calendar/controlled",
       "title": "Controlled",
-      "description": "Controlled selection and visible month with explicit today.",
+      "description": "Controlled month with min, max, and unavailable dates.",
+      "layer": "headless"
+    },
+    {
+      "id": "calendar/unselected",
+      "title": "Unselected",
+      "description": "Roving focus starts on today when no value is set.",
       "layer": "headless"
     },
     {

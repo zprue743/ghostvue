@@ -33,6 +33,8 @@ const hostRef = useTemplateRef('host')
 const element = computed(() => resolveCalendarHtmlElement(hostRef.value))
 const isNativeButton = computed(() => props.as === 'button')
 
+const focusDisabled = computed(() => context.isDateFocusDisabled(props.date))
+const unavailable = computed(() => context.isDateUnavailable(props.date))
 const selectionDisabled = computed(() =>
   context.isDateSelectionDisabled(props.date),
 )
@@ -77,7 +79,14 @@ const cellAttrs = computed(() => {
 
   if (isNativeButton.value) {
     base['type'] = attrs['type'] ?? 'button'
-    base['disabled'] = selectionDisabled.value || context.disabled.value
+    base['disabled'] = focusDisabled.value
+    if (
+      (unavailable.value || outsideMonth.value) &&
+      !focusDisabled.value &&
+      !context.disabled.value
+    ) {
+      base['aria-disabled'] = 'true'
+    }
   } else if (selectionDisabled.value || context.disabled.value) {
     base['aria-disabled'] = 'true'
   }

@@ -63,6 +63,10 @@ function initialFocusedDate(
   if (isCalendarRangeValue(selection)) {
     return toCalendarDate(selection.start)
   }
+  const explicitToday = toValue(options.today)
+  if (explicitToday) {
+    return toCalendarDate(explicitToday)
+  }
   return toCalendarDate(visibleMonth)
 }
 
@@ -141,7 +145,8 @@ export function useGhostCalendar(
     return date.month !== visibleMonth.value.month
   }
 
-  function isDateDisabledForInteraction(date: CalendarDate): boolean {
+  /** Hard keyboard focus bounds (min/max and root disabled only). */
+  function isDateFocusDisabled(date: CalendarDate): boolean {
     if (disabled.value) {
       return true
     }
@@ -151,15 +156,24 @@ export function useGhostCalendar(
     if (maxValue.value && compareCalendarDate(date, maxValue.value) > 0) {
       return true
     }
-    const custom = isDateDisabled.value
-    if (custom?.(date)) {
-      return true
-    }
     return false
   }
 
+  /** Consumer-marked unavailable dates: focusable but not selectable. */
+  function isDateUnavailable(date: CalendarDate): boolean {
+    return isDateDisabled.value?.(date) ?? false
+  }
+
+  function isDateDisabledForInteraction(date: CalendarDate): boolean {
+    return isDateFocusDisabled(date) || isDateUnavailable(date)
+  }
+
   function isDateSelectionDisabled(date: CalendarDate): boolean {
-    return isDateDisabledForInteraction(date) || isOutsideMonth(date)
+    return (
+      isDateFocusDisabled(date) ||
+      isDateUnavailable(date) ||
+      isOutsideMonth(date)
+    )
   }
 
   function getCellState(date: CalendarDate): GhostCalendarCellState {
@@ -259,17 +273,43 @@ export function useGhostCalendar(
     }
   }
 
-  function findEnabledStep(
+  function clampToFocusBounds(date: CalendarDate): CalendarDate {
+    const normalized = toCalendarDate(date)
+    if (minValue.value && compareCalendarDate(normalized, minValue.value) < 0) {
+      return toCalendarDate(minValue.value)
+    }
+    if (maxValue.value && compareCalendarDate(normalized, maxValue.value) > 0) {
+      return toCalendarDate(maxValue.value)
+    }
+    return normalized
+  }
+
+  /** Steps by day/week until the target is inside min/max, or give up at the bound. */
+  function findInBoundsStep(
     from: CalendarDate,
     step: (date: CalendarDate) => CalendarDate,
-    reverse = false,
   ): CalendarDate | undefined {
     let current = toCalendarDate(from)
     for (let attempt = 0; attempt < 366; attempt += 1) {
-      current = toCalendarDate(reverse ? step(current) : step(current))
-      if (!isDateDisabledForInteraction(current)) {
-        return current
+      const next = toCalendarDate(step(current))
+      if (!isDateFocusDisabled(next)) {
+        return next
       }
+      if (
+        minValue.value &&
+        compareCalendarDate(next, minValue.value) < 0 &&
+        compareCalendarDate(current, minValue.value) <= 0
+      ) {
+        return undefined
+      }
+      if (
+        maxValue.value &&
+        compareCalendarDate(next, maxValue.value) > 0 &&
+        compareCalendarDate(current, maxValue.value) >= 0
+      ) {
+        return undefined
+      }
+      current = next
     }
     return undefined
   }
@@ -277,7 +317,7 @@ export function useGhostCalendar(
   function focusNextDay(reverse = false): void {
     const step = (date: CalendarDate) =>
       addCalendarDuration(date, reverse ? { days: -1 } : { days: 1 })
-    const next = findEnabledStep(toCalendarDate(focusedDate.value), step, false)
+    const next = findInBoundsStep(toCalendarDate(focusedDate.value), step)
     if (next) {
       setFocusedDate(next)
     }
@@ -286,41 +326,35 @@ export function useGhostCalendar(
   function focusNextWeek(reverse = false): void {
     const step = (date: CalendarDate) =>
       addCalendarDuration(date, reverse ? { weeks: -1 } : { weeks: 1 })
-    const next = findEnabledStep(toCalendarDate(focusedDate.value), step, false)
+    const next = findInBoundsStep(toCalendarDate(focusedDate.value), step)
     if (next) {
       setFocusedDate(next)
     }
   }
 
+  function localeWeekOptions(): Parameters<typeof startOfWeek>[2] | undefined {
+    if (weekStartsOn.value === undefined) {
+      return undefined
+    }
+    const weekStart = resolveWeekStartName(weekStartsOn.value)
+    return weekStart as Parameters<typeof startOfWeek>[2]
+  }
+
   function focusWeekBoundary(end = false): void {
-    const weekStart = resolveWeekStartName(effectiveWeekStart.value)
-    const weekStartArg = weekStart as Parameters<typeof startOfWeek>[2]
-    const start = toCalendarDate(
-      weekStart
-        ? startOfWeek(
-            toCalendarDate(focusedDate.value),
-            locale.value,
-            weekStartArg,
-          )
-        : startOfWeek(toCalendarDate(focusedDate.value), locale.value),
-    )
+    const weekOption = localeWeekOptions()
+    const focused = toCalendarDate(focusedDate.value)
     const boundary = end
       ? toCalendarDate(
-          weekStart
-            ? endOfWeek(
-                toCalendarDate(focusedDate.value),
-                locale.value,
-                weekStartArg,
-              )
-            : endOfWeek(toCalendarDate(focusedDate.value), locale.value),
+          weekOption
+            ? endOfWeek(focused, locale.value, weekOption)
+            : endOfWeek(focused, locale.value),
         )
-      : start
-    const target = isDateDisabledForInteraction(boundary)
-      ? (findEnabledStep(boundary, (date) =>
-          addCalendarDuration(date, { days: 1 }),
-        ) ?? boundary)
-      : boundary
-    setFocusedDate(target)
+      : toCalendarDate(
+          weekOption
+            ? startOfWeek(focused, locale.value, weekOption)
+            : startOfWeek(focused, locale.value),
+        )
+    setFocusedDate(clampToFocusBounds(boundary))
   }
 
   function focusNextMonth(reverse = false): void {
@@ -373,6 +407,8 @@ export function useGhostCalendar(
     weekdayLabels,
     monthYearLabel,
     selectDate,
+    isDateFocusDisabled,
+    isDateUnavailable,
     isDateDisabledForInteraction,
     isDateSelectionDisabled,
     getCellState,

@@ -160,6 +160,7 @@
     "calendar/basic",
     "calendar/range",
     "calendar/controlled",
+    "calendar/unselected",
     "calendar/locale",
     "calendar/themed"
   ]

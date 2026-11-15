@@ -139,8 +139,13 @@ focused, today, formattedDate, props }` for custom cell rendering.
 ### Loading, empty, disabled, read-only, and error states
 
 - Root `disabled` disables all cells and navigation buttons.
-- Per-date disabled merges `minValue`, `maxValue`, `isDateDisabled`, and
-  outside-month padding days.
+- Root `disabled` disables the entire calendar.
+- `minValue` / `maxValue` are hard bounds: those dates cannot receive focus and
+  keyboard moves stop at the bound.
+- `isDateDisabled` marks **unavailable** dates: they remain focusable, expose
+  `aria-disabled`, and cannot be selected (React Aria / APG unavailable dates).
+- Outside-month padding days are not selectable (`aria-disabled`) but remain
+  focusable for grid continuity unless out of min/max bounds.
 
 ## Consumer data
 
@@ -158,30 +163,33 @@ Follows [WAI-ARIA APG Date Picker Dialog](https://www.w3.org/WAI/ARIA/apg/patter
 - Weekday row: `role="row"` with `role="columnheader"` cells.
 - Date row: `role="row"`; each date: `role="gridcell"` containing a focusable
   control (default `button`) with `aria-label` = full spoken date, `aria-selected`
-  when selected, `aria-disabled` when disabled (non-button hosts).
+  when selected, and `aria-disabled` when unavailable or outside-month (native
+  `disabled` only for min/max/root-disabled dates).
 - Visually hidden live region (`aria-live="polite"`) on the root announces month
   changes when `visibleMonth` updates from keyboard or buttons.
 - Stable `data-part`, `data-ghost-calendar`, `.ghost-calendar-*` classes.
 
 ### Keyboard interaction (on grid with focus inside)
 
-| Key                   | Behavior                                      |
-| --------------------- | --------------------------------------------- |
-| `ArrowRight` / `Left` | Previous / next day (RTL swaps horizontal).   |
-| `ArrowDown` / `Up`    | Next / previous week.                         |
-| `Home` / `End`        | Start / end of week (respect `weekStartsOn`). |
-| `PageDown` / `PageUp` | Next / previous month (moves focus).          |
-| `Shift+PageDown/Up`   | Next / previous year.                         |
-| `Enter` / `Space`     | Toggle/select focused date (unless disabled). |
+| Key                   | Behavior                                                 |
+| --------------------- | -------------------------------------------------------- |
+| `ArrowRight` / `Left` | Previous / next day (RTL swaps horizontal).              |
+| `ArrowDown` / `Up`    | Next / previous week.                                    |
+| `Home` / `End`        | Start / end of week (respect `weekStartsOn`).            |
+| `PageDown` / `PageUp` | Next / previous month (moves focus).                     |
+| `Shift+PageDown/Up`   | Next / previous year.                                    |
+| `Enter` / `Space`     | Select focused date unless unavailable or out of bounds. |
 
-Navigation skips disabled dates when moving focus. Month changes announce the new
-month label.
+Keyboard moves land on every in-bounds calendar day, including unavailable dates.
+Only `minValue` / `maxValue` stop arrow, home/end, and week moves. Month changes
+announce the new month label; month-sized moves clamp (e.g. Jan 31 + 1 month →
+last day of February).
 
 ### Focus behavior
 
-- Roving `tabindex`: focused date `0`, other enabled cells `-1`.
-- Tab into grid focuses the selected date, else focused date, else first enabled
-  day in the month.
+- Roving `tabindex`: focused date `0`, other in-bounds cells `-1`.
+- Tab into grid focuses the selected date when present, else `today` when
+  provided, else the first day of `visibleMonth`.
 - Prev/next buttons are in normal tab order before/after the grid per composition.
 
 ### Assistive technology expectations
@@ -225,8 +233,9 @@ month label.
 
 ## Test plan
 
-- Unit: selection single/range, min/max, `isDateDisabled`, controlled ignore,
-  month navigation, keyboard moves, roving tabindex, disabled root, locale week
+- Unit: selection single/range, min/max bounds vs `isDateDisabled` unavailable
+  focus, controlled ignore, month navigation, keyboard moves, roving tabindex,
+  disabled root, locale week
   start, SSR no document listeners.
 - Integration: `expectSsrHydration` compound tree.
 - Themed ref smoke test (scaffold).

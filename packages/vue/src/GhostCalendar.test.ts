@@ -2,7 +2,7 @@ import { CalendarDate } from '@internationalized/date'
 import { mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { flushPromises } from '@vue/test-utils'
-import { defineComponent, h, ref } from 'vue'
+import { defineComponent, h, nextTick, ref } from 'vue'
 import { createSSRApp } from 'vue'
 import { renderToString } from 'vue/server-renderer'
 
@@ -136,9 +136,10 @@ describe('GhostCalendar', () => {
       today: FIXED_TODAY,
     }))
 
-    const disabled = wrapper.find('[data-ghost-calendar-date="2024-06-12"]')
-    expect((disabled.element as HTMLButtonElement).disabled).toBe(true)
-    await disabled.trigger('click')
+    const unavailable = wrapper.find('[data-ghost-calendar-date="2024-06-12"]')
+    expect((unavailable.element as HTMLButtonElement).disabled).toBe(false)
+    expect(unavailable.attributes('aria-disabled')).toBe('true')
+    await unavailable.trigger('click')
     expect(selected.value).toBeUndefined()
 
     await wrapper
@@ -161,6 +162,59 @@ describe('GhostCalendar', () => {
     expect(selected.value.toString()).toBe('2024-06-01')
   })
 
+  it('focuses unavailable dates without skipping them', async () => {
+    const wrapper = mountCalendar(() => ({
+      defaultValue: new CalendarDate(2024, 6, 5),
+      defaultVisibleMonth: JUNE_2024,
+      isDateDisabled: (date: CalendarDate) => date.day === 12,
+      today: FIXED_TODAY,
+    }))
+
+    const grid = wrapper.find('[data-part="grid"]').element
+    const dateCell = (iso: string) =>
+      grid.querySelector<HTMLElement>(
+        `[data-ghost-calendar-date="${iso}"]`,
+      ) as HTMLButtonElement
+
+    dateCell('2024-06-05').focus()
+    key(grid, 'ArrowDown')
+    await flushPromises()
+    expect(
+      document.activeElement?.getAttribute('data-ghost-calendar-date'),
+    ).toBe('2024-06-12')
+    expect(dateCell('2024-06-12').getAttribute('aria-disabled')).toBe('true')
+  })
+
+  it('clamps keyboard focus at min and max values', async () => {
+    const wrapper = mountCalendar(() => ({
+      defaultValue: new CalendarDate(2024, 6, 5),
+      defaultVisibleMonth: JUNE_2024,
+      minValue: new CalendarDate(2024, 6, 5),
+      maxValue: new CalendarDate(2024, 6, 20),
+      today: FIXED_TODAY,
+    }))
+
+    const grid = wrapper.find('[data-part="grid"]').element
+    const dateCell = (iso: string) =>
+      grid.querySelector<HTMLElement>(
+        `[data-ghost-calendar-date="${iso}"]`,
+      ) as HTMLButtonElement
+
+    dateCell('2024-06-05').focus()
+    key(grid, 'ArrowLeft')
+    await flushPromises()
+    expect(
+      document.activeElement?.getAttribute('data-ghost-calendar-date'),
+    ).toBe('2024-06-05')
+
+    dateCell('2024-06-20').focus()
+    key(grid, 'ArrowRight')
+    await flushPromises()
+    expect(
+      document.activeElement?.getAttribute('data-ghost-calendar-date'),
+    ).toBe('2024-06-20')
+  })
+
   it('moves focus with arrow keys on the grid', async () => {
     const wrapper = mountCalendar(() => ({
       defaultValue: new CalendarDate(2024, 6, 15),
@@ -169,27 +223,46 @@ describe('GhostCalendar', () => {
     }))
 
     const grid = wrapper.find('[data-part="grid"]').element
-    const focused = () =>
-      grid.querySelector<HTMLElement>(
-        '[data-ghost-calendar-date][tabindex="0"]',
+    const focusDate = (iso: string) => {
+      const cell = grid.querySelector<HTMLElement>(
+        `[data-ghost-calendar-date="${iso}"]`,
       )
+      cell?.focus()
+      return cell
+    }
 
-    focused()?.focus()
-    expect(focused()?.getAttribute('data-ghost-calendar-date')).toBe(
-      '2024-06-15',
-    )
+    focusDate('2024-06-15')
+    expect(
+      document.activeElement?.getAttribute('data-ghost-calendar-date'),
+    ).toBe('2024-06-15')
 
     key(grid, 'ArrowRight')
     await flushPromises()
-    expect(focused()?.getAttribute('data-ghost-calendar-date')).toBe(
-      '2024-06-16',
-    )
+    expect(
+      document.activeElement?.getAttribute('data-ghost-calendar-date'),
+    ).toBe('2024-06-16')
 
     key(grid, 'ArrowDown')
     await flushPromises()
-    expect(focused()?.getAttribute('data-ghost-calendar-date')).toBe(
-      '2024-06-23',
-    )
+    expect(
+      document.activeElement?.getAttribute('data-ghost-calendar-date'),
+    ).toBe('2024-06-23')
+
+    focusDate('2024-06-15')
+    key(document.activeElement ?? grid, 'Home')
+    await flushPromises()
+    await nextTick()
+    expect(
+      document.activeElement?.getAttribute('data-ghost-calendar-date'),
+    ).toBe('2024-06-09')
+
+    focusDate('2024-06-15')
+    key(document.activeElement ?? grid, 'End')
+    await flushPromises()
+    await nextTick()
+    expect(
+      document.activeElement?.getAttribute('data-ghost-calendar-date'),
+    ).toBe('2024-06-15')
   })
 
   it('navigates months with page keys and announces', async () => {
