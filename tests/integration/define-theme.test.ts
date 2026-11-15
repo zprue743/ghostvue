@@ -11,7 +11,10 @@ import {
   DefineThemeError,
   FLAGSHIP_THEME_INPUTS,
 } from '../../packages/themes/scripts/lib/define-theme.js'
-import { evaluateContrast } from '../../packages/themes/scripts/lib/contrast.js'
+import {
+  evaluateContrast,
+  extractGradientStopColors,
+} from '../../packages/themes/scripts/lib/contrast.js'
 
 describe('defineTheme', () => {
   it('applies documented defaults', () => {
@@ -130,9 +133,55 @@ describe('defineTheme', () => {
     const theme = defineTheme({ name: 'sun', primary: '#facc15' })
     const bg = theme.tokens.find((token) => token.name === 'action.primary.bg')
     const fg = theme.tokens.find((token) => token.name === 'action.primary.fg')
+    const from = theme.tokens.find(
+      (token) => token.name === 'action.primary.gradient.from',
+    )
+    const to = theme.tokens.find(
+      (token) => token.name === 'action.primary.gradient.to',
+    )
+    const gradient = theme.tokens.find(
+      (token) => token.name === 'gradient.action.primary',
+    )
+    const spotlight = theme.tokens.find(
+      (token) => token.name === 'interactive.spotlight.color',
+    )
 
     expect(bg?.value.light).not.toBe('#facc15')
     expect(fg?.value.light).toBe('#ffffff')
+    expect(gradient?.value.light).toContain(from?.value.light)
+    expect(gradient?.value.light).toContain(to?.value.light)
+    expect(gradient?.value.light).not.toContain('#facc15')
+    expect(extractGradientStopColors(gradient?.value.light ?? '')).toEqual([
+      from?.value.light,
+      to?.value.light,
+    ])
+    expect(gradient).toBeDefined()
+    if (!gradient) return
+    expect(theme.css).toContain(
+      `--ghost-gradient-action-primary: ${gradient.value.light};`,
+    )
+    expect(spotlight?.value.light).toBe(bg?.value.light)
+    expect(
+      evaluateContrast(theme.tokens).filter((row) => !row.passesWcagAa),
+    ).toEqual([])
+  })
+
+  it('rebuilds solid action gradients when gradient flavor is none on a light primary', () => {
+    const theme = defineTheme({
+      name: 'sun-flat',
+      primary: '#facc15',
+      gradient: 'none',
+    })
+    const bg = theme.tokens.find((token) => token.name === 'action.primary.bg')
+    const gradient = theme.tokens.find(
+      (token) => token.name === 'gradient.action.primary',
+    )
+
+    expect(bg?.value.light).not.toBe('#facc15')
+    expect(extractGradientStopColors(gradient?.value.light ?? '')).toEqual([
+      bg?.value.light,
+      bg?.value.light,
+    ])
     expect(
       evaluateContrast(theme.tokens).filter((row) => !row.passesWcagAa),
     ).toEqual([])

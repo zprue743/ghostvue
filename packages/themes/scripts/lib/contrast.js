@@ -1,4 +1,4 @@
-import { wcagContrast } from 'culori'
+import { formatHex, parse, wcagContrast } from 'culori'
 
 import { apcaContrast } from './apca.js'
 
@@ -34,6 +34,13 @@ export function contrastPairs(tokens) {
   add('surface.inverse.fg', 'surface.inverse.bg', 'surface')
 
   for (const token of tokens) {
+    if (token.tier === 'semantic' && token.type === 'gradient') {
+      const match = token.name.match(/^gradient\.action\.([^.]+)$/)
+      if (match) {
+        add(`action.${match[1]}.fg`, token.name, 'fg/rendered gradient stop')
+      }
+      continue
+    }
     if (token.tier !== 'semantic' || token.type !== 'color') continue
     const { name } = token
 
@@ -79,6 +86,89 @@ export function contrastPairs(tokens) {
   )
 }
 
+function toOpaqueHex(color) {
+  if (isHexColor(color)) return color
+  if (typeof color !== 'string') return null
+  const parsed = parse(color)
+  if (!parsed || (parsed.alpha !== undefined && parsed.alpha < 1)) return null
+  return formatHex(parsed) ?? null
+}
+
+function splitTopLevelCommas(input) {
+  const parts = []
+  let depth = 0
+  let start = 0
+  for (let i = 0; i < input.length; i += 1) {
+    const ch = input[i]
+    if (ch === '(') depth += 1
+    else if (ch === ')') depth = Math.max(0, depth - 1)
+    else if (ch === ',' && depth === 0) {
+      parts.push(input.slice(start, i).trim())
+      start = i + 1
+    }
+  }
+  parts.push(input.slice(start).trim())
+  return parts.filter(Boolean)
+}
+
+function extractLeadingColor(stop) {
+  const trimmed = stop.trim()
+  if (!trimmed) return null
+  const fnMatch = trimmed.match(/^[a-z-]+\(/i)
+  if (fnMatch) {
+    let depth = 0
+    for (let i = fnMatch[0].length - 1; i < trimmed.length; i += 1) {
+      if (trimmed[i] === '(') depth += 1
+      else if (trimmed[i] === ')') {
+        depth -= 1
+        if (depth === 0) return trimmed.slice(0, i + 1)
+      }
+    }
+    return null
+  }
+  const token = trimmed.split(/\s+/)[0]
+  return token || null
+}
+
+/**
+ * Extract opaque stop colors (as #hex) from a serialized CSS gradient string.
+ *
+ * @param {string} gradientCss
+ * @returns {string[]}
+ */
+export function extractGradientStopColors(gradientCss) {
+  if (typeof gradientCss !== 'string') return []
+  const colors = []
+  const fnPattern = /(?:linear|radial|conic)-gradient\(/gi
+  let match
+  while ((match = fnPattern.exec(gradientCss)) !== null) {
+    const openIndex = match.index + match[0].length - 1
+    let depth = 0
+    let closeIndex = -1
+    for (let i = openIndex; i < gradientCss.length; i += 1) {
+      if (gradientCss[i] === '(') depth += 1
+      else if (gradientCss[i] === ')') {
+        depth -= 1
+        if (depth === 0) {
+          closeIndex = i
+          break
+        }
+      }
+    }
+    if (closeIndex === -1) continue
+    const inner = gradientCss.slice(openIndex + 1, closeIndex)
+    const args = splitTopLevelCommas(inner)
+    for (const arg of args) {
+      const candidate = extractLeadingColor(arg)
+      const hex = candidate ? toOpaqueHex(candidate) : null
+      if (hex) {
+        colors.push(hex)
+      }
+    }
+  }
+  return colors
+}
+
 /**
  * @param {{ name: string, tier: string, type: string, value: { light: string, dark: string } }[]} tokens
  */
@@ -94,7 +184,29 @@ export function evaluateContrast(tokens) {
     for (const mode of TOKEN_MODES) {
       const fgValue = fgToken.value[mode]
       const bgValue = bgToken.value[mode]
-      if (!isHexColor(fgValue) || !isHexColor(bgValue)) continue
+      if (!isHexColor(fgValue)) continue
+
+      if (bgToken.type === 'gradient') {
+        const stops = extractGradientStopColors(bgValue)
+        for (let index = 0; index < stops.length; index += 1) {
+          const stopHex = stops[index]
+          const wcag = wcagContrast(fgValue, stopHex)
+          const apca = apcaContrast(fgValue, stopHex)
+          results.push({
+            ...pair,
+            bg: `${pair.bg} (stop ${index + 1})`,
+            mode,
+            fgValue,
+            bgValue: stopHex,
+            wcag,
+            apca,
+            passesWcagAa: wcag >= WCAG_AA_NORMAL_TEXT,
+          })
+        }
+        continue
+      }
+
+      if (!isHexColor(bgValue)) continue
       const wcag = wcagContrast(fgValue, bgValue)
       const apca = apcaContrast(fgValue, bgValue)
       results.push({

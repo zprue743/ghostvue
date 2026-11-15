@@ -11,6 +11,7 @@ import {
 import {
   contrastPairs,
   evaluateContrast,
+  extractGradientStopColors,
 } from '../../packages/themes/scripts/lib/contrast.js'
 
 const tokensDir = resolve(process.cwd(), 'packages/themes/tokens')
@@ -132,5 +133,52 @@ describe('semantic contrast gate', () => {
     const failures = results.filter((result) => !result.passesWcagAa)
     expect(failures, JSON.stringify(failures, null, 2)).toEqual([])
     expect(results.every((result) => Number.isFinite(result.apca))).toBe(true)
+  })
+
+  it('validates rendered gradient stops against action foregrounds', () => {
+    expect(
+      extractGradientStopColors(
+        'linear-gradient(165deg in oklch, #facc15 0%, #b49200 100%)',
+      ),
+    ).toEqual(['#facc15', '#b49200'])
+
+    const results = evaluateContrast([
+      {
+        name: 'action.primary.fg',
+        tier: 'semantic',
+        type: 'color',
+        value: { light: '#ffffff', dark: '#0f172a' },
+      },
+      {
+        name: 'action.primary.gradient.from',
+        tier: 'semantic',
+        type: 'color',
+        value: { light: '#725b00', dark: '#fde047' },
+      },
+      {
+        name: 'action.primary.gradient.to',
+        tier: 'semantic',
+        type: 'color',
+        value: { light: '#3e3000', dark: '#fef08a' },
+      },
+      {
+        name: 'gradient.action.primary',
+        tier: 'semantic',
+        type: 'gradient',
+        value: {
+          light: 'linear-gradient(165deg in oklch, #facc15 0%, #b49200 100%)',
+          dark: 'linear-gradient(165deg in oklch, #fde047 0%, #fef08a 100%)',
+        },
+      },
+    ])
+
+    const lightFailures = results.filter(
+      (row) => row.mode === 'light' && !row.passesWcagAa,
+    )
+    expect(lightFailures).toHaveLength(2)
+    expect(lightFailures.map((row) => row.bgValue)).toEqual([
+      '#facc15',
+      '#b49200',
+    ])
   })
 })
