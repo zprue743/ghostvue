@@ -248,4 +248,214 @@ describe('GhostSegmentedControl', () => {
     component.value?.focus()
     expect(document.activeElement?.textContent).toBe('B')
   })
+
+  it('exposes button semantics and tabindex on non-button hosts', async () => {
+    const wrapper = mount(
+      defineComponent({
+        setup() {
+          return () =>
+            h(
+              GhostSegmentedControl,
+              { 'aria-label': 'View', defaultValue: 'grid' },
+              {
+                default: () => [
+                  h(
+                    GhostSegmentedControlItem,
+                    { as: 'div', value: 'list' },
+                    () => 'List',
+                  ),
+                  h(
+                    GhostSegmentedControlItem,
+                    { as: 'span', value: 'grid' },
+                    () => 'Grid',
+                  ),
+                  h(
+                    GhostSegmentedControlItem,
+                    { as: 'div', value: 'table', disabled: true },
+                    () => 'Table',
+                  ),
+                  h(
+                    GhostSegmentedControlItem,
+                    { as: 'div', value: 'custom', role: 'radio' },
+                    () => 'Custom',
+                  ),
+                ],
+              },
+            )
+        },
+      }),
+      { attachTo: document.body },
+    )
+    attached.push(wrapper)
+    await flushPromises()
+
+    const list = items(wrapper)
+    expect(list[0]?.attributes('role')).toBe('button')
+    expect(list[0]?.attributes('tabindex')).toBe('-1')
+    expect(list[0]?.attributes('aria-disabled')).toBeUndefined()
+
+    expect(list[1]?.attributes('role')).toBe('button')
+    expect(list[1]?.attributes('tabindex')).toBe('0')
+
+    expect(list[2]?.attributes('role')).toBe('button')
+    expect(list[2]?.attributes('tabindex')).toBe('-1')
+    expect(list[2]?.attributes('aria-disabled')).toBe('true')
+    expect(list[2]?.attributes('disabled')).toBeUndefined()
+
+    expect(list[3]?.attributes('role')).toBe('radio')
+  })
+
+  it('toggles non-button hosts with Enter and Space and moves roving focus', async () => {
+    const updates: (string | undefined)[] = []
+    const wrapper = mount(
+      defineComponent({
+        setup() {
+          return () =>
+            h(
+              GhostSegmentedControl,
+              {
+                'aria-label': 'View',
+                defaultValue: 'list',
+                'onUpdate:modelValue': (value: string | undefined) => {
+                  updates.push(value)
+                },
+              },
+              {
+                default: () => [
+                  h(
+                    GhostSegmentedControlItem,
+                    { as: 'div', value: 'list' },
+                    () => 'List',
+                  ),
+                  h(
+                    GhostSegmentedControlItem,
+                    { as: 'span', value: 'grid' },
+                    () => 'Grid',
+                  ),
+                  h(
+                    GhostSegmentedControlItem,
+                    { as: 'div', value: 'board' },
+                    () => 'Board',
+                  ),
+                ],
+              },
+            )
+        },
+      }),
+      { attachTo: document.body },
+    )
+    attached.push(wrapper)
+    await flushPromises()
+
+    const [first, second, third] = items(wrapper)
+    if (!first || !second || !third) {
+      throw new Error('Expected three segment items')
+    }
+    ;(first.element as HTMLElement).focus()
+    first.element.dispatchEvent(
+      new KeyboardEvent('keydown', {
+        key: 'ArrowRight',
+        bubbles: true,
+        cancelable: true,
+      }),
+    )
+    await flushPromises()
+    expect(document.activeElement).toBe(second.element)
+
+    const enterEvent = new KeyboardEvent('keydown', {
+      key: 'Enter',
+      bubbles: true,
+      cancelable: true,
+    })
+    second.element.dispatchEvent(enterEvent)
+    await flushPromises()
+    expect(enterEvent.defaultPrevented).toBe(true)
+    expect(second.attributes('aria-pressed')).toBe('true')
+    expect(updates.at(-1)).toBe('grid')
+
+    const spaceEvent = new KeyboardEvent('keydown', {
+      key: ' ',
+      bubbles: true,
+      cancelable: true,
+    })
+    third.element.dispatchEvent(spaceEvent)
+    await flushPromises()
+    expect(spaceEvent.defaultPrevented).toBe(true)
+    expect(third.attributes('aria-pressed')).toBe('true')
+    expect(updates.at(-1)).toBe('board')
+  })
+
+  it('ignores Enter and Space on disabled non-button hosts and respects prevented keydown', async () => {
+    const updates: (string | undefined)[] = []
+    const wrapper = mount(
+      defineComponent({
+        setup() {
+          return () =>
+            h(
+              GhostSegmentedControl,
+              {
+                'aria-label': 'View',
+                defaultValue: 'list',
+                'onUpdate:modelValue': (value: string | undefined) => {
+                  updates.push(value)
+                },
+              },
+              {
+                default: () => [
+                  h(
+                    GhostSegmentedControlItem,
+                    { as: 'div', value: 'list' },
+                    () => 'List',
+                  ),
+                  h(
+                    GhostSegmentedControlItem,
+                    { as: 'span', value: 'disabled-seg', disabled: true },
+                    () => 'Disabled',
+                  ),
+                  h(
+                    GhostSegmentedControlItem,
+                    {
+                      as: 'div',
+                      value: 'prevented-seg',
+                      onKeydown: (event: KeyboardEvent) => {
+                        event.preventDefault()
+                      },
+                    },
+                    () => 'Prevented',
+                  ),
+                ],
+              },
+            )
+        },
+      }),
+      { attachTo: document.body },
+    )
+    attached.push(wrapper)
+    await flushPromises()
+
+    const [, disabledSeg, preventedSeg] = items(wrapper)
+    if (!disabledSeg || !preventedSeg) {
+      throw new Error('Expected segment items')
+    }
+    const disabledSpace = new KeyboardEvent('keydown', {
+      key: ' ',
+      bubbles: true,
+      cancelable: true,
+    })
+    disabledSeg.element.dispatchEvent(disabledSpace)
+    await flushPromises()
+    expect(disabledSpace.defaultPrevented).toBe(true)
+    expect(disabledSeg.attributes('aria-pressed')).toBe('false')
+
+    const preventedEnter = new KeyboardEvent('keydown', {
+      key: 'Enter',
+      bubbles: true,
+      cancelable: true,
+    })
+    preventedSeg.element.dispatchEvent(preventedEnter)
+    await flushPromises()
+    expect(preventedEnter.defaultPrevented).toBe(true)
+    expect(preventedSeg.attributes('aria-pressed')).toBe('false')
+    expect(updates).toHaveLength(0)
+  })
 })

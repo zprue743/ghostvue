@@ -89,6 +89,10 @@ onUnmounted(() => {
 
 const pressed = computed(() => group.isPressed(props.value))
 
+const receivesTabStop = computed(
+  () => !itemDisabled.value && group.tabStopValue.value === props.value,
+)
+
 const itemAttrs = computed(() => {
   const rest: Record<string, unknown> = {}
   for (const [key, value] of Object.entries(attrs)) {
@@ -106,6 +110,8 @@ const itemAttrs = computed(() => {
   }
 
   const customType = attrs['type']
+  const customRole = attrs['role']
+  const customTabindex = attrs['tabindex']
   const extraClass = attrs.class
 
   const base: Record<string, unknown> = {
@@ -129,8 +135,12 @@ const itemAttrs = computed(() => {
     if (customType !== undefined) {
       base['type'] = customType
     }
-  } else if (itemDisabled.value) {
-    base['aria-disabled'] = 'true'
+  } else {
+    base['role'] = customRole ?? 'button'
+    base['tabindex'] = customTabindex ?? (receivesTabStop.value ? 0 : -1)
+    if (itemDisabled.value) {
+      base['aria-disabled'] = 'true'
+    }
   }
 
   return base
@@ -165,6 +175,29 @@ function handleKeydown(event: KeyboardEvent): void {
   if (!itemDisabled.value) {
     invokeAttrHandler(attrs['onKeydown'], event)
   }
+  if (event.key !== 'Enter' && event.key !== ' ') {
+    return
+  }
+  if (itemDisabled.value) {
+    event.preventDefault()
+    return
+  }
+  if (event.defaultPrevented) {
+    return
+  }
+  const el = element.value
+  if (el instanceof HTMLButtonElement) {
+    return
+  }
+  if (
+    event.key === 'Enter' &&
+    el instanceof HTMLAnchorElement &&
+    el.hasAttribute('href')
+  ) {
+    return
+  }
+  event.preventDefault()
+  group.toggle(props.value)
 }
 
 defineExpose<GhostToggleGroupItemExposed>({
