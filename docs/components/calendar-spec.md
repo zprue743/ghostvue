@@ -56,7 +56,7 @@ Themed exports from `@ghostvue/themes`:
 - Convert to `Date` at local noon to avoid DST edges:
   `new Date(date.year, date.month - 1, date.day)`.
 - Convert from `Date`: `new CalendarDate(d.getFullYear(), d.getMonth() + 1,
-  d.getDate())`.
+d.getDate())`.
 - The library pins `@internationalized/date` as a runtime dependency of
   `@ghostvue/vue`; consumers must not assume a different major API.
 
@@ -64,34 +64,34 @@ Themed exports from `@ghostvue/themes`:
 
 #### `GhostCalendar` (root)
 
-| Prop               | Type                                      | Default       | Contract                                                                 |
-| ------------------ | ----------------------------------------- | ------------- | ------------------------------------------------------------------------ |
-| `modelValue`       | `GhostCalendarValue`                      | `undefined`   | Controlled selection. Omit for uncontrolled.                             |
-| `defaultValue`     | `GhostCalendarValue`                      | `undefined`   | Initial selection when `modelValue` is omitted.                        |
-| `selectionMode`    | `'single' \| 'range'`                     | `'single'`    | Single date vs inclusive range.                                          |
-| `minValue`         | `CalendarDate \| undefined`               | `undefined`   | Dates before this are disabled.                                          |
-| `maxValue`         | `CalendarDate \| undefined`               | `undefined`   | Dates after this are disabled.                                           |
-| `isDateDisabled`   | `(date: CalendarDate) => boolean`         | `undefined`   | Additional disabled dates.                                               |
-| `locale`           | `string`                                  | `'en-US'`     | `Intl` locale for weekday/month labels and default week start.           |
-| `weekStartsOn`     | `0 \| 1 \| ... \| 6 \| undefined`          | `undefined`   | Override week start (Sunday = 0). When omitted, use locale preference.   |
-| `visibleMonth`     | `CalendarDate \| undefined`               | `undefined`   | Controlled month anchor (first day of displayed month).                  |
-| `defaultVisibleMonth`| `CalendarDate \| undefined`             | `undefined`   | Initial month when `visibleMonth` is omitted.                              |
-| `today`            | `CalendarDate \| undefined`               | `undefined`   | **Required for deterministic SSR/tests.** When omitted, `"today"` styling is not applied (no implicit `new Date()` during SSR). |
-| `disabled`         | `boolean`                                 | `false`       | Disables grid interaction.                                               |
+| Prop                  | Type                              | Default     | Contract                                                                                                                        |
+| --------------------- | --------------------------------- | ----------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| `modelValue`          | `GhostCalendarValue`              | `undefined` | Controlled selection. Omit for uncontrolled.                                                                                    |
+| `defaultValue`        | `GhostCalendarValue`              | `undefined` | Initial selection when `modelValue` is omitted.                                                                                 |
+| `selectionMode`       | `'single' \| 'range'`             | `'single'`  | Single date vs inclusive range.                                                                                                 |
+| `minValue`            | `CalendarDate \| undefined`       | `undefined` | Dates before this are disabled.                                                                                                 |
+| `maxValue`            | `CalendarDate \| undefined`       | `undefined` | Dates after this are disabled.                                                                                                  |
+| `isDateDisabled`      | `(date: CalendarDate) => boolean` | `undefined` | Additional disabled dates.                                                                                                      |
+| `locale`              | `string`                          | `'en-US'`   | `Intl` locale for weekday/month labels and default week start.                                                                  |
+| `weekStartsOn`        | `0 \| 1 \| ... \| 6 \| undefined` | `undefined` | Override week start (Sunday = 0). When omitted, use locale preference.                                                          |
+| `visibleMonth`        | `CalendarDate \| undefined`       | `undefined` | Controlled month anchor (first day of displayed month).                                                                         |
+| `defaultVisibleMonth` | `CalendarDate \| undefined`       | `undefined` | Initial month when `visibleMonth` is omitted.                                                                                   |
+| `today`               | `CalendarDate \| undefined`       | `undefined` | **Required for deterministic SSR/tests.** When omitted, `"today"` styling is not applied (no implicit `new Date()` during SSR). |
+| `disabled`            | `boolean`                         | `false`     | Disables grid interaction.                                                                                                      |
 
 #### `GhostCalendarHeader`, `GhostCalendarHeading`, nav buttons
 
-| Part                     | Prop | Default  | Contract                                      |
-| ------------------------ | ---- | -------- | --------------------------------------------- |
-| `GhostCalendarHeader`    | `as` | `'div'`  | `role="group"` with `aria-label` overridable. |
-| `GhostCalendarHeading`   | `as` | `'h2'`   | `id` for `aria-labelledby` on grid.           |
-| `GhostCalendarPrevButton`| `as` | `'button'` | Previous month; `type="button"`.            |
-| `GhostCalendarNextButton`| `as` | `'button'` | Next month; `type="button"`.                |
+| Part                      | Prop | Default    | Contract                                      |
+| ------------------------- | ---- | ---------- | --------------------------------------------- |
+| `GhostCalendarHeader`     | `as` | `'div'`    | `role="group"` with `aria-label` overridable. |
+| `GhostCalendarHeading`    | `as` | `'h2'`     | `id` for `aria-labelledby` on grid.           |
+| `GhostCalendarPrevButton` | `as` | `'button'` | Previous month; `type="button"`.              |
+| `GhostCalendarNextButton` | `as` | `'button'` | Next month; `type="button"`.                  |
 
 #### `GhostCalendarGrid`
 
-| Prop | Type | Default | Contract |
-| ---- | ---- | ------- | -------- |
+| Prop | Type              | Default | Contract                                                                                                                                                                         |
+| ---- | ----------------- | ------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `as` | element/component | `'div'` | Renders weekday header row and body rows inside the grid host (`role="grid"`). Default slot optional; when omitted, renders `GhostCalendarCell` for each date in the month grid. |
 
 Host uses `role="grid"`, `aria-labelledby` → heading id when present,
@@ -99,10 +99,10 @@ Host uses `role="grid"`, `aria-labelledby` → heading id when present,
 
 #### `GhostCalendarCell`
 
-| Prop     | Type            | Default    | Contract |
-| -------- | --------------- | ---------- | -------- |
-| `as`     | element/component | `'button'` | Native button when `as="button"`. |
-| `date`   | `CalendarDate`  | required   | Calendar day this cell represents. |
+| Prop   | Type              | Default    | Contract                           |
+| ------ | ----------------- | ---------- | ---------------------------------- |
+| `as`   | element/component | `'button'` | Native button when `as="button"`.  |
+| `date` | `CalendarDate`    | required   | Calendar day this cell represents. |
 
 ### v-model contracts
 
@@ -123,7 +123,7 @@ Host uses `role="grid"`, `aria-labelledby` → heading id when present,
 - `GhostCalendarHeading` default slot: `{ label, visibleMonth }` (localized
   month/year string).
 - `GhostCalendarGrid` optional `cell` slot: `{ date, disabled, selected,
-  focused, today, formattedDate, props }` for custom cell rendering.
+focused, today, formattedDate, props }` for custom cell rendering.
 - Parts expose `{ element, focus?, blur? }` where they render a focusable host.
 
 ## State model
@@ -132,7 +132,7 @@ Host uses `role="grid"`, `aria-labelledby` → heading id when present,
 - **Focused date** — internal roving focus target within the grid; initialized
   from selection or `visibleMonth` on mount.
 - **Selection** — `data-state="selected" | "range-start" | "range-end" |
-  "range-middle" | "none"` on cells.
+"range-middle" | "none"` on cells.
 - **Outside month** — dates shown for layout padding use `data-outside-month`
   and are disabled for selection (still focusable unless disabled).
 
@@ -165,14 +165,14 @@ Follows [WAI-ARIA APG Date Picker Dialog](https://www.w3.org/WAI/ARIA/apg/patter
 
 ### Keyboard interaction (on grid with focus inside)
 
-| Key                    | Behavior                                      |
-| ---------------------- | --------------------------------------------- |
-| `ArrowRight` / `Left`  | Previous / next day (RTL swaps horizontal).   |
-| `ArrowDown` / `Up`     | Next / previous week.                         |
-| `Home` / `End`         | Start / end of week (respect `weekStartsOn`). |
-| `PageDown` / `PageUp`  | Next / previous month (moves focus).          |
-| `Shift+PageDown/Up`    | Next / previous year.                         |
-| `Enter` / `Space`      | Toggle/select focused date (unless disabled). |
+| Key                   | Behavior                                      |
+| --------------------- | --------------------------------------------- |
+| `ArrowRight` / `Left` | Previous / next day (RTL swaps horizontal).   |
+| `ArrowDown` / `Up`    | Next / previous week.                         |
+| `Home` / `End`        | Start / end of week (respect `weekStartsOn`). |
+| `PageDown` / `PageUp` | Next / previous month (moves focus).          |
+| `Shift+PageDown/Up`   | Next / previous year.                         |
+| `Enter` / `Space`     | Toggle/select focused date (unless disabled). |
 
 Navigation skips disabled dates when moving focus. Month changes announce the new
 month label.

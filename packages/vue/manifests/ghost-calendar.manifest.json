@@ -1,0 +1,166 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "generated",
+  "name": "GhostCalendar",
+  "package": "@ghostvue/vue",
+  "status": "experimental",
+  "description": "Scaffold only: neutral content container. Approve the component specification before implementing widget behavior.",
+  "props": [
+    {
+      "name": "defaultValue",
+      "type": "GhostCalendarValue",
+      "required": false,
+      "description": "Declared prop `defaultValue`.",
+      "deprecated": false
+    },
+    {
+      "name": "defaultVisibleMonth",
+      "type": "CalendarDate",
+      "required": false,
+      "description": "Declared prop `defaultVisibleMonth`.",
+      "deprecated": false
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Declared prop `disabled`.",
+      "deprecated": false
+    },
+    {
+      "name": "isDateDisabled",
+      "type": "((date: CalendarDate) => boolean)",
+      "required": false,
+      "description": "Declared prop `isDateDisabled`.",
+      "deprecated": false
+    },
+    {
+      "name": "locale",
+      "type": "string",
+      "default": "en-US",
+      "required": false,
+      "description": "Declared prop `locale`.",
+      "deprecated": false
+    },
+    {
+      "name": "maxValue",
+      "type": "CalendarDate",
+      "required": false,
+      "description": "Declared prop `maxValue`.",
+      "deprecated": false
+    },
+    {
+      "name": "minValue",
+      "type": "CalendarDate",
+      "required": false,
+      "description": "Declared prop `minValue`.",
+      "deprecated": false
+    },
+    {
+      "name": "modelValue",
+      "type": "GhostCalendarValue",
+      "required": false,
+      "description": "Declared prop `modelValue`.",
+      "deprecated": false
+    },
+    {
+      "name": "selectionMode",
+      "type": "GhostCalendarSelectionMode",
+      "default": "single",
+      "required": false,
+      "description": "Declared prop `selectionMode`.",
+      "deprecated": false
+    },
+    {
+      "name": "today",
+      "type": "CalendarDate",
+      "required": false,
+      "description": "Declared prop `today`.",
+      "deprecated": false
+    },
+    {
+      "name": "visibleMonth",
+      "type": "CalendarDate",
+      "required": false,
+      "description": "Declared prop `visibleMonth`.",
+      "deprecated": false
+    },
+    {
+      "name": "weekStartsOn",
+      "type": "number",
+      "required": false,
+      "description": "Declared prop `weekStartsOn`.",
+      "deprecated": false
+    }
+  ],
+  "models": [
+    {
+      "prop": "modelValue",
+      "event": "update:modelValue",
+      "type": "GhostCalendarValue",
+      "description": "v-model binding for `modelValue`."
+    },
+    {
+      "prop": "visibleMonth",
+      "event": "update:visibleMonth",
+      "type": "CalendarDate",
+      "description": "v-model binding for `visibleMonth`."
+    }
+  ],
+  "events": [],
+  "slots": [
+    {
+      "name": "default",
+      "props": [
+        {
+          "name": "modelValue",
+          "type": "GhostCalendarValue",
+          "description": "Slot prop `modelValue`."
+        },
+        {
+          "name": "selectionMode",
+          "type": "GhostCalendarSelectionMode",
+          "description": "Slot prop `selectionMode`."
+        },
+        {
+          "name": "visibleMonth",
+          "type": "CalendarDate",
+          "description": "Slot prop `visibleMonth`."
+        }
+      ],
+      "description": "Container content."
+    }
+  ],
+  "exposed": [
+    {
+      "name": "element",
+      "kind": "property",
+      "type": "HTMLElement | null",
+      "description": "Root element after mount; null before mount."
+    }
+  ],
+  "styling": {
+    "parts": [
+      {
+        "name": "root",
+        "description": "Neutral content container."
+      }
+    ],
+    "states": [],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "generic",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/",
+    "keyboard": {},
+    "requiredAriaAttributes": []
+  },
+  "examples": [
+    "calendar/basic",
+    "calendar/range",
+    "calendar/controlled",
+    "calendar/locale",
+    "calendar/themed"
+  ]
+}

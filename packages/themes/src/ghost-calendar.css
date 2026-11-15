@@ -1,0 +1,175 @@
+/* Themed GhostCalendar month grid. Values use semantic --ghost-* tokens. */
+@layer ghostvue-theme {
+  :where(
+    .ghost-theme .ghost-calendar-header,
+    .ghost-themed-scope .ghost-calendar-header,
+    .ghost-calendar-header[data-themed]
+  ) {
+    align-items: center;
+    display: flex;
+    gap: var(--ghost-space-gap-sm);
+    justify-content: space-between;
+    margin-block-end: var(--ghost-space-gap-sm);
+  }
+
+  :where(
+    .ghost-theme .ghost-calendar-heading,
+    .ghost-themed-scope .ghost-calendar-heading,
+    .ghost-calendar-heading[data-themed]
+  ) {
+    color: var(--ghost-surface-fg);
+    flex: 1;
+    font-family: var(--ghost-type-family-sans);
+    font-size: var(--ghost-type-size-md);
+    font-weight: var(--ghost-type-weight-semibold);
+    margin: 0;
+    text-align: center;
+  }
+
+  :where(
+    .ghost-theme .ghost-calendar-prev,
+    .ghost-themed-scope .ghost-calendar-prev,
+    .ghost-calendar-prev[data-themed],
+    .ghost-theme .ghost-calendar-next,
+    .ghost-themed-scope .ghost-calendar-next,
+    .ghost-calendar-next[data-themed]
+  ) {
+    background-color: var(--ghost-elevation-1-bg);
+    border: var(--ghost-border-hairline-width) solid
+      var(--ghost-elevation-1-border);
+    border-radius: var(--ghost-radius-md);
+    color: var(--ghost-surface-fg);
+    cursor: pointer;
+    font: inherit;
+    min-block-size: var(--ghost-control-size-sm-min);
+    min-inline-size: var(--ghost-control-size-sm-min);
+    padding: var(--ghost-space-inset-xs);
+  }
+
+  :where(
+    .ghost-theme .ghost-calendar-prev:focus-visible,
+    .ghost-themed-scope .ghost-calendar-prev:focus-visible,
+    .ghost-calendar-prev[data-themed]:focus-visible,
+    .ghost-theme .ghost-calendar-next:focus-visible,
+    .ghost-themed-scope .ghost-calendar-next:focus-visible,
+    .ghost-calendar-next[data-themed]:focus-visible
+  ) {
+    outline: var(--ghost-focus-ring-width) solid var(--ghost-focus-ring-color);
+    outline-offset: var(--ghost-focus-ring-offset);
+  }
+
+  :where(
+    .ghost-theme .ghost-calendar-grid,
+    .ghost-themed-scope .ghost-calendar-grid,
+    .ghost-calendar-grid[data-themed]
+  ) {
+    border-collapse: collapse;
+    display: block;
+    font-family: var(--ghost-type-family-sans);
+    width: 100%;
+  }
+
+  :where(
+    .ghost-theme .ghost-calendar-weekdays,
+    .ghost-themed-scope .ghost-calendar-weekdays,
+    .ghost-calendar-weekdays[data-themed]
+  ) {
+    display: grid;
+    gap: var(--ghost-space-gap-xs);
+    grid-template-columns: repeat(7, minmax(2.25rem, 1fr));
+    margin-block-end: var(--ghost-space-gap-xs);
+  }
+
+  :where(
+    .ghost-theme .ghost-calendar-weekday,
+    .ghost-themed-scope .ghost-calendar-weekday,
+    .ghost-calendar-weekday[data-themed]
+  ) {
+    color: var(--ghost-surface-fg-muted);
+    font-size: var(--ghost-type-size-xs);
+    font-weight: var(--ghost-type-weight-semibold);
+    text-align: center;
+  }
+
+  :where(
+    .ghost-theme .ghost-calendar-week,
+    .ghost-themed-scope .ghost-calendar-week,
+    .ghost-calendar-week[data-themed]
+  ) {
+    display: grid;
+    gap: var(--ghost-space-gap-xs);
+    grid-template-columns: repeat(7, minmax(2.25rem, 1fr));
+  }
+
+  :where(
+    .ghost-theme .ghost-calendar-cell,
+    .ghost-themed-scope .ghost-calendar-cell,
+    .ghost-calendar-cell[data-themed]
+  ) {
+    align-items: center;
+    aspect-ratio: 1;
+    background: transparent;
+    border: var(--ghost-border-hairline-width) solid transparent;
+    border-radius: var(--ghost-radius-md);
+    color: var(--ghost-surface-fg);
+    cursor: pointer;
+    display: inline-flex;
+    font: inherit;
+    justify-content: center;
+    min-block-size: var(--ghost-control-size-sm-min);
+    padding: 0;
+    width: 100%;
+  }
+
+  :where(
+    .ghost-theme .ghost-calendar-cell[data-outside-month],
+    .ghost-themed-scope .ghost-calendar-cell[data-outside-month],
+    .ghost-calendar-cell[data-themed][data-outside-month]
+  ) {
+    color: var(--ghost-surface-fg-muted);
+    opacity: 0.55;
+  }
+
+  :where(
+    .ghost-theme .ghost-calendar-cell[data-today]:not([data-state='selected']),
+    .ghost-themed-scope
+      .ghost-calendar-cell[data-today]:not([data-state='selected']),
+    .ghost-calendar-cell[data-themed][data-today]:not([data-state='selected'])
+  ) {
+    border-color: var(--ghost-border-strong);
+  }
+
+  :where(
+    .ghost-theme .ghost-calendar-cell[data-state='selected'],
+    .ghost-themed-scope .ghost-calendar-cell[data-state='selected'],
+    .ghost-calendar-cell[data-themed][data-state='selected'],
+    .ghost-theme .ghost-calendar-cell[data-state='range-start'],
+    .ghost-themed-scope .ghost-calendar-cell[data-state='range-start'],
+    .ghost-calendar-cell[data-themed][data-state='range-start'],
+    .ghost-theme .ghost-calendar-cell[data-state='range-end'],
+    .ghost-themed-scope .ghost-calendar-cell[data-state='range-end'],
+    .ghost-calendar-cell[data-themed][data-state='range-end']
+  ) {
+    background-color: var(--ghost-action-primary-bg);
+    border-color: var(--ghost-action-primary-border);
+    color: var(--ghost-action-primary-fg);
+  }
+
+  :where(
+    .ghost-theme .ghost-calendar-cell[data-state='range-middle'],
+    .ghost-themed-scope .ghost-calendar-cell[data-state='range-middle'],
+    .ghost-calendar-cell[data-themed][data-state='range-middle']
+  ) {
+    background-color: var(--ghost-elevation-2-bg);
+    color: var(--ghost-surface-fg);
+  }
+
+  :where(
+    .ghost-theme .ghost-calendar-cell:focus-visible,
+    .ghost-themed-scope .ghost-calendar-cell:focus-visible,
+    .ghost-calendar-cell[data-themed]:focus-visible
+  ) {
+    outline: var(--ghost-focus-ring-width) solid var(--ghost-focus-ring-color);
+    outline-offset: var(--ghost-focus-ring-offset);
+  }
+}

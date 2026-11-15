@@ -14,6 +14,10 @@ import GhostMenubarItem from '../../packages/vue/src/GhostMenubarItem.vue'
 import GhostMenubarMenu from '../../packages/vue/src/GhostMenubarMenu.vue'
 import GhostMenubarTrigger from '../../packages/vue/src/GhostMenubarTrigger.vue'
 import GhostInlineAlert from '../../packages/vue/src/GhostInlineAlert.vue'
+import { CalendarDate } from '../../packages/vue/src/calendar-public-date'
+import GhostCalendar from '../../packages/vue/src/GhostCalendar.vue'
+import GhostCalendarGrid from '../../packages/vue/src/GhostCalendarGrid.vue'
+import GhostCalendarHeading from '../../packages/vue/src/GhostCalendarHeading.vue'
 import GhostCombobox from '../../packages/vue/src/GhostCombobox.vue'
 import GhostComboboxContent from '../../packages/vue/src/GhostComboboxContent.vue'
 import GhostComboboxInput from '../../packages/vue/src/GhostComboboxInput.vue'
@@ -152,6 +156,33 @@ describe('SSR hydration harness', () => {
         expect(html).toContain('aria-expanded="true"')
         expect(html).toContain('Visible SSR disclosure')
         expect(html).not.toContain(' hidden')
+      },
+    })
+  })
+
+  it('hydrates GhostCalendar month grid without mismatch', async () => {
+    const CalendarFixture = defineComponent({
+      name: 'CalendarFixture',
+      setup() {
+        return () =>
+          h(
+            GhostCalendar,
+            {
+              defaultVisibleMonth: new CalendarDate(2024, 6, 1),
+              today: new CalendarDate(2024, 6, 10),
+              defaultValue: new CalendarDate(2024, 6, 15),
+            },
+            {
+              default: () => [h(GhostCalendarHeading), h(GhostCalendarGrid)],
+            },
+          )
+      },
+    })
+
+    await expectSsrHydration(CalendarFixture, {
+      assertServerHtml(html) {
+        expect(html).toContain('role="grid"')
+        expect(html).toContain('data-ghost-calendar-date="2024-06-15"')
       },
     })
   })

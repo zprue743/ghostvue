@@ -1,0 +1,107 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "generated",
+  "name": "GhostCalendarCell",
+  "package": "@ghostvue/vue",
+  "status": "experimental",
+  "description": "Public GhostCalendarCell component.",
+  "props": [
+    {
+      "name": "as",
+      "type": "GhostCalendarCellElement",
+      "default": "button",
+      "required": false,
+      "description": "Declared prop `as`.",
+      "deprecated": false
+    },
+    {
+      "name": "date",
+      "type": "CalendarDate",
+      "required": true,
+      "description": "Declared prop `date`.",
+      "deprecated": false
+    }
+  ],
+  "models": [],
+  "events": [],
+  "slots": [
+    {
+      "name": "default",
+      "props": [
+        {
+          "name": "date",
+          "type": "CalendarDate",
+          "description": "Slot prop `date`."
+        },
+        {
+          "name": "disabled",
+          "type": "boolean",
+          "description": "Slot prop `disabled`."
+        },
+        {
+          "name": "focused",
+          "type": "boolean",
+          "description": "Slot prop `focused`."
+        },
+        {
+          "name": "formattedDate",
+          "type": "string",
+          "description": "Slot prop `formattedDate`."
+        },
+        {
+          "name": "outsideMonth",
+          "type": "boolean",
+          "description": "Slot prop `outsideMonth`."
+        },
+        {
+          "name": "selected",
+          "type": "boolean",
+          "description": "Slot prop `selected`."
+        },
+        {
+          "name": "state",
+          "type": "GhostCalendarCellState",
+          "description": "Slot prop `state`."
+        },
+        {
+          "name": "today",
+          "type": "boolean",
+          "description": "Slot prop `today`."
+        }
+      ],
+      "description": "Primary content."
+    }
+  ],
+  "exposed": [
+    {
+      "name": "blur",
+      "kind": "method",
+      "type": "() => void",
+      "description": "Exposed method `blur`."
+    },
+    {
+      "name": "element",
+      "kind": "property",
+      "type": "HTMLElement | null",
+      "description": "Exposed property `element`."
+    },
+    {
+      "name": "focus",
+      "kind": "method",
+      "type": "(options?: FocusOptions) => void",
+      "description": "Exposed method `focus`."
+    }
+  ],
+  "styling": {
+    "parts": [],
+    "states": [],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "generic",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/",
+    "keyboard": {},
+    "requiredAriaAttributes": []
+  },
+  "examples": []
+}
