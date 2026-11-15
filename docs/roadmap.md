@@ -103,6 +103,3 @@ DataTable ([GHO-35](https://linear.app/ghost-vue/issue/GHO-35)) is the north sta
 | 48    | DataTable         | [GHO-35](https://linear.app/ghost-vue/issue/GHO-35)   | Blocked by [GHO-27](https://linear.app/ghost-vue/issue/GHO-27) (overlay primitives) and `GhostTable`, `GhostScrollArea`, `GhostCheckbox`, `GhostInput`, `GhostSelect`, `GhostPagination`, `GhostToolbar`, `GhostDropdownMenu`, `GhostPopover`, `GhostTooltip`, `GhostSkeleton`, `GhostSpinner`, `GhostEmptyState`. Query builders and virtualization are mentioned in [philosophy.md](./philosophy.md) / [performance.md](./standards/performance.md) as directional, not as this catalog. | planned                                                      |
 
 Public `Ghost*` names for DataTable are not recorded in ADR 0003 examples. ADR 0003 would require a DataTable `Ghost*` name if that component ships.
-
-
-<!-- path-filter smoke -->
