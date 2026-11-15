@@ -20,12 +20,40 @@ export interface UseFocusScopeOptions {
   restoreFocus?: MaybeRefOrGetter<boolean>
 }
 
+interface TrappedScopeEntry {
+  readonly id: symbol
+  readonly element: HTMLElement
+}
+
 /**
  * Only the innermost trapped scope owns Tab. Untrapped scopes still autofocus
  * and restore, but they must not sit on this stack or a nested popover would
  * disable an ancestor dialog's trap.
  */
-const trappedStack: symbol[] = []
+const trappedStack: TrappedScopeEntry[] = []
+
+function pushTrappedScope(entry: TrappedScopeEntry): void {
+  // Vue runs child onMounted hooks before parent onMounted hooks. When nested
+  // trapped scopes mount in the same render, keep descendants above ancestors
+  // so the innermost trapped scope owns Tab regardless of mount order.
+  const descendantIndex = trappedStack.findIndex(
+    (existing) =>
+      existing.element !== entry.element &&
+      entry.element.contains(existing.element),
+  )
+  if (descendantIndex >= 0) {
+    trappedStack.splice(descendantIndex, 0, entry)
+    return
+  }
+  trappedStack.push(entry)
+}
+
+function removeTrappedScope(entry: TrappedScopeEntry): void {
+  const index = trappedStack.lastIndexOf(entry)
+  if (index >= 0) {
+    trappedStack.splice(index, 1)
+  }
+}
 
 /**
  * Focus entry, optional Tab trap, and restoration for overlays.
@@ -67,17 +95,15 @@ export function useFocusScope(
               return
             }
 
-            trappedStack.push(scopeId)
+            const entry: TrappedScopeEntry = { id: scopeId, element }
+            pushTrappedScope(entry)
             const onKeyDown = (event: KeyboardEvent): void => {
               handleTab(event, element, scopeId, toValue(options?.loop) ?? true)
             }
             document.addEventListener('keydown', onKeyDown, true)
             onTrapCleanup(() => {
               document.removeEventListener('keydown', onKeyDown, true)
-              const index = trappedStack.lastIndexOf(scopeId)
-              if (index >= 0) {
-                trappedStack.splice(index, 1)
-              }
+              removeTrappedScope(entry)
             })
           },
           { immediate: true },
@@ -127,7 +153,7 @@ function handleTab(
   if (event.key !== 'Tab' || event.defaultPrevented) {
     return
   }
-  if (trappedStack.at(-1) !== scopeId) {
+  if (trappedStack.at(-1)?.id !== scopeId) {
     return
   }
   // A non-trapped dismissable layer (such as a portaled popover) opened above

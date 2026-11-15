@@ -266,6 +266,236 @@ describe('useFocusScope', () => {
     expect(document.activeElement?.textContent).toBe('Inner first')
   })
 
+  it('lets the innermost separate child component own Tab when parent and child mount together', async () => {
+    const showChild = ref(true)
+    const ChildScope = defineComponent({
+      setup() {
+        const inner = ref<HTMLElement | null>(null)
+        useFocusScope(inner, { trapped: true, loop: true, autoFocus: false })
+        return () =>
+          h('div', { ref: inner, tabindex: '-1' }, [
+            h(
+              'button',
+              { type: 'button', 'data-testid': 'inner-first' },
+              'Inner first',
+            ),
+            h(
+              'button',
+              { type: 'button', 'data-testid': 'inner-last' },
+              'Inner last',
+            ),
+          ])
+      },
+    })
+
+    const ParentScope = defineComponent({
+      setup() {
+        const outer = ref<HTMLElement | null>(null)
+        useFocusScope(outer, { trapped: true, loop: true, autoFocus: false })
+        return () =>
+          h('div', { ref: outer, tabindex: '-1' }, [
+            h(
+              'button',
+              { type: 'button', 'data-testid': 'outer-first' },
+              'Outer first',
+            ),
+            showChild.value ? h(ChildScope) : null,
+            h(
+              'button',
+              { type: 'button', 'data-testid': 'outer-last' },
+              'Outer last',
+            ),
+          ])
+      },
+    })
+
+    const wrapper = mount(ParentScope, { attachTo: document.body })
+    attached.push(wrapper)
+
+    const innerFirst = wrapper.get<HTMLElement>(
+      '[data-testid="inner-first"]',
+    ).element
+    const innerLast = wrapper.get<HTMLElement>(
+      '[data-testid="inner-last"]',
+    ).element
+
+    innerLast.focus()
+    const forward = tab(innerLast)
+    expect(forward.defaultPrevented).toBe(true)
+    expect(document.activeElement).toBe(innerFirst)
+
+    const backward = tab(innerFirst, true)
+    expect(backward.defaultPrevented).toBe(true)
+    expect(document.activeElement).toBe(innerLast)
+
+    // Unmounting the child returns Tab ownership to the parent scope.
+    showChild.value = false
+    await nextTick()
+
+    const outerFirst = wrapper.get<HTMLElement>(
+      '[data-testid="outer-first"]',
+    ).element
+    const outerLast = wrapper.get<HTMLElement>(
+      '[data-testid="outer-last"]',
+    ).element
+    outerLast.focus()
+    const parentWrap = tab(outerLast)
+    expect(parentWrap.defaultPrevented).toBe(true)
+    expect(document.activeElement).toBe(outerFirst)
+  })
+
+  it('keeps Tab owned by an already-mounted child when an ancestor becomes trapped later', async () => {
+    const parentTrapped = ref(false)
+    const ChildScope = defineComponent({
+      setup() {
+        const inner = ref<HTMLElement | null>(null)
+        useFocusScope(inner, { trapped: true, loop: true, autoFocus: false })
+        return () =>
+          h('div', { ref: inner, tabindex: '-1' }, [
+            h(
+              'button',
+              { type: 'button', 'data-testid': 'inner-first' },
+              'Inner first',
+            ),
+            h(
+              'button',
+              { type: 'button', 'data-testid': 'inner-last' },
+              'Inner last',
+            ),
+          ])
+      },
+    })
+
+    const ParentScope = defineComponent({
+      setup() {
+        const outer = ref<HTMLElement | null>(null)
+        useFocusScope(outer, {
+          trapped: parentTrapped,
+          loop: true,
+          autoFocus: false,
+        })
+        return () =>
+          h('div', { ref: outer, tabindex: '-1' }, [
+            h(
+              'button',
+              { type: 'button', 'data-testid': 'outer-first' },
+              'Outer first',
+            ),
+            h(ChildScope),
+            h(
+              'button',
+              { type: 'button', 'data-testid': 'outer-last' },
+              'Outer last',
+            ),
+          ])
+      },
+    })
+
+    const wrapper = mount(ParentScope, { attachTo: document.body })
+    attached.push(wrapper)
+
+    parentTrapped.value = true
+    await nextTick()
+
+    const innerFirst = wrapper.get<HTMLElement>(
+      '[data-testid="inner-first"]',
+    ).element
+    const innerLast = wrapper.get<HTMLElement>(
+      '[data-testid="inner-last"]',
+    ).element
+    innerLast.focus()
+    const event = tab(innerLast)
+    expect(event.defaultPrevented).toBe(true)
+    expect(document.activeElement).toBe(innerFirst)
+  })
+
+  it('preserves autofocus and restoreFocus across nested trapped components', async () => {
+    const showChild = ref(false)
+    const ChildScope = defineComponent({
+      setup() {
+        const inner = ref<HTMLElement | null>(null)
+        useFocusScope(inner, {
+          trapped: true,
+          loop: true,
+          autoFocus: true,
+          restoreFocus: true,
+        })
+        return () =>
+          h('div', { ref: inner, tabindex: '-1' }, [
+            h(
+              'button',
+              { type: 'button', 'data-testid': 'inner-first' },
+              'Inner first',
+            ),
+            h(
+              'button',
+              { type: 'button', 'data-testid': 'inner-last' },
+              'Inner last',
+            ),
+          ])
+      },
+    })
+
+    const ParentScope = defineComponent({
+      setup() {
+        const outer = ref<HTMLElement | null>(null)
+        useFocusScope(outer, {
+          trapped: true,
+          loop: true,
+          autoFocus: true,
+          restoreFocus: true,
+        })
+        return () =>
+          h('div', { ref: outer, tabindex: '-1' }, [
+            h(
+              'button',
+              { type: 'button', 'data-testid': 'outer-trigger' },
+              'Outer trigger',
+            ),
+            showChild.value ? h(ChildScope) : null,
+          ])
+      },
+    })
+
+    const outside = document.createElement('button')
+    outside.type = 'button'
+    outside.textContent = 'Outside'
+    document.body.append(outside)
+    outside.focus()
+
+    const wrapper = mount(ParentScope, { attachTo: document.body })
+    attached.push(wrapper)
+
+    await nextTick()
+    const outerTrigger = wrapper.get<HTMLElement>(
+      '[data-testid="outer-trigger"]',
+    ).element
+    expect(document.activeElement).toBe(outerTrigger)
+
+    showChild.value = true
+    await nextTick()
+    const innerFirst = wrapper.get<HTMLElement>(
+      '[data-testid="inner-first"]',
+    ).element
+    const innerLast = wrapper.get<HTMLElement>(
+      '[data-testid="inner-last"]',
+    ).element
+    expect(document.activeElement).toBe(innerFirst)
+
+    innerLast.focus()
+    const event = tab(innerLast)
+    expect(event.defaultPrevented).toBe(true)
+    expect(document.activeElement).toBe(innerFirst)
+
+    showChild.value = false
+    await nextTick()
+    expect(document.activeElement).toBe(outerTrigger)
+
+    wrapper.unmount()
+    expect(document.activeElement).toBe(outside)
+    outside.remove()
+  })
+
   it('restores focus to the previously focused element on unmount', async () => {
     const outside = document.createElement('button')
     outside.type = 'button'
