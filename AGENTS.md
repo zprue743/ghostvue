@@ -50,6 +50,24 @@ run `pnpm adapters:write` rather than hand-editing them.
   (for example VitePress `base.css`) and restore only those properties under the
   narrowest scope.
 
+## Before you open or update a PR
+
+- Visual baselines: only `pnpm test:visual:docker` (Docker is in the agent env; never
+  host snapshots).
+- After rebasing onto `master`, run `pnpm manifests:write` and commit export/registry
+  updates.
+- In `docs/roadmap.md`, change only your component's row.
+- Do not push empty "retrigger CI" commits. Missing Actions usually means the PR
+  conflicts with `master`: rebase, then `git push --force-with-lease` on your branch.
+- Part/slot props merge consumer `class`/`style`; never overwrite them.
+- Interactive or scrollable regions need a role and accessible name (`role="region"`
+  plus `aria-label` / `aria-labelledby`). Space visually hidden text from visible
+  labels. Native `<button>` defaults to `type="button"`.
+- Theme selectors target the component's own parts (child combinator), not nested parts.
+- Tests assert behavior; cover reorder/insert and async races for stateful components.
+- Run `pnpm verify` and `pnpm test:e2e` before reporting done; cite the head SHA only
+  after `verify` and browser checks are green on that commit.
+
 ## Commands
 
 ```bash
