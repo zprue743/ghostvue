@@ -59,11 +59,13 @@ None.
 
 ### Events, callbacks, slots, and exposed methods
 
-| Slot      | Part      | Contract                                                                                 |
-| --------- | --------- | ---------------------------------------------------------------------------------------- |
-| `header`  | `header`  | Optional top region. No implicit heading; consumers supply headings in slot content.     |
-| `default` | `content` | Primary body copy or controls.                                                           |
-| `footer`  | `footer`  | Optional bottom region for secondary actions when the root is **not** an action element. |
+| Slot      | Part      | Contract                                                                                          |
+| --------- | --------- | ------------------------------------------------------------------------------------------------- |
+| `header`  | `header`  | Optional top region. `div` by default; `span` on `a` / `button` roots for valid phrasing content. |
+| `default` | `content` | Primary body copy or controls.                                                                    |
+| `footer`  | `footer`  | Optional bottom region for secondary actions when the root is **not** an action element.          |
+
+When `as` is `button` and `type` is omitted, the root defaults to `type="button"`.
 
 No component-specific events. Exposed API:
 

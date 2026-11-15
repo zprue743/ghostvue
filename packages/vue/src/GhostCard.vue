@@ -30,7 +30,11 @@ const hasFooter = computed(() => Boolean(slots['footer']))
 
 const spotlightActive = computed(() => props.effects.includes('spotlight'))
 
-const { as, rootProps: cardRootProps, isActionRoot } = useGhostCard({
+const {
+  as,
+  rootProps: cardRootProps,
+  isActionRoot,
+} = useGhostCard({
   as: () => props.as,
 })
 
@@ -48,7 +52,7 @@ const hostAttrs = computed(() => ({
   ...attrs,
   ...cardRootProps.value,
   ...interactiveRootProps.value,
-  ...(props.as === 'button' && attrs.type === undefined
+  ...(props.as === 'button' && attrs['type'] === undefined
     ? { type: 'button' as const }
     : {}),
   class: [attrs.class, cardRootProps.value.class],
