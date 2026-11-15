@@ -32,7 +32,7 @@
     "test:coverage": "vitest run --coverage",
     "test:coverage:integration-heavy": "vitest run --coverage $(node scripts/vitest-ci-args.mjs integration-heavy)",
     "test:coverage:unit:ci": "vitest run --coverage $(node scripts/vitest-ci-args.mjs unit-exclude)",
-    "test:coverage:merge": "vitest --merge-reports --coverage",
+    "test:coverage:merge": "vitest --merge-reports .vitest-reports --coverage",
     "test:e2e": "pnpm --filter @ghostvue/playground build && pnpm --filter @ghostvue/docs build && playwright test",
     "test:e2e:prebuilt": "playwright test",
     "test:visual": "pnpm --filter @ghostvue/playground build && pnpm --filter @ghostvue/docs build && playwright test --grep @visual",

@@ -67,6 +67,7 @@ jobs:
         shard: [1, 2]
     env:
       VITEST_BLOB_LABEL: unit-${{ matrix.shard }}
+      VITEST_DEFER_COVERAGE_THRESHOLDS: '1'
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -94,7 +95,7 @@ jobs:
         if: always()
         with:
           name: vitest-blob-unit-${{ matrix.shard }}
-          path: .vitest
+          path: .vitest-reports
           include-hidden-files: true
           retention-days: 1
           if-no-files-found: error
@@ -106,6 +107,7 @@ jobs:
     timeout-minutes: 15
     env:
       VITEST_BLOB_LABEL: integration
+      VITEST_DEFER_COVERAGE_THRESHOLDS: '1'
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -133,7 +135,7 @@ jobs:
         if: always()
         with:
           name: vitest-blob-integration
-          path: .vitest
+          path: .vitest-reports
           include-hidden-files: true
           retention-days: 1
           if-no-files-found: error
@@ -215,7 +217,7 @@ jobs:
         if: needs.changes.outputs.skip_heavy != 'true'
         with:
           pattern: vitest-blob-*
-          path: .vitest
+          path: .vitest-reports
           merge-multiple: true
       - name: Merge Vitest coverage and enforce thresholds
         if: needs.changes.outputs.skip_heavy != 'true'
