@@ -37,8 +37,11 @@ test.describe('GhostTable', () => {
         .getByTestId('table-contained')
         .locator('caption')
       const captionId = await containedCaption.getAttribute('id')
-      expect(captionId).toBeTruthy()
-      await expect(scrollRegion).toHaveAttribute('aria-labelledby', captionId!)
+      expect(captionId).not.toBeNull()
+      if (!captionId) {
+        throw new Error('Expected table-contained caption to have an id')
+      }
+      await expect(scrollRegion).toHaveAttribute('aria-labelledby', captionId)
       await expect(page.getByTestId('table-contained')).toHaveAttribute(
         'data-part',
         'root',

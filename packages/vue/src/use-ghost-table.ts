@@ -39,11 +39,21 @@ function tablePartProps(
 
 /** Preserve consumer `class` and `style` when applying GhostTable part hooks. */
 export function mergeGhostTablePartAttrs<
-  TRoot extends Record<string, unknown>,
-  TAttrs extends Record<string, unknown>,
->(attrs: TAttrs, rootProps: TRoot): Omit<TAttrs, 'class' | 'style'> & TRoot {
-  const { class: rootClass, style: rootStyle, ...rootRest } = rootProps
-  const { class: attrClass, style: attrStyle, ...attrRest } = attrs
+  TRoot extends object,
+  TAttrs extends object,
+>(attrs: TAttrs, rootProps: TRoot): TAttrs & TRoot {
+  const rootRecord = rootProps as Record<string, unknown>
+  const attrRecord = attrs as Record<string, unknown>
+  const rootClass = rootRecord['class']
+  const rootStyle = rootRecord['style']
+  const attrClass = attrRecord['class']
+  const attrStyle = attrRecord['style']
+  const rootRest = { ...rootRecord }
+  delete rootRest['class']
+  delete rootRest['style']
+  const attrRest = { ...attrRecord }
+  delete attrRest['class']
+  delete attrRest['style']
 
   const merged: Record<string, unknown> = {
     ...attrRest,
@@ -52,15 +62,15 @@ export function mergeGhostTablePartAttrs<
 
   const classes = [attrClass, rootClass].filter(Boolean)
   if (classes.length > 0) {
-    merged.class = classes.length === 1 ? classes[0] : classes
+    merged['class'] = classes.length === 1 ? classes[0] : classes
   }
 
   const styles = [attrStyle, rootStyle].filter(Boolean) as StyleValue[]
   if (styles.length > 0) {
-    merged.style = styles.length === 1 ? styles[0] : styles
+    merged['style'] = styles.length === 1 ? styles[0] : styles
   }
 
-  return merged as Omit<TAttrs, 'class' | 'style'> & TRoot
+  return merged as TAttrs & TRoot
 }
 
 export interface GhostTableRootProps {

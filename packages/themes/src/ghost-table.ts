@@ -38,7 +38,7 @@ export const GhostTable = defineComponent({
           {
             ...attrs,
             containHorizontal: props.containHorizontal,
-            scrollLabel: props.scrollLabel,
+            ...(props.scrollLabel ? { scrollLabel: props.scrollLabel } : {}),
             ref: inner,
           },
           slots,

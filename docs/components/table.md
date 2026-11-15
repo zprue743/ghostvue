@@ -16,9 +16,9 @@ during SSR hydration.
 
 ### `GhostTable`
 
-| Prop                | Type      | Default | Description                                                                                    |
-| ------------------- | --------- | ------- | ---------------------------------------------------------------------------------------------- |
-| `containHorizontal` | `boolean` | `false` | Wraps the table in `data-part="scroll-container"` for horizontal scroll.                       |
+| Prop                | Type      | Default | Description                                                                                      |
+| ------------------- | --------- | ------- | ------------------------------------------------------------------------------------------------ |
+| `containHorizontal` | `boolean` | `false` | Wraps the table in `data-part="scroll-container"` for horizontal scroll.                         |
 | `scrollLabel`       | `string`  | —       | Accessible name for the scroll region; otherwise uses `GhostTableCaption` via `aria-labelledby`. |
 
 Native attributes fall through to the `<table>` element. Exposes `element`:

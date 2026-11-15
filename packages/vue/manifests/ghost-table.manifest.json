@@ -13,6 +13,13 @@
       "required": false,
       "description": "When true, wraps the table in a scroll container for explicit horizontal overflow. The table itself never receives implicit overflow.",
       "deprecated": false
+    },
+    {
+      "name": "scrollLabel",
+      "type": "string",
+      "required": false,
+      "description": "Accessible name for the horizontal scroll region. When omitted and GhostTableCaption is rendered, the scroll region uses aria-labelledby on the caption id.",
+      "deprecated": false
     }
   ],
   "models": [],

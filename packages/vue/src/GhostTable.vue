@@ -14,7 +14,6 @@ defineOptions({
 
 const props = withDefaults(defineProps<GhostTableProps>(), {
   containHorizontal: false,
-  scrollLabel: undefined,
 })
 
 defineSlots<{ default(): unknown }>()

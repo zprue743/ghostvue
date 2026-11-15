@@ -10,6 +10,23 @@ import GhostTableHeaderCell from '../../packages/vue/src/GhostTableHeaderCell.vu
 import GhostTableRow from '../../packages/vue/src/GhostTableRow.vue'
 
 describe('themed GhostTable', () => {
+  it('forwards scrollLabel to the unstyled scroll region', () => {
+    const wrapper = mount(GhostTable, {
+      props: { containHorizontal: true, scrollLabel: 'Quarterly rates' },
+      slots: {
+        default: () => [
+          h(GhostTableBody, () =>
+            h(GhostTableRow, () => h(GhostTableCell, () => 'Cell')),
+          ),
+        ],
+      },
+    })
+
+    expect(
+      wrapper.find('.ghost-table-scroll-container').attributes('aria-label'),
+    ).toBe('Quarterly rates')
+  })
+
   it('scopes recipe CSS without changing table semantics', () => {
     const wrapper = mount(GhostTable, {
       props: { containHorizontal: true },
