@@ -1,4 +1,5 @@
 {
   "name": "GhostVue",
-  "install": "export COREPACK_ENABLE_DOWNLOAD_PROMPT=0 && (corepack enable pnpm || sudo env \"PATH=$PATH\" \"$(command -v corepack)\" enable pnpm --install-directory /usr/local/bin) && corepack install && pnpm install --frozen-lockfile && pnpm exec playwright install --with-deps chromium"
+  "install": "command -v docker >/dev/null || (sudo apt-get update -qq && sudo DEBIAN_FRONTEND=noninteractive apt-get install -y docker.io) && sudo usermod -aG docker \"${USER:-ubuntu}\" 2>/dev/null || true && export COREPACK_ENABLE_DOWNLOAD_PROMPT=0 && (corepack enable pnpm || sudo env \"PATH=$PATH\" \"$(command -v corepack)\" enable pnpm --install-directory /usr/local/bin) && corepack install && pnpm install --frozen-lockfile && pnpm exec playwright install --with-deps chromium",
+  "start": "if ! pgrep -x dockerd >/dev/null 2>&1; then sudo dockerd >/tmp/dockerd.log 2>&1 & fi; for i in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30; do [ -S /var/run/docker.sock ] && break; sleep 1; done; sudo chmod 666 /var/run/docker.sock 2>/dev/null || true; docker image inspect mcr.microsoft.com/playwright:v1.62.1-noble >/dev/null 2>&1 || docker pull mcr.microsoft.com/playwright:v1.62.1-noble >/tmp/playwright-image-pull.log 2>&1 &"
 }
