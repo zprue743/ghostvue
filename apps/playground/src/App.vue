@@ -1325,7 +1325,7 @@ function submitPlaygroundComment(event: Event): void {
         <p v-for="line in 10" :key="line">Log line {{ line }}</p>
       </GhostScrollArea>
       <GhostScrollArea
-        label="Wide columns"
+        label="Horizontal column scroll"
         orientation="horizontal"
         data-testid="scroll-area-horizontal"
         style="max-inline-size: 12rem; margin-block-start: 1rem"
