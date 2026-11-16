@@ -402,4 +402,169 @@ describe('GhostField', () => {
     expect(wrapper.get('.ghost-field').attributes('data-part')).toBe('root')
     wrapper.unmount()
   })
+
+  it('uses custom description and error ids in aria-describedby', async () => {
+    const wrapper = mount(
+      defineComponent({
+        setup() {
+          return () =>
+            h(GhostField, { invalid: true }, () => [
+              h(GhostFieldLabel, {}, () => 'Email'),
+              h(
+                GhostFieldDescription,
+                { id: 'custom-hint' },
+                () => 'Work email only.',
+              ),
+              h(
+                GhostFieldError,
+                { id: 'custom-error' },
+                () => 'Enter a valid email.',
+              ),
+              h(GhostFieldControl, null, {
+                default: (field: Record<string, unknown>) =>
+                  h(GhostInput, field),
+              }),
+            ])
+        },
+      }),
+    )
+
+    await flushPromises()
+    const input = wrapper.get('input')
+    const description = wrapper.get('[data-part="description"]')
+    const error = wrapper.get('[data-part="error"]')
+
+    expect(description.attributes('id')).toBe('custom-hint')
+    expect(error.attributes('id')).toBe('custom-error')
+    expect(input.attributes('aria-describedby')).toBe(
+      'custom-hint custom-error',
+    )
+    wrapper.unmount()
+  })
+
+  it('supports mixed custom and generated description/error ids', async () => {
+    const wrapper = mount(
+      defineComponent({
+        setup() {
+          return () =>
+            h(GhostField, { invalid: true }, () => [
+              h(GhostFieldLabel, {}, () => 'Email'),
+              h(
+                GhostFieldDescription,
+                { id: 'custom-hint' },
+                () => 'Work email only.',
+              ),
+              h(GhostFieldError, {}, () => 'Enter a valid email.'),
+              h(GhostFieldControl, null, {
+                default: (field: Record<string, unknown>) =>
+                  h(GhostInput, field),
+              }),
+            ])
+        },
+      }),
+    )
+
+    await flushPromises()
+    const input = wrapper.get('input')
+    const errorId = wrapper.get('[data-part="error"]').attributes('id') ?? ''
+
+    expect(errorId).toMatch(/^ghost-field-error-/)
+    expect(input.attributes('aria-describedby')).toBe(`custom-hint ${errorId}`)
+    wrapper.unmount()
+  })
+
+  it('updates aria-describedby dynamically when custom ids change or fall back', async () => {
+    const hintId = ref<string | undefined>('custom-hint')
+    const errorId = ref<string | undefined>('custom-error')
+
+    const wrapper = mount(
+      defineComponent({
+        setup() {
+          return () =>
+            h(GhostField, { invalid: true }, () => [
+              h(GhostFieldLabel, {}, () => 'Username'),
+              h(
+                GhostFieldDescription,
+                { id: hintId.value },
+                () => 'Lowercase letters only.',
+              ),
+              h(GhostFieldError, { id: errorId.value }, () => 'Already taken.'),
+              h(GhostFieldControl, null, {
+                default: (field: Record<string, unknown>) =>
+                  h(GhostInput, field),
+              }),
+            ])
+        },
+      }),
+    )
+
+    await flushPromises()
+    const input = () => wrapper.get('input')
+    const description = () => wrapper.get('[data-part="description"]')
+    const error = () => wrapper.get('[data-part="error"]')
+
+    expect(input().attributes('aria-describedby')).toBe(
+      'custom-hint custom-error',
+    )
+
+    hintId.value = 'updated-hint'
+    await flushPromises()
+    expect(description().attributes('id')).toBe('updated-hint')
+    expect(input().attributes('aria-describedby')).toBe(
+      'updated-hint custom-error',
+    )
+
+    hintId.value = undefined
+    errorId.value = ''
+    await flushPromises()
+    const fallbackHintId = description().attributes('id') ?? ''
+    const fallbackErrorId = error().attributes('id') ?? ''
+    expect(fallbackHintId).toMatch(/^ghost-field-description-/)
+    expect(fallbackErrorId).toMatch(/^ghost-field-error-/)
+    expect(input().attributes('aria-describedby')).toBe(
+      `${fallbackHintId} ${fallbackErrorId}`,
+    )
+    wrapper.unmount()
+  })
+
+  it('clears custom ids from aria-describedby on unmount', async () => {
+    const showDescription = ref(true)
+    const showError = ref(true)
+
+    const wrapper = mount(
+      defineComponent({
+        setup() {
+          return () =>
+            h(GhostField, { invalid: true }, () => [
+              h(GhostFieldLabel, {}, () => 'Token'),
+              showDescription.value
+                ? h(GhostFieldDescription, { id: 'custom-hint' }, () => 'Hint')
+                : null,
+              showError.value
+                ? h(GhostFieldError, { id: 'custom-error' }, () => 'Error')
+                : null,
+              h(GhostFieldControl, null, {
+                default: (field: Record<string, unknown>) =>
+                  h(GhostInput, field),
+              }),
+            ])
+        },
+      }),
+    )
+
+    await flushPromises()
+    const input = () => wrapper.get('input')
+    expect(input().attributes('aria-describedby')).toBe(
+      'custom-hint custom-error',
+    )
+
+    showError.value = false
+    await flushPromises()
+    expect(input().attributes('aria-describedby')).toBe('custom-hint')
+
+    showDescription.value = false
+    await flushPromises()
+    expect(input().attributes('aria-describedby')).toBeUndefined()
+    wrapper.unmount()
+  })
 })

@@ -1,5 +1,13 @@
 <script setup lang="ts">
-import { computed, inject, shallowRef, useAttrs, useTemplateRef } from 'vue'
+import {
+  computed,
+  inject,
+  onUnmounted,
+  shallowRef,
+  useAttrs,
+  useTemplateRef,
+  watch,
+} from 'vue'
 
 import {
   ghostFieldContextKey,
@@ -32,6 +40,27 @@ const hostRef = useTemplateRef<HTMLElement>('host')
 const element = computed(() => resolveFieldHtmlElement(hostRef.value))
 const visible = shallowRef(false)
 
+const descriptionId = computed(() => {
+  const customId = attrs['id']
+  return typeof customId === 'string' && customId.length > 0
+    ? customId
+    : context.defaultDescriptionId.value
+})
+
+watch(
+  descriptionId,
+  (id) => {
+    context.setDescriptionId(
+      id === context.defaultDescriptionId.value ? null : id,
+    )
+  },
+  { immediate: true },
+)
+
+onUnmounted(() => {
+  context.setDescriptionId(null)
+})
+
 useGhostFieldPartContent(hostRef, (next) => {
   visible.value = next
   context.setDescriptionRegistered(next)
@@ -45,15 +74,9 @@ const descriptionAttrs = computed(() => {
     }
   }
 
-  const customId = attrs['id']
-  const id =
-    typeof customId === 'string' && customId.length > 0
-      ? customId
-      : context.descriptionId.value
-
   return {
     ...rest,
-    id,
+    id: descriptionId.value,
     'data-part': 'description',
     hidden: visible.value ? undefined : true,
   }
