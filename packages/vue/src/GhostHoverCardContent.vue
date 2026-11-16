@@ -12,7 +12,6 @@ import type { GhostPortalTarget } from './ghost-portal'
 import GhostPortal from './GhostPortal.vue'
 import {
   ghostHoverCardContextKey,
-  hoverCardFocusStaysInside,
   resolveHoverCardHtmlElement,
   type GhostHoverCardContentElement,
   type GhostHoverCardContentExposed,
@@ -211,11 +210,8 @@ function handleFocusOut(event: FocusEvent): void {
     return
   }
   if (
-    hoverCardFocusStaysInside(
-      event.relatedTarget,
-      context.triggerElement.value,
-      context.contentElement.value,
-    )
+    event.relatedTarget instanceof Node &&
+    context.contentElement.value?.contains(event.relatedTarget)
   ) {
     return
   }
