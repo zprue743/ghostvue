@@ -1,5 +1,13 @@
 import { mount } from '@vue/test-utils'
-import { createSSRApp, defineComponent, h, nextTick, ref } from 'vue'
+import {
+  Teleport,
+  createApp,
+  createSSRApp,
+  defineComponent,
+  h,
+  nextTick,
+  ref,
+} from 'vue'
 import { renderToString } from 'vue/server-renderer'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
@@ -50,6 +58,14 @@ function buttonElement(
     throw new Error('expected a button')
   }
   return node.element
+}
+
+function queryHtml(selector: string, root: ParentNode = document): HTMLElement {
+  const element = root.querySelector(selector)
+  if (!(element instanceof HTMLElement)) {
+    throw new Error(`Expected HTMLElement matching selector: ${selector}`)
+  }
+  return element
 }
 
 describe('useFocusScope', () => {
@@ -521,7 +537,7 @@ describe('useFocusScope', () => {
     outside.remove()
   })
 
-  it('removes the keydown listener on unmount', () => {
+  it('removes the keydown and focusin listeners on unmount', () => {
     const container = ref<HTMLElement | null>(null)
     const wrapper = mountScope(
       () => {
@@ -538,6 +554,7 @@ describe('useFocusScope', () => {
     stray.type = 'button'
     document.body.append(stray)
     stray.focus()
+    expect(document.activeElement).toBe(stray)
     const event = tab(stray)
     expect(event.defaultPrevented).toBe(false)
     stray.remove()
@@ -867,5 +884,394 @@ describe('useFocusScope', () => {
     const forwardTrailing = tab(trailing)
     expect(forwardTrailing.defaultPrevented).toBe(true)
     expect(document.activeElement).toBe(buttonElement(wrapper, 0))
+  })
+
+  it('recovers focus to the last focused inside element when focus escapes via .focus() or focusin', async () => {
+    const outsideBtn = document.createElement('button')
+    outsideBtn.type = 'button'
+    outsideBtn.textContent = 'Outside button'
+    const outsideHeading = document.createElement('h2')
+    outsideHeading.tabIndex = -1
+    outsideHeading.textContent = 'Outside heading'
+    document.body.append(outsideBtn, outsideHeading)
+
+    const container = ref<HTMLElement | null>(null)
+    const trapped = ref(true)
+    const wrapper = mountScope(
+      () => {
+        useFocusScope(container, { trapped, autoFocus: true })
+      },
+      () =>
+        h('div', { ref: container, tabindex: '-1' }, [
+          h('button', { type: 'button', 'data-testid': 'first' }, 'First'),
+          h('button', { type: 'button', 'data-testid': 'second' }, 'Second'),
+        ]),
+    )
+
+    await nextTick()
+    const first = wrapper.get<HTMLElement>('[data-testid="first"]').element
+    const second = wrapper.get<HTMLElement>('[data-testid="second"]').element
+    expect(document.activeElement).toBe(first)
+
+    // Move to second item, then attempt programmatic focus and synthetic focusin outside.
+    second.focus()
+    expect(document.activeElement).toBe(second)
+
+    outsideBtn.focus()
+    expect(document.activeElement).toBe(second)
+
+    outsideHeading.focus()
+    expect(document.activeElement).toBe(second)
+
+    outsideBtn.dispatchEvent(new FocusEvent('focusin', { bubbles: true }))
+    expect(document.activeElement).toBe(second)
+
+    // Turning off trapped releases the focusin guard.
+    trapped.value = false
+    await nextTick()
+    outsideBtn.focus()
+    expect(document.activeElement).toBe(outsideBtn)
+
+    outsideBtn.remove()
+    outsideHeading.remove()
+  })
+
+  it('falls back to initial focus when the last focused inside element becomes disabled or removed', async () => {
+    const outside = document.createElement('button')
+    outside.type = 'button'
+    outside.textContent = 'Outside'
+    document.body.append(outside)
+
+    const container = ref<HTMLElement | null>(null)
+    const wrapper = mountScope(
+      () => {
+        useFocusScope(container, { trapped: true, autoFocus: true })
+      },
+      () =>
+        h('div', { ref: container, tabindex: '-1' }, [
+          h('button', { type: 'button', 'data-testid': 'first' }, 'First'),
+          h('button', { type: 'button', 'data-testid': 'second' }, 'Second'),
+        ]),
+    )
+
+    await nextTick()
+    const first = wrapper.get<HTMLElement>('[data-testid="first"]').element
+    const second = wrapper.get<HTMLButtonElement>(
+      '[data-testid="second"]',
+    ).element
+
+    second.focus()
+    expect(document.activeElement).toBe(second)
+
+    second.disabled = true
+    outside.focus()
+    expect(document.activeElement).toBe(first)
+
+    outside.remove()
+  })
+
+  it('does not pull focus from an upper dismissable layer on focusin while still guarding outside it', async () => {
+    const outside = document.createElement('button')
+    outside.type = 'button'
+    outside.textContent = 'Outside'
+    document.body.append(outside)
+
+    const dialog = ref<HTMLElement | null>(null)
+    const popover = ref<HTMLElement | null>(null)
+    const popoverOpen = ref(false)
+
+    const wrapper = mountScope(
+      () => {
+        useDismissableLayer(dialog, { onDismiss: () => undefined })
+        useFocusScope(dialog, { trapped: true, autoFocus: true })
+        useDismissableLayer(popover, { onDismiss: () => undefined })
+        useFocusScope(popover, { trapped: false, autoFocus: true })
+      },
+      () =>
+        h('div', [
+          h('div', { ref: dialog, tabindex: '-1' }, [
+            h(
+              'button',
+              { type: 'button', 'data-testid': 'dialog-btn' },
+              'Dialog',
+            ),
+          ]),
+          popoverOpen.value
+            ? h('div', { ref: popover, tabindex: '-1' }, [
+                h(
+                  'button',
+                  { type: 'button', 'data-testid': 'pop-btn' },
+                  'Popover',
+                ),
+              ])
+            : null,
+        ]),
+    )
+
+    await nextTick()
+    const dialogBtn = wrapper.get<HTMLElement>(
+      '[data-testid="dialog-btn"]',
+    ).element
+    expect(document.activeElement).toBe(dialogBtn)
+
+    popoverOpen.value = true
+    await nextTick()
+    const popBtn = wrapper.get<HTMLElement>('[data-testid="pop-btn"]').element
+    expect(document.activeElement).toBe(popBtn)
+
+    // Moving focus inside the upper dismissable layer stays allowed.
+    popBtn.focus()
+    expect(document.activeElement).toBe(popBtn)
+
+    // Moving focus outside both the dialog and the upper popover pulls back to dialog.
+    outside.focus()
+    expect(document.activeElement).toBe(dialogBtn)
+
+    outside.remove()
+  })
+
+  it('coordinates trapped scopes across multiple Vue apps without fighting over focus', async () => {
+    const hostA = document.createElement('div')
+    const hostB = document.createElement('div')
+    const outside = document.createElement('button')
+    outside.type = 'button'
+    outside.textContent = 'Outside'
+    document.body.append(hostA, hostB, outside)
+
+    const appA = createApp(
+      defineComponent({
+        setup() {
+          const el = ref<HTMLElement | null>(null)
+          useFocusScope(el, { trapped: true, autoFocus: true })
+          return () =>
+            h('div', { ref: el, tabindex: '-1' }, [
+              h('button', { type: 'button', 'data-testid': 'a-first' }, 'A1'),
+              h('button', { type: 'button', 'data-testid': 'a-last' }, 'A2'),
+            ])
+        },
+      }),
+    )
+    const appB = createApp(
+      defineComponent({
+        setup() {
+          const el = ref<HTMLElement | null>(null)
+          useFocusScope(el, { trapped: true, autoFocus: true })
+          return () =>
+            h('div', { ref: el, tabindex: '-1' }, [
+              h('button', { type: 'button', 'data-testid': 'b-first' }, 'B1'),
+              h('button', { type: 'button', 'data-testid': 'b-last' }, 'B2'),
+            ])
+        },
+      }),
+    )
+
+    try {
+      appA.mount(hostA)
+      await nextTick()
+      const aFirst = queryHtml('[data-testid="a-first"]', hostA)
+      const aLast = queryHtml('[data-testid="a-last"]', hostA)
+      expect(document.activeElement).toBe(aFirst)
+
+      // Mounting a second app with a trapped scope yields focus ownership cleanly.
+      appB.mount(hostB)
+      await nextTick()
+      const bFirst = queryHtml('[data-testid="b-first"]', hostB)
+      const bLast = queryHtml('[data-testid="b-last"]', hostB)
+      expect(document.activeElement).toBe(bFirst)
+
+      bLast.focus()
+      expect(document.activeElement).toBe(bLast)
+      expect(tab(bLast).defaultPrevented).toBe(true)
+      expect(document.activeElement).toBe(bFirst)
+
+      // Escaping outside pulls focus back to App B (topmost), not App A.
+      outside.focus()
+      expect(document.activeElement).toBe(bFirst)
+
+      // Unmounting App B returns ownership to App A.
+      appB.unmount()
+      await nextTick()
+      expect(document.activeElement).toBe(aFirst)
+
+      outside.focus()
+      expect(document.activeElement).toBe(aFirst)
+
+      aLast.focus()
+      expect(tab(aLast).defaultPrevented).toBe(true)
+      expect(document.activeElement).toBe(aFirst)
+    } finally {
+      appB.unmount()
+      appA.unmount()
+      hostA.remove()
+      hostB.remove()
+      outside.remove()
+    }
+  })
+
+  it('stays consistent when outer and inner scopes deactivate or reactivate out of order', async () => {
+    const outerTrapped = ref(true)
+    const innerTrapped = ref(true)
+    const outside = document.createElement('button')
+    outside.type = 'button'
+    document.body.append(outside)
+
+    const outer = ref<HTMLElement | null>(null)
+    const inner = ref<HTMLElement | null>(null)
+    const wrapper = mountScope(
+      () => {
+        useFocusScope(outer, { trapped: outerTrapped, autoFocus: false })
+        useFocusScope(inner, { trapped: innerTrapped, autoFocus: false })
+      },
+      () =>
+        h('div', { ref: outer, tabindex: '-1' }, [
+          h(
+            'button',
+            { type: 'button', 'data-testid': 'outer-btn' },
+            'Outer btn',
+          ),
+          h('div', { ref: inner, tabindex: '-1' }, [
+            h(
+              'button',
+              { type: 'button', 'data-testid': 'inner-btn' },
+              'Inner btn',
+            ),
+          ]),
+        ]),
+    )
+
+    const outerBtn = wrapper.get<HTMLElement>(
+      '[data-testid="outer-btn"]',
+    ).element
+    const innerBtn = wrapper.get<HTMLElement>(
+      '[data-testid="inner-btn"]',
+    ).element
+
+    innerBtn.focus()
+    expect(document.activeElement).toBe(innerBtn)
+
+    // Deactivate outer while inner stays active: inner still owns Tab and focusin.
+    outerTrapped.value = false
+    await nextTick()
+    outside.focus()
+    expect(document.activeElement).toBe(innerBtn)
+    expect(tab(innerBtn).defaultPrevented).toBe(true)
+    expect(document.activeElement).toBe(innerBtn)
+
+    // Reactivate outer while inner is still active: inner stays on top.
+    outerTrapped.value = true
+    await nextTick()
+    outside.focus()
+    expect(document.activeElement).toBe(innerBtn)
+
+    // Now deactivate inner: outer resumes ownership.
+    innerTrapped.value = false
+    await nextTick()
+    outerBtn.focus()
+    outside.focus()
+    expect(document.activeElement).toBe(outerBtn)
+
+    outside.remove()
+  })
+
+  it('keeps teleported child trapped scope above parent when both mount in the same render', async () => {
+    const ChildScope = defineComponent({
+      setup() {
+        const inner = ref<HTMLElement | null>(null)
+        useFocusScope(inner, { trapped: true, autoFocus: false })
+        return () =>
+          h(Teleport, { to: 'body' }, [
+            h('div', { ref: inner, tabindex: '-1' }, [
+              h(
+                'button',
+                { type: 'button', 'data-testid': 'teleported-inner-first' },
+                'Inner 1',
+              ),
+              h(
+                'button',
+                { type: 'button', 'data-testid': 'teleported-inner-last' },
+                'Inner 2',
+              ),
+            ]),
+          ])
+      },
+    })
+
+    const ParentScope = defineComponent({
+      setup() {
+        const outer = ref<HTMLElement | null>(null)
+        useFocusScope(outer, { trapped: true, autoFocus: false })
+        return () =>
+          h(Teleport, { to: 'body' }, [
+            h('div', { ref: outer, tabindex: '-1' }, [
+              h(
+                'button',
+                { type: 'button', 'data-testid': 'teleported-outer-btn' },
+                'Outer',
+              ),
+              h(ChildScope),
+            ]),
+          ])
+      },
+    })
+
+    const wrapper = mount(ParentScope, { attachTo: document.body })
+    attached.push(wrapper)
+    await nextTick()
+
+    const innerFirst = queryHtml('[data-testid="teleported-inner-first"]')
+    const innerLast = queryHtml('[data-testid="teleported-inner-last"]')
+    const outerBtn = queryHtml('[data-testid="teleported-outer-btn"]')
+
+    innerLast.focus()
+    expect(document.activeElement).toBe(innerLast)
+    expect(tab(innerLast).defaultPrevented).toBe(true)
+    expect(document.activeElement).toBe(innerFirst)
+
+    // Even when trying to move focus to the teleported parent scope, the
+    // teleported child stays on top and retains focus.
+    outerBtn.focus()
+    expect(document.activeElement).toBe(innerFirst)
+  })
+
+  it('prunes disconnected stale scopes so an orphaned node cannot wedge lower traps', async () => {
+    const outer = ref<HTMLElement | null>(null)
+    const inner = ref<HTMLElement | null>(null)
+    const outside = document.createElement('button')
+    outside.type = 'button'
+    document.body.append(outside)
+
+    const wrapper = mountScope(
+      () => {
+        useFocusScope(outer, { trapped: true, autoFocus: true })
+        useFocusScope(inner, { trapped: true, autoFocus: true })
+      },
+      () =>
+        h('div', [
+          h('div', { ref: outer, tabindex: '-1' }, [
+            h('button', { type: 'button', 'data-testid': 'outer-btn' }, 'Out'),
+          ]),
+          h('div', { ref: inner, tabindex: '-1' }, [
+            h('button', { type: 'button', 'data-testid': 'inner-btn' }, 'In'),
+          ]),
+        ]),
+    )
+
+    await nextTick()
+    const outerBtn = wrapper.get<HTMLElement>(
+      '[data-testid="outer-btn"]',
+    ).element
+    if (!inner.value) {
+      throw new Error('Expected inner container to be mounted')
+    }
+
+    // Imperatively detach the inner scope root without unmounting Vue.
+    inner.value.remove()
+
+    outside.focus()
+    expect(document.activeElement).toBe(outerBtn)
+    expect(tab(outerBtn).defaultPrevented).toBe(true)
+    expect(document.activeElement).toBe(outerBtn)
+
+    outside.remove()
   })
 })
