@@ -272,4 +272,147 @@ describe('useRovingFocus', () => {
     first.dispatchEvent(event)
     expect(event.defaultPrevented).toBe(false)
   })
+
+  it('retains a single tab stop when native buttons are inserted after mount', async () => {
+    const wrapper = mountRoving({ orientation: 'horizontal' }, ['One', 'Two'])
+    await nextTick()
+
+    const root = wrapper.element as HTMLElement
+    const first = buttonElement(wrapper, 0)
+    expect(first.tabIndex).toBe(0)
+
+    const prepended = document.createElement('button')
+    prepended.type = 'button'
+    prepended.textContent = 'Zero'
+    root.prepend(prepended)
+
+    const appended = document.createElement('button')
+    appended.type = 'button'
+    appended.textContent = 'Three'
+    root.append(appended)
+
+    await nextTick()
+
+    const buttons = Array.from(root.querySelectorAll('button'))
+    expect(buttons.map((button) => button.tabIndex)).toEqual([-1, 0, -1, -1])
+  })
+
+  it('promotes a remaining enabled item when the current stop is removed', async () => {
+    const wrapper = mountRoving({ orientation: 'horizontal' }, [
+      'One',
+      'Two',
+      'Three',
+    ])
+    await nextTick()
+
+    const first = buttonElement(wrapper, 0)
+    expect(first.tabIndex).toBe(0)
+    first.remove()
+    await nextTick()
+
+    const remaining = wrapper
+      .findAll('button')
+      .map((node) => node.element.tabIndex)
+    expect(remaining).toEqual([0, -1])
+  })
+
+  it('retains a single tab stop when descendants are reordered', async () => {
+    const wrapper = mountRoving({ orientation: 'horizontal' }, [
+      'One',
+      'Two',
+      'Three',
+    ])
+    await nextTick()
+
+    const root = wrapper.element as HTMLElement
+    const second = buttonElement(wrapper, 1)
+    second.focus()
+    await nextTick()
+    expect(second.tabIndex).toBe(0)
+
+    const first = buttonElement(wrapper, 0)
+    root.append(first)
+    await nextTick()
+
+    const buttons = Array.from(root.querySelectorAll('button'))
+    expect(buttons.map((button) => button.textContent)).toEqual([
+      'Two',
+      'Three',
+      'One',
+    ])
+    expect(buttons.map((button) => button.tabIndex)).toEqual([0, -1, -1])
+
+    key(second, 'ArrowRight')
+    expect(document.activeElement?.textContent).toBe('Three')
+  })
+
+  it('moves the tab stop when the current stop becomes disabled or aria-disabled', async () => {
+    const wrapper = mountRoving({ orientation: 'horizontal' }, [
+      'One',
+      'Two',
+      'Three',
+    ])
+    await nextTick()
+
+    const first = buttonElement(wrapper, 0) as HTMLButtonElement
+    const second = buttonElement(wrapper, 1) as HTMLButtonElement
+    const third = buttonElement(wrapper, 2) as HTMLButtonElement
+
+    first.disabled = true
+    await nextTick()
+    expect(second.tabIndex).toBe(0)
+    expect(third.tabIndex).toBe(-1)
+
+    second.setAttribute('aria-disabled', 'true')
+    await nextTick()
+    expect(second.tabIndex).toBe(-1)
+    expect(third.tabIndex).toBe(0)
+
+    third.disabled = true
+    await nextTick()
+    expect(
+      [first, second, third].filter(
+        (button) => !button.disabled && button.tabIndex === 0,
+      ),
+    ).toHaveLength(0)
+
+    first.disabled = false
+    await nextTick()
+    expect(first.tabIndex).toBe(0)
+  })
+
+  it('disconnects the MutationObserver on unmount and container change', async () => {
+    const disconnectSpy = vi.spyOn(MutationObserver.prototype, 'disconnect')
+    const container = ref<HTMLElement | null>(null)
+    const showFirst = ref(true)
+
+    const wrapper = mount(
+      defineComponent({
+        setup() {
+          useRovingFocus(container, { orientation: 'horizontal' })
+          return () =>
+            showFirst.value
+              ? h('div', { key: 'first', ref: container, role: 'toolbar' }, [
+                  h('button', { type: 'button' }, 'A'),
+                ])
+              : h('div', { key: 'second', ref: container, role: 'toolbar' }, [
+                  h('button', { type: 'button' }, 'B'),
+                ])
+        },
+      }),
+      { attachTo: document.body },
+    )
+    attached.push(wrapper)
+    await nextTick()
+
+    expect(disconnectSpy).not.toHaveBeenCalled()
+
+    showFirst.value = false
+    await nextTick()
+    expect(disconnectSpy).toHaveBeenCalledTimes(1)
+
+    wrapper.unmount()
+    expect(disconnectSpy).toHaveBeenCalledTimes(2)
+    disconnectSpy.mockRestore()
+  })
 })

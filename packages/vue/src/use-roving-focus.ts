@@ -25,6 +25,15 @@ export interface UseRovingFocusOptions {
   onTabStopChange?: (current: HTMLElement | undefined) => void
 }
 
+const ROVING_OBSERVER_ATTRIBUTES = [
+  'disabled',
+  'aria-disabled',
+  'hidden',
+  'inert',
+  'aria-hidden',
+  'style',
+]
+
 /**
  * APG roving tabindex: one tab stop, arrows/Home/End move among enabled items.
  * Horizontal arrows flip in RTL. Disabled and aria-disabled items are skipped.
@@ -45,10 +54,39 @@ export function useRovingFocus(
           return
         }
 
-        syncTabStops(element, options)
+        let currentStop: HTMLElement | undefined
+
+        const sync = (preferred?: HTMLElement): void => {
+          const items = getItems(element)
+          const enabled = enabledItems(items)
+          const nextStop =
+            preferred && items.includes(preferred)
+              ? preferred
+              : currentStop && enabled.includes(currentStop)
+                ? currentStop
+                : (enabled.find((item) => item.tabIndex >= 0) ?? enabled[0])
+          currentStop =
+            nextStop && enabled.includes(nextStop) ? nextStop : undefined
+          applyTabStops(items, nextStop, options)
+        }
+
+        sync()
+
+        const observer = new MutationObserver(() => {
+          sync()
+        })
+        observer.observe(element, {
+          childList: true,
+          subtree: true,
+          attributes: true,
+          attributeFilter: ROVING_OBSERVER_ATTRIBUTES,
+        })
 
         const onKeyDown = (event: KeyboardEvent): void => {
-          handleRovingKey(event, element, options)
+          const movedTo = handleRovingKey(event, element, options)
+          if (movedTo) {
+            currentStop = movedTo
+          }
         }
         const onFocusIn = (event: FocusEvent): void => {
           const target = event.target
@@ -57,13 +95,14 @@ export function useRovingFocus(
           }
           const items = getItems(element)
           if (items.includes(target)) {
-            applyTabStops(items, target, options)
+            sync(target)
           }
         }
 
         element.addEventListener('keydown', onKeyDown)
         element.addEventListener('focusin', onFocusIn)
         onCleanup(() => {
+          observer.disconnect()
           element.removeEventListener('keydown', onKeyDown)
           element.removeEventListener('focusin', onFocusIn)
         })
@@ -85,24 +124,16 @@ function enabledItems(items: HTMLElement[]): HTMLElement[] {
   return items.filter((item) => !isDisabledElement(item))
 }
 
-function syncTabStops(
-  root: HTMLElement,
-  options: UseRovingFocusOptions | undefined,
-): void {
-  const items = getItems(root)
-  const current =
-    enabledItems(items).find((item) => item.tabIndex >= 0) ??
-    enabledItems(items)[0]
-  applyTabStops(items, current, options)
-}
-
 function applyTabStops(
   items: HTMLElement[],
   current: HTMLElement | undefined,
   options: UseRovingFocusOptions | undefined,
 ): void {
   for (const item of items) {
-    item.tabIndex = item === current ? 0 : -1
+    const nextTabIndex = item === current ? 0 : -1
+    if (item.tabIndex !== nextTabIndex) {
+      item.tabIndex = nextTabIndex
+    }
   }
   options?.onTabStopChange?.(current)
 }
@@ -111,9 +142,9 @@ function handleRovingKey(
   event: KeyboardEvent,
   root: HTMLElement,
   options: UseRovingFocusOptions | undefined,
-): void {
+): HTMLElement | undefined {
   if (event.defaultPrevented || isEditableTarget(event.target)) {
-    return
+    return undefined
   }
 
   const items = getItems(root)
@@ -123,7 +154,7 @@ function handleRovingKey(
     enabled.find((item) => item.tabIndex >= 0) ??
     enabled[0]
   if (!current) {
-    return
+    return undefined
   }
 
   const orientation = toValue(options?.orientation) ?? 'horizontal'
@@ -138,16 +169,17 @@ function handleRovingKey(
     loop,
   )
   if (nextIndex === undefined) {
-    return
+    return undefined
   }
 
   event.preventDefault()
   const next = enabled[nextIndex]
   if (!next) {
-    return
+    return undefined
   }
   applyTabStops(items, next, options)
   next.focus({ preventScroll: true })
+  return next
 }
 
 function nextEnabledIndex(
