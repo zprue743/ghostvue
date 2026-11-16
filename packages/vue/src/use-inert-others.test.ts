@@ -227,4 +227,48 @@ describe('useInertOthers', () => {
     expect(bg.hasAttribute('inert')).toBe(false)
     expect(latePopover.hasAttribute('inert')).toBe(false)
   })
+
+  it('refreshes inert isolation when a kept element moves in the DOM while active', async () => {
+    const app = appendToBody(`
+      <div id="app">
+        <main id="app-main">App main</main>
+        <div id="inline-slot"></div>
+      </div>
+    `)
+    const customTarget = appendToBody('<div id="custom-target"></div>')
+    const modal = appendToBody('<div role="dialog">Modal</div>')
+
+    const appMain = app.querySelector('#app-main')
+    const inlineSlot = app.querySelector('#inline-slot')
+    if (!appMain || !inlineSlot) {
+      throw new Error('Expected #app-main and #inline-slot elements')
+    }
+
+    const wrapper = mountInert(modal, () => true)
+    expect(app.hasAttribute('inert')).toBe(true)
+    expect(customTarget.hasAttribute('inert')).toBe(true)
+    expect(modal.closest('[inert]')).toBeNull()
+
+    // Move modal inside #app (simulating portal=true -> portal=false).
+    inlineSlot.append(modal)
+    await Promise.resolve()
+
+    expect(app.hasAttribute('inert')).toBe(false)
+    expect(appMain.hasAttribute('inert')).toBe(true)
+    expect(customTarget.hasAttribute('inert')).toBe(true)
+    expect(modal.closest('[inert]')).toBeNull()
+
+    // Move modal to #custom-target (simulating portalTo change).
+    customTarget.append(modal)
+    await Promise.resolve()
+
+    expect(app.hasAttribute('inert')).toBe(true)
+    expect(appMain.hasAttribute('inert')).toBe(false)
+    expect(customTarget.hasAttribute('inert')).toBe(false)
+    expect(modal.closest('[inert]')).toBeNull()
+
+    wrapper.unmount()
+    expect(app.hasAttribute('inert')).toBe(false)
+    expect(customTarget.hasAttribute('inert')).toBe(false)
+  })
 })

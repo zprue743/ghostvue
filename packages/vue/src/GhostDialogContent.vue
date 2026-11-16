@@ -164,6 +164,7 @@ useScrollLock(modalActive)
 useInertOthers(
   [() => context.contentElement.value, () => context.overlayElement.value],
   modalActive,
+  { watch: [() => props.portal, () => props.portalTo] },
 )
 
 useDismissableLayer(contentElement, {
