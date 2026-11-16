@@ -858,4 +858,53 @@ describe('GhostHoverCard', () => {
     expect(document.querySelector('#reverse-content')).toBeNull()
     expect(updates).toEqual([true, false])
   })
+
+  it('merges consumer classes (string, array, object, CSS Module) with ghost-hover-card-content', async () => {
+    const active = ref(true)
+    const moduleStyles = { surface: 'HoverCardModule_surface__def456' }
+    const wrapper = mountAttached(
+      defineComponent({
+        setup() {
+          return () =>
+            h(
+              GhostHoverCard,
+              { defaultOpen: true },
+              {
+                default: () => [
+                  h(GhostHoverCardTrigger, null, () => 'Anchor'),
+                  h(
+                    GhostHoverCardContent,
+                    {
+                      id: 'hover-card-class-merge',
+                      portal: false,
+                      class: [
+                        'consumer-surface',
+                        { 'is-active': active.value, 'is-hidden': false },
+                        [moduleStyles.surface],
+                      ],
+                    },
+                    () => 'Preview',
+                  ),
+                ],
+              },
+            )
+        },
+      }),
+    )
+
+    await flushPromises()
+    await nextTick()
+
+    const content = wrapper.get('#hover-card-class-merge')
+    expect(content.classes()).toContain('ghost-hover-card-content')
+    expect(content.classes()).toContain('consumer-surface')
+    expect(content.classes()).toContain('is-active')
+    expect(content.classes()).not.toContain('is-hidden')
+    expect(content.classes()).toContain('HoverCardModule_surface__def456')
+
+    active.value = false
+    await nextTick()
+    expect(content.classes()).toContain('ghost-hover-card-content')
+    expect(content.classes()).not.toContain('is-active')
+  })
 })

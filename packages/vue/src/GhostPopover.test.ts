@@ -952,4 +952,53 @@ describe('GhostPopover', () => {
     expect(api?.isOpen.value).toBe(true)
     expect(changes).toEqual([true, false, true])
   })
+
+  it('merges consumer classes (string, array, object, CSS Module) with ghost-popover-content', async () => {
+    const active = ref(true)
+    const moduleStyles = { surface: 'PopoverModule_surface__abc123' }
+    const wrapper = mountAttached(
+      defineComponent({
+        setup() {
+          return () =>
+            h(
+              GhostPopover,
+              { defaultOpen: true },
+              {
+                default: () => [
+                  h(GhostPopoverTrigger, null, () => 'Toggle'),
+                  h(
+                    GhostPopoverContent,
+                    {
+                      id: 'popover-class-merge',
+                      portal: false,
+                      class: [
+                        'consumer-surface',
+                        { 'is-active': active.value, 'is-hidden': false },
+                        [moduleStyles.surface],
+                      ],
+                    },
+                    () => 'Body',
+                  ),
+                ],
+              },
+            )
+        },
+      }),
+    )
+
+    await flushPromises()
+    await nextTick()
+
+    const content = wrapper.get('#popover-class-merge')
+    expect(content.classes()).toContain('ghost-popover-content')
+    expect(content.classes()).toContain('consumer-surface')
+    expect(content.classes()).toContain('is-active')
+    expect(content.classes()).not.toContain('is-hidden')
+    expect(content.classes()).toContain('PopoverModule_surface__abc123')
+
+    active.value = false
+    await nextTick()
+    expect(content.classes()).toContain('ghost-popover-content')
+    expect(content.classes()).not.toContain('is-active')
+  })
 })

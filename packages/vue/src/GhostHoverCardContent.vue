@@ -248,7 +248,7 @@ defineExpose<GhostHoverCardContentExposed>({
       :is="as"
       v-if="context.isOpen.value"
       ref="host"
-      class="ghost-hover-card-content"
+      :class="['ghost-hover-card-content', attrs.class]"
       :style="contentStyle"
       v-bind="contentAttrs"
       @pointerenter="handlePointerEnter"
