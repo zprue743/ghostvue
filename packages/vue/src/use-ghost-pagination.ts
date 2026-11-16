@@ -1,4 +1,4 @@
-import { computed, toValue, type ComputedRef } from 'vue'
+import { computed, toValue, unref, type ComputedRef } from 'vue'
 
 import { getPaginationRange } from './get-pagination-range'
 import type {
@@ -22,6 +22,27 @@ function clampPage(page: number, pageCount: number): number {
 
 function defaultPageLabel(page: number): string {
   return `Page ${String(page)}`
+}
+
+function resolvePageLabel(
+  source: UseGhostPaginationOptions['getPageLabel'],
+): (page: number) => string {
+  if (typeof source !== 'function') {
+    return unref(source) ?? defaultPageLabel
+  }
+  if (source.length > 0) {
+    return source as (page: number) => string
+  }
+  const resolved: unknown = (
+    source as () => ((page: number) => string) | undefined
+  )()
+  if (typeof resolved === 'function') {
+    return resolved as (page: number) => string
+  }
+  if (resolved === undefined) {
+    return defaultPageLabel
+  }
+  return source as (page: number) => string
 }
 
 /**
@@ -59,10 +80,7 @@ export function useGhostPagination(options: UseGhostPaginationOptions): {
   const showEdges = computed(() => toValue(options.showEdges) !== false)
 
   const ariaLabel = computed(() => toValue(options.ariaLabel) ?? 'Pagination')
-  const getPageLabel = computed(() => {
-    const custom = toValue(options.getPageLabel)
-    return custom ?? defaultPageLabel
-  })
+  const getPageLabel = computed(() => resolvePageLabel(options.getPageLabel))
   const previousLabel = computed(
     () => toValue(options.previousLabel) ?? 'Previous page',
   )
