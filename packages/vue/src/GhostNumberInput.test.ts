@@ -236,6 +236,68 @@ describe('GhostNumberInput', () => {
     await nextTick()
 
     expect(amount.value).toBe(44)
+    expect(input.value).toBe('44')
+    expect(hidden.value).toBe('44')
+    wrapper.unmount()
+  })
+
+  it('keeps accepted Enter commits visible and reconciles rejected or invalid drafts', async () => {
+    const amount = ref(10)
+    const acceptUpdates = ref(true)
+    const wrapper = mount(
+      {
+        setup() {
+          return () =>
+            h(GhostNumberInput, {
+              modelValue: amount.value,
+              name: 'qty',
+              'onUpdate:modelValue': (value: number | null) => {
+                if (acceptUpdates.value && value !== null) {
+                  amount.value = value
+                }
+              },
+            })
+        },
+      },
+      { attachTo: document.body },
+    )
+    const input = wrapper.get('[role="spinbutton"]').element as HTMLInputElement
+    const hidden = wrapper.get('input[type="hidden"]')
+      .element as HTMLInputElement
+
+    input.focus()
+    input.value = '44'
+    input.dispatchEvent(new InputEvent('input', { bubbles: true }))
+    input.dispatchEvent(
+      new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }),
+    )
+    await nextTick()
+
+    expect(amount.value).toBe(44)
+    expect(input.value).toBe('44')
+    expect(hidden.value).toBe('44')
+
+    acceptUpdates.value = false
+    input.value = '99'
+    input.dispatchEvent(new InputEvent('input', { bubbles: true }))
+    input.dispatchEvent(
+      new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }),
+    )
+    await nextTick()
+
+    expect(amount.value).toBe(44)
+    expect(input.value).toBe('44')
+    expect(hidden.value).toBe('44')
+
+    input.value = '44abc'
+    input.dispatchEvent(new InputEvent('input', { bubbles: true }))
+    input.dispatchEvent(
+      new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }),
+    )
+    await nextTick()
+
+    expect(amount.value).toBe(44)
+    expect(input.value).toBe('44')
     expect(hidden.value).toBe('44')
     wrapper.unmount()
   })
