@@ -619,4 +619,183 @@ describe('GhostDropdownMenu', () => {
     expect(checked.value).toBe(false)
     expect(checkbox.getAttribute('aria-checked')).toBe('false')
   })
+
+  it('Space activates default div menuitem and menuitemradio hosts', async () => {
+    computePositionOverride = () =>
+      Promise.resolve({
+        x: 0,
+        y: 0,
+        placement: 'bottom',
+        strategy: 'absolute',
+        middlewareData: {},
+      })
+
+    const selectLog: string[] = []
+    const radio = ref('a')
+    const open = ref(true)
+
+    mountAttached(
+      defineComponent({
+        setup() {
+          return () =>
+            h(
+              GhostDropdownMenu,
+              {
+                open: open.value,
+                'onUpdate:open': (value: boolean) => {
+                  open.value = value
+                },
+              },
+              {
+                default: () => [
+                  h(GhostDropdownMenuTrigger, null, () => 'Menu'),
+                  h(GhostDropdownMenuContent, null, () => [
+                    h(
+                      GhostDropdownMenuItem,
+                      {
+                        onSelect: () => {
+                          selectLog.push('item')
+                        },
+                      },
+                      () => 'Action',
+                    ),
+                    h(
+                      GhostDropdownMenuRadioGroup,
+                      {
+                        modelValue: radio.value,
+                        'onUpdate:modelValue': (value: string) => {
+                          radio.value = value
+                        },
+                      },
+                      () => [
+                        h(
+                          GhostDropdownMenuRadioItem,
+                          { value: 'a' },
+                          () => 'Option A',
+                        ),
+                        h(
+                          GhostDropdownMenuRadioItem,
+                          {
+                            value: 'b',
+                            onSelect: () => {
+                              selectLog.push('radio:b')
+                            },
+                          },
+                          () => 'Option B',
+                        ),
+                      ],
+                    ),
+                  ]),
+                ],
+              },
+            )
+        },
+      }),
+    )
+    await flushPromises()
+
+    const item = getHtmlPart('item')
+    expect(item.tagName).toBe('DIV')
+    item.focus()
+    const itemSpaceEvent = pressKey(' ', item)
+    await flushPromises()
+    expect(itemSpaceEvent.defaultPrevented).toBe(true)
+    expect(selectLog).toEqual(['item'])
+    expect(open.value).toBe(false)
+
+    open.value = true
+    await flushPromises()
+
+    const radioB = getDataValueSelector('b')
+    expect(radioB.tagName).toBe('DIV')
+    radioB.focus()
+    const radioSpaceEvent = pressKey(' ', radioB)
+    await flushPromises()
+    expect(radioSpaceEvent.defaultPrevented).toBe(true)
+    expect(radio.value).toBe('b')
+    expect(selectLog).toEqual(['item', 'radio:b'])
+    expect(open.value).toBe(false)
+  })
+
+  it('Space continues active typeahead queries before activating after timeout', async () => {
+    computePositionOverride = () =>
+      Promise.resolve({
+        x: 0,
+        y: 0,
+        placement: 'bottom',
+        strategy: 'absolute',
+        middlewareData: {},
+      })
+
+    const selectLog: string[] = []
+    const open = ref(true)
+
+    mountAttached(
+      defineComponent({
+        setup() {
+          return () =>
+            h(
+              GhostDropdownMenu,
+              {
+                open: open.value,
+                'onUpdate:open': (value: boolean) => {
+                  open.value = value
+                },
+              },
+              {
+                default: () => [
+                  h(GhostDropdownMenuTrigger, null, () => 'Menu'),
+                  h(GhostDropdownMenuContent, null, () => [
+                    h(
+                      GhostDropdownMenuItem,
+                      {
+                        onSelect: () => {
+                          selectLog.push('Save')
+                        },
+                      },
+                      () => 'Save',
+                    ),
+                    h(
+                      GhostDropdownMenuItem,
+                      {
+                        onSelect: () => {
+                          selectLog.push('Save As')
+                        },
+                      },
+                      () => 'Save As',
+                    ),
+                  ]),
+                ],
+              },
+            )
+        },
+      }),
+    )
+    await flushPromises()
+
+    const items = [
+      ...document.querySelectorAll<HTMLElement>('[data-part="item"]'),
+    ]
+    const saveItem = items[0]
+    const saveAsItem = items[1]
+    expect(saveItem).toBeDefined()
+    expect(saveAsItem).toBeDefined()
+
+    saveItem?.focus()
+    for (const key of ['s', 'a', 'v', 'e', ' ', 'a']) {
+      pressKey(key, document.activeElement ?? saveItem)
+    }
+    await flushPromises()
+
+    expect(document.activeElement).toBe(saveAsItem)
+    expect(selectLog).toEqual([])
+    expect(open.value).toBe(true)
+
+    await new Promise((resolve) => setTimeout(resolve, 510))
+    const spaceEvent = pressKey(' ', saveAsItem)
+    await flushPromises()
+    expect(spaceEvent.defaultPrevented).toBe(true)
+    expect(selectLog).toEqual(['Save As'])
+    expect(open.value).toBe(false)
+  })
 })
