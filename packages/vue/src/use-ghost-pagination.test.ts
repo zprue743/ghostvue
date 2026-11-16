@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 
 import { useGhostPagination } from './use-ghost-pagination'
 
@@ -71,5 +71,56 @@ describe('useGhostPagination', () => {
     expect(api.lastProps.value['aria-disabled']).toBe('true')
     expect(api.firstProps.value['aria-disabled']).toBeUndefined()
     expect(api.previousProps.value['aria-disabled']).toBeUndefined()
+  })
+
+  it('supports direct getPageLabel callbacks', () => {
+    const api = useGhostPagination({
+      pageCount: 5,
+      getPageLabel: (page) => `Go to page ${page.toFixed(0)}`,
+    })
+
+    expect(api.pageButtonProps(2)['aria-label']).toBe('Go to page 2')
+
+    const defaultedArgApi = useGhostPagination({
+      pageCount: 5,
+      getPageLabel: (page = 1) => `Custom ${String(page)}`,
+    })
+
+    expect(defaultedArgApi.pageButtonProps(2)['aria-label']).toBe('Custom 2')
+  })
+
+  it('supports MaybeRefOrGetter getPageLabel refs, computeds, and getters', () => {
+    const labelRef = ref<((page: number) => string) | undefined>(
+      (page) => `Ref ${String(page)}`,
+    )
+    const refApi = useGhostPagination({
+      pageCount: 5,
+      getPageLabel: labelRef,
+    })
+
+    expect(refApi.pageButtonProps(2)['aria-label']).toBe('Ref 2')
+    labelRef.value = undefined
+    expect(refApi.pageButtonProps(2)['aria-label']).toBe('Page 2')
+
+    const computedLabel = computed(
+      () => (page: number) => `Computed ${String(page)}`,
+    )
+    const computedApi = useGhostPagination({
+      pageCount: 5,
+      getPageLabel: computedLabel,
+    })
+
+    expect(computedApi.pageButtonProps(2)['aria-label']).toBe('Computed 2')
+
+    const active = ref(true)
+    const getterApi = useGhostPagination({
+      pageCount: 5,
+      getPageLabel: () =>
+        active.value ? (page: number) => `Getter ${String(page)}` : undefined,
+    })
+
+    expect(getterApi.pageButtonProps(2)['aria-label']).toBe('Getter 2')
+    active.value = false
+    expect(getterApi.pageButtonProps(2)['aria-label']).toBe('Page 2')
   })
 })
