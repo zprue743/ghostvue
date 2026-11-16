@@ -104,6 +104,12 @@ const floating = useFloating(
 
 const shouldRestoreFocus = shallowRef(true)
 
+watch(isOpen, (open) => {
+  if (open) {
+    shouldRestoreFocus.value = true
+  }
+})
+
 function hasFocusableAncestor(target: EventTarget | null): boolean {
   let current: Element | null =
     target instanceof Element
@@ -189,7 +195,7 @@ function onListboxKeydown(event: KeyboardEvent): void {
   }
   if (event.key === 'Escape') {
     event.preventDefault()
-    shouldRestoreFocus.value = true
+    shouldRestoreFocus.value = false
     context.close()
     context.triggerElement.value?.focus({ preventScroll: true })
     return

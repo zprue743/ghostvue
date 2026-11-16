@@ -441,4 +441,110 @@ describe('GhostSelect', () => {
     ).toBe(true)
     expect(document.activeElement).toBe(trigger.element)
   })
+
+  it('refreshes selected value and typeahead when slot text changes without textValue', async () => {
+    const optionALabel = ref('Old option')
+    const wrapper = mountAttached(
+      defineComponent({
+        setup() {
+          return () =>
+            h(
+              GhostSelect,
+              { defaultValue: 'a', name: 'choice' },
+              {
+                default: () => [
+                  h(GhostSelectTrigger, null, () => h(GhostSelectValue)),
+                  h(GhostSelectContent, { portal: false }, () => [
+                    h(
+                      GhostSelectOption,
+                      { value: 'a' },
+                      () => optionALabel.value,
+                    ),
+                    h(GhostSelectOption, { value: 'b' }, () => 'Beta'),
+                  ]),
+                ],
+              },
+            )
+        },
+      }),
+    )
+
+    await flushPromises()
+    await nextTick()
+    expect(wrapper.get('[data-part="value"]').text()).toBe('Old option')
+
+    optionALabel.value = 'New option'
+    await flushPromises()
+    await nextTick()
+    expect(wrapper.get('[data-part="value"]').text()).toBe('New option')
+
+    const trigger = wrapper.get('[data-part="trigger"]')
+    await trigger.trigger('click')
+    await flushPromises()
+
+    const listbox = document.querySelector('[data-part="listbox"]')
+    expect(listbox).toBeInstanceOf(HTMLElement)
+    if (!(listbox instanceof HTMLElement)) {
+      return
+    }
+    const betaOption = wrapper.get('[data-value="b"]').element as HTMLElement
+    betaOption.focus()
+    expect(document.activeElement).toBe(betaOption)
+
+    listbox.dispatchEvent(
+      new KeyboardEvent('keydown', {
+        key: 'o',
+        bubbles: true,
+        cancelable: true,
+      }),
+    )
+    await flushPromises()
+    expect(document.activeElement).toBe(betaOption)
+
+    listbox.dispatchEvent(
+      new KeyboardEvent('keydown', {
+        key: 'n',
+        bubbles: true,
+        cancelable: true,
+      }),
+    )
+    await flushPromises()
+    expect(document.activeElement?.getAttribute('data-value')).toBe('a')
+  })
+
+  it('keeps explicit textValue when slot text changes', async () => {
+    const slotLabel = ref('First label')
+    const wrapper = mountAttached(
+      defineComponent({
+        setup() {
+          return () =>
+            h(
+              GhostSelect,
+              { defaultValue: 'a' },
+              {
+                default: () => [
+                  h(GhostSelectTrigger, null, () => h(GhostSelectValue)),
+                  h(GhostSelectContent, { portal: false }, () => [
+                    h(
+                      GhostSelectOption,
+                      { value: 'a', textValue: 'Pinned label' },
+                      () => slotLabel.value,
+                    ),
+                  ]),
+                ],
+              },
+            )
+        },
+      }),
+    )
+
+    await flushPromises()
+    await nextTick()
+    expect(wrapper.get('[data-part="value"]').text()).toBe('Pinned label')
+
+    slotLabel.value = 'Updated slot label'
+    await flushPromises()
+    await nextTick()
+    expect(wrapper.get('[data-part="value"]').text()).toBe('Pinned label')
+  })
 })
