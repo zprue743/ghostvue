@@ -798,4 +798,324 @@ describe('GhostDropdownMenu', () => {
     expect(selectLog).toEqual(['Save As'])
     expect(open.value).toBe(false)
   })
+
+  it('blocks consumer onClick handlers and state changes on disabled ordinary, checkbox, and radio items', async () => {
+    const open = ref(true)
+    const checked = ref(false)
+    const radio = ref('a')
+
+    const itemFnClick = vi.fn()
+    const itemArrClickA = vi.fn()
+    const itemArrClickB = vi.fn()
+    const itemSelect = vi.fn()
+
+    const checkboxFnClick = vi.fn()
+    const checkboxArrClickA = vi.fn()
+    const checkboxArrClickB = vi.fn()
+    const checkboxUpdate = vi.fn()
+
+    const radioFnClick = vi.fn()
+    const radioArrClickA = vi.fn()
+    const radioArrClickB = vi.fn()
+    const radioSelect = vi.fn()
+    const radioUpdate = vi.fn()
+
+    const groupDisabledClick = vi.fn()
+
+    mountAttached(
+      defineComponent({
+        setup() {
+          return () =>
+            h(
+              GhostDropdownMenu,
+              {
+                open: open.value,
+                'onUpdate:open': (value: boolean) => {
+                  open.value = value
+                },
+              },
+              {
+                default: () => [
+                  h(GhostDropdownMenuTrigger, null, () => 'Menu'),
+                  h(GhostDropdownMenuContent, { portal: false }, () => [
+                    h(
+                      GhostDropdownMenuItem,
+                      {
+                        disabled: true,
+                        'data-testid': 'item-fn',
+                        onClick: itemFnClick,
+                        onSelect: itemSelect,
+                      },
+                      () => 'Item Fn',
+                    ),
+                    h(
+                      GhostDropdownMenuItem,
+                      {
+                        disabled: true,
+                        'data-testid': 'item-arr',
+                        onClick: [itemArrClickA, itemArrClickB] as unknown as (
+                          event: MouseEvent,
+                        ) => void,
+                        onSelect: itemSelect,
+                      },
+                      () => 'Item Arr',
+                    ),
+                    h(
+                      GhostDropdownMenuCheckboxItem,
+                      {
+                        disabled: true,
+                        checked: checked.value,
+                        'data-testid': 'checkbox-fn',
+                        onClick: checkboxFnClick,
+                        'onUpdate:checked': (next: boolean) => {
+                          checked.value = next
+                          checkboxUpdate(next)
+                        },
+                      },
+                      () => 'Checkbox Fn',
+                    ),
+                    h(
+                      GhostDropdownMenuCheckboxItem,
+                      {
+                        disabled: true,
+                        checked: checked.value,
+                        'data-testid': 'checkbox-arr',
+                        onClick: [
+                          checkboxArrClickA,
+                          checkboxArrClickB,
+                        ] as unknown as (event: MouseEvent) => void,
+                        'onUpdate:checked': (next: boolean) => {
+                          checked.value = next
+                          checkboxUpdate(next)
+                        },
+                      },
+                      () => 'Checkbox Arr',
+                    ),
+                    h(
+                      GhostDropdownMenuRadioGroup,
+                      {
+                        modelValue: radio.value,
+                        'onUpdate:modelValue': (next: string) => {
+                          radio.value = next
+                          radioUpdate(next)
+                        },
+                      },
+                      () => [
+                        h(
+                          GhostDropdownMenuRadioItem,
+                          {
+                            value: 'b',
+                            disabled: true,
+                            'data-testid': 'radio-fn',
+                            onClick: radioFnClick,
+                            onSelect: radioSelect,
+                          },
+                          () => 'Radio Fn',
+                        ),
+                        h(
+                          GhostDropdownMenuRadioItem,
+                          {
+                            value: 'c',
+                            disabled: true,
+                            'data-testid': 'radio-arr',
+                            onClick: [
+                              radioArrClickA,
+                              radioArrClickB,
+                            ] as unknown as (event: MouseEvent) => void,
+                            onSelect: radioSelect,
+                          },
+                          () => 'Radio Arr',
+                        ),
+                      ],
+                    ),
+                    h(
+                      GhostDropdownMenuRadioGroup,
+                      {
+                        disabled: true,
+                        modelValue: radio.value,
+                        'onUpdate:modelValue': (next: string) => {
+                          radio.value = next
+                          radioUpdate(next)
+                        },
+                      },
+                      () =>
+                        h(
+                          GhostDropdownMenuRadioItem,
+                          {
+                            value: 'd',
+                            'data-testid': 'radio-group-disabled',
+                            onClick: groupDisabledClick,
+                            onSelect: radioSelect,
+                          },
+                          () => 'Radio Group Disabled',
+                        ),
+                    ),
+                  ]),
+                ],
+              },
+            )
+        },
+      }),
+    )
+    await flushPromises()
+
+    const clickAndCheck = async (testId: string) => {
+      const el = document.querySelector<HTMLElement>(
+        `[data-testid="${testId}"]`,
+      )
+      if (!el) throw new Error(`Missing ${testId}`)
+      const clickEvent = new MouseEvent('click', {
+        bubbles: true,
+        cancelable: true,
+      })
+      el.dispatchEvent(clickEvent)
+      expect(clickEvent.defaultPrevented).toBe(true)
+      pressKey('Enter', el)
+      pressKey(' ', el)
+      await flushPromises()
+    }
+
+    await clickAndCheck('item-fn')
+    await clickAndCheck('item-arr')
+    expect(itemFnClick).not.toHaveBeenCalled()
+    expect(itemArrClickA).not.toHaveBeenCalled()
+    expect(itemArrClickB).not.toHaveBeenCalled()
+    expect(itemSelect).not.toHaveBeenCalled()
+
+    await clickAndCheck('checkbox-fn')
+    await clickAndCheck('checkbox-arr')
+    expect(checkboxFnClick).not.toHaveBeenCalled()
+    expect(checkboxArrClickA).not.toHaveBeenCalled()
+    expect(checkboxArrClickB).not.toHaveBeenCalled()
+    expect(checkboxUpdate).not.toHaveBeenCalled()
+    expect(checked.value).toBe(false)
+
+    await clickAndCheck('radio-fn')
+    await clickAndCheck('radio-arr')
+    await clickAndCheck('radio-group-disabled')
+    expect(radioFnClick).not.toHaveBeenCalled()
+    expect(radioArrClickA).not.toHaveBeenCalled()
+    expect(radioArrClickB).not.toHaveBeenCalled()
+    expect(groupDisabledClick).not.toHaveBeenCalled()
+    expect(radioSelect).not.toHaveBeenCalled()
+    expect(radioUpdate).not.toHaveBeenCalled()
+    expect(radio.value).toBe('a')
+    expect(open.value).toBe(true)
+  })
+
+  it('invokes enabled consumer onClick handlers and respects preventDefault cancellation', async () => {
+    const open = ref(true)
+    const checked = ref(false)
+    const radio = ref('a')
+
+    const itemPrevent = vi.fn((event: MouseEvent) => {
+      event.preventDefault()
+    })
+    const itemSelect = vi.fn()
+    const checkboxArrFirst = vi.fn()
+    const checkboxArrPrevent = vi.fn((event: MouseEvent) => {
+      event.preventDefault()
+    })
+    const checkboxUpdate = vi.fn()
+    const radioPrevent = vi.fn((event: MouseEvent) => {
+      event.preventDefault()
+    })
+    const radioSelect = vi.fn()
+    const radioUpdate = vi.fn()
+
+    mountAttached(
+      defineComponent({
+        setup() {
+          return () =>
+            h(
+              GhostDropdownMenu,
+              {
+                open: open.value,
+                'onUpdate:open': (value: boolean) => {
+                  open.value = value
+                },
+              },
+              {
+                default: () => [
+                  h(GhostDropdownMenuTrigger, null, () => 'Menu'),
+                  h(GhostDropdownMenuContent, { portal: false }, () => [
+                    h(
+                      GhostDropdownMenuItem,
+                      {
+                        'data-testid': 'enabled-item',
+                        onClick: itemPrevent,
+                        onSelect: itemSelect,
+                      },
+                      () => 'Item',
+                    ),
+                    h(
+                      GhostDropdownMenuCheckboxItem,
+                      {
+                        checked: checked.value,
+                        'data-testid': 'enabled-checkbox',
+                        onClick: [
+                          checkboxArrFirst,
+                          checkboxArrPrevent,
+                        ] as unknown as (event: MouseEvent) => void,
+                        'onUpdate:checked': (next: boolean) => {
+                          checked.value = next
+                          checkboxUpdate(next)
+                        },
+                      },
+                      () => 'Checkbox',
+                    ),
+                    h(
+                      GhostDropdownMenuRadioGroup,
+                      {
+                        modelValue: radio.value,
+                        'onUpdate:modelValue': (next: string) => {
+                          radio.value = next
+                          radioUpdate(next)
+                        },
+                      },
+                      () =>
+                        h(
+                          GhostDropdownMenuRadioItem,
+                          {
+                            value: 'b',
+                            'data-testid': 'enabled-radio',
+                            onClick: radioPrevent,
+                            onSelect: radioSelect,
+                          },
+                          () => 'Radio',
+                        ),
+                    ),
+                  ]),
+                ],
+              },
+            )
+        },
+      }),
+    )
+    await flushPromises()
+
+    document.querySelector<HTMLElement>('[data-testid="enabled-item"]')?.click()
+    await flushPromises()
+    expect(itemPrevent).toHaveBeenCalledTimes(1)
+    expect(itemSelect).toHaveBeenCalledTimes(1)
+    expect(open.value).toBe(true)
+
+    document
+      .querySelector<HTMLElement>('[data-testid="enabled-checkbox"]')
+      ?.click()
+    await flushPromises()
+    expect(checkboxArrFirst).toHaveBeenCalledTimes(1)
+    expect(checkboxArrPrevent).toHaveBeenCalledTimes(1)
+    expect(checkboxUpdate).not.toHaveBeenCalled()
+    expect(checked.value).toBe(false)
+
+    document
+      .querySelector<HTMLElement>('[data-testid="enabled-radio"]')
+      ?.click()
+    await flushPromises()
+    expect(radioPrevent).toHaveBeenCalledTimes(1)
+    expect(radioUpdate).toHaveBeenCalledWith('b')
+    expect(radioSelect).toHaveBeenCalledTimes(1)
+    expect(open.value).toBe(true)
+  })
 })

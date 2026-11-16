@@ -76,6 +76,10 @@ function handleKeydown(event: KeyboardEvent): void {
 }
 
 function handleClick(event: MouseEvent): void {
+  if (props.disabled) {
+    event.preventDefault()
+    return
+  }
   const custom = attrs['onClick']
   if (typeof custom === 'function') {
     ;(custom as (event: MouseEvent) => void)(event)
@@ -85,10 +89,6 @@ function handleClick(event: MouseEvent): void {
         ;(fn as (event: MouseEvent) => void)(event)
       }
     }
-  }
-  if (props.disabled) {
-    event.preventDefault()
-    return
   }
   if (event.defaultPrevented) {
     return

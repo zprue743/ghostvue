@@ -7,6 +7,8 @@ import GhostContextMenu from './GhostContextMenu.vue'
 import GhostContextMenuCheckboxItem from './GhostContextMenuCheckboxItem.vue'
 import GhostContextMenuContent from './GhostContextMenuContent.vue'
 import GhostContextMenuItem from './GhostContextMenuItem.vue'
+import GhostContextMenuRadioGroup from './GhostContextMenuRadioGroup.vue'
+import GhostContextMenuRadioItem from './GhostContextMenuRadioItem.vue'
 import GhostContextMenuTrigger from './GhostContextMenuTrigger.vue'
 
 let computePositionOverride:
@@ -689,5 +691,327 @@ describe('GhostContextMenu', () => {
       await flushPromises()
       expect(document.querySelector('[data-part="content"]')).toBeNull()
     })
+  })
+
+  it('blocks consumer onClick handlers and state changes on disabled ordinary, checkbox, and radio items', async () => {
+    const open = ref(true)
+    const checked = ref(false)
+    const radio = ref('a')
+
+    const itemFnClick = vi.fn()
+    const itemArrClickA = vi.fn()
+    const itemArrClickB = vi.fn()
+    const itemSelect = vi.fn()
+
+    const checkboxFnClick = vi.fn()
+    const checkboxArrClickA = vi.fn()
+    const checkboxArrClickB = vi.fn()
+    const checkboxUpdate = vi.fn()
+
+    const radioFnClick = vi.fn()
+    const radioArrClickA = vi.fn()
+    const radioArrClickB = vi.fn()
+    const radioSelect = vi.fn()
+    const radioUpdate = vi.fn()
+
+    const groupDisabledClick = vi.fn()
+
+    mountAttached(
+      defineComponent({
+        setup() {
+          return () =>
+            h(
+              GhostContextMenu,
+              {
+                open: open.value,
+                'onUpdate:open': (value: boolean) => {
+                  open.value = value
+                },
+              },
+              {
+                default: () => [
+                  h(GhostContextMenuTrigger, null, () => 'Target'),
+                  h(GhostContextMenuContent, { portal: false }, () => [
+                    h(
+                      GhostContextMenuItem,
+                      {
+                        disabled: true,
+                        'data-testid': 'ctx-item-fn',
+                        onClick: itemFnClick,
+                        onSelect: itemSelect,
+                      },
+                      () => 'Item Fn',
+                    ),
+                    h(
+                      GhostContextMenuItem,
+                      {
+                        disabled: true,
+                        'data-testid': 'ctx-item-arr',
+                        onClick: [itemArrClickA, itemArrClickB] as unknown as (
+                          event: MouseEvent,
+                        ) => void,
+                        onSelect: itemSelect,
+                      },
+                      () => 'Item Arr',
+                    ),
+                    h(
+                      GhostContextMenuCheckboxItem,
+                      {
+                        disabled: true,
+                        checked: checked.value,
+                        'data-testid': 'ctx-checkbox-fn',
+                        onClick: checkboxFnClick,
+                        'onUpdate:checked': (next: boolean) => {
+                          checked.value = next
+                          checkboxUpdate(next)
+                        },
+                      },
+                      () => 'Checkbox Fn',
+                    ),
+                    h(
+                      GhostContextMenuCheckboxItem,
+                      {
+                        disabled: true,
+                        checked: checked.value,
+                        'data-testid': 'ctx-checkbox-arr',
+                        onClick: [
+                          checkboxArrClickA,
+                          checkboxArrClickB,
+                        ] as unknown as (event: MouseEvent) => void,
+                        'onUpdate:checked': (next: boolean) => {
+                          checked.value = next
+                          checkboxUpdate(next)
+                        },
+                      },
+                      () => 'Checkbox Arr',
+                    ),
+                    h(
+                      GhostContextMenuRadioGroup,
+                      {
+                        modelValue: radio.value,
+                        'onUpdate:modelValue': (next: string) => {
+                          radio.value = next
+                          radioUpdate(next)
+                        },
+                      },
+                      () => [
+                        h(
+                          GhostContextMenuRadioItem,
+                          {
+                            value: 'b',
+                            disabled: true,
+                            'data-testid': 'ctx-radio-fn',
+                            onClick: radioFnClick,
+                            onSelect: radioSelect,
+                          },
+                          () => 'Radio Fn',
+                        ),
+                        h(
+                          GhostContextMenuRadioItem,
+                          {
+                            value: 'c',
+                            disabled: true,
+                            'data-testid': 'ctx-radio-arr',
+                            onClick: [
+                              radioArrClickA,
+                              radioArrClickB,
+                            ] as unknown as (event: MouseEvent) => void,
+                            onSelect: radioSelect,
+                          },
+                          () => 'Radio Arr',
+                        ),
+                      ],
+                    ),
+                    h(
+                      GhostContextMenuRadioGroup,
+                      {
+                        disabled: true,
+                        modelValue: radio.value,
+                        'onUpdate:modelValue': (next: string) => {
+                          radio.value = next
+                          radioUpdate(next)
+                        },
+                      },
+                      () =>
+                        h(
+                          GhostContextMenuRadioItem,
+                          {
+                            value: 'd',
+                            'data-testid': 'ctx-radio-group-disabled',
+                            onClick: groupDisabledClick,
+                            onSelect: radioSelect,
+                          },
+                          () => 'Radio Group Disabled',
+                        ),
+                    ),
+                  ]),
+                ],
+              },
+            )
+        },
+      }),
+    )
+    await flushPromises()
+
+    const clickAndCheck = async (testId: string) => {
+      const el = document.querySelector<HTMLElement>(
+        `[data-testid="${testId}"]`,
+      )
+      if (!el) throw new Error(`Missing ${testId}`)
+      const clickEvent = new MouseEvent('click', {
+        bubbles: true,
+        cancelable: true,
+      })
+      el.dispatchEvent(clickEvent)
+      expect(clickEvent.defaultPrevented).toBe(true)
+      pressKey('Enter', el)
+      pressKey(' ', el)
+      await flushPromises()
+    }
+
+    await clickAndCheck('ctx-item-fn')
+    await clickAndCheck('ctx-item-arr')
+    expect(itemFnClick).not.toHaveBeenCalled()
+    expect(itemArrClickA).not.toHaveBeenCalled()
+    expect(itemArrClickB).not.toHaveBeenCalled()
+    expect(itemSelect).not.toHaveBeenCalled()
+
+    await clickAndCheck('ctx-checkbox-fn')
+    await clickAndCheck('ctx-checkbox-arr')
+    expect(checkboxFnClick).not.toHaveBeenCalled()
+    expect(checkboxArrClickA).not.toHaveBeenCalled()
+    expect(checkboxArrClickB).not.toHaveBeenCalled()
+    expect(checkboxUpdate).not.toHaveBeenCalled()
+    expect(checked.value).toBe(false)
+
+    await clickAndCheck('ctx-radio-fn')
+    await clickAndCheck('ctx-radio-arr')
+    await clickAndCheck('ctx-radio-group-disabled')
+    expect(radioFnClick).not.toHaveBeenCalled()
+    expect(radioArrClickA).not.toHaveBeenCalled()
+    expect(radioArrClickB).not.toHaveBeenCalled()
+    expect(groupDisabledClick).not.toHaveBeenCalled()
+    expect(radioSelect).not.toHaveBeenCalled()
+    expect(radioUpdate).not.toHaveBeenCalled()
+    expect(radio.value).toBe('a')
+    expect(open.value).toBe(true)
+  })
+
+  it('invokes enabled consumer onClick handlers and respects preventDefault cancellation', async () => {
+    const open = ref(true)
+    const checked = ref(false)
+    const radio = ref('a')
+
+    const itemPrevent = vi.fn((event: MouseEvent) => {
+      event.preventDefault()
+    })
+    const itemSelect = vi.fn()
+    const checkboxArrFirst = vi.fn()
+    const checkboxArrPrevent = vi.fn((event: MouseEvent) => {
+      event.preventDefault()
+    })
+    const checkboxUpdate = vi.fn()
+    const radioPrevent = vi.fn((event: MouseEvent) => {
+      event.preventDefault()
+    })
+    const radioSelect = vi.fn()
+    const radioUpdate = vi.fn()
+
+    mountAttached(
+      defineComponent({
+        setup() {
+          return () =>
+            h(
+              GhostContextMenu,
+              {
+                open: open.value,
+                'onUpdate:open': (value: boolean) => {
+                  open.value = value
+                },
+              },
+              {
+                default: () => [
+                  h(GhostContextMenuTrigger, null, () => 'Target'),
+                  h(GhostContextMenuContent, { portal: false }, () => [
+                    h(
+                      GhostContextMenuItem,
+                      {
+                        'data-testid': 'ctx-enabled-item',
+                        onClick: itemPrevent,
+                        onSelect: itemSelect,
+                      },
+                      () => 'Item',
+                    ),
+                    h(
+                      GhostContextMenuCheckboxItem,
+                      {
+                        checked: checked.value,
+                        'data-testid': 'ctx-enabled-checkbox',
+                        onClick: [
+                          checkboxArrFirst,
+                          checkboxArrPrevent,
+                        ] as unknown as (event: MouseEvent) => void,
+                        'onUpdate:checked': (next: boolean) => {
+                          checked.value = next
+                          checkboxUpdate(next)
+                        },
+                      },
+                      () => 'Checkbox',
+                    ),
+                    h(
+                      GhostContextMenuRadioGroup,
+                      {
+                        modelValue: radio.value,
+                        'onUpdate:modelValue': (next: string) => {
+                          radio.value = next
+                          radioUpdate(next)
+                        },
+                      },
+                      () =>
+                        h(
+                          GhostContextMenuRadioItem,
+                          {
+                            value: 'b',
+                            'data-testid': 'ctx-enabled-radio',
+                            onClick: radioPrevent,
+                            onSelect: radioSelect,
+                          },
+                          () => 'Radio',
+                        ),
+                    ),
+                  ]),
+                ],
+              },
+            )
+        },
+      }),
+    )
+    await flushPromises()
+
+    document
+      .querySelector<HTMLElement>('[data-testid="ctx-enabled-item"]')
+      ?.click()
+    await flushPromises()
+    expect(itemPrevent).toHaveBeenCalledTimes(1)
+    expect(itemSelect).toHaveBeenCalledTimes(1)
+    expect(open.value).toBe(true)
+
+    document
+      .querySelector<HTMLElement>('[data-testid="ctx-enabled-checkbox"]')
+      ?.click()
+    await flushPromises()
+    expect(checkboxArrFirst).toHaveBeenCalledTimes(1)
+    expect(checkboxArrPrevent).toHaveBeenCalledTimes(1)
+    expect(checkboxUpdate).not.toHaveBeenCalled()
+    expect(checked.value).toBe(false)
+
+    document
+      .querySelector<HTMLElement>('[data-testid="ctx-enabled-radio"]')
+      ?.click()
+    await flushPromises()
+    expect(radioPrevent).toHaveBeenCalledTimes(1)
+    expect(radioUpdate).toHaveBeenCalledWith('b')
+    expect(radioSelect).toHaveBeenCalledTimes(1)
+    expect(open.value).toBe(true)
   })
 })
