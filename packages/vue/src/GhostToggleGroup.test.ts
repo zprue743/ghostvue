@@ -422,4 +422,225 @@ describe('GhostToggleGroup', () => {
     await flushPromises()
     expect(items(wrapper)[0]?.attributes('tabindex')).toBe('0')
   })
+
+  it('exposes button semantics and tabindex on non-button hosts', async () => {
+    const wrapper = mount(
+      defineComponent({
+        setup() {
+          return () =>
+            h(
+              GhostToggleGroup,
+              { 'aria-label': 'Align', defaultValue: 'center' },
+              {
+                default: () => [
+                  h(
+                    GhostToggleGroupItem,
+                    { as: 'div', value: 'left' },
+                    () => 'Left',
+                  ),
+                  h(
+                    GhostToggleGroupItem,
+                    { as: 'span', value: 'center' },
+                    () => 'Center',
+                  ),
+                  h(
+                    GhostToggleGroupItem,
+                    { as: 'div', value: 'right', disabled: true },
+                    () => 'Right',
+                  ),
+                  h(
+                    GhostToggleGroupItem,
+                    { as: 'div', value: 'custom', role: 'switch' },
+                    () => 'Custom',
+                  ),
+                ],
+              },
+            )
+        },
+      }),
+      { attachTo: document.body },
+    )
+    attached.push(wrapper)
+    await flushPromises()
+
+    const list = items(wrapper)
+    expect(list[0]?.attributes('role')).toBe('button')
+    expect(list[0]?.attributes('tabindex')).toBe('-1')
+    expect(list[0]?.attributes('aria-disabled')).toBeUndefined()
+
+    expect(list[1]?.attributes('role')).toBe('button')
+    expect(list[1]?.attributes('tabindex')).toBe('0')
+
+    expect(list[2]?.attributes('role')).toBe('button')
+    expect(list[2]?.attributes('tabindex')).toBe('-1')
+    expect(list[2]?.attributes('aria-disabled')).toBe('true')
+    expect(list[2]?.attributes('disabled')).toBeUndefined()
+
+    expect(list[3]?.attributes('role')).toBe('switch')
+  })
+
+  it('renders non-button role and tabindex during SSR', async () => {
+    const app = createSSRApp(
+      defineComponent({
+        setup: () => () =>
+          h(
+            GhostToggleGroup,
+            { 'aria-label': 'SSR non-button', defaultValue: 'two' },
+            {
+              default: () => [
+                h(
+                  GhostToggleGroupItem,
+                  { as: 'div', value: 'one' },
+                  () => 'One',
+                ),
+                h(
+                  GhostToggleGroupItem,
+                  { as: 'span', value: 'two' },
+                  () => 'Two',
+                ),
+                h(
+                  GhostToggleGroupItem,
+                  { as: 'div', value: 'three', disabled: true },
+                  () => 'Three',
+                ),
+              ],
+            },
+          ),
+      }),
+    )
+    const html = await renderToString(app)
+    expect(html).toContain('role="button"')
+    expect(html).toContain('tabindex="0"')
+    expect(html).toContain('tabindex="-1"')
+    expect(html).toContain('aria-disabled="true"')
+  })
+
+  it('toggles non-button hosts with Enter and Space and prevents default', async () => {
+    const updates: (string | string[] | undefined)[] = []
+    const wrapper = mount(
+      defineComponent({
+        setup() {
+          return () =>
+            h(
+              GhostToggleGroup,
+              {
+                type: 'multiple',
+                'aria-label': 'Format',
+                'onUpdate:modelValue': (
+                  value: string | string[] | undefined,
+                ) => {
+                  updates.push(value)
+                },
+              },
+              {
+                default: () => [
+                  h(
+                    GhostToggleGroupItem,
+                    { as: 'div', value: 'bold' },
+                    () => 'Bold',
+                  ),
+                  h(
+                    GhostToggleGroupItem,
+                    { as: 'span', value: 'italic' },
+                    () => 'Italic',
+                  ),
+                ],
+              },
+            )
+        },
+      }),
+      { attachTo: document.body },
+    )
+    attached.push(wrapper)
+    await flushPromises()
+
+    const [bold, italic] = items(wrapper)
+    if (!bold || !italic) {
+      throw new Error('Expected two toggle items')
+    }
+    const enterEvent = key(bold.element, 'Enter')
+    await flushPromises()
+    expect(enterEvent.defaultPrevented).toBe(true)
+    expect(bold.attributes('aria-pressed')).toBe('true')
+    expect(updates.at(-1)).toEqual(['bold'])
+
+    const spaceEvent = key(italic.element, ' ')
+    await flushPromises()
+    expect(spaceEvent.defaultPrevented).toBe(true)
+    expect(italic.attributes('aria-pressed')).toBe('true')
+    expect(updates.at(-1)).toEqual(['bold', 'italic'])
+  })
+
+  it('ignores Enter and Space on disabled non-button hosts and when consumer prevents default', async () => {
+    const updates: (string | string[] | undefined)[] = []
+    const wrapper = mount(
+      defineComponent({
+        setup() {
+          return () =>
+            h(
+              GhostToggleGroup,
+              {
+                'aria-label': 'Format',
+                'onUpdate:modelValue': (
+                  value: string | string[] | undefined,
+                ) => {
+                  updates.push(value)
+                },
+              },
+              {
+                default: () => [
+                  h(
+                    GhostToggleGroupItem,
+                    { as: 'div', value: 'disabled-item', disabled: true },
+                    () => 'Disabled',
+                  ),
+                  h(
+                    GhostToggleGroupItem,
+                    {
+                      as: 'span',
+                      value: 'prevented-item',
+                      onKeydown: (event: KeyboardEvent) => {
+                        event.preventDefault()
+                      },
+                    },
+                    () => 'Prevented',
+                  ),
+                ],
+              },
+            )
+        },
+      }),
+      { attachTo: document.body },
+    )
+    attached.push(wrapper)
+    await flushPromises()
+
+    const [disabledItem, preventedItem] = items(wrapper)
+    if (!disabledItem || !preventedItem) {
+      throw new Error('Expected two toggle items')
+    }
+    const disabledSpace = key(disabledItem.element, ' ')
+    await flushPromises()
+    expect(disabledSpace.defaultPrevented).toBe(true)
+    expect(disabledItem.attributes('aria-pressed')).toBe('false')
+
+    const preventedEnter = key(preventedItem.element, 'Enter')
+    await flushPromises()
+    expect(preventedEnter.defaultPrevented).toBe(true)
+    expect(preventedItem.attributes('aria-pressed')).toBe('false')
+    expect(updates).toHaveLength(0)
+  })
+
+  it('does not toggle native button hosts on keydown alone', async () => {
+    const { wrapper, updates } = mountGroup()
+    await flushPromises()
+    const first = items(wrapper)[0]
+    if (!first) {
+      throw new Error('Expected first toggle item')
+    }
+    const enterEvent = key(first.element, 'Enter')
+    await flushPromises()
+    expect(enterEvent.defaultPrevented).toBe(false)
+    expect(updates).toHaveLength(0)
+  })
 })
