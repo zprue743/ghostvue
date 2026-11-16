@@ -35,8 +35,8 @@ const rootRef = useTemplateRef<HTMLElement>('root')
 const {
   controlId,
   labelId,
-  descriptionId,
-  errorId,
+  descriptionId: defaultDescriptionId,
+  errorId: defaultErrorId,
   disabled,
   invalid,
   required,
@@ -46,6 +46,13 @@ const {
   invalid: () => props.invalid,
   required: () => props.required,
 })
+
+const customDescriptionId = shallowRef<string | null>(null)
+const customErrorId = shallowRef<string | null>(null)
+const descriptionId = computed(
+  () => customDescriptionId.value ?? defaultDescriptionId.value,
+)
+const errorId = computed(() => customErrorId.value ?? defaultErrorId.value)
 
 const descriptionRegistered = shallowRef(false)
 const errorRegistered = shallowRef(false)
@@ -65,7 +72,9 @@ const ariaDescribedBy = computed(() => {
 provide(ghostFieldContextKey, {
   controlId,
   labelId,
+  defaultDescriptionId,
   descriptionId,
+  defaultErrorId,
   errorId,
   disabled,
   invalid,
@@ -74,6 +83,12 @@ provide(ghostFieldContextKey, {
   errorRegistered,
   errorVisible,
   ariaDescribedBy,
+  setDescriptionId(id: string | null) {
+    customDescriptionId.value = id
+  },
+  setErrorId(id: string | null) {
+    customErrorId.value = id
+  },
   setDescriptionRegistered(registered: boolean) {
     descriptionRegistered.value = registered
   },

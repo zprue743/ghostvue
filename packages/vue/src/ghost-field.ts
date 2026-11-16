@@ -152,7 +152,9 @@ export interface UseGhostFieldReturn {
 export interface GhostFieldContext {
   controlId: ComputedRef<string>
   labelId: ComputedRef<string>
+  defaultDescriptionId: ComputedRef<string>
   descriptionId: ComputedRef<string>
+  defaultErrorId: ComputedRef<string>
   errorId: ComputedRef<string>
   disabled: ComputedRef<boolean>
   invalid: ComputedRef<boolean>
@@ -161,6 +163,8 @@ export interface GhostFieldContext {
   errorRegistered: Ref<boolean>
   errorVisible: Ref<boolean>
   ariaDescribedBy: ComputedRef<string | undefined>
+  setDescriptionId(id: string | null): void
+  setErrorId(id: string | null): void
   setDescriptionRegistered(registered: boolean): void
   setErrorRegistered(registered: boolean): void
   setErrorVisible(visible: boolean): void

@@ -2,10 +2,12 @@
 import {
   computed,
   inject,
+  onUnmounted,
   shallowRef,
   useAttrs,
   useSlots,
   useTemplateRef,
+  watch,
 } from 'vue'
 
 import {
@@ -45,6 +47,27 @@ const hostRef = useTemplateRef<HTMLElement>('host')
 const element = computed(() => resolveFieldHtmlElement(hostRef.value))
 const visible = shallowRef(false)
 
+const errorId = computed(() => {
+  const customId = attrs['id']
+  return typeof customId === 'string' && customId.length > 0
+    ? customId
+    : fieldContext.defaultErrorId.value
+})
+
+watch(
+  errorId,
+  (id) => {
+    fieldContext.setErrorId(
+      id === fieldContext.defaultErrorId.value ? null : id,
+    )
+  },
+  { immediate: true },
+)
+
+onUnmounted(() => {
+  fieldContext.setErrorId(null)
+})
+
 useGhostFieldPartContent(hostRef, (next) => {
   visible.value = next
   fieldContext.setErrorVisible(next)
@@ -64,15 +87,9 @@ function buildErrorAttrs(): Record<string, unknown> {
     }
   }
 
-  const customId = attrs['id']
-  const id =
-    typeof customId === 'string' && customId.length > 0
-      ? customId
-      : fieldContext.errorId.value
-
   const result: Record<string, unknown> = {
     ...rest,
-    id,
+    id: errorId.value,
     'data-part': 'error',
   }
 
