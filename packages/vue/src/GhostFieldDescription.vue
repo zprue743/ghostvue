@@ -61,7 +61,7 @@ onUnmounted(() => {
   context.setDescriptionId(null)
 })
 
-useGhostFieldPartContent(hostRef, (next) => {
+useGhostFieldPartContent(element, (next) => {
   visible.value = next
   context.setDescriptionRegistered(next)
 })

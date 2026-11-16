@@ -18,6 +18,15 @@ describe('fieldPartHostHasContent', () => {
     expect(fieldPartHostHasContent(withChild)).toBe(true)
     expect(fieldPartHostHasContent(empty)).toBe(false)
     expect(fieldPartHostHasContent(null)).toBe(false)
+    expect(fieldPartHostHasContent({ $el: withText })).toBe(true)
+    expect(fieldPartHostHasContent({ element: withChild })).toBe(true)
+    expect(fieldPartHostHasContent({ $el: empty })).toBe(false)
+    expect(
+      fieldPartHostHasContent({ $el: document.createTextNode('hint') }),
+    ).toBe(false)
+    expect(
+      fieldPartHostHasContent({ $el: document.createComment('empty') }),
+    ).toBe(false)
   })
 })
 
