@@ -62,7 +62,20 @@ const group = useGhostRadioGroup({
   },
 })
 
-useNativeFormReset(() => rootRef.value, group.applyFormReset)
+useNativeFormReset(() => {
+  const root = rootRef.value
+  if (!root) {
+    return null
+  }
+  if ('form' in root) {
+    return root as HTMLFieldSetElement
+  }
+  return (
+    root.querySelector<HTMLInputElement>(
+      'input.ghost-radio-group-item[type="radio"]',
+    ) ?? root
+  )
+}, group.applyFormReset)
 
 provide(ghostRadioGroupContextKey, {
   selectedValue: group.selectedValue,
