@@ -9,7 +9,11 @@ import GhostComboboxEmpty from './GhostComboboxEmpty.vue'
 import GhostComboboxInput from './GhostComboboxInput.vue'
 import GhostComboboxOption from './GhostComboboxOption.vue'
 import { waitForFormResetDeferral } from './form-reset'
-import { useGhostComboboxAsyncSearch } from './use-ghost-combobox'
+import {
+  useGhostCombobox,
+  useGhostComboboxAsyncSearch,
+} from './use-ghost-combobox'
+import { visuallyHiddenStyle } from './use-ghost-visually-hidden'
 
 const attached: ReturnType<typeof mount>[] = []
 
@@ -609,5 +613,107 @@ describe('GhostCombobox', () => {
       document.querySelector('[data-part="content"]')?.hasAttribute('hidden'),
     ).toBe(true)
     expect(document.activeElement).toBe(input.element)
+  })
+
+  it('visually hides form mirrors and the announcer inline without any consumer stylesheet while preserving FormData, external form, and required validation', async () => {
+    const wrapper = mountAttached(
+      defineComponent({
+        setup() {
+          return () =>
+            h('div', [
+              h('form', { id: 'ext-combobox-form' }),
+              h(
+                GhostCombobox,
+                {
+                  name: 'fruits',
+                  form: 'ext-combobox-form',
+                  multiple: true,
+                  required: true,
+                },
+                {
+                  default: () => [
+                    h(GhostComboboxInput),
+                    h(GhostComboboxContent, { portal: false }, () => [
+                      h(
+                        GhostComboboxOption,
+                        { value: 'a', textValue: 'Apple' },
+                        () => 'Apple',
+                      ),
+                      h(
+                        GhostComboboxOption,
+                        { value: 'b', textValue: 'Banana' },
+                        () => 'Banana',
+                      ),
+                    ]),
+                  ],
+                },
+              ),
+            ])
+        },
+      }),
+    )
+
+    await flushPromises()
+    await nextTick()
+
+    const announcer = wrapper.get('[data-part="announcer"]')
+      .element as HTMLElement
+    expect(announcer.getAttribute('aria-live')).toBe('polite')
+    expect(announcer.getAttribute('aria-atomic')).toBe('true')
+    expect(announcer.style.position).toBe('absolute')
+    expect(announcer.style.width).toBe('1px')
+    expect(announcer.style.height).toBe('1px')
+    expect(announcer.style.margin).toBe('-1px')
+    expect(announcer.style.overflow).toBe('hidden')
+    expect(announcer.style.whiteSpace).toBe('nowrap')
+    expect(announcer.style.clipPath).toBe('inset(50%)')
+
+    const initialMirror = wrapper.get('input.ghost-visually-hidden')
+      .element as HTMLInputElement
+    expect(initialMirror.type).toBe('text')
+    expect(initialMirror.getAttribute('form')).toBe('ext-combobox-form')
+    expect(initialMirror.style.position).toBe('absolute')
+    expect(initialMirror.style.width).toBe('1px')
+    expect(initialMirror.style.height).toBe('1px')
+    expect(initialMirror.style.overflow).toBe('hidden')
+    expect(initialMirror.style.clipPath).toBe('inset(50%)')
+
+    const form = wrapper.get('#ext-combobox-form').element as HTMLFormElement
+    expect(form.checkValidity()).toBe(false)
+
+    await wrapper.get('[data-value="a"]').trigger('click')
+    await wrapper.get('[data-value="b"]').trigger('click')
+    await flushPromises()
+    await nextTick()
+
+    expect(form.checkValidity()).toBe(true)
+    expect(new FormData(form).getAll('fruits')).toEqual(['a', 'b'])
+
+    const mirrors = wrapper.findAll('input.ghost-visually-hidden')
+    expect(mirrors).toHaveLength(2)
+    for (const mirror of mirrors) {
+      const el = mirror.element as HTMLInputElement
+      expect(el.style.position).toBe('absolute')
+      expect(el.style.width).toBe('1px')
+      expect(el.style.height).toBe('1px')
+    }
+  })
+
+  it('includes inline visually-hidden style in useGhostCombobox formMirrorInputs and liveRegionProps', () => {
+    let api!: ReturnType<typeof useGhostCombobox>
+    const wrapper = mountAttached(
+      defineComponent({
+        setup() {
+          api = useGhostCombobox({ name: 'fruit' })
+          return () => h('div')
+        },
+      }),
+    )
+    expect(api.formMirrorInputs.value[0]?.style).toEqual(visuallyHiddenStyle)
+    expect(api.liveRegionProps.value.style).toEqual(visuallyHiddenStyle)
+    expect(api.liveRegionProps.value['data-part']).toBe('announcer')
+    expect(api.liveRegionProps.value['aria-live']).toBe('polite')
+    expect(api.liveRegionProps.value['aria-atomic']).toBe(true)
+    wrapper.unmount()
   })
 })

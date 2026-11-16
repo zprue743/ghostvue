@@ -12,7 +12,7 @@ import type { UseGhostVisuallyHiddenOptions } from './ghost-visually-hidden'
  * Clip technique: 1px not 0 so some engines keep the node in the accessibility
  * tree. No font/spacing declarations (WCAG 1.4.4 / 1.4.12).
  */
-const visuallyHiddenStyle = Object.freeze({
+export const visuallyHiddenStyle = Object.freeze({
   position: 'absolute',
   width: '1px',
   height: '1px',

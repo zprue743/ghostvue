@@ -10,6 +10,7 @@ import {
 
 import type {
   GhostComboboxFormInputProps,
+  GhostComboboxLiveRegionProps,
   GhostComboboxOptionRecord,
   GhostComboboxSearchPayload,
   GhostComboboxValue,
@@ -17,6 +18,7 @@ import type {
 } from './ghost-combobox'
 import { useControllableState } from './use-controllable-state'
 import { useGhostId } from './use-ghost-id'
+import { visuallyHiddenStyle } from './use-ghost-visually-hidden'
 
 /** Neutral root class hook (themed recipes may target). */
 export interface GhostComboboxRootProps {
@@ -69,6 +71,7 @@ export function useGhostCombobox(options: UseGhostComboboxOptions = {}): {
   labelVersion: Ref<number>
   announceMessage: Ref<string>
   liveRegionId: ComputedRef<string>
+  liveRegionProps: ComputedRef<GhostComboboxLiveRegionProps>
 } {
   let suppressValueChange = false
 
@@ -441,6 +444,7 @@ export function useGhostCombobox(options: UseGhostComboboxOptions = {}): {
       tabindex: -1 as const,
       'aria-hidden': true as const,
       class: 'ghost-visually-hidden' as const,
+      style: visuallyHiddenStyle,
       autocomplete: 'off' as const,
     }
     if (multiple.value) {
@@ -505,6 +509,15 @@ export function useGhostCombobox(options: UseGhostComboboxOptions = {}): {
     syncFormValidity()
   })
 
+  const liveRegionProps = computed((): GhostComboboxLiveRegionProps => ({
+    id: liveRegionId.value,
+    class: 'ghost-visually-hidden',
+    style: visuallyHiddenStyle,
+    'aria-live': 'polite',
+    'aria-atomic': true,
+    'data-part': 'announcer',
+  }))
+
   return {
     multiple,
     virtualized,
@@ -553,6 +566,7 @@ export function useGhostCombobox(options: UseGhostComboboxOptions = {}): {
     labelVersion,
     announceMessage,
     liveRegionId,
+    liveRegionProps,
   }
 }
 

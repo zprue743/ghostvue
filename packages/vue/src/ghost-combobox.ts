@@ -2,6 +2,7 @@ import type { Placement, Strategy } from '@floating-ui/dom'
 import type {
   Component,
   ComputedRef,
+  CSSProperties,
   InjectionKey,
   MaybeRefOrGetter,
   Ref,
@@ -66,7 +67,18 @@ export interface GhostComboboxFormInputProps {
   tabindex: -1
   'aria-hidden': true
   class: 'ghost-visually-hidden'
+  style: CSSProperties
   autocomplete: 'off'
+}
+
+/** Visually-hidden polite live region bindings for {@link GhostCombobox}. */
+export interface GhostComboboxLiveRegionProps {
+  id: string
+  class: 'ghost-visually-hidden'
+  style: CSSProperties
+  'aria-live': 'polite'
+  'aria-atomic': true
+  'data-part': 'announcer'
 }
 
 export interface GhostComboboxSearchPayload {
