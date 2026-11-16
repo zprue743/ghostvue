@@ -212,7 +212,10 @@ function handleMenuKeyDown(
     return
   }
 
-  if (isPrintableKey(event)) {
+  const isTypeaheadSpace =
+    event.key === ' ' && typeaheadState.getTypeahead().length > 0
+
+  if (isPrintableKey(event) && (event.key !== ' ' || isTypeaheadSpace)) {
     const nextQuery = typeaheadState.getTypeahead() + event.key
     typeaheadState.setTypeahead(nextQuery)
     typeaheadState.resetTypeaheadTimer()
@@ -225,7 +228,12 @@ function handleMenuKeyDown(
     return
   }
 
-  if (event.key === 'Enter' || event.key === ' ') {
+  if (
+    (event.key === 'Enter' || event.key === ' ') &&
+    !event.ctrlKey &&
+    !event.metaKey &&
+    !event.altKey
+  ) {
     const target = event.target
     if (!(target instanceof HTMLElement) || !root.contains(target)) {
       return
