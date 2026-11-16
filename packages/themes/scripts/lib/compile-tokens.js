@@ -54,7 +54,9 @@ export function themeHostSelector(themeName = DEFAULT_THEME_NAME) {
 }
 
 function systemHostSelector(cssHost) {
-  return `${cssHost}:not([${MODE_ATTRIBUTE}]):not(:where([${MODE_ATTRIBUTE}] *))`
+  return wrapSelectorList(
+    `${cssHost}:not([${MODE_ATTRIBUTE}]):not(:where([${MODE_ATTRIBUTE}] *))`,
+  )
 }
 
 function wrapSelectorList(selectors) {
@@ -66,6 +68,12 @@ function modeHostSelector(cssHost, mode) {
   return wrapSelectorList(
     `${cssHost}:where([${MODE_ATTRIBUTE}='${mode}']), ${cssHost} :where([${MODE_ATTRIBUTE}='${mode}'])`,
   )
+}
+
+function accessibilityHostSelector(cssHost) {
+  // Match theme hosts and nested mode hosts so reduced-motion and forced-color
+  // overrides apply wherever ordinary mode declarations are emitted.
+  return wrapSelectorList(`${cssHost}, ${cssHost} :where([${MODE_ATTRIBUTE}])`)
 }
 
 function inheritedModeHostSelector(cssHost) {
@@ -807,12 +815,14 @@ ${highDprVars}
     nestedDarkVars,
     nestedDescendantDark,
   )
+  const accessibilityHost = accessibilityHostSelector(cssHost)
+  const inheritedHost = inheritedModeHostSelector(cssHost)
   const reducedRest = renderReducedMotionProperties(rest, '      ')
   const reducedDurations = renderReducedMotionProperties(durations, '      ')
   const reducedRadii = renderReducedMotionProperties(radii, '      ')
   const reducedRestBlock = reducedRest
     ? `
-    ${cssHost} {
+    ${accessibilityHost} {
 ${reducedRest}
     }
 `
@@ -822,17 +832,66 @@ ${reducedRest}
     .join('\n')
   const reducedDurationBlock = reducedDescendant
     ? `
-    ${withDescendants(cssHost)} {
+    ${withDescendants(accessibilityHost)} {
 ${reducedDescendant}
     }
 `
     : ''
+  const reducedInheritedRest = renderReducedMotionProperties(rest, '        ')
+  const reducedInheritedDurations = renderReducedMotionProperties(
+    durations,
+    '        ',
+  )
+  const reducedInheritedRadii = renderReducedMotionProperties(radii, '        ')
+  const reducedInheritedDescendant = [
+    reducedInheritedDurations,
+    reducedInheritedRadii,
+  ]
+    .filter(Boolean)
+    .join('\n')
+  const reducedInheritedBlock =
+    reducedInheritedRest || reducedInheritedDescendant
+      ? `
+    @scope ([${MODE_ATTRIBUTE}]) to ([${MODE_ATTRIBUTE}]) {
+${
+  reducedInheritedRest
+    ? `      ${inheritedHost} {
+${reducedInheritedRest}
+      }
+`
+    : ''
+}${
+          reducedInheritedDescendant
+            ? `      ${withDescendants(inheritedHost)} {
+${reducedInheritedDescendant}
+      }
+`
+            : ''
+        }    }
+`
+      : ''
   const reducedMotionBlock =
     reducedRest || reducedDescendant
       ? `
-  @media (prefers-reduced-motion: reduce) {${reducedRestBlock}${reducedDurationBlock}  }
+  @media (prefers-reduced-motion: reduce) {${reducedRestBlock}${reducedDurationBlock}${reducedInheritedBlock}  }
 `
       : ''
+  const inheritedForcedVars = renderForcedColors(tokens, '        ')
+  const forcedColorsBlock = forcedVars
+    ? `
+  @media (forced-colors: active) {
+    ${accessibilityHost} {
+${forcedVars}
+    }
+
+    @scope ([${MODE_ATTRIBUTE}]) to ([${MODE_ATTRIBUTE}]) {
+      ${inheritedHost} {
+${inheritedForcedVars}
+      }
+    }
+  }
+`
+    : ''
   const densityLabel =
     defaultDensity === DEFAULT_DENSITY
       ? 'comfortable'
@@ -888,13 +947,7 @@ ${inheritedLightBlock}${inheritedDarkBlock}
   ${systemHost} {
     color-scheme: light dark;
   }
-${densityBlock}${coarseBlock}${highDprBlock}${reducedMotionBlock}
-  @media (forced-colors: active) {
-    ${cssHost} {
-${forcedVars}
-    }
-  }
-}
+${densityBlock}${coarseBlock}${highDprBlock}${reducedMotionBlock}${forcedColorsBlock}}
 `
 }
 
