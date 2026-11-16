@@ -68,6 +68,29 @@ function modeHostSelector(cssHost, mode) {
   )
 }
 
+function inheritedModeHostSelector(cssHost) {
+  return wrapSelectorList(`${cssHost}:not([${MODE_ATTRIBUTE}])`)
+}
+
+function renderInheritedModeBlock(cssHost, mode, vars, descendantVars) {
+  const host = inheritedModeHostSelector(cssHost)
+  const descendantBlock = descendantVars
+    ? `
+
+    ${withDescendants(host)} {
+${descendantVars}
+    }`
+    : ''
+  return `
+  @scope ([${MODE_ATTRIBUTE}='${mode}']) to ([${MODE_ATTRIBUTE}]) {
+    ${host} {
+      color-scheme: ${mode};
+${vars}
+    }${descendantBlock}
+  }
+`
+}
+
 function unsetDensityHost(cssHost) {
   return `${cssHost}:not([${DENSITY_ATTRIBUTE}]):not(:where([${DENSITY_ATTRIBUTE}] *))`
 }
@@ -730,9 +753,15 @@ export function renderTokenCss(tokens, options = {}) {
   const durations = durationTokens(tokens)
   const radii = roundnessTokens(tokens)
   const lightVars = renderCustomProperties(rest, 'light')
+  const nestedLightVars = renderCustomProperties(rest, 'light', '      ')
   const darkVars = renderCustomProperties(rest, 'dark')
   const nestedDarkVars = renderCustomProperties(rest, 'dark', '      ')
   const lightDurations = renderCustomProperties(durations, 'light')
+  const nestedLightDurations = renderCustomProperties(
+    durations,
+    'light',
+    '      ',
+  )
   const darkDurations = renderCustomProperties(durations, 'dark')
   const nestedDarkDurations = renderCustomProperties(
     durations,
@@ -740,6 +769,7 @@ export function renderTokenCss(tokens, options = {}) {
     '      ',
   )
   const lightRadii = renderCustomProperties(radii, 'light')
+  const nestedLightRadii = renderCustomProperties(radii, 'light', '      ')
   const darkRadii = renderCustomProperties(radii, 'dark')
   const nestedDarkRadii = renderCustomProperties(radii, 'dark', '      ')
   const densityBlock = `${renderUnsetDensityCss(tokens, cssHost, defaultDensity)}${renderDensityCss(tokens, cssHost)}`
@@ -758,10 +788,25 @@ ${highDprVars}
   const descendantLight = [lightDurations, lightRadii]
     .filter(Boolean)
     .join('\n')
+  const nestedDescendantLight = [nestedLightDurations, nestedLightRadii]
+    .filter(Boolean)
+    .join('\n')
   const descendantDark = [darkDurations, darkRadii].filter(Boolean).join('\n')
   const nestedDescendantDark = [nestedDarkDurations, nestedDarkRadii]
     .filter(Boolean)
     .join('\n')
+  const inheritedLightBlock = renderInheritedModeBlock(
+    cssHost,
+    'light',
+    nestedLightVars,
+    nestedDescendantLight,
+  )
+  const inheritedDarkBlock = renderInheritedModeBlock(
+    cssHost,
+    'dark',
+    nestedDarkVars,
+    nestedDescendantDark,
+  )
   const reducedRest = renderReducedMotionProperties(rest, '      ')
   const reducedDurations = renderReducedMotionProperties(durations, '      ')
   const reducedRadii = renderReducedMotionProperties(radii, '      ')
@@ -839,7 +884,7 @@ ${darkVars}
   ${withDescendants(darkModeHost)} {
 ${descendantDark}
   }
-
+${inheritedLightBlock}${inheritedDarkBlock}
   ${systemHost} {
     color-scheme: light dark;
   }
