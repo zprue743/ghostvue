@@ -257,7 +257,7 @@ defineExpose<GhostPopoverContentExposed>({
       :is="as"
       v-if="context.isOpen.value"
       ref="host"
-      class="ghost-popover-content"
+      :class="['ghost-popover-content', attrs.class]"
       :style="contentStyle"
       v-bind="contentAttrs"
     >

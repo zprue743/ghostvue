@@ -198,7 +198,7 @@ defineExpose<GhostTooltipContentExposed>({
       :is="as"
       v-if="context.isOpen.value"
       ref="host"
-      class="ghost-tooltip-content"
+      :class="['ghost-tooltip-content', attrs.class]"
       :style="contentStyle"
       v-bind="contentAttrs"
       @pointerenter="handlePointerEnter"

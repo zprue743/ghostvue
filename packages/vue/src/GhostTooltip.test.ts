@@ -672,4 +672,53 @@ describe('GhostTooltip', () => {
     expect(document.querySelector('#multi-source-content')).toBeNull()
     expect(updates).toEqual([true, false])
   })
+
+  it('merges consumer classes (string, array, object, CSS Module) with ghost-tooltip-content', async () => {
+    const active = ref(true)
+    const moduleStyles = { surface: 'TooltipModule_surface__xyz789' }
+    const wrapper = mountAttached(
+      defineComponent({
+        setup() {
+          return () =>
+            h(
+              GhostTooltip,
+              { defaultOpen: true },
+              {
+                default: () => [
+                  h(GhostTooltipTrigger, null, () => 'Anchor'),
+                  h(
+                    GhostTooltipContent,
+                    {
+                      id: 'tooltip-class-merge',
+                      portal: false,
+                      class: [
+                        'consumer-surface',
+                        { 'is-active': active.value, 'is-hidden': false },
+                        [moduleStyles.surface],
+                      ],
+                    },
+                    () => 'Hint',
+                  ),
+                ],
+              },
+            )
+        },
+      }),
+    )
+
+    await flushPromises()
+    await nextTick()
+
+    const content = wrapper.get('#tooltip-class-merge')
+    expect(content.classes()).toContain('ghost-tooltip-content')
+    expect(content.classes()).toContain('consumer-surface')
+    expect(content.classes()).toContain('is-active')
+    expect(content.classes()).not.toContain('is-hidden')
+    expect(content.classes()).toContain('TooltipModule_surface__xyz789')
+
+    active.value = false
+    await nextTick()
+    expect(content.classes()).toContain('ghost-tooltip-content')
+    expect(content.classes()).not.toContain('is-active')
+  })
 })
