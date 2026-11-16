@@ -76,4 +76,27 @@ describe('useGhostAccordion', () => {
     ).result.setItemOpen('b', true)
     expect(updates).toEqual(['b'])
   })
+
+  it('clears controlled collapsible single selection to undefined', () => {
+    const updates: (string | string[] | undefined)[] = []
+    const modelValue = ref<string | undefined>('a')
+    const { result } = mountComposable(() =>
+      useGhostAccordion({
+        type: 'single',
+        collapsible: true,
+        modelValue: () => modelValue.value,
+        onValueChange: (next) => {
+          updates.push(next)
+          modelValue.value = typeof next === 'string' ? next : undefined
+        },
+      }),
+    )
+
+    expect(result.isItemOpen('a')).toBe(true)
+    result.setItemOpen('a', false)
+    expect(updates).toEqual([undefined])
+    expect(modelValue.value).toBeUndefined()
+    expect(result.modelValue.value).toBeUndefined()
+    expect(result.isItemOpen('a')).toBe(false)
+  })
 })

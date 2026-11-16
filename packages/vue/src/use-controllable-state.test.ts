@@ -232,4 +232,43 @@ describe('useControllableState', () => {
     expectTypeOf(result).toEqualTypeOf<WritableComputedRef<boolean>>()
     wrapper.unmount()
   })
+
+  it('clears controlled state to undefined without warning when allowControlledUndefined is enabled', async () => {
+    const prop = ref<string | undefined>('a')
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined)
+    const onChange = vi.fn((value: string | undefined) => {
+      prop.value = value
+    })
+    const { result, wrapper } = mountComposable(() =>
+      useControllableState<string | undefined>({
+        prop: () => prop.value,
+        defaultValue: 'fallback',
+        onChange,
+        allowControlledUndefined: true,
+      }),
+    )
+
+    expect(result.value).toBe('a')
+
+    result.value = undefined
+    await nextTick()
+
+    expect(onChange).toHaveBeenCalledTimes(1)
+    expect(onChange).toHaveBeenCalledWith(undefined)
+    expect(prop.value).toBeUndefined()
+    expect(result.value).toBeUndefined()
+    expect(warn).not.toHaveBeenCalled()
+
+    result.value = 'b'
+    await nextTick()
+    expect(result.value).toBe('b')
+
+    prop.value = undefined
+    await nextTick()
+    expect(result.value).toBeUndefined()
+    expect(warn).not.toHaveBeenCalled()
+
+    warn.mockRestore()
+    wrapper.unmount()
+  })
 })

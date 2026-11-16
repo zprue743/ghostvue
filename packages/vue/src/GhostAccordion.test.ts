@@ -236,4 +236,98 @@ describe('GhostAccordion', () => {
     await flushPromises()
     expect(trigger.attributes('aria-expanded')).toBe('true')
   })
+
+  it('collapses controlled single collapsible item to empty state', async () => {
+    const value = ref<string | undefined>('one')
+    const updates: (string | string[] | undefined)[] = []
+    const wrapper = mountAttached(
+      defineComponent({
+        setup() {
+          return () =>
+            h(
+              GhostAccordion,
+              {
+                type: 'single',
+                collapsible: true,
+                modelValue: value.value,
+                'onUpdate:modelValue': (
+                  next: string | string[] | undefined,
+                ) => {
+                  updates.push(next)
+                  value.value = typeof next === 'string' ? next : undefined
+                },
+              },
+              {
+                default: () => [
+                  h(GhostAccordionItem, { value: 'one' }, () => [
+                    h(GhostAccordionTrigger, null, () => 'Panel one'),
+                    h(GhostAccordionContent, null, () => 'Body one'),
+                  ]),
+                  h(GhostAccordionItem, { value: 'two' }, () => [
+                    h(GhostAccordionTrigger, null, () => 'Panel two'),
+                    h(GhostAccordionContent, null, () => 'Body two'),
+                  ]),
+                ],
+              },
+            )
+        },
+      }),
+    )
+
+    const triggers = wrapper.findAll('[data-part="trigger"]')
+    expect(triggers.at(0)?.attributes('aria-expanded')).toBe('true')
+    expect(triggers.at(1)?.attributes('aria-expanded')).toBe('false')
+
+    await triggers.at(0)?.trigger('click')
+    await flushPromises()
+
+    expect(updates).toEqual([undefined])
+    expect(value.value).toBeUndefined()
+    expect(triggers.at(0)?.attributes('aria-expanded')).toBe('false')
+    expect(triggers.at(1)?.attributes('aria-expanded')).toBe('false')
+
+    await triggers.at(1)?.trigger('click')
+    await flushPromises()
+    expect(updates).toEqual([undefined, 'two'])
+    expect(triggers.at(1)?.attributes('aria-expanded')).toBe('true')
+  })
+
+  it('preserves expanded item when controlled parent ignores collapse', async () => {
+    const updates: (string | string[] | undefined)[] = []
+    const wrapper = mountAttached(
+      defineComponent({
+        setup() {
+          return () =>
+            h(
+              GhostAccordion,
+              {
+                type: 'single',
+                collapsible: true,
+                modelValue: 'one',
+                'onUpdate:modelValue': (
+                  next: string | string[] | undefined,
+                ) => {
+                  updates.push(next)
+                },
+              },
+              {
+                default: () => [
+                  h(GhostAccordionItem, { value: 'one' }, () => [
+                    h(GhostAccordionTrigger, null, () => 'Panel one'),
+                    h(GhostAccordionContent, null, () => 'Body one'),
+                  ]),
+                ],
+              },
+            )
+        },
+      }),
+    )
+
+    const trigger = wrapper.get('[data-part="trigger"]')
+    await trigger.trigger('click')
+    await flushPromises()
+
+    expect(updates).toEqual([undefined])
+    expect(trigger.attributes('aria-expanded')).toBe('true')
+  })
 })

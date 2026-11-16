@@ -1,3 +1,4 @@
+import { ref } from 'vue'
 import { describe, expect, it } from 'vitest'
 
 import { useGhostToggleGroup } from './use-ghost-toggle-group'
@@ -39,5 +40,28 @@ describe('useGhostToggleGroup', () => {
     group.toggle('a')
     group.toggle('b')
     expect(updates.at(-1)).toEqual(['a', 'b'])
+  })
+
+  it('clears controlled single selection to undefined', () => {
+    const model = ref<string | undefined>('a')
+    const updates: (string | string[] | undefined)[] = []
+    const group = useGhostToggleGroup({
+      type: 'single',
+      modelValue: () => model.value,
+      onValueChange: (next) => {
+        updates.push(next)
+        model.value = typeof next === 'string' ? next : undefined
+      },
+    })
+
+    group.registerItem('a', false)
+    group.registerItem('b', false)
+    expect(group.isPressed('a')).toBe(true)
+
+    group.toggle('a')
+    expect(updates).toEqual([undefined])
+    expect(model.value).toBeUndefined()
+    expect(group.modelValue.value).toBeUndefined()
+    expect(group.isPressed('a')).toBe(false)
   })
 })

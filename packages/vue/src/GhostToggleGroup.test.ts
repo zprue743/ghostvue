@@ -643,4 +643,64 @@ describe('GhostToggleGroup', () => {
     expect(enterEvent.defaultPrevented).toBe(false)
     expect(updates).toHaveLength(0)
   })
+
+  it('clears controlled single selection to empty state when active item is clicked', async () => {
+    const { wrapper, updates } = mountGroup({ modelValue: 'one' })
+    await flushPromises()
+    expect(items(wrapper)[0]?.attributes('aria-pressed')).toBe('true')
+    expect(items(wrapper)[0]?.attributes('data-state')).toBe('on')
+
+    await items(wrapper)[0]?.trigger('click')
+    await flushPromises()
+
+    expect(updates).toEqual([undefined])
+    for (const item of items(wrapper)) {
+      expect(item.attributes('aria-pressed')).toBe('false')
+      expect(item.attributes('data-state')).toBe('off')
+    }
+
+    await items(wrapper)[1]?.trigger('click')
+    await flushPromises()
+    expect(updates).toEqual([undefined, 'two'])
+    expect(items(wrapper)[1]?.attributes('aria-pressed')).toBe('true')
+  })
+
+  it('preserves pressed state when controlled parent ignores deselection', async () => {
+    const updates: (string | string[] | undefined)[] = []
+    const wrapper = mount(
+      defineComponent({
+        setup() {
+          return () =>
+            h(
+              GhostToggleGroup,
+              {
+                type: 'single',
+                modelValue: 'one',
+                'aria-label': 'Test group',
+                'onUpdate:modelValue': (
+                  value: string | string[] | undefined,
+                ) => {
+                  updates.push(value)
+                },
+              },
+              {
+                default: () => [
+                  h(GhostToggleGroupItem, { value: 'one' }, () => 'One'),
+                  h(GhostToggleGroupItem, { value: 'two' }, () => 'Two'),
+                ],
+              },
+            )
+        },
+      }),
+      { attachTo: document.body },
+    )
+    attached.push(wrapper)
+    await flushPromises()
+
+    await items(wrapper)[0]?.trigger('click')
+    await flushPromises()
+
+    expect(updates).toEqual([undefined])
+    expect(items(wrapper)[0]?.attributes('aria-pressed')).toBe('true')
+  })
 })

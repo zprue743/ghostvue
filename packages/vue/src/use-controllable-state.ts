@@ -17,17 +17,41 @@ export interface UseControllableStateOptions<Value> {
   defaultValue?: MaybeRefOrGetter<Value>
   /** Synchronous write. Emit `update:modelValue` / `update:open` here. */
   onChange?: (value: Value) => void
+  /**
+   * Once `prop()` has been defined, keep treating later `undefined` values as
+   * controlled empty state instead of falling back to uncontrolled `internal`.
+   */
+  allowControlledUndefined?: boolean
 }
 
 /**
  * Controlled/uncontrolled state as a writable computed, matching `defineModel`
- * assignment and timing. Controlled iff `prop()` is not `undefined`.
+ * assignment and timing. Controlled iff `prop()` is not `undefined` (or was
+ * previously defined when `allowControlledUndefined` is enabled).
  */
 export function useControllableState<Value>(
   options: UseControllableStateOptions<Value>,
 ): WritableComputedRef<Value> {
   const readProp = (): Value | undefined => options.prop()
-  const isControlled = computed(() => readProp() !== undefined)
+  const hadControlledProp = shallowRef(readProp() !== undefined)
+
+  if (options.allowControlledUndefined) {
+    watch(
+      readProp,
+      (value) => {
+        if (value !== undefined) {
+          hadControlledProp.value = true
+        }
+      },
+      { flush: 'sync' },
+    )
+  }
+
+  const isControlled = computed(
+    () =>
+      readProp() !== undefined ||
+      (Boolean(options.allowControlledUndefined) && hadControlledProp.value),
+  )
 
   // Seed from the current prop when controlled so a later switch does not snap to default.
   // Vue's shallowRef overload uses IfAny on unconstrained generics.
@@ -37,6 +61,9 @@ export function useControllableState<Value>(
     const prop = readProp()
     if (prop !== undefined) {
       return prop
+    }
+    if (options.allowControlledUndefined && hadControlledProp.value) {
+      return undefined as Value
     }
     return internal.value
   }
