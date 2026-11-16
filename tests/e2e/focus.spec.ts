@@ -29,6 +29,39 @@ test.describe('focus primitives', () => {
     }
   })
 
+  test('recovers focus on outside mouse clicks and programmatic .focus() while trapped', async ({
+    page,
+  }) => {
+    const playground = await startStaticServer('apps/playground/dist')
+
+    try {
+      await page.goto(playground.url)
+      await page.getByTestId('open-trap').click()
+      await expect(page.getByTestId('trap-first')).toBeFocused()
+
+      await page.keyboard.press('Tab')
+      await expect(page.getByTestId('trap-last')).toBeFocused()
+
+      // Clicking an outside focusable button pulls focus back to the last
+      // focused element inside the trapped scope.
+      await page.getByTestId('before-roving').click()
+      await expect(page.getByTestId('trap-last')).toBeFocused()
+
+      // Programmatic .focus() on an outside control also recovers inside.
+      await page.evaluate(() => {
+        document
+          .querySelector<HTMLElement>('[data-testid="before-roving"]')
+          ?.focus()
+      })
+      await expect(page.getByTestId('trap-last')).toBeFocused()
+
+      await page.getByTestId('close-trap').click()
+      await expect(page.getByTestId('open-trap')).toBeFocused()
+    } finally {
+      await playground.close()
+    }
+  })
+
   test('autofocuses the visible tab stop when an earlier candidate is in a hidden subtree', async ({
     page,
   }) => {

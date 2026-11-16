@@ -24,27 +24,56 @@ unmount or when the container becomes `null`.
 Activates when `container` resolves to an element. Deactivates when it becomes
 `null` or the owner unmounts.
 
-| Option         | Default | Behavior                                                                                  |
-| -------------- | ------- | ----------------------------------------------------------------------------------------- |
-| `trapped`      | `false` | Tab/Shift+Tab cannot leave the container.                                                 |
-| `loop`         | `true`  | When trapped, wrap last → first and first → last. `false` keeps focus on the edge item.   |
-| `autoFocus`    | `true`  | Focus `[data-autofocus]` if it is focusable, else the first tabbable, else the container. |
-| `restoreFocus` | `true`  | Focus the previously focused node on deactivate if it is still connected.                 |
+| Option         | Default | Behavior                                                                                                             |
+| -------------- | ------- | -------------------------------------------------------------------------------------------------------------------- |
+| `trapped`      | `false` | Tab/Shift+Tab cannot leave the container, and a `focusin` guard pulls focus back inside if it moves out another way. |
+| `loop`         | `true`  | When trapped, wrap last → first and first → last. `false` keeps focus on the edge item.                              |
+| `autoFocus`    | `true`  | Focus `[data-autofocus]` if it is focusable, else the first tabbable, else the container.                            |
+| `restoreFocus` | `true`  | Focus the previously focused node on deactivate if it is still connected.                                            |
 
 Each option is a `MaybeRefOrGetter`. `container` is too.
 
 Nested trapped scopes stack. Only the **innermost currently trapped** scope
-handles Tab. An untrapped inner scope does not steal trap ownership from an
-ancestor, so a non-modal popover inside a dialog does not disable the dialog
-trap.
+handles `Tab` and `focusin` recovery. If focus leaves the container via a
+pointer click, script `.focus()`, or screen-reader navigation, `focusin` returns
+focus to the last focused focusable element inside the container (or falls back
+to initial focus if that element is gone or disabled). An untrapped inner scope
+does not steal trap ownership from an ancestor, so a non-modal popover inside a
+dialog does not disable the dialog trap.
 
 When a dismissable layer from `useDismissableLayer` (such as a portaled
-`GhostPopover`) is stacked **above** the trapped scope's own layer and
-`document.activeElement` is inside that upper layer (and outside the trapped
-scope's container), the trapped scope ignores Tab so focus can move freely
-inside the popover instead of being pulled back to the dialog. Inline layers
-contained inside the scope (`portal=false`) and dismissable layers stacked below
-the scope do not bypass the trap.
+`GhostPopover`) is stacked **above** the trapped scope's own layer and focus sits
+inside that upper layer (and outside the trapped scope's container), the trapped
+scope ignores both `Tab` and `focusin` recovery so focus can move freely inside
+the popover instead of being pulled back to the dialog. Inline layers contained
+inside the scope (`portal=false`) and dismissable layers stacked below the scope
+do not bypass the trap.
+
+### Why `trappedStack` is module-level
+
+`trappedStack` is intentionally a module-level stack (per loaded copy of
+`@ghostvue/vue`) rather than an isolated per-app `provide`/`inject` context:
+
+- **Document-global focus:** A browser document has one `document.activeElement`.
+  If separate Vue apps on the same page held independent stacks, concurrent
+  trapped scopes would both treat themselves as topmost and fight over focus.
+- **Zero-provider contract:** Standalone `useFocusScope` calls and components
+  coordinate automatically without requiring `app.use(GhostVue)` or a root
+  provider component, matching `layerStack` in [ADR 0011](../adr/0011-overlay-primitives.md)
+  and scroll-lock / inert ref-counting in [ADR 0012](../adr/0012-modal-overlays.md).
+
+To prevent common global-stack failure modes:
+
+- **Nesting order across portals:** `useFocusScope` pairs DOM `contains()` checks
+  with Vue `provide`/`inject` ancestor IDs so child trapped scopes stay above
+  parents even when both teleport into `document.body` during the same mount.
+- **Out-of-order deactivation:** Cleanup removes each scope entry by object
+  identity rather than popping from the top, preserving whichever active scope
+  remains innermost.
+- **Stale disconnected roots (HMR / DOM removal):** Before dispatching `Tab` or
+  `focusin`, connected scopes whose root element left the document without Vue
+  cleanup are pruned from the top of the stack so an orphaned node cannot wedge
+  lower traps, and `document` listeners detach completely once the stack empties.
 
 ```ts
 const content = useTemplateRef<HTMLElement>('content')
