@@ -35,6 +35,7 @@ export function useGhostAccordion(
     onChange: (next) => {
       options.onValueChange?.(next)
     },
+    allowControlledUndefined: true,
   })
 
   function isItemOpen(value: string): boolean {

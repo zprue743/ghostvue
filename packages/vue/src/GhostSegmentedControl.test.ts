@@ -458,4 +458,80 @@ describe('GhostSegmentedControl', () => {
     expect(preventedSeg.attributes('aria-pressed')).toBe('false')
     expect(updates).toHaveLength(0)
   })
+
+  it('clears controlled deselectable selection to empty state when active segment is clicked', async () => {
+    const { wrapper, updates } = mountSegmented({
+      modelValue: 'a',
+      deselectable: true,
+    })
+    await flushPromises()
+    expect(items(wrapper)[0]?.attributes('aria-pressed')).toBe('true')
+    expect(
+      wrapper
+        .get('[data-part="indicator"]')
+        .attributes('data-indicator-visible'),
+    ).toBe('true')
+
+    await items(wrapper)[0]?.trigger('click')
+    await flushPromises()
+
+    expect(updates).toEqual([undefined])
+    for (const item of items(wrapper)) {
+      expect(item.attributes('aria-pressed')).toBe('false')
+    }
+    expect(
+      wrapper
+        .get('[data-part="indicator"]')
+        .attributes('data-indicator-visible'),
+    ).toBe('false')
+    expect(selectedIndexFromIndicator(wrapper)).toBe(-1)
+
+    await items(wrapper)[1]?.trigger('click')
+    await flushPromises()
+    expect(updates).toEqual([undefined, 'b'])
+    expect(items(wrapper)[1]?.attributes('aria-pressed')).toBe('true')
+    expect(selectedIndexFromIndicator(wrapper)).toBe(1)
+  })
+
+  it('preserves active segment when controlled parent ignores deselection', async () => {
+    const updates: (string | undefined)[] = []
+    const wrapper = mount(
+      defineComponent({
+        setup() {
+          return () =>
+            h(
+              GhostSegmentedControl,
+              {
+                modelValue: 'a',
+                deselectable: true,
+                'aria-label': 'Test segments',
+                'onUpdate:modelValue': (value: string | undefined) => {
+                  updates.push(value)
+                },
+              },
+              {
+                default: () => [
+                  h(GhostSegmentedControlItem, { value: 'a' }, () => 'A'),
+                  h(GhostSegmentedControlItem, { value: 'b' }, () => 'B'),
+                ],
+              },
+            )
+        },
+      }),
+      { attachTo: document.body },
+    )
+    attached.push(wrapper)
+    await flushPromises()
+
+    await items(wrapper)[0]?.trigger('click')
+    await flushPromises()
+
+    expect(updates).toEqual([undefined])
+    expect(items(wrapper)[0]?.attributes('aria-pressed')).toBe('true')
+    expect(
+      wrapper
+        .get('[data-part="indicator"]')
+        .attributes('data-indicator-visible'),
+    ).toBe('true')
+  })
 })

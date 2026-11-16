@@ -42,6 +42,7 @@ export function useGhostToggleGroup(
     onChange: (next) => {
       options.onValueChange?.(next)
     },
+    allowControlledUndefined: true,
   })
 
   const orientation = computed<GhostToggleGroupOrientation>(
