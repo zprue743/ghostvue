@@ -72,7 +72,7 @@ function handleKeydown(event: KeyboardEvent): void {
     return
   }
   event.preventDefault()
-  handleClick(event as unknown as MouseEvent)
+  element.value?.click()
 }
 
 function handleClick(event: MouseEvent): void {
