@@ -68,7 +68,7 @@ onUnmounted(() => {
   fieldContext.setErrorId(null)
 })
 
-useGhostFieldPartContent(hostRef, (next) => {
+useGhostFieldPartContent(element, (next) => {
   visible.value = next
   fieldContext.setErrorVisible(next)
   fieldContext.setErrorRegistered(next)

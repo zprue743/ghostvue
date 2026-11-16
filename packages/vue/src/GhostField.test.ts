@@ -567,4 +567,92 @@ describe('GhostField', () => {
     expect(input().attributes('aria-describedby')).toBeUndefined()
     wrapper.unmount()
   })
+
+  it('inspects content when GhostFieldDescription and GhostFieldError use component hosts', async () => {
+    const CustomDescription = defineComponent({
+      setup(_props, { attrs, slots }) {
+        return () => h('p', attrs, slots['default']?.())
+      },
+    })
+    const CustomError = defineComponent({
+      setup(_props, { attrs, slots }) {
+        return () => h('span', attrs, slots['default']?.())
+      },
+    })
+
+    const errorMessage = ref('Required field')
+    const wrapper = mount(
+      defineComponent({
+        setup() {
+          return () =>
+            h(GhostField, { invalid: true }, () => [
+              h(GhostFieldLabel, {}, () => 'Name'),
+              h(
+                GhostFieldDescription,
+                { as: CustomDescription },
+                () => 'Helpful hint',
+              ),
+              h(GhostFieldError, { as: CustomError }, () => errorMessage.value),
+              h(GhostFieldControl, null, {
+                default: (field: Record<string, unknown>) =>
+                  h(GhostInput, field),
+              }),
+            ])
+        },
+      }),
+    )
+
+    await flushPromises()
+    const input = () => wrapper.get('input')
+    const description = () => wrapper.get('[data-part="description"]')
+    const error = () => wrapper.get('[data-part="error"]')
+
+    const descriptionId = description().attributes('id') ?? ''
+    const errorId = error().attributes('id') ?? ''
+    expect(description().attributes('hidden')).toBeUndefined()
+    expect(error().attributes('hidden')).toBeUndefined()
+    expect(descriptionId).not.toBe('')
+    expect(errorId).not.toBe('')
+    expect(input().attributes('aria-describedby')).toBe(
+      `${descriptionId} ${errorId}`,
+    )
+
+    errorMessage.value = ''
+    await flushPromises()
+    expect(error().attributes('hidden')).toBeDefined()
+    expect(input().attributes('aria-describedby')).toBe(
+      description().attributes('id'),
+    )
+    wrapper.unmount()
+  })
+
+  it('handles component hosts that render non-element nodes without throwing', async () => {
+    const TextOnlyHost = defineComponent({
+      inheritAttrs: false,
+      setup(_props, { slots }) {
+        return () => slots['default']?.()
+      },
+    })
+
+    const wrapper = mount(
+      defineComponent({
+        setup() {
+          return () =>
+            h(GhostField, { invalid: true }, () => [
+              h(GhostFieldLabel, {}, () => 'Name'),
+              h(GhostFieldDescription, { as: TextOnlyHost }, () => 'Text hint'),
+              h(GhostFieldError, { as: TextOnlyHost }, () => 'Text error'),
+              h(GhostFieldControl, null, {
+                default: (field: Record<string, unknown>) =>
+                  h(GhostInput, field),
+              }),
+            ])
+        },
+      }),
+    )
+
+    await flushPromises()
+    expect(wrapper.get('input').attributes('aria-describedby')).toBeUndefined()
+    wrapper.unmount()
+  })
 })

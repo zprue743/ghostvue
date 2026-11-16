@@ -6,10 +6,11 @@ import {
   onMounted,
   onUnmounted,
   onUpdated,
-  type Ref,
   type VNode,
   type VNodeArrayChildren,
 } from 'vue'
+
+import { resolveFieldHtmlElement } from './ghost-field'
 
 function fieldPartVnodeHasRenderableContent(vnode: VNode): boolean {
   if (vnode.type === Comment) {
@@ -71,14 +72,15 @@ export function fieldPartSlotHasRenderableContent(
 }
 
 /** Whether a field hint/error host exposes non-empty visible content. */
-export function fieldPartHostHasContent(element: HTMLElement | null): boolean {
-  if (!element) {
+export function fieldPartHostHasContent(element: unknown): boolean {
+  const resolved = resolveFieldHtmlElement(element)
+  if (!resolved) {
     return false
   }
-  if (element.textContent.trim().length > 0) {
+  if (resolved.textContent.trim().length > 0) {
     return true
   }
-  return element.children.length > 0
+  return resolved.children.length > 0
 }
 
 /**
@@ -86,7 +88,7 @@ export function fieldPartHostHasContent(element: HTMLElement | null): boolean {
  * outside the render phase; parent reactive slot content updates land in onUpdated.
  */
 export function useGhostFieldPartContent(
-  hostRef: Ref<HTMLElement | null>,
+  hostRef: { readonly value: unknown },
   onVisibleChange: (visible: boolean) => void,
 ): void {
   let visible = false
