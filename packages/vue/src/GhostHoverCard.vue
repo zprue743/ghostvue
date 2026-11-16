@@ -143,11 +143,18 @@ function notifyTriggerFocusIn(): void {
 function notifyTriggerFocusOut(relatedTarget: EventTarget | null): void {
   if (
     relatedTarget instanceof Node &&
-    contentElement.value?.contains(relatedTarget)
+    triggerElement.value?.contains(relatedTarget)
   ) {
     return
   }
   triggerFocus.value = false
+  if (
+    relatedTarget instanceof Node &&
+    contentElement.value?.contains(relatedTarget)
+  ) {
+    cancelClose()
+    return
+  }
   maybeScheduleClose()
 }
 
@@ -169,11 +176,18 @@ function notifyContentFocusIn(): void {
 function notifyContentFocusOut(relatedTarget: EventTarget | null): void {
   if (
     relatedTarget instanceof Node &&
-    triggerElement.value?.contains(relatedTarget)
+    contentElement.value?.contains(relatedTarget)
   ) {
     return
   }
   contentFocus.value = false
+  if (
+    relatedTarget instanceof Node &&
+    triggerElement.value?.contains(relatedTarget)
+  ) {
+    cancelClose()
+    return
+  }
   maybeScheduleClose()
 }
 

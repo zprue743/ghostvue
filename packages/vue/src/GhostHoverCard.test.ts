@@ -671,4 +671,191 @@ describe('GhostHoverCard', () => {
     expect(document.querySelector('#multi-source-content')).toBeNull()
     expect(updates).toEqual([true, false])
   })
+
+  it('releases trigger focus on trigger-to-content transfer and closes when focus leaves content', async () => {
+    const updates: boolean[] = []
+    mountAttached(
+      defineComponent({
+        setup() {
+          return () =>
+            h('div', [
+              h(
+                GhostHoverCard,
+                {
+                  openDelay: 0,
+                  closeDelay: 100,
+                  'onUpdate:open': (open: boolean) => updates.push(open),
+                },
+                {
+                  default: () => [
+                    h(
+                      GhostHoverCardTrigger,
+                      { id: 'transfer-trigger' },
+                      () => 'Anchor',
+                    ),
+                    h(GhostHoverCardContent, { id: 'transfer-content' }, () => [
+                      h('a', { id: 'transfer-link', href: '#a' }, 'Link'),
+                      h(
+                        'button',
+                        { id: 'transfer-btn', type: 'button' },
+                        'Action',
+                      ),
+                    ]),
+                  ],
+                },
+              ),
+              h(
+                'button',
+                { id: 'transfer-outside', type: 'button' },
+                'Outside',
+              ),
+            ])
+        },
+      }),
+    )
+
+    const requireEl = (selector: string): HTMLElement => {
+      const el = document.querySelector<HTMLElement>(selector)
+      if (!el) {
+        throw new Error(`Expected element ${selector}`)
+      }
+      return el
+    }
+
+    const trigger = requireEl('#transfer-trigger')
+    const outside = requireEl('#transfer-outside')
+
+    trigger.dispatchEvent(new FocusEvent('focusin', { bubbles: true }))
+    vi.runOnlyPendingTimers()
+    await flushPromises()
+    await nextTick()
+
+    const link = requireEl('#transfer-link')
+    const btn = requireEl('#transfer-btn')
+    expect(document.querySelector('#transfer-content')).not.toBeNull()
+
+    // Move focus from trigger into content child
+    trigger.dispatchEvent(
+      new FocusEvent('focusout', { bubbles: true, relatedTarget: link }),
+    )
+    link.dispatchEvent(
+      new FocusEvent('focusin', { bubbles: true, relatedTarget: trigger }),
+    )
+    vi.advanceTimersByTime(200)
+    await flushPromises()
+    await nextTick()
+    expect(document.querySelector('#transfer-content')).not.toBeNull()
+
+    // Move focus between descendants inside content
+    link.dispatchEvent(
+      new FocusEvent('focusout', { bubbles: true, relatedTarget: btn }),
+    )
+    btn.dispatchEvent(
+      new FocusEvent('focusin', { bubbles: true, relatedTarget: link }),
+    )
+    vi.advanceTimersByTime(200)
+    await flushPromises()
+    await nextTick()
+    expect(document.querySelector('#transfer-content')).not.toBeNull()
+
+    // Move focus from content child to outside element
+    btn.dispatchEvent(
+      new FocusEvent('focusout', { bubbles: true, relatedTarget: outside }),
+    )
+    outside.dispatchEvent(
+      new FocusEvent('focusin', { bubbles: true, relatedTarget: btn }),
+    )
+    vi.advanceTimersByTime(99)
+    expect(document.querySelector('#transfer-content')).not.toBeNull()
+
+    vi.advanceTimersByTime(1)
+    await flushPromises()
+    await nextTick()
+    expect(document.querySelector('#transfer-content')).toBeNull()
+    expect(updates).toEqual([true, false])
+  })
+
+  it('releases content focus on content-to-trigger transfer and closes when focus leaves trigger', async () => {
+    const updates: boolean[] = []
+    mountAttached(
+      defineComponent({
+        setup() {
+          return () =>
+            h('div', [
+              h(
+                GhostHoverCard,
+                {
+                  openDelay: 0,
+                  closeDelay: 50,
+                  'onUpdate:open': (open: boolean) => updates.push(open),
+                },
+                {
+                  default: () => [
+                    h(
+                      GhostHoverCardTrigger,
+                      { id: 'reverse-trigger' },
+                      () => 'Anchor',
+                    ),
+                    h(GhostHoverCardContent, { id: 'reverse-content' }, () => [
+                      h('a', { id: 'reverse-link', href: '#a' }, 'Link'),
+                    ]),
+                  ],
+                },
+              ),
+              h('button', { id: 'reverse-outside', type: 'button' }, 'Outside'),
+            ])
+        },
+      }),
+    )
+
+    const requireEl = (selector: string): HTMLElement => {
+      const el = document.querySelector<HTMLElement>(selector)
+      if (!el) {
+        throw new Error(`Expected element ${selector}`)
+      }
+      return el
+    }
+
+    const trigger = requireEl('#reverse-trigger')
+    const outside = requireEl('#reverse-outside')
+
+    trigger.dispatchEvent(new FocusEvent('focusin', { bubbles: true }))
+    vi.runOnlyPendingTimers()
+    await flushPromises()
+    await nextTick()
+
+    const link = requireEl('#reverse-link')
+
+    // Trigger -> content
+    trigger.dispatchEvent(
+      new FocusEvent('focusout', { bubbles: true, relatedTarget: link }),
+    )
+    link.dispatchEvent(
+      new FocusEvent('focusin', { bubbles: true, relatedTarget: trigger }),
+    )
+    vi.advanceTimersByTime(100)
+    await flushPromises()
+    expect(document.querySelector('#reverse-content')).not.toBeNull()
+
+    // Content -> trigger
+    link.dispatchEvent(
+      new FocusEvent('focusout', { bubbles: true, relatedTarget: trigger }),
+    )
+    trigger.dispatchEvent(
+      new FocusEvent('focusin', { bubbles: true, relatedTarget: link }),
+    )
+    vi.advanceTimersByTime(100)
+    await flushPromises()
+    expect(document.querySelector('#reverse-content')).not.toBeNull()
+
+    // Trigger -> outside
+    trigger.dispatchEvent(
+      new FocusEvent('focusout', { bubbles: true, relatedTarget: outside }),
+    )
+    vi.advanceTimersByTime(50)
+    await flushPromises()
+    await nextTick()
+    expect(document.querySelector('#reverse-content')).toBeNull()
+    expect(updates).toEqual([true, false])
+  })
 })

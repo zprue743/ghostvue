@@ -112,4 +112,49 @@ test.describe('GhostHoverCard', () => {
       await playground.close()
     }
   })
+
+  test('transfers focus between trigger and interactive content and closes after tabbing outside', async ({
+    page,
+  }) => {
+    const playground = await startStaticServer('apps/playground/dist')
+
+    try {
+      await page.goto(playground.url)
+
+      const trigger = page.getByTestId('hover-card-delay-trigger')
+      const content = page.getByTestId('hover-card-delay-content')
+      const link = page.getByTestId('hover-card-delay-link')
+      const escapeTarget = page.getByTestId('hover-card-escape-target')
+
+      await trigger.scrollIntoViewIfNeeded()
+      await trigger.focus()
+      await expect(content).toBeVisible({ timeout: 1000 })
+
+      // Move focus from trigger into interactive content child
+      await link.focus()
+      await expect(link).toBeFocused()
+      await page.waitForTimeout(200)
+      await expect(content).toBeVisible()
+
+      // Tab outside of content; card must close rather than staying open on stale triggerFocus
+      await page.keyboard.press('Tab')
+      await expect(content).toHaveCount(0, { timeout: 1000 })
+
+      // Reverse transfer: trigger -> content -> trigger -> outside
+      await trigger.focus()
+      await expect(content).toBeVisible({ timeout: 1000 })
+      await link.focus()
+      await expect(link).toBeFocused()
+      await trigger.focus()
+      await expect(trigger).toBeFocused()
+      await page.waitForTimeout(200)
+      await expect(content).toBeVisible()
+
+      await escapeTarget.focus()
+      await expect(escapeTarget).toBeFocused()
+      await expect(content).toHaveCount(0, { timeout: 1000 })
+    } finally {
+      await playground.close()
+    }
+  })
 })

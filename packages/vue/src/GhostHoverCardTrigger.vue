@@ -10,7 +10,6 @@ import {
 
 import {
   ghostHoverCardContextKey,
-  hoverCardFocusStaysInside,
   resolveHoverCardHtmlElement,
   type GhostHoverCardTriggerElement,
   type GhostHoverCardTriggerExposed,
@@ -176,11 +175,8 @@ function handleFocusOut(event: FocusEvent): void {
     return
   }
   if (
-    hoverCardFocusStaysInside(
-      event.relatedTarget,
-      context.triggerElement.value,
-      context.contentElement.value,
-    )
+    event.relatedTarget instanceof Node &&
+    context.triggerElement.value?.contains(event.relatedTarget)
   ) {
     return
   }
