@@ -357,4 +357,87 @@ describe('GhostSlider', () => {
     })
     expect(host.value?.element).toBe(wrapper.get('[data-part="root"]').element)
   })
+
+  it('preserves fractional defaultValue and restores it on form reset for single sliders', async () => {
+    const wrapper = mount(
+      {
+        setup() {
+          return () =>
+            h('form', [
+              h(GhostSlider, {
+                'aria-label': 'Opacity',
+                name: 'opacity',
+                min: 0,
+                max: 1,
+                step: 0.1,
+                defaultValue: 0.2,
+              }),
+            ])
+        },
+      },
+      { attachTo: document.body },
+    )
+
+    const form = wrapper.find('form').element as HTMLFormElement
+    const thumb = wrapper.get('[role="slider"]')
+    expect(thumb.attributes('aria-valuenow')).toBe('0.2')
+    expect(new FormData(form).get('opacity')).toBe('0.2')
+
+    await thumb.trigger('keydown', { key: 'ArrowRight' })
+    expect(thumb.attributes('aria-valuenow')).toBe('0.3')
+    expect(new FormData(form).get('opacity')).toBe('0.3')
+
+    form.reset()
+    await waitForFormResetDeferral()
+    await nextTick()
+
+    expect(thumb.attributes('aria-valuenow')).toBe('0.2')
+    expect(new FormData(form).get('opacity')).toBe('0.2')
+    wrapper.unmount()
+  })
+
+  it('preserves fractional defaultValue and restores it on form reset for range sliders', async () => {
+    const wrapper = mount(
+      {
+        setup() {
+          return () =>
+            h('form', [
+              h(GhostSlider, {
+                'aria-label': 'Band',
+                range: true,
+                name: 'minBand',
+                nameMax: 'maxBand',
+                min: 0,
+                max: 1,
+                step: 0.1,
+                defaultValue: [0.2, 0.7] as const,
+              }),
+            ])
+        },
+      },
+      { attachTo: document.body },
+    )
+
+    const form = wrapper.find('form').element as HTMLFormElement
+    const thumbs = wrapper.findAll('[role="slider"]')
+    expect(thumbs[0]?.attributes('aria-valuenow')).toBe('0.2')
+    expect(thumbs[1]?.attributes('aria-valuenow')).toBe('0.7')
+    expect(new FormData(form).get('minBand')).toBe('0.2')
+    expect(new FormData(form).get('maxBand')).toBe('0.7')
+
+    await thumbs[0]?.trigger('keydown', { key: 'ArrowRight' })
+    await thumbs[1]?.trigger('keydown', { key: 'ArrowLeft' })
+    expect(thumbs[0]?.attributes('aria-valuenow')).toBe('0.3')
+    expect(thumbs[1]?.attributes('aria-valuenow')).toBe('0.6')
+
+    form.reset()
+    await waitForFormResetDeferral()
+    await nextTick()
+
+    expect(thumbs[0]?.attributes('aria-valuenow')).toBe('0.2')
+    expect(thumbs[1]?.attributes('aria-valuenow')).toBe('0.7')
+    expect(new FormData(form).get('minBand')).toBe('0.2')
+    expect(new FormData(form).get('maxBand')).toBe('0.7')
+    wrapper.unmount()
+  })
 })

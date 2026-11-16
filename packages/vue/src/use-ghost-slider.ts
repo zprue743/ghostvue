@@ -114,6 +114,7 @@ function normalizeSeed(
   range: boolean,
   min: number,
   max: number,
+  step: number,
 ): GhostSliderValue {
   if (seed == null) return defaultForRange(min, max, range)
   if (range) {
@@ -123,12 +124,12 @@ function normalizeSeed(
       : typeof seed === 'number'
         ? seed
         : max
-    const low = snapValue(lowRaw, min, max, 1)
-    const high = snapValue(highRaw, min, max, 1)
+    const low = snapValue(lowRaw, min, max, step)
+    const high = snapValue(highRaw, min, max, step)
     return [Math.min(low, high), Math.max(low, high)] as const
   }
   const single = Array.isArray(seed) ? Number(seed[0]) : Number(seed)
-  return snapValue(single, min, max, 1)
+  return snapValue(single, min, max, step)
 }
 
 /**
@@ -170,6 +171,7 @@ export function useGhostSlider(options: UseGhostSliderOptions = {}): {
     isRange.value,
     bounds.value.min,
     bounds.value.max,
+    step.value,
   )
 
   const rawModel = useControllableState<GhostSliderValue>({
