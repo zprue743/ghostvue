@@ -257,14 +257,31 @@ export function useGhostNumberInput(options: UseGhostNumberInputOptions = {}): {
       value.value = committed
     }
 
-    draftText.value = formatNumber(
-      value.value,
-      locale.value,
-      formatOptions.value,
-    )
+    const display = formatNumber(committed, locale.value, formatOptions.value)
+    draftText.value = display
     const el = target ?? toValue(options.element)
-    if (el && el.value !== draftText.value) el.value = draftText.value
+    if (el && el.value !== display) el.value = display
     syncHiddenInput(committed)
+
+    // Controlled parents apply v-model updates on the next tick; keep the
+    // committed draft visible now, then reconcile if the parent rejected it.
+    void nextTick(() => {
+      if (draftText.value !== display) return
+      const expected = formatNumber(
+        value.value,
+        locale.value,
+        formatOptions.value,
+      )
+      if (draftText.value !== expected) {
+        draftText.value = expected
+      }
+      const currentEl = target ?? toValue(options.element)
+      if (currentEl && currentEl.value !== expected) {
+        currentEl.value = expected
+      }
+      syncHiddenInput(value.value)
+    })
+
     return committed
   }
 
