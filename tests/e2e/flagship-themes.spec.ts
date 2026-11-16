@@ -127,4 +127,156 @@ test.describe('Nested named themes under ancestor mode', () => {
       await playground.close()
     }
   })
+
+  test('applies reduced-motion and forced-colors overrides to nested mode hosts', async ({
+    page,
+  }) => {
+    const playground = await startStaticServer('apps/playground/dist')
+
+    try {
+      await page.goto(playground.url)
+
+      await page.evaluate(() => {
+        const container = document.createElement('div')
+        container.id = 'gho-148-fixture'
+        container.innerHTML = `
+          <div id="system-host" class="ghost-theme">
+            <div id="system-nested-dark" data-ghost-mode="dark">
+              <div
+                id="system-nested-dark-probe"
+                style="background-color: var(--ghost-action-primary-bg); transition-duration: var(--ghost-motion-duration-fast);"
+              ></div>
+            </div>
+          </div>
+          <div id="light-host" class="ghost-theme" data-ghost-mode="light">
+            <div id="light-nested-dark" data-ghost-mode="dark">
+              <div
+                id="light-nested-dark-probe"
+                style="background-color: var(--ghost-action-primary-bg); transition-duration: var(--ghost-motion-duration-fast);"
+              ></div>
+              <div id="nested-calm-inherited" data-ghost-theme="calm">
+                <div
+                  id="nested-calm-inherited-probe"
+                  style="background-color: var(--ghost-action-primary-bg); transition-duration: var(--ghost-motion-duration-fast);"
+                ></div>
+              </div>
+            </div>
+          </div>
+        `
+        document.body.appendChild(container)
+      })
+
+      const readMotion = () =>
+        page.evaluate(() => {
+          const ids = [
+            'system-nested-dark-probe',
+            'light-nested-dark-probe',
+            'nested-calm-inherited-probe',
+          ]
+          return Object.fromEntries(
+            ids.map((id) => {
+              const el = document.getElementById(id)
+              if (!el) {
+                throw new Error(`Missing test element #${id}`)
+              }
+              const style = getComputedStyle(el)
+              return [
+                id,
+                {
+                  translate: style
+                    .getPropertyValue('--ghost-motion-translate')
+                    .trim(),
+                  pressScale: style
+                    .getPropertyValue('--ghost-motion-press-scale')
+                    .trim(),
+                  transitionDuration: style.transitionDuration,
+                },
+              ]
+            }),
+          )
+        })
+
+      const beforeMotion = await readMotion()
+      expect(beforeMotion['system-nested-dark-probe'].transitionDuration).toBe(
+        '0.12s',
+      )
+      expect(beforeMotion['light-nested-dark-probe'].transitionDuration).toBe(
+        '0.12s',
+      )
+
+      await page.emulateMedia({ reducedMotion: 'reduce' })
+      const reducedMotion = await readMotion()
+      expect(reducedMotion).toEqual({
+        'system-nested-dark-probe': {
+          translate: '0px',
+          pressScale: '1',
+          transitionDuration: '0.08s',
+        },
+        'light-nested-dark-probe': {
+          translate: '0px',
+          pressScale: '1',
+          transitionDuration: '0.08s',
+        },
+        'nested-calm-inherited-probe': {
+          translate: '0px',
+          pressScale: '1',
+          transitionDuration: '0.048s',
+        },
+      })
+
+      const readColors = () =>
+        page.evaluate(() => {
+          const ids = [
+            'system-nested-dark-probe',
+            'light-nested-dark-probe',
+            'nested-calm-inherited-probe',
+          ]
+          return Object.fromEntries(
+            ids.map((id) => {
+              const el = document.getElementById(id)
+              if (!el) {
+                throw new Error(`Missing test element #${id}`)
+              }
+              const style = getComputedStyle(el)
+              return [
+                id,
+                {
+                  surfaceBg: style
+                    .getPropertyValue('--ghost-surface-bg')
+                    .trim(),
+                  actionBg: style
+                    .getPropertyValue('--ghost-action-primary-bg')
+                    .trim(),
+                  scrim: style.getPropertyValue('--ghost-scrim').trim(),
+                  computedBg: style.backgroundColor,
+                },
+              ]
+            }),
+          )
+        })
+
+      const beforeForced = await readColors()
+      expect(beforeForced['system-nested-dark-probe'].surfaceBg).toBe('#0f172a')
+      expect(beforeForced['light-nested-dark-probe'].actionBg).toBe('#60a5fa')
+      expect(beforeForced['nested-calm-inherited-probe'].actionBg).toBe(
+        '#00b6d4',
+      )
+
+      await page.emulateMedia({ forcedColors: 'active' })
+      const forcedColors = await readColors()
+      for (const probe of Object.values(forcedColors)) {
+        expect(probe.surfaceBg.toLowerCase()).toBe('canvas')
+        expect(probe.actionBg.toLowerCase()).toBe('buttonface')
+        expect(probe.scrim).toBe('transparent')
+        expect(probe.computedBg).not.toBe('rgb(96, 165, 250)')
+        expect(probe.computedBg).not.toBe('rgb(0, 182, 212)')
+      }
+
+      await page.evaluate(() => {
+        document.getElementById('gho-148-fixture')?.remove()
+      })
+    } finally {
+      await playground.close()
+    }
+  })
 })

@@ -10,7 +10,7 @@
  * flash the opposite palette.
  */
 @layer ghostvue-theme {
-  :where([data-ghost-theme='mono']):not([data-ghost-mode]):not(:where([data-ghost-mode] *)) {
+  :where(:where([data-ghost-theme='mono']):not([data-ghost-mode]):not(:where([data-ghost-mode] *))) {
     --ghost-action-danger-bg: #b91c1c;
     --ghost-action-danger-bg-active: #640004;
     --ghost-action-danger-bg-hover: #900009;
@@ -219,7 +219,7 @@
     --ghost-type-weight-semibold: 600;
   }
 
-  :where([data-ghost-theme='mono']):not([data-ghost-mode]):not(:where([data-ghost-mode] *)), :where([data-ghost-theme='mono']):not([data-ghost-mode]):not(:where([data-ghost-mode] *)) :where(*) {
+  :where(:where([data-ghost-theme='mono']):not([data-ghost-mode]):not(:where([data-ghost-mode] *))), :where(:where([data-ghost-theme='mono']):not([data-ghost-mode]):not(:where([data-ghost-mode] *))) :where(*) {
     --ghost-action-duration: calc(120ms * var(--ghost-motion-intensity, 1));
     --ghost-action-spinner-duration: calc(700ms * var(--ghost-motion-intensity, 1));
     --ghost-focus-ring-duration: calc(120ms * var(--ghost-motion-intensity, 1));
@@ -246,7 +246,7 @@
   }
 
   @media (prefers-color-scheme: dark) {
-    :where([data-ghost-theme='mono']):not([data-ghost-mode]):not(:where([data-ghost-mode] *)) {
+    :where(:where([data-ghost-theme='mono']):not([data-ghost-mode]):not(:where([data-ghost-mode] *))) {
       --ghost-action-danger-bg: #f87171;
       --ghost-action-danger-bg-active: #ffb4b0;
       --ghost-action-danger-bg-hover: #ff908d;
@@ -455,7 +455,7 @@
       --ghost-type-weight-semibold: 600;
     }
 
-    :where([data-ghost-theme='mono']):not([data-ghost-mode]):not(:where([data-ghost-mode] *)), :where([data-ghost-theme='mono']):not([data-ghost-mode]):not(:where([data-ghost-mode] *)) :where(*) {
+    :where(:where([data-ghost-theme='mono']):not([data-ghost-mode]):not(:where([data-ghost-mode] *))), :where(:where([data-ghost-theme='mono']):not([data-ghost-mode]):not(:where([data-ghost-mode] *))) :where(*) {
       --ghost-action-duration: calc(120ms * var(--ghost-motion-intensity, 1));
       --ghost-action-spinner-duration: calc(700ms * var(--ghost-motion-intensity, 1));
       --ghost-focus-ring-duration: calc(120ms * var(--ghost-motion-intensity, 1));
@@ -1430,7 +1430,7 @@
     }
   }
 
-  :where([data-ghost-theme='mono']):not([data-ghost-mode]):not(:where([data-ghost-mode] *)) {
+  :where(:where([data-ghost-theme='mono']):not([data-ghost-mode]):not(:where([data-ghost-mode] *))) {
     color-scheme: light dark;
   }
 
@@ -1563,13 +1563,13 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
-    :where([data-ghost-theme='mono']) {
+    :where(:where([data-ghost-theme='mono']), :where([data-ghost-theme='mono']) :where([data-ghost-mode])) {
       --ghost-motion-press-scale: 1;
       --ghost-motion-scale: 1;
       --ghost-motion-translate: 0px;
     }
 
-    :where([data-ghost-theme='mono']), :where([data-ghost-theme='mono']) :where(*) {
+    :where(:where([data-ghost-theme='mono']), :where([data-ghost-theme='mono']) :where([data-ghost-mode])), :where(:where([data-ghost-theme='mono']), :where([data-ghost-theme='mono']) :where([data-ghost-mode])) :where(*) {
       --ghost-action-duration: calc(80ms * var(--ghost-motion-intensity, 1));
       --ghost-focus-ring-duration: calc(0ms * var(--ghost-motion-intensity, 1));
       --ghost-interactive-leave-spring-duration: calc(80ms * var(--ghost-motion-intensity, 1));
@@ -1586,10 +1586,35 @@
       --ghost-motion-spring-snappy-duration: calc(80ms * var(--ghost-motion-intensity, 1));
       --ghost-motion-stagger: calc(0ms * var(--ghost-motion-intensity, 1));
     }
+
+    @scope ([data-ghost-mode]) to ([data-ghost-mode]) {
+      :where(:where([data-ghost-theme='mono']):not([data-ghost-mode])) {
+        --ghost-motion-press-scale: 1;
+        --ghost-motion-scale: 1;
+        --ghost-motion-translate: 0px;
+      }
+      :where(:where([data-ghost-theme='mono']):not([data-ghost-mode])), :where(:where([data-ghost-theme='mono']):not([data-ghost-mode])) :where(*) {
+        --ghost-action-duration: calc(80ms * var(--ghost-motion-intensity, 1));
+        --ghost-focus-ring-duration: calc(0ms * var(--ghost-motion-intensity, 1));
+        --ghost-interactive-leave-spring-duration: calc(80ms * var(--ghost-motion-intensity, 1));
+        --ghost-motion-duration-expressive: calc(80ms * var(--ghost-motion-intensity, 1));
+        --ghost-motion-duration-fast: calc(80ms * var(--ghost-motion-intensity, 1));
+        --ghost-motion-duration-instant: calc(0ms * var(--ghost-motion-intensity, 1));
+        --ghost-motion-duration-moderate: calc(80ms * var(--ghost-motion-intensity, 1));
+        --ghost-motion-duration-slow: calc(80ms * var(--ghost-motion-intensity, 1));
+        --ghost-motion-enter-duration: calc(80ms * var(--ghost-motion-intensity, 1));
+        --ghost-motion-exit-duration: calc(80ms * var(--ghost-motion-intensity, 1));
+        --ghost-motion-fade-duration: calc(80ms * var(--ghost-motion-intensity, 1));
+        --ghost-motion-spring-bouncy-duration: calc(80ms * var(--ghost-motion-intensity, 1));
+        --ghost-motion-spring-gentle-duration: calc(80ms * var(--ghost-motion-intensity, 1));
+        --ghost-motion-spring-snappy-duration: calc(80ms * var(--ghost-motion-intensity, 1));
+        --ghost-motion-stagger: calc(0ms * var(--ghost-motion-intensity, 1));
+      }
+    }
   }
 
   @media (forced-colors: active) {
-    :where([data-ghost-theme='mono']) {
+    :where(:where([data-ghost-theme='mono']), :where([data-ghost-theme='mono']) :where([data-ghost-mode])) {
     --ghost-action-danger-bg: ButtonFace;
     --ghost-action-danger-bg-active: ButtonFace;
     --ghost-action-danger-bg-hover: ButtonFace;
@@ -1681,6 +1706,102 @@
     --ghost-text-subtle: GrayText;
     --ghost-text-success: CanvasText;
     --ghost-text-warning: CanvasText;
+    }
+
+    @scope ([data-ghost-mode]) to ([data-ghost-mode]) {
+      :where(:where([data-ghost-theme='mono']):not([data-ghost-mode])) {
+        --ghost-action-danger-bg: ButtonFace;
+        --ghost-action-danger-bg-active: ButtonFace;
+        --ghost-action-danger-bg-hover: ButtonFace;
+        --ghost-action-danger-border: ButtonText;
+        --ghost-action-danger-fg: ButtonText;
+        --ghost-action-disabled-bg: ButtonFace;
+        --ghost-action-disabled-border: ButtonText;
+        --ghost-action-disabled-fg: ButtonText;
+        --ghost-action-info-bg: ButtonFace;
+        --ghost-action-info-bg-active: ButtonFace;
+        --ghost-action-info-bg-hover: ButtonFace;
+        --ghost-action-info-border: ButtonText;
+        --ghost-action-info-fg: ButtonText;
+        --ghost-action-neutral-bg: ButtonFace;
+        --ghost-action-neutral-bg-active: ButtonFace;
+        --ghost-action-neutral-bg-hover: ButtonFace;
+        --ghost-action-neutral-border: ButtonText;
+        --ghost-action-neutral-fg: ButtonText;
+        --ghost-action-primary-bg: ButtonFace;
+        --ghost-action-primary-bg-active: ButtonFace;
+        --ghost-action-primary-bg-hover: ButtonFace;
+        --ghost-action-primary-border: ButtonText;
+        --ghost-action-primary-fg: ButtonText;
+        --ghost-action-success-bg: ButtonFace;
+        --ghost-action-success-bg-active: ButtonFace;
+        --ghost-action-success-bg-hover: ButtonFace;
+        --ghost-action-success-border: ButtonText;
+        --ghost-action-success-fg: ButtonText;
+        --ghost-action-warning-bg: ButtonFace;
+        --ghost-action-warning-bg-active: ButtonFace;
+        --ghost-action-warning-bg-hover: ButtonFace;
+        --ghost-action-warning-border: ButtonText;
+        --ghost-action-warning-fg: ButtonText;
+        --ghost-border-danger: CanvasText;
+        --ghost-border-default: CanvasText;
+        --ghost-border-focus: CanvasText;
+        --ghost-border-hairline: CanvasText;
+        --ghost-border-info: CanvasText;
+        --ghost-border-muted: CanvasText;
+        --ghost-border-primary: CanvasText;
+        --ghost-border-strong: CanvasText;
+        --ghost-border-success: CanvasText;
+        --ghost-border-warning: CanvasText;
+        --ghost-elevation-0-bg: Canvas;
+        --ghost-elevation-0-border: CanvasText;
+        --ghost-elevation-1-bg: Canvas;
+        --ghost-elevation-1-border: CanvasText;
+        --ghost-elevation-2-bg: Canvas;
+        --ghost-elevation-2-border: CanvasText;
+        --ghost-elevation-3-bg: Canvas;
+        --ghost-elevation-3-border: CanvasText;
+        --ghost-elevation-4-bg: Canvas;
+        --ghost-elevation-4-border: CanvasText;
+        --ghost-elevation-5-bg: Canvas;
+        --ghost-elevation-5-border: CanvasText;
+        --ghost-focus-ring-color: Highlight;
+        --ghost-focus-ring-contrast: Canvas;
+        --ghost-interactive-spotlight-color: CanvasText;
+        --ghost-material-glass-bg: Canvas;
+        --ghost-material-glass-border: CanvasText;
+        --ghost-material-glass-fallback-bg: Canvas;
+        --ghost-material-grain-bg: Canvas;
+        --ghost-material-solid-bg: Canvas;
+        --ghost-scrim: transparent;
+        --ghost-status-danger-bg: Canvas;
+        --ghost-status-danger-border: CanvasText;
+        --ghost-status-danger-fg: CanvasText;
+        --ghost-status-info-bg: Canvas;
+        --ghost-status-info-border: CanvasText;
+        --ghost-status-info-fg: CanvasText;
+        --ghost-status-success-bg: Canvas;
+        --ghost-status-success-border: CanvasText;
+        --ghost-status-success-fg: CanvasText;
+        --ghost-status-warning-bg: Canvas;
+        --ghost-status-warning-border: CanvasText;
+        --ghost-status-warning-fg: CanvasText;
+        --ghost-surface-bg: Canvas;
+        --ghost-surface-fg: CanvasText;
+        --ghost-surface-inverse-bg: CanvasText;
+        --ghost-surface-inverse-fg: Canvas;
+        --ghost-surface-muted-bg: Canvas;
+        --ghost-surface-subtle-bg: Canvas;
+        --ghost-text-danger: CanvasText;
+        --ghost-text-default: CanvasText;
+        --ghost-text-info: CanvasText;
+        --ghost-text-inverse: Canvas;
+        --ghost-text-muted: GrayText;
+        --ghost-text-primary: CanvasText;
+        --ghost-text-subtle: GrayText;
+        --ghost-text-success: CanvasText;
+        --ghost-text-warning: CanvasText;
+      }
     }
   }
 }

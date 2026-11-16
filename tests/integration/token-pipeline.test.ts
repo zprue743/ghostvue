@@ -343,4 +343,63 @@ describe('token pipeline', () => {
       ":where(:where([data-ghost-theme='calm']):not([data-ghost-mode]))",
     )
   })
+
+  it('targets nested mode hosts for reduced-motion and forced-colors overrides', () => {
+    const compiled = compileTokenDocuments(
+      [
+        {
+          file: 'semantic.json',
+          tier: 'semantic',
+          tree: {
+            surface: {
+              bg: { $type: 'color', $value: '#ffffff' },
+            },
+            motion: {
+              translate: {
+                $type: 'dimension',
+                $value: '4px',
+                $extensions: { ghostvue: { reducedMotion: '0px' } },
+              },
+              duration: {
+                fast: {
+                  $type: 'duration',
+                  $value: '120ms',
+                  $extensions: { ghostvue: { reducedMotion: '80ms' } },
+                },
+              },
+            },
+          },
+        },
+        {
+          file: 'semantic.dark.json',
+          tier: 'semantic',
+          overlayMode: 'dark',
+          tree: {
+            surface: {
+              bg: { $type: 'color', $value: '#0f172a' },
+            },
+          },
+        },
+      ],
+      { themeName: 'calm' },
+    )
+
+    const accessibilityHost =
+      ":where(:where([data-ghost-theme='calm']), :where([data-ghost-theme='calm']) :where([data-ghost-mode]))"
+    expect(compiled.css).toContain(
+      `:where(:where([data-ghost-theme='calm']):not([data-ghost-mode]):not(:where([data-ghost-mode] *)))`,
+    )
+    expect(compiled.css).toContain(
+      `@media (prefers-reduced-motion: reduce) {\n    ${accessibilityHost} {`,
+    )
+    expect(compiled.css).toContain(
+      `${accessibilityHost}, ${accessibilityHost} :where(*) {`,
+    )
+    expect(compiled.css).toContain(
+      `@media (forced-colors: active) {\n    ${accessibilityHost} {`,
+    )
+    expect(compiled.css).toContain(
+      `@scope ([data-ghost-mode]) to ([data-ghost-mode]) {\n      :where(:where([data-ghost-theme='calm']):not([data-ghost-mode])) {`,
+    )
+  })
 })
