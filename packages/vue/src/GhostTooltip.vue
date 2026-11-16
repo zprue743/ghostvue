@@ -122,7 +122,9 @@ function scheduleOpen(viaPointer: boolean): void {
   const delay = resolveScheduleOpenDelay(viaPointer)
   openTimer = setTimeout(() => {
     openTimer = null
-    open()
+    if (shouldRemainOpen()) {
+      open()
+    }
   }, delay)
 }
 
@@ -131,7 +133,11 @@ function cancelClose(): void {
 }
 
 function maybeScheduleClose(): void {
-  if (!isOpen.value || shouldRemainOpen()) {
+  if (shouldRemainOpen()) {
+    return
+  }
+  clearOpenTimer()
+  if (!isOpen.value) {
     return
   }
   clearCloseTimer()

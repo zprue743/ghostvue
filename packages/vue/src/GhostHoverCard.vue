@@ -90,7 +90,9 @@ function scheduleOpen(): void {
   clearOpenTimer()
   openTimer = setTimeout(() => {
     openTimer = null
-    open()
+    if (shouldRemainOpen()) {
+      open()
+    }
   }, props.openDelay)
 }
 
@@ -99,7 +101,11 @@ function cancelClose(): void {
 }
 
 function maybeScheduleClose(): void {
-  if (!isOpen.value || shouldRemainOpen()) {
+  if (shouldRemainOpen()) {
+    return
+  }
+  clearOpenTimer()
+  if (!isOpen.value) {
     return
   }
   clearCloseTimer()
