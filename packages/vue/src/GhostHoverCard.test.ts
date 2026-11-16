@@ -517,4 +517,158 @@ describe('GhostHoverCard', () => {
     const el = triggerRef.value?.element
     expect(el?.tagName).toBe('BUTTON')
   })
+
+  it('cancels pending open when pointer leaves before delay', async () => {
+    const updates: boolean[] = []
+    const wrapper = mountAttached(
+      defineComponent({
+        setup() {
+          return () =>
+            h(
+              GhostHoverCard,
+              {
+                openDelay: 300,
+                closeDelay: 0,
+                'onUpdate:open': (open: boolean) => updates.push(open),
+              },
+              {
+                default: () => [
+                  h(
+                    GhostHoverCardTrigger,
+                    { id: 'cancel-pointer-trigger' },
+                    () => 'Anchor',
+                  ),
+                  h(
+                    GhostHoverCardContent,
+                    { id: 'cancel-pointer-content' },
+                    () => 'Preview',
+                  ),
+                ],
+              },
+            )
+        },
+      }),
+    )
+
+    const trigger = wrapper.get('#cancel-pointer-trigger')
+    await trigger.trigger('pointerenter')
+    vi.advanceTimersByTime(150)
+    await trigger.trigger('pointerleave')
+
+    vi.advanceTimersByTime(300)
+    await flushPromises()
+    await nextTick()
+
+    expect(document.querySelector('#cancel-pointer-content')).toBeNull()
+    expect(updates).toEqual([])
+  })
+
+  it('cancels pending open when focus leaves before delay', async () => {
+    const updates: boolean[] = []
+    const wrapper = mountAttached(
+      defineComponent({
+        setup() {
+          return () =>
+            h(
+              GhostHoverCard,
+              {
+                openDelay: 300,
+                closeDelay: 0,
+                'onUpdate:open': (open: boolean) => updates.push(open),
+              },
+              {
+                default: () => [
+                  h(
+                    GhostHoverCardTrigger,
+                    { id: 'cancel-focus-trigger' },
+                    () => 'Anchor',
+                  ),
+                  h(
+                    GhostHoverCardContent,
+                    { id: 'cancel-focus-content' },
+                    () => 'Preview',
+                  ),
+                ],
+              },
+            )
+        },
+      }),
+    )
+
+    const trigger = wrapper.get('#cancel-focus-trigger')
+    await trigger.trigger('focusin')
+    vi.advanceTimersByTime(150)
+    await trigger.trigger('focusout')
+
+    vi.advanceTimersByTime(300)
+    await flushPromises()
+    await nextTick()
+
+    expect(document.querySelector('#cancel-focus-content')).toBeNull()
+    expect(updates).toEqual([])
+  })
+
+  it('keeps pending open while another activation source remains active, then cancels once all leave', async () => {
+    const updates: boolean[] = []
+    const wrapper = mountAttached(
+      defineComponent({
+        setup() {
+          return () =>
+            h(
+              GhostHoverCard,
+              {
+                openDelay: 300,
+                closeDelay: 0,
+                'onUpdate:open': (open: boolean) => updates.push(open),
+              },
+              {
+                default: () => [
+                  h(
+                    GhostHoverCardTrigger,
+                    { id: 'multi-source-trigger' },
+                    () => 'Anchor',
+                  ),
+                  h(
+                    GhostHoverCardContent,
+                    { id: 'multi-source-content' },
+                    () => 'Preview',
+                  ),
+                ],
+              },
+            )
+        },
+      }),
+    )
+
+    const trigger = wrapper.get('#multi-source-trigger')
+    await trigger.trigger('pointerenter')
+    await trigger.trigger('focusin')
+    vi.advanceTimersByTime(150)
+    await trigger.trigger('pointerleave')
+
+    vi.advanceTimersByTime(150)
+    await flushPromises()
+    await nextTick()
+
+    expect(document.querySelector('#multi-source-content')).not.toBeNull()
+    expect(updates).toEqual([true])
+
+    await trigger.trigger('focusout')
+    vi.runOnlyPendingTimers()
+    await flushPromises()
+    await nextTick()
+    expect(document.querySelector('#multi-source-content')).toBeNull()
+
+    await trigger.trigger('pointerenter')
+    await trigger.trigger('focusin')
+    vi.advanceTimersByTime(100)
+    await trigger.trigger('pointerleave')
+    await trigger.trigger('focusout')
+
+    vi.advanceTimersByTime(300)
+    await flushPromises()
+    await nextTick()
+    expect(document.querySelector('#multi-source-content')).toBeNull()
+    expect(updates).toEqual([true, false])
+  })
 })

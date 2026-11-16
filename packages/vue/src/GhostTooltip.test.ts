@@ -518,4 +518,158 @@ describe('GhostTooltip', () => {
     const el = triggerRef.value?.element
     expect(el?.tagName).toBe('BUTTON')
   })
+
+  it('cancels pending open when pointer leaves before delay', async () => {
+    const updates: boolean[] = []
+    const wrapper = mountAttached(
+      defineComponent({
+        setup() {
+          return () =>
+            h(
+              GhostTooltip,
+              {
+                delayDuration: 300,
+                closeDelay: 0,
+                'onUpdate:open': (open: boolean) => updates.push(open),
+              },
+              {
+                default: () => [
+                  h(
+                    GhostTooltipTrigger,
+                    { id: 'cancel-pointer-trigger' },
+                    () => 'Anchor',
+                  ),
+                  h(
+                    GhostTooltipContent,
+                    { id: 'cancel-pointer-content' },
+                    () => 'Hint',
+                  ),
+                ],
+              },
+            )
+        },
+      }),
+    )
+
+    const trigger = wrapper.get('#cancel-pointer-trigger')
+    await trigger.trigger('pointerenter')
+    vi.advanceTimersByTime(150)
+    await trigger.trigger('pointerleave')
+
+    vi.advanceTimersByTime(300)
+    await flushPromises()
+    await nextTick()
+
+    expect(document.querySelector('#cancel-pointer-content')).toBeNull()
+    expect(updates).toEqual([])
+  })
+
+  it('cancels pending open when focus leaves before delay', async () => {
+    const updates: boolean[] = []
+    const wrapper = mountAttached(
+      defineComponent({
+        setup() {
+          return () =>
+            h(
+              GhostTooltip,
+              {
+                delayDuration: 300,
+                closeDelay: 0,
+                'onUpdate:open': (open: boolean) => updates.push(open),
+              },
+              {
+                default: () => [
+                  h(
+                    GhostTooltipTrigger,
+                    { id: 'cancel-focus-trigger' },
+                    () => 'Anchor',
+                  ),
+                  h(
+                    GhostTooltipContent,
+                    { id: 'cancel-focus-content' },
+                    () => 'Hint',
+                  ),
+                ],
+              },
+            )
+        },
+      }),
+    )
+
+    const trigger = wrapper.get('#cancel-focus-trigger')
+    await trigger.trigger('focusin')
+    vi.advanceTimersByTime(150)
+    await trigger.trigger('focusout')
+
+    vi.advanceTimersByTime(300)
+    await flushPromises()
+    await nextTick()
+
+    expect(document.querySelector('#cancel-focus-content')).toBeNull()
+    expect(updates).toEqual([])
+  })
+
+  it('keeps pending open while another activation source remains active, then cancels once all leave', async () => {
+    const updates: boolean[] = []
+    const wrapper = mountAttached(
+      defineComponent({
+        setup() {
+          return () =>
+            h(
+              GhostTooltip,
+              {
+                delayDuration: 300,
+                closeDelay: 0,
+                'onUpdate:open': (open: boolean) => updates.push(open),
+              },
+              {
+                default: () => [
+                  h(
+                    GhostTooltipTrigger,
+                    { id: 'multi-source-trigger' },
+                    () => 'Anchor',
+                  ),
+                  h(
+                    GhostTooltipContent,
+                    { id: 'multi-source-content' },
+                    () => 'Hint',
+                  ),
+                ],
+              },
+            )
+        },
+      }),
+    )
+
+    const trigger = wrapper.get('#multi-source-trigger')
+    await trigger.trigger('pointerenter')
+    await trigger.trigger('focusin')
+    vi.advanceTimersByTime(150)
+    await trigger.trigger('pointerleave')
+
+    vi.advanceTimersByTime(150)
+    await flushPromises()
+    await nextTick()
+
+    expect(document.querySelector('#multi-source-content')).not.toBeNull()
+    expect(updates).toEqual([true])
+
+    await trigger.trigger('focusout')
+    vi.runOnlyPendingTimers()
+    await flushPromises()
+    await nextTick()
+    expect(document.querySelector('#multi-source-content')).toBeNull()
+
+    await trigger.trigger('pointerenter')
+    await trigger.trigger('focusin')
+    vi.advanceTimersByTime(100)
+    await trigger.trigger('pointerleave')
+    await trigger.trigger('focusout')
+
+    vi.advanceTimersByTime(300)
+    await flushPromises()
+    await nextTick()
+    expect(document.querySelector('#multi-source-content')).toBeNull()
+    expect(updates).toEqual([true, false])
+  })
 })
