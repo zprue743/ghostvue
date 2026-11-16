@@ -302,4 +302,45 @@ describe('token pipeline', () => {
       ]),
     ).toThrow(/has no base token/)
   })
+
+  it('scopes inherited ancestor mode to nested theme hosts without explicit mode', () => {
+    const compiled = compileTokenDocuments(
+      [
+        {
+          file: 'semantic.json',
+          tier: 'semantic',
+          tree: {
+            action: {
+              primary: {
+                bg: { $type: 'color', $value: '#006c7e' },
+              },
+            },
+          },
+        },
+        {
+          file: 'semantic.dark.json',
+          tier: 'semantic',
+          overlayMode: 'dark',
+          tree: {
+            action: {
+              primary: {
+                bg: { $type: 'color', $value: '#00b6d4' },
+              },
+            },
+          },
+        },
+      ],
+      { themeName: 'calm' },
+    )
+
+    expect(compiled.css).toContain(
+      "@scope ([data-ghost-mode='light']) to ([data-ghost-mode]) {",
+    )
+    expect(compiled.css).toContain(
+      "@scope ([data-ghost-mode='dark']) to ([data-ghost-mode]) {",
+    )
+    expect(compiled.css).toContain(
+      ":where(:where([data-ghost-theme='calm']):not([data-ghost-mode]))",
+    )
+  })
 })
