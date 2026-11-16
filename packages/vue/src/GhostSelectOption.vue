@@ -4,6 +4,7 @@ import {
   inject,
   onMounted,
   onUnmounted,
+  onUpdated,
   useAttrs,
   useTemplateRef,
   watch,
@@ -45,22 +46,47 @@ const optionId = useGhostId('ghost-select-option')
 
 const element = computed(() => resolveSelectHtmlElement(hostRef.value))
 
-const resolvedTextValue = computed(() => {
-  if (props.textValue) {
+function resolveOptionTextValue(): string {
+  if (props.textValue !== undefined) {
     return props.textValue
   }
   const el = element.value
   return el?.textContent.trim() ?? props.value
-})
+}
 
 function getElement(): HTMLElement | null {
   return element.value
 }
 
 const registered = { value: false }
+let textObserver: MutationObserver | undefined
+
+function disconnectTextObserver(): void {
+  textObserver?.disconnect()
+  textObserver = undefined
+}
+
+function connectTextObserver(el: HTMLElement | null): void {
+  disconnectTextObserver()
+  if (
+    !el ||
+    props.textValue !== undefined ||
+    typeof MutationObserver !== 'function'
+  ) {
+    return
+  }
+  textObserver = new MutationObserver(() => {
+    syncRegistration()
+  })
+  textObserver.observe(el, {
+    childList: true,
+    characterData: true,
+    subtree: true,
+  })
+}
 
 function syncRegistration(): void {
-  const text = props.textValue ?? resolvedTextValue.value
+  const text = resolveOptionTextValue()
   const optionDisabled = props.disabled
   if (!registered.value) {
     context.registerOption(props.value, text, optionDisabled, getElement)
@@ -79,8 +105,9 @@ watch(
 )
 
 watch(
-  [resolvedTextValue, () => props.textValue],
-  () => {
+  [element, () => props.textValue],
+  ([el]) => {
+    connectTextObserver(el)
     syncRegistration()
   },
   { flush: 'post' },
@@ -88,11 +115,17 @@ watch(
 
 onMounted(() => {
   void nextTick(() => {
+    connectTextObserver(element.value)
     syncRegistration()
   })
 })
 
+onUpdated(() => {
+  syncRegistration()
+})
+
 onUnmounted(() => {
+  disconnectTextObserver()
   context.unregisterOption(props.value)
 })
 
