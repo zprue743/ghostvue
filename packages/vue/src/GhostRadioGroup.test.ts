@@ -357,6 +357,86 @@ describe('GhostRadioGroup', () => {
     wrapper.unmount()
     form.remove()
   })
+
+  it('restores the mounted default on native form reset when hosted by a div', async () => {
+    const form = document.createElement('form')
+    document.body.append(form)
+
+    const wrapper = mount(
+      defineComponent({
+        components: { GhostRadioGroup, GhostRadioGroupItem },
+        setup() {
+          return () =>
+            h(
+              GhostRadioGroup,
+              { as: 'div', defaultValue: 'a', name: 'tier-div' },
+              {
+                default: () => [
+                  h(GhostRadioGroupItem, { value: 'a', id: 'radio-a' }),
+                  h(GhostRadioGroupItem, { value: 'b', id: 'radio-b' }),
+                ],
+              },
+            )
+        },
+      }),
+      { attachTo: form },
+    )
+
+    await wrapper.get('#radio-b').setValue()
+    form.reset()
+    await waitForFormResetDeferral()
+
+    expect((wrapper.get('#radio-a').element as HTMLInputElement).checked).toBe(
+      true,
+    )
+    expect((wrapper.get('#radio-b').element as HTMLInputElement).checked).toBe(
+      false,
+    )
+
+    wrapper.unmount()
+    form.remove()
+  })
+
+  it('does not reset a div-hosted group when an unrelated form resets', async () => {
+    const owningForm = document.createElement('form')
+    const unrelatedForm = document.createElement('form')
+    document.body.append(owningForm, unrelatedForm)
+
+    const wrapper = mount(
+      defineComponent({
+        components: { GhostRadioGroup, GhostRadioGroupItem },
+        setup() {
+          return () =>
+            h(
+              GhostRadioGroup,
+              { as: 'div', defaultValue: 'a', name: 'tier-div-scoped' },
+              {
+                default: () => [
+                  h(GhostRadioGroupItem, { value: 'a', id: 'radio-a' }),
+                  h(GhostRadioGroupItem, { value: 'b', id: 'radio-b' }),
+                ],
+              },
+            )
+        },
+      }),
+      { attachTo: owningForm },
+    )
+
+    await wrapper.get('#radio-b').setValue()
+    unrelatedForm.reset()
+    await waitForFormResetDeferral()
+
+    expect((wrapper.get('#radio-a').element as HTMLInputElement).checked).toBe(
+      false,
+    )
+    expect((wrapper.get('#radio-b').element as HTMLInputElement).checked).toBe(
+      true,
+    )
+
+    wrapper.unmount()
+    owningForm.remove()
+    unrelatedForm.remove()
+  })
 })
 
 describe('GhostRadioGroupItem', () => {

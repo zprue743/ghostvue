@@ -45,7 +45,8 @@ export function useNativeFormReset(
     const element = getElement()
     const target = event.target
     if (!element || !(target instanceof HTMLFormElement)) return
-    if (element.form !== target) return
+    const ownerForm = 'form' in element ? element.form : element.closest('form')
+    if (ownerForm !== target) return
     const cancel = afterNativeFormReset(event, () => {
       pendingReconciles.delete(cancel)
       apply()
