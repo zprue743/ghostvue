@@ -498,4 +498,82 @@ describe('GhostMenubar', () => {
     pressKey('c', content)
     expect(document.activeElement?.textContent).toBe('Cherry')
   })
+
+  it('checkbox item toggles on Enter and Space while consumer onClick preventDefault cancels toggle', async () => {
+    stubFloatingPosition()
+    const checked = ref(false)
+    const cancelToggle = ref(false)
+
+    mountAttached(
+      defineComponent({
+        setup() {
+          return () =>
+            h(GhostMenubar, null, {
+              default: () =>
+                h(
+                  GhostMenubarMenu,
+                  { defaultOpen: true },
+                  {
+                    default: () => [
+                      h(GhostMenubarTrigger, null, () => 'Edit'),
+                      h(GhostMenubarContent, null, () =>
+                        h(
+                          GhostMenubarCheckboxItem,
+                          {
+                            checked: checked.value,
+                            'onUpdate:checked': (value: boolean) => {
+                              checked.value = value
+                            },
+                            onClick: (event: MouseEvent) => {
+                              if (cancelToggle.value) {
+                                event.preventDefault()
+                              }
+                            },
+                          },
+                          () => 'Show hidden',
+                        ),
+                      ),
+                    ],
+                  },
+                ),
+            })
+        },
+      }),
+    )
+    await flushPromises()
+
+    const checkbox = getHtmlPart('checkbox-item')
+    checkbox.focus()
+    expect(checkbox.getAttribute('aria-checked')).toBe('false')
+
+    const enterEvent = pressKey('Enter', checkbox)
+    await flushPromises()
+    expect(enterEvent.defaultPrevented).toBe(true)
+    expect(checked.value).toBe(true)
+    expect(checkbox.getAttribute('aria-checked')).toBe('true')
+    expect(document.querySelector('[data-part="content"]')).not.toBeNull()
+
+    const spaceEvent = pressKey(' ', checkbox)
+    await flushPromises()
+    expect(spaceEvent.defaultPrevented).toBe(true)
+    expect(checked.value).toBe(false)
+    expect(checkbox.getAttribute('aria-checked')).toBe('false')
+    expect(document.querySelector('[data-part="content"]')).not.toBeNull()
+
+    cancelToggle.value = true
+    pressKey('Enter', checkbox)
+    await flushPromises()
+    expect(checked.value).toBe(false)
+    expect(checkbox.getAttribute('aria-checked')).toBe('false')
+
+    pressKey(' ', checkbox)
+    await flushPromises()
+    expect(checked.value).toBe(false)
+    expect(checkbox.getAttribute('aria-checked')).toBe('false')
+
+    checkbox.click()
+    await flushPromises()
+    expect(checked.value).toBe(false)
+    expect(checkbox.getAttribute('aria-checked')).toBe('false')
+  })
 })
