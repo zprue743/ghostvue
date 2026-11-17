@@ -302,6 +302,72 @@ describe('GhostNumberInput', () => {
     wrapper.unmount()
   })
 
+  it('keeps controlled state authoritative after accepted and rejected steps', async () => {
+    const amount = ref(5)
+    const acceptUpdates = ref(true)
+    const wrapper = mount(
+      {
+        setup() {
+          return () =>
+            h(GhostNumberInput, {
+              modelValue: amount.value,
+              name: 'qty',
+              'onUpdate:modelValue': (value: number | null) => {
+                if (acceptUpdates.value && value !== null) {
+                  amount.value = value
+                }
+              },
+            })
+        },
+      },
+      { attachTo: document.body },
+    )
+    const input = wrapper.get('[role="spinbutton"]').element as HTMLInputElement
+    const hidden = wrapper.get('input[type="hidden"]')
+      .element as HTMLInputElement
+    const incrementButton = wrapper.get('[data-part="increment"]')
+
+    await incrementButton.trigger('click')
+    expect(amount.value).toBe(6)
+    expect(input.value).toBe('6')
+    expect(hidden.value).toBe('6')
+
+    acceptUpdates.value = false
+    await incrementButton.trigger('click')
+    await nextTick()
+    expect(amount.value).toBe(6)
+    expect(input.value).toBe('6')
+    expect(hidden.value).toBe('6')
+
+    await wrapper.get('[data-part="decrement"]').trigger('click')
+    await nextTick()
+    expect(amount.value).toBe(6)
+    expect(input.value).toBe('6')
+    expect(hidden.value).toBe('6')
+
+    // Keyboard stepping keeps focus in the field (editing state), which must
+    // still reconcile the visible text after the parent rejects the step.
+    input.focus()
+    input.dispatchEvent(
+      new KeyboardEvent('keydown', { key: 'ArrowUp', bubbles: true }),
+    )
+    await nextTick()
+    await nextTick()
+    expect(amount.value).toBe(6)
+    expect(input.value).toBe('6')
+    expect(hidden.value).toBe('6')
+
+    acceptUpdates.value = true
+    input.dispatchEvent(
+      new KeyboardEvent('keydown', { key: 'ArrowUp', bubbles: true }),
+    )
+    await nextTick()
+    expect(amount.value).toBe(7)
+    expect(input.value).toBe('7')
+    expect(hidden.value).toBe('7')
+    wrapper.unmount()
+  })
+
   it('puts name on the hidden input and submits the machine value', () => {
     const wrapper = mount(GhostNumberInput, {
       props: { modelValue: 1234.5, name: 'amount', locale: 'de-DE' },
