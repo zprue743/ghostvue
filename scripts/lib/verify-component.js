@@ -13,6 +13,7 @@ import {
   validateExampleManifests,
   validateManifestSchemas,
 } from './component-manifests.js'
+import { resolvePackageManagerInvocation } from './package-manager.js'
 
 const execFileAsync = promisify(execFile)
 const checkNames = [
@@ -41,9 +42,13 @@ export function firstErrorLines(output) {
 /** Run without a shell. Infrastructure errors and timeouts are failures too. */
 export async function executeCommand(command, repositoryRoot) {
   try {
-    const { stdout, stderr } = await execFileAsync(
+    const resolved = resolvePackageManagerInvocation(
       command[0],
       command.slice(1),
+    )
+    const { stdout, stderr } = await execFileAsync(
+      resolved.file,
+      resolved.args,
       {
         cwd: repositoryRoot,
         timeout: 180_000,

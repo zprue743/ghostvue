@@ -32,6 +32,20 @@ describe('vue-type-tests-negative harness', () => {
     ])
   })
 
+  it('normalizes Windows backslash separators in vue-tsc diagnostic paths', () => {
+    const output =
+      "type-tests-negative\\invalid-model-value.ts(9,3): error TS2322: Type 'number' is not assignable to type 'string'."
+
+    expect(parseVueTscErrorLines(output)).toEqual([
+      {
+        file: 'type-tests-negative/invalid-model-value.ts',
+        line: '9',
+        code: 'TS2322',
+        message: "Type 'number' is not assignable to type 'string'.",
+      },
+    ])
+  })
+
   it('fails when vue-tsc succeeds on a clean temp fixture', async () => {
     const tempDir = await mkdtemp(join(tmpdir(), 'ghostvue-negative-harness-'))
     const tsconfigPath = join(tempDir, 'tsconfig.harness-smoke.json')

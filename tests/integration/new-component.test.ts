@@ -1,6 +1,5 @@
 /** @vitest-environment node */
 
-import { execFileSync } from 'node:child_process'
 import { existsSync } from 'node:fs'
 import {
   cp,
@@ -22,6 +21,7 @@ import {
   componentIdentity,
   scaffoldComponent,
 } from '../../scripts/lib/new-component.js'
+import { execPackageManagerSync } from '../../scripts/lib/package-manager.js'
 
 const repositoryRoot = process.cwd()
 
@@ -95,7 +95,11 @@ async function copyRepository() {
 function run(root: string, args: string[]) {
   try {
     // Full-repo verify in a copied workspace can exceed four minutes as packages grow.
-    execFileSync('pnpm', args, { cwd: root, stdio: 'pipe', timeout: 480_000 })
+    execPackageManagerSync('pnpm', args, {
+      cwd: root,
+      stdio: 'pipe',
+      timeout: 480_000,
+    })
   } catch (error) {
     if (error instanceof Error && 'stdout' in error && 'stderr' in error) {
       throw new Error(
@@ -171,7 +175,9 @@ describe('component scaffolding', () => {
       expect(result.updated).toEqual(dryRun.updated)
       const paths = [...result.created, ...result.updated]
       for (const path of paths)
-        expect(relative(root, join(root, path))).toBe(path)
+        expect(relative(root, join(root, path)).replaceAll('\\', '/')).toBe(
+          path,
+        )
       expect(result.created).toContain(
         'tests/integration/ghost-scaffold-probe-themed.test.ts',
       )

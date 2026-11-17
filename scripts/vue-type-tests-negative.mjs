@@ -3,10 +3,10 @@
  * expected consumer regression (TS2322 on `modelValue` in the negative fixture),
  * not an incidental tooling or project graph error.
  */
-import { execFileSync } from 'node:child_process'
 import { fileURLToPath } from 'node:url'
 import { isAbsolute, join } from 'node:path'
 
+import { execPackageManagerSync } from './lib/package-manager.js'
 import { parseVueTscErrorLines } from './lib/vue-type-tests-negative-diagnostics.js'
 
 const root = fileURLToPath(new URL('..', import.meta.url))
@@ -36,7 +36,7 @@ function failWithOutput(reason, output) {
 let result
 try {
   try {
-    const stdout = execFileSync(
+    const stdout = execPackageManagerSync(
       'pnpm',
       ['exec', 'vue-tsc', '-p', vueTscConfig, '--noEmit'],
       {

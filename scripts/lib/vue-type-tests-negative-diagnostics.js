@@ -10,7 +10,12 @@ export function parseVueTscErrorLines(output) {
     const match = diagnosticLine.exec(line.trimEnd())
     if (match) {
       const [, file, lineNumber, code, message] = match
-      diagnostics.push({ file, line: lineNumber, code, message })
+      diagnostics.push({
+        file: file.replaceAll('\\', '/'),
+        line: lineNumber,
+        code,
+        message,
+      })
     }
   }
   return diagnostics
