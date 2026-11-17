@@ -91,6 +91,19 @@ for (const directory of packageDirectories) {
           `${packageJson.name} bundle baked away process.env.NODE_ENV`,
         )
       }
+      for (const externalDep of [
+        '@floating-ui/dom',
+        '@internationalized/date',
+      ]) {
+        const externalImportPattern = new RegExp(
+          `from\\s+["']${externalDep.replace(/[.*+?^${}()|[\\]\\\\]/g, '\\$&')}["']`,
+        )
+        if (!externalImportPattern.test(bundle)) {
+          violations.push(
+            `${packageJson.name} bundle did not externalize ${externalDep}`,
+          )
+        }
+      }
     } catch {
       // Missing bundle is already reported as a published-file violation.
     }
