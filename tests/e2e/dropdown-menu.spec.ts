@@ -51,6 +51,25 @@ test.describe('GhostDropdownMenu', () => {
       await page.keyboard.press('s')
       await expect(checkbox).toBeFocused()
 
+      // Extending 'o' -> 'op' keeps Option A focused rather than cycling to Option B.
+      await page.waitForTimeout(550)
+      await page.keyboard.press('o')
+      await expect(radioA).toBeFocused()
+      await page.keyboard.press('p')
+      await expect(radioA).toBeFocused()
+      await expect(editItem).toHaveAttribute('tabindex', '-1')
+      await expect(disabledItem).toHaveAttribute('tabindex', '-1')
+      await expect(checkbox).toHaveAttribute('tabindex', '-1')
+      await expect(radioA).toHaveAttribute('tabindex', '0')
+      await expect(radioB).toHaveAttribute('tabindex', '-1')
+
+      // Repeated 'o' after timeout cycles to Option B.
+      await page.waitForTimeout(550)
+      await page.keyboard.press('o')
+      await expect(radioB).toBeFocused()
+      await expect(radioA).toHaveAttribute('tabindex', '-1')
+      await expect(radioB).toHaveAttribute('tabindex', '0')
+
       await page.keyboard.press('Escape')
       await expect(content).toHaveCount(0)
       await expect(trigger).toBeFocused()

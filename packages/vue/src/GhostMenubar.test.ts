@@ -903,4 +903,85 @@ describe('GhostMenubar', () => {
     expect(radioSelect).toHaveBeenCalledTimes(1)
     expect(open.value).toBe(true)
   })
+
+  it('keeps active match on typeahead query extension while supporting repeated-letter cycling, timeout reset, no match, disabled items, and wraparound', async () => {
+    stubFloatingPosition()
+    vi.useFakeTimers()
+    try {
+      mountAttached(
+        defineComponent({
+          setup() {
+            return () =>
+              h(GhostMenubar, null, {
+                default: () =>
+                  h(
+                    GhostMenubarMenu,
+                    { defaultOpen: true },
+                    {
+                      default: () => [
+                        h(GhostMenubarTrigger, null, () => 'File'),
+                        h(GhostMenubarContent, null, () => [
+                          h(GhostMenubarItem, null, () => 'Able'),
+                          h(GhostMenubarItem, null, () => 'Banana'),
+                          h(
+                            GhostMenubarItem,
+                            { disabled: true },
+                            () => 'Abalone',
+                          ),
+                          h(GhostMenubarItem, null, () => 'Abacus'),
+                        ]),
+                      ],
+                    },
+                  ),
+              })
+          },
+        }),
+      )
+      await flushPromises()
+
+      const content = getHtmlPart('content')
+      const items = [
+        ...content.querySelectorAll<HTMLElement>('[role="menuitem"]'),
+      ]
+      const [able, banana, abalone, abacus] = items
+      expect(items).toHaveLength(4)
+
+      const expectSingleTabStop = (active: HTMLElement | undefined) => {
+        expect(document.activeElement).toBe(active)
+        for (const item of items) {
+          expect(item.tabIndex).toBe(item === active ? 0 : -1)
+        }
+      }
+
+      banana?.focus()
+      pressKey('a', content)
+      expectSingleTabStop(abacus)
+
+      // Extending 'a' -> 'ab' keeps Abacus focused; 'abl' wraps around to Able.
+      pressKey('b', content)
+      expectSingleTabStop(abacus)
+      pressKey('l', content)
+      expectSingleTabStop(able)
+
+      // No match leaves focus unchanged.
+      pressKey('z', content)
+      expectSingleTabStop(able)
+
+      // Timeout reset + rapid repeated 'a' cycling without any 'aa*' item.
+      vi.advanceTimersByTime(500)
+      pressKey('b', content)
+      expectSingleTabStop(banana)
+
+      vi.advanceTimersByTime(500)
+      pressKey('a', content)
+      expectSingleTabStop(abacus)
+      pressKey('a', content)
+      expectSingleTabStop(able)
+      pressKey('a', content)
+      expectSingleTabStop(abacus)
+      expect(abalone?.tabIndex).toBe(-1)
+    } finally {
+      vi.useRealTimers()
+    }
+  })
 })

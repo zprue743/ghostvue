@@ -104,6 +104,23 @@ test.describe('GhostMenubar', () => {
       await page.keyboard.press('s')
       await expect(checkbox).toBeFocused()
 
+      // Extending 'o' -> 'op' keeps Option A focused rather than cycling to Option B.
+      await page.waitForTimeout(550)
+      await page.keyboard.press('o')
+      await expect(radioA).toBeFocused()
+      await page.keyboard.press('p')
+      await expect(radioA).toBeFocused()
+      await expect(checkbox).toHaveAttribute('tabindex', '-1')
+      await expect(radioA).toHaveAttribute('tabindex', '0')
+      await expect(radioB).toHaveAttribute('tabindex', '-1')
+
+      // Rapid repeated 'o' after timeout cycles to Option B.
+      await page.waitForTimeout(550)
+      await page.keyboard.press('o')
+      await expect(radioB).toBeFocused()
+      await expect(radioA).toHaveAttribute('tabindex', '-1')
+      await expect(radioB).toHaveAttribute('tabindex', '0')
+
       await page.keyboard.press('Escape')
       await expect(editContent).toHaveCount(0)
       await expect(editTrigger).toBeFocused()
