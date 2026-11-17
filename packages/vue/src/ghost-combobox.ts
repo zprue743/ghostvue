@@ -116,6 +116,24 @@ export interface GhostComboboxContext {
   setContentId: (id: string | null) => void
   setInputRegistered: (registered: boolean) => void
   inputRegistered: Ref<boolean>
+  /** Optional companion trigger; part of the widget for focus departure. */
+  triggerElement: Ref<HTMLElement | null>
+  setTriggerElement: (element: HTMLElement | null) => void
+  /**
+   * Called from `focusout` on the input, trigger, and content. Closes and
+   * resets the transient search only when focus leaves all of them.
+   */
+  notifyFocusOut: (event: FocusEvent) => void
+  /**
+   * Called from `pointerdown` on the input, trigger, and content so a press
+   * inside the widget that blurs to `body` is not treated as focus departure.
+   */
+  notifyPointerDownInside: () => void
+  /**
+   * True while a focus-departure close is pending, so the content's focus
+   * scope does not pull focus back to the input after the user moved away.
+   */
+  focusRestoreSuppressed: Ref<boolean>
   registerOption: (
     value: string,
     textValue: string,
