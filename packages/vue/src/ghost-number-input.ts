@@ -1,6 +1,13 @@
 import type { InputHTMLAttributes, MaybeRefOrGetter } from 'vue'
 
-/** Options forwarded to `Intl.NumberFormat`. */
+/**
+ * Options forwarded to `Intl.NumberFormat`.
+ *
+ * Round-trip formatting and parsing is supported for `notation: 'standard'`
+ * (the default) across `style: 'decimal' | 'currency' | 'percent' | 'unit'`,
+ * including `currencySign: 'accounting'`, `signDisplay`, `useGrouping`, and
+ * locale or `numberingSystem` digits.
+ */
 export type GhostNumberInputFormatOptions = Intl.NumberFormatOptions
 
 /**
