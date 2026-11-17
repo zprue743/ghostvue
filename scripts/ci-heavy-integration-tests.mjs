@@ -12,4 +12,5 @@ export const heavyIntegrationTestFiles = [
   'tests/integration/themes-main-entry-graph.test.ts',
   'tests/integration/vue-type-tests-negative-harness.test.ts',
   'tests/integration/component-registries.test.ts',
+  'tests/integration/bundle-tree-shaking.test.ts',
 ]

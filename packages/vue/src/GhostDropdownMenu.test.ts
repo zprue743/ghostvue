@@ -717,6 +717,101 @@ describe('GhostDropdownMenu', () => {
     expect(open.value).toBe(false)
   })
 
+  it('leaves IME composition keys to the input method (isComposing and keyCode 229)', async () => {
+    computePositionOverride = () =>
+      Promise.resolve({
+        x: 0,
+        y: 0,
+        placement: 'bottom',
+        strategy: 'absolute',
+        middlewareData: {},
+      })
+    const onSelect = vi.fn()
+    const onOpen = vi.fn()
+    const onChecked = vi.fn()
+
+    mountAttached(
+      defineComponent({
+        setup() {
+          return () =>
+            h(
+              GhostDropdownMenu,
+              { defaultOpen: true, 'onUpdate:open': onOpen },
+              {
+                default: () => [
+                  h(GhostDropdownMenuTrigger, null, () => 'Menu'),
+                  h(GhostDropdownMenuContent, null, () => [
+                    h(GhostDropdownMenuItem, { onSelect }, () => 'Apple'),
+                    h(GhostDropdownMenuItem, null, () => 'Banana'),
+                    h(
+                      GhostDropdownMenuCheckboxItem,
+                      { 'onUpdate:checked': onChecked },
+                      () => 'Show hidden',
+                    ),
+                  ]),
+                ],
+              },
+            )
+        },
+      }),
+    )
+    await flushPromises()
+
+    const content = getHtmlPart('content')
+    const apple = document.activeElement
+    expect(apple?.textContent).toBe('Apple')
+
+    for (const init of [{ isComposing: true }, { keyCode: 229 }]) {
+      for (const key of [
+        'b',
+        'ArrowDown',
+        'ArrowUp',
+        'End',
+        'Enter',
+        'Escape',
+      ]) {
+        const event = new KeyboardEvent('keydown', {
+          ...init,
+          key,
+          bubbles: true,
+          cancelable: true,
+        })
+        ;(document.activeElement ?? content).dispatchEvent(event)
+        await flushPromises()
+        expect(event.defaultPrevented, key).toBe(false)
+        expect(document.activeElement, key).toBe(apple)
+      }
+    }
+    expect(onSelect).not.toHaveBeenCalled()
+    expect(onOpen).not.toHaveBeenCalled()
+
+    // Checkbox items own Enter/Space; composing keys must not toggle them.
+    const checkboxItem = document.querySelector('[role="menuitemcheckbox"]')
+    expect(checkboxItem).toBeInstanceOf(HTMLElement)
+    if (!(checkboxItem instanceof HTMLElement)) {
+      return
+    }
+    for (const init of [{ isComposing: true }, { keyCode: 229 }]) {
+      for (const key of ['Enter', ' ']) {
+        const event = new KeyboardEvent('keydown', {
+          ...init,
+          key,
+          bubbles: true,
+          cancelable: true,
+        })
+        checkboxItem.dispatchEvent(event)
+        await flushPromises()
+        expect(event.defaultPrevented, key).toBe(false)
+      }
+    }
+    expect(onChecked).not.toHaveBeenCalled()
+    expect(document.activeElement).toBe(apple)
+
+    // After compositionend, typeahead resumes.
+    pressKey('b', content)
+    expect(document.activeElement?.textContent).toBe('Banana')
+  })
+
   it('Space continues active typeahead queries before activating after timeout', async () => {
     computePositionOverride = () =>
       Promise.resolve({

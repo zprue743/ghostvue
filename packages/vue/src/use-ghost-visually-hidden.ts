@@ -11,8 +11,12 @@ import type { UseGhostVisuallyHiddenOptions } from './ghost-visually-hidden'
 /**
  * Clip technique: 1px not 0 so some engines keep the node in the accessibility
  * tree. No font/spacing declarations (WCAG 1.4.4 / 1.4.12).
+ *
+ * The pure annotation lets consumer bundlers drop this module-level
+ * `Object.freeze` call when nothing imports the style, so single-component
+ * imports that never hide content do not carry it (GHO-56).
  */
-export const visuallyHiddenStyle = Object.freeze({
+export const visuallyHiddenStyle = /* @__PURE__ */ Object.freeze({
   position: 'absolute',
   width: '1px',
   height: '1px',

@@ -587,6 +587,144 @@ describe('GhostCombobox', () => {
     expect((input.element as HTMLInputElement).value).toBe('Banana')
   })
 
+  describe('IME composition', () => {
+    function imeFixture(handlers: {
+      onKeydown: (event: KeyboardEvent) => void
+      onSearch: (payload: unknown) => void
+      onModel: (next: GhostComboboxValue) => void
+    }) {
+      return defineComponent({
+        setup() {
+          // Uncontrolled so the test observes emitted model updates only.
+          return () =>
+            h(
+              GhostCombobox,
+              {
+                'onUpdate:modelValue': handlers.onModel,
+                onSearch: handlers.onSearch,
+              },
+              {
+                default: () => [
+                  h(GhostComboboxInput, { onKeydown: handlers.onKeydown }),
+                  h(GhostComboboxContent, { portal: false }, () => [
+                    h(
+                      GhostComboboxOption,
+                      { value: 'a', textValue: 'Apple' },
+                      () => 'Apple',
+                    ),
+                    h(
+                      GhostComboboxOption,
+                      { value: 'b', textValue: 'Banana' },
+                      () => 'Banana',
+                    ),
+                  ]),
+                ],
+              },
+            )
+        },
+      })
+    }
+
+    function press(
+      target: HTMLElement,
+      key: string,
+      init: KeyboardEventInit = {},
+    ): KeyboardEvent {
+      const event = new KeyboardEvent('keydown', {
+        ...init,
+        key,
+        bubbles: true,
+        cancelable: true,
+      })
+      target.dispatchEvent(event)
+      return event
+    }
+
+    // `isComposing` is the standard signal; keyCode 229 without isComposing is
+    // what WebKit reports for the keydown that confirms a composition after
+    // compositionend has already fired.
+    const signals: [string, KeyboardEventInit][] = [
+      ['isComposing', { isComposing: true }],
+      ['keyCode 229', { keyCode: 229 }],
+    ]
+
+    for (const [label, init] of signals) {
+      it(`leaves composing keys to the input method (${label})`, async () => {
+        const onKeydown = vi.fn()
+        const onSearch = vi.fn()
+        const onModel = vi.fn()
+        const wrapper = mountAttached(
+          imeFixture({ onKeydown, onSearch, onModel }),
+        )
+        const input = wrapper.get('[data-part="input"]')
+        const inputEl = input.element as HTMLInputElement
+        inputEl.focus()
+
+        // Closed: composing ArrowDown/ArrowUp must not open the popup.
+        for (const key of ['ArrowDown', 'ArrowUp']) {
+          const event = press(inputEl, key, init)
+          await flushPromises()
+          expect(event.defaultPrevented).toBe(false)
+          expect(input.attributes('aria-expanded')).toBe('false')
+        }
+
+        // Open and highlight the first option with ordinary keys.
+        press(inputEl, 'ArrowDown')
+        await flushPromises()
+        expect(input.attributes('aria-expanded')).toBe('true')
+        const active = input.attributes('aria-activedescendant')
+        expect(active).toBeTruthy()
+        onKeydown.mockClear()
+
+        for (const key of [
+          'ArrowDown',
+          'ArrowUp',
+          'Home',
+          'End',
+          'Enter',
+          'Escape',
+          'a',
+        ]) {
+          const event = press(inputEl, key, init)
+          await flushPromises()
+          expect(event.defaultPrevented, key).toBe(false)
+          expect(input.attributes('aria-expanded'), key).toBe('true')
+          expect(input.attributes('aria-activedescendant'), key).toBe(active)
+          expect(
+            document
+              .querySelector('[data-part="content"]')
+              ?.hasAttribute('hidden'),
+            key,
+          ).toBe(false)
+        }
+
+        // Consumer handlers still observe every composing keydown.
+        expect(onKeydown).toHaveBeenCalledTimes(7)
+        expect(onModel).not.toHaveBeenCalled()
+        expect(onSearch).not.toHaveBeenCalled()
+        expect(document.activeElement).toBe(inputEl)
+
+        // After compositionend, ordinary keys resume combobox behavior.
+        press(inputEl, 'ArrowDown')
+        await flushPromises()
+        expect(input.attributes('aria-activedescendant')).not.toBe(active)
+        const enter = press(inputEl, 'Enter')
+        await flushPromises()
+        expect(enter.defaultPrevented).toBe(true)
+        expect(onModel).toHaveBeenLastCalledWith('b')
+        expect(input.attributes('aria-expanded')).toBe('false')
+
+        press(inputEl, 'ArrowDown')
+        await flushPromises()
+        expect(input.attributes('aria-expanded')).toBe('true')
+        const escape = press(inputEl, 'Escape')
+        await flushPromises()
+        expect(escape.defaultPrevented).toBe(true)
+        expect(input.attributes('aria-expanded')).toBe('false')
+      })
+    }
+  })
+
   it('closes on Escape and restores focus to the input', async () => {
     const wrapper = mountAttached(comboboxFixture())
     const input = wrapper.get('[data-part="input"]')

@@ -7,6 +7,7 @@ import {
   type GhostContextMenuCheckboxItemElement,
   type GhostContextMenuCheckboxItemExposed,
 } from './ghost-context-menu'
+import { isImeComposing } from './is-ime-composing'
 import { useControllableState } from './use-controllable-state'
 
 defineOptions({
@@ -65,7 +66,8 @@ const itemAttrs = computed(() => {
 })
 
 function handleKeydown(event: KeyboardEvent): void {
-  if (props.disabled || event.defaultPrevented) {
+  // IME-owned Enter/Space confirm a composition, not the checkbox item.
+  if (props.disabled || event.defaultPrevented || isImeComposing(event)) {
     return
   }
   if (event.key !== ' ' && event.key !== 'Enter') {

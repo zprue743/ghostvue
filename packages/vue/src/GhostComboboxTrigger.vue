@@ -1,5 +1,12 @@
 <script setup lang="ts">
-import { computed, inject, useAttrs, useTemplateRef } from 'vue'
+import {
+  computed,
+  inject,
+  onUnmounted,
+  useAttrs,
+  useTemplateRef,
+  watch,
+} from 'vue'
 
 import {
   ghostComboboxContextKey,
@@ -36,6 +43,20 @@ const isNativeButtonTag = computed(() => props.as === 'button')
 const isEffectivelyDisabled = computed(
   () => props.disabled || context.disabled.value,
 )
+
+// The trigger is part of the widget for focus departure (GHO-166): moving
+// focus between it and the input must not close the list.
+watch(
+  element,
+  (el) => {
+    context.setTriggerElement(el)
+  },
+  { immediate: true, flush: 'post' },
+)
+
+onUnmounted(() => {
+  context.setTriggerElement(null)
+})
 
 const triggerAttrs = computed(() => {
   const rest: Record<string, unknown> = {}
@@ -102,6 +123,8 @@ defineExpose<GhostComboboxTriggerExposed>({
     v-bind="triggerAttrs"
     @click="handleClick"
     @keydown="handleKeydown"
+    @focusout="context.notifyFocusOut"
+    @pointerdown="context.notifyPointerDownInside"
   >
     <slot />
   </component>

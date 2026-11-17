@@ -6,12 +6,15 @@ import { useGhostAvatar } from './use-ghost-avatar'
 
 const props = withDefaults(
   defineProps<{
-    src?: string
-    alt?: string
-    name?: string
+    src?: string | undefined
+    alt?: string | undefined
+    name?: string | undefined
     as?: GhostAvatarElement
   }>(),
   {
+    src: undefined,
+    alt: undefined,
+    name: undefined,
     as: 'span',
   },
 )

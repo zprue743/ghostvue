@@ -286,6 +286,16 @@ does not read arbitrary object arrays.
 | Printable keys          | Input                  | Updates search; consumer replaces options.                            |
 | `Home` / `End`          | Input (open)           | First / last enabled option highlight.                                |
 
+Keys that belong to an active IME composition are not combobox commands:
+while `isComposing` is `true`, or the keydown reports the legacy `keyCode` 229
+(WebKit dispatches the composition-confirming keydown after `compositionend`
+with `isComposing === false`), arrow keys, `Home` / `End`, `Enter`, and `Escape`
+do not open the list, move the highlight, select, or close. Consumer `onKeydown`
+handlers still receive these events, `Escape` is left unprevented, and the
+dismissable layer applies the same guard, so cancelling a composition never
+closes the popup. Composition text still reaches the input through `input`
+events and updates the search like ordinary typing.
+
 `GhostComboboxTrigger` is a single tab stop; activation toggles open without
 stealing combobox role.
 
@@ -296,6 +306,46 @@ Listbox does not use roving `tabindex`; focus remains on the input.
 Tab order: input (and trigger when present). On open, focus stays on input.
 On close, focus remains on input. Outside dismiss restores focus per
 `useDismissableLayer` / `useFocusScope` (`trapped: false`).
+
+#### Focus departure (GHO-166)
+
+The **widget** is the combobox input, the optional `GhostComboboxTrigger`, and
+the owned `GhostComboboxContent` surface, whether it renders inline
+(`portal: false`) or portaled. When keyboard focus (`Tab` / `Shift+Tab`) or
+programmatic focus (`element.focus()` elsewhere, `input.blur()`) leaves the
+complete widget:
+
+- The root **requests close**: `update:open` is emitted with `false`. Focus is
+  not restored to the input; it stays wherever it went.
+- The selection does not change and no `update:modelValue` is emitted.
+- The **transient search is cleared**. Single selection resets the query to the
+  committed selected option's label (or `''` when nothing is selected), so the
+  closed input shows the committed value. Multiple selection resets the query
+  to `''`. A reset that changes the query emits `update:search` and `search`
+  (with a new `requestId`) so consumer filtering and async results follow the
+  visible query; an unchanged query emits nothing.
+- Controlled `open`, `search`, and `modelValue` remain parent-owned. When the
+  parent rejects the update (keeps `open` true or keeps its `search`), the
+  controlled value wins and the popup stays as the parent renders it.
+
+These are **internal** transitions and never dismiss:
+
+- Focus moving between the input, the trigger, and focusable elements inside
+  the content (inline or portaled), including the transient focus an option
+  receives while it is pressed before focus returns to the input.
+- Pointer presses that start inside the widget (option selection, pressing
+  non-focusable content padding, group labels, or the trigger in browsers that
+  do not focus buttons on click). Pressing a non-focusable part of the content
+  prevents the `mousedown` default so focus stays on the input (the listbox
+  never takes focus, per APG); otherwise focus would fall to `body` or a
+  focusable page ancestor where later departures could not be observed.
+  Focusable content descendants (options, consumer buttons) keep the default.
+- The window or tab losing focus while the input stays the document's active
+  element.
+
+Pointer presses outside the widget keep the existing outside-pointer dismissal
+(`useDismissableLayer`); when such a press moves focus out of the widget, the
+search reset above also applies.
 
 ### Virtualization
 
@@ -352,10 +402,31 @@ is consumer-driven via `virtualized` flag and documented highlight contract.
   selection + label + FormData preserved when options unmount (filtering,
   out-of-order async replacement, reorder, remount) without emits, Arrow /
   `Home` / `End` in DOM order after keyed reorder, insertion, filter + restore,
-  disabled toggles, and a virtualized window scrolling back
+  disabled toggles, and a virtualized window scrolling back; IME composition
+  (`isComposing` and `keyCode` 229) leaves ArrowUp/Down, `Home` / `End`,
+  `Enter`, `Escape`, and printable keys to the input method without model,
+  search, or open-state changes, still calls consumer `onKeydown`, and normal
+  keys resume afterwards; focus departure (GHO-166): focus moving to an
+  external element or `blur()` closes and emits `update:open` `false` without
+  restoring focus, single resets search to the committed label and multiple to
+  `''` without selection emits, internal input → trigger and option pointer
+  selection stay open, window blur keeps the list open, controlled `open` and
+  `search` rejection keep the parent's values
 - **SSR:** `expectSsrHydration` closed combobox
 - **E2E + axe:** keyboard path on playground demo, async example smoke,
-  `aria-activedescendant` in rendered order after list changes
+  `aria-activedescendant` in rendered order after list changes, Chromium
+  DevTools-protocol IME composition plus WebKit-style `keyCode` 229 keys
+  (`tests/e2e/ime-composition.spec.ts`); focus departure (GHO-166) with real
+  `Tab` / `Shift+Tab` and external `focus()` asserting the focused destination,
+  `aria-expanded`, and popup visibility for inline and portaled content,
+  input → trigger internal moves, option pointer selection, single vs multiple
+  search reset, and controlled `open` rejection
+- **Manual:** Manual IME validation (automation cannot drive a real input method editor):
+  with a Japanese, Chinese, or Korean IME on macOS Safari, macOS Chrome, Windows
+  Chrome/Edge, and Firefox, compose text, move through candidates with the arrow
+  keys, confirm with `Enter`, and cancel with `Escape`; the widget state must not
+  change until the composition is committed, and the first keys after commit must
+  behave normally.
 - **Visual:** `combobox/themed` via `pnpm test:visual:docker`
 - **Types:** consumer compile fixture
 

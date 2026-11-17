@@ -56,4 +56,5 @@ option unmounts, the value stays selected, keeps submitting with the form, and
 - `useGhostSelect` for advanced composition
 
 See the [specification](/specs/select) for keyboard, typeahead, portal, and
-SSR behavior.
+SSR behavior. Keys owned by an active IME composition do not run typeahead or
+listbox commands.

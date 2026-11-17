@@ -108,7 +108,10 @@ There is no model. Pending and disabled state remain consumer-owned props.
 The default slot supplies button content. No component-specific events are
 declared; native listeners such as `@click` attach to the button and receive the
 native event. Icon and loading-indicator structure is marked with `data-part`,
-not extra Vue slots.
+not extra Vue slots. Per [ADR 0013](../adr/0013-icon-strategy.md), icon content
+is always consumer-supplied: the headless button ships no icon artwork, and the
+themed wrapper's only default mark is the CSS loading ring, which consumer
+`data-part="loading-indicator"` content replaces.
 
 A component template ref exposes:
 
@@ -155,8 +158,10 @@ No consumer data is accepted or mutated.
 
 The root is always a native `<button>`. Text content normally provides its name.
 Icon-only use requires `aria-label`, `aria-labelledby`, or hidden text (for
-example `GhostVisuallyHidden`). Decorative icons must be hidden from assistive
-technology. `disabled` uses native semantics. Loading exposes
+example `GhostVisuallyHidden`). `iconOnly` / `data-icon-only` only changes
+sizing and never supplies a name. Decorative icons must be hidden from assistive
+technology with `aria-hidden="true"` (plus `focusable="false"` on inline SVG),
+as recorded in [ADR 0013](../adr/0013-icon-strategy.md). `disabled` uses native semantics. Loading exposes
 `aria-disabled="true"` and `aria-busy="true"` while retaining the name and
 focusability.
 

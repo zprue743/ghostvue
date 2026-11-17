@@ -71,6 +71,34 @@ input submits the selection and participates in native `required` validation.
 - `update:modelValue`, `update:search`, `update:open`
 - `search` — `{ query: string, requestId: number }` on each query change
 
+### Keyboard and IME
+
+While an input method editor is composing (Japanese, Chinese, Korean, and
+similar input), arrow keys, `Enter`, and `Escape` belong to the IME's candidate
+list: the combobox does not move the highlight, select, or close until the
+composition is committed. Your own `@keydown` handlers on `GhostComboboxInput`
+still receive those events.
+
+### Focus and dismissal
+
+The list closes when focus leaves the whole widget: the input, the optional
+`GhostComboboxTrigger`, and the content, whether it is portaled or rendered
+inline with `:portal="false"`. This covers `Tab`, `Shift+Tab`, and focus moved
+by your code (`element.focus()` elsewhere or `blur()`). Focus stays where it
+went; it is not pulled back to the input. Moving between the input and the
+trigger, selecting an option with the pointer, or pressing a non-focusable part
+of the list (a group label, padding) does not close it.
+
+Leaving also clears the unfinished query. In single mode the input shows the
+committed option's label again (or becomes empty when nothing is selected); in
+multiple mode the query becomes empty. The selection never changes. When the
+query changes, `update:search` and `search` are emitted so filtered or async
+results match the query on the next open.
+
+With a controlled `open` or `search`, the combobox only requests the change
+(`update:open` with `false`, `update:search`). If the parent keeps its value,
+the list stays as the parent renders it.
+
 ### Parts
 
 - `GhostComboboxInput`, `GhostComboboxTrigger`, `GhostComboboxContent`

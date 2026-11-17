@@ -224,6 +224,11 @@ dismiss layers stay clean while closed.
 | Printable keys                              | Content          | Typeahead: accumulate within ~500ms, match `textValue` prefix, cycle matches; focus moves to match. |
 | `Enter` / `Space`                           | Focused option   | Selects option, closes listbox, focuses trigger.                                                    |
 
+Keys that belong to an active IME composition (`isComposing`, or the legacy
+`keyCode` 229 that WebKit reports for an IME-processed key after
+`compositionend`) are ignored by the open listbox: they do not run typeahead,
+move focus, select, or close.
+
 Native `button` trigger: `Space`/`Enter` on the closed trigger opens without
 duplicate activation from native button semantics (same guard pattern as
 `GhostPopoverTrigger`).
@@ -303,10 +308,20 @@ stays mounted while closed so option labels remain registered.
   input constraint validation, form reset, Field aria wiring, value survives
   close, defaultValue label while closed, SSR hydration, value + label + FormData
   survive option unmount/reorder/remount without emits, first/last open focus
-  and typeahead in DOM order after keyed reorder, insertion, filter + restore
+  and typeahead in DOM order after keyed reorder, insertion, filter + restore;
+  IME-owned keys (`isComposing`, `keyCode` 229) skip typeahead, roving,
+  selection, and Escape, and typeahead resumes afterwards
 - **SSR:** `overlay-ssr.test.ts` closed/open; `expectSsrHydration` integration
 - **E2E + axe:** open/select/close keyboard paths, form submit, docs example,
-  real focus / typeahead / selection in rendered order after list changes
+  real focus / typeahead / selection in rendered order after list changes,
+  WebKit-style `keyCode` 229 keys ignored in the listbox
+  (`tests/e2e/ime-composition.spec.ts`)
+- **Manual:** Manual IME validation (automation cannot drive a real input method editor):
+  with a Japanese, Chinese, or Korean IME on macOS Safari, macOS Chrome, Windows
+  Chrome/Edge, and Firefox, compose text, move through candidates with the arrow
+  keys, confirm with `Enter`, and cancel with `Escape`; the widget state must not
+  change until the composition is committed, and the first keys after commit must
+  behave normally.
 - **Visual:** `examples/select/themed` baselines via `pnpm test:visual:docker`
 - **Type:** consumer compile fixture
 

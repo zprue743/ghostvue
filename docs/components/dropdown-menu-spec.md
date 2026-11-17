@@ -241,6 +241,12 @@ multi-character query starts at the active item so it stays focused while it
 still matches, with repeated-character fallback cycling when no item matches the
 repeated prefix.
 
+Keys that belong to an active IME composition (`isComposing`, or the legacy
+`keyCode` 229 that WebKit reports for an IME-processed key after
+`compositionend`) are not menu commands: they do not run typeahead, move focus,
+activate items, or close the menu. This lives in `useGhostMenuCollection` and
+`useDismissableLayer`, so context menus and menubar menus share it.
+
 ### Focus behavior
 
 - On open after positioned: `focusFirstMenuItem` or `focusLastMenuItem` on content.
@@ -287,7 +293,8 @@ repeated prefix.
 - **Unit (`packages/vue/src/GhostDropdownMenu.test.ts`):** controlled/uncontrolled
   open; trigger `aria-*`; arrow open focusing first/last; roving, typeahead,
   Home/End; disabled skip; Escape/outside/select close; checkbox toggle without
-  close; radio select closes.
+  close; radio select closes; IME-owned keys (`isComposing`, `keyCode` 229)
+  skip typeahead, roving, activation, and Escape.
 - **SSR (`packages/vue/src/overlay-ssr.test.ts`, `tests/integration/ssr-hydration.test.ts`):**
   closed and `defaultOpen` server render.
 - **Theme CSS (`tests/integration/ghost-dropdown-menu-theme-css.test.ts`):** token-only
@@ -295,6 +302,14 @@ repeated prefix.
 - **E2E (`tests/e2e/dropdown-menu.spec.ts`):** axe, open/close, menu ARIA, arrows,
   typeahead, Escape, item select, checkbox Space, radio select, outside click,
   disabled skip.
+- **E2E (`tests/e2e/ime-composition.spec.ts`):** WebKit-style `keyCode` 229 keys
+  leave focus and open state unchanged; typeahead resumes afterwards.
+- **Manual:** Manual IME validation (automation cannot drive a real input method editor):
+  with a Japanese, Chinese, or Korean IME on macOS Safari, macOS Chrome, Windows
+  Chrome/Edge, and Firefox, compose text, move through candidates with the arrow
+  keys, confirm with `Enter`, and cancel with `Escape`; the widget state must not
+  change until the composition is committed, and the first keys after commit must
+  behave normally.
 - **Docs examples (`tests/e2e/docs-examples.spec.ts`):** when wired to
   `dropdown-menu/*` ids.
 
