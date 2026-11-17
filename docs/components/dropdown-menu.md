@@ -70,7 +70,7 @@ Keeps `visibility: hidden` until `useFloating().isPositioned` resolves. Sets
 - **Keyboard:** Arrow keys move among enabled items; `Home` / `End` jump;
   typeahead focuses the next match; `Enter` / `Space` activate; checkbox items
   toggle on `Space` without dismissing; `Escape` closes and returns focus to the
-  trigger.
+  trigger. Keys owned by an active IME composition are left to the input method.
 - **Dismissal:** Outside pointer and `Escape` use `useDismissableLayer` with the
   trigger ignored so trigger clicks toggle cleanly.
 

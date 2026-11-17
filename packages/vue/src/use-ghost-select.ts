@@ -12,6 +12,7 @@ import type {
   GhostSelectOptionRecord,
   UseGhostSelectOptions,
 } from './ghost-select'
+import { isImeComposing } from './is-ime-composing'
 import { sortByDocumentOrder } from './sort-by-document-order'
 import { useControllableState } from './use-controllable-state'
 import { useGhostId } from './use-ghost-id'
@@ -250,11 +251,15 @@ export function useGhostSelect(options: UseGhostSelectOptions = {}): {
   }
 
   function handleTypeahead(event: KeyboardEvent): void {
+    // Composed characters are not typeahead input until the IME commits them;
+    // guarded here as well so custom content that calls `handleTypeahead`
+    // directly gets the same behavior as `GhostSelectContent`.
     if (
       event.defaultPrevented ||
       event.altKey ||
       event.ctrlKey ||
-      event.metaKey
+      event.metaKey ||
+      isImeComposing(event)
     ) {
       return
     }

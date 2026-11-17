@@ -71,6 +71,14 @@ input submits the selection and participates in native `required` validation.
 - `update:modelValue`, `update:search`, `update:open`
 - `search` — `{ query: string, requestId: number }` on each query change
 
+### Keyboard and IME
+
+While an input method editor is composing (Japanese, Chinese, Korean, and
+similar input), arrow keys, `Enter`, and `Escape` belong to the IME's candidate
+list: the combobox does not move the highlight, select, or close until the
+composition is committed. Your own `@keydown` handlers on `GhostComboboxInput`
+still receive those events.
+
 ### Parts
 
 - `GhostComboboxInput`, `GhostComboboxTrigger`, `GhostComboboxContent`

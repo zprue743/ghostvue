@@ -10,6 +10,7 @@ import {
   getFocusableElements,
   isDisabledElement,
 } from './get-tabbable-elements'
+import { isImeComposing } from './is-ime-composing'
 
 export type RovingOrientation = 'horizontal' | 'vertical' | 'both'
 export type TextDirection = 'ltr' | 'rtl'
@@ -265,23 +266,12 @@ function resolveDir(
  * Shift is deliberately not a bail-out: APG roving composites document no
  * Shift+Arrow meaning, and existing callers treat Shift+Arrow like Arrow.
  *
- * IME composition keystrokes (`isComposing`, or the legacy `keyCode` 229 that
- * some engines report for the first composition keydown) belong to the input
- * method editor and are ignored for the same reason.
+ * IME composition keystrokes belong to the input method editor and are ignored
+ * for the same reason; see `isImeComposing` for the browser compatibility
+ * signals.
  */
 function isModifiedOrComposing(event: KeyboardEvent): boolean {
-  return (
-    event.altKey ||
-    event.ctrlKey ||
-    event.metaKey ||
-    event.isComposing ||
-    // `keyCode` is deprecated, but WebKit can dispatch an IME-owned keydown
-    // with `isComposing === false` and the real `key` (for example an arrow),
-    // leaving `keyCode === 229` as the only composition signal. `key ===
-    // 'Process'` is not a substitute: those events carry the physical key.
-    // eslint-disable-next-line @typescript-eslint/no-deprecated -- WebKit IME compatibility; see above.
-    event.keyCode === 229
-  )
+  return event.altKey || event.ctrlKey || event.metaKey || isImeComposing(event)
 }
 
 /** Arrow keys inside a text field belong to the field, not the composite. */

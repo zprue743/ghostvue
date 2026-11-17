@@ -419,6 +419,87 @@ describe('GhostSelect', () => {
     expect(document.activeElement?.getAttribute('data-value')).not.toBe('c')
   })
 
+  for (const [label, init] of [
+    ['isComposing', { isComposing: true }],
+    ['keyCode 229', { keyCode: 229 }],
+  ] as const) {
+    it(`leaves IME composition keys to the input method (${label})`, async () => {
+      const onModel = vi.fn()
+      const wrapper = mountAttached(
+        defineComponent({
+          setup() {
+            return () =>
+              h(
+                GhostSelect,
+                { 'onUpdate:modelValue': onModel },
+                {
+                  default: () => [
+                    h(GhostSelectTrigger, null, () => h(GhostSelectValue)),
+                    h(GhostSelectContent, { portal: false }, () => [
+                      h(
+                        GhostSelectOption,
+                        { value: 'a', textValue: 'Apple' },
+                        () => 'Apple',
+                      ),
+                      h(
+                        GhostSelectOption,
+                        { value: 'b', textValue: 'Banana' },
+                        () => 'Banana',
+                      ),
+                    ]),
+                  ],
+                },
+              )
+          },
+        }),
+      )
+      await wrapper.get('[data-part="trigger"]').trigger('click')
+      await flushPromises()
+
+      const apple = document.querySelector('[data-value="a"]')
+      expect(apple).toBeInstanceOf(HTMLElement)
+      if (!(apple instanceof HTMLElement)) {
+        return
+      }
+      apple.focus()
+      const content = () => document.querySelector('[data-part="content"]')
+
+      for (const key of [
+        'b',
+        'ArrowDown',
+        'ArrowUp',
+        'End',
+        'Enter',
+        ' ',
+        'Escape',
+      ]) {
+        const event = new KeyboardEvent('keydown', {
+          ...init,
+          key,
+          bubbles: true,
+          cancelable: true,
+        })
+        apple.dispatchEvent(event)
+        await flushPromises()
+        expect(event.defaultPrevented, key).toBe(false)
+        expect(document.activeElement, key).toBe(apple)
+        expect(content()?.hasAttribute('hidden'), key).toBe(false)
+      }
+      expect(onModel).not.toHaveBeenCalled()
+
+      // After compositionend, typeahead resumes.
+      apple.dispatchEvent(
+        new KeyboardEvent('keydown', {
+          key: 'b',
+          bubbles: true,
+          cancelable: true,
+        }),
+      )
+      await flushPromises()
+      expect(document.activeElement?.getAttribute('data-value')).toBe('b')
+    })
+  }
+
   it('closes on Escape and restores focus to the trigger', async () => {
     const wrapper = mountAttached(selectFixture())
     const trigger = wrapper.get('[data-part="trigger"]')
