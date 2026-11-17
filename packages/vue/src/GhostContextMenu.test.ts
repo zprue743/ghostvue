@@ -1014,4 +1014,96 @@ describe('GhostContextMenu', () => {
     expect(radioSelect).toHaveBeenCalledTimes(1)
     expect(open.value).toBe(true)
   })
+
+  it('keeps active match on typeahead query extension while supporting repeated-letter cycling, timeout reset, no match, disabled items, and wraparound', async () => {
+    computePositionOverride = () =>
+      Promise.resolve({
+        x: 0,
+        y: 0,
+        placement: 'bottom-start',
+        strategy: 'fixed',
+        middlewareData: {},
+      })
+
+    vi.useFakeTimers()
+    try {
+      mountAttached(
+        defineComponent({
+          setup() {
+            return () =>
+              h(
+                GhostContextMenu,
+                { defaultOpen: true },
+                {
+                  default: () => [
+                    h(GhostContextMenuTrigger, null, () => 'Target'),
+                    h(GhostContextMenuContent, null, () => [
+                      h(GhostContextMenuItem, null, () => 'Able'),
+                      h(GhostContextMenuItem, null, () => 'Banana'),
+                      h(
+                        GhostContextMenuItem,
+                        { disabled: true },
+                        () => 'Abalone',
+                      ),
+                      h(GhostContextMenuItem, null, () => 'Abacus'),
+                    ]),
+                  ],
+                },
+              )
+          },
+        }),
+      )
+      await flushPromises()
+
+      const content = document.querySelector<HTMLElement>(
+        '[data-part="content"]',
+      )
+      expect(content).not.toBeNull()
+      if (!content) {
+        return
+      }
+      const items = [
+        ...content.querySelectorAll<HTMLElement>('[role="menuitem"]'),
+      ]
+      const [able, banana, abalone, abacus] = items
+      expect(items).toHaveLength(4)
+
+      const expectSingleTabStop = (active: HTMLElement | undefined) => {
+        expect(document.activeElement).toBe(active)
+        for (const item of items) {
+          expect(item.tabIndex).toBe(item === active ? 0 : -1)
+        }
+      }
+
+      banana?.focus()
+      pressKey('a', content)
+      expectSingleTabStop(abacus)
+
+      // Extending 'a' -> 'ab' keeps Abacus focused; 'abl' wraps around to Able.
+      pressKey('b', content)
+      expectSingleTabStop(abacus)
+      pressKey('l', content)
+      expectSingleTabStop(able)
+
+      // No match leaves focus unchanged.
+      pressKey('z', content)
+      expectSingleTabStop(able)
+
+      // Timeout reset + rapid repeated 'a' cycling without any 'aa*' item.
+      vi.advanceTimersByTime(500)
+      pressKey('b', content)
+      expectSingleTabStop(banana)
+
+      vi.advanceTimersByTime(500)
+      pressKey('a', content)
+      expectSingleTabStop(abacus)
+      pressKey('a', content)
+      expectSingleTabStop(able)
+      pressKey('a', content)
+      expectSingleTabStop(abacus)
+      expect(abalone?.tabIndex).toBe(-1)
+    } finally {
+      vi.useRealTimers()
+    }
+  })
 })

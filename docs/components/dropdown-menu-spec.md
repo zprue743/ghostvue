@@ -175,7 +175,11 @@ WAI-ARIA APG **Menu Button** pattern (flat menu):
 | `Escape`                | Open menu      | Close; restore focus to trigger.                                              |
 | `Tab` / `Shift+Tab`     | Open menu      | Closes the menu and moves focus to the next tab stop (no restore to trigger). |
 
-Disabled items are omitted from roving and typeahead.
+Disabled items are omitted from roving and typeahead. Single-character typeahead
+starts searching after the active item to cycle matches; extending a
+multi-character query starts at the active item so it stays focused while it
+still matches, with repeated-character fallback cycling when no item matches the
+repeated prefix.
 
 ### Focus behavior
 

@@ -85,6 +85,28 @@ test.describe('GhostContextMenu', () => {
       await page.keyboard.press('h')
       await expect(checkbox).toBeFocused()
 
+      // Extending 's' -> 'so' from Show hidden rows keeps Sort by name focused instead of cycling to Sort by date.
+      await page.waitForTimeout(550)
+      await checkbox.focus()
+      await page.keyboard.press('s')
+      await expect(radioName).toBeFocused()
+      await page.keyboard.press('o')
+      await expect(radioName).toBeFocused()
+      await expect(editItem).toHaveAttribute('tabindex', '-1')
+      await expect(disabledItem).toHaveAttribute('tabindex', '-1')
+      await expect(checkbox).toHaveAttribute('tabindex', '-1')
+      await expect(radioName).toHaveAttribute('tabindex', '0')
+      await expect(radioDate).toHaveAttribute('tabindex', '-1')
+
+      // Rapid repeated 's' after timeout cycles from Sort by name to Sort by date.
+      await page.waitForTimeout(550)
+      await page.keyboard.press('s')
+      await expect(radioDate).toBeFocused()
+      await page.keyboard.press('s')
+      await expect(checkbox).toBeFocused()
+      await expect(checkbox).toHaveAttribute('tabindex', '0')
+      await expect(radioDate).toHaveAttribute('tabindex', '-1')
+
       await page.keyboard.press('Escape')
       await expect(content).toHaveCount(0)
       await expect(trigger).toBeFocused()

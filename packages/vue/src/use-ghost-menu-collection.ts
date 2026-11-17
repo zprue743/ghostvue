@@ -140,8 +140,10 @@ export function useGhostMenuCollection(
         onCleanup(() => {
           element.removeEventListener('keydown', onKeyDown)
           element.removeEventListener('focusin', onFocusIn)
+          typeahead = ''
           if (typeaheadTimer !== undefined) {
             clearTimeout(typeaheadTimer)
+            typeaheadTimer = undefined
           }
         })
       },
@@ -294,19 +296,53 @@ function findTypeaheadMatch(
   if (normalized.length === 0) {
     return undefined
   }
-  const start = active ? items.indexOf(active) + 1 : 0
+  const activeIndex = active ? items.indexOf(active) : -1
+  if (normalized.length === 1) {
+    return findMatchFromIndex(items, normalized, activeIndex + 1)
+  }
+
+  const start = activeIndex >= 0 ? activeIndex : 0
+  const directMatch = findMatchFromIndex(items, normalized, start)
+  if (directMatch) {
+    return directMatch
+  }
+
+  // Repeated single-character presses (e.g. "aa" with no "aa*" item) cycle
+  // through items starting with that character rather than stalling.
+  const firstChar = normalized[0]
+  if (firstChar && isRepeatedCharacterQuery(normalized, firstChar)) {
+    return findMatchFromIndex(items, firstChar, activeIndex + 1)
+  }
+
+  return undefined
+}
+
+function findMatchFromIndex(
+  items: HTMLElement[],
+  normalizedQuery: string,
+  startIndex: number,
+): HTMLElement | undefined {
   for (let offset = 0; offset < items.length; offset++) {
-    const item = items[(start + offset) % items.length]
+    const item = items[(startIndex + offset) % items.length]
     if (!item) {
       continue
     }
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- live DOM allows null `textContent`.
     const text = (item.textContent ?? '').trim().toLowerCase()
-    if (text.startsWith(normalized)) {
+    if (text.startsWith(normalizedQuery)) {
       return item
     }
   }
   return undefined
+}
+
+function isRepeatedCharacterQuery(query: string, char: string): boolean {
+  for (let i = 1; i < query.length; i++) {
+    if (query[i] !== char) {
+      return false
+    }
+  }
+  return true
 }
 
 function isEditableTarget(target: EventTarget | null): boolean {
