@@ -185,6 +185,17 @@ The component does not await fetches. Consumers:
 Stale responses must not replace newer results: the helper’s `isLatest` gate is
 the supported contract; tests demonstrate a fast-then-slow race.
 
+### Option removal
+
+Consumer filtering, async result replacement, reordering, and virtualization
+unmount options routinely. Unregistering an option only removes it from the live
+registry (highlight, result count, `aria-activedescendant`). It never changes the
+selection: uncontrolled single and multiple values stay selected and keep
+submitting through the form mirror(s), and the closed single-mode input keeps the
+last registered `textValue` for the selected value. No `update:modelValue` is
+emitted. The selection changes only through explicit user selection or
+deselection, native form reset, or the parent's controlled `modelValue`.
+
 ## Consumer data
 
 Options are compound children (`GhostComboboxOption`), identified by stable string
@@ -271,7 +282,9 @@ is consumer-driven via `virtualized` flag and documented highlight contract.
 - **Vue unit:** v-model single/multiple, search emit + requestId monotonic,
   `useGhostComboboxAsyncSearch` stale discard, highlight/Enter/Escape, loading +
   empty, required validation, form reset, controlled parent ignoring updates,
-  virtualized highlight among mounted subset, timer/listener cleanup on unmount
+  virtualized highlight among mounted subset, timer/listener cleanup on unmount,
+  selection + label + FormData preserved when options unmount (filtering,
+  out-of-order async replacement, reorder, remount) without emits
 - **SSR:** `expectSsrHydration` closed combobox
 - **E2E + axe:** keyboard path on playground demo, async example smoke
 - **Visual:** `combobox/themed` via `pnpm test:visual:docker`

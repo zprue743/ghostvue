@@ -116,8 +116,14 @@ nearest preceding `GhostSelectLabel` id in the same group subtree.
 Both use `useControllableState`. Switching controlled ↔ uncontrolled after setup
 is unsupported ([GHOST001](../warnings.md#ghost001)).
 
-Unregistering the selected option clears the internal selection to `undefined`
-without selecting another value (same policy as `GhostRadioGroup`).
+Unregistering an option (conditional rendering, consumer filtering, reordering,
+or remounting) only removes it from the keyboard and typeahead registry. It never
+changes the selection: an uncontrolled value stays selected, keeps submitting
+through the form mirror, and `GhostSelectValue` keeps showing the last registered
+label for it. No `update:modelValue` is emitted. The selection changes only
+through user selection, native form reset, or the parent's controlled
+`modelValue`. This intentionally differs from `GhostRadioGroup`, whose items are
+the visible control rather than a filtered suggestion list.
 
 ### Events, slots, and exposed methods
 
@@ -233,7 +239,8 @@ stays mounted while closed so option labels remain registered.
 - **Vue unit tests:** v-model, uncontrolled/defaultValue, disabled options,
   controlled emit ignore, open/close, typeahead, roving keys, required submit
   input constraint validation, form reset, Field aria wiring, value survives
-  close, defaultValue label while closed, SSR hydration
+  close, defaultValue label while closed, SSR hydration, value + label + FormData
+  survive option unmount/reorder/remount without emits
 - **SSR:** `overlay-ssr.test.ts` closed/open; `expectSsrHydration` integration
 - **E2E + axe:** open/select/close keyboard paths, form submit, docs example
 - **Visual:** `examples/select/themed` baselines via `pnpm test:visual:docker`

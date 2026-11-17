@@ -1,6 +1,5 @@
 import {
   computed,
-  nextTick,
   shallowRef,
   toValue,
   watch,
@@ -70,8 +69,6 @@ export function useGhostCombobox(options: UseGhostComboboxOptions = {}): {
   announceMessage: Ref<string>
   liveRegionId: ComputedRef<string>
 } {
-  let suppressValueChange = false
-
   const multiple = computed(() => Boolean(toValue(options.multiple)))
   const virtualized = computed(() => Boolean(toValue(options.virtualized)))
   const loading = computed(() => Boolean(toValue(options.loading)))
@@ -83,9 +80,6 @@ export function useGhostCombobox(options: UseGhostComboboxOptions = {}): {
       toValue(options.defaultValue) ??
       (multiple.value ? ([] as string[]) : undefined),
     onChange: (next) => {
-      if (suppressValueChange) {
-        return
-      }
       options.onValueChange?.(next)
     },
   })
@@ -236,6 +230,15 @@ export function useGhostCombobox(options: UseGhostComboboxOptions = {}): {
     bumpRegistry()
   }
 
+  /**
+   * Removes an option from the live registry (navigation, result count,
+   * `aria-activedescendant`) without touching the selection. Consumer-owned
+   * filtering, async result replacement, and virtualization unmount options
+   * routinely; the selected value(s) and the cached label in `optionLabels`
+   * must survive so form data and the displayed label never change without a
+   * user action or an `update:modelValue` event. Only explicit user clearing,
+   * native form reset, or the parent's controlled value change the selection.
+   */
   function unregisterOption(value: string): void {
     optionOrder.value = optionOrder.value.filter((entry) => entry !== value)
     optionRegistry.value.delete(value)
@@ -243,40 +246,6 @@ export function useGhostCombobox(options: UseGhostComboboxOptions = {}): {
       activeOptionValue.value = undefined
     }
     bumpRegistry()
-    normalizeSelectionAfterUnregister(value)
-  }
-
-  function normalizeSelectionAfterUnregister(removed: string): void {
-    if (multiple.value) {
-      const current = selectedArray()
-      if (!current.includes(removed)) {
-        return
-      }
-      const controlled = toValue(options.modelValue) !== undefined
-      if (!controlled) {
-        suppressValueChange = true
-        selectedValue.value = current.filter((v) => v !== removed)
-        suppressValueChange = false
-      } else {
-        void nextTick(() => {
-          /* parent owns controlled value when option unmounts */
-        })
-      }
-      return
-    }
-    if (selectedValue.value !== removed) {
-      return
-    }
-    const controlled = toValue(options.modelValue) !== undefined
-    if (!controlled) {
-      suppressValueChange = true
-      selectedValue.value = undefined
-      suppressValueChange = false
-      return
-    }
-    void nextTick(() => {
-      /* parent owns controlled value */
-    })
   }
 
   function selectedArray(): string[] {
