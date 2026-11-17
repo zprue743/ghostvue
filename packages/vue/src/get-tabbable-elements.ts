@@ -5,6 +5,10 @@
  * Visibility uses computed style and hiding attributes rather than layout
  * metrics: jsdom reports 0×0 for every element, so offsetWidth would empty
  * the sequence in unit tests and still be wrong for zero-size controls.
+ *
+ * Scope boundary: queries light-DOM candidates under `root` (or the direct tree
+ * of `root` when `root` itself is a `ShadowRoot`). Does not traverse into nested
+ * open shadow roots or closed shadow roots.
  */
 
 const FOCUSABLE_SELECTOR = [
@@ -25,11 +29,13 @@ const FOCUSABLE_SELECTOR = [
 ].join(',')
 
 export function getTabbableElements(root: ParentNode): HTMLElement[] {
+  const hiddenCache = new Map<HTMLElement, boolean>()
+  const styleCache = new Map<HTMLElement, CSSStyleDeclaration>()
   const tabbable: HTMLElement[] = []
   const rest: HTMLElement[] = []
 
   for (const element of collectCandidates(root)) {
-    if (!isTabbable(element)) {
+    if (!isElementTabbable(element, hiddenCache, styleCache)) {
       continue
     }
     if (element.tabIndex > 0) {
@@ -40,16 +46,43 @@ export function getTabbableElements(root: ParentNode): HTMLElement[] {
   }
 
   tabbable.sort((left, right) => left.tabIndex - right.tabIndex)
-  return [...tabbable, ...rest]
+  return filterRadioGroups(
+    [...tabbable, ...rest],
+    root,
+    hiddenCache,
+    styleCache,
+  )
 }
 
 /** Focusable includes tabindex="-1", which roving items use as the resting stop. */
 export function getFocusableElements(root: ParentNode): HTMLElement[] {
-  return collectCandidates(root).filter((element) => isFocusable(element))
+  const hiddenCache = new Map<HTMLElement, boolean>()
+  const styleCache = new Map<HTMLElement, CSSStyleDeclaration>()
+  return collectCandidates(root).filter((element) =>
+    isElementFocusable(element, hiddenCache, styleCache),
+  )
 }
 
 export function isFocusable(element: HTMLElement): boolean {
-  if (isNativelyDisabledElement(element) || isHidden(element)) {
+  return isElementFocusable(element)
+}
+
+export function isSameRadioGroup(a: Element, b: Element): boolean {
+  if (!isNamedNativeRadio(a) || !isNamedNativeRadio(b) || a.name !== b.name) {
+    return false
+  }
+  return getRadioGroupScope(a) === getRadioGroupScope(b)
+}
+
+function isElementFocusable(
+  element: HTMLElement,
+  hiddenCache?: Map<HTMLElement, boolean>,
+  styleCache?: Map<HTMLElement, CSSStyleDeclaration>,
+): boolean {
+  if (
+    isNativelyDisabledElement(element) ||
+    isHidden(element, hiddenCache, styleCache)
+  ) {
     return false
   }
   if (element.matches(FOCUSABLE_SELECTOR)) {
@@ -80,12 +113,145 @@ export function isDisabledElement(element: HTMLElement): boolean {
   return false
 }
 
-function isTabbable(element: HTMLElement): boolean {
-  if (!isFocusable(element)) {
+function isElementTabbable(
+  element: HTMLElement,
+  hiddenCache?: Map<HTMLElement, boolean>,
+  styleCache?: Map<HTMLElement, CSSStyleDeclaration>,
+): boolean {
+  if (!isElementFocusable(element, hiddenCache, styleCache)) {
     return false
   }
   // jsdom reports tabIndex -1 and omits isContentEditable; browsers still tab here.
   return element.tabIndex >= 0 || isContentEditableHost(element)
+}
+
+function isNamedNativeRadio(element: Element): element is HTMLInputElement {
+  return (
+    element instanceof HTMLInputElement &&
+    element.type === 'radio' &&
+    element.name !== ''
+  )
+}
+
+function getRadioGroupScope(radio: HTMLInputElement): Node {
+  return radio.form ?? radio.getRootNode()
+}
+
+function filterRadioGroups(
+  ordered: HTMLElement[],
+  root: ParentNode,
+  hiddenCache: Map<HTMLElement, boolean>,
+  styleCache: Map<HTMLElement, CSSStyleDeclaration>,
+): HTMLElement[] {
+  const groups = new Map<Node, Map<string, HTMLInputElement[]>>()
+
+  for (const element of ordered) {
+    if (!isNamedNativeRadio(element)) {
+      continue
+    }
+    const scope = getRadioGroupScope(element)
+    let byName = groups.get(scope)
+    if (!byName) {
+      byName = new Map<string, HTMLInputElement[]>()
+      groups.set(scope, byName)
+    }
+    let list = byName.get(element.name)
+    if (!list) {
+      list = []
+      byName.set(element.name, list)
+    }
+    list.push(element)
+  }
+
+  if (groups.size === 0) {
+    return ordered
+  }
+
+  const activeStopByGroup = new Map<
+    Node,
+    Map<string, HTMLInputElement | null>
+  >()
+
+  for (const [scope, byName] of groups) {
+    const selectedByName = new Map<string, HTMLInputElement | null>()
+    activeStopByGroup.set(scope, selectedByName)
+    for (const [name, radios] of byName) {
+      const checked = radios.find((radio) => radio.checked)
+      if (checked) {
+        selectedByName.set(name, checked)
+      } else if (
+        hasExternalCheckedTabbableRadio(
+          scope,
+          name,
+          radios[0]?.form ?? null,
+          root,
+          hiddenCache,
+          styleCache,
+        )
+      ) {
+        selectedByName.set(name, null)
+      } else {
+        selectedByName.set(name, radios[0] ?? null)
+      }
+    }
+  }
+
+  return ordered.filter((element) => {
+    if (!isNamedNativeRadio(element)) {
+      return true
+    }
+    const scope = getRadioGroupScope(element)
+    return activeStopByGroup.get(scope)?.get(element.name) === element
+  })
+}
+
+function hasExternalCheckedTabbableRadio(
+  scope: Node,
+  name: string,
+  form: HTMLFormElement | null,
+  root: ParentNode,
+  hiddenCache: Map<HTMLElement, boolean>,
+  styleCache: Map<HTMLElement, CSSStyleDeclaration>,
+): boolean {
+  if (scope === root) {
+    return false
+  }
+  const isInsideRoot = (el: Element): boolean =>
+    root instanceof Node && root.contains(el)
+
+  if (scope instanceof HTMLFormElement) {
+    for (const control of scope.elements) {
+      if (
+        control instanceof HTMLInputElement &&
+        control.type === 'radio' &&
+        control.checked &&
+        control.name === name &&
+        !isInsideRoot(control) &&
+        isElementTabbable(control, hiddenCache, styleCache)
+      ) {
+        return true
+      }
+    }
+    return false
+  }
+
+  if (scope instanceof Document || scope instanceof ShadowRoot) {
+    const checkedRadios = scope.querySelectorAll<HTMLInputElement>(
+      'input[type="radio"]:checked',
+    )
+    for (const radio of checkedRadios) {
+      if (
+        radio.name === name &&
+        radio.form === form &&
+        !isInsideRoot(radio) &&
+        isElementTabbable(radio, hiddenCache, styleCache)
+      ) {
+        return true
+      }
+    }
+  }
+
+  return false
 }
 
 function isContentEditableHost(element: HTMLElement): boolean {
@@ -106,28 +272,69 @@ function collectCandidates(root: ParentNode): HTMLElement[] {
   return descendants
 }
 
-function isHidden(element: HTMLElement): boolean {
-  if (
-    element.closest('[hidden]') ||
-    element.closest('[inert]') ||
-    element.closest('[aria-hidden="true"]')
-  ) {
-    return true
+function readComputedStyle(
+  element: HTMLElement,
+  styleCache?: Map<HTMLElement, CSSStyleDeclaration>,
+): CSSStyleDeclaration {
+  const cached = styleCache?.get(element)
+  if (cached) {
+    return cached
   }
+  const style = getComputedStyle(element)
+  styleCache?.set(element, style)
+  return style
+}
 
-  // Ancestor `display:none` (e.g. closed `v-show`) hides descendants even when
-  // their own computed display is still `inline-block`.
+function isSubtreeHidden(
+  element: HTMLElement,
+  hiddenCache?: Map<HTMLElement, boolean>,
+  styleCache?: Map<HTMLElement, CSSStyleDeclaration>,
+): boolean {
+  const chain: HTMLElement[] = []
+  let result = false
+
+  // Ancestor `display:none` (e.g. closed `v-show`) and hiding attributes hide
+  // descendants even when their own computed display is still `inline-block`.
   for (
     let node: HTMLElement | null = element;
     node;
     node = node.parentElement
   ) {
-    if (getComputedStyle(node).display === 'none') {
-      return true
+    const cached = hiddenCache?.get(node)
+    if (cached !== undefined) {
+      result = cached
+      break
+    }
+    chain.push(node)
+    if (
+      node.hasAttribute('hidden') ||
+      node.hasAttribute('inert') ||
+      node.getAttribute('aria-hidden') === 'true' ||
+      readComputedStyle(node, styleCache).display === 'none'
+    ) {
+      result = true
+      break
     }
   }
 
-  const own = getComputedStyle(element)
+  if (hiddenCache) {
+    for (const node of chain) {
+      hiddenCache.set(node, result)
+    }
+  }
+  return result
+}
+
+function isHidden(
+  element: HTMLElement,
+  hiddenCache?: Map<HTMLElement, boolean>,
+  styleCache?: Map<HTMLElement, CSSStyleDeclaration>,
+): boolean {
+  if (isSubtreeHidden(element, hiddenCache, styleCache)) {
+    return true
+  }
+
+  const own = readComputedStyle(element, styleCache)
   return own.visibility === 'hidden' || own.visibility === 'collapse'
 }
 

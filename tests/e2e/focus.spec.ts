@@ -146,4 +146,60 @@ test.describe('focus primitives', () => {
       await playground.close()
     }
   })
+
+  test('wraps Tab and Shift+Tab cleanly across checked and trailing unchecked native radios', async ({
+    page,
+  }) => {
+    const playground = await startStaticServer('apps/playground/dist')
+
+    try {
+      await page.goto(playground.url)
+      await page.getByTestId('open-trap-radio').click()
+
+      await expect(page.getByTestId('close-trap-radio')).toBeFocused()
+      await page.keyboard.press('Tab')
+      await expect(page.getByTestId('trap-radio-checked')).toBeFocused()
+      await page.keyboard.press('Tab')
+      await expect(page.getByTestId('close-trap-radio')).toBeFocused()
+
+      await page.keyboard.press('Shift+Tab')
+      await expect(page.getByTestId('trap-radio-checked')).toBeFocused()
+      await page.keyboard.press('Shift+Tab')
+      await expect(page.getByTestId('close-trap-radio')).toBeFocused()
+
+      await page.getByTestId('close-trap-radio').click()
+      await expect(page.getByTestId('open-trap-radio')).toBeFocused()
+    } finally {
+      await playground.close()
+    }
+  })
+
+  test('wraps Tab and Shift+Tab cleanly across an all-unchecked native radio group', async ({
+    page,
+  }) => {
+    const playground = await startStaticServer('apps/playground/dist')
+
+    try {
+      await page.goto(playground.url)
+      await page.getByTestId('open-trap-radio-unchecked').click()
+
+      await expect(page.getByTestId('trap-radio-unchecked-1')).toBeFocused()
+      await page.keyboard.press('Tab')
+      await expect(page.getByTestId('close-trap-radio-unchecked')).toBeFocused()
+      await page.keyboard.press('Tab')
+      await expect(page.getByTestId('trap-radio-unchecked-1')).toBeFocused()
+
+      await page.keyboard.press('Shift+Tab')
+      await expect(page.getByTestId('close-trap-radio-unchecked')).toBeFocused()
+      await page.keyboard.press('Shift+Tab')
+      await expect(page.getByTestId('trap-radio-unchecked-1')).toBeFocused()
+      await page.keyboard.press('Shift+Tab')
+      await expect(page.getByTestId('close-trap-radio-unchecked')).toBeFocused()
+
+      await page.getByTestId('close-trap-radio-unchecked').click()
+      await expect(page.getByTestId('open-trap-radio-unchecked')).toBeFocused()
+    } finally {
+      await playground.close()
+    }
+  })
 })

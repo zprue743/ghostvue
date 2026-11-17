@@ -218,6 +218,24 @@ useFocusScope(trapHidden, {
   restoreFocus: true,
 })
 
+const trapRadioOpen = ref(false)
+const trapRadio = useTemplateRef<HTMLElement>('trap-radio')
+useFocusScope(trapRadio, {
+  trapped: true,
+  loop: true,
+  autoFocus: true,
+  restoreFocus: true,
+})
+
+const trapRadioUncheckedOpen = ref(false)
+const trapRadioUnchecked = useTemplateRef<HTMLElement>('trap-radio-unchecked')
+useFocusScope(trapRadioUnchecked, {
+  trapped: true,
+  loop: true,
+  autoFocus: true,
+  restoreFocus: true,
+})
+
 const nestedOpen = ref(false)
 const nestedInnerOpen = ref(false)
 const nestedOuter = useTemplateRef<HTMLElement>('nested-outer')
@@ -659,6 +677,20 @@ function submitPlaygroundComment(event: Event): void {
       >
         Open trap with hidden first stop
       </button>
+      <button
+        type="button"
+        data-testid="open-trap-radio"
+        @click="trapRadioOpen = true"
+      >
+        Open trap with trailing radio group
+      </button>
+      <button
+        type="button"
+        data-testid="open-trap-radio-unchecked"
+        @click="trapRadioUncheckedOpen = true"
+      >
+        Open trap with unchecked radio group
+      </button>
       <div
         v-if="trapOpen"
         ref="trap"
@@ -702,6 +734,77 @@ function submitPlaygroundComment(event: Event): void {
           @click="trapHiddenOpen = false"
         >
           Close trap hidden
+        </button>
+      </div>
+      <div
+        v-if="trapRadioOpen"
+        ref="trap-radio"
+        tabindex="-1"
+        role="dialog"
+        aria-labelledby="trap-radio-title"
+        data-testid="trap-radio"
+      >
+        <h3 id="trap-radio-title">Trap with trailing radio group</h3>
+        <button
+          type="button"
+          data-testid="close-trap-radio"
+          @click="trapRadioOpen = false"
+        >
+          Close trap radio
+        </button>
+        <label>
+          <input
+            type="radio"
+            name="trap-radio-group"
+            value="a"
+            checked
+            data-testid="trap-radio-checked"
+          />
+          Checked option
+        </label>
+        <label>
+          <input
+            type="radio"
+            name="trap-radio-group"
+            value="b"
+            data-testid="trap-radio-trailing-unchecked"
+          />
+          Trailing unchecked option
+        </label>
+      </div>
+      <div
+        v-if="trapRadioUncheckedOpen"
+        ref="trap-radio-unchecked"
+        tabindex="-1"
+        role="dialog"
+        aria-labelledby="trap-radio-unchecked-title"
+        data-testid="trap-radio-unchecked"
+      >
+        <h3 id="trap-radio-unchecked-title">Trap with unchecked radio group</h3>
+        <label>
+          <input
+            type="radio"
+            name="trap-radio-unchecked-group"
+            value="a"
+            data-testid="trap-radio-unchecked-1"
+          />
+          Option 1
+        </label>
+        <label>
+          <input
+            type="radio"
+            name="trap-radio-unchecked-group"
+            value="b"
+            data-testid="trap-radio-unchecked-2"
+          />
+          Option 2
+        </label>
+        <button
+          type="button"
+          data-testid="close-trap-radio-unchecked"
+          @click="trapRadioUncheckedOpen = false"
+        >
+          Close trap unchecked radio
         </button>
       </div>
 

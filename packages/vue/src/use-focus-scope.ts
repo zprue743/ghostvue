@@ -11,7 +11,11 @@ import {
 } from 'vue'
 
 import { isFocusInUpperDismissableLayer } from './dismissable-layer-stack'
-import { getTabbableElements, isFocusable } from './get-tabbable-elements'
+import {
+  getTabbableElements,
+  isFocusable,
+  isSameRadioGroup,
+} from './get-tabbable-elements'
 
 export interface UseFocusScopeOptions {
   /** When true, focus and Tab/Shift+Tab cannot leave this container. Default false. */
@@ -352,19 +356,23 @@ function handleTab(
 }
 
 function isBeforeTabbables(active: Element, tabbables: HTMLElement[]): boolean {
-  return tabbables.every((tabbable) =>
-    Boolean(
-      tabbable.compareDocumentPosition(active) &
-      Node.DOCUMENT_POSITION_PRECEDING,
-    ),
+  return tabbables.every(
+    (tabbable) =>
+      isSameRadioGroup(active, tabbable) ||
+      Boolean(
+        tabbable.compareDocumentPosition(active) &
+        Node.DOCUMENT_POSITION_PRECEDING,
+      ),
   )
 }
 
 function isAfterTabbables(active: Element, tabbables: HTMLElement[]): boolean {
-  return tabbables.every((tabbable) =>
-    Boolean(
-      tabbable.compareDocumentPosition(active) &
-      Node.DOCUMENT_POSITION_FOLLOWING,
-    ),
+  return tabbables.every(
+    (tabbable) =>
+      isSameRadioGroup(active, tabbable) ||
+      Boolean(
+        tabbable.compareDocumentPosition(active) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+      ),
   )
 }
