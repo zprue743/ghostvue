@@ -177,23 +177,23 @@ tokens that alias them.
 | `elevation.0.border` | `--ghost-elevation-0-border` | color | `transparent` | `transparent` | Level 0 border. Flush surfaces do not stroke. |
 | `elevation.0.highlight` | `--ghost-elevation-0-highlight` | shadow | `inset 0px 1px 0px 0px transparent` | `inset 0px 1px 0px 0px transparent` | Level 0 inset highlight. Unused in light mode. |
 | `elevation.0.shadow` | `--ghost-elevation-0-shadow` | shadow | `0px 0px 0px 0px transparent` | `0px 0px 0px 0px transparent` | Level 0 shadow. No ambient or key layer. |
-| `elevation.1.bg` | `--ghost-elevation-1-bg` | color | `#ffffff` | `#1b1d1f` | Level 1 surface. Resting cards and controls. |
+| `elevation.1.bg` | `--ghost-elevation-1-bg` | color | `#ffffff` | `#1c2533` | Level 1 surface. Resting cards and controls. |
 | `elevation.1.border` | `--ghost-elevation-1-border` | color | `oklch(0.254 0.028 257.5 / 0.18)` | `oklch(0.96 0.005 250 / 0.16)` | Level 1 hairline border. |
 | `elevation.1.highlight` | `--ghost-elevation-1-highlight` | shadow | `inset 0px 1px 0px 0px transparent` | `inset 0px 1px 0px 0px oklch(1 0.005 258 / 0.12)` | Level 1 inset highlight. Unused in light mode. |
 | `elevation.1.shadow` | `--ghost-elevation-1-shadow` | shadow | `0px 1px 2px 0px oklch(0.254 0.028 257.5 / 0.08), 0px 1px 3px 0px oklch(0.254 0.028 257.5 / 0.14)` | `0px 1px 2px 0px oklch(0.08 0.02 258 / 0.28), 0px 1px 2px 0px oklch(0.08 0.02 258 / 0.16)` | Level 1 layered shadow. Ambient plus key light. |
-| `elevation.2.bg` | `--ghost-elevation-2-bg` | color | `#ffffff` | `#24272b` | Level 2 surface. Raised cards and menus. |
+| `elevation.2.bg` | `--ghost-elevation-2-bg` | color | `#ffffff` | `#242c3a` | Level 2 surface. Raised cards and menus. |
 | `elevation.2.border` | `--ghost-elevation-2-border` | color | `oklch(0.254 0.028 257.5 / 0.18)` | `oklch(0.96 0.005 250 / 0.16)` | Level 2 hairline border. |
 | `elevation.2.highlight` | `--ghost-elevation-2-highlight` | shadow | `inset 0px 1px 0px 0px transparent` | `inset 0px 1px 0px 0px oklch(1 0.005 258 / 0.12)` | Level 2 inset highlight. Unused in light mode. |
 | `elevation.2.shadow` | `--ghost-elevation-2-shadow` | shadow | `0px 2px 4px 0px oklch(0.254 0.028 257.5 / 0.08), 0px 4px 10px 0px oklch(0.254 0.028 257.5 / 0.14)` | `0px 2px 4px 0px oklch(0.08 0.02 258 / 0.3), 0px 3px 8px 0px oklch(0.08 0.02 258 / 0.18)` | Level 2 layered shadow. Ambient plus key light. |
-| `elevation.3.bg` | `--ghost-elevation-3-bg` | color | `#ffffff` | `#2e3135` | Level 3 surface. Popovers and floating panels. |
+| `elevation.3.bg` | `--ghost-elevation-3-bg` | color | `#ffffff` | `#2b3441` | Level 3 surface. Popovers and floating panels. |
 | `elevation.3.border` | `--ghost-elevation-3-border` | color | `oklch(0.254 0.028 257.5 / 0.18)` | `oklch(0.96 0.005 250 / 0.16)` | Level 3 hairline border. |
 | `elevation.3.highlight` | `--ghost-elevation-3-highlight` | shadow | `inset 0px 1px 0px 0px transparent` | `inset 0px 1px 0px 0px oklch(1 0.005 258 / 0.12)` | Level 3 inset highlight. Unused in light mode. |
 | `elevation.3.shadow` | `--ghost-elevation-3-shadow` | shadow | `0px 4px 8px 0px oklch(0.254 0.028 257.5 / 0.08), 0px 8px 20px 0px oklch(0.254 0.028 257.5 / 0.14)` | `0px 4px 8px 0px oklch(0.08 0.02 258 / 0.32), 0px 6px 16px 0px oklch(0.08 0.02 258 / 0.2)` | Level 3 layered shadow. Ambient plus key light. |
-| `elevation.4.bg` | `--ghost-elevation-4-bg` | color | `#ffffff` | `#3a3e43` | Level 4 surface. Dialogs and sheets. |
+| `elevation.4.bg` | `--ghost-elevation-4-bg` | color | `#ffffff` | `#343c48` | Level 4 surface. Dialogs and sheets. |
 | `elevation.4.border` | `--ghost-elevation-4-border` | color | `oklch(0.254 0.028 257.5 / 0.18)` | `oklch(0.96 0.005 250 / 0.16)` | Level 4 hairline border. |
 | `elevation.4.highlight` | `--ghost-elevation-4-highlight` | shadow | `inset 0px 1px 0px 0px transparent` | `inset 0px 1px 0px 0px oklch(1 0.005 258 / 0.12)` | Level 4 inset highlight. Unused in light mode. |
 | `elevation.4.shadow` | `--ghost-elevation-4-shadow` | shadow | `0px 8px 16px 0px oklch(0.254 0.028 257.5 / 0.08), 0px 16px 32px 0px oklch(0.254 0.028 257.5 / 0.14)` | `0px 6px 12px 0px oklch(0.08 0.02 258 / 0.34), 0px 10px 24px 0px oklch(0.08 0.02 258 / 0.22)` | Level 4 layered shadow. Ambient plus key light. |
-| `elevation.5.bg` | `--ghost-elevation-5-bg` | color | `#ffffff` | `#464b50` | Level 5 surface. Highest floating layer. |
+| `elevation.5.bg` | `--ghost-elevation-5-bg` | color | `#ffffff` | `#3d4550` | Level 5 surface. Highest floating layer. |
 | `elevation.5.border` | `--ghost-elevation-5-border` | color | `oklch(0.254 0.028 257.5 / 0.18)` | `oklch(0.96 0.005 250 / 0.16)` | Level 5 hairline border. |
 | `elevation.5.highlight` | `--ghost-elevation-5-highlight` | shadow | `inset 0px 1px 0px 0px transparent` | `inset 0px 1px 0px 0px oklch(1 0.005 258 / 0.12)` | Level 5 inset highlight. Unused in light mode. |
 | `elevation.5.shadow` | `--ghost-elevation-5-shadow` | shadow | `0px 12px 24px 0px oklch(0.254 0.028 257.5 / 0.08), 0px 24px 48px 0px oklch(0.254 0.028 257.5 / 0.14)` | `0px 8px 16px 0px oklch(0.08 0.02 258 / 0.36), 0px 14px 32px 0px oklch(0.08 0.02 258 / 0.24)` | Level 5 layered shadow. Ambient plus key light. |
@@ -236,7 +236,7 @@ tokens that alias them.
 | `material.glass.bg` | `--ghost-material-glass-bg` | color | `oklch(1 0 0 / 0.64)` | `oklch(0.27 0.018 258 / 0.55)` | Translucent glass fill. Contrast is gated on the opaque fallback. |
 | `material.glass.blur` | `--ghost-material-glass-blur` | dimension | `1.25rem` | `1.25rem` | Glass backdrop blur radius. |
 | `material.glass.border` | `--ghost-material-glass-border` | color | `oklch(0.254 0.028 257.5 / 0.18)` | `oklch(0.96 0.005 250 / 0.16)` | Glass hairline border. |
-| `material.glass.fallback.bg` | `--ghost-material-glass-fallback-bg` | color | `#ffffff` | `#24272b` | Opaque glass fallback when backdrop-filter is unavailable. |
+| `material.glass.fallback.bg` | `--ghost-material-glass-fallback-bg` | color | `#ffffff` | `#242c3a` | Opaque glass fallback when backdrop-filter is unavailable. |
 | `material.glass.noise` | `--ghost-material-glass-noise` | image | `url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20160%20160%22%3E%3Cfilter%20id%3D%22n%22%3E%3CfeTurbulence%20type%3D%22fractalNoise%22%20baseFrequency%3D%220.8%22%20numOctaves%3D%224%22%20seed%3D%222%22%20stitchTiles%3D%22stitch%22%2F%3E%3C%2Ffilter%3E%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20filter%3D%22url(%23n)%22%2F%3E%3C%2Fsvg%3E")` | `url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20160%20160%22%3E%3Cfilter%20id%3D%22n%22%3E%3CfeTurbulence%20type%3D%22fractalNoise%22%20baseFrequency%3D%220.8%22%20numOctaves%3D%224%22%20seed%3D%222%22%20stitchTiles%3D%22stitch%22%2F%3E%3C%2Ffilter%3E%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20filter%3D%22url(%23n)%22%2F%3E%3C%2Fsvg%3E")` | Glass noise overlay image. |
 | `material.glass.noise.opacity` | `--ghost-material-glass-noise-opacity` | number | `0.04` | `0.04` | Glass noise overlay opacity. |
 | `material.glass.saturate` | `--ghost-material-glass-saturate` | number | `1.45` | `1.45` | Glass backdrop saturation boost. |
@@ -349,8 +349,8 @@ tokens that alias them.
 | `surface.fg` | `--ghost-surface-fg` | color | `#0f172a` | `#f8fafc` | Theme canvas foreground. |
 | `surface.inverse.bg` | `--ghost-surface-inverse-bg` | color | `#0f172a` | `#f8fafc` | Inverted surface background. |
 | `surface.inverse.fg` | `--ghost-surface-inverse-fg` | color | `#ffffff` | `#0f172a` | Foreground on an inverted surface. |
-| `surface.muted.bg` | `--ghost-surface-muted-bg` | color | `#eceff3` | `#2e3135` | Muted surface fill behind grouped content. |
-| `surface.subtle.bg` | `--ghost-surface-subtle-bg` | color | `#f9fafc` | `#1b1d1f` | Subtle surface fill for inset regions. |
+| `surface.muted.bg` | `--ghost-surface-muted-bg` | color | `#eceff3` | `#182030` | Muted surface fill behind grouped content. |
+| `surface.subtle.bg` | `--ghost-surface-subtle-bg` | color | `#f9fafc` | `#151d2d` | Subtle surface fill for inset regions. |
 
 ### text
 
@@ -513,8 +513,11 @@ tokens can alias a stable OKLCH scale.
 | `color.primary.dark.800` | color | `#1c3d64` | Primary 800 (dark-tuned). |
 | `color.primary.dark.900` | color | `#132944` | Primary 900 (dark-tuned). |
 | `color.primary.dark.950` | color | `#0c1a2b` | Primary 950 (dark-tuned). |
-| `color.raised.2` | color | `#24272b` | Dark-mode elevation 2 fill between neutral 950 and 900. |
-| `color.raised.4` | color | `#3a3e43` | Dark-mode elevation 4 fill between neutral 900 and 800. |
+| `color.raised.1` | color | `#1c2533` | Dark-mode elevation 1 fill for resting cards and controls above subtle surfaces. |
+| `color.raised.2` | color | `#242c3a` | Dark-mode elevation 2 fill for raised cards, menus, and tooltips. |
+| `color.raised.3` | color | `#2b3441` | Dark-mode elevation 3 fill for popovers and floating panels. |
+| `color.raised.4` | color | `#343c48` | Dark-mode elevation 4 fill for dialogs and sheets. |
+| `color.raised.5` | color | `#3d4550` | Dark-mode elevation 5 fill for the highest floating layer. |
 | `color.shadow.ambient` | color | `oklch(0.254 0.028 257.5 / 0.08)` | Neutral-hue ambient shadow tint. Alpha is the light-mode rest value. |
 | `color.shadow.highlight` | color | `oklch(1 0.005 258 / 0.12)` | Inset top highlight used by dark-mode elevation. |
 | `color.shadow.key` | color | `oklch(0.254 0.028 257.5 / 0.14)` | Neutral-hue key-light shadow tint. Alpha is the light-mode rest value. |
@@ -542,6 +545,8 @@ tokens can alias a stable OKLCH scale.
 | `color.success.dark.800` | color | `#045227` | Success 800 (dark-tuned). |
 | `color.success.dark.900` | color | `#06371a` | Success 900 (dark-tuned). |
 | `color.success.dark.950` | color | `#05220f` | Success 950 (dark-tuned). |
+| `color.surface.dark.muted` | color | `#182030` | Dark-mode muted well and code surface harmonized with canvas ink. |
+| `color.surface.dark.subtle` | color | `#151d2d` | Dark-mode subtle inset surface harmonized with canvas ink. |
 | `color.warning.100` | color | `#ffeee6` | Warning 100 (light-tuned). |
 | `color.warning.1000` | color | `#180500` | Warning 1000 (light-tuned). |
 | `color.warning.200` | color | `#ffdfce` | Warning 200 (light-tuned). |

@@ -1765,24 +1765,54 @@ export const tokens = {
       dark: "#0c1a2b",
     },
   },
+  "color.raised.1": {
+    name: "color.raised.1",
+    type: "color",
+    tier: "primitive",
+    description: "Dark-mode elevation 1 fill for resting cards and controls above subtle surfaces.",
+    value: {
+      light: "#1c2533",
+      dark: "#1c2533",
+    },
+  },
   "color.raised.2": {
     name: "color.raised.2",
     type: "color",
     tier: "primitive",
-    description: "Dark-mode elevation 2 fill between neutral 950 and 900.",
+    description: "Dark-mode elevation 2 fill for raised cards, menus, and tooltips.",
     value: {
-      light: "#24272b",
-      dark: "#24272b",
+      light: "#242c3a",
+      dark: "#242c3a",
+    },
+  },
+  "color.raised.3": {
+    name: "color.raised.3",
+    type: "color",
+    tier: "primitive",
+    description: "Dark-mode elevation 3 fill for popovers and floating panels.",
+    value: {
+      light: "#2b3441",
+      dark: "#2b3441",
     },
   },
   "color.raised.4": {
     name: "color.raised.4",
     type: "color",
     tier: "primitive",
-    description: "Dark-mode elevation 4 fill between neutral 900 and 800.",
+    description: "Dark-mode elevation 4 fill for dialogs and sheets.",
     value: {
-      light: "#3a3e43",
-      dark: "#3a3e43",
+      light: "#343c48",
+      dark: "#343c48",
+    },
+  },
+  "color.raised.5": {
+    name: "color.raised.5",
+    type: "color",
+    tier: "primitive",
+    description: "Dark-mode elevation 5 fill for the highest floating layer.",
+    value: {
+      light: "#3d4550",
+      dark: "#3d4550",
     },
   },
   "color.shadow.ambient": {
@@ -2053,6 +2083,26 @@ export const tokens = {
     value: {
       light: "#05220f",
       dark: "#05220f",
+    },
+  },
+  "color.surface.dark.muted": {
+    name: "color.surface.dark.muted",
+    type: "color",
+    tier: "primitive",
+    description: "Dark-mode muted well and code surface harmonized with canvas ink.",
+    value: {
+      light: "#182030",
+      dark: "#182030",
+    },
+  },
+  "color.surface.dark.subtle": {
+    name: "color.surface.dark.subtle",
+    type: "color",
+    tier: "primitive",
+    description: "Dark-mode subtle inset surface harmonized with canvas ink.",
+    value: {
+      light: "#151d2d",
+      dark: "#151d2d",
     },
   },
   "color.warning.100": {
@@ -2699,7 +2749,7 @@ export const tokens = {
     description: "Level 1 surface. Resting cards and controls.",
     value: {
       light: "#ffffff",
-      dark: "#1b1d1f",
+      dark: "#1c2533",
     },
   },
   "elevation.1.border": {
@@ -2743,7 +2793,7 @@ export const tokens = {
     description: "Level 2 surface. Raised cards and menus.",
     value: {
       light: "#ffffff",
-      dark: "#24272b",
+      dark: "#242c3a",
     },
   },
   "elevation.2.border": {
@@ -2787,7 +2837,7 @@ export const tokens = {
     description: "Level 3 surface. Popovers and floating panels.",
     value: {
       light: "#ffffff",
-      dark: "#2e3135",
+      dark: "#2b3441",
     },
   },
   "elevation.3.border": {
@@ -2831,7 +2881,7 @@ export const tokens = {
     description: "Level 4 surface. Dialogs and sheets.",
     value: {
       light: "#ffffff",
-      dark: "#3a3e43",
+      dark: "#343c48",
     },
   },
   "elevation.4.border": {
@@ -2875,7 +2925,7 @@ export const tokens = {
     description: "Level 5 surface. Highest floating layer.",
     value: {
       light: "#ffffff",
-      dark: "#464b50",
+      dark: "#3d4550",
     },
   },
   "elevation.5.border": {
@@ -3360,7 +3410,7 @@ export const tokens = {
     description: "Opaque glass fallback when backdrop-filter is unavailable.",
     value: {
       light: "#ffffff",
-      dark: "#24272b",
+      dark: "#242c3a",
     },
   },
   "material.glass.noise": {
@@ -4708,7 +4758,7 @@ export const tokens = {
     description: "Muted surface fill behind grouped content.",
     value: {
       light: "#eceff3",
-      dark: "#2e3135",
+      dark: "#182030",
     },
   },
   "surface.subtle.bg": {
@@ -4719,7 +4769,7 @@ export const tokens = {
     description: "Subtle surface fill for inset regions.",
     value: {
       light: "#f9fafc",
-      dark: "#1b1d1f",
+      dark: "#151d2d",
     },
   },
   "text.danger": {

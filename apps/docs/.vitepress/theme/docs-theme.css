@@ -5,7 +5,7 @@
 html[data-ghost-theme] {
   --vp-c-bg: var(--ghost-surface-bg);
   --vp-c-bg-alt: var(--ghost-surface-subtle-bg);
-  --vp-c-bg-elv: var(--ghost-surface-muted-bg);
+  --vp-c-bg-elv: var(--ghost-elevation-1-bg);
   --vp-c-bg-soft: var(--ghost-surface-subtle-bg);
   --vp-c-text-1: var(--ghost-surface-fg);
   --vp-c-text-2: var(--ghost-text-muted);
@@ -35,15 +35,14 @@ html[data-ghost-theme] {
     var(--ghost-surface-bg) 88%,
     transparent
   );
-  --vp-code-bg: var(--ghost-surface-muted-bg);
   /*
-   * Light Shiki tokens on the muted ramp sit just under 4.5:1; nudge the fence
-   * canvas toward ink so syntax colors keep AA contrast without re-tuning Shiki.
+   * Keep light code fences on a subtle neutral surface between subtle and muted
+   * so code stays distinct from the page and preview while preserving Shiki AA.
    */
   --vp-code-block-bg: color-mix(
     in oklch,
-    var(--ghost-surface-muted-bg) 82%,
-    var(--ghost-surface-fg)
+    var(--ghost-surface-subtle-bg) 60%,
+    var(--ghost-surface-muted-bg)
   );
   --vp-code-bg: var(--vp-code-block-bg);
   --vp-code-copy-code-bg: var(--ghost-surface-bg);
@@ -51,25 +50,15 @@ html[data-ghost-theme] {
 }
 
 /*
- * Dark muted surfaces are grey-green (#2d3233) from the dark-tuned neutral
- * ramp. The docs canvas is navy `--ghost-surface-bg` (#0f172a), so VitePress
- * fences clash unless `--vp-code-block-bg` stays in that navy family.
- * Light appearance keeps the mapping above; these rules are html.dark-only.
+ * Dark muted surfaces now share the canvas ink family (#182030 on #0f172a),
+ * so fences map directly to `--ghost-surface-muted-bg` without a color-mix patch.
  */
 html[data-ghost-theme].dark {
-  --vp-code-block-bg: color-mix(
-    in oklch,
-    var(--ghost-surface-bg) 78%,
-    var(--ghost-surface-muted-bg)
-  );
+  --vp-code-block-bg: var(--ghost-surface-muted-bg);
   --vp-code-bg: var(--vp-code-block-bg);
   --vp-code-block-divider-color: var(--ghost-border-muted);
   --vp-code-copy-code-bg: var(--ghost-surface-bg);
-  --vp-code-copy-code-hover-bg: color-mix(
-    in oklch,
-    var(--ghost-surface-bg) 70%,
-    var(--ghost-surface-muted-bg)
-  );
+  --vp-code-copy-code-hover-bg: var(--ghost-surface-subtle-bg);
 }
 
 /*

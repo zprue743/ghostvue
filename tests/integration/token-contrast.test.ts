@@ -4,6 +4,8 @@ import { resolve } from 'node:path'
 
 import { describe, expect, it } from 'vitest'
 
+import { oklchOf } from '../../packages/themes/scripts/lib/generate-ramps.js'
+
 import {
   compileThemeTokens,
   compileTokenDocuments,
@@ -180,5 +182,50 @@ describe('semantic contrast gate', () => {
       '#facc15',
       '#b49200',
     ])
+  })
+
+  it('maintains a distinct, monotonic dark surface and elevation hierarchy', async () => {
+    const compiled = await compileThemeTokens(tokensDir)
+    const byName = new Map(
+      compiled.tokens.map((token) => [token.name, token.value.dark]),
+    )
+
+    const darkRoles = [
+      'surface.bg',
+      'surface.subtle.bg',
+      'surface.muted.bg',
+      'elevation.1.bg',
+      'elevation.2.bg',
+      'elevation.3.bg',
+      'elevation.4.bg',
+      'elevation.5.bg',
+    ] as const
+
+    const hexes = darkRoles.map((role) => {
+      const value = byName.get(role) ?? ''
+      expect(value, `${role} should exist`).toMatch(/^#[0-9a-f]{6}$/i)
+      return value
+    })
+
+    // Preview stage, muted wells, and resting cards must be distinct surfaces.
+    expect(byName.get('elevation.1.bg')).not.toBe(
+      byName.get('surface.subtle.bg'),
+    )
+    expect(byName.get('elevation.1.bg')).not.toBe(byName.get('surface.bg'))
+    expect(byName.get('elevation.3.bg')).not.toBe(
+      byName.get('surface.muted.bg'),
+    )
+
+    const lightnesses = hexes.map((hex) => oklchOf(hex).l)
+    for (let index = 1; index < lightnesses.length; index += 1) {
+      const currentRole = darkRoles[index] ?? ''
+      const previousRole = darkRoles[index - 1] ?? ''
+      const currentL = lightnesses[index] ?? 0
+      const previousL = lightnesses[index - 1] ?? 0
+      expect(
+        currentL,
+        `${currentRole} should be lighter than ${previousRole}`,
+      ).toBeGreaterThan(previousL)
+    }
   })
 })
