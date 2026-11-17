@@ -1,3 +1,4 @@
+import { existsSync } from 'node:fs'
 import { lstat, mkdir, readFile, writeFile } from 'node:fs/promises'
 import { dirname, join } from 'node:path'
 
@@ -5,6 +6,14 @@ import { format, resolveConfig } from 'prettier'
 
 import { pascalToKebab, serializeManifest } from './component-manifests.js'
 import { execPackageManagerSync } from './package-manager.js'
+
+const BUNDLE_SIZE_BUDGETS_PATH = 'scripts/bundle-size-budgets.json'
+/**
+ * Provisional gzip budget for a scaffolded component import. The neutral
+ * scaffold measures well under 1 kB in either package; 2 kB leaves room for
+ * early implementation without hiding a real regression for long.
+ */
+const SCAFFOLD_BUNDLE_BUDGET_BYTES = 2000
 
 function stableStringify(value) {
   return `${JSON.stringify(value, null, 2)}\n`
@@ -376,6 +385,22 @@ test('${name} scaffold renders accessible content', async ({ page }) => {
       stableStringify(primitives),
     ],
   ])
+
+  // `pnpm size` fails for a component import without a budget. Seed generous
+  // provisional budgets so the scaffold passes `pnpm verify`; re-baseline with
+  // `pnpm size:write` once the approved implementation lands.
+  const budgetsPath = join(repositoryRoot, BUNDLE_SIZE_BUDGETS_PATH)
+  if (existsSync(budgetsPath)) {
+    const budgets = JSON.parse(await readFile(budgetsPath, 'utf8'))
+    for (const pkg of ['@ghostvue/vue', '@ghostvue/themes']) {
+      const id = `${pkg}:${name}`
+      if (id in budgets) {
+        throw new Error(`${name} already has a bundle size budget (${id})`)
+      }
+      budgets[id] = SCAFFOLD_BUNDLE_BUDGET_BYTES
+    }
+    edits.set(BUNDLE_SIZE_BUDGETS_PATH, stableStringify(budgets))
+  }
 
   for (const [path, source] of [...files, ...edits]) {
     if (!path.endsWith('.manifest.json')) {

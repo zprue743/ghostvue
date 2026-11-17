@@ -35,13 +35,18 @@ function mountLayer(setup: () => unknown, render: () => ReturnType<typeof h>) {
 
 function pressKey(
   key: string,
-  options: { defaultPrevented?: boolean; isComposing?: boolean } = {},
+  options: {
+    defaultPrevented?: boolean
+    isComposing?: boolean
+    keyCode?: number
+  } = {},
 ): KeyboardEvent {
   const event = new KeyboardEvent('keydown', {
     key,
     bubbles: true,
     cancelable: true,
     isComposing: options.isComposing ?? false,
+    keyCode: options.keyCode ?? 0,
   })
   if (options.defaultPrevented) {
     event.preventDefault()
@@ -105,6 +110,8 @@ describe('useDismissableLayer', () => {
     pressKey('Enter')
     pressKey('Escape', { defaultPrevented: true })
     pressKey('Escape', { isComposing: true })
+    // WebKit: the keydown after compositionend reports keyCode 229 only.
+    pressKey('Escape', { keyCode: 229 })
     expect(onDismiss).not.toHaveBeenCalled()
 
     pressKey('Escape')

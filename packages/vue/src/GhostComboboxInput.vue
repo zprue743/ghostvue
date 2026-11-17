@@ -15,6 +15,7 @@ import {
   type GhostComboboxInputElement,
   type GhostComboboxInputExposed,
 } from './ghost-combobox'
+import { isImeComposing } from './is-ime-composing'
 
 defineOptions({ inheritAttrs: false })
 
@@ -204,7 +205,13 @@ function handleKeydown(event: KeyboardEvent): void {
     return
   }
   invokeAttrHandler(attrs['onKeydown'], event)
-  if (event.defaultPrevented) {
+  // While an IME is composing, ArrowUp/ArrowDown move through its candidate
+  // list, Enter confirms the candidate, and Escape cancels the composition.
+  // Consumer handlers above still observe the event, but the combobox must not
+  // open, move the active option, select, or close. Escape is left
+  // un-prevented and the dismissable layer applies the same guard, so the
+  // popup stays open. See `isImeComposing` for the keyCode 229 fallback.
+  if (event.defaultPrevented || isImeComposing(event)) {
     return
   }
 
