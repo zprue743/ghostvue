@@ -16,6 +16,7 @@ import {
   restoreDocsThemeScript,
 } from './theme/restore-theme'
 import { renderLocalSearchDocument } from './search-local'
+import { DEMO_CSS_LAYER_PRELUDE, demoCssLayersPlugin } from './demo-css-layers'
 
 function packageSrc(relative: string): string {
   return fileURLToPath(
@@ -48,6 +49,7 @@ export default defineConfig({
       },
     ],
     ['link', { rel: 'apple-touch-icon', href: '/icons/apple-touch-icon.png' }],
+    ['style', { id: 'ghost-demo-css-layers' }, DEMO_CSS_LAYER_PRELUDE],
     ['script', { id: 'ghost-docs-theme-restore' }, restoreDocsThemeScript],
   ],
   transformHtml(code) {
@@ -64,6 +66,7 @@ export default defineConfig({
   },
   vite: {
     plugins: [
+      demoCssLayersPlugin(),
       {
         name: 'ghost-docs-theme-host',
         transformIndexHtml(html) {

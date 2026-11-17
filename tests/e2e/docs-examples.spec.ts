@@ -308,4 +308,79 @@ test.describe('docs example previews', () => {
       await docs.close()
     }
   })
+
+  test('VitePress reset/prose layers stay below theme recipes and unlayered consumer overrides win without !important', async ({
+    page,
+  }) => {
+    const docs = await startStaticServer('apps/docs/.vitepress/dist')
+
+    try {
+      await page.goto(`${docs.url}/components/input.html`)
+
+      const layerOrder = await page.evaluate(() => {
+        const rules: string[] = []
+        for (const sheet of document.styleSheets) {
+          try {
+            for (const rule of sheet.cssRules) {
+              if (rule instanceof CSSLayerStatementRule) {
+                rules.push(rule.nameList.join(','))
+              }
+            }
+          } catch {
+            // Skip cross-origin sheets if any.
+          }
+        }
+        return rules
+      })
+      expect(layerOrder).toContain(
+        'ghostvue-vitepress,ghostvue-demo-reset,ghostvue-theme',
+      )
+
+      // Inject ordinary unlayered consumer rules (no !important) and verify they
+      // override @layer ghostvue-theme and @layer ghostvue-vitepress on GhostInput.
+      const input = page
+        .locator('[data-example-id="input/themed"]')
+        .getByTestId('ghost-example-preview')
+        .locator('.ghost-input')
+        .first()
+      await expect(input).toBeVisible()
+
+      await page.addStyleTag({
+        content:
+          '.custom-input { border-color: rgb(220, 38, 38); padding-inline-start: 28px; }',
+      })
+      await input.evaluate((el) => {
+        el.classList.add('custom-input')
+      })
+
+      await expect(input).toHaveCSS('border-top-color', 'rgb(220, 38, 38)')
+      await expect(input).toHaveCSS('padding-inline-start', '28px')
+
+      // Verify ordinary .custom-link wins over .vp-doc a and @layer ghostvue-theme without !important.
+      await page.goto(`${docs.url}/components/link.html`)
+      const link = page
+        .locator('[data-example-id="link/themed"]')
+        .getByTestId('ghost-example-preview')
+        .locator('.ghost-link')
+        .first()
+      await expect(link).toBeVisible()
+
+      await page.addStyleTag({
+        content:
+          '.custom-link { color: rgb(22, 163, 74); text-decoration: none; }',
+      })
+      await link.evaluate((el) => {
+        el.classList.add('custom-link')
+      })
+
+      await expect(link).toHaveCSS('color', 'rgb(22, 163, 74)')
+      await expect(link).toHaveCSS('text-decoration-line', 'none')
+
+      // Navigation remains visible and interactive.
+      await expect(page.locator('.VPNavBar')).toBeVisible()
+      await expect(page.locator('.VPSidebar')).toBeVisible()
+    } finally {
+      await docs.close()
+    }
+  })
 })
