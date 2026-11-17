@@ -5,6 +5,7 @@
   "timezone": "UTC",
   "schedule": ["before 6am on monday"],
   "rangeStrategy": "pin",
+  "minimumReleaseAge": "3 days",
   "automerge": false,
   "platformAutomerge": false,
   "prConcurrentLimit": 5,
@@ -18,6 +19,7 @@
   "vulnerabilityAlerts": {
     "enabled": true,
     "labels": ["dependencies", "security"],
+    "minimumReleaseAge": null,
     "automerge": false
   },
   "customManagers": [

@@ -69,6 +69,9 @@ requests on Monday mornings (UTC):
 - npm versions stay exact (`rangeStrategy: "pin"`), matching `saveExact` in
   `pnpm-workspace.yaml`. Installs keep `strictPeerDependencies` and
   `engineStrict`; Renovate does not override them.
+- A new release must be at least 3 days old before Renovate proposes it
+  (`minimumReleaseAge`), which gives the registry time to pull a bad or
+  compromised version. Security fixes are not delayed.
 - GitHub Actions are grouped into one pull request and kept as commit SHAs with
   a version comment (`helpers:pinGitHubActionDigests`).
 - Playwright packages and the Playwright container image are updated together.
