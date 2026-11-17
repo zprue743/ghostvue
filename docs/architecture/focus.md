@@ -19,6 +19,29 @@ SSR setup must not touch the document. Both composables register listeners in
 `onMounted` (and in the handlers those listeners call) and remove them on
 unmount or when the container becomes `null`.
 
+### Tabbable query (`getTabbableElements`)
+
+`getTabbableElements(root)` models platform Tab stops without external runtime
+dependencies:
+
+- **Native radio groups:** Named `<input type="radio">` elements are grouped by
+  `(radio.form ?? radio.getRootNode(), radio.name)`. Each group contributes at
+  most one Tab stop: the checked tabbable radio if one exists (including a
+  non-inert checked radio in the same form/root outside `root`), or the first
+  tabbable radio when none is checked. Disabled, hidden, and `tabindex="-1"`
+  checked radios do not suppress enabled siblings. Unnamed radios remain
+  independent Tab stops, and `useFocusScope` treats same-group radios as a
+  single edge for `Tab` / `Shift+Tab` wrapping.
+- **Visibility memoization:** Within a single query, ancestor `[hidden]`,
+  `[inert]`, `[aria-hidden="true"]`, and computed `display: none` / `visibility`
+  checks are memoized per element to avoid repeated `getComputedStyle` walks.
+- **Open-shadow-root boundary:** `getTabbableElements(root)` queries light-DOM
+  candidates under `root` via `querySelectorAll` (or the direct tree of `root`
+  when `root` itself is a `ShadowRoot`). It does not traverse into nested open
+  shadow roots on light-DOM descendants, and closed shadow roots are never
+  supported. Extending traversal into nested open shadow roots is gated on a
+  concrete failing supported use case and must not add a runtime dependency.
+
 ## `useFocusScope(container, options?)`
 
 Activates when `container` resolves to an element. Deactivates when it becomes
