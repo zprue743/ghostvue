@@ -153,6 +153,15 @@ const priceFilter = ref(40)
 const priceInterval = ref<readonly [number, number]>([20, 80])
 const volumeLevel = ref(55)
 const sliderBoundSubmitted = ref('')
+const sliderLabInheritedDir = ref<'ltr' | 'rtl'>('rtl')
+const sliderLabReactiveDir = ref<'ltr' | 'rtl'>('ltr')
+const sliderSingleSm = ref(0)
+const sliderSingleMd = ref(50)
+const sliderSingleLg = ref(100)
+const sliderRangeMd = ref<readonly [number, number]>([0, 100])
+const sliderVerticalSm = ref(50)
+const sliderVerticalRangeLg = ref<readonly [number, number]>([20, 80])
+const sliderReactiveVal = ref(25)
 
 function onSliderFilterSubmit(event: Event): void {
   event.preventDefault()
@@ -896,6 +905,90 @@ function submitPlaygroundComment(event: Event): void {
           disabled
           data-testid="slider-themed-vertical"
         />
+      </div>
+      <div class="ghost-theme" data-testid="slider-geometry-lab">
+        <div style="display: flex; gap: 0.75rem; margin-block: 0.75rem">
+          <button
+            type="button"
+            data-testid="slider-toggle-inherited-dir"
+            @click="
+              sliderLabInheritedDir =
+                sliderLabInheritedDir === 'rtl' ? 'ltr' : 'rtl'
+            "
+          >
+            Toggle inherited dir ({{ sliderLabInheritedDir }})
+          </button>
+          <button
+            type="button"
+            data-testid="slider-toggle-reactive-dir"
+            @click="
+              sliderLabReactiveDir =
+                sliderLabReactiveDir === 'rtl' ? 'ltr' : 'rtl'
+            "
+          >
+            Toggle reactive dir ({{ sliderLabReactiveDir }})
+          </button>
+        </div>
+        <div
+          :dir="sliderLabInheritedDir"
+          data-testid="slider-inherited-dir-host"
+          style="
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            align-items: center;
+          "
+        >
+          <GhostSliderThemed
+            v-model="sliderSingleSm"
+            size="sm"
+            aria-label="Horizontal single sm"
+            data-testid="slider-lab-h-single-sm"
+          />
+          <GhostSliderThemed
+            v-model="sliderSingleMd"
+            size="md"
+            aria-label="Horizontal single md"
+            data-testid="slider-lab-h-single-md"
+          />
+          <GhostSliderThemed
+            v-model="sliderSingleLg"
+            size="lg"
+            aria-label="Horizontal single lg"
+            data-testid="slider-lab-h-single-lg"
+          />
+          <GhostSliderThemed
+            v-model="sliderRangeMd"
+            range
+            size="md"
+            aria-label="Horizontal range md"
+            data-testid="slider-lab-h-range-md"
+          />
+          <GhostSliderThemed
+            v-model="sliderVerticalSm"
+            orientation="vertical"
+            size="sm"
+            aria-label="Vertical single sm"
+            data-testid="slider-lab-v-single-sm"
+          />
+          <GhostSliderThemed
+            v-model="sliderVerticalRangeLg"
+            range
+            orientation="vertical"
+            size="lg"
+            aria-label="Vertical range lg"
+            data-testid="slider-lab-v-range-lg"
+          />
+        </div>
+        <div style="margin-block-start: 0.75rem">
+          <GhostSliderThemed
+            v-model="sliderReactiveVal"
+            :dir="sliderLabReactiveDir"
+            size="lg"
+            aria-label="Reactive dir slider"
+            data-testid="slider-lab-reactive-dir"
+          />
+        </div>
       </div>
     </section>
 

@@ -72,6 +72,7 @@ const rangeEndLabelHints = computed(() =>
 
 const {
   value,
+  dir,
   rootProps,
   trackProps,
   rangeProps,
@@ -116,7 +117,7 @@ const railStyle = computed(() =>
         position: 'absolute' as const,
         insetBlock: '0',
         insetInlineStart: '50%',
-        transform: 'translateX(-50%)',
+        transform: dir.value === 'rtl' ? 'translateX(50%)' : 'translateX(-50%)',
         inlineSize: '0.375rem',
         blockSize: '100%',
       }

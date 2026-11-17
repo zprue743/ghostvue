@@ -186,8 +186,11 @@ Headless `data-part` hooks:
 | `range` | Selected interval fill (range mode or single fill from min) |
 | `thumb` | Draggable value handle (`data-thumb-index` `0` \| `1`)      |
 
-Thumbs are positioned with inline axis percentage. Vertical sliders use block
-axis percentage on the thumb.
+Thumbs are positioned with inline axis percentage and centered along the inline
+axis according to the resolved text direction (`-50%` in LTR, `+50%` in RTL,
+reacting to `dir` changes on the root or ancestors). Vertical sliders use block
+axis percentage on the thumb and apply the same direction-aware inline
+centering to both the rail and thumb.
 
 ## Environment behavior
 
