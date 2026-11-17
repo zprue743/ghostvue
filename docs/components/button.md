@@ -86,7 +86,8 @@ cancellation, and any success or failure announcement.
 ## Icon-only actions
 
 Icon-only buttons require an accessible name. Hide decorative icon content from
-assistive technology.
+assistive technology with `aria-hidden="true"` (and `focusable="false"` on
+inline SVG).
 
 <GhostExample id="button/icon-only" />
 
@@ -95,6 +96,14 @@ unstyled component uses `data-icon-only` instead. Text buttons normally receive
 their accessible name from the slot. You can also forward `aria-labelledby` or
 `aria-describedby`, or compose with `GhostVisuallyHidden` when the name should
 be translated as content.
+
+GhostButton ships no icons and has no icon prop or icon slot. Put your own icon
+component or SVG in the default slot and add `data-part="icon"` so the themed
+wrapper sizes it with `--ghost-action-icon-size`; it inherits the button color
+through `currentColor`. A consumer element with `data-part="loading-indicator"`
+replaces the themed default loading ring. See
+[ADR 0013: Icon strategy](../adr/0013-icon-strategy.md) and
+[icons in the default theme](../themes/default.md#icons).
 
 ## Component refs
 

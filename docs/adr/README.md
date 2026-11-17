@@ -23,3 +23,4 @@ new context rather than rewriting history.
 - [0010 — Rebrand to GhostVue](./0010-rebrand-to-ghostvue.md)
 - [0011 — Overlay primitives](./0011-overlay-primitives.md)
 - [0012 — Modal overlays](./0012-modal-overlays.md)
+- [0013 — Icon strategy](./0013-icon-strategy.md)
