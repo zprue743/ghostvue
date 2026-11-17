@@ -182,9 +182,9 @@ function labelOf(value: string): string {
     </GhostCombobox>
     <p>
       Rejected close requests:
-      <output data-testid="combobox-pinned-rejections">{{
+      <span data-testid="combobox-pinned-rejections">{{
         rejectedCloseCount
-      }}</output>
+      }}</span>
     </p>
     <button
       type="button"
