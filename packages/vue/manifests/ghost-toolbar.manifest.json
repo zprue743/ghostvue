@@ -82,7 +82,17 @@
       }
     ],
     "states": [],
-    "cssProperties": []
+    "cssProperties": [],
+    "attributes": [
+      {
+        "name": "data-orientation",
+        "values": [
+          "horizontal",
+          "vertical"
+        ],
+        "description": "Resolved orientation on the root. Always present."
+      }
+    ]
   },
   "accessibility": {
     "role": "toolbar",

@@ -219,7 +219,14 @@
         "description": "Root while every control is disabled."
       }
     ],
-    "cssProperties": []
+    "cssProperties": [],
+    "attributes": [
+      {
+        "name": "data-disabled",
+        "values": [],
+        "description": "Present on a first, previous, next, last, or page control while it cannot be activated, either because the whole pagination is disabled or because the control points at the current boundary."
+      }
+    ]
   },
   "accessibility": {
     "role": "navigation",

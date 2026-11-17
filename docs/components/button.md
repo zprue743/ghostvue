@@ -116,6 +116,25 @@ wrapper to target.
 }
 ```
 
+These hooks are the stable styling API (see the
+[styling hook contract](../architecture/styling.md#styling-hooks)), so utility
+CSS can target them directly. With Tailwind CSS data variants:
+
+```vue
+<template>
+  <GhostButton
+    :loading="saving"
+    class="rounded-md bg-blue-600 px-3 py-2 text-white data-[state=disabled]:opacity-50 data-[state=loading]:cursor-progress"
+  >
+    Save
+  </GhostButton>
+</template>
+```
+
+The themed wrapper adds `data-variant`, `data-tone`, `data-size`,
+`data-block`, `data-icon-only`, `data-interactive`, and
+`data-interactive-state`; the generated reference lists their values.
+
 ## Accessibility and environment behavior
 
 Enabled buttons retain native `Enter`, `Space`, pointer, touch, and focus

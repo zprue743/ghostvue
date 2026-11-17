@@ -64,7 +64,12 @@ Every manifest lists:
 - `events` and payload types (component emits only)
 - `slots` and slot props
 - `exposed` methods and properties
-- styling hooks — `data-part`, `data-state`, `--ghost-*` custom properties
+- styling hooks — `data-part` values (`styling.parts`), `data-state` values
+  (`styling.states`), `--ghost-*` custom properties (`styling.cssProperties`),
+  and optional `styling.attributes` for other stable `data-*` hooks such as
+  `data-disabled` or `data-orientation` (name, values, description; an empty
+  value list means a presence attribute). The contract is in
+  [styling](./styling.md#styling-hooks).
 - accessibility — role, APG pattern URL, keyboard map, required ARIA
   attributes
 - `examples` — stable example ids matching `examples/<id>.vue`

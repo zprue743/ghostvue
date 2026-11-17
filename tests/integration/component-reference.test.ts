@@ -131,6 +131,29 @@ describe('component reference generation', () => {
     expect(manifestToMarkdown(manifest)).toBe(markdown)
   })
 
+  it('lists extra data attributes with their values or presence', () => {
+    const markdown = manifestToMarkdown({
+      ...manifest,
+      styling: {
+        ...manifest.styling,
+        attributes: [
+          {
+            name: 'data-orientation',
+            values: ['horizontal', 'vertical'],
+            description: 'Axis.',
+          },
+          { name: 'data-disabled', values: [], description: 'Disabled.' },
+        ],
+      },
+    })
+    expect(markdown).toContain(
+      '| <code>data-orientation</code> | <code>horizontal</code>, <code>vertical</code> | Axis. |',
+    )
+    expect(markdown).toContain(
+      '| <code>data-disabled</code> | present | Disabled. |',
+    )
+  })
+
   it('escapes type and prose markup and makes empty sections explicit', () => {
     const markdown = manifestToMarkdown({
       ...manifest,

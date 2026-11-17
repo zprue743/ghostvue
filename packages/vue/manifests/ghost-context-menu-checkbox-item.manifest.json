@@ -75,9 +75,30 @@
     }
   ],
   "styling": {
-    "parts": [],
-    "states": [],
-    "cssProperties": []
+    "parts": [
+      {
+        "name": "checkbox-item",
+        "description": "The context menu item element with role=menuitemcheckbox."
+      }
+    ],
+    "states": [
+      {
+        "name": "checked",
+        "description": "The item is checked."
+      },
+      {
+        "name": "unchecked",
+        "description": "The item is not checked."
+      }
+    ],
+    "cssProperties": [],
+    "attributes": [
+      {
+        "name": "data-disabled",
+        "values": [],
+        "description": "Present while the item is disabled, independent of the checked data-state."
+      }
+    ]
   },
   "accessibility": {
     "role": "generic",

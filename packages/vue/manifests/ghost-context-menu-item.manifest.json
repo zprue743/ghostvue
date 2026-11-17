@@ -59,9 +59,21 @@
     }
   ],
   "styling": {
-    "parts": [],
+    "parts": [
+      {
+        "name": "item",
+        "description": "The context menu item element with role=menuitem."
+      }
+    ],
     "states": [],
-    "cssProperties": []
+    "cssProperties": [],
+    "attributes": [
+      {
+        "name": "data-disabled",
+        "values": [],
+        "description": "Present while the item is disabled; absent otherwise."
+      }
+    ]
   },
   "accessibility": {
     "role": "generic",

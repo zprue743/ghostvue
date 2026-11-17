@@ -63,7 +63,18 @@
       }
     ],
     "states": [],
-    "cssProperties": []
+    "cssProperties": [],
+    "attributes": [
+      {
+        "name": "data-orientation",
+        "values": [
+          "vertical",
+          "horizontal",
+          "both"
+        ],
+        "description": "Resolved orientation on the root. Always present."
+      }
+    ]
   },
   "accessibility": {
     "role": "native scrolling",
