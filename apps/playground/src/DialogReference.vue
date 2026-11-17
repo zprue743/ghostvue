@@ -152,6 +152,38 @@ const basicOpen = ref(false)
         </GhostDialogContent>
       </GhostDialog>
 
+      <!-- Scrollable modal dialog -->
+      <GhostDialog>
+        <GhostDialogTrigger data-testid="dialog-scrollable-trigger">
+          Open scrollable dialog
+        </GhostDialogTrigger>
+        <GhostDialogOverlay
+          data-testid="dialog-scrollable-overlay"
+          class="dialog-demo-overlay"
+        />
+        <GhostDialogContent
+          data-testid="dialog-scrollable-content"
+          class="dialog-demo-surface"
+        >
+          <GhostDialogTitle>Scrollable dialog</GhostDialogTitle>
+          <GhostDialogDescription>
+            Scrollable dialog body remains scrollable while viewport is locked.
+          </GhostDialogDescription>
+          <div
+            data-testid="dialog-scrollable-body"
+            tabindex="0"
+            class="dialog-scrollable-body"
+          >
+            <p v-for="item in 24" :key="item">
+              Scrollable dialog row {{ item }}
+            </p>
+          </div>
+          <GhostDialogClose data-testid="dialog-scrollable-close">
+            Close scrollable dialog
+          </GhostDialogClose>
+        </GhostDialogContent>
+      </GhostDialog>
+
       <!-- Dialog hosting portaled and inline (portal=false) popovers -->
       <GhostDialog>
         <GhostDialogTrigger data-testid="dialog-popovers-trigger">
@@ -385,5 +417,12 @@ const basicOpen = ref(false)
   padding: 0.5rem 0.75rem;
   position: fixed;
   z-index: 60;
+}
+
+:global(.dialog-scrollable-body) {
+  border: 1px solid #d1d5db;
+  max-block-size: 10rem;
+  overflow-y: auto;
+  padding: 0.5rem;
 }
 </style>

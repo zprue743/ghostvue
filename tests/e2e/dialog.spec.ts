@@ -352,4 +352,208 @@ test.describe('GhostDialog', () => {
       await playground.close()
     }
   })
+
+  test('locks viewport scrolling when html has overflow-y: scroll, preserves nested locks, and restores styles on close', async ({
+    page,
+  }) => {
+    const playground = await startStaticServer('apps/playground/dist')
+
+    try {
+      await page.setViewportSize({ width: 1024, height: 600 })
+      await page.goto(playground.url)
+      await page.addStyleTag({ content: 'html { overflow-y: scroll; }' })
+
+      const before = await page.evaluate(() => {
+        window.scrollTo(0, 120)
+        const main = document.querySelector('main')
+        return {
+          scrollY: window.scrollY,
+          scrollbarWidth:
+            window.innerWidth - document.documentElement.clientWidth,
+          mainWidth: main ? main.getBoundingClientRect().width : 0,
+          rootStyleAttr: document.documentElement.hasAttribute('style'),
+          bodyStyleAttr: document.body.hasAttribute('style'),
+        }
+      })
+      expect(before.scrollY).toBeGreaterThan(0)
+      expect(before.scrollbarWidth).toBeGreaterThan(0)
+      expect(before.rootStyleAttr).toBe(false)
+      expect(before.bodyStyleAttr).toBe(false)
+
+      const outerTrigger = page.getByTestId('dialog-nested-outer-trigger')
+      const outerContent = page.getByTestId('dialog-nested-outer-content')
+      const innerTrigger = page.getByTestId('dialog-nested-inner-trigger')
+      const innerContent = page.getByTestId('dialog-nested-inner-content')
+
+      await outerTrigger.scrollIntoViewIfNeeded()
+      await outerTrigger.click()
+      await expect(outerContent).toBeVisible()
+
+      const baselineScroll = await page.evaluate(() => window.scrollY)
+
+      // Wheel and keyboard scroll outside the dialog must not scroll the viewport.
+      await page.mouse.move(10, 10)
+      await page.mouse.wheel(0, 300)
+      await page.keyboard.press('PageDown')
+      await page.keyboard.press('ArrowDown')
+      await page.waitForTimeout(100)
+
+      const duringOuter = await page.evaluate((scrollStart) => {
+        const main = document.querySelector('main')
+        return {
+          rootOverflow: document.documentElement.style.overflow,
+          rootPaddingRight: document.documentElement.style.paddingRight,
+          bodyHasStyle: document.body.hasAttribute('style'),
+          mainWidth: main ? main.getBoundingClientRect().width : 0,
+          scrollDelta: window.scrollY - scrollStart,
+        }
+      }, baselineScroll)
+
+      expect(duringOuter.rootOverflow).toBe('hidden')
+      expect(Number.parseFloat(duringOuter.rootPaddingRight)).toBe(
+        before.scrollbarWidth,
+      )
+      expect(duringOuter.bodyHasStyle).toBe(false)
+      expect(Math.abs(duringOuter.mainWidth - before.mainWidth)).toBeLessThan(1)
+      expect(duringOuter.scrollDelta).toBe(0)
+
+      // Opening a nested dialog preserves the existing lock without double padding.
+      await innerTrigger.click()
+      await expect(innerContent).toBeVisible()
+
+      const duringNested = await page.evaluate(() => ({
+        rootOverflow: document.documentElement.style.overflow,
+        rootPaddingRight: document.documentElement.style.paddingRight,
+      }))
+      expect(duringNested.rootOverflow).toBe('hidden')
+      expect(Number.parseFloat(duringNested.rootPaddingRight)).toBe(
+        before.scrollbarWidth,
+      )
+
+      // Closing inner dialog keeps viewport locked for the outer dialog.
+      await page.getByTestId('dialog-nested-inner-close').click()
+      await expect(innerContent).toHaveCount(0)
+      await expect(outerContent).toBeVisible()
+
+      await page.mouse.move(10, 10)
+      await page.mouse.wheel(0, 250)
+      await page.waitForTimeout(100)
+
+      const afterInnerClose = await page.evaluate(
+        (scrollStart) => ({
+          rootOverflow: document.documentElement.style.overflow,
+          scrollDelta: window.scrollY - scrollStart,
+        }),
+        baselineScroll,
+      )
+      expect(afterInnerClose.rootOverflow).toBe('hidden')
+      expect(afterInnerClose.scrollDelta).toBe(0)
+
+      // Closing outer dialog restores documentElement inline styles and unlocks scrolling.
+      await page.getByTestId('dialog-nested-outer-close').click()
+      await expect(outerContent).toHaveCount(0)
+
+      const afterOuterClose = await page.evaluate(() => {
+        const main = document.querySelector('main')
+        return {
+          rootHasStyle: document.documentElement.hasAttribute('style'),
+          bodyHasStyle: document.body.hasAttribute('style'),
+          mainWidth: main ? main.getBoundingClientRect().width : 0,
+        }
+      })
+      expect(afterOuterClose.rootHasStyle).toBe(false)
+      expect(afterOuterClose.bodyHasStyle).toBe(false)
+      expect(
+        Math.abs(afterOuterClose.mainWidth - before.mainWidth),
+      ).toBeLessThan(1)
+
+      await page.mouse.wheel(0, 200)
+      await page.waitForTimeout(100)
+      const unlockedScroll = await page.evaluate(() => window.scrollY)
+      expect(unlockedScroll).toBeGreaterThan(baselineScroll)
+    } finally {
+      await playground.close()
+    }
+  })
+
+  for (const mode of ['default-body', 'html-overflow-y-scroll'] as const) {
+    test(`keeps scrollable dialog content scrollable while locking viewport (${mode})`, async ({
+      page,
+    }) => {
+      const playground = await startStaticServer('apps/playground/dist')
+
+      try {
+        await page.setViewportSize({ width: 1024, height: 600 })
+        await page.goto(playground.url)
+        if (mode === 'html-overflow-y-scroll') {
+          await page.addStyleTag({ content: 'html { overflow-y: scroll; }' })
+        }
+
+        const trigger = page.getByTestId('dialog-scrollable-trigger')
+        await trigger.scrollIntoViewIfNeeded()
+        await trigger.click()
+
+        const content = page.getByTestId('dialog-scrollable-content')
+        const scrollBody = page.getByTestId('dialog-scrollable-body')
+        await expect(content).toBeVisible()
+        await expect(scrollBody).toBeVisible()
+
+        const baselineWindowScroll = await page.evaluate(() => window.scrollY)
+
+        // Wheel outside the dialog does not scroll the viewport.
+        await page.mouse.move(10, 10)
+        await page.mouse.wheel(0, 250)
+        await page.waitForTimeout(100)
+        expect(await page.evaluate(() => window.scrollY)).toBe(
+          baselineWindowScroll,
+        )
+
+        // Wheel inside the dialog scrolls the dialog body, not the viewport.
+        const box = await scrollBody.boundingBox()
+        expect(box).not.toBeNull()
+        if (!box) {
+          throw new Error('Expected scrollable dialog body bounding box')
+        }
+        await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2)
+        await page.mouse.wheel(0, 180)
+        await page.waitForTimeout(100)
+
+        const afterWheel = await page.evaluate(() => {
+          const el = document.querySelector(
+            '[data-testid="dialog-scrollable-body"]',
+          )
+          return {
+            dialogScrollTop: el ? el.scrollTop : 0,
+            windowScrollY: window.scrollY,
+          }
+        })
+        expect(afterWheel.dialogScrollTop).toBeGreaterThan(0)
+        expect(afterWheel.windowScrollY).toBe(baselineWindowScroll)
+
+        // Keyboard scrolling inside the focused dialog body scrolls it further.
+        await scrollBody.focus()
+        await page.keyboard.press('PageDown')
+        await page.waitForTimeout(100)
+
+        const afterKey = await page.evaluate(() => {
+          const el = document.querySelector(
+            '[data-testid="dialog-scrollable-body"]',
+          )
+          return {
+            dialogScrollTop: el ? el.scrollTop : 0,
+            windowScrollY: window.scrollY,
+          }
+        })
+        expect(afterKey.dialogScrollTop).toBeGreaterThan(
+          afterWheel.dialogScrollTop,
+        )
+        expect(afterKey.windowScrollY).toBe(baselineWindowScroll)
+
+        await page.getByTestId('dialog-scrollable-close').click()
+        await expect(content).toHaveCount(0)
+      } finally {
+        await playground.close()
+      }
+    })
+  }
 })
