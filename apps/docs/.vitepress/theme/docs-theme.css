@@ -50,11 +50,16 @@ html[data-ghost-theme] {
 }
 
 /*
- * Dark muted surfaces now share the canvas ink family (#182030 on #0f172a),
- * so fences map directly to `--ghost-surface-muted-bg` without a color-mix patch.
+ * Keep dark code fences closer to the navy canvas (`--ghost-surface-bg`) than
+ * component muted wells so Shiki tokens stay readable without washing out
+ * Skeleton, Input, or Pagination fills that use `--ghost-surface-muted-bg`.
  */
 html[data-ghost-theme].dark {
-  --vp-code-block-bg: var(--ghost-surface-muted-bg);
+  --vp-code-block-bg: color-mix(
+    in oklch,
+    var(--ghost-surface-bg) 72%,
+    var(--ghost-surface-muted-bg)
+  );
   --vp-code-bg: var(--vp-code-block-bg);
   --vp-code-block-divider-color: var(--ghost-border-muted);
   --vp-code-copy-code-bg: var(--ghost-surface-bg);

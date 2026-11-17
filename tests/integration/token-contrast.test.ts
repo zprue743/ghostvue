@@ -1,5 +1,6 @@
 /** @vitest-environment node */
 
+import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 
 import { describe, expect, it } from 'vitest'
@@ -15,6 +16,28 @@ import {
   evaluateContrast,
   extractGradientStopColors,
 } from '../../packages/themes/scripts/lib/contrast.js'
+import {
+  defineTheme,
+  FLAGSHIP_THEME_INPUTS,
+} from '../../packages/themes/scripts/lib/define-theme.js'
+
+function relativeLuminance(hex: string): number {
+  const numeric = Number.parseInt(hex.slice(1), 16)
+  const channels = [(numeric >> 16) & 255, (numeric >> 8) & 255, numeric & 255]
+  const linear = channels.map((channel) => {
+    const srgb = channel / 255
+    return srgb <= 0.03928 ? srgb / 12.92 : ((srgb + 0.055) / 1.055) ** 2.4
+  })
+  return 0.2126 * linear[0] + 0.7152 * linear[1] + 0.0722 * linear[2]
+}
+
+function wcagContrastRatio(firstHex: string, secondHex: string): number {
+  const first = relativeLuminance(firstHex)
+  const second = relativeLuminance(secondHex)
+  const lighter = Math.max(first, second)
+  const darker = Math.min(first, second)
+  return (lighter + 0.05) / (darker + 0.05)
+}
 
 const tokensDir = resolve(process.cwd(), 'packages/themes/tokens')
 
@@ -193,7 +216,6 @@ describe('semantic contrast gate', () => {
     const darkRoles = [
       'surface.bg',
       'surface.subtle.bg',
-      'surface.muted.bg',
       'elevation.1.bg',
       'elevation.2.bg',
       'elevation.3.bg',
@@ -207,13 +229,18 @@ describe('semantic contrast gate', () => {
       return value
     })
 
+    const mutedBg = byName.get('surface.muted.bg') ?? ''
+    expect(mutedBg, 'surface.muted.bg should exist').toMatch(/^#[0-9a-f]{6}$/i)
+
     // Preview stage, muted wells, and resting cards must be distinct surfaces.
     expect(byName.get('elevation.1.bg')).not.toBe(
       byName.get('surface.subtle.bg'),
     )
     expect(byName.get('elevation.1.bg')).not.toBe(byName.get('surface.bg'))
-    expect(byName.get('elevation.3.bg')).not.toBe(
-      byName.get('surface.muted.bg'),
+    expect(byName.get('elevation.3.bg')).not.toBe(mutedBg)
+    // Skeleton fill (surface.muted.bg) must stay lighter than its shimmer (surface.subtle.bg).
+    expect(oklchOf(mutedBg).l).toBeGreaterThan(
+      oklchOf(byName.get('surface.subtle.bg') ?? '').l,
     )
 
     const lightnesses = hexes.map((hex) => oklchOf(hex).l)
@@ -226,6 +253,58 @@ describe('semantic contrast gate', () => {
         currentL,
         `${currentRole} should be lighter than ${previousRole}`,
       ).toBeGreaterThan(previousL)
+    }
+  })
+
+  it('meets dark-mode 3:1 non-text contrast for unchecked Switch and Slider tracks across all themes', async () => {
+    const switchCss = readFileSync(
+      resolve(process.cwd(), 'packages/themes/src/ghost-switch.css'),
+      'utf8',
+    )
+    const sliderCss = readFileSync(
+      resolve(process.cwd(), 'packages/themes/src/ghost-slider.css'),
+      'utf8',
+    )
+    const switchTrackVar =
+      /--_ghost-switch-track:\s*var\((--ghost-[a-z0-9-]+)\)/.exec(
+        switchCss,
+      )?.[1]
+    const sliderTrackVar =
+      /--_ghost-slider-track:\s*var\((--ghost-[a-z0-9-]+)\)/.exec(
+        sliderCss,
+      )?.[1]
+    expect(switchTrackVar).toBeTruthy()
+    expect(sliderTrackVar).toBeTruthy()
+
+    const defaultCompiled = await compileThemeTokens(tokensDir)
+    const catalogs = [
+      { name: 'default', tokens: defaultCompiled.tokens },
+      ...FLAGSHIP_THEME_INPUTS.map((input) => ({
+        name: input.name,
+        tokens: defineTheme(input).tokens,
+      })),
+    ]
+
+    for (const catalog of catalogs) {
+      const byCssVar = new Map(
+        catalog.tokens.map((token) => [token.cssVar, token.value.dark]),
+      )
+      const surfaceBg = byCssVar.get('--ghost-surface-bg') ?? ''
+      const switchTrack = byCssVar.get(switchTrackVar ?? '') ?? ''
+      const sliderTrack = byCssVar.get(sliderTrackVar ?? '') ?? ''
+
+      expect(surfaceBg).toMatch(/^#[0-9a-f]{6}$/i)
+      expect(switchTrack).toMatch(/^#[0-9a-f]{6}$/i)
+      expect(sliderTrack).toMatch(/^#[0-9a-f]{6}$/i)
+
+      expect(
+        wcagContrastRatio(switchTrack, surfaceBg),
+        `${catalog.name} unchecked Switch track vs surface.bg`,
+      ).toBeGreaterThanOrEqual(3)
+      expect(
+        wcagContrastRatio(sliderTrack, surfaceBg),
+        `${catalog.name} Slider track vs surface.bg`,
+      ).toBeGreaterThanOrEqual(3)
     }
   })
 })

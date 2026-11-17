@@ -24,8 +24,8 @@
         },
         "muted": {
           "$type": "color",
-          "$value": "#182030",
-          "$description": "Dark-mode muted well and code surface harmonized with canvas ink."
+          "$value": "#293240",
+          "$description": "Dark-mode muted well surface harmonized with canvas ink."
         }
       }
     },

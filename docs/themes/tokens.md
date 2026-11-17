@@ -349,7 +349,7 @@ tokens that alias them.
 | `surface.fg` | `--ghost-surface-fg` | color | `#0f172a` | `#f8fafc` | Theme canvas foreground. |
 | `surface.inverse.bg` | `--ghost-surface-inverse-bg` | color | `#0f172a` | `#f8fafc` | Inverted surface background. |
 | `surface.inverse.fg` | `--ghost-surface-inverse-fg` | color | `#ffffff` | `#0f172a` | Foreground on an inverted surface. |
-| `surface.muted.bg` | `--ghost-surface-muted-bg` | color | `#eceff3` | `#182030` | Muted surface fill behind grouped content. |
+| `surface.muted.bg` | `--ghost-surface-muted-bg` | color | `#eceff3` | `#293240` | Muted surface fill behind grouped content. |
 | `surface.subtle.bg` | `--ghost-surface-subtle-bg` | color | `#f9fafc` | `#151d2d` | Subtle surface fill for inset regions. |
 
 ### text
@@ -545,7 +545,7 @@ tokens can alias a stable OKLCH scale.
 | `color.success.dark.800` | color | `#045227` | Success 800 (dark-tuned). |
 | `color.success.dark.900` | color | `#06371a` | Success 900 (dark-tuned). |
 | `color.success.dark.950` | color | `#05220f` | Success 950 (dark-tuned). |
-| `color.surface.dark.muted` | color | `#182030` | Dark-mode muted well and code surface harmonized with canvas ink. |
+| `color.surface.dark.muted` | color | `#293240` | Dark-mode muted well surface harmonized with canvas ink. |
 | `color.surface.dark.subtle` | color | `#151d2d` | Dark-mode subtle inset surface harmonized with canvas ink. |
 | `color.warning.100` | color | `#ffeee6` | Warning 100 (light-tuned). |
 | `color.warning.1000` | color | `#180500` | Warning 1000 (light-tuned). |

@@ -2089,10 +2089,10 @@ export const tokens = {
     name: "color.surface.dark.muted",
     type: "color",
     tier: "primitive",
-    description: "Dark-mode muted well and code surface harmonized with canvas ink.",
+    description: "Dark-mode muted well surface harmonized with canvas ink.",
     value: {
-      light: "#182030",
-      dark: "#182030",
+      light: "#293240",
+      dark: "#293240",
     },
   },
   "color.surface.dark.subtle": {
@@ -4758,7 +4758,7 @@ export const tokens = {
     description: "Muted surface fill behind grouped content.",
     value: {
       light: "#eceff3",
-      dark: "#182030",
+      dark: "#293240",
     },
   },
   "surface.subtle.bg": {
