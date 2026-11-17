@@ -167,40 +167,24 @@ onUnmounted(() => {
   border-block-start: 1px solid var(--ghost-border-muted, var(--vp-c-divider));
 }
 
+/*
+ * `overflow-x: auto` (wide tables, toolbars) forces `overflow-y` to clip too,
+ * which cut focus rings on controls touching the stage edge. The padding is
+ * room for the largest recipe ring (width + offset); the matching negative
+ * margin keeps the demo exactly where it sat before.
+ */
 .ghost-example__stage {
+  --_ghost-example-ring-room: 0.5rem;
+
   align-items: center;
   display: flex;
   flex-wrap: wrap;
   gap: 0.75rem;
   justify-content: center;
-  max-inline-size: 100%;
-  min-block-size: 4.5rem;
+  margin: calc(-1 * var(--_ghost-example-ring-room));
+  max-inline-size: calc(100% + 2 * var(--_ghost-example-ring-room));
+  min-block-size: calc(4.5rem + 2 * var(--_ghost-example-ring-room));
   overflow-x: auto;
-}
-
-.ghost-example__preview :deep(table) {
-  border-collapse: collapse;
-}
-
-.ghost-example__preview :deep(:is(th, td)) {
-  border: 1px solid var(--ghost-border-default, var(--vp-c-border));
-  padding: 0.45rem 0.7rem;
-  text-align: start;
-}
-
-/*
- * VitePress zeros native button chrome. Revert headless hosts to the UA
- * stylesheet so the preview reads as an intentional unstyled control, not
- * broken text. Themed recipes stay on `.ghost-themed-scope` instead.
- */
-.ghost-example[data-example-layer='headless']
-  .ghost-example__preview
-  :deep(button) {
-  all: revert;
-}
-
-.ghost-example__preview :deep(:focus-visible) {
-  outline: 2px solid var(--ghost-focus-ring-color, Highlight);
-  outline-offset: 2px;
+  padding: var(--_ghost-example-ring-room);
 }
 </style>
