@@ -4,6 +4,7 @@ import {
   toValue,
   watch,
   type ComputedRef,
+  type CSSProperties,
   type Ref,
 } from 'vue'
 
@@ -13,6 +14,7 @@ import type {
 } from './ghost-select'
 import { useControllableState } from './use-controllable-state'
 import { useGhostId } from './use-ghost-id'
+import { visuallyHiddenStyle } from './use-ghost-visually-hidden'
 
 const TYPEAHEAD_MS = 500
 
@@ -27,6 +29,7 @@ export interface GhostSelectFormInputProps {
   tabindex: -1
   'aria-hidden': true
   class: 'ghost-visually-hidden'
+  style: CSSProperties
   autocomplete: 'off'
 }
 
@@ -301,6 +304,7 @@ export function useGhostSelect(options: UseGhostSelectOptions = {}): {
       tabindex: -1,
       'aria-hidden': true,
       class: 'ghost-visually-hidden',
+      style: visuallyHiddenStyle,
       autocomplete: 'off',
     }
   })

@@ -9,6 +9,8 @@ import GhostSelectOption from './GhostSelectOption.vue'
 import GhostSelectTrigger from './GhostSelectTrigger.vue'
 import GhostSelectValue from './GhostSelectValue.vue'
 import { waitForFormResetDeferral } from './form-reset'
+import { useGhostSelect } from './use-ghost-select'
+import { visuallyHiddenStyle } from './use-ghost-visually-hidden'
 
 let computePositionOverride:
   | ((
@@ -546,5 +548,79 @@ describe('GhostSelect', () => {
     await flushPromises()
     await nextTick()
     expect(wrapper.get('[data-part="value"]').text()).toBe('Pinned label')
+  })
+
+  it('visually hides the form mirror inline without any consumer stylesheet while preserving FormData, external form, and required validation', async () => {
+    const wrapper = mountAttached(
+      defineComponent({
+        setup() {
+          return () =>
+            h('div', [
+              h('form', { id: 'ext-select-form' }),
+              h(
+                GhostSelect,
+                {
+                  name: 'fruit',
+                  form: 'ext-select-form',
+                  required: true,
+                },
+                {
+                  default: () => [
+                    h(GhostSelectTrigger, null, () => h(GhostSelectValue)),
+                    h(GhostSelectContent, { portal: false }, () => [
+                      h(
+                        GhostSelectOption,
+                        { value: 'a', textValue: 'Apple' },
+                        () => 'Apple',
+                      ),
+                    ]),
+                  ],
+                },
+              ),
+            ])
+        },
+      }),
+    )
+
+    await flushPromises()
+    await nextTick()
+
+    const formInput = wrapper.get('input.ghost-visually-hidden')
+      .element as HTMLInputElement
+    expect(formInput.type).toBe('text')
+    expect(formInput.getAttribute('form')).toBe('ext-select-form')
+    expect(formInput.style.position).toBe('absolute')
+    expect(formInput.style.width).toBe('1px')
+    expect(formInput.style.height).toBe('1px')
+    expect(formInput.style.margin).toBe('-1px')
+    expect(formInput.style.overflow).toBe('hidden')
+    expect(formInput.style.whiteSpace).toBe('nowrap')
+    expect(formInput.style.clipPath).toBe('inset(50%)')
+
+    const form = wrapper.get('#ext-select-form').element as HTMLFormElement
+    expect(form.checkValidity()).toBe(false)
+
+    await wrapper.get('[data-part="trigger"]').trigger('click')
+    await flushPromises()
+    await wrapper.get('[data-value="a"]').trigger('click')
+    await flushPromises()
+    await nextTick()
+
+    expect(form.checkValidity()).toBe(true)
+    expect(new FormData(form).get('fruit')).toBe('a')
+  })
+
+  it('includes inline visually-hidden style in useGhostSelect formInputProps', () => {
+    let props!: ReturnType<typeof useGhostSelect>['formInputProps']
+    const wrapper = mountAttached(
+      defineComponent({
+        setup() {
+          props = useGhostSelect({ name: 'fruit' }).formInputProps
+          return () => h('div')
+        },
+      }),
+    )
+    expect(props.value.style).toEqual(visuallyHiddenStyle)
+    wrapper.unmount()
   })
 })

@@ -98,7 +98,7 @@ const combobox = useGhostCombobox({
   getFormInput: () => primaryFormMirror.value,
 })
 
-const { liveRegionId, announceMessage, formMirrorInputs } = combobox
+const { liveRegionProps, announceMessage, formMirrorInputs } = combobox
 
 useNativeFormReset(
   () => primaryFormMirror.value ?? inputElement.value,
@@ -240,13 +240,7 @@ defineExpose<GhostComboboxExposed>({
 
 <template>
   <slot />
-  <div
-    :id="liveRegionId"
-    class="ghost-visually-hidden"
-    aria-live="polite"
-    aria-atomic="true"
-    data-part="announcer"
-  >
+  <div v-bind="liveRegionProps">
     {{ announceMessage }}
   </div>
   <input
