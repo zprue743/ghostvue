@@ -64,7 +64,8 @@ only on this wrapper:
 | `size` | `'sm' \| 'md' \| 'lg'`              | `'md'`     | Track thickness.       |
 
 Defaults omit `data-size` / `data-tone` so CSS can treat a missing hook as `md`
-/ `accent`. Thickness uses `--ghost-space-gap-xs` / `sm` / `md`. Fill uses
+/ `accent`. Thickness uses `--ghost-track-thickness-sm` / `md` / `lg` (4 / 6 /
+8px at every density and theme, so `sm` stays visible under compact Calm). Fill uses
 `--ghost-action-*-bg`. The track is `--ghost-surface-muted-bg`.
 
 Under `prefers-reduced-motion: reduce`, indeterminate translation becomes an

@@ -245,7 +245,10 @@ no per-component progress tokens:
 
 - track fill `--ghost-surface-muted-bg`
 - indicator `--ghost-action-primary-bg` / `neutral` / `danger`
-- thickness `--ghost-space-gap-xs` / `sm` / `md` for `sm` / `md` / `lg`
+- thickness `--ghost-track-thickness-sm` / `md` / `lg` (4 / 6 / 8px). These
+  are painted-thickness tokens, independent of density: layout gaps such as
+  `--ghost-space-gap-xs` collapse to zero at compact density and must not size
+  paint
 - rounding `--ghost-radius-pill`
 - determinate transition `--ghost-motion-duration-fast` and
   `--ghost-motion-easing-standard`

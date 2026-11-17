@@ -75,6 +75,34 @@
       {
         "name": "--ghost-action-primary-bg",
         "description": "Default range fill and thumb ring."
+      },
+      {
+        "name": "--ghost-track-thickness-sm",
+        "description": "Track and range thickness for size sm. Density-independent."
+      },
+      {
+        "name": "--ghost-track-thickness-md",
+        "description": "Track and range thickness for size md. Density-independent."
+      },
+      {
+        "name": "--ghost-track-thickness-lg",
+        "description": "Track and range thickness for size lg. Density-independent."
+      },
+      {
+        "name": "--ghost-track-thumb-sm",
+        "description": "Thumb diameter for size sm."
+      },
+      {
+        "name": "--ghost-track-thumb-md",
+        "description": "Thumb diameter for size md."
+      },
+      {
+        "name": "--ghost-track-thumb-lg",
+        "description": "Thumb diameter for size lg."
+      },
+      {
+        "name": "--ghost-track-target",
+        "description": "Minimum pointer hit size around the track cross axis and the thumb."
       }
     ]
   },

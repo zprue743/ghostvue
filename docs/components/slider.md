@@ -17,6 +17,10 @@ interval valid (low does not cross high).
 ## Themed vertical
 
 The themed wrapper adds track, fill, and thumb recipes via `size` and `tone`.
+Track and fill share `--ghost-track-thickness-*` (4 / 6 / 8px) and the thumb uses
+`--ghost-track-thumb-*` (12 / 16 / 20px) at every density and theme. Transparent
+hit areas grow the track and thumb to at least `--ghost-track-target` (24px)
+without changing layout or the focus ring.
 
 <GhostExample id="slider/vertical" />
 

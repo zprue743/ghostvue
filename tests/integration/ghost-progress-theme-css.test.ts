@@ -42,7 +42,11 @@ describe('GhostProgress theme CSS tokens', () => {
     expect(css).toContain('--ghost-surface-muted-bg')
     expect(css).toContain('--ghost-action-primary-bg')
     expect(css).toContain('--ghost-action-spinner-duration')
-    expect(css).toContain('--ghost-space-gap-sm')
+    expect(css).toContain('--ghost-track-thickness-sm')
+    expect(css).toContain('--ghost-track-thickness-md')
+    expect(css).toContain('--ghost-track-thickness-lg')
+    // Layout gaps collapse to 0 at compact density; they must not size paint.
+    expect(stripComments(css)).not.toContain('--ghost-space-')
     expect(css).toContain('prefers-reduced-motion')
     expect(findHardcodedVisuals(css)).toEqual([])
   })
