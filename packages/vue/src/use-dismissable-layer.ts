@@ -15,6 +15,7 @@ import {
   removeDismissableLayer,
   type DismissableLayerEntry,
 } from './dismissable-layer-stack'
+import { isImeComposing } from './is-ime-composing'
 
 /** Why the topmost dismissable layer was asked to close. */
 export type DismissReason = 'escape' | 'outside-pointer'
@@ -71,7 +72,14 @@ function detachDocumentListeners(): void {
 }
 
 function handleDocumentKeyDown(event: KeyboardEvent): void {
-  if (event.key !== 'Escape' || event.defaultPrevented || event.isComposing) {
+  // Escape during IME composition cancels the composition, not the layer.
+  // `isImeComposing` also covers WebKit's keyCode 229 keydown that arrives
+  // after `compositionend` with `isComposing === false`.
+  if (
+    event.key !== 'Escape' ||
+    event.defaultPrevented ||
+    isImeComposing(event)
+  ) {
     return
   }
   const top = getTopDismissableLayer()

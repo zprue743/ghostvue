@@ -7,6 +7,7 @@ import {
 } from 'vue'
 
 import { isDisabledElement } from './get-tabbable-elements'
+import { isImeComposing } from './is-ime-composing'
 
 export const MENU_ITEM_SELECTOR =
   '[role="menuitem"],[role="menuitemcheckbox"],[role="menuitemradio"]'
@@ -168,7 +169,13 @@ function handleMenuKeyDown(
   options: UseGhostMenuCollectionOptions | undefined,
   typeaheadState: TypeaheadState,
 ): void {
-  if (event.defaultPrevented || isEditableTarget(event.target)) {
+  // Keys owned by an active IME composition (candidate navigation, confirm,
+  // cancel, composed characters) are neither menu commands nor typeahead.
+  if (
+    event.defaultPrevented ||
+    isEditableTarget(event.target) ||
+    isImeComposing(event)
+  ) {
     return
   }
 

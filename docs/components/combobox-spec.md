@@ -230,6 +230,16 @@ does not read arbitrary object arrays.
 | Printable keys          | Input                  | Updates search; consumer replaces options.                            |
 | `Home` / `End`          | Input (open)           | First / last enabled option highlight.                                |
 
+Keys that belong to an active IME composition are not combobox commands:
+while `isComposing` is `true`, or the keydown reports the legacy `keyCode` 229
+(WebKit dispatches the composition-confirming keydown after `compositionend`
+with `isComposing === false`), arrow keys, `Home` / `End`, `Enter`, and `Escape`
+do not open the list, move the highlight, select, or close. Consumer `onKeydown`
+handlers still receive these events, `Escape` is left unprevented, and the
+dismissable layer applies the same guard, so cancelling a composition never
+closes the popup. Composition text still reaches the input through `input`
+events and updates the search like ordinary typing.
+
 `GhostComboboxTrigger` is a single tab stop; activation toggles open without
 stealing combobox role.
 
@@ -296,10 +306,22 @@ is consumer-driven via `virtualized` flag and documented highlight contract.
   selection + label + FormData preserved when options unmount (filtering,
   out-of-order async replacement, reorder, remount) without emits, Arrow /
   `Home` / `End` in DOM order after keyed reorder, insertion, filter + restore,
-  disabled toggles, and a virtualized window scrolling back
+  disabled toggles, and a virtualized window scrolling back; IME composition
+  (`isComposing` and `keyCode` 229) leaves ArrowUp/Down, `Home` / `End`,
+  `Enter`, `Escape`, and printable keys to the input method without model,
+  search, or open-state changes, still calls consumer `onKeydown`, and normal
+  keys resume afterwards
 - **SSR:** `expectSsrHydration` closed combobox
 - **E2E + axe:** keyboard path on playground demo, async example smoke,
-  `aria-activedescendant` in rendered order after list changes
+  `aria-activedescendant` in rendered order after list changes, Chromium
+  DevTools-protocol IME composition plus WebKit-style `keyCode` 229 keys
+  (`tests/e2e/ime-composition.spec.ts`)
+- **Manual:** Manual IME validation (automation cannot drive a real input method editor):
+  with a Japanese, Chinese, or Korean IME on macOS Safari, macOS Chrome, Windows
+  Chrome/Edge, and Firefox, compose text, move through candidates with the arrow
+  keys, confirm with `Enter`, and cancel with `Escape`; the widget state must not
+  change until the composition is committed, and the first keys after commit must
+  behave normally.
 - **Visual:** `combobox/themed` via `pnpm test:visual:docker`
 - **Types:** consumer compile fixture
 

@@ -25,6 +25,7 @@ import {
   type GhostSelectStrategy,
 } from './ghost-select'
 import { isFocusable } from './get-tabbable-elements'
+import { isImeComposing } from './is-ime-composing'
 import { useDismissableLayer } from './use-dismissable-layer'
 import { useFloating } from './use-floating'
 import { useFocusScope } from './use-focus-scope'
@@ -190,7 +191,9 @@ onUnmounted(() => {
 useRovingFocus(listboxRef, { orientation: 'vertical', loop: true })
 
 function onListboxKeydown(event: KeyboardEvent): void {
-  if (!isOpen.value || event.defaultPrevented) {
+  // IME-owned keys (see `isImeComposing`) must not close, select, or run
+  // typeahead; the input method consumes them.
+  if (!isOpen.value || event.defaultPrevented || isImeComposing(event)) {
     return
   }
   if (event.key === 'Escape') {
