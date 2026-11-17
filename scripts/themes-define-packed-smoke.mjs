@@ -9,6 +9,7 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 
+import { execPackageManagerSync } from './lib/package-manager.js'
 import { workspacePackages } from './workspace-packages.mjs'
 
 const root = fileURLToPath(new URL('..', import.meta.url))
@@ -52,10 +53,14 @@ export async function packGhostvueTarballs(
       await readFile(join(root, 'packages', directory, 'package.json'), 'utf8'),
     )
     const destination = join(packDir, directory)
-    execFileSync('pnpm', ['pack', '--pack-destination', destination], {
-      cwd: join(root, 'packages', directory),
-      stdio: 'pipe',
-    })
+    execPackageManagerSync(
+      'pnpm',
+      ['pack', '--pack-destination', destination],
+      {
+        cwd: join(root, 'packages', directory),
+        stdio: 'pipe',
+      },
+    )
     const packed = await readdir(destination)
     const [archive] = packed.filter((file) => file.endsWith('.tgz'))
     if (!archive) {
@@ -132,12 +137,12 @@ export async function runThemesDefinePackedSmoke(options = {}) {
   let buildStart
   if (options.ensureBuilt && !ghostvuePackArtifactsPresent()) {
     buildStart = performance.now()
-    execFileSync('pnpm', ['build'], {
+    execPackageManagerSync('pnpm', ['build'], {
       cwd: root,
       stdio: 'pipe',
       env: {
         ...process.env,
-        COREPACK_HOME: process.env.COREPACK_HOME ?? '/tmp/corepack',
+        COREPACK_HOME: process.env.COREPACK_HOME ?? join(tmpdir(), 'corepack'),
       },
     })
     mark('buildMs', buildStart)
@@ -203,7 +208,7 @@ export async function runThemesDefinePackedSmoke(options = {}) {
 
     const installStart = performance.now()
     // npm resolves every @ghostvue package from the file: tarballs (packed manifests still say 0.0.0).
-    execFileSync(
+    execPackageManagerSync(
       'npm',
       ['install', '--omit=dev', '--prefer-offline', '--no-audit', '--no-fund'],
       {

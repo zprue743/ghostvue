@@ -1,10 +1,10 @@
-import { execFileSync } from 'node:child_process'
 import { lstat, mkdir, readFile, writeFile } from 'node:fs/promises'
 import { dirname, join } from 'node:path'
 
 import { format, resolveConfig } from 'prettier'
 
 import { pascalToKebab, serializeManifest } from './component-manifests.js'
+import { execPackageManagerSync } from './package-manager.js'
 
 function stableStringify(value) {
   return `${JSON.stringify(value, null, 2)}\n`
@@ -393,7 +393,7 @@ test('${name} scaffold renders accessible content', async ({ page }) => {
     }
     for (const [path, source] of edits)
       await writeFile(join(repositoryRoot, path), source)
-    execFileSync('pnpm', ['registries:write'], {
+    execPackageManagerSync('pnpm', ['registries:write'], {
       cwd: repositoryRoot,
       stdio: 'pipe',
     })

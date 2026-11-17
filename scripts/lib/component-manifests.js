@@ -14,7 +14,7 @@
  * tests import this module.
  */
 import { access, glob, mkdir, readFile, writeFile } from 'node:fs/promises'
-import { basename, join } from 'node:path'
+import { basename, join, posix } from 'node:path'
 
 import Ajv2020 from 'ajv/dist/2020.js'
 import { createChecker } from 'vue-component-meta'
@@ -667,7 +667,7 @@ async function listVueComponents(srcDir) {
   const files = []
   for await (const file of glob('**/*.vue', { cwd: srcDir })) {
     if (!COMPONENT_FILE.test(basename(file))) continue
-    files.push(file)
+    files.push(file.replaceAll('\\', '/'))
   }
   return files.sort()
 }
@@ -748,7 +748,7 @@ export async function syncRepositoryManifests({
       for (const fileName of await listManifestFiles(pkg.manifestsDir)) {
         if (selectedManifestFiles && !selectedManifestFiles.has(fileName))
           continue
-        const relativePath = join(
+        const relativePath = posix.join(
           'packages',
           pkg.directory,
           'manifests',
@@ -779,7 +779,7 @@ export async function syncRepositoryManifests({
       const fileName = `${kebab}.manifest.json`
       const absoluteSfc = join(pkg.srcDir, relative)
       const absoluteManifest = join(pkg.manifestsDir, fileName)
-      const relativeManifest = join(
+      const relativeManifest = posix.join(
         'packages',
         pkg.directory,
         'manifests',
@@ -836,7 +836,7 @@ export async function syncRepositoryManifests({
         continue
       const absoluteManifest = join(pkg.manifestsDir, fileName)
       if (generatedFiles.has(absoluteManifest)) continue
-      const relativePath = join(
+      const relativePath = posix.join(
         'packages',
         pkg.directory,
         'manifests',

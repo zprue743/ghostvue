@@ -1,9 +1,9 @@
-import { execFileSync } from 'node:child_process'
 import { mkdtemp, readFile, readdir, rm } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
+import { execPackageManagerSync } from './lib/package-manager.js'
 import { workspacePackages } from './workspace-packages.mjs'
 import { runThemesDefinePackedSmoke } from './themes-define-packed-smoke.mjs'
 
@@ -18,19 +18,27 @@ try {
   for (const { directory, name } of workspacePackages) {
     const destination = join(temporary, directory)
     console.log(`\nChecking packed exports: ${name}`)
-    execFileSync('pnpm', ['pack', '--pack-destination', destination], {
-      cwd: join(root, 'packages', directory),
-      stdio: 'pipe',
-    })
+    execPackageManagerSync(
+      'pnpm',
+      ['pack', '--pack-destination', destination],
+      {
+        cwd: join(root, 'packages', directory),
+        stdio: 'pipe',
+      },
+    )
     const [archive] = (await readdir(destination)).filter((file) =>
       file.endsWith('.tgz'),
     )
     const tarball = join(destination, archive)
     packedTarballsByName[name] = tarball
-    execFileSync('pnpm', ['exec', 'publint', tarball, '--level', 'error'], {
-      cwd: root,
-      stdio: 'inherit',
-    })
+    execPackageManagerSync(
+      'pnpm',
+      ['exec', 'publint', tarball, '--level', 'error'],
+      {
+        cwd: root,
+        stdio: 'inherit',
+      },
+    )
     const manifest = JSON.parse(
       await readFile(join(root, 'packages', directory, 'package.json'), 'utf8'),
     )
@@ -42,7 +50,7 @@ try {
       )
       .map(([entry]) => entry)
     // ESM-only packages require dynamic import from CommonJS consumers.
-    execFileSync(
+    execPackageManagerSync(
       'pnpm',
       [
         'exec',

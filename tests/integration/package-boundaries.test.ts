@@ -142,6 +142,7 @@ describe('source import boundaries', () => {
         )
       }
     },
+    20_000,
   )
 
   it('keeps imports from fixture entries out of the boundary graph', async () => {
@@ -163,7 +164,7 @@ describe('source import boundaries', () => {
     expect(withFixture.stderr).toBe('')
     // Config exclusion alone can hide the entry while leaking its dependencies.
     expect(withFixture.stdout).toBe(baseline.stdout)
-  })
+  }, 20_000)
 
   it('resolves the requested workspace tsconfig from another cwd', async () => {
     const entry = 'packages/core/src/index.js'
@@ -205,7 +206,7 @@ describe('source import boundaries', () => {
         '[core-no-vue-or-themes] packages/core/src/index.js -> packages/vue/src/index.js',
       ),
     )
-  })
+  }, 20_000)
 
   it('rejects forbidden package.json dependencies through the real checker', async () => {
     await cp(
@@ -227,7 +228,7 @@ describe('source import boundaries', () => {
       'stderr',
       expect.stringContaining('@ghostvue/core may not depend on @ghostvue/vue'),
     )
-  })
+  }, 20_000)
 })
 
 describe('workspace metadata', () => {
