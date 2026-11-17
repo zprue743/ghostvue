@@ -440,4 +440,81 @@ describe('GhostSlider', () => {
     expect(new FormData(form).get('maxBand')).toBe('0.7')
     wrapper.unmount()
   })
+
+  it('centers thumb and vertical rail according to resolved text direction', async () => {
+    const dir = ref<'ltr' | 'rtl'>('ltr')
+    const wrapper = mount(
+      {
+        setup() {
+          return () =>
+            h('div', { dir: dir.value }, [
+              h(GhostSlider, {
+                'aria-label': 'Horizontal',
+                modelValue: 50,
+                'data-testid': 'horizontal',
+              }),
+              h(GhostSlider, {
+                'aria-label': 'Vertical',
+                orientation: 'vertical',
+                modelValue: 50,
+                'data-testid': 'vertical',
+              }),
+            ])
+        },
+      },
+      { attachTo: document.body },
+    )
+
+    const hThumb = wrapper.get('[data-testid="horizontal"] [role="slider"]')
+    const vThumb = wrapper.get('[data-testid="vertical"] [role="slider"]')
+    const vRail = wrapper.get('[data-testid="vertical"] [data-part="rail"]')
+
+    expect(hThumb.attributes('style')).toContain('translate(-50%, -50%)')
+    expect(vThumb.attributes('style')).toContain('translate(-50%, 50%)')
+    expect(vRail.attributes('style')).toContain('translateX(-50%)')
+
+    dir.value = 'rtl'
+    await nextTick()
+    await nextTick()
+
+    expect(hThumb.attributes('style')).toContain('translate(50%, -50%)')
+    expect(vThumb.attributes('style')).toContain('translate(50%, 50%)')
+    expect(vRail.attributes('style')).toContain('translateX(50%)')
+
+    dir.value = 'ltr'
+    await nextTick()
+    await nextTick()
+
+    expect(hThumb.attributes('style')).toContain('translate(-50%, -50%)')
+    expect(vThumb.attributes('style')).toContain('translate(-50%, 50%)')
+    expect(vRail.attributes('style')).toContain('translateX(-50%)')
+    wrapper.unmount()
+  })
+
+  it('updates centering when dir changes reactively on the slider root', async () => {
+    const dir = ref<'ltr' | 'rtl'>('ltr')
+    const wrapper = mount(
+      {
+        setup() {
+          return () =>
+            h(GhostSlider, {
+              'aria-label': 'Reactive root dir',
+              dir: dir.value,
+              modelValue: 25,
+            })
+        },
+      },
+      { attachTo: document.body },
+    )
+
+    const thumb = wrapper.get('[role="slider"]')
+    expect(thumb.attributes('style')).toContain('translate(-50%, -50%)')
+
+    dir.value = 'rtl'
+    await nextTick()
+    await nextTick()
+
+    expect(thumb.attributes('style')).toContain('translate(50%, -50%)')
+    wrapper.unmount()
+  })
 })

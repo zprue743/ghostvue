@@ -1,6 +1,7 @@
 import {
   computed,
   nextTick,
+  ref,
   toValue,
   watch,
   type ComputedRef,
@@ -140,6 +141,7 @@ export function useGhostSlider(options: UseGhostSliderOptions = {}): {
   isRange: ComputedRef<boolean>
   isDisabled: ComputedRef<boolean>
   orientation: ComputedRef<GhostSliderOrientation>
+  dir: ComputedRef<'ltr' | 'rtl'>
   bounds: ComputedRef<{ min: number; max: number }>
   step: ComputedRef<number>
   rootProps: ComputedRef<GhostSliderRootProps>
@@ -235,12 +237,58 @@ export function useGhostSlider(options: UseGhostSliderOptions = {}): {
   }
 
   function resolveDir(): 'ltr' | 'rtl' {
+    if (typeof document === 'undefined') return 'ltr'
     const root = toValue(options.root)
-    if (!root) return document.documentElement.dir === 'rtl' ? 'rtl' : 'ltr'
-    const closest = root.closest('[dir]')?.getAttribute('dir')
+    const docDir = document.documentElement.dir.toLowerCase()
+    if (!root) return docDir === 'rtl' ? 'rtl' : 'ltr'
+    const closest = root.closest('[dir]')?.getAttribute('dir')?.toLowerCase()
     if (closest === 'ltr' || closest === 'rtl') return closest
-    return document.documentElement.dir === 'rtl' ? 'rtl' : 'ltr'
+    if (typeof getComputedStyle === 'function') {
+      const computedDir = getComputedStyle(root).direction
+      if (computedDir === 'rtl') return 'rtl'
+      if (computedDir === 'ltr' && closest === 'auto') return 'ltr'
+    }
+    return docDir === 'rtl' ? 'rtl' : 'ltr'
   }
+
+  const dirVersion = ref(0)
+  const dir = computed((): 'ltr' | 'rtl' => {
+    void dirVersion.value
+    return resolveDir()
+  })
+
+  watch(
+    () => toValue(options.root),
+    (root, _prev, onCleanup) => {
+      dirVersion.value += 1
+      if (!root || typeof MutationObserver !== 'function') return
+      const observer = new MutationObserver(() => {
+        dirVersion.value += 1
+      })
+      let current: HTMLElement | null = root
+      let observedDocumentRoot = false
+      while (current) {
+        observer.observe(current, {
+          attributes: true,
+          attributeFilter: ['dir'],
+        })
+        if (current === document.documentElement) {
+          observedDocumentRoot = true
+        }
+        current = current.parentElement
+      }
+      if (!observedDocumentRoot) {
+        observer.observe(document.documentElement, {
+          attributes: true,
+          attributeFilter: ['dir'],
+        })
+      }
+      onCleanup(() => {
+        observer.disconnect()
+      })
+    },
+    { immediate: true, flush: 'post' },
+  )
 
   function movementForKey(key: string): number | 'min' | 'max' | undefined {
     const horizontal = orientation.value === 'horizontal'
@@ -308,19 +356,20 @@ export function useGhostSlider(options: UseGhostSliderOptions = {}): {
 
   function thumbStyle(index: 0 | 1): CSSProperties {
     const percent = percentForThumb(index)
+    const translateX = dir.value === 'rtl' ? '50%' : '-50%'
     if (orientation.value === 'vertical') {
       return {
         position: 'absolute',
         insetBlockEnd: `${String(percent)}%`,
         insetInlineStart: '50%',
-        transform: 'translate(-50%, 50%)',
+        transform: `translate(${translateX}, 50%)`,
       }
     }
     return {
       position: 'absolute',
       insetInlineStart: `${String(percent)}%`,
       insetBlockStart: '50%',
-      transform: 'translate(-50%, -50%)',
+      transform: `translate(${translateX}, -50%)`,
     }
   }
 
@@ -605,6 +654,7 @@ export function useGhostSlider(options: UseGhostSliderOptions = {}): {
     isRange,
     isDisabled,
     orientation,
+    dir,
     bounds,
     step,
     rootProps,
