@@ -309,6 +309,174 @@ test.describe('docs example previews', () => {
     }
   })
 
+  test('demo canvas drops .vp-doc prose decoration but keeps recipes and authored styles', async ({
+    page,
+  }) => {
+    const docs = await startStaticServer('apps/docs/.vitepress/dist')
+    const previewOf = (id: string) =>
+      page
+        .locator(`[data-example-id="${id}"]`)
+        .getByTestId('ghost-example-preview')
+
+    try {
+      await page.goto(`${docs.url}/components/card.html`)
+      const cardHeading = previewOf('card/themed').locator('h2')
+      await expect(cardHeading).toBeVisible()
+      // `.vp-doc h2` adds a divider, 24px top padding, and tight tracking.
+      await expect(cardHeading).toHaveCSS('border-top-width', '0px')
+      await expect(cardHeading).toHaveCSS('padding-top', '0px')
+      await expect(cardHeading).toHaveCSS('letter-spacing', 'normal')
+
+      const inlineCode = previewOf('card/themed').locator('code')
+      await expect(inlineCode).toHaveCSS('padding-left', '0px')
+      expect(
+        isTransparentColor(
+          await inlineCode.evaluate(
+            (el) => getComputedStyle(el).backgroundColor,
+          ),
+        ),
+      ).toBe(true)
+
+      // Unlayered consumer rules still beat the demo reset layer.
+      await page.addStyleTag({
+        content: '.custom-heading { border-top: 3px solid rgb(220, 38, 38); }',
+      })
+      await cardHeading.evaluate((el) => {
+        el.classList.add('custom-heading')
+      })
+      await expect(cardHeading).toHaveCSS('border-top-width', '3px')
+      await expect(cardHeading).toHaveCSS(
+        'border-top-color',
+        'rgb(220, 38, 38)',
+      )
+
+      await page.goto(`${docs.url}/components/accordion.html`)
+      const accordionHeader = previewOf('accordion/themed')
+        .locator('.ghost-accordion-header')
+        .first()
+      await expect(accordionHeader).toBeVisible()
+      await expect(accordionHeader).toHaveCSS('border-top-width', '0px')
+      await expect(accordionHeader).toHaveCSS('padding-top', '0px')
+      await expect(accordionHeader).toHaveCSS('margin-top', '0px')
+
+      await page.goto(`${docs.url}/components/tabs.html`)
+      const tabs = previewOf('tabs/themed')
+      const list = tabs.getByRole('tablist')
+      const selected = tabs.getByRole('tab', { selected: true })
+      const panel = tabs.getByRole('tabpanel')
+      await expect(panel).toBeVisible()
+
+      const triggerStyles = await selected.evaluate((el) => {
+        const computed = getComputedStyle(el)
+        return {
+          borderTopColor: computed.borderTopColor,
+          borderTopWidth: computed.borderTopWidth,
+          paddingBlockStart: computed.paddingBlockStart,
+          paddingInlineStart: computed.paddingInlineStart,
+        }
+      })
+      expect(
+        Number.parseFloat(triggerStyles.paddingBlockStart),
+      ).toBeGreaterThan(0)
+      expect(
+        Number.parseFloat(triggerStyles.paddingInlineStart),
+      ).toBeGreaterThan(0)
+      expect(Number.parseFloat(triggerStyles.borderTopWidth)).toBeGreaterThan(0)
+      expect(isTransparentColor(triggerStyles.borderTopColor)).toBe(false)
+
+      const listBox = await list.boundingBox()
+      const panelBox = await panel.boundingBox()
+      expect(listBox).not.toBeNull()
+      expect(panelBox).not.toBeNull()
+      if (listBox && panelBox) {
+        expect(panelBox.y).toBeGreaterThanOrEqual(listBox.y + listBox.height)
+        expect(Math.abs(panelBox.x - listBox.x)).toBeLessThan(1)
+      }
+
+      // Hover must not shift layout (no border/padding swap on hover).
+      const idle = tabs.getByRole('tab', { name: 'Members' })
+      await idle.scrollIntoViewIfNeeded()
+      const before = await idle.boundingBox()
+      await idle.hover()
+      expect(await idle.boundingBox()).toEqual(before)
+
+      // Keyboard focus uses the recipe ring, not a docs-host outline.
+      await selected.focus()
+      await page.keyboard.press('ArrowRight')
+      await expect(idle).toBeFocused()
+      await expect(idle).toHaveCSS('outline-style', 'solid')
+
+      // The stage scrolls horizontally, so it clips on both axes; the whole
+      // ring (outline width + offset) must stay inside its padding box.
+      const ringFits = await idle.evaluate((el) => {
+        const stage = el.closest('.ghost-example__stage')
+        if (!stage) return false
+        const computed = getComputedStyle(el)
+        const ring =
+          Number.parseFloat(computed.outlineWidth) +
+          Number.parseFloat(computed.outlineOffset)
+        const box = el.getBoundingClientRect()
+        const clip = stage.getBoundingClientRect()
+        return (
+          box.top - ring >= clip.top &&
+          box.left - ring >= clip.left &&
+          box.bottom + ring <= clip.bottom &&
+          box.right + ring <= clip.right
+        )
+      })
+      expect(ringFits).toBe(true)
+
+      await page.goto(`${docs.url}/components/number-input.html`)
+      const numberInput = previewOf('number-input/themed').getByRole(
+        'spinbutton',
+      )
+      await expect(numberInput).toBeVisible()
+      const inputStyles = await numberInput.evaluate((el) => {
+        const computed = getComputedStyle(el)
+        return {
+          borderTopColor: computed.borderTopColor,
+          borderTopWidth: computed.borderTopWidth,
+          paddingInlineStart: computed.paddingInlineStart,
+        }
+      })
+      expect(Number.parseFloat(inputStyles.borderTopWidth)).toBeGreaterThan(0)
+      expect(Number.parseFloat(inputStyles.paddingInlineStart)).toBeGreaterThan(
+        0,
+      )
+      expect(isTransparentColor(inputStyles.borderTopColor)).toBe(false)
+
+      // The themed focus treatment is a box-shadow ring with no outline.
+      await numberInput.focus()
+      await expect(numberInput).toHaveCSS('outline-style', 'none')
+
+      // Themed invalid state still overrides the default border color.
+      await previewOf('number-input/themed')
+        .locator('.ghost-number-input')
+        .evaluate((el) => {
+          el.setAttribute('data-state', 'invalid')
+        })
+      await expect(numberInput).not.toHaveCSS(
+        'border-top-color',
+        inputStyles.borderTopColor,
+      )
+
+      // Headless demos stay unthemed: native control chrome, no recipe.
+      await page.goto(`${docs.url}/components/button.html`)
+      const headlessButton = previewOf('button/basic').getByRole('button')
+      await expect(headlessButton).toBeVisible()
+      expect(
+        Number.parseFloat(
+          await headlessButton.evaluate(
+            (el) => getComputedStyle(el).borderTopWidth,
+          ),
+        ),
+      ).toBeGreaterThan(0)
+      await expect(headlessButton).not.toHaveAttribute('data-themed')
+    } finally {
+      await docs.close()
+    }
+  })
+
   test('VitePress reset/prose layers stay below theme recipes and unlayered consumer overrides win without !important', async ({
     page,
   }) => {

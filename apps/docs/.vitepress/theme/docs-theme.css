@@ -237,11 +237,6 @@ html[data-ghost-theme='mono'] {
   max-inline-size: 100%;
 }
 
-.ghost-example__stage {
-  max-inline-size: 100%;
-  overflow-x: auto;
-}
-
 /* Component catalog overview (`/components/`). */
 .ghost-component-catalog__lede {
   margin-block: 0 1.25rem;

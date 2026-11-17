@@ -1,0 +1,153 @@
+/*
+ * Live demo canvas corrections.
+ *
+ * VitePress `base.css` and `vp-doc.css` are wrapped in
+ * `@layer ghostvue-vitepress` (see `../demo-css-layers.ts`). Markdown prose
+ * decoration from `.vp-doc` (h2 dividers, paragraph rhythm, list bullets,
+ * brand links, zebra tables, inline-code pills) still matches descendants of
+ * `<GhostExample>` because the preview renders inside the article. The rules
+ * below return those properties to the browser's native presentation inside
+ * the preview only, so a demo looks the way it does in a consumer app (and in
+ * the playground at `/examples.html`, which has no reset).
+ *
+ * Layer contract (`ghostvue-vitepress, ghostvue-demo-reset, ghostvue-theme`):
+ * - This layer beats VitePress regardless of specificity, so selectors use
+ *   `:where()` and stay at zero specificity.
+ * - `@layer ghostvue-theme` recipes always win, so a themed heading, link, or
+ *   table keeps its recipe values.
+ * - Unlayered example `<style scoped>` rules, authored classes, and inline
+ *   styles always win, so consumer overrides behave as documented.
+ *
+ * Each `revert` targets a property VitePress sets on that element; nothing
+ * else is reverted. `revert` (not `revert-layer`) is deliberate: `revert-layer`
+ * would fall back to the `ghostvue-vitepress` layer we are undoing. The only
+ * additive rule is the native-table grid at the end, mirroring the playground.
+ */
+@layer ghostvue-demo-reset {
+  :where(.ghost-example__preview) :where(h1, h2, h3, h4, h5, h6) {
+    position: revert;
+    margin: revert;
+    padding-block-start: revert;
+    border-block-start: revert;
+    font-size: revert;
+    font-weight: revert;
+    letter-spacing: revert;
+    line-height: revert;
+    outline: revert;
+  }
+
+  :where(.ghost-example__preview) :where(p, summary) {
+    margin: revert;
+    line-height: revert;
+  }
+
+  :where(.ghost-example__preview) :where(blockquote) {
+    margin: revert;
+    padding-inline-start: revert;
+    border-inline-start: revert;
+    color: revert;
+    transition: revert;
+  }
+
+  :where(.ghost-example__preview) :where(blockquote > p) {
+    font-size: revert;
+  }
+
+  :where(.ghost-example__preview) :where(a) {
+    color: revert;
+    font-weight: revert;
+    text-decoration: revert;
+    text-underline-offset: revert;
+    transition: revert;
+  }
+
+  :where(.ghost-example__preview) :where(ul, ol) {
+    margin: revert;
+    padding: revert;
+    list-style: revert;
+  }
+
+  :where(.ghost-example__preview) :where(li) {
+    margin: revert;
+  }
+
+  /*
+   * `.vp-doc table` turns the table into a scrolling block, and rows/cells
+   * gain borders, zebra fills, and muted 14px header text. Themed
+   * GhostTable sets its own collapse and cell chrome in `ghostvue-theme`.
+   */
+  :where(.ghost-example__preview) :where(table) {
+    display: revert;
+    margin: revert;
+    overflow-x: revert;
+    border-collapse: revert;
+  }
+
+  :where(.ghost-example__preview) :where(tr) {
+    border-block-start: revert;
+    background-color: revert;
+    transition: revert;
+  }
+
+  :where(.ghost-example__preview) :where(th, td) {
+    border: revert;
+    padding: revert;
+    background-color: revert;
+    color: revert;
+    font-size: revert;
+    font-weight: revert;
+    text-align: revert;
+  }
+
+  :where(.ghost-example__preview) :where(hr) {
+    margin: revert;
+    border: revert;
+  }
+
+  /* Inline-code pill; `font-family` keeps the docs monospace stack. */
+  :where(.ghost-example__preview) :where(code) {
+    padding: revert;
+    border-radius: revert;
+    background-color: revert;
+    color: revert;
+    font-size: revert;
+    transition: revert;
+  }
+
+  /*
+   * `base.css` strips native form-control chrome (border, padding,
+   * background, focus outline) for VitePress's own UI. Headless demos ship no
+   * recipe, so restore the platform control instead of rendering bare text.
+   * Themed demos are excluded: their recipes own these elements, and some
+   * rely on the reset for properties they intentionally leave unset.
+   */
+  :where(.ghost-example[data-example-layer='headless'] .ghost-example__preview)
+    :where(button, input, select, textarea) {
+    all: revert;
+  }
+
+  /*
+   * Native tables have no cell separation, so plain `<table>` demos (headless
+   * Table, or Badge/Skeleton/EmptyState shown in a table) read as
+   * run-together text. Draw a neutral grid like the playground host does.
+   * Themed GhostTable cells are excluded so the recipe's row rules are not
+   * boxed in (the recipe sets only block-end borders); headless GhostTable
+   * cells carry the same classes, so the exclusion keys on the themed scope.
+   * Authored cell styles still win because they are unlayered.
+   */
+  :where(.ghost-example__preview) :where(table) {
+    border-collapse: collapse;
+  }
+
+  :where(.ghost-example__preview)
+    :where(
+      :is(th, td):not(
+        :is(.ghost-theme, .ghost-themed-scope)
+          :is(.ghost-table-header-cell, .ghost-table-cell)
+      )
+    ) {
+    border: 1px solid var(--ghost-border-default);
+    padding: 0.45rem 0.7rem;
+    text-align: start;
+  }
+}

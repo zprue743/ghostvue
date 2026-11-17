@@ -191,3 +191,43 @@ describe('demo-css-layers', () => {
     expect(ensureCssBundleLayerPrelude('body{margin:0}')).toBe('body{margin:0}')
   })
 })
+
+describe('docs demo canvas corrections', () => {
+  const themeDir = new URL('../../apps/docs/.vitepress/theme/', import.meta.url)
+  const read = (file: string) => readFileSync(new URL(file, themeDir), 'utf8')
+
+  /** Top-level preludes (text before each depth-0 `{` or `;`). */
+  function topLevelPreludes(css: string): string[] {
+    const stripped = css.replace(/\/\*[\s\S]*?\*\//g, '')
+    const preludes: string[] = []
+    let depth = 0
+    let current = ''
+    for (const char of stripped) {
+      if (depth === 0 && (char === '{' || char === ';')) {
+        preludes.push(current.trim())
+        current = ''
+      }
+      if (char === '{') depth += 1
+      else if (char === '}') depth -= 1
+      else if (depth === 0 && char !== ';') current += char
+    }
+    expect(depth).toBe(0)
+    expect(current.trim()).toBe('')
+    return preludes
+  }
+
+  it('keeps every correction inside @layer ghostvue-demo-reset so recipes and authored CSS win', () => {
+    const preludes = topLevelPreludes(read('docs-demo-compat.css'))
+    expect(preludes.length).toBeGreaterThan(0)
+    expect(new Set(preludes)).toEqual(new Set(['@layer ghostvue-demo-reset']))
+    expect(DEMO_CSS_LAYER_ORDER.indexOf('ghostvue-demo-reset')).toBeLessThan(
+      DEMO_CSS_LAYER_ORDER.indexOf('ghostvue-theme'),
+    )
+  })
+
+  it('loads the corrections and leaves no unlayered blanket overrides on the preview', () => {
+    expect(read('index.ts')).toContain("import './docs-demo-compat.css'")
+    expect(read('GhostExample.vue')).not.toMatch(/:deep\(/)
+    expect(() => read('docs-recipe-bridge.css')).toThrow()
+  })
+})

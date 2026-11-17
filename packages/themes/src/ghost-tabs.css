@@ -1,5 +1,10 @@
 /*
  * Themed GhostTabs list, triggers, and panels. Values use semantic --ghost-* tokens.
+ *
+ * The GhostTabs root is renderless, so there is no root recipe here: the list
+ * and panels are siblings in whatever element the consumer provides. Wrap
+ * them in one block (or a vertical flex container) when the parent is a flex
+ * row; otherwise the panel can flow beside the strip instead of below it.
  */
 @layer ghostvue-theme {
   :where(
