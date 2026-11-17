@@ -119,6 +119,32 @@ function hasFocusableAncestor(target: EventTarget | null): boolean {
   return false
 }
 
+/**
+ * Pressing a non-focusable part of the open content (padding, a group label,
+ * an empty message) would otherwise move focus to `body` or to a focusable
+ * page ancestor such as a `tabindex="-1"` landmark. Focus then sits outside
+ * the widget, so a later Tab or programmatic focus elsewhere never reaches
+ * the widget's `focusout` and the list would stay open (GHO-166). Keeping
+ * focus on the input also matches the APG pattern, where the listbox never
+ * takes focus. Presses on focusable content descendants (options, consumer
+ * buttons) keep their default so pointer selection is unchanged.
+ */
+function handleContentMouseDown(event: MouseEvent): void {
+  const root = context.contentElement.value
+  let current: Element | null =
+    event.target instanceof Element ? event.target : null
+  while (current && root?.contains(current)) {
+    if (current instanceof HTMLElement && isFocusable(current)) {
+      return
+    }
+    if (current === root) {
+      break
+    }
+    current = current.parentElement
+  }
+  event.preventDefault()
+}
+
 useDismissableLayer(contentElement, {
   ignore: () =>
     [context.inputElement.value, context.contentElement.value].filter(Boolean),
@@ -162,7 +188,10 @@ watch(
 useFocusScope(focusTarget, {
   trapped: false,
   autoFocus: false,
-  restoreFocus: shouldRestoreFocus,
+  // Focus departure (GHO-166) closes without restoring: focus stays where the
+  // user or the page moved it.
+  restoreFocus: () =>
+    shouldRestoreFocus.value && !context.focusRestoreSuppressed.value,
 })
 
 watch(
@@ -252,7 +281,14 @@ defineExpose<GhostComboboxContentExposed>({
 
 <template>
   <GhostPortal :to="portalTo" :disabled="!portalActive">
-    <component :is="as" ref="host" v-bind="contentAttrs">
+    <component
+      :is="as"
+      ref="host"
+      v-bind="contentAttrs"
+      @focusout="context.notifyFocusOut"
+      @pointerdown="context.notifyPointerDownInside"
+      @mousedown="handleContentMouseDown"
+    >
       <div ref="listbox" v-bind="listboxAttrs">
         <slot />
       </div>

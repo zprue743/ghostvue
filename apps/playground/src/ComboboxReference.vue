@@ -4,12 +4,31 @@ import { ref } from 'vue'
 import {
   GhostCombobox,
   GhostComboboxContent,
+  GhostComboboxGroup,
   GhostComboboxInput,
+  GhostComboboxLabel,
   GhostComboboxOption,
+  GhostComboboxTrigger,
 } from '@ghostvue/themes'
 
 const pageSize = ref('25')
 const multiTags = ref<string[]>(['10'])
+
+/*
+ * GHO-166 focus-departure fixtures: an inline (`portal: false`) combobox with
+ * a trigger between two outside buttons, and a parent that controls `open`,
+ * accepts opening, and rejects every close request until released.
+ */
+const departureFruit = ref<string | undefined>('banana')
+const pinnedOpen = ref(false)
+const rejectedCloseCount = ref(0)
+function onPinnedOpenUpdate(next: boolean): void {
+  if (next) {
+    pinnedOpen.value = true
+    return
+  }
+  rejectedCloseCount.value += 1
+}
 
 /*
  * GHO-162 order fixture: keyed list mutations (filter + restore, reorder,
@@ -99,6 +118,81 @@ function labelOf(value: string): string {
         </GhostComboboxOption>
       </GhostComboboxContent>
     </GhostCombobox>
+
+    <h3 id="combobox-departure-heading">Focus departure</h3>
+    <button type="button" data-testid="combobox-departure-before">
+      Before combobox
+    </button>
+    <GhostCombobox v-model="departureFruit">
+      <GhostComboboxInput
+        data-testid="combobox-departure-input"
+        aria-label="Fruit"
+        placeholder="Pick a fruit"
+      />
+      <GhostComboboxTrigger
+        data-testid="combobox-departure-trigger"
+        aria-label="Show fruits"
+      >
+        ▾
+      </GhostComboboxTrigger>
+      <GhostComboboxContent
+        data-testid="combobox-departure-content"
+        :portal="false"
+        :offset="6"
+      >
+        <GhostComboboxGroup>
+          <GhostComboboxLabel data-testid="combobox-departure-label">
+            Fruits
+          </GhostComboboxLabel>
+          <GhostComboboxOption value="apple" text-value="Apple">
+            Apple
+          </GhostComboboxOption>
+          <GhostComboboxOption value="banana" text-value="Banana">
+            Banana
+          </GhostComboboxOption>
+          <GhostComboboxOption value="cherry" text-value="Cherry">
+            Cherry
+          </GhostComboboxOption>
+        </GhostComboboxGroup>
+      </GhostComboboxContent>
+    </GhostCombobox>
+    <button type="button" data-testid="combobox-departure-after">
+      After combobox
+    </button>
+
+    <h3 id="combobox-pinned-heading">Controlled open (rejects close)</h3>
+    <GhostCombobox :open="pinnedOpen" @update:open="onPinnedOpenUpdate">
+      <GhostComboboxInput
+        data-testid="combobox-pinned-input"
+        aria-label="Pinned number"
+        placeholder="Always open"
+      />
+      <GhostComboboxContent
+        data-testid="combobox-pinned-content"
+        :portal="false"
+        :offset="6"
+      >
+        <GhostComboboxOption value="one" text-value="One">
+          One
+        </GhostComboboxOption>
+        <GhostComboboxOption value="two" text-value="Two">
+          Two
+        </GhostComboboxOption>
+      </GhostComboboxContent>
+    </GhostCombobox>
+    <p>
+      Rejected close requests:
+      <output data-testid="combobox-pinned-rejections">{{
+        rejectedCloseCount
+      }}</output>
+    </p>
+    <button
+      type="button"
+      data-testid="combobox-pinned-release"
+      @click="pinnedOpen = false"
+    >
+      Release pinned combobox
+    </button>
 
     <h3 id="combobox-order-heading">Dynamic option order</h3>
     <div
