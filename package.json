@@ -18,6 +18,7 @@
     "published-exports": "node scripts/check-published-exports.mjs",
     "changeset": "changeset",
     "changeset:status": "changeset status",
+    "release:dry-run": "node scripts/release-dry-run.mjs --dry-run",
     "dev": "pnpm --filter @ghostvue/playground dev",
     "docs:build": "pnpm --filter @ghostvue/docs build",
     "docs:dev": "pnpm --filter @ghostvue/docs dev",

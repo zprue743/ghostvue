@@ -1,0 +1,105 @@
+# Release dry run with a maintainer approval gate (GHO-57).
+#
+# This workflow cannot publish. It has no npm credentials, no publish step, and
+# every npm call goes through scripts/release-dry-run.mjs, which refuses to run
+# without --dry-run and points npm at an unreachable registry. Enabling real
+# publication requires separate explicit maintainer authorization and a
+# reviewed change to this file (see docs/contributing/releases.md).
+name: Release dry run
+
+on:
+  workflow_dispatch:
+    inputs:
+      expected_version:
+        description: Version every publishable package must plan to release.
+        required: true
+        default: 0.1.0
+
+concurrency:
+  group: release-dry-run
+  cancel-in-progress: false
+
+# Least privilege by default; jobs widen only what they need.
+permissions: {}
+
+jobs:
+  dry-run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: pnpm/action-setup@v4
+        with:
+          run_install: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+      # Reuse the existing GHO-55/GHO-6 package gates (publint, attw, packed
+      # define smoke) instead of duplicating them for the release.
+      - run: pnpm published-exports
+      - run: pnpm exports:check
+      - name: Credential-free release dry run
+        env:
+          EXPECTED_VERSION: ${{ inputs.expected_version }}
+        run: pnpm release:dry-run --expect-version "$EXPECTED_VERSION"
+      - name: Confirm the checkout is unchanged
+        run: git diff --exit-code
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-dry-run-evidence
+          path: reports/release-dry-run/
+          retention-days: 30
+          if-no-files-found: error
+
+  maintainer-approval:
+    needs: dry-run
+    # Only master can reach the approval gate; branch runs stop after evidence.
+    if: github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    # Required reviewers on this environment are configured by a repository
+    # admin in Settings > Environments; the job waits for their approval.
+    environment: npm-release
+    permissions:
+      contents: read
+      # Reserved for npm provenance / trusted publishing in a future,
+      # separately authorized publish step. Nothing here requests a token.
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: actions/download-artifact@v4
+        with:
+          name: release-dry-run-evidence
+          path: reports/release-dry-run
+      - name: Verify approved dry-run evidence
+        env:
+          EXPECTED_VERSION: ${{ inputs.expected_version }}
+        run: node scripts/release-dry-run.mjs --dry-run --verify-evidence reports/release-dry-run --expect-version "$EXPECTED_VERSION"
+      - name: Report provenance readiness
+        run: |
+          if [ -n "${ACTIONS_ID_TOKEN_REQUEST_URL:-}" ]; then
+            echo "OIDC token endpoint available for future npm provenance."
+          else
+            echo "OIDC token endpoint unavailable; check id-token permission."
+            exit 1
+          fi
+      - name: Publication disabled
+        run: |
+          {
+            echo "## Publication disabled"
+            echo
+            echo "Dry-run evidence was approved and verified. Nothing was published."
+            echo "Real publication requires separate explicit maintainer authorization."
+          } >> "$GITHUB_STEP_SUMMARY"

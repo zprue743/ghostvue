@@ -4,6 +4,11 @@
   "private": true,
   "description": "Vue 3 integration for the headless-first GhostVue library.",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zprue743/ghostvue.git",
+    "directory": "packages/vue"
+  },
   "type": "module",
   "sideEffects": false,
   "exports": {
@@ -16,6 +21,10 @@
   "files": [
     "dist"
   ],
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
   "scripts": {
     "prebuild": "pnpm -w registries:write",
     "build": "vite build && node ../../scripts/stage-vue-declaration-tree.mjs && vue-tsc -p tsconfig.declarations.json --emitDeclarationOnly && node ../../scripts/finalize-declarations.mjs dist",

@@ -27,3 +27,6 @@ packages/themes/src/.publish-index.generated.ts
 examples/.registries/
 apps/docs/.vitepress/.registries/
 docs/.registries/
+
+# Release dry-run evidence (pnpm release:dry-run).
+reports/release-dry-run/
