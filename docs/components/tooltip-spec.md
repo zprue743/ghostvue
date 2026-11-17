@@ -147,10 +147,10 @@ Follows WAI-ARIA APG Tooltip pattern and WCAG 1.4.13 (Content on Hover or Focus)
 
 ### Keyboard interaction
 
-| Key      | Where                 | Behavior                                                          |
-| -------- | --------------------- | ----------------------------------------------------------------- |
-| `Escape` | Document while open   | Closes immediately (`hideImmediate`); does not move focus.        |
-| `Tab`    | `GhostTooltipTrigger` | Normal tab order; focus scheduling opens the tooltip after delay. |
+| Key      | Where                 | Behavior                                                                                                      |
+| -------- | --------------------- | ------------------------------------------------------------------------------------------------------------- |
+| `Escape` | Document while open   | Closes immediately (`hideImmediate`) when the tooltip is the topmost open overlay layer; does not move focus. |
+| `Tab`    | `GhostTooltipTrigger` | Normal tab order; focus scheduling opens the tooltip after delay.                                             |
 
 Tooltip content is not in the tab order and must not receive focus.
 
@@ -206,15 +206,26 @@ Tooltip content is not in the tab order and must not receive focus.
 - `GhostPortal` for teleportation.
 - `useFloating` for anchor positioning, collision handling, `data-placement`,
   and `isPositioned`.
-- Root owns delay timers, pointer/focus/content hover tracking, `Escape`
-  dismissal, and timer cleanup on unmount.
+- Root owns delay timers, pointer/focus/content hover tracking, `hideImmediate`,
+  and timer cleanup on unmount.
+- `GhostTooltipContent` joins the shared dismissable-layer stack
+  (`useDismissableLayer`'s internal escape-only registration) while open, so
+  `Escape` dismisses only the topmost open overlay. A tooltip inside a dialog
+  or popover closes on the first `Escape`; the next `Escape` reaches the layer
+  beneath. Escape-only layers never take part in outside-pointer dismissal
+  (presses outside pass through to the layer beneath; presses on the tooltip are
+  not "outside" for it) and never claim focus above a modal focus trap. A
+  separate per-tooltip `document` listener was rejected because listener
+  registration order decides which handler runs first, so local
+  `preventDefault()` cannot coordinate dismissal reliably.
 
 ## Test plan
 
 - **Unit tests (`packages/vue/src/GhostTooltip.test.ts`):** controlled/uncontrolled
   `open`, delay timers (Vitest fake timers), `aria-describedby` while open,
   `role="tooltip"`, `data-*` attrs, `isPositioned` visibility guard,
-  `portal` vs `portal=false`, disabled trigger, `Escape` dismissal, timer/listener
+  `portal` vs `portal=false`, disabled trigger, `Escape` dismissal and ordering
+  above dialogs/popovers (inline and portaled), consumer-canceled `Escape`, timer/listener
   cleanup on unmount, `as` prop including `GhostButton`, `v-if` unmount stopping
   `autoUpdate`.
 - **SSR test (`packages/vue/src/overlay-ssr.test.ts`):** closed and
@@ -224,7 +235,10 @@ Tooltip content is not in the tab order and must not receive focus.
 - **Browser & Axe E2E tests (`tests/e2e/ghost-tooltip.spec.ts`,
   `tests/e2e/docs-examples.spec.ts`):** hover/focus show with delay, grace delay
   on leave, `Escape` dismissal, disabled trigger, viewport positioning, and zero
-  Axe violations.
+  Axe violations. `tests/e2e/tooltip-layers.spec.ts` covers tooltips inside a
+  modal dialog (inline and portaled, controlled state) and a popover: one
+  `Escape` per layer, real focus, outside-pointer pass-through, and Axe with
+  overlays open and closed.
 
 ## Documentation plan
 

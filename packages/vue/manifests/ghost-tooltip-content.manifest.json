@@ -118,7 +118,7 @@
     "role": "tooltip",
     "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/tooltip/",
     "keyboard": {
-      "Escape": "Dismisses the tooltip via the root provider."
+      "Escape": "Dismisses the tooltip via the root when it is the topmost open overlay layer (escape-only; never an outside-click layer)."
     },
     "requiredAriaAttributes": []
   },

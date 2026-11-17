@@ -51,6 +51,13 @@ Add three headless overlay primitives to `@ghostvue/vue`:
   `defaultPrevented` or `isComposing`) and outside `pointerdown`. If the topmost
   layer sets `disableEscape` or `disableOutsidePointer`, it blocks lower layers
   from dismissing underneath it rather than letting events fall through.
+- **Escape-only layers** (currently only `GhostTooltipContent`, through an
+  internal registration that is not exported) join `layerStack` for `Escape`
+  ordering but are skipped for outside `pointerdown`: a press inside one is
+  ignored, and any other press is handled by the next ordinary layer beneath.
+  They are also ignored when a trapped `useFocusScope` checks for focus in an
+  upper layer, so a tooltip never blocks click-away dismissal or opens a hole
+  in a modal trap.
 - Elements in `ignore` (such as the trigger button) are checked alongside `el`
   via `composedPath()` (with `contains()` fallback) so pressing them never
   counts as an outside interaction.

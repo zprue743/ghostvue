@@ -191,25 +191,6 @@ function notifyContentPointerLeave(): void {
   maybeScheduleClose()
 }
 
-watchEffect((onCleanup) => {
-  if (!isOpen.value || typeof document === 'undefined') {
-    return
-  }
-  function onKeyDown(event: KeyboardEvent): void {
-    if (
-      event.key === 'Escape' &&
-      !event.defaultPrevented &&
-      !event.isComposing
-    ) {
-      hideImmediate()
-    }
-  }
-  document.addEventListener('keydown', onKeyDown)
-  onCleanup(() => {
-    document.removeEventListener('keydown', onKeyDown)
-  })
-})
-
 watchEffect(() => {
   if (!isOpen.value) {
     contentPointer.value = false
@@ -223,6 +204,10 @@ onUnmounted(() => {
     tooltipProvider?.onTooltipDidClose()
   }
 })
+
+// `Escape` dismissal is registered by `GhostTooltipContent` through the shared
+// dismissable-layer stack (escape-only), not by a document listener here, so
+// a tooltip above a dialog or popover closes alone on the first `Escape`.
 
 const customTriggerId = shallowRef<string | null>(null)
 const customContentId = shallowRef<string | null>(null)

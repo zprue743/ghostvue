@@ -8,6 +8,7 @@ import {
 } from 'vue'
 
 import {
+  getDismissableLayers,
   getTopDismissableLayer,
   hasDismissableLayers,
   pushDismissableLayer,
@@ -82,12 +83,36 @@ function handleDocumentKeyDown(event: KeyboardEvent): void {
 }
 
 function handleDocumentPointerDown(event: PointerEvent): void {
-  const top = getTopDismissableLayer()
-  const options = top ? layerOptions.get(top.id) : undefined
-  if (!top || !options || (toValue(options.disableOutsidePointer) ?? false)) {
+  const layers = getDismissableLayers()
+  for (let index = layers.length - 1; index >= 0; index -= 1) {
+    const layer = layers[index]
+    if (!layer) {
+      continue
+    }
+    if (layer.escapeOnly) {
+      // Pressing an escape-only layer (a tooltip, possibly portaled outside
+      // its owning overlay) is not an outside interaction for layers beneath
+      // it; pressing anywhere else passes through to the next layer down so a
+      // tooltip never blocks outside-pointer dismissal of a popover or dialog.
+      if (isEventInsideElement(event, layer.element)) {
+        return
+      }
+      continue
+    }
+    dismissOnOutsidePointer(event, layer)
     return
   }
-  if (isEventInsideElement(event, top.element)) {
+}
+
+function dismissOnOutsidePointer(
+  event: PointerEvent,
+  layer: DismissableLayerEntry,
+): void {
+  const options = layerOptions.get(layer.id)
+  if (!options || (toValue(options.disableOutsidePointer) ?? false)) {
+    return
+  }
+  if (isEventInsideElement(event, layer.element)) {
     return
   }
   for (const ignored of resolveIgnoredElements(options.ignore)) {
@@ -149,6 +174,42 @@ export function useDismissableLayer(
   el: MaybeRefOrGetter<DismissableLayerTarget>,
   options: UseDismissableLayerOptions,
 ): void {
+  registerDismissableLayer(el, options, false)
+}
+
+/**
+ * Internal (not part of the public entry point): joins `el` to the shared
+ * layer stack for `Escape` ordering only. Used by `GhostTooltipContent` so one
+ * `Escape` closes a tooltip opened above a dialog or popover without also
+ * closing that overlay, while the tooltip stays out of outside-pointer
+ * dismissal and modal focus ownership (it is not a modal or click-away layer).
+ * A separate per-component `document` listener cannot provide that ordering:
+ * which listener runs first depends on registration order, so local
+ * `preventDefault()` alone is unreliable.
+ */
+export function useEscapeDismissableLayer(
+  el: MaybeRefOrGetter<DismissableLayerTarget>,
+  onEscape: (event: KeyboardEvent) => void,
+): void {
+  registerDismissableLayer(
+    el,
+    {
+      disableOutsidePointer: true,
+      onDismiss: (reason, event) => {
+        if (reason === 'escape' && event instanceof KeyboardEvent) {
+          onEscape(event)
+        }
+      },
+    },
+    true,
+  )
+}
+
+function registerDismissableLayer(
+  el: MaybeRefOrGetter<DismissableLayerTarget>,
+  options: UseDismissableLayerOptions,
+  escapeOnly: boolean,
+): void {
   let stopWatch: (() => void) | undefined
 
   onMounted(() => {
@@ -162,6 +223,7 @@ export function useDismissableLayer(
         const entry: DismissableLayerEntry = {
           id: Symbol('ghost-dismissable-layer'),
           element,
+          escapeOnly,
         }
         layerOptions.set(entry.id, options)
         pushDismissableLayer(entry)

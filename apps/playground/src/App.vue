@@ -41,6 +41,7 @@ import SelectReference from './SelectReference.vue'
 import TabsReference from './TabsReference.vue'
 import SegmentedControlReference from './SegmentedControlReference.vue'
 import ToggleGroupReference from './ToggleGroupReference.vue'
+import TooltipLayersReference from './TooltipLayersReference.vue'
 import TooltipReference from './TooltipReference.vue'
 import HoverCardReference from './HoverCardReference.vue'
 import VisualReference from './VisualReference.vue'
@@ -357,6 +358,7 @@ function submitPlaygroundComment(event: Event): void {
     <CollapsibleReference />
     <AccordionReference />
     <TooltipReference />
+    <TooltipLayersReference />
     <HoverCardReference />
     <DialogReference />
     <TabsReference />

@@ -21,6 +21,7 @@ import {
   type GhostTooltipShiftOptions,
   type GhostTooltipStrategy,
 } from './ghost-tooltip'
+import { useEscapeDismissableLayer } from './use-dismissable-layer'
 import { useFloating } from './use-floating'
 
 defineOptions({
@@ -105,6 +106,16 @@ const floating = useFloating(
     strategy: () => props.strategy,
   },
 )
+
+// Joins the shared layer stack for `Escape` ordering only: the topmost open
+// overlay (this tooltip, or a dialog/popover/menu opened above it) handles each
+// `Escape`, so one press never closes both a tooltip and the dialog under it.
+// Escape-only layers stay out of outside-pointer dismissal and modal focus
+// ownership. The layer exists only while open (`contentElement` is `null` when
+// closed), so no document listener remains once the tooltip hides.
+useEscapeDismissableLayer(contentElement, () => {
+  context.hideImmediate()
+})
 
 const isPositioned = computed(
   () => !context.triggerRegistered.value || floating.isPositioned.value,
