@@ -3,7 +3,7 @@
  * `@ghostvue/themes/define`. No workspace aliases or devDependency fallbacks.
  */
 import { execFileSync } from 'node:child_process'
-import { existsSync } from 'node:fs'
+import { existsSync, rmSync } from 'node:fs'
 import { mkdtemp, readFile, readdir, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
@@ -85,6 +85,32 @@ export function fileDependenciesFromTarballs(tarballs) {
  * @type {{ packDir: string, tarballs: Record<string, string> } | null}
  */
 let packedTarballSessionCache = null
+let exitHookRegistered = false
+
+function ensureExitCleanupHook() {
+  if (exitHookRegistered) {
+    return
+  }
+  exitHookRegistered = true
+  process.on('exit', () => {
+    const dir = packedTarballSessionCache?.packDir
+    packedTarballSessionCache = null
+    if (dir) {
+      rmSync(dir, { recursive: true, force: true })
+    }
+  })
+}
+
+/**
+ * Removes any cached pack directory created during this Node session.
+ */
+export async function clearPackedTarballSessionCache() {
+  const dir = packedTarballSessionCache?.packDir
+  packedTarballSessionCache = null
+  if (dir) {
+    await rm(dir, { recursive: true, force: true })
+  }
+}
 
 /**
  * @param {{
@@ -124,36 +150,38 @@ export async function runThemesDefinePackedSmoke(options = {}) {
   /** @type {Record<string, string>} */
   let tarballs
   let packDir = null
+  let consumerDir = null
   const requiredNames = workspacePackages.map((pkg) => pkg.name)
   const prepackedComplete =
     options.prepackedTarballs &&
     requiredNames.every((name) => options.prepackedTarballs[name])
 
-  if (prepackedComplete) {
-    tarballs = options.prepackedTarballs
-    timings.packMs = 0
-    timings.packReusedPrepacked = 1
-  } else if (
-    !options.prepackedTarballs &&
-    packedTarballSessionCache &&
-    requiredNames.every((name) => packedTarballSessionCache.tarballs[name])
-  ) {
-    tarballs = packedTarballSessionCache.tarballs
-    timings.packMs = 0
-    timings.packReusedSession = 1
-  } else {
-    packStart = performance.now()
-    packDir = await mkdtemp(join(tmpdir(), 'ghostvue-themes-pack-'))
-    tarballs = await packGhostvueTarballs(packDir)
-    mark('packMs', packStart)
-    if (!options.prepackedTarballs) {
-      packedTarballSessionCache = { packDir, tarballs: { ...tarballs } }
-    }
-  }
-
-  const consumerDir = await mkdtemp(join(tmpdir(), 'ghostvue-themes-consumer-'))
-
   try {
+    if (prepackedComplete) {
+      tarballs = options.prepackedTarballs
+      timings.packMs = 0
+      timings.packReusedPrepacked = 1
+    } else if (
+      !options.prepackedTarballs &&
+      packedTarballSessionCache &&
+      requiredNames.every((name) => packedTarballSessionCache.tarballs[name])
+    ) {
+      tarballs = packedTarballSessionCache.tarballs
+      timings.packMs = 0
+      timings.packReusedSession = 1
+    } else {
+      packStart = performance.now()
+      packDir = await mkdtemp(join(tmpdir(), 'ghostvue-themes-pack-'))
+      tarballs = await packGhostvueTarballs(packDir)
+      mark('packMs', packStart)
+      if (!options.prepackedTarballs) {
+        await clearPackedTarballSessionCache()
+        ensureExitCleanupHook()
+        packedTarballSessionCache = { packDir, tarballs: { ...tarballs } }
+      }
+    }
+
+    consumerDir = await mkdtemp(join(tmpdir(), 'ghostvue-themes-consumer-'))
     const dependencies = fileDependenciesFromTarballs(tarballs)
 
     await writeFile(
@@ -225,7 +253,9 @@ console.log(JSON.stringify({ name: theme.name, cssLength: theme.css.length }))
       ...(options.profile ? { timings } : {}),
     }
   } finally {
-    await rm(consumerDir, { recursive: true, force: true })
+    if (consumerDir) {
+      await rm(consumerDir, { recursive: true, force: true })
+    }
     if (packDir && packDir !== packedTarballSessionCache?.packDir) {
       await rm(packDir, { recursive: true, force: true })
     }
@@ -241,5 +271,7 @@ if (import.meta.url === pathToFileURL(process.argv[1]).href) {
   } catch (error) {
     console.error(error instanceof Error ? error.message : error)
     process.exitCode = 1
+  } finally {
+    await clearPackedTarballSessionCache()
   }
 }

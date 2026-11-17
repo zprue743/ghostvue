@@ -17,10 +17,11 @@ async function bundleConsumer(
   mode: 'development' | 'production',
 ): Promise<string> {
   const dir = await mkdtemp(join(tmpdir(), 'ghost-codes-'))
-  const entry = join(dir, 'consumer.ts')
-  await writeFile(
-    entry,
-    `import { useControllableState } from '@ghostvue/vue'
+  try {
+    const entry = join(dir, 'consumer.ts')
+    await writeFile(
+      entry,
+      `import { useControllableState } from '@ghostvue/vue'
 
 export function createState() {
   return useControllableState({
@@ -29,45 +30,46 @@ export function createState() {
   })
 }
 `,
-  )
+    )
 
-  const outDir = join(dir, 'dist')
-  // Lib mode matches how apps consume `@ghostvue/vue`. `define` is what a
-  // consumer application build does; the library itself leaves NODE_ENV intact.
-  await build({
-    configFile: false,
-    root: dir,
-    mode,
-    logLevel: 'silent',
-    // The package barrel re-exports SFCs such as GhostVisuallyHidden.
-    plugins: [vue()],
-    define: {
-      'process.env.NODE_ENV': JSON.stringify(mode),
-    },
-    build: {
-      outDir,
-      emptyOutDir: true,
-      minify: false,
-      write: true,
-      lib: {
-        entry,
-        formats: ['es'],
-        fileName: () => 'consumer.js',
+    const outDir = join(dir, 'dist')
+    // Lib mode matches how apps consume `@ghostvue/vue`. `define` is what a
+    // consumer application build does; the library itself leaves NODE_ENV intact.
+    await build({
+      configFile: false,
+      root: dir,
+      mode,
+      logLevel: 'silent',
+      // The package barrel re-exports SFCs such as GhostVisuallyHidden.
+      plugins: [vue()],
+      define: {
+        'process.env.NODE_ENV': JSON.stringify(mode),
       },
-      rollupOptions: {
-        external: ['vue'],
+      build: {
+        outDir,
+        emptyOutDir: true,
+        minify: false,
+        write: true,
+        lib: {
+          entry,
+          formats: ['es'],
+          fileName: () => 'consumer.js',
+        },
+        rollupOptions: {
+          external: ['vue'],
+        },
       },
-    },
-    resolve: {
-      alias: {
-        '@ghostvue/vue': vueEntry,
+      resolve: {
+        alias: {
+          '@ghostvue/vue': vueEntry,
+        },
       },
-    },
-  })
+    })
 
-  const output = await readFile(join(outDir, 'consumer.js'), 'utf8')
-  await rm(dir, { recursive: true, force: true })
-  return output
+    return await readFile(join(outDir, 'consumer.js'), 'utf8')
+  } finally {
+    await rm(dir, { recursive: true, force: true })
+  }
 }
 
 describe('GHOST0 production DCE', () => {
