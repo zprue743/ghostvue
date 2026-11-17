@@ -97,6 +97,11 @@
           "type": "array",
           "description": "Public CSS custom properties consumers may set. Must use the --ghost- prefix from ADR 0007. Private --_ghost-* properties are unpublished and must not appear here.",
           "items": { "$ref": "#/$defs/cssProperty" }
+        },
+        "attributes": {
+          "type": "array",
+          "description": "Additional stable data-* styling hooks beside data-part and data-state, such as data-disabled when data-state already carries another axis, or data-orientation. Optional; omit when the component has none.",
+          "items": { "$ref": "#/$defs/dataAttribute" }
         }
       }
     },
@@ -340,6 +345,33 @@
         "description": {
           "type": "string",
           "description": "What this part or state represents.",
+          "minLength": 1
+        }
+      }
+    },
+    "dataAttribute": {
+      "type": "object",
+      "description": "A documented data-* styling hook other than data-part and data-state.",
+      "additionalProperties": false,
+      "required": ["name", "values", "description"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Full attribute name (data-disabled, data-orientation). data-part and data-state belong in parts and states instead.",
+          "pattern": "^data-(?!part$|state$)[a-z][a-z0-9-]*$"
+        },
+        "values": {
+          "type": "array",
+          "description": "Every value the attribute can take. Empty for a presence attribute that renders as an empty string when true and is absent when false.",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9-]*$"
+          }
+        },
+        "description": {
+          "type": "string",
+          "description": "Which element carries the attribute and what it represents.",
           "minLength": 1
         }
       }

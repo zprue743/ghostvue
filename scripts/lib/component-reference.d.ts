@@ -9,6 +9,7 @@ export type ReferenceManifest = Omit<
     parts: { name: string; description: string }[]
     states: { name: string; description: string }[]
     cssProperties: { name: string; description: string }[]
+    attributes?: { name: string; values: string[]; description: string }[]
   }
   examples: string[]
 }

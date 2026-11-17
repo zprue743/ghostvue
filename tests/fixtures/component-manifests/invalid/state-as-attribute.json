@@ -1,0 +1,34 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "handwritten",
+  "name": "GhostButton",
+  "package": "@ghostvue/vue",
+  "status": "experimental",
+  "description": "Invalid because data-state values belong in styling.states, not styling.attributes.",
+  "props": [],
+  "models": [],
+  "events": [],
+  "slots": [],
+  "exposed": [],
+  "styling": {
+    "parts": [],
+    "states": [],
+    "cssProperties": [],
+    "attributes": [
+      {
+        "name": "data-state",
+        "values": ["loading"],
+        "description": "Duplicates the dedicated states list."
+      }
+    ]
+  },
+  "accessibility": {
+    "role": "button",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/button/",
+    "keyboard": {
+      "Enter": "Activate"
+    },
+    "requiredAriaAttributes": []
+  },
+  "examples": []
+}

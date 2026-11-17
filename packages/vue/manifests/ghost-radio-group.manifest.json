@@ -121,7 +121,17 @@
         "description": "Whole group disabled."
       }
     ],
-    "cssProperties": []
+    "cssProperties": [],
+    "attributes": [
+      {
+        "name": "data-orientation",
+        "values": [
+          "horizontal",
+          "vertical"
+        ],
+        "description": "Resolved orientation on the root. Always present."
+      }
+    ]
   },
   "accessibility": {
     "role": "radiogroup",

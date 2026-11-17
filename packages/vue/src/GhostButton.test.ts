@@ -16,6 +16,37 @@ describe('GhostButton', () => {
     expect(wrapper.text()).toBe('Save')
   })
 
+  // The styling contract (docs/architecture/styling.md): data-part and
+  // data-state are the public styling API. Absent data-state means the idle
+  // state, so `[data-state]` selectors never match an idle button. The
+  // manifest cross-check lives in tests/integration/component-manifest.test.ts.
+  it('exposes the documented data-part and data-state hooks in every state', () => {
+    const cases = [
+      { props: {}, state: undefined, disabled: undefined },
+      { props: { disabled: true }, state: 'disabled', disabled: '' },
+      { props: { loading: true }, state: 'loading', disabled: undefined },
+      // Loading wins data-state; native disabled still reports unavailability.
+      {
+        props: { disabled: true, loading: true },
+        state: 'loading',
+        disabled: '',
+      },
+    ] as const
+
+    for (const { props, state, disabled } of cases) {
+      const button = mount(GhostButton, {
+        props,
+        slots: { default: 'Save' },
+      }).get('button')
+
+      expect(button.attributes('data-part')).toBe('root')
+      expect(button.attributes('data-state')).toBe(state)
+      expect(button.attributes('disabled')).toBe(disabled)
+      // Button has no extra data-* hooks; disabled is native plus data-state.
+      expect(button.attributes('data-disabled')).toBeUndefined()
+    }
+  })
+
   it('forwards native attributes and listeners to the button', () => {
     const onClick = vi.fn()
     const wrapper = mount(GhostButton, {

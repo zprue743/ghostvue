@@ -66,9 +66,26 @@
     }
   ],
   "styling": {
-    "parts": [],
-    "states": [],
-    "cssProperties": []
+    "parts": [
+      {
+        "name": "radio-item",
+        "description": "The menubar menu item element with role=menuitemradio."
+      }
+    ],
+    "states": [
+      {
+        "name": "checked",
+        "description": "The item is the selected value of its radio group. data-state is absent otherwise."
+      }
+    ],
+    "cssProperties": [],
+    "attributes": [
+      {
+        "name": "data-disabled",
+        "values": [],
+        "description": "Present while the item or its radio group is disabled, independent of the checked data-state."
+      }
+    ]
   },
   "accessibility": {
     "role": "generic",

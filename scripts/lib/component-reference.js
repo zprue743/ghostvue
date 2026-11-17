@@ -124,6 +124,15 @@ export function manifestToMarkdown(manifest) {
           code(state.name),
           text(state.description),
         ]),
+        // Presence attributes have no value list: they render as an empty
+        // string when true and are absent otherwise.
+        ...(manifest.styling.attributes ?? []).map((attribute) => [
+          code(attribute.name),
+          attribute.values.length
+            ? attribute.values.map(code).join(', ')
+            : 'present',
+          text(attribute.description),
+        ]),
       ],
     ),
     table(

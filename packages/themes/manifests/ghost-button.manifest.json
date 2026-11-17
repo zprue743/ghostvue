@@ -134,18 +134,6 @@
       {
         "name": "disabled",
         "description": "Unavailable appearance. Prefer the native disabled attribute when both apply."
-      },
-      {
-        "name": "off",
-        "description": "data-interactive-state while reduced motion or coarse pointer. Spotlight only."
-      },
-      {
-        "name": "idle",
-        "description": "data-interactive-state while opted in and at rest."
-      },
-      {
-        "name": "tracking",
-        "description": "data-interactive-state while the pointer is over an opted-in button."
       }
     ],
     "cssProperties": [
@@ -332,6 +320,59 @@
       {
         "name": "--ghost-control-size-lg-padding-inline",
         "description": "Inline padding for size lg."
+      }
+    ],
+    "attributes": [
+      {
+        "name": "data-variant",
+        "values": [
+          "soft",
+          "outline",
+          "ghost"
+        ],
+        "description": "Visual treatment on the root button. Absent for the default solid variant."
+      },
+      {
+        "name": "data-tone",
+        "values": [
+          "neutral",
+          "danger"
+        ],
+        "description": "Semantic color intent on the root button. Absent for the default accent tone."
+      },
+      {
+        "name": "data-size",
+        "values": [
+          "sm",
+          "lg"
+        ],
+        "description": "Control size on the root button. Absent for the default md size."
+      },
+      {
+        "name": "data-block",
+        "values": [],
+        "description": "Present on the root button when block is true."
+      },
+      {
+        "name": "data-icon-only",
+        "values": [],
+        "description": "Present on the root button when iconOnly is true."
+      },
+      {
+        "name": "data-interactive",
+        "values": [
+          "spotlight"
+        ],
+        "description": "Present on the root button when interactive is spotlight."
+      },
+      {
+        "name": "data-interactive-state",
+        "values": [
+          "off",
+          "idle",
+          "tracking"
+        ],
+        "description": "Spotlight pointer state on the root button: off while reduced motion or a coarse pointer disables the effect, idle while opted in and at rest, tracking while the pointer is over the button. Kept separate from data-state so loading and disabled stay stylable."
       }
     ]
   },
