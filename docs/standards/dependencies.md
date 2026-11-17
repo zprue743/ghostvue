@@ -9,6 +9,10 @@ bundle impact, license, maintenance health, security posture, and SSR/browser
 requirements. Prefer a peer dependency when the consumer must own a singleton
 runtime, as with Vue.
 
+Icons are not a dependency. Components take icon content from consumers, and
+packages do not add an icon library or icon adapter package; see
+[ADR 0013](../adr/0013-icon-strategy.md).
+
 Development tooling may be broader but remains intentional. Avoid overlapping
 tools that enforce the same rule in different ways. Pin exact development
 versions through the lockfile and update them in reviewed changes.

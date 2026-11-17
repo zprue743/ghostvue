@@ -17,6 +17,11 @@ Prefer native HTML semantics. ARIA supplements missing native meaning; it does
 not repair arbitrary markup automatically. Components must remain operable
 without a pointer and should not encode meaning through color alone.
 
+Decorative icons, whether default or consumer-supplied, are hidden with
+`aria-hidden="true"`. An icon is never the only accessible name: icon-only
+controls are named with `aria-label`, `aria-labelledby`, or visually hidden
+text. See [ADR 0013](../adr/0013-icon-strategy.md).
+
 Specs should cite established WAI-ARIA Authoring Practices patterns when a
 matching composite widget exists, while still validating the chosen behavior in
 the product context. Tests should cover keyboard and focus behavior explicitly.

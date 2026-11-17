@@ -191,6 +191,47 @@ and roundness nest through `data-ghost-density` and `--ghost-roundness`; see
 Authored DTCG lives in `packages/themes/tokens/` and is compiled by
 `@ghostvue/themes` ([ADR 0007](../adr/0007-token-pipeline.md)).
 
+## Icons
+
+The theme ships no icon set and does not depend on an icon library
+([ADR 0013](../adr/0013-icon-strategy.md)). Supply icons as slot content from
+whatever set your application uses; headless components never choose artwork.
+
+Themed defaults are CSS-painted, not icon assets: the GhostButton and
+GhostSpinner loading rings, the GhostCheckbox check and indeterminate bar, and
+the GhostRadioGroup dot. They follow the same tokens as your icons.
+
+- **Color.** Icons inherit the control's text color when they paint with
+  `currentColor` (`stroke="currentColor"` or `fill="currentColor"`), so tone,
+  mode, disabled, and forced-colors styling apply without per-icon colors.
+- **Size.** `--ghost-action-icon-size` (default `1.1em`) sizes
+  `[data-part='icon']` in GhostButton and GhostBadge and the GhostLink
+  `[data-part='external-icon']`; the inner `svg` fills that box.
+  `--ghost-action-spinner-size` and `--ghost-action-spinner-width` size loading
+  rings. Both are `em`-based, so icons follow density and text size.
+- **Replacement.** Put your own markup in the documented slot. In a loading
+  GhostButton, an element with `data-part="loading-indicator"` replaces the
+  default ring; GhostLink's `externalIndicator` slot replaces its arrow.
+
+```css
+.product-theme {
+  --ghost-action-icon-size: 1.25em;
+  --ghost-action-spinner-width: 3px;
+}
+```
+
+```vue
+<GhostButton icon-only aria-label="Close dialog">
+  <svg data-part="icon" aria-hidden="true" focusable="false" viewBox="0 0 16 16">
+    <path d="M3 3l10 10M13 3L3 13" fill="none" stroke="currentColor" />
+  </svg>
+</GhostButton>
+```
+
+Decorative icons need `aria-hidden="true"`. An icon never names a control:
+icon-only controls need `aria-label`, `aria-labelledby`, or
+`GhostVisuallyHidden` text. `icon-only` changes sizing only.
+
 ## Accessibility and motion
 
 The defaults include contrast-tested light and dark treatments (WCAG 2 AA
