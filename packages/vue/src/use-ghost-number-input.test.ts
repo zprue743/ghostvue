@@ -40,4 +40,62 @@ describe('useGhostNumberInput formatting', () => {
     await wrapper.get('[data-part="increment"]').trigger('click')
     expect(wrapper.emitted('update:modelValue')?.[0]).toEqual([10])
   })
+
+  it('preserves fractional precision from value when step is an integer', async () => {
+    const wrapper = mount(GhostNumberInput, {
+      props: { defaultValue: 1.5, min: 1.5, step: 1 },
+    })
+
+    expect(
+      wrapper.get('[data-part="decrement"]').attributes('disabled'),
+    ).toBeDefined()
+
+    await wrapper.get('[data-part="increment"]').trigger('click')
+    expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual([2.5])
+    expect(
+      wrapper.get('[data-part="decrement"]').attributes('disabled'),
+    ).toBeUndefined()
+
+    await wrapper.get('[data-part="decrement"]').trigger('click')
+    expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual([1.5])
+    expect(
+      wrapper.get('[data-part="decrement"]').attributes('disabled'),
+    ).toBeDefined()
+  })
+
+  it('preserves fractional precision from bounds and current value', async () => {
+    const fromMin = mount(GhostNumberInput, {
+      props: { defaultValue: null, min: 1.25, step: 0.5 },
+    })
+    await fromMin.get('[data-part="increment"]').trigger('click')
+    expect(fromMin.emitted('update:modelValue')?.[0]).toEqual([1.75])
+
+    const toMax = mount(GhostNumberInput, {
+      props: { defaultValue: 1.9, max: 2.25, step: 1 },
+    })
+    await toMax.get('[data-part="increment"]').trigger('click')
+    expect(toMax.emitted('update:modelValue')?.[0]).toEqual([2.25])
+
+    const fromValue = mount(GhostNumberInput, {
+      props: { defaultValue: 1.234, step: 0.1 },
+    })
+    await fromValue.get('[data-part="increment"]').trigger('click')
+    expect(fromValue.emitted('update:modelValue')?.[0]).toEqual([1.334])
+    await fromValue.get('[data-part="decrement"]').trigger('click')
+    expect(fromValue.emitted('update:modelValue')?.[1]).toEqual([1.234])
+  })
+
+  it('cleans up binary floating-point drift and scientific-notation steps', async () => {
+    const floatWrapper = mount(GhostNumberInput, {
+      props: { defaultValue: 0.1, step: 0.2 },
+    })
+    await floatWrapper.get('[data-part="increment"]').trigger('click')
+    expect(floatWrapper.emitted('update:modelValue')?.[0]).toEqual([0.3])
+
+    const sciWrapper = mount(GhostNumberInput, {
+      props: { defaultValue: 0, step: 1e-7 },
+    })
+    await sciWrapper.get('[data-part="increment"]').trigger('click')
+    expect(sciWrapper.emitted('update:modelValue')?.[0]).toEqual([1e-7])
+  })
 })

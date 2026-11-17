@@ -83,10 +83,14 @@ function getFormatter(
   return formatter
 }
 
-function countDecimals(step: number): number {
-  const text = step.toString()
-  const dot = text.indexOf('.')
-  return dot === -1 ? 0 : text.length - dot - 1
+function countDecimals(value: number | undefined): number {
+  if (value === undefined || !Number.isFinite(value)) return 0
+  const text = value.toString().toLowerCase()
+  const [mantissa = '', exponentPart] = text.split('e')
+  const dot = mantissa.indexOf('.')
+  const mantissaDecimals = dot === -1 ? 0 : mantissa.length - dot - 1
+  const exponent = exponentPart ? Number(exponentPart) : 0
+  return Math.max(0, mantissaDecimals - exponent)
 }
 
 function clampNumber(value: number, min?: number, max?: number): number {
@@ -145,7 +149,15 @@ function stepFrom(
   max?: number,
 ): number {
   const seed = current ?? min ?? 0
-  const decimals = countDecimals(step)
+  const decimals = Math.min(
+    100,
+    Math.max(
+      countDecimals(seed),
+      countDecimals(step),
+      countDecimals(min),
+      countDecimals(max),
+    ),
+  )
   const next = seed + deltaSteps * step
   const clamped = clampNumber(next, min, max)
   return Number(clamped.toFixed(decimals))
