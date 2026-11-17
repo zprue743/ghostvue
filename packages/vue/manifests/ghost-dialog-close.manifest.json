@@ -71,5 +71,10 @@
     },
     "requiredAriaAttributes": []
   },
-  "examples": []
+  "examples": [],
+  "spec": {
+    "path": "docs/components/dialog-spec.md",
+    "status": "approved",
+    "evidence": "Approved for minimal `GhostDialog` (GHO-28 PR 2 of 2)."
+  }
 }

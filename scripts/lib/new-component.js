@@ -206,7 +206,50 @@ state, SSR requirements, and meaningful behavior tests in the specification.
     ],
     [
       `docs/components/${slug}-spec.md`,
-      `# ${name} specification
+      `---
+schemaVersion: 1.0.0
+component: ${name}
+components:
+  - ${name}
+packages:
+  - '@ghostvue/vue'
+  - '@ghostvue/themes'
+specStatus: draft
+manifests:
+  - packages/vue/manifests/${base}.manifest.json
+  - packages/themes/manifests/${base}.manifest.json
+sections:
+  purpose:
+    applicable: true
+  nonGoals:
+    applicable: true
+  publicApi:
+    applicable: true
+  stateModel:
+    applicable: true
+  consumerData:
+    applicable: true
+  accessibility:
+    applicable: true
+  rendering:
+    applicable: true
+  environment:
+    applicable: true
+  performance:
+    applicable: true
+  composition:
+    applicable: true
+  testPlan:
+    applicable: true
+  documentationPlan:
+    applicable: true
+  compatibility:
+    applicable: true
+unresolvedQuestions:
+  - 'Approve the ${name} specification before implementing production behavior.'
+---
+
+# ${name} specification
 
 Status: draft; approval required before implementing production behavior.
 

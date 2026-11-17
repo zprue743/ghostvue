@@ -1,3 +1,53 @@
+---
+schemaVersion: 1.0.0
+component: GhostPopover
+components:
+  - GhostPopover
+  - GhostPopoverTrigger
+  - GhostPopoverContent
+  - GhostPopoverClose
+packages:
+  - '@ghostvue/vue'
+  - '@ghostvue/themes'
+specStatus: approved
+approval:
+  evidence: 'Approved and implemented (`GhostPopover` on `master`, GHO-78 complete).'
+manifests:
+  - packages/vue/manifests/ghost-popover.manifest.json
+  - packages/vue/manifests/ghost-popover-trigger.manifest.json
+  - packages/vue/manifests/ghost-popover-content.manifest.json
+  - packages/vue/manifests/ghost-popover-close.manifest.json
+  - packages/themes/manifests/ghost-popover.manifest.json
+sections:
+  purpose:
+    applicable: true
+  nonGoals:
+    applicable: true
+  publicApi:
+    applicable: true
+  stateModel:
+    applicable: true
+  consumerData:
+    applicable: true
+  accessibility:
+    applicable: true
+  rendering:
+    applicable: true
+  environment:
+    applicable: true
+  performance:
+    applicable: true
+  composition:
+    applicable: true
+  testPlan:
+    applicable: true
+  documentationPlan:
+    applicable: true
+  compatibility:
+    applicable: true
+unresolvedQuestions: []
+---
+
 # GhostPopover specification
 
 **Status:** Approved and implemented (`GhostPopover` on `master`, GHO-78 complete).

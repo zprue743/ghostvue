@@ -1,3 +1,51 @@
+---
+schemaVersion: 1.0.0
+component: GhostHoverCard
+components:
+  - GhostHoverCard
+  - GhostHoverCardTrigger
+  - GhostHoverCardContent
+packages:
+  - '@ghostvue/vue'
+  - '@ghostvue/themes'
+specStatus: approved
+approval:
+  evidence: 'Approved for minimal `GhostHoverCard` (GHO-100). Visual baselines use `pnpm test:visual:docker`.'
+manifests:
+  - packages/vue/manifests/ghost-hover-card.manifest.json
+  - packages/vue/manifests/ghost-hover-card-trigger.manifest.json
+  - packages/vue/manifests/ghost-hover-card-content.manifest.json
+  - packages/themes/manifests/ghost-hover-card.manifest.json
+sections:
+  purpose:
+    applicable: true
+  nonGoals:
+    applicable: true
+  publicApi:
+    applicable: true
+  stateModel:
+    applicable: true
+  consumerData:
+    applicable: true
+  accessibility:
+    applicable: true
+  rendering:
+    applicable: true
+  environment:
+    applicable: true
+  performance:
+    applicable: true
+  composition:
+    applicable: true
+  testPlan:
+    applicable: true
+  documentationPlan:
+    applicable: true
+  compatibility:
+    applicable: true
+unresolvedQuestions: []
+---
+
 # GhostHoverCard specification
 
 **Status:** Approved for minimal `GhostHoverCard` (GHO-100). Visual baselines use `pnpm test:visual:docker`.

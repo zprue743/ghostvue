@@ -1,3 +1,58 @@
+---
+schemaVersion: 1.0.0
+component: GhostSelect
+components:
+  - GhostSelect
+  - GhostSelectTrigger
+  - GhostSelectValue
+  - GhostSelectContent
+  - GhostSelectOption
+  - GhostSelectGroup
+  - GhostSelectLabel
+packages:
+  - '@ghostvue/vue'
+  - '@ghostvue/themes'
+specStatus: proposed
+manifests:
+  - packages/vue/manifests/ghost-select.manifest.json
+  - packages/vue/manifests/ghost-select-trigger.manifest.json
+  - packages/vue/manifests/ghost-select-value.manifest.json
+  - packages/vue/manifests/ghost-select-content.manifest.json
+  - packages/vue/manifests/ghost-select-option.manifest.json
+  - packages/vue/manifests/ghost-select-group.manifest.json
+  - packages/vue/manifests/ghost-select-label.manifest.json
+  - packages/themes/manifests/ghost-select.manifest.json
+sections:
+  purpose:
+    applicable: true
+  nonGoals:
+    applicable: true
+  publicApi:
+    applicable: true
+  stateModel:
+    applicable: true
+  consumerData:
+    applicable: false
+    reason: 'Component does not accept consumer data collections or typed item accessors.'
+  accessibility:
+    applicable: true
+  rendering:
+    applicable: true
+  environment:
+    applicable: true
+  performance:
+    applicable: true
+  composition:
+    applicable: true
+  testPlan:
+    applicable: true
+  documentationPlan:
+    applicable: true
+  compatibility:
+    applicable: true
+unresolvedQuestions: []
+---
+
 # GhostSelect specification
 
 **Status:** Proposed for GHO-83. Spec and implementation ship together; Zac

@@ -75,6 +75,11 @@ Every manifest lists:
 - `examples` — stable example ids matching `examples/<id>.vue`
   (`button/icon-only`). Not repository-root file paths. See
   [executable examples](../contributing/examples.md).
+- `spec` (optional, generated when approved) — `{ path, status: 'approved', evidence? }`
+  populated by `pnpm manifests:write` only from component specifications whose
+  YAML frontmatter has `specStatus: approved` and `approval.evidence`. Spec
+  approval status is distinct from component `status` (`experimental`, `beta`,
+  `stable`, `deprecated`).
 
 Unknown keys are invalid. Native HTML/ARIA fallthrough is not duplicated into
 `props`. Native listeners on a native root are not duplicated into `events`.

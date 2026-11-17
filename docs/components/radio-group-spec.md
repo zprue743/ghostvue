@@ -1,3 +1,51 @@
+---
+schemaVersion: 1.0.0
+component: GhostRadioGroup
+components:
+  - GhostRadioGroup
+  - GhostRadioGroupItem
+packages:
+  - '@ghostvue/vue'
+  - '@ghostvue/themes'
+specStatus: proposed
+manifests:
+  - packages/vue/manifests/ghost-radio-group.manifest.json
+  - packages/vue/manifests/ghost-radio-group-item.manifest.json
+  - packages/themes/manifests/ghost-radio-group.manifest.json
+sections:
+  purpose:
+    applicable: true
+  nonGoals:
+    applicable: true
+  publicApi:
+    applicable: true
+  stateModel:
+    applicable: true
+  consumerData:
+    applicable: false
+    reason: 'Component does not accept consumer data collections or typed item accessors.'
+  accessibility:
+    applicable: true
+  rendering:
+    applicable: false
+    reason: 'Renderless context provider; emits no DOM elements or styling hooks.'
+  environment:
+    applicable: false
+    reason: 'Provider uses Vue provide/inject and reactive timers with no DOM or touch surface.'
+  performance:
+    applicable: false
+    reason: 'Constant-time context provider managing a single active tooltip timer.'
+  composition:
+    applicable: true
+  testPlan:
+    applicable: true
+  documentationPlan:
+    applicable: true
+  compatibility:
+    applicable: true
+unresolvedQuestions: []
+---
+
 # GhostRadioGroup specification
 
 **Status:** Proposed for GHO-30. Spec and implementation ship together; Zac

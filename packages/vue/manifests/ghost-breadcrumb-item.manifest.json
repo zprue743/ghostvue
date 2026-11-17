@@ -48,5 +48,10 @@
     "keyboard": {},
     "requiredAriaAttributes": []
   },
-  "examples": []
+  "examples": [],
+  "spec": {
+    "path": "docs/components/breadcrumb-spec.md",
+    "status": "approved",
+    "evidence": "Approved and implemented (`GhostBreadcrumb` on `feat/gho-99-breadcrumb`, GHO-99)."
+  }
 }

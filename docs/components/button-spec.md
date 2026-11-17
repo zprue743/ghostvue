@@ -1,3 +1,47 @@
+---
+schemaVersion: 1.0.0
+component: GhostButton
+components:
+  - GhostButton
+packages:
+  - '@ghostvue/vue'
+  - '@ghostvue/themes'
+specStatus: approved
+approval:
+  evidence: 'Approved for issue #1 implementation scope on 2026-08-15.'
+manifests:
+  - packages/vue/manifests/ghost-button.manifest.json
+  - packages/themes/manifests/ghost-button.manifest.json
+sections:
+  purpose:
+    applicable: true
+  nonGoals:
+    applicable: true
+  publicApi:
+    applicable: true
+  stateModel:
+    applicable: true
+  consumerData:
+    applicable: true
+  accessibility:
+    applicable: true
+  rendering:
+    applicable: true
+  environment:
+    applicable: true
+  performance:
+    applicable: true
+  composition:
+    applicable: true
+  testPlan:
+    applicable: true
+  documentationPlan:
+    applicable: true
+  compatibility:
+    applicable: true
+unresolvedQuestions: []
+---
+
 # GhostButton specification
 
 **Status:** Approved for issue #1 implementation scope on 2026-08-15.

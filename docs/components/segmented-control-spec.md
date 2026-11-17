@@ -1,3 +1,48 @@
+---
+schemaVersion: 1.0.0
+component: GhostSegmentedControl
+components:
+  - GhostSegmentedControl
+  - GhostSegmentedControlItem
+packages:
+  - '@ghostvue/vue'
+  - '@ghostvue/themes'
+specStatus: proposed
+manifests:
+  - packages/vue/manifests/ghost-segmented-control.manifest.json
+  - packages/vue/manifests/ghost-segmented-control-item.manifest.json
+  - packages/themes/manifests/ghost-segmented-control.manifest.json
+  - packages/themes/manifests/ghost-segmented-control-item.manifest.json
+sections:
+  purpose:
+    applicable: true
+  nonGoals:
+    applicable: true
+  publicApi:
+    applicable: true
+  stateModel:
+    applicable: true
+  consumerData:
+    applicable: true
+  accessibility:
+    applicable: true
+  rendering:
+    applicable: true
+  environment:
+    applicable: true
+  performance:
+    applicable: true
+  composition:
+    applicable: true
+  testPlan:
+    applicable: true
+  documentationPlan:
+    applicable: true
+  compatibility:
+    applicable: true
+unresolvedQuestions: []
+---
+
 # GhostSegmentedControl specification
 
 **Status:** Proposed for GHO-101. Spec and implementation ship together; Zac

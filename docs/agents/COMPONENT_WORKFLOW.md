@@ -6,7 +6,12 @@ predecessor. Do not start markup to stand in for an unresolved design.
 
 1. **Approved specification.** A spec based on
    [the component template](../components/spec-template.md), reviewed enough
-   to resolve public behavior and accessibility.
+   to resolve public behavior and accessibility. Its YAML frontmatter records
+   component identity, manifest references, required-section applicability
+   (with a `reason` for any `applicable: false` entry), `unresolvedQuestions: []`,
+   and `specStatus: approved` with `approval.evidence` (distinct from the
+   manifest's `status` stability field). Run `pnpm specs:check` to validate
+   completeness.
 2. **Tests.** Behavior tests for the public contract (Vue/unit), browser
    tests for observable interaction (`pnpm test:e2e`), and type tests when
    the exported declaration extends beyond custom props. Follow

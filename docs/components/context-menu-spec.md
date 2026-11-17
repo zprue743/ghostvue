@@ -1,3 +1,65 @@
+---
+schemaVersion: 1.0.0
+component: GhostContextMenu
+components:
+  - GhostContextMenu
+  - GhostContextMenuTrigger
+  - GhostContextMenuContent
+  - GhostContextMenuItem
+  - GhostContextMenuGroup
+  - GhostContextMenuLabel
+  - GhostContextMenuSeparator
+  - GhostContextMenuCheckboxItem
+  - GhostContextMenuRadioGroup
+  - GhostContextMenuRadioItem
+packages:
+  - '@ghostvue/vue'
+  - '@ghostvue/themes'
+specStatus: pending-review
+manifests:
+  - packages/vue/manifests/ghost-context-menu.manifest.json
+  - packages/vue/manifests/ghost-context-menu-trigger.manifest.json
+  - packages/vue/manifests/ghost-context-menu-content.manifest.json
+  - packages/vue/manifests/ghost-context-menu-item.manifest.json
+  - packages/vue/manifests/ghost-context-menu-group.manifest.json
+  - packages/vue/manifests/ghost-context-menu-label.manifest.json
+  - packages/vue/manifests/ghost-context-menu-separator.manifest.json
+  - packages/vue/manifests/ghost-context-menu-checkbox-item.manifest.json
+  - packages/vue/manifests/ghost-context-menu-radio-group.manifest.json
+  - packages/vue/manifests/ghost-context-menu-radio-item.manifest.json
+  - packages/themes/manifests/ghost-context-menu.manifest.json
+sections:
+  purpose:
+    applicable: true
+  nonGoals:
+    applicable: true
+  publicApi:
+    applicable: true
+  stateModel:
+    applicable: true
+  consumerData:
+    applicable: false
+    reason: 'Component does not accept consumer data collections or typed item accessors.'
+  accessibility:
+    applicable: true
+  rendering:
+    applicable: true
+  environment:
+    applicable: true
+  performance:
+    applicable: false
+    reason: 'Constant-time context provider managing a single active tooltip timer.'
+  composition:
+    applicable: true
+  testPlan:
+    applicable: true
+  documentationPlan:
+    applicable: true
+  compatibility:
+    applicable: true
+unresolvedQuestions: []
+---
+
 # GhostContextMenu specification
 
 **Status:** Approved pending review.

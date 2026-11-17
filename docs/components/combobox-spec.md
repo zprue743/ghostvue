@@ -1,3 +1,59 @@
+---
+schemaVersion: 1.0.0
+component: GhostCombobox
+components:
+  - GhostCombobox
+  - GhostComboboxInput
+  - GhostComboboxTrigger
+  - GhostComboboxContent
+  - GhostComboboxOption
+  - GhostComboboxGroup
+  - GhostComboboxLabel
+  - GhostComboboxEmpty
+packages:
+  - '@ghostvue/vue'
+  - '@ghostvue/themes'
+specStatus: proposed
+manifests:
+  - packages/vue/manifests/ghost-combobox.manifest.json
+  - packages/vue/manifests/ghost-combobox-input.manifest.json
+  - packages/vue/manifests/ghost-combobox-trigger.manifest.json
+  - packages/vue/manifests/ghost-combobox-content.manifest.json
+  - packages/vue/manifests/ghost-combobox-option.manifest.json
+  - packages/vue/manifests/ghost-combobox-group.manifest.json
+  - packages/vue/manifests/ghost-combobox-label.manifest.json
+  - packages/vue/manifests/ghost-combobox-empty.manifest.json
+  - packages/themes/manifests/ghost-combobox.manifest.json
+sections:
+  purpose:
+    applicable: true
+  nonGoals:
+    applicable: true
+  publicApi:
+    applicable: true
+  stateModel:
+    applicable: true
+  consumerData:
+    applicable: true
+  accessibility:
+    applicable: true
+  rendering:
+    applicable: true
+  environment:
+    applicable: true
+  performance:
+    applicable: true
+  composition:
+    applicable: true
+  testPlan:
+    applicable: true
+  documentationPlan:
+    applicable: true
+  compatibility:
+    applicable: true
+unresolvedQuestions: []
+---
+
 # GhostCombobox specification
 
 **Status:** Proposed for GHO-32. Spec and implementation ship together; Zac

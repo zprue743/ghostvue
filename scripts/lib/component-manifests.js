@@ -19,6 +19,8 @@ import { basename, join, posix } from 'node:path'
 import Ajv2020 from 'ajv/dist/2020.js'
 import { createChecker } from 'vue-component-meta'
 
+import { loadApprovedSpecMetadata } from './component-specs.js'
+
 export const CURRENT_SCHEMA_VERSION = '1.0.0'
 
 export const MANIFEST_PACKAGES = [
@@ -505,7 +507,7 @@ function existingByProp(list) {
   return map
 }
 
-export function mergeManifest(derived, existing) {
+export function mergeManifest(derived, existing, specMetadata = undefined) {
   const previous =
     existing && typeof existing === 'object' && !Array.isArray(existing)
       ? existing
@@ -621,6 +623,20 @@ export function mergeManifest(derived, existing) {
 
   const examples = Array.isArray(previous.examples) ? previous.examples : []
 
+  const spec =
+    specMetadata && specMetadata.status === 'approved'
+      ? {
+          path: specMetadata.path,
+          status: 'approved',
+          ...(specMetadata.evidence ? { evidence: specMetadata.evidence } : {}),
+        }
+      : previous.spec &&
+          typeof previous.spec === 'object' &&
+          !Array.isArray(previous.spec) &&
+          previous.spec.status === 'approved'
+        ? previous.spec
+        : undefined
+
   return {
     schemaVersion:
       typeof previous.schemaVersion === 'string' && previous.schemaVersion
@@ -643,6 +659,7 @@ export function mergeManifest(derived, existing) {
     styling,
     accessibility,
     examples,
+    ...(spec ? { spec } : {}),
   }
 }
 
@@ -737,6 +754,9 @@ export async function syncRepositoryManifests({
   const written = []
   const checked = []
   const generatedFiles = new Set()
+  const approvedSpecs = repositoryRoot
+    ? await loadApprovedSpecMetadata(repositoryRoot)
+    : new Map()
 
   for (const spec of packages) {
     const pkg = resolveManifestPackage(repositoryRoot, spec)
@@ -805,7 +825,7 @@ export async function syncRepositoryManifests({
       const existing = (await fileExists(absoluteManifest))
         ? await readJsonObject(absoluteManifest)
         : null
-      const next = mergeManifest(derived, existing)
+      const next = mergeManifest(derived, existing, approvedSpecs.get(name))
       const serialized = serializeManifest(next)
       checked.push(relativeManifest)
 

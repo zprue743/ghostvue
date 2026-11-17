@@ -29,6 +29,7 @@
     "manifests:write": "node scripts/write-component-manifests.mjs --write",
     "registries": "node scripts/write-component-registries.mjs",
     "registries:write": "node scripts/write-component-registries.mjs --write",
+    "specs:check": "node scripts/check-component-specs.mjs",
     "prepare": "pnpm registries:write",
     "contrast": "node packages/themes/scripts/check-contrast.mjs",
     "pretest": "pnpm registries:write",

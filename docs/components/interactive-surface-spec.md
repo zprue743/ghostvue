@@ -1,3 +1,48 @@
+---
+schemaVersion: 1.0.0
+component: GhostInteractiveSurface
+components:
+  - GhostInteractiveSurface
+packages:
+  - '@ghostvue/vue'
+  - '@ghostvue/themes'
+specStatus: approved
+approval:
+  evidence: 'Approved with ADR 0009 (accepted 2026-11-11). v1 ships'
+manifests:
+  - packages/vue/manifests/ghost-interactive-surface.manifest.json
+  - packages/themes/manifests/ghost-interactive-surface.manifest.json
+sections:
+  purpose:
+    applicable: true
+  nonGoals:
+    applicable: true
+  publicApi:
+    applicable: true
+  stateModel:
+    applicable: true
+  consumerData:
+    applicable: false
+    reason: 'Component does not accept consumer data collections or typed item accessors.'
+  accessibility:
+    applicable: true
+  rendering:
+    applicable: true
+  environment:
+    applicable: true
+  performance:
+    applicable: true
+  composition:
+    applicable: true
+  testPlan:
+    applicable: true
+  documentationPlan:
+    applicable: true
+  compatibility:
+    applicable: true
+unresolvedQuestions: []
+---
+
 # GhostInteractiveSurface specification
 
 **Status:** Approved with ADR 0009 (accepted 2026-11-11). v1 ships

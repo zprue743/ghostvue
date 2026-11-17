@@ -1,3 +1,65 @@
+---
+schemaVersion: 1.0.0
+component: GhostMenubar
+components:
+  - GhostMenubar
+  - GhostMenubarMenu
+  - GhostMenubarTrigger
+  - GhostMenubarContent
+  - GhostMenubarItem
+  - GhostMenubarGroup
+  - GhostMenubarLabel
+  - GhostMenubarSeparator
+  - GhostMenubarCheckboxItem
+  - GhostMenubarRadioGroup
+  - GhostMenubarRadioItem
+packages:
+  - '@ghostvue/vue'
+  - '@ghostvue/themes'
+specStatus: pending-review
+manifests:
+  - packages/vue/manifests/ghost-menubar.manifest.json
+  - packages/vue/manifests/ghost-menubar-menu.manifest.json
+  - packages/vue/manifests/ghost-menubar-trigger.manifest.json
+  - packages/vue/manifests/ghost-menubar-content.manifest.json
+  - packages/vue/manifests/ghost-menubar-item.manifest.json
+  - packages/vue/manifests/ghost-menubar-group.manifest.json
+  - packages/vue/manifests/ghost-menubar-label.manifest.json
+  - packages/vue/manifests/ghost-menubar-separator.manifest.json
+  - packages/vue/manifests/ghost-menubar-checkbox-item.manifest.json
+  - packages/vue/manifests/ghost-menubar-radio-group.manifest.json
+  - packages/vue/manifests/ghost-menubar-radio-item.manifest.json
+  - packages/themes/manifests/ghost-menubar.manifest.json
+sections:
+  purpose:
+    applicable: true
+  nonGoals:
+    applicable: true
+  publicApi:
+    applicable: true
+  stateModel:
+    applicable: true
+  consumerData:
+    applicable: true
+  accessibility:
+    applicable: true
+  rendering:
+    applicable: true
+  environment:
+    applicable: true
+  performance:
+    applicable: true
+  composition:
+    applicable: true
+  testPlan:
+    applicable: true
+  documentationPlan:
+    applicable: true
+  compatibility:
+    applicable: true
+unresolvedQuestions: []
+---
+
 # GhostMenubar specification
 
 **Status:** Approved pending review.

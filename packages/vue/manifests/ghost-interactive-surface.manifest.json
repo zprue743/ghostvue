@@ -92,5 +92,10 @@
   },
   "examples": [
     "interactive-surface/composable"
-  ]
+  ],
+  "spec": {
+    "path": "docs/components/interactive-surface-spec.md",
+    "status": "approved",
+    "evidence": "Approved with ADR 0009 (accepted 2026-11-11). v1 ships"
+  }
 }
