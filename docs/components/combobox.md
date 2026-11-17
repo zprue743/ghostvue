@@ -19,6 +19,10 @@ Listen for `search` (with `requestId`), call `begin(payload.requestId)` at fetch
 start, and use `isLatest(payload.requestId)` before applying results so
 stale responses do not overwrite newer results.
 
+Filtering or replacing results never clears the selection. A selected value whose
+option is no longer rendered stays selected, keeps submitting with the form, and
+keeps its last known label; no `update:modelValue` is emitted.
+
 ## Multiple selection
 
 <GhostExample id="combobox/multi" />

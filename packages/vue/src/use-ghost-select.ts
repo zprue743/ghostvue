@@ -1,6 +1,5 @@
 import {
   computed,
-  nextTick,
   shallowRef,
   toValue,
   watch,
@@ -65,15 +64,10 @@ export function useGhostSelect(options: UseGhostSelectOptions = {}): {
   syncFormValidity: () => void
   handleFormInputInvalid: () => void
 } {
-  let suppressValueChange = false
-
   const selectedValue = useControllableState<string | undefined>({
     prop: () => toValue(options.modelValue),
     defaultValue: () => toValue(options.defaultValue),
     onChange: (next) => {
-      if (suppressValueChange) {
-        return
-      }
       options.onValueChange?.(next)
     },
   })
@@ -154,23 +148,18 @@ export function useGhostSelect(options: UseGhostSelectOptions = {}): {
     bumpRegistry()
   }
 
+  /**
+   * Removes an option from the live registry (keyboard focus, typeahead)
+   * without touching the selection. Conditional or filtered option lists
+   * unmount options routinely; the selected value and its cached label in
+   * `optionLabels` must survive so form data and `GhostSelectValue` never
+   * change without a user action or an `update:modelValue` event. Only user
+   * selection, native form reset, or the parent's controlled value change it.
+   */
   function unregisterOption(value: string): void {
     optionOrder.value = optionOrder.value.filter((entry) => entry !== value)
     optionRegistry.value.delete(value)
     bumpRegistry()
-    if (selectedValue.value !== value) {
-      return
-    }
-    const controlled = toValue(options.modelValue) !== undefined
-    if (!controlled) {
-      suppressValueChange = true
-      selectedValue.value = undefined
-      suppressValueChange = false
-      return
-    }
-    void nextTick(() => {
-      /* parent owns controlled value when selected item unmounts */
-    })
   }
 
   function isOptionDisabled(value: string): boolean {

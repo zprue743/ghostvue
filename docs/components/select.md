@@ -25,6 +25,10 @@ trigger is the primary tab stop.
 root so a visually hidden input submits the selected value and participates in
 native `required` validation.
 
+Rendering options conditionally never clears the selection. If the selected
+option unmounts, the value stays selected, keeps submitting with the form, and
+`GhostSelectValue` keeps its last known label; no `update:modelValue` is emitted.
+
 ## Themed use
 
 <GhostExample id="select/themed" />
