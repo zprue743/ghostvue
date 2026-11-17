@@ -143,7 +143,11 @@ function handleRovingKey(
   root: HTMLElement,
   options: UseRovingFocusOptions | undefined,
 ): HTMLElement | undefined {
-  if (event.defaultPrevented || isEditableTarget(event.target)) {
+  if (
+    event.defaultPrevented ||
+    isModifiedOrComposing(event) ||
+    isEditableTarget(event.target)
+  ) {
     return undefined
   }
 
@@ -252,6 +256,32 @@ function resolveDir(
     return closest
   }
   return document.documentElement.dir === 'rtl' ? 'rtl' : 'ltr'
+}
+
+/**
+ * Alt/Ctrl/Meta chords belong to the browser, OS, assistive technology, or the
+ * app (for example Alt+Left history back, Cmd+Left line start, Ctrl+Home), so
+ * the composite neither moves focus nor calls `preventDefault()` for them.
+ * Shift is deliberately not a bail-out: APG roving composites document no
+ * Shift+Arrow meaning, and existing callers treat Shift+Arrow like Arrow.
+ *
+ * IME composition keystrokes (`isComposing`, or the legacy `keyCode` 229 that
+ * some engines report for the first composition keydown) belong to the input
+ * method editor and are ignored for the same reason.
+ */
+function isModifiedOrComposing(event: KeyboardEvent): boolean {
+  return (
+    event.altKey ||
+    event.ctrlKey ||
+    event.metaKey ||
+    event.isComposing ||
+    // `keyCode` is deprecated, but WebKit can dispatch an IME-owned keydown
+    // with `isComposing === false` and the real `key` (for example an arrow),
+    // leaving `keyCode === 229` as the only composition signal. `key ===
+    // 'Process'` is not a substitute: those events carry the physical key.
+    // eslint-disable-next-line @typescript-eslint/no-deprecated -- WebKit IME compatibility; see above.
+    event.keyCode === 229
+  )
 }
 
 /** Arrow keys inside a text field belong to the field, not the composite. */

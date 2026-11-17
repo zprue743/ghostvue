@@ -135,7 +135,9 @@ Delegated to `useRovingFocus` inside the toolbar root:
 | `Tab` / `Shift+Tab` | Not intercepted; moves focus into or out of the composite.                 |
 
 Arrow keys do not move focus when the event target is an editable field inside
-the toolbar. Disabled and `aria-disabled` items are skipped.
+the toolbar. Disabled and `aria-disabled` items are skipped. Arrow, Home, and
+End combined with Alt, Ctrl, or Meta, and keys that belong to an IME
+composition, are not handled so platform shortcuts keep working.
 
 ### Focus behavior
 

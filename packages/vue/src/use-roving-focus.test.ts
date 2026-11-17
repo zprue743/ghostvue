@@ -51,8 +51,13 @@ function mountRoving(
   return wrapper
 }
 
-function key(target: EventTarget, keyName: string): KeyboardEvent {
+function key(
+  target: EventTarget,
+  keyName: string,
+  init: KeyboardEventInit = {},
+): KeyboardEvent {
   const event = new KeyboardEvent('keydown', {
+    ...init,
     key: keyName,
     bubbles: true,
     cancelable: true,
@@ -232,6 +237,71 @@ describe('useRovingFocus', () => {
     expect(document.activeElement?.textContent).toBe('C')
     key(document.activeElement ?? first, 'Home')
     expect(document.activeElement?.textContent).toBe('A')
+  })
+
+  it.each([
+    ['Alt', { altKey: true }],
+    ['Control', { ctrlKey: true }],
+    ['Meta', { metaKey: true }],
+  ] as const)(
+    'leaves %s-modified arrows, Home, and End to the browser',
+    async (_label, modifiers) => {
+      const wrapper = mountRoving({ orientation: 'both' }, ['A', 'B', 'C'])
+      await nextTick()
+      const middle = buttonElement(wrapper, 1)
+      middle.focus()
+      await nextTick()
+
+      for (const keyName of [
+        'ArrowRight',
+        'ArrowLeft',
+        'ArrowDown',
+        'ArrowUp',
+        'Home',
+        'End',
+      ]) {
+        const event = key(middle, keyName, modifiers)
+        expect(event.defaultPrevented).toBe(false)
+        expect(document.activeElement).toBe(middle)
+      }
+      expect(
+        wrapper.findAll('button').map((node) => node.element.tabIndex),
+      ).toEqual([-1, 0, -1])
+    },
+  )
+
+  it('ignores keys that belong to an active IME composition', async () => {
+    const wrapper = mountRoving({ orientation: 'horizontal' }, ['A', 'B'])
+    await nextTick()
+    const first = wrapper.get('button').element
+    first.focus()
+
+    const composing = key(first, 'ArrowRight', { isComposing: true })
+    expect(composing.defaultPrevented).toBe(false)
+    expect(document.activeElement).toBe(first)
+
+    // Legacy composition signal: some engines report keyCode 229 without
+    // isComposing on the first IME keydown.
+    const legacy = key(first, 'End', { keyCode: 229 })
+    expect(legacy.defaultPrevented).toBe(false)
+    expect(document.activeElement).toBe(first)
+    expect(first.tabIndex).toBe(0)
+  })
+
+  it('still moves for Shift-modified navigation keys', async () => {
+    const wrapper = mountRoving({ orientation: 'horizontal' }, ['A', 'B', 'C'])
+    await nextTick()
+    const first = wrapper.get('button').element
+    first.focus()
+
+    const arrow = key(first, 'ArrowRight', { shiftKey: true })
+    expect(arrow.defaultPrevented).toBe(true)
+    expect(document.activeElement?.textContent).toBe('B')
+
+    const end = key(document.activeElement ?? first, 'End', { shiftKey: true })
+    expect(end.defaultPrevented).toBe(true)
+    expect(document.activeElement?.textContent).toBe('C')
+    expect(buttonElement(wrapper, 'last').tabIndex).toBe(0)
   })
 
   it('reverses horizontal arrows in RTL', async () => {
