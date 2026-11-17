@@ -21,7 +21,11 @@ The scaffold creates:
 It adds `packages/vue/registry/<slug>.registry.json`, updates
 `registry/primitives.registry.json`, and runs `pnpm registries:write` so public
 barrels, examples, and docs sidebar slices regenerate locally (gitignored
-`.registries/` output).
+`.registries/` output). It also seeds provisional 2 kB gzip budgets for the
+new component's `@ghostvue/vue` and `@ghostvue/themes` imports in
+`scripts/bundle-size-budgets.json`, so `pnpm size` passes. Replace them with
+measured budgets (`pnpm build && pnpm size:write`) once the implementation lands;
+see the [performance standard](../standards/performance.md#bundle-size-and-tree-shaking-budgets).
 Vue refs and composables stay in `vue`; a neutral scaffold has no useful
 framework-independent behavior to put in `core` or `shared`.
 
