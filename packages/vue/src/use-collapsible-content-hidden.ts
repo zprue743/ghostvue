@@ -71,6 +71,7 @@ export function useCollapsibleContentHidden(
 
   let closeTimer: ReturnType<typeof setTimeout> | undefined
   let onTransitionEnd: ((event: TransitionEvent) => void) | undefined
+  let isUnmounted = false
 
   function resolveHostElement(): HTMLElement | null {
     return resolveCollapsibleHtmlElement(toValue(options.host))
@@ -165,7 +166,7 @@ export function useCollapsibleContentHidden(
 
       panelHidden.value = false
       await nextTick()
-      if (toValue(options.isOpen)) {
+      if (isUnmounted || toValue(options.isOpen)) {
         return
       }
       scheduleDeferredClose()
@@ -174,6 +175,7 @@ export function useCollapsibleContentHidden(
   )
 
   onUnmounted(() => {
+    isUnmounted = true
     clearCloseAnimationListeners()
   })
 

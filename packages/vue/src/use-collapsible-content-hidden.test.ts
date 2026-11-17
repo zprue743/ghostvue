@@ -1,6 +1,6 @@
 import { flushPromises, mount } from '@vue/test-utils'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { defineComponent, h } from 'vue'
+import { defineComponent, h, ref } from 'vue'
 
 import GhostCollapsible from './GhostCollapsible.vue'
 import GhostCollapsibleContent from './GhostCollapsibleContent.vue'
@@ -9,6 +9,7 @@ import {
   COLLAPSIBLE_CLOSE_FALLBACK_MS,
   collapsibleHeightAnimationEnabled,
   isThemedCollapsibleSurface,
+  useCollapsibleContentHidden,
 } from './use-collapsible-content-hidden'
 import { collapsibleHostAllowsAnimationShell } from './ghost-collapsible'
 
@@ -263,5 +264,51 @@ describe('useCollapsibleContentHidden integration', () => {
       wrapper.get('[data-part="content"]').attributes('hidden'),
     ).toBeUndefined()
     wrapper.unmount()
+  })
+
+  it('does not schedule close-animation timer or listener when unmounted in the same tick as close', async () => {
+    matchMedia.mockImplementation((query: string) => ({
+      matches: false,
+      media: query,
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+    }))
+    vi.useFakeTimers()
+
+    const hostEl = document.createElement('div')
+    document.body.append(hostEl)
+    const addEventListenerSpy = vi.spyOn(hostEl, 'addEventListener')
+    const isOpen = ref(true)
+
+    try {
+      const wrapper = mount(
+        defineComponent({
+          setup() {
+            const panelHidden = useCollapsibleContentHidden({
+              isOpen,
+              host: () => hostEl,
+              disableAnimation: false,
+              dataAnimationOff: false,
+              hasDataThemed: true,
+            })
+            return () => h('div', { hidden: panelHidden.value })
+          },
+        }),
+      )
+
+      isOpen.value = false
+      await Promise.resolve()
+      wrapper.unmount()
+      await flushPromises()
+
+      expect(vi.getTimerCount()).toBe(0)
+      expect(addEventListenerSpy).not.toHaveBeenCalledWith(
+        'transitionend',
+        expect.any(Function),
+      )
+    } finally {
+      hostEl.remove()
+      vi.useRealTimers()
+    }
   })
 })
