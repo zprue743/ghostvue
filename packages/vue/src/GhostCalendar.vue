@@ -17,11 +17,11 @@ const props = withDefaults(
     modelValue?: GhostCalendarValue
     defaultValue?: GhostCalendarValue
     selectionMode?: GhostCalendarSelectionMode
-    minValue?: CalendarDate
-    maxValue?: CalendarDate
-    isDateDisabled?: (date: CalendarDate) => boolean
+    minValue?: CalendarDate | undefined
+    maxValue?: CalendarDate | undefined
+    isDateDisabled?: ((date: CalendarDate) => boolean) | undefined
     locale?: string
-    weekStartsOn?: number
+    weekStartsOn?: number | undefined
     visibleMonth?: CalendarDate | undefined
     defaultVisibleMonth?: CalendarDate | undefined
     today?: CalendarDate | undefined
@@ -31,7 +31,14 @@ const props = withDefaults(
     modelValue: undefined,
     defaultValue: undefined,
     selectionMode: 'single',
+    minValue: undefined,
+    maxValue: undefined,
+    isDateDisabled: undefined,
     locale: 'en-US',
+    weekStartsOn: undefined,
+    visibleMonth: undefined,
+    defaultVisibleMonth: undefined,
+    today: undefined,
     disabled: false,
   },
 )

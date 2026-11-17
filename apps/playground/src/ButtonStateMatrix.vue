@@ -8,10 +8,13 @@ type DensityName = 'compact' | 'comfortable' | 'spacious'
 
 const props = withDefaults(
   defineProps<{
-    theme?: string
+    theme?: string | undefined
     densityFilter?: readonly DensityName[]
   }>(),
-  { densityFilter: () => ['compact', 'comfortable', 'spacious'] as const },
+  {
+    theme: undefined,
+    densityFilter: () => ['compact', 'comfortable', 'spacious'] as const,
+  },
 )
 
 const states = [
