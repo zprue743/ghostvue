@@ -89,7 +89,7 @@ const hostAttrs = computed(() => {
   return merged
 })
 
-function handleClickCapture(event: MouseEvent) {
+function handleActivationCapture(event: MouseEvent) {
   if (!isDisabled.value) {
     return
   }
@@ -118,7 +118,8 @@ defineExpose<GhostLinkExposed>({
     :is="as"
     ref="host"
     v-bind="hostAttrs"
-    @click.capture="handleClickCapture"
+    @click.capture="handleActivationCapture"
+    @auxclick.capture="handleActivationCapture"
   >
     <slot />
     <span
