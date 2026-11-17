@@ -77,7 +77,7 @@
     "role": "generic",
     "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/tooltip/",
     "keyboard": {
-      "Escape": "Dismisses an open tooltip without moving focus."
+      "Escape": "Dismisses an open tooltip without moving focus; inside a dialog or popover the first Escape closes only the tooltip."
     },
     "requiredAriaAttributes": []
   },

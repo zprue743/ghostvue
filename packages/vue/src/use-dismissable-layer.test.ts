@@ -3,8 +3,10 @@ import { createSSRApp, defineComponent, h, nextTick, ref } from 'vue'
 import { renderToString } from 'vue/server-renderer'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
+import { isFocusInUpperDismissableLayer } from './dismissable-layer-stack'
 import {
   useDismissableLayer,
+  useEscapeDismissableLayer,
   type DismissReason,
 } from './use-dismissable-layer'
 
@@ -267,6 +269,108 @@ describe('useDismissableLayer', () => {
 
     pressKey('Escape')
     expect(onOuterDismiss).toHaveBeenCalledTimes(1)
+  })
+
+  it('orders an escape-only layer for Escape without blocking outside-pointer dismissal beneath it', async () => {
+    const outer = ref<HTMLElement | null>(null)
+    const tip = ref<HTMLElement | null>(null)
+    const tipOpen = ref(true)
+    const onOuterDismiss = vi.fn<(reason: DismissReason) => void>()
+    const onTipEscape = vi.fn(() => {
+      tipOpen.value = false
+    })
+
+    const wrapper = mountLayer(
+      () => {
+        useDismissableLayer(outer, { onDismiss: onOuterDismiss })
+        useEscapeDismissableLayer(tip, onTipEscape)
+      },
+      () =>
+        h('div', [
+          h('div', { ref: outer, 'data-testid': 'outer' }, 'Outer'),
+          // Sibling of the outer layer, like a tooltip portaled to <body>.
+          tipOpen.value
+            ? h('div', { ref: tip, 'data-testid': 'tip' }, 'Tip')
+            : null,
+          h('button', { type: 'button', 'data-testid': 'page' }, 'Page'),
+        ]),
+    )
+
+    // Pressing the escape-only layer is not "outside" for the layer beneath.
+    pointerDown(wrapper.get('[data-testid="tip"]').element)
+    expect(onOuterDismiss).not.toHaveBeenCalled()
+    expect(onTipEscape).not.toHaveBeenCalled()
+
+    // Prevented and composing Escape reach neither layer.
+    pressKey('Escape', { defaultPrevented: true })
+    pressKey('Escape', { isComposing: true })
+    expect(onTipEscape).not.toHaveBeenCalled()
+    expect(onOuterDismiss).not.toHaveBeenCalled()
+
+    // One Escape closes only the escape-only layer on top.
+    const first = pressKey('Escape')
+    expect(onTipEscape).toHaveBeenCalledTimes(1)
+    expect(onTipEscape).toHaveBeenCalledWith(first)
+    expect(onOuterDismiss).not.toHaveBeenCalled()
+    await nextTick()
+
+    // The next Escape reaches the underlying layer.
+    pressKey('Escape')
+    expect(onOuterDismiss).toHaveBeenCalledTimes(1)
+    expect(onOuterDismiss).toHaveBeenLastCalledWith('escape', expect.anything())
+
+    // Re-open the escape-only layer: an outside press passes through it to the
+    // layer beneath, and never dismisses the escape-only layer itself.
+    tipOpen.value = true
+    await nextTick()
+    pointerDown(wrapper.get('[data-testid="page"]').element)
+    expect(onOuterDismiss).toHaveBeenCalledTimes(2)
+    expect(onOuterDismiss).toHaveBeenLastCalledWith(
+      'outside-pointer',
+      expect.anything(),
+    )
+    expect(onTipEscape).toHaveBeenCalledTimes(1)
+  })
+
+  it('keeps escape-only layers from claiming focus above a lower layer', () => {
+    const outer = ref<HTMLElement | null>(null)
+    const tip = ref<HTMLElement | null>(null)
+    const popover = ref<HTMLElement | null>(null)
+
+    const wrapper = mountLayer(
+      () => {
+        useDismissableLayer(outer, { onDismiss: vi.fn() })
+        useEscapeDismissableLayer(tip, vi.fn())
+        useDismissableLayer(popover, { onDismiss: vi.fn() })
+      },
+      () =>
+        h('div', [
+          h('div', { ref: outer, 'data-testid': 'outer' }, 'Outer'),
+          h('div', { ref: tip }, [
+            h('span', { tabindex: -1, 'data-testid': 'in-tip' }, 'Tip'),
+          ]),
+          h('div', { ref: popover }, [
+            h('button', { type: 'button', 'data-testid': 'in-pop' }, 'Pop'),
+          ]),
+        ]),
+    )
+
+    const outerEl = wrapper.get('[data-testid="outer"]').element
+    if (!(outerEl instanceof HTMLElement)) {
+      throw new Error('expected outer layer element')
+    }
+    expect(
+      isFocusInUpperDismissableLayer(
+        outerEl,
+        wrapper.get('[data-testid="in-tip"]').element,
+      ),
+    ).toBe(false)
+    expect(
+      isFocusInUpperDismissableLayer(
+        outerEl,
+        wrapper.get('[data-testid="in-pop"]').element,
+      ),
+    ).toBe(true)
   })
 
   it('keeps nested child layers above parent layers even when child mounts first', () => {

@@ -4,6 +4,11 @@ import { defineComponent, h, nextTick, ref } from 'vue'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import GhostButton from './GhostButton.vue'
+import GhostDialog from './GhostDialog.vue'
+import GhostDialogContent from './GhostDialogContent.vue'
+import GhostPopover from './GhostPopover.vue'
+import GhostPopoverContent from './GhostPopoverContent.vue'
+import GhostPopoverTrigger from './GhostPopoverTrigger.vue'
 import GhostTooltip from './GhostTooltip.vue'
 import GhostTooltipContent from './GhostTooltipContent.vue'
 import GhostTooltipTrigger from './GhostTooltipTrigger.vue'
@@ -720,5 +725,242 @@ describe('GhostTooltip', () => {
     await nextTick()
     expect(content.classes()).toContain('ghost-tooltip-content')
     expect(content.classes()).not.toContain('is-active')
+  })
+
+  describe('Escape coordination with overlay layers', () => {
+    async function settle(): Promise<void> {
+      await flushPromises()
+      await nextTick()
+    }
+
+    it.each([
+      { portal: true, label: 'portaled' },
+      { portal: false, label: 'inline' },
+    ])(
+      'closes only a $label tooltip inside a dialog on the first Escape',
+      async ({ portal }) => {
+        const dialogOpen = ref(true)
+        const tooltipOpen = ref(false)
+        const dialogUpdates: boolean[] = []
+        const tooltipUpdates: boolean[] = []
+
+        mountAttached(
+          defineComponent({
+            setup() {
+              return () =>
+                h(
+                  GhostDialog,
+                  {
+                    open: dialogOpen.value,
+                    'onUpdate:open': (open: boolean) => {
+                      dialogUpdates.push(open)
+                      dialogOpen.value = open
+                    },
+                  },
+                  {
+                    default: () => [
+                      h(
+                        GhostDialogContent,
+                        { 'aria-label': 'Settings', id: 'esc-dialog' },
+                        () => [
+                          h(
+                            GhostTooltip,
+                            {
+                              open: tooltipOpen.value,
+                              'onUpdate:open': (open: boolean) => {
+                                tooltipUpdates.push(open)
+                                tooltipOpen.value = open
+                              },
+                            },
+                            {
+                              default: () => [
+                                h(
+                                  GhostTooltipTrigger,
+                                  { id: 'esc-trigger' },
+                                  () => 'Info',
+                                ),
+                                h(
+                                  GhostTooltipContent,
+                                  { id: 'esc-tip', portal },
+                                  () => 'Diagnostic',
+                                ),
+                              ],
+                            },
+                          ),
+                        ],
+                      ),
+                    ],
+                  },
+                )
+            },
+          }),
+        )
+        await settle()
+
+        // Open after the dialog, as a hover/focus delay would.
+        tooltipOpen.value = true
+        await settle()
+        const tip = document.querySelector('#esc-tip')
+        expect(tip).not.toBeNull()
+        expect(
+          document.querySelector('#esc-dialog')?.contains(tip ?? null),
+        ).toBe(!portal)
+
+        pressKey('Escape')
+        await settle()
+        expect(tooltipUpdates).toEqual([false])
+        expect(dialogUpdates).toEqual([])
+        expect(document.querySelector('#esc-tip')).toBeNull()
+        expect(document.querySelector('#esc-dialog')).not.toBeNull()
+
+        pressKey('Escape')
+        await settle()
+        expect(dialogUpdates).toEqual([false])
+        expect(tooltipUpdates).toEqual([false])
+      },
+    )
+
+    it('leaves a consumer-canceled Escape to the consumer', async () => {
+      const updates: boolean[] = []
+      mountAttached(
+        defineComponent({
+          setup() {
+            return () =>
+              h(
+                GhostTooltip,
+                {
+                  defaultOpen: true,
+                  'onUpdate:open': (open: boolean) => updates.push(open),
+                },
+                {
+                  default: () => [
+                    h(GhostTooltipTrigger, { id: 'cancel-trigger' }, () => 'T'),
+                    h(GhostTooltipContent, { id: 'cancel-tip' }, () => 'Tip'),
+                  ],
+                },
+              )
+          },
+        }),
+      )
+      await settle()
+      const trigger = document.querySelector('#cancel-trigger')
+      if (!trigger) {
+        throw new Error('expected trigger')
+      }
+      trigger.addEventListener('keydown', (event) => {
+        event.preventDefault()
+      })
+
+      pressKey('Escape', trigger)
+      await settle()
+      expect(updates).toEqual([])
+      expect(document.querySelector('#cancel-tip')).not.toBeNull()
+    })
+
+    it('closes a tooltip above an open popover first and keeps outside presses dismissing the popover', async () => {
+      const popoverOpen = ref(true)
+      const tooltipOpen = ref(false)
+      const popoverUpdates: boolean[] = []
+
+      mountAttached(
+        defineComponent({
+          setup() {
+            return () =>
+              h('div', [
+                h('button', { type: 'button', id: 'outside' }, 'Outside'),
+                h(
+                  GhostPopover,
+                  {
+                    open: popoverOpen.value,
+                    'onUpdate:open': (open: boolean) => {
+                      popoverUpdates.push(open)
+                      popoverOpen.value = open
+                    },
+                  },
+                  {
+                    default: () => [
+                      h(GhostPopoverTrigger, () => 'Filters'),
+                      h(GhostPopoverContent, { id: 'pop' }, () => [
+                        h(
+                          GhostTooltip,
+                          {
+                            open: tooltipOpen.value,
+                            'onUpdate:open': (open: boolean) => {
+                              tooltipOpen.value = open
+                            },
+                          },
+                          {
+                            default: () => [
+                              h(GhostTooltipTrigger, () => 'Hint'),
+                              h(
+                                GhostTooltipContent,
+                                { id: 'pop-tip' },
+                                () => 'Tip',
+                              ),
+                            ],
+                          },
+                        ),
+                      ]),
+                    ],
+                  },
+                ),
+              ])
+          },
+        }),
+      )
+      await settle()
+      tooltipOpen.value = true
+      await settle()
+
+      pressKey('Escape')
+      await settle()
+      expect(tooltipOpen.value).toBe(false)
+      expect(popoverUpdates).toEqual([])
+
+      // A tooltip on top must not block outside-pointer dismissal beneath it.
+      tooltipOpen.value = true
+      await settle()
+      const outside = document.querySelector('#outside')
+      if (!outside) {
+        throw new Error('expected outside button')
+      }
+      outside.dispatchEvent(
+        new PointerEvent('pointerdown', { bubbles: true, cancelable: true }),
+      )
+      await settle()
+      expect(popoverUpdates).toEqual([false])
+    })
+
+    it('removes its document listener once closed and on unmount', async () => {
+      const remove = vi.spyOn(document, 'removeEventListener')
+      const open = ref(true)
+      const wrapper = mountAttached(
+        defineComponent({
+          setup() {
+            return () =>
+              h(
+                GhostTooltip,
+                { open: open.value },
+                {
+                  default: () => [
+                    h(GhostTooltipTrigger, () => 'T'),
+                    h(GhostTooltipContent, () => 'Tip'),
+                  ],
+                },
+              )
+          },
+        }),
+      )
+      await settle()
+      open.value = false
+      await settle()
+      expect(remove).toHaveBeenCalledWith(
+        'keydown',
+        expect.any(Function),
+        false,
+      )
+      wrapper.unmount()
+      remove.mockRestore()
+    })
   })
 })

@@ -23,6 +23,15 @@ via `useGhostId`, applies open/close delays for WCAG 1.4.13, positions the
 floating label with `useFloating`, renders it through `GhostPortal` by default,
 unmounts it with `v-if` when closed, and dismisses on `Escape`.
 
+An open tooltip joins the shared overlay layer stack for `Escape` only. When a
+tooltip is open inside (or above) a `GhostDialog`, `GhostPopover`, or menu, one
+`Escape` closes just the topmost open overlay: the tooltip closes first and a
+second `Escape` reaches the dialog. Tooltips never act as a modal or
+click-away layer: pressing outside still dismisses the dialog or popover
+beneath an open tooltip, and pressing the tooltip itself does not. Calling
+`event.preventDefault()` on `Escape` (or pressing it during IME composition)
+leaves every layer open.
+
 ## Themed use
 
 <GhostExample id="tooltip/themed" />
@@ -65,7 +74,8 @@ Keeps `visibility: hidden` until `useFloating().isPositioned` resolves. Sets
   information.
 - **WCAG 1.4.13:** `closeDelay` preserves a grace period before hiding;
   hoverable content keeps the tooltip open while the pointer is over the trigger,
-  content, or while the trigger stays focused. Press `Escape` to dismiss immediately.
+  content, or while the trigger stays focused. Press `Escape` to dismiss immediately;
+  inside a dialog or popover, the first `Escape` closes only the tooltip.
 - **No focus theft:** Opening does not move focus; tooltip content is not
   tabbable.
 

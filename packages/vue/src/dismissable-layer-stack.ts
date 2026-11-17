@@ -6,6 +6,12 @@
 export interface DismissableLayerEntry {
   readonly id: symbol
   readonly element: HTMLElement
+  /**
+   * Escape-only layers (such as an open tooltip) take part in `Escape`
+   * ordering but never in outside-pointer dismissal or focus ownership, so they
+   * cannot block or steal those interactions from the layers beneath them.
+   */
+  readonly escapeOnly?: boolean
 }
 
 const layerStack: DismissableLayerEntry[] = []
@@ -34,6 +40,11 @@ export function removeDismissableLayer(entry: DismissableLayerEntry): void {
 
 export function getTopDismissableLayer(): DismissableLayerEntry | undefined {
   return layerStack.at(-1)
+}
+
+/** Active layers ordered bottom to top. Read-only view of the live stack. */
+export function getDismissableLayers(): readonly DismissableLayerEntry[] {
+  return layerStack
 }
 
 export function hasDismissableLayers(): boolean {
@@ -71,7 +82,9 @@ export function isFocusInUpperDismissableLayer(
 
   for (let index = scopeLayerIndex + 1; index < layerStack.length; index += 1) {
     const layer = layerStack[index]
-    if (layer?.element.contains(activeElement)) {
+    // Escape-only layers (tooltips) never own focus, so they must not open a
+    // hole in a modal focus trap beneath them.
+    if (layer && !layer.escapeOnly && layer.element.contains(activeElement)) {
       return true
     }
   }
