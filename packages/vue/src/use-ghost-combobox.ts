@@ -15,6 +15,7 @@ import type {
   GhostComboboxValue,
   UseGhostComboboxOptions,
 } from './ghost-combobox'
+import { sortByDocumentOrder } from './sort-by-document-order'
 import { useControllableState } from './use-controllable-state'
 import { useGhostId } from './use-ghost-id'
 import { visuallyHiddenStyle } from './use-ghost-visually-hidden'
@@ -134,7 +135,8 @@ export function useGhostCombobox(options: UseGhostComboboxOptions = {}): {
     queueAnnouncement()
   }
 
-  function enabledOptionsInOrder(): GhostComboboxOptionRecord[] {
+  /** Enabled registered options in registration order (counting only). */
+  function enabledOptions(): GhostComboboxOptionRecord[] {
     void registryVersion.value
     return optionOrder.value
       .map((value) => optionRegistry.value.get(value))
@@ -142,6 +144,18 @@ export function useGhostCombobox(options: UseGhostComboboxOptions = {}): {
         (entry): entry is GhostComboboxOptionRecord => entry !== undefined,
       )
       .filter((entry) => !isOptionDisabled(entry.value))
+  }
+
+  /**
+   * Enabled options in rendered DOM order for Arrow / Home / End. The registry
+   * appends on mount, so after keyed reordering, insertion before existing
+   * options, filter-and-restore, or a virtualized window scrolling back,
+   * registration order no longer matches what the user sees. Sorting here (at
+   * key-press time, over the mounted subset only) keeps
+   * `aria-activedescendant` moving in visual order.
+   */
+  function enabledOptionsInOrder(): GhostComboboxOptionRecord[] {
+    return sortByDocumentOrder(enabledOptions(), (entry) => entry.getElement())
   }
 
   function queueAnnouncement(): void {
@@ -157,7 +171,7 @@ export function useGhostCombobox(options: UseGhostComboboxOptions = {}): {
       return
     }
     announcedLoading.value = false
-    const count = enabledOptionsInOrder().length
+    const count = enabledOptions().length
     announceMessage.value =
       count === 0
         ? 'No results available'

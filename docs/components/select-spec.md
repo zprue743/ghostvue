@@ -178,6 +178,11 @@ duplicate activation from native button semantics (same guard pattern as
 - One tab stop on the trigger while closed.
 - On open: focus first selected enabled option, else first enabled option; listbox
   receives `useRovingFocus` with vertical orientation.
+- Order: "first", "last", typeahead matching, and roving all follow the
+  rendered DOM order of the mounted options, not the order they registered in.
+  Keyed reordering, inserting options before existing ones, and filtering then
+  restoring a list therefore never change keyboard order relative to what is
+  displayed. Unmounted options are not navigable.
 - On close: restore focus to trigger unless an outside focusable was clicked
   (`useDismissableLayer` + `useFocusScope` `trapped: false`, matching Popover).
 - `visibility: hidden` on content until `useFloating().isPositioned` is true.
@@ -242,9 +247,11 @@ stays mounted while closed so option labels remain registered.
   controlled emit ignore, open/close, typeahead, roving keys, required submit
   input constraint validation, form reset, Field aria wiring, value survives
   close, defaultValue label while closed, SSR hydration, value + label + FormData
-  survive option unmount/reorder/remount without emits
+  survive option unmount/reorder/remount without emits, first/last open focus
+  and typeahead in DOM order after keyed reorder, insertion, filter + restore
 - **SSR:** `overlay-ssr.test.ts` closed/open; `expectSsrHydration` integration
-- **E2E + axe:** open/select/close keyboard paths, form submit, docs example
+- **E2E + axe:** open/select/close keyboard paths, form submit, docs example,
+  real focus / typeahead / selection in rendered order after list changes
 - **Visual:** `examples/select/themed` baselines via `pnpm test:visual:docker`
 - **Type:** consumer compile fixture
 

@@ -12,6 +12,7 @@ import type {
   GhostSelectOptionRecord,
   UseGhostSelectOptions,
 } from './ghost-select'
+import { sortByDocumentOrder } from './sort-by-document-order'
 import { useControllableState } from './use-controllable-state'
 import { useGhostId } from './use-ghost-id'
 import { visuallyHiddenStyle } from './use-ghost-visually-hidden'
@@ -169,12 +170,20 @@ export function useGhostSelect(options: UseGhostSelectOptions = {}): {
     return disabled.value || Boolean(optionRegistry.value.get(value)?.disabled)
   }
 
+  /**
+   * Enabled options in rendered DOM order for open-time first/last focus and
+   * typeahead. Arrow keys already follow DOM order through `useRovingFocus`;
+   * the registry appends on mount, so after keyed reordering, insertion before
+   * existing options, or filter-and-restore its order is stale and must not
+   * drive these paths. Sorted only when a key or open needs it.
+   */
   function enabledOptionsInOrder(): GhostSelectOptionRecord[] {
     void registryVersion.value
-    return optionOrder.value
+    const enabled = optionOrder.value
       .map((value) => optionRegistry.value.get(value))
       .filter((entry): entry is GhostSelectOptionRecord => entry !== undefined)
       .filter((entry) => !isOptionDisabled(entry.value))
+    return sortByDocumentOrder(enabled, (entry) => entry.getElement())
   }
 
   function focusElement(element: HTMLElement | null | undefined): void {
