@@ -1,4 +1,4 @@
-import { mkdtemp, mkdir, readFile, writeFile } from 'node:fs/promises'
+import { mkdtemp, mkdir, readFile, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 
@@ -146,8 +146,21 @@ function derivedFromWidget() {
 // under v8 coverage on 2-core CI runners can exceed Vitest's 5s default timeout.
 const META_CHECKER_TIMEOUT_MS = 30_000
 
-afterEach(() => {
+const temporaryDirectories: string[] = []
+
+async function createTempDir(prefix = 'ghost-manifests-'): Promise<string> {
+  const dir = await mkdtemp(join(tmpdir(), prefix))
+  temporaryDirectories.push(dir)
+  return dir
+}
+
+afterEach(async () => {
   resetMetaCheckers()
+  await Promise.all(
+    temporaryDirectories
+      .splice(0)
+      .map((dir) => rm(dir, { recursive: true, force: true })),
+  )
 })
 
 describe('manifest derivation helpers', () => {
@@ -395,7 +408,7 @@ describe(
   { timeout: META_CHECKER_TIMEOUT_MS },
   () => {
     it('fails check when a generated manifest is stale versus the SFC', async () => {
-      const manifestsDir = await mkdtemp(join(tmpdir(), 'ghost-manifests-'))
+      const manifestsDir = await createTempDir('ghost-manifests-')
       const packages = await fixturePackages(manifestsDir)
 
       const written = await syncRepositoryManifests({
@@ -428,7 +441,7 @@ describe(
     })
 
     it('rewrites machine fields without dropping later hand-authored edits', async () => {
-      const manifestsDir = await mkdtemp(join(tmpdir(), 'ghost-manifests-'))
+      const manifestsDir = await createTempDir('ghost-manifests-')
       const packages = await fixturePackages(manifestsDir)
 
       await syncRepositoryManifests({
@@ -464,9 +477,7 @@ describe(
     })
 
     it('ignores unrelated generated manifests only in component-scoped checks', async () => {
-      const manifestsDir = await mkdtemp(
-        join(tmpdir(), 'ghost-scoped-manifests-'),
-      )
+      const manifestsDir = await createTempDir('ghost-scoped-manifests-')
       const packages = await fixturePackages(manifestsDir)
       await syncRepositoryManifests({ repositoryRoot, write: true, packages })
       await writeFile(
@@ -492,7 +503,7 @@ describe(
     })
 
     it('allows leftover handwritten manifests when no matching SFC exists', async () => {
-      const manifestsDir = await mkdtemp(join(tmpdir(), 'ghost-manifests-'))
+      const manifestsDir = await createTempDir('ghost-manifests-')
       const packages = await fixturePackages(manifestsDir)
       await writeFile(
         join(manifestsDir, 'ghost-button.manifest.json'),
@@ -521,7 +532,7 @@ describe(
     })
 
     it('fails when a generated manifest has no matching SFC', async () => {
-      const manifestsDir = await mkdtemp(join(tmpdir(), 'ghost-manifests-'))
+      const manifestsDir = await createTempDir('ghost-manifests-')
       const packages = [
         {
           directory: 'vue',

@@ -19,49 +19,53 @@ const vueEntry = fileURLToPath(
 describe('themes main-entry graph', () => {
   it('does not pull culori or defineTheme into a browser bundle', async () => {
     const dir = await mkdtemp(join(tmpdir(), 'ghost-themes-graph-'))
-    const entry = join(dir, 'consumer.ts')
-    await writeFile(
-      entry,
-      `import { flagshipThemes, startThemeTransition } from '@ghostvue/themes'
+    let output: string
+    try {
+      const entry = join(dir, 'consumer.ts')
+      await writeFile(
+        entry,
+        `import { flagshipThemes, startThemeTransition } from '@ghostvue/themes'
 
 export const names = flagshipThemes
 export const transition = startThemeTransition
 `,
-    )
+      )
 
-    const outDir = join(dir, 'dist')
-    await build({
-      configFile: false,
-      root: dir,
-      logLevel: 'silent',
-      plugins: [vue()],
-      build: {
-        outDir,
-        emptyOutDir: true,
-        minify: false,
-        write: true,
-        lib: {
-          entry,
-          formats: ['es'],
-          fileName: () => 'consumer.js',
+      const outDir = join(dir, 'dist')
+      await build({
+        configFile: false,
+        root: dir,
+        logLevel: 'silent',
+        plugins: [vue()],
+        build: {
+          outDir,
+          emptyOutDir: true,
+          minify: false,
+          write: true,
+          lib: {
+            entry,
+            formats: ['es'],
+            fileName: () => 'consumer.js',
+          },
+          rollupOptions: {
+            external: ['vue'],
+          },
         },
-        rollupOptions: {
-          external: ['vue'],
+        resolve: {
+          alias: {
+            '@ghostvue/themes/default.css': fileURLToPath(
+              new URL('../../packages/themes/src/default.css', import.meta.url),
+            ),
+            '@ghostvue/themes': themesEntry,
+            '@ghostvue/vue': vueEntry,
+          },
         },
-      },
-      resolve: {
-        alias: {
-          '@ghostvue/themes/default.css': fileURLToPath(
-            new URL('../../packages/themes/src/default.css', import.meta.url),
-          ),
-          '@ghostvue/themes': themesEntry,
-          '@ghostvue/vue': vueEntry,
-        },
-      },
-    })
+      })
 
-    const output = await readFile(join(outDir, 'consumer.js'), 'utf8')
-    await rm(dir, { recursive: true, force: true })
+      output = await readFile(join(outDir, 'consumer.js'), 'utf8')
+    } finally {
+      await rm(dir, { recursive: true, force: true })
+    }
 
     expect(output).toContain('calm')
     expect(output).not.toMatch(/culori/)
