@@ -83,9 +83,12 @@ Committed updates happen when:
 - Form reset restores the captured `defaultValue`.
 
 While focused and typing, a local draft string may diverge from the formatted
-display. On blur, the draft is parsed with locale-aware rules, clamped to
-`min`/`max`, committed, and reformatted. Invalid drafts revert to the last
-committed value without emit.
+display. On blur or Enter, the draft is parsed with `formatToParts`-derived
+locale rules (`notation: 'standard'` across `decimal`, `currency`, `percent`, and
+`unit` styles, scaling `percent` drafts by `10^-2`, normalizing localized
+digits and bidi/sign/affix literals, and validating locale grouping when
+present), clamped to `min`/`max`, committed, and reformatted. Invalid drafts
+(including malformed grouping) revert to the last committed value without emit.
 
 Do not synchronously restore the spinbutton DOM after emit while controlled;
 reconcile on `nextTick` only when the parent ignored the emit, matching

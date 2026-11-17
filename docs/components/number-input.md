@@ -23,7 +23,7 @@ the text field, not the surrounding buttons.
 | `max`            | `number`                   | omitted    | Inclusive maximum (`aria-valuemax`).                           |
 | `step`           | `number`                   | `1`        | Step for buttons and arrow keys.                               |
 | `locale`         | `string`                   | omitted    | `Intl.NumberFormat` locale.                                    |
-| `formatOptions`  | `Intl.NumberFormatOptions` | `{}`       | Display and parse hints (for example currency).                |
+| `formatOptions`  | `Intl.NumberFormatOptions` | `{}`       | Display and round-trip parse options (`notation: 'standard'`). |
 | `disabled`       | `boolean`                  | `false`    | Disables the field and buttons.                                |
 | `readonly`       | `boolean`                  | `false`    | Focusable; edits and buttons do not change the value.          |
 | `invalid`        | `boolean`                  | `false`    | Sets `aria-invalid` on the spinbutton.                         |
@@ -32,7 +32,30 @@ the text field, not the surrounding buttons.
 | `incrementLabel` | `string`                   | `Increase` | `aria-label` on the increment button.                          |
 
 `v-model` emits `update:modelValue` when a value commits (blur after typing,
-buttons, or keyboard stepping). While typing, the draft text is local until blur.
+Enter, buttons, or keyboard stepping). While typing, the draft text is local
+until commit.
+
+## Locale and format parsing contract
+
+`GhostNumberInput` formats and round-trip parses `Intl.NumberFormat` outputs for
+`notation: 'standard'` (the default) across `decimal`, `currency` (including
+`currencySign: 'accounting'`), `percent`, and `unit` styles:
+
+- **Affixes and signs**: Currency symbols/codes, unit labels, percent signs,
+  accounting parentheses `(...)`, `signDisplay` markers, and Unicode bidi
+  control characters are stripped based on `Intl.NumberFormat.formatToParts`.
+  Drafts with or without the configured currency/unit/percent affixes parse to
+  the same numeric model value.
+- **Percent scaling**: In `style: 'percent'`, both `60%` and plain `60` commit
+  to `modelValue = 0.6` (and submit `0.6` via the hidden form input).
+- **Localized digits**: Both the locale's `numberingSystem` digits (such as
+  Eastern Arabic-Indic `٠–٩` or Persian `۰–۹`) and ASCII `0–9` are accepted.
+- **Grouping**: Locale group separators are optional, but when present they must
+  match the locale's grouping sizes (for example, `1.234,5` is valid in `de-DE`,
+  while malformed grouping like `1.5` in `de-DE` is rejected and reverts to the
+  last committed value).
+- **Non-standard notations**: `compact`, `scientific`, and `engineering`
+  notations are outside the editing contract and are not parsed.
 
 ## Bounds and clamping
 

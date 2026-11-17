@@ -61,7 +61,26 @@ export interface GhostNumberInputButtonProps {
 type DraftParseResult =
   { kind: 'empty' } | { kind: 'invalid' } | { kind: 'valid'; value: number }
 
+interface FormatSpec {
+  supported: boolean
+  decimal: string
+  group: string | undefined
+  primaryGroupSize: number
+  secondaryGroupSize: number
+  isPercent: boolean
+  hasAccountingParens: boolean
+  digitMap: Map<string, string>
+  minusSigns: string[]
+  plusSigns: string[]
+  affixes: string[]
+}
+
+const BIDI_CHARS_RE = /[\u061C\u200E\u200F\u202A-\u202E\u2066-\u2069\uFEFF]/g
+const WHITESPACE_RE = /\s/
+const SAMPLE_VALUES = [-123456789.12, 123456789.12, -1, 1, 0, 2] as const
+
 const formatterCache = new Map<string, Intl.NumberFormat>()
+const specCache = new Map<string, FormatSpec>()
 
 function formatterKey(
   locale: string | undefined,
@@ -81,6 +100,312 @@ function getFormatter(
     formatterCache.set(key, formatter)
   }
   return formatter
+}
+
+function stripBidiAndTrim(text: string): string {
+  return text.replace(BIDI_CHARS_RE, '').trim()
+}
+
+function buildDigitMap(
+  resolvedLocale: string,
+  numberingSystem: string | undefined,
+): Map<string, string> {
+  const map = new Map<string, string>()
+  for (let i = 0; i <= 9; i += 1) {
+    map.set(String(i), String(i))
+  }
+  const digitFormatter = getFormatter(resolvedLocale, {
+    ...(numberingSystem ? { numberingSystem } : {}),
+    useGrouping: false,
+    maximumFractionDigits: 0,
+  })
+  const digits = digitFormatter
+    .formatToParts(1234567890)
+    .filter((part) => part.type === 'integer')
+    .map((part) => part.value)
+    .join('')
+  const chars = Array.from(digits)
+  if (chars.length === 10) {
+    for (let i = 0; i < 10; i += 1) {
+      const ch = chars[i]
+      if (ch) map.set(ch, String((i + 1) % 10))
+    }
+  }
+  return map
+}
+
+function getFormatSpec(
+  locale: string | undefined,
+  options: Intl.NumberFormatOptions,
+): FormatSpec {
+  const key = formatterKey(locale, options)
+  const cached = specCache.get(key)
+  if (cached) return cached
+
+  const formatter = getFormatter(locale, options)
+  const resolved = formatter.resolvedOptions()
+  const supported = resolved.notation === 'standard'
+
+  const digitMap = buildDigitMap(resolved.locale, resolved.numberingSystem)
+
+  const decimalProbe = getFormatter(resolved.locale, {
+    ...(resolved.numberingSystem
+      ? { numberingSystem: resolved.numberingSystem }
+      : {}),
+    minimumFractionDigits: 1,
+    maximumFractionDigits: 1,
+  })
+  const probeParts = decimalProbe.formatToParts(123456789.1)
+  const decimal =
+    probeParts.find((part) => part.type === 'decimal')?.value ?? '.'
+
+  const samplePartsList = SAMPLE_VALUES.map((sample) =>
+    formatter.formatToParts(sample),
+  )
+
+  let group: string | undefined
+  const groupSizes: number[] = []
+  for (const part of samplePartsList[1] ?? []) {
+    if (part.type === 'group') {
+      group = part.value
+    } else if (part.type === 'integer') {
+      groupSizes.push(Array.from(part.value).length)
+    }
+  }
+  if (!group) {
+    for (const parts of samplePartsList) {
+      const found = parts.find((part) => part.type === 'group')?.value
+      if (found) {
+        group = found
+        break
+      }
+    }
+  }
+
+  const primaryGroupSize =
+    groupSizes.length >= 2 ? (groupSizes[groupSizes.length - 1] ?? 3) : 3
+  const secondaryGroupSize =
+    groupSizes.length >= 3
+      ? (groupSizes[groupSizes.length - 2] ?? primaryGroupSize)
+      : primaryGroupSize
+
+  const minusSet = new Set<string>(['-'])
+  const plusSet = new Set<string>(['+'])
+  const affixSet = new Set<string>()
+  let hasOpenParen = false
+  let hasCloseParen = false
+  let sawMinusOnNegative = false
+
+  for (let i = 0; i < SAMPLE_VALUES.length; i += 1) {
+    const parts = samplePartsList[i] ?? []
+    const isNegativeSample = (SAMPLE_VALUES[i] ?? 0) < 0
+    for (const part of parts) {
+      if (part.type === 'minusSign') {
+        minusSet.add(part.value)
+        if (isNegativeSample) sawMinusOnNegative = true
+      } else if (part.type === 'plusSign') {
+        plusSet.add(part.value)
+      } else if (
+        part.type === 'currency' ||
+        part.type === 'unit' ||
+        part.type === 'percentSign' ||
+        part.type === 'literal'
+      ) {
+        const cleaned = stripBidiAndTrim(part.value)
+        if (!cleaned) continue
+        if (isNegativeSample && cleaned === '(') {
+          hasOpenParen = true
+          continue
+        }
+        if (isNegativeSample && cleaned === ')') {
+          hasCloseParen = true
+          continue
+        }
+        affixSet.add(cleaned)
+      }
+    }
+  }
+
+  const byLengthDesc = (a: string, b: string) => b.length - a.length
+  const spec: FormatSpec = {
+    supported,
+    decimal,
+    group,
+    primaryGroupSize,
+    secondaryGroupSize,
+    isPercent: resolved.style === 'percent',
+    hasAccountingParens:
+      resolved.currencySign === 'accounting' ||
+      (hasOpenParen && hasCloseParen && !sawMinusOnNegative),
+    digitMap,
+    minusSigns: [...minusSet].sort(byLengthDesc),
+    plusSigns: [...plusSet].sort(byLengthDesc),
+    affixes: [...affixSet].sort(byLengthDesc),
+  }
+
+  specCache.set(key, spec)
+  return spec
+}
+
+function peelAffixesAndSign(
+  trimmedInput: string,
+  spec: FormatSpec,
+): { sign: 1 | -1; core: string } {
+  let s = trimmedInput
+  let sign: 1 | -1 = 1
+  let seenSign = false
+
+  if (spec.hasAccountingParens && s.startsWith('(') && s.endsWith(')')) {
+    s = stripBidiAndTrim(s.slice(1, -1))
+    sign = -1
+    seenSign = true
+  }
+
+  const usedAffixes = new Set<string>()
+  while (s.length > 0) {
+    let changed = false
+
+    if (!seenSign) {
+      for (const minus of spec.minusSigns) {
+        if (s.startsWith(minus)) {
+          s = stripBidiAndTrim(s.slice(minus.length))
+          sign = -1
+          seenSign = true
+          changed = true
+          break
+        }
+        if (s.endsWith(minus)) {
+          s = stripBidiAndTrim(s.slice(0, s.length - minus.length))
+          sign = -1
+          seenSign = true
+          changed = true
+          break
+        }
+      }
+      if (changed) continue
+
+      for (const plus of spec.plusSigns) {
+        if (s.startsWith(plus)) {
+          s = stripBidiAndTrim(s.slice(plus.length))
+          sign = 1
+          seenSign = true
+          changed = true
+          break
+        }
+        if (s.endsWith(plus)) {
+          s = stripBidiAndTrim(s.slice(0, s.length - plus.length))
+          sign = 1
+          seenSign = true
+          changed = true
+          break
+        }
+      }
+      if (changed) continue
+    }
+
+    for (const affix of spec.affixes) {
+      if (usedAffixes.has(affix)) continue
+      if (s.startsWith(affix)) {
+        s = stripBidiAndTrim(s.slice(affix.length))
+        usedAffixes.add(affix)
+        changed = true
+        break
+      }
+      if (s.endsWith(affix)) {
+        s = stripBidiAndTrim(s.slice(0, s.length - affix.length))
+        usedAffixes.add(affix)
+        changed = true
+        break
+      }
+    }
+
+    if (!changed) break
+  }
+
+  return { sign, core: s }
+}
+
+function isGroupChar(ch: string, group: string | undefined): boolean {
+  if (!group) return false
+  if (ch === group) return true
+  return WHITESPACE_RE.test(group) && WHITESPACE_RE.test(ch)
+}
+
+function parseNumericCore(core: string, spec: FormatSpec): string | null {
+  if (!core) return null
+
+  const chars = Array.from(core)
+  let decimalIndex = -1
+  for (let i = 0; i < chars.length; i += 1) {
+    if (chars[i] === spec.decimal) {
+      if (decimalIndex !== -1) return null
+      decimalIndex = i
+    }
+  }
+
+  const intChars = decimalIndex === -1 ? chars : chars.slice(0, decimalIndex)
+  const fracChars = decimalIndex === -1 ? [] : chars.slice(decimalIndex + 1)
+
+  const fracDigits: string[] = []
+  for (const ch of fracChars) {
+    const mapped = spec.digitMap.get(ch)
+    if (mapped === undefined) return null
+    fracDigits.push(mapped)
+  }
+
+  const intGroups: string[] = []
+  let currentGroup = ''
+  let sawGroupSeparator = false
+
+  for (const ch of intChars) {
+    if (isGroupChar(ch, spec.group)) {
+      sawGroupSeparator = true
+      if (!currentGroup) return null
+      intGroups.push(currentGroup)
+      currentGroup = ''
+      continue
+    }
+    const mapped = spec.digitMap.get(ch)
+    if (mapped === undefined) return null
+    currentGroup += mapped
+  }
+
+  if (sawGroupSeparator) {
+    if (!currentGroup) return null
+    intGroups.push(currentGroup)
+    if (intGroups.length < 2) return null
+
+    const lastGroup = intGroups[intGroups.length - 1]
+    if (lastGroup?.length !== spec.primaryGroupSize) return null
+
+    for (let i = 1; i < intGroups.length - 1; i += 1) {
+      if (intGroups[i]?.length !== spec.secondaryGroupSize) return null
+    }
+
+    const firstGroup = intGroups[0]
+    if (
+      !firstGroup ||
+      firstGroup.length < 1 ||
+      firstGroup.length > spec.secondaryGroupSize
+    ) {
+      return null
+    }
+  }
+
+  const intDigits = sawGroupSeparator ? intGroups.join('') : currentGroup
+  if (intDigits.length === 0 && fracDigits.length === 0) return null
+
+  return decimalIndex === -1 ? intDigits : `${intDigits}.${fracDigits.join('')}`
+}
+
+function shiftDecimalLeft2(ascii: string): string {
+  const [intPart = '', fracPart = ''] = ascii.split('.')
+  const allDigits = `${intPart}${fracPart}`
+  const newPos = intPart.length - 2
+  if (newPos <= 0) {
+    return `0.${'0'.repeat(-newPos)}${allDigits}`
+  }
+  return `${allDigits.slice(0, newPos)}.${allDigits.slice(newPos)}`
 }
 
 function countDecimals(value: number | undefined): number {
@@ -119,26 +444,20 @@ function parseDraft(
   locale: string | undefined,
   formatOptions: Intl.NumberFormatOptions,
 ): DraftParseResult {
-  const trimmed = input.trim()
+  const trimmed = stripBidiAndTrim(input)
   if (!trimmed) return { kind: 'empty' }
 
-  const formatter = getFormatter(locale, formatOptions)
-  const parts = formatter.formatToParts(-12345.67)
-  const decimal = parts.find((part) => part.type === 'decimal')?.value ?? '.'
-  const group = parts.find((part) => part.type === 'group')?.value ?? ','
-  const minus = parts.find((part) => part.type === 'minusSign')?.value ?? '-'
+  const spec = getFormatSpec(locale, formatOptions)
+  if (!spec.supported) return { kind: 'invalid' }
 
-  let normalized = trimmed.split(group).join('')
-  if (normalized.startsWith(minus)) {
-    normalized = `-${normalized.slice(minus.length)}`
-  }
-  if (decimal !== '.') {
-    normalized = normalized.split(decimal).join('.')
-  }
+  const { sign, core } = peelAffixesAndSign(trimmed, spec)
+  const ascii = parseNumericCore(core, spec)
+  if (ascii === null) return { kind: 'invalid' }
 
-  const parsed = Number(normalized)
+  const scaled = spec.isPercent ? shiftDecimalLeft2(ascii) : ascii
+  const parsed = Number(scaled)
   if (!Number.isFinite(parsed)) return { kind: 'invalid' }
-  return { kind: 'valid', value: parsed }
+  return { kind: 'valid', value: parsed === 0 ? 0 : sign * parsed }
 }
 
 function stepFrom(

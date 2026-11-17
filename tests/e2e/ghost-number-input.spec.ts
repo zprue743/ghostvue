@@ -28,5 +28,12 @@ test('GhostNumberInput submits the machine value for de-DE display', async ({
   await expect(page.getByTestId('amount-submitted')).toHaveText(
     'Submitted: 2345.6',
   )
+
+  // Malformed de-DE grouping ('1.5') reverts to the last committed value on blur.
+  await spinbutton.click()
+  await spinbutton.fill('1.5')
+  await spinbutton.blur()
+  await expect(spinbutton).toHaveValue('2.345,6')
+
   await expectNoAxeViolations(page)
 })
