@@ -41,31 +41,95 @@ describe('GhostLink', () => {
 
   it('forwards native listeners to the host', () => {
     const onClick = vi.fn()
+    const onAuxclick = vi.fn()
     const wrapper = mount(GhostLink, {
-      attrs: { href: '/docs', onClick },
+      attrs: { href: '/docs', onClick, onAuxclick },
       slots: { default: 'Read docs' },
     })
 
-    wrapper.get('a').element.click()
+    const link = wrapper.get('a').element
+    link.click()
+    const auxEvent = new MouseEvent('auxclick', {
+      button: 1,
+      bubbles: true,
+      cancelable: true,
+    })
+    link.dispatchEvent(auxEvent)
+
     expect(onClick).toHaveBeenCalledOnce()
+    expect(onAuxclick).toHaveBeenCalledOnce()
+    expect(auxEvent.defaultPrevented).toBe(false)
   })
 
   it('prevents activation while disabled and drops href', () => {
     const onClick = vi.fn()
+    const onAuxclick = vi.fn()
     const wrapper = mount(GhostLink, {
-      attrs: { href: '/docs', onClick },
+      attrs: { href: '/docs', onClick, onAuxclick },
       props: { disabled: true },
       slots: { default: 'Read docs' },
     })
 
     const link = wrapper.get('a')
     link.element.click()
+    const auxEvent = new MouseEvent('auxclick', {
+      button: 1,
+      bubbles: true,
+      cancelable: true,
+    })
+    link.element.dispatchEvent(auxEvent)
 
     expect(link.attributes('href')).toBeUndefined()
     expect(link.attributes('aria-disabled')).toBe('true')
     expect(link.attributes('tabindex')).toBe('-1')
     expect(link.attributes('data-state')).toBe('disabled')
     expect(onClick).not.toHaveBeenCalled()
+    expect(onAuxclick).not.toHaveBeenCalled()
+    expect(auxEvent.defaultPrevented).toBe(true)
+  })
+
+  it('blocks click and auxclick on disabled component hosts that still render href', () => {
+    const RouterWithHref = defineComponent({
+      name: 'RouterWithHref',
+      props: { to: { type: String, required: true } },
+      setup(props, { slots }) {
+        return () => h('a', { href: props.to }, slots['default']?.())
+      },
+    })
+    const onClick = vi.fn()
+    const onAuxclick = vi.fn()
+    const wrapper = mount(GhostLink, {
+      props: { as: markRaw(RouterWithHref), disabled: true },
+      attrs: { to: '/settings', onClick, onAuxclick },
+      slots: { default: 'Settings' },
+    })
+
+    const link = wrapper.get('a').element
+    const ctrlClick = new MouseEvent('click', {
+      ctrlKey: true,
+      bubbles: true,
+      cancelable: true,
+    })
+    const metaClick = new MouseEvent('click', {
+      metaKey: true,
+      bubbles: true,
+      cancelable: true,
+    })
+    const middleAuxClick = new MouseEvent('auxclick', {
+      button: 1,
+      bubbles: true,
+      cancelable: true,
+    })
+
+    link.dispatchEvent(ctrlClick)
+    link.dispatchEvent(metaClick)
+    link.dispatchEvent(middleAuxClick)
+
+    expect(ctrlClick.defaultPrevented).toBe(true)
+    expect(metaClick.defaultPrevented).toBe(true)
+    expect(middleAuxClick.defaultPrevented).toBe(true)
+    expect(onClick).not.toHaveBeenCalled()
+    expect(onAuxclick).not.toHaveBeenCalled()
   })
 
   it('augments rel and announces new-tab intent for target=_blank', () => {

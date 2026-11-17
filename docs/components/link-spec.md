@@ -70,7 +70,8 @@ There is no model.
 ### Events, callbacks, slots, and exposed methods
 
 No component-specific events. Native listeners attach to the root host. Disabled
-links cancel `click` in the capture phase before consumer handlers run.
+links cancel `click` and `auxclick` in the capture phase before consumer
+handlers run.
 
 Slots:
 
@@ -99,7 +100,7 @@ Disabled removes `href` on native `<a>` hosts (even when `href` is present in
 fallthrough), sets `aria-disabled="true"`, `tabindex="-1"`, and `data-state="disabled"`.
 The control is not in sequential focus order and cannot activate. For component
 hosts, `disabled` is forwarded as a prop when supported; `aria-disabled` and
-capture-phase click cancellation still apply.
+capture-phase `click` / `auxclick` cancellation still apply.
 
 ### Async behavior
 

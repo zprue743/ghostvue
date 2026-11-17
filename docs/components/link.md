@@ -41,7 +41,8 @@ destination is outside the app but opens in the same tab.
 <GhostExample id="link/disabled" />
 
 Disabled links drop `href` on native anchors, use `tabindex="-1"`, expose
-`data-state="disabled"`, and ignore clicks in the capture phase.
+`data-state="disabled"`, and ignore `click` and `auxclick` (middle-click) in
+the capture phase.
 
 ## Router composition
 

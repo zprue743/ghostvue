@@ -79,4 +79,89 @@ test.describe('GhostLink', () => {
       await playground.close()
     }
   })
+
+  test('disabled example blocks middle-click and modifier-click', async ({
+    page,
+    context,
+  }) => {
+    const playground = await startStaticServer('apps/playground/dist')
+    try {
+      const initialUrl = `${playground.url}/examples.html?id=link/disabled`
+      await page.goto(initialUrl)
+      const link = page.getByText('Unavailable destination')
+
+      await link.evaluate((element) => {
+        const win = window as unknown as {
+          __ghostAuxClicks?: number
+          __ghostClicks?: number
+        }
+        win.__ghostAuxClicks = 0
+        win.__ghostClicks = 0
+        element.addEventListener('auxclick', () => {
+          win.__ghostAuxClicks = (win.__ghostAuxClicks ?? 0) + 1
+        })
+        element.addEventListener('click', () => {
+          win.__ghostClicks = (win.__ghostClicks ?? 0) + 1
+        })
+      })
+
+      let openedPage = false
+      context.on('page', () => {
+        openedPage = true
+      })
+
+      await link.click({ button: 'middle', force: true })
+      await link.click({ modifiers: ['Control'], force: true })
+      await link.click({ modifiers: ['Meta'], force: true })
+
+      expect(openedPage).toBe(false)
+      expect(page.url()).toBe(initialUrl)
+      const counts = await page.evaluate(() => {
+        const win = window as unknown as {
+          __ghostAuxClicks?: number
+          __ghostClicks?: number
+        }
+        return {
+          auxClicks: win.__ghostAuxClicks ?? 0,
+          clicks: win.__ghostClicks ?? 0,
+        }
+      })
+      expect(counts).toEqual({ auxClicks: 0, clicks: 0 })
+    } finally {
+      await playground.close()
+    }
+  })
+
+  test('basic example keeps native middle-click and modifier-click behavior', async ({
+    page,
+    context,
+  }) => {
+    const playground = await startStaticServer('apps/playground/dist')
+    try {
+      await page.goto(`${playground.url}/examples.html?id=link/basic`)
+      const link = page.getByRole('link', { name: 'GhostButton docs' })
+      const href = await link.getAttribute('href')
+      expect(href).toBeTruthy()
+      if (!href) {
+        throw new Error('Expected href attribute on basic link')
+      }
+
+      const [middlePopup] = await Promise.all([
+        context.waitForEvent('page'),
+        link.click({ button: 'middle' }),
+      ])
+      expect(middlePopup.url()).toContain(href)
+      await middlePopup.close()
+
+      const modifier = process.platform === 'darwin' ? 'Meta' : 'Control'
+      const [modifierPopup] = await Promise.all([
+        context.waitForEvent('page'),
+        link.click({ modifiers: [modifier] }),
+      ])
+      expect(modifierPopup.url()).toContain(href)
+      await modifierPopup.close()
+    } finally {
+      await playground.close()
+    }
+  })
 })
