@@ -93,10 +93,16 @@ async function copyRepository() {
 }
 
 function run(root: string, args: string[]) {
+  // Vitest sets NODE_ENV=test. Inherited by the nested `pnpm verify`, it makes
+  // @vitejs/plugin-vue compile SFCs in development mode, so `pnpm size` would
+  // measure a non-production package build. Run the gate as a shell would.
+  const env = { ...process.env }
+  delete env.NODE_ENV
   try {
     // Full-repo verify in a copied workspace can exceed four minutes as packages grow.
     execPackageManagerSync('pnpm', args, {
       cwd: root,
+      env,
       stdio: 'pipe',
       timeout: 480_000,
     })
@@ -214,6 +220,14 @@ describe('component scaffolding', () => {
           specLink: '/specs/scaffold-probe',
         },
         examples: [{ id: 'scaffold-probe/basic' }],
+      })
+      expect(result.updated).toContain('scripts/bundle-size-budgets.json')
+      const budgets: unknown = JSON.parse(
+        await readFile(join(root, 'scripts/bundle-size-budgets.json'), 'utf8'),
+      )
+      expect(budgets).toMatchObject({
+        '@ghostvue/vue:GhostScaffoldProbe': 2000,
+        '@ghostvue/themes:GhostScaffoldProbe': 2000,
       })
       run(root, ['registries:write'])
       run(root, ['verify'])

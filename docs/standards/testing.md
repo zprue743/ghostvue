@@ -152,6 +152,14 @@ When the CI `browser` job fails, Playwright's HTML report and diff outputs
 PNGs) are uploaded as the `playwright-report` workflow artifact (retained for
 14 days) on the failed GitHub Actions run.
 
+## Bundle size and tree-shaking
+
+After `pnpm build`, run `pnpm size`. It checks gzip budgets for every package
+entry and every single-component import, and confirms that Vue stays external.
+`pnpm verify` runs it after `pnpm exports:check`. Budgets, fixture rules, and
+the update workflow are in the
+[performance standard](./performance.md#bundle-size-and-tree-shaking-budgets).
+
 ## Coverage reporting
 
 `*.test.ts` files run in Vitest as unit and integration tests and count toward
