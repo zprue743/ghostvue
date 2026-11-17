@@ -635,9 +635,31 @@ export function useGhostNumberInput(options: UseGhostNumberInputOptions = {}): {
   function setValueFromStep(next: number): void {
     value.value = next
     editing.value = false
-    draftText.value = formatNumber(next, locale.value, formatOptions.value)
+    const proposed = formatNumber(next, locale.value, formatOptions.value)
+    draftText.value = proposed
     syncSpinbuttonDisplay(next)
     syncHiddenInput(next)
+
+    // The step result is written to both native inputs immediately so stepping
+    // feels instant, but a controlled parent may reject (or transform) it. Vue
+    // only re-patches `value` when the bound prop changes, so after the
+    // parent's v-model flush reconcile both inputs with the authoritative
+    // model. Only text still showing the proposed step is overwritten, so a
+    // newer edit or step queued in the same tick wins.
+    void nextTick(() => {
+      const committed = value.value
+      const expected = formatNumber(
+        committed,
+        locale.value,
+        formatOptions.value,
+      )
+      if (draftText.value === proposed) draftText.value = expected
+      const el = toValue(options.element)
+      if (el?.value === proposed && proposed !== expected) {
+        el.value = expected
+      }
+      syncHiddenInput(committed)
+    })
   }
 
   function increment(): void {
