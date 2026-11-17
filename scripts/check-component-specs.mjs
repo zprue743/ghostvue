@@ -12,6 +12,12 @@ import { checkComponentSpecs } from './lib/component-specs.js'
 const repositoryRoot = fileURLToPath(new URL('..', import.meta.url))
 const result = await checkComponentSpecs(repositoryRoot)
 
+if (result.warnings.length > 0) {
+  console.warn(
+    result.warnings.map((warning) => `Warning: ${warning}`).join('\n'),
+  )
+}
+
 if (!result.ok) {
   console.error(result.violations.join('\n'))
   console.error(
@@ -19,7 +25,11 @@ if (!result.ok) {
   )
   process.exitCode = 1
 } else {
+  const warningSuffix =
+    result.warnings.length > 0
+      ? `, ${String(result.warnings.length)} warning(s)`
+      : ''
   console.log(
-    `Component specifications valid (${String(result.specCount)} specs, ${String(result.exportedCount)} exported components covered).`,
+    `Component specifications valid (${String(result.specCount)} specs, ${String(result.approvedCount)} approved, ${String(result.exportedCount)} exported components covered${warningSuffix}).`,
   )
 }

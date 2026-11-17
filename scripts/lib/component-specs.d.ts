@@ -5,12 +5,14 @@ export const SECTION_HEADING_ALIASES: Record<string, readonly string[]>
 
 export interface SpecValidationResult {
   violations: string[]
+  warnings: string[]
   frontmatter: Record<string, unknown> | null
 }
 
 export interface SpecCheckResult {
   ok: boolean
   violations: string[]
+  warnings: string[]
   specCount: number
   approvedCount: number
   exportedCount: number

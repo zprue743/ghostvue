@@ -359,6 +359,7 @@ export async function validateSpecDocument({
   content,
 }) {
   const violations = []
+  const warnings = []
   let parsed
   try {
     parsed = extractFrontmatter(content)
@@ -366,14 +367,14 @@ export async function validateSpecDocument({
     violations.push(
       `${relativePath}: invalid YAML frontmatter (${error instanceof Error ? error.message : String(error)})`,
     )
-    return { violations, frontmatter: null }
+    return { violations, warnings, frontmatter: null }
   }
 
   if (!parsed) {
     violations.push(
       `${relativePath}: missing YAML frontmatter block (expected leading --- ... ---)`,
     )
-    return { violations, frontmatter: null }
+    return { violations, warnings, frontmatter: null }
   }
 
   const { frontmatter, body } = parsed
@@ -451,8 +452,8 @@ export async function validateSpecDocument({
       `${relativePath}: specStatus must be one of ${SPEC_STATUSES.join(', ')}`,
     )
   } else if (frontmatter.specStatus !== 'approved') {
-    violations.push(
-      `${relativePath}: specStatus is "${frontmatter.specStatus}" (must be "approved" with human approval evidence)`,
+    warnings.push(
+      `${relativePath}: specStatus is "${frontmatter.specStatus}" (not yet "approved"; must be "approved" with human approval evidence before implementation)`,
     )
   }
 
@@ -555,7 +556,7 @@ export async function validateSpecDocument({
     }
   }
 
-  return { violations, frontmatter }
+  return { violations, warnings, frontmatter }
 }
 
 async function discoverExportedComponents(repositoryRoot) {
@@ -635,6 +636,7 @@ export async function checkComponentSpecs(repositoryRoot) {
   specFiles.sort()
 
   const violations = []
+  const warnings = []
   const componentOwners = new Map()
   const specPackages = new Map()
   let approvedCount = 0
@@ -642,13 +644,17 @@ export async function checkComponentSpecs(repositoryRoot) {
   for (const file of specFiles) {
     const relativePath = posix.join('docs/components', file)
     const content = await readFile(join(specsDir, file), 'utf8')
-    const { violations: docViolations, frontmatter } =
-      await validateSpecDocument({
-        repositoryRoot,
-        relativePath,
-        content,
-      })
+    const {
+      violations: docViolations,
+      warnings: docWarnings,
+      frontmatter,
+    } = await validateSpecDocument({
+      repositoryRoot,
+      relativePath,
+      content,
+    })
     violations.push(...docViolations)
+    warnings.push(...docWarnings)
 
     if (
       frontmatter &&
@@ -701,6 +707,7 @@ export async function checkComponentSpecs(repositoryRoot) {
   return {
     ok: violations.length === 0,
     violations,
+    warnings,
     specCount: specFiles.length,
     approvedCount,
     exportedCount: exported.size,

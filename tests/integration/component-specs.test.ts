@@ -149,18 +149,30 @@ unresolvedQuestions: []
     expect(result.violations[0]).toContain('has no component specification')
   })
 
-  it('fails when specStatus is not approved (e.g. proposed or pending-review)', async () => {
+  it('warns (without failing) when specStatus is not approved (e.g. proposed or pending-review)', async () => {
     const root = await makeTempRepo()
     for (const status of ['proposed', 'pending-review', 'submitted', 'draft']) {
-      const { violations } = await validateSpecDocument({
+      const { violations, warnings } = await validateSpecDocument({
         repositoryRoot: root,
         relativePath: 'docs/components/widget-spec.md',
         content: buildSpec({ specStatus: status, approvalEvidence: '' }),
       })
+      expect(violations).toEqual([])
       expect(
-        violations.some((v) => v.includes(`specStatus is "${status}"`)),
+        warnings.some((w) => w.includes(`specStatus is "${status}"`)),
       ).toBe(true)
     }
+
+    await writeFile(
+      join(root, 'docs/components/widget-spec.md'),
+      buildSpec({ specStatus: 'proposed', approvalEvidence: '' }),
+    )
+    const result = await checkComponentSpecs(root)
+    expect(result.ok).toBe(true)
+    expect(result.violations).toEqual([])
+    expect(result.approvedCount).toBe(0)
+    expect(result.warnings).toHaveLength(1)
+    expect(result.warnings[0]).toContain('specStatus is "proposed"')
   })
 
   it('fails when approved spec lacks approval.evidence', async () => {
@@ -273,5 +285,13 @@ unresolvedQuestions: []
     })
     expect(approved.has('GhostDraft')).toBe(false)
     expect(extractFrontmatter('plain markdown')).toBeNull()
+  })
+
+  it('passes on the current repository state including GhostPortal', async () => {
+    const repoRoot = join(import.meta.dirname, '../..')
+    const result = await checkComponentSpecs(repoRoot)
+    expect(result.ok).toBe(true)
+    expect(result.violations).toEqual([])
+    expect(result.exportedCount).toBeGreaterThan(0)
   })
 })

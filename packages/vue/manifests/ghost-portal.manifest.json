@@ -52,5 +52,10 @@
     "keyboard": {},
     "requiredAriaAttributes": []
   },
-  "examples": []
+  "examples": [],
+  "spec": {
+    "path": "docs/components/portal-spec.md",
+    "status": "approved",
+    "evidence": "Approved in ADR 0011 (overlay primitives) and PR #59 (GHO-27)."
+  }
 }
