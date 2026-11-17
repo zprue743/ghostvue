@@ -171,12 +171,19 @@ onUnmounted(() => {
 
   .motion-replay-demo .demo-dot[data-motion] {
     animation-name: ghost-motion-fade;
-    /*
-     * VitePress theme-default sets `animation-duration: 1ms !important` on
-     * every element under reduced motion. Beat that only inside this demo
-     * so the fade stays visible as the note claims.
-     */
-    animation-duration: 0.7s !important;
+  }
+
+  /*
+   * VitePress `base.css` lives in `@layer ghostvue-vitepress` and sets
+   * `animation-duration: 1ms !important` under reduced motion. Layered
+   * `!important` beats unlayered `!important` (and later layers), so this
+   * demo-only override must sit in `@layer ghostvue-vitepress` to win by
+   * specificity.
+   */
+  @layer ghostvue-vitepress {
+    .motion-replay-demo .demo-dot[data-motion] {
+      animation-duration: 0.7s !important;
+    }
   }
 }
 </style>
