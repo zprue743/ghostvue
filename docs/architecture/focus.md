@@ -104,6 +104,14 @@ Home and End move to the first and last **enabled** item. Disabled and
 Arrow keys inside an input, textarea, select, or contenteditable host are
 left to that field.
 
+Arrow, Home, and End keys pressed with Alt, Ctrl, or Meta (Command) are not
+handled: focus, tab stops, and `defaultPrevented` stay unchanged so browser,
+operating-system, assistive-technology, and application shortcuts (for example
+Alt+Left history back or Cmd+Left) keep working. Keys that belong to an IME
+composition (`isComposing`, or `keyCode` 229) are ignored the same way. Shift is
+not a bail-out: Shift+Arrow, Shift+Home, and Shift+End move like the unmodified
+key.
+
 Tab is not handled: the browser already stops once on the `tabindex="0"` item.
 
 ```ts

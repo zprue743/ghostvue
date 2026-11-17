@@ -142,6 +142,9 @@ Roving among items (`useRovingFocus` on the group root):
 | `Home`       | either      | First enabled item.                |
 | `End`        | either      | Last enabled item.                 |
 
+Arrow, Home, and End combined with Alt, Ctrl, or Meta, and keys that belong to
+an IME composition, are not handled so platform shortcuts keep working.
+
 Activation (`GhostToggleGroupItem`):
 
 | Key             | Behavior                                      |

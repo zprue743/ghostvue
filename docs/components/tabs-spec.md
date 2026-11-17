@@ -143,6 +143,9 @@ Roving among tabs (`useRovingFocus` on `GhostTabsList`):
 | `Home`       | either      | First enabled tab.                |
 | `End`        | either      | Last enabled tab.                 |
 
+Arrow, Home, and End combined with Alt, Ctrl, or Meta, and keys that belong to
+an IME composition, are not handled so platform shortcuts keep working.
+
 Activation (`GhostTabsTrigger`):
 
 | Key             | `activationMode` | Behavior                                                                 |
