@@ -1,7 +1,11 @@
 <script setup lang="ts">
 import { computed, useAttrs, useTemplateRef, type PropType } from 'vue'
 
-import type { GhostSliderExposed, GhostSliderValue } from './ghost-slider'
+import type {
+  GhostSliderExposed,
+  GhostSliderMessages,
+  GhostSliderValue,
+} from './ghost-slider'
 import { useNativeFormReset } from './form-reset'
 import GhostVisuallyHidden from './GhostVisuallyHidden.vue'
 import { useGhostId } from './use-ghost-id'
@@ -32,6 +36,10 @@ const props = defineProps({
   nameMax: { type: String, default: undefined },
   form: { type: String, default: undefined },
   valueText: { type: String, default: undefined },
+  messages: {
+    type: Object as PropType<GhostSliderMessages | undefined>,
+    default: undefined,
+  },
 })
 
 const emit = defineEmits<{
@@ -97,6 +105,7 @@ const {
   label: () => thumbNamingAttrs.value.label,
   ariaLabelledby: () => thumbNamingAttrs.value.ariaLabelledby,
   rangeEndLabelIds: () => rangeEndLabelHints.value,
+  messages: () => props.messages,
   root,
   onChange: (next) => {
     emit('update:modelValue', next)
@@ -199,8 +208,12 @@ defineExpose<GhostSliderExposed>({
     </div>
     <slot />
     <template v-if="rangeEndLabelHints">
-      <GhostVisuallyHidden :id="minimumEndLabelId">minimum</GhostVisuallyHidden>
-      <GhostVisuallyHidden :id="maximumEndLabelId">maximum</GhostVisuallyHidden>
+      <GhostVisuallyHidden :id="minimumEndLabelId">{{
+        props.messages?.minimum ?? 'minimum'
+      }}</GhostVisuallyHidden>
+      <GhostVisuallyHidden :id="maximumEndLabelId">{{
+        props.messages?.maximum ?? 'maximum'
+      }}</GhostVisuallyHidden>
     </template>
     <input v-if="inputProps[0]" ref="formInput0" v-bind="inputProps[0]" />
     <input v-if="inputProps[1]" v-bind="inputProps[1]" />

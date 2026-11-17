@@ -392,8 +392,10 @@ None blocking.
 
 - Creatable options and inline multi-value tags.
 - [GHO-43](https://linear.app/ghost-vue/issue/GHO-43): i18n for polite
-  announcement strings (“Loading results”, “N results available”, “No results
-  available”) — v1 uses fixed English in the announcer live region.
+  announcement strings (`loading`, `empty`, `results` callback) and required
+  validation (`required`) is exposed via reactive `messages`
+  (`GhostComboboxMessages`) on `GhostCombobox`, `useGhostCombobox`, and the
+  themed wrapper, keeping English defaults.
 
 ### Form submit (multiple)
 

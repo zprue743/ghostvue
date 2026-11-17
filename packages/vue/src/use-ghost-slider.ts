@@ -534,9 +534,18 @@ export function useGhostSlider(options: UseGhostSliderOptions = {}): {
       const thumbLabel = toValue(options.label)
       const labelledBy = toValue(options.ariaLabelledby)
       const endLabelIds = toValue(options.rangeEndLabelIds)
+      const resolvedMessages = toValue(options.messages)
+      const minimumText = resolvedMessages?.minimum ?? 'minimum'
+      const maximumText = resolvedMessages?.maximum ?? 'maximum'
       const thumbAccessibleName =
         thumbLabel && isRange.value
-          ? `${thumbLabel} ${thumbIndex === 0 ? 'minimum' : 'maximum'}`
+          ? thumbIndex === 0
+            ? resolvedMessages?.formatMinimumLabel
+              ? resolvedMessages.formatMinimumLabel(thumbLabel)
+              : `${thumbLabel} ${minimumText}`
+            : resolvedMessages?.formatMaximumLabel
+              ? resolvedMessages.formatMaximumLabel(thumbLabel)
+              : `${thumbLabel} ${maximumText}`
           : thumbLabel
       const thumbLabelledBy =
         labelledBy && isRange.value && endLabelIds

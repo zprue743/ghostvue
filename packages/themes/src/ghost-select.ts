@@ -3,6 +3,7 @@ import { defineComponent, h, ref, type PropType } from 'vue'
 import {
   GhostSelect as GhostUnstyledSelect,
   type GhostSelectExposed,
+  type GhostSelectMessages,
 } from '@ghostvue/vue'
 
 /** Themed {@link GhostSelect} root wrapper. */
@@ -30,6 +31,10 @@ export const GhostSelect = defineComponent({
     defaultOpen: { type: Boolean, default: false },
     placeholder: {
       type: String as PropType<string | undefined>,
+      default: undefined,
+    },
+    messages: {
+      type: Object as PropType<GhostSelectMessages | undefined>,
       default: undefined,
     },
   },
@@ -69,6 +74,7 @@ export const GhostSelect = defineComponent({
           open: props.open,
           defaultOpen: props.defaultOpen,
           placeholder: props.placeholder,
+          messages: props.messages,
           'onUpdate:modelValue': (next: string | undefined) => {
             emit('update:modelValue', next)
           },

@@ -3,6 +3,7 @@ import { defineComponent, h, ref, type PropType } from 'vue'
 import {
   GhostSlider as GhostUnstyledSlider,
   type GhostSliderExposed,
+  type GhostSliderMessages,
   type GhostSliderValue,
 } from '@ghostvue/vue'
 
@@ -34,6 +35,10 @@ export const GhostSlider = defineComponent({
     nameMax: { type: String, default: undefined },
     form: { type: String, default: undefined },
     valueText: { type: String, default: undefined },
+    messages: {
+      type: Object as PropType<GhostSliderMessages | undefined>,
+      default: undefined,
+    },
     size: { type: String as PropType<GhostSliderSize>, default: 'md' },
     tone: { type: String as PropType<GhostSliderTone>, default: 'accent' },
   },
@@ -82,6 +87,7 @@ export const GhostSlider = defineComponent({
             ...(props.nameMax ? { nameMax: props.nameMax } : {}),
             ...(props.form ? { form: props.form } : {}),
             ...(props.valueText ? { valueText: props.valueText } : {}),
+            ...(props.messages ? { messages: props.messages } : {}),
             'data-size': props.size === 'md' ? undefined : props.size,
             'data-tone': props.tone === 'accent' ? undefined : props.tone,
             'onUpdate:modelValue': (next: GhostSliderValue) => {

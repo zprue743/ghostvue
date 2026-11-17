@@ -37,17 +37,18 @@ option unmounts, the value stays selected, keeps submitting with the form, and
 
 ### `GhostSelect`
 
-| Prop           | Type                  | Default     | Description                        |
-| -------------- | --------------------- | ----------- | ---------------------------------- |
-| `modelValue`   | `string \| undefined` | `undefined` | Controlled value.                  |
-| `defaultValue` | `string \| undefined` | `undefined` | Uncontrolled seed and reset value. |
-| `name`         | `string`              | `undefined` | Submit input name.                 |
-| `disabled`     | `boolean`             | `false`     | Disables the control.              |
-| `required`     | `boolean`             | `false`     | Required when `name` is set.       |
-| `invalid`      | `boolean`             | `false`     | `aria-invalid` on the trigger.     |
-| `open`         | `boolean`             | `undefined` | Controlled listbox open state.     |
-| `defaultOpen`  | `boolean`             | `false`     | Initial open state.                |
-| `placeholder`  | `string`              | `undefined` | Shown when no value is selected.   |
+| Prop           | Type                  | Default     | Description                                                                                |
+| -------------- | --------------------- | ----------- | ------------------------------------------------------------------------------------------ |
+| `modelValue`   | `string \| undefined` | `undefined` | Controlled value.                                                                          |
+| `defaultValue` | `string \| undefined` | `undefined` | Uncontrolled seed and reset value.                                                         |
+| `name`         | `string`              | `undefined` | Submit input name.                                                                         |
+| `disabled`     | `boolean`             | `false`     | Disables the control.                                                                      |
+| `required`     | `boolean`             | `false`     | Required when `name` is set.                                                               |
+| `invalid`      | `boolean`             | `false`     | `aria-invalid` on the trigger.                                                             |
+| `open`         | `boolean`             | `undefined` | Controlled listbox open state.                                                             |
+| `defaultOpen`  | `boolean`             | `false`     | Initial open state.                                                                        |
+| `placeholder`  | `string`              | `undefined` | Shown when no value is selected.                                                           |
+| `messages`     | `GhostSelectMessages` | `undefined` | Overridable internal strings (`required` validation message, default `'Select a value.'`). |
 
 ### Parts
 

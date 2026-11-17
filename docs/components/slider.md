@@ -26,20 +26,21 @@ without changing layout or the focus ring.
 
 ## API
 
-| Prop           | Type                         | Default        | Description                                   |
-| -------------- | ---------------------------- | -------------- | --------------------------------------------- |
-| `v-model`      | `number \| [number, number]` | —              | Controlled value; tuple when `range` is true. |
-| `defaultValue` | same                         | `min` / tuple  | Uncontrolled seed and form-reset baseline.    |
-| `min`          | `number`                     | `0`            | Lower bound.                                  |
-| `max`          | `number`                     | `100`          | Upper bound.                                  |
-| `step`         | `number`                     | `1`            | Snap increment.                               |
-| `range`        | `boolean`                    | `false`        | Two-thumb interval mode.                      |
-| `orientation`  | `'horizontal' \| 'vertical'` | `'horizontal'` | Axis and keyboard mapping.                    |
-| `disabled`     | `boolean`                    | `false`        | Non-operable; hidden inputs not submitted.    |
-| `name`         | `string`                     | —              | Primary hidden field name.                    |
-| `nameMax`      | `string`                     | —              | High thumb name when `range` is true.         |
-| `form`         | `string`                     | —              | External form association.                    |
-| `valueText`    | `string`                     | —              | `aria-valuetext` for single-thumb mode.       |
+| Prop           | Type                         | Default        | Description                                                                                                                             |
+| -------------- | ---------------------------- | -------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| `v-model`      | `number \| [number, number]` | —              | Controlled value; tuple when `range` is true.                                                                                           |
+| `defaultValue` | same                         | `min` / tuple  | Uncontrolled seed and form-reset baseline.                                                                                              |
+| `min`          | `number`                     | `0`            | Lower bound.                                                                                                                            |
+| `max`          | `number`                     | `100`          | Upper bound.                                                                                                                            |
+| `step`         | `number`                     | `1`            | Snap increment.                                                                                                                         |
+| `range`        | `boolean`                    | `false`        | Two-thumb interval mode.                                                                                                                |
+| `orientation`  | `'horizontal' \| 'vertical'` | `'horizontal'` | Axis and keyboard mapping.                                                                                                              |
+| `disabled`     | `boolean`                    | `false`        | Non-operable; hidden inputs not submitted.                                                                                              |
+| `name`         | `string`                     | —              | Primary hidden field name.                                                                                                              |
+| `nameMax`      | `string`                     | —              | High thumb name when `range` is true.                                                                                                   |
+| `form`         | `string`                     | —              | External form association.                                                                                                              |
+| `valueText`    | `string`                     | —              | `aria-valuetext` for single-thumb mode.                                                                                                 |
+| `messages`     | `GhostSliderMessages`        | —              | Overridable range-thumb naming strings (`minimum`, `maximum`) and `aria-label` formatters (`formatMinimumLabel`, `formatMaximumLabel`). |
 
 Native attributes (`id`, `class`, `aria-labelledby`, and listeners) fall
 through to the root (`data-part="root"`). Thumbs expose `role="slider"` with

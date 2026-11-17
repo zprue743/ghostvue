@@ -159,24 +159,28 @@ export function useGhostCombobox(options: UseGhostComboboxOptions = {}): {
     return sortByDocumentOrder(enabledOptions(), (entry) => entry.getElement())
   }
 
-  function queueAnnouncement(): void {
+  function queueAnnouncement(force = false): void {
     if (!isOpen.value) {
       return
     }
+    const resolvedMessages = toValue(options.messages)
     if (loading.value) {
-      if (announcedLoading.value) {
+      if (announcedLoading.value && !force) {
         return
       }
       announcedLoading.value = true
-      announceMessage.value = 'Loading results'
+      announceMessage.value = resolvedMessages?.loading ?? 'Loading results'
       return
     }
     announcedLoading.value = false
     const count = enabledOptions().length
-    announceMessage.value =
-      count === 0
-        ? 'No results available'
-        : `${String(count)} results available`
+    if (count === 0) {
+      announceMessage.value = resolvedMessages?.empty ?? 'No results available'
+      return
+    }
+    announceMessage.value = resolvedMessages?.results
+      ? resolvedMessages.results(count)
+      : `${String(count)} results available`
   }
 
   watch(
@@ -501,7 +505,9 @@ export function useGhostCombobox(options: UseGhostComboboxOptions = {}): {
       ? selectedArray().length === 0
       : selectedValue.value === undefined || selectedValue.value === ''
     if (required.value && empty) {
-      el.setCustomValidity('Select a value.')
+      el.setCustomValidity(
+        toValue(options.messages)?.required ?? 'Select a value.',
+      )
     } else {
       el.setCustomValidity('')
       constraintInvalid.value = false
@@ -515,6 +521,17 @@ export function useGhostCombobox(options: UseGhostComboboxOptions = {}): {
   watch([selectedValue, required, () => multiple.value], () => {
     syncFormValidity()
   })
+
+  watch(
+    () => {
+      const m = toValue(options.messages)
+      return [m?.loading, m?.empty, m?.results, m?.required] as const
+    },
+    () => {
+      queueAnnouncement(true)
+      syncFormValidity()
+    },
+  )
 
   const liveRegionProps = computed((): GhostComboboxLiveRegionProps => ({
     id: liveRegionId.value,

@@ -517,4 +517,90 @@ describe('GhostSlider', () => {
     expect(thumb.attributes('style')).toContain('translate(50%, -50%)')
     wrapper.unmount()
   })
+
+  it('supports reactive non-English messages for both range naming routes without English fallback', async () => {
+    const messages = ref<{
+      minimum: string
+      maximum: string
+      formatMinimumLabel?: (label: string) => string
+      formatMaximumLabel?: (label: string) => string
+    }>({
+      minimum: 'mínimo',
+      maximum: 'máximo',
+    })
+
+    const ariaLabelWrapper = mount(
+      {
+        setup() {
+          return () =>
+            h(GhostSlider, {
+              range: true,
+              defaultValue: [10, 80] as const,
+              'aria-label': 'Precio',
+              messages: messages.value,
+            })
+        },
+      },
+      { attachTo: document.body },
+    )
+
+    const ariaThumbs = ariaLabelWrapper.findAll('[role="slider"]')
+    expect(ariaThumbs[0]?.attributes('aria-label')).toBe('Precio mínimo')
+    expect(ariaThumbs[1]?.attributes('aria-label')).toBe('Precio máximo')
+    expect(ariaThumbs[0]?.attributes('aria-label')).not.toContain('minimum')
+    expect(ariaThumbs[1]?.attributes('aria-label')).not.toContain('maximum')
+
+    messages.value = {
+      minimum: 'cota inferior',
+      maximum: 'cota superior',
+      formatMinimumLabel: (label) => `Mínimo de ${label}`,
+      formatMaximumLabel: (label) => `Máximo de ${label}`,
+    }
+    await nextTick()
+    expect(ariaThumbs[0]?.attributes('aria-label')).toBe('Mínimo de Precio')
+    expect(ariaThumbs[1]?.attributes('aria-label')).toBe('Máximo de Precio')
+
+    const labelledByWrapper = mount(
+      {
+        setup() {
+          return () =>
+            h('div', [
+              h('span', { id: 'price-heading' }, 'Rango de precios'),
+              h(GhostSlider, {
+                range: true,
+                defaultValue: [20, 70] as const,
+                'aria-labelledby': 'price-heading',
+                messages: messages.value,
+              }),
+            ])
+        },
+      },
+      { attachTo: document.body },
+    )
+
+    const labelledThumbs = labelledByWrapper.findAll('[role="slider"]')
+    const minIds =
+      labelledThumbs[0]?.attributes('aria-labelledby')?.split(' ') ?? []
+    const maxIds =
+      labelledThumbs[1]?.attributes('aria-labelledby')?.split(' ') ?? []
+    expect(minIds[0]).toBe('price-heading')
+    expect(maxIds[0]).toBe('price-heading')
+    const minHint = labelledByWrapper.get(`#${minIds[1] ?? ''}`)
+    const maxHint = labelledByWrapper.get(`#${maxIds[1] ?? ''}`)
+    expect(minHint.text()).toBe('cota inferior')
+    expect(maxHint.text()).toBe('cota superior')
+    expect(minHint.text()).not.toBe('minimum')
+    expect(maxHint.text()).not.toBe('maximum')
+
+    messages.value = {
+      minimum: 'límite bajo',
+      maximum: 'límite alto',
+    }
+    await nextTick()
+    expect(minHint.text()).toBe('límite bajo')
+    expect(maxHint.text()).toBe('límite alto')
+
+    ariaLabelWrapper.unmount()
+    labelledByWrapper.unmount()
+  })
 })

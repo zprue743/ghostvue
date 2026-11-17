@@ -119,6 +119,12 @@ export interface GhostSelectExposed {
   blur(): void
 }
 
+/** Overridable internal strings for {@link GhostSelect}. */
+export interface GhostSelectMessages {
+  /** Native constraint validation message when `required` and empty. @default 'Select a value.' */
+  required?: string
+}
+
 export interface UseGhostSelectOptions {
   modelValue?: MaybeRefOrGetter<string | undefined>
   defaultValue?: MaybeRefOrGetter<string | undefined>
@@ -130,6 +136,7 @@ export interface UseGhostSelectOptions {
   name?: MaybeRefOrGetter<string | undefined>
   form?: MaybeRefOrGetter<string | undefined>
   placeholder?: MaybeRefOrGetter<string | undefined>
+  messages?: MaybeRefOrGetter<GhostSelectMessages | undefined>
   onValueChange?: (value: string | undefined) => void
   onOpenChange?: (open: boolean) => void
   getFormInput?: () => HTMLInputElement | null

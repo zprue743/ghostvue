@@ -4,6 +4,34 @@ export type GhostSliderOrientation = 'horizontal' | 'vertical'
 
 export type GhostSliderValue = number | readonly [number, number]
 
+/** Overridable internal range-naming strings and formatters for {@link GhostSlider}. */
+export interface GhostSliderMessages {
+  /**
+   * Minimum-thumb hint text for range sliders.
+   * Used both in the visually hidden hint referenced by `aria-labelledby` and
+   * as the default suffix when `aria-label` is set without `formatMinimumLabel`.
+   * @default 'minimum'
+   */
+  minimum?: string
+  /**
+   * Maximum-thumb hint text for range sliders.
+   * Used both in the visually hidden hint referenced by `aria-labelledby` and
+   * as the default suffix when `aria-label` is set without `formatMaximumLabel`.
+   * @default 'maximum'
+   */
+  maximum?: string
+  /**
+   * Optional formatter for the minimum thumb `aria-label` in range mode when
+   * the root uses `aria-label`. Defaults to `` `${label} ${minimum}` ``.
+   */
+  formatMinimumLabel?: (label: string) => string
+  /**
+   * Optional formatter for the maximum thumb `aria-label` in range mode when
+   * the root uses `aria-label`. Defaults to `` `${label} ${maximum}` ``.
+   */
+  formatMaximumLabel?: (label: string) => string
+}
+
 /**
  * Unstyled {@link GhostSlider} props. Native attributes fall through to the root
  * track container.
@@ -49,6 +77,9 @@ export interface GhostSliderProps extends /* @vue-ignore */ HTMLAttributes {
 
   /** Optional `aria-valuetext` for the sole thumb in single mode. */
   valueText?: string
+
+  /** Overridable range-thumb naming strings and formatters. */
+  messages?: GhostSliderMessages
 }
 
 export interface UseGhostSliderOptions {
@@ -75,6 +106,7 @@ export interface UseGhostSliderOptions {
       }
     | undefined
   >
+  messages?: MaybeRefOrGetter<GhostSliderMessages | undefined>
   onChange?: (value: GhostSliderValue) => void
   root?: MaybeRefOrGetter<HTMLElement | null | undefined>
 }

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, provide, shallowRef, useTemplateRef, watch } from 'vue'
 
-import { ghostSelectContextKey } from './ghost-select'
+import { ghostSelectContextKey, type GhostSelectMessages } from './ghost-select'
 import { useNativeFormReset } from './form-reset'
 import { useGhostSelect } from './use-ghost-select'
 
@@ -19,6 +19,7 @@ const props = withDefaults(
     open?: boolean | undefined
     defaultOpen?: boolean
     placeholder?: string | undefined
+    messages?: GhostSelectMessages | undefined
   }>(),
   {
     modelValue: undefined,
@@ -31,6 +32,7 @@ const props = withDefaults(
     open: undefined,
     defaultOpen: false,
     placeholder: undefined,
+    messages: undefined,
   },
 )
 
@@ -81,6 +83,7 @@ const {
   name: () => props.name,
   form: () => props.form,
   placeholder: () => props.placeholder,
+  messages: () => props.messages,
   onValueChange: (value) => {
     emit('update:modelValue', value)
   },

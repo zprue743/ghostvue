@@ -69,6 +69,13 @@
       "deprecated": false
     },
     {
+      "name": "messages",
+      "type": "GhostComboboxMessages",
+      "required": false,
+      "description": "Declared prop `messages`.",
+      "deprecated": false
+    },
+    {
       "name": "modelValue",
       "type": "GhostComboboxValue",
       "required": false,
