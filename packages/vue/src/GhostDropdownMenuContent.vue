@@ -276,7 +276,7 @@ defineExpose<GhostDropdownMenuContentExposed>({
       :is="as"
       v-if="context.isOpen.value"
       ref="host"
-      class="ghost-dropdown-menu-content"
+      :class="['ghost-dropdown-menu-content', attrs.class]"
       :style="contentStyle"
       v-bind="contentAttrs"
     >

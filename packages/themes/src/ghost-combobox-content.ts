@@ -71,7 +71,6 @@ export const GhostComboboxContent = defineComponent({
           ...attrs,
           ref: inner,
           ...props,
-          class: ['ghost-combobox-content', attrs.class],
           'data-themed': '',
         },
         slots,

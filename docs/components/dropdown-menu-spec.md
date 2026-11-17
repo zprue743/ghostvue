@@ -187,7 +187,8 @@ Disabled items are omitted from roving and typeahead.
 ## Rendering and customization
 
 - Root: renderless provider.
-- Content: class `ghost-dropdown-menu-content`, `data-part="content"`.
+- Content: class `ghost-dropdown-menu-content`, `data-part="content"`. Consumer
+  `class` and `style` merge with the library class and floating position styles.
 - Trigger / items / label / separator: `data-part` hooks as above; checkbox and
   radio use `data-state` where applicable.
 - Themed CSS under `@layer ghostvue-theme` uses `--ghost-elevation-3-*`, radius,

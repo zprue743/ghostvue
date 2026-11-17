@@ -306,7 +306,7 @@ defineExpose<GhostMenubarContentExposed>({
       :is="as"
       v-if="context.isOpen.value"
       ref="host"
-      class="ghost-menubar-content"
+      :class="['ghost-menubar-content', attrs.class]"
       :style="contentStyle"
       v-bind="contentAttrs"
       @keydown.capture="handleKeydown"

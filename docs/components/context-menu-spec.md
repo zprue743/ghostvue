@@ -133,7 +133,8 @@ WAI-ARIA APG **Menu** pattern (context menu variant):
 ## Rendering and customization
 
 - Root: renderless provider.
-- Content: class `ghost-context-menu-content`, `data-part="content"`.
+- Content: class `ghost-context-menu-content`, `data-part="content"`. Consumer
+  `class` and `style` merge with the library class and floating position styles.
 - Themed CSS mirrors dropdown menu tokens on `.ghost-context-menu-content`.
 
 ## Environment behavior
