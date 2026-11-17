@@ -47,7 +47,7 @@
   "devDependencies": {
     "culori": "4.0.2",
     "esbuild": "0.21.5",
-    "vue": "3.5.41"
+    "vue": "3.5.45"
   },
   "typesVersions": {
     "*": {
