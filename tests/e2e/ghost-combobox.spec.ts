@@ -115,4 +115,110 @@ test.describe('GhostCombobox', () => {
       await playground.close()
     }
   })
+
+  test('aria-activedescendant follows rendered option order after list changes (GHO-162)', async ({
+    page,
+  }) => {
+    const playground = await startStaticServer('apps/playground/dist')
+
+    try {
+      await page.goto(playground.url)
+
+      const input = page.getByTestId('combobox-order-input')
+      const content = page.getByTestId('combobox-order-content')
+      await input.scrollIntoViewIfNeeded()
+
+      async function expectActive(name: string): Promise<void> {
+        const id = await content
+          .getByRole('option', { name, exact: true })
+          .getAttribute('id')
+        expect(id).toBeTruthy()
+        await expect(input).toHaveAttribute('aria-activedescendant', id ?? '')
+      }
+
+      async function openListbox(): Promise<void> {
+        await input.focus()
+        await page.keyboard.press('ArrowDown')
+        await expect(content).toBeVisible()
+        await expect(input).toHaveAttribute('aria-expanded', 'true')
+      }
+
+      async function closeListbox(): Promise<void> {
+        await page.keyboard.press('Escape')
+        await expect(content).toBeHidden()
+      }
+
+      // Filter + restore: banana re-registers first but renders second.
+      await page.getByTestId('combobox-order-filter').click()
+      await page.getByTestId('combobox-order-restore').click()
+      await openListbox()
+      await expectActive('Apple')
+      await page.keyboard.press('ArrowDown')
+      await expectActive('Banana')
+      await page.keyboard.press('ArrowDown')
+      await expectActive('Cherry')
+      await page.keyboard.press('ArrowDown')
+      await expectActive('Apple')
+      await page.keyboard.press('End')
+      await expectActive('Cherry')
+      await page.keyboard.press('Home')
+      await expectActive('Apple')
+      await page.keyboard.press('ArrowUp')
+      await expectActive('Cherry')
+      await closeListbox()
+
+      // Keyed reorder.
+      await page.getByTestId('combobox-order-reverse').click()
+      await openListbox()
+      await page.keyboard.press('Home')
+      await expectActive('Cherry')
+      await page.keyboard.press('ArrowDown')
+      await expectActive('Banana')
+      await page.keyboard.press('End')
+      await expectActive('Apple')
+      await closeListbox()
+
+      // Insertion before existing options.
+      await page.getByTestId('combobox-order-insert').click()
+      await openListbox()
+      await page.keyboard.press('Home')
+      await expectActive('Apricot')
+      await page.keyboard.press('ArrowDown')
+      await expectActive('Apple')
+      await closeListbox()
+
+      // Disabled options are skipped without breaking DOM order.
+      await page.getByTestId('combobox-order-disable').click()
+      await openListbox()
+      await page.keyboard.press('Home')
+      await expectActive('Apple')
+      await page.keyboard.press('ArrowDown')
+      await expectActive('Banana')
+      await page.keyboard.press('ArrowDown')
+      await expectActive('Apple')
+      await page.keyboard.press('End')
+      await expectActive('Banana')
+      await closeListbox()
+
+      // Virtualized mounted window scrolling forward and back.
+      await page.getByTestId('combobox-order-window-start').click()
+      await page.getByTestId('combobox-order-window-later').click()
+      await page.getByTestId('combobox-order-window-start').click()
+      await openListbox()
+      await page.keyboard.press('Home')
+      await expectActive('Item 1')
+      await page.keyboard.press('ArrowDown')
+      await expectActive('Item 2')
+      await page.keyboard.press('End')
+      await expectActive('Item 4')
+      await page.keyboard.press('ArrowUp')
+      await expectActive('Item 3')
+      await page.keyboard.press('Enter')
+      await expect(content).toBeHidden()
+      await expect(input).toHaveValue('Item 3')
+      await expect(input).toBeFocused()
+    } finally {
+      await playground.close()
+    }
+  })
 })

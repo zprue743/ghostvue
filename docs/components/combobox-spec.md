@@ -162,6 +162,10 @@ Floating and dismiss layers attach while open.
 Highlight: `activeOptionValue` drives `aria-activedescendant` on the input,
 referencing the active option element id. Keyboard moves highlight among enabled
 registered options; pointer hover may move highlight (optional, matches APG).
+Arrow, `Home`, and `End` traverse those options in their rendered DOM order, not
+the order they registered in, so keyed reordering, insertion before existing
+options, and filtering then restoring results keep `aria-activedescendant`
+moving in visual order.
 
 ### Loading, empty, disabled, read-only, and error states
 
@@ -243,7 +247,11 @@ When `virtualized` is true, consumers render a window of `GhostComboboxOption`
 nodes. Highlight APIs (`moveActive`, `setActiveOptionByValue`) only consider
 **currently registered** options. Documentation shows pairing with an external
 virtualizer: pass stable `value` / `textValue` and keep `aria-activedescendant`
-in sync by remounting options for the visible slice.
+in sync by remounting options for the visible slice. Traversal follows the DOM
+order of the mounted slice, so render the window in list order (an item that
+remounts when scrolling back is still reached in its visual position). Ordering
+is resolved per key press over the mounted options only; it is not a registry
+performance optimization for very large unvirtualized lists.
 
 ## Rendering and customization
 
@@ -286,9 +294,12 @@ is consumer-driven via `virtualized` flag and documented highlight contract.
   empty, required validation, form reset, controlled parent ignoring updates,
   virtualized highlight among mounted subset, timer/listener cleanup on unmount,
   selection + label + FormData preserved when options unmount (filtering,
-  out-of-order async replacement, reorder, remount) without emits
+  out-of-order async replacement, reorder, remount) without emits, Arrow /
+  `Home` / `End` in DOM order after keyed reorder, insertion, filter + restore,
+  disabled toggles, and a virtualized window scrolling back
 - **SSR:** `expectSsrHydration` closed combobox
-- **E2E + axe:** keyboard path on playground demo, async example smoke
+- **E2E + axe:** keyboard path on playground demo, async example smoke,
+  `aria-activedescendant` in rendered order after list changes
 - **Visual:** `combobox/themed` via `pnpm test:visual:docker`
 - **Types:** consumer compile fixture
 
