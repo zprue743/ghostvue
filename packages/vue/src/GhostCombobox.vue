@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import {
   computed,
+  nextTick,
   provide,
   shallowRef,
   watch,
@@ -106,8 +107,11 @@ useNativeFormReset(
 )
 
 const openedAtMount = shallowRef(combobox.isOpen.value)
+const shouldRestoreFocus = shallowRef(true)
 watch(combobox.isOpen, (next) => {
-  if (!next) {
+  if (next) {
+    shouldRestoreFocus.value = true
+  } else {
     openedAtMount.value = false
   }
 })
@@ -155,8 +159,42 @@ function setPrimaryFormMirror(
 const customInputId = shallowRef<string | null>(null)
 const customContentId = shallowRef<string | null>(null)
 const inputRegistered = shallowRef(false)
+const triggerElement = shallowRef<HTMLElement | null>(null)
 const contentElement = shallowRef<HTMLElement | null>(null)
 const listboxElement = shallowRef<HTMLElement | null>(null)
+
+function isTargetWithinWidget(target: EventTarget | null): boolean {
+  if (!(target instanceof Node)) {
+    return false
+  }
+  const containers = [
+    inputElement.value,
+    triggerElement.value,
+    contentElement.value,
+  ]
+  for (const container of containers) {
+    if (container?.contains(target)) {
+      return true
+    }
+  }
+  return false
+}
+
+function notifyFocusOut(relatedTarget: EventTarget | null): void {
+  if (!combobox.isOpen.value || isTargetWithinWidget(relatedTarget)) {
+    return
+  }
+  // Focus has already moved elsewhere or blurred; closing must not yank focus
+  // back to the input via useFocusScope's cleanup restoration.
+  shouldRestoreFocus.value = false
+  combobox.clearTransientSearch()
+  combobox.close()
+  void nextTick(() => {
+    if (combobox.isOpen.value) {
+      shouldRestoreFocus.value = true
+    }
+  })
+}
 
 provide(ghostComboboxContextKey, {
   multiple: combobox.multiple,
@@ -180,12 +218,17 @@ provide(ghostComboboxContextKey, {
     () => customContentId.value ?? combobox.defaultContentId.value,
   ),
   inputElement,
+  triggerElement,
   contentElement,
   listboxElement,
   openedAtMount,
+  shouldRestoreFocus,
   inputRegistered,
   setInputElement(element) {
     inputElement.value = element
+  },
+  setTriggerElement(element) {
+    triggerElement.value = element
   },
   setContentElement(element) {
     contentElement.value = element
@@ -193,6 +236,7 @@ provide(ghostComboboxContextKey, {
   setListboxElement(element) {
     listboxElement.value = element
   },
+  notifyFocusOut,
   setInputId(id) {
     customInputId.value = id
   },

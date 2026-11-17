@@ -6,10 +6,14 @@ import {
   GhostComboboxContent,
   GhostComboboxInput,
   GhostComboboxOption,
+  GhostComboboxTrigger,
 } from '@ghostvue/themes'
 
 const pageSize = ref('25')
 const multiTags = ref<string[]>(['10'])
+const focusSingleValue = ref<string>('banana')
+const focusMultiValues = ref<string[]>(['apple'])
+const rejectedOpenCount = ref(0)
 
 /*
  * GHO-162 order fixture: keyed list mutations (filter + restore, reorder,
@@ -174,11 +178,89 @@ function labelOf(value: string): string {
         </GhostComboboxOption>
       </GhostComboboxContent>
     </GhostCombobox>
+
+    <h3 id="combobox-focus-heading">Focus departure</h3>
+    <div class="combobox-focus-controls">
+      <button type="button" data-testid="combobox-focus-before">
+        Before combobox
+      </button>
+      <GhostCombobox v-model="focusSingleValue">
+        <GhostComboboxInput
+          data-testid="combobox-focus-portaled-input"
+          aria-labelledby="combobox-focus-heading"
+          placeholder="Portaled with trigger"
+        />
+        <GhostComboboxTrigger
+          data-testid="combobox-focus-trigger"
+          aria-label="Toggle fruit list"
+        >
+          Toggle
+        </GhostComboboxTrigger>
+        <GhostComboboxContent
+          data-testid="combobox-focus-portaled-content"
+          :offset="6"
+        >
+          <GhostComboboxOption value="apple" text-value="Apple">
+            Apple
+          </GhostComboboxOption>
+          <GhostComboboxOption value="banana" text-value="Banana">
+            Banana
+          </GhostComboboxOption>
+        </GhostComboboxContent>
+      </GhostCombobox>
+      <button type="button" data-testid="combobox-focus-after">
+        After portaled
+      </button>
+
+      <GhostCombobox v-model="focusMultiValues" multiple>
+        <GhostComboboxInput
+          data-testid="combobox-focus-inline-input"
+          aria-label="Inline multi combobox"
+          placeholder="Inline multi"
+        />
+        <GhostComboboxContent
+          data-testid="combobox-focus-inline-content"
+          :portal="false"
+          :offset="6"
+        >
+          <GhostComboboxOption value="apple" text-value="Apple">
+            Apple
+          </GhostComboboxOption>
+          <GhostComboboxOption value="banana" text-value="Banana">
+            Banana
+          </GhostComboboxOption>
+        </GhostComboboxContent>
+      </GhostCombobox>
+      <button type="button" data-testid="combobox-focus-after-inline">
+        After inline
+      </button>
+
+      <GhostCombobox :open="true" @update:open="rejectedOpenCount += 1">
+        <GhostComboboxInput
+          data-testid="combobox-focus-controlled-input"
+          aria-label="Controlled open combobox"
+          placeholder="Controlled open"
+        />
+        <GhostComboboxContent
+          data-testid="combobox-focus-controlled-content"
+          :portal="false"
+          :offset="6"
+        >
+          <GhostComboboxOption value="apple" text-value="Apple">
+            Apple
+          </GhostComboboxOption>
+        </GhostComboboxContent>
+      </GhostCombobox>
+      <button type="button" data-testid="combobox-focus-after-controlled">
+        After controlled ({{ rejectedOpenCount }})
+      </button>
+    </div>
   </section>
 </template>
 
 <style scoped>
-.combobox-order-controls {
+.combobox-order-controls,
+.combobox-focus-controls {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;

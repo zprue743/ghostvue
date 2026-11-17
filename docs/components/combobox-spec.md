@@ -248,8 +248,19 @@ Listbox does not use roving `tabindex`; focus remains on the input.
 ### Focus
 
 Tab order: input (and trigger when present). On open, focus stays on input.
-On close, focus remains on input. Outside dismiss restores focus per
-`useDismissableLayer` / `useFocusScope` (`trapped: false`).
+On `Escape` or outside pointer dismissal onto a non-focusable target, focus
+remains on / restores to the input per `useDismissableLayer` / `useFocusScope`
+(`trapped: false`).
+
+When keyboard (`Tab` / `Shift+Tab`) or programmatic (`blur()`, focusing an
+external element) focus leaves the complete widget — `GhostComboboxInput`,
+`GhostComboboxTrigger`, and owned inline or portaled `GhostComboboxContent` —
+the combobox requests close without restoring focus or changing selection, and
+clears the transient search: single selection displays the committed selected
+label (or empty when nothing is selected), and multiple selection returns to an
+empty search. Internal focus moves between widget parts and option pointer
+selection do not dismiss prematurely. Controlled `open`, `search`, and
+`modelValue` remain parent-owned, including rejected updates.
 
 ### Virtualization
 
@@ -310,10 +321,16 @@ is consumer-driven via `virtualized` flag and documented highlight contract.
   (`isComposing` and `keyCode` 229) leaves ArrowUp/Down, `Home` / `End`,
   `Enter`, `Escape`, and printable keys to the input method without model,
   search, or open-state changes, still calls consumer `onKeydown`, and normal
-  keys resume afterwards
+  keys resume afterwards; focus departure from the complete widget (input,
+  trigger, inline/portaled content) closes without restoring focus or changing
+  selection, clears transient search (single shows committed label, multiple
+  clears to empty), ignores internal focus moves and option pointer selection,
+  and respects controlled `open` / `search` / `modelValue` rejections
 - **SSR:** `expectSsrHydration` closed combobox
 - **E2E + axe:** keyboard path on playground demo, async example smoke,
-  `aria-activedescendant` in rendered order after list changes, Chromium
+  `aria-activedescendant` in rendered order after list changes, `Tab` /
+  `Shift+Tab` and programmatic external focus departure across input, trigger,
+  inline/portaled content, and controlled `open` rejection, Chromium
   DevTools-protocol IME composition plus WebKit-style `keyCode` 229 keys
   (`tests/e2e/ime-composition.spec.ts`)
 - **Manual:** Manual IME validation (automation cannot drive a real input method editor):

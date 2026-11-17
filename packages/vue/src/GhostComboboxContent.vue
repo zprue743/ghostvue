@@ -14,6 +14,7 @@ import type { GhostPortalTarget } from './ghost-portal'
 import GhostPortal from './GhostPortal.vue'
 import {
   ghostComboboxContextKey,
+  invokeComboboxAttrHandler,
   resolveComboboxHtmlElement,
   type GhostComboboxContentElement,
   type GhostComboboxContentExposed,
@@ -97,8 +98,6 @@ const floating = useFloating(() => context.inputElement.value, contentElement, {
   strategy: () => props.strategy,
 })
 
-const shouldRestoreFocus = shallowRef(true)
-
 function hasFocusableAncestor(target: EventTarget | null): boolean {
   let current: Element | null =
     target instanceof Element
@@ -121,19 +120,23 @@ function hasFocusableAncestor(target: EventTarget | null): boolean {
 
 useDismissableLayer(contentElement, {
   ignore: () =>
-    [context.inputElement.value, context.contentElement.value].filter(Boolean),
+    [
+      context.inputElement.value,
+      context.triggerElement.value,
+      context.contentElement.value,
+    ].filter(Boolean),
   onDismiss: (reason, event) => {
     if (!isOpen.value) {
       return
     }
     const skipRestore =
       reason === 'outside-pointer' && hasFocusableAncestor(event.target)
-    shouldRestoreFocus.value = !skipRestore
+    context.shouldRestoreFocus.value = !skipRestore
     context.close()
     if (skipRestore) {
       void nextTick(() => {
         if (context.isOpen.value) {
-          shouldRestoreFocus.value = true
+          context.shouldRestoreFocus.value = true
         }
       })
     }
@@ -162,7 +165,7 @@ watch(
 useFocusScope(focusTarget, {
   trapped: false,
   autoFocus: false,
-  restoreFocus: shouldRestoreFocus,
+  restoreFocus: context.shouldRestoreFocus,
 })
 
 watch(
@@ -195,7 +198,8 @@ const contentAttrs = computed(() => {
       key !== 'class' &&
       key !== 'style' &&
       key !== 'role' &&
-      key !== 'hidden'
+      key !== 'hidden' &&
+      key !== 'onFocusout'
     ) {
       rest[key] = value
     }
@@ -235,6 +239,14 @@ const listboxAttrs = computed(() => ({
   'data-part': 'listbox',
 }))
 
+function handleFocusOut(event: FocusEvent): void {
+  invokeComboboxAttrHandler(attrs['onFocusout'], event)
+  if (event.defaultPrevented) {
+    return
+  }
+  context.notifyFocusOut(event.relatedTarget)
+}
+
 const portalActive = computed(() => props.portal && isOpen.value)
 
 defineExpose<GhostComboboxContentExposed>({
@@ -252,7 +264,12 @@ defineExpose<GhostComboboxContentExposed>({
 
 <template>
   <GhostPortal :to="portalTo" :disabled="!portalActive">
-    <component :is="as" ref="host" v-bind="contentAttrs">
+    <component
+      :is="as"
+      ref="host"
+      v-bind="contentAttrs"
+      @focusout="handleFocusOut"
+    >
       <div ref="listbox" v-bind="listboxAttrs">
         <slot />
       </div>

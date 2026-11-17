@@ -64,6 +64,7 @@ export function useGhostCombobox(options: UseGhostComboboxOptions = {}): {
   moveActiveFirst: () => void
   moveActiveLast: () => void
   onInputSearch: (query: string) => void
+  clearTransientSearch: () => void
   formMirrorInputs: ComputedRef<GhostComboboxFormInputProps[]>
   applyFormReset: () => void
   syncFormValidity: () => void
@@ -414,6 +415,16 @@ export function useGhostCombobox(options: UseGhostComboboxOptions = {}): {
     queueAnnouncement()
   }
 
+  function clearTransientSearch(): void {
+    if (multiple.value) {
+      searchValue.value = ''
+      return
+    }
+    const selected = selectedValue.value
+    searchValue.value =
+      typeof selected === 'string' ? (getOptionText(selected) ?? '') : ''
+  }
+
   const formMirrorInputs = computed((): GhostComboboxFormInputProps[] => {
     const name = toValue(options.name)
     const form = toValue(options.form)
@@ -542,6 +553,7 @@ export function useGhostCombobox(options: UseGhostComboboxOptions = {}): {
     moveActiveFirst,
     moveActiveLast,
     onInputSearch,
+    clearTransientSearch,
     formMirrorInputs,
     applyFormReset,
     syncFormValidity,

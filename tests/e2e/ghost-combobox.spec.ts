@@ -221,4 +221,88 @@ test.describe('GhostCombobox', () => {
       await playground.close()
     }
   })
+
+  test('dismisses on Tab/Shift+Tab and external focus without restoring focus, across inline/portaled content and controlled open rejection (GHO-166)', async ({
+    page,
+  }) => {
+    const playground = await startStaticServer('apps/playground/dist')
+
+    try {
+      await page.goto(playground.url)
+
+      const beforeBtn = page.getByTestId('combobox-focus-before')
+      const portaledInput = page.getByTestId('combobox-focus-portaled-input')
+      const trigger = page.getByTestId('combobox-focus-trigger')
+      const portaledContent = page.getByTestId(
+        'combobox-focus-portaled-content',
+      )
+      const afterBtn = page.getByTestId('combobox-focus-after')
+
+      await portaledInput.scrollIntoViewIfNeeded()
+
+      // Open, type transient search, Tab to trigger (stays open), then Tab to afterBtn (dismisses).
+      await portaledInput.focus()
+      await portaledInput.fill('ap')
+      await expect(portaledContent).toBeVisible()
+      await expect(portaledInput).toHaveAttribute('aria-expanded', 'true')
+
+      await page.keyboard.press('Tab')
+      await expect(trigger).toBeFocused()
+      await expect(portaledContent).toBeVisible()
+      await expect(portaledInput).toHaveAttribute('aria-expanded', 'true')
+
+      await page.keyboard.press('Tab')
+      await expect(afterBtn).toBeFocused()
+      await expect(portaledContent).toBeHidden()
+      await expect(portaledInput).toHaveAttribute('aria-expanded', 'false')
+      await expect(portaledInput).toHaveValue('Banana')
+
+      // Shift+Tab from input -> trigger (stays open) -> beforeBtn (dismisses).
+      await portaledInput.focus()
+      await portaledInput.fill('ap')
+      await expect(portaledContent).toBeVisible()
+      await page.keyboard.press('Shift+Tab')
+      await expect(beforeBtn).toBeFocused()
+      await expect(portaledContent).toBeHidden()
+      await expect(portaledInput).toHaveAttribute('aria-expanded', 'false')
+      await expect(portaledInput).toHaveValue('Banana')
+
+      // Programmatic external focus on inline multi-select clears search to empty.
+      const inlineInput = page.getByTestId('combobox-focus-inline-input')
+      const inlineContent = page.getByTestId('combobox-focus-inline-content')
+      const afterInline = page.getByTestId('combobox-focus-after-inline')
+
+      await inlineInput.focus()
+      await inlineInput.fill('ap')
+      await expect(inlineContent).toBeVisible()
+      await expect(inlineInput).toHaveAttribute('aria-expanded', 'true')
+
+      await afterInline.focus()
+      await expect(afterInline).toBeFocused()
+      await expect(inlineContent).toBeHidden()
+      await expect(inlineInput).toHaveAttribute('aria-expanded', 'false')
+      await expect(inlineInput).toHaveValue('')
+
+      // Controlled open rejection: Tab away requests close, parent keeps open=true.
+      const controlledInput = page.getByTestId(
+        'combobox-focus-controlled-input',
+      )
+      const controlledContent = page.getByTestId(
+        'combobox-focus-controlled-content',
+      )
+      const afterControlled = page.getByTestId(
+        'combobox-focus-after-controlled',
+      )
+
+      await controlledInput.focus()
+      await expect(controlledContent).toBeVisible()
+      await page.keyboard.press('Tab')
+      await expect(afterControlled).toBeFocused()
+      await expect(controlledContent).toBeVisible()
+      await expect(controlledInput).toHaveAttribute('aria-expanded', 'true')
+      await expect(afterControlled).toContainText('After controlled (1)')
+    } finally {
+      await playground.close()
+    }
+  })
 })

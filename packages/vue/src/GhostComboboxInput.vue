@@ -10,6 +10,7 @@ import {
 
 import {
   ghostComboboxContextKey,
+  invokeComboboxAttrHandler,
   resolveComboboxHtmlElement,
   type GhostComboboxContext,
   type GhostComboboxInputElement,
@@ -106,6 +107,7 @@ const inputAttrs = computed(() => {
       key !== 'onInput' &&
       key !== 'onKeydown' &&
       key !== 'onFocus' &&
+      key !== 'onFocusout' &&
       key !== 'onClick'
     ) {
       rest[key] = value
@@ -153,23 +155,11 @@ const inputAttrs = computed(() => {
   return base
 })
 
-function invokeAttrHandler(handler: unknown, event: Event): void {
-  if (typeof handler === 'function') {
-    ;(handler as (event: Event) => void)(event)
-  } else if (Array.isArray(handler)) {
-    for (const fn of handler) {
-      if (typeof fn === 'function') {
-        ;(fn as (event: Event) => void)(event)
-      }
-    }
-  }
-}
-
 function handleInput(event: Event): void {
   if (isEffectivelyDisabled.value) {
     return
   }
-  invokeAttrHandler(attrs['onInput'], event)
+  invokeComboboxAttrHandler(attrs['onInput'], event)
   if (event.defaultPrevented) {
     return
   }
@@ -184,14 +174,22 @@ function handleInput(event: Event): void {
 }
 
 function handleFocus(event: FocusEvent): void {
-  invokeAttrHandler(attrs['onFocus'], event)
+  invokeComboboxAttrHandler(attrs['onFocus'], event)
   if (event.defaultPrevented || isEffectivelyDisabled.value) {
     return
   }
 }
 
+function handleFocusOut(event: FocusEvent): void {
+  invokeComboboxAttrHandler(attrs['onFocusout'], event)
+  if (event.defaultPrevented) {
+    return
+  }
+  context.notifyFocusOut(event.relatedTarget)
+}
+
 function handleClick(event: MouseEvent): void {
-  invokeAttrHandler(attrs['onClick'], event)
+  invokeComboboxAttrHandler(attrs['onClick'], event)
   if (event.defaultPrevented || isEffectivelyDisabled.value) {
     return
   }
@@ -204,7 +202,7 @@ function handleKeydown(event: KeyboardEvent): void {
   if (isEffectivelyDisabled.value) {
     return
   }
-  invokeAttrHandler(attrs['onKeydown'], event)
+  invokeComboboxAttrHandler(attrs['onKeydown'], event)
   // While an IME is composing, ArrowUp/ArrowDown move through its candidate
   // list, Enter confirms the candidate, and Escape cancels the composition.
   // Consumer handlers above still observe the event, but the combobox must not
@@ -286,6 +284,7 @@ defineExpose<GhostComboboxInputExposed>({
     v-bind="inputAttrs"
     @input="handleInput"
     @focus="handleFocus"
+    @focusout="handleFocusOut"
     @click="handleClick"
     @keydown="handleKeydown"
   />

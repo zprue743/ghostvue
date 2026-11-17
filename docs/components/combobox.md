@@ -79,6 +79,11 @@ list: the combobox does not move the highlight, select, or close until the
 composition is committed. Your own `@keydown` handlers on `GhostComboboxInput`
 still receive those events.
 
+Moving focus outside the combobox widget (input, trigger, and listbox content)
+closes the popup without restoring focus or changing the selection, and resets
+any transient search text to the committed selected label (or empty in
+`multiple` mode).
+
 ### Parts
 
 - `GhostComboboxInput`, `GhostComboboxTrigger`, `GhostComboboxContent`

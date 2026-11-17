@@ -1,8 +1,16 @@
 <script setup lang="ts">
-import { computed, inject, useAttrs, useTemplateRef } from 'vue'
+import {
+  computed,
+  inject,
+  onUnmounted,
+  useAttrs,
+  useTemplateRef,
+  watch,
+} from 'vue'
 
 import {
   ghostComboboxContextKey,
+  invokeComboboxAttrHandler,
   resolveComboboxHtmlElement,
   type GhostComboboxContext,
   type GhostComboboxTriggerElement,
@@ -37,10 +45,27 @@ const isEffectivelyDisabled = computed(
   () => props.disabled || context.disabled.value,
 )
 
+watch(
+  element,
+  (el) => {
+    context.setTriggerElement(el)
+  },
+  { immediate: true, flush: 'post' },
+)
+
+onUnmounted(() => {
+  context.setTriggerElement(null)
+})
+
 const triggerAttrs = computed(() => {
   const rest: Record<string, unknown> = {}
   for (const [key, value] of Object.entries(attrs)) {
-    if (key !== 'type' && key !== 'onClick' && key !== 'onKeydown') {
+    if (
+      key !== 'type' &&
+      key !== 'onClick' &&
+      key !== 'onKeydown' &&
+      key !== 'onFocusout'
+    ) {
       rest[key] = value
     }
   }
@@ -61,6 +86,14 @@ const triggerAttrs = computed(() => {
     class: ['ghost-combobox-trigger', attrs['class']],
   }
 })
+
+function handleFocusOut(event: FocusEvent): void {
+  invokeComboboxAttrHandler(attrs['onFocusout'], event)
+  if (event.defaultPrevented) {
+    return
+  }
+  context.notifyFocusOut(event.relatedTarget)
+}
 
 function handleClick(event: MouseEvent): void {
   if (isEffectivelyDisabled.value) {
@@ -102,6 +135,7 @@ defineExpose<GhostComboboxTriggerExposed>({
     v-bind="triggerAttrs"
     @click="handleClick"
     @keydown="handleKeydown"
+    @focusout="handleFocusOut"
   >
     <slot />
   </component>

@@ -13,6 +13,22 @@ import { resolvePopoverHtmlElement } from './ghost-popover'
 /** @see resolvePopoverHtmlElement */
 export const resolveComboboxHtmlElement = resolvePopoverHtmlElement
 
+/** Invokes a single function or array of functions from fallthrough `attrs`. */
+export function invokeComboboxAttrHandler(
+  handler: unknown,
+  event: Event,
+): void {
+  if (typeof handler === 'function') {
+    ;(handler as (event: Event) => void)(event)
+  } else if (Array.isArray(handler)) {
+    for (const fn of handler) {
+      if (typeof fn === 'function') {
+        ;(fn as (event: Event) => void)(event)
+      }
+    }
+  }
+}
+
 export type GhostComboboxInputElement = string | Component
 export type GhostComboboxTriggerElement = string | Component
 export type GhostComboboxContentElement = string | Component
@@ -106,12 +122,16 @@ export interface GhostComboboxContext {
   inputId: ComputedRef<string>
   contentId: ComputedRef<string>
   inputElement: Ref<HTMLElement | null>
+  triggerElement: Ref<HTMLElement | null>
   contentElement: Ref<HTMLElement | null>
   listboxElement: Ref<HTMLElement | null>
   openedAtMount: Ref<boolean>
+  shouldRestoreFocus: Ref<boolean>
   setInputElement: (element: HTMLElement | null) => void
+  setTriggerElement: (element: HTMLElement | null) => void
   setContentElement: (element: HTMLElement | null) => void
   setListboxElement: (element: HTMLElement | null) => void
+  notifyFocusOut: (relatedTarget: EventTarget | null) => void
   setInputId: (id: string | null) => void
   setContentId: (id: string | null) => void
   setInputRegistered: (registered: boolean) => void

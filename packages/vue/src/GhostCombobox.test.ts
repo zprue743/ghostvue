@@ -8,6 +8,7 @@ import GhostComboboxContent from './GhostComboboxContent.vue'
 import GhostComboboxEmpty from './GhostComboboxEmpty.vue'
 import GhostComboboxInput from './GhostComboboxInput.vue'
 import GhostComboboxOption from './GhostComboboxOption.vue'
+import GhostComboboxTrigger from './GhostComboboxTrigger.vue'
 import { waitForFormResetDeferral } from './form-reset'
 import {
   useGhostCombobox,
@@ -656,6 +657,9 @@ describe('GhostCombobox', () => {
         const wrapper = mountAttached(
           imeFixture({ onKeydown, onSearch, onModel }),
         )
+        await flushPromises()
+        await nextTick()
+
         const input = wrapper.get('[data-part="input"]')
         const inputEl = input.element as HTMLInputElement
         inputEl.focus()
@@ -853,5 +857,370 @@ describe('GhostCombobox', () => {
     expect(api.liveRegionProps.value['aria-live']).toBe('polite')
     expect(api.liveRegionProps.value['aria-atomic']).toBe(true)
     wrapper.unmount()
+  })
+
+  describe('focus departure (GHO-166)', () => {
+    it('closes on external focus without restoring focus or changing single selection, and displays committed label', async () => {
+      const value = ref<string | undefined>('b')
+      const wrapper = mountAttached(
+        defineComponent({
+          setup() {
+            return () =>
+              h('div', [
+                h(
+                  GhostCombobox,
+                  {
+                    modelValue: value.value,
+                    'onUpdate:modelValue': (next: GhostComboboxValue) => {
+                      if (typeof next === 'string' || next === undefined) {
+                        value.value = next
+                      }
+                    },
+                  },
+                  {
+                    default: () => [
+                      h(GhostComboboxInput),
+                      h(GhostComboboxContent, { portal: false }, () => [
+                        h(
+                          GhostComboboxOption,
+                          { value: 'a', textValue: 'Apple' },
+                          () => 'Apple',
+                        ),
+                        h(
+                          GhostComboboxOption,
+                          { value: 'b', textValue: 'Banana' },
+                          () => 'Banana',
+                        ),
+                      ]),
+                    ],
+                  },
+                ),
+                h(
+                  'button',
+                  { type: 'button', 'data-testid': 'outside' },
+                  'Out',
+                ),
+              ])
+          },
+        }),
+      )
+
+      await flushPromises()
+      await nextTick()
+
+      const input = wrapper.get('[data-part="input"]')
+      const inputEl = input.element as HTMLInputElement
+      const outside = wrapper.get('[data-testid="outside"]')
+        .element as HTMLElement
+
+      inputEl.focus()
+      await input.setValue('ap')
+      await flushPromises()
+      expect(input.attributes('aria-expanded')).toBe('true')
+
+      outside.focus()
+      await flushPromises()
+      await nextTick()
+
+      expect(input.attributes('aria-expanded')).toBe('false')
+      expect(
+        wrapper.get('[data-part="content"]').attributes('hidden'),
+      ).toBeDefined()
+      expect(document.activeElement).toBe(outside)
+      expect(value.value).toBe('b')
+      expect(inputEl.value).toBe('Banana')
+    })
+
+    it('clears transient search on blur when no selection is committed and in multiple mode', async () => {
+      const multi = ref<string[]>(['a'])
+      const wrapper = mountAttached(
+        defineComponent({
+          setup() {
+            return () =>
+              h('div', [
+                h(GhostCombobox, null, {
+                  default: () => [
+                    h(GhostComboboxInput, { 'data-testid': 'single-input' }),
+                    h(GhostComboboxContent, { portal: false }, () =>
+                      h(
+                        GhostComboboxOption,
+                        { value: 'a', textValue: 'Apple' },
+                        () => 'Apple',
+                      ),
+                    ),
+                  ],
+                }),
+                h(
+                  GhostCombobox,
+                  {
+                    multiple: true,
+                    modelValue: multi.value,
+                    'onUpdate:modelValue': (next: GhostComboboxValue) => {
+                      multi.value = Array.isArray(next) ? next : []
+                    },
+                  },
+                  {
+                    default: () => [
+                      h(GhostComboboxInput, { 'data-testid': 'multi-input' }),
+                      h(GhostComboboxContent, { portal: false }, () => [
+                        h(
+                          GhostComboboxOption,
+                          { value: 'a', textValue: 'Apple' },
+                          () => 'Apple',
+                        ),
+                        h(
+                          GhostComboboxOption,
+                          { value: 'b', textValue: 'Banana' },
+                          () => 'Banana',
+                        ),
+                      ]),
+                    ],
+                  },
+                ),
+                h(
+                  'button',
+                  { type: 'button', 'data-testid': 'outside' },
+                  'Out',
+                ),
+              ])
+          },
+        }),
+      )
+
+      const singleInput = wrapper.get('[data-testid="single-input"]')
+      const singleEl = singleInput.element as HTMLInputElement
+      singleEl.focus()
+      await singleInput.setValue('ap')
+      await flushPromises()
+      expect(singleInput.attributes('aria-expanded')).toBe('true')
+
+      singleEl.blur()
+      await flushPromises()
+      await nextTick()
+      expect(singleInput.attributes('aria-expanded')).toBe('false')
+      expect(singleEl.value).toBe('')
+      expect(document.activeElement).not.toBe(singleEl)
+
+      const multiInput = wrapper.get('[data-testid="multi-input"]')
+      const multiEl = multiInput.element as HTMLInputElement
+      const outside = wrapper.get('[data-testid="outside"]')
+        .element as HTMLElement
+      multiEl.focus()
+      await multiInput.setValue('ban')
+      await flushPromises()
+      expect(multiInput.attributes('aria-expanded')).toBe('true')
+
+      outside.focus()
+      await flushPromises()
+      await nextTick()
+      expect(multiInput.attributes('aria-expanded')).toBe('false')
+      expect(multiEl.value).toBe('')
+      expect(multi.value).toEqual(['a'])
+      expect(document.activeElement).toBe(outside)
+    })
+
+    it.each([false, true])(
+      'keeps open on internal focus moves across input, trigger, and content (portal=%s), then closes on external focus',
+      async (portal) => {
+        const wrapper = mountAttached(
+          defineComponent({
+            setup() {
+              return () =>
+                h('div', [
+                  h(GhostCombobox, null, {
+                    default: () => [
+                      h(GhostComboboxInput),
+                      h(GhostComboboxTrigger, null, () => 'Toggle'),
+                      h(GhostComboboxContent, { portal }, () => [
+                        h(
+                          GhostComboboxOption,
+                          { value: 'a', textValue: 'Apple' },
+                          () => 'Apple',
+                        ),
+                        h(
+                          'button',
+                          { type: 'button', 'data-testid': 'inner-btn' },
+                          'Inner',
+                        ),
+                      ]),
+                    ],
+                  }),
+                  h(
+                    'button',
+                    { type: 'button', 'data-testid': 'outside' },
+                    'Outside',
+                  ),
+                ])
+            },
+          }),
+        )
+
+        await flushPromises()
+        await nextTick()
+
+        const input = wrapper.get('[data-part="input"]')
+        const inputEl = input.element as HTMLInputElement
+        const triggerEl = wrapper.get('[data-part="trigger"]')
+          .element as HTMLElement
+        const outsideEl = wrapper.get('[data-testid="outside"]')
+          .element as HTMLElement
+
+        inputEl.focus()
+        inputEl.dispatchEvent(
+          new KeyboardEvent('keydown', {
+            key: 'ArrowDown',
+            bubbles: true,
+            cancelable: true,
+          }),
+        )
+        await flushPromises()
+        await nextTick()
+        expect(input.attributes('aria-expanded')).toBe('true')
+
+        triggerEl.focus()
+        await flushPromises()
+        expect(input.attributes('aria-expanded')).toBe('true')
+
+        const innerBtn = document.body.querySelector<HTMLElement>(
+          '[data-testid="inner-btn"]',
+        )
+        expect(innerBtn).toBeInstanceOf(HTMLElement)
+        innerBtn?.focus()
+        await flushPromises()
+        expect(input.attributes('aria-expanded')).toBe('true')
+
+        outsideEl.focus()
+        await flushPromises()
+        await nextTick()
+        expect(input.attributes('aria-expanded')).toBe('false')
+        expect(document.activeElement).toBe(outsideEl)
+      },
+    )
+
+    it('does not dismiss prematurely on option pointer selection', async () => {
+      const multi = ref<string[]>([])
+      const wrapper = mountAttached(
+        defineComponent({
+          setup() {
+            return () =>
+              h(
+                GhostCombobox,
+                {
+                  multiple: true,
+                  modelValue: multi.value,
+                  'onUpdate:modelValue': (next: GhostComboboxValue) => {
+                    multi.value = Array.isArray(next) ? next : []
+                  },
+                },
+                {
+                  default: () => [
+                    h(GhostComboboxInput),
+                    h(GhostComboboxContent, { portal: false }, () =>
+                      h(
+                        GhostComboboxOption,
+                        { value: 'a', textValue: 'Apple' },
+                        () => 'Apple',
+                      ),
+                    ),
+                  ],
+                },
+              )
+          },
+        }),
+      )
+
+      await flushPromises()
+      await nextTick()
+
+      const input = wrapper.get('[data-part="input"]')
+      const inputEl = input.element as HTMLInputElement
+      inputEl.focus()
+      inputEl.dispatchEvent(
+        new KeyboardEvent('keydown', {
+          key: 'ArrowDown',
+          bubbles: true,
+          cancelable: true,
+        }),
+      )
+      await flushPromises()
+
+      const optionEl = wrapper.get('[data-value="a"]').element as HTMLElement
+      const pointerDown = new Event('pointerdown', {
+        bubbles: true,
+        cancelable: true,
+      })
+      optionEl.dispatchEvent(pointerDown)
+      expect(pointerDown.defaultPrevented).toBe(true)
+
+      await wrapper.get('[data-value="a"]').trigger('click')
+      await flushPromises()
+      expect(multi.value).toEqual(['a'])
+      expect(input.attributes('aria-expanded')).toBe('true')
+    })
+
+    it('keeps controlled open and search parent-owned when updates are rejected', async () => {
+      const onUpdateOpen = vi.fn()
+      const onUpdateSearch = vi.fn()
+      const wrapper = mountAttached(
+        defineComponent({
+          setup() {
+            return () =>
+              h('div', [
+                h(
+                  GhostCombobox,
+                  {
+                    open: true,
+                    search: 'ap',
+                    modelValue: 'b',
+                    'onUpdate:open': onUpdateOpen,
+                    'onUpdate:search': onUpdateSearch,
+                  },
+                  {
+                    default: () => [
+                      h(GhostComboboxInput),
+                      h(GhostComboboxContent, { portal: false }, () => [
+                        h(
+                          GhostComboboxOption,
+                          { value: 'a', textValue: 'Apple' },
+                          () => 'Apple',
+                        ),
+                        h(
+                          GhostComboboxOption,
+                          { value: 'b', textValue: 'Banana' },
+                          () => 'Banana',
+                        ),
+                      ]),
+                    ],
+                  },
+                ),
+                h(
+                  'button',
+                  { type: 'button', 'data-testid': 'outside' },
+                  'Out',
+                ),
+              ])
+          },
+        }),
+      )
+
+      await flushPromises()
+      await nextTick()
+
+      const input = wrapper.get('[data-part="input"]')
+      const inputEl = input.element as HTMLInputElement
+      const outside = wrapper.get('[data-testid="outside"]')
+        .element as HTMLElement
+
+      inputEl.focus()
+      outside.focus()
+      await flushPromises()
+      await nextTick()
+
+      expect(onUpdateOpen).toHaveBeenCalledWith(false)
+      expect(onUpdateSearch).toHaveBeenCalledWith('Banana')
+      expect(input.attributes('aria-expanded')).toBe('true')
+      expect(inputEl.value).toBe('ap')
+      expect(document.activeElement).toBe(outside)
+    })
   })
 })
