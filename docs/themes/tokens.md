@@ -366,6 +366,18 @@ tokens that alias them.
 | `text.success` | `--ghost-text-success` | color | `#15803d` | `#4ade80` | Success-colored text on the canvas. |
 | `text.warning` | `--ghost-text-warning` | color | `#b45309` | `#fbbf24` | Warning-colored text on the canvas. |
 
+### track
+
+| Token | CSS | Type | Light | Dark | Description |
+| --- | --- | --- | --- | --- | --- |
+| `track.target` | `--ghost-track-target` | dimension | `1.5rem` | `1.5rem` | Minimum pointer hit size around a painted track or thumb. Hit areas grow to this size without changing paint or layout. |
+| `track.thickness.lg` | `--ghost-track-thickness-lg` | dimension | `0.5rem` | `0.5rem` | Large painted thickness for progress bars and slider tracks. 8px at every density. |
+| `track.thickness.md` | `--ghost-track-thickness-md` | dimension | `0.375rem` | `0.375rem` | Medium painted thickness for progress bars and slider tracks. 6px at every density. |
+| `track.thickness.sm` | `--ghost-track-thickness-sm` | dimension | `0.25rem` | `0.25rem` | Small painted thickness for progress bars and slider tracks. 4px at every density; layout gaps never size paint. |
+| `track.thumb.lg` | `--ghost-track-thumb-lg` | dimension | `1.25rem` | `1.25rem` | Painted thumb diameter paired with track.thickness.lg. 20px at every density. |
+| `track.thumb.md` | `--ghost-track-thumb-md` | dimension | `1rem` | `1rem` | Painted thumb diameter paired with track.thickness.md. 16px at every density. |
+| `track.thumb.sm` | `--ghost-track-thumb-sm` | dimension | `0.75rem` | `0.75rem` | Painted thumb diameter paired with track.thickness.sm. 12px at every density. |
+
 ### type
 
 | Token | CSS | Type | Light | Dark | Description |
@@ -620,6 +632,13 @@ tokens can alias a stable OKLCH scale.
 | `size.icon` | dimension | `1.1em` | Icon size relative to the label. |
 | `size.motion.translate` | dimension | `0.5rem` | Default enter/exit translation distance. |
 | `size.spinner.width` | dimension | `2px` | Default spinner stroke width. |
+| `size.track.target` | dimension | `1.5rem` | Minimum fine-pointer hit size around a painted track or thumb. 24px (WCAG 2.5.8). |
+| `size.track.thickness.lg` | dimension | `0.5rem` | Large painted track thickness. 8px. |
+| `size.track.thickness.md` | dimension | `0.375rem` | Medium painted track thickness. 6px. |
+| `size.track.thickness.sm` | dimension | `0.25rem` | Small painted track thickness. 4px. |
+| `size.track.thumb.lg` | dimension | `1.25rem` | Large painted thumb diameter. 20px. |
+| `size.track.thumb.md` | dimension | `1rem` | Medium painted thumb diameter. 16px. |
+| `size.track.thumb.sm` | dimension | `0.75rem` | Small painted thumb diameter. 12px. |
 | `space.0` | dimension | `0px` | Space 0. 4px grid. |
 | `space.1` | dimension | `0.25rem` | Space 1. 4px. |
 | `space.10` | dimension | `2.5rem` | Space 10. 40px. |

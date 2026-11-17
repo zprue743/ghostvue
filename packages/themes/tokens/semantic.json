@@ -1401,6 +1401,47 @@
       }
     }
   },
+  "track": {
+    "thickness": {
+      "sm": {
+        "$type": "dimension",
+        "$value": "{size.track.thickness.sm}",
+        "$description": "Small painted thickness for progress bars and slider tracks. 4px at every density; layout gaps never size paint."
+      },
+      "md": {
+        "$type": "dimension",
+        "$value": "{size.track.thickness.md}",
+        "$description": "Medium painted thickness for progress bars and slider tracks. 6px at every density."
+      },
+      "lg": {
+        "$type": "dimension",
+        "$value": "{size.track.thickness.lg}",
+        "$description": "Large painted thickness for progress bars and slider tracks. 8px at every density."
+      }
+    },
+    "thumb": {
+      "sm": {
+        "$type": "dimension",
+        "$value": "{size.track.thumb.sm}",
+        "$description": "Painted thumb diameter paired with track.thickness.sm. 12px at every density."
+      },
+      "md": {
+        "$type": "dimension",
+        "$value": "{size.track.thumb.md}",
+        "$description": "Painted thumb diameter paired with track.thickness.md. 16px at every density."
+      },
+      "lg": {
+        "$type": "dimension",
+        "$value": "{size.track.thumb.lg}",
+        "$description": "Painted thumb diameter paired with track.thickness.lg. 20px at every density."
+      }
+    },
+    "target": {
+      "$type": "dimension",
+      "$value": "{size.track.target}",
+      "$description": "Minimum pointer hit size around a painted track or thumb. Hit areas grow to this size without changing paint or layout."
+    }
+  },
   "radius": {
     "none": {
       "$type": "dimension",

@@ -1,6 +1,15 @@
 /*
  * Themed GhostSlider. Track, range fill, and thumb use semantic --ghost-* tokens.
  * Private --_ghost-slider-* are per-instance wiring, not a public API.
+ *
+ * Geometry reads --ghost-track-* rather than layout gap tokens: gaps are
+ * spacing that density may collapse to zero (Calm defaults to compact), while
+ * painted thickness must stay visible at every density and theme. Track and
+ * range share one thickness and are centered on the headless rail with
+ * margins (the rail and track carry inline inset/size styles the theme cannot
+ * override). Hit areas are transparent ::before boxes grown to at least
+ * --ghost-track-target, so pointer targets stay usable when paint is thin and
+ * never change layout, the focus outline, or the track rect used for values.
  */
 @layer ghostvue-theme {
   :where(.ghost-theme .ghost-slider, .ghost-themed-scope .ghost-slider) {
@@ -8,7 +17,15 @@
     --_ghost-slider-fill: var(--ghost-action-primary-bg);
     --_ghost-slider-thumb: var(--ghost-surface-bg);
     --_ghost-slider-thumb-ring: var(--ghost-action-primary-bg);
-    --_ghost-slider-track-size: var(--ghost-space-gap-sm);
+    --_ghost-slider-track-size: var(--ghost-track-thickness-md);
+    --_ghost-slider-thumb-size: var(--ghost-track-thumb-md);
+    /* Negative inset growing paint to the hit target; 0 once paint is larger. */
+    --_ghost-slider-track-hit: calc(
+      min(0px, var(--_ghost-slider-track-size) - var(--ghost-track-target)) / 2
+    );
+    --_ghost-slider-thumb-hit: calc(
+      min(0px, var(--_ghost-slider-thumb-size) - var(--ghost-track-target)) / 2
+    );
 
     color: inherit;
     font: inherit;
@@ -30,9 +47,57 @@
       [data-part='track'],
     .ghost-themed-scope
       .ghost-slider[data-orientation='horizontal']
-      [data-part='track']
+      [data-part='track'],
+    .ghost-theme
+      .ghost-slider[data-orientation='horizontal']
+      [data-part='range'],
+    .ghost-themed-scope
+      .ghost-slider[data-orientation='horizontal']
+      [data-part='range']
   ) {
     block-size: var(--_ghost-slider-track-size);
+    /* Inline styles pin both block insets to the rail; auto margins center paint. */
+    margin-block: auto;
+  }
+
+  :where(
+    .ghost-theme .ghost-slider[data-orientation='vertical'] [data-part='track'],
+    .ghost-themed-scope
+      .ghost-slider[data-orientation='vertical']
+      [data-part='track'],
+    .ghost-theme .ghost-slider[data-orientation='vertical'] [data-part='range'],
+    .ghost-themed-scope
+      .ghost-slider[data-orientation='vertical']
+      [data-part='range']
+  ) {
+    inline-size: var(--_ghost-slider-track-size);
+    /*
+     * Inline-axis auto margins never go negative, so paint wider than the rail
+     * would start-align; percentages resolve against the rail's inline size.
+     */
+    margin-inline: calc((100% - var(--_ghost-slider-track-size)) / 2);
+  }
+
+  :where(
+    .ghost-theme .ghost-slider [data-part='track'],
+    .ghost-themed-scope .ghost-slider [data-part='track'],
+    .ghost-theme .ghost-slider [data-part='thumb'],
+    .ghost-themed-scope .ghost-slider [data-part='thumb']
+  )::before {
+    content: '';
+    position: absolute;
+  }
+
+  :where(
+    .ghost-theme
+      .ghost-slider[data-orientation='horizontal']
+      [data-part='track'],
+    .ghost-themed-scope
+      .ghost-slider[data-orientation='horizontal']
+      [data-part='track']
+  )::before {
+    inset-block: var(--_ghost-slider-track-hit);
+    inset-inline: 0;
   }
 
   :where(
@@ -40,8 +105,17 @@
     .ghost-themed-scope
       .ghost-slider[data-orientation='vertical']
       [data-part='track']
-  ) {
-    inline-size: var(--_ghost-slider-track-size);
+  )::before {
+    inset-block: 0;
+    inset-inline: var(--_ghost-slider-track-hit);
+  }
+
+  :where(
+    .ghost-theme .ghost-slider [data-part='thumb'],
+    .ghost-themed-scope .ghost-slider [data-part='thumb']
+  )::before {
+    border-radius: 50%;
+    inset: var(--_ghost-slider-thumb-hit);
   }
 
   :where(
@@ -58,7 +132,7 @@
     .ghost-themed-scope .ghost-slider [data-part='thumb']
   ) {
     background-color: var(--_ghost-slider-thumb);
-    block-size: calc(var(--_ghost-slider-track-size) * 2);
+    block-size: var(--_ghost-slider-thumb-size);
     border: var(--ghost-border-hairline-width) solid
       var(--_ghost-slider-thumb-ring);
     border-radius: 50%;
@@ -66,7 +140,7 @@
     box-sizing: border-box;
     cursor: grab;
     display: block;
-    inline-size: calc(var(--_ghost-slider-track-size) * 2);
+    inline-size: var(--_ghost-slider-thumb-size);
     touch-action: none;
   }
 
@@ -108,14 +182,16 @@
     .ghost-theme .ghost-slider[data-size='sm'],
     .ghost-themed-scope .ghost-slider[data-size='sm']
   ) {
-    --_ghost-slider-track-size: var(--ghost-space-gap-xs);
+    --_ghost-slider-track-size: var(--ghost-track-thickness-sm);
+    --_ghost-slider-thumb-size: var(--ghost-track-thumb-sm);
   }
 
   :where(
     .ghost-theme .ghost-slider[data-size='lg'],
     .ghost-themed-scope .ghost-slider[data-size='lg']
   ) {
-    --_ghost-slider-track-size: var(--ghost-space-gap-md);
+    --_ghost-slider-track-size: var(--ghost-track-thickness-lg);
+    --_ghost-slider-thumb-size: var(--ghost-track-thumb-lg);
   }
 
   :where(

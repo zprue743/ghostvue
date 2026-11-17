@@ -4083,6 +4083,76 @@ export const tokens = {
       dark: "2px",
     },
   },
+  "size.track.target": {
+    name: "size.track.target",
+    type: "dimension",
+    tier: "primitive",
+    description: "Minimum fine-pointer hit size around a painted track or thumb. 24px (WCAG 2.5.8).",
+    value: {
+      light: "1.5rem",
+      dark: "1.5rem",
+    },
+  },
+  "size.track.thickness.lg": {
+    name: "size.track.thickness.lg",
+    type: "dimension",
+    tier: "primitive",
+    description: "Large painted track thickness. 8px.",
+    value: {
+      light: "0.5rem",
+      dark: "0.5rem",
+    },
+  },
+  "size.track.thickness.md": {
+    name: "size.track.thickness.md",
+    type: "dimension",
+    tier: "primitive",
+    description: "Medium painted track thickness. 6px.",
+    value: {
+      light: "0.375rem",
+      dark: "0.375rem",
+    },
+  },
+  "size.track.thickness.sm": {
+    name: "size.track.thickness.sm",
+    type: "dimension",
+    tier: "primitive",
+    description: "Small painted track thickness. 4px.",
+    value: {
+      light: "0.25rem",
+      dark: "0.25rem",
+    },
+  },
+  "size.track.thumb.lg": {
+    name: "size.track.thumb.lg",
+    type: "dimension",
+    tier: "primitive",
+    description: "Large painted thumb diameter. 20px.",
+    value: {
+      light: "1.25rem",
+      dark: "1.25rem",
+    },
+  },
+  "size.track.thumb.md": {
+    name: "size.track.thumb.md",
+    type: "dimension",
+    tier: "primitive",
+    description: "Medium painted thumb diameter. 16px.",
+    value: {
+      light: "1rem",
+      dark: "1rem",
+    },
+  },
+  "size.track.thumb.sm": {
+    name: "size.track.thumb.sm",
+    type: "dimension",
+    tier: "primitive",
+    description: "Small painted thumb diameter. 12px.",
+    value: {
+      light: "0.75rem",
+      dark: "0.75rem",
+    },
+  },
   "space.0": {
     name: "space.0",
     type: "dimension",
@@ -4749,6 +4819,83 @@ export const tokens = {
     value: {
       light: "#b45309",
       dark: "#fbbf24",
+    },
+  },
+  "track.target": {
+    name: "track.target",
+    cssVar: "--ghost-track-target",
+    type: "dimension",
+    tier: "semantic",
+    description: "Minimum pointer hit size around a painted track or thumb. Hit areas grow to this size without changing paint or layout.",
+    value: {
+      light: "1.5rem",
+      dark: "1.5rem",
+    },
+  },
+  "track.thickness.lg": {
+    name: "track.thickness.lg",
+    cssVar: "--ghost-track-thickness-lg",
+    type: "dimension",
+    tier: "semantic",
+    description: "Large painted thickness for progress bars and slider tracks. 8px at every density.",
+    value: {
+      light: "0.5rem",
+      dark: "0.5rem",
+    },
+  },
+  "track.thickness.md": {
+    name: "track.thickness.md",
+    cssVar: "--ghost-track-thickness-md",
+    type: "dimension",
+    tier: "semantic",
+    description: "Medium painted thickness for progress bars and slider tracks. 6px at every density.",
+    value: {
+      light: "0.375rem",
+      dark: "0.375rem",
+    },
+  },
+  "track.thickness.sm": {
+    name: "track.thickness.sm",
+    cssVar: "--ghost-track-thickness-sm",
+    type: "dimension",
+    tier: "semantic",
+    description: "Small painted thickness for progress bars and slider tracks. 4px at every density; layout gaps never size paint.",
+    value: {
+      light: "0.25rem",
+      dark: "0.25rem",
+    },
+  },
+  "track.thumb.lg": {
+    name: "track.thumb.lg",
+    cssVar: "--ghost-track-thumb-lg",
+    type: "dimension",
+    tier: "semantic",
+    description: "Painted thumb diameter paired with track.thickness.lg. 20px at every density.",
+    value: {
+      light: "1.25rem",
+      dark: "1.25rem",
+    },
+  },
+  "track.thumb.md": {
+    name: "track.thumb.md",
+    cssVar: "--ghost-track-thumb-md",
+    type: "dimension",
+    tier: "semantic",
+    description: "Painted thumb diameter paired with track.thickness.md. 16px at every density.",
+    value: {
+      light: "1rem",
+      dark: "1rem",
+    },
+  },
+  "track.thumb.sm": {
+    name: "track.thumb.sm",
+    cssVar: "--ghost-track-thumb-sm",
+    type: "dimension",
+    tier: "semantic",
+    description: "Painted thumb diameter paired with track.thickness.sm. 12px at every density.",
+    value: {
+      light: "0.75rem",
+      dark: "0.75rem",
     },
   },
   "type.family.sans": {

@@ -91,16 +91,16 @@
         "description": "Danger fill color."
       },
       {
-        "name": "--ghost-space-gap-xs",
-        "description": "Track thickness for size sm."
+        "name": "--ghost-track-thickness-sm",
+        "description": "Painted track thickness for size sm. Density-independent."
       },
       {
-        "name": "--ghost-space-gap-sm",
-        "description": "Track thickness for size md."
+        "name": "--ghost-track-thickness-md",
+        "description": "Painted track thickness for size md. Density-independent."
       },
       {
-        "name": "--ghost-space-gap-md",
-        "description": "Track thickness for size lg."
+        "name": "--ghost-track-thickness-lg",
+        "description": "Painted track thickness for size lg. Density-independent."
       },
       {
         "name": "--ghost-radius-pill",

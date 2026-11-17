@@ -73,6 +73,15 @@ visual props:
 | `size` | `'sm' \| 'md' \| 'lg'`              | `'md'`     | Track thickness and thumb size. Default omits `data-size`.        |
 | `tone` | `'accent' \| 'neutral' \| 'danger'` | `'accent'` | Selected range and thumb color intent. Default omits `data-tone`. |
 
+Themed geometry comes from density-independent painted tokens, never layout
+gaps (which collapse to zero at compact density): track and range share
+`--ghost-track-thickness-sm` / `md` / `lg` (4 / 6 / 8px) and are centered on the
+rail; the thumb uses `--ghost-track-thumb-sm` / `md` / `lg` (12 / 16 / 20px).
+Pointer targets are separate from paint: transparent `::before` hit areas grow
+the track's cross axis and the thumb to at least `--ghost-track-target` (24px)
+without affecting layout, the focus outline, or the track rect used to map
+pointer position to a value.
+
 ### v-model contracts
 
 `v-model` binds `modelValue` / `update:modelValue`.

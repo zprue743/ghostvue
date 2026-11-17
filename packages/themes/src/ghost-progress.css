@@ -3,12 +3,16 @@
  * Private --_ghost-progress-* properties are per-instance wiring, not a public
  * API. Indeterminate translation is CSS-only so reduced-motion can swap it for
  * a pulse without a client motion query.
+ *
+ * Thickness reads --ghost-track-thickness-*, not --ghost-space-gap-*: gaps are
+ * layout spacing that density may collapse to zero (Calm defaults to compact),
+ * while painted thickness must stay visible at every density and theme.
  */
 @layer ghostvue-theme {
   :where(.ghost-theme .ghost-progress, .ghost-themed-scope .ghost-progress) {
     --_ghost-progress-track: var(--ghost-surface-muted-bg);
     --_ghost-progress-fill: var(--ghost-action-primary-bg);
-    --_ghost-progress-size: var(--ghost-space-gap-sm);
+    --_ghost-progress-size: var(--ghost-track-thickness-md);
 
     background-color: var(--_ghost-progress-track);
     block-size: var(--_ghost-progress-size);
@@ -48,14 +52,14 @@
     .ghost-theme .ghost-progress[data-size='sm'],
     .ghost-themed-scope .ghost-progress[data-size='sm']
   ) {
-    --_ghost-progress-size: var(--ghost-space-gap-xs);
+    --_ghost-progress-size: var(--ghost-track-thickness-sm);
   }
 
   :where(
     .ghost-theme .ghost-progress[data-size='lg'],
     .ghost-themed-scope .ghost-progress[data-size='lg']
   ) {
-    --_ghost-progress-size: var(--ghost-space-gap-md);
+    --_ghost-progress-size: var(--ghost-track-thickness-lg);
   }
 
   :where(

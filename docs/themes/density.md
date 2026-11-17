@@ -23,6 +23,10 @@ any subtree; every radius token is `calc(<designed> * var(--ghost-roundness, 1))
 The primitive scale is 4px (`0`, `1` = 4px, `2` = 8px, through `16` = 64px).
 Semantic roles are `space.gap.*`, `space.inset.*`, and `space.stack.*`.
 Density remaps those roles one step down (compact) or up (spacious).
+Compact `space.gap.xs` is `0`, so spacing roles never size paint. Painted
+geometry uses `track.thickness.*` (4 / 6 / 8px), `track.thumb.*` (12 / 16 /
+20px), and `track.target` (24px minimum hit size), which stay fixed at every
+density and theme. `GhostProgress` and `GhostSlider` read these.
 
 ## Control heights
 
