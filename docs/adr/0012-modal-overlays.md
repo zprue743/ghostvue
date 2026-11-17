@@ -68,14 +68,16 @@ focusable elements.
 
 ### 2. Scroll lock (`useScrollLock`)
 
-- `useScrollLock(enabled)` sets `overflow: hidden` on `document.body` while
-  enabled and restores the original inline `overflow` and `padding-right`
-  styles (including `!important` priority and omitting an empty `style`
-  attribute if none existed) only when a module-level reference count drops back
-  to `0`.
+- `useScrollLock(enabled)` sets `overflow: hidden` on the effective viewport
+  scroller (`document.documentElement` when root `overflow-x` or `overflow-y` is
+  not `visible`, otherwise `document.body` per CSS Overflow 3 overflow
+  propagation) while enabled and restores every modified inline property
+  (`overflow-x`, `overflow-y`, `padding-right`) and its `!important` priority
+  (omitting an empty `style` attribute if none existed) only when a
+  module-level reference count drops back to `0`.
 - **Scrollbar compensation:** when `window.innerWidth - documentElement.clientWidth > 0`,
-  `useScrollLock` adds that scrollbar width to `body`'s computed `padding-right`
-  so fixed/centered content does not shift horizontally.
+  `useScrollLock` adds that scrollbar width to the locked target's computed
+  `padding-right` so fixed/centered content does not shift horizontally.
 - **`scrollbar-gutter: stable` skip:** when `document.documentElement` resolves
   `scrollbar-gutter` containing `stable`, space is already reserved by the
   browser, so `padding-right` compensation is skipped to avoid double padding.

@@ -194,4 +194,132 @@ describe('useScrollLock', () => {
     expect(document.body.style.paddingRight).toBe('')
     wrapper.unmount()
   })
+
+  it('locks documentElement instead of body when html has overflow-y: scroll and restores inline properties and priorities', async () => {
+    document.documentElement.setAttribute(
+      'style',
+      'color: rgb(1, 2, 3); overflow-y: scroll !important; padding-right: 8px !important;',
+    )
+    vi.spyOn(window, 'innerWidth', 'get').mockReturnValue(1200)
+    vi.spyOn(document.documentElement, 'clientWidth', 'get').mockReturnValue(
+      1185,
+    )
+
+    const enabled = ref(false)
+    mountLock(() => enabled.value)
+
+    enabled.value = true
+    await nextTick()
+
+    expect(document.body.hasAttribute('style')).toBe(false)
+    expect(document.documentElement.style.overflow).toBe('hidden')
+    expect(document.documentElement.style.paddingRight).toBe('23px')
+    expect(document.documentElement.style.color).toBe('rgb(1, 2, 3)')
+
+    enabled.value = false
+    await nextTick()
+
+    expect(document.documentElement.style.getPropertyValue('overflow-y')).toBe(
+      'scroll',
+    )
+    expect(
+      document.documentElement.style.getPropertyPriority('overflow-y'),
+    ).toBe('important')
+    expect(document.documentElement.style.getPropertyValue('overflow-x')).toBe(
+      '',
+    )
+    expect(
+      document.documentElement.style.getPropertyValue('padding-right'),
+    ).toBe('8px')
+    expect(
+      document.documentElement.style.getPropertyPriority('padding-right'),
+    ).toBe('important')
+    expect(document.documentElement.style.color).toBe('rgb(1, 2, 3)')
+  })
+
+  it('locks documentElement when root computed overflow-y is scroll without inline style and removes style attribute on release', () => {
+    vi.spyOn(window, 'innerWidth', 'get').mockReturnValue(1000)
+    vi.spyOn(document.documentElement, 'clientWidth', 'get').mockReturnValue(
+      985,
+    )
+    const originalGetComputedStyle = window.getComputedStyle.bind(window)
+    vi.spyOn(window, 'getComputedStyle').mockImplementation((target) => {
+      const style = originalGetComputedStyle(target)
+      if (target === document.documentElement) {
+        return {
+          overflowX: 'visible',
+          overflowY: 'scroll',
+          paddingRight: '0px',
+          scrollbarGutter: '',
+          getPropertyValue: (prop: string) => {
+            if (prop === 'overflow-x') return 'visible'
+            if (prop === 'overflow-y') return 'scroll'
+            if (prop === 'padding-right') return '0px'
+            if (prop === 'scrollbar-gutter') return ''
+            return style.getPropertyValue(prop)
+          },
+        } as unknown as CSSStyleDeclaration
+      }
+      return style
+    })
+
+    const wrapper = mountLock(() => true)
+    expect(document.body.hasAttribute('style')).toBe(false)
+    expect(document.documentElement.style.overflow).toBe('hidden')
+    expect(document.documentElement.style.paddingRight).toBe('15px')
+
+    wrapper.unmount()
+    expect(document.documentElement.hasAttribute('style')).toBe(false)
+  })
+
+  it('locks documentElement when root has non-visible overflow-x and preserves out-of-order ref counting', () => {
+    document.documentElement.style.setProperty('overflow-x', 'hidden')
+    vi.spyOn(window, 'innerWidth', 'get').mockReturnValue(1000)
+    vi.spyOn(document.documentElement, 'clientWidth', 'get').mockReturnValue(
+      984,
+    )
+
+    const firstWrapper = mountLock(() => true)
+    const secondWrapper = mountLock(() => true)
+
+    expect(document.body.hasAttribute('style')).toBe(false)
+    expect(document.documentElement.style.overflow).toBe('hidden')
+    expect(document.documentElement.style.paddingRight).toBe('16px')
+
+    // Out-of-order release: first unlocks before second.
+    firstWrapper.unmount()
+    expect(document.documentElement.style.overflow).toBe('hidden')
+    expect(document.documentElement.style.paddingRight).toBe('16px')
+
+    secondWrapper.unmount()
+    expect(document.documentElement.style.getPropertyValue('overflow-x')).toBe(
+      'hidden',
+    )
+    expect(document.documentElement.style.getPropertyValue('overflow-y')).toBe(
+      '',
+    )
+    expect(document.documentElement.style.paddingRight).toBe('')
+  })
+
+  it('skips padding-right compensation on documentElement when scrollbar-gutter: stable is set', () => {
+    document.documentElement.style.setProperty('overflow-y', 'scroll')
+    document.documentElement.style.setProperty('scrollbar-gutter', 'stable')
+    vi.spyOn(window, 'innerWidth', 'get').mockReturnValue(1200)
+    vi.spyOn(document.documentElement, 'clientWidth', 'get').mockReturnValue(
+      1185,
+    )
+
+    const wrapper = mountLock(() => true)
+    expect(document.documentElement.style.overflow).toBe('hidden')
+    expect(document.documentElement.style.paddingRight).toBe('')
+    expect(document.body.hasAttribute('style')).toBe(false)
+
+    wrapper.unmount()
+    expect(document.documentElement.style.getPropertyValue('overflow-y')).toBe(
+      'scroll',
+    )
+    expect(
+      document.documentElement.style.getPropertyValue('scrollbar-gutter'),
+    ).toBe('stable')
+  })
 })
