@@ -5,13 +5,16 @@ import { useGhostProgress } from './use-ghost-progress'
 // No default slot: progressbar children are presentational; the fill is data-part.
 const props = withDefaults(
   defineProps<{
-    value?: number | null
+    value?: number | null | undefined
     max?: number
-    label?: string
-    valueText?: string
+    label?: string | undefined
+    valueText?: string | undefined
   }>(),
   {
+    value: undefined,
     max: 100,
+    label: undefined,
+    valueText: undefined,
   },
 )
 

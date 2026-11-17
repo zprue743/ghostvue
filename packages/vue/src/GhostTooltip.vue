@@ -22,7 +22,7 @@ const props = withDefaults(
     /** Initial open state when `open` is omitted. */
     defaultOpen?: boolean
     /** Milliseconds before showing after hover or focus begins. */
-    delayDuration?: number
+    delayDuration?: number | undefined
     /** Milliseconds before hiding after hover/focus leaves the trigger and content. */
     closeDelay?: number
     /** When `true`, hides immediately on pointer/focus leave and disables content hover. */
@@ -31,6 +31,7 @@ const props = withDefaults(
   {
     open: undefined,
     defaultOpen: false,
+    delayDuration: undefined,
     closeDelay: 300,
     disableHoverableContent: false,
   },

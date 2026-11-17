@@ -4,11 +4,11 @@ import { GhostInlineAlert } from '../src'
 
 <template>
   <GhostInlineAlert
+    id="load-error"
     :heading-level="2"
     announce="alert"
     as="section"
     class="table-banner"
-    id="load-error"
   >
     <template #title>Unable to load rows</template>
     <template #message>The table could not refresh.</template>

@@ -4,10 +4,12 @@ import { defineComponent, h, ref } from 'vue'
 
 import {
   GhostRadioGroup,
-  GhostRadioGroupItem,
   type GhostRadioGroupExposed,
-  type GhostRadioGroupItemExposed,
 } from './ghost-radio-group'
+import {
+  GhostRadioGroupItem,
+  type GhostRadioGroupItemExposed,
+} from './ghost-radio-group-item'
 
 describe('ghost-radio-group theme wrapper', () => {
   it('forwards v-model and exposes the inner group root', async () => {

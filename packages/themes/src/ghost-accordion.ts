@@ -1,11 +1,13 @@
-import { defineComponent, h, ref, type PropType } from 'vue'
+import { defineComponent, h, type PropType } from 'vue'
 
 import {
   GhostAccordion as GhostUnstyledAccordion,
-  GhostAccordionContent as GhostUnstyledAccordionContent,
-  GhostAccordionItem as GhostUnstyledAccordionItem,
-  GhostAccordionTrigger as GhostUnstyledAccordionTrigger,
+  type GhostAccordionContentElement,
+  type GhostAccordionContentExposed,
+  type GhostAccordionExposed,
   type GhostAccordionHeadingLevel,
+  type GhostAccordionItemProps,
+  type GhostAccordionTriggerElement,
   type GhostAccordionTriggerExposed,
   type GhostAccordionType,
   type GhostAccordionValue,
@@ -66,80 +68,9 @@ export const GhostAccordion = defineComponent({
   },
 })
 
-export const GhostAccordionItem = defineComponent({
-  name: 'GhostAccordionItem',
-  inheritAttrs: false,
-  props: {
-    value: { type: String, required: true },
-    disabled: { type: Boolean, default: false },
-  },
-  setup(props, { attrs, slots }) {
-    return () => h(GhostUnstyledAccordionItem, { ...attrs, ...props }, slots)
-  },
-})
-
-export const GhostAccordionTrigger = defineComponent({
-  name: 'GhostAccordionTrigger',
-  inheritAttrs: false,
-  props: {
-    as: {
-      type: [String, Object, Function] as PropType<string | object>,
-      default: 'button',
-    },
-  },
-  setup(props, { attrs, slots, expose }) {
-    const inner = ref<GhostAccordionTriggerExposed | null>(null)
-
-    expose({
-      get element() {
-        return inner.value?.element ?? null
-      },
-      focus(options?: FocusOptions) {
-        inner.value?.focus(options)
-      },
-      blur() {
-        inner.value?.blur()
-      },
-    } satisfies GhostAccordionTriggerExposed)
-
-    return () =>
-      h(
-        GhostUnstyledAccordionTrigger,
-        {
-          ...attrs,
-          ref: inner,
-          as: props.as,
-          'data-themed': '',
-        },
-        slots,
-      )
-  },
-})
-
-export const GhostAccordionContent = defineComponent({
-  name: 'GhostAccordionContent',
-  inheritAttrs: false,
-  props: {
-    as: {
-      type: [String, Object] as PropType<string | object>,
-      default: 'div',
-    },
-    disableAnimation: { type: Boolean, default: false },
-  },
-  setup(props, { attrs, slots }) {
-    return () =>
-      h(
-        GhostUnstyledAccordionContent,
-        {
-          ...attrs,
-          as: props.as,
-          disableAnimation: props.disableAnimation,
-          'data-themed': '',
-        },
-        slots,
-      )
-  },
-})
+export { GhostAccordionItem } from './ghost-accordion-item'
+export { GhostAccordionTrigger } from './ghost-accordion-trigger'
+export { GhostAccordionContent } from './ghost-accordion-content'
 
 export type {
   GhostAccordionContentElement,
@@ -151,4 +82,4 @@ export type {
   GhostAccordionTriggerExposed,
   GhostAccordionType,
   GhostAccordionValue,
-} from '@ghostvue/vue'
+}
