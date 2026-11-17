@@ -205,7 +205,9 @@ const contentAttrs = computed(() => {
     ...rest,
     id: contentId.value,
     role: attrs['role'] ?? 'presentation',
-    class: 'ghost-combobox-content',
+    // Library class first so consumer class bindings (string, array, object)
+    // merge with it instead of being dropped.
+    class: ['ghost-combobox-content', attrs.class],
     'data-part': 'content',
     'data-state': open ? 'open' : 'closed',
     'data-placement': open ? floating.placement.value : undefined,

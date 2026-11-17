@@ -249,6 +249,8 @@ in sync by remounting options for the visible slice.
 
 `data-part`, `data-state`, `data-placement`, classes `ghost-combobox-content`,
 `ghost-combobox-input`. Themed CSS uses `--ghost-*` tokens only (mirrors Select).
+Content merges consumer `class` (string, array, or object) and `style` with
+`ghost-combobox-content` and its floating position styles, portaled or inline.
 
 ## Environment behavior
 

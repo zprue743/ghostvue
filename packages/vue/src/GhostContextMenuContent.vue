@@ -277,7 +277,7 @@ defineExpose<GhostContextMenuContentExposed>({
       :is="as"
       v-if="context.isOpen.value"
       ref="host"
-      class="ghost-context-menu-content"
+      :class="['ghost-context-menu-content', attrs.class]"
       :style="contentStyle"
       v-bind="contentAttrs"
     >

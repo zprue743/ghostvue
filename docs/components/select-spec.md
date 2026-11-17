@@ -186,7 +186,9 @@ duplicate activation from native button semantics (same guard pattern as
 
 Stable hooks: `data-part`, `data-state`, `data-placement` on content, class
 `ghost-select-content` on themed content. Options carry `data-part="option"`.
-Themed CSS uses existing `--ghost-*` tokens only.
+Themed CSS uses existing `--ghost-*` tokens only. Content merges consumer
+`class` (string, array, or object) and `style` with `ghost-select-content` and
+its floating position styles, portaled or inline.
 
 ## Environment behavior
 

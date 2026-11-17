@@ -131,6 +131,8 @@ WAI-ARIA APG **Menubar** pattern (flat menus per top-level item):
 
 - `GhostMenubarMenu` is renderless; `GhostMenubar` renders the bar container.
 - Content uses class `ghost-menubar-content`; themed tokens mirror dropdown menu.
+  Consumer `class` and `style` merge with the library class and floating
+  position styles.
 
 ## Environment behavior
 
