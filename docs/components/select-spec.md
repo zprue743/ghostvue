@@ -235,6 +235,14 @@ does not interact with the listbox (no text field).
 Floating observers and dismiss listeners run only while the listbox is open; content
 stays mounted while closed so option labels remain registered.
 
+Option registration, unregistration, and disabled / `textValue` updates do
+constant work each (one insertion-ordered record map plus the label cache), so
+mounting, filtering, restoring, or reordering _n_ options costs O(_n_)
+bookkeeping, and each option's own state re-evaluates only when that option
+changes. Registry state stays synchronous after every call. Measure with
+`pnpm bench:registry` (`tests/bench/select-combobox-registry.bench.ts`, not part
+of `pnpm verify`).
+
 ## Composition
 
 - `useControllableState` — value and open
