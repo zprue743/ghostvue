@@ -77,7 +77,8 @@ html[data-ghost-theme] {
 }
 
 /*
- * `<GhostExample>` owns its highlighted `<<<` snippet in a source slot. Undo
+ * `<GhostExample>` hands its highlighted `<<<` snippet to the DemoPreview
+ * source slot (frame styles live in `demo-preview.css`). Undo
  * only the `.vp-doc div[class*='language-']` card chrome (outer margin, the
  * mobile negative bleed, radius) so the fence sits flush inside the example
  * card while Shiki, dark-mode token mapping and scrolling still apply.
@@ -219,11 +220,6 @@ html[data-ghost-theme='mono'] {
 .vp-doc :is(pre, div[class*='language-']) {
   max-inline-size: 100%;
   overflow-x: auto;
-}
-
-.ghost-example {
-  box-sizing: border-box;
-  max-inline-size: 100%;
 }
 
 /* Component catalog overview (`/components/`). */
