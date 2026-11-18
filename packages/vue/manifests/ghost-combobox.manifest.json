@@ -222,7 +222,9 @@
       "Enter": "Selects the highlighted option.",
       "Escape": "Closes the listbox.",
       "Home": "Highlights the first enabled option.",
-      "End": "Highlights the last enabled option."
+      "End": "Highlights the last enabled option.",
+      "Tab": "Moves to the trigger, or out of the widget; leaving the input, trigger, and content closes the listbox without restoring focus and resets the search (selected label in single mode, empty in multiple mode).",
+      "Shift+Tab": "Moves to the previous focusable element; leaving the widget closes the listbox and resets the search like Tab."
     },
     "requiredAriaAttributes": [
       "aria-expanded",

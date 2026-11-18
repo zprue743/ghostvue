@@ -26,11 +26,13 @@ const props = withDefaults(
   defineProps<{
     value: string
     disabled?: boolean
-    textValue?: string
-    as?: GhostSelectOptionElement
+    textValue?: string | undefined
+    as?: GhostSelectOptionElement | undefined
   }>(),
   {
     disabled: false,
+    textValue: undefined,
+    as: undefined,
   },
 )
 

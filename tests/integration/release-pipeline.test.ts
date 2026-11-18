@@ -78,17 +78,21 @@ describe('release workflow', () => {
     expect(code).not.toMatch(/write-all/)
   })
 
-  it('gates the OIDC-capable job behind the npm-release approval environment', () => {
+  it('gates maintainer approval behind the npm-release environment', () => {
     const jobs = workflowJobs()
-    const withIdToken = [...jobs].filter(([, body]) =>
-      body.includes('id-token: write'),
-    )
-    expect(withIdToken.map(([id]) => id)).toEqual(['maintainer-approval'])
     const gated = jobs.get('maintainer-approval') ?? ''
     expect(gated).toMatch(/^ {4}environment: npm-release$/m)
+    expect(gated).toMatch(/^ {6}contents: read$/m)
     expect(gated).toMatch(/needs: dry-run/)
     expect(gated).toMatch(/if: github\.ref == 'refs\/heads\/master'/)
-    expect(jobs.get('dry-run')).not.toMatch(/environment:|id-token/)
+    expect(jobs.get('dry-run')).not.toMatch(/environment:/)
+  })
+
+  it('grants id-token: write to no job until publication is authorized', () => {
+    // The future authorized publish PR adds it to maintainer-approval only.
+    const raw = readFileSync(`${root}/${workflowPath}`, 'utf8')
+    expect(raw).not.toMatch(/id-token\s*:/)
+    expect(raw).not.toMatch(/ACTIONS_ID_TOKEN_REQUEST/)
   })
 
   it('contains no executable publication path or registry credentials', () => {
@@ -116,13 +120,30 @@ describe('release workflow', () => {
     expect(dryRun).toMatch(/run: git diff --exit-code/)
   })
 
-  it('pins actions to the same major tags as CI', () => {
-    const uses = [...workflowCode().matchAll(/uses: (\S+)/g)].map((m) => m[1])
-    expect(uses.length).toBeGreaterThan(0)
-    for (const action of uses) {
-      expect(action).toMatch(
-        /^(actions\/(checkout|setup-node|upload-artifact|download-artifact)|pnpm\/action-setup)@v4$/,
-      )
+  it('pins every action to the same commit SHA and release as CI', () => {
+    // tests/integration/ci-workflow-policy.test.ts enforces SHA pins across
+    // all workflows; this ties the release workflow to CI's exact pins.
+    const pinsIn = (path: string) =>
+      [
+        ...readFileSync(`${root}/${path}`, 'utf8').matchAll(
+          /^\s*(?:- )?uses: ([^@\s]+)@(\S+)(?: # (\S+))?$/gm,
+        ),
+      ].map(([, action = '', ref = '', version = '']) => ({
+        action,
+        ref,
+        version,
+      }))
+    const ciPins = new Map(
+      pinsIn('.github/workflows/ci.yml').map(({ action, ref, version }) => [
+        action,
+        `${ref} # ${version}`,
+      ]),
+    )
+    const releasePins = pinsIn(workflowPath)
+    expect(releasePins.length).toBeGreaterThan(0)
+    for (const { action, ref, version } of releasePins) {
+      expect(ref, action).toMatch(/^[0-9a-f]{40}$/)
+      expect(`${ref} # ${version}`, action).toBe(ciPins.get(action))
     }
   })
 })

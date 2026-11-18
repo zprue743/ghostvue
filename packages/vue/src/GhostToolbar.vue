@@ -17,13 +17,15 @@ const props = withDefaults(
   defineProps<{
     orientation?: GhostToolbarOrientation
     loop?: boolean
-    dir?: GhostToolbarDirection
-    label?: string
+    dir?: GhostToolbarDirection | undefined
+    label?: string | undefined
     as?: GhostToolbarElement
   }>(),
   {
     orientation: 'horizontal',
     loop: true,
+    dir: undefined,
+    label: undefined,
     as: 'div',
   },
 )

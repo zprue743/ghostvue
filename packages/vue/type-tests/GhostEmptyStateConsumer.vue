@@ -4,10 +4,10 @@ import { GhostEmptyState } from '../src'
 
 <template>
   <GhostEmptyState
+    id="reports-empty"
     :heading-level="2"
     as="section"
     class="panel"
-    id="reports-empty"
   >
     <template #title>No reports yet</template>
     <template #description>Create one to populate this panel.</template>

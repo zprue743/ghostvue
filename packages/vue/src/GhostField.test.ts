@@ -343,6 +343,11 @@ describe('GhostField', () => {
           GhostFieldError,
           GhostFieldLabel,
         },
+        setup() {
+          const message = ref('')
+          const showError = ref(true)
+          return { message, showError }
+        },
         template: `
           <GhostField :invalid="true">
             <GhostFieldLabel>Name</GhostFieldLabel>
@@ -352,11 +357,6 @@ describe('GhostField', () => {
             <GhostFieldError v-if="showError">{{ message }}</GhostFieldError>
           </GhostField>
         `,
-        setup() {
-          const message = ref('')
-          const showError = ref(true)
-          return { message, showError }
-        },
       }),
     )
 

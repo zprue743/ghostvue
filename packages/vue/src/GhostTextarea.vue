@@ -16,7 +16,7 @@ const props = withDefaults(
     invalid?: boolean
     required?: boolean
     rows?: number
-    maxRows?: number
+    maxRows?: number | undefined
     autoResize?: boolean
   }>(),
   {
@@ -27,6 +27,7 @@ const props = withDefaults(
     invalid: false,
     required: false,
     rows: 2,
+    maxRows: undefined,
     autoResize: false,
   },
 )

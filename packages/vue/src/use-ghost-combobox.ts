@@ -39,6 +39,7 @@ export function useGhostCombobox(options: UseGhostComboboxOptions = {}): {
   open: () => void
   close: () => void
   toggleOpen: () => void
+  dismissOnFocusLeave: () => void
   disabled: ComputedRef<boolean>
   required: ComputedRef<boolean>
   invalid: ComputedRef<boolean>
@@ -299,6 +300,29 @@ export function useGhostCombobox(options: UseGhostComboboxOptions = {}): {
     isOpen.value = !isOpen.value
   }
 
+  /**
+   * Focus left the complete widget (input, trigger, and owned content). Requests
+   * close and drops the transient query so a half-typed search never lingers
+   * once the user has moved on: single selection shows the committed label
+   * (or `''`), multiple selection returns to an empty query. The selection is
+   * never touched. Both writes go through controllable state, so a parent that
+   * owns `open` or `search` can reject them and keep its value. `search` is
+   * emitted only when the query changes so consumer filtering and async
+   * results match the query the input shows when it next opens.
+   */
+  function dismissOnFocusLeave(): void {
+    close()
+    const committed =
+      !multiple.value && typeof selectedValue.value === 'string'
+        ? (getOptionText(selectedValue.value) ?? '')
+        : ''
+    if (searchValue.value === committed) {
+      return
+    }
+    searchValue.value = committed
+    emitSearch(committed)
+  }
+
   function isSelected(value: string): boolean {
     if (multiple.value) {
       return selectedArray().includes(value)
@@ -511,6 +535,7 @@ export function useGhostCombobox(options: UseGhostComboboxOptions = {}): {
     open,
     close,
     toggleOpen,
+    dismissOnFocusLeave,
     disabled,
     required,
     invalid,

@@ -288,5 +288,7 @@ defineExpose<GhostComboboxInputExposed>({
     @focus="handleFocus"
     @click="handleClick"
     @keydown="handleKeydown"
+    @focusout="context.notifyFocusOut"
+    @pointerdown="context.notifyPointerDownInside"
   />
 </template>
