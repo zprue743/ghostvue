@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test'
 
+import { exampleSourceBlock, openExampleSource } from './docs-example-source'
 import { startStaticServer } from './static-server'
 
 function channelDistance(
@@ -40,9 +41,8 @@ test.describe('docs code blocks', () => {
       })
       await page.goto(`${docs.url}/components/button.html`)
 
-      const source = page.locator(
-        '[data-example-id="button/themed"] + div[class*="language-"]',
-      )
+      await openExampleSource(page, 'button/themed')
+      const source = exampleSourceBlock(page, 'button/themed')
       await expect(source).toBeVisible()
       await expect
         .poll(async () =>
@@ -71,7 +71,7 @@ test.describe('docs code blocks', () => {
         }
         const root = document.documentElement
         const block = document.querySelector(
-          '[data-example-id="button/themed"] + div[class*="language-"]',
+          '[data-example-id="button/themed"] [data-testid="ghost-example-source"] > div[class*="language-"]',
         )
         const span = block?.querySelector('.vp-code span[style*="--shiki-"]')
         const pageBg = getComputedStyle(root).backgroundColor
@@ -110,9 +110,8 @@ test.describe('docs code blocks', () => {
       })
       await page.goto(`${docs.url}/components/button.html`)
 
-      const source = page.locator(
-        '[data-example-id="button/themed"] + div[class*="language-"]',
-      )
+      await openExampleSource(page, 'button/themed')
+      const source = exampleSourceBlock(page, 'button/themed')
       await expect(source).toBeVisible()
       await expect
         .poll(async () =>
@@ -139,7 +138,7 @@ test.describe('docs code blocks', () => {
           return [red, green, blue]
         }
         const block = document.querySelector(
-          '[data-example-id="button/themed"] + div[class*="language-"]',
+          '[data-example-id="button/themed"] [data-testid="ghost-example-source"] > div[class*="language-"]',
         )
         const span = block?.querySelector('.vp-code span[style*="--shiki-"]')
         const codeBlockBg = block ? getComputedStyle(block).backgroundColor : ''
@@ -167,9 +166,8 @@ test.describe('docs code blocks', () => {
       })
       await page.goto(`${docs.url}/components/button.html`)
 
-      const source = page.locator(
-        '[data-example-id="button/themed"] + div[class*="language-"]',
-      )
+      await openExampleSource(page, 'button/themed')
+      const source = exampleSourceBlock(page, 'button/themed')
       await expect(source).toBeVisible()
 
       const colors = await page.evaluate(() => {
@@ -188,7 +186,7 @@ test.describe('docs code blocks', () => {
         }
         const root = document.documentElement
         const block = document.querySelector(
-          '[data-example-id="button/themed"] + div[class*="language-"]',
+          '[data-example-id="button/themed"] [data-testid="ghost-example-source"] > div[class*="language-"]',
         )
         const codeBlockBg = block ? getComputedStyle(block).backgroundColor : ''
         const pageBg = getComputedStyle(root).backgroundColor

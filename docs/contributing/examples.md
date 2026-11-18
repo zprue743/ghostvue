@@ -36,9 +36,11 @@ On a component page, render a usage sample with:
 
 The VitePress `GhostExample` host shows a live preview of the SFC (inside the
 docs theme, so light/dark and the flagship switcher apply). The docs markdown
-pipeline appends a `<<<` snippet for the same file so Shiki highlights the
-source the way ordinary VitePress fences do. Do not paste a second copy into
-the markdown.
+pipeline expands the tag so its source slot holds a `<<<` snippet for the same
+file; Shiki highlights it the way ordinary VitePress fences do, and the host
+renders it in a collapsible **Code** disclosure that never remounts the live
+demo. Do not paste a second copy or a sibling `<<<` snippet into the markdown;
+`llms-full.txt` gets exactly one `vue` fence per example.
 
 Keep API tables, CSS snippets, and non-runnable illustrations as fenced
 blocks.

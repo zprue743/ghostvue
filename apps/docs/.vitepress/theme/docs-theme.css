@@ -77,27 +77,22 @@ html[data-ghost-theme] {
 }
 
 /*
- * Live `<GhostExample>` is followed by a VitePress `<<<` fence. Join them into
- * one card so Shiki, the copy control, and dark-mode token mapping apply.
+ * `<GhostExample>` owns its highlighted `<<<` snippet in a source slot. Undo
+ * only the `.vp-doc div[class*='language-']` card chrome (outer margin, the
+ * mobile negative bleed, radius) so the fence sits flush inside the example
+ * card while Shiki, dark-mode token mapping and scrolling still apply.
  */
-.vp-doc .ghost-example + div[class*='language-'] {
-  margin-block: 0 1.5rem;
-  margin-inline: 0;
-  overflow: hidden;
-  border: 1px solid var(--ghost-border-default);
-  border-block-start: 1px solid var(--ghost-border-muted);
-  border-end-end-radius: calc(1rem * var(--ghost-roundness, 1));
-  border-end-start-radius: calc(1rem * var(--ghost-roundness, 1));
-  border-start-end-radius: 0;
-  border-start-start-radius: 0;
+.vp-doc .ghost-example__source > div[class*='language-'] {
+  margin: 0;
+  border-radius: 0;
   background-color: var(--vp-code-block-bg);
 }
 
-.vp-doc .ghost-example + div[class*='language-'] pre {
+.vp-doc .ghost-example__source > div[class*='language-'] pre {
   max-block-size: 22rem;
 }
 
-.vp-doc .ghost-example + div[class*='language-'] > button.copy {
+.vp-doc .ghost-example__source > div[class*='language-'] > button.copy {
   /* Header Copy is the labeled control; hide the duplicate VP icon. */
   display: none;
 }
