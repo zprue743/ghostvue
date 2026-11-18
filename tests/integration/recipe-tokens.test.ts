@@ -19,6 +19,8 @@ const RUNTIME_GHOST_VARS = new Set([
   '--ghost-pointer-y',
   '--ghost-segmented-item-count',
   '--ghost-segmented-selected-index',
+  // Set inline on each GhostTreeItem from its depth.
+  '--ghost-tree-level',
 ])
 
 function collectEmittedTokens(): Set<string> {

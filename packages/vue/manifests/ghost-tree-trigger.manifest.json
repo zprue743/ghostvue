@@ -1,0 +1,143 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "generated",
+  "name": "GhostTreeTrigger",
+  "package": "@ghostvue/vue",
+  "status": "experimental",
+  "description": "Non-focusable row or disclosure target (default <span>, no role or tabindex) inside GhostTreeItem, so the tree has no nested interactive controls. action=\"both\" selects and toggles (with expandOnClick), \"toggle\" only toggles expansion, \"select\" only selects. Non-toggle triggers label the item through aria-labelledby; focus() delegates to the owning item.",
+  "props": [
+    {
+      "name": "action",
+      "type": "GhostTreeTriggerAction",
+      "default": "both",
+      "required": false,
+      "description": "Pointer click behavior: select and toggle, toggle only, or select only.",
+      "deprecated": false
+    },
+    {
+      "name": "as",
+      "type": "GhostTreeTriggerElement",
+      "default": "span",
+      "required": false,
+      "description": "Tag name or component for the non-focusable row or disclosure target.",
+      "deprecated": false
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Local disable flag, combined with the item and root `disabled`.",
+      "deprecated": false
+    }
+  ],
+  "models": [],
+  "events": [],
+  "slots": [
+    {
+      "name": "default",
+      "props": [
+        {
+          "name": "disabled",
+          "type": "boolean",
+          "description": "Slot prop `disabled`."
+        },
+        {
+          "name": "expandable",
+          "type": "boolean",
+          "description": "Slot prop `expandable`."
+        },
+        {
+          "name": "expanded",
+          "type": "boolean",
+          "description": "Slot prop `expanded`."
+        },
+        {
+          "name": "level",
+          "type": "number",
+          "description": "Slot prop `level`."
+        },
+        {
+          "name": "select",
+          "type": "() => void",
+          "description": "Slot prop `select`."
+        },
+        {
+          "name": "selected",
+          "type": "boolean",
+          "description": "Slot prop `selected`."
+        },
+        {
+          "name": "toggle",
+          "type": "() => void",
+          "description": "Slot prop `toggle`."
+        }
+      ],
+      "description": "Visible label and decorative (aria-hidden) affordances such as a chevron."
+    }
+  ],
+  "exposed": [
+    {
+      "name": "blur",
+      "kind": "method",
+      "type": "() => void",
+      "description": "Exposed method `blur`."
+    },
+    {
+      "name": "element",
+      "kind": "property",
+      "type": "HTMLElement | null",
+      "description": "Exposed property `element`."
+    },
+    {
+      "name": "focus",
+      "kind": "method",
+      "type": "(options?: FocusOptions) => void",
+      "description": "Exposed method `focus`."
+    }
+  ],
+  "styling": {
+    "parts": [
+      {
+        "name": "trigger",
+        "description": "Row or disclosure target rendered by GhostTreeTrigger."
+      }
+    ],
+    "states": [
+      {
+        "name": "open",
+        "description": "Owning branch is expanded."
+      },
+      {
+        "name": "closed",
+        "description": "Owning branch is collapsed."
+      },
+      {
+        "name": "checked",
+        "description": "Owning leaf item is selected."
+      }
+    ],
+    "cssProperties": [],
+    "attributes": [
+      {
+        "name": "data-selected",
+        "values": [],
+        "description": "Present while the owning item is selected."
+      },
+      {
+        "name": "data-disabled",
+        "values": [],
+        "description": "Present when the trigger, its item, or the tree is disabled."
+      }
+    ]
+  },
+  "accessibility": {
+    "role": "generic",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/treeview/",
+    "keyboard": {
+      "Enter": "Handled by the owning treeitem; the trigger itself is never focused."
+    },
+    "requiredAriaAttributes": []
+  },
+  "examples": []
+}
