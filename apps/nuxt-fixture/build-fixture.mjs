@@ -21,7 +21,18 @@ function run(args, env = process.env) {
   if (result.status !== 0) process.exit(result.status ?? 1)
 }
 
-for (const variant of ['headless', 'themed']) {
+const variants = ['headless', 'themed']
+
+// The fixture's root tsconfig.json references every variant's generated
+// `.nuxt/<variant>/tsconfig.*.json`, and Vite's SFC transform loads that root
+// tsconfig with its references. Generate all variants' configs first, or a
+// clean checkout fails the first build on the not-yet-generated variant.
+for (const variant of variants) {
+  console.log(`\nPreparing Nuxt fixture: ${variant}`)
+  run(['nuxt', 'prepare'], { ...process.env, GHOSTVUE_NUXT_FIXTURE: variant })
+}
+
+for (const variant of variants) {
   console.log(`\nBuilding Nuxt fixture: ${variant}`)
   run(['nuxt', 'build'], { ...process.env, GHOSTVUE_NUXT_FIXTURE: variant })
 }
