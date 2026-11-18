@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { computed, provide, shallowRef, watch } from 'vue'
+import { provide } from 'vue'
 
+import { createDialogPartsContext } from './dialog-shared'
 import { ghostDialogContextKey } from './ghost-dialog'
 import { useGhostDialog } from './use-ghost-dialog'
 
@@ -31,17 +32,7 @@ defineSlots<{
   default(props: { open: boolean; close: () => void }): unknown
 }>()
 
-const {
-  isOpen,
-  isModal,
-  open: openDialog,
-  close,
-  toggle,
-  triggerId: defaultTriggerId,
-  contentId: defaultContentId,
-  titleId: defaultTitleId,
-  descriptionId: defaultDescriptionId,
-} = useGhostDialog({
+const state = useGhostDialog({
   open: () => props.open,
   defaultOpen: () => props.defaultOpen,
   modal: () => props.modal,
@@ -50,81 +41,11 @@ const {
   },
 })
 
-// Record whether a non-modal dialog started open at setup so `defaultOpen`
-// does not steal focus on page load (matching GhostPopover), while modal dialogs
-// always move focus inside on open per APG Dialog expectations.
-const openedAtMount = shallowRef(isOpen.value)
-watch(isOpen, (open) => {
-  if (!open) {
-    openedAtMount.value = false
-  }
-})
-
-const customTriggerId = shallowRef<string | null>(null)
-const customContentId = shallowRef<string | null>(null)
-const customTitleId = shallowRef<string | null>(null)
-const customDescriptionId = shallowRef<string | null>(null)
-const triggerRegistered = shallowRef(false)
-const titleRegistered = shallowRef(false)
-const descriptionRegistered = shallowRef(false)
-const triggerElement = shallowRef<HTMLElement | null>(null)
-const overlayElement = shallowRef<HTMLElement | null>(null)
-const contentElement = shallowRef<HTMLElement | null>(null)
-
-provide(ghostDialogContextKey, {
-  isOpen,
-  isModal,
-  open: openDialog,
-  close,
-  toggle,
-  defaultTriggerId,
-  defaultContentId,
-  defaultTitleId,
-  defaultDescriptionId,
-  triggerId: computed(() => customTriggerId.value ?? defaultTriggerId.value),
-  contentId: computed(() => customContentId.value ?? defaultContentId.value),
-  titleId: computed(() => customTitleId.value ?? defaultTitleId.value),
-  descriptionId: computed(
-    () => customDescriptionId.value ?? defaultDescriptionId.value,
-  ),
-  triggerRegistered,
-  titleRegistered,
-  descriptionRegistered,
-  triggerElement,
-  overlayElement,
-  contentElement,
-  openedAtMount,
-  setTriggerElement(element) {
-    triggerElement.value = element
-  },
-  setOverlayElement(element) {
-    overlayElement.value = element
-  },
-  setContentElement(element) {
-    contentElement.value = element
-  },
-  setTriggerId(id) {
-    customTriggerId.value = id
-  },
-  setTriggerRegistered(registered) {
-    triggerRegistered.value = registered
-  },
-  setContentId(id) {
-    customContentId.value = id
-  },
-  setTitleId(id) {
-    customTitleId.value = id
-  },
-  setTitleRegistered(registered) {
-    titleRegistered.value = registered
-  },
-  setDescriptionId(id) {
-    customDescriptionId.value = id
-  },
-  setDescriptionRegistered(registered) {
-    descriptionRegistered.value = registered
-  },
-})
+// Part registration, custom-id tracking, and the non-modal `openedAtMount`
+// rule live in the internal dialog-shared module (also used by GhostDrawer).
+const context = createDialogPartsContext(state)
+provide(ghostDialogContextKey, context)
+const { isOpen, close } = state
 </script>
 
 <template>
