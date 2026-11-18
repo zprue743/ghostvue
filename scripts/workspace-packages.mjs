@@ -30,4 +30,11 @@ export const workspacePackages = [
     responsibility: 'Optional theme and design-token infrastructure.',
     allowedDependencies: ['@ghostvue/vue'],
   },
+  {
+    directory: 'nuxt',
+    name: '@ghostvue/nuxt',
+    responsibility:
+      'Optional Nuxt module: auto-imports headless components by default; themed wrappers and theme CSS on explicit opt-in.',
+    allowedDependencies: ['@ghostvue/vue', '@ghostvue/themes'],
+  },
 ]

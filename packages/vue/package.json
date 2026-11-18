@@ -15,6 +15,10 @@
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/ghostvue.js"
+    },
+    "./resolver": {
+      "types": "./dist/resolver.d.ts",
+      "import": "./dist/resolver.js"
     }
   },
   "types": "./dist/index.d.ts",
@@ -42,5 +46,12 @@
   },
   "devDependencies": {
     "vue": "3.5.45"
+  },
+  "typesVersions": {
+    "*": {
+      "resolver": [
+        "./dist/resolver.d.ts"
+      ]
+    }
   }
 }

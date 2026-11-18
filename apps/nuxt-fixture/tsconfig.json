@@ -1,0 +1,9 @@
+{
+  "files": [],
+  "references": [
+    { "path": "./.nuxt/headless/tsconfig.app.json" },
+    { "path": "./.nuxt/headless/tsconfig.node.json" },
+    { "path": "./.nuxt/themed/tsconfig.app.json" },
+    { "path": "./.nuxt/themed/tsconfig.node.json" }
+  ]
+}

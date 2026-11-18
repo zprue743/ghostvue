@@ -1,0 +1,5 @@
+{
+  "name": "@ghostvue/nuxt",
+  "private": true,
+  "type": "module"
+}

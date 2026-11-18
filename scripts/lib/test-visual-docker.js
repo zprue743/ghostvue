@@ -3,8 +3,10 @@ const PLAYWRIGHT_IMAGE = 'mcr.microsoft.com/playwright:v1.62.1-noble'
 const ANONYMOUS_NODE_MODULES = [
   '/work/node_modules',
   '/work/apps/docs/node_modules',
+  '/work/apps/nuxt-fixture/node_modules',
   '/work/apps/playground/node_modules',
   '/work/packages/core/node_modules',
+  '/work/packages/nuxt/node_modules',
   '/work/packages/shared/node_modules',
   '/work/packages/themes/node_modules',
   '/work/packages/vue/node_modules',
@@ -22,6 +24,7 @@ const CHOWN_TARGETS = [
   'packages/vue/src/.publish-index.generated.ts',
   'packages/themes/src/.registries',
   'packages/themes/src/.publish-index.generated.ts',
+  'packages/nuxt/src/.registries',
   '.pnpm-store',
   'playwright-report',
   'test-results',

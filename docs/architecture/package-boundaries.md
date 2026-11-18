@@ -8,6 +8,8 @@ shared <- core <- vue
    +-------+-------+
            |
          themes (optional; may depend on vue)
+
+nuxt (optional integration) -> vue (peer), themes (optional peer)
 ```
 
 - `shared` has no internal production dependency.
@@ -20,6 +22,14 @@ shared <- core <- vue
   [ADR 0004](../adr/0004-headless-styled-layering.md), and in
   `scripts/workspace-packages.mjs` now that themed `GhostButton` is the first
   wrapper.
+
+- `nuxt` is an optional framework integration. It may depend on `vue` and,
+  only as an optional peer for the explicit themed/CSS opt-in, on `themes`.
+  Nothing depends on `nuxt`: `shared`, `core`, `vue`, and `themes` must never
+  import Nuxt, `@nuxt/*`, or `unplugin-vue-components`
+  (`library-packages-no-nuxt` in `.dependency-cruiser.mjs`). The
+  `unplugin-vue-components` resolver (`@ghostvue/vue/resolver`) therefore
+  matches the plugin's resolver contract structurally instead of importing it.
 
 Themed Vue components belong in `themes`. Headless composables and thin
 unstyled components belong in `vue`. Do not add a third package merely to

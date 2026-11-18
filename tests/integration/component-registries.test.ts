@@ -8,6 +8,7 @@ import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
 
 import {
+  buildAutoImportNames,
   hashContent,
   syncRepositoryRegistries,
 } from '../../scripts/lib/component-registries.js'
@@ -21,6 +22,42 @@ describe('component registries', () => {
       write: false,
     })
     expect(check.violations).toEqual([])
+  })
+
+  it('derives auto-import names from barrel value exports only', () => {
+    const names = buildAutoImportNames(
+      {
+        schemaVersion: '1.0.0',
+        slug: 'primitives',
+        familyOrder: ['badge'],
+        vueBarrel: [
+          "export { useGhostId, useFocusScope } from './use-ghost-id'",
+          // A future non-component Ghost* value (an app plugin) must not
+          // become an auto-imported component.
+          "export { GhostVue } from './plugin'",
+        ],
+        themesBarrel: ["export { tokens } from './generated/tokens'"],
+      },
+      [
+        {
+          schemaVersion: '1.0.0',
+          slug: 'badge',
+          vueBarrel: [
+            "export { default as GhostBadge } from './GhostBadge.vue'",
+            "export {\n  useGhostBadge,\n  type GhostBadgeRootProps,\n} from './use-ghost-badge'",
+            "export type { GhostBadgeProps } from './ghost-badge'",
+          ],
+          themesBarrel: [
+            "export { GhostBadge, type GhostBadgeTone } from './ghost-badge'",
+          ],
+        },
+      ],
+    )
+    expect(names).toEqual({
+      headlessComponents: ['GhostBadge'],
+      headlessComposables: ['useGhostBadge', 'useGhostId'],
+      themedComponents: ['GhostBadge'],
+    })
   })
 
   it('tracks vue public API hash for merge proofs', async () => {

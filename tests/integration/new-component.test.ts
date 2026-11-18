@@ -38,6 +38,9 @@ async function copyRepository() {
         'reports',
         'test-results',
         'playwright-report',
+        // Nuxt fixture build output (pnpm test:nuxt).
+        '.nuxt',
+        '.output',
       ].includes(basename(source)) &&
       !source.endsWith('.tsbuildinfo') &&
       // Avoid recursively invoking this harness inside the fixture's verify.
@@ -51,7 +54,9 @@ async function copyRepository() {
     'packages/themes',
     'packages/core',
     'packages/shared',
+    'packages/nuxt',
     'apps/docs',
+    'apps/nuxt-fixture',
     'apps/playground',
   ]) {
     if (!existsSync(join(repositoryRoot, directory, 'node_modules'))) continue
