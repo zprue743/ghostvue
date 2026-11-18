@@ -4,6 +4,11 @@
   "private": true,
   "description": "Optional design-token and theme infrastructure for GhostVue.",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zprue743/ghostvue.git",
+    "directory": "packages/themes"
+  },
   "type": "module",
   "sideEffects": [
     "**/*.css"
@@ -31,6 +36,10 @@
     "dist",
     "THIRD_PARTY_NOTICES.md"
   ],
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
   "scripts": {
     "prebuild": "pnpm -w registries:write",
     "build": "node scripts/compile-tokens.mjs && tsc -p tsconfig.build.json && node ../../scripts/finalize-publish-index.mjs dist && node scripts/copy-css.mjs && node scripts/bundle-define.mjs && node ../../scripts/finalize-declarations.mjs dist",
