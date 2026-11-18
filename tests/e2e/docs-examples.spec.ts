@@ -2,6 +2,11 @@ import AxeBuilder from '@axe-core/playwright'
 import { expect, test } from '@playwright/test'
 
 import { generatedComponentPageLinks } from '../../apps/docs/.vitepress/docs-nav'
+import {
+  exampleSourceBlock,
+  exampleSourceToggle,
+  openExampleSource,
+} from './docs-example-source'
 import { startStaticServer } from './static-server'
 
 const componentPages = [...generatedComponentPageLinks]
@@ -42,9 +47,8 @@ test.describe('docs example previews', () => {
       expect(Number.parseFloat(styles.borderTopWidth)).toBeGreaterThan(0)
       expect(isTransparentColor(styles.borderTopColor)).toBe(false)
 
-      const source = page.locator(
-        '[data-example-id="button/themed"] + div[class*="language-"]',
-      )
+      await openExampleSource(page, 'button/themed')
+      const source = exampleSourceBlock(page, 'button/themed')
       await expect(
         source.locator('.vp-code span[style*="--shiki-"]').first(),
       ).toBeVisible()
@@ -130,9 +134,8 @@ test.describe('docs example previews', () => {
       await themedDialog.getByRole('button', { name: 'Done' }).click()
       await expect(themedDialog).toHaveCount(0)
 
-      const source = page.locator(
-        '[data-example-id="popover/themed"] + div[class*="language-"]',
-      )
+      await openExampleSource(page, 'popover/themed')
+      const source = exampleSourceBlock(page, 'popover/themed')
       await expect(
         source.locator('.vp-code span[style*="--shiki-"]').first(),
       ).toBeVisible()
@@ -642,6 +645,98 @@ test.describe('docs example previews', () => {
 
         await context.close()
       }
+    } finally {
+      await docs.close()
+    }
+  })
+
+  test('each example owns one collapsible highlighted source that never resets the demo', async ({
+    page,
+  }) => {
+    const docs = await startStaticServer('apps/docs/.vitepress/dist')
+
+    try {
+      await page.goto(`${docs.url}/components/input.html`)
+
+      // Every host holds exactly one highlighted SFC in its own source slot;
+      // nothing is left as a sibling fence next to the card.
+      const counts = await page.evaluate(() =>
+        [...document.querySelectorAll('figure[data-example-id]')].map(
+          (figure) => ({
+            owned: figure.querySelectorAll(
+              '[data-testid="ghost-example-source"] > div[class*="language-"]',
+            ).length,
+            sibling:
+              figure.nextElementSibling?.matches('div[class*="language-"]') ??
+              false,
+          }),
+        ),
+      )
+      expect(counts.length).toBeGreaterThan(0)
+      for (const entry of counts) {
+        expect(entry).toEqual({ owned: 1, sibling: false })
+      }
+
+      const id = 'input/themed'
+      const example = page.locator(`[data-example-id="${id}"]`)
+      const toggle = exampleSourceToggle(page, id)
+      const region = example.getByTestId('ghost-example-source')
+      const copy = example.getByRole('button', { name: /^Copy .* source$/ })
+
+      // Collapsed by default; the toggle names and controls the region.
+      await expect(toggle).toHaveAttribute('aria-expanded', 'false')
+      await expect(region).toBeHidden()
+      await expect(region).toHaveAttribute('role', 'region')
+      expect(await toggle.getAttribute('aria-controls')).toBe(
+        await region.getAttribute('id'),
+      )
+
+      // Put the live demo into a user-driven state and tag the node so a
+      // remount would be detectable.
+      const field = example
+        .getByTestId('ghost-example-preview')
+        .getByRole('textbox')
+        .nth(1)
+      await field.fill('typed before toggling')
+      await field.evaluate((element) => {
+        element.setAttribute('data-probe', 'original-node')
+      })
+
+      const copyBox = await copy.boundingBox()
+      await openExampleSource(page, id)
+      await expect(region).toBeVisible()
+      await expect(
+        exampleSourceBlock(page, id)
+          .locator('.vp-code span[style*="--shiki-"]')
+          .first(),
+      ).toBeVisible()
+      // The toggle label is constant, so the header controls do not move.
+      expect(await copy.boundingBox()).toEqual(copyBox)
+
+      // Keyboard: the native button toggles with Enter and Space and keeps focus.
+      await toggle.focus()
+      await page.keyboard.press('Enter')
+      await expect(toggle).toBeFocused()
+      await expect(toggle).toHaveAttribute('aria-expanded', 'false')
+      await expect(region).toBeHidden()
+      await page.keyboard.press('Space')
+      await expect(toggle).toBeFocused()
+      await expect(toggle).toHaveAttribute('aria-expanded', 'true')
+
+      // Demo state survives both transitions: same node, same value.
+      await expect(field).toHaveValue('typed before toggling')
+      await expect(field).toHaveAttribute('data-probe', 'original-node')
+
+      // Collapsing one example leaves its neighbours' sources alone.
+      await expect(exampleSourceToggle(page, 'input/basic')).toHaveAttribute(
+        'aria-expanded',
+        'false',
+      )
+
+      const axe = await new AxeBuilder({ page })
+        .include(`[data-example-id="${id}"]`)
+        .analyze()
+      expect(axe.violations).toEqual([])
     } finally {
       await docs.close()
     }
