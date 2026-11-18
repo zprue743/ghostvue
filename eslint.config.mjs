@@ -57,7 +57,7 @@ export default tseslint.config(
     },
   },
   {
-    files: ['**/*.test.ts'],
+    files: ['**/*.test.ts', '**/*.bench.ts'],
     rules: {
       // Inline harness components are the usual way to exercise composables.
       'vue/one-component-per-file': 'off',

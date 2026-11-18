@@ -1,6 +1,8 @@
 import {
   computed,
+  shallowReactive,
   shallowRef,
+  toRaw,
   toValue,
   watch,
   type ComputedRef,
@@ -96,9 +98,31 @@ export function useGhostSelect(options: UseGhostSelectOptions = {}): {
   const triggerId = useGhostId('ghost-select-trigger')
   const contentId = useGhostId('ghost-select-content')
 
-  const optionOrder = shallowRef<string[]>([])
-  const optionRegistry = shallowRef(new Map<string, GhostSelectOptionRecord>())
-  const optionLabels = shallowRef(new Map<string, string>())
+  /*
+   * Registry bookkeeping is O(1) per option change (GHO-176). Earlier
+   * revisions copied an order array, scanned it with `includes`, and copied
+   * the record and label Maps on every register / unregister so that a
+   * replaced `shallowRef` would notify readers; mounting, filtering, or
+   * reordering n options was O(n²) (about 1.3 s of pure bookkeeping for 3000
+   * options in jsdom; see `tests/bench/select-combobox-registry.bench.ts`).
+   *
+   * - The record Map's insertion order *is* the registration order: `set` on
+   *   a new key appends, `set` on an existing key keeps its slot, and
+   *   `delete` removes it, exactly like the former push-if-absent / filter
+   *   array. Rendered order still comes from the DOM (`sortByDocumentOrder`).
+   * - Both Maps are `shallowReactive`, so `get(value)` tracks only that key:
+   *   an option's own `isOptionDisabled` / `getOptionText` reads re-run when
+   *   that option changes, not when any of n siblings register. Records are
+   *   replaced, never mutated, so shallow tracking is sufficient.
+   * - `registryVersion` / `labelVersion` stay the coarse signals for
+   *   whole-list readers (`optionOrder`, `GhostSelectValue`); they are bumped
+   *   synchronously so public state is current right after each call.
+   */
+  const optionRegistry = shallowReactive(
+    new Map<string, GhostSelectOptionRecord>(),
+  )
+  // Survives unregistration so the selected label outlives a filtered option.
+  const optionLabels = shallowReactive(new Map<string, string>())
   const registryVersion = shallowRef(0)
   const labelVersion = shallowRef(0)
 
@@ -107,8 +131,12 @@ export function useGhostSelect(options: UseGhostSelectOptions = {}): {
   let typeaheadMatchIndex = 0
 
   function bumpRegistry(): void {
-    optionRegistry.value = new Map(optionRegistry.value)
     registryVersion.value += 1
+  }
+
+  function setLabel(value: string, textValue: string): void {
+    optionLabels.set(value, textValue)
+    labelVersion.value += 1
   }
 
   function registerOption(
@@ -117,14 +145,8 @@ export function useGhostSelect(options: UseGhostSelectOptions = {}): {
     optionDisabled: boolean,
     getElement: () => HTMLElement | null,
   ): void {
-    const nextOrder = [...optionOrder.value]
-    if (!nextOrder.includes(value)) {
-      nextOrder.push(value)
-      optionOrder.value = nextOrder
-    }
-    optionLabels.value = new Map(optionLabels.value).set(value, textValue)
-    labelVersion.value += 1
-    optionRegistry.value.set(value, {
+    setLabel(value, textValue)
+    optionRegistry.set(value, {
       value,
       textValue,
       disabled: optionDisabled,
@@ -134,22 +156,21 @@ export function useGhostSelect(options: UseGhostSelectOptions = {}): {
   }
 
   function setOptionDisabled(value: string, optionDisabled: boolean): void {
-    const record = optionRegistry.value.get(value)
+    const record = toRaw(optionRegistry).get(value)
     if (!record || record.disabled === optionDisabled) {
       return
     }
-    optionRegistry.value.set(value, { ...record, disabled: optionDisabled })
+    optionRegistry.set(value, { ...record, disabled: optionDisabled })
     bumpRegistry()
   }
 
   function setOptionTextValue(value: string, textValue: string): void {
-    const record = optionRegistry.value.get(value)
+    const record = toRaw(optionRegistry).get(value)
     if (!record || record.textValue === textValue) {
       return
     }
-    optionLabels.value = new Map(optionLabels.value).set(value, textValue)
-    labelVersion.value += 1
-    optionRegistry.value.set(value, { ...record, textValue })
+    setLabel(value, textValue)
+    optionRegistry.set(value, { ...record, textValue })
     bumpRegistry()
   }
 
@@ -162,13 +183,13 @@ export function useGhostSelect(options: UseGhostSelectOptions = {}): {
    * selection, native form reset, or the parent's controlled value change it.
    */
   function unregisterOption(value: string): void {
-    optionOrder.value = optionOrder.value.filter((entry) => entry !== value)
-    optionRegistry.value.delete(value)
-    bumpRegistry()
+    if (optionRegistry.delete(value)) {
+      bumpRegistry()
+    }
   }
 
   function isOptionDisabled(value: string): boolean {
-    return disabled.value || Boolean(optionRegistry.value.get(value)?.disabled)
+    return disabled.value || Boolean(optionRegistry.get(value)?.disabled)
   }
 
   /**
@@ -180,10 +201,9 @@ export function useGhostSelect(options: UseGhostSelectOptions = {}): {
    */
   function enabledOptionsInOrder(): GhostSelectOptionRecord[] {
     void registryVersion.value
-    const enabled = optionOrder.value
-      .map((value) => optionRegistry.value.get(value))
-      .filter((entry): entry is GhostSelectOptionRecord => entry !== undefined)
-      .filter((entry) => !isOptionDisabled(entry.value))
+    const enabled = disabled.value
+      ? []
+      : [...toRaw(optionRegistry).values()].filter((entry) => !entry.disabled)
     return sortByDocumentOrder(enabled, (entry) => entry.getElement())
   }
 
@@ -192,7 +212,7 @@ export function useGhostSelect(options: UseGhostSelectOptions = {}): {
   }
 
   function focusOptionByValue(value: string): void {
-    const record = optionRegistry.value.get(value)
+    const record = optionRegistry.get(value)
     if (!record || isOptionDisabled(value)) {
       return
     }
@@ -244,10 +264,7 @@ export function useGhostSelect(options: UseGhostSelectOptions = {}): {
   }
 
   function getOptionText(value: string): string | undefined {
-    return (
-      optionRegistry.value.get(value)?.textValue ??
-      optionLabels.value.get(value)
-    )
+    return optionRegistry.get(value)?.textValue ?? optionLabels.get(value)
   }
 
   function handleTypeahead(event: KeyboardEvent): void {
@@ -370,7 +387,7 @@ export function useGhostSelect(options: UseGhostSelectOptions = {}): {
     placeholder,
     optionOrder: computed(() => {
       void registryVersion.value
-      return [...optionOrder.value]
+      return [...toRaw(optionRegistry).keys()]
     }),
     registerOption,
     unregisterOption,
