@@ -568,6 +568,88 @@ describe(
 )
 
 describe(
+  'TSDoc descriptions from shipped components',
+  { timeout: META_CHECKER_TIMEOUT_MS },
+  () => {
+    const vueTsconfig = join(repositoryRoot, 'packages/vue/tsconfig.json')
+
+    function derive(name: string) {
+      const checker = createMetaChecker(vueTsconfig)
+      const meta = extractComponentMeta(
+        checker,
+        join(repositoryRoot, `packages/vue/src/${name}.vue`),
+      )
+      const { derived, violations } = buildDerivedContract(meta, {
+        name,
+        packageName: '@ghostvue/vue',
+      })
+      expect(violations).toEqual([])
+      return derived
+    }
+
+    async function checkedIn(name: string): Promise<Record<string, unknown>> {
+      return parseJsonObject(
+        await readFile(
+          join(
+            repositoryRoot,
+            `packages/vue/manifests/${pascalToKebab(name)}.manifest.json`,
+          ),
+          'utf8',
+        ),
+      )
+    }
+
+    function descriptionOf(list: unknown, name: string): unknown {
+      return asPropList(list).find((item) => item.name === name)?.description
+    }
+
+    it('fills GhostVisuallyHidden prop descriptions from TSDoc and keeps checked-in prose', async () => {
+      const derived = derive('GhostVisuallyHidden')
+      // TSDoc on GhostVisuallyHiddenProps reaches the derived contract.
+      expect(descriptionOf(derived.props, 'as')).toBe(
+        'Root tag valid in the parent context (`th` in a row, `li` in a list).',
+      )
+      expect(descriptionOf(derived.props, 'focusable')).toBe(
+        'Reveal while focus is inside. Required if the slot is focusable (skip links).',
+      )
+      // With no manifest yet, TSDoc becomes the manifest description.
+      const fresh = mergeManifest(derived, null)
+      expect(descriptionOf(fresh.props, 'as')).toBe(
+        descriptionOf(derived.props, 'as'),
+      )
+      // Hand-authored manifest prose wins on regeneration.
+      const existing = await checkedIn('GhostVisuallyHidden')
+      const merged = mergeManifest(derived, existing)
+      expect(descriptionOf(merged.props, 'focusable')).toBe(
+        descriptionOf(existing.props, 'focusable'),
+      )
+      expect(merged.description).toBe(existing.description)
+    })
+
+    it('fills GhostButton exposed descriptions from TSDoc and keeps checked-in prose', async () => {
+      const derived = derive('GhostButton')
+      // GhostButtonExposed TSDoc flows through defineExpose<GhostButtonExposed>.
+      expect(descriptionOf(derived.exposed, 'element')).toBe(
+        'The native button element after mount, or `null` before mount.',
+      )
+      expect(descriptionOf(derived.exposed, 'focus')).toBe(
+        'Moves focus to the native button when it is mounted and enabled.',
+      )
+      const fresh = mergeManifest(derived, null)
+      expect(descriptionOf(fresh.exposed, 'blur')).toBe(
+        'Removes focus from the native button when it is mounted.',
+      )
+      const existing = await checkedIn('GhostButton')
+      const merged = mergeManifest(derived, existing)
+      expect(descriptionOf(merged.exposed, 'blur')).toBe(
+        descriptionOf(existing.exposed, 'blur'),
+      )
+      expect(merged.description).toBe(existing.description)
+    })
+  },
+)
+
+describe(
   'repository manifests check',
   { timeout: META_CHECKER_TIMEOUT_MS },
   () => {

@@ -29,7 +29,8 @@
     "./tokens.json": "./dist/tokens.json",
     "./calm.css": "./dist/calm.css",
     "./vibrant.css": "./dist/vibrant.css",
-    "./mono.css": "./dist/mono.css"
+    "./mono.css": "./dist/mono.css",
+    "./manifest.json": "./dist/manifest.json"
   },
   "types": "./dist/index.d.ts",
   "files": [
@@ -42,7 +43,7 @@
   },
   "scripts": {
     "prebuild": "pnpm -w registries:write",
-    "build": "node scripts/compile-tokens.mjs && tsc -p tsconfig.build.json && node ../../scripts/finalize-publish-index.mjs dist && node scripts/copy-css.mjs && node scripts/bundle-define.mjs && node ../../scripts/finalize-declarations.mjs dist",
+    "build": "node scripts/compile-tokens.mjs && tsc -p tsconfig.build.json && node ../../scripts/finalize-publish-index.mjs dist && node scripts/copy-css.mjs && node scripts/bundle-define.mjs && node ../../scripts/finalize-declarations.mjs dist && node ../../scripts/write-manifest-collection.mjs --package @ghostvue/themes",
     "pretypecheck": "pnpm -w registries:write",
     "define-theme": "node scripts/define-theme.mjs",
     "typecheck": "node scripts/compile-tokens.mjs && vue-tsc -p tsconfig.json --noEmit"
