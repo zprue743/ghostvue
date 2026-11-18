@@ -19,14 +19,14 @@
     "export { default as GhostComboboxLabel } from './GhostComboboxLabel.vue'",
     "export { default as GhostComboboxEmpty } from './GhostComboboxEmpty.vue'",
     "export { useGhostCombobox, useGhostComboboxAsyncSearch, type GhostComboboxRootProps } from './use-ghost-combobox'",
-    "export type {\n  GhostComboboxContentElement,\n  GhostComboboxContentExposed,\n  GhostComboboxContext,\n  GhostComboboxEmptyElement,\n  GhostComboboxFlipOptions,\n  GhostComboboxGroupElement,\n  GhostComboboxInputElement,\n  GhostComboboxInputExposed,\n  GhostComboboxLabelElement,\n  GhostComboboxOffsetOptions,\n  GhostComboboxOptionElement,\n  GhostComboboxOptionExposed,\n  GhostComboboxPlacement,\n  GhostComboboxSearchPayload,\n  GhostComboboxShiftOptions,\n  GhostComboboxStrategy,\n  GhostComboboxTriggerElement,\n  GhostComboboxTriggerExposed,\n  GhostComboboxValue,\n  GhostComboboxExposed,\n  UseGhostComboboxOptions,\n} from './ghost-combobox'"
+    "export type {\n  GhostComboboxContentElement,\n  GhostComboboxContentExposed,\n  GhostComboboxContext,\n  GhostComboboxEmptyElement,\n  GhostComboboxFlipOptions,\n  GhostComboboxGroupElement,\n  GhostComboboxInputElement,\n  GhostComboboxInputExposed,\n  GhostComboboxLabelElement,\n  GhostComboboxMessages,\n  GhostComboboxOffsetOptions,\n  GhostComboboxOptionElement,\n  GhostComboboxOptionExposed,\n  GhostComboboxPlacement,\n  GhostComboboxSearchPayload,\n  GhostComboboxShiftOptions,\n  GhostComboboxStrategy,\n  GhostComboboxTriggerElement,\n  GhostComboboxTriggerExposed,\n  GhostComboboxValue,\n  GhostComboboxExposed,\n  UseGhostComboboxOptions,\n} from './ghost-combobox'"
   ],
   "themesBarrel": [
     "export { GhostCombobox, type GhostComboboxExposed } from './ghost-combobox'",
     "export {\n  GhostComboboxInput,\n  type GhostComboboxInputElement,\n  type GhostComboboxInputExposed,\n} from './ghost-combobox-input'",
     "export {\n  GhostComboboxTrigger,\n  type GhostComboboxTriggerElement,\n  type GhostComboboxTriggerExposed,\n} from './ghost-combobox-trigger'",
     "export {\n  GhostComboboxContent,\n  type GhostComboboxContentElement,\n  type GhostComboboxContentExposed,\n  type GhostComboboxFlipOptions,\n  type GhostComboboxOffsetOptions,\n  type GhostComboboxPlacement,\n  type GhostComboboxShiftOptions,\n  type GhostComboboxStrategy,\n} from './ghost-combobox-content'",
-    "export {\n  GhostComboboxOption,\n  GhostComboboxGroup,\n  GhostComboboxLabel,\n  GhostComboboxEmpty,\n  useGhostCombobox,\n  useGhostComboboxAsyncSearch,\n} from '@ghostvue/vue'"
+    "export {\n  GhostComboboxOption,\n  GhostComboboxGroup,\n  GhostComboboxLabel,\n  GhostComboboxEmpty,\n  type GhostComboboxMessages,\n  useGhostCombobox,\n  useGhostComboboxAsyncSearch,\n} from '@ghostvue/vue'"
   ],
   "examples": [
     {

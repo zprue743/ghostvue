@@ -18,13 +18,13 @@
     "export { default as GhostSelectGroup } from './GhostSelectGroup.vue'",
     "export { default as GhostSelectLabel } from './GhostSelectLabel.vue'",
     "export { useGhostSelect } from './use-ghost-select'",
-    "export type {\n  GhostSelectContentElement,\n  GhostSelectContentExposed,\n  GhostSelectContext,\n  GhostSelectFlipOptions,\n  GhostSelectGroupElement,\n  GhostSelectLabelElement,\n  GhostSelectOffsetOptions,\n  GhostSelectOptionElement,\n  GhostSelectOptionExposed,\n  GhostSelectPlacement,\n  GhostSelectShiftOptions,\n  GhostSelectStrategy,\n  GhostSelectTriggerElement,\n  GhostSelectTriggerExposed,\n  GhostSelectExposed,\n  UseGhostSelectOptions,\n} from './ghost-select'"
+    "export type {\n  GhostSelectContentElement,\n  GhostSelectContentExposed,\n  GhostSelectContext,\n  GhostSelectFlipOptions,\n  GhostSelectGroupElement,\n  GhostSelectLabelElement,\n  GhostSelectMessages,\n  GhostSelectOffsetOptions,\n  GhostSelectOptionElement,\n  GhostSelectOptionExposed,\n  GhostSelectPlacement,\n  GhostSelectShiftOptions,\n  GhostSelectStrategy,\n  GhostSelectTriggerElement,\n  GhostSelectTriggerExposed,\n  GhostSelectExposed,\n  UseGhostSelectOptions,\n} from './ghost-select'"
   ],
   "themesBarrel": [
     "export { GhostSelect, type GhostSelectExposed } from './ghost-select'",
     "export {\n  GhostSelectTrigger,\n  type GhostSelectTriggerElement,\n  type GhostSelectTriggerExposed,\n} from './ghost-select-trigger'",
     "export {\n  GhostSelectContent,\n  type GhostSelectContentElement,\n  type GhostSelectContentExposed,\n  type GhostSelectFlipOptions,\n  type GhostSelectOffsetOptions,\n  type GhostSelectPlacement,\n  type GhostSelectShiftOptions,\n  type GhostSelectStrategy,\n} from './ghost-select-content'",
-    "export {\n  GhostSelectValue,\n  GhostSelectOption,\n  GhostSelectGroup,\n  GhostSelectLabel,\n  useGhostSelect,\n} from '@ghostvue/vue'"
+    "export {\n  GhostSelectValue,\n  GhostSelectOption,\n  GhostSelectGroup,\n  GhostSelectLabel,\n  type GhostSelectMessages,\n  useGhostSelect,\n} from '@ghostvue/vue'"
   ],
   "examples": [
     {

@@ -335,7 +335,9 @@ export function useGhostSelect(options: UseGhostSelectOptions = {}): {
     const empty =
       selectedValue.value === undefined || selectedValue.value === ''
     if (required.value && empty) {
-      el.setCustomValidity('Select a value.')
+      el.setCustomValidity(
+        toValue(options.messages)?.required ?? 'Select a value.',
+      )
     } else {
       el.setCustomValidity('')
       constraintInvalid.value = false
@@ -347,9 +349,12 @@ export function useGhostSelect(options: UseGhostSelectOptions = {}): {
     constraintInvalid.value = true
   }
 
-  watch([selectedValue, required], () => {
-    syncFormValidity()
-  })
+  watch(
+    [selectedValue, required, () => toValue(options.messages)?.required],
+    () => {
+      syncFormValidity()
+    },
+  )
 
   return {
     selectedValue,

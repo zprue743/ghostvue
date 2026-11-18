@@ -3,6 +3,7 @@ import { defineComponent, h, ref, type PropType } from 'vue'
 import {
   GhostCombobox as GhostUnstyledCombobox,
   type GhostComboboxExposed,
+  type GhostComboboxMessages,
   type GhostComboboxValue,
 } from '@ghostvue/vue'
 
@@ -40,6 +41,10 @@ export const GhostCombobox = defineComponent({
     defaultOpen: { type: Boolean, default: false },
     placeholder: {
       type: String as PropType<string | undefined>,
+      default: undefined,
+    },
+    messages: {
+      type: Object as PropType<GhostComboboxMessages | undefined>,
       default: undefined,
     },
   },
@@ -89,6 +94,7 @@ export const GhostCombobox = defineComponent({
           open: props.open,
           defaultOpen: props.defaultOpen,
           placeholder: props.placeholder,
+          messages: props.messages,
           'onUpdate:modelValue': (next: GhostComboboxValue) => {
             emit('update:modelValue', next)
           },

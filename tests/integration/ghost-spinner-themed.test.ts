@@ -31,4 +31,15 @@ describe('themed GhostSpinner', () => {
     expect(root.classes()).toContain('dense')
     expect(root.text()).toBe('Refreshing reports')
   })
+
+  it('supports non-English accessible labels without English fallback', () => {
+    const wrapper = mount(GhostSpinner, {
+      props: {
+        label: 'Cargando',
+      },
+    })
+    const root = wrapper.get('.ghost-spinner')
+    expect(root.text()).toBe('Cargando')
+    expect(root.text()).not.toBe('Loading')
+  })
 })

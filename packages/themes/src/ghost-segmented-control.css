@@ -48,7 +48,8 @@
     box-shadow: var(--ghost-elevation-2-shadow);
     box-sizing: border-box;
     transition:
-      left var(--ghost-motion-duration-fast) var(--ghost-motion-easing-standard),
+      inset-inline-start var(--ghost-motion-duration-fast)
+        var(--ghost-motion-easing-standard),
       top var(--ghost-motion-duration-fast) var(--ghost-motion-easing-standard);
   }
 
@@ -75,13 +76,12 @@
     .ghost-segmented-control[data-themed]:not([aria-orientation='vertical'])
       [data-part='indicator']
   ) {
-    top: var(--ghost-space-inset-xs);
-    bottom: var(--ghost-space-inset-xs);
+    inset-block: var(--ghost-space-inset-xs);
     width: calc(
       (100% - 2 * var(--ghost-space-inset-xs)) /
         var(--ghost-segmented-item-count)
     );
-    left: calc(
+    inset-inline-start: calc(
       var(--ghost-space-inset-xs) + (100% - 2 * var(--ghost-space-inset-xs)) /
         var(--ghost-segmented-item-count) *
         var(--ghost-segmented-selected-index)
@@ -94,8 +94,7 @@
       .ghost-segmented-control[data-themed][aria-orientation='vertical']
     )
     [data-part='indicator'] {
-    left: var(--ghost-space-inset-xs);
-    right: var(--ghost-space-inset-xs);
+    inset-inline: var(--ghost-space-inset-xs);
     height: calc(
       (100% - 2 * var(--ghost-space-inset-xs)) /
         var(--ghost-segmented-item-count)

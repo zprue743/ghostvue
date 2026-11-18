@@ -1,6 +1,6 @@
-import { mount } from '@vue/test-utils'
+import { flushPromises, mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
-import { defineComponent, h, ref } from 'vue'
+import { defineComponent, h, nextTick, ref } from 'vue'
 
 import {
   GhostCombobox,
@@ -34,6 +34,40 @@ describe('themed GhostCombobox', () => {
     const input = wrapper.get('[data-part="input"]')
     expect(input.attributes('data-themed')).toBe('')
     expect(comboboxRef.value?.element).toBeTruthy()
+    wrapper.unmount()
+  })
+
+  it('forwards messages to the unstyled combobox for announcements and validation', async () => {
+    const wrapper = mount(
+      defineComponent({
+        setup: () => () =>
+          h(
+            GhostCombobox,
+            {
+              name: 'fruit',
+              required: true,
+              defaultOpen: true,
+              messages: {
+                empty: 'Sin resultados',
+                required: 'Elige una fruta.',
+              },
+            },
+            {
+              default: () => [
+                h(GhostComboboxInput, { 'aria-label': 'Fruta' }),
+                h(GhostComboboxContent, { portal: false }, () => []),
+              ],
+            },
+          ),
+      }),
+    )
+
+    await flushPromises()
+    await nextTick()
+    expect(wrapper.get('[data-part="announcer"]').text()).toBe('Sin resultados')
+    const mirror = wrapper.get('input.ghost-visually-hidden')
+      .element as HTMLInputElement
+    expect(mirror.validationMessage).toBe('Elige una fruta.')
     wrapper.unmount()
   })
 })

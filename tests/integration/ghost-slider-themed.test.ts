@@ -102,4 +102,21 @@ describe('themed GhostSlider', () => {
     wrapper.unmount()
     expect(exposed?.element).toBeNull()
   })
+
+  it('forwards messages to the unstyled slider for range naming', () => {
+    const wrapper = mount(GhostSlider, {
+      props: {
+        range: true,
+        defaultValue: [15, 85] as const,
+        'aria-label': 'Rango',
+        messages: {
+          minimum: 'mínimo',
+          maximum: 'máximo',
+        },
+      },
+    })
+    const thumbs = wrapper.findAll('[role="slider"]')
+    expect(thumbs[0]?.attributes('aria-label')).toBe('Rango mínimo')
+    expect(thumbs[1]?.attributes('aria-label')).toBe('Rango máximo')
+  })
 })

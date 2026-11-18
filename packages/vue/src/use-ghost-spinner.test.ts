@@ -1,7 +1,8 @@
 import { mount } from '@vue/test-utils'
-import { defineComponent, h, ref } from 'vue'
+import { defineComponent, h, nextTick, ref } from 'vue'
 import { describe, expect, it } from 'vitest'
 
+import GhostSpinner from './GhostSpinner.vue'
 import { useGhostSpinner } from './use-ghost-spinner'
 
 function mountComposable<Value>(setup: () => Value) {
@@ -37,6 +38,25 @@ describe('useGhostSpinner', () => {
     expect(result.label.value).toBe('Refreshing reports')
     label.value = 'Deleting rows'
     expect(result.label.value).toBe('Deleting rows')
+    wrapper.unmount()
+  })
+
+  it('supports reactive non-English accessible labels on GhostSpinner without English fallback', async () => {
+    const label = ref('Cargando resultados')
+    const wrapper = mount(
+      defineComponent({
+        setup() {
+          return () => h(GhostSpinner, { label: label.value })
+        },
+      }),
+    )
+
+    expect(wrapper.get('[role="status"]').text()).toBe('Cargando resultados')
+    expect(wrapper.get('[role="status"]').text()).not.toBe('Loading')
+
+    label.value = 'Actualizando tabla'
+    await nextTick()
+    expect(wrapper.get('[role="status"]').text()).toBe('Actualizando tabla')
     wrapper.unmount()
   })
 })

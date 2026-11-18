@@ -105,5 +105,16 @@ the list stays as the parent renders it.
 - `GhostComboboxOption`, `GhostComboboxGroup`, `GhostComboboxLabel`, `GhostComboboxEmpty`
 - `useGhostCombobox`, `useGhostComboboxAsyncSearch`
 
+### Localization (`messages`)
+
+Pass a reactive `messages` (`GhostComboboxMessages`) object to `GhostCombobox` or
+`useGhostCombobox` to override internal announcements and native validation
+strings without a global locale provider:
+
+- `loading`: live-region announcement while `loading` is `true` (default `'Loading results'`)
+- `empty`: live-region announcement when open with zero enabled options (default `'No results available'`)
+- `results`: `(count: number) => string` formatter when open with results (default `` `${count} results available` ``)
+- `required`: native `setCustomValidity` message when `required` is `true` and empty (default `'Select a value.'`)
+
 See the [specification](/specs/combobox) for keyboard, highlight, portal, and
 SSR behavior.
