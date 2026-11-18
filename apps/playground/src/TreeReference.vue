@@ -86,7 +86,7 @@ const expanded = ref<string[]>([])
             data-testid="tree-remove-beta"
             @click="removeFile('beta')"
           >
-            Remove beta.ts
+            Remove second file
           </button>
           <button
             type="button"
