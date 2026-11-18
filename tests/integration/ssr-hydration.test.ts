@@ -8,6 +8,12 @@ import GhostCollapsibleTrigger from '../../packages/vue/src/GhostCollapsibleTrig
 import GhostContextMenu from '../../packages/vue/src/GhostContextMenu.vue'
 import GhostContextMenuContent from '../../packages/vue/src/GhostContextMenuContent.vue'
 import GhostContextMenuTrigger from '../../packages/vue/src/GhostContextMenuTrigger.vue'
+import GhostDrawer from '../../packages/vue/src/GhostDrawer.vue'
+import GhostDrawerContent from '../../packages/vue/src/GhostDrawerContent.vue'
+import GhostDrawerDescription from '../../packages/vue/src/GhostDrawerDescription.vue'
+import GhostDrawerOverlay from '../../packages/vue/src/GhostDrawerOverlay.vue'
+import GhostDrawerTitle from '../../packages/vue/src/GhostDrawerTitle.vue'
+import GhostDrawerTrigger from '../../packages/vue/src/GhostDrawerTrigger.vue'
 import GhostDropdownMenu from '../../packages/vue/src/GhostDropdownMenu.vue'
 import GhostDropdownMenuContent from '../../packages/vue/src/GhostDropdownMenuContent.vue'
 import GhostDropdownMenuTrigger from '../../packages/vue/src/GhostDropdownMenuTrigger.vue'
@@ -188,6 +194,77 @@ describe('SSR hydration harness', () => {
         expect(html).toContain('aria-expanded="true"')
         expect(html).toContain('Visible SSR disclosure')
         expect(html).not.toContain(' hidden')
+      },
+    })
+  })
+
+  it('hydrates closed GhostDrawer without mismatch', async () => {
+    const Closed = defineComponent({
+      name: 'ClosedDrawerFixture',
+      setup() {
+        return () =>
+          h(
+            GhostDrawer,
+            { side: 'start' },
+            {
+              default: () => [
+                h(GhostDrawerTrigger, null, () => 'Open filters'),
+                h(GhostDrawerOverlay),
+                h(GhostDrawerContent, null, () =>
+                  h(GhostDrawerTitle, null, () => 'Hidden drawer title'),
+                ),
+              ],
+            },
+          )
+      },
+    })
+
+    await expectSsrHydration(Closed, {
+      assertServerHtml(html) {
+        expect(html).toContain('Open filters')
+        expect(html).toContain('aria-expanded="false"')
+        expect(html).toContain('data-side="start"')
+        expect(html).not.toContain('Hidden drawer title')
+      },
+    })
+  })
+
+  it('hydrates defaultOpen inline GhostDrawer with explicit dir without mismatch', async () => {
+    const Open = defineComponent({
+      name: 'OpenDrawerFixture',
+      setup() {
+        return () =>
+          h(
+            GhostDrawer,
+            { defaultOpen: true, side: 'end', dir: 'rtl' },
+            {
+              default: () => [
+                h(GhostDrawerTrigger, null, () => 'Filters'),
+                h(GhostDrawerOverlay, { portal: false }),
+                h(GhostDrawerContent, { portal: false }, () => [
+                  h(GhostDrawerTitle, null, () => 'Visible drawer title'),
+                  h(
+                    GhostDrawerDescription,
+                    null,
+                    () => 'Visible drawer description',
+                  ),
+                ]),
+              ],
+            },
+          )
+      },
+    })
+
+    await expectSsrHydration(Open, {
+      assertServerHtml(html) {
+        expect(html).toContain('aria-expanded="true"')
+        expect(html).toContain('role="dialog"')
+        expect(html).toContain('aria-modal="true"')
+        expect(html).toContain('data-dir="rtl"')
+        expect(html).toContain('dir="rtl"')
+        expect(html).toContain('data-part="overlay"')
+        expect(html).toContain('ghost-drawer-title')
+        expect(html).toContain('Visible drawer description')
       },
     })
   })

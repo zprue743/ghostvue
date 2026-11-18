@@ -1,0 +1,132 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "generated",
+  "name": "GhostDrawerContent",
+  "package": "@ghostvue/vue",
+  "status": "experimental",
+  "description": "Headless edge-anchored drawer surface for GhostDrawer. Shares GhostDialogContent's focus scope, dismissable layer, scroll lock, and inert isolation; sets data-side and a portal-safe data-dir (plus dir=\"rtl\" when right-to-left) so themes can map logical sides to physical viewport edges. Stays unmounted when closed.",
+  "props": [
+    {
+      "name": "as",
+      "type": "GhostDrawerContentElement",
+      "default": "div",
+      "required": false,
+      "description": "Tag name or component rendered for the drawer surface.",
+      "deprecated": false
+    },
+    {
+      "name": "closeOnEscape",
+      "type": "boolean",
+      "default": true,
+      "required": false,
+      "description": "Dismisses the topmost open layer on `Escape`.",
+      "deprecated": false
+    },
+    {
+      "name": "closeOnOutsideClick",
+      "type": "boolean",
+      "required": false,
+      "description": "Dismisses the drawer on outside pointerdown (`true` for `'dialog'`, `false` for `'alertdialog'` by default).",
+      "deprecated": false
+    },
+    {
+      "name": "dir",
+      "type": "GhostDrawerDirection",
+      "required": false,
+      "description": "Overrides the root `dir` when provided.",
+      "deprecated": false
+    },
+    {
+      "name": "portal",
+      "type": "boolean",
+      "default": true,
+      "required": false,
+      "description": "Teleport content through `GhostPortal` when `true`, or render inline when `false`.",
+      "deprecated": false
+    },
+    {
+      "name": "portalTo",
+      "type": "GhostPortalTarget",
+      "default": "body",
+      "required": false,
+      "description": "Teleport target passed to `GhostPortal` when `portal` is `true`.",
+      "deprecated": false
+    },
+    {
+      "name": "role",
+      "type": "GhostDrawerContentRole",
+      "default": "dialog",
+      "required": false,
+      "description": "Semantic ARIA role for the drawer surface (`'dialog'` or `'alertdialog'`).",
+      "deprecated": false
+    },
+    {
+      "name": "side",
+      "type": "GhostDrawerSide",
+      "required": false,
+      "description": "Overrides the root `side` when provided.",
+      "deprecated": false
+    }
+  ],
+  "models": [],
+  "events": [],
+  "slots": [
+    {
+      "name": "default",
+      "props": [],
+      "description": "Drawer heading, description, body content, and action controls rendered while open."
+    }
+  ],
+  "exposed": [
+    {
+      "name": "blur",
+      "kind": "method",
+      "type": "() => void",
+      "description": "Removes focus from the drawer surface element."
+    },
+    {
+      "name": "element",
+      "kind": "property",
+      "type": "HTMLElement | null",
+      "description": "Resolved drawer surface element while open; null when closed or unmounted."
+    },
+    {
+      "name": "focus",
+      "kind": "method",
+      "type": "(options?: FocusOptions) => void",
+      "description": "Focuses the drawer surface element when mounted."
+    }
+  ],
+  "styling": {
+    "parts": [
+      {
+        "name": "content",
+        "description": "Drawer surface marked with class ghost-drawer-content, data-part=\"content\", data-side, and data-dir=\"ltr\" | \"rtl\"."
+      }
+    ],
+    "states": [
+      {
+        "name": "open",
+        "description": "Applied on data-state while mounted and open."
+      },
+      {
+        "name": "side",
+        "description": "data-side reports the effective side (content override or root side)."
+      }
+    ],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "dialog",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/",
+    "keyboard": {
+      "Escape": "Dismisses the topmost open drawer when closeOnEscape is true.",
+      "Tab": "Cycles forward within modal drawers; moves freely in non-modal drawers.",
+      "Shift+Tab": "Cycles backward within modal drawers; moves freely in non-modal drawers."
+    },
+    "requiredAriaAttributes": [
+      "aria-labelledby"
+    ]
+  },
+  "examples": []
+}

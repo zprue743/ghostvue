@@ -1,0 +1,144 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "generated",
+  "name": "GhostDrawer",
+  "package": "@ghostvue/vue",
+  "status": "experimental",
+  "description": "Headless edge-anchored drawer (sheet) root provider built as a GhostDialog variant. Manages controlled/uncontrolled open state via useControllableState, modal mode (trapped focus, scroll lock, inert background siblings, overlay), logical side placement (start, end, top, bottom), optional writing direction, and deterministic ghost-drawer-* part IDs.",
+  "props": [
+    {
+      "name": "defaultOpen",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Initial open state when `open` is omitted.",
+      "deprecated": false
+    },
+    {
+      "name": "dir",
+      "type": "GhostDrawerDirection",
+      "required": false,
+      "description": "Explicit writing direction for mapping logical `start` / `end` sides.",
+      "deprecated": false
+    },
+    {
+      "name": "modal",
+      "type": "boolean",
+      "default": true,
+      "required": false,
+      "description": "Enables modal behavior (trapped focus, scroll lock, inert background, overlay).",
+      "deprecated": false
+    },
+    {
+      "name": "open",
+      "type": "boolean",
+      "required": false,
+      "description": "Controlled open state. Omit for uncontrolled mode.",
+      "deprecated": false
+    },
+    {
+      "name": "side",
+      "type": "GhostDrawerSide",
+      "default": "end",
+      "required": false,
+      "description": "Viewport edge the drawer is anchored to (`'start'`, `'end'`, `'top'`, `'bottom'`).",
+      "deprecated": false
+    }
+  ],
+  "models": [
+    {
+      "prop": "open",
+      "event": "update:open",
+      "type": "boolean",
+      "description": "v-model binding for `open`."
+    }
+  ],
+  "events": [],
+  "slots": [
+    {
+      "name": "default",
+      "props": [
+        {
+          "name": "close",
+          "type": "() => void",
+          "description": "Closes the drawer."
+        },
+        {
+          "name": "open",
+          "type": "boolean",
+          "description": "Current open state."
+        },
+        {
+          "name": "side",
+          "type": "GhostDrawerSide",
+          "description": "Slot prop `side`."
+        }
+      ],
+      "description": "Drawer trigger, overlay, content, title, description, and close parts."
+    }
+  ],
+  "exposed": [],
+  "styling": {
+    "parts": [
+      {
+        "name": "trigger",
+        "description": "Trigger control rendered by GhostDrawerTrigger."
+      },
+      {
+        "name": "overlay",
+        "description": "Modal backdrop rendered by GhostDrawerOverlay."
+      },
+      {
+        "name": "content",
+        "description": "Drawer surface rendered by GhostDrawerContent."
+      },
+      {
+        "name": "title",
+        "description": "Accessible heading rendered by GhostDrawerTitle."
+      },
+      {
+        "name": "description",
+        "description": "Accessible description rendered by GhostDrawerDescription."
+      },
+      {
+        "name": "close",
+        "description": "Close button rendered by GhostDrawerClose."
+      }
+    ],
+    "states": [
+      {
+        "name": "open",
+        "description": "Applied on data-state across trigger, overlay, and content while the drawer is open."
+      },
+      {
+        "name": "closed",
+        "description": "Applied on GhostDrawerTrigger data-state while the drawer is closed."
+      },
+      {
+        "name": "side",
+        "description": "data-side=\"start\" | \"end\" | \"top\" | \"bottom\" on trigger, overlay, and content reports the effective side."
+      }
+    ],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "dialog",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/",
+    "keyboard": {
+      "Enter": "Opens or toggles the drawer on GhostDrawerTrigger or closes on GhostDrawerClose.",
+      "Space": "Opens or toggles the drawer on GhostDrawerTrigger or closes on GhostDrawerClose.",
+      "Tab": "Moves focus forward through tabbable descendants, wrapping within modal drawers.",
+      "Shift+Tab": "Moves focus backward through tabbable descendants, wrapping within modal drawers.",
+      "Escape": "Dismisses the topmost open drawer when closeOnEscape is enabled and restores focus."
+    },
+    "requiredAriaAttributes": [
+      "aria-expanded",
+      "aria-controls",
+      "aria-haspopup",
+      "aria-labelledby"
+    ]
+  },
+  "examples": [
+    "drawer/basic"
+  ]
+}

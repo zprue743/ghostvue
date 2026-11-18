@@ -11,6 +11,12 @@ import GhostDialogDescription from './GhostDialogDescription.vue'
 import GhostDialogOverlay from './GhostDialogOverlay.vue'
 import GhostDialogTitle from './GhostDialogTitle.vue'
 import GhostDialogTrigger from './GhostDialogTrigger.vue'
+import GhostDrawer from './GhostDrawer.vue'
+import GhostDrawerClose from './GhostDrawerClose.vue'
+import GhostDrawerContent from './GhostDrawerContent.vue'
+import GhostDrawerOverlay from './GhostDrawerOverlay.vue'
+import GhostDrawerTitle from './GhostDrawerTitle.vue'
+import GhostDrawerTrigger from './GhostDrawerTrigger.vue'
 import GhostCollapsible from './GhostCollapsible.vue'
 import GhostCollapsibleContent from './GhostCollapsibleContent.vue'
 import GhostCollapsibleTrigger from './GhostCollapsibleTrigger.vue'
@@ -417,6 +423,50 @@ describe('overlay primitives in Node SSR (no window or document)', () => {
     expect(openHtml).toContain('Visible SSR description')
     expect(openHtml).toContain('role="dialog"')
     expect(openHtml).toContain('aria-modal="true"')
+    expect(openHtml).toContain('data-part="overlay"')
+  })
+
+  it('renders GhostDrawer closed and defaultOpen states cleanly in Node SSR', async () => {
+    expect(typeof window).toBe('undefined')
+    expect(typeof document).toBe('undefined')
+
+    const render = (open: boolean) =>
+      renderToString(
+        createSSRApp(
+          defineComponent({
+            setup() {
+              return () =>
+                h(
+                  GhostDrawer,
+                  { defaultOpen: open, side: 'bottom' },
+                  {
+                    default: () => [
+                      h(GhostDrawerTrigger, null, () => 'Drawer trigger'),
+                      h(GhostDrawerOverlay, { portal: false }),
+                      h(GhostDrawerContent, { portal: false }, () => [
+                        h(GhostDrawerTitle, null, () => 'SSR drawer title'),
+                        h(GhostDrawerClose, null, () => 'Close'),
+                      ]),
+                    ],
+                  },
+                )
+            },
+          }),
+        ),
+      )
+
+    const closedHtml = await render(false)
+    expect(closedHtml).toContain('aria-expanded="false"')
+    expect(closedHtml).toContain('data-side="bottom"')
+    expect(closedHtml).not.toContain('SSR drawer title')
+
+    const openHtml = await render(true)
+    expect(openHtml).toContain('aria-expanded="true"')
+    expect(openHtml).toContain('SSR drawer title')
+    expect(openHtml).toContain('role="dialog"')
+    expect(openHtml).toContain('data-side="bottom"')
+    // Without document access the server falls back to LTR.
+    expect(openHtml).toContain('data-dir="ltr"')
     expect(openHtml).toContain('data-part="overlay"')
   })
 

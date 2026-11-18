@@ -258,26 +258,3 @@ export interface GhostDialogInternalContext extends GhostDialogContext {
 
 export const ghostDialogContextKey: InjectionKey<GhostDialogInternalContext> =
   Symbol('ghost-dialog')
-
-/**
- * Resolves a DOM element from either a raw element or a component ref
- * (preferring exposed `.element` over `.$el` so wrappers like themed
- * `GhostButton` with a `display: contents` scope resolve to their inner control).
- */
-export function resolveDialogHtmlElement(target: unknown): HTMLElement | null {
-  if (typeof HTMLElement === 'undefined') {
-    return null
-  }
-  if (target instanceof HTMLElement) {
-    return target
-  }
-  if (typeof target === 'object' && target !== null) {
-    if ('element' in target && target.element instanceof HTMLElement) {
-      return target.element
-    }
-    if ('$el' in target && target.$el instanceof HTMLElement) {
-      return target.$el
-    }
-  }
-  return null
-}
