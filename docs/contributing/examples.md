@@ -42,6 +42,15 @@ renders it in a collapsible **Code** disclosure that never remounts the live
 demo. Do not paste a second copy or a sibling `<<<` snippet into the markdown;
 `llms-full.txt` gets exactly one `vue` fence per example.
 
+`GhostExample` is a thin id adapter over the docs-only `DemoPreview` frame
+(`apps/docs/.vitepress/theme/DemoPreview.vue`, styles in `demo-preview.css`).
+The frame renders the title, layer badge, description, toolbar, optional
+controls, a block-layout canvas, and the source disclosure. The canvas does
+not center or resize the demo, so give an example a single root element that
+owns its layout (a grid, a row with a gap). Examples with several root elements
+fall back to a wrapping row. While a demo chunk loads, or if it fails, the
+canvas shows an explained status instead of an empty box.
+
 Keep API tables, CSS snippets, and non-runnable illustrations as fenced
 blocks.
 

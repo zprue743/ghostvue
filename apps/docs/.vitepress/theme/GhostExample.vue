@@ -1,11 +1,19 @@
 <script setup lang="ts">
-import { computed, defineAsyncComponent, onUnmounted, ref, useId } from 'vue'
+import { computed, onUnmounted, ref } from 'vue'
 
 import { GhostButton } from '@ghostvue/themes'
 
 import { exampleLoader, exampleSource } from '../../../../examples/load'
 import { ghostExampleById } from '../../../../examples/registry'
+import { defineDemoPreview } from './demo-preview-async'
+import DemoPreview from './DemoPreview.vue'
 
+/*
+ * Id adapter: markdown keeps writing `<GhostExample id="button/icon-only" />`.
+ * This component resolves the id against the example registry and loader and
+ * hands title, layer, description, the lazy demo, and the highlighted source
+ * to `DemoPreview`, which owns the frame.
+ */
 const props = defineProps<{
   /** Path-derived example id (`button/icon-only`). */
   id: string
@@ -31,14 +39,7 @@ if (!loader) {
   )
 }
 
-const Preview = defineAsyncComponent(loader)
-const sourceRegionId = `ghost-example-source-${useId()}`
-/*
- * Collapsed by default so the live demo leads. This state lives on the host,
- * not the demo, and the region uses `v-show`, so toggling never remounts or
- * resets the preview and the highlighted markup stays in the SSR output.
- */
-const sourceOpen = ref(false)
+const Preview = defineDemoPreview(loader)
 const copied = ref(false)
 let copiedTimer: ReturnType<typeof setTimeout> | undefined
 
@@ -66,209 +67,30 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <figure
-    class="ghost-example"
+  <DemoPreview
     :data-example-id="id"
-    :data-example-layer="meta?.layer"
+    :title="title"
+    :layer="meta?.layer"
+    :description="meta?.description"
   >
-    <figcaption class="ghost-example__header">
-      <div class="ghost-example__heading">
-        <span class="ghost-example__title">{{ title }}</span>
-        <span v-if="meta?.layer === 'headless'" class="ghost-example__badge">
-          Headless
-        </span>
-        <div class="ghost-example__actions">
-          <!--
-            Disclosure pattern: a native button whose aria-expanded mirrors the
-            region below. The label stays constant ("Code") so the control does
-            not change width or name when toggled; state is announced via
-            aria-expanded and shown by the chevron.
-          -->
-          <GhostButton
-            v-if="slots.default"
-            class="ghost-example__toggle"
-            type="button"
-            size="sm"
-            variant="ghost"
-            tone="neutral"
-            :aria-expanded="sourceOpen ? 'true' : 'false'"
-            :aria-controls="sourceRegionId"
-            :aria-label="`${title} source code`"
-            @click="sourceOpen = !sourceOpen"
-          >
-            <svg
-              class="ghost-example__chevron"
-              aria-hidden="true"
-              viewBox="0 0 16 16"
-              width="12"
-              height="12"
-            >
-              <path
-                d="M6 3.5 10.5 8 6 12.5"
-                fill="none"
-                stroke="currentColor"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="1.75"
-              />
-            </svg>
-            Code
-          </GhostButton>
-          <GhostButton
-            class="ghost-example__copy"
-            type="button"
-            size="sm"
-            variant="ghost"
-            tone="neutral"
-            :aria-label="
-              copied ? `Copied ${title} source` : `Copy ${title} source`
-            "
-            @click="copySource"
-          >
-            {{ copied ? 'Copied' : 'Copy' }}
-          </GhostButton>
-        </div>
-      </div>
-      <p v-if="meta?.description" class="ghost-example__description">
-        {{ meta.description }}
-      </p>
-    </figcaption>
+    <Preview />
 
-    <div class="ghost-example__preview" data-testid="ghost-example-preview">
-      <div class="ghost-example__stage">
-        <Preview />
-      </div>
-    </div>
+    <template #actions>
+      <GhostButton
+        class="ghost-example__copy"
+        type="button"
+        size="sm"
+        variant="ghost"
+        tone="neutral"
+        :aria-label="copied ? `Copied ${title} source` : `Copy ${title} source`"
+        @click="copySource"
+      >
+        {{ copied ? 'Copied' : 'Copy' }}
+      </GhostButton>
+    </template>
 
-    <div
-      v-if="slots.default"
-      v-show="sourceOpen"
-      :id="sourceRegionId"
-      class="ghost-example__source"
-      data-testid="ghost-example-source"
-      role="region"
-      :aria-label="`${title} source`"
-    >
+    <template v-if="slots.default" #source>
       <slot />
-    </div>
-  </figure>
+    </template>
+  </DemoPreview>
 </template>
-
-<style scoped>
-.ghost-example {
-  box-sizing: border-box;
-  display: grid;
-  gap: 0;
-  margin-block: 1.5rem;
-  max-inline-size: 100%;
-  overflow: hidden;
-  border: 1px solid var(--ghost-border-default, var(--vp-c-border));
-  border-radius: calc(1rem * var(--ghost-roundness, 1));
-  background: var(--ghost-surface-bg, var(--vp-c-bg));
-}
-
-.ghost-example__header {
-  display: grid;
-  gap: 0.35rem;
-  max-inline-size: 100%;
-  min-inline-size: 0;
-  padding: 1rem 1.15rem 0.85rem;
-}
-
-.ghost-example__heading {
-  align-items: center;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  max-inline-size: 100%;
-  min-inline-size: 0;
-}
-
-.ghost-example__title {
-  color: var(--ghost-surface-fg, var(--vp-c-text-1));
-  flex: 1 1 auto;
-  font-size: 0.95rem;
-  font-weight: 650;
-  min-inline-size: 0;
-  letter-spacing: 0.01em;
-  line-height: 1.3;
-}
-
-.ghost-example__badge {
-  border: 1px solid var(--ghost-border-muted, var(--vp-c-divider));
-  border-radius: 999px;
-  color: var(--ghost-text-muted, var(--vp-c-text-2));
-  font-size: 0.68rem;
-  font-weight: 650;
-  letter-spacing: 0.04em;
-  padding: 0.12rem 0.5rem;
-  text-transform: uppercase;
-}
-
-.ghost-example__actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.25rem;
-  margin-inline-start: auto;
-}
-
-/* Rotation is transform-only so toggling never shifts surrounding layout. */
-.ghost-example__chevron {
-  flex: none;
-  transition: transform 120ms ease;
-}
-
-.ghost-example__toggle[aria-expanded='true'] .ghost-example__chevron {
-  transform: rotate(90deg);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .ghost-example__chevron {
-    transition: none;
-  }
-}
-
-.ghost-example__source {
-  min-inline-size: 0;
-  border-block-start: 1px solid var(--ghost-border-muted, var(--vp-c-divider));
-}
-
-.ghost-example__description {
-  color: var(--ghost-text-muted, var(--vp-c-text-2));
-  font-size: 0.88rem;
-  line-height: 1.45;
-  margin: 0;
-}
-
-.ghost-example__preview {
-  isolation: isolate;
-  max-inline-size: 100%;
-  min-block-size: 8rem;
-  min-inline-size: 0;
-  padding: 1.75rem 1.25rem;
-  position: relative;
-  background-color: var(--ghost-surface-subtle-bg, var(--vp-c-bg-alt));
-  border-block-start: 1px solid var(--ghost-border-muted, var(--vp-c-divider));
-}
-
-/*
- * `overflow-x: auto` (wide tables, toolbars) forces `overflow-y` to clip too,
- * which cut focus rings on controls touching the stage edge. The padding is
- * room for the largest recipe ring (width + offset); the matching negative
- * margin keeps the demo exactly where it sat before.
- */
-.ghost-example__stage {
-  --_ghost-example-ring-room: 0.5rem;
-
-  align-items: center;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-  justify-content: center;
-  margin: calc(-1 * var(--_ghost-example-ring-room));
-  max-inline-size: calc(100% + 2 * var(--_ghost-example-ring-room));
-  min-block-size: calc(4.5rem + 2 * var(--_ghost-example-ring-room));
-  overflow-x: auto;
-  padding: var(--_ghost-example-ring-room);
-}
-</style>
