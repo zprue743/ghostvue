@@ -206,6 +206,47 @@ Commit regenerated baseline PNGs in a dedicated commit when updating existing
 snapshots so pixel churn is easy to review. Use `pnpm test:visual:update` only
 when already running inside the pinned Linux environment.
 
+### Regenerating baselines in CI
+
+Contributors and agents without Docker can ask CI to regenerate baselines
+instead. Add the `update-baselines` label to the pull request, or run the
+**Update visual baselines** workflow (`.github/workflows/update-baselines.yml`)
+from the Actions tab with the PR number. It never runs automatically when CI
+fails.
+
+The workflow runs in the same pinned Playwright image as CI and
+`pnpm test:visual:docker`, using `scripts/update-visual-baselines.mjs`:
+
+1. Run every `@visual` test without updating snapshots. If all pass, it comments
+   and pushes nothing.
+2. If any visual test fails for a reason other than a screenshot mismatch or a
+   missing baseline (a timeout or functional assertion), it comments and
+   pushes nothing.
+3. Rerun only the failing tests with `--update-snapshots=changed`, then rerun
+   them again without updating to confirm they pass.
+4. Check that the only changed paths are
+   `tests/e2e/*.spec.ts-snapshots/*-chromium-linux.png`, then push one commit,
+   `test(visual): regenerate baselines (GHO-123)`, to the PR branch. The key
+   comes from the PR title, then the branch name. Without a key, the commit uses
+   the PR number (`(#123)`).
+
+Any failure, including a test that still fails after its update, produces a PR
+comment and no push. The workflow removes the label when it finishes, so add it
+again to retry. Review the image diffs in the pushed commit before merging.
+
+It refuses fork PRs, because it only runs for branches in this repository. It
+also only runs on a PR that GitHub can merge (no conflicts with `master`).
+
+Maintainer setup:
+
+- Create the `update-baselines` label.
+- Add a repository secret named `BASELINES_PUSH_TOKEN`. Use a fine-grained
+  personal access token or a GitHub App token with **Contents: read and write**
+  on this repository only. Pushes made with the default `GITHUB_TOKEN` do not
+  start new workflow runs, so CI would never check the new baselines. If the
+  secret is missing, the workflow comments and stops. It never falls back to
+  `GITHUB_TOKEN`.
+
 When the CI `browser` job fails, Playwright's HTML report and diff outputs
 (`playwright-report/` and `test-results/`, including expected, actual, and diff
 PNGs) are uploaded as the `playwright-report` workflow artifact (retained for

@@ -273,3 +273,82 @@ describe('Renovate configuration', () => {
     )
   })
 })
+
+describe('Update visual baselines workflow', () => {
+  const workflow = readRepoFile('.github/workflows/update-baselines.yml')
+
+  it('is opt-in and never runs fork code with write access', () => {
+    expect(workflow).toMatch(/^ {2}pull_request:\n {4}types: \[labeled\]$/m)
+    expect(workflow).toMatch(/^ {2}workflow_dispatch:$/m)
+    expect(workflow).not.toMatch(/^\s*pull_request_target:/m)
+    expect(workflow).not.toMatch(/workflow_run|^ {2}push:/m)
+    expect(jobBlock(workflow, 'prepare')).toContain(
+      "github.event.label.name == 'update-baselines'",
+    )
+    expect(jobBlock(workflow, 'prepare')).toContain(
+      'github.event.pull_request.head.repo.full_name == github.repository',
+    )
+  })
+
+  it('grants least privilege and keeps the push token out of the test job', () => {
+    expect(workflow).toMatch(/^permissions: \{\}$/m)
+    expect(permissionsUnder(jobBlock(workflow, 'prepare'), '    ')).toEqual({
+      'pull-requests': 'read',
+    })
+    expect(permissionsUnder(jobBlock(workflow, 'regenerate'), '    ')).toEqual({
+      contents: 'read',
+    })
+    expect(permissionsUnder(jobBlock(workflow, 'publish'), '    ')).toEqual({
+      contents: 'read',
+    })
+    expect(permissionsUnder(jobBlock(workflow, 'report'), '    ')).toEqual({
+      'pull-requests': 'write',
+    })
+    // Only `publish` (no install, no Playwright) may hold the push secret;
+    // `prepare` only checks that it is set.
+    expect(jobBlock(workflow, 'regenerate')).not.toContain('secrets.')
+    expect(jobBlock(workflow, 'report')).not.toContain('secrets.')
+    expect(jobBlock(workflow, 'publish')).not.toMatch(/pnpm|playwright/)
+    expect(jobBlock(workflow, 'regenerate')).toContain(
+      'persist-credentials: false',
+    )
+  })
+
+  it('regenerates in the Playwright image CI uses', () => {
+    const version = (
+      JSON.parse(readRepoFile('package.json')) as {
+        devDependencies: Record<string, string>
+      }
+    ).devDependencies['@playwright/test']
+    expect(jobBlock(workflow, 'regenerate')).toContain(
+      `image: mcr.microsoft.com/playwright:v${String(version)}-noble`,
+    )
+  })
+
+  it('never expands untrusted pull request fields inside run scripts', () => {
+    // Script injection: titles and branch names reach shells only via env.
+    const runScripts = workflow
+      .split('\n')
+      .reduce<{ lines: string[]; indent: number | null }>(
+        (state, line) => {
+          const run = /^(\s*)(?:- )?run: ?(.*)$/.exec(line)
+          if (run) {
+            state.lines.push(run[2] ?? '')
+            state.indent = (run[1] ?? '').length
+          } else if (
+            state.indent !== null &&
+            (line.trim() === '' ||
+              line.length - line.trimStart().length > state.indent)
+          ) {
+            state.lines.push(line)
+          } else {
+            state.indent = null
+          }
+          return state
+        },
+        { lines: [], indent: null },
+      ).lines
+    expect(runScripts.length).toBeGreaterThan(0)
+    expect(runScripts.filter((line) => line.includes('${{'))).toEqual([])
+  })
+})

@@ -39,6 +39,8 @@ Do not ship the starter as a production widget.
 
 After implementation, run `pnpm manifests:write`, fill out manifest prose, and
 run `pnpm verify` and `pnpm test:e2e`. New registered examples need visual
-baselines via `pnpm test:visual:docker` before browser CI can pass. Add a
+baselines via `pnpm test:visual:docker` before browser CI can pass (without
+Docker, add the `update-baselines` label to the PR; see
+[regenerating baselines in CI](../standards/testing.md#regenerating-baselines-in-ci)). Add a
 Changeset when the component changes a published package's output. The scaffold
 generator itself is tooling and requires no Changeset.

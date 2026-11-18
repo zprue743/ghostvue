@@ -1,0 +1,279 @@
+# Opt-in Playwright visual baseline regeneration (GHO-204).
+#
+# Not every contributor or coding agent can run Docker, but committed baselines
+# must match CI's Linux render. Labelling a pull request `update-baselines` (or
+# dispatching this workflow with a PR number) regenerates only the failing
+# visual snapshots in the same pinned Playwright image CI uses, confirms them,
+# and pushes one snapshot-only commit to the PR branch. It never runs
+# automatically on CI failure. See
+# docs/standards/testing.md#regenerating-baselines-in-ci.
+#
+# Security model:
+# - Same-repository branches only. Fork PRs are skipped, and there is no
+#   `pull_request_target`, so fork code never sees a write token or secret.
+# - PR title and branch are untrusted: they reach scripts only through `env:`
+#   and step outputs, never through `${{ }}` inside `run:`.
+# - The job that installs dependencies and runs Playwright has a read-only
+#   token and no push secret. Only `publish` sees BASELINES_PUSH_TOKEN, and it
+#   runs neither `pnpm install` nor Playwright: it copies snapshot paths out of
+#   the artifact, re-checks that nothing else changed, and pushes.
+# - BASELINES_PUSH_TOKEN (fine-grained PAT or GitHub App token, contents:write
+#   on this repository) is required because pushes made with GITHUB_TOKEN do
+#   not start CI. Without it the run comments and stops instead of falling back.
+name: Update visual baselines
+
+on:
+  pull_request:
+    types: [labeled]
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: Pull request number whose failing visual baselines to regenerate.
+        required: true
+        type: number
+
+concurrency:
+  group: update-baselines-${{ github.event.pull_request.number || inputs.pr_number }}
+  # Queue rather than cancel: a cancelled run could stop between push and
+  # comment, and a queued rerun simply finds nothing left to regenerate.
+  cancel-in-progress: false
+
+permissions: {}
+
+jobs:
+  prepare:
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.label.name == 'update-baselines' &&
+      github.event.pull_request.head.repo.full_name == github.repository)
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      pull-requests: read
+    outputs:
+      ok: ${{ steps.pr.outputs.ok }}
+      reason: ${{ steps.pr.outputs.reason }}
+      number: ${{ steps.pr.outputs.number }}
+      head_sha: ${{ steps.pr.outputs.head_sha }}
+      head_ref: ${{ steps.pr.outputs.head_ref }}
+      title: ${{ steps.pr.outputs.title }}
+    steps:
+      - id: pr
+        uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7.1.0
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number || inputs.pr_number }}
+          HAS_PUSH_TOKEN: ${{ secrets.BASELINES_PUSH_TOKEN != '' }}
+        with:
+          script: |
+            const { owner, repo } = context.repo
+            const number = Number(process.env.PR_NUMBER)
+            core.setOutput('number', String(number))
+            core.setOutput('ok', 'false')
+            if (!Number.isInteger(number) || number <= 0) {
+              core.setOutput('reason', 'invalid-number')
+              return
+            }
+            // Re-read the PR so a dispatch and a label event see the same state.
+            const { data: pr } = await github.rest.pulls.get({
+              owner,
+              repo,
+              pull_number: number,
+            })
+            core.setOutput('head_sha', pr.head.sha)
+            core.setOutput('head_ref', pr.head.ref)
+            core.setOutput('title', pr.title)
+            let reason = ''
+            if (pr.state !== 'open') reason = 'not-open'
+            else if (pr.head.repo?.full_name !== `${owner}/${repo}`) reason = 'fork'
+            else if (process.env.HAS_PUSH_TOKEN !== 'true') reason = 'missing-token'
+            core.setOutput('reason', reason)
+            core.setOutput('ok', reason === '' ? 'true' : 'false')
+
+  regenerate:
+    needs: prepare
+    if: needs.prepare.outputs.ok == 'true'
+    runs-on: ubuntu-latest
+    # Same pinned image as CI's browser-shard job and `pnpm test:visual:docker`,
+    # so regenerated baselines match the render CI compares against.
+    container:
+      image: mcr.microsoft.com/playwright:v1.62.1-noble
+    env:
+      HOME: /root
+    timeout-minutes: 45
+    permissions:
+      contents: read
+    outputs:
+      outcome: ${{ steps.regenerate.outputs.outcome }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          ref: ${{ needs.prepare.outputs.head_sha }}
+          persist-credentials: false
+      - uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4.3.0
+        with:
+          run_install: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      # The visual suite serves the built playground and docs (as `pnpm test:visual` does).
+      - run: pnpm --filter @ghostvue/playground build && pnpm --filter @ghostvue/docs build
+      # git refuses to read a checkout owned by another user inside the container.
+      - run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+      - id: out
+        # runner.temp is the host path in container jobs; RUNNER_TEMP is not.
+        run: echo "dir=$RUNNER_TEMP/visual-baselines" >> "$GITHUB_OUTPUT"
+      - id: regenerate
+        env:
+          OUT_DIR: ${{ steps.out.outputs.dir }}
+        run: node scripts/update-visual-baselines.mjs regenerate --out "$OUT_DIR"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        if: always() && steps.regenerate.outcome == 'success'
+        with:
+          name: visual-baselines
+          path: |
+            ${{ steps.out.outputs.dir }}/result.json
+            ${{ steps.out.outputs.dir }}/comment.md
+            ${{ steps.out.outputs.dir }}/files/
+          retention-days: 7
+          if-no-files-found: error
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        if: failure() || steps.regenerate.outputs.outcome == 'failed'
+        with:
+          name: visual-baselines-report
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 14
+          if-no-files-found: ignore
+
+  publish:
+    needs: [prepare, regenerate]
+    if: needs.regenerate.outputs.outcome == 'changes'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    # The push uses BASELINES_PUSH_TOKEN, not GITHUB_TOKEN.
+    permissions:
+      contents: read
+    outputs:
+      sha: ${{ steps.push.outputs.sha }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          ref: ${{ needs.prepare.outputs.head_sha }}
+          token: ${{ secrets.BASELINES_PUSH_TOKEN }}
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 22
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: visual-baselines
+          path: ${{ runner.temp }}/visual-baselines
+      - name: Apply snapshot-only changes
+        env:
+          ARTIFACT_DIR: ${{ runner.temp }}/visual-baselines
+        run: node scripts/update-visual-baselines.mjs apply --from "$ARTIFACT_DIR"
+      - id: push
+        name: Commit and push
+        env:
+          PR_NUMBER: ${{ needs.prepare.outputs.number }}
+          PR_TITLE: ${{ needs.prepare.outputs.title }}
+          PR_HEAD_REF: ${{ needs.prepare.outputs.head_ref }}
+        run: |
+          git check-ref-format --branch "$PR_HEAD_REF" >/dev/null
+          message="$(node scripts/update-visual-baselines.mjs commit-message)"
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A -- 'tests/e2e/*.spec.ts-snapshots/*-chromium-linux.png'
+          # Hooks are disabled so nothing from the checkout runs with the token.
+          git -c core.hooksPath=/dev/null commit --no-verify -m "$message"
+          # A normal (fast-forward only) push: if the branch moved since the
+          # run started, it is rejected and nothing is overwritten.
+          git push origin "HEAD:refs/heads/$PR_HEAD_REF"
+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+  report:
+    needs: [prepare, regenerate, publish]
+    if: always() && needs.prepare.result != 'skipped'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      pull-requests: write
+    steps:
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        id: download
+        if: needs.regenerate.result == 'success'
+        continue-on-error: true
+        with:
+          name: visual-baselines
+          path: ${{ runner.temp }}/visual-baselines
+      - uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7.1.0
+        env:
+          PR_NUMBER: ${{ needs.prepare.outputs.number || github.event.pull_request.number || inputs.pr_number }}
+          PREPARE_RESULT: ${{ needs.prepare.result }}
+          REASON: ${{ needs.prepare.outputs.reason }}
+          REGENERATE_RESULT: ${{ needs.regenerate.result }}
+          OUTCOME: ${{ needs.regenerate.outputs.outcome }}
+          PUBLISH_RESULT: ${{ needs.publish.result }}
+          PUSHED_SHA: ${{ needs.publish.outputs.sha }}
+          COMMENT_PATH: ${{ runner.temp }}/visual-baselines/comment.md
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        with:
+          script: |
+            const fs = require('node:fs')
+            const env = process.env
+            const { owner, repo } = context.repo
+            const issue_number = Number(env.PR_NUMBER)
+            const details = fs.existsSync(env.COMMENT_PATH)
+              ? fs.readFileSync(env.COMMENT_PATH, 'utf8')
+              : ''
+            const reasons = {
+              'missing-token':
+                'The `BASELINES_PUSH_TOKEN` secret is not set, so nothing was regenerated. A maintainer must add a fine-grained token with `contents: write` on this repository; pushes with the default `GITHUB_TOKEN` would not start CI.',
+              fork: 'Baselines are only regenerated for branches in this repository, not forks.',
+              'not-open': 'The pull request is not open.',
+              'invalid-number': 'The workflow input is not a pull request number.',
+            }
+            let failed = true
+            let body
+            if (env.PREPARE_RESULT !== 'success') {
+              body = 'Could not read the pull request.'
+            } else if (env.REASON) {
+              body = reasons[env.REASON] ?? env.REASON
+            } else if (env.REGENERATE_RESULT !== 'success' || !details) {
+              body = `Baseline regeneration did not finish (${env.REGENERATE_RESULT}). Nothing was pushed.`
+            } else if (env.OUTCOME === 'noop') {
+              failed = false
+              body = details
+            } else if (env.OUTCOME === 'failed') {
+              body = `${details}\nNothing was pushed. The Playwright report is in the \`visual-baselines-report\` artifact.`
+            } else if (env.PUBLISH_RESULT === 'success' && env.PUSHED_SHA) {
+              failed = false
+              body = `Pushed ${env.PUSHED_SHA}. CI will rerun on the new commit; review the image diffs before merging.\n\n${details}`
+            } else {
+              body = `Baselines were regenerated, but committing or pushing them failed (${env.PUBLISH_RESULT}); the branch may have moved since the run started. Nothing was pushed. Re-add the \`update-baselines\` label to retry.\n\n${details}`
+            }
+            const heading = failed
+              ? '### Visual baselines: not updated'
+              : '### Visual baselines'
+            if (Number.isInteger(issue_number) && issue_number > 0) {
+              await github.rest.issues.createComment({
+                owner,
+                repo,
+                issue_number,
+                body: `${heading}\n\n${body}\n\n[Workflow run](${env.RUN_URL})`,
+              })
+              // Removing the label lets a maintainer re-apply it to retry.
+              try {
+                await github.rest.issues.removeLabel({
+                  owner,
+                  repo,
+                  issue_number,
+                  name: 'update-baselines',
+                })
+              } catch (error) {
+                if (error.status !== 404) throw error
+              }
+            }
+            if (failed) core.setFailed(body.split('\n')[0])

@@ -1,0 +1,100 @@
+{
+  "config": {
+    "rootDir": "/work/tests/e2e"
+  },
+  "suites": [
+    {
+      "title": "density.spec.ts",
+      "file": "density.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "density, type, and roundness",
+          "file": "density.spec.ts",
+          "line": 25,
+          "column": 6,
+          "specs": [
+            {
+              "title": "renders GhostButton at every density and roundness",
+              "ok": false,
+              "tags": ["visual"],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 1964,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveScreenshot\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: getByTestId('density-shot-comfortable')\n  12950 pixels (ratio 0.13 of all image pixels) are different.\n\n  Snapshot: density-comfortable.png\n\nCall log:\n\u001b[2m  - Expect \"toHaveScreenshot(density-comfortable.png)\" with timeout 5000ms\u001b[22m\n\u001b[2m    - verifying given screenshot expectation\u001b[22m\n\u001b[2m  - waiting for getByTestId('density-shot-comfortable')\u001b[22m\n\u001b[2m    - locator resolved to <div data-v-073c5ecf=\"\" class=\"roundness-grid\" data-testid=\"density-shot-comfortable\">\u2026</div>\u001b[22m\n\u001b[2m  - taking element screenshot\u001b[22m\n\u001b[2m    - disabled all CSS animations\u001b[22m\n\u001b[2m  - waiting for fonts to load...\u001b[22m\n\u001b[2m  - fonts loaded\u001b[22m\n\u001b[2m  - attempting scroll into view action\u001b[22m\n\u001b[2m    - waiting for element to be stable\u001b[22m\n\u001b[2m  - 12950 pixels (ratio 0.13 of all image pixels) are different.\u001b[22m\n\u001b[2m  - waiting 100ms before taking screenshot\u001b[22m\n\u001b[2m  - waiting for getByTestId('density-shot-comfortable')\u001b[22m\n\u001b[2m    - locator resolved to <div data-v-073c5ecf=\"\" class=\"roundness-grid\" data-testid=\"density-shot-comfortable\">\u2026</div>\u001b[22m\n\u001b[2m  - taking element screenshot\u001b[22m\n\u001b[2m    - disabled all CSS animations\u001b[22m\n\u001b[2m  - waiting for fonts to load...\u001b[22m\n\u001b[2m  - fonts loaded\u001b[22m\n\u001b[2m  - attempting scroll into view action\u001b[22m\n\u001b[2m    - waiting for element to be stable\u001b[22m\n\u001b[2m  - captured a stable screenshot\u001b[22m\n\u001b[2m  - 12950 pixels (ratio 0.13 of all image pixels) are different.\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveScreenshot\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: getByTestId('density-shot-comfortable')\n  12950 pixels (ratio 0.13 of all image pixels) are different.\n\n  Snapshot: density-comfortable.png\n\nCall log:\n\u001b[2m  - Expect \"toHaveScreenshot(density-comfortable.png)\" with timeout 5000ms\u001b[22m\n\u001b[2m    - verifying given screenshot expectation\u001b[22m\n\u001b[2m  - waiting for getByTestId('density-shot-comfortable')\u001b[22m\n\u001b[2m    - locator resolved to <div data-v-073c5ecf=\"\" class=\"roundness-grid\" data-testid=\"density-shot-comfortable\">\u2026</div>\u001b[22m\n\u001b[2m  - taking element screenshot\u001b[22m\n\u001b[2m    - disabled all CSS animations\u001b[22m\n\u001b[2m  - waiting for fonts to load...\u001b[22m\n\u001b[2m  - fonts loaded\u001b[22m\n\u001b[2m  - attempting scroll into view action\u001b[22m\n\u001b[2m    - waiting for element to be stable\u001b[22m\n\u001b[2m  - 12950 pixels (ratio 0.13 of all image pixels) are different.\u001b[22m\n\u001b[2m  - waiting 100ms before taking screenshot\u001b[22m\n\u001b[2m  - waiting for getByTestId('density-shot-comfortable')\u001b[22m\n\u001b[2m    - locator resolved to <div data-v-073c5ecf=\"\" class=\"roundness-grid\" data-testid=\"density-shot-comfortable\">\u2026</div>\u001b[22m\n\u001b[2m  - taking element screenshot\u001b[22m\n\u001b[2m    - disabled all CSS animations\u001b[22m\n\u001b[2m  - waiting for fonts to load...\u001b[22m\n\u001b[2m  - fonts loaded\u001b[22m\n\u001b[2m  - attempting scroll into view action\u001b[22m\n\u001b[2m    - waiting for element to be stable\u001b[22m\n\u001b[2m  - captured a stable screenshot\u001b[22m\n\u001b[2m  - 12950 pixels (ratio 0.13 of all image pixels) are different.\u001b[22m\n\n    at /work/tests/e2e/density.spec.ts:79:30",
+                        "location": {
+                          "file": "/work/tests/e2e/density.spec.ts",
+                          "column": 30,
+                          "line": 79
+                        },
+                        "snippet": "\u001b[0m \u001b[90m 77 |\u001b[39m             element\u001b[33m.\u001b[39mstyle\u001b[33m.\u001b[39mwidth \u001b[33m=\u001b[39m \u001b[32m'1168px'\u001b[39m\n \u001b[90m 78 |\u001b[39m           })\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 79 |\u001b[39m           \u001b[36mawait\u001b[39m expect(shot)\u001b[33m.\u001b[39mtoHaveScreenshot(\u001b[32m`density-${density}.png`\u001b[39m\u001b[33m,\u001b[39m {\n \u001b[90m    |\u001b[39m                              \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 80 |\u001b[39m             \u001b[33m...\u001b[39mscreenshotOptions\u001b[33m,\u001b[39m\n \u001b[90m 81 |\u001b[39m             mask\u001b[33m:\u001b[39m [shot\u001b[33m.\u001b[39mlocator(\u001b[32m'.roundness-cell > span'\u001b[39m)]\u001b[33m,\u001b[39m\n \u001b[90m 82 |\u001b[39m           })\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/work/tests/e2e/density.spec.ts",
+                            "column": 30,
+                            "line": 79
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveScreenshot\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: getByTestId('density-shot-comfortable')\n  12950 pixels (ratio 0.13 of all image pixels) are different.\n\n  Snapshot: density-comfortable.png\n\nCall log:\n\u001b[2m  - Expect \"toHaveScreenshot(density-comfortable.png)\" with timeout 5000ms\u001b[22m\n\u001b[2m    - verifying given screenshot expectation\u001b[22m\n\u001b[2m  - waiting for getByTestId('density-shot-comfortable')\u001b[22m\n\u001b[2m    - locator resolved to <div data-v-073c5ecf=\"\" class=\"roundness-grid\" data-testid=\"density-shot-comfortable\">\u2026</div>\u001b[22m\n\u001b[2m  - taking element screenshot\u001b[22m\n\u001b[2m    - disabled all CSS animations\u001b[22m\n\u001b[2m  - waiting for fonts to load...\u001b[22m\n\u001b[2m  - fonts loaded\u001b[22m\n\u001b[2m  - attempting scroll into view action\u001b[22m\n\u001b[2m    - waiting for element to be stable\u001b[22m\n\u001b[2m  - 12950 pixels (ratio 0.13 of all image pixels) are different.\u001b[22m\n\u001b[2m  - waiting 100ms before taking screenshot\u001b[22m\n\u001b[2m  - waiting for getByTestId('density-shot-comfortable')\u001b[22m\n\u001b[2m    - locator resolved to <div data-v-073c5ecf=\"\" class=\"roundness-grid\" data-testid=\"density-shot-comfortable\">\u2026</div>\u001b[22m\n\u001b[2m  - taking element screenshot\u001b[22m\n\u001b[2m    - disabled all CSS animations\u001b[22m\n\u001b[2m  - waiting for fonts to load...\u001b[22m\n\u001b[2m  - fonts loaded\u001b[22m\n\u001b[2m  - attempting scroll into view action\u001b[22m\n\u001b[2m    - waiting for element to be stable\u001b[22m\n\u001b[2m  - captured a stable screenshot\u001b[22m\n\u001b[2m  - 12950 pixels (ratio 0.13 of all image pixels) are different.\u001b[22m\n\n\n  77 |             element.style.width = '1168px'\n  78 |           })\n> 79 |           await expect(shot).toHaveScreenshot(`density-${density}.png`, {\n     |                              ^\n  80 |             ...screenshotOptions,\n  81 |             mask: [shot.locator('.roundness-cell > span')],\n  82 |           })\n    at /work/tests/e2e/density.spec.ts:79:30"
+                        }
+                      ],
+                      "retry": 0,
+                      "startTime": "2026-11-18T18:49:30.523Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "density-comfortable-expected.png",
+                          "contentType": "image/png",
+                          "path": "/work/tests/e2e/density.spec.ts-snapshots/density-comfortable-chromium-linux.png"
+                        },
+                        {
+                          "name": "density-comfortable-actual.png",
+                          "contentType": "image/png",
+                          "path": "/work/test-results/density-density-type-and-r-d5733-every-density-and-roundness-chromium/density-comfortable-actual.png"
+                        },
+                        {
+                          "name": "density-comfortable-diff.png",
+                          "contentType": "image/png",
+                          "path": "/work/test-results/density-density-type-and-r-d5733-every-density-and-roundness-chromium/density-comfortable-diff.png"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "bdba9eadb243e1f29c81-5966cbc978076b45507b",
+              "file": "density.spec.ts",
+              "line": 31,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-18T18:49:29.963Z",
+    "duration": 2772.6549999999997,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}
