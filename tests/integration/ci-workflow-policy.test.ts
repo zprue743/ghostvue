@@ -187,6 +187,19 @@ describe('CI workflow', () => {
     expect(readRepoFile('scripts/lib/test-visual-docker.js')).toContain(image)
     expect(workflow).not.toMatch(/run:.*playwright install/)
   })
+
+  it('builds docs and playground once in verify-build and shares the dist with browser-shard', () => {
+    expect(workflow).not.toMatch(/^ {2}browser-prebuild:/m)
+    expect(jobBlock(workflow, 'verify-build')).toContain(
+      'name: e2e-prebuilt-dist',
+    )
+    expect(jobBlock(workflow, 'browser-shard')).toMatch(
+      /needs:\s*\[changes,\s*verify-build\]/,
+    )
+    expect(jobBlock(workflow, 'browser')).toMatch(
+      /needs:\s*\[changes,\s*verify-build,\s*browser-shard\]/,
+    )
+  })
 })
 
 describe('Renovate configuration', () => {
