@@ -105,9 +105,9 @@ function run(root: string, args: string[]) {
   const env = { ...process.env }
   delete env.NODE_ENV
   try {
-    // Full-repo verify in a copied workspace grows with every package: it
-    // passed eight minutes on CI runners once @ghostvue/nuxt joined the
-    // workspace. Stay inside the 15-minute verify-integration job limit.
+    // Full-repo verify in a copied workspace grows with every package and test:
+    // under coverage on CI runners it now passes eight minutes once @ghostvue/nuxt
+    // joined the workspace. Stay inside the 15-minute verify-integration job limit.
     execPackageManagerSync('pnpm', args, {
       cwd: root,
       env,

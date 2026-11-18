@@ -4,7 +4,7 @@
   "name": "GhostAccordion",
   "package": "@ghostvue/themes",
   "status": "experimental",
-  "description": "Themed wrappers for GhostAccordion compound parts; imports default stacked disclosure styles.",
+  "description": "Themed wrappers for GhostAccordion compound parts; imports default stacked disclosure styles. Root and item add data-themed so headless accordions stay unstyled.",
   "props": [],
   "models": [],
   "events": [],

@@ -1282,7 +1282,7 @@
     {
       "id": "tooltip/themed",
       "title": "Themed",
-      "description": "Elevation-2 tooltip surface inside a ghost-theme fieldset.",
+      "description": "Elevation-2 tooltip surface that follows the site theme and mode.",
       "layer": "themed"
     },
     {

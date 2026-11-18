@@ -11,6 +11,12 @@ export const GhostAccordionItem = defineComponent({
     disabled: { type: Boolean, default: false },
   },
   setup(props, { attrs, slots }) {
-    return () => h(GhostUnstyledAccordionItem, { ...attrs, ...props }, slots)
+    return () =>
+      h(
+        GhostUnstyledAccordionItem,
+        // `data-themed` opts this item (and its header) into ghost-accordion.css.
+        { ...attrs, ...props, 'data-themed': '' },
+        slots,
+      )
   },
 })

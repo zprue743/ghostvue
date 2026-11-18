@@ -1,11 +1,17 @@
 /*
  * Themed GhostAccordion stacks disclosure items and reuses collapsible surfaces.
+ *
+ * Visual opt-in is `.ghost-theme` / `.ghost-themed-scope` or the `data-themed`
+ * marker the themed root and item wrappers add. Do not select the headless
+ * behavior hooks (`data-ghost-accordion`, `data-ghost-accordion-value`, bare
+ * `data-part='header'`): every unstyled `@ghostvue/vue` accordion renders them,
+ * so matching them would style headless instances whenever this sheet loads.
  */
 @layer ghostvue-theme {
   :where(
     .ghost-theme .ghost-accordion,
     .ghost-themed-scope .ghost-accordion,
-    .ghost-accordion[data-ghost-accordion]
+    .ghost-accordion[data-themed]
   ) {
     display: flex;
     flex-direction: column;
@@ -16,17 +22,19 @@
   :where(
     .ghost-theme .ghost-accordion-item,
     .ghost-themed-scope .ghost-accordion-item,
-    .ghost-accordion-item[data-ghost-accordion-value]
+    .ghost-accordion-item[data-themed]
   ) {
     display: flex;
     flex-direction: column;
     width: 100%;
   }
 
+  /* The header is the item's own part; the child combinator keeps a nested
+     headless accordion inside a themed panel unstyled. */
   :where(
     .ghost-theme .ghost-accordion-header,
     .ghost-themed-scope .ghost-accordion-header,
-    .ghost-accordion-header[data-part='header']
+    .ghost-accordion-item[data-themed] > .ghost-accordion-header
   ) {
     margin: 0;
     font: inherit;

@@ -18,7 +18,9 @@ direct headers without changing `tabindex`; every header stays in the tab sequen
 <GhostExample id="accordion/themed" />
 
 `type="multiple"` tracks a `string[]` of open item values. Themed examples load
-`default.css` and reuse collapsible trigger and panel surfaces.
+`default.css` and reuse collapsible trigger and panel surfaces. The themed root
+and items add `data-themed`, so loading the stylesheet does not restyle headless
+accordions on the same page.
 
 ## API
 

@@ -144,6 +144,10 @@ triggers only. Focus does not move into panel content on expand.
 - `data-part="header"` on the heading wrapper; trigger/content use collapsible
   `data-part` values.
 - Themed CSS stacks items and reuses collapsible trigger/content surface styles.
+  It applies only under `.ghost-theme` / `.ghost-themed-scope` or to the
+  `data-themed` marker that the `@ghostvue/themes` root and item wrappers add.
+  The behavior hooks above never opt an accordion into the theme, so a headless
+  accordion stays unstyled when `default.css` is loaded.
 
 ## Environment behavior
 
