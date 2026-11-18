@@ -1,0 +1,59 @@
+{
+  "schemaVersion": "1.0.0",
+  "slug": "tree",
+  "docs": {
+    "title": "GhostTree",
+    "specStatus": "approved",
+    "link": "/components/tree",
+    "specLink": "/specs/tree",
+    "category": "navigation-disclosure",
+    "sidebarLabel": "Tree"
+  },
+  "vueBarrel": [
+    "export { default as GhostTree } from './GhostTree.vue'",
+    "export { default as GhostTreeItem } from './GhostTreeItem.vue'",
+    "export { default as GhostTreeTrigger } from './GhostTreeTrigger.vue'",
+    "export { default as GhostTreeGroup } from './GhostTreeGroup.vue'",
+    "export { useGhostTree } from './use-ghost-tree'",
+    "export {\n  ghostTreeContextKey,\n  ghostTreeItemContextKey,\n  resolveTreeDir,\n} from './ghost-tree'",
+    "export type {\n  GhostTreeContext,\n  GhostTreeDirection,\n  GhostTreeElement,\n  GhostTreeExposed,\n  GhostTreeGroupElement,\n  GhostTreeGroupExposed,\n  GhostTreeGroupProps,\n  GhostTreeItemContext,\n  GhostTreeItemElement,\n  GhostTreeItemExposed,\n  GhostTreeItemProps,\n  GhostTreeItemSlotProps,\n  GhostTreeNodeRecord,\n  GhostTreeProps,\n  GhostTreeSelectionMode,\n  GhostTreeSelectPayload,\n  GhostTreeSlotProps,\n  GhostTreeTogglePayload,\n  GhostTreeTriggerAction,\n  GhostTreeTriggerElement,\n  GhostTreeTriggerExposed,\n  GhostTreeTriggerProps,\n  GhostTreeTriggerSlotProps,\n  GhostTreeValue,\n  UseGhostTreeOptions,\n  UseGhostTreeReturn,\n} from './ghost-tree'"
+  ],
+  "themesBarrel": [
+    "export {\n  GhostTree,\n  type GhostTreeDirection,\n  type GhostTreeExposed,\n  type GhostTreeSelectionMode,\n  type GhostTreeSelectPayload,\n  type GhostTreeSlotProps,\n  type GhostTreeTogglePayload,\n  type GhostTreeValue,\n} from './ghost-tree'",
+    "export {\n  GhostTreeItem,\n  type GhostTreeItemElement,\n  type GhostTreeItemExposed,\n  type GhostTreeItemSlotProps,\n} from './ghost-tree-item'",
+    "export {\n  GhostTreeTrigger,\n  type GhostTreeTriggerAction,\n  type GhostTreeTriggerElement,\n  type GhostTreeTriggerExposed,\n  type GhostTreeTriggerSlotProps,\n} from './ghost-tree-trigger'",
+    "export {\n  GhostTreeGroup,\n  type GhostTreeGroupElement,\n  type GhostTreeGroupExposed,\n} from './ghost-tree-group'"
+  ],
+  "examples": [
+    {
+      "id": "tree/basic",
+      "title": "Basic",
+      "description": "Single-selection file hierarchy with expand/collapse, one Tab stop, and arrow-key navigation.",
+      "layer": "headless"
+    },
+    {
+      "id": "tree/multi-select",
+      "title": "Multiple selection",
+      "description": "selectionMode=\"multiple\" with controlled v-model and v-model:expanded; Space toggles the focused node.",
+      "layer": "headless"
+    },
+    {
+      "id": "tree/split-trigger",
+      "title": "Split trigger",
+      "description": "A toggle-only chevron and a select-only label with expandOnClick=false.",
+      "layer": "headless"
+    },
+    {
+      "id": "tree/rtl",
+      "title": "Right-to-left",
+      "description": "dir=\"rtl\" hierarchy where ArrowLeft expands and enters branches and ArrowRight collapses or moves to the parent.",
+      "layer": "headless"
+    },
+    {
+      "id": "tree/themed",
+      "title": "Themed",
+      "description": "Default theme styles with depth indentation, selection, focus ring, and collapsible height motion.",
+      "layer": "themed"
+    }
+  ]
+}

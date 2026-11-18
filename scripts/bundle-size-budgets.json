@@ -1,7 +1,7 @@
 {
   "@ghostvue/shared": 100,
   "@ghostvue/core": 100,
-  "@ghostvue/vue": 74100,
+  "@ghostvue/vue": 81700,
   "@ghostvue/vue/resolver": 900,
   "@ghostvue/vue:GhostAccordion": 1800,
   "@ghostvue/vue:GhostAccordionContent": 1900,
@@ -141,6 +141,10 @@
   "@ghostvue/vue:GhostTooltipContent": 9300,
   "@ghostvue/vue:GhostTooltipProvider": 500,
   "@ghostvue/vue:GhostTooltipTrigger": 1500,
+  "@ghostvue/vue:GhostTree": 4200,
+  "@ghostvue/vue:GhostTreeGroup": 1800,
+  "@ghostvue/vue:GhostTreeItem": 2400,
+  "@ghostvue/vue:GhostTreeTrigger": 1200,
   "@ghostvue/vue:GhostVisuallyHidden": 700,
   "@ghostvue/themes": 95300,
   "@ghostvue/themes/define": 30800,
@@ -192,5 +196,6 @@
   "@ghostvue/themes:GhostToggleGroup": 3800,
   "@ghostvue/themes:GhostToggleGroupItem": 1700,
   "@ghostvue/themes:GhostToolbar": 2500,
-  "@ghostvue/themes:GhostTooltip": 1700
+  "@ghostvue/themes:GhostTooltip": 1700,
+  "@ghostvue/themes:GhostTree": 4500
 }
