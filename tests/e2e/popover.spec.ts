@@ -96,7 +96,7 @@ test.describe('GhostPopover', () => {
     }
   })
 
-  test('closes nested popovers one layer at a time and passes Axe on themed popover', async ({
+  test('closes nested popovers one layer at a time and passes Axe on themed popover @cross-browser', async ({
     page,
   }) => {
     const playground = await startStaticServer('apps/playground/dist')

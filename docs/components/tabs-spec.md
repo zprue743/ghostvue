@@ -215,6 +215,9 @@ element while mounted.
   SSR without roving listeners, controlled/uncontrolled selection.
 - **Browser (`ghost-tabs.spec.ts`):** example gallery keyboard/pointer, Axe zero
   violations, `@component:GhostTabs`.
+- **Cross-browser (`rtl-roving.spec.ts`, `@cross-browser`):** RTL layout order,
+  mirrored arrows with real focus and `aria-selected`, Home/End, in Chromium,
+  Firefox, and WebKit. No engine differences found; focus and ARIA assertions are shared.
 - **Themed integration:** themed root ref reaches list element.
 - **Type tests:** optional consumer fixtures when exports stabilize.
 

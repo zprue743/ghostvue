@@ -28,8 +28,12 @@ Never copy a SHA from a blog post or another repository without checking it
 against upstream.
 
 Container images are pinned by exact tag. The Playwright image tag must match
-`@playwright/test` in `package.json`; it also provides the browsers, so CI never
-runs `playwright install`.
+`@playwright/test` in `package.json`; it also provides the browsers (Chromium,
+Firefox, and WebKit with their system libraries), so CI never runs
+`playwright install`. The `browser-shard` jobs run the Chromium projects and
+the `browser-cross` jobs run the `firefox-e2e` and `webkit-e2e` projects from
+the same image; see the
+[cross-browser matrix](../standards/testing.md#cross-browser-functional-matrix).
 
 ## Token permissions
 
@@ -51,7 +55,8 @@ needs the review described in the [dependency policy](../standards/dependencies.
 ## Node versions
 
 `engines.node` is `>=22`. The `verify-static` and `verify-unit` jobs run on
-Node 22 and 24. Integration, build, and browser jobs run on Node 22 only. When a
+Node 22 and 24. Integration, build, and browser jobs (including
+`browser-cross`) run on Node 22 only. When a
 new Node LTS line ships, add it to both matrices. Raising the `engines` floor
 needs its own reviewed change.
 

@@ -91,8 +91,65 @@ Vue consumer type fixtures, and `pnpm test:e2e` for browser checks.
 The normal `pnpm verify` gate excludes browser tests to keep routine local and CI
 feedback fast; CI runs the `browser` job inside the pinned Playwright container
 image (`mcr.microsoft.com/playwright:<version>-noble`, matching
-`@playwright/test` in `package.json`) with its bundled Chromium binary and
+`@playwright/test` in `package.json`) with its bundled browsers and
 `--update-snapshots=none` so missing or drifted baselines always fail.
+
+## Cross-browser functional matrix
+
+Keyboard, focus, `inert`, scroll locking, native radio Tab order, and RTL layout
+differ between engines, so a representative set of functional specs also runs in
+Firefox and WebKit. The full suite stays Chromium-only to keep CI cost flat.
+
+| Project        | Browser                 | Runs                                     |
+| -------------- | ----------------------- | ---------------------------------------- |
+| `chromium`     | Desktop Chrome          | `@visual` snapshot suites only           |
+| `chromium-e2e` | Desktop Chrome          | every non-visual spec                    |
+| `firefox-e2e`  | Desktop Firefox (Gecko) | non-visual specs tagged `@cross-browser` |
+| `webkit-e2e`   | Desktop Safari (WebKit) | non-visual specs tagged `@cross-browser` |
+
+Tag a describe block with `{ tag: '@cross-browser' }`, or append
+` @cross-browser` to a test title when adding an options object would only
+re-indent an existing test. Tag a flow when it depends on engine behavior: real
+focus movement, focus traps and nested overlays, `inert`, root or body scroll
+lock, native form controls, pointer-to-value mapping, or RTL geometry. Assert
+real focus (`toBeFocused()`), ARIA state, or bounding boxes, never `tabindex`
+alone. The tagged set currently covers focus primitives (`focus.spec.ts`), modal
+primitives, dialog trap/restore, nested dialogs and popovers, root scroll lock,
+the drawer RTL edge flip, RTL roving for tabs, toggle group, toolbar, menubar,
+segmented control, calendar, and native radios (`rtl-roving.spec.ts`), and
+Slider geometry and pointer mapping in both orientations and directions.
+
+CI runs Chromium in the `browser-shard` matrix and Firefox and WebKit in the
+`browser-cross` matrix, from the same pinned Playwright image, which already
+contains all three browsers and their system libraries. The `browser` check
+merges every report and fails if any leg fails. Locally, `pnpm test:e2e` runs
+all four projects; select one with `--project`, for example
+`pnpm exec playwright test --project=webkit-e2e`. On a host without Firefox or
+WebKit installed, run them inside the Playwright image used by
+`pnpm test:visual:docker`.
+
+Visual baselines are Chromium-only and still come only from
+`pnpm test:visual:docker`. Functional browser coverage never adds Firefox or
+WebKit baselines.
+
+### Known engine differences
+
+Each difference is asserted explicitly in the spec that covers it, with a
+comment. A difference is documented here only when it is engine behavior the
+component intentionally leaves alone, or a workaround the component ships.
+
+| Area                                        | Chromium                                        | Firefox                         | WebKit                                                                                                 |
+| ------------------------------------------- | ----------------------------------------------- | ------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| Headless scrollbars                         | 15px classic with `hideScrollbars=false`        | 0px overlay                     | 0px overlay (and rejects `--blink-settings`)                                                           |
+| Scroll-lock `padding-right`                 | equals the removed scrollbar width              | left untouched                  | left untouched                                                                                         |
+| Native radio RTL ArrowLeft/ArrowRight       | mirrored                                        | mirrored                        | not mirrored: ArrowRight is next in DOM order                                                          |
+| Shift+Tab into an all-unchecked radio group | first radio                                     | first radio                     | last radio                                                                                             |
+| Mouse event coordinates                     | exact edge targets land on the edge             | integers; overshoot track edges | exact edge targets land on the edge                                                                    |
+| Modal close on overlay `pointerdown`        | compatibility `mousedown` cancelled by GhostVue | same as Chromium                | no `mousedown`, focus dropped to `<body>`; GhostVue reapplies the restored focus (see the dialog spec) |
+
+`tests/support/scrollbars.ts` holds the per-engine launch options and the
+scroll-lock assertions. Per-component notes live in the dialog, drawer, radio
+group, and slider specifications.
 
 ## Visual regression
 
@@ -120,7 +177,9 @@ pnpm test:visual
 The `chromium` project runs only `@visual` tests with zero retries, including in
 CI, so a flaky screenshot fails the job. The `chromium-e2e` project runs all
 non-visual browser tests and retains two retries in CI (zero locally).
-`pnpm test:e2e` runs both projects; existing Chromium snapshot names are preserved.
+`pnpm test:e2e` runs these and the Firefox/WebKit functional projects (see
+[the cross-browser matrix](#cross-browser-functional-matrix)); existing Chromium
+snapshot names are preserved.
 
 Committed baselines (`*-chromium-linux.png`) are generated inside the pinned
 Playwright Linux container so host OS font rendering cannot introduce drift. When

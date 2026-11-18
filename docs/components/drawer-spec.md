@@ -337,6 +337,10 @@ Direction resolution walks DOM ancestors only on open/mount changes.
   physical edge geometry for every side in LTR and inside an RTL subtree,
   reduced-motion `translate: none`, non-modal page interaction, nested dialog
   Escape order, and Axe with the drawer open and closed.
+- **Cross-browser (`@cross-browser`):** the RTL-subtree edge flip and nested
+  dialog Escape order also run in Firefox and WebKit. The drawer shares the
+  dialog's modal outside-press handling, including the WebKit focus reapply
+  described under Focus behavior in `docs/components/dialog-spec.md`.
 
 ## Documentation plan
 
