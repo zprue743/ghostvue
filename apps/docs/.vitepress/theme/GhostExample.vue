@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, defineAsyncComponent, onUnmounted, ref } from 'vue'
+import { computed, defineAsyncComponent, onUnmounted, ref, useId } from 'vue'
 
 import { GhostButton } from '@ghostvue/themes'
 
@@ -11,7 +11,16 @@ const props = defineProps<{
   id: string
 }>()
 
+const slots = defineSlots<{
+  /**
+   * Highlighted source for this example. The docs markdown pipeline fills it
+   * with a `<<<` snippet of the same SFC the preview mounts.
+   */
+  default?: () => unknown
+}>()
+
 const meta = computed(() => ghostExampleById(props.id))
+const title = computed(() => meta.value?.title ?? props.id)
 const source = computed(() => exampleSource(props.id)?.replace(/\n$/, '') ?? '')
 const loader = exampleLoader(props.id)
 
@@ -23,6 +32,13 @@ if (!loader) {
 }
 
 const Preview = defineAsyncComponent(loader)
+const sourceRegionId = `ghost-example-source-${useId()}`
+/*
+ * Collapsed by default so the live demo leads. This state lives on the host,
+ * not the demo, and the region uses `v-show`, so toggling never remounts or
+ * resets the preview and the highlighted markup stays in the SSR output.
+ */
+const sourceOpen = ref(false)
 const copied = ref(false)
 let copiedTimer: ReturnType<typeof setTimeout> | undefined
 
@@ -57,25 +73,61 @@ onUnmounted(() => {
   >
     <figcaption class="ghost-example__header">
       <div class="ghost-example__heading">
-        <span class="ghost-example__title">{{ meta?.title ?? id }}</span>
+        <span class="ghost-example__title">{{ title }}</span>
         <span v-if="meta?.layer === 'headless'" class="ghost-example__badge">
           Headless
         </span>
-        <GhostButton
-          class="ghost-example__copy"
-          type="button"
-          size="sm"
-          variant="ghost"
-          tone="neutral"
-          :aria-label="
-            copied
-              ? `Copied ${meta?.title ?? id} source`
-              : `Copy ${meta?.title ?? id} source`
-          "
-          @click="copySource"
-        >
-          {{ copied ? 'Copied' : 'Copy' }}
-        </GhostButton>
+        <div class="ghost-example__actions">
+          <!--
+            Disclosure pattern: a native button whose aria-expanded mirrors the
+            region below. The label stays constant ("Code") so the control does
+            not change width or name when toggled; state is announced via
+            aria-expanded and shown by the chevron.
+          -->
+          <GhostButton
+            v-if="slots.default"
+            class="ghost-example__toggle"
+            type="button"
+            size="sm"
+            variant="ghost"
+            tone="neutral"
+            :aria-expanded="sourceOpen ? 'true' : 'false'"
+            :aria-controls="sourceRegionId"
+            :aria-label="`${title} source code`"
+            @click="sourceOpen = !sourceOpen"
+          >
+            <svg
+              class="ghost-example__chevron"
+              aria-hidden="true"
+              viewBox="0 0 16 16"
+              width="12"
+              height="12"
+            >
+              <path
+                d="M6 3.5 10.5 8 6 12.5"
+                fill="none"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="1.75"
+              />
+            </svg>
+            Code
+          </GhostButton>
+          <GhostButton
+            class="ghost-example__copy"
+            type="button"
+            size="sm"
+            variant="ghost"
+            tone="neutral"
+            :aria-label="
+              copied ? `Copied ${title} source` : `Copy ${title} source`
+            "
+            @click="copySource"
+          >
+            {{ copied ? 'Copied' : 'Copy' }}
+          </GhostButton>
+        </div>
       </div>
       <p v-if="meta?.description" class="ghost-example__description">
         {{ meta.description }}
@@ -87,6 +139,18 @@ onUnmounted(() => {
         <Preview />
       </div>
     </div>
+
+    <div
+      v-if="slots.default"
+      v-show="sourceOpen"
+      :id="sourceRegionId"
+      class="ghost-example__source"
+      data-testid="ghost-example-source"
+      role="region"
+      :aria-label="`${title} source`"
+    >
+      <slot />
+    </div>
   </figure>
 </template>
 
@@ -95,15 +159,11 @@ onUnmounted(() => {
   box-sizing: border-box;
   display: grid;
   gap: 0;
-  margin-block: 1.5rem 0;
+  margin-block: 1.5rem;
   max-inline-size: 100%;
   overflow: hidden;
   border: 1px solid var(--ghost-border-default, var(--vp-c-border));
-  border-block-end: 0;
-  border-end-end-radius: 0;
-  border-end-start-radius: 0;
-  border-start-end-radius: calc(1rem * var(--ghost-roundness, 1));
-  border-start-start-radius: calc(1rem * var(--ghost-roundness, 1));
+  border-radius: calc(1rem * var(--ghost-roundness, 1));
   background: var(--ghost-surface-bg, var(--vp-c-bg));
 }
 
@@ -145,8 +205,32 @@ onUnmounted(() => {
   text-transform: uppercase;
 }
 
-.ghost-example__copy {
+.ghost-example__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
   margin-inline-start: auto;
+}
+
+/* Rotation is transform-only so toggling never shifts surrounding layout. */
+.ghost-example__chevron {
+  flex: none;
+  transition: transform 120ms ease;
+}
+
+.ghost-example__toggle[aria-expanded='true'] .ghost-example__chevron {
+  transform: rotate(90deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ghost-example__chevron {
+    transition: none;
+  }
+}
+
+.ghost-example__source {
+  min-inline-size: 0;
+  border-block-start: 1px solid var(--ghost-border-muted, var(--vp-c-divider));
 }
 
 .ghost-example__description {

@@ -1,10 +1,12 @@
 import { access, readFile, writeFile } from 'node:fs/promises'
 import { join, relative, resolve } from 'node:path'
 
+import {
+  EXAMPLE_ID,
+  EXAMPLE_SOURCE_BLOCK,
+  expandExampleSnippets,
+} from './expand-example-snippets'
 import { mapOutsideFences } from './markdown-fences'
-
-const EXAMPLE_TAG = /<GhostExample\s+id=["']([^"']+)["']\s*\/?\s*>/g
-const EXAMPLE_ID = /^[a-z][a-z0-9-]+\/[a-z][a-z0-9-]+$/
 
 /**
  * Sidebar shape used by the docs site. Nested groups stay under their
@@ -137,36 +139,44 @@ export async function resolveDocsPagePath(
 /**
  * Replace docs `<GhostExample id="..." />` tags with the executable SFC source so
  * llms-full.txt still contains copyable examples instead of a Vue host tag.
+ *
+ * The page is first normalized through the same rewrite the VitePress build
+ * uses, then each whole host (open tag, `<<<` slot, close tag) becomes one
+ * fence. That keeps exactly one copy of each example's source per host and
+ * never leaks wrapper or snippet syntax, whether the author wrote the
+ * self-closing tag, a legacy sibling snippet, or the expanded form. Quoted
+ * hosts inside fences are illustrations and stay verbatim.
  */
 export async function expandExampleTags(
   source: string,
   repoRoot: string,
 ): Promise<string> {
-  const expandable: { tag: string; id: string }[] = []
-  mapOutsideFences(source, (chunk) => {
-    EXAMPLE_TAG.lastIndex = 0
-    for (const match of chunk.matchAll(EXAMPLE_TAG)) {
+  const normalized = expandExampleSnippets(source)
+  const ids = new Set<string>()
+  mapOutsideFences(normalized, (chunk) => {
+    for (const match of chunk.matchAll(EXAMPLE_SOURCE_BLOCK)) {
       const id = match[1]
       if (id && EXAMPLE_ID.test(id)) {
-        expandable.push({ tag: match[0], id })
+        ids.add(id)
       }
     }
     return chunk
   })
 
-  let result = source
-  const seen = new Set<string>()
-  for (const { tag, id } of expandable) {
-    if (seen.has(tag)) {
-      continue
-    }
-    seen.add(tag)
+  const sources = new Map<string, string>()
+  for (const id of ids) {
     const filePath = join(repoRoot, 'examples', `${id}.vue`)
-    const exampleSource = (await readFile(filePath, 'utf8')).replace(/\n+$/, '')
-    result = result.replaceAll(tag, `\`\`\`vue\n${exampleSource}\n\`\`\``)
+    sources.set(id, (await readFile(filePath, 'utf8')).replace(/\n+$/, ''))
   }
 
-  return result
+  return mapOutsideFences(normalized, (chunk) =>
+    chunk.replace(EXAMPLE_SOURCE_BLOCK, (block, id: string) => {
+      const exampleSource = sources.get(id)
+      return exampleSource === undefined
+        ? block
+        : `\`\`\`vue\n${exampleSource}\n\`\`\``
+    }),
+  )
 }
 
 /**
