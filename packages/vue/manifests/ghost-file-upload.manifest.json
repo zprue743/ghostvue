@@ -1,0 +1,242 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "generated",
+  "name": "GhostFileUpload",
+  "package": "@ghostvue/vue",
+  "status": "experimental",
+  "description": "Headless file picker with a removable File[] list. Browse and drop share one intake path that checks accept, maxFileSize, validate, and capacity in input order, appends accepted files, and reports each rejected file with a typed reason. Optional form participation through a visually hidden file input mirror (name, form, required, reset). Outcomes are announced through a polite live region. Client-side checks are UX, not a security control; consumers own uploads.",
+  "props": [
+    {
+      "name": "accept",
+      "type": "string",
+      "required": false,
+      "description": "Native `accept` grammar: a picker hint that is also enforced on intake.",
+      "deprecated": false
+    },
+    {
+      "name": "defaultValue",
+      "type": "File[]",
+      "default": "[]",
+      "required": false,
+      "description": "Uncontrolled seed and form-reset baseline, captured once at setup.",
+      "deprecated": false
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Disables the trigger, drops, and remove buttons, and omits the mirror from submit.",
+      "deprecated": false
+    },
+    {
+      "name": "form",
+      "type": "string",
+      "required": false,
+      "description": "`form` attribute for the mirror and the picker.",
+      "deprecated": false
+    },
+    {
+      "name": "id",
+      "type": "string",
+      "required": false,
+      "description": "Id of the trigger (the labelable control), not of the root element.",
+      "deprecated": false
+    },
+    {
+      "name": "invalid",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Consumer validity, combined with native constraint failure.",
+      "deprecated": false
+    },
+    {
+      "name": "maxFiles",
+      "type": "number",
+      "required": false,
+      "description": "Total list capacity. Floored; not finite or below 1 is unlimited. `1` turns `multiple` off.",
+      "deprecated": false
+    },
+    {
+      "name": "maxFileSize",
+      "type": "number",
+      "required": false,
+      "description": "Per-file limit in bytes; equal is accepted. Not finite or negative is unset.",
+      "deprecated": false
+    },
+    {
+      "name": "messages",
+      "type": "Partial<GhostFileUploadMessages>",
+      "required": false,
+      "description": "Typed, reactive overrides of announcement and label text.",
+      "deprecated": false
+    },
+    {
+      "name": "modelValue",
+      "type": "File[]",
+      "required": false,
+      "description": "Controlled list. `undefined` is uncontrolled; `[]` is a real empty value.",
+      "deprecated": false
+    },
+    {
+      "name": "name",
+      "type": "string",
+      "required": false,
+      "description": "Form mirror `name`. Without it no mirror renders and nothing is submitted.",
+      "deprecated": false
+    },
+    {
+      "name": "preventDocumentDrop",
+      "type": "boolean",
+      "default": true,
+      "required": false,
+      "description": "Cancel file drags and drops outside every dropzone while an enabled dropzone is mounted.",
+      "deprecated": false
+    },
+    {
+      "name": "required",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Native `required` on the form mirror when `name` is set.",
+      "deprecated": false
+    },
+    {
+      "name": "validate",
+      "type": "GhostFileUploadValidate",
+      "required": false,
+      "description": "Synchronous, pure check after `accept` and `maxFileSize`; return a string to reject.",
+      "deprecated": false
+    }
+  ],
+  "models": [
+    {
+      "prop": "modelValue",
+      "event": "update:modelValue",
+      "type": "File[]",
+      "description": "v-model for the File[] list. Every change emits a new array with the same File instances; the consumer array is never mutated."
+    }
+  ],
+  "events": [
+    {
+      "name": "reject",
+      "payloadType": "GhostFileUploadRejection[]",
+      "description": "Once per intake batch with at least one rejection, after update:modelValue. Fires even when a controlled parent ignores the list update."
+    }
+  ],
+  "slots": [
+    {
+      "name": "default",
+      "props": [
+        {
+          "name": "clear",
+          "type": "() => void",
+          "description": "Empties the list and `rejections`, and announces it."
+        },
+        {
+          "name": "clearRejections",
+          "type": "() => void",
+          "description": "Empties `rejections` without touching the list."
+        },
+        {
+          "name": "entries",
+          "type": "readonly GhostFileUploadEntry[]",
+          "description": "Current list with stable ids for `v-for` keys."
+        },
+        {
+          "name": "invalid",
+          "type": "boolean",
+          "description": "Effective invalid state: `invalid` prop or native constraint failure."
+        },
+        {
+          "name": "openPicker",
+          "type": "() => void",
+          "description": "Opens the native picker. No-op when disabled."
+        },
+        {
+          "name": "rejections",
+          "type": "readonly GhostFileUploadRejection[]",
+          "description": "Rejections from the most recent intake only."
+        },
+        {
+          "name": "remaining",
+          "type": "number | undefined",
+          "description": "`maxFiles` minus list length, never below 0; `undefined` when unlimited."
+        },
+        {
+          "name": "remove",
+          "type": "(file: File) => void",
+          "description": "Removes the first identical entry and applies the focus rule."
+        }
+      ],
+      "description": "Consumer layout of the parts, with the list entries, rejections from the latest intake, remaining capacity, effective invalid state, and actions."
+    }
+  ],
+  "exposed": [
+    {
+      "name": "blur",
+      "kind": "method",
+      "type": "() => void",
+      "description": "Blurs the trigger."
+    },
+    {
+      "name": "clear",
+      "kind": "method",
+      "type": "() => void",
+      "description": "Same as the slot `clear`."
+    },
+    {
+      "name": "element",
+      "kind": "property",
+      "type": "HTMLElement | null",
+      "description": "The root element."
+    },
+    {
+      "name": "focus",
+      "kind": "method",
+      "type": "(options?: FocusOptions) => void",
+      "description": "Focuses the trigger."
+    },
+    {
+      "name": "openPicker",
+      "kind": "method",
+      "type": "() => void",
+      "description": "Opens the native picker; call inside a user gesture."
+    }
+  ],
+  "styling": {
+    "parts": [
+      {
+        "name": "root",
+        "description": "State owner element (div). Internal picker, form-input mirror, and announcer are not styling hooks."
+      }
+    ],
+    "states": [
+      {
+        "name": "invalid",
+        "description": "invalid prop or native required failure from the mirror. Wins over disabled."
+      },
+      {
+        "name": "disabled",
+        "description": "Root is disabled."
+      }
+    ],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "generic",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/button/",
+    "keyboard": {},
+    "requiredAriaAttributes": []
+  },
+  "examples": [
+    "file-upload/basic",
+    "file-upload/button-only",
+    "file-upload/field",
+    "file-upload/validation",
+    "file-upload/duplicates",
+    "file-upload/controlled",
+    "file-upload/form"
+  ]
+}

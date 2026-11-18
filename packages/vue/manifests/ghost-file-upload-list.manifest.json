@@ -1,0 +1,45 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "generated",
+  "name": "GhostFileUploadList",
+  "package": "@ghostvue/vue",
+  "status": "experimental",
+  "description": "Unordered list of chosen files (ul), rendered only while the list is non-empty. Consumers name it with aria-label or aria-labelledby.",
+  "props": [],
+  "models": [],
+  "events": [],
+  "slots": [
+    {
+      "name": "default",
+      "props": [],
+      "description": "GhostFileUploadItem elements, usually one per entry."
+    }
+  ],
+  "exposed": [
+    {
+      "name": "element",
+      "kind": "property",
+      "type": "HTMLElement | null",
+      "description": "`null` while the list is empty (the list is not rendered)."
+    }
+  ],
+  "styling": {
+    "parts": [
+      {
+        "name": "list",
+        "description": "File list rendered by GhostFileUploadList."
+      }
+    ],
+    "states": [],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "list",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/button/",
+    "keyboard": {},
+    "requiredAriaAttributes": [
+      "aria-label"
+    ]
+  },
+  "examples": []
+}
