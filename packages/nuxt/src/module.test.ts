@@ -26,10 +26,18 @@ vi.mock('@nuxt/kit', async (importOriginal) => {
       })
       return logger
     },
-    tryResolveModule: (id: string, url: URL | URL[]) =>
-      kitMocks.themesInstalled
-        ? kit.tryResolveModule(id, url)
-        : Promise.resolve(undefined),
+    // Decide @ghostvue/themes resolution here instead of resolving it for
+    // real: its package entry points at dist/, which only exists after a
+    // build, and unit tests must not depend on build output. The Nuxt fixture
+    // build (pnpm test:nuxt) covers real resolution of the installed package.
+    tryResolveModule: (id: string, url: URL | URL[]) => {
+      if (id !== '@ghostvue/themes') return kit.tryResolveModule(id, url)
+      return Promise.resolve(
+        kitMocks.themesInstalled
+          ? 'file:///node_modules/@ghostvue/themes/dist/index.js'
+          : undefined,
+      )
+    },
   }
 })
 
