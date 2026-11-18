@@ -21,6 +21,13 @@ shared <- core <- vue
   `scripts/workspace-packages.mjs` now that themed `GhostButton` is the first
   wrapper.
 
+- `eslint-plugin` (`@ghostvue/eslint-plugin`) is Node-only tooling with no
+  internal production dependency, and no package may depend on it. It reads
+  component contracts from `packages/vue/manifests` and
+  `packages/themes/manifests` through a generated data module
+  (`pnpm registries:write`), not through imports, so it never loads Vue or
+  component code. See the [ESLint plugin](../tooling/eslint-plugin.md) docs.
+
 Themed Vue components belong in `themes`. Headless composables and thin
 unstyled components belong in `vue`. Do not add a third package merely to
 host styled twins.

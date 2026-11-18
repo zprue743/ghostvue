@@ -23,7 +23,7 @@ const config = {
         path: '^packages/shared/',
       },
       to: {
-        path: '^(@ghostvue/(core|vue|themes)(/|$)|packages/(core|vue|themes)/)',
+        path: '^(@ghostvue/(core|vue|themes|eslint-plugin)(/|$)|packages/(core|vue|themes|eslint-plugin)/)',
       },
     },
     {
@@ -35,31 +35,43 @@ const config = {
         path: '^packages/core/',
       },
       to: {
-        path: '^(@ghostvue/(vue|themes)(/|$)|packages/(vue|themes)/)',
+        path: '^(@ghostvue/(vue|themes|eslint-plugin)(/|$)|packages/(vue|themes|eslint-plugin)/)',
       },
     },
     {
       name: 'vue-no-themes',
       severity: 'error',
       comment:
-        '@ghostvue/vue must remain headless and never depend on @ghostvue/themes (docs/architecture/package-boundaries.md).',
+        '@ghostvue/vue must remain headless and never depend on @ghostvue/themes or the Node-only @ghostvue/eslint-plugin (docs/architecture/package-boundaries.md).',
       from: {
         path: '^packages/vue/',
       },
       to: {
-        path: '^(@ghostvue/themes(/|$)|packages/themes/)',
+        path: '^(@ghostvue/(themes|eslint-plugin)(/|$)|packages/(themes|eslint-plugin)/)',
       },
     },
     {
       name: 'themes-only-depends-on-vue',
       severity: 'error',
       comment:
-        '@ghostvue/themes may only depend on @ghostvue/vue among workspace packages (scripts/workspace-packages.mjs).',
+        '@ghostvue/themes may only depend on @ghostvue/vue among workspace packages; tooling such as @ghostvue/eslint-plugin is never a runtime dependency (scripts/workspace-packages.mjs).',
       from: {
         path: '^packages/themes/',
       },
       to: {
-        path: '^(@ghostvue/(core|shared)(/|$)|packages/(core|shared)/)',
+        path: '^(@ghostvue/(core|shared|eslint-plugin)(/|$)|packages/(core|shared|eslint-plugin)/)',
+      },
+    },
+    {
+      name: 'eslint-plugin-no-internal-dependencies',
+      severity: 'error',
+      comment:
+        '@ghostvue/eslint-plugin runs in Node inside ESLint and reads component contracts from generated manifest data, never from another workspace package (scripts/workspace-packages.mjs).',
+      from: {
+        path: '^packages/eslint-plugin/',
+      },
+      to: {
+        path: '^(@ghostvue/(shared|core|vue|themes)(/|$)|packages/(shared|core|vue|themes)/)',
       },
     },
     {

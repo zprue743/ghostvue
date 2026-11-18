@@ -5,7 +5,16 @@
   "package": "@ghostvue/themes",
   "status": "experimental",
   "description": "Themed GhostRadioGroup and GhostRadioGroupItem with default radio ring styles.",
-  "props": [],
+  "props": [
+    {
+      "name": "size",
+      "type": "'sm' | 'md' | 'lg'",
+      "default": "md",
+      "required": false,
+      "description": "Group layout density. The default omits data-size so CSS can treat a missing hook as md.",
+      "deprecated": false
+    }
+  ],
   "models": [],
   "events": [],
   "slots": [

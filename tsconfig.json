@@ -12,6 +12,7 @@
     { "path": "./packages/core" },
     { "path": "./packages/themes" },
     { "path": "./packages/vue" },
+    { "path": "./packages/eslint-plugin" },
     { "path": "./apps/playground" }
   ]
 }

@@ -11,8 +11,8 @@ judgment; zero-major status is not permission for surprise breakage.
 ## Publication status
 
 Publication is **disabled**. The first public release is `0.1.0` of
-`@ghostvue/shared`, `@ghostvue/core`, `@ghostvue/vue`, and `@ghostvue/themes`
-under the `@ghostvue` npm scope. The maintainer authorized preparing a dry-run
+`@ghostvue/shared`, `@ghostvue/core`, `@ghostvue/vue`, `@ghostvue/themes`, and
+`@ghostvue/eslint-plugin` under the `@ghostvue` npm scope. The maintainer authorized preparing a dry-run
 pipeline and approval gate only (GHO-57). Real publication requires a separate,
 explicit maintainer authorization. No agent may publish packages, create npm
 tokens, or create releases without that authorization.

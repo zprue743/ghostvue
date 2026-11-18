@@ -30,4 +30,13 @@ export const workspacePackages = [
     responsibility: 'Optional theme and design-token infrastructure.',
     allowedDependencies: ['@ghostvue/vue'],
   },
+  {
+    directory: 'eslint-plugin',
+    name: '@ghostvue/eslint-plugin',
+    responsibility:
+      'Node-only ESLint rules that check GhostVue component usage against manifests.',
+    // Component contracts are compiled from packages/{vue,themes}/manifests at
+    // registries:write time, so there is no runtime or source import edge.
+    allowedDependencies: [],
+  },
 ]
