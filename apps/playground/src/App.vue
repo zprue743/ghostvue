@@ -1897,6 +1897,12 @@ table {
   border-collapse: collapse;
 }
 
+/* Headless GhostTable scroll-container gets playground-owned horizontal containment. */
+main :deep(.ghost-table-scroll-container) {
+  max-inline-size: 100%;
+  overflow-x: auto;
+}
+
 th,
 td {
   border: 1px solid #767676;
