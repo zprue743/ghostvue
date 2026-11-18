@@ -1,0 +1,65 @@
+{
+  "schemaVersion": "1.0.0",
+  "slug": "drawer",
+  "docs": {
+    "title": "GhostDrawer",
+    "specStatus": "approved",
+    "link": "/components/drawer",
+    "specLink": "/specs/drawer",
+    "category": "overlays",
+    "sidebarLabel": "Drawer"
+  },
+  "vueBarrel": [
+    "export { default as GhostDrawer } from './GhostDrawer.vue'",
+    "export { default as GhostDrawerTrigger } from './GhostDrawerTrigger.vue'",
+    "export { default as GhostDrawerOverlay } from './GhostDrawerOverlay.vue'",
+    "export { default as GhostDrawerContent } from './GhostDrawerContent.vue'",
+    "export { default as GhostDrawerTitle } from './GhostDrawerTitle.vue'",
+    "export { default as GhostDrawerDescription } from './GhostDrawerDescription.vue'",
+    "export { default as GhostDrawerClose } from './GhostDrawerClose.vue'",
+    "export { useGhostDrawer } from './use-ghost-drawer'",
+    "export { resolveDrawerDir } from './ghost-drawer'",
+    "export type {\n  GhostDrawerCloseElement,\n  GhostDrawerCloseExposed,\n  GhostDrawerCloseProps,\n  GhostDrawerContentElement,\n  GhostDrawerContentExposed,\n  GhostDrawerContentProps,\n  GhostDrawerContentRole,\n  GhostDrawerContext,\n  GhostDrawerDescriptionElement,\n  GhostDrawerDescriptionExposed,\n  GhostDrawerDescriptionProps,\n  GhostDrawerDirection,\n  GhostDrawerOverlayElement,\n  GhostDrawerOverlayExposed,\n  GhostDrawerOverlayProps,\n  GhostDrawerProps,\n  GhostDrawerSide,\n  GhostDrawerSlotProps,\n  GhostDrawerTitleElement,\n  GhostDrawerTitleExposed,\n  GhostDrawerTitleProps,\n  GhostDrawerTriggerElement,\n  GhostDrawerTriggerExposed,\n  GhostDrawerTriggerProps,\n  ResolveDrawerDirOptions,\n  UseGhostDrawerOptions,\n  UseGhostDrawerReturn,\n} from './ghost-drawer'"
+  ],
+  "themesBarrel": [
+    "export {\n  GhostDrawer,\n  type GhostDrawerDirection,\n  type GhostDrawerSide,\n  type GhostDrawerSlotProps,\n} from './ghost-drawer'",
+    "export {\n  GhostDrawerTrigger,\n  type GhostDrawerTriggerElement,\n  type GhostDrawerTriggerExposed,\n} from './ghost-drawer-trigger'",
+    "export {\n  GhostDrawerOverlay,\n  type GhostDrawerOverlayElement,\n  type GhostDrawerOverlayExposed,\n} from './ghost-drawer-overlay'",
+    "export {\n  GhostDrawerContent,\n  type GhostDrawerContentElement,\n  type GhostDrawerContentExposed,\n  type GhostDrawerContentRole,\n} from './ghost-drawer-content'",
+    "export {\n  GhostDrawerTitle,\n  type GhostDrawerTitleElement,\n  type GhostDrawerTitleExposed,\n} from './ghost-drawer-title'",
+    "export {\n  GhostDrawerDescription,\n  type GhostDrawerDescriptionElement,\n  type GhostDrawerDescriptionExposed,\n} from './ghost-drawer-description'",
+    "export {\n  GhostDrawerClose,\n  type GhostDrawerCloseElement,\n  type GhostDrawerCloseExposed,\n} from './ghost-drawer-close'"
+  ],
+  "examples": [
+    {
+      "id": "drawer/basic",
+      "title": "Basic",
+      "description": "Unstyled end-side modal drawer with overlay, trapped Tab focus, scroll lock, and inert background.",
+      "layer": "headless"
+    },
+    {
+      "id": "drawer/themed",
+      "title": "Themed",
+      "description": "Elevation-4 end-side sheet with scrim overlay, slide-in entry, and themed button actions.",
+      "layer": "themed"
+    },
+    {
+      "id": "drawer/sides",
+      "title": "Sides",
+      "description": "Logical start and end side panels plus top and bottom sheets, including an RTL subtree.",
+      "layer": "themed"
+    },
+    {
+      "id": "drawer/non-modal",
+      "title": "Non-modal",
+      "description": "Drawer with modal=false: no overlay, scroll lock, or focus trap; the page stays interactive.",
+      "layer": "themed"
+    },
+    {
+      "id": "drawer/nested",
+      "title": "Nested",
+      "description": "Confirmation dialog stacked above a filter drawer; Escape dismisses only the topmost layer.",
+      "layer": "themed"
+    }
+  ]
+}

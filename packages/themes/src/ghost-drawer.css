@@ -1,0 +1,338 @@
+/*
+ * Themed GhostDrawer overlay and edge-anchored surface. Visual values come from
+ * semantic --ghost-* tokens with no component-specific tokens.
+ *
+ * Placement uses physical edges keyed on [data-side] + [data-dir]: a portaled
+ * `position: fixed` drawer resolves `inset-inline-*` against <html>, not the
+ * localized `[dir]` subtree around its trigger, so the headless part resolves
+ * the direction and these rules map it to left/right explicitly.
+ *
+ * Entry is a slide + fade via @starting-style (no exit animation: closed
+ * drawers unmount immediately). Reduced motion keeps only an opacity fade.
+ */
+@layer ghostvue-theme {
+  :where(
+    .ghost-theme .ghost-drawer-overlay[data-state='open'],
+    .ghost-themed-scope .ghost-drawer-overlay[data-state='open'],
+    .ghost-drawer-overlay[data-themed][data-state='open']
+  ) {
+    background-color: var(--ghost-scrim);
+    inset: 0;
+    position: fixed;
+    z-index: 50;
+  }
+
+  :where(
+    .ghost-theme .ghost-drawer-content[data-state='open'],
+    .ghost-themed-scope .ghost-drawer-content[data-state='open'],
+    .ghost-drawer-content[data-themed][data-state='open']
+  ) {
+    align-content: start;
+    background-color: var(--ghost-elevation-4-bg);
+    border: var(--ghost-border-hairline-width) solid
+      var(--ghost-elevation-4-border);
+    border-radius: 0;
+    box-shadow:
+      var(--ghost-elevation-4-shadow), var(--ghost-elevation-4-highlight);
+    box-sizing: border-box;
+    color: var(--ghost-surface-fg);
+    display: grid;
+    font-family: var(--ghost-type-family-sans);
+    font-feature-settings: var(--ghost-type-feature-default);
+    gap: var(--ghost-space-gap-md);
+    overflow: auto;
+    overscroll-behavior: contain;
+    padding: var(--ghost-space-inset-lg);
+    position: fixed;
+    z-index: 50;
+  }
+
+  /* Side panels (start / end): full dynamic viewport height. */
+  :where(
+    .ghost-theme
+      .ghost-drawer-content:is([data-side='start'], [data-side='end']),
+    .ghost-themed-scope
+      .ghost-drawer-content:is([data-side='start'], [data-side='end']),
+    .ghost-drawer-content[data-themed]:is(
+        [data-side='start'],
+        [data-side='end']
+      )
+  ) {
+    block-size: 100dvh;
+    bottom: 0;
+    inline-size: min(calc(100dvw - 2 * var(--ghost-space-inset-lg)), 42ch);
+    max-block-size: 100dvh;
+    max-inline-size: 100dvw;
+    top: 0;
+  }
+
+  /* Physical left edge: start in LTR, end in RTL. Inner edge is the right. */
+  :where(
+    .ghost-theme
+      .ghost-drawer-content:is(
+        [data-side='start'][data-dir='ltr'],
+        [data-side='end'][data-dir='rtl']
+      ),
+    .ghost-themed-scope
+      .ghost-drawer-content:is(
+        [data-side='start'][data-dir='ltr'],
+        [data-side='end'][data-dir='rtl']
+      ),
+    .ghost-drawer-content[data-themed]:is(
+        [data-side='start'][data-dir='ltr'],
+        [data-side='end'][data-dir='rtl']
+      )
+  ) {
+    border-bottom-right-radius: var(--ghost-radius-lg);
+    border-left-width: 0;
+    border-top-right-radius: var(--ghost-radius-lg);
+    left: 0;
+  }
+
+  /* Physical right edge: end in LTR, start in RTL. Inner edge is the left. */
+  :where(
+    .ghost-theme
+      .ghost-drawer-content:is(
+        [data-side='end'][data-dir='ltr'],
+        [data-side='start'][data-dir='rtl']
+      ),
+    .ghost-themed-scope
+      .ghost-drawer-content:is(
+        [data-side='end'][data-dir='ltr'],
+        [data-side='start'][data-dir='rtl']
+      ),
+    .ghost-drawer-content[data-themed]:is(
+        [data-side='end'][data-dir='ltr'],
+        [data-side='start'][data-dir='rtl']
+      )
+  ) {
+    border-bottom-left-radius: var(--ghost-radius-lg);
+    border-right-width: 0;
+    border-top-left-radius: var(--ghost-radius-lg);
+    right: 0;
+  }
+
+  /* Sheet panels (top / bottom): full dynamic viewport width. */
+  :where(
+    .ghost-theme
+      .ghost-drawer-content:is([data-side='top'], [data-side='bottom']),
+    .ghost-themed-scope
+      .ghost-drawer-content:is([data-side='top'], [data-side='bottom']),
+    .ghost-drawer-content[data-themed]:is(
+        [data-side='top'],
+        [data-side='bottom']
+      )
+  ) {
+    inline-size: 100dvw;
+    left: 0;
+    max-block-size: min(calc(100dvh - 2 * var(--ghost-space-inset-lg)), 85dvh);
+    max-inline-size: 100dvw;
+  }
+
+  :where(
+    .ghost-theme .ghost-drawer-content[data-side='top'],
+    .ghost-themed-scope .ghost-drawer-content[data-side='top'],
+    .ghost-drawer-content[data-themed][data-side='top']
+  ) {
+    border-bottom-left-radius: var(--ghost-radius-lg);
+    border-bottom-right-radius: var(--ghost-radius-lg);
+    border-top-width: 0;
+    top: 0;
+  }
+
+  :where(
+    .ghost-theme .ghost-drawer-content[data-side='bottom'],
+    .ghost-themed-scope .ghost-drawer-content[data-side='bottom'],
+    .ghost-drawer-content[data-themed][data-side='bottom']
+  ) {
+    border-bottom-width: 0;
+    border-top-left-radius: var(--ghost-radius-lg);
+    border-top-right-radius: var(--ghost-radius-lg);
+    bottom: 0;
+  }
+
+  /* Child combinators keep a nested dialog's parts from inheriting these. */
+  :where(
+    .ghost-theme .ghost-drawer-content > [data-part='title'],
+    .ghost-themed-scope .ghost-drawer-content > [data-part='title'],
+    .ghost-drawer-content[data-themed] > [data-part='title']
+  ) {
+    font-size: var(--ghost-type-size-lg);
+    font-weight: var(--ghost-type-weight-semibold);
+    line-height: var(--ghost-type-line-snug);
+    margin: 0;
+  }
+
+  :where(
+    .ghost-theme .ghost-drawer-content > [data-part='description'],
+    .ghost-themed-scope .ghost-drawer-content > [data-part='description'],
+    .ghost-drawer-content[data-themed] > [data-part='description']
+  ) {
+    color: var(--ghost-text-muted);
+    font-size: var(--ghost-type-size-sm);
+    line-height: var(--ghost-type-line-normal);
+    margin: 0;
+  }
+
+  :where(
+    .ghost-theme .ghost-drawer-content:focus-visible,
+    .ghost-themed-scope .ghost-drawer-content:focus-visible,
+    .ghost-drawer-content[data-themed]:focus-visible
+  ) {
+    box-shadow:
+      var(--ghost-elevation-4-shadow),
+      var(--ghost-elevation-4-highlight),
+      0 0 0 var(--ghost-focus-ring-offset) var(--ghost-focus-ring-contrast);
+    outline: var(--ghost-focus-ring-width) solid var(--ghost-focus-ring-color);
+    outline-offset: calc(-1 * var(--ghost-focus-ring-width));
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    :where(
+      .ghost-theme .ghost-drawer-overlay[data-state='open'],
+      .ghost-themed-scope .ghost-drawer-overlay[data-state='open'],
+      .ghost-drawer-overlay[data-themed][data-state='open']
+    ) {
+      transition: opacity var(--ghost-motion-enter-duration)
+        var(--ghost-motion-enter-easing);
+    }
+
+    :where(
+      .ghost-theme .ghost-drawer-content[data-state='open'],
+      .ghost-themed-scope .ghost-drawer-content[data-state='open'],
+      .ghost-drawer-content[data-themed][data-state='open']
+    ) {
+      transition:
+        opacity var(--ghost-motion-enter-duration)
+          var(--ghost-motion-enter-easing),
+        translate var(--ghost-motion-enter-duration)
+          var(--ghost-motion-enter-easing);
+    }
+
+    @starting-style {
+      :where(
+        .ghost-theme .ghost-drawer-overlay[data-state='open'],
+        .ghost-themed-scope .ghost-drawer-overlay[data-state='open'],
+        .ghost-drawer-overlay[data-themed][data-state='open']
+      ) {
+        opacity: 0;
+      }
+
+      :where(
+        .ghost-theme .ghost-drawer-content[data-state='open'],
+        .ghost-themed-scope .ghost-drawer-content[data-state='open'],
+        .ghost-drawer-content[data-themed][data-state='open']
+      ) {
+        opacity: 0;
+      }
+
+      /* Slide in from the anchored edge: left-anchored panels start off-screen left. */
+      :where(
+        .ghost-theme
+          .ghost-drawer-content:is(
+            [data-side='start'][data-dir='ltr'],
+            [data-side='end'][data-dir='rtl']
+          ),
+        .ghost-themed-scope
+          .ghost-drawer-content:is(
+            [data-side='start'][data-dir='ltr'],
+            [data-side='end'][data-dir='rtl']
+          ),
+        .ghost-drawer-content[data-themed]:is(
+            [data-side='start'][data-dir='ltr'],
+            [data-side='end'][data-dir='rtl']
+          )
+      ) {
+        translate: -100% 0;
+      }
+
+      :where(
+        .ghost-theme
+          .ghost-drawer-content:is(
+            [data-side='end'][data-dir='ltr'],
+            [data-side='start'][data-dir='rtl']
+          ),
+        .ghost-themed-scope
+          .ghost-drawer-content:is(
+            [data-side='end'][data-dir='ltr'],
+            [data-side='start'][data-dir='rtl']
+          ),
+        .ghost-drawer-content[data-themed]:is(
+            [data-side='end'][data-dir='ltr'],
+            [data-side='start'][data-dir='rtl']
+          )
+      ) {
+        translate: 100% 0;
+      }
+
+      :where(
+        .ghost-theme .ghost-drawer-content[data-side='top'],
+        .ghost-themed-scope .ghost-drawer-content[data-side='top'],
+        .ghost-drawer-content[data-themed][data-side='top']
+      ) {
+        translate: 0 -100%;
+      }
+
+      :where(
+        .ghost-theme .ghost-drawer-content[data-side='bottom'],
+        .ghost-themed-scope .ghost-drawer-content[data-side='bottom'],
+        .ghost-drawer-content[data-themed][data-side='bottom']
+      ) {
+        translate: 0 100%;
+      }
+    }
+  }
+
+  /* Reduced motion: no spatial movement in resting or starting state; a short
+   * opacity fade still signals that a layer appeared. */
+  @media (prefers-reduced-motion: reduce) {
+    :where(
+      .ghost-theme .ghost-drawer-overlay[data-state='open'],
+      .ghost-themed-scope .ghost-drawer-overlay[data-state='open'],
+      .ghost-drawer-overlay[data-themed][data-state='open'],
+      .ghost-theme .ghost-drawer-content[data-state='open'],
+      .ghost-themed-scope .ghost-drawer-content[data-state='open'],
+      .ghost-drawer-content[data-themed][data-state='open']
+    ) {
+      transition: opacity var(--ghost-motion-fade-duration)
+        var(--ghost-motion-easing-standard);
+      translate: none;
+    }
+
+    @starting-style {
+      :where(
+        .ghost-theme .ghost-drawer-overlay[data-state='open'],
+        .ghost-themed-scope .ghost-drawer-overlay[data-state='open'],
+        .ghost-drawer-overlay[data-themed][data-state='open'],
+        .ghost-theme .ghost-drawer-content[data-state='open'],
+        .ghost-themed-scope .ghost-drawer-content[data-state='open'],
+        .ghost-drawer-content[data-themed][data-state='open']
+      ) {
+        opacity: 0;
+        translate: none;
+      }
+    }
+  }
+
+  @media (forced-colors: active) {
+    :where(
+      .ghost-theme .ghost-drawer-content[data-state='open'],
+      .ghost-themed-scope .ghost-drawer-content[data-state='open'],
+      .ghost-drawer-content[data-themed][data-state='open']
+    ) {
+      background-color: Canvas;
+      border-color: CanvasText;
+      box-shadow: none;
+      color: CanvasText;
+    }
+
+    :where(
+      .ghost-theme .ghost-drawer-content:focus-visible,
+      .ghost-themed-scope .ghost-drawer-content:focus-visible,
+      .ghost-drawer-content[data-themed]:focus-visible
+    ) {
+      box-shadow: none;
+      outline-color: Highlight;
+    }
+  }
+}

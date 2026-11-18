@@ -1,0 +1,64 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "generated",
+  "name": "GhostDrawerDescription",
+  "package": "@ghostvue/vue",
+  "status": "experimental",
+  "description": "Accessible description for GhostDrawerContent. Registers its id on context so Content links via aria-describedby automatically.",
+  "props": [
+    {
+      "name": "as",
+      "type": "GhostDrawerDescriptionElement",
+      "default": "p",
+      "required": false,
+      "description": "Tag name or component rendered for the drawer description.",
+      "deprecated": false
+    }
+  ],
+  "models": [],
+  "events": [],
+  "slots": [
+    {
+      "name": "default",
+      "props": [],
+      "description": "Supporting drawer description text."
+    }
+  ],
+  "exposed": [
+    {
+      "name": "blur",
+      "kind": "method",
+      "type": "() => void",
+      "description": "Blurs the resolved description element."
+    },
+    {
+      "name": "element",
+      "kind": "property",
+      "type": "HTMLElement | null",
+      "description": "Resolved description element after mount; null before mount and after unmount."
+    },
+    {
+      "name": "focus",
+      "kind": "method",
+      "type": "(options?: FocusOptions) => void",
+      "description": "Focuses the resolved description element."
+    }
+  ],
+  "styling": {
+    "parts": [
+      {
+        "name": "description",
+        "description": "Description element marked with data-part=\"description\"."
+      }
+    ],
+    "states": [],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "generic",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/",
+    "keyboard": {},
+    "requiredAriaAttributes": []
+  },
+  "examples": []
+}
