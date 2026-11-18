@@ -171,6 +171,22 @@ describe('CI workflow', () => {
     )
   })
 
+  it('keeps unit and integration Vitest blobs from overwriting each other', () => {
+    // `verify` downloads every `vitest-blob-*` artifact into one directory.
+    // An unsharded run writes `.vitest-reports/blob.json` by default, so a
+    // second unsharded job without its own name would silently replace the
+    // first job's coverage before the thresholds are enforced.
+    const unit = jobBlock(workflow, 'verify-unit')
+    expect(unit).toContain('--outputFile.blob=.vitest-reports/blob-unit.json')
+    expect(unit).not.toMatch(/--shard=/)
+    expect(unit).toContain('name: vitest-blob-unit\n')
+
+    const integration = jobBlock(workflow, 'verify-integration')
+    expect(integration).not.toMatch(/--outputFile\.blob=\S*blob-unit\.json/)
+    expect(integration).toContain('name: vitest-blob-integration')
+    expect(jobBlock(workflow, 'verify')).toContain('pattern: vitest-blob-*')
+  })
+
   it('runs browsers from the Playwright image matching @playwright/test', () => {
     const playwrightVersion =
       (

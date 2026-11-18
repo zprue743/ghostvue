@@ -55,7 +55,8 @@ needs the review described in the [dependency policy](../standards/dependencies.
 ## Node versions
 
 `engines.node` is `>=22`. The `verify-static` and `verify-unit` jobs run on
-Node 22 and 24. Integration, build, and browser jobs (including
+Node 22 and 24. Each `verify-unit` leg runs the whole unit suite unsharded;
+only the Node 22 leg uploads its coverage blob. Integration, build, and browser jobs (including
 `browser-cross`) run on Node 22 only. When a
 new Node LTS line ships, add it to both matrices. Raising the `engines` floor
 needs its own reviewed change.
