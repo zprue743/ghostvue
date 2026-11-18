@@ -551,4 +551,99 @@ test.describe('docs example previews', () => {
       await docs.close()
     }
   })
+
+  test('themed demos follow the site appearance and headless Accordion stays unthemed', async ({
+    browser,
+  }) => {
+    const docs = await startStaticServer('apps/docs/.vitepress/dist')
+
+    /** Relative luminance (0..1) of a computed sRGB `rgb()`/`rgba()` color. */
+    const luminance = (color: string): number => {
+      const channels = /rgba?\(([^)]+)\)/.exec(color)?.[1]?.split(',') ?? []
+      const [r = 0, g = 0, b = 0] = channels
+        .slice(0, 3)
+        .map((value) => Number.parseFloat(value) / 255)
+        .map((c) => (c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4))
+      return 0.2126 * r + 0.7152 * g + 0.0722 * b
+    }
+
+    try {
+      for (const mode of ['light', 'dark'] as const) {
+        const context = await browser.newContext({ colorScheme: mode })
+        // The docs restore script reads this before first paint.
+        await context.addInitScript((appearance) => {
+          localStorage.setItem('vitepress-theme-appearance', appearance)
+        }, mode)
+        const page = await context.newPage()
+        const previewOf = (id: string) =>
+          page
+            .locator(`[data-example-id="${id}"]`)
+            .getByTestId('ghost-example-preview')
+
+        await page.goto(`${docs.url}/components/accordion.html`)
+        await expect(page.locator('html')).toHaveAttribute(
+          'data-ghost-mode',
+          mode,
+        )
+
+        // Inline themed text follows the page mode (no forced-light island).
+        const trigger = previewOf('accordion/themed')
+          .getByRole('button', { name: 'Inventory holds' })
+          .first()
+        await expect(trigger).toBeVisible()
+        const triggerInk = luminance(
+          await trigger.evaluate((el) => getComputedStyle(el).color),
+        )
+        if (mode === 'dark') expect(triggerInk).toBeGreaterThan(0.5)
+        else expect(triggerInk).toBeLessThan(0.2)
+
+        // default.css is loaded site-wide; the headless accordion's behavior
+        // hooks must not opt it into the stacked theme layout.
+        const headlessRoot =
+          previewOf('accordion/basic').locator('.ghost-accordion')
+        await expect(headlessRoot).toHaveAttribute('data-ghost-accordion', '')
+        await expect(headlessRoot).toHaveCSS('display', 'block')
+        await expect(
+          previewOf('accordion/basic').locator('.ghost-accordion-item').first(),
+        ).toHaveCSS('display', 'block')
+        await expect(
+          previewOf('accordion/themed').locator('.ghost-accordion'),
+        ).toHaveCSS('display', 'flex')
+
+        // Portaled content and its inline trigger share the page mode.
+        await page.goto(`${docs.url}/components/tooltip.html`)
+        await previewOf('tooltip/themed')
+          .getByRole('button', { name: 'Hover for glossary' })
+          .focus()
+        const tooltip = page
+          .getByRole('tooltip')
+          .filter({ hasText: '95th percentile' })
+        await expect(tooltip).toBeVisible({ timeout: 2000 })
+        const tooltipSurface = luminance(
+          await tooltip.evaluate((el) => getComputedStyle(el).backgroundColor),
+        )
+        if (mode === 'dark') expect(tooltipSurface).toBeLessThan(0.1)
+        else expect(tooltipSurface).toBeGreaterThan(0.8)
+
+        for (const [slug, id] of [
+          ['collapsible', 'collapsible/themed'],
+          ['empty-state', 'empty-state/themed'],
+          ['hover-card', 'hover-card/themed'],
+          ['scroll-area', 'scroll-area/themed'],
+        ] as const) {
+          await page.goto(`${docs.url}/components/${slug}.html`)
+          const preview = previewOf(id)
+          await expect(preview.locator(':scope > *').first()).toBeAttached()
+          // No local mode/theme host: tokens come from <html>, like portals.
+          await expect(
+            preview.locator('[data-ghost-mode], .ghost-theme'),
+          ).toHaveCount(0)
+        }
+
+        await context.close()
+      }
+    } finally {
+      await docs.close()
+    }
+  })
 })

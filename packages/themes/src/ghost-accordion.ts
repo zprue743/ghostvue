@@ -59,6 +59,8 @@ export const GhostAccordion = defineComponent({
           defaultValue: props.defaultValue,
           headingLevel: props.headingLevel,
           disabled: props.disabled,
+          // Visual opt-in for ghost-accordion.css; behavior hooks stay unstyled.
+          'data-themed': '',
           'onUpdate:modelValue': (next: GhostAccordionValue) => {
             emit('update:modelValue', next)
           },
