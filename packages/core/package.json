@@ -16,12 +16,14 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
     },
-    "./manifest.schema.json": "./manifest.schema.json"
+    "./manifest.schema.json": "./manifest.schema.json",
+    "./manifest-collection.schema.json": "./manifest-collection.schema.json"
   },
   "types": "./dist/index.d.ts",
   "files": [
     "dist",
-    "manifest.schema.json"
+    "manifest.schema.json",
+    "manifest-collection.schema.json"
   ],
   "publishConfig": {
     "access": "public",
