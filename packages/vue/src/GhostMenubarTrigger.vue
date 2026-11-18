@@ -16,6 +16,7 @@ import {
   type GhostMenubarTriggerElement,
   type GhostMenubarTriggerExposed,
 } from './ghost-menubar'
+import { invokeAttrHandler } from './invoke-attr-handler'
 
 defineOptions({
   inheritAttrs: false,
@@ -151,18 +152,6 @@ const triggerAttrs = computed(() => {
 
   return base
 })
-
-function invokeAttrHandler(handler: unknown, event: Event): void {
-  if (typeof handler === 'function') {
-    ;(handler as (event: Event) => void)(event)
-  } else if (Array.isArray(handler)) {
-    for (const fn of handler) {
-      if (typeof fn === 'function') {
-        ;(fn as (event: Event) => void)(event)
-      }
-    }
-  }
-}
 
 function handlePointerEnter(): void {
   if (props.disabled || !menubar.hasOpenMenu() || context.isOpen.value) {

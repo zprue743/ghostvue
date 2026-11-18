@@ -7,6 +7,10 @@ import {
   type GhostMenubarItemElement,
   type GhostMenubarItemExposed,
 } from './ghost-menubar'
+import {
+  omitMenuItemClickAttr,
+  runMenuItemConsumerClick,
+} from './menu-item-activation'
 
 defineOptions({
   inheritAttrs: false,
@@ -38,15 +42,8 @@ const hostRef = useTemplateRef('host')
 const element = computed(() => resolveMenubarHtmlElement(hostRef.value))
 
 const itemAttrs = computed(() => {
-  const rest: Record<string, unknown> = {}
-  for (const [key, value] of Object.entries(attrs)) {
-    if (key !== 'onClick') {
-      rest[key] = value
-    }
-  }
-
   return {
-    ...rest,
+    ...omitMenuItemClickAttr(attrs),
     role: 'menuitem',
     tabindex: -1,
     'aria-disabled': props.disabled ? 'true' : undefined,
@@ -56,19 +53,8 @@ const itemAttrs = computed(() => {
 })
 
 function handleClick(event: MouseEvent): void {
-  if (props.disabled) {
-    event.preventDefault()
+  if (!runMenuItemConsumerClick(event, props.disabled, attrs)) {
     return
-  }
-  const custom = attrs['onClick']
-  if (typeof custom === 'function') {
-    ;(custom as (event: MouseEvent) => void)(event)
-  } else if (Array.isArray(custom)) {
-    for (const fn of custom) {
-      if (typeof fn === 'function') {
-        ;(fn as (event: MouseEvent) => void)(event)
-      }
-    }
   }
   emit('select', event)
   if (event.defaultPrevented) {
