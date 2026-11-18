@@ -1,0 +1,77 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "generated",
+  "name": "GhostFileUploadTrigger",
+  "package": "@ghostvue/vue",
+  "status": "experimental",
+  "description": "Native button (type=button) that opens the file picker; the keyboard and assistive-technology control. Receives the root id and aria-describedby, sets aria-invalid when invalid, and inside GhostField composes aria-labelledby from the Field label and its own text unless the consumer names it.",
+  "props": [
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Disables this trigger only; combines with the root `disabled`.",
+      "deprecated": false
+    }
+  ],
+  "models": [],
+  "events": [],
+  "slots": [
+    {
+      "name": "default",
+      "props": [],
+      "description": "Visible button text, for example Choose files."
+    }
+  ],
+  "exposed": [
+    {
+      "name": "blur",
+      "kind": "method",
+      "type": "() => void",
+      "description": "Exposed method `blur`."
+    },
+    {
+      "name": "element",
+      "kind": "property",
+      "type": "HTMLElement | null",
+      "description": "Exposed property `element`."
+    },
+    {
+      "name": "focus",
+      "kind": "method",
+      "type": "(options?: FocusOptions) => void",
+      "description": "Exposed method `focus`."
+    }
+  ],
+  "styling": {
+    "parts": [
+      {
+        "name": "trigger",
+        "description": "Picker button rendered by GhostFileUploadTrigger."
+      }
+    ],
+    "states": [
+      {
+        "name": "invalid",
+        "description": "Root is invalid. Wins over disabled."
+      },
+      {
+        "name": "disabled",
+        "description": "Root or trigger is disabled."
+      }
+    ],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "button",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/button/",
+    "keyboard": {
+      "Enter": "Opens the native file picker.",
+      "Space": "Opens the native file picker.",
+      "Tab": "Moves to the trigger, then to each remove button in DOM order."
+    },
+    "requiredAriaAttributes": []
+  },
+  "examples": []
+}

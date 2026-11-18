@@ -1,0 +1,62 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "generated",
+  "name": "GhostFileUploadDropzone",
+  "package": "@ghostvue/vue",
+  "status": "experimental",
+  "description": "Drop target for file drags (div, no role, not a tab stop). A click on a non-interactive area opens the picker as a pointer convenience; the trigger stays the keyboard control. Cancels file drags even when disabled so a drop never navigates the page, and installs the shared document drop guard while mounted and enabled.",
+  "props": [],
+  "models": [],
+  "events": [],
+  "slots": [
+    {
+      "name": "default",
+      "props": [
+        {
+          "name": "dragging",
+          "type": "boolean",
+          "description": "A file drag is over the dropzone."
+        }
+      ],
+      "description": "Drop target content; receives dragging while a file drag is over the zone."
+    }
+  ],
+  "exposed": [
+    {
+      "name": "element",
+      "kind": "property",
+      "type": "HTMLElement | null",
+      "description": "Exposed property `element`."
+    }
+  ],
+  "styling": {
+    "parts": [
+      {
+        "name": "dropzone",
+        "description": "Drop target rendered by GhostFileUploadDropzone."
+      }
+    ],
+    "states": [
+      {
+        "name": "dragging",
+        "description": "A file drag is over the zone. Wins over invalid and disabled."
+      },
+      {
+        "name": "invalid",
+        "description": "Root is invalid."
+      },
+      {
+        "name": "disabled",
+        "description": "Root is disabled; drags and clicks are ignored."
+      }
+    ],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "generic",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/button/",
+    "keyboard": {},
+    "requiredAriaAttributes": []
+  },
+  "examples": []
+}

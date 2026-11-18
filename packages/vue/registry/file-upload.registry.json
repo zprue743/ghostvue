@@ -1,0 +1,67 @@
+{
+  "schemaVersion": "1.0.0",
+  "slug": "file-upload",
+  "docs": {
+    "title": "GhostFileUpload",
+    "specStatus": "approved",
+    "link": "/components/file-upload",
+    "specLink": "/specs/file-upload",
+    "category": "forms",
+    "sidebarLabel": "File upload"
+  },
+  "vueBarrel": [
+    "export { default as GhostFileUpload } from './GhostFileUpload.vue'",
+    "export { default as GhostFileUploadDropzone } from './GhostFileUploadDropzone.vue'",
+    "export { default as GhostFileUploadTrigger } from './GhostFileUploadTrigger.vue'",
+    "export { default as GhostFileUploadList } from './GhostFileUploadList.vue'",
+    "export { default as GhostFileUploadItem } from './GhostFileUploadItem.vue'",
+    "export { default as GhostFileUploadItemRemove } from './GhostFileUploadItemRemove.vue'",
+    "export { useGhostFileUpload } from './use-ghost-file-upload'",
+    "export type {\n  GhostFileUploadDropzoneExposed,\n  GhostFileUploadDropzoneSlotProps,\n  GhostFileUploadEntry,\n  GhostFileUploadExposed,\n  GhostFileUploadItemExposed,\n  GhostFileUploadItemRemoveExposed,\n  GhostFileUploadListExposed,\n  GhostFileUploadMessages,\n  GhostFileUploadProps,\n  GhostFileUploadRejection,\n  GhostFileUploadRejectionContext,\n  GhostFileUploadRejectionReason,\n  GhostFileUploadSlotProps,\n  GhostFileUploadTriggerExposed,\n  GhostFileUploadValidate,\n  GhostFileUploadValidateContext,\n  UseGhostFileUploadOptions,\n} from './ghost-file-upload'"
+  ],
+  "themesBarrel": [],
+  "examples": [
+    {
+      "id": "file-upload/basic",
+      "title": "Basic",
+      "description": "Dropzone, trigger, and a removable file list.",
+      "layer": "headless"
+    },
+    {
+      "id": "file-upload/button-only",
+      "title": "Button only",
+      "description": "Trigger and list without a drop target.",
+      "layer": "headless"
+    },
+    {
+      "id": "file-upload/field",
+      "title": "Field",
+      "description": "Inside GhostField with a visible error built from rejections.",
+      "layer": "headless"
+    },
+    {
+      "id": "file-upload/validation",
+      "title": "Validation",
+      "description": "accept, maxFileSize, and maxFiles with visible rejection messages.",
+      "layer": "headless"
+    },
+    {
+      "id": "file-upload/duplicates",
+      "title": "Duplicates",
+      "description": "A validate callback that rejects files already in the list.",
+      "layer": "headless"
+    },
+    {
+      "id": "file-upload/controlled",
+      "title": "Controlled",
+      "description": "v-model with a synchronous parent update, a clear action, and a disabled toggle.",
+      "layer": "headless"
+    },
+    {
+      "id": "file-upload/form",
+      "title": "Form",
+      "description": "Native form with FormData from the mirror, required, and reset.",
+      "layer": "headless"
+    }
+  ]
+}
