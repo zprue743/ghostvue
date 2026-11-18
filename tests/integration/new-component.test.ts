@@ -55,6 +55,7 @@ async function copyRepository() {
     'packages/core',
     'packages/shared',
     'packages/nuxt',
+    'packages/eslint-plugin',
     'apps/docs',
     'apps/nuxt-fixture',
     'apps/playground',

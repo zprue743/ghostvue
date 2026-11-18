@@ -1,20 +1,22 @@
 import AxeBuilder from '@axe-core/playwright'
 import { expect, test } from '@playwright/test'
 
+import {
+  classicScrollbarLaunchOptions,
+  expectMeasuredScrollbar,
+  expectScrollbarCompensation,
+} from '../support'
 import { startStaticServer } from './static-server'
 
 // Headless Chromium hides scrollbars (`hideScrollbars=true`, 0px width) by
 // default; show classic scrollbars so the scroll-lock test exercises real
 // padding-right compensation and proves zero horizontal layout shift.
-test.use({
-  launchOptions: {
-    args: ['--blink-settings=hideScrollbars=false'],
-  },
-})
+// Firefox and WebKit keep their 0px overlay scrollbars (see the helper).
+test.use({ launchOptions: classicScrollbarLaunchOptions })
 
 const tag = '@component:GhostDialog'
 
-test.describe('modal primitives', { tag }, () => {
+test.describe('modal primitives', { tag: [tag, '@cross-browser'] }, () => {
   test(
     'allows Tab within a portaled popover inside a trapped scope without pulling focus back',
     { tag: '@component:GhostPopover' },
@@ -81,6 +83,7 @@ test.describe('modal primitives', { tag }, () => {
 
   test('locks body scroll without horizontal layout shift and restores original styles on close', async ({
     page,
+    browserName,
   }) => {
     const playground = await startStaticServer('apps/playground/dist')
 
@@ -101,7 +104,7 @@ test.describe('modal primitives', { tag }, () => {
         }
       })
       expect(before.scrollY).toBeGreaterThan(0)
-      expect(before.scrollbarWidth).toBeGreaterThan(0)
+      expectMeasuredScrollbar(browserName, before.scrollbarWidth)
 
       const openTrigger = page.getByTestId('modal-fixture-open')
       await openTrigger.scrollIntoViewIfNeeded()
@@ -127,7 +130,11 @@ test.describe('modal primitives', { tag }, () => {
 
       expect(during.overflow).toBe('hidden')
       expect(during.computedOverflow).toBe('hidden')
-      expect(Number.parseFloat(during.paddingRight)).toBe(before.scrollbarWidth)
+      expectScrollbarCompensation(
+        during.paddingRight,
+        before.scrollbarWidth,
+        before.paddingRight,
+      )
       expect(Math.abs(during.mainWidth - before.mainWidth)).toBeLessThan(1)
       expect(during.scrollDelta).toBe(0)
 

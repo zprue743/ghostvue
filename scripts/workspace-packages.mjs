@@ -37,4 +37,13 @@ export const workspacePackages = [
       'Optional Nuxt module: auto-imports headless components by default; themed wrappers and theme CSS on explicit opt-in.',
     allowedDependencies: ['@ghostvue/vue', '@ghostvue/themes'],
   },
+  {
+    directory: 'eslint-plugin',
+    name: '@ghostvue/eslint-plugin',
+    responsibility:
+      'Node-only ESLint rules that check GhostVue component usage against manifests.',
+    // Component contracts are compiled from packages/{vue,themes}/manifests at
+    // registries:write time, so there is no runtime or source import edge.
+    allowedDependencies: [],
+  },
 ]

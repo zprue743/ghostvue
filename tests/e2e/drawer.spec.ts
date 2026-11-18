@@ -142,7 +142,7 @@ test.describe('GhostDrawer', () => {
     }
   })
 
-  test('flips logical start/end edges for a portaled drawer inside an RTL subtree', async ({
+  test('flips logical start/end edges for a portaled drawer inside an RTL subtree @cross-browser', async ({
     page,
   }) => {
     const playground = await startStaticServer('apps/playground/dist')
@@ -264,7 +264,9 @@ test.describe('GhostDrawer', () => {
     }
   })
 
-  test('a nested dialog owns Escape before the drawer', async ({ page }) => {
+  test('a nested dialog owns Escape before the drawer @cross-browser', async ({
+    page,
+  }) => {
     const playground = await startStaticServer('apps/playground/dist')
 
     try {

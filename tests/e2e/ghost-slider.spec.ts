@@ -61,7 +61,7 @@ test.describe('GhostSlider', () => {
     }
   })
 
-  test('centers thumbs and vertical rails across LTR/RTL, sizes, pointer drags, keyboard, and reactive dir', async ({
+  test('centers thumbs and vertical rails across LTR/RTL, sizes, pointer drags, keyboard, and reactive dir @cross-browser', async ({
     page,
   }) => {
     const playground = await startStaticServer('apps/playground/dist')
@@ -211,9 +211,12 @@ test.describe('GhostSlider', () => {
         vSmBeforeDrag.track.centerY,
       )
       await page.mouse.down()
+      // Overshoot the track edge: Firefox reports integer mouse coordinates,
+      // so a pointer exactly on a fractional edge can land a pixel inside the
+      // track. Past-the-edge positions clamp to the endpoint in every engine.
       await page.mouse.move(
         vSmBeforeDrag.track.centerX,
-        vSmBeforeDrag.track.bottom,
+        vSmBeforeDrag.track.bottom + 4,
       )
       await page.mouse.up()
       const vSmThumb = page
@@ -226,7 +229,7 @@ test.describe('GhostSlider', () => {
 
       await page.mouse.move(vSmMin.track.centerX, vSmMin.track.bottom - 2)
       await page.mouse.down()
-      await page.mouse.move(vSmMin.track.centerX, vSmMin.track.top)
+      await page.mouse.move(vSmMin.track.centerX, vSmMin.track.top - 4)
       await page.mouse.up()
       await expect(vSmThumb).toHaveAttribute('aria-valuenow', '100')
       const vSmMax = await measure('slider-lab-v-single-sm')
@@ -275,6 +278,100 @@ test.describe('GhostSlider', () => {
         reactiveRtl.track.right - reactiveRtl.track.width * 0.25,
         1,
       )
+    } finally {
+      await playground.close()
+    }
+  })
+
+  test('maps vertical pointer drags and arrow keys identically in RTL and LTR @cross-browser', async ({
+    page,
+  }) => {
+    const playground = await startStaticServer('apps/playground/dist')
+
+    try {
+      await page.goto(playground.url)
+      const lab = page.getByTestId('slider-lab-v-range-lg')
+      await lab.scrollIntoViewIfNeeded()
+      await expect(
+        page.getByTestId('slider-inherited-dir-host'),
+      ).toHaveAttribute('dir', 'rtl')
+      const [low, high] = [
+        lab.getByRole('slider').nth(0),
+        lab.getByRole('slider').nth(1),
+      ]
+      await expect(low).toHaveAttribute('aria-valuenow', '20')
+      await expect(high).toHaveAttribute('aria-valuenow', '80')
+
+      const geometry = async () =>
+        lab.evaluate((root) => {
+          const rect = (el: Element | null) => {
+            if (!el) throw new Error('missing slider part')
+            const r = el.getBoundingClientRect()
+            return {
+              top: r.top,
+              bottom: r.bottom,
+              height: r.height,
+              centerX: r.left + r.width / 2,
+              centerY: r.top + r.height / 2,
+            }
+          }
+          return {
+            track: rect(root.querySelector('[data-part="track"]')),
+            thumbs: Array.from(
+              root.querySelectorAll('[data-part="thumb"]'),
+            ).map((el) => rect(el)),
+          }
+        })
+
+      // Vertical sliders grow upward in both directions; RTL must not mirror
+      // the block axis. Drag the high thumb to 60% (measured from the bottom).
+      for (const dir of ['rtl', 'ltr'] as const) {
+        if (dir === 'ltr') {
+          await page.getByTestId('slider-toggle-inherited-dir').click()
+          await expect(
+            page.getByTestId('slider-inherited-dir-host'),
+          ).toHaveAttribute('dir', 'ltr')
+          await lab.scrollIntoViewIfNeeded()
+        }
+        await high.focus()
+        await page.keyboard.press('End')
+        await expect(high).toHaveAttribute('aria-valuenow', '100')
+        await low.focus()
+        await page.keyboard.press('Home')
+        await expect(low).toHaveAttribute('aria-valuenow', '0')
+
+        const start = await geometry()
+        const highStart = start.thumbs[1]
+        expect(highStart, dir).toBeDefined()
+        if (!highStart) return
+        const targetY = start.track.bottom - start.track.height * 0.6
+        await page.mouse.move(highStart.centerX, highStart.centerY)
+        await page.mouse.down()
+        await page.mouse.move(start.track.centerX, targetY, { steps: 4 })
+        await page.mouse.up()
+        await expect(high, dir).toHaveAttribute('aria-valuenow', '60')
+        await expect(low, dir).toHaveAttribute('aria-valuenow', '0')
+
+        const after = await geometry()
+        expect(
+          Math.abs((after.thumbs[1]?.centerY ?? 0) - targetY),
+        ).toBeLessThan(1.5)
+        expect(
+          Math.abs((after.thumbs[1]?.centerX ?? 0) - after.track.centerX),
+        ).toBeLessThan(1)
+
+        // Only ArrowUp/ArrowDown step a vertical slider; horizontal arrows are
+        // ignored in either direction.
+        await high.focus()
+        await expect(high, dir).toBeFocused()
+        await page.keyboard.press('ArrowUp')
+        await expect(high, dir).toHaveAttribute('aria-valuenow', '61')
+        await page.keyboard.press('ArrowLeft')
+        await page.keyboard.press('ArrowRight')
+        await expect(high, dir).toHaveAttribute('aria-valuenow', '61')
+        await page.keyboard.press('ArrowDown')
+        await expect(high, dir).toHaveAttribute('aria-valuenow', '60')
+      }
     } finally {
       await playground.close()
     }

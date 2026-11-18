@@ -14,8 +14,15 @@ import { workspacePackages } from './workspace-packages.mjs'
 
 const root = fileURLToPath(new URL('..', import.meta.url))
 
+// The consumer installs only the runtime chain `@ghostvue/themes` needs. The
+// ESLint plugin is Node tooling with ESLint peer dependencies; installing it
+// here would make npm fetch ESLint without exercising anything themes uses.
+const smokePackages = workspacePackages.filter(
+  ({ name }) => name !== '@ghostvue/eslint-plugin',
+)
+
 /** Publish order for packed consumer installs (must match dependency chain). */
-export const themesPackedSmokeOrder = workspacePackages.map(
+export const themesPackedSmokeOrder = smokePackages.map(
   ({ directory }) => directory,
 )
 
@@ -156,7 +163,7 @@ export async function runThemesDefinePackedSmoke(options = {}) {
   let tarballs
   let packDir = null
   let consumerDir = null
-  const requiredNames = workspacePackages.map((pkg) => pkg.name)
+  const requiredNames = smokePackages.map((pkg) => pkg.name)
   const prepackedComplete =
     options.prepackedTarballs &&
     requiredNames.every((name) => options.prepackedTarballs[name])
@@ -187,7 +194,9 @@ export async function runThemesDefinePackedSmoke(options = {}) {
     }
 
     consumerDir = await mkdtemp(join(tmpdir(), 'ghostvue-themes-consumer-'))
-    const dependencies = fileDependenciesFromTarballs(tarballs)
+    const dependencies = fileDependenciesFromTarballs(
+      Object.fromEntries(requiredNames.map((name) => [name, tarballs[name]])),
+    )
 
     await writeFile(
       join(consumerDir, 'package.json'),

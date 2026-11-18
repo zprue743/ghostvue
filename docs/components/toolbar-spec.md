@@ -201,6 +201,9 @@ focusable descendants on key events and focus sync; no virtualization.
 - SSR: listeners not attached during `renderToString`.
 - Browser: playground section, axe on toolbar region, arrow moves focus between
   buttons, Tab leaves the bar.
+- Cross-browser (`rtl-roving.spec.ts`, `@cross-browser`): RTL layout order,
+  mirrored arrows, Home/End, and a single Tab stop with real focus in Chromium,
+  Firefox, and WebKit. No engine differences found; focus and ARIA assertions are shared.
 - Examples: axe via `examples.spec.ts` for each registry example in light and dark.
 - Type: consumer fixture imports public props.
 

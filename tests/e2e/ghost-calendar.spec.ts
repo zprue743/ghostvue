@@ -39,7 +39,9 @@ test.describe('GhostCalendar', { tag }, () => {
     }
   })
 
-  test('keyboard grid navigation uses real DOM focus', async ({ page }) => {
+  test('keyboard grid navigation uses real DOM focus @cross-browser', async ({
+    page,
+  }) => {
     const { playground, day, heading } = await openExample(
       page,
       'calendar/basic',
@@ -174,7 +176,7 @@ test.describe('GhostCalendar', { tag }, () => {
     }
   })
 
-  test('RTL mirrors horizontal arrows', async ({ page }) => {
+  test('RTL mirrors horizontal arrows @cross-browser', async ({ page }) => {
     const { playground, day } = await openExample(page, 'calendar/basic')
 
     try {

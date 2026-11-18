@@ -183,8 +183,9 @@ describe('CI workflow', () => {
 
     // The image doubles as the browser cache (Chromium preinstalled), so a
     // mismatched tag would silently run a different browser than the runner.
-    expect(jobBlock(workflow, 'browser-shard')).toContain(`image: ${image}`)
-    expect(jobBlock(workflow, 'nuxt-fixture')).toContain(`image: ${image}`)
+    for (const jobId of ['browser-shard', 'browser-cross', 'nuxt-fixture']) {
+      expect(jobBlock(workflow, jobId), jobId).toContain(`image: ${image}`)
+    }
     expect(readRepoFile('scripts/lib/test-visual-docker.js')).toContain(image)
     expect(workflow).not.toMatch(/run:.*playwright install/)
   })
@@ -210,8 +211,45 @@ describe('CI workflow', () => {
       /needs:\s*\[changes,\s*verify-build\]/,
     )
     expect(jobBlock(workflow, 'browser')).toMatch(
-      /needs:\s*\[changes,\s*verify-build,\s*browser-shard\]/,
+      /needs:\s*\[changes,\s*verify-build,\s*browser-shard,\s*browser-cross\]/,
     )
+  })
+
+  it('runs Chromium shards and a Firefox/WebKit cross-browser matrix behind the browser check', () => {
+    const shard = jobBlock(workflow, 'browser-shard')
+    expect(shard).toMatch(
+      /run: pnpm test:e2e:prebuilt --project=chromium --project=chromium-e2e /,
+    )
+
+    const cross = jobBlock(workflow, 'browser-cross')
+    expect(cross).toMatch(/needs:\s*\[changes,\s*verify-build\]/)
+    expect(cross).toMatch(/^ {8}browser: \[firefox, webkit\]$/m)
+    expect(cross).toContain(
+      'run: pnpm test:e2e:prebuilt --project=${{ matrix.browser }}-e2e',
+    )
+    // Blob names must not collide with the Chromium shard reports when the
+    // `browser` job merges every `playwright-blob-*` artifact.
+    expect(cross).toContain(
+      'PLAYWRIGHT_BLOB_OUTPUT_NAME: report-${{ matrix.browser }}.zip',
+    )
+    expect(cross).toContain('name: playwright-blob-${{ matrix.browser }}')
+
+    const aggregate = jobBlock(workflow, 'browser')
+    expect(aggregate).toContain('needs.browser-cross.result')
+    expect(aggregate).toContain('pattern: playwright-blob-*')
+  })
+
+  it('limits Firefox and WebKit projects to functional @cross-browser specs', () => {
+    const config = readRepoFile('playwright.config.ts')
+    for (const project of ['firefox-e2e', 'webkit-e2e']) {
+      const block = new RegExp(
+        `name: '${project}',\\n\\s+grep: CROSS_BROWSER_TAG,\\n\\s+grepInvert: VISUAL_TAG,`,
+      )
+      expect(config, project).toMatch(block)
+    }
+    expect(config).toMatch(/const CROSS_BROWSER_TAG = \/@cross-browser\//)
+    // Visual baselines stay on the single Chromium project.
+    expect(config.match(/grep: VISUAL_TAG/g)).toHaveLength(1)
   })
 })
 

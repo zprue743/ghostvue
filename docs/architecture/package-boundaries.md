@@ -30,6 +30,12 @@ nuxt (optional integration) -> vue (peer), themes (optional peer)
   (`library-packages-no-nuxt` in `.dependency-cruiser.mjs`). The
   `unplugin-vue-components` resolver (`@ghostvue/vue/resolver`) therefore
   matches the plugin's resolver contract structurally instead of importing it.
+- `eslint-plugin` (`@ghostvue/eslint-plugin`) is Node-only tooling with no
+  internal production dependency, and no package may depend on it. It reads
+  component contracts from `packages/vue/manifests` and
+  `packages/themes/manifests` through a generated data module
+  (`pnpm registries:write`), not through imports, so it never loads Vue or
+  component code. See the [ESLint plugin](../tooling/eslint-plugin.md) docs.
 
 Themed Vue components belong in `themes`. Headless composables and thin
 unstyled components belong in `vue`. Do not add a third package merely to
