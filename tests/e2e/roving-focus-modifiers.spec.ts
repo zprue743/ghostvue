@@ -192,7 +192,7 @@ test.describe('useRovingFocus modified navigation shortcuts', () => {
     }
   })
 
-  test('RTL roving fixture keeps flipped arrows and ignores modified keys', async ({
+  test('RTL roving fixture keeps flipped arrows and ignores modified keys @cross-browser', async ({
     page,
   }) => {
     const playground = await startStaticServer('apps/playground/dist')

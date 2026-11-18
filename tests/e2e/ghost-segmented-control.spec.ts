@@ -68,7 +68,7 @@ test.describe('GhostSegmentedControl', { tag }, () => {
     }
   })
 
-  test('themed example aligns indicator and flips roving focus in RTL', async ({
+  test('themed example aligns indicator and flips roving focus in RTL @cross-browser', async ({
     page,
   }) => {
     const playground = await startStaticServer('apps/playground/dist')
@@ -96,14 +96,17 @@ test.describe('GhostSegmentedControl', { tag }, () => {
       await page.keyboard.press('ArrowRight')
       await expect(day).toBeFocused()
 
-      // Indicator must align with the first segment on the inline-start (right) side in RTL.
-      const dayBox = await day.boundingBox()
-      const indicatorBox = await indicator.boundingBox()
-      expect(dayBox).not.toBeNull()
-      expect(indicatorBox).not.toBeNull()
-      expect(Math.abs((indicatorBox?.x ?? 0) - (dayBox?.x ?? 0))).toBeLessThan(
-        6,
-      )
+      // Indicator must align with the first segment on the inline-start (right)
+      // side in RTL. The indicator slides with a CSS transition after the dir
+      // flip, so poll for the settled position instead of sampling mid-slide.
+      await expect
+        .poll(async () => {
+          const dayBox = await day.boundingBox()
+          const indicatorBox = await indicator.boundingBox()
+          if (!dayBox || !indicatorBox) return Number.POSITIVE_INFINITY
+          return Math.abs(indicatorBox.x - dayBox.x)
+        })
+        .toBeLessThan(6)
     } finally {
       await playground.close()
     }

@@ -744,7 +744,22 @@ export function useDialogContentPart(
         const preventBlur = (mouseEvent: MouseEvent): void => {
           mouseEvent.preventDefault()
         }
+        // WebKit dispatches no compatibility mousedown once pointerdown has
+        // removed its target, but its press default action still moves focus
+        // to <body> after the restore. Remember where focus was restored and
+        // reapply it in the next task, once that synchronous press handling is
+        // over, but only if focus was dropped to <body> rather than moved on.
+        let restored: HTMLElement | null = null
+        const rememberRestored = (focusEvent: FocusEvent): void => {
+          if (focusEvent.target instanceof HTMLElement) {
+            restored = focusEvent.target
+          }
+        }
         document.addEventListener('mousedown', preventBlur, {
+          capture: true,
+          once: true,
+        })
+        document.addEventListener('focusin', rememberRestored, {
           capture: true,
           once: true,
         })
@@ -752,6 +767,16 @@ export function useDialogContentPart(
           document.removeEventListener('mousedown', preventBlur, {
             capture: true,
           })
+          document.removeEventListener('focusin', rememberRestored, {
+            capture: true,
+          })
+          const active = document.activeElement
+          if (
+            restored?.isConnected &&
+            (active === null || active === document.body)
+          ) {
+            restored.focus({ preventScroll: true })
+          }
         }, 0)
       }
       context.close()

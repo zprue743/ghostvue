@@ -36,6 +36,16 @@ playgroundTest('section behavior', async ({ page, playgroundUrl }) => {
 - `expectFocus(locator)` — assertion wrapper for focused elements.
 - `pressSequence(page, ['Tab', 'Shift+Tab', 'Enter'])` — ordered key dispatch.
 
+## Scrollbar helpers
+
+- `classicScrollbarLaunchOptions` — `test.use({ launchOptions })` value that
+  shows classic scrollbars in headless Chromium and launches Firefox and WebKit
+  (0px overlay scrollbars only) with defaults.
+- `expectMeasuredScrollbar(browserName, width)` /
+  `expectScrollbarCompensation(paddingRight, width, original)` — per-engine
+  scroll-lock assertions. See the cross-browser matrix in
+  `docs/standards/testing.md`.
+
 ## Accessibility helpers
 
 - `axeScan(page, playgroundUrl, exampleId, { mode?: 'light' | 'dark' })` —
