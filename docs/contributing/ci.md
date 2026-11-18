@@ -60,6 +60,15 @@ Node 22 and 24. Integration, build, and browser jobs (including
 new Node LTS line ships, add it to both matrices. Raising the `engines` floor
 needs its own reviewed change.
 
+## Nuxt SSR fixture
+
+The `nuxt-fixture` job builds `apps/nuxt-fixture` (the `@ghostvue/nuxt`
+consumer) in its headless default and themed opt-in variants and runs
+`pnpm test:nuxt` in the same pinned Playwright image as `browser-shard`. It
+checks server HTML, hydration console output, interactivity, and injected CSS.
+The aggregate `verify` check requires it. Run it locally after building the
+packages: `pnpm --filter "@ghostvue/nuxt-fixture^..." build && pnpm test:nuxt`.
+
 ## Security scanning
 
 `.github/workflows/codeql.yml` runs CodeQL for `javascript-typescript` and

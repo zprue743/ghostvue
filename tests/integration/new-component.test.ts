@@ -38,6 +38,9 @@ async function copyRepository() {
         'reports',
         'test-results',
         'playwright-report',
+        // Nuxt fixture build output (pnpm test:nuxt).
+        '.nuxt',
+        '.output',
       ].includes(basename(source)) &&
       !source.endsWith('.tsbuildinfo') &&
       // Avoid recursively invoking this harness inside the fixture's verify.
@@ -51,8 +54,10 @@ async function copyRepository() {
     'packages/themes',
     'packages/core',
     'packages/shared',
+    'packages/nuxt',
     'packages/eslint-plugin',
     'apps/docs',
+    'apps/nuxt-fixture',
     'apps/playground',
   ]) {
     if (!existsSync(join(repositoryRoot, directory, 'node_modules'))) continue
@@ -101,8 +106,8 @@ function run(root: string, args: string[]) {
   delete env.NODE_ENV
   try {
     // Full-repo verify in a copied workspace grows with every package and test:
-    // under coverage on CI runners it now passes eight minutes. Stay inside the
-    // 15-minute verify-integration job limit.
+    // under coverage on CI runners it now passes eight minutes once @ghostvue/nuxt
+    // joined the workspace. Stay inside the 15-minute verify-integration job limit.
     execPackageManagerSync('pnpm', args, {
       cwd: root,
       env,

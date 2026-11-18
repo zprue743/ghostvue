@@ -54,9 +54,16 @@ They apply to public components in `@ghostvue/vue` and themed wrappers in
 - `GlobalComponents` types ship on an intended subpath
   `@ghostvue/vue/components` for plugin and auto-import users. The main
   entry must not augment globals.
-- `unplugin-vue-components` support, when implemented, is `GhostVueResolver()`
-  from `@ghostvue/vue/resolver`, resolving `GhostButton` to `@ghostvue/vue`.
-  Do not add that dependency until a consumer in this repo needs auto-import.
+- `unplugin-vue-components` support is `GhostVueResolver()` from
+  `@ghostvue/vue/resolver`, resolving `GhostButton` to `@ghostvue/vue`. It
+  matches the plugin's resolver contract structurally; `@ghostvue/vue` never
+  depends on the plugin. Its component list is generated from the registry
+  barrels (`pnpm registries:write`), not maintained by hand.
+- Nuxt auto-import is the separate `@ghostvue/nuxt` module. It auto-imports
+  headless exports by default; themed wrappers and theme CSS require explicit
+  opt-in, and each component name resolves to exactly one layer. The
+  `apps/nuxt-fixture` SSR app is the in-repo auto-import consumer. See
+  [Nuxt and auto-imports](../auto-imports.md).
 
 ### Props, events, and slots
 

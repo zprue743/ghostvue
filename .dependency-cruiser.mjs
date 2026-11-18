@@ -75,6 +75,31 @@ const config = {
       },
     },
     {
+      name: 'library-packages-no-nuxt',
+      severity: 'error',
+      comment:
+        'Only @ghostvue/nuxt may depend on Nuxt or unplugin-vue-components; shared, core, vue, and themes stay framework-integration-free (docs/architecture/package-boundaries.md). GhostVueResolver matches the unplugin contract structurally.',
+      from: {
+        path: '^packages/(shared|core|vue|themes)/',
+      },
+      to: {
+        // Matches bare specifiers and resolved node_modules / packages/ paths.
+        path: '(^|/)(@ghostvue/nuxt|nuxt|@nuxt/[^/]+|unplugin-vue-components)(/|$)',
+      },
+    },
+    {
+      name: 'nuxt-only-depends-on-vue-and-themes',
+      severity: 'error',
+      comment:
+        '@ghostvue/nuxt may only depend on @ghostvue/vue and @ghostvue/themes among workspace packages (scripts/workspace-packages.mjs).',
+      from: {
+        path: '^packages/nuxt/',
+      },
+      to: {
+        path: '^(@ghostvue/(core|shared)(/|$)|packages/(core|shared)/)',
+      },
+    },
+    {
       name: 'no-cross-package-relative-src',
       severity: 'error',
       comment:
@@ -120,6 +145,7 @@ const config = {
         '(^|/)\\.vitepress/(dist|cache)/',
         '(^|/)\\.registries/',
         '(^|/)\\.cache/declaration-build/',
+        '(^|/)\\.(nuxt|output)/',
       ],
     },
     enhancedResolveOptions: {

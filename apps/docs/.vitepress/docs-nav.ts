@@ -17,6 +17,7 @@ const docsMainSidebar: LlmsSidebarGroup['items'] = [
     items: [
       { text: 'Introduction', link: '/philosophy' },
       { text: 'Getting started', link: '/getting-started' },
+      { text: 'Nuxt & auto-imports', link: '/auto-imports' },
       { text: 'Roadmap', link: '/roadmap' },
     ],
   },

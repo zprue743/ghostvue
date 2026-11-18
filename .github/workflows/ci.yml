@@ -209,6 +209,44 @@ jobs:
           path: .artifacts/e2e-prebuilt
           retention-days: 1
 
+  # Builds the @ghostvue/nuxt SSR fixture (apps/nuxt-fixture) in its headless
+  # default and themed opt-in variants, type-checks it against the generated
+  # auto-import declarations, and checks server HTML, hydration console output,
+  # interactivity, and injected CSS in Chromium. It builds only the fixture's
+  # workspace dependencies, so it runs in parallel with verify-build.
+  nuxt-fixture:
+    needs: changes
+    if: success() && needs.changes.outputs.skip_heavy != 'true'
+    runs-on: ubuntu-latest
+    # Same pinned Playwright image as browser-shard (Chromium preinstalled).
+    container:
+      image: mcr.microsoft.com/playwright:v1.62.1-noble
+    env:
+      HOME: /root
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4.3.0
+        with:
+          run_install: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Build fixture workspace dependencies
+        run: pnpm --filter "@ghostvue/nuxt-fixture^..." build
+      - run: pnpm test:nuxt
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        if: failure()
+        with:
+          name: nuxt-fixture-report
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 14
+          if-no-files-found: ignore
+
   # Posts the bundle size report as one sticky PR comment. Kept out of
   # verify-build so only this job holds `pull-requests: write`, and it never
   # checks out or runs PR code. Fork PRs get a read-only token: commenting then
@@ -278,7 +316,14 @@ jobs:
 
   verify:
     needs:
-      [changes, verify-static, verify-unit, verify-integration, verify-build]
+      [
+        changes,
+        verify-static,
+        verify-unit,
+        verify-integration,
+        verify-build,
+        nuxt-fixture,
+      ]
     if: always() && !cancelled()
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -299,8 +344,9 @@ jobs:
             "${{ needs.verify-unit.result }}"
             "${{ needs.verify-integration.result }}"
             "${{ needs.verify-build.result }}"
+            "${{ needs.nuxt-fixture.result }}"
           )
-          names=(verify-static verify-unit verify-integration verify-build)
+          names=(verify-static verify-unit verify-integration verify-build nuxt-fixture)
           for i in "${!results[@]}"; do
             if [[ "${results[$i]}" != "success" ]]; then
               echo "Required partition ${names[$i]} finished as: ${results[$i]}"

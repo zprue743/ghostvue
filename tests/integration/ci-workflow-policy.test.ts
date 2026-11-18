@@ -183,11 +183,23 @@ describe('CI workflow', () => {
 
     // The image doubles as the browser cache (Chromium preinstalled), so a
     // mismatched tag would silently run a different browser than the runner.
-    for (const jobId of ['browser-shard', 'browser-cross']) {
+    for (const jobId of ['browser-shard', 'browser-cross', 'nuxt-fixture']) {
       expect(jobBlock(workflow, jobId), jobId).toContain(`image: ${image}`)
     }
     expect(readRepoFile('scripts/lib/test-visual-docker.js')).toContain(image)
     expect(workflow).not.toMatch(/run:.*playwright install/)
+  })
+
+  it('gates the aggregate verify check on the Nuxt SSR fixture', () => {
+    const fixture = jobBlock(workflow, 'nuxt-fixture')
+    expect(fixture).toContain('run: pnpm test:nuxt')
+    expect(fixture).toMatch(/timeout-minutes: \d+/)
+    const verify = jobBlock(workflow, 'verify')
+    const needs = /needs:\s*\[([^\]]+)\]/.exec(verify)
+    expect(needs?.[1].split(',').map((need) => need.trim())).toContain(
+      'nuxt-fixture',
+    )
+    expect(verify).toContain('${{ needs.nuxt-fixture.result }}')
   })
 
   it('builds docs and playground once in verify-build and shares the dist with browser-shard', () => {
