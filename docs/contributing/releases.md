@@ -15,3 +15,7 @@ release, maintainers must review package names/ownership, provenance, registry
 access, changelog policy, support matrix, and a least-privilege publication
 workflow. No agent may publish packages or create releases without explicit
 authorization.
+
+Any release or publish workflow must follow the [CI policy](./ci.md): actions
+pinned by commit SHA, a read-only default token, and write or `id-token` scopes
+only on the job that needs them.

@@ -83,6 +83,7 @@ const contributeSidebar: LlmsSidebarGroup[] = [
       },
       { text: 'Executable examples', link: '/contributing/examples' },
       { text: 'Releases', link: '/contributing/releases' },
+      { text: 'CI and dependency updates', link: '/contributing/ci' },
     ],
   },
   {

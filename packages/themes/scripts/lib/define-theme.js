@@ -569,7 +569,10 @@ function pinActionGradientStops(tree, mode = 'light') {
 }
 
 function applyPrimitiveTint(primitives, seeds) {
-  const lightHue = oklchOfHex(seeds.modes.light.neutral.hex).h
+  // Round the hue: the raw value's last digits differ between V8 releases
+  // (Node 22 vs 24), which would make generated CSS depend on the Node version.
+  const lightHue =
+    Math.round(oklchOfHex(seeds.modes.light.neutral.hex).h * 1e6) / 1e6
   walkTokens(primitives, (node) => {
     if (node.$type === 'color' && typeof node.$value === 'string') {
       node.$value = retintOklchString(node.$value, lightHue)

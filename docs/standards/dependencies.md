@@ -15,7 +15,9 @@ packages do not add an icon library or icon adapter package; see
 
 Development tooling may be broader but remains intentional. Avoid overlapping
 tools that enforce the same rule in different ways. Pin exact development
-versions through the lockfile and update them in reviewed changes.
+versions through the lockfile and update them in reviewed changes. Renovate
+opens those update pull requests; see
+[CI and dependency updates](../contributing/ci.md).
 
 pnpm blocks dependency install scripts unless they are explicitly allowlisted in
 `pnpm-workspace.yaml`. `esbuild` is allowlisted because Vite/VitePress require its
