@@ -15,16 +15,45 @@
       "$value": "#f8fafc",
       "$description": "Near-white canvas foreground used in dark mode."
     },
+    "surface": {
+      "dark": {
+        "subtle": {
+          "$type": "color",
+          "$value": "#151d2d",
+          "$description": "Dark-mode subtle inset surface harmonized with canvas ink."
+        },
+        "muted": {
+          "$type": "color",
+          "$value": "#293240",
+          "$description": "Dark-mode muted well surface harmonized with canvas ink."
+        }
+      }
+    },
     "raised": {
+      "1": {
+        "$type": "color",
+        "$value": "#1c2533",
+        "$description": "Dark-mode elevation 1 fill for resting cards and controls above subtle surfaces."
+      },
       "2": {
         "$type": "color",
-        "$value": "#24272b",
-        "$description": "Dark-mode elevation 2 fill between neutral 950 and 900."
+        "$value": "#242c3a",
+        "$description": "Dark-mode elevation 2 fill for raised cards, menus, and tooltips."
+      },
+      "3": {
+        "$type": "color",
+        "$value": "#2b3441",
+        "$description": "Dark-mode elevation 3 fill for popovers and floating panels."
       },
       "4": {
         "$type": "color",
-        "$value": "#3a3e43",
-        "$description": "Dark-mode elevation 4 fill between neutral 900 and 800."
+        "$value": "#343c48",
+        "$description": "Dark-mode elevation 4 fill for dialogs and sheets."
+      },
+      "5": {
+        "$type": "color",
+        "$value": "#3d4550",
+        "$description": "Dark-mode elevation 5 fill for the highest floating layer."
       }
     },
     "shadow": {

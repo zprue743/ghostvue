@@ -10,7 +10,7 @@
  */
 @layer ghostvue-theme {
   :where(.ghost-theme .ghost-progress, .ghost-themed-scope .ghost-progress) {
-    --_ghost-progress-track: var(--ghost-surface-muted-bg);
+    --_ghost-progress-track: var(--ghost-border-default);
     --_ghost-progress-fill: var(--ghost-action-primary-bg);
     --_ghost-progress-size: var(--ghost-track-thickness-md);
 

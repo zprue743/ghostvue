@@ -15,13 +15,13 @@
     "muted": {
       "bg": {
         "$type": "color",
-        "$value": "{color.neutral.dark.900}"
+        "$value": "{color.surface.dark.muted}"
       }
     },
     "subtle": {
       "bg": {
         "$type": "color",
-        "$value": "{color.neutral.dark.950}"
+        "$value": "{color.surface.dark.subtle}"
       }
     },
     "inverse": {
@@ -45,7 +45,7 @@
     "1": {
       "bg": {
         "$type": "color",
-        "$value": "{color.neutral.dark.950}"
+        "$value": "{color.raised.1}"
       },
       "shadow": {
         "$type": "shadow",
@@ -117,7 +117,7 @@
     "3": {
       "bg": {
         "$type": "color",
-        "$value": "{color.neutral.dark.900}"
+        "$value": "{color.raised.3}"
       },
       "shadow": {
         "$type": "shadow",
@@ -189,7 +189,7 @@
     "5": {
       "bg": {
         "$type": "color",
-        "$value": "{color.neutral.dark.800}"
+        "$value": "{color.raised.5}"
       },
       "shadow": {
         "$type": "shadow",

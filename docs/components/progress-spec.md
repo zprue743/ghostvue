@@ -243,7 +243,7 @@ parallel styling-hooks contract (GHO-38 remains undecided):
 Visual values in the recipe come from existing `--ghost-*` tokens. There are
 no per-component progress tokens:
 
-- track fill `--ghost-surface-muted-bg`
+- track fill `--ghost-border-default`
 - indicator `--ghost-action-primary-bg` / `neutral` / `danger`
 - thickness `--ghost-track-thickness-sm` / `md` / `lg` (4 / 6 / 8px). These
   are painted-thickness tokens, independent of density: layout gaps such as

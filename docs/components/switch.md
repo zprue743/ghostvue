@@ -60,7 +60,7 @@ exist only on this wrapper:
 
 Themed track size comes from `--ghost-control-size-*-min`. The on fill uses
 `--ghost-action-primary-*` (or the matching tone) and
-`--ghost-gradient-action-*`. Off uses `--ghost-surface-muted-bg`. There are
+`--ghost-gradient-action-*`. Off uses `--ghost-border-default`. There are
 no per-component tokens.
 
 You can also import the stylesheet and wrap unstyled switches in
