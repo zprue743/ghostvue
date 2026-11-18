@@ -29,6 +29,7 @@ import ButtonStateMatrix from './ButtonStateMatrix.vue'
 import DensityReference from './DensityReference.vue'
 import DialogReference from './DialogReference.vue'
 import DrawerReference from './DrawerReference.vue'
+import TreeReference from './TreeReference.vue'
 import ModalPrimitivesReference from './ModalPrimitivesReference.vue'
 import MotionReference from './MotionReference.vue'
 import OverlayReference from './OverlayReference.vue'
@@ -363,6 +364,7 @@ function submitPlaygroundComment(event: Event): void {
     <HoverCardReference />
     <DialogReference />
     <DrawerReference />
+    <TreeReference />
     <TabsReference />
     <SegmentedControlReference />
     <ToggleGroupReference />

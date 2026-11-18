@@ -1,0 +1,92 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "generated",
+  "name": "GhostTreeGroup",
+  "package": "@ghostvue/vue",
+  "status": "experimental",
+  "description": "Nested role=\"group\" child container (default <ul>) inside a GhostTreeItem. Registering it makes the item a branch. Reuses GhostCollapsible disclosure mechanics: hidden while collapsed (deferred until the themed height transition ends), aria-labelledby to the item trigger.",
+  "props": [
+    {
+      "name": "as",
+      "type": "GhostTreeGroupElement",
+      "default": "ul",
+      "required": false,
+      "description": "Tag name or component rendered for the `role=\"group\"` child container.",
+      "deprecated": false
+    },
+    {
+      "name": "disableAnimation",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Skips themed height transitions (`data-animation=\"off\"`).",
+      "deprecated": false
+    }
+  ],
+  "models": [],
+  "events": [],
+  "slots": [
+    {
+      "name": "default",
+      "props": [],
+      "description": "Child GhostTreeItem nodes."
+    }
+  ],
+  "exposed": [
+    {
+      "name": "blur",
+      "kind": "method",
+      "type": "() => void",
+      "description": "Exposed method `blur`."
+    },
+    {
+      "name": "element",
+      "kind": "property",
+      "type": "HTMLElement | null",
+      "description": "Exposed property `element`."
+    },
+    {
+      "name": "focus",
+      "kind": "method",
+      "type": "(options?: FocusOptions) => void",
+      "description": "Exposed method `focus`."
+    }
+  ],
+  "styling": {
+    "parts": [
+      {
+        "name": "group",
+        "description": "role=\"group\" child container rendered by GhostTreeGroup."
+      }
+    ],
+    "states": [
+      {
+        "name": "open",
+        "description": "Owning branch is expanded."
+      },
+      {
+        "name": "closed",
+        "description": "Owning branch is collapsed."
+      }
+    ],
+    "cssProperties": [],
+    "attributes": [
+      {
+        "name": "data-animation",
+        "values": [
+          "off"
+        ],
+        "description": "Set when disableAnimation is true; themed height transitions are skipped."
+      }
+    ]
+  },
+  "accessibility": {
+    "role": "group",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/treeview/",
+    "keyboard": {
+      "Tab": "Never a tab stop; navigation is owned by GhostTree."
+    },
+    "requiredAriaAttributes": []
+  },
+  "examples": []
+}

@@ -1,0 +1,295 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "handwritten",
+  "name": "GhostTree",
+  "package": "@ghostvue/themes",
+  "status": "experimental",
+  "description": "Themed wrappers around headless GhostTree, GhostTreeItem, GhostTreeTrigger, and GhostTreeGroup. Importing from @ghostvue/themes loads ghost-tree.css: token-based rows indented from --ghost-tree-level with logical padding, selected and hover row states, a focus ring on the focused item row only, reduced-motion-aware group height transitions, and forced-colors support.",
+  "props": [
+    {
+      "name": "allowDeselect",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "In single mode, re-activating the selected node clears the selection. Forwarded to headless GhostTree.",
+      "deprecated": false
+    },
+    {
+      "name": "as",
+      "type": "GhostTreeElement",
+      "default": "ul",
+      "required": false,
+      "description": "Tag name or component rendered for the `role=\"tree\"` container. Forwarded to headless GhostTree.",
+      "deprecated": false
+    },
+    {
+      "name": "defaultExpanded",
+      "type": "string[]",
+      "default": "[]",
+      "required": false,
+      "description": "Initial expanded branch values when `expanded` is omitted. Forwarded to headless GhostTree.",
+      "deprecated": false
+    },
+    {
+      "name": "defaultValue",
+      "type": "GhostTreeValue",
+      "required": false,
+      "description": "Initial uncontrolled selection. Forwarded to headless GhostTree.",
+      "deprecated": false
+    },
+    {
+      "name": "dir",
+      "type": "GhostTreeDirection",
+      "required": false,
+      "description": "Explicit writing direction; otherwise inherited from `[dir]`. Forwarded to headless GhostTree.",
+      "deprecated": false
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Disables every interaction in the tree. Forwarded to headless GhostTree.",
+      "deprecated": false
+    },
+    {
+      "name": "expanded",
+      "type": "string[]",
+      "required": false,
+      "description": "Controlled expanded branch values (`v-model:expanded`). Forwarded to headless GhostTree.",
+      "deprecated": false
+    },
+    {
+      "name": "expandOnClick",
+      "type": "boolean",
+      "default": true,
+      "required": false,
+      "description": "Pointer clicks on a branch row also toggle expansion. Forwarded to headless GhostTree.",
+      "deprecated": false
+    },
+    {
+      "name": "loop",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "`ArrowDown` / `ArrowUp` wrap at the ends of the visible node list. Forwarded to headless GhostTree.",
+      "deprecated": false
+    },
+    {
+      "name": "modelValue",
+      "type": "GhostTreeValue",
+      "required": false,
+      "description": "Controlled selection (`v-model`). Omit for uncontrolled mode. Forwarded to headless GhostTree.",
+      "deprecated": false
+    },
+    {
+      "name": "selectionMode",
+      "type": "GhostTreeSelectionMode",
+      "default": "single",
+      "required": false,
+      "description": "Single (`string | undefined`) or multiple (`string[]`) selection. Forwarded to headless GhostTree.",
+      "deprecated": false
+    }
+  ],
+  "models": [
+    {
+      "prop": "expanded",
+      "event": "update:expanded",
+      "type": "string[]",
+      "description": "v-model binding for `expanded`."
+    },
+    {
+      "prop": "modelValue",
+      "event": "update:modelValue",
+      "type": "GhostTreeValue",
+      "description": "v-model binding for `modelValue`."
+    }
+  ],
+  "events": [
+    {
+      "name": "select",
+      "payloadType": "GhostTreeSelectPayload",
+      "description": "Emitted as `select`."
+    },
+    {
+      "name": "toggle",
+      "payloadType": "GhostTreeTogglePayload",
+      "description": "Emitted as `toggle`."
+    }
+  ],
+  "slots": [
+    {
+      "name": "default",
+      "props": [
+        {
+          "name": "expandAllSiblings",
+          "type": "(value: string) => void",
+          "description": "Slot prop `expandAllSiblings`."
+        },
+        {
+          "name": "expanded",
+          "type": "string[]",
+          "description": "Slot prop `expanded`."
+        },
+        {
+          "name": "focusedValue",
+          "type": "string | undefined",
+          "description": "Slot prop `focusedValue`."
+        },
+        {
+          "name": "isExpanded",
+          "type": "(value: string) => boolean",
+          "description": "Slot prop `isExpanded`."
+        },
+        {
+          "name": "isSelected",
+          "type": "(value: string) => boolean",
+          "description": "Slot prop `isSelected`."
+        },
+        {
+          "name": "modelValue",
+          "type": "GhostTreeValue",
+          "description": "Slot prop `modelValue`."
+        },
+        {
+          "name": "select",
+          "type": "(value: string) => void",
+          "description": "Slot prop `select`."
+        },
+        {
+          "name": "toggleExpanded",
+          "type": "(value: string) => void",
+          "description": "Slot prop `toggleExpanded`."
+        }
+      ],
+      "description": "GhostTreeItem nodes; receives selection, expansion, and focus state plus select/toggle helpers."
+    }
+  ],
+  "exposed": [
+    {
+      "name": "blur",
+      "kind": "method",
+      "type": "() => void",
+      "description": "Exposed method `blur`."
+    },
+    {
+      "name": "element",
+      "kind": "property",
+      "type": "HTMLElement | null",
+      "description": "Exposed property `element`."
+    },
+    {
+      "name": "focus",
+      "kind": "method",
+      "type": "(options?: FocusOptions) => void",
+      "description": "Focuses the current roving tab stop item, if any."
+    }
+  ],
+  "styling": {
+    "parts": [
+      {
+        "name": "root",
+        "description": "Tree container with data-themed."
+      },
+      {
+        "name": "item",
+        "description": "Tree item; indents from --ghost-tree-level."
+      },
+      {
+        "name": "trigger",
+        "description": "Item row: hover, selected, disabled, and focus-ring styles."
+      },
+      {
+        "name": "group",
+        "description": "Child list; animates height while motion is allowed."
+      }
+    ],
+    "states": [
+      {
+        "name": "checked",
+        "description": "Selected item."
+      },
+      {
+        "name": "open",
+        "description": "Expanded branch trigger and group."
+      },
+      {
+        "name": "closed",
+        "description": "Collapsed branch trigger and group."
+      }
+    ],
+    "cssProperties": [
+      {
+        "name": "--ghost-tree-level",
+        "description": "1-based item depth (set inline by GhostTreeItem) that drives row indentation."
+      },
+      {
+        "name": "--ghost-surface-muted-bg",
+        "description": "Selected row background."
+      },
+      {
+        "name": "--ghost-elevation-2-bg",
+        "description": "Hovered row background."
+      },
+      {
+        "name": "--ghost-space-inset-md",
+        "description": "Indentation step per level."
+      },
+      {
+        "name": "--ghost-focus-ring-color",
+        "description": "Focus ring color on the focused item row."
+      },
+      {
+        "name": "--ghost-motion-duration-moderate",
+        "description": "Group expand/collapse duration."
+      }
+    ],
+    "attributes": [
+      {
+        "name": "data-themed",
+        "values": [],
+        "description": "Present on every themed tree part."
+      },
+      {
+        "name": "data-selected",
+        "values": [],
+        "description": "Selected item and trigger."
+      },
+      {
+        "name": "data-disabled",
+        "values": [],
+        "description": "Disabled root, item, or trigger."
+      },
+      {
+        "name": "data-animation",
+        "values": [
+          "off"
+        ],
+        "description": "Group with disableAnimation."
+      }
+    ]
+  },
+  "accessibility": {
+    "role": "tree",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/treeview/",
+    "keyboard": {
+      "Tab": "Moves focus into and out of the tree through its single roving tab stop.",
+      "ArrowDown": "Moves focus to the next visible enabled item without changing selection; wraps only when loop is true.",
+      "ArrowUp": "Moves focus to the previous visible enabled item without changing selection; wraps only when loop is true.",
+      "ArrowRight": "LTR: expands a closed branch, or moves to the first visible enabled child of an open branch. RTL: collapses an open branch, or moves to the closest visible enabled ancestor.",
+      "ArrowLeft": "LTR: collapses an open branch, or moves to the closest visible enabled ancestor. RTL: expands a closed branch, or moves to the first visible enabled child of an open branch.",
+      "Home": "Moves focus to the first visible enabled item.",
+      "End": "Moves focus to the last visible enabled item.",
+      "Enter": "Selects the focused item (single), deselects it when allowDeselect is true, or toggles it (multiple). Never toggles expansion.",
+      " ": "Same as Enter when no typeahead query is active; otherwise appends a space to the query.",
+      "*": "Expands every closed enabled sibling branch of the focused item in one update.",
+      "a-z": "Printable characters run a 500ms typeahead over visible enabled items, moving focus without selecting."
+    },
+    "requiredAriaAttributes": [
+      "aria-label"
+    ]
+  },
+  "examples": [
+    "tree/themed"
+  ]
+}
