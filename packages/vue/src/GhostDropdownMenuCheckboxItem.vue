@@ -7,7 +7,11 @@ import {
   type GhostDropdownMenuCheckboxItemElement,
   type GhostDropdownMenuCheckboxItemExposed,
 } from './ghost-dropdown-menu'
-import { isImeComposing } from './is-ime-composing'
+import {
+  handleMenuCheckboxItemKeydown,
+  omitMenuItemClickAttr,
+  runMenuItemConsumerClick,
+} from './menu-item-activation'
 import { useControllableState } from './use-controllable-state'
 
 defineOptions({
@@ -46,15 +50,8 @@ const hostRef = useTemplateRef('host')
 const element = computed(() => resolveDropdownMenuHtmlElement(hostRef.value))
 
 const itemAttrs = computed(() => {
-  const rest: Record<string, unknown> = {}
-  for (const [key, value] of Object.entries(attrs)) {
-    if (key !== 'onClick') {
-      rest[key] = value
-    }
-  }
-
   return {
-    ...rest,
+    ...omitMenuItemClickAttr(attrs),
     role: 'menuitemcheckbox',
     tabindex: -1,
     'aria-checked': isChecked.value ? 'true' : 'false',
@@ -66,31 +63,12 @@ const itemAttrs = computed(() => {
 })
 
 function handleKeydown(event: KeyboardEvent): void {
-  // IME-owned Enter/Space confirm a composition, not the checkbox item.
-  if (props.disabled || event.defaultPrevented || isImeComposing(event)) {
-    return
-  }
-  if (event.key !== ' ' && event.key !== 'Enter') {
-    return
-  }
-  event.preventDefault()
-  element.value?.click()
+  handleMenuCheckboxItemKeydown(event, props.disabled, element.value)
 }
 
 function handleClick(event: MouseEvent): void {
-  if (props.disabled) {
-    event.preventDefault()
+  if (!runMenuItemConsumerClick(event, props.disabled, attrs)) {
     return
-  }
-  const custom = attrs['onClick']
-  if (typeof custom === 'function') {
-    ;(custom as (event: MouseEvent) => void)(event)
-  } else if (Array.isArray(custom)) {
-    for (const fn of custom) {
-      if (typeof fn === 'function') {
-        ;(fn as (event: MouseEvent) => void)(event)
-      }
-    }
   }
   if (event.defaultPrevented) {
     return

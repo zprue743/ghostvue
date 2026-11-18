@@ -146,3 +146,23 @@ useRovingFocus(list, {
   dir: () => props.dir,
 })
 ```
+
+### Menu families keep their own collection policy
+
+DropdownMenu, ContextMenu, and Menubar content do not use `useRovingFocus`.
+They share the internal `use-ghost-menu-collection.ts` instead, because menus
+add policies a generic roving list must not have: typeahead, Enter/Space item
+activation, and Tab dismissal without focus restoration. Folding those into
+`useRovingFocus` options would make every tabs/toolbar consumer carry menu
+behavior, so the two stay separate even though arrow/Home/End movement looks
+alike.
+
+Menu item parts (`*Item`, `*CheckboxItem`, `*RadioItem`) in all three families
+share the internal `menu-item-activation.ts` helpers for the steps that are
+identical: the consumer `onClick` is never bound natively, disabled items cancel
+the click before consumer listeners run, enabled items run the consumer
+listener (function or array) first, and checkbox items route Enter/Space through
+`click()`. What follows that prefix stays explicit in each part: ordinary and
+radio items emit `select` before checking cancellation, radio items commit the
+value even when the click is cancelled, and checkbox items toggle only when it
+is not. `menu-item-shared-behavior.test.ts` pins this contract for every family.

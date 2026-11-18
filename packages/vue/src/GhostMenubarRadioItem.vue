@@ -8,6 +8,10 @@ import {
   type GhostMenubarRadioItemElement,
   type GhostMenubarRadioItemExposed,
 } from './ghost-menubar'
+import {
+  omitMenuItemClickAttr,
+  runMenuItemConsumerClick,
+} from './menu-item-activation'
 
 defineOptions({
   inheritAttrs: false,
@@ -50,15 +54,8 @@ const isDisabled = computed(() => group.disabled.value || props.disabled)
 const checked = computed(() => group.isSelected(props.value))
 
 const itemAttrs = computed(() => {
-  const rest: Record<string, unknown> = {}
-  for (const [key, value] of Object.entries(attrs)) {
-    if (key !== 'onClick') {
-      rest[key] = value
-    }
-  }
-
   return {
-    ...rest,
+    ...omitMenuItemClickAttr(attrs),
     role: 'menuitemradio',
     tabindex: -1,
     'aria-checked': checked.value ? 'true' : 'false',
@@ -71,19 +68,8 @@ const itemAttrs = computed(() => {
 })
 
 function handleClick(event: MouseEvent): void {
-  if (isDisabled.value) {
-    event.preventDefault()
+  if (!runMenuItemConsumerClick(event, isDisabled.value, attrs)) {
     return
-  }
-  const custom = attrs['onClick']
-  if (typeof custom === 'function') {
-    ;(custom as (event: MouseEvent) => void)(event)
-  } else if (Array.isArray(custom)) {
-    for (const fn of custom) {
-      if (typeof fn === 'function') {
-        ;(fn as (event: MouseEvent) => void)(event)
-      }
-    }
   }
   group.select(props.value)
   emit('select', props.value, event)
