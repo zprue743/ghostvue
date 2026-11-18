@@ -23,6 +23,7 @@ packages/vue/src/.registries/
 packages/vue/src/.publish-index.generated.ts
 packages/vue/src/.publish-build/
 packages/themes/src/.registries/
+packages/eslint-plugin/src/.registries/
 packages/themes/src/.publish-index.generated.ts
 examples/.registries/
 apps/docs/.vitepress/.registries/

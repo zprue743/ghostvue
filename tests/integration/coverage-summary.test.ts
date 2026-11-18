@@ -52,6 +52,7 @@ describe('coverage summary', () => {
         '| --- | --- | --- | --- | --- |',
         '| Total | 80.00% PASS | 90.00% | 70.00% | 33.33% |',
         '| packages/core/src | 80.00% PASS | 88.88% | 50.00% | 100.00% |',
+        '| packages/eslint-plugin/src | 100.00% PASS | 100.00% | 100.00% | 100.00% |',
         '| packages/shared/src | 100.00% PASS | 100.00% | 100.00% | 100.00% |',
         '| packages/themes/src | 75.00% FAIL | 75.00% | 75.00% | 75.00% |',
         '| packages/vue/src | 90.00% PASS | 90.00% | 90.00% | 90.00% |',

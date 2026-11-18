@@ -51,6 +51,7 @@ async function copyRepository() {
     'packages/themes',
     'packages/core',
     'packages/shared',
+    'packages/eslint-plugin',
     'apps/docs',
     'apps/playground',
   ]) {

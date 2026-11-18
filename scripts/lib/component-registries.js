@@ -1,6 +1,7 @@
 /**
  * Generate shared barrels, docs nav slices, examples catalog, and roadmap table
- * from packages/vue/registry/*.registry.json.
+ * from packages/vue/registry/*.registry.json, plus the ESLint plugin's
+ * component index from packages/{vue,themes}/manifests.
  */
 import { createHash } from 'node:crypto'
 import { mkdir, readdir, readFile, writeFile } from 'node:fs/promises'
@@ -62,6 +63,7 @@ const DOC_CATEGORY_LABELS = {
 export const REGISTRY_GITIGNORE_PATHS = [
   'packages/vue/src/.registries/',
   'packages/themes/src/.registries/',
+  'packages/eslint-plugin/src/.registries/',
   'examples/.registries/',
   'apps/docs/.vitepress/.registries/',
   'docs/.registries/',
@@ -405,6 +407,147 @@ ${items.join('\n')}
 `
 }
 
+/** Component packages whose manifests feed `@ghostvue/eslint-plugin`. */
+const ESLINT_INDEX_PACKAGES = [
+  { name: '@ghostvue/vue', manifests: 'packages/vue/manifests' },
+  { name: '@ghostvue/themes', manifests: 'packages/themes/manifests' },
+]
+
+/** @typedef {{
+ *   name: string
+ *   props?: { name: string }[]
+ *   models?: { prop: string }[]
+ *   slots?: { name: string }[]
+ * }} ManifestContract
+ */
+
+/**
+ * Manifests keyed by component name. A missing directory yields an empty map so
+ * fixture workspaces without manifests still generate an (empty) index.
+ *
+ * @param {string} repositoryRoot
+ * @param {string} directory
+ */
+async function readManifestContracts(repositoryRoot, directory) {
+  /** @type {Map<string, ManifestContract & { stem: string }>} */
+  const contracts = new Map()
+  let files
+  try {
+    files = await readdir(join(repositoryRoot, directory))
+  } catch {
+    return contracts
+  }
+  for (const file of files.filter((name) => name.endsWith('.manifest.json'))) {
+    const manifest = /** @type {ManifestContract} */ (
+      JSON.parse(await readFile(join(repositoryRoot, directory, file), 'utf8'))
+    )
+    contracts.set(manifest.name, {
+      ...manifest,
+      stem: file.slice(0, -'.manifest.json'.length),
+    })
+  }
+  return contracts
+}
+
+/**
+ * @param {Iterable<string>} values
+ */
+function sortedUnique(values) {
+  return [...new Set(values)].sort((left, right) => left.localeCompare(right))
+}
+
+/**
+ * Public docs page for a manifest: the longest documented family slug that
+ * prefixes the manifest stem (`ghost-dialog-close` -> `dialog`), else the
+ * component index.
+ *
+ * @param {string} stem
+ * @param {string[]} documentedSlugs
+ */
+function docsSlugForManifest(stem, documentedSlugs) {
+  const bare = stem.replace(/^ghost-/, '')
+  let best = 'index'
+  for (const slug of documentedSlugs) {
+    const matches = bare === slug || bare.startsWith(`${slug}-`)
+    if (matches && (best === 'index' || slug.length > best.length)) {
+      best = slug
+    }
+  }
+  return best
+}
+
+/**
+ * Static usage contract for `@ghostvue/eslint-plugin`: prop, v-model, and slot
+ * names per package and component, plus the docs page slug.
+ *
+ * Themed manifests are hand-written and list only what the wrapper adds, while
+ * every themed wrapper sets `inheritAttrs: false` and forwards attrs and slots
+ * to the unstyled component of the same name. The themed contract is therefore
+ * the union of both manifests. The headless contract never borrows from themes,
+ * which is how the rules tell `@ghostvue/vue` and `@ghostvue/themes` apart.
+ *
+ * @param {string} repositoryRoot
+ * @param {FamilyRegistry[]} families
+ */
+async function buildEslintComponentIndex(repositoryRoot, families) {
+  const documentedSlugs = families
+    .map((family) => family.docs?.link)
+    .filter((link) => typeof link === 'string')
+    .map((link) => link.replace(/^\/components\//, ''))
+  /** @type {Map<string, Map<string, ManifestContract & { stem: string }>>} */
+  const byPackage = new Map()
+  for (const pkg of ESLINT_INDEX_PACKAGES) {
+    byPackage.set(
+      pkg.name,
+      await readManifestContracts(repositoryRoot, pkg.manifests),
+    )
+  }
+  const headless = byPackage.get('@ghostvue/vue') ?? new Map()
+
+  /** @type {Record<string, Record<string, unknown>>} */
+  const index = {}
+  for (const pkg of ESLINT_INDEX_PACKAGES) {
+    const contracts = byPackage.get(pkg.name) ?? new Map()
+    /** @type {Record<string, unknown>} */
+    const components = {}
+    for (const name of sortedUnique(contracts.keys())) {
+      const own = contracts.get(name)
+      if (!own) continue
+      const sources =
+        pkg.name === '@ghostvue/themes' && headless.has(name)
+          ? [own, headless.get(name)]
+          : [own]
+      components[name] = {
+        props: sortedUnique(
+          sources.flatMap((source) =>
+            (source?.props ?? []).map((prop) => prop.name),
+          ),
+        ),
+        models: sortedUnique(
+          sources.flatMap((source) =>
+            (source?.models ?? []).map((model) => model.prop),
+          ),
+        ),
+        slots: sortedUnique(
+          sources.flatMap((source) =>
+            (source?.slots ?? []).map((slot) => slot.name),
+          ),
+        ),
+        docs: docsSlugForManifest(own.stem, documentedSlugs),
+      }
+    }
+    index[pkg.name] = components
+  }
+
+  return `${GENERATED_BANNER}
+/**
+ * Component usage contracts generated from packages/vue/manifests and
+ * packages/themes/manifests. Typed by ../component-index.ts.
+ */
+export const generatedComponentIndex = ${JSON.stringify(index, null, 2)} as const
+`
+}
+
 /**
  * @param {string} body
  * @param {string} filepath
@@ -472,6 +615,13 @@ export async function syncRepositoryRegistries({ repositoryRoot, write }) {
       await formatTypescript(
         buildDocsNavSpecs(families),
         join(repositoryRoot, 'apps/docs/.vitepress/docs-nav.ts'),
+      ),
+    ],
+    [
+      'packages/eslint-plugin/src/.registries/component-index.generated.ts',
+      await formatTypescript(
+        await buildEslintComponentIndex(repositoryRoot, families),
+        join(repositoryRoot, 'packages/eslint-plugin/src/index.ts'),
       ),
     ],
   ])

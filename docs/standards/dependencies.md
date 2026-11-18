@@ -24,6 +24,20 @@ pnpm blocks dependency install scripts unless they are explicitly allowlisted in
 platform binary; additions to that list require the same security review as a
 new runtime dependency.
 
+### `@ghostvue/eslint-plugin` (GHO-22)
+
+The ESLint plugin adds no runtime dependency and no new package to the
+lockfile. Template traversal and AST types come from `vue-eslint-parser`, the
+parser eslint-plugin-vue already installs for this repository and for
+consumers; the plugin does not import it at runtime and only calls the parser
+services it provides. Both `eslint` (`^9 || ^10`) and `vue-eslint-parser`
+(`^10`) are peer dependencies because the consumer's ESLint config owns those
+singletons. The package pins the same versions as development dependencies
+(`eslint` 10.15.0 and `vue-eslint-parser` 10.4.1, both MIT and already resolved
+through eslint-plugin-vue) for types and rule tests. The list of native HTML
+and SVG attribute names is kept locally instead of adding an attribute-list
+package, since only set membership is needed.
+
 Run `pnpm boundaries` after changing package manifests. Do not bypass pnpm's
 strict peer dependency checks merely to accept an invalid graph.
 

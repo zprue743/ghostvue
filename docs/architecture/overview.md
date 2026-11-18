@@ -8,6 +8,7 @@ packages/shared    proven framework-neutral low-level utilities
 packages/core      framework-independent behavior and contracts
 packages/vue       Vue lifecycle, reactivity, composables, and components
 packages/themes    optional theme and design-token infrastructure
+packages/eslint-plugin  manifest-based ESLint usage rules (Node-only tooling)
 apps/docs          VitePress command wrapper for canonical docs
 apps/playground    manual development and browser-test host
 examples           typed executable samples (unpublished)

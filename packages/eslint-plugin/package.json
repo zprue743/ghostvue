@@ -1,0 +1,49 @@
+{
+  "name": "@ghostvue/eslint-plugin",
+  "version": "0.0.0",
+  "private": true,
+  "description": "ESLint rules that check GhostVue component props, slots, and v-model bindings in Vue templates against the component manifests.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zprue743/ghostvue.git",
+    "directory": "packages/eslint-plugin"
+  },
+  "keywords": [
+    "eslint",
+    "eslintplugin",
+    "eslint-plugin",
+    "vue",
+    "ghostvue"
+  ],
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "scripts": {
+    "prebuild": "pnpm -w registries:write",
+    "build": "tsc -p tsconfig.build.json",
+    "pretypecheck": "pnpm -w registries:write",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "peerDependencies": {
+    "eslint": "^9.0.0 || ^10.0.0",
+    "vue-eslint-parser": "^10.0.0"
+  },
+  "devDependencies": {
+    "eslint": "10.15.0",
+    "vue-eslint-parser": "10.4.1"
+  }
+}

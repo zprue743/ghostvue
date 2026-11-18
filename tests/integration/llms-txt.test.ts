@@ -102,6 +102,19 @@ describe('llms.txt generation', () => {
     }
   })
 
+  it('lists the ESLint plugin page so agents can discover the usage rules', async () => {
+    const { llmsTxt, llmsFullTxt } = await generateLlmsDocuments({
+      docsRoot,
+      title: docsTitle,
+      description: docsDescription,
+      sidebar: docsSidebar,
+    })
+
+    expect(llmsTxt).toContain('- [ESLint plugin](/tooling/eslint-plugin)')
+    expect(llmsFullTxt).toContain('Source: docs/tooling/eslint-plugin.md')
+    expect(llmsFullTxt).toContain('## no-undeclared-v-model')
+  })
+
   it('writes both files into the docs output directory', async () => {
     const outDir = await mkdtemp(join(tmpdir(), 'ghost-llms-'))
     tempDirs.push(outDir)

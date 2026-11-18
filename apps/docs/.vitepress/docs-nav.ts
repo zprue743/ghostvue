@@ -25,6 +25,7 @@ const docsMainSidebar: LlmsSidebarGroup['items'] = [
     items: [
       { text: 'API reference', link: '/reference/' },
       { text: 'Dev warnings', link: '/warnings' },
+      { text: 'ESLint plugin', link: '/tooling/eslint-plugin' },
     ],
   },
 ]
