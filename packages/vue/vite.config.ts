@@ -7,9 +7,11 @@ export default defineConfig({
     // Vite empties dist first, so vue-tsc must run after this build.
     emptyOutDir: true,
     lib: {
-      entry: 'src/index.ts',
+      // `resolver` is Node-side build tooling (`@ghostvue/vue/resolver`); it
+      // shares no modules with the component entry, so no shared chunk forms.
+      entry: { ghostvue: 'src/index.ts', resolver: 'src/resolver.ts' },
       formats: ['es'],
-      fileName: 'ghostvue',
+      fileName: (_format, entryName) => `${entryName}.js`,
     },
     rollupOptions: {
       // Vue remains a peer dependency and runtime dependencies (@floating-ui/dom,

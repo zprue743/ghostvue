@@ -41,6 +41,35 @@ package, since only set membership is needed.
 Run `pnpm boundaries` after changing package manifests. Do not bypass pnpm's
 strict peer dependency checks merely to accept an invalid graph.
 
+## Integration dependencies (GHO-59)
+
+Reviewed November 2026 for `@ghostvue/nuxt` and `GhostVueResolver()`. All are
+MIT-licensed and build-time only: none ships in a browser bundle.
+
+| Package                   | Version                  | Where                                                  | Why                                                                                                                                           |
+| ------------------------- | ------------------------ | ------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| `@nuxt/kit`               | 4.6.4                    | `@ghostvue/nuxt` dependency                            | Official module API (`defineNuxtModule`, `addComponent`, `addImports`). No local substitute: Nuxt module hooks are only reachable through it. |
+| `@nuxt/schema`            | 4.6.4                    | `@ghostvue/nuxt` dependency                            | Types for the published `NuxtModule` signature and the `ghostvue` config-key augmentation. `@nuxt/kit` only declares it as an optional peer.  |
+| `nuxt`                    | `^4.6.0` peer; 4.6.4 dev | `@ghostvue/nuxt` peer and dev, `apps/nuxt-fixture` dev | The consumer owns its Nuxt runtime. 4.6.4 is the tested version; the peer floor matches the module's `compatibility`.                         |
+| `vite`                    | 8.3.5                    | `@ghostvue/nuxt` dev, `apps/nuxt-fixture`              | Nuxt 4.6.4's `@nuxt/vite-server` peers on `vite ^8.3.5`; the root stays on 8.2.6 so this does not move the library build toolchain.           |
+| `unplugin-vue-components` | 32.1.0                   | root dev dependency                                    | Test-only: proves `GhostVueResolver()` inside the real plugin. `@ghostvue/vue` does not depend on it; the resolver is structural.             |
+
+- `@ghostvue/vue` is a peer of `@ghostvue/nuxt` (one Vue runtime and one copy
+  of the components, owned by the app). `@ghostvue/themes` is an optional peer
+  needed only for the themed/CSS opt-in.
+- No install scripts were allowlisted; `allowBuilds` is unchanged.
+- Nuxt pulls a large development graph (Nitro, Vite, Rolldown). It is confined
+  to `packages/nuxt` and `apps/nuxt-fixture` (whose dependencies are all
+  development dependencies).
+- Residual: `pnpm audit --prod` reports picomatch 4.0.7
+  (GHSA-fc5q-39xc-vjpf, high, ReDoS on repeated extglobs) through
+  `@ghostvue/nuxt > @nuxt/kit > tinyglobby`. The advisory names 4.0.8 as
+  patched, but no 4.0.8 is published to npm, so there is nothing to bump or
+  refresh to. The same 4.0.7 is already in the development graph on `master`.
+  Exposure is build-time only: the globs come from the Nuxt app's own
+  configuration, not from end users. Follow-up: refresh the lockfile once a
+  patched picomatch is published.
+
 ## Security audit triage
 
 Triage `pnpm audit` findings by real exposure, not raw counts: the report counts

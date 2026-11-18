@@ -87,6 +87,9 @@ const EXCLUDED_DIRS = new Set([
   'fixtures',
   'coverage',
   'cache',
+  // Nuxt fixture build and generated type output (apps/nuxt-fixture).
+  '.nuxt',
+  '.output',
 ])
 
 const SOURCE_EXTENSIONS = new Set([

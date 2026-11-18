@@ -111,6 +111,13 @@ Components render deterministic markup and IDs on the server and do not read
 browser globals during setup. Mode follows `prefers-color-scheme` in CSS, so
 there is no flash of the wrong palette.
 
+## Auto-imports and Nuxt
+
+Prefer named imports. For Nuxt apps, `@ghostvue/nuxt` auto-imports the headless
+components and composables, with themed wrappers and CSS as an explicit opt-in;
+other Vite apps can use `GhostVueResolver()` from `@ghostvue/vue/resolver`. See
+[Nuxt and auto-imports](/auto-imports).
+
 ## Next steps
 
 - [Browse components](/components/button)

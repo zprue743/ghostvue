@@ -118,7 +118,7 @@ export default defineConfig({
         text: 'Docs',
         link: '/getting-started',
         activeMatch:
-          '^/(getting-started|philosophy|roadmap|reference/|warnings|tooling/)',
+          '^/(getting-started|auto-imports|philosophy|roadmap|reference/|warnings|tooling/)',
       },
       {
         text: 'Components',
