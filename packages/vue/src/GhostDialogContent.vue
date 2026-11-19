@@ -29,6 +29,12 @@ const props = withDefaults(
     portal?: boolean
     /** Teleport target passed to `GhostPortal` when `portal` is `true`. */
     portalTo?: GhostPortalTarget
+    /** Gates the first focus-scope activation of each opening; once active, the scope stays active until close. */
+    focusReady?: boolean
+    /** Resolves the preferred initial focus target; invalid or `null` keeps the default autofocus fallback. */
+    initialFocus?: (() => HTMLElement | null) | undefined
+    /** Resolves the preferred close focus target; invalid or `null` keeps the saved opener. */
+    returnFocus?: (() => HTMLElement | null) | undefined
   }>(),
   {
     as: 'div',
@@ -37,6 +43,9 @@ const props = withDefaults(
     closeOnOutsideClick: undefined,
     portal: true,
     portalTo: 'body',
+    focusReady: true,
+    initialFocus: undefined,
+    returnFocus: undefined,
   },
 )
 

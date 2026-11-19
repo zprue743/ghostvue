@@ -1,5 +1,6 @@
 import { flushPromises, mount } from '@vue/test-utils'
-import { defineComponent, h, nextTick, ref } from 'vue'
+import { createSSRApp, defineComponent, h, nextTick, ref } from 'vue'
+import { renderToString } from 'vue/server-renderer'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
 import GhostButton from './GhostButton.vue'
@@ -1235,5 +1236,386 @@ describe('GhostDialog', () => {
         ),
       ).toThrow(/must be used inside GhostDialog/)
     }
+  })
+})
+
+describe('GhostDialogContent focus readiness and targets (GHO-209)', () => {
+  interface HarnessOptions {
+    open?: ReturnType<typeof ref<boolean>>
+    onOpenChange?: (open: boolean) => void
+    focusReady?: ReturnType<typeof ref<boolean>>
+    initialFocus?: () => HTMLElement | null
+    returnFocus?: () => HTMLElement | null
+    showTrigger?: ReturnType<typeof ref<boolean>>
+    triggerDisabled?: ReturnType<typeof ref<boolean>>
+    portal?: boolean
+    defaultOpen?: boolean
+  }
+
+  // A child that registers its own focus target through a callback ref, the
+  // way the anchored DatePicker registers its Calendar grid cell.
+  const registeredTarget = ref<HTMLElement | null>(null)
+  const RegisteringChild = defineComponent({
+    setup() {
+      return () =>
+        h(
+          'button',
+          {
+            type: 'button',
+            'data-testid': 'registered',
+            ref: (el: unknown) => {
+              registeredTarget.value = el instanceof HTMLElement ? el : null
+            },
+          },
+          'Registered',
+        )
+    },
+  })
+
+  function mountHarness(options: HarnessOptions = {}) {
+    return mountAttached(
+      defineComponent({
+        setup() {
+          return () =>
+            h(
+              GhostDialog,
+              {
+                ...(options.open
+                  ? {
+                      open: options.open.value,
+                      'onUpdate:open': (value: boolean) => {
+                        options.onOpenChange?.(value)
+                      },
+                    }
+                  : {}),
+                defaultOpen: options.defaultOpen ?? false,
+              },
+              {
+                default: () => [
+                  options.showTrigger?.value === false
+                    ? null
+                    : h(
+                        GhostDialogTrigger,
+                        {
+                          'data-testid': 'trigger',
+                          disabled: options.triggerDisabled?.value ?? false,
+                        },
+                        () => 'Open',
+                      ),
+                  h('input', { 'data-testid': 'input' }),
+                  h(
+                    GhostDialogContent,
+                    {
+                      'aria-label': 'Picker',
+                      portal: options.portal ?? true,
+                      focusReady: options.focusReady?.value ?? true,
+                      initialFocus: options.initialFocus,
+                      returnFocus: options.returnFocus,
+                    },
+                    () => [
+                      h(
+                        'button',
+                        { type: 'button', 'data-testid': 'first' },
+                        'First',
+                      ),
+                      h(RegisteringChild),
+                      h(
+                        GhostDialogClose,
+                        { 'data-testid': 'close' },
+                        () => 'X',
+                      ),
+                    ],
+                  ),
+                ],
+              },
+            )
+        },
+      }),
+    )
+  }
+
+  it('defers focus entry until focusReady, then keeps the trap when readiness drops', async () => {
+    const focusReady = ref(false)
+    const initialFocus = vi.fn(() => registeredTarget.value)
+    const wrapper = mountHarness({ focusReady, initialFocus })
+    const trigger = wrapper.get<HTMLElement>('[data-testid="trigger"]').element
+
+    await wrapper.get('[data-testid="trigger"]').trigger('click')
+    await flushPromises()
+    expect(queryHtml('[data-part="content"]')).toBeTruthy()
+    // Modal isolation applies immediately; focus entry waits.
+    expect(document.body.style.overflow).toBe('hidden')
+    expect(document.activeElement).toBe(trigger)
+    expect(initialFocus).not.toHaveBeenCalled()
+
+    focusReady.value = true
+    await flushPromises()
+    expect(initialFocus).toHaveBeenCalledTimes(1)
+    expect(document.activeElement).toBe(queryHtml('[data-testid="registered"]'))
+
+    // Readiness flipping back off does not release the trap or refocus.
+    focusReady.value = false
+    await flushPromises()
+    const close = queryHtml('[data-testid="close"]')
+    close.focus()
+    expect(pressKey('Tab', close).defaultPrevented).toBe(true)
+    expect(document.activeElement).toBe(queryHtml('[data-testid="first"]'))
+    expect(initialFocus).toHaveBeenCalledTimes(1)
+
+    pressKey('Escape')
+    await flushPromises()
+    expect(document.querySelector('[data-part="content"]')).toBeNull()
+    expect(document.activeElement).toBe(trigger)
+  })
+
+  it('gates each opening separately', async () => {
+    const focusReady = ref(true)
+    const wrapper = mountHarness({ focusReady })
+    const trigger = wrapper.get('[data-testid="trigger"]')
+
+    await trigger.trigger('click')
+    await flushPromises()
+    expect(document.activeElement).toBe(queryHtml('[data-testid="first"]'))
+    pressKey('Escape')
+    await flushPromises()
+    expect(document.activeElement).toBe(trigger.element)
+
+    focusReady.value = false
+    await flushPromises()
+    await trigger.trigger('click')
+    await flushPromises()
+    expect(document.activeElement).toBe(trigger.element)
+    focusReady.value = true
+    await flushPromises()
+    expect(document.activeElement).toBe(queryHtml('[data-testid="first"]'))
+  })
+
+  it('returns focus to the saved opener when deferred entry closes before activation', async () => {
+    const focusReady = ref(false)
+    const wrapper = mountHarness({ focusReady })
+    const trigger = wrapper.get<HTMLElement>('[data-testid="trigger"]').element
+
+    await wrapper.get('[data-testid="trigger"]').trigger('click')
+    await flushPromises()
+    // Browsers blur an element once it becomes inert; jsdom does not, so
+    // simulate that drop explicitly.
+    trigger.blur()
+    expect(document.activeElement).toBe(document.body)
+
+    pressKey('Escape')
+    await flushPromises()
+    expect(document.querySelector('[data-part="content"]')).toBeNull()
+    expect(document.activeElement).toBe(trigger)
+  })
+
+  it('falls back from an invalid initialFocus target to the default autofocus order', async () => {
+    const detached = document.createElement('button')
+    const wrapper = mountHarness({ initialFocus: () => detached })
+    await wrapper.get('[data-testid="trigger"]').trigger('click')
+    await flushPromises()
+    expect(document.activeElement).toBe(queryHtml('[data-testid="first"]'))
+  })
+
+  it('returns focus to an enabled trigger, else the input, when the opener is disabled or removed', async () => {
+    const showTrigger = ref(true)
+    const triggerDisabled = ref(false)
+    let triggerEl: HTMLElement | null = null
+    let inputEl: HTMLElement | null = null
+    const returnFocus = vi.fn(() =>
+      triggerEl?.isConnected && !triggerEl.hasAttribute('disabled')
+        ? triggerEl
+        : inputEl,
+    )
+    const wrapper = mountHarness({ showTrigger, triggerDisabled, returnFocus })
+    triggerEl = wrapper.get<HTMLElement>('[data-testid="trigger"]').element
+    inputEl = wrapper.get<HTMLElement>('[data-testid="input"]').element
+
+    await wrapper.get('[data-testid="trigger"]').trigger('click')
+    await flushPromises()
+    expect(returnFocus).not.toHaveBeenCalled()
+    pressKey('Escape')
+    await flushPromises()
+    expect(returnFocus).toHaveBeenCalledTimes(1)
+    expect(document.activeElement).toBe(triggerEl)
+
+    // Disabled opener: resolver chooses the input.
+    await wrapper.get('[data-testid="trigger"]').trigger('click')
+    await flushPromises()
+    triggerDisabled.value = true
+    await flushPromises()
+    pressKey('Escape')
+    await flushPromises()
+    expect(document.activeElement).toBe(inputEl)
+
+    // Removed opener: resolver chooses the input.
+    triggerDisabled.value = false
+    await flushPromises()
+    await wrapper.get('[data-testid="trigger"]').trigger('click')
+    await flushPromises()
+    showTrigger.value = false
+    await flushPromises()
+    queryHtml('[data-testid="close"]').click()
+    await flushPromises()
+    expect(document.querySelector('[data-part="content"]')).toBeNull()
+    expect(document.activeElement).toBe(inputEl)
+  })
+
+  it('keeps the saved opener when returnFocus resolves an invalid target', async () => {
+    const wrapper = mountHarness({ returnFocus: () => null })
+    const trigger = wrapper.get<HTMLElement>('[data-testid="trigger"]').element
+    await wrapper.get('[data-testid="trigger"]').trigger('click')
+    await flushPromises()
+    pressKey('Escape')
+    await flushPromises()
+    expect(document.activeElement).toBe(trigger)
+  })
+
+  it('does not restore focus or call returnFocus when a controlled parent ignores close', async () => {
+    const open = ref(true)
+    const onOpenChange = vi.fn()
+    const returnFocus = vi.fn(() => null)
+    mountHarness({ open, onOpenChange, returnFocus })
+    await flushPromises()
+    const first = queryHtml('[data-testid="first"]')
+    expect(document.activeElement).toBe(first)
+
+    pressKey('Escape')
+    await flushPromises()
+    expect(onOpenChange).toHaveBeenCalledWith(false)
+    expect(queryHtml('[data-part="content"]')).toBeTruthy()
+    expect(returnFocus).not.toHaveBeenCalled()
+    expect(document.activeElement).toBe(first)
+    // Trap is still active.
+    const close = queryHtml('[data-testid="close"]')
+    close.focus()
+    expect(pressKey('Tab', close).defaultPrevented).toBe(true)
+  })
+
+  it('renders on the server without invoking resolvers and hydrates an initially open, not-yet-ready dialog', async () => {
+    const initialFocus = vi.fn(() => registeredTarget.value)
+    const returnFocus = vi.fn(() => null)
+    const focusReady = ref(false)
+    const App = defineComponent({
+      setup() {
+        return () =>
+          h(
+            GhostDialog,
+            { defaultOpen: true },
+            {
+              default: () =>
+                h(
+                  GhostDialogContent,
+                  {
+                    'aria-label': 'SSR picker',
+                    portal: false,
+                    focusReady: focusReady.value,
+                    initialFocus,
+                    returnFocus,
+                  },
+                  () => [
+                    h('button', { type: 'button' }, 'First'),
+                    h(RegisteringChild),
+                  ],
+                ),
+            },
+          )
+      },
+    })
+
+    const html = await renderToString(createSSRApp(App))
+    expect(html).toContain('SSR picker')
+    expect(initialFocus).not.toHaveBeenCalled()
+    expect(returnFocus).not.toHaveBeenCalled()
+
+    const container = document.createElement('div')
+    container.innerHTML = html
+    document.body.append(container)
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined)
+    const error = vi.spyOn(console, 'error').mockImplementation(() => undefined)
+    const app = createSSRApp(App)
+    app.mount(container)
+    await flushPromises()
+    const messages = [...warn.mock.calls, ...error.mock.calls]
+      .flat()
+      .map(String)
+      .filter((text) => text.toLowerCase().includes('hydration'))
+    expect(messages).toEqual([])
+    expect(initialFocus).not.toHaveBeenCalled()
+
+    focusReady.value = true
+    await flushPromises()
+    expect(initialFocus).toHaveBeenCalledTimes(1)
+    expect(document.activeElement).toBe(
+      container.querySelector('[data-testid="registered"]'),
+    )
+
+    // Unmount releases trap listeners, inert, and scroll lock.
+    const remove = vi.spyOn(document, 'removeEventListener')
+    app.unmount()
+    expect(remove).toHaveBeenCalledWith('keydown', expect.any(Function), true)
+    expect(document.body.style.overflow).toBe('')
+    container.remove()
+  })
+
+  it('keeps nested dialogs layered when the inner one defers focus entry', async () => {
+    const innerReady = ref(false)
+    mountAttached(
+      defineComponent({
+        setup() {
+          return () =>
+            h(
+              GhostDialog,
+              { defaultOpen: true },
+              {
+                default: () =>
+                  h(GhostDialogContent, { 'aria-label': 'Outer' }, () => [
+                    h('button', { 'data-testid': 'outer-first' }, 'Outer'),
+                    h(GhostDialog, null, {
+                      default: () => [
+                        h(
+                          GhostDialogTrigger,
+                          { 'data-testid': 'inner-trigger' },
+                          () => 'Inner',
+                        ),
+                        h(
+                          GhostDialogContent,
+                          {
+                            'aria-label': 'Inner',
+                            focusReady: innerReady.value,
+                          },
+                          () => [
+                            h(
+                              'button',
+                              { 'data-testid': 'inner-first' },
+                              'Inner first',
+                            ),
+                          ],
+                        ),
+                      ],
+                    }),
+                  ]),
+              },
+            )
+        },
+      }),
+    )
+    await flushPromises()
+    const innerTrigger = queryHtml('[data-testid="inner-trigger"]')
+    innerTrigger.click()
+    await flushPromises()
+    expect(document.activeElement).toBe(innerTrigger)
+
+    innerReady.value = true
+    await flushPromises()
+    const innerFirst = queryHtml('[data-testid="inner-first"]')
+    expect(document.activeElement).toBe(innerFirst)
+    expect(pressKey('Tab', innerFirst).defaultPrevented).toBe(true)
+    expect(document.activeElement).toBe(innerFirst)
+
+    pressKey('Escape')
+    await flushPromises()
+    expect(document.querySelector('[data-testid="inner-first"]')).toBeNull()
+    expect(document.activeElement).toBe(innerTrigger)
+    expect(queryHtml('[data-testid="outer-first"]')).toBeTruthy()
   })
 })

@@ -30,6 +30,21 @@
       "deprecated": false
     },
     {
+      "name": "focusReady",
+      "type": "boolean",
+      "default": true,
+      "required": false,
+      "description": "Gates the first focus-scope activation of each opening; once active, the scope stays active until close.",
+      "deprecated": false
+    },
+    {
+      "name": "initialFocus",
+      "type": "(() => HTMLElement | null)",
+      "required": false,
+      "description": "Resolves the preferred initial focus target; invalid or `null` keeps the default autofocus fallback.",
+      "deprecated": false
+    },
+    {
       "name": "portal",
       "type": "boolean",
       "default": true,
@@ -43,6 +58,13 @@
       "default": "body",
       "required": false,
       "description": "Teleport target passed to `GhostPortal` when `portal` is `true`.",
+      "deprecated": false
+    },
+    {
+      "name": "returnFocus",
+      "type": "(() => HTMLElement | null)",
+      "required": false,
+      "description": "Resolves the preferred close focus target; invalid or `null` keeps the saved opener.",
       "deprecated": false
     },
     {

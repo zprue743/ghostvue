@@ -97,6 +97,9 @@ Renders only when both `open` and `modal` are `true`.
 | `closeOnOutsideClick` | `boolean \| undefined`                              | `true` (`false` for `'alertdialog'`) | Whether pointer clicks outside content (including overlay) dismiss the dialog. |
 | `portal`              | `boolean`                                           | `true`                               | Teleports content through `GhostPortal` when `true`, or inline when `false`.   |
 | `portalTo`            | `GhostPortalTarget`                                 | `'body'`                             | Teleport target passed to `GhostPortal` when `portal` is `true`.               |
+| `focusReady`          | `boolean`                                           | `true`                               | Gates the first focus-scope activation of each opening (see Focus behavior).   |
+| `initialFocus`        | `(() => HTMLElement \| null) \| undefined`          | `undefined`                          | Preferred initial focus target; invalid or `null` keeps the default order.     |
+| `returnFocus`         | `(() => HTMLElement \| null) \| undefined`          | `undefined`                          | Preferred close focus target; invalid or `null` keeps the saved opener.        |
 
 #### `GhostDialogTitle`
 
@@ -204,6 +207,30 @@ autoFocus: true, restoreFocus: true }`. Even when open at mount (`defaultOpen`
   dialog owns `Tab` while focus sits outside the dialog root, while an inline
   (`portal=false`) popover inside the dialog keeps `Tab` bounded inside the modal
   dialog.
+- Focus readiness and targets (GHO-209, added for the anchored
+  DatePicker, specified in `docs/components/date-picker-spec.md`):
+  - `focusReady` (default `true`) gates the first focus-scope activation of
+    each opening. Activation also waits for portal placement. Scroll lock,
+    background `inert`, and dismissal start when the dialog opens. Once the
+    scope has activated, it stays active (and a modal trap stays on) until
+    close, even if `focusReady` turns `false` again.
+  - The element focused when an opening starts is captured before background
+    `inert` applies, because browsers blur a focused element once it becomes
+    inert. When activation was deferred, that element is the restore fallback.
+    A dialog closed before it ever activated restores focus the same way if
+    focus was left on `<body>`.
+  - `initialFocus` is resolved at activation, after mount. A missing,
+    disconnected, unfocusable, or outside-the-content element keeps the default
+    order (`[data-autofocus]`, first tabbable, the content).
+  - `returnFocus` is resolved on each close that restores focus, after mount.
+    A missing, disconnected, or unfocusable (for example disabled) element
+    keeps the saved opener. It is not called while a controlled parent keeps
+    the dialog open, and focus does not move in that case.
+  - Resolvers are plain functions read at those moments, so a descendant can
+    register its target (for example a Calendar grid cell) without timers or
+    DOM queries into undocumented nesting.
+  - `GhostDrawerContent` shares this implementation but does not expose these
+    props; drawers keep the default behavior.
 - On modal close, `useInertOthers` releases `inert` from background elements
   before `useFocusScope` restores focus to the trigger/previous element.
 - Modal outside-pointer close happens on `pointerdown`, so the overlay is gone
@@ -262,7 +289,9 @@ autoFocus: true, restoreFocus: true }`. Even when open at mount (`defaultOpen`
   every part, props, exposed refs, `modal` vs non-modal, `alertdialog`, `GHOST002`/
   `GHOST003`, inline `portal=false` popover Tab containment inside a modal
   dialog, overlay order before/after content keeping both non-inert, nested
-  dialogs, Node SSR without globals.
+  dialogs, Node SSR without globals, and `focusReady` / `initialFocus` /
+  `returnFocus` defaults, fallbacks, SSR without resolver calls, and hydration
+  of an initially open, not-yet-ready dialog.
 - **Theme integration (`tests/integration/ghost-dialog-themed.test.ts`,
   `ghost-dialog-theme-css.test.ts`):** all themed wrappers preserving >= 80%
   line coverage in `packages/themes/src`, CSS tokens (`--ghost-scrim`)
@@ -271,7 +300,10 @@ autoFocus: true, restoreFocus: true }`. Even when open at mount (`defaultOpen`
   overlay click, `closeOnEscape`/`closeOnOutsideClick=false`, scroll lock with
   no layout shift, inert background (skipping `[data-ghost-live]`), focus
   restore, nested dialogs, popover inside dialog (portaled and `portal=false`),
-  `alertdialog`, `modal=false`, and Axe clean.
+  `alertdialog`, `modal=false`, and Axe clean. Deferred focus entry
+  (`focusReady`, registered `initialFocus` target, trap continuity, nested
+  dialogs, disabled and removed opener with `returnFocus`, close before
+  readiness, ignored controlled close, and cleanup).
 - **Cross-browser (`@cross-browser`, Chromium, Firefox, WebKit):** focus trap
   and overlay-click restore, nested dialog Escape, root scroll lock with
   `html { overflow-y: scroll }`, and the modal primitives (portaled popover Tab

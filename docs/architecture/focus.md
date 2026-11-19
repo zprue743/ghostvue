@@ -53,8 +53,17 @@ Activates when `container` resolves to an element. Deactivates when it becomes
 | `loop`         | `true`  | When trapped, wrap last → first and first → last. `false` keeps focus on the edge item.                              |
 | `autoFocus`    | `true`  | Focus `[data-autofocus]` if it is focusable, else the first tabbable, else the container.                            |
 | `restoreFocus` | `true`  | Focus the previously focused node on deactivate if it is still connected.                                            |
+| `initialFocus` | none    | Preferred autofocus target. Used only when `autoFocus` is on and the element is connected, focusable, and in scope.  |
+| `returnFocus`  | none    | Preferred restore target. Used only when `restoreFocus` is on and the element is connected and focusable.            |
 
 Each option is a `MaybeRefOrGetter`. `container` is too.
+
+`initialFocus` and `returnFocus` are resolved lazily: once when the scope
+activates and once when it deactivates, both after mount, never during setup
+or SSR. Pass a getter so a target registered later by a descendant (for
+example a calendar grid cell) is read at activation time. An omitted, `null`,
+or invalid target keeps the default order above, so a disabled or removed
+preferred target never drops focus to `<body>`.
 
 Nested trapped scopes stack. Only the **innermost currently trapped** scope
 handles `Tab` and `focusin` recovery. If focus leaves the container via a

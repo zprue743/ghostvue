@@ -41,6 +41,19 @@ export const GhostDialogContent = defineComponent({
       type: [String, Object, null] as PropType<GhostPortalTarget>,
       default: 'body',
     },
+    // Focus-entry hooks forwarded unchanged to the headless content (GHO-209).
+    focusReady: {
+      type: Boolean,
+      default: true,
+    },
+    initialFocus: {
+      type: Function as PropType<(() => HTMLElement | null) | undefined>,
+      default: undefined,
+    },
+    returnFocus: {
+      type: Function as PropType<(() => HTMLElement | null) | undefined>,
+      default: undefined,
+    },
   },
   setup(props, { attrs, slots, expose }) {
     const inner = ref<GhostDialogContentExposed | null>(null)
@@ -69,6 +82,9 @@ export const GhostDialogContent = defineComponent({
           closeOnOutsideClick: props.closeOnOutsideClick,
           portal: props.portal,
           portalTo: props.portalTo,
+          focusReady: props.focusReady,
+          initialFocus: props.initialFocus,
+          returnFocus: props.returnFocus,
           'data-themed': '',
         },
         slots,

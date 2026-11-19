@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, useTemplateRef } from 'vue'
 
 import {
   GhostButton as GhostButtonThemed,
@@ -27,6 +27,51 @@ import {
 } from '@ghostvue/vue'
 
 const basicOpen = ref(false)
+
+// Deferred focus entry fixture (GHO-209). It models the anchored DatePicker:
+// readiness stays false after open until "positioning" finishes, a child
+// registers the initial target, and return focus falls back from the
+// trigger to the text input when the trigger is disabled or removed. Readiness is driven by an in-dialog control that
+// e2e activates with a synthetic click so the pointer never moves focus.
+const deferredOpen = ref(false)
+const deferredReady = ref(false)
+const deferredKeepOpen = ref(false)
+const deferredTriggerDisabled = ref(false)
+const deferredTriggerRemoved = ref(false)
+const deferredTarget = ref<HTMLElement | null>(null)
+const deferredTrigger = useTemplateRef<{ element: HTMLElement | null }>(
+  'deferredTrigger',
+)
+const deferredInput = useTemplateRef<HTMLInputElement>('deferredInput')
+
+function onDeferredOpenChange(open: boolean): void {
+  // Controlled parent that can ignore close proposals.
+  if (!open && deferredKeepOpen.value) {
+    return
+  }
+  if (open) {
+    deferredReady.value = false
+  }
+  deferredOpen.value = open
+}
+
+function registerDeferredTarget(element: unknown): void {
+  deferredTarget.value = element instanceof HTMLElement ? element : null
+}
+
+// Returns null while the trigger is usable so Dialog's own saved opener (the
+// trigger, captured before background inert blurred it) is exercised, and
+// names the input only once the trigger is disabled or removed.
+function deferredReturnFocus(): HTMLElement | null {
+  const trigger = deferredTrigger.value?.element ?? null
+  if (
+    trigger?.isConnected &&
+    !(trigger instanceof HTMLButtonElement && trigger.disabled)
+  ) {
+    return null
+  }
+  return deferredInput.value
+}
 </script>
 
 <template>
@@ -79,6 +124,102 @@ const basicOpen = ref(false)
           </div>
         </GhostDialogContent>
       </GhostDialog>
+
+      <!-- Deferred focus entry with initial/return targets (GHO-209) -->
+      <div class="dialog-actions">
+        <label>
+          Deferred date
+          <input
+            ref="deferredInput"
+            type="text"
+            data-testid="dialog-deferred-input"
+          />
+        </label>
+        <GhostDialog :open="deferredOpen" @update:open="onDeferredOpenChange">
+          <GhostDialogTrigger
+            v-if="!deferredTriggerRemoved"
+            ref="deferredTrigger"
+            :disabled="deferredTriggerDisabled"
+            data-testid="dialog-deferred-trigger"
+          >
+            Open deferred dialog
+          </GhostDialogTrigger>
+          <GhostDialogOverlay class="dialog-demo-overlay" />
+          <GhostDialogContent
+            data-testid="dialog-deferred-content"
+            class="dialog-demo-surface"
+            :focus-ready="deferredReady"
+            :initial-focus="() => deferredTarget"
+            :return-focus="deferredReturnFocus"
+          >
+            <GhostDialogTitle>Deferred dialog</GhostDialogTitle>
+            <div class="dialog-actions">
+              <button
+                type="button"
+                data-testid="dialog-deferred-first"
+                @click="deferredReady = true"
+              >
+                Finish positioning
+              </button>
+              <button
+                :ref="registerDeferredTarget"
+                type="button"
+                data-testid="dialog-deferred-target"
+              >
+                Registered target
+              </button>
+              <button
+                type="button"
+                data-testid="dialog-deferred-unready"
+                @click="deferredReady = false"
+              >
+                Reset readiness
+              </button>
+              <label>
+                <input
+                  v-model="deferredKeepOpen"
+                  type="checkbox"
+                  data-testid="dialog-deferred-keep-open"
+                />
+                Ignore close
+              </label>
+              <button
+                type="button"
+                data-testid="dialog-deferred-disable-trigger"
+                @click="deferredTriggerDisabled = true"
+              >
+                Disable trigger
+              </button>
+              <button
+                type="button"
+                data-testid="dialog-deferred-remove-trigger"
+                @click="deferredTriggerRemoved = true"
+              >
+                Remove trigger
+              </button>
+              <GhostDialog>
+                <GhostDialogTrigger
+                  data-testid="dialog-deferred-nested-trigger"
+                >
+                  Open nested dialog
+                </GhostDialogTrigger>
+                <GhostDialogContent
+                  data-testid="dialog-deferred-nested-content"
+                  class="dialog-demo-surface"
+                >
+                  <GhostDialogTitle>Nested dialog</GhostDialogTitle>
+                  <GhostDialogClose data-testid="dialog-deferred-nested-close">
+                    Close nested dialog
+                  </GhostDialogClose>
+                </GhostDialogContent>
+              </GhostDialog>
+              <GhostDialogClose data-testid="dialog-deferred-close">
+                Close deferred dialog
+              </GhostDialogClose>
+            </div>
+          </GhostDialogContent>
+        </GhostDialog>
+      </div>
 
       <!-- Guarded dialog: closeOnEscape=false & closeOnOutsideClick=false -->
       <GhostDialog>

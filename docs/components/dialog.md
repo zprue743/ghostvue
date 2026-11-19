@@ -85,6 +85,28 @@ Sets `role`, `aria-modal="true"` (when `modal=true`), `tabindex="-1"`,
 `GhostDialogTitle`), and `aria-describedby` (linking `GhostDialogDescription`).
 Exposes `{ element, focus, blur }`.
 
+Three optional props control focus entry and exit. Most dialogs never need
+them.
+
+| Prop           | Default     | Behavior                                                                                                                                                           |
+| -------------- | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `focusReady`   | `true`      | While `false`, focus does not enter the dialog yet. Use it while content is still positioning or rendering. Once focus has entered, the trap stays on until close. |
+| `initialFocus` | `undefined` | Function returning the element to focus on entry. `null` or an invalid element keeps the default: `[data-autofocus]`, then the first tabbable element.             |
+| `returnFocus`  | `undefined` | Function returning the element to focus on close. `null`, or a removed or disabled element, keeps the default: the element focused when the dialog opened.         |
+
+```vue
+<GhostDialogContent
+  :focus-ready="positioned"
+  :initial-focus="() => selectedCell"
+  :return-focus="() => (triggerEnabled ? null : inputElement)"
+>
+  ...
+</GhostDialogContent>
+```
+
+Both functions run in the browser only, at the moment focus moves. They are
+never called during server rendering.
+
 ### `GhostDialogTitle`
 
 Sets `id` and `data-part="title"`, and registers as the dialog's accessible name
