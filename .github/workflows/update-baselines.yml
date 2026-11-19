@@ -13,10 +13,19 @@
 #   `pull_request_target`, so fork code never sees a write token or secret.
 # - PR title and branch are untrusted: they reach scripts only through `env:`
 #   and step outputs, never through `${{ }}` inside `run:`.
-# - The job that installs dependencies and runs Playwright has a read-only
-#   token and no push secret. Only `publish` sees BASELINES_PUSH_TOKEN, and it
-#   runs neither `pnpm install` nor Playwright: it copies snapshot paths out of
-#   the artifact, re-checks that nothing else changed, and pushes.
+# - The job that installs dependencies and runs Playwright (`regenerate`) has a
+#   read-only token, no push secret, and no dependency cache: a
+#   `workflow_dispatch` run uses the default branch's cache scope, so PR code
+#   must not be able to write a cache that master CI later restores.
+# - Only `publish` sees BASELINES_PUSH_TOKEN, and it runs no PR-controlled code:
+#   no `pnpm install`, no Playwright, no node script from the PR tree, and no
+#   git hooks. It runs scripts/update-visual-baselines.mjs from a separate
+#   checkout of the default branch, checks out the PR head with
+#   `persist-credentials: false`, and hands the token to the final `git push`
+#   step alone, as a masked one-shot header that is never written to
+#   `.git/config`. Until this workflow's PR merges, the default branch has no
+#   copy of the script, so `publish` fails (and nothing is pushed) by design
+#   rather than falling back to the PR's copy.
 # - BASELINES_PUSH_TOKEN (fine-grained PAT or GitHub App token, contents:write
 #   on this repository) is required because pushes made with GITHUB_TOKEN do
 #   not start CI. Without it the run comments and stops instead of falling back.
@@ -114,8 +123,8 @@ jobs:
           run_install: false
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
+          # No dependency cache on purpose; see the security model above.
           node-version: 22
-          cache: pnpm
       - run: pnpm install --frozen-lockfile
       # The visual suite serves the built playground and docs (as `pnpm test:visual` does).
       - run: pnpm --filter @ghostvue/playground build && pnpm --filter @ghostvue/docs build
@@ -158,11 +167,21 @@ jobs:
       contents: read
     outputs:
       sha: ${{ steps.push.outputs.sha }}
+    env:
+      # Trusted copy of the helper script, from the default branch checkout.
+      # The PR tree under `head/` is data only: nothing in it is executed.
+      BASELINES_SCRIPT: ${{ github.workspace }}/base/scripts/update-visual-baselines.mjs
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:
+          ref: ${{ github.event.repository.default_branch }}
+          path: base
+          persist-credentials: false
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
           ref: ${{ needs.prepare.outputs.head_sha }}
-          token: ${{ secrets.BASELINES_PUSH_TOKEN }}
+          path: head
+          persist-credentials: false
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: 22
@@ -171,26 +190,43 @@ jobs:
           name: visual-baselines
           path: ${{ runner.temp }}/visual-baselines
       - name: Apply snapshot-only changes
+        working-directory: head
         env:
           ARTIFACT_DIR: ${{ runner.temp }}/visual-baselines
-        run: node scripts/update-visual-baselines.mjs apply --from "$ARTIFACT_DIR"
-      - id: push
-        name: Commit and push
+        run: node "$BASELINES_SCRIPT" apply --from "$ARTIFACT_DIR"
+      - name: Commit
+        working-directory: head
         env:
           PR_NUMBER: ${{ needs.prepare.outputs.number }}
           PR_TITLE: ${{ needs.prepare.outputs.title }}
           PR_HEAD_REF: ${{ needs.prepare.outputs.head_ref }}
         run: |
-          git check-ref-format --branch "$PR_HEAD_REF" >/dev/null
-          message="$(node scripts/update-visual-baselines.mjs commit-message)"
+          message="$(node "$BASELINES_SCRIPT" commit-message)"
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add -A -- 'tests/e2e/*.spec.ts-snapshots/*-chromium-linux.png'
-          # Hooks are disabled so nothing from the checkout runs with the token.
+          # Hooks are disabled so nothing from the PR checkout runs.
           git -c core.hooksPath=/dev/null commit --no-verify -m "$message"
+      - id: push
+        name: Push
+        working-directory: head
+        env:
+          PR_HEAD_REF: ${{ needs.prepare.outputs.head_ref }}
+          # The only place the push secret enters the job.
+          BASELINES_PUSH_TOKEN: ${{ secrets.BASELINES_PUSH_TOKEN }}
+        run: |
+          git check-ref-format --branch "$PR_HEAD_REF" >/dev/null
+          # The token travels as a one-shot header for this command only; it is
+          # never written to .git/config. Runners mask the secret itself, but
+          # not its base64 form, so mask that too before it can be printed.
+          auth="$(printf 'x-access-token:%s' "$BASELINES_PUSH_TOKEN" | base64 -w0)"
+          echo "::add-mask::$auth"
           # A normal (fast-forward only) push: if the branch moved since the
-          # run started, it is rejected and nothing is overwritten.
-          git push origin "HEAD:refs/heads/$PR_HEAD_REF"
+          # run started, it is rejected and nothing is overwritten. Hooks stay
+          # disabled while the token is in use.
+          git -c core.hooksPath=/dev/null \
+            -c "http.$GITHUB_SERVER_URL/.extraheader=AUTHORIZATION: basic $auth" \
+            push --no-verify origin "HEAD:refs/heads/$PR_HEAD_REF"
           echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
 
   report:

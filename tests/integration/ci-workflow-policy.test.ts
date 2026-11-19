@@ -34,6 +34,19 @@ function jobBlock(workflow: string, jobId: string): string {
   return rest.slice(0, end === -1 ? undefined : end).join('\n')
 }
 
+/** Splits a job block into its steps (each starting at `      - `). */
+function jobSteps(block: string): string[] {
+  const lines = block.split('\n')
+  const start = lines.indexOf('    steps:')
+  if (start === -1) throw new Error('steps block not found')
+  const steps: string[][] = []
+  for (const line of lines.slice(start + 1)) {
+    if (line.startsWith('      - ')) steps.push([line])
+    else steps.at(-1)?.push(line)
+  }
+  return steps.map((step) => step.join('\n'))
+}
+
 /** Returns `key: value` pairs nested directly under a `permissions:` line. */
 function permissionsUnder(
   block: string,
@@ -312,6 +325,67 @@ describe('Update visual baselines workflow', () => {
     expect(jobBlock(workflow, 'regenerate')).toContain(
       'persist-credentials: false',
     )
+  })
+
+  it('keeps the regenerate job out of every shared cache', () => {
+    // A workflow_dispatch run uses the default branch's cache scope, so a
+    // cache written after installing PR code could poison master CI.
+    const regenerate = jobBlock(workflow, 'regenerate')
+    expect(regenerate).not.toMatch(/^\s+cache(?:-dependency-path)?:/m)
+    expect(regenerate).not.toMatch(/actions\/cache|store-path|STORE_PATH/)
+  })
+
+  it('runs only trusted code in publish and limits the push token to git push', () => {
+    const publish = jobBlock(workflow, 'publish')
+    const steps = jobSteps(publish)
+    const checkouts = steps.filter((step) =>
+      step.includes('uses: actions/checkout@'),
+    )
+    expect(checkouts).toHaveLength(2)
+    const [base, head] = checkouts as [string, string]
+
+    expect(base).toContain('ref: ${{ github.event.repository.default_branch }}')
+    expect(base).toContain('path: base')
+    expect(base).toContain('persist-credentials: false')
+    expect(base).not.toMatch(/token:/)
+    expect(head).toContain('ref: ${{ needs.prepare.outputs.head_sha }}')
+    expect(head).toContain('path: head')
+    expect(head).toContain('persist-credentials: false')
+    expect(head).not.toMatch(/token:/)
+
+    // The helper script comes from the default-branch checkout, never the PR.
+    expect(publish).toContain(
+      'BASELINES_SCRIPT: ${{ github.workspace }}/base/scripts/update-visual-baselines.mjs',
+    )
+    const scriptRuns = publish.match(/node [^\n]*/g) ?? []
+    expect(scriptRuns.length).toBeGreaterThan(0)
+    expect(
+      scriptRuns.filter((run) => !run.startsWith('node "$BASELINES_SCRIPT" ')),
+    ).toEqual([])
+
+    // The secret enters exactly one step: the push, through its env.
+    const secretSteps = steps.filter((step) =>
+      step.includes('BASELINES_PUSH_TOKEN'),
+    )
+    expect(secretSteps).toHaveLength(1)
+    const push = secretSteps[0] ?? ''
+    expect(push).toContain('id: push')
+    expect(publish.match(/secrets\./g)).toHaveLength(1)
+    expect(push).toMatch(
+      /^ {10}BASELINES_PUSH_TOKEN: \$\{\{ secrets\.BASELINES_PUSH_TOKEN \}\}$/m,
+    )
+    // Never persisted: no `git config` and no remote rewrite with the token.
+    expect(push).not.toMatch(/git config|remote set-url|credential/)
+    expect(push).toContain('::add-mask::')
+    // No PR hooks run with the token in reach.
+    const gitWrites = steps.filter(
+      (step) => /\bgit\b/.test(step) && /\b(?:commit|push)\b/.test(step),
+    )
+    expect(gitWrites).toHaveLength(2)
+    for (const step of gitWrites) {
+      expect(step).toContain('core.hooksPath=/dev/null')
+      expect(step).toContain('--no-verify')
+    }
   })
 
   it('regenerates in the Playwright image CI uses', () => {

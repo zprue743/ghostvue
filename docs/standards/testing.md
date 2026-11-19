@@ -237,6 +237,14 @@ again to retry. Review the image diffs in the pushed commit before merging.
 It refuses fork PRs, because it only runs for branches in this repository. It
 also only runs on a PR that GitHub can merge (no conflicts with `master`).
 
+The job that installs dependencies and runs Playwright has a read-only token,
+no secrets, and no dependency cache, so PR code cannot write a cache that
+`master` CI restores. The job that pushes runs no code from the PR: it runs
+`scripts/update-visual-baselines.mjs` from a separate checkout of the default
+branch, checks out the PR head without persisted credentials, disables git
+hooks, and passes `BASELINES_PUSH_TOKEN` only to the final `git push` step. A
+change to the script therefore takes effect only after it merges to `master`.
+
 Maintainer setup:
 
 - Create the `update-baselines` label.
