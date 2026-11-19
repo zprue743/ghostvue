@@ -8,6 +8,10 @@
 import { fileURLToPath } from 'node:url'
 
 import {
+  loadRepositoryManifests,
+  validateRepositoryVerification,
+} from './lib/accessibility-verification.js'
+import {
   syncRepositoryManifests,
   validateExampleManifests,
 } from './lib/component-manifests.js'
@@ -20,7 +24,18 @@ const result = await syncRepositoryManifests({
   write: writeMode,
 })
 const exampleViolations = await validateExampleManifests(repositoryRoot)
-const violations = [...result.violations, ...exampleViolations]
+// Cross-field accessibility.verification rules (declared keys vs mapped
+// tests, evidence identity, schemaVersion). Execution is checked separately
+// by scripts/check-keyboard-evidence.mjs.
+const verificationViolations = validateRepositoryVerification(
+  repositoryRoot,
+  await loadRepositoryManifests(repositoryRoot),
+)
+const violations = [
+  ...result.violations,
+  ...exampleViolations,
+  ...verificationViolations,
+]
 
 if (violations.length > 0) {
   console.error(violations.join('\n'))

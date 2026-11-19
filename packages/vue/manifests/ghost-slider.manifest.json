@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "1.0.0",
+  "schemaVersion": "1.1.0",
   "source": "generated",
   "name": "GhostSlider",
   "package": "@ghostvue/vue",
@@ -195,7 +195,98 @@
       "aria-valuemin",
       "aria-valuemax",
       "aria-valuenow"
-    ]
+    ],
+    "verification": {
+      "automatedKeyboard": {
+        "status": "passed",
+        "keys": {
+          "ArrowRight": [
+            {
+              "spec": "tests/e2e/ghost-slider.spec.ts",
+              "title": "GhostSlider › steps a horizontal LTR slider with every documented horizontal key",
+              "package": "@ghostvue/vue"
+            },
+            {
+              "spec": "tests/e2e/ghost-slider.spec.ts",
+              "title": "GhostSlider › centers thumbs and vertical rails across LTR/RTL, sizes, pointer drags, keyboard, and reactive dir @cross-browser",
+              "package": "@ghostvue/themes"
+            }
+          ],
+          "ArrowLeft": [
+            {
+              "spec": "tests/e2e/ghost-slider.spec.ts",
+              "title": "GhostSlider › steps a horizontal LTR slider with every documented horizontal key",
+              "package": "@ghostvue/vue"
+            },
+            {
+              "spec": "tests/e2e/ghost-slider.spec.ts",
+              "title": "GhostSlider › centers thumbs and vertical rails across LTR/RTL, sizes, pointer drags, keyboard, and reactive dir @cross-browser",
+              "package": "@ghostvue/themes"
+            }
+          ],
+          "ArrowUp": [
+            {
+              "spec": "tests/e2e/ghost-slider.spec.ts",
+              "title": "GhostSlider › maps vertical pointer drags and arrow keys identically in RTL and LTR @cross-browser",
+              "package": "@ghostvue/themes"
+            }
+          ],
+          "ArrowDown": [
+            {
+              "spec": "tests/e2e/ghost-slider.spec.ts",
+              "title": "GhostSlider › maps vertical pointer drags and arrow keys identically in RTL and LTR @cross-browser",
+              "package": "@ghostvue/themes"
+            }
+          ],
+          "PageUp": [
+            {
+              "spec": "tests/e2e/ghost-slider.spec.ts",
+              "title": "GhostSlider › steps a horizontal LTR slider with every documented horizontal key",
+              "package": "@ghostvue/vue"
+            }
+          ],
+          "PageDown": [
+            {
+              "spec": "tests/e2e/ghost-slider.spec.ts",
+              "title": "GhostSlider › steps a horizontal LTR slider with every documented horizontal key",
+              "package": "@ghostvue/vue"
+            }
+          ],
+          "Home": [
+            {
+              "spec": "tests/e2e/ghost-slider.spec.ts",
+              "title": "GhostSlider › steps a horizontal LTR slider with every documented horizontal key",
+              "package": "@ghostvue/vue"
+            },
+            {
+              "spec": "tests/e2e/ghost-slider.spec.ts",
+              "title": "GhostSlider › centers thumbs and vertical rails across LTR/RTL, sizes, pointer drags, keyboard, and reactive dir @cross-browser",
+              "package": "@ghostvue/themes"
+            }
+          ],
+          "End": [
+            {
+              "spec": "tests/e2e/ghost-slider.spec.ts",
+              "title": "GhostSlider › steps a horizontal LTR slider with every documented horizontal key",
+              "package": "@ghostvue/vue"
+            },
+            {
+              "spec": "tests/e2e/ghost-slider.spec.ts",
+              "title": "GhostSlider › centers thumbs and vertical rails across LTR/RTL, sizes, pointer drags, keyboard, and reactive dir @cross-browser",
+              "package": "@ghostvue/themes"
+            }
+          ]
+        }
+      },
+      "manual": {
+        "status": "not-reviewed",
+        "evidence": []
+      },
+      "assistiveTechnology": {
+        "status": "not-reviewed",
+        "evidence": []
+      }
+    }
   },
   "examples": [
     "slider/basic",

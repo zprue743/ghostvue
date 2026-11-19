@@ -553,7 +553,15 @@ jobs:
           merge-multiple: true
       - name: Merge Playwright blob reports
         if: needs.changes.outputs.skip_heavy != 'true'
-        run: pnpm exec playwright merge-reports --reporter=html,github ./all-blob-reports
+        env:
+          PLAYWRIGHT_JSON_OUTPUT_FILE: .artifacts/playwright/results.json
+        run: pnpm exec playwright merge-reports --reporter=html,github,json ./all-blob-reports
+      # GHO-42: every key mapped in a manifest's automatedKeyboard evidence
+      # must have executed and passed in this run's merged chromium-e2e
+      # results, not merely exist as a test title.
+      - name: Verify keyboard evidence executed and passed
+        if: needs.changes.outputs.skip_heavy != 'true'
+        run: node scripts/check-keyboard-evidence.mjs --report .artifacts/playwright/results.json
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         if: failure() && needs.changes.outputs.skip_heavy != 'true'
         with:

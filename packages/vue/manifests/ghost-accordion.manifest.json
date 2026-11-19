@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "1.0.0",
+  "schemaVersion": "1.1.0",
   "source": "generated",
   "name": "GhostAccordion",
   "package": "@ghostvue/vue",
@@ -108,7 +108,60 @@
       "Home": "Focus the first accordion trigger.",
       "End": "Focus the last accordion trigger."
     },
-    "requiredAriaAttributes": []
+    "requiredAriaAttributes": [],
+    "verification": {
+      "automatedKeyboard": {
+        "status": "passed",
+        "keys": {
+          "ArrowDown": [
+            {
+              "spec": "tests/e2e/ghost-accordion.spec.ts",
+              "title": "GhostAccordion @component:GhostAccordion › navigation example keeps tab order and isolates nested headers",
+              "package": "@ghostvue/vue"
+            },
+            {
+              "spec": "tests/e2e/ghost-accordion.spec.ts",
+              "title": "GhostAccordion @component:GhostAccordion › arrow keys move focus between accordion triggers",
+              "package": "@ghostvue/vue"
+            }
+          ],
+          "ArrowUp": [
+            {
+              "spec": "tests/e2e/ghost-accordion.spec.ts",
+              "title": "GhostAccordion @component:GhostAccordion › navigation example keeps tab order and isolates nested headers",
+              "package": "@ghostvue/vue"
+            },
+            {
+              "spec": "tests/e2e/ghost-accordion.spec.ts",
+              "title": "GhostAccordion @component:GhostAccordion › arrow keys move focus between accordion triggers",
+              "package": "@ghostvue/vue"
+            }
+          ],
+          "Home": [
+            {
+              "spec": "tests/e2e/ghost-accordion.spec.ts",
+              "title": "GhostAccordion @component:GhostAccordion › navigation example keeps tab order and isolates nested headers",
+              "package": "@ghostvue/vue"
+            }
+          ],
+          "End": [
+            {
+              "spec": "tests/e2e/ghost-accordion.spec.ts",
+              "title": "GhostAccordion @component:GhostAccordion › navigation example keeps tab order and isolates nested headers",
+              "package": "@ghostvue/vue"
+            }
+          ]
+        }
+      },
+      "manual": {
+        "status": "not-reviewed",
+        "evidence": []
+      },
+      "assistiveTechnology": {
+        "status": "not-reviewed",
+        "evidence": []
+      }
+    }
   },
   "examples": [
     "accordion/basic",

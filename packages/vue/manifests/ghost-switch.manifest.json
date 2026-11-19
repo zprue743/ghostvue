@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "1.0.0",
+  "schemaVersion": "1.1.0",
   "source": "generated",
   "name": "GhostSwitch",
   "package": "@ghostvue/vue",
@@ -144,7 +144,36 @@
     },
     "requiredAriaAttributes": [
       "aria-checked"
-    ]
+    ],
+    "verification": {
+      "automatedKeyboard": {
+        "status": "passed",
+        "keys": {
+          "Space": [
+            {
+              "spec": "tests/e2e/switch.spec.ts",
+              "title": "GhostSwitch › toggles from pointer and keyboard, participates in forms, and has no axe violations",
+              "package": "@ghostvue/vue"
+            }
+          ],
+          "Enter": [
+            {
+              "spec": "tests/e2e/switch.spec.ts",
+              "title": "GhostSwitch › toggles from pointer and keyboard, participates in forms, and has no axe violations",
+              "package": "@ghostvue/vue"
+            }
+          ]
+        }
+      },
+      "manual": {
+        "status": "not-reviewed",
+        "evidence": []
+      },
+      "assistiveTechnology": {
+        "status": "not-reviewed",
+        "evidence": []
+      }
+    }
   },
   "examples": [
     "switch/basic",

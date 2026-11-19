@@ -1,0 +1,49 @@
+{
+  "schemaVersion": "1.1.0",
+  "source": "handwritten",
+  "name": "GhostButton",
+  "package": "@ghostvue/vue",
+  "status": "experimental",
+  "description": "Invalid because not-reviewed automated keyboard evidence cannot map tests.",
+  "props": [],
+  "models": [],
+  "events": [],
+  "slots": [],
+  "exposed": [],
+  "styling": {
+    "parts": [],
+    "states": [],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "button",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/button/",
+    "keyboard": {
+      "Enter": "Activate"
+    },
+    "requiredAriaAttributes": [],
+    "verification": {
+      "automatedKeyboard": {
+        "status": "not-reviewed",
+        "keys": {
+          "Enter": [
+            {
+              "spec": "tests/e2e/button.spec.ts",
+              "title": "GhostButton \u203a activates",
+              "package": "@ghostvue/vue"
+            }
+          ]
+        }
+      },
+      "manual": {
+        "status": "not-reviewed",
+        "evidence": []
+      },
+      "assistiveTechnology": {
+        "status": "not-reviewed",
+        "evidence": []
+      }
+    }
+  },
+  "examples": []
+}

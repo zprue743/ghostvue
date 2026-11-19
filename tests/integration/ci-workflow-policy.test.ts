@@ -255,6 +255,21 @@ describe('CI workflow', () => {
     expect(aggregate).toContain('pattern: playwright-blob-*')
   })
 
+  it('checks mapped keyboard evidence against the merged browser results', () => {
+    const aggregate = jobBlock(workflow, 'browser')
+    expect(aggregate).toContain(
+      'PLAYWRIGHT_JSON_OUTPUT_FILE: .artifacts/playwright/results.json',
+    )
+    expect(aggregate).toContain(
+      'run: pnpm exec playwright merge-reports --reporter=html,github,json ./all-blob-reports',
+    )
+    const merge = aggregate.indexOf('merge-reports')
+    const check = aggregate.indexOf(
+      'run: node scripts/check-keyboard-evidence.mjs --report .artifacts/playwright/results.json',
+    )
+    expect(check).toBeGreaterThan(merge)
+  })
+
   it('limits Firefox and WebKit projects to functional @cross-browser specs', () => {
     const config = readRepoFile('playwright.config.ts')
     for (const project of ['firefox-e2e', 'webkit-e2e']) {

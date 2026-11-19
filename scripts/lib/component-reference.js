@@ -1,6 +1,7 @@
 import { mkdir, readdir, readFile, rm, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 
+import { resolveVerification } from './accessibility-verification.js'
 import { MANIFEST_PACKAGES, pascalToKebab } from './component-manifests.js'
 
 // Escape prose as text: manifest descriptions can contain HTML, pipes and
@@ -25,9 +26,9 @@ function code(value) {
   return `<code>${text(value)}</code>`
 }
 
-function table(title, columns, rows) {
+function table(title, columns, rows, heading = '##') {
   return [
-    `## ${title}`,
+    `${heading} ${title}`,
     '',
     ...(rows.length
       ? [
@@ -36,6 +37,92 @@ function table(title, columns, rows) {
           ...rows.map((row) => `| ${row.join(' | ')} |`),
         ]
       : ['None declared.']),
+    '',
+  ].join('\n')
+}
+
+const STATUS_LABELS = {
+  passed: 'Passed',
+  failed: 'Failed',
+  'not-reviewed': 'Not reviewed',
+}
+
+const REPOSITORY_BLOB = 'https://github.com/zprue743/ghostvue/blob/master/'
+
+function statusLabel(status) {
+  return STATUS_LABELS[status] ?? text(status)
+}
+
+function testLink(reference) {
+  return `<a href="${REPOSITORY_BLOB}${encodeURI(reference.spec)}">${text(reference.title)}</a> (${code(reference.package)})`
+}
+
+function reviewEvidence(entry) {
+  const environment = [
+    entry.environment.assistiveTechnology,
+    entry.environment.browser,
+    entry.environment.platform,
+  ]
+    .filter(Boolean)
+    .map(text)
+    .join(', ')
+  const reference = entry.reference.startsWith('https://')
+    ? entry.reference
+    : `${REPOSITORY_BLOB}${entry.reference}`
+  return `${text(entry.date)}, ${text(entry.reviewer)}, ${code(entry.package)} at ${code(entry.revision)} (${environment}): ${text(entry.summary)} <a href="${encodeURI(reference)}">Record</a>`
+}
+
+/**
+ * Accessibility contract plus the three verification categories, each shown
+ * on its own row. A passed automated row never implies the review rows.
+ */
+function accessibilitySection(manifest) {
+  const accessibility = manifest.accessibility
+  const verification = resolveVerification(manifest)
+  const { automatedKeyboard, manual, assistiveTechnology } = verification
+  const keyboardRows = Object.entries(accessibility.keyboard).map(
+    ([key, action]) => [
+      code(key),
+      text(action),
+      automatedKeyboard.status === 'not-reviewed'
+        ? 'Not reviewed'
+        : (automatedKeyboard.keys[key] ?? []).map(testLink).join('<br>'),
+    ],
+  )
+  const reviewCell = (category) =>
+    category.evidence.length
+      ? category.evidence.map(reviewEvidence).join('<br>')
+      : 'No review recorded.'
+  return [
+    '## Accessibility',
+    '',
+    `Role: ${code(accessibility.role)}. APG pattern: <a href="${encodeURI(accessibility.apgPattern)}">${text(accessibility.apgPattern)}</a>.`,
+    '',
+    `Required ARIA attributes: ${
+      accessibility.requiredAriaAttributes.length
+        ? accessibility.requiredAriaAttributes.map(code).join(', ')
+        : 'none'
+    }.`,
+    '',
+    table(
+      'Keyboard',
+      ['Key', 'Action', 'Automated browser test'],
+      keyboardRows,
+      '###',
+    ),
+    '### Verification',
+    '',
+    'Each category is reviewed separately. Automated keyboard and axe results do not attest manual or assistive-technology review.',
+    '',
+    '| Category | Status | Evidence |',
+    '| --- | --- | --- |',
+    `| Automated keyboard | ${statusLabel(automatedKeyboard.status)} | ${
+      automatedKeyboard.status === 'not-reviewed'
+        ? 'No declared key is mapped to a browser test yet.'
+        : 'Every declared key maps to a Chromium browser test that CI runs and requires to pass on every commit.'
+    } |`,
+    `| Manual interaction | ${statusLabel(manual.status)} | ${reviewCell(manual)} |`,
+    `| Assistive technology | ${statusLabel(assistiveTechnology.status)} | ${reviewCell(assistiveTechnology)} |`,
     '',
   ].join('\n')
 }
@@ -143,6 +230,7 @@ export function manifestToMarkdown(manifest) {
         text(property.description),
       ]),
     ),
+    accessibilitySection(manifest),
     '## Examples',
     '',
     ...(manifest.examples.length

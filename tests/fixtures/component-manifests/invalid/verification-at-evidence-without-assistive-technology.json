@@ -1,0 +1,55 @@
+{
+  "schemaVersion": "1.1.0",
+  "source": "handwritten",
+  "name": "GhostButton",
+  "package": "@ghostvue/vue",
+  "status": "experimental",
+  "description": "Invalid because assistive-technology evidence must name the assistive technology and the reviewed revision.",
+  "props": [],
+  "models": [],
+  "events": [],
+  "slots": [],
+  "exposed": [],
+  "styling": {
+    "parts": [],
+    "states": [],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "button",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/button/",
+    "keyboard": {
+      "Enter": "Activate"
+    },
+    "requiredAriaAttributes": [],
+    "verification": {
+      "automatedKeyboard": {
+        "status": "not-reviewed",
+        "keys": {}
+      },
+      "manual": {
+        "status": "not-reviewed",
+        "evidence": []
+      },
+      "assistiveTechnology": {
+        "status": "failed",
+        "evidence": [
+          {
+            "component": "GhostButton",
+            "package": "@ghostvue/vue",
+            "revision": "main",
+            "date": "2026-11-01",
+            "reviewer": "QA",
+            "environment": {
+              "browser": "Firefox 140",
+              "platform": "Windows 11"
+            },
+            "reference": "https://example.com/r/1",
+            "summary": "Missing name."
+          }
+        ]
+      }
+    }
+  },
+  "examples": []
+}

@@ -1,8 +1,13 @@
 import type { ComponentManifest } from './component-manifests.js'
+import type {
+  KeyboardTestReference,
+  ReviewEvidence,
+  VerificationStatus,
+} from './accessibility-verification.js'
 
 export type ReferenceManifest = Omit<
   ComponentManifest,
-  'source' | 'styling' | 'examples'
+  'source' | 'styling' | 'accessibility' | 'examples'
 > & {
   source: 'generated' | 'handwritten'
   styling: {
@@ -10,6 +15,23 @@ export type ReferenceManifest = Omit<
     states: { name: string; description: string }[]
     cssProperties: { name: string; description: string }[]
     attributes?: { name: string; values: string[]; description: string }[]
+  }
+  accessibility: {
+    role: string
+    apgPattern: string
+    keyboard: Record<string, string>
+    requiredAriaAttributes: string[]
+    verification?: {
+      automatedKeyboard: {
+        status: VerificationStatus
+        keys: Record<string, KeyboardTestReference[]>
+      }
+      manual: { status: VerificationStatus; evidence: ReviewEvidence[] }
+      assistiveTechnology: {
+        status: VerificationStatus
+        evidence: ReviewEvidence[]
+      }
+    }
   }
   examples: string[]
 }

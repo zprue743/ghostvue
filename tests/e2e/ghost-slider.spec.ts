@@ -61,6 +61,42 @@ test.describe('GhostSlider', () => {
     }
   })
 
+  test('steps a horizontal LTR slider with every documented horizontal key', async ({
+    page,
+  }) => {
+    const playground = await startStaticServer('apps/playground/dist')
+
+    try {
+      await page.goto(playground.url)
+
+      // 0–200 in steps of 10, so the large step is max(10 * 10, 200 / 10).
+      const ceiling = page.getByRole('slider', { name: 'Price ceiling' })
+      await expect(ceiling).toHaveAttribute('aria-valuenow', '40')
+      await ceiling.focus()
+      await expect(ceiling).toBeFocused()
+
+      await page.keyboard.press('ArrowRight')
+      await expect(ceiling).toHaveAttribute('aria-valuenow', '50')
+      await page.keyboard.press('ArrowLeft')
+      await expect(ceiling).toHaveAttribute('aria-valuenow', '40')
+      await page.keyboard.press('PageUp')
+      await expect(ceiling).toHaveAttribute('aria-valuenow', '140')
+      await page.keyboard.press('PageDown')
+      await expect(ceiling).toHaveAttribute('aria-valuenow', '40')
+      await page.keyboard.press('End')
+      await expect(ceiling).toHaveAttribute('aria-valuenow', '200')
+      await page.keyboard.press('PageUp')
+      await expect(ceiling).toHaveAttribute('aria-valuenow', '200')
+      await page.keyboard.press('Home')
+      await expect(ceiling).toHaveAttribute('aria-valuenow', '0')
+      await page.keyboard.press('PageDown')
+      await expect(ceiling).toHaveAttribute('aria-valuenow', '0')
+      await expect(page.getByText('Price ceiling: 0')).toBeVisible()
+    } finally {
+      await playground.close()
+    }
+  })
+
   test('centers thumbs and vertical rails across LTR/RTL, sizes, pointer drags, keyboard, and reactive dir @cross-browser', async ({
     page,
   }) => {

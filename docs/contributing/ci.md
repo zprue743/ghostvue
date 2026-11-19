@@ -61,6 +61,15 @@ only the Node 22 leg uploads its coverage blob. Integration, build, and browser 
 new Node LTS line ships, add it to both matrices. Raising the `engines` floor
 needs its own reviewed change.
 
+## Keyboard evidence
+
+The `browser` job merges every Playwright blob report into HTML, GitHub
+annotations, and `.artifacts/playwright/results.json`, then runs
+`node scripts/check-keyboard-evidence.mjs --report` on that JSON. It fails when
+any test mapped in a manifest's `accessibility.verification.automatedKeyboard`
+did not execute in `chromium-e2e` or did not pass. See
+[accessibility verification](../architecture/component-manifest.md#accessibility-verification).
+
 ## Nuxt SSR fixture
 
 The `nuxt-fixture` job builds `apps/nuxt-fixture` (the `@ghostvue/nuxt`

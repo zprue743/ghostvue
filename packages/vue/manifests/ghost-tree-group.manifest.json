@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "1.0.0",
+  "schemaVersion": "1.1.0",
   "source": "generated",
   "name": "GhostTreeGroup",
   "package": "@ghostvue/vue",
@@ -86,7 +86,29 @@
     "keyboard": {
       "Tab": "Never a tab stop; navigation is owned by GhostTree."
     },
-    "requiredAriaAttributes": []
+    "requiredAriaAttributes": [],
+    "verification": {
+      "automatedKeyboard": {
+        "status": "passed",
+        "keys": {
+          "Tab": [
+            {
+              "spec": "tests/e2e/ghost-tree.spec.ts",
+              "title": "GhostTree @component:GhostTree › tree/basic: one Tab stop, every documented key, and Axe in both states",
+              "package": "@ghostvue/vue"
+            }
+          ]
+        }
+      },
+      "manual": {
+        "status": "not-reviewed",
+        "evidence": []
+      },
+      "assistiveTechnology": {
+        "status": "not-reviewed",
+        "evidence": []
+      }
+    }
   },
   "examples": []
 }
