@@ -132,6 +132,13 @@ unresolvedQuestions: []
       consumerData: { applicable: false, reason: 'No collections' },
     })
     expect(parsed.unresolvedQuestions).toEqual([])
+
+    const escaped = parseSimpleYaml(
+      'escapedBackslashN: "\\\\n"\nliteralNewline: "a\\nb"\nquoted: "say \\"hi\\""',
+    )
+    expect(escaped.escapedBackslashN).toBe('\\n')
+    expect(escaped.literalNewline).toBe('a\nb')
+    expect(escaped.quoted).toBe('say "hi"')
   })
 
   it('passes a valid approved spec covering all exported components', async () => {

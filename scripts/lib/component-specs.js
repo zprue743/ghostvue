@@ -119,10 +119,7 @@ function parseYamlScalar(raw) {
   ) {
     const inner = trimmed.slice(1, -1)
     return trimmed.startsWith('"')
-      ? inner
-          .replaceAll('\\"', '"')
-          .replaceAll('\\\\', '\\')
-          .replaceAll('\\n', '\n')
+      ? inner.replace(/\\(["\\n])/g, (_, char) => (char === 'n' ? '\n' : char))
       : inner.replaceAll("''", "'")
   }
   if (/^-?\d+(?:\.\d+)?$/.test(trimmed)) return Number(trimmed)
