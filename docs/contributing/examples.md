@@ -70,10 +70,10 @@ blocks.
 
 A few examples opt into a typed props playground: a row of controls above
 the canvas that changes chosen props on the live demo. Today these are
-`button/themed` (size, tone, variant) and `input/search` (size, disabled,
-invalid). A playground is an explicit adapter in
-`apps/docs/.vitepress/theme/demo-playgrounds.ts`; examples without one are
-unchanged.
+`button/action-bar` (size, loading), `button/themed` (size, tone, variant)
+and `input/search` (size, disabled, invalid). A playground is an explicit
+adapter in `apps/docs/.vitepress/theme/demo-playgrounds.ts`; examples without
+one are unchanged.
 
 To add one:
 
@@ -131,7 +131,8 @@ These constraints apply to every example the docs frame renders:
   grid of fields, a row with a token gap). The canvas is block layout: it
   does not center, stretch, or shrink-wrap the demo. Several roots fall
   back to a wrapping row. To adapt to the preview width, use
-  `@container ghost-demo (...)`, not `@media`.
+  `@container ghost-demo (...)`, not `@media`. The playground
+  `/examples.html` canvas is the same named container.
 - **Surfaces.** The canvas uses `--ghost-surface-subtle-bg` inside a frame
   on elevation 1. Do not paint a page or card background on the example
   root; let themed components bring their own surfaces. Use semantic tokens

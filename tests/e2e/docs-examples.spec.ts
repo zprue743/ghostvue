@@ -332,7 +332,7 @@ test.describe('docs example previews', () => {
       await expect(page).toHaveURL(/\/components\/button$/)
 
       const stages = page.locator('.ghost-example__stage')
-      await expect(stages).toHaveCount(6)
+      await expect(stages).toHaveCount(7)
       for (const stage of await stages.all()) {
         await expect(stage.locator(':scope > *').first()).toBeAttached()
       }

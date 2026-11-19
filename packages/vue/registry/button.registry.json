@@ -19,6 +19,12 @@
   ],
   "examples": [
     {
+      "id": "button/action-bar",
+      "title": "Publish action bar",
+      "description": "Primary, secondary, and destructive actions with a pending publish.",
+      "layer": "themed"
+    },
+    {
       "id": "button/basic",
       "title": "Basic",
       "description": "Native action control. The default type is button.",
@@ -39,7 +45,7 @@
     {
       "id": "button/loading",
       "title": "Loading and disabled",
-      "description": "Pending actions stay focusable; disabled ones do not.",
+      "description": "Pending actions keep their width and focus; disabled ones do not.",
       "layer": "themed"
     },
     {

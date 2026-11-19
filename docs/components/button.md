@@ -4,6 +4,21 @@
 consumer-owned loading state. Import it from `@ghostvue/vue` for headless use, or
 from `@ghostvue/themes` for the default visual treatment.
 
+## Action area
+
+<GhostExample id="button/action-bar" />
+
+A save and publish bar shows the usual hierarchy. **Publish** is the one solid
+accent action. **Save draft** is a neutral outline. **Discard changes** is a
+ghost danger action, kept apart from the primary so it is not hit by mistake.
+Use the controls to change the size of every action or to preview the pending
+publish. While pending, the button keeps its width and focus, and the status
+line under the title is a polite live region that reports the result.
+
+The row adapts to the preview width with `@container ghost-demo`. Narrow
+previews stack the summary above the actions and put the destructive action on
+its own row.
+
 ## Basic use
 
 <GhostExample id="button/basic" />
@@ -75,6 +90,11 @@ when you want a region of headless components to pick up the defaults. See the
 ## Loading and disabled actions
 
 <GhostExample id="button/loading" />
+
+The themed wrapper hides the label while loading but keeps it in the layout, so
+a pending button stays the same size and nothing around it moves. Disabled
+buttons use desaturated action colors rather than a faded rest tone and leave
+the tab order. A loading button stays focusable and still draws the focus ring.
 
 Loading adds `aria-disabled="true"`, `aria-busy="true"`, and
 `data-state="loading"`. Activation is blocked while the native button remains
