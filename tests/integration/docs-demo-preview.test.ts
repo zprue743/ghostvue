@@ -75,6 +75,7 @@ describe('DemoPreview frame', () => {
     const toolbar = wrapper.get('[role="group"][aria-label="Themed actions"]')
     expect(toolbar.findAll('button').map((b) => b.text())).toEqual([
       'Code',
+      'Width',
       'Copy',
     ])
     expect(
@@ -108,8 +109,14 @@ describe('DemoPreview frame', () => {
       'ghost-example__controls',
       'ghost-example__preview',
     ])
-    // Without source or actions there is no toolbar to tab through.
-    expect(wrapper.find('.ghost-example__toolbar').exists()).toBe(false)
+    // Without source or sourceText the toolbar holds only the Width toggle.
+    expect(
+      wrapper
+        .get('.ghost-example__toolbar')
+        .findAll('button')
+        .map((b) => b.text()),
+    ).toEqual(['Width'])
+    expect(wrapper.find('[role="status"]').exists()).toBe(false)
   })
 
   it('keeps source collapsed by default and toggles it without remounting the demo', async () => {
@@ -148,9 +155,9 @@ describe('DemoPreview frame', () => {
     const regions = [
       ...host.querySelectorAll('[data-testid="ghost-example-source"]'),
     ].map((el) => el.id)
-    const targets = [...host.querySelectorAll('[aria-controls]')].map((el) =>
-      el.getAttribute('aria-controls'),
-    )
+    const targets = [
+      ...host.querySelectorAll('[aria-controls^="ghost-example-source-"]'),
+    ].map((el) => el.getAttribute('aria-controls'))
     expect(regions).toHaveLength(2)
     expect(new Set(regions).size).toBe(2)
     expect(targets).toEqual(regions)
@@ -159,7 +166,9 @@ describe('DemoPreview frame', () => {
 
   it('renders no source toggle or region without a source slot', () => {
     const wrapper = mountFrame(Demo, { withSource: false })
-    expect(wrapper.find('[aria-expanded]').exists()).toBe(false)
+    expect(
+      wrapper.find('button[aria-label="Themed source code"]').exists(),
+    ).toBe(false)
     expect(wrapper.find('[data-testid="ghost-example-source"]').exists()).toBe(
       false,
     )

@@ -51,6 +51,18 @@ owns its layout (a grid, a row with a gap). Examples with several root elements
 fall back to a wrapping row. While a demo chunk loads, or if it fails, the
 canvas shows an explained status instead of an empty box.
 
+The toolbar's **Copy** action copies the original SFC (not the highlighted
+markup) and reports success or failure in a polite live region. Without a
+usable clipboard it opens the source and selects it for a manual copy. The
+**Width** disclosure reveals a "Preview width" band with Auto, 320, 480 and
+768 presets and a range. It narrows the canvas only, capped at the width the
+frame has, and reports the applied size; it is not viewport emulation, so
+`@media` queries still see the real window. The demo sits in an inline-size
+query container named `ghost-demo`, so an example that should adapt to the
+preview width uses `@container ghost-demo (min-width: …)`. The container adds
+no layout containment, so inline popovers (`:portal="false"`) still position
+against the canvas.
+
 Keep API tables, CSS snippets, and non-runnable illustrations as fenced
 blocks.
 

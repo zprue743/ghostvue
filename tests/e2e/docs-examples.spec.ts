@@ -1,11 +1,15 @@
+import { readFileSync } from 'node:fs'
+
 import AxeBuilder from '@axe-core/playwright'
-import { expect, test } from '@playwright/test'
+import { expect, test, type Locator, type Page } from '@playwright/test'
 
 import { generatedComponentPageLinks } from '../../apps/docs/.vitepress/docs-nav'
 import {
+  examplePreviewWidthToggle,
   exampleSourceBlock,
   exampleSourceToggle,
   openExampleSource,
+  openPreviewWidth,
 } from './docs-example-source'
 import { startStaticServer } from './static-server'
 
@@ -14,6 +18,31 @@ const componentPages = [...generatedComponentPageLinks]
 function isTransparentColor(value: string): boolean {
   return /^(transparent|rgba\(\s*0,\s*0,\s*0,\s*0\s*\)|oklab\(\s*0\s+0\s+0\s*\/\s*0\s*\))$/i.test(
     value,
+  )
+}
+
+/** Rendered inline size of an example's preview-width query container. */
+async function viewportWidth(example: Locator): Promise<number> {
+  return example
+    .getByTestId('ghost-example-viewport')
+    .evaluate((el) => el.getBoundingClientRect().width)
+}
+
+/** Canvas content width available to the demo (preview minus its padding). */
+async function availableWidth(example: Locator): Promise<number> {
+  return example.getByTestId('ghost-example-preview').evaluate((el) => {
+    const style = getComputedStyle(el)
+    return Math.floor(
+      el.clientWidth -
+        Number.parseFloat(style.paddingInlineStart) -
+        Number.parseFloat(style.paddingInlineEnd),
+    )
+  })
+}
+
+async function pageOverflow(page: Page): Promise<number> {
+  return page.evaluate(
+    () => document.documentElement.scrollWidth - window.innerWidth,
   )
 }
 
@@ -737,6 +766,361 @@ test.describe('docs example previews', () => {
         .include(`[data-example-id="${id}"]`)
         .analyze()
       expect(axe.violations).toEqual([])
+    } finally {
+      await docs.close()
+    }
+  })
+  test('Copy writes the original source and announces success through a live status', async ({
+    browser,
+  }) => {
+    const docs = await startStaticServer('apps/docs/.vitepress/dist')
+    const context = await browser.newContext()
+    await context.grantPermissions(['clipboard-read', 'clipboard-write'])
+    const page = await context.newPage()
+
+    try {
+      await page.goto(`${docs.url}/components/input.html`)
+      const id = 'input/themed'
+      const example = page.locator(`[data-example-id="${id}"]`)
+      const copy = example.getByRole('button', { name: 'Copy Themed source' })
+      const status = example.getByRole('status')
+
+      // The live region exists (empty) before the first message.
+      await expect(status).toHaveCount(1)
+      await expect(status).toHaveText('')
+
+      await expect(async () => {
+        await copy.click()
+        await expect(status).toHaveText('Copied', { timeout: 500 })
+      }).toPass()
+      // The label never changes, so the toolbar does not reflow.
+      await expect(copy).toHaveText('Copy')
+
+      // The unhighlighted SFC from disk, not the Shiki markup.
+      const clipboard = await page.evaluate(() =>
+        navigator.clipboard.readText(),
+      )
+      expect(clipboard).toBe(readFileSync(`examples/${id}.vue`, 'utf8'))
+
+      // Copying never opens the source.
+      await expect(exampleSourceToggle(page, id)).toHaveAttribute(
+        'aria-expanded',
+        'false',
+      )
+    } finally {
+      await context.close()
+      await docs.close()
+    }
+  })
+
+  test('Copy without a clipboard reports failure and selects the source for manual copy', async ({
+    page,
+  }) => {
+    const docs = await startStaticServer('apps/docs/.vitepress/dist')
+
+    try {
+      // Insecure origins and locked-down embeds have no Clipboard API.
+      await page.addInitScript(() => {
+        Object.defineProperty(Navigator.prototype, 'clipboard', {
+          configurable: true,
+          get: () => undefined,
+        })
+      })
+      await page.goto(`${docs.url}/components/input.html`)
+      const id = 'input/themed'
+      const example = page.locator(`[data-example-id="${id}"]`)
+      const copy = example.getByRole('button', { name: 'Copy Themed source' })
+      const status = example.getByRole('status')
+
+      // Keyboard only: Enter on the native button.
+      await expect(async () => {
+        await copy.focus()
+        await page.keyboard.press('Enter')
+        await expect(status).toContainText('Copy failed', { timeout: 500 })
+      }).toPass()
+      await expect(copy).toBeFocused()
+      await expect(exampleSourceToggle(page, id)).toHaveAttribute(
+        'aria-expanded',
+        'true',
+      )
+      await expect(example.getByTestId('ghost-example-source')).toBeVisible()
+      const selected = await page.evaluate(() =>
+        String(window.getSelection() ?? ''),
+      )
+      expect(selected).toContain('<template>')
+      expect(selected).toContain('</script>')
+
+      // The failure message stays legible inside the frame on a phone.
+      await page.setViewportSize({ width: 320, height: 800 })
+      expect(await pageOverflow(page)).toBeLessThanOrEqual(0)
+    } finally {
+      await docs.close()
+    }
+  })
+
+  test('Preview width presets and range are keyboard operable, capped, and keep demo state and focus', async ({
+    page,
+  }) => {
+    const docs = await startStaticServer('apps/docs/.vitepress/dist')
+
+    try {
+      await page.setViewportSize({ width: 1280, height: 900 })
+      await page.goto(`${docs.url}/components/input.html`)
+      const id = 'input/themed'
+      const example = page.locator(`[data-example-id="${id}"]`)
+      const toggle = examplePreviewWidthToggle(page, id)
+      const band = example.getByTestId('ghost-example-width')
+      const report = example.getByTestId('ghost-example-width-report')
+
+      await expect(toggle).toHaveAttribute('aria-expanded', 'false')
+      await expect(band).toBeHidden()
+      expect(await toggle.getAttribute('aria-controls')).toBe(
+        await band.getAttribute('id'),
+      )
+
+      // Named inline-size query container around the demo.
+      const container = await example
+        .getByTestId('ghost-example-viewport')
+        .evaluate((el) => {
+          const style = getComputedStyle(el)
+          return { name: style.containerName, type: style.containerType }
+        })
+      expect(container).toEqual({ name: 'ghost-demo', type: 'inline-size' })
+
+      // Put the demo into a user-driven state; a remount would lose both.
+      const field = example
+        .getByTestId('ghost-example-preview')
+        .getByRole('textbox')
+        .nth(1)
+      await field.fill('typed before resizing')
+      await field.evaluate((element) => {
+        element.setAttribute('data-probe', 'original-node')
+      })
+
+      const available = await availableWidth(example)
+      expect(available).toBeGreaterThan(480)
+      await openPreviewWidth(page, id)
+      await expect(band).toBeVisible()
+      await expect(
+        band.getByRole('group', { name: 'Preview width' }),
+      ).toHaveCount(0)
+      const auto = band.getByRole('radio', { name: 'Auto' })
+      await expect(auto).toBeChecked()
+      await expect(report).toHaveText(`Auto: ${String(available)} px`)
+
+      // Tab into the radio group, then arrows move the selection natively.
+      await toggle.focus()
+      await page.keyboard.press('Tab')
+      await expect(auto).toBeFocused()
+      await page.keyboard.press('ArrowRight')
+      const small = band.getByRole('radio', { name: '320' })
+      await expect(small).toBeFocused()
+      await expect(small).toBeChecked()
+      await expect(report).toHaveText('320 px')
+      expect(await viewportWidth(example)).toBeCloseTo(320, 0)
+      await page.keyboard.press('ArrowRight')
+      await expect(band.getByRole('radio', { name: '480' })).toBeChecked()
+      expect(await viewportWidth(example)).toBeCloseTo(480, 0)
+
+      // 768 does not fit the canvas: capped, and the report says so.
+      await page.keyboard.press('ArrowRight')
+      const tablet = band.getByRole('radio', { name: '768' })
+      await expect(tablet).toBeFocused()
+      const capped = Math.min(768, available)
+      expect(await viewportWidth(example)).toBeCloseTo(capped, 0)
+      if (available < 768) {
+        await expect(report).toHaveText(
+          `${String(available)} px (capped from 768 px to fit)`,
+        )
+      }
+
+      // The native range shares the legend's name and reports pixels.
+      const range = band.getByRole('slider', { name: 'Preview width' })
+      await page.keyboard.press('Tab')
+      await expect(range).toBeFocused()
+      await page.keyboard.press('Home')
+      await expect(range).toHaveAttribute('aria-valuetext', '200 pixels')
+      expect(await viewportWidth(example)).toBeCloseTo(200, 0)
+      await page.keyboard.press('ArrowRight')
+      await expect(report).toHaveText('201 px')
+      // No preset matches a custom width.
+      await expect(band.getByRole('radio', { checked: true })).toHaveCount(0)
+      await page.keyboard.press('End')
+      await expect(range).toHaveAttribute(
+        'aria-valuetext',
+        `${String(available)} pixels`,
+      )
+      await expect(range).toBeFocused()
+
+      await auto.check()
+      await expect(report).toHaveText(`Auto: ${String(available)} px`)
+      await band.getByRole('radio', { name: '320' }).check()
+
+      // Collapsing keeps the chosen width, so the demo does not jump.
+      await toggle.focus()
+      await page.keyboard.press('Enter')
+      await expect(toggle).toBeFocused()
+      await expect(band).toBeHidden()
+      expect(await viewportWidth(example)).toBeCloseTo(320, 0)
+
+      // Demo state survives every width change: same node, same value.
+      await expect(field).toHaveValue('typed before resizing')
+      await expect(field).toHaveAttribute('data-probe', 'original-node')
+
+      await openPreviewWidth(page, id)
+      const axe = await new AxeBuilder({ page })
+        .include(`[data-example-id="${id}"]`)
+        .analyze()
+      expect(axe.violations).toEqual([])
+    } finally {
+      await docs.close()
+    }
+  })
+
+  test('collapsing a region that holds focus moves focus to its toggle', async ({
+    page,
+  }) => {
+    const docs = await startStaticServer('apps/docs/.vitepress/dist')
+
+    try {
+      await page.goto(`${docs.url}/components/input.html`)
+      const id = 'input/themed'
+      const example = page.locator(`[data-example-id="${id}"]`)
+
+      // A pointer click in Safari does not focus the button, so focus can
+      // still sit inside the region; a synthetic click reproduces that.
+      await openExampleSource(page, id)
+      const sourceToggle = exampleSourceToggle(page, id)
+      // The scrollable code block is a Tab stop (VitePress sets tabindex=0).
+      const inner = exampleSourceBlock(page, id).locator('pre')
+      await inner.focus()
+      await expect(inner).toBeFocused()
+      await sourceToggle.dispatchEvent('click')
+      await expect(sourceToggle).toHaveAttribute('aria-expanded', 'false')
+      await expect(sourceToggle).toBeFocused()
+
+      await openPreviewWidth(page, id)
+      const widthToggle = examplePreviewWidthToggle(page, id)
+      const radio = example.getByRole('radio', { name: '480' })
+      await radio.focus()
+      await widthToggle.dispatchEvent('click')
+      await expect(widthToggle).toHaveAttribute('aria-expanded', 'false')
+      await expect(widthToggle).toBeFocused()
+    } finally {
+      await docs.close()
+    }
+  })
+
+  for (const width of [320, 390] as const) {
+    test(`Preview width at a ${String(width)}px phone caps every preset without page overflow`, async ({
+      browser,
+    }) => {
+      const docs = await startStaticServer('apps/docs/.vitepress/dist')
+      const context = await browser.newContext({
+        viewport: { width, height: 800 },
+      })
+      const page = await context.newPage()
+
+      try {
+        await page.goto(`${docs.url}/components/input.html`)
+        const id = 'input/themed'
+        const example = page.locator(`[data-example-id="${id}"]`)
+        await example.scrollIntoViewIfNeeded()
+        await openPreviewWidth(page, id)
+        const available = await availableWidth(example)
+        const frame = await example.boundingBox()
+
+        for (const name of ['320', '480', '768']) {
+          await example.getByRole('radio', { name }).check()
+          expect(await pageOverflow(page)).toBeLessThanOrEqual(0)
+          expect(await viewportWidth(example)).toBeLessThanOrEqual(
+            available + 0.5,
+          )
+          if (Number(name) > available) {
+            await expect(
+              example.getByTestId('ghost-example-width-report'),
+            ).toHaveText(
+              `${String(available)} px (capped from ${name} px to fit)`,
+            )
+          }
+        }
+
+        // The band itself wraps inside the frame.
+        for (const control of await example
+          .getByTestId('ghost-example-width')
+          .locator('input, legend, [data-testid="ghost-example-width-report"]')
+          .all()) {
+          const box = await control.boundingBox()
+          if (box && frame) {
+            expect(box.x).toBeGreaterThanOrEqual(frame.x)
+            expect(box.x + box.width).toBeLessThanOrEqual(
+              frame.x + frame.width + 0.5,
+            )
+          }
+        }
+      } finally {
+        await context.close()
+        await docs.close()
+      }
+    })
+  }
+
+  test('portal=false popovers keep the canvas as their containing block at every preview width', async ({
+    page,
+  }) => {
+    const docs = await startStaticServer('apps/docs/.vitepress/dist')
+
+    try {
+      await page.setViewportSize({ width: 1280, height: 900 })
+      await page.goto(`${docs.url}/components/select.html`)
+      const id = 'select/form'
+      const example = page.locator(`[data-example-id="${id}"]`)
+      await openPreviewWidth(page, id)
+      const trigger = example.getByRole('combobox', { name: 'Email cadence' })
+
+      for (const name of ['Auto', '320', '480', '768']) {
+        await example.getByRole('radio', { name }).check()
+        await trigger.click()
+        const listbox = page.getByRole('listbox')
+        await expect(listbox).toBeVisible()
+
+        const layout = await listbox.evaluate((el) => {
+          const content = el.closest('.ghost-select-content') ?? el
+          const stage = el.closest('.ghost-example__stage')
+          const options = [...el.querySelectorAll('[role="option"]')]
+          // Every option is hit-testable: nothing clips the popover.
+          const visible = options.every((option) => {
+            const rect = option.getBoundingClientRect()
+            const hit = document.elementFromPoint(
+              rect.x + rect.width / 2,
+              rect.y + rect.height / 2,
+            )
+            return option === hit || option.contains(hit)
+          })
+          return {
+            position: getComputedStyle(content).position,
+            // A `contain`, transform, or `position` on the query container
+            // (or anything between it and the canvas) would change this.
+            containingBlock:
+              content instanceof HTMLElement
+                ? (content.offsetParent?.className ?? null)
+                : null,
+            stageScrolls: stage
+              ? stage.scrollHeight > stage.clientHeight + 1
+              : true,
+            visible,
+          }
+        })
+        expect(layout).toEqual({
+          position: 'absolute',
+          containingBlock: 'ghost-example__preview',
+          stageScrolls: false,
+          visible: true,
+        })
+
+        await page.keyboard.press('Escape')
+        await expect(listbox).toBeHidden()
+      }
     } finally {
       await docs.close()
     }
