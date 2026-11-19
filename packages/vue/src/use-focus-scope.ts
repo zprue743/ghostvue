@@ -26,6 +26,21 @@ export interface UseFocusScopeOptions {
   autoFocus?: MaybeRefOrGetter<boolean>
   /** Return focus to the previously focused node on deactivate. Default true. */
   restoreFocus?: MaybeRefOrGetter<boolean>
+  /**
+   * Preferred initial focus target, resolved once per activation (after mount)
+   * and only when `autoFocus` is enabled. Pass a getter to resolve lazily, for
+   * example a target that a descendant registers after it renders. A missing,
+   * disconnected, unfocusable, or out-of-scope element falls back to
+   * `[data-autofocus]`, then the first tabbable, then the container.
+   */
+  initialFocus?: MaybeRefOrGetter<HTMLElement | null | undefined>
+  /**
+   * Preferred restoration target, resolved once per deactivation and only
+   * when `restoreFocus` is enabled. A missing, disconnected, or unfocusable
+   * (for example disabled) element falls back to the node that was focused
+   * when the scope activated.
+   */
+  returnFocus?: MaybeRefOrGetter<HTMLElement | null | undefined>
 }
 
 interface TrappedScopeEntry {
@@ -187,16 +202,40 @@ export function useFocusScope(
 
         // onMounted has already committed the container, so autofocus can run
         // synchronously. Deferring would race nested scopes and SSR tests.
+        // Resolvers run here and in cleanup only, never during setup, so SSR
+        // stays side-effect free and consumer getters may read the DOM.
         if (toValue(options?.autoFocus) ?? true) {
-          focusInitial(element)
+          const preferred = toValue(options?.initialFocus)
+          if (
+            preferred instanceof HTMLElement &&
+            preferred.isConnected &&
+            isElementInScope(element, preferred) &&
+            isFocusable(preferred)
+          ) {
+            preferred.focus({ preventScroll: true })
+          } else {
+            focusInitial(element)
+          }
         }
 
         onCleanup(() => {
           stopTrap()
+          if (!(toValue(options?.restoreFocus) ?? true)) {
+            return
+          }
+          // Resolve after stopTrap so the target is evaluated against the
+          // post-close DOM (for example an opener that was removed or disabled
+          // while the scope was active).
+          const preferred = toValue(options?.returnFocus)
           if (
-            (toValue(options?.restoreFocus) ?? true) &&
-            previouslyFocused?.isConnected
+            preferred instanceof HTMLElement &&
+            preferred.isConnected &&
+            isFocusable(preferred)
           ) {
+            preferred.focus({ preventScroll: true })
+            return
+          }
+          if (previouslyFocused?.isConnected) {
             previouslyFocused.focus({ preventScroll: true })
           }
         })

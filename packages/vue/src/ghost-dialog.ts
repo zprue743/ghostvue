@@ -122,6 +122,34 @@ export interface GhostDialogContentProps {
    * @default 'body'
    */
   portalTo?: GhostPortalTarget
+  /**
+   * Gates the first focus-scope activation (initial focus and, when modal,
+   * the focus trap) of each opening. Set it to `false` while content still
+   * needs positioning or rendering, then `true` once it is ready. Activation
+   * also waits for portal placement. After activation the scope stays active
+   * until close, even if this later becomes `false`. Scroll lock, background
+   * inert, and dismissal apply from the moment the dialog opens.
+   * @default true
+   */
+  focusReady?: boolean
+  /**
+   * Resolves the element that receives focus when the focus scope activates.
+   * Called after mount, once per opening, after `focusReady` and portal
+   * placement. Return `null`, or an element that is disconnected, unfocusable,
+   * or outside the content, to keep the default: `[data-autofocus]`, then the
+   * first tabbable element, then the content itself.
+   * @default undefined
+   */
+  initialFocus?: (() => HTMLElement | null) | undefined
+  /**
+   * Resolves the element that receives focus when the dialog closes. Called
+   * after mount on each close that restores focus. Return `null`, or an
+   * element that is disconnected or unfocusable (for example disabled), to
+   * keep the default: the element that was focused when the dialog opened.
+   * Not called while a controlled parent keeps the dialog open.
+   * @default undefined
+   */
+  returnFocus?: (() => HTMLElement | null) | undefined
 }
 
 /** Props for {@link GhostDialogTitle}. */

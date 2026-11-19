@@ -1274,4 +1274,191 @@ describe('useFocusScope', () => {
 
     outside.remove()
   })
+
+  describe('initial and return target resolvers (GHO-209)', () => {
+    it('never invokes resolvers during SSR setup', async () => {
+      const initialFocus = vi.fn(() => null)
+      const returnFocus = vi.fn(() => null)
+      const Comp = defineComponent({
+        setup() {
+          const container = ref<HTMLElement | null>(null)
+          useFocusScope(container, {
+            trapped: true,
+            initialFocus,
+            returnFocus,
+          })
+          return () => h('div', { ref: container }, [h('button', 'Inside')])
+        },
+      })
+
+      const html = await renderToString(createSSRApp(Comp))
+      expect(html).toContain('Inside')
+      expect(initialFocus).not.toHaveBeenCalled()
+      expect(returnFocus).not.toHaveBeenCalled()
+    })
+
+    it('focuses a valid initial target resolved lazily at activation', async () => {
+      const container = ref<HTMLElement | null>(null)
+      const registered = ref<HTMLElement | null>(null)
+      const show = ref(false)
+      const initialFocus = vi.fn(() => registered.value)
+      mountScope(
+        () => {
+          useFocusScope(() => (show.value ? container.value : null), {
+            trapped: true,
+            initialFocus,
+          })
+        },
+        () =>
+          h('div', { ref: container, tabindex: '-1' }, [
+            h('button', { type: 'button', 'data-autofocus': '' }, 'Auto'),
+            h(
+              'button',
+              { type: 'button', ref: registered, 'data-testid': 'target' },
+              'Target',
+            ),
+          ]),
+      )
+      await nextTick()
+      expect(initialFocus).not.toHaveBeenCalled()
+
+      show.value = true
+      await nextTick()
+      expect(initialFocus).toHaveBeenCalledTimes(1)
+      expect(document.activeElement).toBe(queryHtml('[data-testid="target"]'))
+    })
+
+    it.each([
+      ['null', 'null'],
+      ['an element outside the scope', 'outside'],
+      ['a disabled element', 'disabled'],
+      ['a disconnected element', 'detached'],
+    ] as const)(
+      'falls back to the autofocus order when the initial target is %s',
+      async (_label, kind) => {
+        const outside = document.createElement('button')
+        document.body.append(outside)
+        const detached = document.createElement('button')
+        const container = ref<HTMLElement | null>(null)
+        const disabledButton = ref<HTMLElement | null>(null)
+        mountScope(
+          () => {
+            useFocusScope(container, {
+              trapped: true,
+              initialFocus: () =>
+                kind === 'null'
+                  ? null
+                  : kind === 'outside'
+                    ? outside
+                    : kind === 'detached'
+                      ? detached
+                      : disabledButton.value,
+            })
+          },
+          () =>
+            h('div', { ref: container, tabindex: '-1' }, [
+              h(
+                'button',
+                { type: 'button', disabled: true, ref: disabledButton },
+                'Disabled',
+              ),
+              h('button', { type: 'button', 'data-testid': 'first' }, 'First'),
+            ]),
+        )
+        await nextTick()
+        expect(document.activeElement).toBe(queryHtml('[data-testid="first"]'))
+        outside.remove()
+      },
+    )
+
+    it('skips the initial target when autoFocus is disabled', async () => {
+      const outside = document.createElement('button')
+      document.body.append(outside)
+      outside.focus()
+      const container = ref<HTMLElement | null>(null)
+      const initialFocus = vi.fn(() => container.value)
+      mountScope(
+        () => {
+          useFocusScope(container, { autoFocus: false, initialFocus })
+        },
+        () => h('div', { ref: container, tabindex: '-1' }, [h('button', 'In')]),
+      )
+      await nextTick()
+      expect(initialFocus).not.toHaveBeenCalled()
+      expect(document.activeElement).toBe(outside)
+      outside.remove()
+    })
+
+    it('restores to a valid return target resolved at deactivation, else the saved opener', async () => {
+      const opener = document.createElement('button')
+      opener.textContent = 'Opener'
+      const fallback = document.createElement('input')
+      document.body.append(opener, fallback)
+
+      const active = ref(false)
+      const preferred = ref<HTMLElement | null>(null)
+      const returnFocus = vi.fn(() => preferred.value)
+      const container = ref<HTMLElement | null>(null)
+      mountScope(
+        () => {
+          useFocusScope(() => (active.value ? container.value : null), {
+            trapped: true,
+            returnFocus,
+          })
+        },
+        () => h('div', { ref: container, tabindex: '-1' }, [h('button', 'In')]),
+      )
+
+      // Valid preferred target wins over the saved opener.
+      opener.focus()
+      active.value = true
+      await nextTick()
+      expect(returnFocus).not.toHaveBeenCalled()
+      preferred.value = fallback
+      active.value = false
+      await nextTick()
+      expect(returnFocus).toHaveBeenCalledTimes(1)
+      expect(document.activeElement).toBe(fallback)
+
+      // A disabled preferred target falls back to the saved opener.
+      opener.focus()
+      active.value = true
+      await nextTick()
+      fallback.disabled = true
+      active.value = false
+      await nextTick()
+      expect(document.activeElement).toBe(opener)
+
+      // A removed preferred target also falls back to the saved opener.
+      opener.focus()
+      active.value = true
+      await nextTick()
+      fallback.disabled = false
+      fallback.remove()
+      active.value = false
+      await nextTick()
+      expect(document.activeElement).toBe(opener)
+
+      opener.remove()
+    })
+
+    it('does not call returnFocus when restoreFocus is false', async () => {
+      const container = ref<HTMLElement | null>(null)
+      const active = ref(true)
+      const returnFocus = vi.fn(() => null)
+      mountScope(
+        () => {
+          useFocusScope(() => (active.value ? container.value : null), {
+            restoreFocus: false,
+            returnFocus,
+          })
+        },
+        () => h('div', { ref: container, tabindex: '-1' }, [h('button', 'In')]),
+      )
+      await nextTick()
+      active.value = false
+      await nextTick()
+      expect(returnFocus).not.toHaveBeenCalled()
+    })
+  })
 })

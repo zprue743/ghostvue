@@ -358,4 +358,62 @@ describe('themed GhostDialog wrappers', () => {
     await flushPromises()
     expect(document.querySelector('[data-testid="alert-content"]')).toBeNull()
   })
+
+  it('forwards focusReady, initialFocus, and returnFocus to the headless content (GHO-209)', async () => {
+    const focusReady = ref(false)
+    const outsideInput = document.createElement('input')
+    document.body.append(outsideInput)
+    const initialFocus = vi.fn(() => queryHtml('[data-testid="themed-target"]'))
+    const returnFocus = vi.fn(() => outsideInput)
+
+    const wrapper = mountAttached(
+      defineComponent({
+        setup() {
+          return () =>
+            h(GhostDialog, null, {
+              default: () => [
+                h(
+                  GhostDialogTrigger,
+                  { 'data-testid': 'themed-trigger' },
+                  () => 'Open',
+                ),
+                h(
+                  GhostDialogContent,
+                  {
+                    'aria-label': 'Themed deferred',
+                    focusReady: focusReady.value,
+                    initialFocus,
+                    returnFocus,
+                  },
+                  () => [
+                    h('button', { type: 'button' }, 'First'),
+                    h(
+                      'button',
+                      { type: 'button', 'data-testid': 'themed-target' },
+                      'Target',
+                    ),
+                  ],
+                ),
+              ],
+            })
+        },
+      }),
+    )
+
+    await wrapper.get('[data-testid="themed-trigger"]').trigger('click')
+    await flushPromises()
+    expect(initialFocus).not.toHaveBeenCalled()
+
+    focusReady.value = true
+    await flushPromises()
+    expect(document.activeElement).toBe(
+      queryHtml('[data-testid="themed-target"]'),
+    )
+
+    pressKey('Escape')
+    await flushPromises()
+    expect(returnFocus).toHaveBeenCalledTimes(1)
+    expect(document.activeElement).toBe(outsideInput)
+    outsideInput.remove()
+  })
 })

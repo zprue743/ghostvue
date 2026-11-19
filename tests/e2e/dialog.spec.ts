@@ -1,5 +1,5 @@
 import AxeBuilder from '@axe-core/playwright'
-import { expect, test } from '@playwright/test'
+import { expect, test, type Page } from '@playwright/test'
 
 import {
   classicScrollbarLaunchOptions,
@@ -563,4 +563,196 @@ test.describe('GhostDialog', () => {
       }
     })
   }
+})
+
+// GHO-209: focusReady / initialFocus / returnFocus on GhostDialogContent.
+// Readiness is flipped with a synthetic click on an in-dialog control so the
+// pointer never moves focus; every focus assertion below is real browser focus.
+test.describe('GhostDialog deferred focus entry', () => {
+  async function openDeferred(page: Page) {
+    const trigger = page.getByTestId('dialog-deferred-trigger')
+    const content = page.getByTestId('dialog-deferred-content')
+    await trigger.scrollIntoViewIfNeeded()
+    await trigger.focus()
+    await page.keyboard.press('Enter')
+    await expect(content).toBeVisible()
+    return { trigger, content }
+  }
+
+  async function markReady(page: Page) {
+    await page.getByTestId('dialog-deferred-first').dispatchEvent('click')
+    await expect(page.getByTestId('dialog-deferred-target')).toBeFocused()
+  }
+
+  async function activeTestId(page: Page) {
+    return page.evaluate(
+      () => document.activeElement?.getAttribute('data-testid') ?? null,
+    )
+  }
+
+  test('waits for readiness, focuses the registered target, keeps the trap, and restores the opener @cross-browser', async ({
+    page,
+  }) => {
+    const playground = await startStaticServer('apps/playground/dist')
+
+    try {
+      await page.goto(playground.url)
+      // Some playground fixtures carry their own inert subtrees.
+      const inertBefore = await page.locator('[inert]').count()
+      const { trigger, content } = await openDeferred(page)
+      await expect(content).toHaveAttribute('aria-modal', 'true')
+      await expect(page.locator('body')).toHaveCSS('overflow', 'hidden')
+
+      // Not ready: nothing inside the dialog has focus yet.
+      const insideBeforeReady = await content.evaluate((element) =>
+        element.contains(document.activeElement),
+      )
+      expect(insideBeforeReady).toBe(false)
+
+      await markReady(page)
+      const openAxe = await new AxeBuilder({ page }).analyze()
+      expect(openAxe.violations).toEqual([])
+
+      // Readiness dropping after activation keeps the trap.
+      await page.getByTestId('dialog-deferred-unready').dispatchEvent('click')
+      await page.getByTestId('dialog-deferred-first').focus()
+      await page.keyboard.press('Shift+Tab')
+      await expect(page.getByTestId('dialog-deferred-close')).toBeFocused()
+      await page.keyboard.press('Tab')
+      await expect(page.getByTestId('dialog-deferred-first')).toBeFocused()
+      await expect(page.getByTestId('dialog-deferred-target')).not.toBeFocused()
+
+      await page.keyboard.press('Escape')
+      await expect(content).toHaveCount(0)
+      await expect(trigger).toBeFocused()
+
+      // Cleanup: no inert or scroll lock left behind; reopening gates again.
+      await expect(page.locator('[inert]')).toHaveCount(inertBefore)
+      await expect(page.locator('body')).not.toHaveCSS('overflow', 'hidden')
+      await page.keyboard.press('Enter')
+      await expect(content).toBeVisible()
+      expect(
+        await content.evaluate((element) =>
+          element.contains(document.activeElement),
+        ),
+      ).toBe(false)
+      await markReady(page)
+      await page.keyboard.press('Escape')
+      await expect(trigger).toBeFocused()
+    } finally {
+      await playground.close()
+    }
+  })
+
+  test('restores the opener when closed before readiness', async ({ page }) => {
+    const playground = await startStaticServer('apps/playground/dist')
+
+    try {
+      await page.goto(playground.url)
+      const { trigger, content } = await openDeferred(page)
+      await page.keyboard.press('Escape')
+      await expect(content).toHaveCount(0)
+      await expect(trigger).toBeFocused()
+    } finally {
+      await playground.close()
+    }
+  })
+
+  test('closes nested dialogs one layer at a time above a deferred dialog', async ({
+    page,
+  }) => {
+    const playground = await startStaticServer('apps/playground/dist')
+
+    try {
+      await page.goto(playground.url)
+      const { trigger, content } = await openDeferred(page)
+      await markReady(page)
+
+      const nestedTrigger = page.getByTestId('dialog-deferred-nested-trigger')
+      const nestedContent = page.getByTestId('dialog-deferred-nested-content')
+      await nestedTrigger.focus()
+      await page.keyboard.press('Enter')
+      await expect(nestedContent).toBeVisible()
+      await expect(
+        page.getByTestId('dialog-deferred-nested-close'),
+      ).toBeFocused()
+      await page.keyboard.press('Tab')
+      await expect(
+        page.getByTestId('dialog-deferred-nested-close'),
+      ).toBeFocused()
+
+      await page.keyboard.press('Escape')
+      await expect(nestedContent).toHaveCount(0)
+      await expect(content).toBeVisible()
+      await expect(nestedTrigger).toBeFocused()
+
+      await page.keyboard.press('Escape')
+      await expect(content).toHaveCount(0)
+      await expect(trigger).toBeFocused()
+    } finally {
+      await playground.close()
+    }
+  })
+
+  for (const action of ['disable', 'remove'] as const) {
+    test(`returns focus to the input when the opener is ${action === 'disable' ? 'disabled' : 'removed'}`, async ({
+      page,
+    }) => {
+      const playground = await startStaticServer('apps/playground/dist')
+
+      try {
+        await page.goto(playground.url)
+        const { trigger, content } = await openDeferred(page)
+        await markReady(page)
+        await page.getByTestId(`dialog-deferred-${action}-trigger`).click()
+        if (action === 'disable') {
+          await expect(trigger).toBeDisabled()
+        } else {
+          await expect(trigger).toHaveCount(0)
+        }
+        await page.keyboard.press('Escape')
+        await expect(content).toHaveCount(0)
+        await expect(page.getByTestId('dialog-deferred-input')).toBeFocused()
+      } finally {
+        await playground.close()
+      }
+    })
+  }
+
+  test('keeps focus and the trap when a controlled parent ignores close', async ({
+    page,
+  }) => {
+    const playground = await startStaticServer('apps/playground/dist')
+
+    try {
+      await page.goto(playground.url)
+      const { trigger, content } = await openDeferred(page)
+      await markReady(page)
+
+      const keepOpen = page.getByTestId('dialog-deferred-keep-open')
+      await keepOpen.focus()
+      await page.keyboard.press('Space')
+      await expect(keepOpen).toBeChecked()
+
+      await page.keyboard.press('Escape')
+      await expect(content).toBeVisible()
+      await expect(keepOpen).toBeFocused()
+      await page.getByTestId('dialog-deferred-close').focus()
+      await page.keyboard.press('Enter')
+      await expect(content).toBeVisible()
+      await expect(page.getByTestId('dialog-deferred-close')).toBeFocused()
+      await page.keyboard.press('Tab')
+      await expect(page.getByTestId('dialog-deferred-first')).toBeFocused()
+      expect(await activeTestId(page)).toBe('dialog-deferred-first')
+
+      await keepOpen.focus()
+      await page.keyboard.press('Space')
+      await expect(keepOpen).not.toBeChecked()
+      await page.keyboard.press('Escape')
+      await expect(content).toHaveCount(0)
+      await expect(trigger).toBeFocused()
+    } finally {
+      await playground.close()
+    }
+  })
 })

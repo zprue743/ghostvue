@@ -242,7 +242,7 @@ export default { components: { GhostButton } }
       errors: [
         {
           message:
-            "'foo-bar' is not a prop of GhostDialogContent from @ghostvue/vue and is not a native, ARIA, or data attribute. Declared props: as, closeOnEscape, closeOnOutsideClick, portal, portalTo, role. See https://github.com/zprue743/ghostvue/blob/master/docs/components/dialog.md",
+            "'foo-bar' is not a prop of GhostDialogContent from @ghostvue/vue and is not a native, ARIA, or data attribute. Declared props: as, closeOnEscape, closeOnOutsideClick, focusReady, initialFocus, portal, portalTo, returnFocus, role. See https://github.com/zprue743/ghostvue/blob/master/docs/components/dialog.md",
         },
       ],
     },

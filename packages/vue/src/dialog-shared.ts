@@ -604,6 +604,22 @@ export interface DialogContentPartProps {
   closeOnOutsideClick: boolean | undefined
   portal: boolean
   portalTo: GhostPortalTarget
+  /**
+   * Focus-entry hooks exposed by `GhostDialogContent` (GHO-209). Optional so
+   * `GhostDrawerContent`, which does not expose them, keeps the defaults.
+   */
+  focusReady?: boolean
+  initialFocus?: (() => HTMLElement | null) | undefined
+  returnFocus?: (() => HTMLElement | null) | undefined
+}
+
+/** True when `element` can receive restored focus right now. */
+function isRestorableTarget(element: unknown): element is HTMLElement {
+  return (
+    element instanceof HTMLElement &&
+    element.isConnected &&
+    isFocusable(element)
+  )
 }
 
 function hasFocusableAncestor(target: EventTarget | null): boolean {
@@ -706,6 +722,56 @@ export function useDialogContentPart(
 
   const shouldRestoreFocus = shallowRef(true)
 
+  // Per-opening focus bookkeeping for `focusReady`. `openerAtOpen` is captured
+  // synchronously when an opening starts (or at mount for an initially open
+  // dialog), before useInertOthers below inerts the background: browsers blur
+  // a focused element once it becomes inert, so a scope that activates later
+  // would otherwise save <body> as its restoration target. The saved opener is
+  // only used when activation was actually deferred, so the default path keeps
+  // useFocusScope's own saved node. Flags reset when the next opening starts,
+  // not on close, because the scope's restore runs after the close watcher.
+  let openerAtOpen: HTMLElement | null = null
+  let activatedThisOpening = false
+  let activationDeferred = false
+
+  function beginOpening(): void {
+    const active = document.activeElement
+    openerAtOpen =
+      active instanceof HTMLElement && active !== document.body ? active : null
+    activatedThisOpening = false
+    activationDeferred = false
+  }
+
+  // Non-immediate `sync` watcher: never runs during SSR, and runs before the
+  // pre-flush inert watcher when `isOpen` flips to true on the client.
+  watch(
+    () => context.isOpen.value,
+    (open) => {
+      if (open) {
+        beginOpening()
+      }
+    },
+    { flush: 'sync' },
+  )
+
+  // Registered before useInertOthers so its onMounted inerting runs after.
+  onMounted(() => {
+    if (context.isOpen.value) {
+      beginOpening()
+    }
+  })
+
+  function resolveReturnTarget(): HTMLElement | null {
+    const preferred = props.returnFocus?.()
+    if (isRestorableTarget(preferred)) {
+      return preferred
+    }
+    if (activationDeferred && isRestorableTarget(openerAtOpen)) {
+      return openerAtOpen
+    }
+    return null
+  }
+
   watch(
     () => context.isOpen.value,
     (open) => {
@@ -790,16 +856,51 @@ export function useDialogContentPart(
     },
   })
 
+  // Activation waits for portal placement and `focusReady`. Only the first
+  // activation of an opening is gated: once active, the scope (and its trap)
+  // stays on until close even if `focusReady` turns false again, so a
+  // re-measure during positioning never releases a modal trap mid-interaction.
   const focusTarget = shallowRef<HTMLElement | null>(null)
+  let lastSeenOpen = false
   watch(
-    [() => context.isOpen.value, contentElement, focusPortalReady],
-    ([open, el, portalReady]) => {
+    [
+      () => context.isOpen.value,
+      contentElement,
+      focusPortalReady,
+      () => props.focusReady ?? true,
+    ],
+    ([open, el, portalReady, ready]) => {
+      const wasOpen = lastSeenOpen
+      lastSeenOpen = open
       if (!open || !el) {
+        if (
+          !open &&
+          wasOpen &&
+          !activatedThisOpening &&
+          activationDeferred &&
+          shouldRestoreFocus.value
+        ) {
+          // Closed before the scope ever activated, so useFocusScope has
+          // nothing to restore. Inert release is a pre-flush watcher, so the
+          // opener is interactive again by this post-flush callback. Leave
+          // focus alone if it already moved somewhere other than <body>.
+          const active = document.activeElement
+          const target = resolveReturnTarget()
+          if (target && (active === null || active === document.body)) {
+            target.focus({ preventScroll: true })
+          }
+        }
         focusTarget.value = null
         return
       }
-      if (portalReady && focusTarget.value !== el) {
+      if (!portalReady || focusTarget.value === el) {
+        return
+      }
+      if (ready || activatedThisOpening) {
+        activatedThisOpening = true
         focusTarget.value = el
+      } else {
+        activationDeferred = true
       }
     },
     { immediate: true, flush: 'post' },
@@ -810,6 +911,10 @@ export function useDialogContentPart(
     loop: () => context.isModal.value,
     autoFocus: () => context.isModal.value || !context.openedAtMount.value,
     restoreFocus: shouldRestoreFocus,
+    // Getters, so useFocusScope invokes the consumer resolvers lazily at
+    // activation and restoration only (mounted lifecycle, never SSR setup).
+    initialFocus: () => props.initialFocus?.() ?? null,
+    returnFocus: resolveReturnTarget,
   })
 
   function hasNonEmptyStringAttr(name: string): boolean {
