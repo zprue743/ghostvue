@@ -32,7 +32,14 @@ export type GhostCalendarCellState =
   'selected' | 'range-start' | 'range-end' | 'range-middle' | 'none'
 
 export interface GhostCalendarProps {
-  modelValue?: GhostCalendarValue
+  /**
+   * Controlled selection. Omit (or pass `undefined`) for uncontrolled state.
+   * `null` is an explicitly controlled empty selection: the calendar renders
+   * nothing selected, ignores `defaultValue`, and only changes when the parent
+   * applies an `update:modelValue` proposal. Slots and emitted payloads still
+   * report empty as `undefined`.
+   */
+  modelValue?: GhostCalendarValue | null
   defaultValue?: GhostCalendarValue
   selectionMode?: GhostCalendarSelectionMode
   minValue?: CalendarDate
@@ -79,7 +86,12 @@ export interface GhostCalendarPartExposed {
 }
 
 export interface UseGhostCalendarOptions {
-  modelValue?: MaybeRefOrGetter<GhostCalendarValue>
+  /**
+   * Controlled selection. `undefined` is uncontrolled; `null` is a controlled
+   * empty selection. The returned `modelValue` and `onValueChange` payloads
+   * normalize empty to `undefined`.
+   */
+  modelValue?: MaybeRefOrGetter<GhostCalendarValue | null>
   defaultValue?: MaybeRefOrGetter<GhostCalendarValue>
   selectionMode?: MaybeRefOrGetter<GhostCalendarSelectionMode>
   minValue?: MaybeRefOrGetter<CalendarDate | undefined>
@@ -94,6 +106,15 @@ export interface UseGhostCalendarOptions {
   today?: MaybeRefOrGetter<CalendarDate | undefined>
   disabled?: MaybeRefOrGetter<boolean>
   onValueChange?: (value: GhostCalendarValue) => void
+  /**
+   * Called once for every accepted date activation, after the selection
+   * proposal (`onValueChange`) and focus update. It fires even when the
+   * activated date is already selected or a controlled parent ignores the
+   * proposal, so wrappers such as `GhostDatePicker` can track their own range
+   * anchor. Activations of disabled, unavailable, or outside-month dates are
+   * rejected and do not call it.
+   */
+  onSelect?: (date: CalendarDate) => void
   onVisibleMonthChange?: (month: CalendarDate) => void
 }
 

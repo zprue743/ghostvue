@@ -14,7 +14,11 @@ import { useGhostVisuallyHidden } from './use-ghost-visually-hidden'
 
 const props = withDefaults(
   defineProps<{
-    modelValue?: GhostCalendarValue
+    /**
+     * Controlled selection. Omit for uncontrolled state; `null` is a
+     * controlled empty selection that ignores `defaultValue`.
+     */
+    modelValue?: GhostCalendarValue | null
     defaultValue?: GhostCalendarValue
     selectionMode?: GhostCalendarSelectionMode
     minValue?: CalendarDate | undefined
@@ -45,6 +49,12 @@ const props = withDefaults(
 
 const emit = defineEmits<{
   'update:modelValue': [value: GhostCalendarValue]
+  /**
+   * Once per accepted date activation, after `update:modelValue`. Also fires
+   * when the date is already selected or a controlled parent ignores the
+   * proposal; disabled or unavailable activations emit nothing.
+   */
+  select: [date: CalendarDate]
   'update:visibleMonth': [month: CalendarDate]
 }>()
 
@@ -74,6 +84,9 @@ const calendar = useGhostCalendar({
   disabled: () => props.disabled,
   onValueChange: (next) => {
     emit('update:modelValue', next)
+  },
+  onSelect: (date) => {
+    emit('select', date)
   },
   onVisibleMonthChange: (month) => {
     emit('update:visibleMonth', month)

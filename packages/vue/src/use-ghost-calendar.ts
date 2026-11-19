@@ -33,6 +33,21 @@ import {
 } from './ghost-calendar'
 import { useControllableState } from './use-controllable-state'
 
+/**
+ * Selection used to seed the visible month and focus. A controlled `null`
+ * means "empty", so it must not fall through to `defaultValue` the way an
+ * omitted (`undefined`) model does.
+ */
+function initialSelection(
+  options: UseGhostCalendarOptions,
+): GhostCalendarValue {
+  const controlled = toValue(options.modelValue)
+  if (controlled === null) {
+    return undefined
+  }
+  return controlled ?? toValue(options.defaultValue)
+}
+
 function initialVisibleMonth(options: UseGhostCalendarOptions): CalendarDate {
   const explicit = toValue(options.visibleMonth)
   if (explicit) {
@@ -42,7 +57,7 @@ function initialVisibleMonth(options: UseGhostCalendarOptions): CalendarDate {
   if (fallback) {
     return normalizeVisibleMonth(fallback)
   }
-  const selection = toValue(options.modelValue) ?? toValue(options.defaultValue)
+  const selection = initialSelection(options)
   if (selection instanceof CalendarDate) {
     return normalizeVisibleMonth(toCalendarDate(selection))
   }
@@ -56,7 +71,7 @@ function initialFocusedDate(
   options: UseGhostCalendarOptions,
   visibleMonth: CalendarDate,
 ): CalendarDate {
-  const selection = toValue(options.modelValue) ?? toValue(options.defaultValue)
+  const selection = initialSelection(options)
   if (selection instanceof CalendarDate) {
     return toCalendarDate(selection)
   }
@@ -83,11 +98,27 @@ export function useGhostCalendar(
   options: UseGhostCalendarOptions,
 ): UseGhostCalendarReturn {
   const defaultMonth = initialVisibleMonth(options)
-  const modelValue = useControllableState<GhostCalendarValue>({
+  // `null` must reach useControllableState unchanged: it is the only way a
+  // parent can hold the calendar controlled while empty (`undefined` means
+  // uncontrolled). Public readers below normalize it back to `undefined` so
+  // existing slot, return, and emitted value types stay unchanged.
+  const selection = useControllableState<GhostCalendarValue | null>({
     prop: () => toValue(options.modelValue),
     defaultValue: () => toValue(options.defaultValue),
     onChange: (next) => {
-      options.onValueChange?.(next)
+      options.onValueChange?.(next ?? undefined)
+    },
+  })
+
+  const modelValue = computed<GhostCalendarValue>({
+    get: () => selection.value ?? undefined,
+    set(next) {
+      // Controlled-empty `null` and `undefined` are the same empty selection;
+      // writing one over the other is not a change worth proposing.
+      if (next === undefined && selection.value === null) {
+        return
+      }
+      selection.value = next
     },
   })
 
@@ -224,21 +255,15 @@ export function useGhostCalendar(
     }
   }
 
-  function selectDate(date: CalendarDate): void {
-    if (isDateSelectionDisabled(date)) {
-      return
-    }
+  /** Selection proposal for an accepted activation of `date`. */
+  function nextSelection(date: CalendarDate): GhostCalendarValue {
     if (selectionMode.value === 'single') {
-      modelValue.value = date
-      setFocusedDate(date, { announce: false })
-      return
+      return date
     }
 
     const current = modelValue.value
     if (!isCalendarRangeValue(current)) {
-      modelValue.value = { start: date, end: date }
-      setFocusedDate(date, { announce: false })
-      return
+      return { start: date, end: date }
     }
 
     const { start, end } = current
@@ -246,16 +271,25 @@ export function useGhostCalendar(
     if (!hasSpan) {
       const startDate = toCalendarDate(start)
       if (compareCalendarDate(date, startDate) < 0) {
-        modelValue.value = { start: date, end: startDate }
-      } else {
-        modelValue.value = { start, end: date }
+        return { start: date, end: startDate }
       }
-      setFocusedDate(date, { announce: false })
-      return
+      return { start, end: date }
     }
 
-    modelValue.value = { start: date, end: date }
+    return { start: date, end: date }
+  }
+
+  function selectDate(date: CalendarDate): void {
+    if (isDateSelectionDisabled(date)) {
+      return
+    }
+    modelValue.value = nextSelection(date)
     setFocusedDate(date, { announce: false })
+    // Fires after the model proposal so listeners see `update:modelValue`
+    // first. A pending range start is shaped like a completed one-day range,
+    // so wrappers that must tell the two apart count `select` activations
+    // instead of reading the proposed value.
+    options.onSelect?.(date)
   }
 
   function setFocusedDate(

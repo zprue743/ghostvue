@@ -25,6 +25,31 @@ render.
 Set `selection-mode="range"` and bind `v-model` to `{ start, end }` (inclusive).
 A third activation starts a new range.
 
+## Activation events and controlled empty
+
+`GhostCalendar` emits `select` with the activated `CalendarDate` once for every
+accepted activation, after `update:modelValue`. It also fires when the date is
+already selected, so a wrapper can tell the first range click from a completed
+one-day range (both propose `{ start: day, end: day }`). Disabled, unavailable,
+and outside-month dates emit nothing. `useGhostCalendar` exposes the same hook
+as `onSelect`.
+
+Bind `:model-value="null"` to keep the calendar controlled while empty.
+`undefined` (or omitting the prop) still means uncontrolled. While the value is
+`null`, `defaultValue` is ignored, slots report `modelValue` as `undefined`,
+and `update:modelValue` proposals change nothing until the parent applies
+them. Resetting the bound value to `null` clears a pending range start.
+
+```vue
+<GhostCalendar
+  :model-value="display"
+  selection-mode="range"
+  @select="onActivate"
+>
+  <GhostCalendarGrid />
+</GhostCalendar>
+```
+
 ## Controlled month
 
 <GhostExample id="calendar/controlled" />

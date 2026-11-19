@@ -2,7 +2,7 @@ import { CalendarDate } from '@internationalized/date'
 import { mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { flushPromises } from '@vue/test-utils'
-import { defineComponent, h, nextTick, ref } from 'vue'
+import { defineComponent, h, nextTick, ref, shallowRef } from 'vue'
 import { createSSRApp } from 'vue'
 import { renderToString } from 'vue/server-renderer'
 
@@ -160,6 +160,168 @@ describe('GhostCalendar', () => {
       .find('[data-ghost-calendar-date="2024-06-18"]')
       .trigger('click')
     expect(selected.value.toString()).toBe('2024-06-01')
+  })
+
+  it('emits select after update:modelValue, including repeat activation', async () => {
+    const log: string[] = []
+    const wrapper = mountCalendar(() => ({
+      'onUpdate:modelValue': (value: CalendarDate) => {
+        log.push(`update:${value.toString()}`)
+      },
+      onSelect: (date: CalendarDate) => {
+        log.push(`select:${date.toString()}`)
+      },
+      defaultVisibleMonth: JUNE_2024,
+      today: FIXED_TODAY,
+    }))
+
+    await wrapper
+      .find('[data-ghost-calendar-date="2024-06-15"]')
+      .trigger('click')
+    await wrapper
+      .find('[data-ghost-calendar-date="2024-06-15"]')
+      .trigger('click')
+
+    // Re-activating the uncontrolled selection proposes no model change, but
+    // still reports the accepted activation.
+    expect(log).toEqual([
+      'update:2024-06-15',
+      'select:2024-06-15',
+      'select:2024-06-15',
+    ])
+  })
+
+  it('emits select once per activation of the same day in range mode', async () => {
+    const selects: string[] = []
+    const updates: string[] = []
+    const wrapper = mountCalendar(() => ({
+      selectionMode: 'range',
+      'onUpdate:modelValue': (value: {
+        start: CalendarDate
+        end: CalendarDate
+      }) => {
+        updates.push(`${value.start.toString()}..${value.end.toString()}`)
+      },
+      onSelect: (date: CalendarDate) => {
+        selects.push(date.toString())
+      },
+      defaultVisibleMonth: JUNE_2024,
+      today: FIXED_TODAY,
+    }))
+
+    const day = wrapper.find('[data-ghost-calendar-date="2024-06-14"]')
+    await day.trigger('click')
+    await day.trigger('click')
+
+    expect(updates).toEqual([
+      '2024-06-14..2024-06-14',
+      '2024-06-14..2024-06-14',
+    ])
+    expect(selects).toEqual(['2024-06-14', '2024-06-14'])
+  })
+
+  it('does not emit select for unavailable, outside-month, or disabled activations', async () => {
+    const onSelect = vi.fn()
+    const disabled = ref(false)
+    const wrapper = mountCalendar(() => ({
+      onSelect,
+      disabled: disabled.value,
+      defaultVisibleMonth: JUNE_2024,
+      isDateDisabled: (date: CalendarDate) => date.day === 12,
+      today: FIXED_TODAY,
+    }))
+
+    await wrapper
+      .find('[data-ghost-calendar-date="2024-06-12"]')
+      .trigger('click')
+    const outside = wrapper.find('[data-outside-month]')
+    expect(outside.exists()).toBe(true)
+    await outside.trigger('click')
+    disabled.value = true
+    await nextTick()
+    await wrapper
+      .find('[data-ghost-calendar-date="2024-06-15"]')
+      .trigger('click')
+
+    expect(onSelect).not.toHaveBeenCalled()
+  })
+
+  it('renders controlled null as empty and ignores unapplied proposals', async () => {
+    const onUpdate = vi.fn()
+    const onSelect = vi.fn()
+    let slotValue: unknown = 'unset'
+    const wrapper = mountCalendar(
+      () => ({
+        modelValue: null,
+        defaultValue: new CalendarDate(2024, 6, 5),
+        'onUpdate:modelValue': onUpdate,
+        onSelect,
+        defaultVisibleMonth: JUNE_2024,
+        today: FIXED_TODAY,
+      }),
+      {
+        default: (({ modelValue }: { modelValue: unknown }) => {
+          slotValue = modelValue
+          return [h(GhostCalendarGrid)]
+        }) as () => unknown,
+      },
+    )
+
+    expect(wrapper.findAll('[aria-selected="true"]')).toHaveLength(0)
+    expect(slotValue).toBeUndefined()
+
+    await wrapper
+      .find('[data-ghost-calendar-date="2024-06-18"]')
+      .trigger('click')
+
+    expect(onUpdate).toHaveBeenCalledOnce()
+    expect(String(onUpdate.mock.calls[0]?.[0])).toBe('2024-06-18')
+    expect(onSelect).toHaveBeenCalledOnce()
+    expect(wrapper.findAll('[aria-selected="true"]')).toHaveLength(0)
+    expect(slotValue).toBeUndefined()
+  })
+
+  it('clears a pending range when the parent resets the model to null', async () => {
+    interface Range {
+      start: CalendarDate
+      end: CalendarDate
+    }
+    const range = shallowRef<Range | null>(null)
+    // Read through a function so TS does not keep the `null` narrowing from
+    // the reset below; the click handler writes `range` out of its sight.
+    const readRange = (): Range | null => range.value
+    const wrapper = mountCalendar(() => ({
+      modelValue: range.value,
+      selectionMode: 'range',
+      'onUpdate:modelValue': (value: {
+        start: CalendarDate
+        end: CalendarDate
+      }) => {
+        range.value = value
+      },
+      defaultVisibleMonth: JUNE_2024,
+      today: FIXED_TODAY,
+    }))
+
+    await wrapper
+      .find('[data-ghost-calendar-date="2024-06-10"]')
+      .trigger('click')
+    expect(
+      wrapper
+        .find('[data-ghost-calendar-date="2024-06-10"]')
+        .attributes('aria-selected'),
+    ).toBe('true')
+
+    range.value = null
+    await nextTick()
+    expect(wrapper.findAll('[aria-selected="true"]')).toHaveLength(0)
+
+    await wrapper
+      .find('[data-ghost-calendar-date="2024-06-16"]')
+      .trigger('click')
+    const committed = readRange()
+    expect(committed?.start.toString()).toBe('2024-06-16')
+    expect(committed?.end.toString()).toBe('2024-06-16')
   })
 
   it('focuses unavailable dates without skipping them', async () => {
