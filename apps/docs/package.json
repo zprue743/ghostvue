@@ -7,6 +7,8 @@
     "prebuild": "pnpm -w registries:write",
     "build": "node ../../scripts/write-component-references.mjs && vitepress build .",
     "predev": "pnpm -w registries:write",
-    "dev": "node ../../scripts/write-component-references.mjs && vitepress dev ."
+    "dev": "node ../../scripts/write-component-references.mjs && vitepress dev .",
+    "pretypecheck": "pnpm -w registries:write",
+    "typecheck": "vue-tsc -p tsconfig.demo.json --noEmit"
   }
 }

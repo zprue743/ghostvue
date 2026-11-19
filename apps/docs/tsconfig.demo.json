@@ -1,0 +1,40 @@
+{
+  // Typechecks the live-demo frame, the GhostExample adapter and the typed
+  // props playgrounds together with the example SFCs they mount, so a
+  // playground control that names a prop the SFC does not declare fails
+  // `pnpm typecheck`. The rest of `.vitepress` (config, nav, landing) is not
+  // in this project: it pulls VitePress/Node typings and is checked by the
+  // docs build instead.
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "jsx": "preserve",
+    // Keep Node's process.env index signature out of Vue sources reached via
+    // `paths` (they declare `process` in packages/vue/src/env.d.ts).
+    "types": [],
+    "paths": {
+      "@ghostvue/themes": ["../../packages/themes/src/index.ts"],
+      "@ghostvue/vue": ["../../packages/vue/src/index.ts"]
+    }
+  },
+  "include": [
+    ".vitepress/env.d.ts",
+    ".vitepress/theme/demo-*.ts",
+    ".vitepress/theme/DemoPreview*.vue",
+    ".vitepress/theme/DemoPlayground*.vue",
+    ".vitepress/theme/GhostExample.vue",
+    "../../examples/**/*.ts",
+    "../../examples/**/*.vue",
+    "../../examples/**/*.d.ts",
+    "../../examples/.registries/**/*.ts",
+    "../../packages/vue/src/**/*.ts",
+    "../../packages/vue/src/**/*.vue",
+    "../../packages/vue/src/.registries/**/*.ts",
+    "../../packages/themes/src/**/*.ts",
+    "../../packages/themes/src/**/*.d.ts",
+    "../../packages/themes/src/.registries/**/*.ts"
+  ],
+  "exclude": [
+    "../../packages/vue/src/**/*.test.ts",
+    "../../packages/themes/src/**/*.test.ts"
+  ]
+}
