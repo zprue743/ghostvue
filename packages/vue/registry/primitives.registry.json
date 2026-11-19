@@ -732,21 +732,27 @@
       "layer": "headless"
     },
     {
+      "id": "dialog/edit-profile",
+      "title": "Profile editor",
+      "description": "Profile card with an edit dialog: validated fields, a scrolling form on short screens, and real save and cancel outcomes.",
+      "layer": "themed"
+    },
+    {
       "id": "dialog/themed",
-      "title": "Themed",
-      "description": "Elevation-4 modal surface, scrim overlay, and themed button actions.",
+      "title": "Long content",
+      "description": "Release notes on the elevation-4 surface that scroll inside the dialog when taller than the viewport.",
       "layer": "themed"
     },
     {
       "id": "dialog/nested",
       "title": "Nested",
-      "description": "Stacked modal dialogs where Escape dismisses only the innermost open dialog.",
+      "description": "A confirmation stacked on a share dialog; Escape dismisses only the innermost layer and focus returns to the outer dialog.",
       "layer": "themed"
     },
     {
       "id": "dialog/alert",
       "title": "Alert dialog",
-      "description": "Confirmation dialog with role=\"alertdialog\" and outside-click dismissal disabled by default.",
+      "description": "Destructive confirmation with role=\"alertdialog\", outside-click dismissal disabled, and a status after confirming.",
       "layer": "themed"
     },
     {

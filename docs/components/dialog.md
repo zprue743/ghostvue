@@ -7,6 +7,17 @@ focus trapping, scroll locking, and background isolation. Import
 `GhostDialogClose` from `@ghostvue/vue` for headless use, or from
 `@ghostvue/themes` for the default elevation-4 surface and scrim backdrop.
 
+<GhostExample id="dialog/edit-profile" />
+
+The profile card opens an edit dialog that works on a draft copy. **Save
+changes** validates the name and email, writes the draft back to the card, and
+closes; focus returns to **Edit profile**. If a field is invalid, the dialog
+stays open and focus moves to the first field that needs attention. **Cancel**,
+`Escape`, and a backdrop click close without saving and the card stays as it
+was. Focus enters on the first field, the default when no `initialFocus` is
+set. The form keeps a 36rem width, the name row stacks when it gets narrow,
+and on short screens the whole dialog scrolls so the actions stay reachable.
+
 ## Basic use
 
 <GhostExample id="dialog/basic" />
@@ -18,9 +29,13 @@ scrollbar-width compensation, marks background siblings `inert` (while skipping
 `[data-ghost-live]`), handles `Escape` and outside `pointerdown` via
 `useDismissableLayer`, and traps `Tab` navigation via `useFocusScope`.
 
-## Themed use
+## Themed use and long content
 
 <GhostExample id="dialog/themed" />
+
+The themed surface caps its width and height to the viewport, minus the
+`--ghost-space-inset-lg` inset, and scrolls when the content is taller. It stays
+centered in both left-to-right and right-to-left documents.
 
 Importing from `@ghostvue/themes` loads `default.css`, styling
 `.ghost-dialog-overlay` with `var(--ghost-scrim)` and
@@ -37,6 +52,11 @@ trapped focus scopes, `inert` sibling sets, and scroll locks cleanly. Pressing
 `Escape` dismisses only the innermost open dialog and restores focus and
 isolation back to the outer dialog.
 
+Revoking the link disables the **Revoke link** button that opened the
+confirmation, so focus cannot return to it. The confirmation passes
+`returnFocus` to send focus to **Done** instead. While the link is active,
+`returnFocus` returns `null` and the default target is kept.
+
 ## Alert dialogs
 
 <GhostExample id="dialog/alert" />
@@ -44,7 +64,8 @@ isolation back to the outer dialog.
 Passing `role="alertdialog"` on `GhostDialogContent` disables outside-click
 dismissal by default so destructive confirmations cannot be dismissed
 accidentally by clicking the backdrop, and emits a development warning
-([GHOST003](../warnings.md#ghost003)) if no description is provided.
+([GHOST003](../warnings.md#ghost003)) if no description is provided. The result
+is announced in a polite `role="status"` next to the trigger.
 
 ## Non-modal and controlled use
 
