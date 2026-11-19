@@ -4,6 +4,39 @@
 content parts. Import the compound pieces from `@ghostvue/vue` for headless use,
 or from `@ghostvue/themes` for the default tab strip and panel surfaces.
 
+<GhostExample id="tabs/workspace" />
+
+The workspace page switches between **Overview**, **Members**, and
+**Activity** panels. **Billing** is a disabled tab: it stays visible but arrow
+keys skip it and clicks do nothing. Because `GhostTabs` renders no element, the
+example wraps the list and the panels in one grid so the strip always sits
+above the panel; the themed panel's top margin is the gap between them. The
+selected tab is raised on the elevation-2 surface, an unselected tab tints on
+hover, and focus draws an outline ring, so neither hover nor focus moves the
+strip.
+
+The **Interface language** switch exercises long translated labels and
+right-to-left layout with deterministic local copy. German labels such as
+**Mitglieder und Berechtigungen** wrap inside their tab, and the strip wraps
+whole tabs onto a new row in narrow previews. Arabic sets `dir="rtl"` on the
+example root; the tab list reads the nearest `dir`, so `ArrowLeft` moves to
+the next tab and `ArrowRight` to the previous one. Class names passed to
+`GhostTabsList`, `GhostTabsTrigger`, and `GhostTabsContent` are merged with the
+part classes, so example-owned layout classes sit beside the themed styles.
+
+### Keyboard
+
+| Key                        | Behavior                                                          |
+| -------------------------- | ----------------------------------------------------------------- |
+| `Tab`                      | Moves into the strip on the selected tab, then into the panel.    |
+| `ArrowRight` / `ArrowLeft` | Next / previous enabled tab, wrapping at the ends (mirrored RTL). |
+| `ArrowDown` / `ArrowUp`    | Next / previous enabled tab in a vertical list.                   |
+| `Home` / `End`             | First / last enabled tab.                                         |
+| `Enter` / `Space`          | Selects the focused tab in manual activation mode.                |
+
+In the default automatic mode, moving focus to a tab also selects it. Arrow,
+`Home`, and `End` combined with Alt, Ctrl, or Meta are left to the platform.
+
 ## Basic use
 
 <GhostExample id="tabs/basic" />
@@ -26,14 +59,20 @@ activates the focused tab.
 <GhostExample id="tabs/vertical" />
 
 `orientation="vertical"` sets `aria-orientation="vertical"` and maps
-`ArrowUp` / `ArrowDown` for roving focus.
+`ArrowUp` / `ArrowDown` for roving focus. The example places the list beside
+the panel from about 24rem of preview width and stacks it above the panel
+when narrower.
 
 ## Themed use
 
 <GhostExample id="tabs/themed" />
 
 Themed list, trigger, and content parts set `data-themed` so elevated surfaces
-and focus rings apply under `.ghost-theme` or `.ghost-themed-scope`.
+and focus rings apply under `.ghost-theme` or `.ghost-themed-scope`. Unselected
+tabs tint on hover, disabled tabs use the disabled opacity with a
+`not-allowed` cursor, and the focusable active panel draws the same focus ring
+as the tabs. In forced-colors mode the selected tab is painted with
+`Highlight` and `HighlightText`.
 
 ## API
 

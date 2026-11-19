@@ -86,7 +86,8 @@ const contentAttrs = computed(() => {
     ...rest,
     id: panelId.value,
     role: 'tabpanel',
-    class: 'ghost-tabs-content',
+    // Keep the consumer class beside the part class instead of replacing it.
+    class: ['ghost-tabs-content', attrs.class],
     tabindex: active.value ? 0 : -1,
     'data-part': 'content',
     'data-ghost-tabs': '',

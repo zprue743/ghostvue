@@ -45,6 +45,7 @@
     "requiredAriaAttributes": []
   },
   "examples": [
+    "tabs/workspace",
     "tabs/basic"
   ]
 }
