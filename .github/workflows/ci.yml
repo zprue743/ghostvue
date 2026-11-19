@@ -74,9 +74,8 @@ jobs:
       fail-fast: false
       matrix:
         node: [22, 24]
-        shard: [1, 2]
     env:
-      VITEST_BLOB_LABEL: unit-${{ matrix.shard }}
+      VITEST_BLOB_LABEL: unit
       VITEST_DEFER_COVERAGE_THRESHOLDS: '1'
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
@@ -99,14 +98,19 @@ jobs:
             build-cache-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}-
             build-cache-${{ runner.os }}-
       - run: pnpm install --frozen-lockfile
-      - name: Run unit coverage shard
-        run: pnpm exec vitest run --coverage --reporter=blob --shard=${{ matrix.shard }}/2 $(node scripts/vitest-ci-args.mjs unit-exclude)
+      # One unsharded run per Node version (GHO-128). The unit suite finishes
+      # well before verify-integration, and two shards cost the same test time
+      # plus a second job's setup. The explicit blob name keeps this report
+      # from overwriting verify-integration's default `blob.json` when
+      # `verify` downloads every `vitest-blob-*` artifact into one directory.
+      - name: Run unit coverage
+        run: pnpm exec vitest run --coverage --reporter=blob --outputFile.blob=.vitest-reports/blob-unit.json $(node scripts/vitest-ci-args.mjs unit-exclude)
       # Only the Node 22 legs feed the merged coverage report: the Node 24 legs
       # run the same tests, and merging both would count every file twice.
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         if: always() && matrix.node == 22
         with:
-          name: vitest-blob-unit-${{ matrix.shard }}
+          name: vitest-blob-unit
           path: .vitest-reports
           include-hidden-files: true
           retention-days: 1
@@ -406,6 +410,10 @@ jobs:
       HOME: /root
       PLAYWRIGHT_BLOB_REPORT: '1'
     timeout-minutes: 10
+    # Three shards keep the browser check ahead of verify-integration (GHO-128).
+    # Playwright splits by test count, not duration, so the last shard carries
+    # most of the slow overlay specs: two shards would make the browser check
+    # the critical path, and a fourth shard trims only ~13% off the slowest one.
     strategy:
       fail-fast: false
       matrix:
