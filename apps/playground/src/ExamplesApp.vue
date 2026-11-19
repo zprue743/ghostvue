@@ -49,8 +49,15 @@ function exampleHref(id?: string): string {
         :data-example-id="example.id"
         :data-example-layer="example.layer"
       >
-        <div class="examples-host__stage" data-testid="ghost-example-stage">
-          <Preview />
+        <!--
+          Same `ghost-demo` query container as the docs
+          `.ghost-example__viewport`, so examples that adapt with
+          `@container ghost-demo` lay out the same in both hosts.
+        -->
+        <div class="examples-host__viewport">
+          <div class="examples-host__stage" data-testid="ghost-example-stage">
+            <Preview />
+          </div>
         </div>
       </div>
     </template>
@@ -119,6 +126,15 @@ function exampleHref(id?: string): string {
   border: 1px solid var(--ghost-border-default);
   border-radius: var(--ghost-radius-xl);
   background: var(--ghost-surface-subtle-bg);
+}
+
+/*
+ * Mirrors `.ghost-example__viewport`: an inline-size query container with no
+ * layout containment, so inline overlays still position against the canvas.
+ */
+.examples-host__viewport {
+  container: ghost-demo / inline-size;
+  min-inline-size: 0;
 }
 
 /* Mirrors `.ghost-example__stage`: block layout, scroll, room for rings. */

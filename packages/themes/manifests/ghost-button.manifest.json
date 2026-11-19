@@ -386,6 +386,7 @@
     "requiredAriaAttributes": []
   },
   "examples": [
+    "button/action-bar",
     "button/themed",
     "button/loading",
     "button/icon-only"

@@ -2,6 +2,7 @@ import type { AllowedComponentProps, VNodeProps } from 'vue'
 
 import type { GhostButton, GhostInput } from '@ghostvue/themes'
 
+import type ButtonActionBarExample from '../../../../examples/button/action-bar.vue'
 import type ButtonThemedExample from '../../../../examples/button/themed.vue'
 import type InputSearchExample from '../../../../examples/input/search.vue'
 
@@ -140,6 +141,27 @@ const buttonThemed = {
   DemoPlaygroundProps<typeof ButtonThemedExample, typeof GhostButton>
 >
 
+/*
+ * The hero action bar sets one size on every action and can preview the
+ * pending publish. Tone and variant stay fixed there because they carry the
+ * primary / secondary / destructive hierarchy; `button/themed` explores them.
+ */
+const buttonActionBar = {
+  component: 'GhostButton',
+  controls: [
+    {
+      kind: 'choice',
+      prop: 'size',
+      label: 'Size',
+      options: ['sm', 'md', 'lg'],
+      default: 'md',
+    },
+    { kind: 'switch', prop: 'loading', label: 'Publishing', default: false },
+  ],
+} satisfies DemoPlayground<
+  DemoPlaygroundProps<typeof ButtonActionBarExample, typeof GhostButton>
+>
+
 const inputSearch = {
   component: 'GhostInput',
   controls: [
@@ -158,6 +180,7 @@ const inputSearch = {
 >
 
 const demoPlaygrounds: Readonly<Record<string, DemoPlaygroundSpec>> = {
+  'button/action-bar': buttonActionBar,
   'button/themed': buttonThemed,
   'input/search': inputSearch,
 }
