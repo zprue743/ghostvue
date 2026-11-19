@@ -471,12 +471,9 @@ export async function validateSpecDocument({
     }
   }
 
-  if (
-    !Array.isArray(frontmatter.manifests) ||
-    frontmatter.manifests.length === 0
-  ) {
+  if (!Array.isArray(frontmatter.manifests)) {
     violations.push(
-      `${relativePath}: manifests must be a non-empty array of manifest paths`,
+      `${relativePath}: manifests must be an array of manifest paths`,
     )
   } else {
     for (const manifestPath of frontmatter.manifests) {
@@ -639,6 +636,7 @@ export async function checkComponentSpecs(repositoryRoot) {
   const warnings = []
   const componentOwners = new Map()
   const specPackages = new Map()
+  const specManifestCounts = new Map()
   let approvedCount = 0
 
   for (const file of specFiles) {
@@ -664,6 +662,10 @@ export async function checkComponentSpecs(repositoryRoot) {
       approvedCount += 1
     }
 
+    if (frontmatter && Array.isArray(frontmatter.manifests)) {
+      specManifestCounts.set(relativePath, frontmatter.manifests.length)
+    }
+
     if (frontmatter && Array.isArray(frontmatter.components)) {
       const pkgs = new Set(
         Array.isArray(frontmatter.packages) ? frontmatter.packages : [],
@@ -684,6 +686,7 @@ export async function checkComponentSpecs(repositoryRoot) {
   }
 
   const exported = await discoverExportedComponents(repositoryRoot)
+  const specsWithExportedComponents = new Set()
   for (const [name, pkgs] of [...exported.entries()].sort((a, b) =>
     a[0].localeCompare(b[0]),
   )) {
@@ -694,6 +697,7 @@ export async function checkComponentSpecs(repositoryRoot) {
       )
       continue
     }
+    specsWithExportedComponents.add(owner)
     const declaredPkgs = specPackages.get(name) ?? new Set()
     for (const pkg of pkgs) {
       if (!declaredPkgs.has(pkg)) {
@@ -701,6 +705,14 @@ export async function checkComponentSpecs(repositoryRoot) {
           `${owner}: exported component "${name}" is exported from ${pkg} but frontmatter packages omits "${pkg}"`,
         )
       }
+    }
+  }
+
+  for (const owner of [...specsWithExportedComponents].sort()) {
+    if (specManifestCounts.get(owner) === 0) {
+      violations.push(
+        `${owner}: manifests must be a non-empty array of manifest paths for exported components`,
+      )
     }
   }
 

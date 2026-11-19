@@ -254,23 +254,80 @@ sections:
     applicable: true
   compatibility:
     applicable: true
-unresolvedQuestions:
-  - 'Approve the ${name} specification before implementing production behavior.'
+unresolvedQuestions: []
 ---
 
 # ${name} specification
 
 Status: draft; approval required before implementing production behavior.
 
-Use the [component specification template](/components/spec-template) to resolve:
+Use the [component specification template](/components/spec-template) to replace
+these draft scaffold notes before requesting design approval.
 
-- Purpose, supported composition, and non-goals.
-- Props, events, slots, exposed members, and state ownership.
-- Native semantics, ARIA, keyboard, focus, disabled and loading behavior.
-- SSR, hydration, async and error states, touch and reduced motion.
-- Headless hooks, theme tokens, behavior tests, browser/Axe tests and type tests.
+## Purpose and user problems
 
-The generated neutral container is scaffolding, not an approved widget design.
+Neutral generated scaffold for \`${name}\`; replace with the user problem and
+intended use cases before production implementation.
+
+## Non-goals
+
+Production widget behavior is outside this generated neutral container scaffold.
+
+## Public API
+
+Exposes the default slot, native attribute fallthrough, and \`element\` ref on
+the root container until the approved API is specified.
+
+## State model
+
+Stateless neutral container scaffold; define controlled and uncontrolled state
+transitions before implementation.
+
+## Consumer data
+
+The generated neutral scaffold does not accept consumer data collections.
+
+## Accessibility contract
+
+Renders a non-interactive container element; define roles, keyboard interaction,
+and focus management before implementation.
+
+## Rendering and customization
+
+Exposes \`data-part="root"\` and \`data-${base}\` styling hooks plus default slot
+composition.
+
+## Environment behavior
+
+Deterministic SSR markup with no browser-only side effects in the scaffold.
+
+## Performance
+
+Constant-time single-element render for the neutral scaffold container.
+
+## Composition
+
+Standalone neutral container scaffold until composition with existing primitives
+is specified.
+
+## Test plan
+
+Includes scaffold unit, themed wrapper ref, and Playwright/Axe smoke tests;
+expand for full behavior coverage upon approval.
+
+## Documentation plan
+
+Includes \`docs/components/${slug}.md\` and \`examples/${slug}/basic.vue\`;
+expand with API reference and edge-case guides upon approval.
+
+## Compatibility and release impact
+
+Unpublished draft scaffold; add a Changeset before shipping consumer-visible
+behavior.
+
+## Open architectural questions
+
+Approve the \`${name}\` specification before implementing production behavior.
 `,
     ],
     [

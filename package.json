@@ -52,7 +52,7 @@
     "typecheck": "pnpm -r --if-present typecheck",
     "verify": "pnpm verify:static && pnpm verify:unit && pnpm verify:build",
     "verify:build": "pnpm build && pnpm published-exports && pnpm exports:check && pnpm size && pnpm docs:build && pnpm docs:links",
-    "verify:static": "pnpm registries && pnpm lint && pnpm boundaries && pnpm adapters && pnpm manifests && pnpm typecheck",
+    "verify:static": "pnpm registries && pnpm lint && pnpm boundaries && pnpm adapters && pnpm manifests && pnpm specs:check && pnpm typecheck",
     "verify:unit": "pnpm test:coverage && pnpm contrast",
     "verify:contrast": "pnpm contrast",
     "exports:check": "node scripts/check-export-integrity.mjs",

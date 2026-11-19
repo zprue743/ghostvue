@@ -1,3 +1,57 @@
+---
+schemaVersion: 1.0.0
+component: GhostDrawer
+components:
+  - GhostDrawer
+  - GhostDrawerTrigger
+  - GhostDrawerOverlay
+  - GhostDrawerContent
+  - GhostDrawerTitle
+  - GhostDrawerDescription
+  - GhostDrawerClose
+packages:
+  - '@ghostvue/vue'
+  - '@ghostvue/themes'
+specStatus: proposed
+manifests:
+  - packages/vue/manifests/ghost-drawer.manifest.json
+  - packages/vue/manifests/ghost-drawer-trigger.manifest.json
+  - packages/vue/manifests/ghost-drawer-overlay.manifest.json
+  - packages/vue/manifests/ghost-drawer-content.manifest.json
+  - packages/vue/manifests/ghost-drawer-title.manifest.json
+  - packages/vue/manifests/ghost-drawer-description.manifest.json
+  - packages/vue/manifests/ghost-drawer-close.manifest.json
+  - packages/themes/manifests/ghost-drawer.manifest.json
+sections:
+  purpose:
+    applicable: true
+  nonGoals:
+    applicable: true
+  publicApi:
+    applicable: true
+  stateModel:
+    applicable: true
+  consumerData:
+    applicable: true
+  accessibility:
+    applicable: true
+  rendering:
+    applicable: true
+  environment:
+    applicable: true
+  performance:
+    applicable: true
+  composition:
+    applicable: true
+  testPlan:
+    applicable: true
+  documentationPlan:
+    applicable: true
+  compatibility:
+    applicable: true
+unresolvedQuestions: []
+---
+
 # GhostDrawer specification
 
 **Status:** Approved. Approved by Zac (maintainer) in chat, November 17, 2026 —

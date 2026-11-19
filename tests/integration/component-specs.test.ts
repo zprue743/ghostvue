@@ -36,6 +36,7 @@ async function makeTempRepo() {
 function buildSpec({
   specStatus = 'approved',
   approvalEvidence = 'Approved in PR #1.',
+  manifestsBlock = '  - packages/vue/manifests/ghost-widget.manifest.json\n',
   extraFrontmatter = '',
   consumerDataSection = `  consumerData:
     applicable: false
@@ -46,6 +47,10 @@ function buildSpec({
   const approvalBlock = approvalEvidence
     ? `approval:\n  evidence: '${approvalEvidence}'\n`
     : ''
+  const manifestsLine =
+    manifestsBlock === '[]'
+      ? 'manifests: []\n'
+      : `manifests:\n${manifestsBlock}`
   const frontmatter = `---
 schemaVersion: 1.0.0
 component: GhostWidget
@@ -54,9 +59,7 @@ components:
 packages:
   - '@ghostvue/vue'
 specStatus: ${specStatus}
-${approvalBlock}manifests:
-  - packages/vue/manifests/ghost-widget.manifest.json
-${extraFrontmatter}sections:
+${approvalBlock}${manifestsLine}${extraFrontmatter}sections:
   purpose:
     applicable: true
   nonGoals:
@@ -285,6 +288,37 @@ unresolvedQuestions: []
     })
     expect(approved.has('GhostDraft')).toBe(false)
     expect(extractFrontmatter('plain markdown')).toBeNull()
+  })
+
+  it('allows empty manifests for pre-implementation specs but requires manifests for exported components', async () => {
+    const root = await makeTempRepo()
+    await writeFile(join(root, 'docs/components/widget-spec.md'), buildSpec())
+    await writeFile(
+      join(root, 'docs/components/planned-spec.md'),
+      buildSpec({
+        specStatus: 'proposed',
+        approvalEvidence: '',
+        manifestsBlock: '[]',
+      }).replaceAll('GhostWidget', 'GhostPlanned'),
+    )
+
+    const plannedResult = await checkComponentSpecs(root)
+    expect(plannedResult.violations).toEqual([])
+    expect(plannedResult.ok).toBe(true)
+
+    await writeFile(
+      join(root, 'docs/components/widget-spec.md'),
+      buildSpec({ manifestsBlock: '[]' }),
+    )
+    const exportedWithoutManifests = await checkComponentSpecs(root)
+    expect(exportedWithoutManifests.ok).toBe(false)
+    expect(
+      exportedWithoutManifests.violations.some((v) =>
+        v.includes(
+          'manifests must be a non-empty array of manifest paths for exported components',
+        ),
+      ),
+    ).toBe(true)
   })
 
   it('passes on the current repository state including GhostPortal', async () => {
