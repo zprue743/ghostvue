@@ -229,5 +229,10 @@
     },
     "requiredAriaAttributes": []
   },
-  "examples": ["input/themed", "input/states", "input/search"]
+  "examples": [
+    "input/account-details",
+    "input/themed",
+    "input/states",
+    "input/search"
+  ]
 }

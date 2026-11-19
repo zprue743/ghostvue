@@ -5,6 +5,17 @@
 Import it from `@ghostvue/vue` for headless use, or from `@ghostvue/themes` for
 the default visual treatment.
 
+<GhostExample id="input/account-details" />
+
+The account form composes themed `GhostInput` with
+[`GhostField`](./field.md) for labels, hints, and errors. The work email
+validates as you type: `invalid` on the field sets `aria-invalid` on the input
+and links the error through `aria-describedby`. The workspace URL is
+`readonly`, so it stays focusable and is submitted. The billing contact is
+`disabled`. Long values stay on one line and end with an ellipsis at rest;
+long hints and errors wrap. The form keeps a 28rem maximum width and the
+name row stacks when it gets narrow.
+
 ## Basic use
 
 <GhostExample id="input/basic" />
@@ -62,6 +73,10 @@ when you want a region of headless components to pick up the defaults. See the
 
 <GhostExample id="input/states" />
 
+Each state is set on `GhostField`, which forwards `disabled`, `invalid`, and
+`required` to the input; `readonly` goes on the input directly. Without a field,
+pass the same props to `GhostInput`.
+
 Disabled uses the native `disabled` attribute. Readonly uses native `readonly`.
 Required uses native `required`. Invalid is a consumer flag for custom or async
 errors; native constraint validation still runs on submit for `required` /
@@ -69,7 +84,8 @@ errors; native constraint validation still runs on submit for `required` /
 
 ## Search
 
-`type="search"` keeps native search behavior for DataTable-style filters:
+`type="search"` keeps native search behavior for DataTable-style filters. This
+sample filters a local list of reports and announces the match count:
 
 <GhostExample id="input/search" />
 
