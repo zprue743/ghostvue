@@ -1,0 +1,221 @@
+/*
+ * DemoPreview frame (`DemoPreview.vue`).
+ *
+ * Unlayered on purpose: these rules must beat the `.vp-doc` prose layer
+ * (`@layer ghostvue-vitepress`) on the frame's own chrome. They never reach
+ * inside the demo: every selector targets a frame part, and the canvas only
+ * sets its own box. What the demo looks like inside the canvas is decided by
+ * the example SFC, its theme recipes, and `docs-demo-compat.css`.
+ *
+ * Every size and color is a semantic GhostVue token so the frame follows the
+ * active flagship, roundness, and light/dark mode like the rest of the site.
+ */
+.ghost-example {
+  /*
+   * One inset drives header, controls, and canvas so they line up. It follows
+   * the flagship's semantic spacing but is clamped to the frame's target
+   * range (about 16px on phones, 24-32px on desktop) so a compact flagship
+   * such as calm cannot crowd the demo.
+   */
+  --_demo-inset: clamp(1rem, var(--ghost-space-inset-md), 1.25rem);
+  --_demo-inset-block: var(--ghost-space-inset-sm);
+
+  box-sizing: border-box;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  margin-block: var(--ghost-space-stack-lg);
+  max-inline-size: 100%;
+  overflow: hidden;
+  border: 1px solid var(--ghost-border-default);
+  border-radius: var(--ghost-radius-xl);
+  background: var(--ghost-elevation-1-bg);
+  /* Low elevation: a hairline highlight plus the level-1 drop shadow. */
+  box-shadow:
+    var(--ghost-elevation-1-highlight), var(--ghost-elevation-1-shadow);
+}
+
+@media (min-width: 640px) {
+  .ghost-example {
+    --_demo-inset: clamp(1.5rem, var(--ghost-space-stack-lg), 2rem);
+  }
+}
+
+@media (min-width: 960px) {
+  .ghost-example {
+    --_demo-inset: clamp(1.5rem, calc(2 * var(--ghost-space-inset-md)), 2rem);
+  }
+}
+
+/*
+ * Header: title, badge and description on the start side, toolbar on the end
+ * side. Flex-wrap moves the toolbar under the text when the row cannot hold
+ * both (320px and 390px phones) instead of squeezing the title.
+ */
+.ghost-example__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--ghost-space-gap-sm) var(--ghost-space-gap-lg);
+  min-inline-size: 0;
+  padding: var(--_demo-inset-block) var(--_demo-inset);
+  background: var(--ghost-elevation-1-bg);
+  border-block-end: 1px solid var(--ghost-border-muted);
+}
+
+.ghost-example__intro {
+  display: grid;
+  flex: 1 1 14rem;
+  gap: var(--ghost-space-gap-xs);
+  min-inline-size: 0;
+  /* Center a one-line title on the 32px toolbar buttons. */
+  padding-block: 0.3rem;
+}
+
+.ghost-example__heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--ghost-space-gap-sm);
+  min-inline-size: 0;
+}
+
+.ghost-example__title {
+  min-inline-size: 0;
+  color: var(--ghost-surface-fg);
+  font-size: 0.95rem;
+  font-weight: 650;
+  letter-spacing: 0.01em;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.ghost-example__badge {
+  padding: 0.1rem 0.5rem;
+  border: 1px solid var(--ghost-border-default);
+  border-radius: var(--ghost-radius-pill);
+  background: var(--ghost-surface-bg);
+  color: var(--ghost-text-muted);
+  font-size: 0.68rem;
+  font-weight: 650;
+  letter-spacing: 0.04em;
+  line-height: 1.4;
+  text-transform: uppercase;
+}
+
+/* `.vp-doc p` adds paragraph margins and 28px leading; the frame owns both. */
+.ghost-example__description {
+  margin: 0;
+  color: var(--ghost-text-muted);
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.ghost-example__toolbar {
+  display: flex;
+  flex: 0 0 auto;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--ghost-space-gap-xs);
+  /*
+   * Ghost buttons have invisible padding; pull them out by it so their labels
+   * line up with the inset whether the toolbar sits at the end of the title
+   * row or wraps under it on phones.
+   */
+  margin-inline: calc(-1 * var(--ghost-space-gap-sm));
+}
+
+/* Rotation is transform-only so toggling never shifts surrounding layout. */
+.ghost-example__chevron {
+  flex: none;
+  transition: transform 120ms ease;
+}
+
+.ghost-example__toggle[aria-expanded='true'] .ghost-example__chevron {
+  transform: rotate(90deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ghost-example__chevron {
+    transition: none;
+  }
+}
+
+.ghost-example__controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--ghost-space-gap-sm) var(--ghost-space-gap-lg);
+  min-inline-size: 0;
+  padding: var(--_demo-inset-block) var(--_demo-inset);
+  border-block-end: 1px solid var(--ghost-border-muted);
+}
+
+/*
+ * Surface hierarchy (GHO-183): page canvas < demo canvas (subtle) < frame
+ * chrome (elevation 1). In dark mode each step is a lighter navy, so the
+ * canvas reads as recessed against the raised header and stays distinct
+ * from the page; in light mode the border and level-1 shadow do that work.
+ */
+.ghost-example__preview {
+  isolation: isolate;
+  position: relative;
+  min-inline-size: 0;
+  padding: var(--_demo-inset);
+  background: var(--ghost-surface-subtle-bg);
+}
+
+/*
+ * Block-layout canvas: the example's root lays itself out the way it would
+ * in an app (a grid of inputs spans the canvas; a lone button sits at the
+ * start), rather than being shrink-wrapped and centered by the host.
+ *
+ * `overflow-x: auto` (wide tables, toolbars) forces `overflow-y` to clip too,
+ * which would cut focus rings on controls touching the stage edge. The
+ * padding is room for the largest recipe ring (width + offset); the matching
+ * negative margin keeps the demo aligned with the header inset.
+ */
+.ghost-example__stage {
+  --_demo-ring-room: 0.5rem;
+
+  display: flow-root;
+  min-block-size: 2.5rem;
+  margin: calc(-1 * var(--_demo-ring-room));
+  padding: var(--_demo-ring-room);
+  overflow-x: auto;
+}
+
+/*
+ * Compatibility for examples whose template has several root elements (a
+ * label beside its input, two buttons): with no root of their own to own the
+ * layout, lay the siblings out in a wrapping row with a token gap, as the
+ * playground host does. Single-root examples are untouched.
+ */
+.ghost-example__stage:has(> * + *) {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--ghost-space-gap-md);
+}
+
+/* Loading and load-failure placeholders keep the canvas from reading empty. */
+.ghost-example__status {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--ghost-space-gap-sm) var(--ghost-space-gap-md);
+  min-block-size: 2.5rem;
+  margin: 0;
+  color: var(--ghost-text-muted);
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.ghost-example__status[data-state='error'] {
+  color: var(--ghost-surface-fg);
+}
+
+.ghost-example__source {
+  min-inline-size: 0;
+  border-block-start: 1px solid var(--ghost-border-muted);
+}

@@ -1,0 +1,224 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "handwritten",
+  "name": "GhostDrawer",
+  "package": "@ghostvue/themes",
+  "status": "experimental",
+  "description": "Themed wrappers around headless GhostDrawer, GhostDrawerTrigger, GhostDrawerOverlay, GhostDrawerContent, GhostDrawerTitle, GhostDrawerDescription, and GhostDrawerClose. Importing from @ghostvue/themes loads the default elevation-4 edge panel, scrim, and reduced-motion-aware slide entry stylesheet.",
+  "props": [
+    {
+      "name": "open",
+      "type": "boolean",
+      "required": false,
+      "description": "Controlled open state forwarded to headless GhostDrawer.",
+      "deprecated": false
+    },
+    {
+      "name": "defaultOpen",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Initial open state when open is omitted.",
+      "deprecated": false
+    },
+    {
+      "name": "modal",
+      "type": "boolean",
+      "default": true,
+      "required": false,
+      "description": "Enables modal behavior (trapped focus, scroll lock, inert background, overlay).",
+      "deprecated": false
+    },
+    {
+      "name": "side",
+      "type": "GhostDrawerSide",
+      "default": "end",
+      "required": false,
+      "description": "Viewport edge forwarded to headless GhostDrawer ('start', 'end', 'top', 'bottom').",
+      "deprecated": false
+    },
+    {
+      "name": "dir",
+      "type": "GhostDrawerDirection",
+      "required": false,
+      "description": "Explicit writing direction for mapping logical start/end sides.",
+      "deprecated": false
+    }
+  ],
+  "models": [
+    {
+      "prop": "open",
+      "event": "update:open",
+      "type": "boolean",
+      "description": "v-model:open binding for controlled state."
+    }
+  ],
+  "events": [],
+  "slots": [
+    {
+      "name": "default",
+      "props": [
+        {
+          "name": "open",
+          "type": "boolean",
+          "description": "Current open state."
+        },
+        {
+          "name": "close",
+          "type": "() => void",
+          "description": "Closes the drawer."
+        },
+        {
+          "name": "side",
+          "type": "GhostDrawerSide",
+          "description": "Effective side."
+        }
+      ],
+      "description": "Drawer trigger, overlay, content, title, description, and close parts."
+    }
+  ],
+  "exposed": [],
+  "styling": {
+    "parts": [
+      {
+        "name": "trigger",
+        "description": "Trigger control rendered by GhostDrawerTrigger."
+      },
+      {
+        "name": "overlay",
+        "description": "Full-viewport backdrop rendered by GhostDrawerOverlay with data-themed."
+      },
+      {
+        "name": "content",
+        "description": "Edge-anchored elevation-4 drawer surface rendered by GhostDrawerContent with data-themed; positioned from data-side and data-dir."
+      },
+      {
+        "name": "title",
+        "description": "Accessible heading rendered by GhostDrawerTitle."
+      },
+      {
+        "name": "description",
+        "description": "Muted supporting description rendered by GhostDrawerDescription."
+      },
+      {
+        "name": "close",
+        "description": "Close control rendered by GhostDrawerClose."
+      }
+    ],
+    "states": [
+      {
+        "name": "open",
+        "description": "Applied to trigger, overlay, and content while open."
+      },
+      {
+        "name": "closed",
+        "description": "Applied to trigger while closed."
+      },
+      {
+        "name": "side",
+        "description": "data-side on trigger, overlay, and content selects the anchored edge."
+      }
+    ],
+    "cssProperties": [
+      {
+        "name": "--ghost-scrim",
+        "description": "Shared semantic backdrop color of GhostDrawerOverlay, supplied by the theme."
+      },
+      {
+        "name": "--ghost-elevation-4-bg",
+        "description": "Surface background color of GhostDrawerContent."
+      },
+      {
+        "name": "--ghost-elevation-4-border",
+        "description": "Border color of GhostDrawerContent."
+      },
+      {
+        "name": "--ghost-elevation-4-shadow",
+        "description": "Drop shadow of GhostDrawerContent."
+      },
+      {
+        "name": "--ghost-elevation-4-highlight",
+        "description": "Inner highlight shadow of GhostDrawerContent."
+      },
+      {
+        "name": "--ghost-border-hairline-width",
+        "description": "Border thickness."
+      },
+      {
+        "name": "--ghost-radius-lg",
+        "description": "Corner radius of GhostDrawerContent."
+      },
+      {
+        "name": "--ghost-surface-fg",
+        "description": "Foreground text color."
+      },
+      {
+        "name": "--ghost-text-muted",
+        "description": "Muted text color applied to GhostDrawerDescription."
+      },
+      {
+        "name": "--ghost-space-inset-lg",
+        "description": "Internal padding and viewport margin of GhostDrawerContent."
+      },
+      {
+        "name": "--ghost-space-gap-md",
+        "description": "Vertical spacing between sections inside GhostDrawerContent."
+      },
+      {
+        "name": "--ghost-focus-ring-color",
+        "description": "Outer focus-visible outline color when content receives focus."
+      },
+      {
+        "name": "--ghost-focus-ring-contrast",
+        "description": "Inner focus-visible halo color."
+      },
+      {
+        "name": "--ghost-focus-ring-offset",
+        "description": "Focus-visible outline offset."
+      },
+      {
+        "name": "--ghost-focus-ring-width",
+        "description": "Focus-visible outline width."
+      },
+      {
+        "name": "--ghost-motion-enter-duration",
+        "description": "Slide and fade entry duration when motion is allowed."
+      },
+      {
+        "name": "--ghost-motion-enter-easing",
+        "description": "Slide and fade entry easing when motion is allowed."
+      },
+      {
+        "name": "--ghost-motion-fade-duration",
+        "description": "Opacity-only entry duration under prefers-reduced-motion: reduce."
+      },
+      {
+        "name": "--ghost-motion-easing-standard",
+        "description": "Opacity-only entry easing under prefers-reduced-motion: reduce."
+      }
+    ]
+  },
+  "accessibility": {
+    "role": "dialog",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/",
+    "keyboard": {
+      "Enter": "Opens or toggles the drawer when focused on the trigger, or closes when focused on GhostDrawerClose.",
+      "Space": "Opens or toggles the drawer when focused on the trigger, or closes when focused on GhostDrawerClose.",
+      "Tab": "Cycles forward within modal drawers.",
+      "Shift+Tab": "Cycles backward within modal drawers.",
+      "Escape": "Dismisses the topmost open drawer when closeOnEscape is true and restores focus."
+    },
+    "requiredAriaAttributes": [
+      "aria-expanded",
+      "aria-controls",
+      "aria-haspopup",
+      "aria-labelledby"
+    ]
+  },
+  "examples": [
+    "drawer/themed",
+    "drawer/sides",
+    "drawer/non-modal",
+    "drawer/nested"
+  ]
+}

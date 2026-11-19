@@ -188,6 +188,17 @@ Native behavior only: arrow keys within the group select among same-name radios;
 Tab enters/leaves the group at the appropriate single tab stop; Space activates
 when applicable. No `useRovingFocus`.
 
+Because the keys are native, these engine differences are intentional and
+covered by the `@cross-browser` e2e specs (Chromium, Firefox, WebKit):
+
+- **RTL horizontal arrows:** Chromium and Firefox mirror ArrowLeft/ArrowRight
+  in RTL (ArrowLeft moves to the next radio, which sits visually to the left).
+  WebKit does not mirror them: ArrowRight always moves to the next radio in DOM
+  order. ArrowDown/ArrowUp mean next/previous in every engine and direction.
+- **Backward Tab into an all-unchecked group:** Chromium and Firefox focus the
+  first radio; WebKit focuses the last. The group is still a single Tab stop,
+  including inside `useFocusScope` traps.
+
 ### Field integration
 
 `GhostField` + `GhostFieldControl` spread bindings onto `GhostRadioGroup`. The
@@ -211,6 +222,9 @@ labels or `for` pointing at each item's `id`.
 - Browser: arrow selects without Space, shared `name` when `name` prop omitted,
   RTL horizontal arrows, form submit with selected value, axe on examples and
   playground
+- Cross-browser (`tests/e2e/rtl-roving.spec.ts`, `tests/e2e/focus.spec.ts`):
+  RTL layout geometry, arrow focus plus `checked` state, and native radio Tab
+  cycles in focus traps, with the per-engine expectations listed under Keyboard
 - Integration: themed wrapper `element` ref
 - Type: consumer compile fixtures
 

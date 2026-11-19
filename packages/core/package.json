@@ -4,6 +4,11 @@
   "private": true,
   "description": "Framework-independent behavior and contracts for GhostVue.",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zprue743/ghostvue.git",
+    "directory": "packages/core"
+  },
   "type": "module",
   "sideEffects": false,
   "exports": {
@@ -11,13 +16,19 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
     },
-    "./manifest.schema.json": "./manifest.schema.json"
+    "./manifest.schema.json": "./manifest.schema.json",
+    "./manifest-collection.schema.json": "./manifest-collection.schema.json"
   },
   "types": "./dist/index.d.ts",
   "files": [
     "dist",
-    "manifest.schema.json"
+    "manifest.schema.json",
+    "manifest-collection.schema.json"
   ],
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
     "typecheck": "tsc -p tsconfig.json --noEmit"

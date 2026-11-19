@@ -40,14 +40,14 @@ export const ghostCodes = {
     level: 'warn',
     title: 'Dialog content missing accessible name',
     message:
-      'GhostDialogContent requires an accessible name. Render GhostDialogTitle inside GhostDialogContent, or pass aria-label or aria-labelledby.',
+      'GhostDialogContent and GhostDrawerContent require an accessible name. Render GhostDialogTitle or GhostDrawerTitle inside the content, or pass aria-label or aria-labelledby.',
     relatedDocs: './components/dialog.md',
   },
   GHOST003: {
     level: 'warn',
     title: 'Alert dialog missing description',
     message:
-      'GhostDialogContent with role="alertdialog" should provide a description. Render GhostDialogDescription inside GhostDialogContent, or pass aria-describedby.',
+      'GhostDialogContent or GhostDrawerContent with role="alertdialog" should provide a description. Render GhostDialogDescription or GhostDrawerDescription inside the content, or pass aria-describedby.',
     relatedDocs: './components/dialog.md',
   },
 } as const satisfies Record<string, GhostCodeEntry>

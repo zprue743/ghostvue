@@ -1,0 +1,231 @@
+/*
+ * Themed GhostTree. Rows indent from `--ghost-tree-level` (set inline on each
+ * item) with logical padding, so any depth works in LTR and RTL without
+ * nesting selectors. The focus ring is drawn on the focused item's own row
+ * (its trigger, or the item itself when it has no trigger) so it never wraps
+ * an expanded child group. Group height motion mirrors ghost-collapsible.css.
+ */
+@layer ghostvue-theme {
+  :where(
+    .ghost-theme .ghost-tree,
+    .ghost-themed-scope .ghost-tree,
+    .ghost-tree[data-themed],
+    .ghost-theme .ghost-tree-group,
+    .ghost-themed-scope .ghost-tree-group,
+    .ghost-tree-group[data-themed]
+  ) {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  :where(
+    .ghost-theme .ghost-tree,
+    .ghost-themed-scope .ghost-tree,
+    .ghost-tree[data-themed]
+  ) {
+    color: var(--ghost-surface-fg);
+    font-family: var(--ghost-type-family-sans);
+    font-feature-settings: var(--ghost-type-feature-default);
+    font-size: var(--ghost-type-size-sm);
+    line-height: var(--ghost-type-line-snug);
+  }
+
+  :where(
+    .ghost-theme .ghost-tree-item,
+    .ghost-themed-scope .ghost-tree-item,
+    .ghost-tree-item[data-themed]
+  ) {
+    margin: 0;
+    outline: none;
+  }
+
+  /* Row box: the trigger, or a triggerless item itself. */
+  :where(
+    .ghost-theme .ghost-tree-item > .ghost-tree-trigger,
+    .ghost-themed-scope .ghost-tree-item > .ghost-tree-trigger,
+    .ghost-tree-trigger[data-themed],
+    .ghost-theme .ghost-tree-item:not(:has(> .ghost-tree-trigger)),
+    .ghost-themed-scope .ghost-tree-item:not(:has(> .ghost-tree-trigger)),
+    .ghost-tree-item[data-themed]:not(:has(> .ghost-tree-trigger))
+  ) {
+    align-items: center;
+    border-radius: var(--ghost-radius-sm);
+    box-sizing: border-box;
+    cursor: pointer;
+    display: flex;
+    gap: var(--ghost-space-gap-xs);
+    padding-block: var(--ghost-space-inset-xs);
+    padding-inline-end: var(--ghost-space-inset-sm);
+    padding-inline-start: calc(
+      var(--ghost-space-inset-sm) + (var(--ghost-tree-level, 1) - 1) *
+        var(--ghost-space-inset-md)
+    );
+    user-select: none;
+  }
+
+  :where(
+    .ghost-theme .ghost-tree-item > .ghost-tree-trigger:hover,
+    .ghost-themed-scope .ghost-tree-item > .ghost-tree-trigger:hover,
+    .ghost-tree-trigger[data-themed]:hover,
+    .ghost-theme .ghost-tree-item:not(:has(> .ghost-tree-trigger)):hover,
+    .ghost-themed-scope .ghost-tree-item:not(:has(> .ghost-tree-trigger)):hover,
+    .ghost-tree-item[data-themed]:not(:has(> .ghost-tree-trigger)):hover
+  ) {
+    background-color: var(--ghost-elevation-2-bg);
+  }
+
+  :where(
+    .ghost-theme .ghost-tree-item > .ghost-tree-trigger[data-selected],
+    .ghost-themed-scope .ghost-tree-item > .ghost-tree-trigger[data-selected],
+    .ghost-tree-trigger[data-themed][data-selected],
+    .ghost-theme
+      .ghost-tree-item[data-selected]:not(:has(> .ghost-tree-trigger)),
+    .ghost-themed-scope
+      .ghost-tree-item[data-selected]:not(:has(> .ghost-tree-trigger)),
+    .ghost-tree-item[data-themed][data-selected]:not(
+        :has(> .ghost-tree-trigger)
+      )
+  ) {
+    background-color: var(--ghost-surface-muted-bg);
+    font-weight: var(--ghost-type-weight-medium);
+  }
+
+  :where(
+    .ghost-theme .ghost-tree-item:focus-visible > .ghost-tree-trigger,
+    .ghost-themed-scope .ghost-tree-item:focus-visible > .ghost-tree-trigger,
+    .ghost-tree-item[data-themed]:focus-visible > .ghost-tree-trigger,
+    .ghost-theme
+      .ghost-tree-item:focus-visible:not(:has(> .ghost-tree-trigger)),
+    .ghost-themed-scope
+      .ghost-tree-item:focus-visible:not(:has(> .ghost-tree-trigger)),
+    .ghost-tree-item[data-themed]:focus-visible:not(:has(> .ghost-tree-trigger))
+  ) {
+    outline: var(--ghost-focus-ring-width) solid var(--ghost-focus-ring-color);
+    outline-offset: calc(var(--ghost-focus-ring-offset) * -1);
+  }
+
+  :where(
+    .ghost-theme .ghost-tree-item[data-disabled] > .ghost-tree-trigger,
+    .ghost-themed-scope .ghost-tree-item[data-disabled] > .ghost-tree-trigger,
+    .ghost-tree-trigger[data-themed][data-disabled],
+    .ghost-theme
+      .ghost-tree-item[data-disabled]:not(:has(> .ghost-tree-trigger)),
+    .ghost-themed-scope
+      .ghost-tree-item[data-disabled]:not(:has(> .ghost-tree-trigger)),
+    .ghost-tree-item[data-themed][data-disabled]:not(
+        :has(> .ghost-tree-trigger)
+      )
+  ) {
+    cursor: not-allowed;
+    opacity: var(--ghost-action-disabled-opacity);
+  }
+
+  :where(
+    .ghost-theme .ghost-tree-group,
+    .ghost-themed-scope .ghost-tree-group,
+    .ghost-tree-group[data-themed]
+  ) {
+    overflow: hidden;
+  }
+
+  :where(
+    .ghost-theme .ghost-tree-group > [data-part='group-inner'],
+    .ghost-themed-scope .ghost-tree-group > [data-part='group-inner'],
+    .ghost-tree-group[data-themed] > [data-part='group-inner']
+  ) {
+    min-block-size: 0;
+    overflow: hidden;
+  }
+
+  @supports (interpolate-size: allow-keywords) {
+    @media (prefers-reduced-motion: no-preference) {
+      :where(
+        .ghost-theme .ghost-tree-group:not([data-animation='off']),
+        .ghost-themed-scope .ghost-tree-group:not([data-animation='off']),
+        .ghost-tree-group[data-themed]:not([data-animation='off'])
+      ) {
+        block-size: 0;
+        interpolate-size: allow-keywords;
+        transition: block-size var(--ghost-motion-duration-moderate)
+          var(--ghost-motion-easing-standard);
+      }
+
+      :where(
+        .ghost-theme
+          .ghost-tree-group[data-state='open']:not([data-animation='off']),
+        .ghost-themed-scope
+          .ghost-tree-group[data-state='open']:not([data-animation='off']),
+        .ghost-tree-group[data-themed][data-state='open']:not(
+            [data-animation='off']
+          )
+      ) {
+        block-size: auto;
+      }
+
+      @starting-style {
+        :where(
+          .ghost-theme
+            .ghost-tree-group[data-state='open']:not([data-animation='off']),
+          .ghost-themed-scope
+            .ghost-tree-group[data-state='open']:not([data-animation='off']),
+          .ghost-tree-group[data-themed][data-state='open']:not(
+              [data-animation='off']
+            )
+        ) {
+          block-size: 0;
+        }
+      }
+    }
+  }
+
+  @media (forced-colors: active) {
+    :where(
+      .ghost-theme .ghost-tree-item > .ghost-tree-trigger[data-selected],
+      .ghost-themed-scope .ghost-tree-item > .ghost-tree-trigger[data-selected],
+      .ghost-tree-trigger[data-themed][data-selected],
+      .ghost-theme
+        .ghost-tree-item[data-selected]:not(:has(> .ghost-tree-trigger)),
+      .ghost-themed-scope
+        .ghost-tree-item[data-selected]:not(:has(> .ghost-tree-trigger)),
+      .ghost-tree-item[data-themed][data-selected]:not(
+          :has(> .ghost-tree-trigger)
+        )
+    ) {
+      background-color: Highlight;
+      color: HighlightText;
+      forced-color-adjust: none;
+    }
+
+    :where(
+      .ghost-theme .ghost-tree-item:focus-visible > .ghost-tree-trigger,
+      .ghost-themed-scope .ghost-tree-item:focus-visible > .ghost-tree-trigger,
+      .ghost-tree-item[data-themed]:focus-visible > .ghost-tree-trigger,
+      .ghost-theme
+        .ghost-tree-item:focus-visible:not(:has(> .ghost-tree-trigger)),
+      .ghost-themed-scope
+        .ghost-tree-item:focus-visible:not(:has(> .ghost-tree-trigger)),
+      .ghost-tree-item[data-themed]:focus-visible:not(
+          :has(> .ghost-tree-trigger)
+        )
+    ) {
+      outline-color: Highlight;
+    }
+
+    :where(
+      .ghost-theme .ghost-tree-item[data-disabled] > .ghost-tree-trigger,
+      .ghost-themed-scope .ghost-tree-item[data-disabled] > .ghost-tree-trigger,
+      .ghost-tree-trigger[data-themed][data-disabled],
+      .ghost-theme
+        .ghost-tree-item[data-disabled]:not(:has(> .ghost-tree-trigger)),
+      .ghost-themed-scope
+        .ghost-tree-item[data-disabled]:not(:has(> .ghost-tree-trigger)),
+      .ghost-tree-item[data-themed][data-disabled]:not(
+          :has(> .ghost-tree-trigger)
+        )
+    ) {
+      color: GrayText;
+      opacity: 1;
+    }
+  }
+}

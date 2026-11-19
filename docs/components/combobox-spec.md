@@ -384,6 +384,17 @@ input; listbox scrolls in content.
 Floating/dismiss listeners only while open. No internal filtering. Virtualization
 is consumer-driven via `virtualized` flag and documented highlight contract.
 
+Option registration, unregistration, and disabled / `textValue` updates do
+constant work each: the registry keeps one insertion-ordered record map and a
+running disabled count, so mounting, filtering, restoring, or reordering _n_
+options costs O(_n_) bookkeeping, and the open-listbox result announcement reads
+that count instead of rescanning options. Each option's own state re-evaluates
+only when that option changes. `optionOrder` / `optionCount` and the
+announcement stay synchronous after every call. Rendering _n_ option components
+is still O(_n_), so very large lists should virtualize. Measure with
+`pnpm bench:registry` (`tests/bench/select-combobox-registry.bench.ts`, not part
+of `pnpm verify`).
+
 ## Composition
 
 - `useControllableState` — selection, search, open
@@ -448,8 +459,10 @@ None blocking.
 
 - Creatable options and inline multi-value tags.
 - [GHO-43](https://linear.app/ghost-vue/issue/GHO-43): i18n for polite
-  announcement strings (“Loading results”, “N results available”, “No results
-  available”) — v1 uses fixed English in the announcer live region.
+  announcement strings (`loading`, `empty`, `results` callback) and required
+  validation (`required`) is exposed via reactive `messages`
+  (`GhostComboboxMessages`) on `GhostCombobox`, `useGhostCombobox`, and the
+  themed wrapper, keeping English defaults.
 
 ### Form submit (multiple)
 

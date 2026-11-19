@@ -228,6 +228,9 @@ WAI-ARIA APG **Menubar** pattern (flat menus per top-level item):
 - **Theme CSS integration:** token-only stylesheet.
 - **E2E (`ghost-menubar.spec.ts`):** axe, horizontal navigation, open adjacent,
   Down open, items, checkbox, radio, Escape.
+- **Cross-browser (`rtl-roving.spec.ts`, `@cross-browser`):** RTL layout order
+  and mirrored arrows between closed triggers with real focus in Chromium,
+  Firefox, and WebKit. No engine differences found; focus and ARIA assertions are shared.
 - **Visual:** Docker baselines for headless and themed examples.
 
 ## Documentation plan

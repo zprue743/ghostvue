@@ -1,0 +1,189 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "generated",
+  "name": "GhostTreeItem",
+  "package": "@ghostvue/vue",
+  "status": "experimental",
+  "description": "Keyed role=\"treeitem\" node (default <li>) and roving focus target. Sets aria-selected, aria-disabled, and for branches (a GhostTreeGroup inside) aria-expanded and aria-controls; links aria-labelledby to its first labelling GhostTreeTrigger so the name excludes child items. Row clicks select and, with expandOnClick, toggle; clicks bubbling from nested items are ignored.",
+  "props": [
+    {
+      "name": "as",
+      "type": "GhostTreeItemElement",
+      "default": "li",
+      "required": false,
+      "description": "Tag name or component rendered for the `role=\"treeitem\"` node.",
+      "deprecated": false
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Disables selection, expansion, and roving focus for this node only.",
+      "deprecated": false
+    },
+    {
+      "name": "textValue",
+      "type": "string",
+      "required": false,
+      "description": "Explicit typeahead label; defaults to the trigger or own text.",
+      "deprecated": false
+    },
+    {
+      "name": "value",
+      "type": "string",
+      "required": true,
+      "description": "Unique, stable key used in `modelValue`, `expanded`, and focus tracking.",
+      "deprecated": false
+    }
+  ],
+  "models": [],
+  "events": [],
+  "slots": [
+    {
+      "name": "default",
+      "props": [
+        {
+          "name": "disabled",
+          "type": "boolean",
+          "description": "Slot prop `disabled`."
+        },
+        {
+          "name": "expandable",
+          "type": "boolean",
+          "description": "Slot prop `expandable`."
+        },
+        {
+          "name": "expanded",
+          "type": "boolean",
+          "description": "Slot prop `expanded`."
+        },
+        {
+          "name": "focused",
+          "type": "boolean",
+          "description": "Slot prop `focused`."
+        },
+        {
+          "name": "level",
+          "type": "number",
+          "description": "Slot prop `level`."
+        },
+        {
+          "name": "select",
+          "type": "() => void",
+          "description": "Slot prop `select`."
+        },
+        {
+          "name": "selected",
+          "type": "boolean",
+          "description": "Slot prop `selected`."
+        },
+        {
+          "name": "toggle",
+          "type": "() => void",
+          "description": "Slot prop `toggle`."
+        }
+      ],
+      "description": "Item content: usually one GhostTreeTrigger and, for branches, one GhostTreeGroup."
+    }
+  ],
+  "exposed": [
+    {
+      "name": "blur",
+      "kind": "method",
+      "type": "() => void",
+      "description": "Exposed method `blur`."
+    },
+    {
+      "name": "element",
+      "kind": "property",
+      "type": "HTMLElement | null",
+      "description": "Exposed property `element`."
+    },
+    {
+      "name": "focus",
+      "kind": "method",
+      "type": "(options?: FocusOptions) => void",
+      "description": "Exposed method `focus`."
+    }
+  ],
+  "styling": {
+    "parts": [
+      {
+        "name": "item",
+        "description": "role=\"treeitem\" node rendered by GhostTreeItem."
+      }
+    ],
+    "states": [
+      {
+        "name": "checked",
+        "description": "data-state on a selected item."
+      },
+      {
+        "name": "disabled",
+        "description": "data-state on a disabled, unselected item."
+      }
+    ],
+    "cssProperties": [
+      {
+        "name": "--ghost-tree-level",
+        "description": "1-based depth set inline on each GhostTreeItem; themes use it for logical indentation. Consumers may override it."
+      }
+    ],
+    "attributes": [
+      {
+        "name": "data-ghost-tree-value",
+        "values": [],
+        "description": "GhostTreeItem element; carries the item value string (free-form, so no fixed values are listed)."
+      },
+      {
+        "name": "data-selected",
+        "values": [],
+        "description": "Present on GhostTreeItem and its GhostTreeTrigger while the item is selected."
+      },
+      {
+        "name": "data-expanded",
+        "values": [
+          "true",
+          "false"
+        ],
+        "description": "On branch GhostTreeItem elements only; mirrors aria-expanded."
+      },
+      {
+        "name": "data-disabled",
+        "values": [],
+        "description": "Present on the root, items, and triggers that are disabled (root or own flag)."
+      },
+      {
+        "name": "data-level",
+        "values": [
+          "1",
+          "2",
+          "3"
+        ],
+        "description": "1-based depth on each GhostTreeItem (any positive integer; first levels listed)."
+      }
+    ]
+  },
+  "accessibility": {
+    "role": "treeitem",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/treeview/",
+    "keyboard": {
+      "Tab": "Moves focus into and out of the tree through its single roving tab stop.",
+      "ArrowDown": "Moves focus to the next visible enabled item without changing selection; wraps only when loop is true.",
+      "ArrowUp": "Moves focus to the previous visible enabled item without changing selection; wraps only when loop is true.",
+      "ArrowRight": "LTR: expands a closed branch, or moves to the first visible enabled child of an open branch. RTL: collapses an open branch, or moves to the closest visible enabled ancestor.",
+      "ArrowLeft": "LTR: collapses an open branch, or moves to the closest visible enabled ancestor. RTL: expands a closed branch, or moves to the first visible enabled child of an open branch.",
+      "Home": "Moves focus to the first visible enabled item.",
+      "End": "Moves focus to the last visible enabled item.",
+      "Enter": "Selects the focused item (single), deselects it when allowDeselect is true, or toggles it (multiple). Never toggles expansion.",
+      " ": "Same as Enter when no typeahead query is active; otherwise appends a space to the query.",
+      "*": "Expands every closed enabled sibling branch of the focused item in one update.",
+      "a-z": "Printable characters run a 500ms typeahead over visible enabled items, moving focus without selecting."
+    },
+    "requiredAriaAttributes": [
+      "aria-selected"
+    ]
+  },
+  "examples": []
+}

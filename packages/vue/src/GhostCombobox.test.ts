@@ -854,4 +854,89 @@ describe('GhostCombobox', () => {
     expect(api.liveRegionProps.value['aria-atomic']).toBe(true)
     wrapper.unmount()
   })
+
+  it('supports reactive non-English messages for announcements, pluralization, and required validation', async () => {
+    const loading = ref(true)
+    const count = ref(1)
+    const messages = ref({
+      loading: 'Cargando resultados',
+      empty: 'No hay resultados disponibles',
+      results: (n: number) =>
+        n === 1
+          ? '1 resultado disponible'
+          : `${String(n)} resultados disponibles`,
+      required: 'Selecciona un valor.',
+    })
+
+    const wrapper = mountAttached(
+      defineComponent({
+        setup() {
+          return () =>
+            h('form', [
+              h(
+                GhostCombobox,
+                {
+                  name: 'fruit',
+                  required: true,
+                  loading: loading.value,
+                  defaultOpen: true,
+                  messages: messages.value,
+                },
+                {
+                  default: () => [
+                    h(GhostComboboxInput, { 'aria-label': 'Fruta' }),
+                    h(GhostComboboxContent, { portal: false }, () =>
+                      Array.from({ length: count.value }, (_, index) =>
+                        h(
+                          GhostComboboxOption,
+                          { key: index, value: `opt-${String(index)}` },
+                          () => `Opción ${String(index)}`,
+                        ),
+                      ),
+                    ),
+                  ],
+                },
+              ),
+            ])
+        },
+      }),
+    )
+
+    await flushPromises()
+    await nextTick()
+    const announcer = wrapper.get('[data-part="announcer"]')
+    expect(announcer.text()).toBe('Cargando resultados')
+    expect(announcer.text()).not.toContain('Loading results')
+
+    const mirror = wrapper.get('input.ghost-visually-hidden')
+      .element as HTMLInputElement
+    expect(mirror.checkValidity()).toBe(false)
+    expect(mirror.validationMessage).toBe('Selecciona un valor.')
+    expect(mirror.validationMessage).not.toBe('Select a value.')
+
+    loading.value = false
+    await flushPromises()
+    await nextTick()
+    expect(announcer.text()).toBe('1 resultado disponible')
+
+    count.value = 3
+    await flushPromises()
+    await nextTick()
+    expect(announcer.text()).toBe('3 resultados disponibles')
+
+    count.value = 0
+    await flushPromises()
+    await nextTick()
+    expect(announcer.text()).toBe('No hay resultados disponibles')
+
+    messages.value = {
+      ...messages.value,
+      empty: 'Sin coincidencias',
+      required: 'Campo obligatorio.',
+    }
+    await flushPromises()
+    await nextTick()
+    expect(announcer.text()).toBe('Sin coincidencias')
+    expect(mirror.validationMessage).toBe('Campo obligatorio.')
+  })
 })

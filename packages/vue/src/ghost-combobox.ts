@@ -86,6 +86,21 @@ export interface GhostComboboxSearchPayload {
   requestId: number
 }
 
+/** Overridable internal strings and formatters for {@link GhostCombobox}. */
+export interface GhostComboboxMessages {
+  /** Live-region announcement while `loading` is true. @default 'Loading results' */
+  loading?: string
+  /** Live-region announcement when open with zero enabled options. @default 'No results available' */
+  empty?: string
+  /**
+   * Live-region announcement formatter when open with `count > 0` enabled options.
+   * @default (count) => `${String(count)} results available`
+   */
+  results?: (count: number) => string
+  /** Native constraint validation message when `required` and empty. @default 'Select a value.' */
+  required?: string
+}
+
 export interface GhostComboboxContext {
   multiple: ComputedRef<boolean>
   virtualized: ComputedRef<boolean>
@@ -217,6 +232,7 @@ export interface UseGhostComboboxOptions {
   name?: MaybeRefOrGetter<string | undefined>
   form?: MaybeRefOrGetter<string | undefined>
   placeholder?: MaybeRefOrGetter<string | undefined>
+  messages?: MaybeRefOrGetter<GhostComboboxMessages | undefined>
   onValueChange?: (value: GhostComboboxValue) => void
   onSearchChange?: (query: string) => void
   onSearch?: (payload: GhostComboboxSearchPayload) => void

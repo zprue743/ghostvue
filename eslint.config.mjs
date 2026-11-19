@@ -20,6 +20,8 @@ export default tseslint.config(
       '**/.declaration-build/**',
       '**/.cache/declaration-build/**',
       'packages/vue/type-tests-negative/**',
+      '**/.nuxt/**',
+      '**/.output/**',
     ],
   },
   eslint.configs.recommended,
@@ -57,7 +59,7 @@ export default tseslint.config(
     },
   },
   {
-    files: ['**/*.test.ts'],
+    files: ['**/*.test.ts', '**/*.bench.ts'],
     rules: {
       // Inline harness components are the usual way to exercise composables.
       'vue/one-component-per-file': 'off',
@@ -89,6 +91,25 @@ export default tseslint.config(
         'camelCase',
         { ignoreProps: ['/^aria-/'] },
       ],
+    },
+  },
+  {
+    // The Nuxt fixture relies on auto-imports whose declarations Nuxt generates
+    // into `.nuxt/` during `pnpm test:nuxt`, which then type-checks the app
+    // with vue-tsc. Static lint runs before any Nuxt build, so type-aware rules
+    // and `no-undef` cannot see those globals here.
+    files: ['apps/nuxt-fixture/**/*.{ts,vue}'],
+    ...tseslint.configs.disableTypeChecked,
+    languageOptions: {
+      parserOptions: {
+        parser: tseslint.parser,
+        projectService: false,
+        extraFileExtensions: ['.vue'],
+      },
+    },
+    rules: {
+      ...tseslint.configs.disableTypeChecked.rules,
+      'no-undef': 'off',
     },
   },
 )

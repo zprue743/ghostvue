@@ -264,6 +264,16 @@ Single- and two-thumb instances only; no virtualization.
   baseline.
 - Browser: keyboard on playground, form submit/reset, axe on playground section
   and each registry example (light/dark).
+- Cross-browser (`@cross-browser`, Chromium, Firefox, WebKit): thumb and rail
+  geometry in LTR and RTL, pointer drags mapped to values in horizontal (single
+  and range) and vertical sliders in both directions, vertical sliders ignoring
+  ArrowLeft/ArrowRight, and reactive `dir`. Assertions use bounding boxes and
+  `aria-valuenow`, not inline styles.
+- Known engine difference: Firefox reports integer mouse coordinates, so a
+  pointer placed exactly on a fractional track edge can land up to one pixel
+  inside the track (value 1 instead of 0 on a 100px track). Endpoint drags in
+  the e2e spec overshoot the edge, which clamps in every engine; interior
+  targets are asserted within 1.5px.
 - Type tests: `GhostSliderProps` fallthrough and v-model types.
 - Themed integration: `element` ref targets the unstyled root inside the scope.
 

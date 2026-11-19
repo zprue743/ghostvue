@@ -7,7 +7,12 @@ import {
 </script>
 
 <template>
-  <div class="ghost-theme" data-ghost-mode="light">
+  <!--
+    GhostCollapsible renders no element, so this plain block keeps the trigger
+    and panel stacked at one width. It is not a theme host: tokens and mode
+    come from the page, like every other themed demo.
+  -->
+  <div>
     <GhostCollapsible>
       <GhostCollapsibleTrigger data-themed>
         Reveal inventory adjustments

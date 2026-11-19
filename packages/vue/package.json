@@ -4,21 +4,35 @@
   "private": true,
   "description": "Vue 3 integration for the headless-first GhostVue library.",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zprue743/ghostvue.git",
+    "directory": "packages/vue"
+  },
   "type": "module",
   "sideEffects": false,
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/ghostvue.js"
-    }
+    },
+    "./resolver": {
+      "types": "./dist/resolver.d.ts",
+      "import": "./dist/resolver.js"
+    },
+    "./manifest.json": "./dist/manifest.json"
   },
   "types": "./dist/index.d.ts",
   "files": [
     "dist"
   ],
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
   "scripts": {
     "prebuild": "pnpm -w registries:write",
-    "build": "vite build && node ../../scripts/stage-vue-declaration-tree.mjs && vue-tsc -p tsconfig.declarations.json --emitDeclarationOnly && node ../../scripts/finalize-declarations.mjs dist",
+    "build": "vite build && node ../../scripts/stage-vue-declaration-tree.mjs && vue-tsc -p tsconfig.declarations.json --emitDeclarationOnly && node ../../scripts/finalize-declarations.mjs dist && node ../../scripts/write-manifest-collection.mjs --package @ghostvue/vue",
     "pretypecheck": "pnpm -w registries:write",
     "typecheck": "vue-tsc -p tsconfig.json --noEmit && node ../../scripts/vue-type-tests-negative.mjs"
   },
@@ -33,5 +47,12 @@
   },
   "devDependencies": {
     "vue": "3.5.45"
+  },
+  "typesVersions": {
+    "*": {
+      "resolver": [
+        "./dist/resolver.d.ts"
+      ]
+    }
   }
 }

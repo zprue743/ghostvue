@@ -45,6 +45,13 @@
       "deprecated": false
     },
     {
+      "name": "messages",
+      "type": "GhostSelectMessages",
+      "required": false,
+      "description": "Declared prop `messages`.",
+      "deprecated": false
+    },
+    {
       "name": "modelValue",
       "type": "string",
       "required": false,

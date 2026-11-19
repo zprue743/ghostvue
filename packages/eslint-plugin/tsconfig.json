@@ -1,0 +1,19 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "composite": true,
+    "rootDir": "src",
+    "outDir": "dist",
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    // ESLint loads plugins with Node's ESM loader, not a bundler, so relative
+    // imports must carry their emitted `.js` extension.
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    // Lint rules run in Node only; keep DOM globals out of the type surface.
+    "lib": ["ES2022"],
+    "types": []
+  },
+  "include": ["src/**/*.ts", "src/.registries/**/*.ts"]
+}

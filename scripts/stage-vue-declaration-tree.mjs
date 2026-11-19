@@ -66,3 +66,10 @@ for (const name of await readdir(srcRoot)) {
   if (skipNames.has(name)) continue
   await mirrorPath(join(srcRoot, name), join(stageRoot, name))
 }
+
+// `resolver.ts` imports the generated component-name list. The rest of
+// `.registries/` is skipped because the publish index above replaces it.
+await mirrorPath(
+  join(srcRoot, '.registries/component-names.generated.ts'),
+  join(stageRoot, '.registries/component-names.generated.ts'),
+)

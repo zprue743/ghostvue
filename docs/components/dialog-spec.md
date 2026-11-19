@@ -262,6 +262,14 @@ autoFocus: true, restoreFocus: true }`. Even when open at mount (`defaultOpen`
   dialog.
 - On modal close, `useInertOthers` releases `inert` from background elements
   before `useFocusScope` restores focus to the trigger/previous element.
+- Modal outside-pointer close happens on `pointerdown`, so the overlay is gone
+  before the press finishes. Chromium and Firefox then dispatch `mousedown` at
+  the uncovered page, which the dialog cancels so it cannot blur the restored
+  focus. WebKit dispatches no `mousedown` once its target is removed but still
+  moves focus to `<body>` as the press default action; the dialog therefore
+  reapplies the restored focus in the next task when, and only when, focus was
+  dropped to `<body>` (a deliberate move to another control is kept). Covered in
+  Chromium, Firefox, and WebKit by the `@cross-browser` dialog e2e spec.
 
 ## Rendering and customization
 
@@ -320,6 +328,15 @@ autoFocus: true, restoreFocus: true }`. Even when open at mount (`defaultOpen`
   no layout shift, inert background (skipping `[data-ghost-live]`), focus
   restore, nested dialogs, popover inside dialog (portaled and `portal=false`),
   `alertdialog`, `modal=false`, and Axe clean.
+- **Cross-browser (`@cross-browser`, Chromium, Firefox, WebKit):** focus trap
+  and overlay-click restore, nested dialog Escape, root scroll lock with
+  `html { overflow-y: scroll }`, and the modal primitives (portaled popover Tab
+  inside a trap, body scroll lock, inert background). Headless Firefox and
+  WebKit on Linux only have 0px overlay scrollbars, so scroll-lock specs assert
+  `padding-right` compensation equal to the classic scrollbar width in Chromium
+  and no compensation (untouched inline padding) in Firefox and WebKit; the
+  overflow lock, zero scroll delta, and zero layout shift are asserted
+  everywhere.
 
 ## Documentation plan
 

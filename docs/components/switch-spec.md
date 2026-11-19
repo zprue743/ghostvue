@@ -333,7 +333,7 @@ tokens):
 - `--ghost-action-primary-*` / `--ghost-action-neutral-*` /
   `--ghost-action-danger-*` and `--ghost-gradient-action-*` for the on
   track
-- `--ghost-surface-muted-bg` for the off track
+- `--ghost-border-default` for the off track
 - `--ghost-action-disabled-*` for disabled
 - `--ghost-focus-ring-*` and `--ghost-state-layer-*` for focus, hover, and
   press

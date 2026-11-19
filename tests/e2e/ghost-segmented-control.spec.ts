@@ -67,4 +67,48 @@ test.describe('GhostSegmentedControl', { tag }, () => {
       await playground.close()
     }
   })
+
+  test('themed example aligns indicator and flips roving focus in RTL @cross-browser', async ({
+    page,
+  }) => {
+    const playground = await startStaticServer('apps/playground/dist')
+    try {
+      await page.goto(
+        `${playground.url}/examples.html?id=segmented-control/themed`,
+      )
+
+      const control = page.locator('.ghost-segmented-control')
+      await control.evaluate((el) => {
+        el.setAttribute('dir', 'rtl')
+      })
+
+      const day = page.getByRole('button', { name: 'Day' })
+      const week = page.getByRole('button', { name: 'Week' })
+      const indicator = control.locator('[data-part="indicator"]')
+
+      await day.click()
+      await expect(day).toHaveAttribute('aria-pressed', 'true')
+      await day.focus()
+
+      // In RTL, ArrowLeft moves to the next segment (Week).
+      await page.keyboard.press('ArrowLeft')
+      await expect(week).toBeFocused()
+      await page.keyboard.press('ArrowRight')
+      await expect(day).toBeFocused()
+
+      // Indicator must align with the first segment on the inline-start (right)
+      // side in RTL. The indicator slides with a CSS transition after the dir
+      // flip, so poll for the settled position instead of sampling mid-slide.
+      await expect
+        .poll(async () => {
+          const dayBox = await day.boundingBox()
+          const indicatorBox = await indicator.boundingBox()
+          if (!dayBox || !indicatorBox) return Number.POSITIVE_INFINITY
+          return Math.abs(indicatorBox.x - dayBox.x)
+        })
+        .toBeLessThan(6)
+    } finally {
+      await playground.close()
+    }
+  })
 })

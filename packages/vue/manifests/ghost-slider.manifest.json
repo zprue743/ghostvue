@@ -37,6 +37,13 @@
       "deprecated": false
     },
     {
+      "name": "messages",
+      "type": "GhostSliderMessages",
+      "required": false,
+      "description": "Declared prop `messages`.",
+      "deprecated": false
+    },
+    {
       "name": "min",
       "type": "number",
       "default": 0,

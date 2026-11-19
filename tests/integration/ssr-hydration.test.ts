@@ -8,6 +8,12 @@ import GhostCollapsibleTrigger from '../../packages/vue/src/GhostCollapsibleTrig
 import GhostContextMenu from '../../packages/vue/src/GhostContextMenu.vue'
 import GhostContextMenuContent from '../../packages/vue/src/GhostContextMenuContent.vue'
 import GhostContextMenuTrigger from '../../packages/vue/src/GhostContextMenuTrigger.vue'
+import GhostDrawer from '../../packages/vue/src/GhostDrawer.vue'
+import GhostDrawerContent from '../../packages/vue/src/GhostDrawerContent.vue'
+import GhostDrawerDescription from '../../packages/vue/src/GhostDrawerDescription.vue'
+import GhostDrawerOverlay from '../../packages/vue/src/GhostDrawerOverlay.vue'
+import GhostDrawerTitle from '../../packages/vue/src/GhostDrawerTitle.vue'
+import GhostDrawerTrigger from '../../packages/vue/src/GhostDrawerTrigger.vue'
 import GhostDropdownMenu from '../../packages/vue/src/GhostDropdownMenu.vue'
 import GhostDropdownMenuContent from '../../packages/vue/src/GhostDropdownMenuContent.vue'
 import GhostDropdownMenuTrigger from '../../packages/vue/src/GhostDropdownMenuTrigger.vue'
@@ -30,6 +36,10 @@ import GhostSelectContent from '../../packages/vue/src/GhostSelectContent.vue'
 import GhostSelectOption from '../../packages/vue/src/GhostSelectOption.vue'
 import GhostSelectTrigger from '../../packages/vue/src/GhostSelectTrigger.vue'
 import GhostSelectValue from '../../packages/vue/src/GhostSelectValue.vue'
+import GhostTree from '../../packages/vue/src/GhostTree.vue'
+import GhostTreeGroup from '../../packages/vue/src/GhostTreeGroup.vue'
+import GhostTreeItem from '../../packages/vue/src/GhostTreeItem.vue'
+import GhostTreeTrigger from '../../packages/vue/src/GhostTreeTrigger.vue'
 import { expectSsrHydration, ssrHydrationRoot } from '../support/ssr-hydration'
 
 describe('SSR hydration harness', () => {
@@ -188,6 +198,128 @@ describe('SSR hydration harness', () => {
         expect(html).toContain('aria-expanded="true"')
         expect(html).toContain('Visible SSR disclosure')
         expect(html).not.toContain(' hidden')
+      },
+    })
+  })
+
+  it('hydrates closed GhostDrawer without mismatch', async () => {
+    const Closed = defineComponent({
+      name: 'ClosedDrawerFixture',
+      setup() {
+        return () =>
+          h(
+            GhostDrawer,
+            { side: 'start' },
+            {
+              default: () => [
+                h(GhostDrawerTrigger, null, () => 'Open filters'),
+                h(GhostDrawerOverlay),
+                h(GhostDrawerContent, null, () =>
+                  h(GhostDrawerTitle, null, () => 'Hidden drawer title'),
+                ),
+              ],
+            },
+          )
+      },
+    })
+
+    await expectSsrHydration(Closed, {
+      assertServerHtml(html) {
+        expect(html).toContain('Open filters')
+        expect(html).toContain('aria-expanded="false"')
+        expect(html).toContain('data-side="start"')
+        expect(html).not.toContain('Hidden drawer title')
+      },
+    })
+  })
+
+  it('hydrates defaultOpen inline GhostDrawer with explicit dir without mismatch', async () => {
+    const Open = defineComponent({
+      name: 'OpenDrawerFixture',
+      setup() {
+        return () =>
+          h(
+            GhostDrawer,
+            { defaultOpen: true, side: 'end', dir: 'rtl' },
+            {
+              default: () => [
+                h(GhostDrawerTrigger, null, () => 'Filters'),
+                h(GhostDrawerOverlay, { portal: false }),
+                h(GhostDrawerContent, { portal: false }, () => [
+                  h(GhostDrawerTitle, null, () => 'Visible drawer title'),
+                  h(
+                    GhostDrawerDescription,
+                    null,
+                    () => 'Visible drawer description',
+                  ),
+                ]),
+              ],
+            },
+          )
+      },
+    })
+
+    await expectSsrHydration(Open, {
+      assertServerHtml(html) {
+        expect(html).toContain('aria-expanded="true"')
+        expect(html).toContain('role="dialog"')
+        expect(html).toContain('aria-modal="true"')
+        expect(html).toContain('data-dir="rtl"')
+        expect(html).toContain('dir="rtl"')
+        expect(html).toContain('data-part="overlay"')
+        expect(html).toContain('ghost-drawer-title')
+        expect(html).toContain('Visible drawer description')
+      },
+    })
+  })
+
+  it('hydrates GhostTree with branch ARIA and a single tab stop without mismatch', async () => {
+    const leaf = (value: string, label: string) =>
+      h(GhostTreeItem, { key: value, value }, () =>
+        h(GhostTreeTrigger, null, () => label),
+      )
+    const Tree = defineComponent({
+      name: 'TreeFixture',
+      setup() {
+        return () =>
+          h(
+            GhostTree,
+            {
+              'aria-label': 'Files',
+              defaultValue: 'main',
+              defaultExpanded: ['src'],
+            },
+            () => [
+              h(GhostTreeItem, { key: 'docs', value: 'docs' }, () => [
+                h(GhostTreeTrigger, null, () => 'Docs'),
+                h(GhostTreeGroup, null, () => [leaf('readme', 'Readme')]),
+              ]),
+              h(GhostTreeItem, { key: 'src', value: 'src' }, () => [
+                h(GhostTreeTrigger, null, () => 'Src'),
+                h(GhostTreeGroup, { id: 'src-children' }, () => [
+                  leaf('main', 'Main'),
+                ]),
+              ]),
+            ],
+          )
+      },
+    })
+
+    await expectSsrHydration(Tree, {
+      assertServerHtml(html) {
+        expect(html).toContain('role="tree"')
+        // Branch state is known before the child parts run setup.
+        expect(html).toContain('aria-expanded="false"')
+        expect(html).toContain('aria-expanded="true"')
+        expect(html).toContain('aria-controls="src-children"')
+        expect(html).toMatch(/aria-labelledby="ghost-tree-trigger-/)
+        expect(html.match(/tabindex="0"/g)).toHaveLength(1)
+        expect(html).toMatch(
+          /data-ghost-tree-value="main"[^>]*tabindex="0"|tabindex="0"[^>]*data-ghost-tree-value="main"/,
+        )
+        expect(html).toMatch(/role="group"[^>]*hidden|hidden[^>]*role="group"/)
+        expect(html).toContain('data-state="open"')
+        expect(html).toContain('data-dir="ltr"')
       },
     })
   })

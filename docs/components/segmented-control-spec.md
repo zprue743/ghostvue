@@ -211,7 +211,8 @@ One passive indicator element; roving listeners on the group root while mounted.
   `aria-pressed`, SSR HTML includes indicator variables.
 - **SSR hydration:** `expectSsrHydration` with default selection and ids.
 - **Browser (`ghost-segmented-control.spec.ts`):** pointer/keyboard, Axe,
-  `@component:GhostSegmentedControl`.
+  `@component:GhostSegmentedControl`. The RTL indicator alignment and mirrored
+  roving case is tagged `@cross-browser` and also runs in Firefox and WebKit.
 - **Themed integration:** themed wrapper ref reaches root.
 - **Visual:** `segmented-control/themed` in `examples-visual` via
   `pnpm test:visual:docker`.

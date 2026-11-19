@@ -13,7 +13,7 @@
  */
 @layer ghostvue-theme {
   :where(.ghost-theme .ghost-slider, .ghost-themed-scope .ghost-slider) {
-    --_ghost-slider-track: var(--ghost-surface-muted-bg);
+    --_ghost-slider-track: var(--ghost-border-default);
     --_ghost-slider-fill: var(--ghost-action-primary-bg);
     --_ghost-slider-thumb: var(--ghost-surface-bg);
     --_ghost-slider-thumb-ring: var(--ghost-action-primary-bg);

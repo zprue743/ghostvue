@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "generated",
+  "name": "GhostFileUploadItem",
+  "package": "@ghostvue/vue",
+  "status": "experimental",
+  "description": "One list entry (li) for a File. Provides the file to GhostFileUploadItemRemove and registers for the focus-after-removal rule. Item content is consumer-owned.",
+  "props": [
+    {
+      "name": "file",
+      "type": "File",
+      "required": true,
+      "description": "The entry this item represents; provides context to its remove button.",
+      "deprecated": false
+    }
+  ],
+  "models": [],
+  "events": [],
+  "slots": [
+    {
+      "name": "default",
+      "props": [],
+      "description": "Consumer content for the file, such as its name, and a GhostFileUploadItemRemove."
+    }
+  ],
+  "exposed": [
+    {
+      "name": "element",
+      "kind": "property",
+      "type": "HTMLElement | null",
+      "description": "Exposed property `element`."
+    }
+  ],
+  "styling": {
+    "parts": [
+      {
+        "name": "item",
+        "description": "List entry rendered by GhostFileUploadItem."
+      }
+    ],
+    "states": [],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "listitem",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/button/",
+    "keyboard": {},
+    "requiredAriaAttributes": []
+  },
+  "examples": []
+}

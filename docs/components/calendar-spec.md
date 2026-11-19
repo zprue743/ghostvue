@@ -293,7 +293,9 @@ last day of February).
   start, SSR no document listeners.
 - Integration: `expectSsrHydration` compound tree.
 - Themed ref smoke test (scaffold).
-- E2e: basic example keyboard + pointer + Axe.
+- E2e: basic example keyboard + pointer + Axe. Real-focus grid navigation and
+  RTL arrow mirroring are tagged `@cross-browser` and also run in Firefox and
+  WebKit.
 - Visual baselines via `pnpm test:visual:docker` for registered examples.
 - Type tests for consumer inference.
 

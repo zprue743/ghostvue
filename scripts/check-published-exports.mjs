@@ -2,6 +2,8 @@ import { readdir, readFile, stat } from 'node:fs/promises'
 import { resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
+import { checkBuiltCollections } from './lib/component-manifest-collections.js'
+
 // Run after `pnpm build`; Vite empties dist before writing the Vue bundle.
 
 const repositoryRoot = new URL('..', import.meta.url)
@@ -110,9 +112,15 @@ for (const directory of packageDirectories) {
   }
 }
 
+// Component manifest collections are public JSON exports (`./manifest.json`),
+// so existence alone is not enough: they must validate and match the sources.
+violations.push(...(await checkBuiltCollections(fileURLToPath(repositoryRoot))))
+
 if (violations.length > 0) {
   console.error(violations.join('\n'))
   process.exitCode = 1
 } else {
-  console.log('Published types/exports targets exist.')
+  console.log(
+    'Published types/exports targets exist; manifest collections are valid and current.',
+  )
 }

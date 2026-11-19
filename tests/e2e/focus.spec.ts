@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test'
 
 import { startStaticServer } from './static-server'
 
-test.describe('focus primitives', () => {
+test.describe('focus primitives', { tag: '@cross-browser' }, () => {
   test('traps Tab inside a focus scope and restores on close', async ({
     page,
   }) => {
@@ -176,6 +176,7 @@ test.describe('focus primitives', () => {
 
   test('wraps Tab and Shift+Tab cleanly across an all-unchecked native radio group', async ({
     page,
+    browserName,
   }) => {
     const playground = await startStaticServer('apps/playground/dist')
 
@@ -191,8 +192,18 @@ test.describe('focus primitives', () => {
 
       await page.keyboard.press('Shift+Tab')
       await expect(page.getByTestId('close-trap-radio-unchecked')).toBeFocused()
+      // Which radio receives focus when Shift+Tab enters an all-unchecked group
+      // is engine-defined (HTML leaves it to the user agent): Chromium and
+      // Firefox pick the first radio, WebKit the last. The trap must leave that
+      // native choice alone; either way the group stays a single Tab stop.
       await page.keyboard.press('Shift+Tab')
-      await expect(page.getByTestId('trap-radio-unchecked-1')).toBeFocused()
+      await expect(
+        page.getByTestId(
+          browserName === 'webkit'
+            ? 'trap-radio-unchecked-2'
+            : 'trap-radio-unchecked-1',
+        ),
+      ).toBeFocused()
       await page.keyboard.press('Shift+Tab')
       await expect(page.getByTestId('close-trap-radio-unchecked')).toBeFocused()
 

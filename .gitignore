@@ -10,6 +10,7 @@ reports/verify-component/
 playwright-report/
 test-results/
 packages/vue/.cache/
+packages/nuxt/.cache/
 *.tsbuildinfo
 .DS_Store
 *.local
@@ -23,7 +24,16 @@ packages/vue/src/.registries/
 packages/vue/src/.publish-index.generated.ts
 packages/vue/src/.publish-build/
 packages/themes/src/.registries/
+packages/nuxt/src/.registries/
+packages/eslint-plugin/src/.registries/
 packages/themes/src/.publish-index.generated.ts
 examples/.registries/
 apps/docs/.vitepress/.registries/
 docs/.registries/
+
+# Release dry-run evidence (pnpm release:dry-run).
+reports/release-dry-run/
+
+# Nuxt fixture build output (pnpm test:nuxt).
+apps/nuxt-fixture/.nuxt/
+apps/nuxt-fixture/.output/

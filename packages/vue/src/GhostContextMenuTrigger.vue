@@ -14,6 +14,7 @@ import {
   type GhostContextMenuTriggerElement,
   type GhostContextMenuTriggerExposed,
 } from './ghost-context-menu'
+import { invokeAttrHandler } from './invoke-attr-handler'
 
 defineOptions({
   inheritAttrs: false,
@@ -113,18 +114,6 @@ function openAtKeyboard(): boolean {
   const x = rect.left + rect.width / 2
   const y = rect.top + rect.height / 2
   return openAtClientPoint(x, y)
-}
-
-function invokeAttrHandler(handler: unknown, event: Event): void {
-  if (typeof handler === 'function') {
-    ;(handler as (event: Event) => void)(event)
-  } else if (Array.isArray(handler)) {
-    for (const fn of handler) {
-      if (typeof fn === 'function') {
-        ;(fn as (event: Event) => void)(event)
-      }
-    }
-  }
 }
 
 function handleContextMenu(event: MouseEvent): void {

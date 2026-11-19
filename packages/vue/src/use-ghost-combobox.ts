@@ -1,6 +1,8 @@
 import {
   computed,
+  shallowReactive,
   shallowRef,
+  toRaw,
   toValue,
   watch,
   type ComputedRef,
@@ -117,11 +119,38 @@ export function useGhostCombobox(options: UseGhostComboboxOptions = {}): {
   const defaultContentId = useGhostId('ghost-combobox-content')
   const liveRegionId = useGhostId('ghost-combobox-announcer')
 
-  const optionOrder = shallowRef<string[]>([])
-  const optionRegistry = shallowRef(
+  /*
+   * Registry bookkeeping is O(1) per option change (GHO-176). Earlier
+   * revisions copied an order array, scanned it with `includes`, copied the
+   * record and label Maps, and (while open) rescanned every option to count
+   * enabled results for the live region on every register / unregister, so
+   * mounting, filtering, or reordering n options was O(n²) (about 2.2 s of
+   * pure bookkeeping for 3000 options in jsdom; see
+   * `tests/bench/select-combobox-registry.bench.ts`).
+   *
+   * - The record Map's insertion order *is* the registration order: `set` on
+   *   a new key appends, `set` on an existing key keeps its slot, and
+   *   `delete` removes it, exactly like the former push-if-absent / filter
+   *   array. Rendered order still comes from the DOM (`sortByDocumentOrder`).
+   * - Both Maps are `shallowReactive`, so `get(value)` tracks only that key:
+   *   an option's own `isOptionDisabled` / `getOptionText` / `getOptionId`
+   *   reads re-run when that option changes, not when any of n siblings
+   *   register. Records are replaced, never mutated, so shallow tracking is
+   *   sufficient.
+   * - `disabledValues` is maintained alongside every record write so the
+   *   result-count announcement stays synchronous without a scan.
+   * - `registryVersion` / `labelVersion` stay the coarse signals for
+   *   whole-list readers (`optionOrder`, `optionCount`, the input label);
+   *   they are bumped synchronously so public state is current right after
+   *   each call.
+   */
+  const optionRegistry = shallowReactive(
     new Map<string, GhostComboboxOptionRecord>(),
   )
-  const optionLabels = shallowRef(new Map<string, string>())
+  // Survives unregistration so the selected label outlives a filtered option.
+  const optionLabels = shallowReactive(new Map<string, string>())
+  // Registered values whose option is disabled; a subset of the record keys.
+  const disabledValues = new Set<string>()
   const registryVersion = shallowRef(0)
   const labelVersion = shallowRef(0)
   const activeOptionValue = shallowRef<string | undefined>(undefined)
@@ -131,20 +160,30 @@ export function useGhostCombobox(options: UseGhostComboboxOptions = {}): {
   let searchRequestId = 0
 
   function bumpRegistry(): void {
-    optionRegistry.value = new Map(optionRegistry.value)
     registryVersion.value += 1
     queueAnnouncement()
   }
 
-  /** Enabled registered options in registration order (counting only). */
+  function setLabel(value: string, textValue: string): void {
+    optionLabels.set(value, textValue)
+    labelVersion.value += 1
+  }
+
+  /** Writes a record and keeps `disabledValues` in step with it. */
+  function writeRecord(record: GhostComboboxOptionRecord): void {
+    if (record.disabled) {
+      disabledValues.add(record.value)
+    } else {
+      disabledValues.delete(record.value)
+    }
+    optionRegistry.set(record.value, record)
+  }
+
+  /** Enabled registered options in registration order (navigation only). */
   function enabledOptions(): GhostComboboxOptionRecord[] {
-    void registryVersion.value
-    return optionOrder.value
-      .map((value) => optionRegistry.value.get(value))
-      .filter(
-        (entry): entry is GhostComboboxOptionRecord => entry !== undefined,
-      )
-      .filter((entry) => !isOptionDisabled(entry.value))
+    return [...toRaw(optionRegistry).values()].filter(
+      (entry) => !isOptionDisabled(entry.value),
+    )
   }
 
   /**
@@ -159,24 +198,31 @@ export function useGhostCombobox(options: UseGhostComboboxOptions = {}): {
     return sortByDocumentOrder(enabledOptions(), (entry) => entry.getElement())
   }
 
-  function queueAnnouncement(): void {
+  function queueAnnouncement(force = false): void {
     if (!isOpen.value) {
       return
     }
+    const resolvedMessages = toValue(options.messages)
     if (loading.value) {
-      if (announcedLoading.value) {
+      if (announcedLoading.value && !force) {
         return
       }
       announcedLoading.value = true
-      announceMessage.value = 'Loading results'
+      announceMessage.value = resolvedMessages?.loading ?? 'Loading results'
       return
     }
     announcedLoading.value = false
-    const count = enabledOptions().length
-    announceMessage.value =
-      count === 0
-        ? 'No results available'
-        : `${String(count)} results available`
+    // Equals `enabledOptions().length` without walking the registry.
+    const count = disabled.value
+      ? 0
+      : toRaw(optionRegistry).size - disabledValues.size
+    if (count === 0) {
+      announceMessage.value = resolvedMessages?.empty ?? 'No results available'
+      return
+    }
+    announceMessage.value = resolvedMessages?.results
+      ? resolvedMessages.results(count)
+      : `${String(count)} results available`
   }
 
   watch(
@@ -211,14 +257,8 @@ export function useGhostCombobox(options: UseGhostComboboxOptions = {}): {
     optionId: string,
     getElement: () => HTMLElement | null,
   ): void {
-    const nextOrder = [...optionOrder.value]
-    if (!nextOrder.includes(value)) {
-      nextOrder.push(value)
-      optionOrder.value = nextOrder
-    }
-    optionLabels.value = new Map(optionLabels.value).set(value, textValue)
-    labelVersion.value += 1
-    optionRegistry.value.set(value, {
+    setLabel(value, textValue)
+    writeRecord({
       value,
       textValue,
       disabled: optionDisabled,
@@ -229,22 +269,21 @@ export function useGhostCombobox(options: UseGhostComboboxOptions = {}): {
   }
 
   function setOptionDisabled(value: string, optionDisabled: boolean): void {
-    const record = optionRegistry.value.get(value)
+    const record = toRaw(optionRegistry).get(value)
     if (!record || record.disabled === optionDisabled) {
       return
     }
-    optionRegistry.value.set(value, { ...record, disabled: optionDisabled })
+    writeRecord({ ...record, disabled: optionDisabled })
     bumpRegistry()
   }
 
   function setOptionTextValue(value: string, textValue: string): void {
-    const record = optionRegistry.value.get(value)
+    const record = toRaw(optionRegistry).get(value)
     if (!record || record.textValue === textValue) {
       return
     }
-    optionLabels.value = new Map(optionLabels.value).set(value, textValue)
-    labelVersion.value += 1
-    optionRegistry.value.set(value, { ...record, textValue })
+    setLabel(value, textValue)
+    writeRecord({ ...record, textValue })
     bumpRegistry()
   }
 
@@ -258,12 +297,13 @@ export function useGhostCombobox(options: UseGhostComboboxOptions = {}): {
    * native form reset, or the parent's controlled value change the selection.
    */
   function unregisterOption(value: string): void {
-    optionOrder.value = optionOrder.value.filter((entry) => entry !== value)
-    optionRegistry.value.delete(value)
     if (activeOptionValue.value === value) {
       activeOptionValue.value = undefined
     }
-    bumpRegistry()
+    disabledValues.delete(value)
+    if (optionRegistry.delete(value)) {
+      bumpRegistry()
+    }
   }
 
   function selectedArray(): string[] {
@@ -276,7 +316,7 @@ export function useGhostCombobox(options: UseGhostComboboxOptions = {}): {
   }
 
   function isOptionDisabled(value: string): boolean {
-    return disabled.value || Boolean(optionRegistry.value.get(value)?.disabled)
+    return disabled.value || Boolean(optionRegistry.get(value)?.disabled)
   }
 
   function open(): void {
@@ -355,14 +395,11 @@ export function useGhostCombobox(options: UseGhostComboboxOptions = {}): {
   }
 
   function getOptionText(value: string): string | undefined {
-    return (
-      optionRegistry.value.get(value)?.textValue ??
-      optionLabels.value.get(value)
-    )
+    return optionRegistry.get(value)?.textValue ?? optionLabels.get(value)
   }
 
   function getOptionId(value: string): string | undefined {
-    return optionRegistry.value.get(value)?.optionId
+    return optionRegistry.get(value)?.optionId
   }
 
   const activeDescendantId = computed(() => {
@@ -501,7 +538,9 @@ export function useGhostCombobox(options: UseGhostComboboxOptions = {}): {
       ? selectedArray().length === 0
       : selectedValue.value === undefined || selectedValue.value === ''
     if (required.value && empty) {
-      el.setCustomValidity('Select a value.')
+      el.setCustomValidity(
+        toValue(options.messages)?.required ?? 'Select a value.',
+      )
     } else {
       el.setCustomValidity('')
       constraintInvalid.value = false
@@ -515,6 +554,17 @@ export function useGhostCombobox(options: UseGhostComboboxOptions = {}): {
   watch([selectedValue, required, () => multiple.value], () => {
     syncFormValidity()
   })
+
+  watch(
+    () => {
+      const m = toValue(options.messages)
+      return [m?.loading, m?.empty, m?.results, m?.required] as const
+    },
+    () => {
+      queueAnnouncement(true)
+      syncFormValidity()
+    },
+  )
 
   const liveRegionProps = computed((): GhostComboboxLiveRegionProps => ({
     id: liveRegionId.value,
@@ -545,11 +595,11 @@ export function useGhostCombobox(options: UseGhostComboboxOptions = {}): {
     defaultContentId,
     optionOrder: computed(() => {
       void registryVersion.value
-      return [...optionOrder.value]
+      return [...toRaw(optionRegistry).keys()]
     }),
     optionCount: computed(() => {
       void registryVersion.value
-      return optionOrder.value.length
+      return toRaw(optionRegistry).size
     }),
     registerOption,
     unregisterOption,

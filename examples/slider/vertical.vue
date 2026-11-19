@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 
-import { GhostSlider } from '@ghostvue/vue'
+import { GhostSlider } from '@ghostvue/themes'
 
 const level = ref(60)
 </script>

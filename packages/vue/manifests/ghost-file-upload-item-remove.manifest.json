@@ -1,0 +1,60 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "generated",
+  "name": "GhostFileUploadItemRemove",
+  "package": "@ghostvue/vue",
+  "status": "experimental",
+  "description": "Native button (type=button) that removes its item's file. Named by messages.removeLabel (Remove {name}) unless the consumer sets aria-label or aria-labelledby. After removal, focus moves to the next item's remove button, then the previous one, then the trigger.",
+  "props": [],
+  "models": [],
+  "events": [],
+  "slots": [
+    {
+      "name": "default",
+      "props": [],
+      "description": "Optional visible text. The accessible name should begin with it (WCAG 2.5.3)."
+    }
+  ],
+  "exposed": [
+    {
+      "name": "blur",
+      "kind": "method",
+      "type": "() => void",
+      "description": "Exposed method `blur`."
+    },
+    {
+      "name": "element",
+      "kind": "property",
+      "type": "HTMLElement | null",
+      "description": "Exposed property `element`."
+    },
+    {
+      "name": "focus",
+      "kind": "method",
+      "type": "(options?: FocusOptions) => void",
+      "description": "Exposed method `focus`."
+    }
+  ],
+  "styling": {
+    "parts": [
+      {
+        "name": "item-remove",
+        "description": "Remove button rendered by GhostFileUploadItemRemove."
+      }
+    ],
+    "states": [],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "button",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/button/",
+    "keyboard": {
+      "Enter": "Removes the file and moves focus.",
+      "Space": "Removes the file and moves focus."
+    },
+    "requiredAriaAttributes": [
+      "aria-label"
+    ]
+  },
+  "examples": []
+}

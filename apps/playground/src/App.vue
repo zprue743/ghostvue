@@ -28,6 +28,8 @@ import AmbientReference from './AmbientReference.vue'
 import ButtonStateMatrix from './ButtonStateMatrix.vue'
 import DensityReference from './DensityReference.vue'
 import DialogReference from './DialogReference.vue'
+import DrawerReference from './DrawerReference.vue'
+import TreeReference from './TreeReference.vue'
 import ModalPrimitivesReference from './ModalPrimitivesReference.vue'
 import MotionReference from './MotionReference.vue'
 import OverlayReference from './OverlayReference.vue'
@@ -361,6 +363,8 @@ function submitPlaygroundComment(event: Event): void {
     <TooltipLayersReference />
     <HoverCardReference />
     <DialogReference />
+    <DrawerReference />
+    <TreeReference />
     <TabsReference />
     <SegmentedControlReference />
     <ToggleGroupReference />
@@ -1895,6 +1899,12 @@ main:focus {
 
 table {
   border-collapse: collapse;
+}
+
+/* Headless GhostTable scroll-container gets playground-owned horizontal containment. */
+main :deep(.ghost-table-scroll-container) {
+  max-inline-size: 100%;
+  overflow-x: auto;
 }
 
 th,

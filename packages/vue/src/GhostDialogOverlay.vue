@@ -1,16 +1,9 @@
 <script setup lang="ts">
-import {
-  computed,
-  inject,
-  onUnmounted,
-  useAttrs,
-  useTemplateRef,
-  watch,
-} from 'vue'
+import { useTemplateRef } from 'vue'
 
+import { injectDialogPartsContext, useDialogOverlayPart } from './dialog-shared'
 import {
   ghostDialogContextKey,
-  resolveDialogHtmlElement,
   type GhostDialogOverlayElement,
   type GhostDialogOverlayExposed,
 } from './ghost-dialog'
@@ -37,59 +30,19 @@ withDefaults(
   },
 )
 
-const injected = inject(ghostDialogContextKey)
-if (!injected) {
-  throw new Error('GhostDialogOverlay must be used inside GhostDialog')
-}
-const context = injected
-
-const attrs = useAttrs()
+const context = injectDialogPartsContext(
+  ghostDialogContextKey,
+  'GhostDialogOverlay',
+  'GhostDialog',
+)
 const hostRef = useTemplateRef('host')
 
-const visible = computed(() => context.isOpen.value && context.isModal.value)
-const overlayElement = computed(() =>
-  visible.value ? resolveDialogHtmlElement(hostRef.value) : null,
+const { attrs, visible, overlayAttrs, exposed } = useDialogOverlayPart(
+  context,
+  hostRef,
 )
 
-watch(
-  overlayElement,
-  (el) => {
-    context.setOverlayElement(el)
-  },
-  { immediate: true, flush: 'post' },
-)
-
-onUnmounted(() => {
-  context.setOverlayElement(null)
-})
-
-const overlayAttrs = computed(() => {
-  const rest: Record<string, unknown> = {}
-  for (const [key, value] of Object.entries(attrs)) {
-    if (key !== 'aria-hidden' && key !== 'class') {
-      rest[key] = value
-    }
-  }
-
-  return {
-    ...rest,
-    'aria-hidden': 'true',
-    'data-part': 'overlay',
-    'data-state': 'open',
-  }
-})
-
-defineExpose<GhostDialogOverlayExposed>({
-  get element() {
-    return overlayElement.value
-  },
-  focus(options?: FocusOptions) {
-    overlayElement.value?.focus(options)
-  },
-  blur() {
-    overlayElement.value?.blur()
-  },
-})
+defineExpose<GhostDialogOverlayExposed>(exposed)
 </script>
 
 <template>

@@ -282,7 +282,8 @@ Follows WAI-ARIA APG disclosure / non-modal dialog guidance:
   viewport-edge flip, nested popover one-layer-at-a-time dismissal, popover inside
   an offset `position: relative` parent landing at the expected offset from its
   anchor, production docs page demo verification, and `@axe-core/playwright` zero
-  violations.
+  violations. Nested popover dismissal and a portaled popover's Tab order inside
+  a modal trap are tagged `@cross-browser` and also run in Firefox and WebKit.
 
 ## Documentation plan
 

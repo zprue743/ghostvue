@@ -1,14 +1,7 @@
 import { expect, test } from '@playwright/test'
 
+import { exampleSourceBlock, openExampleSource } from './docs-example-source'
 import { startStaticServer } from './static-server'
-
-function parseRgb(value: string): readonly [number, number, number] {
-  const match = value.match(/(\d+(?:\.\d+)?)/g)
-  if (!match || match.length < 3) {
-    throw new Error(`Expected an rgb() color, received ${value}`)
-  }
-  return [Number(match[0]), Number(match[1]), Number(match[2])]
-}
 
 function channelDistance(
   left: readonly [number, number, number],
@@ -48,9 +41,8 @@ test.describe('docs code blocks', () => {
       })
       await page.goto(`${docs.url}/components/button.html`)
 
-      const source = page.locator(
-        '[data-example-id="button/themed"] + div[class*="language-"]',
-      )
+      await openExampleSource(page, 'button/themed')
+      const source = exampleSourceBlock(page, 'button/themed')
       await expect(source).toBeVisible()
       await expect
         .poll(async () =>
@@ -79,7 +71,7 @@ test.describe('docs code blocks', () => {
         }
         const root = document.documentElement
         const block = document.querySelector(
-          '[data-example-id="button/themed"] + div[class*="language-"]',
+          '[data-example-id="button/themed"] [data-testid="ghost-example-source"] > div[class*="language-"]',
         )
         const span = block?.querySelector('.vp-code span[style*="--shiki-"]')
         const pageBg = getComputedStyle(root).backgroundColor
@@ -118,9 +110,8 @@ test.describe('docs code blocks', () => {
       })
       await page.goto(`${docs.url}/components/button.html`)
 
-      const source = page.locator(
-        '[data-example-id="button/themed"] + div[class*="language-"]',
-      )
+      await openExampleSource(page, 'button/themed')
+      const source = exampleSourceBlock(page, 'button/themed')
       await expect(source).toBeVisible()
       await expect
         .poll(async () =>
@@ -147,7 +138,7 @@ test.describe('docs code blocks', () => {
           return [red, green, blue]
         }
         const block = document.querySelector(
-          '[data-example-id="button/themed"] + div[class*="language-"]',
+          '[data-example-id="button/themed"] [data-testid="ghost-example-source"] > div[class*="language-"]',
         )
         const span = block?.querySelector('.vp-code span[style*="--shiki-"]')
         const codeBlockBg = block ? getComputedStyle(block).backgroundColor : ''
@@ -175,25 +166,101 @@ test.describe('docs code blocks', () => {
       })
       await page.goto(`${docs.url}/components/button.html`)
 
-      const source = page.locator(
-        '[data-example-id="button/themed"] + div[class*="language-"]',
-      )
+      await openExampleSource(page, 'button/themed')
+      const source = exampleSourceBlock(page, 'button/themed')
       await expect(source).toBeVisible()
 
       const colors = await page.evaluate(() => {
+        const toSrgb = (cssColor: string): [number, number, number] => {
+          const canvas = document.createElement('canvas')
+          canvas.width = 1
+          canvas.height = 1
+          const context = canvas.getContext('2d')
+          if (!context) {
+            throw new Error('2D canvas context is required to resolve colors')
+          }
+          context.fillStyle = cssColor
+          context.fillRect(0, 0, 1, 1)
+          const [red, green, blue] = context.getImageData(0, 0, 1, 1).data
+          return [red, green, blue]
+        }
         const root = document.documentElement
         const block = document.querySelector(
-          '[data-example-id="button/themed"] + div[class*="language-"]',
+          '[data-example-id="button/themed"] [data-testid="ghost-example-source"] > div[class*="language-"]',
         )
+        const codeBlockBg = block ? getComputedStyle(block).backgroundColor : ''
+        const pageBg = getComputedStyle(root).backgroundColor
         return {
-          codeBlockBg: block ? getComputedStyle(block).backgroundColor : '',
-          pageBg: getComputedStyle(root).backgroundColor,
+          codeBlockBg: toSrgb(codeBlockBg),
+          pageBg: toSrgb(pageBg),
         }
       })
 
-      const codeBlockBg = parseRgb(colors.codeBlockBg)
-      const pageBg = parseRgb(colors.pageBg)
-      expect(channelDistance(codeBlockBg, pageBg)).toBeGreaterThan(8)
+      expect(
+        channelDistance(colors.codeBlockBg, colors.pageBg),
+      ).toBeGreaterThan(8)
+    } finally {
+      await docs.close()
+    }
+  })
+
+  test('dark preview stage and elevated card stay distinct from page canvas', async ({
+    page,
+  }) => {
+    const docs = await startStaticServer('apps/docs/.vitepress/dist')
+    try {
+      await page.emulateMedia({
+        colorScheme: 'dark',
+        reducedMotion: 'reduce',
+      })
+      await page.goto(`${docs.url}/components/card.html`)
+
+      const preview = page
+        .locator('[data-example-id="card/themed"]')
+        .getByTestId('ghost-example-preview')
+      await expect(preview).toBeVisible()
+      const card = preview.locator('.ghost-card').first()
+      await expect(card).toBeVisible()
+
+      const colors = await page.evaluate(() => {
+        const toSrgb = (cssColor: string): [number, number, number] => {
+          const canvas = document.createElement('canvas')
+          canvas.width = 1
+          canvas.height = 1
+          const context = canvas.getContext('2d')
+          if (!context) {
+            throw new Error('2D canvas context is required to resolve colors')
+          }
+          context.fillStyle = cssColor
+          context.fillRect(0, 0, 1, 1)
+          const [red, green, blue] = context.getImageData(0, 0, 1, 1).data
+          return [red, green, blue]
+        }
+        const previewEl = document.querySelector(
+          '[data-example-id="card/themed"] [data-testid="ghost-example-preview"]',
+        )
+        const cardEl = previewEl?.querySelector('.ghost-card')
+        return {
+          pageBg: toSrgb(
+            getComputedStyle(document.documentElement).backgroundColor,
+          ),
+          previewBg: toSrgb(
+            previewEl ? getComputedStyle(previewEl).backgroundColor : '',
+          ),
+          cardBg: toSrgb(
+            cardEl ? getComputedStyle(cardEl).backgroundColor : '',
+          ),
+        }
+      })
+
+      expect(channelDistance(colors.previewBg, colors.pageBg)).toBeGreaterThan(
+        6,
+      )
+      expect(channelDistance(colors.cardBg, colors.previewBg)).toBeGreaterThan(
+        6,
+      )
+      expect(colors.previewBg[2]).toBeGreaterThan(colors.previewBg[1])
+      expect(colors.cardBg[2]).toBeGreaterThan(colors.cardBg[1])
     } finally {
       await docs.close()
     }

@@ -1,18 +1,20 @@
 import AxeBuilder from '@axe-core/playwright'
 import { expect, test } from '@playwright/test'
 
+import {
+  classicScrollbarLaunchOptions,
+  expectMeasuredScrollbar,
+  expectScrollbarCompensation,
+} from '../support'
 import { startStaticServer } from './static-server'
 
 // Show classic scrollbars in headless Chromium so scroll-lock padding-right
 // compensation and zero horizontal layout shift are genuinely exercised.
-test.use({
-  launchOptions: {
-    args: ['--blink-settings=hideScrollbars=false'],
-  },
-})
+// Firefox and WebKit keep their 0px overlay scrollbars (see the helper).
+test.use({ launchOptions: classicScrollbarLaunchOptions })
 
 test.describe('GhostDialog', () => {
-  test('traps Tab/Shift+Tab, dismisses on Escape and overlay click, restores focus, and passes Axe', async ({
+  test('traps Tab/Shift+Tab, dismisses on Escape and overlay click, restores focus, and passes Axe @cross-browser', async ({
     page,
   }) => {
     const playground = await startStaticServer('apps/playground/dist')
@@ -193,7 +195,7 @@ test.describe('GhostDialog', () => {
     }
   })
 
-  test('dismisses nested modal dialogs one layer at a time on Escape', async ({
+  test('dismisses nested modal dialogs one layer at a time on Escape @cross-browser', async ({
     page,
   }) => {
     const playground = await startStaticServer('apps/playground/dist')
@@ -353,8 +355,9 @@ test.describe('GhostDialog', () => {
     }
   })
 
-  test('locks viewport scrolling when html has overflow-y: scroll, preserves nested locks, and restores styles on close', async ({
+  test('locks viewport scrolling when html has overflow-y: scroll, preserves nested locks, and restores styles on close @cross-browser', async ({
     page,
+    browserName,
   }) => {
     const playground = await startStaticServer('apps/playground/dist')
 
@@ -376,7 +379,7 @@ test.describe('GhostDialog', () => {
         }
       })
       expect(before.scrollY).toBeGreaterThan(0)
-      expect(before.scrollbarWidth).toBeGreaterThan(0)
+      expectMeasuredScrollbar(browserName, before.scrollbarWidth)
       expect(before.rootStyleAttr).toBe(false)
       expect(before.bodyStyleAttr).toBe(false)
 
@@ -410,8 +413,10 @@ test.describe('GhostDialog', () => {
       }, baselineScroll)
 
       expect(duringOuter.rootOverflow).toBe('hidden')
-      expect(Number.parseFloat(duringOuter.rootPaddingRight)).toBe(
+      expectScrollbarCompensation(
+        duringOuter.rootPaddingRight,
         before.scrollbarWidth,
+        '',
       )
       expect(duringOuter.bodyHasStyle).toBe(false)
       expect(Math.abs(duringOuter.mainWidth - before.mainWidth)).toBeLessThan(1)
@@ -426,8 +431,10 @@ test.describe('GhostDialog', () => {
         rootPaddingRight: document.documentElement.style.paddingRight,
       }))
       expect(duringNested.rootOverflow).toBe('hidden')
-      expect(Number.parseFloat(duringNested.rootPaddingRight)).toBe(
+      expectScrollbarCompensation(
+        duringNested.rootPaddingRight,
         before.scrollbarWidth,
+        '',
       )
 
       // Closing inner dialog keeps viewport locked for the outer dialog.

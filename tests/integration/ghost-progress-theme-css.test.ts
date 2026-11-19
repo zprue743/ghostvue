@@ -39,7 +39,7 @@ function findHardcodedVisuals(css: string) {
 describe('GhostProgress theme CSS tokens', () => {
   it('uses semantic --ghost-* tokens with no hard-coded colors, px, or time literals', async () => {
     const css = await readFile(cssPath, 'utf8')
-    expect(css).toContain('--ghost-surface-muted-bg')
+    expect(css).toContain('--ghost-border-default')
     expect(css).toContain('--ghost-action-primary-bg')
     expect(css).toContain('--ghost-action-spinner-duration')
     expect(css).toContain('--ghost-track-thickness-sm')

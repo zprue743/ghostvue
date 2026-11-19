@@ -8,7 +8,7 @@
   :where(.ghost-theme .ghost-switch, .ghost-themed-scope .ghost-switch) {
     --_ghost-switch-size: var(--ghost-control-size-md-min);
     --_ghost-switch-inset: var(--ghost-space-gap-xs);
-    --_ghost-switch-track: var(--ghost-surface-muted-bg);
+    --_ghost-switch-track: var(--ghost-border-default);
     --_ghost-switch-thumb: var(--ghost-surface-bg);
     --_ghost-switch-fill: none;
     --_ghost-switch-layer: 0;

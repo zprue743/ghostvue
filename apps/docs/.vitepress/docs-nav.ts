@@ -17,6 +17,7 @@ const docsMainSidebar: LlmsSidebarGroup['items'] = [
     items: [
       { text: 'Introduction', link: '/philosophy' },
       { text: 'Getting started', link: '/getting-started' },
+      { text: 'Nuxt & auto-imports', link: '/auto-imports' },
       { text: 'Roadmap', link: '/roadmap' },
     ],
   },
@@ -25,6 +26,7 @@ const docsMainSidebar: LlmsSidebarGroup['items'] = [
     items: [
       { text: 'API reference', link: '/reference/' },
       { text: 'Dev warnings', link: '/warnings' },
+      { text: 'ESLint plugin', link: '/tooling/eslint-plugin' },
     ],
   },
 ]
@@ -83,6 +85,7 @@ const contributeSidebar: LlmsSidebarGroup[] = [
       },
       { text: 'Executable examples', link: '/contributing/examples' },
       { text: 'Releases', link: '/contributing/releases' },
+      { text: 'CI and dependency updates', link: '/contributing/ci' },
     ],
   },
   {

@@ -256,6 +256,9 @@ mounted.
   Home/End, controlled/uncontrolled, `aria-pressed`, SSR without roving listeners.
 - **Browser (`ghost-toggle-group.spec.ts`):** example gallery keyboard/pointer,
   Axe zero violations, `@component:GhostToggleGroup`.
+- **Cross-browser (`rtl-roving.spec.ts`, `@cross-browser`):** RTL layout order,
+  mirrored arrows with real focus while `aria-pressed` only changes on Space, in
+  Chromium, Firefox, and WebKit. No engine differences found; focus and ARIA assertions are shared.
 - **Themed integration:** themed root ref reaches group element.
 - **Type tests:** consumer fixtures for single vs multiple `v-model` when exports
   stabilize.

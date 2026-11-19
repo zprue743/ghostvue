@@ -17,11 +17,22 @@ export default defineConfig({
   plugins: [vue()],
   resolve: {
     // Package exports point at dist, which `pnpm test` does not build.
-    alias: {
-      '@ghostvue/vue': fileURLToPath(
-        new URL('./packages/vue/src/index.ts', import.meta.url),
-      ),
-    },
+    alias: [
+      {
+        find: '@ghostvue/vue',
+        replacement: fileURLToPath(
+          new URL('./packages/vue/src/index.ts', import.meta.url),
+        ),
+      },
+      // Docs theme SFCs import the themed recipes by package name; exact match
+      // so CSS subpaths (`@ghostvue/themes/default.css`) are not rewritten.
+      {
+        find: /^@ghostvue\/themes$/,
+        replacement: fileURLToPath(
+          new URL('./packages/themes/src/index.ts', import.meta.url),
+        ),
+      },
+    ],
   },
   test: {
     environment: 'jsdom',

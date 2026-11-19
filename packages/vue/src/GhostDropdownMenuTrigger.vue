@@ -14,6 +14,7 @@ import {
   type GhostDropdownMenuTriggerElement,
   type GhostDropdownMenuTriggerExposed,
 } from './ghost-dropdown-menu'
+import { invokeAttrHandler } from './invoke-attr-handler'
 
 defineOptions({
   inheritAttrs: false,
@@ -124,18 +125,6 @@ const triggerAttrs = computed(() => {
 
   return base
 })
-
-function invokeAttrHandler(handler: unknown, event: Event): void {
-  if (typeof handler === 'function') {
-    ;(handler as (event: Event) => void)(event)
-  } else if (Array.isArray(handler)) {
-    for (const fn of handler) {
-      if (typeof fn === 'function') {
-        ;(fn as (event: Event) => void)(event)
-      }
-    }
-  }
-}
 
 function handleClick(event: MouseEvent): void {
   if (props.disabled) {

@@ -5,7 +5,7 @@
 html[data-ghost-theme] {
   --vp-c-bg: var(--ghost-surface-bg);
   --vp-c-bg-alt: var(--ghost-surface-subtle-bg);
-  --vp-c-bg-elv: var(--ghost-surface-muted-bg);
+  --vp-c-bg-elv: var(--ghost-elevation-1-bg);
   --vp-c-bg-soft: var(--ghost-surface-subtle-bg);
   --vp-c-text-1: var(--ghost-surface-fg);
   --vp-c-text-2: var(--ghost-text-muted);
@@ -35,15 +35,14 @@ html[data-ghost-theme] {
     var(--ghost-surface-bg) 88%,
     transparent
   );
-  --vp-code-bg: var(--ghost-surface-muted-bg);
   /*
-   * Light Shiki tokens on the muted ramp sit just under 4.5:1; nudge the fence
-   * canvas toward ink so syntax colors keep AA contrast without re-tuning Shiki.
+   * Keep light code fences on a subtle neutral surface between subtle and muted
+   * so code stays distinct from the page and preview while preserving Shiki AA.
    */
   --vp-code-block-bg: color-mix(
     in oklch,
-    var(--ghost-surface-muted-bg) 82%,
-    var(--ghost-surface-fg)
+    var(--ghost-surface-subtle-bg) 60%,
+    var(--ghost-surface-muted-bg)
   );
   --vp-code-bg: var(--vp-code-block-bg);
   --vp-code-copy-code-bg: var(--ghost-surface-bg);
@@ -51,25 +50,20 @@ html[data-ghost-theme] {
 }
 
 /*
- * Dark muted surfaces are grey-green (#2d3233) from the dark-tuned neutral
- * ramp. The docs canvas is navy `--ghost-surface-bg` (#0f172a), so VitePress
- * fences clash unless `--vp-code-block-bg` stays in that navy family.
- * Light appearance keeps the mapping above; these rules are html.dark-only.
+ * Keep dark code fences closer to the navy canvas (`--ghost-surface-bg`) than
+ * component muted wells so Shiki tokens stay readable without washing out
+ * Skeleton, Input, or Pagination fills that use `--ghost-surface-muted-bg`.
  */
 html[data-ghost-theme].dark {
   --vp-code-block-bg: color-mix(
     in oklch,
-    var(--ghost-surface-bg) 78%,
+    var(--ghost-surface-bg) 72%,
     var(--ghost-surface-muted-bg)
   );
   --vp-code-bg: var(--vp-code-block-bg);
   --vp-code-block-divider-color: var(--ghost-border-muted);
   --vp-code-copy-code-bg: var(--ghost-surface-bg);
-  --vp-code-copy-code-hover-bg: color-mix(
-    in oklch,
-    var(--ghost-surface-bg) 70%,
-    var(--ghost-surface-muted-bg)
-  );
+  --vp-code-copy-code-hover-bg: var(--ghost-surface-subtle-bg);
 }
 
 /*
@@ -83,27 +77,23 @@ html[data-ghost-theme] {
 }
 
 /*
- * Live `<GhostExample>` is followed by a VitePress `<<<` fence. Join them into
- * one card so Shiki, the copy control, and dark-mode token mapping apply.
+ * `<GhostExample>` hands its highlighted `<<<` snippet to the DemoPreview
+ * source slot (frame styles live in `demo-preview.css`). Undo
+ * only the `.vp-doc div[class*='language-']` card chrome (outer margin, the
+ * mobile negative bleed, radius) so the fence sits flush inside the example
+ * card while Shiki, dark-mode token mapping and scrolling still apply.
  */
-.vp-doc .ghost-example + div[class*='language-'] {
-  margin-block: 0 1.5rem;
-  margin-inline: 0;
-  overflow: hidden;
-  border: 1px solid var(--ghost-border-default);
-  border-block-start: 1px solid var(--ghost-border-muted);
-  border-end-end-radius: calc(1rem * var(--ghost-roundness, 1));
-  border-end-start-radius: calc(1rem * var(--ghost-roundness, 1));
-  border-start-end-radius: 0;
-  border-start-start-radius: 0;
+.vp-doc .ghost-example__source > div[class*='language-'] {
+  margin: 0;
+  border-radius: 0;
   background-color: var(--vp-code-block-bg);
 }
 
-.vp-doc .ghost-example + div[class*='language-'] pre {
+.vp-doc .ghost-example__source > div[class*='language-'] pre {
   max-block-size: 22rem;
 }
 
-.vp-doc .ghost-example + div[class*='language-'] > button.copy {
+.vp-doc .ghost-example__source > div[class*='language-'] > button.copy {
   /* Header Copy is the labeled control; hide the duplicate VP icon. */
   display: none;
 }
@@ -230,11 +220,6 @@ html[data-ghost-theme='mono'] {
 .vp-doc :is(pre, div[class*='language-']) {
   max-inline-size: 100%;
   overflow-x: auto;
-}
-
-.ghost-example {
-  box-sizing: border-box;
-  max-inline-size: 100%;
 }
 
 /* Component catalog overview (`/components/`). */

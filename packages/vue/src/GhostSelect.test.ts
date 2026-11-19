@@ -704,4 +704,48 @@ describe('GhostSelect', () => {
     expect(props.value.style).toEqual(visuallyHiddenStyle)
     wrapper.unmount()
   })
+
+  it('supports reactive non-English required validation messages without English fallback', async () => {
+    const requiredMessage = ref('Selecciona una opción.')
+    const wrapper = mountAttached(
+      defineComponent({
+        setup() {
+          return () =>
+            h('form', [
+              h(
+                GhostSelect,
+                {
+                  name: 'fruit',
+                  required: true,
+                  messages: { required: requiredMessage.value },
+                },
+                {
+                  default: () => [
+                    h(GhostSelectTrigger, { 'aria-label': 'Fruta' }, () =>
+                      h(GhostSelectValue),
+                    ),
+                    h(GhostSelectContent, { portal: false }, () => [
+                      h(GhostSelectOption, { value: 'a' }, () => 'Manzana'),
+                    ]),
+                  ],
+                },
+              ),
+            ])
+        },
+      }),
+    )
+
+    await flushPromises()
+    await nextTick()
+    const input = wrapper.get('input.ghost-visually-hidden')
+      .element as HTMLInputElement
+    expect(input.checkValidity()).toBe(false)
+    expect(input.validationMessage).toBe('Selecciona una opción.')
+    expect(input.validationMessage).not.toBe('Select a value.')
+
+    requiredMessage.value = 'Este campo es obligatorio.'
+    await flushPromises()
+    await nextTick()
+    expect(input.validationMessage).toBe('Este campo es obligatorio.')
+  })
 })

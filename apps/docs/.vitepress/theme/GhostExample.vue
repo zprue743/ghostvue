@@ -1,17 +1,34 @@
 <script setup lang="ts">
-import { computed, defineAsyncComponent, onUnmounted, ref } from 'vue'
+import { computed, onUnmounted, ref } from 'vue'
 
 import { GhostButton } from '@ghostvue/themes'
 
 import { exampleLoader, exampleSource } from '../../../../examples/load'
 import { ghostExampleById } from '../../../../examples/registry'
+import { defineDemoPreview } from './demo-preview-async'
+import DemoPreview from './DemoPreview.vue'
 
+/*
+ * Id adapter: markdown keeps writing `<GhostExample id="button/icon-only" />`.
+ * This component resolves the id against the example registry and loader and
+ * hands title, layer, description, the lazy demo, and the highlighted source
+ * to `DemoPreview`, which owns the frame.
+ */
 const props = defineProps<{
   /** Path-derived example id (`button/icon-only`). */
   id: string
 }>()
 
+const slots = defineSlots<{
+  /**
+   * Highlighted source for this example. The docs markdown pipeline fills it
+   * with a `<<<` snippet of the same SFC the preview mounts.
+   */
+  default?: () => unknown
+}>()
+
 const meta = computed(() => ghostExampleById(props.id))
+const title = computed(() => meta.value?.title ?? props.id)
 const source = computed(() => exampleSource(props.id)?.replace(/\n$/, '') ?? '')
 const loader = exampleLoader(props.id)
 
@@ -22,7 +39,7 @@ if (!loader) {
   )
 }
 
-const Preview = defineAsyncComponent(loader)
+const Preview = defineDemoPreview(loader)
 const copied = ref(false)
 let copiedTimer: ReturnType<typeof setTimeout> | undefined
 
@@ -50,141 +67,30 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <figure
-    class="ghost-example"
+  <DemoPreview
     :data-example-id="id"
-    :data-example-layer="meta?.layer"
+    :title="title"
+    :layer="meta?.layer"
+    :description="meta?.description"
   >
-    <figcaption class="ghost-example__header">
-      <div class="ghost-example__heading">
-        <span class="ghost-example__title">{{ meta?.title ?? id }}</span>
-        <span v-if="meta?.layer === 'headless'" class="ghost-example__badge">
-          Headless
-        </span>
-        <GhostButton
-          class="ghost-example__copy"
-          type="button"
-          size="sm"
-          variant="ghost"
-          tone="neutral"
-          :aria-label="
-            copied
-              ? `Copied ${meta?.title ?? id} source`
-              : `Copy ${meta?.title ?? id} source`
-          "
-          @click="copySource"
-        >
-          {{ copied ? 'Copied' : 'Copy' }}
-        </GhostButton>
-      </div>
-      <p v-if="meta?.description" class="ghost-example__description">
-        {{ meta.description }}
-      </p>
-    </figcaption>
+    <Preview />
 
-    <div class="ghost-example__preview" data-testid="ghost-example-preview">
-      <div class="ghost-example__stage">
-        <Preview />
-      </div>
-    </div>
-  </figure>
+    <template #actions>
+      <GhostButton
+        class="ghost-example__copy"
+        type="button"
+        size="sm"
+        variant="ghost"
+        tone="neutral"
+        :aria-label="copied ? `Copied ${title} source` : `Copy ${title} source`"
+        @click="copySource"
+      >
+        {{ copied ? 'Copied' : 'Copy' }}
+      </GhostButton>
+    </template>
+
+    <template v-if="slots.default" #source>
+      <slot />
+    </template>
+  </DemoPreview>
 </template>
-
-<style scoped>
-.ghost-example {
-  box-sizing: border-box;
-  display: grid;
-  gap: 0;
-  margin-block: 1.5rem 0;
-  max-inline-size: 100%;
-  overflow: hidden;
-  border: 1px solid var(--ghost-border-default, var(--vp-c-border));
-  border-block-end: 0;
-  border-end-end-radius: 0;
-  border-end-start-radius: 0;
-  border-start-end-radius: calc(1rem * var(--ghost-roundness, 1));
-  border-start-start-radius: calc(1rem * var(--ghost-roundness, 1));
-  background: var(--ghost-surface-bg, var(--vp-c-bg));
-}
-
-.ghost-example__header {
-  display: grid;
-  gap: 0.35rem;
-  max-inline-size: 100%;
-  min-inline-size: 0;
-  padding: 1rem 1.15rem 0.85rem;
-}
-
-.ghost-example__heading {
-  align-items: center;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  max-inline-size: 100%;
-  min-inline-size: 0;
-}
-
-.ghost-example__title {
-  color: var(--ghost-surface-fg, var(--vp-c-text-1));
-  flex: 1 1 auto;
-  font-size: 0.95rem;
-  font-weight: 650;
-  min-inline-size: 0;
-  letter-spacing: 0.01em;
-  line-height: 1.3;
-}
-
-.ghost-example__badge {
-  border: 1px solid var(--ghost-border-muted, var(--vp-c-divider));
-  border-radius: 999px;
-  color: var(--ghost-text-muted, var(--vp-c-text-2));
-  font-size: 0.68rem;
-  font-weight: 650;
-  letter-spacing: 0.04em;
-  padding: 0.12rem 0.5rem;
-  text-transform: uppercase;
-}
-
-.ghost-example__copy {
-  margin-inline-start: auto;
-}
-
-.ghost-example__description {
-  color: var(--ghost-text-muted, var(--vp-c-text-2));
-  font-size: 0.88rem;
-  line-height: 1.45;
-  margin: 0;
-}
-
-.ghost-example__preview {
-  isolation: isolate;
-  max-inline-size: 100%;
-  min-block-size: 8rem;
-  min-inline-size: 0;
-  padding: 1.75rem 1.25rem;
-  position: relative;
-  background-color: var(--ghost-surface-subtle-bg, var(--vp-c-bg-alt));
-  border-block-start: 1px solid var(--ghost-border-muted, var(--vp-c-divider));
-}
-
-/*
- * `overflow-x: auto` (wide tables, toolbars) forces `overflow-y` to clip too,
- * which cut focus rings on controls touching the stage edge. The padding is
- * room for the largest recipe ring (width + offset); the matching negative
- * margin keeps the demo exactly where it sat before.
- */
-.ghost-example__stage {
-  --_ghost-example-ring-room: 0.5rem;
-
-  align-items: center;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-  justify-content: center;
-  margin: calc(-1 * var(--_ghost-example-ring-room));
-  max-inline-size: calc(100% + 2 * var(--_ghost-example-ring-room));
-  min-block-size: calc(4.5rem + 2 * var(--_ghost-example-ring-room));
-  overflow-x: auto;
-  padding: var(--_ghost-example-ring-room);
-}
-</style>

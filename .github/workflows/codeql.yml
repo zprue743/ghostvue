@@ -1,0 +1,48 @@
+name: CodeQL
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+  schedule:
+    # Weekly rescan picks up new CodeQL queries even when the code is unchanged.
+    - cron: '27 4 * * 1'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+# Least privilege: nothing at workflow level; the analyze job grants only what
+# CodeQL needs to read the repository and upload SARIF results.
+permissions: {}
+
+jobs:
+  analyze:
+    name: Analyze (${{ matrix.language }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      # Read workflow run metadata (required by codeql-action on private repos).
+      actions: read
+      contents: read
+      security-events: write
+    strategy:
+      fail-fast: false
+      matrix:
+        # `actions` scans the workflows themselves (injection, unpinned refs,
+        # excessive permissions). Both languages need no build: JS/TS is
+        # extracted from source, so no install scripts or dependencies run.
+        language: [javascript-typescript, actions]
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+      # init and analyze must come from the same codeql-action release.
+      - uses: github/codeql-action/init@33d7b85da1a04171e211befe2c739303b9a4c066 # v4.39.3
+        with:
+          languages: ${{ matrix.language }}
+          build-mode: none
+      - uses: github/codeql-action/analyze@33d7b85da1a04171e211befe2c739303b9a4c066 # v4.39.3
+        with:
+          category: /language:${{ matrix.language }}

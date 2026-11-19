@@ -66,7 +66,7 @@ only on this wrapper:
 Defaults omit `data-size` / `data-tone` so CSS can treat a missing hook as `md`
 / `accent`. Thickness uses `--ghost-track-thickness-sm` / `md` / `lg` (4 / 6 /
 8px at every density and theme, so `sm` stays visible under compact Calm). Fill uses
-`--ghost-action-*-bg`. The track is `--ghost-surface-muted-bg`.
+`--ghost-action-*-bg`. The track is `--ghost-border-default`.
 
 Under `prefers-reduced-motion: reduce`, indeterminate translation becomes an
 opacity pulse at `--ghost-action-spinner-duration` so the bar does not slide

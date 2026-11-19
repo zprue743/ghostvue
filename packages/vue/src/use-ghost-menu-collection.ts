@@ -8,6 +8,7 @@ import {
 
 import { isDisabledElement } from './get-tabbable-elements'
 import { isImeComposing } from './is-ime-composing'
+import { findTypeaheadMatch } from './typeahead-match'
 
 export const MENU_ITEM_SELECTOR =
   '[role="menuitem"],[role="menuitemcheckbox"],[role="menuitemradio"]'
@@ -228,7 +229,7 @@ function handleMenuKeyDown(
     const nextQuery = typeaheadState.getTypeahead() + event.key
     typeaheadState.setTypeahead(nextQuery)
     typeaheadState.resetTypeaheadTimer()
-    const match = findTypeaheadMatch(enabled, nextQuery, active)
+    const match = findTypeaheadMatch(enabled, nextQuery, active, menuItemText)
     if (match) {
       event.preventDefault()
       applyMenuTabStops(items, match)
@@ -294,62 +295,9 @@ function isPrintableKey(event: KeyboardEvent): boolean {
   return event.key.length === 1
 }
 
-function findTypeaheadMatch(
-  items: HTMLElement[],
-  query: string,
-  active: HTMLElement | undefined,
-): HTMLElement | undefined {
-  const normalized = query.trim().toLowerCase()
-  if (normalized.length === 0) {
-    return undefined
-  }
-  const activeIndex = active ? items.indexOf(active) : -1
-  if (normalized.length === 1) {
-    return findMatchFromIndex(items, normalized, activeIndex + 1)
-  }
-
-  const start = activeIndex >= 0 ? activeIndex : 0
-  const directMatch = findMatchFromIndex(items, normalized, start)
-  if (directMatch) {
-    return directMatch
-  }
-
-  // Repeated single-character presses (e.g. "aa" with no "aa*" item) cycle
-  // through items starting with that character rather than stalling.
-  const firstChar = normalized[0]
-  if (firstChar && isRepeatedCharacterQuery(normalized, firstChar)) {
-    return findMatchFromIndex(items, firstChar, activeIndex + 1)
-  }
-
-  return undefined
-}
-
-function findMatchFromIndex(
-  items: HTMLElement[],
-  normalizedQuery: string,
-  startIndex: number,
-): HTMLElement | undefined {
-  for (let offset = 0; offset < items.length; offset++) {
-    const item = items[(startIndex + offset) % items.length]
-    if (!item) {
-      continue
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- live DOM allows null `textContent`.
-    const text = (item.textContent ?? '').trim().toLowerCase()
-    if (text.startsWith(normalizedQuery)) {
-      return item
-    }
-  }
-  return undefined
-}
-
-function isRepeatedCharacterQuery(query: string, char: string): boolean {
-  for (let i = 1; i < query.length; i++) {
-    if (query[i] !== char) {
-      return false
-    }
-  }
-  return true
+function menuItemText(item: HTMLElement): string {
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- live DOM allows null `textContent`.
+  return item.textContent ?? ''
 }
 
 function isEditableTarget(target: EventTarget | null): boolean {

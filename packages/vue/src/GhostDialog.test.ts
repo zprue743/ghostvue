@@ -488,6 +488,61 @@ describe('GhostDialog', () => {
     expect(document.activeElement).toBe(trigger.element)
   })
 
+  it('reapplies restored focus when the overlay press drops focus to body (WebKit), but not when focus moved elsewhere', async () => {
+    const outside = document.createElement('button')
+    outside.textContent = 'Outside'
+    document.body.append(outside)
+
+    const wrapper = mountAttached(
+      defineComponent({
+        setup() {
+          return () =>
+            h(GhostDialog, null, {
+              default: () => [
+                h(
+                  GhostDialogTrigger,
+                  { 'data-testid': 'dlg-trigger' },
+                  () => 'Open modal',
+                ),
+                h(GhostDialogOverlay, { 'data-testid': 'dlg-overlay' }),
+                h(GhostDialogContent, { 'aria-label': 'Modal dialog' }, () => [
+                  h(GhostDialogClose, () => 'Close'),
+                ]),
+              ],
+            })
+        },
+      }),
+    )
+    const trigger = wrapper.get('[data-testid="dlg-trigger"]')
+    const nextTask = () =>
+      new Promise<void>((resolve) => {
+        window.setTimeout(resolve, 0)
+      })
+
+    // WebKit: after the restore, the press default action blurs to <body>
+    // without dispatching mousedown, so preventDefault cannot stop it.
+    await trigger.trigger('click')
+    await flushPromises()
+    pointerDown(queryHtml('[data-testid="dlg-overlay"]'))
+    // Only microtasks: the restore runs in Vue's flush, before the timer task.
+    await nextTick()
+    expect(document.activeElement).toBe(trigger.element)
+    ;(trigger.element as HTMLElement).blur()
+    expect(document.activeElement).toBe(document.body)
+    await nextTask()
+    expect(document.activeElement).toBe(trigger.element)
+
+    // A deliberate move to another control before the next task is kept.
+    await trigger.trigger('click')
+    await flushPromises()
+    pointerDown(queryHtml('[data-testid="dlg-overlay"]'))
+    await nextTick()
+    expect(document.activeElement).toBe(trigger.element)
+    outside.focus()
+    await nextTask()
+    expect(document.activeElement).toBe(outside)
+  })
+
   it('disables trap, scroll lock, inert background, and overlay when modal=false, and skips restore when clicking outside focusable control', async () => {
     const siblingWrapper = document.createElement('div')
     const outsideBtn = document.createElement('button')

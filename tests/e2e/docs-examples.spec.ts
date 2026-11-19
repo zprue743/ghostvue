@@ -2,6 +2,11 @@ import AxeBuilder from '@axe-core/playwright'
 import { expect, test } from '@playwright/test'
 
 import { generatedComponentPageLinks } from '../../apps/docs/.vitepress/docs-nav'
+import {
+  exampleSourceBlock,
+  exampleSourceToggle,
+  openExampleSource,
+} from './docs-example-source'
 import { startStaticServer } from './static-server'
 
 const componentPages = [...generatedComponentPageLinks]
@@ -42,9 +47,8 @@ test.describe('docs example previews', () => {
       expect(Number.parseFloat(styles.borderTopWidth)).toBeGreaterThan(0)
       expect(isTransparentColor(styles.borderTopColor)).toBe(false)
 
-      const source = page.locator(
-        '[data-example-id="button/themed"] + div[class*="language-"]',
-      )
+      await openExampleSource(page, 'button/themed')
+      const source = exampleSourceBlock(page, 'button/themed')
       await expect(
         source.locator('.vp-code span[style*="--shiki-"]').first(),
       ).toBeVisible()
@@ -130,9 +134,8 @@ test.describe('docs example previews', () => {
       await themedDialog.getByRole('button', { name: 'Done' }).click()
       await expect(themedDialog).toHaveCount(0)
 
-      const source = page.locator(
-        '[data-example-id="popover/themed"] + div[class*="language-"]',
-      )
+      await openExampleSource(page, 'popover/themed')
+      const source = exampleSourceBlock(page, 'popover/themed')
       await expect(
         source.locator('.vp-code span[style*="--shiki-"]').first(),
       ).toBeVisible()
@@ -547,6 +550,193 @@ test.describe('docs example previews', () => {
       // Navigation remains visible and interactive.
       await expect(page.locator('.VPNavBar')).toBeVisible()
       await expect(page.locator('.VPSidebar')).toBeVisible()
+    } finally {
+      await docs.close()
+    }
+  })
+
+  test('themed demos follow the site appearance and headless Accordion stays unthemed', async ({
+    browser,
+  }) => {
+    const docs = await startStaticServer('apps/docs/.vitepress/dist')
+
+    /** Relative luminance (0..1) of a computed sRGB `rgb()`/`rgba()` color. */
+    const luminance = (color: string): number => {
+      const channels = /rgba?\(([^)]+)\)/.exec(color)?.[1]?.split(',') ?? []
+      const [r = 0, g = 0, b = 0] = channels
+        .slice(0, 3)
+        .map((value) => Number.parseFloat(value) / 255)
+        .map((c) => (c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4))
+      return 0.2126 * r + 0.7152 * g + 0.0722 * b
+    }
+
+    try {
+      for (const mode of ['light', 'dark'] as const) {
+        const context = await browser.newContext({ colorScheme: mode })
+        // The docs restore script reads this before first paint.
+        await context.addInitScript((appearance) => {
+          localStorage.setItem('vitepress-theme-appearance', appearance)
+        }, mode)
+        const page = await context.newPage()
+        const previewOf = (id: string) =>
+          page
+            .locator(`[data-example-id="${id}"]`)
+            .getByTestId('ghost-example-preview')
+
+        await page.goto(`${docs.url}/components/accordion.html`)
+        await expect(page.locator('html')).toHaveAttribute(
+          'data-ghost-mode',
+          mode,
+        )
+
+        // Inline themed text follows the page mode (no forced-light island).
+        const trigger = previewOf('accordion/themed')
+          .getByRole('button', { name: 'Inventory holds' })
+          .first()
+        await expect(trigger).toBeVisible()
+        const triggerInk = luminance(
+          await trigger.evaluate((el) => getComputedStyle(el).color),
+        )
+        if (mode === 'dark') expect(triggerInk).toBeGreaterThan(0.5)
+        else expect(triggerInk).toBeLessThan(0.2)
+
+        // default.css is loaded site-wide; the headless accordion's behavior
+        // hooks must not opt it into the stacked theme layout.
+        const headlessRoot =
+          previewOf('accordion/basic').locator('.ghost-accordion')
+        await expect(headlessRoot).toHaveAttribute('data-ghost-accordion', '')
+        await expect(headlessRoot).toHaveCSS('display', 'block')
+        await expect(
+          previewOf('accordion/basic').locator('.ghost-accordion-item').first(),
+        ).toHaveCSS('display', 'block')
+        await expect(
+          previewOf('accordion/themed').locator('.ghost-accordion'),
+        ).toHaveCSS('display', 'flex')
+
+        // Portaled content and its inline trigger share the page mode.
+        await page.goto(`${docs.url}/components/tooltip.html`)
+        await previewOf('tooltip/themed')
+          .getByRole('button', { name: 'Hover for glossary' })
+          .focus()
+        const tooltip = page
+          .getByRole('tooltip')
+          .filter({ hasText: '95th percentile' })
+        await expect(tooltip).toBeVisible({ timeout: 2000 })
+        const tooltipSurface = luminance(
+          await tooltip.evaluate((el) => getComputedStyle(el).backgroundColor),
+        )
+        if (mode === 'dark') expect(tooltipSurface).toBeLessThan(0.1)
+        else expect(tooltipSurface).toBeGreaterThan(0.8)
+
+        for (const [slug, id] of [
+          ['collapsible', 'collapsible/themed'],
+          ['empty-state', 'empty-state/themed'],
+          ['hover-card', 'hover-card/themed'],
+          ['scroll-area', 'scroll-area/themed'],
+        ] as const) {
+          await page.goto(`${docs.url}/components/${slug}.html`)
+          const preview = previewOf(id)
+          await expect(preview.locator(':scope > *').first()).toBeAttached()
+          // No local mode/theme host: tokens come from <html>, like portals.
+          await expect(
+            preview.locator('[data-ghost-mode], .ghost-theme'),
+          ).toHaveCount(0)
+        }
+
+        await context.close()
+      }
+    } finally {
+      await docs.close()
+    }
+  })
+
+  test('each example owns one collapsible highlighted source that never resets the demo', async ({
+    page,
+  }) => {
+    const docs = await startStaticServer('apps/docs/.vitepress/dist')
+
+    try {
+      await page.goto(`${docs.url}/components/input.html`)
+
+      // Every host holds exactly one highlighted SFC in its own source slot;
+      // nothing is left as a sibling fence next to the card.
+      const counts = await page.evaluate(() =>
+        [...document.querySelectorAll('figure[data-example-id]')].map(
+          (figure) => ({
+            owned: figure.querySelectorAll(
+              '[data-testid="ghost-example-source"] > div[class*="language-"]',
+            ).length,
+            sibling:
+              figure.nextElementSibling?.matches('div[class*="language-"]') ??
+              false,
+          }),
+        ),
+      )
+      expect(counts.length).toBeGreaterThan(0)
+      for (const entry of counts) {
+        expect(entry).toEqual({ owned: 1, sibling: false })
+      }
+
+      const id = 'input/themed'
+      const example = page.locator(`[data-example-id="${id}"]`)
+      const toggle = exampleSourceToggle(page, id)
+      const region = example.getByTestId('ghost-example-source')
+      const copy = example.getByRole('button', { name: /^Copy .* source$/ })
+
+      // Collapsed by default; the toggle names and controls the region.
+      await expect(toggle).toHaveAttribute('aria-expanded', 'false')
+      await expect(region).toBeHidden()
+      await expect(region).toHaveAttribute('role', 'region')
+      expect(await toggle.getAttribute('aria-controls')).toBe(
+        await region.getAttribute('id'),
+      )
+
+      // Put the live demo into a user-driven state and tag the node so a
+      // remount would be detectable.
+      const field = example
+        .getByTestId('ghost-example-preview')
+        .getByRole('textbox')
+        .nth(1)
+      await field.fill('typed before toggling')
+      await field.evaluate((element) => {
+        element.setAttribute('data-probe', 'original-node')
+      })
+
+      const copyBox = await copy.boundingBox()
+      await openExampleSource(page, id)
+      await expect(region).toBeVisible()
+      await expect(
+        exampleSourceBlock(page, id)
+          .locator('.vp-code span[style*="--shiki-"]')
+          .first(),
+      ).toBeVisible()
+      // The toggle label is constant, so the header controls do not move.
+      expect(await copy.boundingBox()).toEqual(copyBox)
+
+      // Keyboard: the native button toggles with Enter and Space and keeps focus.
+      await toggle.focus()
+      await page.keyboard.press('Enter')
+      await expect(toggle).toBeFocused()
+      await expect(toggle).toHaveAttribute('aria-expanded', 'false')
+      await expect(region).toBeHidden()
+      await page.keyboard.press('Space')
+      await expect(toggle).toBeFocused()
+      await expect(toggle).toHaveAttribute('aria-expanded', 'true')
+
+      // Demo state survives both transitions: same node, same value.
+      await expect(field).toHaveValue('typed before toggling')
+      await expect(field).toHaveAttribute('data-probe', 'original-node')
+
+      // Collapsing one example leaves its neighbours' sources alone.
+      await expect(exampleSourceToggle(page, 'input/basic')).toHaveAttribute(
+        'aria-expanded',
+        'false',
+      )
+
+      const axe = await new AxeBuilder({ page })
+        .include(`[data-example-id="${id}"]`)
+        .analyze()
+      expect(axe.violations).toEqual([])
     } finally {
       await docs.close()
     }

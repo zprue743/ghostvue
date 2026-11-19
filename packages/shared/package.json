@@ -4,6 +4,11 @@
   "private": true,
   "description": "Framework-neutral low-level utilities shared by GhostVue packages.",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zprue743/ghostvue.git",
+    "directory": "packages/shared"
+  },
   "type": "module",
   "sideEffects": false,
   "exports": {
@@ -16,6 +21,10 @@
   "files": [
     "dist"
   ],
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
     "typecheck": "tsc -p tsconfig.json --noEmit"
