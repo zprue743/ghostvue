@@ -3,6 +3,9 @@ import { flushPromises, mount } from '@vue/test-utils'
 import { defineComponent, h, nextTick, ref } from 'vue'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
+import GhostField from './GhostField.vue'
+import GhostFieldControl from './GhostFieldControl.vue'
+import GhostFieldLabel from './GhostFieldLabel.vue'
 import GhostSelect from './GhostSelect.vue'
 import GhostSelectContent from './GhostSelectContent.vue'
 import GhostSelectOption from './GhostSelectOption.vue'
@@ -124,6 +127,19 @@ describe('GhostSelect', () => {
     const formInput = wrapper.get('input.ghost-visually-hidden')
     expect(formInput.attributes('name')).toBe('fruit')
     expect((formInput.element as HTMLInputElement).value).toBe('a')
+  })
+
+  it('points aria-controls at the listbox, not the presentational content wrapper', async () => {
+    const wrapper = mountAttached(selectFixture())
+    await flushPromises()
+    const trigger = wrapper.get('[data-part="trigger"]')
+    const controls = trigger.attributes('aria-controls') ?? ''
+    const popup = document.getElementById(controls)
+    expect(popup?.getAttribute('role')).toBe('listbox')
+    expect(popup?.getAttribute('aria-labelledby')).toBe(
+      trigger.attributes('id'),
+    )
+    expect(popup?.parentElement?.getAttribute('data-part')).toBe('content')
   })
 
   it('keeps uncontrolled value and label after selecting and closing', async () => {
@@ -336,6 +352,41 @@ describe('GhostSelect', () => {
     ).toBe('true')
   })
 
+  it('keeps GhostFieldControl invalid and required state when slot props spread onto the trigger', async () => {
+    const invalid = ref(true)
+    const wrapper = mountAttached(
+      defineComponent({
+        setup() {
+          return () =>
+            h(GhostField, { invalid: invalid.value, required: true }, () => [
+              h(GhostFieldLabel, null, () => 'Currency'),
+              h(GhostFieldControl, null, {
+                default: (field: Record<string, unknown>) =>
+                  h(GhostSelect, null, () => [
+                    h(GhostSelectTrigger, field, () => h(GhostSelectValue)),
+                    h(GhostSelectContent, { portal: false }, () => [
+                      h(GhostSelectOption, { value: 'usd' }, () => 'USD'),
+                    ]),
+                  ]),
+              }),
+            ])
+        },
+      }),
+    )
+    await flushPromises()
+    const trigger = wrapper.get('[data-part="trigger"]')
+    // The field owns the state; the root has neither `invalid` nor `required`.
+    expect(trigger.attributes('aria-invalid')).toBe('true')
+    expect(trigger.attributes('aria-required')).toBe('true')
+    // `invalid` and `required` are field state, not attributes of a button.
+    expect(trigger.attributes('invalid')).toBeUndefined()
+    expect(trigger.attributes('required')).toBeUndefined()
+
+    invalid.value = false
+    await nextTick()
+    expect(trigger.attributes('aria-invalid')).toBeUndefined()
+  })
+
   it('restores defaultValue on native form reset', async () => {
     const wrapper = mountAttached(
       defineComponent({
@@ -499,6 +550,30 @@ describe('GhostSelect', () => {
       expect(document.activeElement?.getAttribute('data-value')).toBe('b')
     })
   }
+
+  it('opens a native button trigger on Enter and Space without the activation click closing it', async () => {
+    for (const key of ['Enter', ' ']) {
+      const wrapper = mountAttached(selectFixture())
+      await flushPromises()
+      const trigger = wrapper.get('[data-part="trigger"]')
+        .element as HTMLElement
+      trigger.focus()
+      const event = new KeyboardEvent('keydown', {
+        key,
+        bubbles: true,
+        cancelable: true,
+      })
+      trigger.dispatchEvent(event)
+      // Browsers fire a click on the focused button unless keydown is
+      // cancelled (Enter right away, Space on keyup); emulate that here.
+      if (!event.defaultPrevented) trigger.click()
+      await flushPromises()
+      expect(event.defaultPrevented, key).toBe(true)
+      expect(trigger.getAttribute('aria-expanded'), key).toBe('true')
+      expect(document.activeElement?.getAttribute('data-value'), key).toBe('b')
+      wrapper.unmount()
+    }
+  })
 
   it('closes on Escape and restores focus to the trigger', async () => {
     const wrapper = mountAttached(selectFixture())

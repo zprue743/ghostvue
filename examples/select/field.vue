@@ -21,9 +21,9 @@ const operator = ref<string | undefined>(undefined)
     <GhostFieldLabel>Filter operator</GhostFieldLabel>
     <GhostFieldDescription>How values are compared.</GhostFieldDescription>
     <GhostFieldControl v-slot="field">
-      <GhostSelect v-model="operator">
+      <GhostSelect v-model="operator" placeholder="Choose operator">
         <GhostSelectTrigger v-bind="field">
-          <GhostSelectValue placeholder="Choose operator" />
+          <GhostSelectValue />
         </GhostSelectTrigger>
         <GhostSelectContent :portal="false">
           <GhostSelectOption value="eq">Equals</GhostSelectOption>

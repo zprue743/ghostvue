@@ -678,6 +678,12 @@
       "layer": "themed"
     },
     {
+      "id": "select/billing-preferences",
+      "title": "Billing preferences",
+      "description": "Billing form with a placeholder, a disabled option, long labels, field validation, and a disabled select.",
+      "layer": "themed"
+    },
+    {
       "id": "select/basic",
       "title": "Basic",
       "description": "Single-value combobox with listbox options, typeahead, and portaled content.",
@@ -698,7 +704,7 @@
     {
       "id": "select/themed",
       "title": "Themed",
-      "description": "Trigger and list surface tokens from @ghostvue/themes.",
+      "description": "Rows-per-page and sort controls on @ghostvue/themes trigger and list tokens.",
       "layer": "themed"
     },
     {

@@ -14,6 +14,7 @@ import type { GhostPortalTarget } from './ghost-portal'
 import GhostPortal from './GhostPortal.vue'
 import {
   ghostSelectContextKey,
+  ghostSelectListboxId,
   resolveSelectHtmlElement,
   type GhostSelectContext,
   type GhostSelectContentElement,
@@ -170,10 +171,47 @@ watch(
   { immediate: true, flush: 'post' },
 )
 
+/*
+ * Initial focus when the scope activates, which waits until the content is
+ * positioned and visible. The trigger's own deferred focus runs earlier,
+ * while the content is still `visibility: hidden`, so a browser ignores it
+ * and focus stayed on the trigger, leaving the open list unreachable from
+ * the keyboard. Same rule as the trigger: the selected enabled option, else
+ * the first (or, after ArrowUp, the last) enabled option in rendered order.
+ */
+function resolveInitialOption(): HTMLElement | null {
+  const listbox = listboxRef.value
+  if (!listbox) {
+    return null
+  }
+  const active = document.activeElement
+  if (
+    active instanceof HTMLElement &&
+    active !== listbox &&
+    listbox.contains(active)
+  ) {
+    return active
+  }
+  const enabled = [
+    ...listbox.querySelectorAll<HTMLElement>(
+      '[role="option"]:not([aria-disabled="true"])',
+    ),
+  ]
+  const selected = enabled.find(
+    (option) => option.getAttribute('aria-selected') === 'true',
+  )
+  return (
+    selected ??
+    (context.openFocusFromEnd.value ? enabled.at(-1) : enabled[0]) ??
+    null
+  )
+}
+
 useFocusScope(focusTarget, {
   trapped: false,
   autoFocus: () => !context.openedAtMount.value,
   restoreFocus: shouldRestoreFocus,
+  initialFocus: resolveInitialOption,
 })
 
 watch(
@@ -266,6 +304,9 @@ const contentAttrs = computed(() => {
 })
 
 const listboxAttrs = computed(() => ({
+  // The trigger's aria-controls names this element, the role="listbox"
+  // popup, rather than the presentational positioning wrapper.
+  id: ghostSelectListboxId(contentId.value),
   role: 'listbox',
   tabindex: isOpen.value ? -1 : undefined,
   'aria-hidden': isOpen.value ? undefined : true,

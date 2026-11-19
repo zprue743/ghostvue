@@ -12,6 +12,15 @@ import { resolvePopoverHtmlElement } from './ghost-popover'
 /** @see resolvePopoverHtmlElement */
 export const resolveSelectHtmlElement = resolvePopoverHtmlElement
 
+/**
+ * Id of the `role="listbox"` element inside the content with `contentId`.
+ * The trigger's `aria-controls` must name the popup itself; the content root
+ * is a presentational positioning wrapper.
+ */
+export function ghostSelectListboxId(contentId: string): string {
+  return `${contentId}-listbox`
+}
+
 export type GhostSelectTriggerElement = string | Component
 export type GhostSelectContentElement = string | Component
 export type GhostSelectOptionElement = string | Component
@@ -89,6 +98,11 @@ export interface GhostSelectContext {
   handleTypeahead: (event: KeyboardEvent) => void
   focusOptionByValue: (value: string) => void
   focusFirstEnabledOption: (fromEnd?: boolean) => void
+  /**
+   * Set by the trigger when it opens the list: `true` when focus should
+   * start on the last enabled option (ArrowUp) if nothing is selected.
+   */
+  openFocusFromEnd: Ref<boolean>
   labelVersion: Ref<number>
 }
 
