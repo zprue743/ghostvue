@@ -62,6 +62,9 @@ function runtimeContract(component: unknown): {
 }
 
 describe('@ghostvue/eslint-plugin', () => {
+  // Lints every repository SFC in sequence: ~1.5s alone, but it has reached
+  // the 5s default under CI's parallel coverage load, and it grows with each
+  // new example.
   it('reports no GhostVue usage errors across examples, playground, and docs SFCs', async () => {
     const files = [
       ...(await collectVueFiles(join(repositoryRoot, 'examples'))),
@@ -80,7 +83,7 @@ describe('@ghostvue/eslint-plugin', () => {
       }
     }
     expect(problems).toEqual([])
-  })
+  }, 30_000)
 
   it('reports each rule through the recommended config with a TypeScript script', () => {
     const messages = lint(`<script setup lang="ts">
