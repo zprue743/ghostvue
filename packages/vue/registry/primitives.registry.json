@@ -1092,6 +1092,12 @@
       "layer": "themed"
     },
     {
+      "id": "table/team-directory",
+      "title": "Team directory",
+      "description": "Searchable team directory with status badges, row actions, loading and empty states, and a named horizontal-scroll region.",
+      "layer": "themed"
+    },
+    {
       "id": "table/basic",
       "title": "Basic table",
       "description": "Caption, header row, and explicit tbody semantics.",

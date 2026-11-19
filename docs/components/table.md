@@ -4,6 +4,25 @@
 parts from `@ghostvue/vue` for headless use, or `GhostTable` from
 `@ghostvue/themes` for default cell and header styling.
 
+<GhostExample id="table/team-directory" />
+
+The team directory wraps themed `GhostTable` in a [`GhostCard`](./card.md).
+Each member's name is a row header (`scope="row"`), so screen readers announce
+it with every cell in the row. Status uses [`GhostBadge`](./badge.md) and row
+actions use a [`GhostDropdownMenu`](./dropdown-menu.md) whose icon-only trigger
+is named per member. Search filters local data; when nothing matches, a
+[`GhostEmptyState`](./empty-state.md) spans the body and offers to clear the
+search. Refresh marks the table `aria-busy` and swaps rows for
+[`GhostSkeleton`](./skeleton.md) placeholders, and a polite status announces
+the result once.
+
+The table uses `contain-horizontal` with `scroll-label="Team members"`. The
+example gives the table a `30rem` minimum width through its own class, so on a
+phone the columns keep their alignment and the named region scrolls instead of
+squeezing the cells. The example styles only its own content (the member
+name block and the end-aligned actions column); the recipe supplies cell
+padding, row rules, the header band, and a token focus ring on the region.
+
 ## Basic use
 
 Always place rows inside `GhostTableHead`, `GhostTableBody`, or
@@ -60,6 +79,13 @@ Wide tables opt in to a scroll container. Overflow is never implied on the
 
 The themed root wraps `.ghost-themed-scope` and loads the default recipe. Parts
 remain unstyled imports from `@ghostvue/vue`.
+
+The recipe gives column headers a muted band. Row headers (`scope="row"`) in
+the body and foot keep the row surface and top alignment, so they read as the
+first cell of their row. Numeric columns in this sample align on the end edge
+with tabular figures through a class on those cells. With `containHorizontal`,
+the scroll region shows the token focus ring, drawn inside its edge so a
+clipping ancestor cannot cut it off.
 
 ## Styling
 

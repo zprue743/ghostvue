@@ -59,6 +59,40 @@
     vertical-align: top;
   }
 
+  /*
+   * Row headers (`scope="row"`) in the body and foot name their row; they
+   * are not part of the column header band. Keep the row's surface and top
+   * alignment so a row header reads as the first cell of its row, and keep
+   * the semibold weight that marks it as a header.
+   */
+  :where(
+    .ghost-theme
+      :is(.ghost-table-body, .ghost-table-foot)
+      > .ghost-table-row
+      > .ghost-table-header-cell,
+    .ghost-themed-scope
+      :is(.ghost-table-body, .ghost-table-foot)
+      > .ghost-table-row
+      > .ghost-table-header-cell
+  ) {
+    background-color: transparent;
+    vertical-align: top;
+  }
+
+  /*
+   * The scroll container is a keyboard stop (tabindex="0") so it needs the
+   * same token focus ring as other themed focusable parts. The negative
+   * offset draws the ring inside the region, so an ancestor that clips
+   * (a card, a docs stage) never cuts it off.
+   */
+  :where(
+    .ghost-theme .ghost-table-scroll-container:focus-visible,
+    .ghost-themed-scope .ghost-table-scroll-container:focus-visible
+  ) {
+    outline: var(--ghost-focus-ring-width) solid var(--ghost-focus-ring-color);
+    outline-offset: calc(-1 * var(--ghost-focus-ring-width));
+  }
+
   :where(
     .ghost-theme .ghost-table-foot .ghost-table-cell,
     .ghost-themed-scope .ghost-table-foot .ghost-table-cell,
