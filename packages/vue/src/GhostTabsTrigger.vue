@@ -120,7 +120,8 @@ const triggerAttrs = computed(() => {
     ...rest,
     id: triggerId.value,
     role: 'tab',
-    class: 'ghost-tabs-trigger',
+    // Keep the consumer class beside the part class instead of replacing it.
+    class: ['ghost-tabs-trigger', attrs.class],
     tabindex: tabIndex,
     'data-ghost-tabs-value': props.value,
     'aria-selected': String(active.value),

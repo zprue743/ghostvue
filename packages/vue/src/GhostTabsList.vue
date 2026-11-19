@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, inject, useTemplateRef, watch } from 'vue'
+import { computed, inject, mergeProps, useTemplateRef, watch } from 'vue'
 
 import {
   ghostTabsContextKey,
@@ -79,6 +79,9 @@ function onFocusOut(event: FocusEvent): void {
   context.syncSelectionTabStops(list)
 }
 
+// Consumer attributes still win over the defaults below, but `mergeProps`
+// joins `class` and `style` so a consumer class never drops `ghost-tabs-list`
+// (which the theme selects on).
 const listAttrs = computed(() => ({
   role: 'tablist',
   'aria-orientation': context.orientation.value,
@@ -104,7 +107,7 @@ defineExpose<GhostTabsListExposed>({
   <component
     :is="as"
     ref="host"
-    v-bind="{ ...listAttrs, ...$attrs }"
+    v-bind="mergeProps(listAttrs, $attrs)"
     @focusout="onFocusOut"
   >
     <slot />

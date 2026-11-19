@@ -181,6 +181,8 @@ Stable hooks (not the undecided GHO-38 styling-hooks contract):
 
 - `ghost-tabs-list`, `ghost-tabs-trigger`, `ghost-tabs-content` classes
 - `data-part`, `data-state`, `data-ghost-tabs`
+- Consumer `class` and `style` on the list, trigger, and content parts merge
+  with the part class and never replace it
 - Themed CSS under `.ghost-theme` / `.ghost-themed-scope` using existing
   `--ghost-*` semantic tokens
 

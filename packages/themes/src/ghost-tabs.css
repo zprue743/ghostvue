@@ -55,6 +55,33 @@
     color: var(--ghost-surface-fg);
   }
 
+  /*
+   * Hover tints only the background of an enabled, unselected tab: the border
+   * stays transparent and padding is unchanged, so hover never moves the strip.
+   */
+  :where(
+    .ghost-theme .ghost-tabs-trigger[data-state='inactive']:hover,
+    .ghost-themed-scope .ghost-tabs-trigger[data-state='inactive']:hover,
+    .ghost-tabs-trigger[data-themed][data-state='inactive']:hover
+  ):where(:not(:disabled, [aria-disabled='true'])) {
+    background-color: color-mix(
+      in oklch,
+      var(--ghost-surface-fg) calc(100% * var(--ghost-state-layer-hover)),
+      transparent
+    );
+    color: var(--ghost-surface-fg);
+  }
+
+  :where(
+    .ghost-theme .ghost-tabs-trigger:is(:disabled, [aria-disabled='true']),
+    .ghost-themed-scope
+      .ghost-tabs-trigger:is(:disabled, [aria-disabled='true']),
+    .ghost-tabs-trigger[data-themed]:is(:disabled, [aria-disabled='true'])
+  ) {
+    cursor: not-allowed;
+    opacity: var(--ghost-action-disabled-opacity);
+  }
+
   :where(
     .ghost-theme .ghost-tabs-trigger:focus-visible,
     .ghost-themed-scope .ghost-tabs-trigger:focus-visible,
@@ -80,14 +107,33 @@
     padding: var(--ghost-space-inset-md);
   }
 
+  /*
+   * The active panel is a tab stop (APG panel entry), so it draws the same
+   * outline ring as the triggers instead of the user agent default.
+   */
+  :where(
+    .ghost-theme .ghost-tabs-content:focus-visible,
+    .ghost-themed-scope .ghost-tabs-content:focus-visible,
+    .ghost-tabs-content[data-themed]:focus-visible
+  ) {
+    outline: var(--ghost-focus-ring-width) solid var(--ghost-focus-ring-color);
+    outline-offset: var(--ghost-focus-ring-offset);
+  }
+
   @media (forced-colors: active) {
     :where(
       .ghost-theme .ghost-tabs-trigger[data-state='active'],
       .ghost-themed-scope .ghost-tabs-trigger[data-state='active'],
       .ghost-tabs-trigger[data-themed][data-state='active']
     ) {
+      /*
+       * HighlightText is only legible on Highlight, so paint both and opt the
+       * active tab out of forced-color adjustment (the tree does the same).
+       */
+      background-color: Highlight;
       border-color: Highlight;
       color: HighlightText;
+      forced-color-adjust: none;
     }
   }
 }

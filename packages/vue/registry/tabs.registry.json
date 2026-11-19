@@ -25,6 +25,12 @@
   ],
   "examples": [
     {
+      "id": "tabs/workspace",
+      "title": "Workspace sections",
+      "description": "Workspace overview, members, and activity panels with a disabled tab, counts, long German labels, and an Arabic right-to-left switch.",
+      "layer": "themed"
+    },
+    {
       "id": "tabs/basic",
       "title": "Basic",
       "description": "Controlled compound tabs with automatic activation.",
@@ -39,13 +45,13 @@
     {
       "id": "tabs/vertical",
       "title": "Vertical",
-      "description": "Vertical tab list with arrow-key roving focus.",
+      "description": "Vertical tab list beside its panel, stacking above it in narrow previews.",
       "layer": "headless"
     },
     {
       "id": "tabs/themed",
       "title": "Themed",
-      "description": "Styled tab list and panels from @ghostvue/themes.",
+      "description": "Themed strip stacked above its panel, with a disabled tab, from @ghostvue/themes.",
       "layer": "themed"
     }
   ]
