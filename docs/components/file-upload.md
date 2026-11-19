@@ -214,6 +214,32 @@ already cancelled. Set `:prevent-document-drop="false"` to opt out.
 `openPicker()`, `addFiles()`, `remove()`, and `clear()` do nothing. Items stay
 visible. There is no read-only mode.
 
+## Themed use
+
+<GhostExample id="file-upload/themed" />
+
+Import the same part names from `@ghostvue/themes` to load
+`ghost-file-upload.css`. `GhostFileUpload`, `GhostFileUploadDropzone`,
+`GhostFileUploadTrigger`, `GhostFileUploadList`, and
+`GhostFileUploadItemRemove` are thin wrappers: they add `data-themed`, keep your
+`class` and `style`, forward the `element` ref and methods, and leave behavior to
+the headless parts. `GhostFileUploadItem` and `useGhostFileUpload` are
+re-exported unchanged; the list styles its items as direct children. There are
+no extra visual props.
+
+- The dropzone has a dashed border on a subtle surface. While a file is dragged
+  over it, the border turns solid and uses `--ghost-border-primary`.
+- `invalid` gives the dropzone and trigger a thicker `--ghost-border-danger`
+  border, so the state does not depend on color alone. `disabled` uses the
+  disabled action tokens.
+- The trigger and remove buttons are at least `--ghost-control-touch-min`
+  (44px) in both directions and show the focus ring on `:focus-visible`.
+- Color transitions run only without `prefers-reduced-motion`. In forced-colors
+  mode the parts use system colors and the drag border uses `Highlight`.
+
+Rules key on `data-themed`, not on a `.ghost-theme` ancestor, so headless parts
+on a themed page stay unstyled.
+
 ## API
 
 See the [generated component references](/reference/) for full tables.

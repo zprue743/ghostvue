@@ -367,7 +367,8 @@
     "ghost-context-menu.css",
     "ghost-menubar.css",
     "ghost-drawer.css",
-    "ghost-tree.css"
+    "ghost-tree.css",
+    "ghost-file-upload.css"
   ],
   "docsComponentNavOrder": [
     "accordion",

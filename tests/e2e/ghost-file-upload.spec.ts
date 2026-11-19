@@ -3,7 +3,7 @@ import { dirname } from 'node:path'
 
 import type { Locator, Page } from '@playwright/test'
 
-import { expectNoAxeViolations } from '../support/axe'
+import { axeScan, expectNoAxeViolations } from '../support/axe'
 import { expect, playgroundTest as test } from '../support/playground'
 
 interface FileSpec {
@@ -427,5 +427,73 @@ test.describe('GhostFileUpload @component:GhostFileUpload', () => {
     await expect(page.getByRole('status')).toHaveText(
       'a.txt was not added: It is already in the list.',
     )
+  })
+  test('themed example has 44px targets, a focus ring, and drag styling', async ({
+    page,
+    playgroundUrl,
+  }) => {
+    // Mode flips are applied instantly by the harness; color transitions
+    // (motion allowed) would otherwise be sampled mid-flight by axe.
+    await page.emulateMedia({ reducedMotion: 'reduce' })
+    for (const mode of ['light', 'dark'] as const) {
+      await axeScan(page, playgroundUrl, 'file-upload/themed', { mode })
+    }
+    const trigger = await openExample(page, playgroundUrl, 'file-upload/themed')
+    const remove = page.getByRole('button', { name: 'Remove q3-report.pdf' })
+    for (const target of [trigger, remove]) {
+      const box = await target.boundingBox()
+      expect(box?.width).toBeGreaterThanOrEqual(44)
+      expect(box?.height).toBeGreaterThanOrEqual(44)
+    }
+
+    // Reach the trigger by keyboard so :focus-visible applies.
+    await remove.focus()
+    await page.keyboard.press('Shift+Tab')
+    await expect(trigger).toBeFocused()
+    const outline = await trigger.evaluate((element) => {
+      const style = getComputedStyle(element)
+      return { style: style.outlineStyle, width: style.outlineWidth }
+    })
+    expect(outline.style).toBe('solid')
+    expect(Number.parseFloat(outline.width)).toBeGreaterThan(0)
+
+    await page.keyboard.press('Tab')
+    await expect(remove).toBeFocused()
+    expect(
+      await remove.evaluate(
+        (element) => getComputedStyle(element).outlineStyle,
+      ),
+    ).toBe('solid')
+
+    const zone = page.locator('[data-part="dropzone"]')
+    const borderStyle = () =>
+      zone.evaluate((element) => getComputedStyle(element).borderTopStyle)
+    expect(await borderStyle()).toBe('dashed')
+    await dispatchFileDrag(zone, 'dragenter')
+    await expect(zone).toHaveAttribute('data-state', 'dragging')
+    expect(await borderStyle()).toBe('solid')
+    await expect(zone.getByText('Drop to add files')).toBeVisible()
+    await dispatchFileDrag(zone, 'drop', { names: ['notes.txt'] })
+    await expect(zone).not.toHaveAttribute('data-state', 'dragging')
+    expect(await borderStyle()).toBe('dashed')
+    await expect(page.getByRole('listitem')).toHaveCount(3)
+  })
+
+  test('themed parts render forced-colors system colors', async ({
+    page,
+    playgroundUrl,
+  }) => {
+    await page.emulateMedia({ forcedColors: 'active' })
+    const trigger = await openExample(page, playgroundUrl, 'file-upload/themed')
+    await expect(trigger).toBeVisible()
+    await trigger.focus()
+    const zone = page.locator('[data-part="dropzone"]')
+    await dispatchFileDrag(zone, 'dragenter')
+    await expect(zone).toHaveAttribute('data-state', 'dragging')
+    expect(
+      await zone.evaluate(
+        (element) => getComputedStyle(element).borderTopStyle,
+      ),
+    ).toBe('solid')
   })
 })
