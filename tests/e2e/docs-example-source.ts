@@ -30,3 +30,23 @@ export async function openExampleSource(page: Page, id: string): Promise<void> {
     })
   }).toPass()
 }
+
+/** The `Width` disclosure toggle that `DemoPreview` renders in every toolbar. */
+export function examplePreviewWidthToggle(page: Page, id: string): Locator {
+  return page
+    .locator(`[data-example-id="${id}"]`)
+    .getByRole('button', { name: /preview width$/ })
+}
+
+/** Expand an example's Preview width band, retrying until hydration. */
+export async function openPreviewWidth(page: Page, id: string): Promise<void> {
+  const toggle = examplePreviewWidthToggle(page, id)
+  await expect(async () => {
+    if ((await toggle.getAttribute('aria-expanded')) !== 'true') {
+      await toggle.click()
+    }
+    await expect(toggle).toHaveAttribute('aria-expanded', 'true', {
+      timeout: 500,
+    })
+  }).toPass()
+}

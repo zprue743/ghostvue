@@ -19,6 +19,8 @@
    */
   --_demo-inset: clamp(1rem, var(--ghost-space-inset-md), 1.25rem);
   --_demo-inset-block: var(--ghost-space-inset-sm);
+  /* Room around the stage for the largest recipe focus ring (width + offset). */
+  --_demo-ring-room: 0.5rem;
 
   box-sizing: border-box;
   display: grid;
@@ -141,6 +143,35 @@
   }
 }
 
+/* Copy feedback sits after the buttons; empty while idle so it takes no room. */
+.ghost-example__copy-status {
+  color: var(--ghost-text-muted);
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+/*
+ * Idle: visually hidden, not `display: none`, so the live region stays in the
+ * accessibility tree and its first message is announced. Out of flow, it
+ * also adds no toolbar gap.
+ */
+.ghost-example__copy-status:empty {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.ghost-example__copy-status[data-state='failed'] {
+  flex-basis: 100%;
+  /* Undo the toolbar's ghost-button pull so the text lines up with them. */
+  padding-inline: var(--ghost-space-gap-sm);
+  color: var(--ghost-text-danger);
+}
+
 .ghost-example__controls {
   display: flex;
   flex-wrap: wrap;
@@ -176,8 +207,6 @@
  * negative margin keeps the demo aligned with the header inset.
  */
 .ghost-example__stage {
-  --_demo-ring-room: 0.5rem;
-
   display: flow-root;
   min-block-size: 2.5rem;
   margin: calc(-1 * var(--_demo-ring-room));
@@ -218,4 +247,131 @@
 .ghost-example__source {
   min-inline-size: 0;
   border-block-start: 1px solid var(--ghost-border-muted);
+}
+
+/*
+ * Preview-width band. A native fieldset with its UA chrome removed: border,
+ * padding and the min-content minimum width (which would otherwise force
+ * horizontal overflow on phones) all come off here.
+ */
+.ghost-example__width {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--ghost-space-gap-sm) var(--ghost-space-gap-md);
+  min-inline-size: 0;
+  margin: 0;
+  padding: var(--_demo-inset-block) var(--_demo-inset);
+  border: 0;
+  border-block-end: 1px solid var(--ghost-border-muted);
+  color: var(--ghost-surface-fg);
+  font-size: 0.8125rem;
+  line-height: 1.4;
+}
+
+/*
+ * A legend inside a flex fieldset still renders as the fieldset's legend, so
+ * it cannot join the flex row; float it to put it on the same line.
+ */
+.ghost-example__width-legend {
+  float: inline-start;
+  margin-inline-end: var(--ghost-space-gap-sm);
+  padding: 0;
+  color: var(--ghost-text-muted);
+  font-weight: 650;
+}
+
+/* Segmented presets: native radios, visually replaced by their labels. */
+.ghost-example__width-presets {
+  display: inline-flex;
+  flex-wrap: wrap;
+  padding: 2px;
+  border: 1px solid var(--ghost-border-default);
+  border-radius: var(--ghost-radius-md);
+  background: var(--ghost-surface-bg);
+}
+
+.ghost-example__width-preset {
+  position: relative;
+  display: inline-flex;
+}
+
+.ghost-example__width-radio {
+  position: absolute;
+  inset: 0;
+  inline-size: 100%;
+  block-size: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.ghost-example__width-preset > span {
+  min-inline-size: 2.75rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: calc(var(--ghost-radius-md) - 2px);
+  color: var(--ghost-text-muted);
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  text-align: center;
+}
+
+.ghost-example__width-radio:hover + span {
+  color: var(--ghost-surface-fg);
+}
+
+.ghost-example__width-radio:checked + span {
+  background: var(--ghost-elevation-1-bg);
+  box-shadow: 0 0 0 1px var(--ghost-border-default);
+  color: var(--ghost-surface-fg);
+}
+
+/* Outline, not border: the ring must not change the label's box. */
+.ghost-example__width-radio:focus-visible + span {
+  outline: 2px solid var(--ghost-focus-ring-color);
+  outline-offset: 1px;
+}
+
+.ghost-example__width-range {
+  flex: 1 1 8rem;
+  min-inline-size: 0;
+  max-inline-size: 16rem;
+  margin: 0;
+  accent-color: var(--ghost-action-primary-bg);
+}
+
+.ghost-example__width-range:focus-visible {
+  outline: 2px solid var(--ghost-focus-ring-color);
+  outline-offset: 2px;
+}
+
+.ghost-example__width-report {
+  color: var(--ghost-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/*
+ * Query container for the demo. `container-type: inline-size` adds inline
+ * size and style containment but no layout containment, so this box is not a
+ * containing block for positioned descendants (the portal=false e2e fixture
+ * guards that). Do not add `position`, `transform`, `filter` or `contain`
+ * here.
+ */
+.ghost-example__viewport {
+  container: ghost-demo / inline-size;
+  min-inline-size: 0;
+}
+
+/*
+ * A requested width narrows the canvas, capped by `min()` so it can never
+ * overflow the frame on a phone. The two-step shadow paints the preview
+ * surface out to the ring room (so edge focus rings sit on the same surface)
+ * and then a hairline marking the preview edge.
+ */
+.ghost-example__viewport[data-constrained] {
+  inline-size: min(var(--_demo-preview-width, 100%), 100%);
+  margin-inline: auto;
+  box-shadow:
+    0 0 0 var(--_demo-ring-room) var(--ghost-surface-bg),
+    0 0 0 calc(var(--_demo-ring-room) + 1px) var(--ghost-border-default);
 }
