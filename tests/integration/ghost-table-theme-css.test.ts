@@ -44,4 +44,27 @@ describe('GhostTable theme CSS tokens', () => {
     expect(css).toContain('overflow-x: auto')
     expect(findHardcodedVisuals(css)).toEqual([])
   })
+
+  it('gives the scroll region a token focus ring drawn inside its box', async () => {
+    const css = stripComments(await readFile(cssPath, 'utf8'))
+    const rule =
+      /\.ghost-table-scroll-container:focus-visible[^{]*\{([^}]*)\}/.exec(css)
+    expect(rule?.[1]).toContain(
+      'outline: var(--ghost-focus-ring-width) solid var(--ghost-focus-ring-color)',
+    )
+    // Inset offset: ancestors that clip overflow cannot cut the ring off.
+    expect(rule?.[1]).toContain(
+      'outline-offset: calc(-1 * var(--ghost-focus-ring-width))',
+    )
+  })
+
+  it('keeps body and foot row headers off the column header band', async () => {
+    const css = stripComments(await readFile(cssPath, 'utf8'))
+    const rule =
+      /:is\(\.ghost-table-body, \.ghost-table-foot\)\s*>\s*\.ghost-table-row\s*>\s*\.ghost-table-header-cell[^{]*\{([^}]*)\}/.exec(
+        css,
+      )
+    expect(rule?.[1]).toContain('background-color: transparent')
+    expect(rule?.[1]).toContain('vertical-align: top')
+  })
 })
