@@ -66,6 +66,92 @@ against the canvas.
 Keep API tables, CSS snippets, and non-runnable illustrations as fenced
 blocks.
 
+## Props playgrounds
+
+A few examples opt into a typed props playground: a row of controls above
+the canvas that changes chosen props on the live demo. Today these are
+`button/themed` (size, tone, variant) and `input/search` (size, disabled,
+invalid). A playground is an explicit adapter in
+`apps/docs/.vitepress/theme/demo-playgrounds.ts`; examples without one are
+unchanged.
+
+To add one:
+
+1. Give the example SFC optional props for the values to explore and pass
+   each one to the component explicitly. Destructure defaults are what the
+   sample renders on its own, so the file stays runnable as written:
+
+   ```ts
+   const { size = 'md' } = defineProps<{ size?: GhostButtonSize }>()
+   ```
+
+2. Add an adapter for the id, checked with `satisfies`:
+
+   ```ts
+   const buttonThemed = {
+     component: 'GhostButton',
+     controls: [/* ... */],
+   } satisfies DemoPlayground<
+     DemoPlaygroundProps<typeof ButtonThemedExample, typeof GhostButton>
+   >
+   ```
+
+   That type only accepts props the SFC declares and the target component
+   also accepts, options from the prop's own union, and a default of the
+   right type. `pnpm typecheck` checks it with vue-tsc
+   (`apps/docs/tsconfig.demo.json`).
+
+3. Repeat the SFC defaults in each control's `default`.
+   `tests/integration/docs-demo-playgrounds.test.ts` mounts every adapter's
+   example and fails if the defaults differ or a control has no visible
+   effect.
+
+Rules the host keeps:
+
+- Only string-union props (a select) and booleans (a checkbox) are offered.
+  Objects, functions and numbers are left out because the copied binding
+  could not express them as plain attributes.
+- Values reach the demo as declared props, never through attribute
+  fallthrough, so a control cannot claim an effect the example ignores.
+- The **Code** disclosure still shows the original SFC and is labelled
+  "Original source". The "Overrides" line lists only values that differ
+  from the SFC defaults.
+- **Copy props** copies a template binding of every controlled prop, for
+  example `<GhostButton size="lg" tone="danger" variant="outline" />`.
+  Static string attributes typecheck against the prop union in the
+  consumer's template; `false` booleans are left out.
+- **Reset** clears the overrides. The demo re-renders on its declared
+  defaults without remounting, and the source and width settings stay.
+
+## Showcase authoring standards
+
+These constraints apply to every example the docs frame renders:
+
+- **Layout.** Give the example one root element that owns its layout (a
+  grid of fields, a row with a token gap). The canvas is block layout: it
+  does not center, stretch, or shrink-wrap the demo. Several roots fall
+  back to a wrapping row. To adapt to the preview width, use
+  `@container ghost-demo (...)`, not `@media`.
+- **Surfaces.** The canvas uses `--ghost-surface-subtle-bg` inside a frame
+  on elevation 1. Do not paint a page or card background on the example
+  root; let themed components bring their own surfaces. Use semantic tokens
+  only, so light, dark and every flagship work.
+- **Typography.** The frame and its controls reset `.vp-doc` paragraph,
+  code and form styles on their own parts. Examples are not shielded the
+  same way: native text (`<p>`, `<label>`) picks up docs prose styles, so
+  keep it short and do not rely on margins from the docs page.
+- **Focus.** The stage leaves room for the largest focus ring. Do not put
+  `overflow: hidden` on an example root, and draw custom rings with
+  `outline` so focus and hover never change layout.
+- **Source.** The source shown and copied is the file on disk. Keep it
+  readable as real usage: no docs-only wrappers, and only add playground
+  props an app could plausibly pass.
+- **Portals.** Overlays portal to `<body>` by default and are fine. For an
+  inline overlay (`:portal="false"`), rely on `.ghost-example__preview` as
+  the containing block. Do not add `position`, `transform`, `filter` or
+  `contain` to example roots that hold inline overlays, or the stage's
+  scroll box will clip them.
+
 ## Manifests
 
 Each component manifest's `examples` array lists the ids that belong to

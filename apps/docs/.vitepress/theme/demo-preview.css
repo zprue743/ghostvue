@@ -375,3 +375,175 @@
     0 0 0 var(--_demo-ring-room) var(--ghost-surface-bg),
     0 0 0 calc(var(--_demo-ring-room) + 1px) var(--ghost-border-default);
 }
+
+/*
+ * Typed props playground (`DemoPlaygroundPanel.vue`), in the frame's controls
+ * band. Fields wrap as a row on wide frames and stack one per line on phones;
+ * each field keeps its label beside its control so nothing truncates.
+ */
+.ghost-playground {
+  display: grid;
+  gap: var(--ghost-space-gap-sm);
+  inline-size: 100%;
+  min-inline-size: 0;
+  color: var(--ghost-surface-fg);
+  font-size: 0.8125rem;
+  line-height: 1.4;
+}
+
+.ghost-playground__fields {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--ghost-space-gap-sm) var(--ghost-space-gap-lg);
+  min-inline-size: 0;
+}
+
+.ghost-playground__field {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ghost-space-gap-sm);
+  min-inline-size: 0;
+}
+
+.ghost-playground__label {
+  color: var(--ghost-text-muted);
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.ghost-playground__select-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+/*
+ * VitePress `base.css` strips select borders, padding and the native arrow
+ * (`appearance: none`) and removes `:focus` outlines; restore a bordered
+ * control with its own chevron and a visible keyboard ring.
+ */
+.ghost-playground__select {
+  box-sizing: border-box;
+  min-block-size: 2rem;
+  min-inline-size: 6.5rem;
+  padding: 0.2rem 1.75rem 0.2rem 0.6rem;
+  border: 1px solid var(--ghost-border-default);
+  border-radius: var(--ghost-radius-md);
+  background: var(--ghost-surface-bg);
+  color: var(--ghost-surface-fg);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.ghost-playground__select:hover {
+  border-color: var(--ghost-border-strong);
+}
+
+.ghost-playground__select-icon {
+  position: absolute;
+  inset-inline-end: 0.55rem;
+  color: var(--ghost-text-muted);
+  pointer-events: none;
+}
+
+.ghost-playground__checkbox {
+  inline-size: 1rem;
+  block-size: 1rem;
+  margin: 0;
+  accent-color: var(--ghost-action-primary-bg);
+  cursor: pointer;
+}
+
+/* Outline, not border or box-shadow: the ring never changes the control box. */
+.ghost-playground__select:focus-visible,
+.ghost-playground__checkbox:focus-visible {
+  outline: 2px solid var(--ghost-focus-ring-color);
+  outline-offset: 2px;
+}
+
+.ghost-playground__footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--ghost-space-gap-xs) var(--ghost-space-gap-md);
+  min-inline-size: 0;
+}
+
+/* `.vp-doc p` adds margins and 28px leading; the panel owns both. */
+.ghost-playground__summary {
+  flex: 1 1 14rem;
+  min-inline-size: 0;
+  margin: 0;
+  color: var(--ghost-text-muted);
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+/* `.vp-doc :not(pre) > code` restyles inline code; reset it to the panel's. */
+.ghost-playground__code {
+  padding: 0;
+  border-radius: 0;
+  background: none;
+  color: var(--ghost-surface-fg);
+  font-family: var(--vp-font-family-mono);
+  font-size: 0.8125rem;
+  overflow-wrap: anywhere;
+}
+
+.ghost-playground__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ghost-space-gap-xs);
+  /* Line ghost-button labels up with the inset, like the header toolbar. */
+  margin-inline: calc(-1 * var(--ghost-space-gap-sm));
+}
+
+.ghost-playground__status {
+  color: var(--ghost-text-muted);
+  overflow-wrap: anywhere;
+}
+
+/* Idle: visually hidden but still in the accessibility tree (see Copy). */
+.ghost-playground__status:empty {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.ghost-playground__status[data-state='failed'] {
+  flex-basis: 100%;
+  color: var(--ghost-text-danger);
+}
+
+@media (max-width: 479px) {
+  .ghost-playground__fields {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  /* One field per row: label at the start, control at the end. */
+  .ghost-playground__field {
+    justify-content: space-between;
+  }
+
+  .ghost-playground__field--switch {
+    flex-direction: row-reverse;
+  }
+}
+
+/*
+ * Above the highlighted source of a playground example: names it as the
+ * original SFC so it is not read as the current settings.
+ */
+.ghost-example__source-note {
+  margin: 0;
+  padding: var(--_demo-inset-block) var(--_demo-inset);
+  color: var(--ghost-text-muted);
+  font-size: 0.8125rem;
+  line-height: 1.4;
+}
