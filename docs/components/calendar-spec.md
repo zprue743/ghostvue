@@ -66,7 +66,7 @@ d.getDate())`.
 
 | Prop                  | Type                              | Default     | Contract                                                                                                                        |
 | --------------------- | --------------------------------- | ----------- | ------------------------------------------------------------------------------------------------------------------------------- |
-| `modelValue`          | `GhostCalendarValue`              | `undefined` | Controlled selection. Omit for uncontrolled.                                                                                    |
+| `modelValue`          | `GhostCalendarValue \| null`      | `undefined` | Controlled selection. Omit for uncontrolled; `null` is a controlled empty selection (see below).                                |
 | `defaultValue`        | `GhostCalendarValue`              | `undefined` | Initial selection when `modelValue` is omitted.                                                                                 |
 | `selectionMode`       | `'single' \| 'range'`             | `'single'`  | Single date vs inclusive range.                                                                                                 |
 | `minValue`            | `CalendarDate \| undefined`       | `undefined` | Dates before this are disabled.                                                                                                 |
@@ -115,10 +115,34 @@ Host uses `role="grid"`, `aria-labelledby` → heading id when present,
   second activation on a later day sets `end`; second on earlier day resets
   `start`; third activation starts a new range.
 - Single selection replaces the value on each activation.
+- **Controlled empty (`null`)** — added in GHO-208 for `GhostDatePicker`.
+  `modelValue: null` keeps the calendar controlled while nothing is selected;
+  `undefined` still means uncontrolled. `null` passes through the
+  control-ownership check unchanged, then every selection reader (slot
+  `modelValue`, `useGhostCalendar().modelValue`, cell state) normalizes it to
+  the existing empty output, `undefined`. `defaultValue` is ignored for the
+  initial selection, visible month, and focus while `modelValue` is `null`.
+  Proposals emitted while controlled-empty use the existing payload types and
+  have no effect until the parent applies them. Setting `modelValue` back to
+  `null` clears a pending range start, so the next activation starts a new
+  range. `GhostCalendarValue`, emitted payloads, and the `defaultValue`
+  contract are unchanged.
 
 ### Events, callbacks, slots, and exposed methods
 
-- `GhostCalendar` emits `update:modelValue` and `update:visibleMonth`.
+- `GhostCalendar` emits `update:modelValue`, `update:visibleMonth`, and
+  `select`.
+- `select(date: CalendarDate)` (composable: `onSelect`) fires exactly once for
+  each accepted date activation, after the `update:modelValue` proposal and
+  focus update. It fires for repeated activation of the same date and when a
+  controlled parent ignores the proposal. Activations rejected because the
+  date is outside `minValue` / `maxValue`, unavailable via `isDateDisabled`,
+  outside the visible month, or the root is `disabled` emit nothing.
+  A pending range start and a completed one-day range propose the same
+  `{ start, end }` shape; consumers that must tell them apart (such as
+  `GhostDatePicker`, which owns its own range anchor per the
+  [DatePicker specification](/specs/date-picker#additive-dependency-contracts-calendar-and-dialog))
+  count `select` activations instead of reading model proposals.
 - Default slot: `{ modelValue, visibleMonth, selectionMode }`.
 - `GhostCalendarHeading` default slot: `{ label, visibleMonth }` (localized
   month/year string).
@@ -234,7 +258,9 @@ last day of February).
 ## Test plan
 
 - Unit: selection single/range, min/max bounds vs `isDateDisabled` unavailable
-  focus, controlled ignore, month navigation, keyboard moves, roving tabindex,
+  focus, controlled ignore, `select` ordering/repeat/disabled suppression,
+  controlled-empty `null` (ignored proposals, clearing a pending range),
+  month navigation, keyboard moves, roving tabindex,
   disabled root, locale week
   start, SSR no document listeners.
 - Integration: `expectSsrHydration` compound tree.

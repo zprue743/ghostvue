@@ -13,8 +13,10 @@ export const GhostCalendar = defineComponent({
   name: 'GhostCalendar',
   inheritAttrs: false,
   props: {
+    // `null` is forwarded as a controlled empty selection; only `undefined`
+    // leaves the headless root uncontrolled.
     modelValue: {
-      type: Object as PropType<GhostCalendarValue | undefined>,
+      type: Object as PropType<GhostCalendarValue | null | undefined>,
       default: undefined,
     },
     defaultValue: {
@@ -52,7 +54,7 @@ export const GhostCalendar = defineComponent({
     },
     disabled: { type: Boolean, default: false },
   },
-  emits: ['update:modelValue', 'update:visibleMonth'],
+  emits: ['update:modelValue', 'update:visibleMonth', 'select'],
   setup(props, { attrs, emit, slots }) {
     return () => {
       const calendarProps: Record<string, unknown> = {
@@ -65,6 +67,9 @@ export const GhostCalendar = defineComponent({
         },
         'onUpdate:visibleMonth': (month: CalendarDate) => {
           emit('update:visibleMonth', month)
+        },
+        onSelect: (date: CalendarDate) => {
+          emit('select', date)
         },
       }
       if (props.modelValue !== undefined) {

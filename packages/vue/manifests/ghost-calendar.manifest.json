@@ -59,7 +59,7 @@
     },
     {
       "name": "modelValue",
-      "type": "GhostCalendarValue",
+      "type": "GhostCalendarValue | null",
       "required": false,
       "description": "Declared prop `modelValue`.",
       "deprecated": false
@@ -98,7 +98,7 @@
     {
       "prop": "modelValue",
       "event": "update:modelValue",
-      "type": "GhostCalendarValue",
+      "type": "GhostCalendarValue | null",
       "description": "v-model binding for `modelValue`."
     },
     {
@@ -108,7 +108,13 @@
       "description": "v-model binding for `visibleMonth`."
     }
   ],
-  "events": [],
+  "events": [
+    {
+      "name": "select",
+      "payloadType": "CalendarDate",
+      "description": "Emitted as `select`."
+    }
+  ],
   "slots": [
     {
       "name": "default",
