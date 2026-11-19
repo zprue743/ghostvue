@@ -141,6 +141,7 @@
     ]
   },
   "examples": [
+    "popover/share-settings",
     "popover/themed"
   ]
 }
