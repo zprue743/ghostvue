@@ -13,7 +13,7 @@ import { startStaticServer } from './static-server'
 const pilots = [
   { slug: 'button', id: 'button/themed', control: 'Delete' },
   { slug: 'input', id: 'input/themed', control: undefined },
-  { slug: 'dialog', id: 'dialog/themed', control: 'Edit profile' },
+  { slug: 'dialog', id: 'dialog/edit-profile', control: 'Edit profile' },
 ] as const
 
 const modes = ['light', 'dark'] as const
@@ -236,7 +236,7 @@ test.describe('docs DemoPreview frame', () => {
       }
 
       const axe = await new AxeBuilder({ page })
-        .include('[data-example-id="dialog/themed"]')
+        .include('[data-example-id="dialog/edit-profile"]')
         .analyze()
       expect(axe.violations).toEqual([])
     } finally {

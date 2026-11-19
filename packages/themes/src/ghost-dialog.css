@@ -32,13 +32,19 @@
     font-feature-settings: var(--ghost-type-feature-default);
     gap: var(--ghost-space-gap-md);
     inline-size: min(calc(100vw - 2 * var(--ghost-space-inset-lg)), 48ch);
-    inset-block-start: 50%;
-    inset-inline-start: 50%;
+    /*
+     * Centering pairs physical offsets with the physical translate() below.
+     * A logical inset-inline-start resolves to `right` under [dir='rtl'],
+     * while translate(-50%) still moves left, which pushed RTL dialogs off
+     * the viewport's left edge.
+     */
+    left: 50%;
     max-block-size: calc(100dvh - 2 * var(--ghost-space-inset-lg));
     max-inline-size: calc(100vw - 2 * var(--ghost-space-inset-lg));
     overflow: auto;
     padding: var(--ghost-space-inset-lg);
     position: fixed;
+    top: 50%;
     transform: translate(-50%, -50%);
     z-index: 50;
   }

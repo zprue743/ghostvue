@@ -50,4 +50,14 @@ describe('GhostDialog theme CSS tokens', () => {
     expect(stripComments(css)).not.toMatch(/animation|transition/i)
     expect(findHardcodedVisuals(css)).toEqual([])
   })
+
+  it('centers with physical offsets so the translate() matches in RTL', async () => {
+    const css = stripComments(await readFile(cssPath, 'utf8'))
+    // translate(-50%, -50%) is physical; a logical inline inset would flip to
+    // `right` under dir="rtl" and push the surface off-screen.
+    expect(css).toContain('transform: translate(-50%, -50%);')
+    expect(css).toMatch(/\bleft: 50%;/)
+    expect(css).toMatch(/\btop: 50%;/)
+    expect(css).not.toMatch(/inset-inline-start/)
+  })
 })
