@@ -318,11 +318,11 @@ test.describe('docs revitalize phase 1', () => {
       await page.setViewportSize({ width: 390, height: 800 })
       await page.goto(`${docs.url}/components/dialog.html`)
       const trigger = page
-        .locator('[data-example-id="dialog/themed"]')
+        .locator('[data-example-id="dialog/edit-profile"]')
         .getByRole('button', { name: 'Edit profile' })
       await trigger.click()
       await expect(
-        page.getByRole('dialog', { name: 'Profile details' }),
+        page.getByRole('dialog', { name: 'Edit profile' }),
       ).toBeVisible()
       await assertNoPageOverflow(page)
     } finally {

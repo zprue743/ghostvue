@@ -176,6 +176,7 @@
     ]
   },
   "examples": [
+    "dialog/edit-profile",
     "dialog/themed",
     "dialog/nested",
     "dialog/alert"

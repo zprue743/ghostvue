@@ -34,40 +34,40 @@ function confirmDelete(): void {
           This removes all projects and cannot be undone. Outside backdrop
           clicks do not dismiss an alert dialog.
         </GhostDialogDescription>
-        <div class="dialog-actions">
-          <GhostDialogClose
-            :as="GhostButton"
-            variant="soft"
-            tone="neutral"
-            size="sm"
-          >
+        <div class="alert-demo__actions">
+          <GhostDialogClose :as="GhostButton" variant="soft" tone="neutral">
             Cancel
           </GhostDialogClose>
-          <GhostButton tone="danger" size="sm" @click="confirmDelete">
+          <GhostButton tone="danger" @click="confirmDelete">
             Confirm delete
           </GhostButton>
         </div>
       </GhostDialogContent>
     </GhostDialog>
-    <p v-if="deleted" class="alert-status">Workspace deleted.</p>
+    <p class="alert-demo__status" role="status">
+      {{ deleted ? 'Workspace deleted.' : '' }}
+    </p>
   </div>
 </template>
 
 <style scoped>
 .alert-demo {
-  display: flex;
   align-items: center;
-  gap: var(--ghost-space-gap-sm);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ghost-space-gap-sm) var(--ghost-space-gap-md);
 }
 
-.alert-status {
+.alert-demo__status {
   color: var(--ghost-text-muted);
   font-size: var(--ghost-type-size-sm);
+  line-height: var(--ghost-type-line-snug);
   margin: 0;
 }
 
-.dialog-actions {
+.alert-demo__actions {
   display: flex;
+  flex-wrap: wrap;
   gap: var(--ghost-space-gap-sm);
   justify-content: flex-end;
 }
