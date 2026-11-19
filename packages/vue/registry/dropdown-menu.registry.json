@@ -43,9 +43,15 @@
       "layer": "headless"
     },
     {
+      "id": "dropdown-menu/record-actions",
+      "title": "Record actions",
+      "description": "Brief list with a per-row actions menu: grouped edit, duplicate, and status items, a destructive Archive with undo, and focus that follows each outcome.",
+      "layer": "themed"
+    },
+    {
       "id": "dropdown-menu/themed",
-      "title": "Themed",
-      "description": "Elevation-3 menu surface and interactive item tokens with a themed trigger button.",
+      "title": "View options",
+      "description": "Inbox toolbar view menu with checkbox and radio items, visible check indicators, and a reset action on the elevation-3 surface.",
       "layer": "themed"
     }
   ]
