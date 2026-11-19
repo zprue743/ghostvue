@@ -60,6 +60,12 @@
       "layer": "headless"
     },
     {
+      "id": "combobox/assignee-search",
+      "title": "Assignee search",
+      "description": "Issue assignee picker with deterministic async people search: loading, error, empty, results, and selected states, with stale responses ignored.",
+      "layer": "themed"
+    },
+    {
       "id": "combobox/themed",
       "title": "Themed",
       "description": "Input and list surface tokens from @ghostvue/themes.",

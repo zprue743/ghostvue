@@ -81,6 +81,9 @@ export function useGhostCombobox(options: UseGhostComboboxOptions = {}): {
   const loading = computed(() => Boolean(toValue(options.loading)))
   const allowDeselect = computed(() => Boolean(toValue(options.allowDeselect)))
 
+  // `allowControlledUndefined` lets a `v-model` parent clear a single
+  // selection (`undefined`) without dropping back to the stale uncontrolled
+  // value, which kept the old option selected and its label in the input.
   const selectedValue = useControllableState<GhostComboboxValue>({
     prop: () => toValue(options.modelValue),
     defaultValue: () =>
@@ -89,6 +92,7 @@ export function useGhostCombobox(options: UseGhostComboboxOptions = {}): {
     onChange: (next) => {
       options.onValueChange?.(next)
     },
+    allowControlledUndefined: true,
   })
 
   const searchValue = useControllableState<string>({

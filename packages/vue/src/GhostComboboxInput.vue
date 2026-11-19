@@ -10,6 +10,7 @@ import {
 
 import {
   ghostComboboxContextKey,
+  ghostComboboxListboxId,
   resolveComboboxHtmlElement,
   type GhostComboboxContext,
   type GhostComboboxInputElement,
@@ -95,10 +96,26 @@ const displayValue = computed(() => {
   return context.searchValue.value
 })
 
+// Booleans arrive as `true` from GhostFieldControl or as strings from
+// templates (`aria-invalid="true"`); `false` / `"false"` mean unset.
+function isAriaTrue(value: unknown): boolean {
+  return value === true || value === 'true' || value === ''
+}
+
 const inputAttrs = computed(() => {
   const rest: Record<string, unknown> = {}
   for (const [key, value] of Object.entries(attrs)) {
     if (
+      /*
+       * Field state from a GhostFieldControl spread (`invalid`, plus
+       * `aria-invalid` / `aria-required` from the field or the template) is
+       * combined with the root's own state below instead of being overwritten
+       * by it. The raw `invalid` key is not an input attribute. Native
+       * `required` still falls through unchanged.
+       */
+      key !== 'invalid' &&
+      key !== 'aria-invalid' &&
+      key !== 'aria-required' &&
       key !== 'id' &&
       key !== 'type' &&
       key !== 'role' &&
@@ -120,15 +137,27 @@ const inputAttrs = computed(() => {
     'aria-autocomplete': 'list',
     'aria-haspopup': 'listbox',
     'aria-expanded': String(open),
-    'aria-controls': context.contentId.value,
+    'aria-controls': ghostComboboxListboxId(context.contentId.value),
     'aria-activedescendant': open
       ? context.activeDescendantId.value
       : undefined,
-    'aria-invalid': context.invalid.value ? 'true' : undefined,
-    'aria-required': context.required.value ? 'true' : undefined,
+    'aria-invalid':
+      context.invalid.value ||
+      isAriaTrue(attrs['invalid']) ||
+      isAriaTrue(attrs['aria-invalid'])
+        ? 'true'
+        : undefined,
+    'aria-required':
+      context.required.value ||
+      isAriaTrue(attrs['required']) ||
+      isAriaTrue(attrs['aria-required'])
+        ? 'true'
+        : undefined,
     'data-part': 'input',
     'data-state': open ? 'open' : 'closed',
-    placeholder: context.placeholder.value,
+    // The root prop wins; otherwise a placeholder set on the input itself
+    // falls through instead of being overwritten with `undefined`.
+    placeholder: context.placeholder.value ?? attrs['placeholder'],
     autocomplete: attrs['autocomplete'] ?? 'off',
   }
 

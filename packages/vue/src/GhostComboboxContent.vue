@@ -14,6 +14,7 @@ import type { GhostPortalTarget } from './ghost-portal'
 import GhostPortal from './GhostPortal.vue'
 import {
   ghostComboboxContextKey,
+  ghostComboboxListboxId,
   resolveComboboxHtmlElement,
   type GhostComboboxContentElement,
   type GhostComboboxContentExposed,
@@ -255,9 +256,24 @@ const contentAttrs = computed(() => {
   }
 })
 
+/*
+ * An open list with nothing to choose from (not loading, no registered
+ * options) is not presented as a listbox: a listbox must own options or
+ * groups (axe aria-required-children), and the empty slot's message is not
+ * an option. The element keeps its id, so `aria-controls` still names the
+ * popup, and the root live region announces the empty result. While loading,
+ * `aria-busy` lets an empty listbox stand.
+ */
+const presentsListbox = computed(
+  () => !isOpen.value || context.loading.value || context.optionCount.value > 0,
+)
+
 const listboxAttrs = computed(() => ({
-  role: 'listbox',
-  'aria-labelledby': context.inputId.value,
+  // The input's and trigger's aria-controls name this element, the
+  // role="listbox" popup, rather than the presentational positioning wrapper.
+  id: ghostComboboxListboxId(contentId.value),
+  role: presentsListbox.value ? 'listbox' : undefined,
+  'aria-labelledby': presentsListbox.value ? context.inputId.value : undefined,
   'aria-busy': context.loading.value ? true : undefined,
   'aria-hidden': isOpen.value ? undefined : true,
   inert: isOpen.value ? undefined : true,
