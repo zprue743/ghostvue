@@ -116,13 +116,15 @@
 
   /*
    * `base.css` strips native form-control chrome (border, padding,
-   * background, focus outline) for VitePress's own UI. Headless demos ship no
-   * recipe, so restore the platform control instead of rendering bare text.
-   * Themed demos are excluded: their recipes own these elements, and some
-   * rely on the reset for properties they intentionally leave unset.
+   * background, focus outline) for VitePress's own UI. A consumer app has no
+   * such reset, so restore the platform control in every demo. Headless
+   * controls then render as native controls; themed recipes sit in the
+   * higher `ghostvue-theme` layer and still win for every property they set,
+   * while properties a recipe leaves unset fall back to the browser default,
+   * exactly as in an app. Controls a themed example leaves unstyled (a plain
+   * tooltip trigger) keep native chrome instead of rendering as bare text.
    */
-  :where(.ghost-example[data-example-layer='headless'] .ghost-example__preview)
-    :where(button, input, select, textarea) {
+  :where(.ghost-example__preview) :where(button, input, select, textarea) {
     all: revert;
   }
 

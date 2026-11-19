@@ -49,10 +49,12 @@ playgroundTest('section behavior', async ({ page, playgroundUrl }) => {
 ## Accessibility helpers
 
 - `axeScan(page, playgroundUrl, exampleId, { mode?: 'light' | 'dark' })` —
-  opens a registered example, optionally sets theme mode, and asserts zero axe
-  violations.
-- `waitForExamplePreview` / `setGhostExampleTheme` — lower-level example
-  navigation used by registry scans and component specs.
+  opens a registered example on the docs-equivalent token host (`calm`, unset
+  density) in the given mode and asserts zero axe violations.
+- `exampleUrl` / `waitForExamplePreview` — lower-level example navigation used
+  by registry scans and component specs. Pass `{ theme, density, mode }` to
+  pick another token host through the `/examples.html` query; never add
+  `.ghost-theme` to `<html>`, which would theme headless examples.
 
 Registry-wide scans live in `tests/e2e/examples.spec.ts`. Visual baselines
 (`@visual`) stay in `examples-visual.spec.ts` and are not run twice in CI.

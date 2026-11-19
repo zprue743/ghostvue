@@ -1,0 +1,52 @@
+/*
+ * Examples route host (`/examples.html`). Imported before the theme CSS so
+ * the layer statement below ranks `ghostvue-examples-host` under
+ * `ghostvue-theme`: themed recipes always win over these host rules, and
+ * unlayered example `<style scoped>` rules, authored classes, and inline
+ * styles win over both. That is the same order the docs canvas uses
+ * (`apps/docs/.vitepress/theme/docs-demo-compat.css`).
+ *
+ * The host paints the page and the canvas from semantic tokens on purpose
+ * instead of adding `.ghost-theme`, which would activate recipes for every
+ * headless example. Headless controls keep native chrome; nothing here sizes,
+ * pads, or outlines controls inside a demo.
+ */
+@layer ghostvue-examples-host, ghostvue-theme;
+
+@layer ghostvue-examples-host {
+  :root {
+    /* Native controls in headless demos follow the selected mode. */
+    color-scheme: light;
+  }
+
+  :root[data-ghost-mode='dark'] {
+    color-scheme: dark;
+  }
+
+  body {
+    margin: 0;
+    background-color: var(--ghost-surface-bg);
+    color: var(--ghost-surface-fg);
+  }
+
+  /*
+   * Native tables have no cell separation. Draw the same neutral grid as the
+   * docs canvas, excluding themed GhostTable cells whose recipe owns their
+   * rules.
+   */
+  :where(.examples-host__preview) :where(table) {
+    border-collapse: collapse;
+  }
+
+  :where(.examples-host__preview)
+    :where(
+      :is(th, td):not(
+        :is(.ghost-theme, .ghost-themed-scope)
+          :is(.ghost-table-header-cell, .ghost-table-cell)
+      )
+    ) {
+    border: 1px solid var(--ghost-border-default);
+    padding: 0.45rem 0.7rem;
+    text-align: start;
+  }
+}

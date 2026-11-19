@@ -65,9 +65,12 @@ test.describe('docs visual baselines', { tag: '@visual' }, () => {
         await preview.scrollIntoViewIfNeeded()
         await expect(preview).toBeVisible()
         await expect(preview.locator('.ghost-input').first()).toBeAttached()
-        await preview.evaluate((element) => {
-          element.style.padding = '12px'
-        })
+        // Capture the canvas with its real inset; never pad it from the test.
+        expect(
+          await preview.evaluate((element) =>
+            Number.parseFloat(getComputedStyle(element).paddingTop),
+          ),
+        ).toBeGreaterThan(0)
         await expect(preview).toHaveScreenshot(
           `docs-input-themed-390-${mode}.png`,
           screenshotOptions,
@@ -91,9 +94,12 @@ test.describe('docs visual baselines', { tag: '@visual' }, () => {
         await preview.scrollIntoViewIfNeeded()
         await expect(preview).toBeVisible()
         await expect(preview.locator('.ghost-checkbox').first()).toBeAttached()
-        await preview.evaluate((element) => {
-          element.style.padding = '12px'
-        })
+        // Capture the canvas with its real inset; never pad it from the test.
+        expect(
+          await preview.evaluate((element) =>
+            Number.parseFloat(getComputedStyle(element).paddingTop),
+          ),
+        ).toBeGreaterThan(0)
         await expect(preview).toHaveScreenshot(
           `docs-checkbox-headless-390-${mode}.png`,
           screenshotOptions,

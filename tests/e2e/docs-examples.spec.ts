@@ -679,6 +679,122 @@ test.describe('docs example previews', () => {
     }
   })
 
+  test('docs canvas and the playground examples route render the same control chrome and token host', async ({
+    browser,
+  }) => {
+    const docs = await startStaticServer('apps/docs/.vitepress/dist')
+    const playground = await startStaticServer('apps/playground/dist')
+
+    // Headless native controls, themed recipes, a themed calendar (its
+    // recipe was once missing from default.css), and themed overlay triggers
+    // the example leaves unstyled. VitePress strips native chrome from every
+    // control, so the docs canvas must restore it to match a consumer app.
+    const parityExamples = [
+      'button/basic',
+      'checkbox/indeterminate',
+      'switch/basic',
+      'number-input/themed',
+      'radio-group/themed',
+      'calendar/themed',
+      'tooltip/themed',
+    ] as const
+    const properties = [
+      'appearance',
+      'background-color',
+      'border-top-style',
+      'border-top-width',
+      'border-top-left-radius',
+      'font-size',
+      'font-weight',
+      'padding-top',
+      'padding-left',
+      'margin-top',
+    ]
+
+    interface Chrome {
+      tag: string
+      values: Record<string, string>
+    }
+    const chromeIn = (stage: Locator): Promise<Chrome[]> =>
+      stage.evaluate((element, names) => {
+        return [
+          ...element.querySelectorAll(
+            'button, input:not([type="hidden"]), select, textarea',
+          ),
+        ].map((control) => {
+          const style = getComputedStyle(control)
+          return {
+            tag: `${control.tagName.toLowerCase()}${control.getAttribute('type') ? `[${String(control.getAttribute('type'))}]` : ''}`,
+            values: Object.fromEntries(
+              names.map((name) => [name, style.getPropertyValue(name)]),
+            ),
+          }
+        })
+      }, properties)
+
+    try {
+      for (const mode of ['light', 'dark'] as const) {
+        const context = await browser.newContext({ colorScheme: mode })
+        await context.addInitScript((appearance) => {
+          localStorage.setItem('vitepress-theme-appearance', appearance)
+        }, mode)
+        const docsPage = await context.newPage()
+        const hostPage = await context.newPage()
+
+        for (const id of parityExamples) {
+          const component = id.split('/')[0] ?? ''
+          await docsPage.goto(`${docs.url}/components/${component}.html`)
+          const docsStage = docsPage.locator(
+            `[data-example-id="${id}"] .ghost-example__stage`,
+          )
+          await expect(docsStage.locator(':scope > *').first()).toBeAttached()
+
+          await hostPage.goto(
+            `${playground.url}/examples.html?id=${encodeURIComponent(id)}&mode=${mode}`,
+          )
+          const hostStage = hostPage.getByTestId('ghost-example-stage')
+          await expect(hostStage.locator(':scope > *').first()).toBeAttached()
+
+          // Same token host: calm flagship, density left unset, no global
+          // recipe activation on either surface.
+          for (const page of [docsPage, hostPage]) {
+            const html = page.locator('html')
+            await expect(html).toHaveAttribute('data-ghost-theme', 'calm')
+            await expect(html).toHaveAttribute('data-ghost-mode', mode)
+            await expect(html).not.toHaveAttribute('data-ghost-density')
+            await expect(html).not.toHaveClass(/\bghost-theme\b/)
+          }
+
+          const docsChrome = await chromeIn(docsStage)
+          const hostChrome = await chromeIn(hostStage)
+          expect(docsChrome.length, `${id} renders controls`).toBeGreaterThan(0)
+          expect(docsChrome, `${id} control chrome (${mode})`).toEqual(
+            hostChrome,
+          )
+          // Native or recipe chrome, never VitePress's bare-text reset.
+          for (const control of docsChrome) {
+            if (
+              control.tag === 'input[radio]' ||
+              control.tag === 'input[checkbox]'
+            ) {
+              continue
+            }
+            const painted =
+              Number.parseFloat(control.values['border-top-width'] ?? '0') >
+                0 ||
+              !isTransparentColor(control.values['background-color'] ?? '')
+            expect(painted, `${id} ${control.tag} keeps chrome`).toBe(true)
+          }
+        }
+
+        await context.close()
+      }
+    } finally {
+      await docs.close()
+      await playground.close()
+    }
+  })
+
   test('each example owns one collapsible highlighted source that never resets the demo', async ({
     page,
   }) => {
