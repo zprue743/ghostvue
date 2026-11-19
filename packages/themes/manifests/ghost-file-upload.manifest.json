@@ -1,0 +1,288 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "handwritten",
+  "name": "GhostFileUpload",
+  "package": "@ghostvue/themes",
+  "status": "experimental",
+  "description": "Themed wrappers around headless GhostFileUpload, GhostFileUploadDropzone, GhostFileUploadTrigger, GhostFileUploadList, and GhostFileUploadItemRemove; GhostFileUploadItem and useGhostFileUpload are re-exported unchanged. Importing from @ghostvue/themes loads ghost-file-upload.css: token-based dropzone with idle, hover, dragging, invalid, and disabled states, a neutral trigger and quiet remove buttons with at least 44px targets and a visible focus ring, bordered list items, motion only when reduced motion is not requested, and forced-colors support. Rules key on data-themed, so headless parts stay unstyled.",
+  "props": [
+    {
+      "name": "accept",
+      "type": "string",
+      "required": false,
+      "description": "Native `accept` grammar: a picker hint that is also enforced on intake. Forwarded to headless GhostFileUpload.",
+      "deprecated": false
+    },
+    {
+      "name": "defaultValue",
+      "type": "File[]",
+      "default": "[]",
+      "required": false,
+      "description": "Uncontrolled seed and form-reset baseline, captured once at setup. Forwarded to headless GhostFileUpload.",
+      "deprecated": false
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Disables the trigger, drops, and remove buttons, and omits the mirror from submit. Forwarded to headless GhostFileUpload.",
+      "deprecated": false
+    },
+    {
+      "name": "form",
+      "type": "string",
+      "required": false,
+      "description": "`form` attribute for the mirror and the picker. Forwarded to headless GhostFileUpload.",
+      "deprecated": false
+    },
+    {
+      "name": "id",
+      "type": "string",
+      "required": false,
+      "description": "Id of the trigger (the labelable control), not of the root element. Forwarded to headless GhostFileUpload.",
+      "deprecated": false
+    },
+    {
+      "name": "invalid",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Consumer validity, combined with native constraint failure. Forwarded to headless GhostFileUpload.",
+      "deprecated": false
+    },
+    {
+      "name": "maxFiles",
+      "type": "number",
+      "required": false,
+      "description": "Total list capacity. Floored; not finite or below 1 is unlimited. `1` turns `multiple` off. Forwarded to headless GhostFileUpload.",
+      "deprecated": false
+    },
+    {
+      "name": "maxFileSize",
+      "type": "number",
+      "required": false,
+      "description": "Per-file limit in bytes; equal is accepted. Not finite or negative is unset. Forwarded to headless GhostFileUpload.",
+      "deprecated": false
+    },
+    {
+      "name": "messages",
+      "type": "Partial<GhostFileUploadMessages>",
+      "required": false,
+      "description": "Typed, reactive overrides of announcement and label text. Forwarded to headless GhostFileUpload.",
+      "deprecated": false
+    },
+    {
+      "name": "modelValue",
+      "type": "File[]",
+      "required": false,
+      "description": "Controlled list. `undefined` is uncontrolled; `[]` is a real empty value. Forwarded to headless GhostFileUpload.",
+      "deprecated": false
+    },
+    {
+      "name": "name",
+      "type": "string",
+      "required": false,
+      "description": "Form mirror `name`. Without it no mirror renders and nothing is submitted. Forwarded to headless GhostFileUpload.",
+      "deprecated": false
+    },
+    {
+      "name": "preventDocumentDrop",
+      "type": "boolean",
+      "default": true,
+      "required": false,
+      "description": "Cancel file drags and drops outside every dropzone while an enabled dropzone is mounted. Forwarded to headless GhostFileUpload.",
+      "deprecated": false
+    },
+    {
+      "name": "required",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Native `required` on the form mirror when `name` is set. Forwarded to headless GhostFileUpload.",
+      "deprecated": false
+    },
+    {
+      "name": "validate",
+      "type": "GhostFileUploadValidate",
+      "required": false,
+      "description": "Synchronous, pure check after `accept` and `maxFileSize`; return a string to reject. Forwarded to headless GhostFileUpload.",
+      "deprecated": false
+    }
+  ],
+  "models": [
+    {
+      "prop": "modelValue",
+      "event": "update:modelValue",
+      "type": "File[]",
+      "description": "v-model for the File[] list. Every change emits a new array with the same File instances; the consumer array is never mutated."
+    }
+  ],
+  "events": [
+    {
+      "name": "reject",
+      "payloadType": "GhostFileUploadRejection[]",
+      "description": "Once per intake batch with at least one rejection, after update:modelValue. Fires even when a controlled parent ignores the list update."
+    }
+  ],
+  "slots": [
+    {
+      "name": "default",
+      "props": [
+        {
+          "name": "clear",
+          "type": "() => void",
+          "description": "Empties the list and `rejections`, and announces it."
+        },
+        {
+          "name": "clearRejections",
+          "type": "() => void",
+          "description": "Empties `rejections` without touching the list."
+        },
+        {
+          "name": "entries",
+          "type": "readonly GhostFileUploadEntry[]",
+          "description": "Current list with stable ids for `v-for` keys."
+        },
+        {
+          "name": "invalid",
+          "type": "boolean",
+          "description": "Effective invalid state: `invalid` prop or native constraint failure."
+        },
+        {
+          "name": "openPicker",
+          "type": "() => void",
+          "description": "Opens the native picker. No-op when disabled."
+        },
+        {
+          "name": "rejections",
+          "type": "readonly GhostFileUploadRejection[]",
+          "description": "Rejections from the most recent intake only."
+        },
+        {
+          "name": "remaining",
+          "type": "number | undefined",
+          "description": "`maxFiles` minus list length, never below 0; `undefined` when unlimited."
+        },
+        {
+          "name": "remove",
+          "type": "(file: File) => void",
+          "description": "Removes the first identical entry and applies the focus rule."
+        }
+      ],
+      "description": "Consumer layout of the parts, with the list entries, rejections from the latest intake, remaining capacity, effective invalid state, and actions."
+    }
+  ],
+  "exposed": [
+    {
+      "name": "blur",
+      "kind": "method",
+      "type": "() => void",
+      "description": "Blurs the trigger."
+    },
+    {
+      "name": "clear",
+      "kind": "method",
+      "type": "() => void",
+      "description": "Same as the slot `clear`."
+    },
+    {
+      "name": "element",
+      "kind": "property",
+      "type": "HTMLElement | null",
+      "description": "The root element."
+    },
+    {
+      "name": "focus",
+      "kind": "method",
+      "type": "(options?: FocusOptions) => void",
+      "description": "Focuses the trigger."
+    },
+    {
+      "name": "openPicker",
+      "kind": "method",
+      "type": "() => void",
+      "description": "Opens the native picker; call inside a user gesture."
+    }
+  ],
+  "styling": {
+    "parts": [
+      {
+        "name": "root",
+        "description": "Grid stack of the consumer's parts with data-themed."
+      },
+      {
+        "name": "dropzone",
+        "description": "Dashed surface; solid primary border while dragging."
+      },
+      {
+        "name": "trigger",
+        "description": "Neutral action button, at least 44px, with a focus ring."
+      },
+      {
+        "name": "list",
+        "description": "Unstyled-marker grid; styles its direct item children."
+      },
+      {
+        "name": "item",
+        "description": "Bordered row (headless part, styled through the list's child combinator)."
+      },
+      {
+        "name": "item-remove",
+        "description": "Quiet button at the item's inline end, at least 44px, with a focus ring."
+      }
+    ],
+    "states": [
+      {
+        "name": "dragging",
+        "description": "Dropzone while a file drag is over it."
+      },
+      {
+        "name": "invalid",
+        "description": "Danger border with doubled width on the dropzone and trigger."
+      },
+      {
+        "name": "disabled",
+        "description": "Disabled tokens on the trigger; reduced opacity on the dropzone."
+      }
+    ],
+    "cssProperties": [
+      {
+        "name": "--ghost-control-touch-min",
+        "description": "Minimum block and inline size of the trigger and remove buttons."
+      },
+      {
+        "name": "--ghost-border-primary",
+        "description": "Dropzone border while dragging."
+      },
+      {
+        "name": "--ghost-border-danger",
+        "description": "Dropzone and trigger border when invalid."
+      },
+      {
+        "name": "--ghost-surface-subtle-bg",
+        "description": "Idle dropzone background."
+      },
+      {
+        "name": "--ghost-focus-ring-color",
+        "description": "Focus ring on the trigger and remove buttons."
+      }
+    ],
+    "attributes": [
+      {
+        "name": "data-themed",
+        "values": [],
+        "description": "Present on every wrapped file upload part."
+      }
+    ]
+  },
+  "accessibility": {
+    "role": "generic",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/button/",
+    "keyboard": {},
+    "requiredAriaAttributes": []
+  },
+  "examples": [
+    "file-upload/themed"
+  ]
+}

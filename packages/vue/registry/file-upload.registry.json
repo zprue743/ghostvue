@@ -19,7 +19,14 @@
     "export { useGhostFileUpload } from './use-ghost-file-upload'",
     "export type {\n  GhostFileUploadDropzoneExposed,\n  GhostFileUploadDropzoneSlotProps,\n  GhostFileUploadEntry,\n  GhostFileUploadExposed,\n  GhostFileUploadItemExposed,\n  GhostFileUploadItemRemoveExposed,\n  GhostFileUploadListExposed,\n  GhostFileUploadMessages,\n  GhostFileUploadProps,\n  GhostFileUploadRejection,\n  GhostFileUploadRejectionContext,\n  GhostFileUploadRejectionReason,\n  GhostFileUploadSlotProps,\n  GhostFileUploadTriggerExposed,\n  GhostFileUploadValidate,\n  GhostFileUploadValidateContext,\n  UseGhostFileUploadOptions,\n} from './ghost-file-upload'"
   ],
-  "themesBarrel": [],
+  "themesBarrel": [
+    "export {\n  GhostFileUpload,\n  type GhostFileUploadEntry,\n  type GhostFileUploadExposed,\n  type GhostFileUploadMessages,\n  type GhostFileUploadRejection,\n  type GhostFileUploadSlotProps,\n  type GhostFileUploadValidate,\n} from './ghost-file-upload'",
+    "export {\n  GhostFileUploadDropzone,\n  type GhostFileUploadDropzoneExposed,\n  type GhostFileUploadDropzoneSlotProps,\n} from './ghost-file-upload-dropzone'",
+    "export {\n  GhostFileUploadTrigger,\n  type GhostFileUploadTriggerExposed,\n} from './ghost-file-upload-trigger'",
+    "export {\n  GhostFileUploadList,\n  type GhostFileUploadListExposed,\n} from './ghost-file-upload-list'",
+    "export {\n  GhostFileUploadItemRemove,\n  type GhostFileUploadItemRemoveExposed,\n} from './ghost-file-upload-item-remove'",
+    "export {\n  GhostFileUploadItem,\n  type GhostFileUploadItemExposed,\n  useGhostFileUpload,\n} from '@ghostvue/vue'"
+  ],
   "examples": [
     {
       "id": "file-upload/basic",
@@ -62,6 +69,12 @@
       "title": "Form",
       "description": "Native form with FormData from the mirror, required, and reset.",
       "layer": "headless"
+    },
+    {
+      "id": "file-upload/themed",
+      "title": "Themed",
+      "description": "Default theme dropzone, trigger, and removable file list with invalid and disabled states.",
+      "layer": "themed"
     }
   ]
 }
