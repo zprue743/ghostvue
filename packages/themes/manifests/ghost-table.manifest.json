@@ -13,6 +13,14 @@
       "required": false,
       "description": "Wraps the table in an explicit horizontal scroll container.",
       "deprecated": false
+    },
+    {
+      "name": "scrollLabel",
+      "type": "string",
+      "default": null,
+      "required": false,
+      "description": "Accessible name for the scroll region when containHorizontal is set. Without it the region is labelled by GhostTableCaption.",
+      "deprecated": false
     }
   ],
   "models": [],
@@ -43,5 +51,10 @@
     "keyboard": {},
     "requiredAriaAttributes": []
   },
-  "examples": ["table/basic", "table/contain-horizontal", "table/themed"]
+  "examples": [
+    "table/team-directory",
+    "table/basic",
+    "table/contain-horizontal",
+    "table/themed"
+  ]
 }
