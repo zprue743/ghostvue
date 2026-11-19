@@ -4,6 +4,25 @@
 consumer-owned mixed state. Import it from `@ghostvue/vue` for headless use, or
 from `@ghostvue/themes` for the default visual treatment.
 
+<GhostExample id="checkbox/notification-preferences" />
+
+The preferences panel composes themed `GhostCheckbox` with
+[`GhostField`](./field.md): each option's label points at its checkbox with
+`for`, and its description is linked through `aria-describedby`, so screen
+readers announce "Weekly digest, checkbox, not checked" followed by the hint.
+The checkbox keeps its full hit target in the first column, and the label's
+first line is centered on the painted box, so long labels and descriptions wrap
+under the text instead of under the control.
+
+**All project activity** is a select-all. It is `checked` when every child is
+on, `indeterminate` when only some are, and toggling it sets every child; the
+v-model stays boolean. **Security alerts** sits in a `disabled` field, which
+disables the checkbox and mutes its label: it stays visible so members know the
+alert exists, but they cannot turn it off. Disabled checkboxes are left out of
+form submission, so the seeded form posts `mentions` and `assignments` but not
+`security`. On narrow previews the actions stack at full
+width.
+
 ## Basic use
 
 <GhostExample id="checkbox/basic" />
@@ -37,6 +56,9 @@ attribute when a `for` association needs it.
 
 <GhostExample id="checkbox/themed" />
 
+The themed sample shows every state side by side, then each tone and size.
+Mixed clears on the first click, the way a resolved select-all would.
+
 Importing the themed component loads the default stylesheet. Visual props exist
 only on this wrapper:
 
@@ -63,6 +85,14 @@ HTML (usually becomes checked).
 
 Do not fold mixed into `modelValue`. DataTable-specific selection
 orchestration is out of scope for this component.
+
+## Field composition
+
+Spread `GhostFieldControl` slot props onto the checkbox to receive the field's
+generated `id`, `aria-describedby`, `aria-invalid`, `disabled`, and `required`.
+The slot's raw `invalid` flag is not an HTML attribute, so the checkbox drops
+it; `aria-invalid` carries that state. Every other attribute still falls
+through.
 
 ## Unlabeled and form use
 

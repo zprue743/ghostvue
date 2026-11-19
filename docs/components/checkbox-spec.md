@@ -59,7 +59,9 @@ type GhostCheckboxState = 'checked' | 'indeterminate' | undefined
 fallthrough attribute: the model owns that state, so a competing `checked`
 attribute cannot fight `:checked`. Native input attributes otherwise included
 in the public type (`name`, `value`, `form`, `required`, `autofocus`, `id`,
-`aria-*`, event listeners) fall through to the root `<input>`.
+`aria-*`, event listeners) fall through to the root `<input>`. The one key
+the SFC consumes is `invalid`: `GhostFieldControl` slot props include it, it is
+not an HTML attribute, and the slot's `aria-invalid` already carries the state.
 
 Named ESM exports: `GhostCheckbox`, `useGhostCheckbox`, and the types above.
 Headless behavior lives in the composable; the SFC is a thin unstyled

@@ -534,6 +534,12 @@
       "layer": "headless"
     },
     {
+      "id": "checkbox/notification-preferences",
+      "title": "Notification preferences",
+      "description": "Email preferences panel with described options, a mixed select-all, and a locked required alert.",
+      "layer": "themed"
+    },
+    {
       "id": "checkbox/basic",
       "title": "Basic",
       "description": "Labeled native checkbox with a boolean v-model.",
@@ -548,7 +554,7 @@
     {
       "id": "checkbox/themed",
       "title": "Themed",
-      "description": "Visual size and tone on the @ghostvue/themes wrapper.",
+      "description": "Size and tone on the @ghostvue/themes wrapper, with checked, mixed, and disabled states.",
       "layer": "themed"
     },
     {

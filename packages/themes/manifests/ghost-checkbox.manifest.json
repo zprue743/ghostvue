@@ -237,5 +237,5 @@
     },
     "requiredAriaAttributes": []
   },
-  "examples": ["checkbox/themed"]
+  "examples": ["checkbox/notification-preferences", "checkbox/themed"]
 }
