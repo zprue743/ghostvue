@@ -125,6 +125,7 @@
     ]
   },
   "examples": [
+    "dropdown-menu/record-actions",
     "dropdown-menu/themed"
   ]
 }
