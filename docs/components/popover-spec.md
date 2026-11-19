@@ -237,8 +237,9 @@ Follows WAI-ARIA APG disclosure / non-modal dialog guidance:
 
 ## Documentation plan
 
-- `docs/components/popover.md` with headless and themed executable examples
-  (`examples/popover/basic.vue`, `examples/popover/themed.vue`), API tables, and
+- `docs/components/popover.md` led by the themed sharing-settings showcase
+  (`examples/popover/share-settings.vue`), with headless and themed executable
+  examples (`examples/popover/basic.vue`, `examples/popover/themed.vue`), API tables, and
   non-modal dialog accessibility guidance.
 - Sidebar entry in `apps/docs/.vitepress/docs-nav.ts` and roadmap status update
   in `docs/roadmap.md`.
