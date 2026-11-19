@@ -8,6 +8,10 @@ import GhostComboboxContent from './GhostComboboxContent.vue'
 import GhostComboboxEmpty from './GhostComboboxEmpty.vue'
 import GhostComboboxInput from './GhostComboboxInput.vue'
 import GhostComboboxOption from './GhostComboboxOption.vue'
+import GhostComboboxTrigger from './GhostComboboxTrigger.vue'
+import GhostField from './GhostField.vue'
+import GhostFieldControl from './GhostFieldControl.vue'
+import GhostFieldLabel from './GhostFieldLabel.vue'
 import { waitForFormResetDeferral } from './form-reset'
 import {
   useGhostCombobox,
@@ -416,6 +420,10 @@ describe('GhostCombobox', () => {
 
     const empty = wrapper.get('[data-part="empty"]')
     expect(empty.isVisible()).toBe(false)
+    // While loading, an empty listbox stands with aria-busy.
+    const busy = wrapper.get('[data-part="listbox"]')
+    expect(busy.attributes('role')).toBe('listbox')
+    expect(busy.attributes('aria-busy')).toBe('true')
 
     wrapper.unmount()
     attached.pop()
@@ -441,6 +449,22 @@ describe('GhostCombobox', () => {
     await flushPromises()
     expect(openWrapper.get('[data-part="empty"]').isVisible()).toBe(true)
     expect(openWrapper.text()).toContain('No results')
+    // Inside role="listbox" only options and groups may carry a role; the
+    // root live region announces the empty result instead.
+    expect(
+      openWrapper.get('[data-part="empty"]').attributes('role'),
+    ).toBeUndefined()
+    expect(openWrapper.get('[data-part="announcer"]').text()).toBe(
+      'No results available',
+    )
+    // A listbox must own options; with none it stays a plain popup that keeps
+    // its id for aria-controls.
+    const popup = openWrapper.get('[data-part="listbox"]')
+    expect(popup.attributes('role')).toBeUndefined()
+    expect(popup.attributes('aria-labelledby')).toBeUndefined()
+    expect(
+      openWrapper.get('[role="combobox"]').attributes('aria-controls'),
+    ).toBe(popup.attributes('id'))
   })
 
   it('uses native constraint validation when required and empty', async () => {
@@ -938,5 +962,208 @@ describe('GhostCombobox', () => {
     await nextTick()
     expect(announcer.text()).toBe('Sin coincidencias')
     expect(mirror.validationMessage).toBe('Campo obligatorio.')
+  })
+
+  it('points aria-controls on the input and trigger at the role="listbox" element', async () => {
+    const wrapper = mountAttached(
+      defineComponent({
+        setup() {
+          return () =>
+            h(GhostCombobox, null, {
+              default: () => [
+                h(GhostComboboxInput, { 'aria-label': 'Fruit' }),
+                h(GhostComboboxTrigger, { 'aria-label': 'Show fruits' }),
+                h(GhostComboboxContent, { portal: false }, () => [
+                  h(GhostComboboxOption, { value: 'a' }, () => 'Apple'),
+                ]),
+              ],
+            })
+        },
+      }),
+    )
+    await flushPromises()
+    const listbox = wrapper.get('[role="listbox"]')
+    const listboxId = listbox.attributes('id')
+    expect(listboxId).toBeTruthy()
+    // The content root is a presentational positioning wrapper, not the popup.
+    expect(listboxId).not.toBe(
+      wrapper.get('[data-part="content"]').attributes('id'),
+    )
+    expect(wrapper.get('[role="combobox"]').attributes('aria-controls')).toBe(
+      listboxId,
+    )
+    expect(
+      wrapper.get('[data-part="trigger"]').attributes('aria-controls'),
+    ).toBe(listboxId)
+  })
+
+  it('keeps GhostField invalid and required state spread onto the input', async () => {
+    const wrapper = mountAttached(
+      defineComponent({
+        setup() {
+          return () =>
+            h(
+              GhostField,
+              { invalid: true, required: true },
+              {
+                default: () => [
+                  h(GhostFieldLabel, null, () => 'Assignee'),
+                  h(GhostFieldControl, null, {
+                    default: (field: Record<string, unknown>) =>
+                      h(GhostCombobox, null, {
+                        default: () => [
+                          h(GhostComboboxInput, field),
+                          h(GhostComboboxContent, { portal: false }, () => [
+                            h(GhostComboboxOption, { value: 'a' }, () => 'Ada'),
+                          ]),
+                        ],
+                      }),
+                  }),
+                ],
+              },
+            )
+        },
+      }),
+    )
+    await flushPromises()
+    const input = wrapper.get('[role="combobox"]')
+    // The root's own `invalid` / `required` are false; the field's state wins.
+    expect(input.attributes('aria-invalid')).toBe('true')
+    expect(input.attributes('aria-required')).toBe('true')
+    // The raw slot key is not rendered as an attribute.
+    expect(input.attributes('invalid')).toBeUndefined()
+  })
+
+  it('leaves aria-invalid unset for a valid field and honours the root invalid prop', () => {
+    const valid = mountAttached(
+      defineComponent({
+        setup() {
+          return () =>
+            h(GhostCombobox, null, {
+              default: () => [
+                h(GhostComboboxInput, {
+                  'aria-label': 'Fruit',
+                  invalid: false,
+                  'aria-invalid': 'false',
+                }),
+              ],
+            })
+        },
+      }),
+    )
+    expect(
+      valid.get('[role="combobox"]').attributes('aria-invalid'),
+    ).toBeUndefined()
+
+    const invalidRoot = mountAttached(
+      defineComponent({
+        setup() {
+          return () =>
+            h(
+              GhostCombobox,
+              { invalid: true },
+              {
+                default: () => [
+                  h(GhostComboboxInput, {
+                    'aria-label': 'Fruit',
+                    invalid: false,
+                  }),
+                ],
+              },
+            )
+        },
+      }),
+    )
+    expect(
+      invalidRoot.get('[role="combobox"]').attributes('aria-invalid'),
+    ).toBe('true')
+  })
+
+  it('renders a placeholder set on the input when the root has none', () => {
+    const wrapper = mountAttached(
+      defineComponent({
+        setup() {
+          return () => [
+            h(GhostCombobox, null, {
+              default: () => [
+                h(GhostComboboxInput, {
+                  'aria-label': 'Person',
+                  placeholder: 'Search people',
+                }),
+              ],
+            }),
+            h(
+              GhostCombobox,
+              { placeholder: 'From root' },
+              {
+                default: () => [
+                  h(GhostComboboxInput, {
+                    'aria-label': 'Team',
+                    placeholder: 'From input',
+                  }),
+                ],
+              },
+            ),
+          ]
+        },
+      }),
+    )
+    const [person, team] = wrapper.findAll('[role="combobox"]')
+    expect(person?.attributes('placeholder')).toBe('Search people')
+    // The root prop keeps precedence when both are set.
+    expect(team?.attributes('placeholder')).toBe('From root')
+  })
+
+  it('clears a controlled single selection when the parent sets undefined', async () => {
+    const value = ref<string | undefined>(undefined)
+    const wrapper = mountAttached(
+      defineComponent({
+        setup() {
+          return () =>
+            h(
+              GhostCombobox,
+              {
+                modelValue: value.value,
+                'onUpdate:modelValue': (next: GhostComboboxValue) => {
+                  if (typeof next === 'string' || next === undefined) {
+                    value.value = next
+                  }
+                },
+                name: 'fruit',
+              },
+              {
+                default: () => [
+                  h(GhostComboboxInput, { 'aria-label': 'Fruit' }),
+                  h(GhostComboboxContent, { portal: false }, () => [
+                    h(
+                      GhostComboboxOption,
+                      { value: 'a', textValue: 'Apple' },
+                      () => 'Apple',
+                    ),
+                  ]),
+                ],
+              },
+            )
+        },
+      }),
+    )
+    await flushPromises()
+    const input = wrapper.get('[role="combobox"]')
+    const inputEl = input.element as HTMLInputElement
+    inputEl.focus()
+    await input.trigger('keydown', { key: 'ArrowDown' })
+    await input.trigger('keydown', { key: 'Enter' })
+    await flushPromises()
+    expect(value.value).toBe('a')
+    expect(inputEl.value).toBe('Apple')
+
+    value.value = undefined
+    await flushPromises()
+    const mirror = wrapper.get('input[name="fruit"]')
+      .element as HTMLInputElement
+    expect(mirror.value).toBe('')
+    expect(wrapper.get('[role="option"]').attributes('aria-selected')).toBe(
+      'false',
+    )
   })
 })

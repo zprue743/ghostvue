@@ -5,11 +5,29 @@ lookups, and form fields. Import headless parts from `@ghostvue/vue` or themed
 wrappers from `@ghostvue/themes`. Filtering and fetching are consumer-owned: the
 component renders whatever options you mount and emits the current query.
 
+<GhostExample id="combobox/assignee-search" />
+
+The **Assignee** field searches a local people directory that answers
+asynchronously. Before you type it suggests the issue's team; each query then
+shows a visual **Searching…** row while the listbox is `aria-busy`, followed by
+matching people, a "No one matches" message, or, with **Simulate offline** on,
+an error. Shorter queries answer more slowly, so typing quickly makes an older
+request finish last; `useGhostComboboxAsyncSearch` drops that stale response so
+the list always matches the input. Focus stays on the input the whole time:
+`ArrowDown` / `ArrowUp` move the highlight through `aria-activedescendant`,
+`Home` / `End` jump to the ends, `Enter` assigns, and `Escape` closes. The
+choice shows in the **Current assignee** panel and the polite status line;
+**Unassign** clears it and returns focus to the search. A `messages` object
+words the combobox's own announcements ("3 people found", "Could not load
+people"). The search and the assignee panel stack in narrow previews and sit
+side by side from about 32rem.
+
 ## Basic use
 
 <GhostExample id="combobox/basic" />
 
-The input is `role="combobox"`; suggestions live in a portaled listbox.
+The input is `role="combobox"`; suggestions live in a portaled listbox, and the
+input's `aria-controls` names that `role="listbox"` element.
 
 ## Async search
 
@@ -18,6 +36,8 @@ The input is `role="combobox"`; suggestions live in a portaled listbox.
 Listen for `search` (with `requestId`), call `begin(payload.requestId)` at fetch
 start, and use `isLatest(payload.requestId)` before applying results so
 stale responses do not overwrite newer results.
+Clear `loading` only for the latest request, too; otherwise a stale response
+ends the loading state while a newer search is still running.
 
 Filtering or replacing results never clears the selection. A selected value whose
 option is no longer rendered stays selected, keeps submitting with the form, and
@@ -33,7 +53,9 @@ Set `multiple` to toggle string values without closing the listbox.
 
 <GhostExample id="combobox/field" />
 
-Spread `GhostFieldControl` slot props onto `GhostComboboxInput`.
+Spread `GhostFieldControl` slot props onto `GhostComboboxInput`. The field's
+`invalid` and `required` state combine with the root's own `invalid` and
+`required` props into `aria-invalid` and `aria-required` on the input.
 
 ## Forms and reset
 
@@ -46,13 +68,19 @@ input submits the selection and participates in native `required` validation.
 
 <GhostExample id="combobox/themed" />
 
+The themed input shows a muted placeholder, a stronger border on hover, the
+token focus ring for keyboard focus and while the list is open, a danger
+border with `aria-invalid`, and the disabled action tokens. None of these
+states change the control's size. The list is capped to the viewport width and
+long option text wraps.
+
 ## API
 
 ### `GhostCombobox`
 
 | Prop            | Type                              | Default     | Description                                    |
 | --------------- | --------------------------------- | ----------- | ---------------------------------------------- |
-| `modelValue`    | `string \| string[] \| undefined` | `undefined` | Controlled selection.                          |
+| `modelValue`    | `string \| string[] \| undefined` | `undefined` | Controlled selection; `undefined` clears.      |
 | `defaultValue`  | same                              | `undefined` | Uncontrolled seed and reset value.             |
 | `multiple`      | `boolean`                         | `false`     | Multi-select toggles membership in `string[]`. |
 | `search`        | `string \| undefined`             | `undefined` | Controlled query in the input.                 |
@@ -64,7 +92,7 @@ input submits the selection and participates in native `required` validation.
 | `loading`       | `boolean`                         | `false`     | Hides empty slot; sets listbox `aria-busy`.    |
 | `open`          | `boolean \| undefined`            | `undefined` | Controlled listbox open state.                 |
 | `defaultOpen`   | `boolean`                         | `false`     | Initial open state.                            |
-| `placeholder`   | `string`                          | `undefined` | Input placeholder.                             |
+| `placeholder`   | `string`                          | `undefined` | Input placeholder (wins over the input's own). |
 
 ### Events
 

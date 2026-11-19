@@ -21,7 +21,57 @@
     width: 100%;
   }
 
+  /*
+   * Placeholder text reads as a hint, like the themed GhostInput. A
+   * pseudo-element is not allowed inside :where(), so it follows the list.
+   */
   :where(
+    .ghost-theme .ghost-combobox-input,
+    .ghost-themed-scope .ghost-combobox-input,
+    .ghost-combobox-input[data-themed]
+  )::placeholder {
+    color: var(--ghost-text-muted);
+    opacity: 1;
+  }
+
+  /* Hover only changes color, so the control never shifts. */
+  :where(
+    .ghost-theme .ghost-combobox-input:hover:not(:disabled),
+    .ghost-themed-scope .ghost-combobox-input:hover:not(:disabled),
+    .ghost-combobox-input[data-themed]:hover:not(:disabled)
+  ) {
+    border-color: var(--ghost-border-strong);
+  }
+
+  :where(
+    .ghost-theme .ghost-combobox-input[aria-invalid='true'],
+    .ghost-themed-scope .ghost-combobox-input[aria-invalid='true'],
+    .ghost-combobox-input[data-themed][aria-invalid='true']
+  ) {
+    border-color: var(--ghost-border-danger);
+  }
+
+  :where(
+    .ghost-theme .ghost-combobox-input:is(:disabled, [aria-disabled='true']),
+    .ghost-themed-scope
+      .ghost-combobox-input:is(:disabled, [aria-disabled='true']),
+    .ghost-combobox-input[data-themed]:is(:disabled, [aria-disabled='true'])
+  ) {
+    background-color: var(--ghost-action-disabled-bg);
+    border-color: var(--ghost-action-disabled-border);
+    color: var(--ghost-action-disabled-fg);
+    cursor: not-allowed;
+  }
+
+  /*
+   * Keyboard focus and the open state share one token ring. Without the
+   * :focus-visible rule a focused, closed input (after Escape or a
+   * selection) fell back to the browser outline.
+   */
+  :where(
+    .ghost-theme .ghost-combobox-input:focus-visible,
+    .ghost-themed-scope .ghost-combobox-input:focus-visible,
+    .ghost-combobox-input[data-themed]:focus-visible,
     .ghost-theme .ghost-combobox-input[data-state='open'],
     .ghost-themed-scope .ghost-combobox-input[data-state='open'],
     .ghost-combobox-input[data-themed][data-state='open']
@@ -66,7 +116,10 @@
     color: var(--ghost-surface-fg);
     font-family: var(--ghost-type-family-sans);
     max-block-size: min(100%, calc(100dvh - 2 * var(--ghost-space-inset-lg)));
+    /* Long option labels wrap inside the viewport instead of widening it. */
+    max-inline-size: calc(100vw - 2 * var(--ghost-space-inset-lg));
     overflow: auto;
+    overflow-wrap: anywhere;
     padding: var(--ghost-space-inset-xs);
     z-index: 50;
   }

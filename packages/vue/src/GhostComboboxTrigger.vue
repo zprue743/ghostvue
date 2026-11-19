@@ -10,6 +10,7 @@ import {
 
 import {
   ghostComboboxContextKey,
+  ghostComboboxListboxId,
   resolveComboboxHtmlElement,
   type GhostComboboxContext,
   type GhostComboboxTriggerElement,
@@ -70,7 +71,7 @@ const triggerAttrs = computed(() => {
     ...rest,
     type: isNativeButtonTag.value ? (attrs['type'] ?? 'button') : attrs['type'],
     'aria-expanded': String(open),
-    'aria-controls': context.contentId.value,
+    'aria-controls': ghostComboboxListboxId(context.contentId.value),
     'data-part': 'trigger',
     'data-state': open ? 'open' : 'closed',
     disabled: isNativeButtonTag.value ? isEffectivelyDisabled.value : undefined,
