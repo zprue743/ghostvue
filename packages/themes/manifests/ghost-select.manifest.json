@@ -17,11 +17,40 @@
         "description": "ghost-select-trigger surface aligned to control tokens."
       },
       {
+        "name": "value",
+        "description": "Selected label or placeholder; fills the trigger and ends long labels with an ellipsis."
+      },
+      {
         "name": "content",
-        "description": "Elevated listbox panel."
+        "description": "Elevated listbox panel, capped to the viewport width."
+      },
+      {
+        "name": "option",
+        "description": "Listbox row; long labels wrap."
       }
     ],
-    "states": [],
+    "states": [
+      {
+        "name": "placeholder",
+        "description": "Muted value text while nothing is selected."
+      },
+      {
+        "name": "invalid",
+        "description": "Danger border when the trigger has aria-invalid, from the root or a GhostField."
+      },
+      {
+        "name": "disabled",
+        "description": "Disabled action tokens on the trigger; disabled options are muted."
+      },
+      {
+        "name": "open",
+        "description": "Focus ring on the trigger while the listbox is open; also shown on keyboard focus."
+      },
+      {
+        "name": "checked",
+        "description": "Muted fill and medium weight on the selected option."
+      }
+    ],
     "cssProperties": []
   },
   "accessibility": {
@@ -31,6 +60,7 @@
     "requiredAriaAttributes": []
   },
   "examples": [
+    "select/billing-preferences",
     "select/themed"
   ]
 }

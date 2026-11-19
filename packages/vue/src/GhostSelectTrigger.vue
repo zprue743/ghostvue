@@ -10,6 +10,7 @@ import {
 
 import {
   ghostSelectContextKey,
+  ghostSelectListboxId,
   resolveSelectHtmlElement,
   type GhostSelectContext,
   type GhostSelectTriggerElement,
@@ -80,7 +81,11 @@ function openWithFocus(preferEnd = false): void {
   if (isEffectivelyDisabled.value || context.isOpen.value) {
     return
   }
+  context.openFocusFromEnd.value = preferEnd
   context.open()
+  // Focuses at once where the list is already laid out; in a browser the
+  // content is still unpositioned (visibility: hidden) here, so it takes
+  // initial focus from the same rule when its focus scope activates.
   void Promise.resolve().then(() => {
     const selected = context.selectedValue.value
     if (selected && !context.isOptionDisabled(selected)) {
@@ -89,6 +94,12 @@ function openWithFocus(preferEnd = false): void {
     }
     context.focusFirstEnabledOption(preferEnd)
   })
+}
+
+// Booleans arrive as `true` from GhostFieldControl or as strings from
+// templates (`aria-invalid="true"`); `false`/`"false"` mean unset.
+function isAriaTrue(value: unknown): boolean {
+  return value === true || value === 'true' || value === ''
 }
 
 const triggerAttrs = computed(() => {
@@ -100,11 +111,32 @@ const triggerAttrs = computed(() => {
       key !== 'role' &&
       key !== 'tabindex' &&
       key !== 'onClick' &&
-      key !== 'onKeydown'
+      key !== 'onKeydown' &&
+      key !== 'invalid' &&
+      key !== 'required' &&
+      key !== 'aria-invalid' &&
+      key !== 'aria-required'
     ) {
       rest[key] = value
     }
   }
+
+  /*
+   * GhostFieldControl slot props spread onto the trigger carry field state as
+   * `invalid`, `required`, and `aria-invalid`. The root's own flags and the
+   * field's are combined so neither side can clear the other; the raw
+   * `invalid`/`required` keys are consumed here because neither is a valid
+   * attribute on the combobox host (native submit validation lives on the
+   * root's hidden input).
+   */
+  const invalid =
+    context.invalid.value ||
+    isAriaTrue(attrs['invalid']) ||
+    isAriaTrue(attrs['aria-invalid'])
+  const required =
+    context.required.value ||
+    isAriaTrue(attrs['required']) ||
+    isAriaTrue(attrs['aria-required'])
 
   const base: Record<string, unknown> = {
     ...rest,
@@ -112,9 +144,9 @@ const triggerAttrs = computed(() => {
     role: 'combobox',
     'aria-haspopup': 'listbox',
     'aria-expanded': String(context.isOpen.value),
-    'aria-controls': context.contentId.value,
-    'aria-invalid': context.invalid.value ? 'true' : undefined,
-    'aria-required': context.required.value ? 'true' : undefined,
+    'aria-controls': ghostSelectListboxId(context.contentId.value),
+    'aria-invalid': invalid ? 'true' : undefined,
+    'aria-required': required ? 'true' : undefined,
     'data-part': 'trigger',
     'data-state': context.isOpen.value ? 'open' : 'closed',
   }
@@ -183,7 +215,6 @@ function handleKeydown(event: KeyboardEvent): void {
     return
   }
 
-  const el = element.value
   if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
     event.preventDefault()
     openWithFocus(event.key === 'ArrowUp')
@@ -191,13 +222,12 @@ function handleKeydown(event: KeyboardEvent): void {
   }
 
   if (event.key === 'Enter' || event.key === ' ') {
-    if (el instanceof HTMLButtonElement && props.as === 'button') {
-      if (event.key === ' ') {
-        event.preventDefault()
-      }
-      openWithFocus()
-      return
-    }
+    /*
+     * Cancel the key's default for every host. On a native button, Enter
+     * synthesizes a click right after keydown (Space does so on keyup); that
+     * click reached handleClick while the list was already open and closed it
+     * again, so Enter never opened a button trigger.
+     */
     event.preventDefault()
     openWithFocus()
   }

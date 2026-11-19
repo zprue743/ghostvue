@@ -127,8 +127,10 @@ const customTriggerId = shallowRef<string | null>(null)
 const customContentId = shallowRef<string | null>(null)
 const triggerRegistered = shallowRef(false)
 const contentElement = shallowRef<HTMLElement | null>(null)
+const openFocusFromEnd = shallowRef(false)
 
 provide(ghostSelectContextKey, {
+  openFocusFromEnd,
   selectedValue,
   isOpen,
   open,
