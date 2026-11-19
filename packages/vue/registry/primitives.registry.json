@@ -900,6 +900,12 @@
       "layer": "headless"
     },
     {
+      "id": "input/account-details",
+      "title": "Account details",
+      "description": "Account form with labels, hints, live email validation, and readonly and disabled fields.",
+      "layer": "themed"
+    },
+    {
       "id": "input/basic",
       "title": "Basic",
       "description": "Native labeled text field. The default type is text.",
@@ -920,19 +926,19 @@
     {
       "id": "input/themed",
       "title": "Themed",
-      "description": "Size props on the @ghostvue/themes wrapper.",
+      "description": "Size props on the @ghostvue/themes wrapper, with aligned labels.",
       "layer": "themed"
     },
     {
       "id": "input/states",
       "title": "States",
-      "description": "Disabled, readonly, invalid, and required.",
+      "description": "Disabled, readonly, invalid, and required, composed with GhostField.",
       "layer": "themed"
     },
     {
       "id": "input/search",
       "title": "Search",
-      "description": "Controlled type=search for DataTable-style filters.",
+      "description": "Controlled type=search filtering a local list of reports.",
       "layer": "themed"
     },
     {
