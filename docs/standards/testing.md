@@ -209,10 +209,10 @@ when already running inside the pinned Linux environment.
 ### Regenerating baselines in CI
 
 Contributors and agents without Docker can ask CI to regenerate baselines
-instead. Add the `update-baselines` label to the pull request, or run the
-**Update visual baselines** workflow (`.github/workflows/update-baselines.yml`)
-from the Actions tab with the PR number. It never runs automatically when CI
-fails.
+instead. Add the `update-baselines` label to the pull request to run the
+**Update visual baselines** workflow (`.github/workflows/update-baselines.yml`).
+It never runs automatically when CI fails, and it has no manual
+(`workflow_dispatch`) trigger.
 
 The workflow runs in the same pinned Playwright image as CI and
 `pnpm test:visual:docker`, using `scripts/update-visual-baselines.mjs`:
@@ -238,21 +238,30 @@ It refuses fork PRs, because it only runs for branches in this repository. It
 also only runs on a PR that GitHub can merge (no conflicts with `master`).
 
 The job that installs dependencies and runs Playwright has a read-only token,
-no secrets, and no dependency cache, so PR code cannot write a cache that
-`master` CI restores. The job that pushes runs no code from the PR: it runs
+no secrets, and no dependency cache. The job that pushes runs no code from the
+PR: it runs
 `scripts/update-visual-baselines.mjs` from a separate checkout of the default
 branch, checks out the PR head without persisted credentials, disables git
 hooks, and passes `BASELINES_PUSH_TOKEN` only to the final `git push` step. A
 change to the script therefore takes effect only after it merges to `master`.
 
+A labelled run uses the workflow file from the PR branch, so a branch could
+change the workflow itself. That is why the push token is a secret of the
+protected `baseline-push` environment: the push job waits until a maintainer
+approves it. Before approving, check that the PR does not change
+`.github/workflows/` or `scripts/update-visual-baselines.mjs`.
+
 Maintainer setup:
 
 - Create the `update-baselines` label.
-- Add a repository secret named `BASELINES_PUSH_TOKEN`. Use a fine-grained
-  personal access token or a GitHub App token with **Contents: read and write**
-  on this repository only. Pushes made with the default `GITHUB_TOKEN` do not
-  start new workflow runs, so CI would never check the new baselines. If the
-  secret is missing, the workflow comments and stops. It never falls back to
+- Create an environment named `baseline-push` (**Settings → Environments**)
+  with **Required reviewers** set to the maintainers allowed to approve pushes.
+- Add an environment secret named `BASELINES_PUSH_TOKEN` to `baseline-push`, not
+  a repository secret. Use a fine-grained personal access token or a GitHub App
+  token with **Contents: read and write** on this repository only. Pushes made
+  with the default `GITHUB_TOKEN` do not start new workflow runs, so CI would
+  never check the new baselines. If the secret is missing, the push job stops
+  before committing and the workflow comments. It never falls back to
   `GITHUB_TOKEN`.
 
 When the CI `browser` job fails, Playwright's HTML report and diff outputs

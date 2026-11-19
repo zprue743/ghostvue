@@ -292,7 +292,9 @@ describe('Update visual baselines workflow', () => {
 
   it('is opt-in and never runs fork code with write access', () => {
     expect(workflow).toMatch(/^ {2}pull_request:\n {4}types: \[labeled\]$/m)
-    expect(workflow).toMatch(/^ {2}workflow_dispatch:$/m)
+    // A dispatched run executes PR code in the default branch's context and
+    // cache scope (CodeQL cache poisoning), so the label is the only trigger.
+    expect(workflow).not.toMatch(/^\s*workflow_dispatch:|\binputs\./m)
     expect(workflow).not.toMatch(/^\s*pull_request_target:/m)
     expect(workflow).not.toMatch(/workflow_run|^ {2}push:/m)
     expect(jobBlock(workflow, 'prepare')).toContain(
@@ -317,8 +319,8 @@ describe('Update visual baselines workflow', () => {
     expect(permissionsUnder(jobBlock(workflow, 'report'), '    ')).toEqual({
       'pull-requests': 'write',
     })
-    // Only `publish` (no install, no Playwright) may hold the push secret;
-    // `prepare` only checks that it is set.
+    // Only `publish` (no install, no Playwright) may hold the push secret.
+    expect(jobBlock(workflow, 'prepare')).not.toContain('secrets.')
     expect(jobBlock(workflow, 'regenerate')).not.toContain('secrets.')
     expect(jobBlock(workflow, 'report')).not.toContain('secrets.')
     expect(jobBlock(workflow, 'publish')).not.toMatch(/pnpm|playwright/)
@@ -327,9 +329,20 @@ describe('Update visual baselines workflow', () => {
     )
   })
 
+  it('gates the push token behind the protected baseline-push environment', () => {
+    // Labelled runs use the workflow file from the PR branch, so the token is
+    // an environment secret that needs a maintainer's approval to release.
+    expect(jobBlock(workflow, 'publish')).toMatch(
+      /^ {4}environment: baseline-push$/m,
+    )
+    for (const job of ['prepare', 'regenerate', 'report']) {
+      expect(jobBlock(workflow, job)).not.toMatch(/^\s+environment:/m)
+    }
+  })
+
   it('keeps the regenerate job out of every shared cache', () => {
-    // A workflow_dispatch run uses the default branch's cache scope, so a
-    // cache written after installing PR code could poison master CI.
+    // The job installs and runs PR code, so it must not write any cache that
+    // later runs could restore.
     const regenerate = jobBlock(workflow, 'regenerate')
     expect(regenerate).not.toMatch(/^\s+cache(?:-dependency-path)?:/m)
     expect(regenerate).not.toMatch(/actions\/cache|store-path|STORE_PATH/)
@@ -363,14 +376,20 @@ describe('Update visual baselines workflow', () => {
       scriptRuns.filter((run) => !run.startsWith('node "$BASELINES_SCRIPT" ')),
     ).toEqual([])
 
-    // The secret enters exactly one step: the push, through its env.
+    // The secret value enters exactly one step: the push, through its env.
+    // The token check step only sees whether it is set.
     const secretSteps = steps.filter((step) =>
-      step.includes('BASELINES_PUSH_TOKEN'),
+      step.includes('${{ secrets.BASELINES_PUSH_TOKEN }}'),
     )
     expect(secretSteps).toHaveLength(1)
     const push = secretSteps[0] ?? ''
     expect(push).toContain('id: push')
-    expect(publish.match(/secrets\./g)).toHaveLength(1)
+    expect(publish.match(/secrets\./g)).toHaveLength(2)
+    const check = steps.find((step) => step.includes('id: token')) ?? ''
+    expect(check).toContain(
+      "HAS_PUSH_TOKEN: ${{ secrets.BASELINES_PUSH_TOKEN != '' }}",
+    )
+    expect(steps.indexOf(check)).toBe(0)
     expect(push).toMatch(
       /^ {10}BASELINES_PUSH_TOKEN: \$\{\{ secrets\.BASELINES_PUSH_TOKEN \}\}$/m,
     )

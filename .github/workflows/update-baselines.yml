@@ -1,9 +1,8 @@
 # Opt-in Playwright visual baseline regeneration (GHO-204).
 #
 # Not every contributor or coding agent can run Docker, but committed baselines
-# must match CI's Linux render. Labelling a pull request `update-baselines` (or
-# dispatching this workflow with a PR number) regenerates only the failing
-# visual snapshots in the same pinned Playwright image CI uses, confirms them,
+# must match CI's Linux render. Labelling a pull request `update-baselines`
+# regenerates only the failing visual snapshots in the same pinned Playwright image CI uses, confirms them,
 # and pushes one snapshot-only commit to the PR branch. It never runs
 # automatically on CI failure. See
 # docs/standards/testing.md#regenerating-baselines-in-ci.
@@ -13,11 +12,19 @@
 #   `pull_request_target`, so fork code never sees a write token or secret.
 # - PR title and branch are untrusted: they reach scripts only through `env:`
 #   and step outputs, never through `${{ }}` inside `run:`.
+# - The only trigger is the `update-baselines` label. There is deliberately no
+#   `workflow_dispatch`: a dispatched run executes in the default branch's
+#   context (and cache scope), and the job below runs PR code.
 # - The job that installs dependencies and runs Playwright (`regenerate`) has a
-#   read-only token, no push secret, and no dependency cache: a
-#   `workflow_dispatch` run uses the default branch's cache scope, so PR code
-#   must not be able to write a cache that master CI later restores.
-# - Only `publish` sees BASELINES_PUSH_TOKEN, and it runs no PR-controlled code:
+#   read-only token, no push secret, and no dependency cache.
+# - A labelled run uses this workflow file from the PR branch, so a branch could
+#   edit the workflow itself. BASELINES_PUSH_TOKEN is therefore an environment
+#   secret of the protected `baseline-push` environment, which requires a
+#   maintainer's approval before any job using it starts. Only `publish` uses
+#   that environment. Approvers must check that the PR does not change
+#   `.github/workflows/` or scripts/update-visual-baselines.mjs before
+#   approving.
+# - `publish` runs no PR-controlled code:
 #   no `pnpm install`, no Playwright, no node script from the PR tree, and no
 #   git hooks. It runs scripts/update-visual-baselines.mjs from a separate
 #   checkout of the default branch, checks out the PR head with
@@ -28,21 +35,16 @@
 #   rather than falling back to the PR's copy.
 # - BASELINES_PUSH_TOKEN (fine-grained PAT or GitHub App token, contents:write
 #   on this repository) is required because pushes made with GITHUB_TOKEN do
-#   not start CI. Without it the run comments and stops instead of falling back.
+#   not start CI. Without it `publish` stops before committing and the run
+#   comments instead of falling back.
 name: Update visual baselines
 
 on:
   pull_request:
     types: [labeled]
-  workflow_dispatch:
-    inputs:
-      pr_number:
-        description: Pull request number whose failing visual baselines to regenerate.
-        required: true
-        type: number
 
 concurrency:
-  group: update-baselines-${{ github.event.pull_request.number || inputs.pr_number }}
+  group: update-baselines-${{ github.event.pull_request.number }}
   # Queue rather than cancel: a cancelled run could stop between push and
   # comment, and a queued rerun simply finds nothing left to regenerate.
   cancel-in-progress: false
@@ -52,9 +54,8 @@ permissions: {}
 jobs:
   prepare:
     if: >-
-      github.event_name == 'workflow_dispatch' ||
-      (github.event.label.name == 'update-baselines' &&
-      github.event.pull_request.head.repo.full_name == github.repository)
+      github.event.label.name == 'update-baselines' &&
+      github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
     timeout-minutes: 5
     permissions:
@@ -70,8 +71,7 @@ jobs:
       - id: pr
         uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7.1.0
         env:
-          PR_NUMBER: ${{ github.event.pull_request.number || inputs.pr_number }}
-          HAS_PUSH_TOKEN: ${{ secrets.BASELINES_PUSH_TOKEN != '' }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
         with:
           script: |
             const { owner, repo } = context.repo
@@ -82,7 +82,7 @@ jobs:
               core.setOutput('reason', 'invalid-number')
               return
             }
-            // Re-read the PR so a dispatch and a label event see the same state.
+            // Re-read the PR: the event payload can be stale by the time the run starts.
             const { data: pr } = await github.rest.pulls.get({
               owner,
               repo,
@@ -94,7 +94,6 @@ jobs:
             let reason = ''
             if (pr.state !== 'open') reason = 'not-open'
             else if (pr.head.repo?.full_name !== `${owner}/${repo}`) reason = 'fork'
-            else if (process.env.HAS_PUSH_TOKEN !== 'true') reason = 'missing-token'
             core.setOutput('reason', reason)
             core.setOutput('ok', reason === '' ? 'true' : 'false')
 
@@ -162,16 +161,30 @@ jobs:
     if: needs.regenerate.outputs.outcome == 'changes'
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    # The push uses BASELINES_PUSH_TOKEN, not GITHUB_TOKEN.
+    # The push uses BASELINES_PUSH_TOKEN, not GITHUB_TOKEN. It is a secret of
+    # this protected environment, so the job waits for a maintainer's approval.
+    environment: baseline-push
     permissions:
       contents: read
     outputs:
       sha: ${{ steps.push.outputs.sha }}
+      missing_token: ${{ steps.token.outputs.missing }}
     env:
       # Trusted copy of the helper script, from the default branch checkout.
       # The PR tree under `head/` is data only: nothing in it is executed.
       BASELINES_SCRIPT: ${{ github.workspace }}/base/scripts/update-visual-baselines.mjs
     steps:
+      - id: token
+        name: Check push token
+        env:
+          # Only whether the secret is set; the value itself stays out of this step.
+          HAS_PUSH_TOKEN: ${{ secrets.BASELINES_PUSH_TOKEN != '' }}
+        run: |
+          if [ "$HAS_PUSH_TOKEN" != 'true' ]; then
+            echo 'missing=true' >> "$GITHUB_OUTPUT"
+            echo '::error::BASELINES_PUSH_TOKEN is not set in the baseline-push environment.'
+            exit 1
+          fi
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:
           ref: ${{ github.event.repository.default_branch }}
@@ -246,13 +259,14 @@ jobs:
           path: ${{ runner.temp }}/visual-baselines
       - uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7.1.0
         env:
-          PR_NUMBER: ${{ needs.prepare.outputs.number || github.event.pull_request.number || inputs.pr_number }}
+          PR_NUMBER: ${{ needs.prepare.outputs.number || github.event.pull_request.number }}
           PREPARE_RESULT: ${{ needs.prepare.result }}
           REASON: ${{ needs.prepare.outputs.reason }}
           REGENERATE_RESULT: ${{ needs.regenerate.result }}
           OUTCOME: ${{ needs.regenerate.outputs.outcome }}
           PUBLISH_RESULT: ${{ needs.publish.result }}
           PUSHED_SHA: ${{ needs.publish.outputs.sha }}
+          MISSING_TOKEN: ${{ needs.publish.outputs.missing_token }}
           COMMENT_PATH: ${{ runner.temp }}/visual-baselines/comment.md
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         with:
@@ -266,10 +280,10 @@ jobs:
               : ''
             const reasons = {
               'missing-token':
-                'The `BASELINES_PUSH_TOKEN` secret is not set, so nothing was regenerated. A maintainer must add a fine-grained token with `contents: write` on this repository; pushes with the default `GITHUB_TOKEN` would not start CI.',
+                'The `BASELINES_PUSH_TOKEN` secret is not set in the `baseline-push` environment, so nothing was pushed. A maintainer must add a fine-grained token with `contents: write` on this repository as an environment secret; pushes with the default `GITHUB_TOKEN` would not start CI.',
               fork: 'Baselines are only regenerated for branches in this repository, not forks.',
               'not-open': 'The pull request is not open.',
-              'invalid-number': 'The workflow input is not a pull request number.',
+              'invalid-number': 'The event did not carry a pull request number.',
             }
             let failed = true
             let body
@@ -284,11 +298,13 @@ jobs:
               body = details
             } else if (env.OUTCOME === 'failed') {
               body = `${details}\nNothing was pushed. The Playwright report is in the \`visual-baselines-report\` artifact.`
+            } else if (env.MISSING_TOKEN === 'true') {
+              body = `${reasons['missing-token']}\n\n${details}`
             } else if (env.PUBLISH_RESULT === 'success' && env.PUSHED_SHA) {
               failed = false
               body = `Pushed ${env.PUSHED_SHA}. CI will rerun on the new commit; review the image diffs before merging.\n\n${details}`
             } else {
-              body = `Baselines were regenerated, but committing or pushing them failed (${env.PUBLISH_RESULT}); the branch may have moved since the run started. Nothing was pushed. Re-add the \`update-baselines\` label to retry.\n\n${details}`
+              body = `Baselines were regenerated, but publishing them did not complete (${env.PUBLISH_RESULT}): the \`baseline-push\` approval may have been rejected or timed out, or the branch moved since the run started. Nothing was pushed. Re-add the \`update-baselines\` label to retry.\n\n${details}`
             }
             const heading = failed
               ? '### Visual baselines: not updated'
