@@ -11,13 +11,26 @@ const example = computed(() =>
 const loader = requestedId ? exampleLoader(requestedId) : undefined
 const Preview = loader ? defineAsyncComponent(loader) : null
 const missing = Boolean(requestedId) && (!example.value || !loader)
+
+/*
+ * Keep the token host (?theme, ?density, ?mode) while moving between the
+ * gallery and an example, so a reviewer comparing dark/default stays there.
+ */
+const hostParams = new URLSearchParams(window.location.search)
+hostParams.delete('id')
+function exampleHref(id?: string): string {
+  const params = new URLSearchParams(hostParams)
+  if (id) params.set('id', id)
+  const query = params.toString()
+  return query ? `./examples.html?${query}` : './examples.html'
+}
 </script>
 
 <template>
   <main class="examples-host">
     <template v-if="example && Preview">
       <p class="examples-host__crumb">
-        <a href="./examples.html">All examples</a>
+        <a :href="exampleHref()">All examples</a>
       </p>
       <h1>{{ example.title }}</h1>
       <p>{{ example.description }}</p>
@@ -25,12 +38,20 @@ const missing = Boolean(requestedId) && (!example.value || !loader)
         <code>{{ example.id }}</code>
         · {{ example.layer }}
       </p>
+      <!--
+        The canvas mirrors the docs DemoPreview canvas: real padding (visual
+        baselines capture it as-is), a block-layout stage, and ring room so
+        edge focus rings are not clipped.
+      -->
       <div
         class="examples-host__preview"
         data-testid="ghost-example-preview"
         :data-example-id="example.id"
+        :data-example-layer="example.layer"
       >
-        <Preview />
+        <div class="examples-host__stage" data-testid="ghost-example-stage">
+          <Preview />
+        </div>
       </div>
     </template>
 
@@ -41,7 +62,7 @@ const missing = Boolean(requestedId) && (!example.value || !loader)
         <code>{{ requestedId }}</code>
         .
       </p>
-      <p><a href="./examples.html">Back to the gallery</a></p>
+      <p><a :href="exampleHref()">Back to the gallery</a></p>
     </template>
 
     <template v-else>
@@ -50,11 +71,14 @@ const missing = Boolean(requestedId) && (!example.value || !loader)
         Each route renders one typed example SFC from
         <code>examples/</code>
         . The same files feed docs previews, manifests, and accessibility
-        checks.
+        checks. Like the docs, headless examples render unthemed and themed
+        examples opt in themselves. Add
+        <code>?theme=default&amp;density=comfortable&amp;mode=dark</code>
+        to change the token host.
       </p>
       <ul class="examples-host__list">
         <li v-for="item in ghostExamples" :key="item.id">
-          <a :href="`?id=${item.id}`">{{ item.id }}</a>
+          <a :href="exampleHref(item.id)">{{ item.id }}</a>
           — {{ item.title }}
         </li>
       </ul>
@@ -64,9 +88,11 @@ const missing = Boolean(requestedId) && (!example.value || !loader)
 
 <style scoped>
 .examples-host {
+  box-sizing: border-box;
   font-family: system-ui, sans-serif;
   margin: 2rem auto;
   max-inline-size: 52rem;
+  padding-inline: 1rem;
 }
 
 .examples-host :is(h1, h2, code) {
@@ -77,43 +103,44 @@ const missing = Boolean(requestedId) && (!example.value || !loader)
   margin-block-end: 1rem;
 }
 
+/*
+ * Same box as the docs `.ghost-example__preview` at desktop width: the
+ * subtle canvas surface and a 1.5-2rem inset. Nothing reaches inside the
+ * demo; the example SFC and its recipes decide how it looks.
+ */
 .examples-host__preview {
-  align-items: center;
+  --_examples-ring-room: 0.5rem;
+
+  isolation: isolate;
+  position: relative;
+  min-inline-size: 0;
+  margin-block-start: 1.25rem;
+  padding: clamp(1.5rem, calc(2 * var(--ghost-space-inset-md)), 2rem);
+  border: 1px solid var(--ghost-border-default);
+  border-radius: var(--ghost-radius-xl);
+  background: var(--ghost-surface-subtle-bg);
+}
+
+/* Mirrors `.ghost-example__stage`: block layout, scroll, room for rings. */
+.examples-host__stage {
+  display: flow-root;
+  min-block-size: 2.5rem;
+  margin: calc(-1 * var(--_examples-ring-room));
+  padding: var(--_examples-ring-room);
+  overflow-x: auto;
+}
+
+/* Several root elements fall back to a wrapping row, as in the docs. */
+.examples-host__stage:has(> * + *) {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.75rem;
-  margin-block-start: 1.25rem;
-  min-block-size: 4rem;
-}
-
-.examples-host__preview :deep(table) {
-  border-collapse: collapse;
-}
-
-.examples-host__preview :deep(:is(th, td)) {
-  border: 1px solid #767676;
-  padding: 0.5rem 0.75rem;
-  text-align: start;
+  align-items: center;
+  gap: var(--ghost-space-gap-md);
 }
 
 .examples-host__list {
   display: grid;
   gap: 0.5rem;
   padding-inline-start: 1.2rem;
-}
-
-/* Headless examples have no theme chrome; match the main playground target. */
-.examples-host :deep(button) {
-  min-block-size: 2.75rem;
-  min-inline-size: 2.75rem;
-}
-
-.examples-host :deep(:focus-visible) {
-  outline: 0.2rem solid Highlight;
-  outline-offset: 0.15rem;
-}
-
-.examples-host :deep(main:focus) {
-  outline: none;
 }
 </style>

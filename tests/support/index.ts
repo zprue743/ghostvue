@@ -5,7 +5,11 @@ export {
   type AxeScanOptions,
   type GhostColorMode,
 } from './axe'
-export { setGhostExampleTheme, waitForExamplePreview } from './examples'
+export {
+  exampleUrl,
+  waitForExamplePreview,
+  type GhostExampleHost,
+} from './examples'
 export { waitForFormResetDeferral } from './form-reset'
 export { expectFocus, pressSequence } from './keyboard'
 export {

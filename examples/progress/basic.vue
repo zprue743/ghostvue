@@ -17,7 +17,8 @@ import { GhostProgress } from '@ghostvue/vue'
   overflow: hidden;
 }
 
-.ghost-progress [data-part='indicator'] {
+/* The indicator renders inside GhostProgress, so scoped CSS needs :deep(). */
+.ghost-progress :deep([data-part='indicator']) {
   background: CanvasText;
   block-size: 100%;
 }

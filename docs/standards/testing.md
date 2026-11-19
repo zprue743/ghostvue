@@ -163,7 +163,15 @@ with `animations: 'disabled'` and a default `maxDiffPixelRatio` of `0.03`
   materials, gradients), and the frozen ambient spotlight opt-in snapshot.
 - **Public example baselines:** `tests/e2e/examples-visual.spec.ts` snapshots
   every registered example in `examples/registry.ts` in `light` and `dark` mode
-  at `comfortable` density with the `default` theme.
+  on the docs token host (`calm`, density unset), and every themed example
+  again with the `default` theme at `comfortable` density (`*-default-comfortable-*`).
+  The `/examples.html` route picks the token host from `?theme=`, `?density=`,
+  and `?mode=`. It never adds `.ghost-theme` to `<html>`, so headless examples
+  stay unthemed as in the docs, and the test never resizes controls or pads
+  the canvas: the screenshot captures the route's real canvas inset.
+  `tests/e2e/examples.spec.ts` asserts the same boundary and that no track,
+  thumb, indicator, slider, switch, separator, progress bar, or spinner paints
+  an empty box.
 - **Docs site baselines:** `tests/e2e/docs-visual.spec.ts` snapshots the docs
   nav, a themed `GhostInput` preview, and a headless checkbox preview at 390px in
   `light` and `dark` mode (requires `apps/docs` build; included in `pnpm test:visual`).

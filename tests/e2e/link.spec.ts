@@ -43,12 +43,10 @@ test.describe('GhostLink', () => {
   }) => {
     const playground = await startStaticServer('apps/playground/dist')
     try {
-      await page.goto(`${playground.url}/examples.html?id=link/themed`)
-      await page.evaluate(() => {
-        document.documentElement.classList.add('ghost-theme')
-        document.documentElement.setAttribute('data-ghost-theme', 'default')
-        document.documentElement.setAttribute('data-ghost-mode', 'light')
-      })
+      // The example opts into recipes itself; the host only picks tokens.
+      await page.goto(
+        `${playground.url}/examples.html?id=link/themed&theme=default&mode=light`,
+      )
 
       const inline = page.getByRole('link', { name: /inline\)/i })
       const subtle = page.getByRole('link', { name: /subtle\)/i })
