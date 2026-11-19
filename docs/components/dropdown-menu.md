@@ -7,6 +7,20 @@ semantics, not dialog, tooltip, or native `<select>`).
 Import the parts from `@ghostvue/vue` for headless use, or from `@ghostvue/themes`
 for the default elevated menu surface and interactive item styling.
 
+<GhostExample id="dropdown-menu/record-actions" />
+
+Each brief has an icon-only **Actions** trigger whose accessible name includes
+the brief title. The menu groups **Edit title** and **Duplicate**, then the
+status action, and sets **Archive** apart after a separator in the danger text
+color. Every action changes the list and is announced in the `role="status"`
+line. Focus follows the outcome: **Edit title** moves focus to the title field,
+**Save**, **Cancel**, and `Escape` return it to the row's trigger, and
+**Archive** moves it to the next row's trigger (or **Undo archive** when the
+list is empty) because the trigger that opened the menu has gone. The panel
+opens at `bottom-end` under the trigger; `flip` and `shift` keep it inside the
+viewport when a row sits near the bottom or the inline edge. Below about 22rem
+the status badge moves under the title so the trigger stays on the row.
+
 ## Basic use
 
 <GhostExample id="dropdown-menu/basic" />
@@ -21,6 +35,13 @@ typeahead, and activation keys to `useGhostMenuCollection`.
 ## Themed use
 
 <GhostExample id="dropdown-menu/themed" />
+
+The inbox **View** menu labels its checkbox group and radio group with
+`GhostDropdownMenuLabel` through `aria-labelledby`. Checkbox items toggle
+without closing; choosing a sort order or **Reset view** closes the menu. The
+theme does not draw a check mark, so the example renders its own `aria-hidden`
+indicator in a fixed-width slot; `aria-checked` carries the state for
+assistive technology.
 
 Importing from `@ghostvue/themes` loads `default.css`, styling
 `.ghost-dropdown-menu-content` with elevation-3 surface tokens and
