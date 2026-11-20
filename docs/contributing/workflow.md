@@ -2,7 +2,9 @@
 
 1. Read `AGENTS.md`, this workflow, and relevant standards.
 2. Inspect related code before introducing a pattern.
-3. Agree on public behavior; component work begins from an approved spec.
+3. Agree on public behavior; adding or promoting a component requires the
+   [component gate](../agents/COMPONENT_WORKFLOW.md) (approved spec, tests,
+   docs, manifest, and a Changeset when publishable behavior changes).
 4. Make the smallest coherent change with tests and documentation. Component
    usage samples belong in `examples/` ([executable examples](./examples.md)).
 5. Add intent-focused comments for non-obvious reasoning.

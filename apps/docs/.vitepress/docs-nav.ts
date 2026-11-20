@@ -9,16 +9,16 @@ export { generatedComponentPageLinks } from './.registries/docs-nav.components.g
 export const docsTitle = 'GhostVue'
 
 export const docsDescription =
-  'Engineering foundation for a Vue-first, headless-first UI library'
+  'Vue-first, headless-first UI primitives in @ghostvue/vue with optional OKLCH themes in @ghostvue/themes.'
 
 const docsMainSidebar: LlmsSidebarGroup['items'] = [
   {
     text: 'Getting started',
     items: [
-      { text: 'Introduction', link: '/philosophy' },
       { text: 'Getting started', link: '/getting-started' },
+      { text: 'Introduction', link: '/philosophy' },
       { text: 'Nuxt & auto-imports', link: '/auto-imports' },
-      { text: 'Roadmap', link: '/roadmap' },
+      { text: 'ESLint plugin', link: '/tooling/eslint-plugin' },
     ],
   },
   {
@@ -26,9 +26,10 @@ const docsMainSidebar: LlmsSidebarGroup['items'] = [
     items: [
       { text: 'API reference', link: '/reference/' },
       { text: 'Dev warnings', link: '/warnings' },
-      { text: 'ESLint plugin', link: '/tooling/eslint-plugin' },
+      { text: 'Roadmap', link: '/roadmap' },
     ],
   },
+  // GHO-48: add consumer AI & MCP docs additively under Docs without altering top-level nav.
 ]
 
 const themingSidebar: LlmsSidebarGroup['items'] = [

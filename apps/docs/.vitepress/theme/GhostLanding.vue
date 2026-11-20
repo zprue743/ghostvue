@@ -244,7 +244,7 @@ onUnmounted(() => {
     </section>
 
     <section id="principles" class="ghost-landing__section">
-      <h2>Engineering commitments</h2>
+      <h2>Built for your stack</h2>
       <div class="ghost-landing__principles">
         <article class="ghost-landing__principle">
           <h3>Headless never depends on themes</h3>
@@ -264,12 +264,12 @@ onUnmounted(() => {
           </p>
         </article>
         <article class="ghost-landing__principle">
-          <h3>Gated components and manifests</h3>
+          <h3>Accessible, typed, and AI-ready</h3>
           <p>
-            Production components ship only with an approved specification, unit
-            and Playwright + axe tests, typed examples under
-            <code>examples/</code>, a machine-readable
-            <code>.manifest.json</code>, and <code>/llms.txt</code> output.
+            Every component is tested with real keyboard navigation and
+            axe-core, documented with live examples and full TypeScript types,
+            and paired with <code>@ghostvue/eslint-plugin</code> and
+            <code>/llms.txt</code>.
           </p>
         </article>
       </div>
@@ -278,9 +278,8 @@ onUnmounted(() => {
     <section id="surface" class="ghost-landing__section">
       <h2>Current public surface</h2>
       <p>
-        {{ surfaceRows.length }} documented components on <code>master</code>,
-        generated from component manifests and the docs catalog. Composable
-        exports and roadmap sequencing live in the
+        {{ surfaceRows.length }} documented components available today, with
+        composable exports and upcoming primitives tracked in the
         <a href="/roadmap">component roadmap</a>.
       </p>
 
@@ -308,9 +307,10 @@ onUnmounted(() => {
 
     <footer id="prerelease" class="ghost-landing__footnote">
       <span>
-        <strong>Pre-release:</strong> GhostVue is under active development.
-        Adding or promoting a component requires the
-        <a href="/agents/COMPONENT_WORKFLOW">component gate</a>.
+        <strong>Pre-release:</strong> GhostVue is under active development and
+        not yet published to npm.
+        <a href="/getting-started">Try it locally</a> or
+        <a href="/contributing/workflow">contribute</a>.
       </span>
       <span>
         <a href="/llms.txt">/llms.txt</a> ·
