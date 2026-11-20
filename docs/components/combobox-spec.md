@@ -369,6 +369,9 @@ performance optimization for very large unvirtualized lists.
 
 `data-part`, `data-state`, `data-placement`, classes `ghost-combobox-content`,
 `ghost-combobox-input`. Themed CSS uses `--ghost-*` tokens only (mirrors Select).
+Because DOM focus stays in the input, the themed highlighted option draws the
+focus-ring token inset, like a focused Select option; the muted highlight fill
+alone is under 3:1 against the panel and matches the checked fill.
 Content merges consumer `class` (string, array, or object) and `style` with
 `ghost-combobox-content` and its floating position styles, portaled or inline.
 
