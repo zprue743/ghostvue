@@ -50,3 +50,33 @@ export async function openPreviewWidth(page: Page, id: string): Promise<void> {
     })
   }).toPass()
 }
+
+/**
+ * Replace the Clipboard API with one whose writes settle as scripted, in call
+ * order: each outcome says how long the write takes and whether it is denied
+ * (`NotAllowedError`, as after a refused permission prompt). Calls beyond the
+ * script succeed at once. Lets a test settle an older write after a newer one.
+ */
+export async function scriptClipboardWrites(
+  page: Page,
+  outcomes: readonly { delay: number; ok: boolean }[],
+): Promise<void> {
+  await page.addInitScript((script) => {
+    const pending = [...script]
+    const clipboard = {
+      writeText: () => {
+        const next = pending.shift() ?? { delay: 0, ok: true }
+        return new Promise<void>((resolve, reject) => {
+          setTimeout(() => {
+            if (next.ok) resolve()
+            else reject(new DOMException('Denied', 'NotAllowedError'))
+          }, next.delay)
+        })
+      },
+    }
+    Object.defineProperty(Navigator.prototype, 'clipboard', {
+      configurable: true,
+      get: () => clipboard,
+    })
+  }, outcomes)
+}

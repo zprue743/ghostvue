@@ -62,6 +62,15 @@ Shared Playwright utilities live under `tests/support/` (documented in
 - `axeScan`, `expectNoAxeViolations` — axe scans for example previews and the
   current page.
 
+`measureFocusChange` in `tests/e2e/focus-appearance.ts` is a screenshot-based
+focus indicator check: the area that changes by 3:1 between focused and
+unfocused renderings, per-edge coverage (catches clipped rings), and layout
+shift. Use it where the ring may be painted on a pseudo-element or child
+part, inside a portal, or in forced colors, where computed styles cannot
+prove visibility. `tests/e2e/docs-showcase-focus.spec.ts` runs it over every
+Tab stop and overlay item of the redesigned docs showcases, together with
+reduced-motion and 200% text checks.
+
 `tests/e2e/examples.spec.ts` axe-scans every registered example in `light` and
 `dark` mode in the non-visual Playwright project. Visual example snapshots stay
 in `examples-visual.spec.ts` (`@visual`).
@@ -117,7 +126,9 @@ alone. The tagged set currently covers focus primitives (`focus.spec.ts`), modal
 primitives, dialog trap/restore, nested dialogs and popovers, root scroll lock,
 the drawer RTL edge flip, RTL roving for tabs, toggle group, toolbar, menubar,
 segmented control, calendar, and native radios (`rtl-roving.spec.ts`), and
-Slider geometry and pointer mapping in both orientations and directions.
+Slider geometry and pointer mapping in both orientations and directions,
+Select's opening keys moving real focus into the list, and the docs theme
+switcher's single Tab stop and arrow keys.
 
 CI runs Chromium in the `browser-shard` matrix and Firefox and WebKit in the
 `browser-cross` matrix, from the same pinned Playwright image, which already
