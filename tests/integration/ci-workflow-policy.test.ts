@@ -187,6 +187,18 @@ describe('CI workflow', () => {
     expect(jobBlock(workflow, 'verify')).toContain('pattern: vitest-blob-*')
   })
 
+  it('prints failing Vitest tests in the job log alongside the blob report', () => {
+    // A blob-only run writes the artifact but logs nothing about which test
+    // failed, so each Vitest job also keeps the `default` reporter (GHO-218).
+    for (const jobId of ['verify-unit', 'verify-integration']) {
+      const run =
+        /run: pnpm exec vitest run .*$/m.exec(jobBlock(workflow, jobId))?.[0] ??
+        ''
+      expect(run, jobId).toContain('--reporter=default')
+      expect(run, jobId).toContain('--reporter=blob')
+    }
+  })
+
   it('runs browsers from the Playwright image matching @playwright/test', () => {
     const playwrightVersion =
       (
