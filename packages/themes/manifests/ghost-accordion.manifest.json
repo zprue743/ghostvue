@@ -45,6 +45,7 @@
     "requiredAriaAttributes": []
   },
   "examples": [
+    "accordion/deployment-faq",
     "accordion/basic",
     "accordion/themed"
   ]

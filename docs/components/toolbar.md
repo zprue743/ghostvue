@@ -4,6 +4,14 @@
 with roving tabindex and arrow-key movement. Import it from `@ghostvue/vue` for
 headless use, or from `@ghostvue/themes` for a default flex layout.
 
+## Document formatting toolbar
+
+<GhostExample id="toolbar/editor-actions" />
+
+A single `Tab` stop enters the `GhostToolbar` and arrow keys move focus
+across formatting and clear actions, separated by a semantic vertical
+`GhostSeparator`.
+
 ## Basic use
 
 <GhostExample id="toolbar/basic" />

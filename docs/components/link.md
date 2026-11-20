@@ -5,6 +5,14 @@ adds safe new-tab defaults, and supports router composition through `as`. Import
 it from `@ghostvue/vue` for headless use, or from `@ghostvue/themes` for the
 default visual treatment.
 
+## Documentation resource links
+
+<GhostExample id="link/documentation-footer" />
+
+A resource card combines inline and subtle `GhostLink` variants, a new-tab
+link with automatic `rel="noopener noreferrer"` and hidden hint, a same-tab
+external link, and a disabled link.
+
 ## Basic use
 
 <GhostExample id="link/basic" />

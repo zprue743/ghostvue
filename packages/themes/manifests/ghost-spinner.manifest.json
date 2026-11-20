@@ -96,5 +96,9 @@
     "keyboard": {},
     "requiredAriaAttributes": []
   },
-  "examples": ["spinner/themed", "spinner/table-refresh"]
+  "examples": [
+    "spinner/sync-status",
+    "spinner/themed",
+    "spinner/table-refresh"
+  ]
 }

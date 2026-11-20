@@ -103,6 +103,7 @@
     "requiredAriaAttributes": []
   },
   "examples": [
+    "interactive-surface/feature-tiles",
     "interactive-surface/basic",
     "interactive-surface/button"
   ]

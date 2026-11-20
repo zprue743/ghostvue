@@ -4,6 +4,14 @@
 values. Import it from `@ghostvue/vue` for headless use, or from
 `@ghostvue/themes` for the default visual treatment.
 
+## Release channels
+
+<GhostExample id="badge/release-channels" />
+
+A release channel list pairs `solid`, `soft`, `outline`, and `ghost` badge
+variants with `accent`, `neutral`, and `danger` tones. Status meaning lives in
+the badge text while `tone` expresses visual emphasis.
+
 ## Basic use
 
 <GhostExample id="badge/basic" />

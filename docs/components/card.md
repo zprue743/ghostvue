@@ -8,6 +8,14 @@ optional ambient spotlight via `useGhostInteractiveSurface`.
 Import from `@ghostvue/vue` for headless use, or from `@ghostvue/themes` for
 default surface chrome.
 
+## Project summary cards
+
+<GhostExample id="card/project-summary" />
+
+A responsive two-column grid (`@container ghost-demo`) pairs an action card
+(with `GhostButton` actions in `#footer`) alongside a navigational `as="a"` card
+with `interactive="spotlight"` and no nested interactive elements.
+
 ## Basic use
 
 <GhostExample id="card/basic" />

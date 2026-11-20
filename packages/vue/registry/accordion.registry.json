@@ -22,6 +22,12 @@
   ],
   "examples": [
     {
+      "id": "accordion/deployment-faq",
+      "title": "Deployment policy FAQ",
+      "description": "Multiple-expansion release policy accordion with expand/collapse actions and responsive header.",
+      "layer": "themed"
+    },
+    {
       "id": "accordion/basic",
       "title": "Accordion sections",
       "description": "Single expansion with collapsible coordination over panels.",

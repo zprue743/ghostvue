@@ -19,6 +19,12 @@
   ],
   "examples": [
     {
+      "id": "skeleton/profile-loading",
+      "title": "Profile loading placeholder",
+      "description": "Toggleable skeleton placeholder matching the loaded maintainer profile layout.",
+      "layer": "themed"
+    },
+    {
       "id": "skeleton/basic",
       "title": "Basic",
       "description": "Unstyled decorative loading placeholder. Hidden from assistive technology.",

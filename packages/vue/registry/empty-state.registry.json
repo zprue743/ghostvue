@@ -19,6 +19,12 @@
   ],
   "examples": [
     {
+      "id": "empty-state/search-results",
+      "title": "Filtered deployment list",
+      "description": "Interactive filter bar revealing a themed GhostEmptyState section with a clear-filter action.",
+      "layer": "themed"
+    },
+    {
       "id": "empty-state/basic",
       "title": "Empty state basics",
       "description": "Title and description for an unused panel.",

@@ -8,6 +8,14 @@ Import it from `@ghostvue/vue` for headless use, or from `@ghostvue/themes`
 for the default visual treatment. It is not a status message: loading that
 must be heard belongs on the surrounding region, not on every bone.
 
+## Profile loading placeholder
+
+<GhostExample id="skeleton/profile-loading" />
+
+Circle, text, and rectangle bones mirror the loaded profile card so swapping
+from loading to content causes no layout jump. The surrounding region carries
+`aria-busy="true"` while loading.
+
 ## Basic use
 
 <GhostExample id="skeleton/basic" />

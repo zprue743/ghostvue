@@ -128,7 +128,13 @@
     "role": "progressbar",
     "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/meter/",
     "keyboard": {},
-    "requiredAriaAttributes": ["aria-valuemin", "aria-valuemax"]
+    "requiredAriaAttributes": [
+      "aria-valuemin",
+      "aria-valuemax"
+    ]
   },
-  "examples": ["progress/themed"]
+  "examples": [
+    "progress/upload-queue",
+    "progress/themed"
+  ]
 }
