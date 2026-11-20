@@ -217,4 +217,17 @@
         var(--ghost-motion-easing-standard);
     }
   }
+
+  /* Opacity alone does not survive forced colors; use the system GrayText. */
+  @media (forced-colors: active) {
+    :where(
+      .ghost-theme .ghost-collapsible-trigger:disabled,
+      .ghost-themed-scope .ghost-collapsible-trigger:disabled,
+      .ghost-collapsible-trigger[data-themed]:disabled
+    ) {
+      border-color: GrayText;
+      color: GrayText;
+      opacity: 1;
+    }
+  }
 }

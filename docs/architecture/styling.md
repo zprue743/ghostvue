@@ -124,6 +124,42 @@ for enumerated ones. Use `group-data-[state=open]:` with a `group` class on
 the parent part to style children from a parent hook. The repository does not
 depend on Tailwind; these classes are consumer-side.
 
+## Color modes, motion, and forced colors
+
+Themes respond to three user preferences. Component recipes must keep all
+three working without JavaScript, so server rendering never flashes.
+
+- **Light and dark.** Two strategies share one token set. With no
+  `data-ghost-mode`, generated token CSS follows
+  `@media (prefers-color-scheme: dark)`. Setting `data-ghost-mode="light"` or
+  `"dark"` on any element pins that subtree; the nearest attribute wins, so
+  modes nest. Recipes consume semantic `--ghost-*` tokens only and never
+  branch on the mode themselves.
+- **Reduced motion.** Under `prefers-reduced-motion: reduce` the generated
+  `--ghost-motion-*` durations collapse (focus ring and stagger become
+  instant; other transitions keep short color and opacity feedback). Recipes
+  put movement (translate, scale, size transitions, `@starting-style`)
+  behind `prefers-reduced-motion: no-preference` or a motion token, so
+  movement is opt-in. See [motion](../themes/motion.md).
+- **Forced colors.** Under `@media (forced-colors: active)` the generated
+  tokens map to CSS system colors (`Canvas`, `CanvasText`, `ButtonFace`,
+  `ButtonText`, `Highlight`, `GrayText`), and recipes for elevation, materials,
+  and gradients drop decorative layers. Token mapping alone is not enough
+  where a state is shown only by a fill, opacity, or box shadow, because the
+  browser repaints backgrounds as `Canvas` and removes shadows. A component
+  sheet then adds its own forced-colors block:
+  - checked, selected, active, and current indicators paint `Highlight` with
+    `HighlightText` and set `forced-color-adjust: none` on that element only,
+    so the pair stays legible (checkbox, radio, switch, tabs, tree, select
+    and combobox options, calendar days, pagination);
+  - disabled parts use `GrayText` with `opacity: 1` instead of a faded token;
+  - focus rings drawn with `box-shadow` fall back to an `outline` in
+    `Highlight`.
+
+  Do not add a forced-colors rule where the token mapping already yields a
+  distinct system color (plain text, borders, surfaces). Forced-colors
+  rendering is covered by `tests/e2e/forced-colors-visual.spec.ts`.
+
 ## Tokens
 
 Tokens are authored as DTCG JSON and compiled to CSS custom properties,

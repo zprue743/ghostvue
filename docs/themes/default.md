@@ -238,11 +238,23 @@ The defaults include contrast-tested light and dark treatments (WCAG 2 AA
 is gated in `pnpm contrast`, including each solid gradient end stop against
 its `*.fg`; APCA Lc is advisory), a two-color keyboard focus indicator
 with a short entrance, density-aware control sizes with a 44px
-coarse-pointer floor, forced-colors mapping to system colors, disabled
-and loading cursors, and reduced-motion handling that keeps short color
-and opacity feedback, drops press scale, and makes the focus ring instant.
-Unset `data-ghost-mode` follows `prefers-color-scheme` from CSS alone, so
-server rendering does not flash the opposite palette. Applications remain
+coarse-pointer floor, disabled and loading cursors, and reduced-motion
+handling that keeps short color and opacity feedback, drops press scale,
+and makes the focus ring instant.
+
+Light and dark use two strategies. Unset `data-ghost-mode` follows
+`prefers-color-scheme` from CSS alone, so server rendering does not flash the
+opposite palette; `data-ghost-mode="light"` or `"dark"` pins a subtree (see
+[Light, dark, and nested modes](#light-dark-and-nested-modes)).
+
+In forced colors (Windows High Contrast), tokens map to system colors and
+shadows, gradients, and glass drop away. Themed components keep every state
+visible: checked, selected, active, and current indicators (checkbox, radio,
+switch, tabs, tree, select and combobox options, calendar days, the current
+page) paint `Highlight` with `HighlightText`, disabled parts use `GrayText`,
+and focus rings are system-color outlines. If you restyle one of these
+states, check it with forced colors emulated (Chromium DevTools > Rendering >
+"Emulate CSS media feature forced-colors"). Applications remain
 responsible for testing token overrides for contrast, focus visibility,
 zoom, and target size in their full interface.
 

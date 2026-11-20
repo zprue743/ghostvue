@@ -146,4 +146,32 @@
   ) {
     border-color: var(--ghost-border-danger);
   }
+
+  /*
+   * The focus ring here is a box-shadow with no outline, and forced colors
+   * remove box shadows, so keyboard focus vanished. Draw a Highlight outline
+   * instead, and show disabled parts in GrayText rather than opacity.
+   */
+  @media (forced-colors: active) {
+    :where(
+      .ghost-theme .ghost-number-input__button:focus-visible,
+      .ghost-themed-scope .ghost-number-input__button:focus-visible,
+      .ghost-theme .ghost-number-input__input:focus-visible,
+      .ghost-themed-scope .ghost-number-input__input:focus-visible
+    ) {
+      outline: var(--ghost-focus-ring-width) solid Highlight;
+      outline-offset: var(--ghost-focus-ring-offset);
+    }
+
+    :where(
+      .ghost-theme .ghost-number-input__button:disabled,
+      .ghost-themed-scope .ghost-number-input__button:disabled,
+      .ghost-theme .ghost-number-input__input:disabled,
+      .ghost-themed-scope .ghost-number-input__input:disabled
+    ) {
+      border-color: GrayText;
+      color: GrayText;
+      opacity: 1;
+    }
+  }
 }
