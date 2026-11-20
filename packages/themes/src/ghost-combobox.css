@@ -158,6 +158,15 @@
     .ghost-combobox-content[data-themed] [data-part='option'][data-highlighted]
   ) {
     background-color: var(--ghost-surface-muted-bg);
+    /*
+     * DOM focus stays in the input, so the highlighted option is the only
+     * sign of where Enter will land. The muted fill alone is under 3:1
+     * against the panel and matches the checked fill, so the highlight also
+     * draws the token ring inset, as focused Select options and menu items
+     * do. Inset keeps it inside the scrolling panel's clip.
+     */
+    outline: var(--ghost-focus-ring-width) solid var(--ghost-focus-ring-color);
+    outline-offset: calc(var(--ghost-focus-ring-offset) * -1);
   }
 
   :where(
