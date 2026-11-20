@@ -62,6 +62,7 @@ const standardsSidebar: LlmsSidebarGroup['items'] = [
   { text: 'Testing', link: '/standards/testing' },
   { text: 'Accessibility', link: '/standards/accessibility' },
   { text: 'Public APIs', link: '/standards/public-api' },
+  { text: 'Component stability', link: '/standards/component-stability' },
   { text: 'Dependencies', link: '/standards/dependencies' },
   { text: 'Documentation', link: '/standards/documentation' },
   { text: 'Performance', link: '/standards/performance' },

@@ -17,7 +17,10 @@ Public APIs require:
 - a Changeset for changes that affect a publishable package.
 
 Deprecate before removal when feasible. Explain the replacement and retain a
-reasonable migration window. Changes in event timing, focus movement, keyboard
+reasonable migration window. The [component stability policy](./component-stability.md)
+defines each manifest `status` (`experimental`, `beta`, `stable`,
+`deprecated`), the evidence each promotion needs, and the minimum deprecation
+window and `GHOST005` warning for stable APIs. Changes in event timing, focus movement, keyboard
 behavior, inferred types, semantic attributes, or required markup can be breaking
 even when a prop name is unchanged.
 

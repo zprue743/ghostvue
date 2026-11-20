@@ -49,3 +49,11 @@ The GhostDatePicker format callback threw for {date}. The input shows the ISO YY
 
 Related: [./components/date-picker.md](./components/date-picker.md)
 
+## GHOST005
+
+**Warning:** Deprecated API used
+
+{api} is deprecated since {since} and will be removed in {removal}. {migration}
+
+Related: [./standards/component-stability.md](./standards/component-stability.md)
+

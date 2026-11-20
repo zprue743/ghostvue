@@ -87,6 +87,22 @@ Every manifest lists:
 Unknown keys are invalid. Native HTML/ARIA fallthrough is not duplicated into
 `props`. Native listeners on a native root are not duplicated into `events`.
 
+## Status
+
+`status` is the component's stability level. The
+[component stability policy](../standards/component-stability.md) defines each
+level and its promotion and deprecation rules. `pnpm manifests` enforces the
+evidence part (`scripts/lib/component-status.js`):
+
+| Status                          | Fails when                                                                                                                                                                  |
+| ------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `beta`                          | No approved `spec`, no usage page for that spec, no `examples`, a generated placeholder description remains, or `automatedKeyboard` is not `passed` while keys are declared |
+| `stable`                        | Any `beta` rule fails, or `manual` or `assistiveTechnology` verification is not `passed`                                                                                    |
+| `experimental` and `deprecated` | Never; no evidence is required                                                                                                                                              |
+
+The check rejects a status the evidence does not support. It never infers or
+writes one: `pnpm manifests:write` preserves the human-set value.
+
 ## Accessibility verification
 
 `accessibility.verification` (schema `1.1.0`, GHO-42) records APG conformance

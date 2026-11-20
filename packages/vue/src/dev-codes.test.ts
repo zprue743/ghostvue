@@ -4,6 +4,7 @@ import {
   formatGhostCodeMessage,
   logGhostCode,
   retiredGhostCodes,
+  warnGhostDeprecation,
   GHOST_CODE_DOCS_URL,
   ghostCodes,
   type GhostCode,
@@ -56,7 +57,31 @@ describe('ghost diagnostic codes', () => {
 
   it('narrows GhostCode to assigned catalog keys', () => {
     expectTypeOf<GhostCode>().toEqualTypeOf<
-      'GHOST001' | 'GHOST002' | 'GHOST003' | 'GHOST004'
+      'GHOST001' | 'GHOST002' | 'GHOST003' | 'GHOST004' | 'GHOST005'
     >()
+  })
+
+  it('reports deprecations with GHOST005 once per deprecated API', () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined)
+    const deprecation = {
+      api: 'GhostFixture prop "size"',
+      since: '0.4.0',
+      removal: '0.5.0',
+      migration: 'Use the themed wrapper size prop instead.',
+    }
+
+    warnGhostDeprecation(deprecation)
+    warnGhostDeprecation(deprecation)
+    warnGhostDeprecation({ ...deprecation, api: 'GhostFixture' })
+
+    expect(warn).toHaveBeenCalledTimes(2)
+    expect(warn).toHaveBeenNthCalledWith(
+      1,
+      `[ghostvue GHOST005] GhostFixture prop "size" is deprecated since 0.4.0 and will be removed in 0.5.0. Use the themed wrapper size prop instead. See ${GHOST_CODE_DOCS_URL}#ghost005`,
+    )
+    expect(warn.mock.calls[1]?.[0]).toContain(
+      '[ghostvue GHOST005] GhostFixture is deprecated',
+    )
+    warn.mockRestore()
   })
 })
