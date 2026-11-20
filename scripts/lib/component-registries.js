@@ -20,7 +20,7 @@ const GENERATED_BANNER =
  *   vueBarrel?: string[]
  *   themesBarrel?: string[]
  *   themesCssImports?: string[]
- *   roadmapTableMarkdown?: string
+ *   roadmapTablesMarkdown?: string
  * }} PrimitivesRegistry
  */
 
@@ -782,10 +782,29 @@ export async function syncRepositoryRegistries({ repositoryRoot, write }) {
   const violations = []
 
   if (primitives.roadmapTablesMarkdown) {
+    const vueExports = barrelValueExports(
+      buildPackageBarrelBody(primitives, families, 'vue'),
+    )
+    const themesExports = barrelValueExports(
+      buildPackageBarrelBody(primitives, families, 'themes'),
+    )
+    const vueExportNames = new Set(vueExports.map(({ name }) => name))
+    const themesExportNames = new Set(themesExports.map(({ name }) => name))
+
+    violations.push(
+      ...findRoadmapStatusDrift({
+        tablesMarkdown: primitives.roadmapTablesMarkdown,
+        vueExportNames,
+      }),
+    )
     violations.push(
       ...(await syncRoadmapTables({
         repositoryRoot,
         tablesMarkdown: primitives.roadmapTablesMarkdown,
+        exportsMarkdown: buildRoadmapExportsMarkdown({
+          vueExportNames,
+          themesExportNames,
+        }),
         write,
       })),
     )
@@ -836,34 +855,141 @@ export function relocateBarrelImports(source) {
 
 const ROADMAP_BEGIN = '<!-- @generated registries:roadmap-tables begin -->'
 const ROADMAP_END = '<!-- @generated registries:roadmap-tables end -->'
+const ROADMAP_EXPORTS_BEGIN =
+  '<!-- @generated registries:roadmap-exports begin -->'
+const ROADMAP_EXPORTS_END = '<!-- @generated registries:roadmap-exports end -->'
+const STALE_ROADMAP_STATUS_RE = /^(?:planned|in progress|in review)\b/i
 
 /**
- * @param {string} repositoryRoot
- * @param {string} tablesMarkdown
- * @param {boolean} write
+ * @param {string} left
+ * @param {string} right
+ */
+function compareCaseInsensitive(left, right) {
+  return left.localeCompare(right, 'en', { sensitivity: 'base' })
+}
+
+/**
+ * @param {{ vueExportNames: Iterable<string>; themesExportNames: Iterable<string> }} options
+ */
+export function buildRoadmapExportsMarkdown({
+  vueExportNames,
+  themesExportNames,
+}) {
+  const vueNames = sortedUnique(vueExportNames)
+    .sort(compareCaseInsensitive)
+    .map((name) => `\`${name}\``)
+    .join(', ')
+  const themesNames = sortedUnique(themesExportNames)
+    .sort(compareCaseInsensitive)
+    .map((name) => `\`${name}\``)
+    .join(', ')
+
+  return [
+    `\`master\` (\`packages/vue/src/index.ts\`, \`@ghostvue/vue\`) value exports: ${vueNames}. The same entry point also exports TypeScript-only types (props, \`*RootProps\`, exposed handles, contexts, and \`Use*\` options types) for every symbol above.`,
+    '',
+    `\`@ghostvue/themes\` (\`packages/themes/src/index.ts\`) value exports: ${themesNames}. It reuses the themed component names from \`@ghostvue/vue\` but does not export headless-only symbols (\`GhostPortal\`, \`GhostVisuallyHidden\`, shared composables such as \`useGhostId\` / \`useControllableState\` / \`useFocusScope\` / \`useRovingFocus\` / \`useDismissableLayer\` / \`useFloating\`, \`getPaginationRange\`, component \`useGhost*\` composables, or tooltip helpers \`ghostTooltipContextKey\` / \`mergeTooltipDescribedBy\` / \`resolveTooltipHtmlElement\`). Type-only themed prop aliases ship alongside those values.`,
+  ].join('\n')
+}
+
+/**
+ * Detects components exported from `@ghostvue/vue` that are still marked as
+ * `planned`, `in progress`, or `in review` in the roadmap table.
+ *
+ * @param {{ tablesMarkdown: string; vueExportNames: Set<string> }} options
+ * @returns {string[]}
+ */
+export function findRoadmapStatusDrift({ tablesMarkdown, vueExportNames }) {
+  /** @type {string[]} */
+  const violations = []
+  for (const line of tablesMarkdown.split('\n')) {
+    if (!/^\|\s*\d+\s*\|/.test(line)) continue
+    const cols = line.split('|').map((cell) => cell.trim())
+    const componentCell = cols[2] ?? ''
+    const statusCell = cols[5] ?? ''
+    if (!STALE_ROADMAP_STATUS_RE.test(statusCell)) continue
+
+    const componentNames = [
+      ...componentCell.matchAll(/`(Ghost[A-Za-z0-9]+)`/g),
+    ].map((match) => match[1])
+    const exportedMatches = componentNames.filter((name) =>
+      vueExportNames.has(name),
+    )
+    if (exportedMatches.length === 0) continue
+
+    violations.push(
+      `docs/roadmap.md (primitives.registry.json roadmapTablesMarkdown): ${exportedMatches.join(' / ')} is exported from @ghostvue/vue but marked "${statusCell}" instead of "merged (<issue>)".`,
+    )
+  }
+  return violations
+}
+
+/**
+ * @param {string} source
+ * @param {string} beginMarker
+ * @param {string} endMarker
+ * @param {string} replacement
+ */
+function replaceGeneratedRegion(source, beginMarker, endMarker, replacement) {
+  const begin = source.indexOf(beginMarker)
+  const end = source.indexOf(endMarker)
+  if (begin === -1 || end === -1 || end <= begin) {
+    return null
+  }
+  return (
+    source.slice(0, begin + beginMarker.length) +
+    '\n' +
+    replacement.trimEnd() +
+    '\n' +
+    source.slice(end)
+  )
+}
+
+/**
+ * @param {{
+ *   repositoryRoot: string
+ *   tablesMarkdown: string
+ *   exportsMarkdown?: string
+ *   write: boolean
+ * }} options
  */
 export async function syncRoadmapTables({
   repositoryRoot,
   tablesMarkdown,
+  exportsMarkdown,
   write,
 }) {
   const roadmapPath = join(repositoryRoot, 'docs/roadmap.md')
-  let source = await readFile(roadmapPath, 'utf8')
-  const begin = source.indexOf(ROADMAP_BEGIN)
-  const end = source.indexOf(ROADMAP_END)
-  if (begin === -1 || end === -1 || end <= begin) {
+  const source = await readFile(roadmapPath, 'utf8')
+
+  let updated = replaceGeneratedRegion(
+    source,
+    ROADMAP_BEGIN,
+    ROADMAP_END,
+    tablesMarkdown,
+  )
+  if (updated === null) {
     return [
       'docs/roadmap.md is missing registry table markers. Add registries begin/end comments.',
     ]
   }
-  const expected =
-    source.slice(0, begin + ROADMAP_BEGIN.length) +
-    '\n' +
-    tablesMarkdown.trimEnd() +
-    '\n' +
-    source.slice(end)
+
+  if (exportsMarkdown !== undefined) {
+    const withExports = replaceGeneratedRegion(
+      updated,
+      ROADMAP_EXPORTS_BEGIN,
+      ROADMAP_EXPORTS_END,
+      exportsMarkdown,
+    )
+    if (withExports === null) {
+      return [
+        'docs/roadmap.md is missing registry exports markers. Add roadmap-exports begin/end comments.',
+      ]
+    }
+    updated = withExports
+  }
+
   const options = await resolveConfig(roadmapPath)
-  const formatted = await format(expected, {
+  const formatted = await format(updated, {
     ...options,
     filepath: roadmapPath,
   })
@@ -871,7 +997,7 @@ export async function syncRoadmapTables({
     return source === formatted
       ? []
       : [
-          'docs/roadmap.md registry table region is stale. Run: pnpm registries:write',
+          'docs/roadmap.md generated regions are stale. Run: pnpm registries:write',
         ]
   }
   await writeFile(roadmapPath, formatted)

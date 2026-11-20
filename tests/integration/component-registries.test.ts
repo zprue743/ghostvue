@@ -9,6 +9,8 @@ import { describe, expect, it } from 'vitest'
 
 import {
   buildAutoImportNames,
+  buildRoadmapExportsMarkdown,
+  findRoadmapStatusDrift,
   hashContent,
   syncRepositoryRegistries,
 } from '../../scripts/lib/component-registries.js'
@@ -204,6 +206,149 @@ describe('component registries', () => {
       expect(themesPublicApi).not.toContain("import '../default.css'")
       expect(themesPublishIndex).toContain("import './default.css'")
       expect(themesPublishIndex).toContain(addedThemesExport)
+    } finally {
+      await rm(tempRoot, { recursive: true, force: true })
+    }
+  })
+
+  it('flags exported components marked planned, in progress, or in review in the roadmap table', () => {
+    const tablesMarkdown = [
+      '| Order | Component | Issue | Primitive dependencies | Status |',
+      '| --- | --- | --- | --- | --- |',
+      '| 1 | `GhostBadge` | GHO-75 | None | merged (GHO-75) |',
+      '| 2 | `GhostInput` | GHO-70 | None | planned |',
+      '| 3 | `GhostSelect` | GHO-83 | None | in review (GHO-83) |',
+      '| 4 | `GhostDialog` / `GhostModal` | GHO-28 | None | in progress |',
+      '| 5 | `GhostToast` | GHO-33 | None | planned |',
+    ].join('\n')
+
+    const violations = findRoadmapStatusDrift({
+      tablesMarkdown,
+      vueExportNames: new Set([
+        'GhostBadge',
+        'GhostInput',
+        'GhostSelect',
+        'GhostDialog',
+      ]),
+    })
+
+    expect(violations).toHaveLength(3)
+    expect(violations[0]).toContain('GhostInput')
+    expect(violations[1]).toContain('GhostSelect')
+    expect(violations[2]).toContain('GhostDialog')
+  })
+
+  it('syncs roadmap exports prose and fails check when roadmap statuses drift', async () => {
+    const tempRoot = await mkdtemp(join(tmpdir(), 'ghostvue-roadmap-'))
+    try {
+      const registryDir = join(tempRoot, 'packages/vue/registry')
+      await mkdir(registryDir, { recursive: true })
+      await mkdir(join(tempRoot, 'docs'), { recursive: true })
+
+      const primitivesPath = join(registryDir, 'primitives.registry.json')
+      const staleTable = [
+        '| Order | Component | Issue | Primitive dependencies | Status |',
+        '| --- | --- | --- | --- | --- |',
+        '| 1 | `GhostBadge` | GHO-75 | None | in progress |',
+      ].join('\n')
+
+      await writeFile(
+        primitivesPath,
+        JSON.stringify(
+          {
+            schemaVersion: '1.0.0',
+            slug: 'primitives',
+            familyOrder: ['badge'],
+            vueBarrel: ["export { useGhostId } from './use-ghost-id'"],
+            themesBarrel: ["export { tokens } from './generated/tokens'"],
+            roadmapTablesMarkdown: staleTable,
+          },
+          null,
+          2,
+        ),
+      )
+
+      await writeFile(
+        join(registryDir, 'badge.registry.json'),
+        JSON.stringify(
+          {
+            schemaVersion: '1.0.0',
+            slug: 'badge',
+            vueBarrel: [
+              "export { default as GhostBadge } from './GhostBadge.vue'",
+            ],
+            themesBarrel: ["export { GhostBadge } from './ghost-badge'"],
+            examples: [],
+          },
+          null,
+          2,
+        ),
+      )
+
+      await writeFile(
+        join(tempRoot, 'docs/roadmap.md'),
+        [
+          '# Component roadmap',
+          '',
+          '<!-- @generated registries:roadmap-exports begin -->',
+          'stale exports',
+          '<!-- @generated registries:roadmap-exports end -->',
+          '',
+          '<!-- @generated registries:roadmap-tables begin -->',
+          staleTable,
+          '<!-- @generated registries:roadmap-tables end -->',
+          '',
+        ].join('\n'),
+      )
+
+      const driftCheck = await syncRepositoryRegistries({
+        repositoryRoot: tempRoot,
+        write: false,
+      })
+      expect(driftCheck.violations).toEqual(
+        expect.arrayContaining([
+          expect.stringContaining('GhostBadge is exported from @ghostvue/vue'),
+          expect.stringContaining(
+            'docs/roadmap.md generated regions are stale',
+          ),
+        ]),
+      )
+
+      const mergedTable = staleTable.replace('in progress', 'merged (GHO-75)')
+      await writeFile(
+        primitivesPath,
+        JSON.stringify(
+          {
+            schemaVersion: '1.0.0',
+            slug: 'primitives',
+            familyOrder: ['badge'],
+            vueBarrel: ["export { useGhostId } from './use-ghost-id'"],
+            themesBarrel: ["export { tokens } from './generated/tokens'"],
+            roadmapTablesMarkdown: mergedTable,
+          },
+          null,
+          2,
+        ),
+      )
+
+      await syncRepositoryRegistries({ repositoryRoot: tempRoot, write: true })
+
+      const cleanCheck = await syncRepositoryRegistries({
+        repositoryRoot: tempRoot,
+        write: false,
+      })
+      expect(cleanCheck.violations).toEqual([])
+
+      const roadmapText = await readFile(
+        join(tempRoot, 'docs/roadmap.md'),
+        'utf8',
+      )
+      const expectedExports = buildRoadmapExportsMarkdown({
+        vueExportNames: ['GhostBadge', 'useGhostId'],
+        themesExportNames: ['GhostBadge', 'tokens'],
+      })
+      expect(roadmapText).toContain(expectedExports)
+      expect(roadmapText).toContain('merged (GHO-75)')
     } finally {
       await rm(tempRoot, { recursive: true, force: true })
     }
