@@ -4,6 +4,14 @@
 validation message. Import the compound parts from `@ghostvue/vue` for headless
 use, or from `@ghostvue/themes` when you want the default vertical stack styles.
 
+<GhostExample id="field/profile-settings" />
+
+The profile form composes themed `GhostField` with `GhostInput` and
+`GhostTextarea`: required fields mark their labels, the seeded invalid support
+email links its error via `aria-describedby`, and the disabled organization ID
+mutes its label while disabling the underlying control. Actions stack at full
+width on narrow previews.
+
 ## Basic labeled input
 
 <GhostExample id="field/basic" />

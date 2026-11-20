@@ -64,5 +64,8 @@
     "keyboard": {},
     "requiredAriaAttributes": []
   },
-  "examples": ["segmented-control/themed"]
+  "examples": [
+    "segmented-control/analytics-period",
+    "segmented-control/themed"
+  ]
 }

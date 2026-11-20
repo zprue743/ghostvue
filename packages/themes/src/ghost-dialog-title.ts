@@ -36,6 +36,7 @@ export const GhostDialogTitle = defineComponent({
         GhostUnstyledDialogTitle,
         {
           ...attrs,
+          class: ['ghost-dialog-title', attrs.class],
           ref: inner,
           as: props.as,
         },

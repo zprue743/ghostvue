@@ -5,6 +5,12 @@ Keyboard and tab order use the platform same-`name` radio model (arrow keys move
 focus and select). Import from `@ghostvue/vue` for headless use, or from
 `@ghostvue/themes` for the default visual treatment.
 
+<GhostExample id="radio-group/deployment-tier" />
+
+The deployment selector pairs a vertical `GhostRadioGroup` for compute tiers
+(including a disabled enterprise option) with a compact `size="sm"` horizontal
+group for billing cadence.
+
 ## Basic use
 
 <GhostExample id="radio-group/basic" />

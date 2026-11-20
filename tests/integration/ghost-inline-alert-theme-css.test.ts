@@ -49,4 +49,20 @@ describe('GhostInlineAlert theme CSS tokens', () => {
     expect(css).toContain('--ghost-type-size-sm')
     expect(findHardcodedVisuals(css)).toEqual([])
   })
+
+  it('uses contrast foreground for solid alerts, child combinators for parts, and CanvasText in forced-colors', async () => {
+    const css = stripComments(await readFile(cssPath, 'utf8'))
+    expect(css).toContain(
+      '--_ghost-inline-alert-title-color: var(--_ghost-inline-alert-tone-contrast);',
+    )
+    expect(css).toContain('--_ghost-inline-alert-message-color: var(')
+    expect(css).not.toContain('85%')
+    expect(css).toMatch(/\.ghost-inline-alert\s*>\s*\[data-part='title'\]/)
+    expect(css).toMatch(/\.ghost-inline-alert\s*>\s*\[data-part='message'\]/)
+    expect(css).toMatch(/\.ghost-inline-alert\s*>\s*\[data-part='actions'\]/)
+    expect(css).not.toMatch(/\.ghost-inline-alert\s+\[data-part=/)
+    expect(css).toContain('@media (forced-colors: active)')
+    expect(css).toContain('--_ghost-inline-alert-title-color: CanvasText;')
+    expect(css).toContain('--_ghost-inline-alert-message-color: CanvasText;')
+  })
 })

@@ -7,10 +7,47 @@
     .ghost-themed-scope .ghost-number-input
   ) {
     --_ghost-number-input-gap: var(--ghost-space-gap-sm);
+    --_ghost-number-input-min-size: var(--ghost-control-size-md-min);
+    --_ghost-number-input-padding-block: var(
+      --ghost-control-size-md-padding-block
+    );
+    --_ghost-number-input-padding-inline: var(
+      --ghost-control-size-md-padding-inline
+    );
+    --_ghost-number-input-font-size: var(--ghost-control-size-md-font);
+
     align-items: stretch;
     display: inline-flex;
     gap: var(--_ghost-number-input-gap);
     max-inline-size: 100%;
+  }
+
+  :where(
+    .ghost-theme .ghost-number-input[data-size='sm'],
+    .ghost-themed-scope .ghost-number-input[data-size='sm']
+  ) {
+    --_ghost-number-input-min-size: var(--ghost-control-size-sm-min);
+    --_ghost-number-input-padding-block: var(
+      --ghost-control-size-sm-padding-block
+    );
+    --_ghost-number-input-padding-inline: var(
+      --ghost-control-size-sm-padding-inline
+    );
+    --_ghost-number-input-font-size: var(--ghost-control-size-sm-font);
+  }
+
+  :where(
+    .ghost-theme .ghost-number-input[data-size='lg'],
+    .ghost-themed-scope .ghost-number-input[data-size='lg']
+  ) {
+    --_ghost-number-input-min-size: var(--ghost-control-size-lg-min);
+    --_ghost-number-input-padding-block: var(
+      --ghost-control-size-lg-padding-block
+    );
+    --_ghost-number-input-padding-inline: var(
+      --ghost-control-size-lg-padding-inline
+    );
+    --_ghost-number-input-font-size: var(--ghost-control-size-lg-font);
   }
 
   :where(
@@ -22,17 +59,9 @@
   }
 
   :where(
-    .ghost-theme .ghost-number-input__input,
-    .ghost-themed-scope .ghost-number-input__input
+    .ghost-theme .ghost-number-input > .ghost-number-input__input,
+    .ghost-themed-scope .ghost-number-input > .ghost-number-input__input
   ) {
-    --_ghost-number-input-min-size: var(--ghost-control-size-md-min);
-    --_ghost-number-input-padding-block: var(
-      --ghost-control-size-md-padding-block
-    );
-    --_ghost-number-input-padding-inline: var(
-      --ghost-control-size-md-padding-inline
-    );
-    --_ghost-number-input-font-size: var(--ghost-control-size-md-font);
     --_ghost-number-input-background: var(--ghost-surface-bg);
     --_ghost-number-input-border-color: var(--ghost-border-default);
     --_ghost-number-input-color: var(--ghost-text-default);
@@ -59,40 +88,8 @@
   }
 
   :where(
-    .ghost-theme .ghost-number-input[data-size='sm'] .ghost-number-input__input,
-    .ghost-themed-scope
-      .ghost-number-input[data-size='sm']
-      .ghost-number-input__input
-  ) {
-    --_ghost-number-input-min-size: var(--ghost-control-size-sm-min);
-    --_ghost-number-input-padding-block: var(
-      --ghost-control-size-sm-padding-block
-    );
-    --_ghost-number-input-padding-inline: var(
-      --ghost-control-size-sm-padding-inline
-    );
-    --_ghost-number-input-font-size: var(--ghost-control-size-sm-font);
-  }
-
-  :where(
-    .ghost-theme .ghost-number-input[data-size='lg'] .ghost-number-input__input,
-    .ghost-themed-scope
-      .ghost-number-input[data-size='lg']
-      .ghost-number-input__input
-  ) {
-    --_ghost-number-input-min-size: var(--ghost-control-size-lg-min);
-    --_ghost-number-input-padding-block: var(
-      --ghost-control-size-lg-padding-block
-    );
-    --_ghost-number-input-padding-inline: var(
-      --ghost-control-size-lg-padding-inline
-    );
-    --_ghost-number-input-font-size: var(--ghost-control-size-lg-font);
-  }
-
-  :where(
-    .ghost-theme .ghost-number-input__button,
-    .ghost-themed-scope .ghost-number-input__button
+    .ghost-theme .ghost-number-input > .ghost-number-input__button,
+    .ghost-themed-scope .ghost-number-input > .ghost-number-input__button
   ) {
     align-items: center;
     appearance: none;
@@ -103,75 +100,115 @@
     cursor: pointer;
     display: inline-flex;
     font-family: var(--ghost-type-family-sans);
-    font-size: var(--ghost-control-size-md-font);
+    font-size: var(--_ghost-number-input-font-size);
     justify-content: center;
     margin: 0;
-    min-inline-size: var(--ghost-control-size-md-min);
+    min-block-size: var(--_ghost-number-input-min-size);
+    min-inline-size: var(--_ghost-number-input-min-size);
     padding-inline: var(--ghost-space-inset-xs);
   }
 
   :where(
-    .ghost-theme .ghost-number-input__button:disabled,
-    .ghost-themed-scope .ghost-number-input__button:disabled
+    .ghost-theme .ghost-number-input > .ghost-number-input__button:disabled,
+    .ghost-themed-scope
+      .ghost-number-input
+      > .ghost-number-input__button:disabled
   ) {
     cursor: not-allowed;
     opacity: 0.5;
   }
 
   :where(
-    .ghost-theme .ghost-number-input__button:focus-visible,
-    .ghost-themed-scope .ghost-number-input__button:focus-visible
+    .ghost-theme
+      .ghost-number-input
+      > .ghost-number-input__button:focus-visible,
+    .ghost-themed-scope
+      .ghost-number-input
+      > .ghost-number-input__button:focus-visible
   ) {
-    box-shadow: 0 0 0 var(--ghost-focus-ring-width)
-      var(--ghost-focus-ring-color);
-    outline: none;
+    box-shadow: 0 0 0 var(--ghost-focus-ring-offset)
+      var(--ghost-focus-ring-contrast);
+    outline: var(--ghost-focus-ring-width) solid var(--ghost-focus-ring-color);
+    outline-offset: var(--ghost-focus-ring-offset);
   }
 
   :where(
-    .ghost-theme .ghost-number-input__input:focus-visible,
-    .ghost-themed-scope .ghost-number-input__input:focus-visible
+    .ghost-theme .ghost-number-input > .ghost-number-input__input:focus-visible,
+    .ghost-themed-scope
+      .ghost-number-input
+      > .ghost-number-input__input:focus-visible
   ) {
-    box-shadow: 0 0 0 var(--ghost-focus-ring-width)
-      var(--ghost-focus-ring-color);
-    outline: none;
+    box-shadow: 0 0 0 var(--ghost-focus-ring-offset)
+      var(--ghost-focus-ring-contrast);
+    outline: var(--ghost-focus-ring-width) solid var(--ghost-focus-ring-color);
+    outline-offset: var(--ghost-focus-ring-offset);
   }
 
   :where(
     .ghost-theme
       .ghost-number-input[data-state='invalid']
-      .ghost-number-input__input,
+      > .ghost-number-input__input,
     .ghost-themed-scope
       .ghost-number-input[data-state='invalid']
-      .ghost-number-input__input
+      > .ghost-number-input__input
   ) {
     border-color: var(--ghost-border-danger);
   }
 
   /*
-   * The focus ring here is a box-shadow with no outline, and forced colors
-   * remove box shadows, so keyboard focus vanished. Draw a Highlight outline
-   * instead, and show disabled parts in GrayText rather than opacity.
+   * Forced colors strip box-shadow focus rings and repaint control chrome, so
+   * preserve system colors, Highlight outlines, and GrayText disabled state.
    */
   @media (forced-colors: active) {
     :where(
-      .ghost-theme .ghost-number-input__button:focus-visible,
-      .ghost-themed-scope .ghost-number-input__button:focus-visible,
-      .ghost-theme .ghost-number-input__input:focus-visible,
-      .ghost-themed-scope .ghost-number-input__input:focus-visible
+      .ghost-theme .ghost-number-input > .ghost-number-input__input,
+      .ghost-themed-scope .ghost-number-input > .ghost-number-input__input
     ) {
-      outline: var(--ghost-focus-ring-width) solid Highlight;
-      outline-offset: var(--ghost-focus-ring-offset);
+      background-color: Field;
+      border-color: FieldText;
+      color: FieldText;
     }
 
     :where(
-      .ghost-theme .ghost-number-input__button:disabled,
-      .ghost-themed-scope .ghost-number-input__button:disabled,
-      .ghost-theme .ghost-number-input__input:disabled,
-      .ghost-themed-scope .ghost-number-input__input:disabled
+      .ghost-theme .ghost-number-input > .ghost-number-input__button,
+      .ghost-themed-scope .ghost-number-input > .ghost-number-input__button
+    ) {
+      background-color: ButtonFace;
+      border-color: ButtonText;
+      color: ButtonText;
+    }
+
+    :where(
+      .ghost-theme .ghost-number-input > .ghost-number-input__button:disabled,
+      .ghost-themed-scope
+        .ghost-number-input
+        > .ghost-number-input__button:disabled,
+      .ghost-theme .ghost-number-input > .ghost-number-input__input:disabled,
+      .ghost-themed-scope
+        .ghost-number-input
+        > .ghost-number-input__input:disabled
     ) {
       border-color: GrayText;
       color: GrayText;
       opacity: 1;
+    }
+
+    :where(
+      .ghost-theme
+        .ghost-number-input
+        > .ghost-number-input__button:focus-visible,
+      .ghost-themed-scope
+        .ghost-number-input
+        > .ghost-number-input__button:focus-visible,
+      .ghost-theme
+        .ghost-number-input
+        > .ghost-number-input__input:focus-visible,
+      .ghost-themed-scope
+        .ghost-number-input
+        > .ghost-number-input__input:focus-visible
+    ) {
+      box-shadow: none;
+      outline-color: Highlight;
     }
   }
 }

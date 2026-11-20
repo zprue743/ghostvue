@@ -5,6 +5,13 @@
 `@ghostvue/vue` for headless use, or from `@ghostvue/themes` for the default
 field treatment.
 
+<GhostExample id="textarea/release-notes" />
+
+The release notes composer pairs themed `GhostTextarea` with `GhostField`:
+the summary auto-resizes as you type and validates on publish, the deployment
+checklist stays focusable as `readonly`, and the deprecation notice is
+`disabled`.
+
 ## Basic use
 
 <GhostExample id="textarea/basic" />

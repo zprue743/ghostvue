@@ -20,6 +20,12 @@
   ],
   "examples": [
     {
+      "id": "radio-group/deployment-tier",
+      "title": "Deployment tier",
+      "description": "Vertical tier cards and compact horizontal billing cadence with GhostRadioGroup.",
+      "layer": "themed"
+    },
+    {
       "id": "radio-group/basic",
       "title": "Basic",
       "description": "Headless radio group with labeled items.",

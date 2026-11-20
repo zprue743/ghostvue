@@ -33,4 +33,21 @@ describe('GhostRadioGroup theme CSS', () => {
     expect(pseudoRule(css, '::before')).toMatch(/grid-area:\s*1\s*\/\s*1;/)
     expect(pseudoRule(css, '::after')).toMatch(/grid-area:\s*1\s*\/\s*1;/)
   })
+
+  it('supports sm/lg sizes via --_ghost-radio-hit and forced-colors mode', async () => {
+    const css = stripComments(await readFile(cssPath, 'utf8'))
+    expect(css).toContain(".ghost-radio-group[data-size='sm']")
+    expect(css).toContain(
+      '--_ghost-radio-hit: var(--ghost-control-size-sm-min);',
+    )
+    expect(css).toContain(".ghost-radio-group[data-size='lg']")
+    expect(css).toContain(
+      '--_ghost-radio-hit: var(--ghost-control-size-lg-min);',
+    )
+    expect(css).toContain('@media (forced-colors: active)')
+    expect(css).toContain('ButtonFace')
+    expect(css).toContain('ButtonText')
+    expect(css).toContain('GrayText')
+    expect(css).toContain('outline-color: Highlight;')
+  })
 })

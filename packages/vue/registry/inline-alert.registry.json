@@ -19,6 +19,12 @@
   ],
   "examples": [
     {
+      "id": "inline-alert/billing-notices",
+      "title": "Workspace billing status",
+      "description": "Solid, soft, and outline GhostInlineAlert notices with contextual actions.",
+      "layer": "themed"
+    },
+    {
       "id": "inline-alert/basic",
       "title": "Static inline alert",
       "description": "Title and message without live-region semantics.",

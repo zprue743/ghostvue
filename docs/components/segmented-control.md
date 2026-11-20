@@ -7,6 +7,11 @@ positioned from CSS variables—no layout reads during SSR.
 
 See the [specification](/specs/segmented-control) for the accessibility contract.
 
+<GhostExample id="segmented-control/analytics-period" />
+
+The API traffic card uses two `GhostSegmentedControl` bars to switch time
+windows and metric series with roving keyboard focus.
+
 ## Examples
 
 ### Headless
