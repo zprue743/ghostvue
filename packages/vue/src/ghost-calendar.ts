@@ -155,6 +155,17 @@ export interface UseGhostCalendarReturn {
 export interface GhostCalendarContext extends UseGhostCalendarReturn {
   setGridElement: (element: HTMLElement | null) => void
   syncFocusedTabStops: (gridRoot: HTMLElement) => void
+  /**
+   * Internal focus-target accessor for wrappers that move focus into the grid
+   * (GhostDatePicker's modal initial focus). `ready` turns true once a
+   * `GhostCalendarGrid` has mounted; `resolve()` returns the control for the
+   * current roving focus date, or `null` when no grid or cell is rendered.
+   * Not part of the public barrel: consumers use `GhostCalendarGrid.focus()`.
+   */
+  focusTarget: {
+    ready: ComputedRef<boolean>
+    resolve: () => HTMLElement | null
+  }
 }
 
 export const ghostCalendarContextKey: InjectionKey<GhostCalendarContext> =

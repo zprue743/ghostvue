@@ -1,0 +1,38 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "generated",
+  "name": "GhostDatePickerCalendar",
+  "package": "@ghostvue/vue",
+  "status": "experimental",
+  "description": "Binds GhostCalendar to the picker: display-only committed value or pending range anchor, select-driven commits, and a default header and grid.",
+  "props": [],
+  "models": [],
+  "events": [],
+  "slots": [
+    {
+      "name": "default",
+      "props": [],
+      "description": "Custom `GhostCalendar*` part composition. Defaults to a header with\nprevious/next month buttons and heading, followed by the grid."
+    }
+  ],
+  "exposed": [],
+  "styling": {
+    "parts": [],
+    "states": [],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "grid",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/examples/datepicker-dialog/",
+    "keyboard": {},
+    "requiredAriaAttributes": [
+      "aria-selected"
+    ]
+  },
+  "examples": [],
+  "spec": {
+    "path": "docs/components/date-picker-spec.md",
+    "status": "approved",
+    "evidence": "Approved by Zac on 2026-11-17 (GHO-207); see the Status line in this spec."
+  }
+}

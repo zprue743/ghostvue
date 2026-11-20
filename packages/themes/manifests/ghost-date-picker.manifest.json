@@ -1,0 +1,64 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "handwritten",
+  "name": "GhostDatePicker",
+  "package": "@ghostvue/themes",
+  "status": "experimental",
+  "description": "Themed GhostDatePicker root, inputs, trigger, and anchored modal surface using --ghost-* tokens with 44px touch targets.",
+  "props": [],
+  "models": [],
+  "events": [],
+  "slots": [
+    {
+      "name": "default",
+      "props": [],
+      "description": "Date picker parts composed by the consumer."
+    }
+  ],
+  "exposed": [],
+  "styling": {
+    "parts": [
+      {
+        "name": "input",
+        "description": "Themed text field with .ghost-date-picker-input."
+      },
+      {
+        "name": "trigger",
+        "description": "Themed icon button with .ghost-date-picker-trigger."
+      },
+      {
+        "name": "content",
+        "description": "Elevated dialog surface with .ghost-date-picker-content; calendar parts inherit the calendar recipe."
+      }
+    ],
+    "states": [
+      {
+        "name": "open",
+        "description": "Trigger data-state while the calendar is open."
+      }
+    ],
+    "cssProperties": [
+      {
+        "name": "--ghost-elevation-3-bg",
+        "description": "Calendar surface background."
+      },
+      {
+        "name": "--ghost-surface-bg",
+        "description": "Input background."
+      },
+      {
+        "name": "--ghost-border-danger",
+        "description": "Invalid input border."
+      }
+    ]
+  },
+  "accessibility": {
+    "role": "dialog",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/examples/datepicker-dialog/",
+    "keyboard": {},
+    "requiredAriaAttributes": []
+  },
+  "examples": [
+    "date-picker/themed"
+  ]
+}

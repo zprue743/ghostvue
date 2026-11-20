@@ -1,0 +1,78 @@
+{
+  "schemaVersion": "1.0.0",
+  "slug": "date-picker",
+  "docs": {
+    "title": "GhostDatePicker",
+    "specStatus": "approved",
+    "link": "/components/date-picker",
+    "specLink": "/specs/date-picker",
+    "category": "forms",
+    "sidebarLabel": "Date Picker"
+  },
+  "vueBarrel": [
+    "export { default as GhostDatePicker } from './GhostDatePicker.vue'",
+    "export { default as GhostDatePickerInput } from './GhostDatePickerInput.vue'",
+    "export { default as GhostDatePickerTrigger } from './GhostDatePickerTrigger.vue'",
+    "export { default as GhostDatePickerContent } from './GhostDatePickerContent.vue'",
+    "export { default as GhostDatePickerCalendar } from './GhostDatePickerCalendar.vue'",
+    "export { useGhostDatePicker } from './use-ghost-date-picker'",
+    "export type {\n  GhostDatePickerCallbackSource,\n  GhostDatePickerContentProps,\n  GhostDatePickerError,\n  GhostDatePickerErrorCode,\n  GhostDatePickerFormat,\n  GhostDatePickerInputExposed,\n  GhostDatePickerInputProps,\n  GhostDatePickerParse,\n  GhostDatePickerPart,\n  GhostDatePickerPartExposed,\n  GhostDatePickerProps,\n  GhostDatePickerRange,\n  GhostDatePickerSelectionMode,\n  GhostDatePickerSlotProps,\n  GhostDatePickerTextContext,\n  GhostDatePickerValidateRange,\n  GhostDatePickerValue,\n  GhostDatePickerWeekday,\n  UseGhostDatePickerOptions,\n  UseGhostDatePickerReturn,\n} from './ghost-date-picker'"
+  ],
+  "themesBarrel": [
+    "export {\n  GhostDatePicker,\n  type GhostDatePickerError,\n  type GhostDatePickerRange,\n  type GhostDatePickerSlotProps,\n  type GhostDatePickerValue,\n} from './ghost-date-picker'",
+    "export {\n  GhostDatePickerInput,\n  type GhostDatePickerInputExposed,\n} from './ghost-date-picker-input'",
+    "export {\n  GhostDatePickerTrigger,\n  type GhostDatePickerPartExposed,\n} from './ghost-date-picker-trigger'",
+    "export { GhostDatePickerContent } from './ghost-date-picker-content'",
+    "export { GhostDatePickerCalendar } from './ghost-date-picker-calendar'"
+  ],
+  "examples": [
+    {
+      "id": "date-picker/basic",
+      "title": "Basic",
+      "description": "Single date with typed ISO entry and an anchored modal calendar.",
+      "layer": "headless"
+    },
+    {
+      "id": "date-picker/range",
+      "title": "Range",
+      "description": "Start and end inputs in a named group; two calendar activations commit atomically.",
+      "layer": "headless"
+    },
+    {
+      "id": "date-picker/controlled",
+      "title": "Controlled",
+      "description": "Controlled value and open state with an explicit clear action.",
+      "layer": "headless"
+    },
+    {
+      "id": "date-picker/validation",
+      "title": "Validation and form reset",
+      "description": "Required range with bounds, validateRange rejecting interior unavailable dates, native submit and reset.",
+      "layer": "headless"
+    },
+    {
+      "id": "date-picker/custom-format",
+      "title": "Custom format and locale",
+      "description": "Consumer parse and format callbacks with a German calendar.",
+      "layer": "headless"
+    },
+    {
+      "id": "date-picker/rtl",
+      "title": "Right-to-left",
+      "description": "Arabic locale in an RTL container; arrow keys follow reading direction.",
+      "layer": "headless"
+    },
+    {
+      "id": "date-picker/nested-dialog",
+      "title": "Inside a dialog",
+      "description": "Date picker in a modal dialog; Escape closes only the top layer.",
+      "layer": "headless"
+    },
+    {
+      "id": "date-picker/themed",
+      "title": "Themed",
+      "description": "Styled date range picker from @ghostvue/themes inside GhostField.",
+      "layer": "themed"
+    }
+  ]
+}
