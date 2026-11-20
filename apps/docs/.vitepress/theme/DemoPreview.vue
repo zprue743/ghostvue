@@ -194,12 +194,22 @@ async function revealSourceForManualCopy(): Promise<void> {
   selection.addRange(range)
 }
 
+/*
+ * Clipboard writes settle in any order (a permission prompt can hold one
+ * back), so only the latest request may set the status; an older write that
+ * settles late must not replace a newer "copied" with "failed".
+ */
+let copyRequest = 0
+
 async function copySource(): Promise<void> {
+  const request = ++copyRequest
   clearCopyTimer()
   // Reset first so a repeated identical message is announced again.
   copyState.value = 'idle'
   await nextTick()
-  if (await copyToClipboard(`${props.sourceText ?? ''}\n`)) {
+  const copied = await copyToClipboard(`${props.sourceText ?? ''}\n`)
+  if (request !== copyRequest) return
+  if (copied) {
     copyState.value = 'copied'
     copyTimer = setTimeout(() => {
       copyState.value = 'idle'
