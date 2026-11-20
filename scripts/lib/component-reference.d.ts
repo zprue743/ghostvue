@@ -36,5 +36,6 @@ export type ReferenceManifest = Omit<
   examples: string[]
 }
 
+export function stabilityBadge(status: string): string
 export function manifestToMarkdown(manifest: ReferenceManifest): string
 export function writeComponentReferences(repositoryRoot: string): Promise<void>

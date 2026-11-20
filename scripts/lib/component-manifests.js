@@ -345,6 +345,22 @@ function exposedKind(type) {
   return 'property'
 }
 
+/**
+ * Generated stand-in prose used when neither the manifest nor JSDoc describes
+ * a member. Exported so the stability check (`component-status.js`) can tell
+ * placeholder text from human-written documentation without duplicating it.
+ */
+export const PLACEHOLDER_DESCRIPTIONS = Object.freeze({
+  component: (name) => `Public ${name} component.`,
+  prop: (name) => `Declared prop \`${name}\`.`,
+  model: (prop) => `v-model binding for \`${prop}\`.`,
+  event: (name) => `Emitted as \`${name}\`.`,
+  slot: (name) =>
+    name === 'default' ? 'Primary content.' : `Named slot \`${name}\`.`,
+  slotProp: (name) => `Slot prop \`${name}\`.`,
+  exposed: (kind, name) => `Exposed ${kind} \`${name}\`.`,
+})
+
 function proseOrFallback(prose, fallback) {
   if (typeof prose === 'string' && prose.trim().length > 0) return prose
   if (typeof fallback === 'string' && fallback.trim().length > 0) {
@@ -528,7 +544,7 @@ export function mergeManifest(derived, existing, specMetadata = undefined) {
       description: memberDescription(
         prior?.description,
         prop.description,
-        `Declared prop \`${prop.name}\`.`,
+        PLACEHOLDER_DESCRIPTIONS.prop(prop.name),
       ),
       deprecated: prop.deprecated,
     }
@@ -543,7 +559,7 @@ export function mergeManifest(derived, existing, specMetadata = undefined) {
       description: memberDescription(
         prior?.description,
         model.description,
-        `v-model binding for \`${model.prop}\`.`,
+        PLACEHOLDER_DESCRIPTIONS.model(model.prop),
       ),
     }
   })
@@ -556,7 +572,7 @@ export function mergeManifest(derived, existing, specMetadata = undefined) {
       description: memberDescription(
         prior?.description,
         event.description,
-        `Emitted as \`${event.name}\`.`,
+        PLACEHOLDER_DESCRIPTIONS.event(event.name),
       ),
     }
   })
@@ -572,15 +588,13 @@ export function mergeManifest(derived, existing, specMetadata = undefined) {
         description: memberDescription(
           priorProps.get(slotProp.name)?.description,
           slotProp.description,
-          `Slot prop \`${slotProp.name}\`.`,
+          PLACEHOLDER_DESCRIPTIONS.slotProp(slotProp.name),
         ),
       })),
       description: memberDescription(
         prior?.description,
         slot.description,
-        slot.name === 'default'
-          ? 'Primary content.'
-          : `Named slot \`${slot.name}\`.`,
+        PLACEHOLDER_DESCRIPTIONS.slot(slot.name),
       ),
     }
   })
@@ -594,7 +608,7 @@ export function mergeManifest(derived, existing, specMetadata = undefined) {
       description: memberDescription(
         prior?.description,
         member.description,
-        `Exposed ${member.kind} \`${member.name}\`.`,
+        PLACEHOLDER_DESCRIPTIONS.exposed(member.kind, member.name),
       ),
     }
   })
@@ -648,7 +662,7 @@ export function mergeManifest(derived, existing, specMetadata = undefined) {
     description: memberDescription(
       previous.description,
       derived.description,
-      `Public ${derived.name} component.`,
+      PLACEHOLDER_DESCRIPTIONS.component(derived.name),
     ),
     props,
     models,

@@ -49,6 +49,21 @@ const STATUS_LABELS = {
 
 const REPOSITORY_BLOB = 'https://github.com/zprue743/ghostvue/blob/master/'
 
+// VitePress default-theme badge types. The badge text stays the raw manifest
+// value so readers, search, and llms.txt see the same token tools read.
+const STABILITY_BADGE_TYPES = {
+  experimental: 'warning',
+  beta: 'info',
+  stable: 'tip',
+  deprecated: 'danger',
+}
+
+/** Status badge for the manifest `status` field (GHO-58). */
+export function stabilityBadge(status) {
+  const type = STABILITY_BADGE_TYPES[status] ?? 'info'
+  return `<Badge type="${type}" text="${text(status)}" />`
+}
+
 function statusLabel(status) {
   return STATUS_LABELS[status] ?? text(status)
 }
@@ -132,7 +147,7 @@ export function manifestToMarkdown(manifest) {
   return [
     `# ${manifest.name} reference`,
     '',
-    `Package: ${code(manifest.package)}. Status: ${text(manifest.status)}.`,
+    `Package: ${code(manifest.package)}. Status: ${stabilityBadge(manifest.status)} ([stability policy](/standards/component-stability)).`,
     '',
     text(manifest.description),
     '',
@@ -270,12 +285,12 @@ export async function writeComponentReferences(repositoryRoot) {
         manifestToMarkdown(manifest),
       )
       links.push(
-        `- [${manifest.name} (${manifest.package})](./${spec.directory}/${slug}.md)`,
+        `- [${manifest.name} (${manifest.package})](./${spec.directory}/${slug}.md) ${stabilityBadge(manifest.status)}`,
       )
     }
   }
   await writeFile(
     join(output, 'index.md'),
-    `# Component references\n\nGenerated from the same manifests checked by \`pnpm manifests\`. Native fallthrough attributes and undocumented hooks are not inferred.\n\n${links.join('\n')}\n`,
+    `# Component references\n\nGenerated from the same manifests checked by \`pnpm manifests\`. Native fallthrough attributes and undocumented hooks are not inferred. Badges show each manifest \`status\`; see the [component stability policy](/standards/component-stability).\n\n${links.join('\n')}\n`,
   )
 }

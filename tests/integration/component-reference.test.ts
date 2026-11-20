@@ -13,6 +13,7 @@ import { describe, expect, it } from 'vitest'
 
 import {
   manifestToMarkdown,
+  stabilityBadge,
   writeComponentReferences,
   type ReferenceManifest,
 } from '../../scripts/lib/component-reference.js'
@@ -140,6 +141,17 @@ describe('component reference generation', () => {
       expect(markdown).toContain(content)
     }
     expect(manifestToMarkdown(manifest)).toBe(markdown)
+  })
+
+  it('renders the manifest status as a badge linked to the stability policy', () => {
+    expect(manifestToMarkdown(manifest)).toContain(
+      'Status: <Badge type="warning" text="experimental" /> ([stability policy](/standards/component-stability)).',
+    )
+    expect(stabilityBadge('beta')).toBe('<Badge type="info" text="beta" />')
+    expect(stabilityBadge('stable')).toBe('<Badge type="tip" text="stable" />')
+    expect(stabilityBadge('deprecated')).toBe(
+      '<Badge type="danger" text="deprecated" />',
+    )
   })
 
   it('renders the accessibility contract with every category not reviewed when verification is absent', () => {
@@ -304,7 +316,9 @@ describe('component reference generation', () => {
       ).toContain('@ghostvue/themes')
       expect(
         await readFile(join(root, 'docs/reference/index.md'), 'utf8'),
-      ).toContain('./themes/ghost-fixture.md')
+      ).toContain(
+        '(./themes/ghost-fixture.md) <Badge type="warning" text="experimental" />',
+      )
       await rm(join(root, 'packages/vue/manifests/ghost-fixture.manifest.json'))
       await writeComponentReferences(root)
       expect(await readdir(join(root, 'docs/reference/vue'))).toEqual([])

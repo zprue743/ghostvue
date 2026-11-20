@@ -66,6 +66,7 @@ const standardsSidebar: LlmsSidebarGroup['items'] = [
     link: '/standards/assistive-technology-review',
   },
   { text: 'Public APIs', link: '/standards/public-api' },
+  { text: 'Component stability', link: '/standards/component-stability' },
   { text: 'Dependencies', link: '/standards/dependencies' },
   { text: 'Documentation', link: '/standards/documentation' },
   { text: 'Performance', link: '/standards/performance' },
