@@ -1,7 +1,11 @@
 import AxeBuilder from '@axe-core/playwright'
 import { expect, test, type Locator, type Page } from '@playwright/test'
 
-import { openExampleSource, openPreviewWidth } from './docs-example-source'
+import {
+  openExampleSource,
+  openPreviewWidth,
+  scriptClipboardWrites,
+} from './docs-example-source'
 import { startStaticServer } from './static-server'
 
 /*
@@ -145,6 +149,44 @@ test.describe('docs typed props playground', () => {
       await expect(field).toBeDisabled()
     } finally {
       await context.close()
+      await docs.close()
+    }
+  })
+
+  test('Copy props reports a denied write and keeps the latest result when an older write settles late', async ({
+    page,
+  }) => {
+    const docs = await startStaticServer('apps/docs/.vitepress/dist')
+    try {
+      // First write denied at once; second denied slowly; third succeeds first.
+      await scriptClipboardWrites(page, [
+        { delay: 0, ok: false },
+        { delay: 400, ok: false },
+        { delay: 0, ok: true },
+      ])
+      await openDocs(page, `${docs.url}/components/input.html`)
+      const panel = panelOf(page.locator('[data-example-id="input/search"]'))
+      const copy = panel.getByRole('button', {
+        name: 'Copy Search props binding',
+      })
+      const status = panel.getByRole('status')
+
+      await expect(async () => {
+        await copy.focus()
+        await page.keyboard.press('Enter')
+        await expect(status).toContainText('Copy failed', { timeout: 500 })
+      }).toPass()
+      await expect(status).toContainText('<GhostInput')
+      await expect(copy).toBeFocused()
+
+      await page.keyboard.press('Enter')
+      await page.keyboard.press('Enter')
+      await expect(status).toHaveText('Props copied')
+      // Outlast the slow denial: it must not replace the newer success.
+      await page.waitForTimeout(600)
+      await expect(status).toHaveText('Props copied')
+      await expect(copy).toBeFocused()
+    } finally {
       await docs.close()
     }
   })

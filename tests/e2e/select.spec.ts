@@ -111,4 +111,53 @@ test.describe('GhostSelect', () => {
       await playground.close()
     }
   })
+
+  /*
+   * Spec keyboard table: Enter, Space, ArrowDown and ArrowUp on the closed
+   * trigger open the listbox and move real focus to the selected enabled
+   * option, else the first (last for ArrowUp) enabled option. A previous
+   * regression left focus on the trigger, so nothing here focuses an option
+   * directly. Opening focus timing differs by engine, hence @cross-browser.
+   */
+  test('every opening key moves real focus into the list @cross-browser', async ({
+    page,
+  }) => {
+    const playground = await startStaticServer('apps/playground/dist')
+
+    try {
+      await page.goto(playground.url)
+      const cases = [
+        // No selection: first enabled option, or the last for ArrowUp.
+        ['select-order', 'Enter', 'Apple'],
+        ['select-order', ' ', 'Apple'],
+        ['select-order', 'ArrowDown', 'Apple'],
+        ['select-order', 'ArrowUp', 'Cherry'],
+        // A selection wins over first/last for every key.
+        ['select-demo', 'Enter', '25 rows'],
+        ['select-demo', ' ', '25 rows'],
+        ['select-demo', 'ArrowDown', '25 rows'],
+        ['select-demo', 'ArrowUp', '25 rows'],
+      ] as const
+      for (const [demo, key, expected] of cases) {
+        const trigger = page.getByTestId(`${demo}-trigger`)
+        const content = page.getByTestId(`${demo}-content`)
+        await trigger.scrollIntoViewIfNeeded()
+        await expect(async () => {
+          await trigger.focus()
+          await page.keyboard.press(key)
+          await expect(content).toBeVisible({ timeout: 500 })
+        }).toPass()
+        await expect(trigger).toHaveAttribute('aria-expanded', 'true')
+        await expect(
+          content.getByRole('option', { name: expected, exact: true }),
+          `${demo} opened with ${key === ' ' ? 'Space' : key}`,
+        ).toBeFocused()
+        await page.keyboard.press('Escape')
+        await expect(content).toBeHidden()
+        await expect(trigger).toBeFocused()
+      }
+    } finally {
+      await playground.close()
+    }
+  })
 })

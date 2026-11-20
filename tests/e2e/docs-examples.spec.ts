@@ -10,6 +10,7 @@ import {
   exampleSourceToggle,
   openExampleSource,
   openPreviewWidth,
+  scriptClipboardWrites,
 } from './docs-example-source'
 import { startStaticServer } from './static-server'
 
@@ -969,6 +970,51 @@ test.describe('docs example previews', () => {
       // The failure message stays legible inside the frame on a phone.
       await page.setViewportSize({ width: 320, height: 800 })
       expect(await pageOverflow(page)).toBeLessThanOrEqual(0)
+    } finally {
+      await docs.close()
+    }
+  })
+
+  test('a denied clipboard write reports failure, and a slow earlier copy never overrides the latest result', async ({
+    page,
+  }) => {
+    const docs = await startStaticServer('apps/docs/.vitepress/dist')
+
+    try {
+      /*
+       * The Clipboard API exists but rejects (permission denied), which is a
+       * different path from a missing API. Each call's outcome is scripted:
+       * the first write is denied after a delay, the second succeeds at
+       * once, so the first rejection settles after the second success.
+       */
+      await scriptClipboardWrites(page, [
+        { delay: 0, ok: false },
+        { delay: 400, ok: false },
+        { delay: 0, ok: true },
+      ])
+      await page.goto(`${docs.url}/components/input.html`)
+      const id = 'input/themed'
+      const example = page.locator(`[data-example-id="${id}"]`)
+      const copy = example.getByRole('button', { name: 'Copy Themed source' })
+      const status = example.getByRole('status')
+
+      // A denied write fails visibly and keeps focus on Copy.
+      await expect(async () => {
+        await copy.focus()
+        await page.keyboard.press('Enter')
+        await expect(status).toContainText('Copy failed', { timeout: 500 })
+      }).toPass()
+      await expect(copy).toBeFocused()
+      await expect(example.getByTestId('ghost-example-source')).toBeVisible()
+
+      // Second press starts a slow denied write; the third succeeds first.
+      await page.keyboard.press('Enter')
+      await page.keyboard.press('Enter')
+      await expect(status).toHaveText('Copied')
+      // Outlast the slow rejection: the latest result must stay on screen.
+      await page.waitForTimeout(600)
+      await expect(status).toHaveText('Copied')
+      await expect(copy).toBeFocused()
     } finally {
       await docs.close()
     }
