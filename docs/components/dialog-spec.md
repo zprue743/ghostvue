@@ -1,3 +1,59 @@
+---
+schemaVersion: 1.0.0
+component: GhostDialog
+components:
+  - GhostDialog
+  - GhostDialogTrigger
+  - GhostDialogOverlay
+  - GhostDialogContent
+  - GhostDialogTitle
+  - GhostDialogDescription
+  - GhostDialogClose
+packages:
+  - '@ghostvue/vue'
+  - '@ghostvue/themes'
+specStatus: approved
+approval:
+  evidence: 'Approved for minimal `GhostDialog` (GHO-28 PR 2 of 2).'
+manifests:
+  - packages/vue/manifests/ghost-dialog.manifest.json
+  - packages/vue/manifests/ghost-dialog-trigger.manifest.json
+  - packages/vue/manifests/ghost-dialog-overlay.manifest.json
+  - packages/vue/manifests/ghost-dialog-content.manifest.json
+  - packages/vue/manifests/ghost-dialog-title.manifest.json
+  - packages/vue/manifests/ghost-dialog-description.manifest.json
+  - packages/vue/manifests/ghost-dialog-close.manifest.json
+  - packages/themes/manifests/ghost-dialog.manifest.json
+sections:
+  purpose:
+    applicable: true
+  nonGoals:
+    applicable: true
+  publicApi:
+    applicable: true
+  stateModel:
+    applicable: true
+  consumerData:
+    applicable: true
+  accessibility:
+    applicable: true
+  rendering:
+    applicable: true
+  environment:
+    applicable: true
+  performance:
+    applicable: true
+  composition:
+    applicable: true
+  testPlan:
+    applicable: true
+  documentationPlan:
+    applicable: true
+  compatibility:
+    applicable: true
+unresolvedQuestions: []
+---
+
 # GhostDialog specification
 
 **Status:** Approved for minimal `GhostDialog` (GHO-28 PR 2 of 2).

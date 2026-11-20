@@ -6,7 +6,12 @@ predecessor. Do not start markup to stand in for an unresolved design.
 
 1. **Approved specification.** A spec based on
    [the component template](../components/spec-template.md), reviewed enough
-   to resolve public behavior and accessibility.
+   to resolve public behavior and accessibility. Its YAML frontmatter records
+   component identity, manifest references, required-section applicability
+   (with a `reason` for any `applicable: false` entry), `unresolvedQuestions: []`,
+   and `specStatus: approved` with `approval.evidence` (distinct from the
+   manifest's `status` stability field). Run `pnpm specs:check` to validate
+   completeness; see [Spec completeness check](#spec-completeness-check).
 2. **Tests.** Behavior tests for the public contract (Vue/unit), browser
    tests for observable interaction (`pnpm test:e2e`), and type tests when
    the exported declaration extends beyond custom props. Follow
@@ -53,3 +58,40 @@ After the gate's specification item is satisfied:
 
 Do not create a production-looking placeholder to stand in for an unresolved
 component design.
+
+## Spec completeness check
+
+`pnpm specs:check` (part of `pnpm verify:static`) reads the YAML frontmatter of
+every `docs/components/*-spec.md` and compares it with the real exports in
+`packages/vue` and `packages/themes`. Frontmatter holds only identity, approval,
+section applicability, manifest references, and unresolved questions. APG
+patterns, keyboard maps, states, and API types stay in the generated manifests,
+and frontmatter that restates them is rejected.
+
+**Errors** fail the command:
+
+- An exported `Ghost*` component that no spec claims, or a spec with missing or
+  unparseable frontmatter.
+- `packages` that omit a package exporting one of the spec's components, or that
+  list a package exporting none of them.
+- `manifests` that omit an existing manifest for an exported component, point
+  at a missing file, or reference a manifest for a component the spec does not
+  claim. A spec whose components are not exported yet may use `manifests: []`.
+- `specStatus: approved` without `approval.evidence`.
+- Any blocking entry in `unresolvedQuestions`. Objects with `blocking: false`
+  are allowed.
+- An applicable required section whose `##` heading is missing or empty, or
+  still contains template or `TODO`/`TBD`/`FIXME` text, and any
+  `applicable: false` section without a non-empty `reason`.
+
+**Warnings** are printed and do not fail the command:
+
+- `specStatus` other than `approved` (`draft`, `proposed`, `submitted`,
+  `pending-review`). These specs predate structured approval, or their approval
+  has not been recorded. Set `specStatus: approved` with `approval.evidence`
+  only when the spec or a linked record shows real human approval. Never set it
+  just to clear a warning.
+
+`pnpm manifests:write` copies `{ path, status, evidence }` from approved specs
+into the generated `@ghostvue/vue` manifests as `spec`. It drops the reference
+when a spec stops being approved.

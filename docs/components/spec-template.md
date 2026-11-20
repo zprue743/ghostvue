@@ -1,7 +1,53 @@
+---
+schemaVersion: 1.0.0
+component: GhostName
+components:
+  - GhostName
+packages:
+  - '@ghostvue/vue'
+specStatus: draft # draft | proposed | submitted | pending-review | approved
+manifests:
+  - packages/vue/manifests/ghost-name.manifest.json
+sections:
+  purpose:
+    applicable: true
+  nonGoals:
+    applicable: true
+  publicApi:
+    applicable: true
+  stateModel:
+    applicable: true
+  consumerData:
+    applicable: true # Set false with a non-empty reason when not applicable
+  accessibility:
+    applicable: true
+  rendering:
+    applicable: true
+  environment:
+    applicable: true
+  performance:
+    applicable: true
+  composition:
+    applicable: true
+  testPlan:
+    applicable: true
+  documentationPlan:
+    applicable: true
+  compatibility:
+    applicable: true
+unresolvedQuestions:
+  - 'Replace with blocking architectural questions, or set to [] when resolved.'
+---
+
 # Component specification: `<Name>`
 
-> Copy this file for every meaningful component. Remove instructional text and
-> resolve applicable sections before production implementation.
+> Copy this file for every meaningful component. Keep detailed behavior in prose
+> and reference the component manifest(s) for APG patterns, keyboard maps,
+> styling hooks, and source-derived API types—do not duplicate them into YAML
+> frontmatter. Set `specStatus: approved` with `approval.evidence` only after
+> human approval; `specStatus` is distinct from the manifest's `status`
+> (component stability). Any section with `applicable: false` must include a
+> `reason`. Run `pnpm specs:check` to validate completeness.
 
 ## Purpose and user problems
 

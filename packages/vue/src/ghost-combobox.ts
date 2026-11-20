@@ -13,6 +13,16 @@ import { resolvePopoverHtmlElement } from './ghost-popover'
 /** @see resolvePopoverHtmlElement */
 export const resolveComboboxHtmlElement = resolvePopoverHtmlElement
 
+/**
+ * Id of the `role="listbox"` element inside the content with `contentId`.
+ * The input's and trigger's `aria-controls` must name the popup itself (see
+ * the specification); the content root is a presentational positioning
+ * wrapper.
+ */
+export function ghostComboboxListboxId(contentId: string): string {
+  return `${contentId}-listbox`
+}
+
 export type GhostComboboxInputElement = string | Component
 export type GhostComboboxTriggerElement = string | Component
 export type GhostComboboxContentElement = string | Component

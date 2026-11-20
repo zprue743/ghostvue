@@ -28,7 +28,92 @@
     width: 100%;
   }
 
+  /*
+   * The value is the trigger's own part: it takes the free inline space and a
+   * long label ends with an ellipsis instead of wrapping the control taller.
+   * Consumer icons after it keep their size.
+   */
   :where(
+    .ghost-theme .ghost-select-trigger > [data-part='value'],
+    .ghost-themed-scope .ghost-select-trigger > [data-part='value'],
+    .ghost-select-trigger[data-themed] > [data-part='value']
+  ) {
+    flex: 1 1 auto;
+    min-inline-size: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  :where(
+    .ghost-theme .ghost-select-trigger > :not([data-part='value']),
+    .ghost-themed-scope .ghost-select-trigger > :not([data-part='value']),
+    .ghost-select-trigger[data-themed] > :not([data-part='value'])
+  ) {
+    flex: none;
+  }
+
+  /* Placeholder text reads as a hint, like a native input placeholder. */
+  :where(
+    .ghost-theme .ghost-select-trigger > [data-part='value']:not([data-state]),
+    .ghost-themed-scope
+      .ghost-select-trigger
+      > [data-part='value']:not([data-state]),
+    .ghost-select-trigger[data-themed] > [data-part='value']:not([data-state])
+  ) {
+    color: var(--ghost-text-muted);
+  }
+
+  /* Hover only changes color, so the control never shifts. */
+  :where(
+    .ghost-theme .ghost-select-trigger:hover:not(:disabled),
+    .ghost-themed-scope .ghost-select-trigger:hover:not(:disabled),
+    .ghost-select-trigger[data-themed]:hover:not(:disabled)
+  ) {
+    border-color: var(--ghost-border-strong);
+  }
+
+  :where(
+    .ghost-theme .ghost-select-trigger[aria-invalid='true'],
+    .ghost-themed-scope .ghost-select-trigger[aria-invalid='true'],
+    .ghost-select-trigger[data-themed][aria-invalid='true']
+  ) {
+    border-color: var(--ghost-border-danger);
+  }
+
+  :where(
+    .ghost-theme .ghost-select-trigger:is(:disabled, [aria-disabled='true']),
+    .ghost-themed-scope
+      .ghost-select-trigger:is(:disabled, [aria-disabled='true']),
+    .ghost-select-trigger[data-themed]:is(:disabled, [aria-disabled='true'])
+  ) {
+    background-color: var(--ghost-action-disabled-bg);
+    border-color: var(--ghost-action-disabled-border);
+    color: var(--ghost-action-disabled-fg);
+    cursor: not-allowed;
+  }
+
+  :where(
+    .ghost-theme
+      .ghost-select-trigger:is(:disabled, [aria-disabled='true'])
+      > [data-part='value'],
+    .ghost-themed-scope
+      .ghost-select-trigger:is(:disabled, [aria-disabled='true'])
+      > [data-part='value'],
+    .ghost-select-trigger[data-themed]:is(:disabled, [aria-disabled='true'])
+      > [data-part='value']
+  ) {
+    color: inherit;
+  }
+
+  /*
+   * Keyboard focus and the open state share one token ring. Without the
+   * :focus-visible rule the closed trigger fell back to the browser outline.
+   */
+  :where(
+    .ghost-theme .ghost-select-trigger:focus-visible,
+    .ghost-themed-scope .ghost-select-trigger:focus-visible,
+    .ghost-select-trigger[data-themed]:focus-visible,
     .ghost-theme .ghost-select-trigger[data-state='open'],
     .ghost-themed-scope .ghost-select-trigger[data-state='open'],
     .ghost-select-trigger[data-themed][data-state='open']
@@ -55,6 +140,8 @@
     color: var(--ghost-surface-fg);
     font-family: var(--ghost-type-family-sans);
     max-block-size: min(100%, calc(100dvh - 2 * var(--ghost-space-inset-lg)));
+    /* Long option labels wrap inside the viewport instead of widening it. */
+    max-inline-size: calc(100vw - 2 * var(--ghost-space-inset-lg));
     overflow: auto;
     padding: var(--ghost-space-inset-xs);
     z-index: 50;
@@ -65,11 +152,29 @@
     .ghost-themed-scope .ghost-select-content [data-part='option'],
     .ghost-select-content[data-themed] [data-part='option']
   ) {
+    align-items: center;
     border-radius: var(--ghost-radius-md);
+    box-sizing: border-box;
     cursor: default;
+    display: flex;
     min-block-size: var(--ghost-control-size-md-min);
+    overflow-wrap: anywhere;
     padding-block: var(--ghost-control-size-sm-padding-block);
     padding-inline: var(--ghost-space-inset-sm);
+  }
+
+  /* Pointer feedback; disabled options stay flat. */
+  :where(
+    .ghost-theme
+      .ghost-select-content
+      [data-part='option']:hover:not([aria-disabled='true']),
+    .ghost-themed-scope
+      .ghost-select-content
+      [data-part='option']:hover:not([aria-disabled='true']),
+    .ghost-select-content[data-themed]
+      [data-part='option']:hover:not([aria-disabled='true'])
+  ) {
+    background-color: var(--ghost-surface-muted-bg);
   }
 
   :where(

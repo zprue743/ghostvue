@@ -1,3 +1,49 @@
+---
+schemaVersion: 1.0.0
+component: GhostDatePicker
+components:
+  - GhostDatePicker
+  - GhostDatePickerInput
+  - GhostDatePickerTrigger
+  - GhostDatePickerContent
+  - GhostDatePickerCalendar
+packages:
+  - '@ghostvue/vue'
+  - '@ghostvue/themes'
+specStatus: approved
+approval:
+  evidence: 'Approved by Zac on 2026-11-17 (GHO-207); see the Status line in this spec.'
+manifests: []
+sections:
+  purpose:
+    applicable: true
+  nonGoals:
+    applicable: true
+  publicApi:
+    applicable: true
+  stateModel:
+    applicable: true
+  consumerData:
+    applicable: true
+  accessibility:
+    applicable: true
+  rendering:
+    applicable: true
+  environment:
+    applicable: true
+  performance:
+    applicable: true
+  composition:
+    applicable: true
+  testPlan:
+    applicable: true
+  documentationPlan:
+    applicable: true
+  compatibility:
+    applicable: true
+unresolvedQuestions: []
+---
+
 # GhostDatePicker specification
 
 **Status:** Approved by Zac on 2026-11-17 ([GHO-207](https://linear.app/ghost-vue/issue/GHO-207)).

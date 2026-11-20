@@ -1,3 +1,52 @@
+---
+schemaVersion: 1.0.0
+component: GhostAccordion
+components:
+  - GhostAccordion
+  - GhostAccordionItem
+  - GhostAccordionTrigger
+  - GhostAccordionContent
+packages:
+  - '@ghostvue/vue'
+  - '@ghostvue/themes'
+specStatus: proposed
+manifests:
+  - packages/vue/manifests/ghost-accordion.manifest.json
+  - packages/vue/manifests/ghost-accordion-item.manifest.json
+  - packages/vue/manifests/ghost-accordion-trigger.manifest.json
+  - packages/vue/manifests/ghost-accordion-content.manifest.json
+  - packages/themes/manifests/ghost-accordion.manifest.json
+sections:
+  purpose:
+    applicable: true
+  nonGoals:
+    applicable: true
+  publicApi:
+    applicable: true
+  stateModel:
+    applicable: true
+  consumerData:
+    applicable: true
+  accessibility:
+    applicable: true
+  rendering:
+    applicable: true
+  environment:
+    applicable: true
+  performance:
+    applicable: false
+    reason: 'No dedicated section: items are consumer-authored slot children with no data-driven collection or virtualization, and the spec sets no budget beyond ordinary rendering.'
+  composition:
+    applicable: true
+  testPlan:
+    applicable: true
+  documentationPlan:
+    applicable: true
+  compatibility:
+    applicable: true
+unresolvedQuestions: []
+---
+
 # GhostAccordion specification
 
 **Status:** Proposed for `GhostAccordion` (GHO-34). Spec and implementation ship

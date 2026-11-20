@@ -446,6 +446,55 @@ describe('GhostTabs', () => {
     expect(panels[1]?.attributes('data-state')).toBe('active')
   })
 
+  it('merges consumer class and style with each part class', async () => {
+    const tone = ref('one')
+    const wrapper = mount(
+      defineComponent({
+        setup: () => () =>
+          h(
+            GhostTabs,
+            { defaultValue: 'a' },
+            {
+              default: () => [
+                h(
+                  GhostTabsList,
+                  { class: ['strip', tone.value], style: { gap: '4px' } },
+                  () => [
+                    h(
+                      GhostTabsTrigger,
+                      { value: 'a', class: 'tab', style: { color: 'red' } },
+                      () => 'A',
+                    ),
+                  ],
+                ),
+                h(
+                  GhostTabsContent,
+                  { value: 'a', class: 'panel', style: { padding: '2px' } },
+                  () => 'Panel',
+                ),
+              ],
+            },
+          ),
+      }),
+    )
+    attached.push(wrapper)
+
+    const list = wrapper.get('[role="tablist"]')
+    expect(list.classes()).toEqual(['ghost-tabs-list', 'strip', 'one'])
+    expect(list.attributes('style')).toContain('gap: 4px')
+    const trigger = wrapper.get('[role="tab"]')
+    expect(trigger.classes()).toEqual(['ghost-tabs-trigger', 'tab'])
+    expect(trigger.attributes('style')).toContain('color: red')
+    const panel = wrapper.get('[role="tabpanel"]')
+    expect(panel.classes()).toEqual(['ghost-tabs-content', 'panel'])
+    expect(panel.attributes('style')).toContain('padding: 2px')
+
+    // A reactive consumer class updates without dropping the part class.
+    tone.value = 'two'
+    await nextTick()
+    expect(list.classes()).toEqual(['ghost-tabs-list', 'strip', 'two'])
+  })
+
   it('resolveTabsHtmlElement reads exposed refs and component roots', () => {
     const el = document.createElement('button')
     expect(resolveTabsHtmlElement(el)).toBe(el)

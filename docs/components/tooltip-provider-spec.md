@@ -1,3 +1,53 @@
+---
+schemaVersion: 1.0.0
+component: GhostTooltipProvider
+components:
+  - GhostTooltipProvider
+packages:
+  - '@ghostvue/vue'
+specStatus: approved
+approval:
+  evidence: 'Approved for GHO-118 (`GhostTooltipProvider`).'
+manifests:
+  - packages/vue/manifests/ghost-tooltip-provider.manifest.json
+sections:
+  purpose:
+    applicable: true
+  nonGoals:
+    applicable: false
+    reason: 'Covered within the provider purpose and public API scope.'
+  publicApi:
+    applicable: true
+  stateModel:
+    applicable: true
+  consumerData:
+    applicable: false
+    reason: 'Component does not accept consumer data collections or typed item accessors.'
+  accessibility:
+    applicable: false
+    reason: 'Renderless state provider; accessibility attributes belong to GhostTooltipTrigger and GhostTooltipContent.'
+  rendering:
+    applicable: false
+    reason: 'Renderless context provider; emits no DOM elements or styling hooks.'
+  environment:
+    applicable: false
+    reason: 'Provider uses Vue provide/inject and reactive timers with no DOM or touch surface.'
+  performance:
+    applicable: false
+    reason: 'Constant-time context provider managing a single active tooltip timer.'
+  composition:
+    applicable: false
+    reason: 'Standalone context provider with no composed child primitives.'
+  testPlan:
+    applicable: true
+  documentationPlan:
+    applicable: false
+    reason: 'Documented alongside GhostTooltip in docs/components/tooltip.md.'
+  compatibility:
+    applicable: true
+unresolvedQuestions: []
+---
+
 # GhostTooltipProvider specification
 
 **Status:** Approved for GHO-118 (`GhostTooltipProvider`).

@@ -1,10 +1,13 @@
-import { mount } from '@vue/test-utils'
+import { flushPromises, mount } from '@vue/test-utils'
 import { defineComponent, h, nextTick, ref } from 'vue'
 import { renderToString } from 'vue/server-renderer'
 import { describe, expect, it, vi } from 'vitest'
 
 import { waitForFormResetDeferral } from './form-reset'
 import GhostCheckbox from './GhostCheckbox.vue'
+import GhostField from './GhostField.vue'
+import GhostFieldControl from './GhostFieldControl.vue'
+import GhostFieldDescription from './GhostFieldDescription.vue'
 import type { GhostCheckboxExposed } from './ghost-checkbox'
 
 describe('GhostCheckbox', () => {
@@ -52,6 +55,51 @@ describe('GhostCheckbox', () => {
     expect(input.classes()).toContain('row-select')
     expect(onChange).toHaveBeenCalledOnce()
     expect((input.element as HTMLInputElement).checked).toBe(true)
+  })
+
+  it('accepts GhostFieldControl slot props without rendering a raw invalid attribute', async () => {
+    const invalid = ref(false)
+    const wrapper = mount(
+      defineComponent({
+        setup() {
+          return () =>
+            h(
+              GhostField,
+              { invalid: invalid.value, required: true },
+              {
+                default: () => [
+                  h(GhostFieldControl, null, {
+                    default: (field: Record<string, unknown>) =>
+                      h(GhostCheckbox, { ...field, class: 'consent' }),
+                  }),
+                  h(GhostFieldDescription, null, {
+                    default: () => 'Required to continue.',
+                  }),
+                ],
+              },
+            )
+        },
+      }),
+    )
+
+    // The description registers with the field after mount.
+    await flushPromises()
+    const input = wrapper.get('input')
+    const description = wrapper.get('[data-part="description"]')
+    expect(input.attributes('invalid')).toBeUndefined()
+    expect(input.attributes('aria-invalid')).toBeUndefined()
+    expect(input.attributes('aria-describedby')).toBe(
+      description.attributes('id'),
+    )
+    expect(input.attributes('id')).toMatch(/\S/)
+    expect((input.element as HTMLInputElement).required).toBe(true)
+    expect(input.classes()).toEqual(['ghost-checkbox', 'consent'])
+
+    invalid.value = true
+    await nextTick()
+    expect(input.attributes('invalid')).toBeUndefined()
+    expect(input.attributes('aria-invalid')).toBe('true')
+    wrapper.unmount()
   })
 
   it('toggles uncontrolled state from pointer activation', async () => {

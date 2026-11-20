@@ -1,3 +1,45 @@
+---
+schemaVersion: 1.0.0
+component: GhostCheckbox
+components:
+  - GhostCheckbox
+packages:
+  - '@ghostvue/vue'
+  - '@ghostvue/themes'
+specStatus: proposed
+manifests:
+  - packages/vue/manifests/ghost-checkbox.manifest.json
+  - packages/themes/manifests/ghost-checkbox.manifest.json
+sections:
+  purpose:
+    applicable: true
+  nonGoals:
+    applicable: true
+  publicApi:
+    applicable: true
+  stateModel:
+    applicable: true
+  consumerData:
+    applicable: true
+  accessibility:
+    applicable: true
+  rendering:
+    applicable: true
+  environment:
+    applicable: true
+  performance:
+    applicable: true
+  composition:
+    applicable: true
+  testPlan:
+    applicable: true
+  documentationPlan:
+    applicable: true
+  compatibility:
+    applicable: true
+unresolvedQuestions: []
+---
+
 # GhostCheckbox specification
 
 **Status:** Proposed for GHO-74. Spec and implementation ship together; Zac
@@ -59,7 +101,9 @@ type GhostCheckboxState = 'checked' | 'indeterminate' | undefined
 fallthrough attribute: the model owns that state, so a competing `checked`
 attribute cannot fight `:checked`. Native input attributes otherwise included
 in the public type (`name`, `value`, `form`, `required`, `autofocus`, `id`,
-`aria-*`, event listeners) fall through to the root `<input>`.
+`aria-*`, event listeners) fall through to the root `<input>`. The one key
+the SFC consumes is `invalid`: `GhostFieldControl` slot props include it, it is
+not an HTML attribute, and the slot's `aria-invalid` already carries the state.
 
 Named ESM exports: `GhostCheckbox`, `useGhostCheckbox`, and the types above.
 Headless behavior lives in the composable; the SFC is a thin unstyled

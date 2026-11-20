@@ -1,9 +1,19 @@
 <script setup lang="ts">
-import { useTemplateRef, watch, type PropType } from 'vue'
+import {
+  computed,
+  mergeProps,
+  useAttrs,
+  useTemplateRef,
+  watch,
+  type PropType,
+} from 'vue'
 
 import type { GhostCheckboxExposed } from './ghost-checkbox'
 import { useNativeFormReset } from './form-reset'
 import { useGhostCheckbox } from './use-ghost-checkbox'
+
+// Attributes are merged by hand below so one non-HTML key can be dropped.
+defineOptions({ inheritAttrs: false })
 
 // Runtime props so `modelValue` can default to `undefined`. Type-only Boolean
 // props coerce omitted values to false, which looks controlled and drops defaultValue.
@@ -35,6 +45,25 @@ const { isChecked, isIndeterminate, rootProps, applyFormReset } =
     },
   })
 
+const attrs = useAttrs()
+
+/*
+ * Native attributes and listeners still fall through, merged after the root
+ * props exactly as Vue's automatic fallthrough would (class and style join,
+ * listeners chain). The one exception is the raw `invalid` flag that
+ * GhostFieldControl puts in its slot props: it is not an HTML attribute, so
+ * spreading the slot onto a checkbox used to render `invalid="false"`. The
+ * slot's `aria-invalid` carries the same state and still falls through.
+ */
+const inputProps = computed(() => {
+  const rest: Record<string, unknown> = {}
+  for (const [key, value] of Object.entries(attrs)) {
+    if (key !== 'invalid') rest[key] = value
+  }
+  const base: Record<string, unknown> = { ...rootProps.value }
+  return mergeProps(base, rest)
+})
+
 useNativeFormReset(() => element.value, applyFormReset)
 
 // `indeterminate` is a DOM property, not an HTML attribute. Re-apply after
@@ -63,5 +92,5 @@ defineExpose<GhostCheckboxExposed>({
 </script>
 
 <template>
-  <input ref="element" v-bind="rootProps" />
+  <input ref="element" v-bind="inputProps" />
 </template>

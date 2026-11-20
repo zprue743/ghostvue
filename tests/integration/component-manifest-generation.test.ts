@@ -681,4 +681,61 @@ describe('mergeManifest derived contract', () => {
     const merged = mergeManifest(derived, prose)
     expect(serializeManifest(merged)).toContain('"source": "generated"')
   })
+
+  it('attaches approved spec metadata while preserving existing manifest prose and stability status', () => {
+    const derived: DerivedContract = {
+      schemaVersion: '1.0.0',
+      source: 'generated',
+      name: 'GhostWidget',
+      package: '@ghostvue/vue',
+      description: '',
+      props: [],
+      models: [],
+      events: [],
+      slots: [],
+      exposed: [],
+    }
+    const merged = mergeManifest(derived, prose, {
+      path: 'docs/components/widget-spec.md',
+      status: 'approved',
+      evidence: 'Approved in PR #1.',
+    })
+    expect(merged.status).toBe('beta')
+    expect(merged.description).toBe('Hand-authored widget summary.')
+    expect(merged.spec).toEqual({
+      path: 'docs/components/widget-spec.md',
+      status: 'approved',
+      evidence: 'Approved in PR #1.',
+    })
+  })
+
+  it('drops a stale spec reference when the spec is no longer approved, keeping other prose', () => {
+    const derived: DerivedContract = {
+      schemaVersion: '1.0.0',
+      source: 'generated',
+      name: 'GhostWidget',
+      package: '@ghostvue/vue',
+      description: '',
+      props: [],
+      models: [],
+      events: [],
+      slots: [],
+      exposed: [],
+    }
+    // The existing manifest still advertises an approval from an earlier
+    // generation; without approved frontmatter it must not survive the merge.
+    const previouslyApproved = {
+      ...prose,
+      spec: {
+        path: 'docs/components/widget-spec.md',
+        status: 'approved',
+        evidence: 'Approved in PR #1.',
+      },
+    }
+    const merged = mergeManifest(derived, previouslyApproved, undefined)
+    expect(merged.status).toBe('beta')
+    expect(merged.description).toBe('Hand-authored widget summary.')
+    expect(merged.spec).toBeUndefined()
+    expect(serializeManifest(merged)).not.toContain('"spec"')
+  })
 })

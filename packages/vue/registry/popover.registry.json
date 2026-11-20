@@ -31,6 +31,12 @@
       "layer": "headless"
     },
     {
+      "id": "popover/share-settings",
+      "title": "Sharing settings",
+      "description": "Document card with a Share popover: general access, link permission, and collaborator switches that apply live, with dismissal and focus return to the trigger.",
+      "layer": "themed"
+    },
+    {
       "id": "popover/themed",
       "title": "Themed",
       "description": "Elevated surface tokens and themed button controls composed via the as prop.",

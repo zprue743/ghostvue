@@ -1,3 +1,51 @@
+---
+schemaVersion: 1.0.0
+component: GhostTabs
+components:
+  - GhostTabs
+  - GhostTabsList
+  - GhostTabsTrigger
+  - GhostTabsContent
+packages:
+  - '@ghostvue/vue'
+  - '@ghostvue/themes'
+specStatus: proposed
+manifests:
+  - packages/vue/manifests/ghost-tabs.manifest.json
+  - packages/vue/manifests/ghost-tabs-list.manifest.json
+  - packages/vue/manifests/ghost-tabs-trigger.manifest.json
+  - packages/vue/manifests/ghost-tabs-content.manifest.json
+  - packages/themes/manifests/ghost-tabs.manifest.json
+sections:
+  purpose:
+    applicable: true
+  nonGoals:
+    applicable: true
+  publicApi:
+    applicable: true
+  stateModel:
+    applicable: true
+  consumerData:
+    applicable: true
+  accessibility:
+    applicable: true
+  rendering:
+    applicable: true
+  environment:
+    applicable: true
+  performance:
+    applicable: true
+  composition:
+    applicable: true
+  testPlan:
+    applicable: true
+  documentationPlan:
+    applicable: true
+  compatibility:
+    applicable: true
+unresolvedQuestions: []
+---
+
 # GhostTabs specification
 
 **Status:** Proposed for GHO-29. Spec and implementation ship together; Zac
@@ -181,6 +229,8 @@ Stable hooks (not the undecided GHO-38 styling-hooks contract):
 
 - `ghost-tabs-list`, `ghost-tabs-trigger`, `ghost-tabs-content` classes
 - `data-part`, `data-state`, `data-ghost-tabs`
+- Consumer `class` and `style` on the list, trigger, and content parts merge
+  with the part class and never replace it
 - Themed CSS under `.ghost-theme` / `.ghost-themed-scope` using existing
   `--ghost-*` semantic tokens
 

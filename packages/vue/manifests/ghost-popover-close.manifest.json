@@ -71,5 +71,10 @@
     },
     "requiredAriaAttributes": []
   },
-  "examples": []
+  "examples": [],
+  "spec": {
+    "path": "docs/components/popover-spec.md",
+    "status": "approved",
+    "evidence": "Approved and implemented (`GhostPopover` on `master`, GHO-78 complete)."
+  }
 }

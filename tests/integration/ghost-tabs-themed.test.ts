@@ -107,4 +107,43 @@ describe('themed GhostTabs', () => {
     expect(listRef.value?.element).toBe(list.element)
     wrapper.unmount()
   })
+
+  it('keeps the themed part hooks when consumers pass a class', () => {
+    const host = defineComponent({
+      setup: () => () =>
+        h(
+          GhostTabs,
+          { defaultValue: 'one' },
+          {
+            default: () => [
+              h(GhostTabsList, { class: 'strip' }, () =>
+                h(
+                  GhostTabsTrigger,
+                  { value: 'one', class: 'tab' },
+                  () => 'One',
+                ),
+              ),
+              h(
+                GhostTabsContent,
+                { value: 'one', class: 'panel' },
+                () => 'Panel',
+              ),
+            ],
+          },
+        ),
+    })
+    const wrapper = mount(host)
+    // The theme selects `.ghost-tabs-list[data-themed]` and friends, so a
+    // consumer class must sit beside the part class rather than replace it.
+    const list = wrapper.get('[role="tablist"]')
+    expect(list.classes()).toEqual(['ghost-tabs-list', 'strip'])
+    expect(list.attributes('data-themed')).toBe('')
+    const trigger = wrapper.get('[role="tab"]')
+    expect(trigger.classes()).toEqual(['ghost-tabs-trigger', 'tab'])
+    expect(trigger.attributes('data-themed')).toBe('')
+    const panel = wrapper.get('[role="tabpanel"]')
+    expect(panel.classes()).toEqual(['ghost-tabs-content', 'panel'])
+    expect(panel.attributes('data-themed')).toBe('')
+    wrapper.unmount()
+  })
 })

@@ -10,9 +10,9 @@ import {
 
 <template>
   <form data-testid="select-form">
-    <GhostSelect name="cadence" default-value="weekly">
+    <GhostSelect name="cadence" default-value="weekly" placeholder="How often">
       <GhostSelectTrigger aria-label="Email cadence">
-        <GhostSelectValue placeholder="How often" />
+        <GhostSelectValue />
       </GhostSelectTrigger>
       <GhostSelectContent :portal="false">
         <GhostSelectOption value="daily">Daily</GhostSelectOption>

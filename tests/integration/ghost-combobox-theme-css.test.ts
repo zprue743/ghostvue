@@ -44,4 +44,30 @@ describe('GhostCombobox theme CSS tokens', () => {
     expect(css).toContain('--ghost-action-radius')
     expect(findHardcodedVisuals(css)).toEqual([])
   })
+
+  it('styles input states without layout changes', async () => {
+    const css = stripComments(await readFile(cssPath, 'utf8'))
+    // Keyboard focus gets the token ring, not the browser default outline.
+    expect(css).toMatch(/\.ghost-combobox-input:focus-visible/)
+    // ::placeholder follows :where(); a pseudo-element inside it never matches.
+    expect(css).toMatch(/\)::placeholder \{/)
+    expect(css).not.toMatch(/:where\([^)]*::placeholder/)
+    expect(css).toMatch(/\.ghost-combobox-input\[aria-invalid='true'\]/)
+    expect(css).toMatch(/--ghost-border-danger/)
+    expect(css).toMatch(/--ghost-action-disabled-bg/)
+    // Long option labels wrap within the viewport.
+    expect(css).toMatch(/max-inline-size: calc\(100vw/)
+    expect(css).toMatch(/overflow-wrap: anywhere;/)
+
+    // Hover, focus, and invalid rules only recolor: no size, padding, or
+    // border-width changes that would shift the control.
+    for (const block of css.matchAll(
+      /:(?:hover|focus-visible)[^{]*\{([^}]*)\}|\[aria-invalid='true'\][^{]*\{([^}]*)\}/g,
+    )) {
+      const body = block[1] ?? block[2] ?? ''
+      expect(body).not.toMatch(
+        /padding|border-width|inline-size|block-size|margin/,
+      )
+    }
+  })
 })

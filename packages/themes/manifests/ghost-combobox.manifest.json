@@ -74,6 +74,7 @@
     "requiredAriaAttributes": []
   },
   "examples": [
+    "combobox/assignee-search",
     "combobox/themed"
   ]
 }

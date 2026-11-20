@@ -534,6 +534,12 @@
       "layer": "headless"
     },
     {
+      "id": "checkbox/notification-preferences",
+      "title": "Notification preferences",
+      "description": "Email preferences panel with described options, a mixed select-all, and a locked required alert.",
+      "layer": "themed"
+    },
+    {
       "id": "checkbox/basic",
       "title": "Basic",
       "description": "Labeled native checkbox with a boolean v-model.",
@@ -548,7 +554,7 @@
     {
       "id": "checkbox/themed",
       "title": "Themed",
-      "description": "Visual size and tone on the @ghostvue/themes wrapper.",
+      "description": "Size and tone on the @ghostvue/themes wrapper, with checked, mixed, and disabled states.",
       "layer": "themed"
     },
     {
@@ -678,6 +684,12 @@
       "layer": "themed"
     },
     {
+      "id": "select/billing-preferences",
+      "title": "Billing preferences",
+      "description": "Billing form with a placeholder, a disabled option, long labels, field validation, and a disabled select.",
+      "layer": "themed"
+    },
+    {
       "id": "select/basic",
       "title": "Basic",
       "description": "Single-value combobox with listbox options, typeahead, and portaled content.",
@@ -698,7 +710,7 @@
     {
       "id": "select/themed",
       "title": "Themed",
-      "description": "Trigger and list surface tokens from @ghostvue/themes.",
+      "description": "Rows-per-page and sort controls on @ghostvue/themes trigger and list tokens.",
       "layer": "themed"
     },
     {
@@ -706,6 +718,12 @@
       "title": "Basic",
       "description": "Unstyled non-modal disclosure anchored to its trigger with Escape and outside-click dismissal.",
       "layer": "headless"
+    },
+    {
+      "id": "popover/share-settings",
+      "title": "Sharing settings",
+      "description": "Document card with a Share popover: general access, link permission, and collaborator switches that apply live, with dismissal and focus return to the trigger.",
+      "layer": "themed"
     },
     {
       "id": "popover/themed",
@@ -1080,6 +1098,12 @@
       "layer": "themed"
     },
     {
+      "id": "tabs/workspace",
+      "title": "Workspace sections",
+      "description": "Workspace overview, members, and activity panels with a disabled tab, counts, long German labels, and an Arabic right-to-left switch.",
+      "layer": "themed"
+    },
+    {
       "id": "tabs/basic",
       "title": "Basic",
       "description": "Controlled compound tabs with automatic activation.",
@@ -1094,13 +1118,13 @@
     {
       "id": "tabs/vertical",
       "title": "Vertical",
-      "description": "Vertical tab list with arrow-key roving focus.",
+      "description": "Vertical tab list beside its panel, stacking above it in narrow previews.",
       "layer": "headless"
     },
     {
       "id": "tabs/themed",
       "title": "Themed",
-      "description": "Styled tab list and panels from @ghostvue/themes.",
+      "description": "Themed strip stacked above its panel, with a disabled tab, from @ghostvue/themes.",
       "layer": "themed"
     },
     {

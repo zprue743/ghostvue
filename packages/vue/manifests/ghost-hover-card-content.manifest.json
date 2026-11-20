@@ -112,5 +112,10 @@
     },
     "requiredAriaAttributes": []
   },
-  "examples": []
+  "examples": [],
+  "spec": {
+    "path": "docs/components/hover-card-spec.md",
+    "status": "approved",
+    "evidence": "Approved for minimal `GhostHoverCard` (GHO-100). Visual baselines use `pnpm test:visual:docker`."
+  }
 }

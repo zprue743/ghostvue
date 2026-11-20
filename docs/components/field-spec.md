@@ -1,3 +1,53 @@
+---
+schemaVersion: 1.0.0
+component: GhostField
+components:
+  - GhostField
+  - GhostFieldLabel
+  - GhostFieldDescription
+  - GhostFieldError
+  - GhostFieldControl
+packages:
+  - '@ghostvue/vue'
+  - '@ghostvue/themes'
+specStatus: proposed
+manifests:
+  - packages/vue/manifests/ghost-field.manifest.json
+  - packages/vue/manifests/ghost-field-label.manifest.json
+  - packages/vue/manifests/ghost-field-description.manifest.json
+  - packages/vue/manifests/ghost-field-error.manifest.json
+  - packages/vue/manifests/ghost-field-control.manifest.json
+  - packages/themes/manifests/ghost-field.manifest.json
+sections:
+  purpose:
+    applicable: true
+  nonGoals:
+    applicable: true
+  publicApi:
+    applicable: true
+  stateModel:
+    applicable: true
+  consumerData:
+    applicable: true
+  accessibility:
+    applicable: true
+  rendering:
+    applicable: true
+  environment:
+    applicable: true
+  performance:
+    applicable: true
+  composition:
+    applicable: true
+  testPlan:
+    applicable: true
+  documentationPlan:
+    applicable: true
+  compatibility:
+    applicable: true
+unresolvedQuestions: []
+---
+
 # GhostField specification
 
 **Status:** Proposed for GHO-71. Spec and implementation ship together; Zac

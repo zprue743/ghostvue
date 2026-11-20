@@ -30,11 +30,17 @@ const visible = computed(
 )
 </script>
 
+<!--
+  No role: the empty message is not an option, and an open list with no
+  options drops its listbox role (see GhostComboboxContent), so the message
+  reads as plain text in the popup. The root's polite live region already
+  announces the empty result (`messages.empty`); a role="status" here only
+  repeated it.
+-->
 <template>
   <component
     :is="props.as"
     v-show="visible"
-    role="status"
     data-part="empty"
     class="ghost-combobox-empty"
   >
