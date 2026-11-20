@@ -9,6 +9,15 @@ Import `GhostTree`, `GhostTreeItem`, `GhostTreeTrigger`, and `GhostTreeGroup`
 from `@ghostvue/vue` for headless use, or from `@ghostvue/themes` for the
 default row, indentation, and motion styles.
 
+<GhostExample id="tree/themed" />
+
+`@ghostvue/themes` loads `ghost-tree.css`. Rows indent by
+`--ghost-tree-level` (set on every item) with logical padding, so any depth
+works in both directions. Selected rows use `--ghost-surface-muted-bg`, hovered
+rows `--ghost-elevation-2-bg`, and the focus ring is drawn on the focused row
+only, never around an open child group. Groups animate their height when motion
+is allowed; set `disable-animation` on a group to turn that off.
+
 ## Basic use
 
 <GhostExample id="tree/basic" />
@@ -70,17 +79,6 @@ Pass `dir`, or let the tree inherit it from the closest `[dir]` ancestor or
 `<html dir>`. In RTL, `ArrowLeft` opens a branch or enters its first child and
 `ArrowRight` closes a branch or moves to the parent. The root reports the result
 in `data-dir`.
-
-## Themed use
-
-<GhostExample id="tree/themed" />
-
-`@ghostvue/themes` loads `ghost-tree.css`. Rows indent by
-`--ghost-tree-level` (set on every item) with logical padding, so any depth
-works in both directions. Selected rows use `--ghost-surface-muted-bg`, hovered
-rows `--ghost-elevation-2-bg`, and the focus ring is drawn on the focused row
-only, never around an open child group. Groups animate their height when motion
-is allowed; set `disable-animation` on a group to turn that off.
 
 ## Keyboard
 

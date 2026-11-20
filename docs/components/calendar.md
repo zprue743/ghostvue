@@ -10,13 +10,17 @@ objects from `@internationalized/date` (shipped as a runtime dependency of
 `@ghostvue/vue`). Use `date.toString()` for ISO `YYYY-MM-DD` strings and
 `parseDate(iso)` when reading user input.
 
+<GhostExample id="calendar/themed" />
+
+Themed parts set `data-themed` so calendar CSS applies under `.ghost-theme` or
+`.ghost-themed-scope`. Pass `today` when you need deterministic “today” styling
+in SSR, tests, or snapshots.
+
 ## Basic use
 
 <GhostExample id="calendar/basic" />
 
-Pass `today` when you need deterministic “today” styling in SSR, tests, or
-snapshots. When `today` is omitted, no implicit runtime clock is used during
-render.
+When `today` is omitted, no implicit runtime clock is used during render.
 
 ## Range selection
 
@@ -63,13 +67,6 @@ them. Resetting the bound value to `null` clears a pending range start.
 
 `locale` drives `Intl` labels; override week layout with `week-starts-on`
 (0 = Sunday).
-
-## Themed use
-
-<GhostExample id="calendar/themed" />
-
-Themed parts set `data-themed` so calendar CSS applies under `.ghost-theme` or
-`.ghost-themed-scope`.
 
 ## API
 

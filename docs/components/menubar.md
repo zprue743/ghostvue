@@ -8,6 +8,13 @@ triggers, and dropdown-style flat menus per `GhostMenubarMenu`.
 Import parts from `@ghostvue/vue` for headless use, or from `@ghostvue/themes`
 for default elevation and item styling.
 
+<GhostExample id="menubar/themed" />
+
+The editor toolbar composes `GhostMenubarTrigger` with `:as="GhostButton"` and
+keeps a single `Tab` stop across **File**, **Edit**, and **View**. Themed
+content sets `data-themed` on portaled panels so `.ghost-menubar-content` picks
+up elevation-3 tokens and item hover/focus styles in light and dark mode.
+
 ## Basic use
 
 <GhostExample id="menubar/basic" />
@@ -16,13 +23,6 @@ for default elevation and item styling.
 and delegates horizontal trigger navigation to `useRovingFocus`. Each menu reuses
 `useGhostMenubarMenu` (overlay stack + `useGhostMenuCollection` for item
 keyboard behavior).
-
-## Themed use
-
-<GhostExample id="menubar/themed" />
-
-Themed content sets `data-themed` on portaled panels so
-`.ghost-menubar-content` picks up elevation-3 tokens and item hover/focus styles.
 
 ## API
 

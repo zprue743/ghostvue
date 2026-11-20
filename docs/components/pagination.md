@@ -5,6 +5,15 @@ it from `@ghostvue/vue` for headless semantics, or from `@ghostvue/themes` for
 the default control styling. Fetching, totals, and URL sync stay outside the
 component.
 
+<GhostExample id="pagination/themed" />
+
+Themed instances wrap the headless root in `.ghost-themed-scope` and style list
+layout, page buttons, and ellipsis affordances.
+
+| Prop   | Type                   | Default | Description     |
+| ------ | ---------------------- | ------- | --------------- |
+| `size` | `'sm' \| 'md' \| 'lg'` | `'md'`  | Control sizing. |
+
 ## Basic use
 
 <GhostExample id="pagination/basic" />
@@ -26,17 +35,6 @@ component is uncontrolled and starts at `defaultPage` (default `1`).
 
 `getPaginationRange` (exported from `@ghostvue/vue`) builds the numbered range
 and ellipsis markers from `siblingCount` and `boundaryCount` (both default `1`).
-
-## Themed use
-
-<GhostExample id="pagination/themed" />
-
-| Prop   | Type                   | Default | Description     |
-| ------ | ---------------------- | ------- | --------------- |
-| `size` | `'sm' \| 'md' \| 'lg'` | `'md'`  | Control sizing. |
-
-Themed instances wrap the headless root in `.ghost-themed-scope` and style list
-layout, page buttons, and ellipsis affordances.
 
 ## API
 

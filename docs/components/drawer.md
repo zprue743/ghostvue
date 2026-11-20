@@ -10,6 +10,14 @@ inspectors, and navigation drawers. Import `GhostDrawer`, `GhostDrawerTrigger`,
 headless use, or from `@ghostvue/themes` for the default edge panel, scrim, and
 slide-in entry.
 
+<GhostExample id="drawer/themed" />
+
+**Inspect order** opens an `end`-anchored modal drawer with order details and
+actions. Importing from `@ghostvue/themes` loads `default.css`, which styles
+`.ghost-drawer-overlay` with `var(--ghost-scrim)` and `.ghost-drawer-content`
+with `--ghost-elevation-4-*`, radius, hairline border, inset padding, and
+focus-ring tokens. Panels slide and fade in with `@starting-style`.
+
 ## Basic use
 
 <GhostExample id="drawer/basic" />
@@ -19,15 +27,6 @@ slide-in entry.
 `v-if` unmounting, scroll lock, `inert` background siblings (skipping
 `[data-ghost-live]`), `Escape` and outside `pointerdown` dismissal, and a looped
 `Tab` trap.
-
-## Themed use
-
-<GhostExample id="drawer/themed" />
-
-Importing from `@ghostvue/themes` loads `default.css`, which styles
-`.ghost-drawer-overlay` with `var(--ghost-scrim)` and `.ghost-drawer-content`
-with `--ghost-elevation-4-*`, radius, hairline border, inset padding, and
-focus-ring tokens. Panels slide and fade in with `@starting-style`.
 
 ## Sides and writing direction
 

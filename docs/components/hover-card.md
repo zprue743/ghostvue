@@ -6,19 +6,19 @@ Import `GhostHoverCard`, `GhostHoverCardTrigger`, and `GhostHoverCardContent`
 from `@ghostvue/vue` for headless use, or from `@ghostvue/themes` for the default
 elevation surface.
 
+<GhostExample id="hover-card/themed" />
+
+Hovering or focusing `@ghostvue/themes` opens a portaled preview card with
+`elevation-3` surface tokens and an interactive link. `GhostHoverCard` owns
+`open` via `useControllableState`, assigns deterministic IDs via `useGhostId`,
+applies open/close delays for WCAG 1.4.13, positions the floating panel with
+`useFloating`, renders it through `GhostPortal` by default, dismisses on
+`Escape` and outside pointerdown via `useDismissableLayer`, and unmounts with
+`v-if` when closed.
+
 ## Basic use
 
 <GhostExample id="hover-card/basic" />
-
-## Themed use
-
-<GhostExample id="hover-card/themed" />
-
-`GhostHoverCard` owns `open` via `useControllableState`, assigns deterministic IDs
-via `useGhostId`, applies open/close delays for WCAG 1.4.13, positions the
-floating panel with `useFloating`, renders it through `GhostPortal` by default,
-dismisses on `Escape` and outside pointerdown via `useDismissableLayer`, and
-unmounts with `v-if` when closed.
 
 ## API
 

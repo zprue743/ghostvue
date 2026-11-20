@@ -7,16 +7,26 @@ const page = ref(2)
 </script>
 
 <template>
-  <GhostPagination
-    v-model="page"
-    :page-count="12"
-    aria-label="Result pages"
-    class="example-pagination"
-  />
-  <p class="example-status">Active page: {{ page }}</p>
+  <div class="example-stack">
+    <GhostPagination
+      v-model="page"
+      :page-count="12"
+      aria-label="Result pages"
+      class="example-pagination"
+    />
+    <p class="example-status">Active page: {{ page }}</p>
+  </div>
 </template>
 
 <style scoped>
+.example-stack {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.example-status {
+  margin: 0;
+}
 .example-pagination :deep(.ghost-pagination__list) {
   display: flex;
   flex-wrap: wrap;
