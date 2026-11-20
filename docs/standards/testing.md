@@ -195,6 +195,18 @@ with `animations: 'disabled'` and a default `maxDiffPixelRatio` of `0.03`
 - **Docs site baselines:** `tests/e2e/docs-visual.spec.ts` snapshots the docs
   nav, a themed `GhostInput` preview, and a headless checkbox preview at 390px in
   `light` and `dark` mode (requires `apps/docs` build; included in `pnpm test:visual`).
+- **Docs hero showcase baselines:** `tests/e2e/docs-showcase-visual.spec.ts`
+  snapshots the ten redesigned hero showcases (each component page's first
+  example) in the built docs on the first-paint host (`calm`, density unset).
+  Every hero is captured with source closed at 390px and 1280px browser widths
+  in `light` and `dark`. Overlay heroes (Dialog, Dropdown Menu, Select,
+  Combobox, Popover) are also captured open from the keyboard, clipped to the
+  trigger plus its body-portaled panel, at the same widths and modes. A source-open
+  capture at 320px (Button) and 768px (Tabs) covers the toolbar and fence, and a
+  480px preview-width capture of Table at a 1280px browser width covers container
+  resizing separately from browser widths. Every capture first asserts no
+  horizontal page overflow. Keep this matrix proportionate: add a hero only when
+  a component page gains a redesigned showcase.
 
 Run only the visual snapshot suites locally with:
 
