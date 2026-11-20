@@ -112,4 +112,32 @@
       --ghost-control-size-lg-padding-inline
     );
   }
+
+  /*
+   * In forced colors every page button shares ButtonFace and ButtonText, so
+   * the current page is painted Highlight (opted out of adjustment) and
+   * disabled controls use GrayText instead of opacity.
+   */
+  @media (forced-colors: active) {
+    :where(
+      .ghost-theme .ghost-pagination button[aria-current='page'],
+      .ghost-themed-scope .ghost-pagination button[aria-current='page']
+    ) {
+      background-color: Highlight;
+      border-color: Highlight;
+      color: HighlightText;
+      forced-color-adjust: none;
+    }
+
+    :where(
+      .ghost-theme .ghost-pagination button:disabled,
+      .ghost-themed-scope .ghost-pagination button:disabled,
+      .ghost-theme .ghost-pagination button[aria-disabled='true'],
+      .ghost-themed-scope .ghost-pagination button[aria-disabled='true']
+    ) {
+      border-color: GrayText;
+      color: GrayText;
+      opacity: 1;
+    }
+  }
 }

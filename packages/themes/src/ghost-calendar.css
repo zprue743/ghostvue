@@ -172,4 +172,37 @@
     outline: var(--ghost-focus-ring-width) solid var(--ghost-focus-ring-color);
     outline-offset: var(--ghost-focus-ring-offset);
   }
+
+  /*
+   * Forced colors erase the selected fill and give the selected and today
+   * borders the same system color. Selected and range ends become Highlight
+   * cells (opted out of adjustment so HighlightText stays on Highlight);
+   * range middles keep a Highlight border so the span still reads.
+   */
+  @media (forced-colors: active) {
+    :where(
+      .ghost-theme .ghost-calendar-cell[data-state='selected'],
+      .ghost-themed-scope .ghost-calendar-cell[data-state='selected'],
+      .ghost-calendar-cell[data-themed][data-state='selected'],
+      .ghost-theme .ghost-calendar-cell[data-state='range-start'],
+      .ghost-themed-scope .ghost-calendar-cell[data-state='range-start'],
+      .ghost-calendar-cell[data-themed][data-state='range-start'],
+      .ghost-theme .ghost-calendar-cell[data-state='range-end'],
+      .ghost-themed-scope .ghost-calendar-cell[data-state='range-end'],
+      .ghost-calendar-cell[data-themed][data-state='range-end']
+    ) {
+      background-color: Highlight;
+      border-color: Highlight;
+      color: HighlightText;
+      forced-color-adjust: none;
+    }
+
+    :where(
+      .ghost-theme .ghost-calendar-cell[data-state='range-middle'],
+      .ghost-themed-scope .ghost-calendar-cell[data-state='range-middle'],
+      .ghost-calendar-cell[data-themed][data-state='range-middle']
+    ) {
+      border-color: Highlight;
+    }
+  }
 }
