@@ -65,45 +65,23 @@ createApp(App).mount('#app')
 Flagships: `default`, `calm`, `vibrant`, `mono`. Light and dark follow
 `prefers-color-scheme`. Set `data-ghost-mode="dark"` on any element to force it.
 
+## Your first headless component
+
+Import primitives from `@ghostvue/vue` when you want full control over CSS.
+Components wire ARIA attributes, IDs, and keyboard behavior while exposing
+`ghost-*` classes and `data-part` / `data-state` hooks for your own styles:
+
+<GhostExample id="field/basic" />
+
 ## Your first themed component
 
-```vue
-<script setup lang="ts">
-import { ref } from 'vue'
-import {
-  GhostField,
-  GhostFieldControl,
-  GhostFieldDescription,
-  GhostFieldLabel,
-  GhostInput,
-} from '@ghostvue/themes'
-
-const region = ref('')
-</script>
-
-<template>
-  <GhostField>
-    <GhostFieldLabel>Data region</GhostFieldLabel>
-    <GhostFieldDescription>
-      Stored replicas stay in this region.
-    </GhostFieldDescription>
-    <GhostFieldControl v-slot="field">
-      <GhostInput v-bind="field" v-model="region" name="region" />
-    </GhostFieldControl>
-  </GhostField>
-</template>
-```
+For styled defaults, import the same components from `@ghostvue/themes` after
+loading a flagship stylesheet:
 
 <GhostExample id="field/themed" />
 
-## Going headless
-
-Swap the import to `@ghostvue/vue`. The markup stays the same, and you style the
-`ghost-*` classes and `data-part` / `data-state` hooks yourself.
-
-```ts
-import { GhostButton } from '@ghostvue/vue'
-```
+Both layers share the same component names, props, and accessibility behavior, so
+you can start themed and swap individual components to `@ghostvue/vue` later.
 
 ## SSR
 
@@ -111,17 +89,46 @@ Components render deterministic markup and IDs on the server and do not read
 browser globals during setup. Mode follows `prefers-color-scheme` in CSS, so
 there is no flash of the wrong palette.
 
-## Auto-imports and Nuxt
+## Tooling: Nuxt, auto-imports, and ESLint
 
-Prefer named imports. For Nuxt apps, `@ghostvue/nuxt` auto-imports the headless
-components and composables, with themed wrappers and CSS as an explicit opt-in;
-other Vite apps can use `GhostVueResolver()` from `@ghostvue/vue/resolver`. See
-[Nuxt and auto-imports](/auto-imports).
+### Auto-imports and Nuxt
+
+Named imports stay the primary API. For Nuxt apps, `@ghostvue/nuxt` auto-imports
+headless `Ghost*` components and `useGhost*` composables from `@ghostvue/vue`,
+with themed wrappers and CSS as an explicit opt-in. Other Vite apps can use
+`GhostVueResolver()` from `@ghostvue/vue/resolver` with
+`unplugin-vue-components`. See [Nuxt and auto-imports](/auto-imports).
+
+### ESLint template validation
+
+`@ghostvue/eslint-plugin` validates `<Ghost*>` props, slots, and `v-model`
+bindings in `.vue` templates against the library's published component
+contracts:
+
+```bash
+pnpm add -D @ghostvue/eslint-plugin eslint eslint-plugin-vue
+```
+
+```js
+// eslint.config.js
+import ghostvue from '@ghostvue/eslint-plugin'
+import vue from 'eslint-plugin-vue'
+
+export default [
+  ...vue.configs['flat/recommended'],
+  ghostvue.configs.recommended,
+]
+```
+
+See [ESLint plugin](/tooling/eslint-plugin) for rule details and configuration
+options.
 
 ## Next steps
 
-- [Browse components](/components/button)
+- [Browse components](/components/)
 - [Default theme](/themes/default) and
   [flagships & `defineTheme`](/themes/define-theme)
+- [Nuxt and auto-imports](/auto-imports) and
+  [ESLint plugin](/tooling/eslint-plugin)
 - [API reference](/reference/)
 - [Why GhostVue](/philosophy)
