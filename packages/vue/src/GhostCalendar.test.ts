@@ -2,10 +2,14 @@ import { CalendarDate } from '@internationalized/date'
 import { mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { flushPromises } from '@vue/test-utils'
-import { defineComponent, h, nextTick, ref, shallowRef } from 'vue'
+import { defineComponent, h, inject, nextTick, ref, shallowRef } from 'vue'
 import { createSSRApp } from 'vue'
 import { renderToString } from 'vue/server-renderer'
 
+import {
+  ghostCalendarContextKey,
+  type GhostCalendarContext,
+} from './ghost-calendar'
 import GhostCalendar from './GhostCalendar.vue'
 import GhostCalendarGrid from './GhostCalendarGrid.vue'
 import GhostCalendarHeader from './GhostCalendarHeader.vue'
@@ -472,5 +476,43 @@ describe('GhostCalendar', () => {
     expect(html).toContain('role="grid"')
     expect(addSpy.mock.calls.some(([event]) => event === 'keydown')).toBe(false)
     addSpy.mockRestore()
+  })
+})
+
+describe('GhostCalendar internal focus-target accessor', () => {
+  it('reports readiness once a grid mounts and resolves the roving date control', async () => {
+    let accessor: GhostCalendarContext['focusTarget'] | undefined
+    const Probe = defineComponent({
+      setup() {
+        accessor = inject(ghostCalendarContextKey)?.focusTarget
+        return () => null
+      },
+    })
+    const showGrid = ref(false)
+    const wrapper = mount(
+      defineComponent({
+        setup: () => () =>
+          h(
+            GhostCalendar,
+            {
+              defaultValue: new CalendarDate(2024, 6, 14),
+              today: FIXED_TODAY,
+            },
+            () => [h(Probe), showGrid.value ? h(GhostCalendarGrid) : null],
+          ),
+      }),
+      { attachTo: document.body },
+    )
+    attached.push(wrapper)
+    expect(accessor?.ready.value).toBe(false)
+    expect(accessor?.resolve()).toBeNull()
+
+    showGrid.value = true
+    await nextTick()
+    await nextTick()
+    expect(accessor?.ready.value).toBe(true)
+    expect(accessor?.resolve()?.getAttribute('data-ghost-calendar-date')).toBe(
+      '2024-06-14',
+    )
   })
 })

@@ -1,0 +1,352 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "generated",
+  "name": "GhostDatePicker",
+  "package": "@ghostvue/vue",
+  "status": "experimental",
+  "description": "Headless date-entry and selection root: strict ISO typed entry for a single date or inclusive range, an anchored modal calendar (APG Date Picker Dialog), separate drafts and committed CalendarDate values, native form serialization, validation, and reset.",
+  "props": [
+    {
+      "name": "defaultOpen",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Initial uncontrolled open state.",
+      "deprecated": false
+    },
+    {
+      "name": "defaultValue",
+      "type": "GhostDatePickerValue",
+      "default": null,
+      "required": false,
+      "description": "Initial uncontrolled value and uncontrolled form-reset target.",
+      "deprecated": false
+    },
+    {
+      "name": "defaultVisibleMonth",
+      "type": "CalendarDate",
+      "required": false,
+      "description": "Month shown when the picker opens empty.",
+      "deprecated": false
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Blocks all interaction and closes the calendar.",
+      "deprecated": false
+    },
+    {
+      "name": "endName",
+      "type": "string",
+      "required": false,
+      "description": "Range end submission name override.",
+      "deprecated": false
+    },
+    {
+      "name": "form",
+      "type": "string",
+      "required": false,
+      "description": "External `<form>` id for submission, validation, and reset.",
+      "deprecated": false
+    },
+    {
+      "name": "format",
+      "type": "GhostDatePickerFormat",
+      "required": false,
+      "description": "Synchronous display formatter; defaults to ISO `YYYY-MM-DD`.",
+      "deprecated": false
+    },
+    {
+      "name": "formatHint",
+      "type": "string",
+      "default": "YYYY-MM-DD",
+      "required": false,
+      "description": "Format description linked to every input.",
+      "deprecated": false
+    },
+    {
+      "name": "invalid",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Consumer-supplied invalid state (`external-invalid`).",
+      "deprecated": false
+    },
+    {
+      "name": "isDateDisabled",
+      "type": "((date: CalendarDate) => boolean)",
+      "required": false,
+      "description": "Unavailable endpoint dates (focusable, not selectable).",
+      "deprecated": false
+    },
+    {
+      "name": "locale",
+      "type": "string",
+      "default": "en-US",
+      "required": false,
+      "description": "Calendar and formatting locale.",
+      "deprecated": false
+    },
+    {
+      "name": "maxValue",
+      "type": "CalendarDate",
+      "required": false,
+      "description": "Inclusive upper bound.",
+      "deprecated": false
+    },
+    {
+      "name": "minValue",
+      "type": "CalendarDate",
+      "required": false,
+      "description": "Inclusive lower bound.",
+      "deprecated": false
+    },
+    {
+      "name": "modelValue",
+      "type": "GhostDatePickerValue",
+      "required": false,
+      "description": "Controlled committed value; `undefined` is uncontrolled, `null` is controlled empty.",
+      "deprecated": false
+    },
+    {
+      "name": "name",
+      "type": "string",
+      "required": false,
+      "description": "Form name: `name` (single) or `name[start]` / `name[end]` (range).",
+      "deprecated": false
+    },
+    {
+      "name": "open",
+      "type": "boolean",
+      "required": false,
+      "description": "Controlled requested open state.",
+      "deprecated": false
+    },
+    {
+      "name": "parse",
+      "type": "GhostDatePickerParse",
+      "required": false,
+      "description": "Synchronous parser; defaults to strict ISO `YYYY-MM-DD`.",
+      "deprecated": false
+    },
+    {
+      "name": "readonly",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Keeps text focusable and selectable but prevents editing, clearing, and opening.",
+      "deprecated": false
+    },
+    {
+      "name": "required",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Native required constraint on an empty committed value.",
+      "deprecated": false
+    },
+    {
+      "name": "selectionMode",
+      "type": "GhostDatePickerSelectionMode",
+      "default": "single",
+      "required": false,
+      "description": "`'single'` or `'range'`; fixed for the instance (remount with a new `key`).",
+      "deprecated": false
+    },
+    {
+      "name": "startName",
+      "type": "string",
+      "required": false,
+      "description": "Range start submission name override.",
+      "deprecated": false
+    },
+    {
+      "name": "today",
+      "type": "CalendarDate",
+      "required": false,
+      "description": "Explicit current date for SSR-safe \"today\" styling and focus fallback.",
+      "deprecated": false
+    },
+    {
+      "name": "validateRange",
+      "type": "GhostDatePickerValidateRange",
+      "required": false,
+      "description": "Whole-range business validation returning an error message or `null`.",
+      "deprecated": false
+    },
+    {
+      "name": "validationMessage",
+      "type": "((error: GhostDatePickerError) => string)",
+      "required": false,
+      "description": "Localizes built-in error messages.",
+      "deprecated": false
+    },
+    {
+      "name": "weekStartsOn",
+      "type": "GhostDatePickerWeekday",
+      "required": false,
+      "description": "Week start override (Sunday = `0`).",
+      "deprecated": false
+    }
+  ],
+  "models": [
+    {
+      "prop": "modelValue",
+      "event": "update:modelValue",
+      "type": "GhostDatePickerValue",
+      "description": "v-model binding for `modelValue`."
+    },
+    {
+      "prop": "open",
+      "event": "update:open",
+      "type": "boolean",
+      "description": "v-model binding for `open`."
+    }
+  ],
+  "events": [],
+  "slots": [
+    {
+      "name": "default",
+      "props": [
+        {
+          "name": "clear",
+          "type": "() => void",
+          "description": "Slot prop `clear`."
+        },
+        {
+          "name": "close",
+          "type": "() => void",
+          "description": "Slot prop `close`."
+        },
+        {
+          "name": "errors",
+          "type": "GhostDatePickerError[]",
+          "description": "Slot prop `errors`."
+        },
+        {
+          "name": "open",
+          "type": "boolean",
+          "description": "Slot prop `open`."
+        },
+        {
+          "name": "openCalendar",
+          "type": "() => void",
+          "description": "Slot prop `openCalendar`."
+        },
+        {
+          "name": "pending",
+          "type": "boolean",
+          "description": "Slot prop `pending`."
+        },
+        {
+          "name": "value",
+          "type": "GhostDatePickerValue",
+          "description": "Slot prop `value`."
+        }
+      ],
+      "description": "Container content."
+    }
+  ],
+  "exposed": [],
+  "styling": {
+    "parts": [
+      {
+        "name": "input",
+        "description": "Native text input from GhostDatePickerInput (data-input-part single/start/end)."
+      },
+      {
+        "name": "trigger",
+        "description": "Native button from GhostDatePickerTrigger that opens the calendar dialog."
+      },
+      {
+        "name": "content",
+        "description": "Positioned modal dialog surface from GhostDatePickerContent."
+      },
+      {
+        "name": "close",
+        "description": "Built-in Close control inside the content."
+      },
+      {
+        "name": "error-summary",
+        "description": "Focusable in-dialog error summary shown after an invalid event while open."
+      },
+      {
+        "name": "status",
+        "description": "Polite status line for the range instruction and calendar validation feedback."
+      },
+      {
+        "name": "format-hint",
+        "description": "Visually hidden format description linked to every input."
+      },
+      {
+        "name": "error-description",
+        "description": "Visually hidden per-input error text linked while errors are shown."
+      }
+    ],
+    "states": [
+      {
+        "name": "open",
+        "description": "Trigger data-state while the calendar dialog is open."
+      },
+      {
+        "name": "invalid",
+        "description": "Input data-state when it has errors or the consumer marked it invalid."
+      },
+      {
+        "name": "disabled",
+        "description": "Input data-state when disabled."
+      },
+      {
+        "name": "readonly",
+        "description": "Input data-state when readonly."
+      }
+    ],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "dialog",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/examples/datepicker-dialog/",
+    "keyboard": {
+      "Enter": "In an edited input, commits the text and prevents implicit form submission. On the trigger, opens the calendar. On a date, selects it.",
+      "Space": "On the trigger, opens the calendar. On a date, selects it.",
+      "Escape": "In the open dialog, closes it without committing calendar progress and restores focus. In an edited closed input, restores the committed text.",
+      "Tab": "Cycles through the dialog controls; the grid is a single Tab stop.",
+      "Shift+Tab": "Cycles backward through the dialog controls.",
+      "ArrowLeft": "Previous day (next day in RTL).",
+      "ArrowRight": "Next day (previous day in RTL).",
+      "ArrowUp": "Same day previous week.",
+      "ArrowDown": "Same day next week.",
+      "Home": "First day of the week.",
+      "End": "Last day of the week.",
+      "PageUp": "Same day previous month.",
+      "PageDown": "Same day next month.",
+      "Shift+PageUp": "Same day previous year.",
+      "Shift+PageDown": "Same day next year."
+    },
+    "requiredAriaAttributes": [
+      "aria-haspopup",
+      "aria-expanded",
+      "aria-controls",
+      "aria-modal",
+      "aria-describedby",
+      "aria-invalid",
+      "aria-selected"
+    ]
+  },
+  "examples": [
+    "date-picker/basic",
+    "date-picker/range",
+    "date-picker/controlled",
+    "date-picker/validation",
+    "date-picker/custom-format",
+    "date-picker/rtl",
+    "date-picker/nested-dialog"
+  ],
+  "spec": {
+    "path": "docs/components/date-picker-spec.md",
+    "status": "approved",
+    "evidence": "Approved by Zac on 2026-11-17 (GHO-207); see the Status line in this spec."
+  }
+}

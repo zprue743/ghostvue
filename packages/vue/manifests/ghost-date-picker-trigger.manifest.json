@@ -1,0 +1,59 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "generated",
+  "name": "GhostDatePickerTrigger",
+  "package": "@ghostvue/vue",
+  "status": "experimental",
+  "description": "Native button that commits pending text and opens the calendar dialog. Its default accessible name includes the selected date or range.",
+  "props": [],
+  "models": [],
+  "events": [],
+  "slots": [
+    {
+      "name": "default",
+      "props": [],
+      "description": "Visible trigger content. Defaults to a decorative calendar icon."
+    }
+  ],
+  "exposed": [
+    {
+      "name": "blur",
+      "kind": "method",
+      "type": "() => void",
+      "description": "Exposed method `blur`."
+    },
+    {
+      "name": "element",
+      "kind": "property",
+      "type": "HTMLElement | null",
+      "description": "Exposed property `element`."
+    },
+    {
+      "name": "focus",
+      "kind": "method",
+      "type": "(options?: FocusOptions) => void",
+      "description": "Exposed method `focus`."
+    }
+  ],
+  "styling": {
+    "parts": [],
+    "states": [],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "button",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/examples/datepicker-dialog/",
+    "keyboard": {},
+    "requiredAriaAttributes": [
+      "aria-haspopup",
+      "aria-expanded",
+      "aria-controls"
+    ]
+  },
+  "examples": [],
+  "spec": {
+    "path": "docs/components/date-picker-spec.md",
+    "status": "approved",
+    "evidence": "Approved by Zac on 2026-11-17 (GHO-207); see the Status line in this spec."
+  }
+}

@@ -1,0 +1,131 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "generated",
+  "name": "GhostDatePickerContent",
+  "package": "@ghostvue/vue",
+  "status": "experimental",
+  "description": "Anchored modal dialog positioned next to the input, with a Close control, error summary, polite status, and the calendar by default.",
+  "props": [
+    {
+      "name": "closeLabel",
+      "type": "string",
+      "default": "Close date picker",
+      "required": false,
+      "description": "Accessible name of the built-in Close control.",
+      "deprecated": false
+    },
+    {
+      "name": "endDateInstruction",
+      "type": "string",
+      "default": "Choose an end date",
+      "required": false,
+      "description": "Polite instruction announced after the first range activation.",
+      "deprecated": false
+    },
+    {
+      "name": "flip",
+      "type": "boolean | GhostPopoverFlipOptions",
+      "default": true,
+      "required": false,
+      "description": "Flip to the opposite side when overflowing.",
+      "deprecated": false
+    },
+    {
+      "name": "offset",
+      "type": "boolean | GhostPopoverOffsetOptions",
+      "default": 4,
+      "required": false,
+      "description": "Distance or axis offsets between anchor and content.",
+      "deprecated": false
+    },
+    {
+      "name": "placement",
+      "type": "Placement",
+      "default": "bottom-start",
+      "required": false,
+      "description": "Preferred placement relative to the input (or trigger).",
+      "deprecated": false
+    },
+    {
+      "name": "portal",
+      "type": "boolean",
+      "default": true,
+      "required": false,
+      "description": "Teleport through `GhostPortal` when `true`; render inline when `false`.",
+      "deprecated": false
+    },
+    {
+      "name": "portalTo",
+      "type": "GhostPortalTarget",
+      "default": "body",
+      "required": false,
+      "description": "Teleport target when `portal` is `true`.",
+      "deprecated": false
+    },
+    {
+      "name": "shift",
+      "type": "boolean | GhostPopoverShiftOptions",
+      "default": true,
+      "required": false,
+      "description": "Shift along the cross axis to stay in view.",
+      "deprecated": false
+    },
+    {
+      "name": "strategy",
+      "type": "Strategy",
+      "default": "absolute",
+      "required": false,
+      "description": "CSS positioning strategy.",
+      "deprecated": false
+    }
+  ],
+  "models": [],
+  "events": [],
+  "slots": [
+    {
+      "name": "default",
+      "props": [],
+      "description": "Calendar and optional help/error content. Defaults to `GhostDatePickerCalendar`."
+    }
+  ],
+  "exposed": [
+    {
+      "name": "blur",
+      "kind": "method",
+      "type": "() => void",
+      "description": "Exposed method `blur`."
+    },
+    {
+      "name": "element",
+      "kind": "property",
+      "type": "HTMLElement | null",
+      "description": "Exposed property `element`."
+    },
+    {
+      "name": "focus",
+      "kind": "method",
+      "type": "(options?: FocusOptions) => void",
+      "description": "Exposed method `focus`."
+    }
+  ],
+  "styling": {
+    "parts": [],
+    "states": [],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "dialog",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/examples/datepicker-dialog/",
+    "keyboard": {},
+    "requiredAriaAttributes": [
+      "aria-modal",
+      "aria-label"
+    ]
+  },
+  "examples": [],
+  "spec": {
+    "path": "docs/components/date-picker-spec.md",
+    "status": "approved",
+    "evidence": "Approved by Zac on 2026-11-17 (GHO-207); see the Status line in this spec."
+  }
+}

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { CalendarDate } from '@internationalized/date'
-import { provide, shallowRef } from 'vue'
+import { computed, provide, shallowRef } from 'vue'
 
 import {
   ghostCalendarContextKey,
@@ -66,6 +66,9 @@ defineSlots<{
   }): unknown
 }>()
 
+const FOCUSABLE_CELL_CONTROL =
+  'button, [href], input, select, textarea, [tabindex]'
+
 const gridElement = shallowRef<HTMLElement | null>(null)
 const liveRegion = useGhostVisuallyHidden()
 
@@ -93,6 +96,27 @@ const calendar = useGhostCalendar({
   },
 })
 
+/**
+ * Control for the roving focus date inside the mounted grid. Reads the cell by
+ * its date key rather than its `tabindex`, because tab stops are synced in a
+ * post-flush watcher that may not have run yet when a wrapper asks.
+ */
+function resolveFocusTarget(): HTMLElement | null {
+  const grid = gridElement.value
+  if (!grid) {
+    return null
+  }
+  const cell = grid.querySelector<HTMLElement>(
+    `[data-ghost-calendar-date="${calendar.focusedDate.value.toString()}"]`,
+  )
+  if (!cell) {
+    return null
+  }
+  return cell.matches(FOCUSABLE_CELL_CONTROL)
+    ? cell
+    : cell.querySelector<HTMLElement>(FOCUSABLE_CELL_CONTROL)
+}
+
 defineExpose<GhostCalendarExposed>({
   get element() {
     return null
@@ -106,6 +130,10 @@ provide(ghostCalendarContextKey, {
   },
   syncFocusedTabStops(gridRoot: HTMLElement) {
     applyCalendarFocusTabStops(gridRoot, calendar.focusedDate.value.toString())
+  },
+  focusTarget: {
+    ready: computed(() => gridElement.value !== null),
+    resolve: resolveFocusTarget,
   },
 })
 </script>

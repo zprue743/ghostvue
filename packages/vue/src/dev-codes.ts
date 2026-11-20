@@ -50,6 +50,13 @@ export const ghostCodes = {
       'GhostDialogContent or GhostDrawerContent with role="alertdialog" should provide a description. Render GhostDialogDescription or GhostDrawerDescription inside the content, or pass aria-describedby.',
     relatedDocs: './components/dialog.md',
   },
+  GHOST004: {
+    level: 'warn',
+    title: 'DatePicker format callback threw',
+    message:
+      'The GhostDatePicker format callback threw for {date}. The input shows the ISO YYYY-MM-DD text instead. Make format synchronous, pure, and total for valid CalendarDate values.',
+    relatedDocs: './components/date-picker.md',
+  },
 } as const satisfies Record<string, GhostCodeEntry>
 
 /**

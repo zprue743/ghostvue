@@ -41,3 +41,11 @@ GhostDialogContent or GhostDrawerContent with role="alertdialog" should provide 
 
 Related: [./components/dialog.md](./components/dialog.md)
 
+## GHOST004
+
+**Warning:** DatePicker format callback threw
+
+The GhostDatePicker format callback threw for {date}. The input shows the ISO YYYY-MM-DD text instead. Make format synchronous, pure, and total for valid CalendarDate values.
+
+Related: [./components/date-picker.md](./components/date-picker.md)
+

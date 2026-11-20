@@ -13,7 +13,13 @@ packages:
 specStatus: approved
 approval:
   evidence: 'Approved by Zac on 2026-11-17 (GHO-207); see the Status line in this spec.'
-manifests: []
+manifests:
+  - packages/vue/manifests/ghost-date-picker.manifest.json
+  - packages/vue/manifests/ghost-date-picker-input.manifest.json
+  - packages/vue/manifests/ghost-date-picker-trigger.manifest.json
+  - packages/vue/manifests/ghost-date-picker-content.manifest.json
+  - packages/vue/manifests/ghost-date-picker-calendar.manifest.json
+  - packages/themes/manifests/ghost-date-picker.manifest.json
 sections:
   purpose:
     applicable: true

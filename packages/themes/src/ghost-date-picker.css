@@ -1,0 +1,279 @@
+/*
+ * Themed GhostDatePicker: text inputs, calendar trigger, and the anchored
+ * modal surface. Visual values come from semantic --ghost-* tokens; private
+ * --_ghost-date-picker-* properties are per-instance wiring, not public API.
+ * Interactive controls keep >= 44px (2.75rem) touch targets.
+ */
+@layer ghostvue-theme {
+  :where(
+    .ghost-theme .ghost-date-picker-input,
+    .ghost-themed-scope .ghost-date-picker-input,
+    .ghost-date-picker-input[data-themed]
+  ) {
+    --_ghost-date-picker-input-bg: var(--ghost-surface-bg);
+    --_ghost-date-picker-input-border: var(--ghost-border-default);
+    --_ghost-date-picker-input-fg: var(--ghost-text-default);
+
+    appearance: none;
+    background-color: var(--_ghost-date-picker-input-bg);
+    border: var(--ghost-border-hairline-width) solid
+      var(--_ghost-date-picker-input-border);
+    border-radius: var(--ghost-action-radius);
+    box-sizing: border-box;
+    color: var(--_ghost-date-picker-input-fg);
+    font-family: var(--ghost-type-family-sans);
+    font-feature-settings: var(--ghost-type-feature-default);
+    font-size: var(--ghost-control-size-md-font);
+    font-variant-numeric: tabular-nums;
+    /* Room for "YYYY-MM-DD" plus padding and borders. */
+    inline-size: calc(
+      11ch + 2 * var(--ghost-control-size-md-padding-inline) + 2 *
+        var(--ghost-border-hairline-width)
+    );
+    line-height: var(--ghost-type-line-normal);
+    margin: 0;
+    max-inline-size: 100%;
+    min-block-size: 2.75rem;
+    padding-block: var(--ghost-control-size-md-padding-block);
+    padding-inline: var(--ghost-control-size-md-padding-inline);
+  }
+
+  :where(
+    .ghost-theme .ghost-date-picker-input:hover:not(:disabled),
+    .ghost-themed-scope .ghost-date-picker-input:hover:not(:disabled),
+    .ghost-date-picker-input[data-themed]:hover:not(:disabled)
+  ) {
+    --_ghost-date-picker-input-border: var(--ghost-border-strong);
+  }
+
+  :where(
+    .ghost-theme .ghost-date-picker-input:focus-visible,
+    .ghost-themed-scope .ghost-date-picker-input:focus-visible,
+    .ghost-date-picker-input[data-themed]:focus-visible,
+    .ghost-theme .ghost-date-picker-trigger:focus-visible,
+    .ghost-themed-scope .ghost-date-picker-trigger:focus-visible,
+    .ghost-date-picker-trigger[data-themed]:focus-visible
+  ) {
+    box-shadow: 0 0 0 var(--ghost-focus-ring-offset)
+      var(--ghost-focus-ring-contrast);
+    outline: var(--ghost-focus-ring-width) solid var(--ghost-focus-ring-color);
+    outline-offset: var(--ghost-focus-ring-offset);
+  }
+
+  :where(
+    .ghost-theme .ghost-date-picker-input[readonly],
+    .ghost-themed-scope .ghost-date-picker-input[readonly],
+    .ghost-date-picker-input[data-themed][readonly]
+  ) {
+    --_ghost-date-picker-input-bg: var(--ghost-surface-muted-bg);
+  }
+
+  :where(
+    .ghost-theme .ghost-date-picker-input[aria-invalid='true'],
+    .ghost-themed-scope .ghost-date-picker-input[aria-invalid='true'],
+    .ghost-date-picker-input[data-themed][aria-invalid='true']
+  ) {
+    --_ghost-date-picker-input-bg: var(--ghost-status-danger-bg);
+    --_ghost-date-picker-input-border: var(--ghost-border-danger);
+    --_ghost-date-picker-input-fg: var(--ghost-status-danger-fg);
+  }
+
+  :where(
+    .ghost-theme .ghost-date-picker-input:disabled,
+    .ghost-themed-scope .ghost-date-picker-input:disabled,
+    .ghost-date-picker-input[data-themed]:disabled
+  ) {
+    --_ghost-date-picker-input-bg: var(--ghost-action-disabled-bg);
+    --_ghost-date-picker-input-border: var(--ghost-action-disabled-border);
+    --_ghost-date-picker-input-fg: var(--ghost-action-disabled-fg);
+
+    cursor: not-allowed;
+  }
+
+  :where(
+    .ghost-theme .ghost-date-picker-trigger,
+    .ghost-themed-scope .ghost-date-picker-trigger,
+    .ghost-date-picker-trigger[data-themed]
+  ) {
+    align-items: center;
+    background-color: var(--ghost-elevation-1-bg);
+    border: var(--ghost-border-hairline-width) solid
+      var(--ghost-elevation-1-border);
+    border-radius: var(--ghost-action-radius);
+    box-sizing: border-box;
+    color: var(--ghost-surface-fg);
+    cursor: pointer;
+    display: inline-flex;
+    justify-content: center;
+    min-block-size: 2.75rem;
+    min-inline-size: 2.75rem;
+    padding: var(--ghost-space-inset-xs);
+  }
+
+  :where(
+    .ghost-theme .ghost-date-picker-trigger:disabled,
+    .ghost-themed-scope .ghost-date-picker-trigger:disabled,
+    .ghost-date-picker-trigger[data-themed]:disabled
+  ) {
+    background-color: var(--ghost-action-disabled-bg);
+    border-color: var(--ghost-action-disabled-border);
+    color: var(--ghost-action-disabled-fg);
+    cursor: not-allowed;
+  }
+
+  /*
+   * The surface is a GhostDialogContent, so the dialog recipe also matches it.
+   * Undo the dialog's centering and fixed sizing; inline left/top/position
+   * from the floating layer place it next to the input.
+   */
+  :where(
+    .ghost-theme .ghost-date-picker-content,
+    .ghost-themed-scope .ghost-date-picker-content,
+    .ghost-date-picker-content[data-themed]
+  ) {
+    background-color: var(--ghost-elevation-3-bg);
+    border: var(--ghost-border-hairline-width) solid
+      var(--ghost-elevation-3-border);
+    border-radius: var(--ghost-radius-lg);
+    box-shadow:
+      var(--ghost-elevation-3-shadow), var(--ghost-elevation-3-highlight);
+    box-sizing: border-box;
+    color: var(--ghost-surface-fg);
+    display: grid;
+    font-family: var(--ghost-type-family-sans);
+    font-feature-settings: var(--ghost-type-feature-default);
+    gap: var(--ghost-space-gap-sm);
+    grid-template-columns: minmax(0, 1fr);
+    inline-size: max-content;
+    max-block-size: none;
+    max-inline-size: calc(100vw - 2 * var(--ghost-space-inset-md));
+    overflow: auto;
+    padding: var(--ghost-space-inset-md);
+    transform: none;
+    z-index: 50;
+  }
+
+  :where(
+    .ghost-theme .ghost-date-picker-content:focus-visible,
+    .ghost-themed-scope .ghost-date-picker-content:focus-visible,
+    .ghost-date-picker-content[data-themed]:focus-visible
+  ) {
+    outline: var(--ghost-focus-ring-width) solid var(--ghost-focus-ring-color);
+    outline-offset: var(--ghost-focus-ring-offset);
+  }
+
+  :where(
+    .ghost-theme .ghost-date-picker-content > .ghost-date-picker-close,
+    .ghost-themed-scope .ghost-date-picker-content > .ghost-date-picker-close,
+    .ghost-date-picker-content[data-themed] > .ghost-date-picker-close
+  ) {
+    background: transparent;
+    border: var(--ghost-border-hairline-width) solid transparent;
+    border-radius: var(--ghost-radius-md);
+    color: var(--ghost-surface-fg);
+    cursor: pointer;
+    font: inherit;
+    font-size: var(--ghost-type-size-lg);
+    justify-self: end;
+    line-height: 1;
+    min-block-size: 2.75rem;
+    min-inline-size: 2.75rem;
+  }
+
+  :where(
+    .ghost-theme
+      .ghost-date-picker-content
+      > .ghost-date-picker-close:focus-visible,
+    .ghost-themed-scope
+      .ghost-date-picker-content
+      > .ghost-date-picker-close:focus-visible,
+    .ghost-date-picker-content[data-themed]
+      > .ghost-date-picker-close:focus-visible
+  ) {
+    outline: var(--ghost-focus-ring-width) solid var(--ghost-focus-ring-color);
+    outline-offset: var(--ghost-focus-ring-offset);
+  }
+
+  :where(
+    .ghost-theme .ghost-date-picker-content > .ghost-date-picker-error-summary,
+    .ghost-themed-scope
+      .ghost-date-picker-content
+      > .ghost-date-picker-error-summary,
+    .ghost-date-picker-content[data-themed] > .ghost-date-picker-error-summary
+  ) {
+    background-color: var(--ghost-status-danger-bg);
+    border-radius: var(--ghost-radius-md);
+    color: var(--ghost-status-danger-fg);
+    font-size: var(--ghost-type-size-sm);
+    padding: var(--ghost-space-inset-xs) var(--ghost-space-inset-sm);
+  }
+
+  :where(
+    .ghost-theme
+      .ghost-date-picker-content
+      > .ghost-date-picker-error-summary
+      p,
+    .ghost-themed-scope
+      .ghost-date-picker-content
+      > .ghost-date-picker-error-summary
+      p,
+    .ghost-date-picker-content[data-themed] > .ghost-date-picker-error-summary p
+  ) {
+    margin: 0;
+  }
+
+  :where(
+    .ghost-theme .ghost-date-picker-content > .ghost-date-picker-status,
+    .ghost-themed-scope .ghost-date-picker-content > .ghost-date-picker-status,
+    .ghost-date-picker-content[data-themed] > .ghost-date-picker-status
+  ) {
+    color: var(--ghost-text-muted);
+    font-size: var(--ghost-type-size-sm);
+    margin: 0;
+    min-block-size: 1lh;
+  }
+
+  /*
+   * Calendar parts portaled inside the themed picker meet the 44px touch
+   * target. They are rendered by the picker itself (GhostDatePickerCalendar),
+   * so sizing them here is part of the picker recipe.
+   */
+  :where(
+    .ghost-date-picker-content[data-themed] .ghost-calendar-cell,
+    .ghost-date-picker-content[data-themed] .ghost-calendar-prev,
+    .ghost-date-picker-content[data-themed] .ghost-calendar-next
+  ) {
+    min-block-size: 2.75rem;
+    min-inline-size: 2.75rem;
+  }
+
+  :where(
+    .ghost-date-picker-content[data-themed] .ghost-calendar-week,
+    .ghost-date-picker-content[data-themed] .ghost-calendar-weekdays
+  ) {
+    grid-template-columns: repeat(7, minmax(2.75rem, 1fr));
+  }
+
+  @media (forced-colors: active) {
+    :where(
+      .ghost-theme .ghost-date-picker-content,
+      .ghost-themed-scope .ghost-date-picker-content,
+      .ghost-date-picker-content[data-themed]
+    ) {
+      background-color: Canvas;
+      border-color: CanvasText;
+      box-shadow: none;
+      color: CanvasText;
+    }
+
+    :where(
+      .ghost-theme .ghost-date-picker-input,
+      .ghost-themed-scope .ghost-date-picker-input,
+      .ghost-date-picker-input[data-themed]
+    ) {
+      background-color: Field;
+      border-color: FieldText;
+      color: FieldText;
+    }
+  }
+}

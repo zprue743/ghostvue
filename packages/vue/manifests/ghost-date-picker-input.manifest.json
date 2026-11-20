@@ -1,0 +1,85 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "generated",
+  "name": "GhostDatePickerInput",
+  "package": "@ghostvue/vue",
+  "status": "experimental",
+  "description": "Native text input for one picker value (single, start, or end). Preserves draft text, commits on Enter or blur, and links the format hint and errors.",
+  "props": [
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Combines with the root `disabled` (for example from `GhostFieldControl`).",
+      "deprecated": false
+    },
+    {
+      "name": "invalid",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Combines with root errors (for example from `GhostFieldControl`).",
+      "deprecated": false
+    },
+    {
+      "name": "part",
+      "type": "GhostDatePickerPart",
+      "default": "single",
+      "required": false,
+      "description": "Which value this input edits; range pickers need `start` and `end`.",
+      "deprecated": false
+    },
+    {
+      "name": "required",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Combines with the root `required` (for example from `GhostFieldControl`).",
+      "deprecated": false
+    }
+  ],
+  "models": [],
+  "events": [],
+  "slots": [],
+  "exposed": [
+    {
+      "name": "blur",
+      "kind": "method",
+      "type": "() => void",
+      "description": "Exposed method `blur`."
+    },
+    {
+      "name": "element",
+      "kind": "property",
+      "type": "HTMLInputElement | null",
+      "description": "Exposed property `element`."
+    },
+    {
+      "name": "focus",
+      "kind": "method",
+      "type": "(options?: FocusOptions) => void",
+      "description": "Exposed method `focus`."
+    }
+  ],
+  "styling": {
+    "parts": [],
+    "states": [],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "textbox",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/examples/datepicker-dialog/",
+    "keyboard": {},
+    "requiredAriaAttributes": [
+      "aria-describedby",
+      "aria-invalid"
+    ]
+  },
+  "examples": [],
+  "spec": {
+    "path": "docs/components/date-picker-spec.md",
+    "status": "approved",
+    "evidence": "Approved by Zac on 2026-11-17 (GHO-207); see the Status line in this spec."
+  }
+}
