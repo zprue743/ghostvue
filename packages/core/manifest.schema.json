@@ -24,7 +24,7 @@
   "properties": {
     "schemaVersion": {
       "type": "string",
-      "description": "Semver of this manifest document's schema. Start at 1.0.0. Bump when the instance shape this file uses changes; a major bump also requires a new $id URL.",
+      "description": "Semver of this manifest document's schema. Start at 1.0.0. Bump when the instance shape this file uses changes (accessibility.verification needs 1.1.0 or later); a major bump also requires a new $id URL.",
       "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$"
     },
     "source": {
@@ -139,6 +139,21 @@
             "pattern": "^aria-[a-z0-9-]+$"
           },
           "uniqueItems": true
+        },
+        "verification": {
+          "type": "object",
+          "description": "Optional (schemaVersion 1.1.0+) APG conformance evidence, recorded as three separate categories. A passing category never attests another: automated keyboard and axe success say nothing about manual or assistive-technology review. Consumers treat an absent verification object as every category not-reviewed.",
+          "additionalProperties": false,
+          "required": ["automatedKeyboard", "manual", "assistiveTechnology"],
+          "properties": {
+            "automatedKeyboard": {
+              "$ref": "#/$defs/automatedKeyboardVerification"
+            },
+            "manual": { "$ref": "#/$defs/manualVerification" },
+            "assistiveTechnology": {
+              "$ref": "#/$defs/assistiveTechnologyVerification"
+            }
+          }
         }
       }
     },
@@ -414,6 +429,312 @@
           "type": "string",
           "description": "What the property controls. Do not list private --_ghost-* names.",
           "minLength": 1
+        }
+      }
+    },
+    "verificationStatus": {
+      "type": "string",
+      "description": "passed: the evidence supports the contract; failed: the evidence records a known defect; not-reviewed: no evidence exists yet.",
+      "enum": ["passed", "failed", "not-reviewed"]
+    },
+    "automatedKeyboardVerification": {
+      "type": "object",
+      "description": "Browser tests that press each declared key. A passed or failed status maps every key in accessibility.keyboard; CI requires each mapped test to execute in the chromium-e2e project and to pass (passed) or to fail as an expected failure (failed). Evidence is re-run on every commit, so its revision is the revision that ships this manifest.",
+      "additionalProperties": false,
+      "required": ["status", "keys"],
+      "properties": {
+        "status": { "$ref": "#/$defs/verificationStatus" },
+        "keys": {
+          "type": "object",
+          "description": "Map from a key name in accessibility.keyboard to the browser tests that press it and assert the documented action. Empty when status is not-reviewed.",
+          "additionalProperties": {
+            "type": "array",
+            "description": "Browser tests that exercise this key.",
+            "minItems": 1,
+            "items": { "$ref": "#/$defs/keyboardTestReference" }
+          }
+        }
+      },
+      "if": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "const": "not-reviewed"
+          }
+        },
+        "required": ["status"]
+      },
+      "then": {
+        "type": "object",
+        "properties": {
+          "keys": {
+            "type": "object",
+            "maxProperties": 0
+          }
+        }
+      },
+      "else": {
+        "type": "object",
+        "properties": {
+          "keys": {
+            "type": "object",
+            "minProperties": 1
+          }
+        }
+      }
+    },
+    "keyboardTestReference": {
+      "type": "object",
+      "description": "One Playwright test, identified the way the Playwright JSON report identifies it.",
+      "additionalProperties": false,
+      "required": ["spec", "title", "package"],
+      "properties": {
+        "spec": {
+          "type": "string",
+          "description": "Repository-relative spec file under tests/e2e.",
+          "pattern": "^tests/e2e/([a-z0-9-]+/)*[a-z0-9.-]+\\.spec\\.ts$"
+        },
+        "title": {
+          "type": "string",
+          "description": "Title path below the spec file: describe titles and the test title joined with ' › '.",
+          "minLength": 1
+        },
+        "package": {
+          "type": "string",
+          "description": "Package of the component instance the test renders. A themed wrapper exercises the headless behavior it wraps.",
+          "pattern": "^@ghostvue/[a-z][a-z0-9-]*$"
+        }
+      }
+    },
+    "manualReviewEvidence": {
+      "type": "object",
+      "description": "One manual interaction review (keyboard, pointer, zoom, focus visibility) of a specific component revision.",
+      "additionalProperties": false,
+      "required": [
+        "component",
+        "package",
+        "revision",
+        "date",
+        "reviewer",
+        "environment",
+        "reference",
+        "summary"
+      ],
+      "properties": {
+        "component": {
+          "type": "string",
+          "description": "Name of the reviewed component; must match this manifest's name.",
+          "pattern": "^Ghost[A-Z][A-Za-z0-9]*$"
+        },
+        "package": {
+          "type": "string",
+          "description": "Package of the reviewed component; must match this manifest's package.",
+          "pattern": "^@ghostvue/[a-z][a-z0-9-]*$"
+        },
+        "revision": {
+          "type": "string",
+          "description": "Git commit SHA or published package version that was reviewed, so consumers can judge whether the evidence still applies.",
+          "pattern": "^([0-9a-f]{7,40}|(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)(-[0-9A-Za-z.-]+)?)$"
+        },
+        "date": {
+          "type": "string",
+          "description": "Review date (YYYY-MM-DD).",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+        },
+        "reviewer": {
+          "type": "string",
+          "description": "Person or team accountable for the review.",
+          "minLength": 1
+        },
+        "environment": {
+          "type": "object",
+          "description": "Software the review ran on.",
+          "additionalProperties": false,
+          "required": ["browser", "platform"],
+          "properties": {
+            "assistiveTechnology": {
+              "type": "string",
+              "description": "Assistive technology and version (for example NVDA 2025.1).",
+              "minLength": 1
+            },
+            "browser": {
+              "type": "string",
+              "description": "Browser and version.",
+              "minLength": 1
+            },
+            "platform": {
+              "type": "string",
+              "description": "Operating system and version.",
+              "minLength": 1
+            }
+          }
+        },
+        "reference": {
+          "type": "string",
+          "description": "Review record: an https URL or a repository-relative path.",
+          "pattern": "^(https://[^\\s]+|[A-Za-z0-9._-]+(/[A-Za-z0-9._-]+)+)$"
+        },
+        "summary": {
+          "type": "string",
+          "description": "What was checked and what was found.",
+          "minLength": 1
+        }
+      }
+    },
+    "assistiveTechnologyReviewEvidence": {
+      "type": "object",
+      "description": "One screen reader or other assistive-technology review of a specific component revision.",
+      "additionalProperties": false,
+      "required": [
+        "component",
+        "package",
+        "revision",
+        "date",
+        "reviewer",
+        "environment",
+        "reference",
+        "summary"
+      ],
+      "properties": {
+        "component": {
+          "type": "string",
+          "description": "Name of the reviewed component; must match this manifest's name.",
+          "pattern": "^Ghost[A-Z][A-Za-z0-9]*$"
+        },
+        "package": {
+          "type": "string",
+          "description": "Package of the reviewed component; must match this manifest's package.",
+          "pattern": "^@ghostvue/[a-z][a-z0-9-]*$"
+        },
+        "revision": {
+          "type": "string",
+          "description": "Git commit SHA or published package version that was reviewed, so consumers can judge whether the evidence still applies.",
+          "pattern": "^([0-9a-f]{7,40}|(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)(-[0-9A-Za-z.-]+)?)$"
+        },
+        "date": {
+          "type": "string",
+          "description": "Review date (YYYY-MM-DD).",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+        },
+        "reviewer": {
+          "type": "string",
+          "description": "Person or team accountable for the review.",
+          "minLength": 1
+        },
+        "environment": {
+          "type": "object",
+          "description": "Software the review ran on.",
+          "additionalProperties": false,
+          "required": ["browser", "platform", "assistiveTechnology"],
+          "properties": {
+            "assistiveTechnology": {
+              "type": "string",
+              "description": "Assistive technology and version (for example NVDA 2025.1).",
+              "minLength": 1
+            },
+            "browser": {
+              "type": "string",
+              "description": "Browser and version.",
+              "minLength": 1
+            },
+            "platform": {
+              "type": "string",
+              "description": "Operating system and version.",
+              "minLength": 1
+            }
+          }
+        },
+        "reference": {
+          "type": "string",
+          "description": "Review record: an https URL or a repository-relative path.",
+          "pattern": "^(https://[^\\s]+|[A-Za-z0-9._-]+(/[A-Za-z0-9._-]+)+)$"
+        },
+        "summary": {
+          "type": "string",
+          "description": "What was checked and what was found.",
+          "minLength": 1
+        }
+      }
+    },
+    "manualVerification": {
+      "type": "object",
+      "description": "Manual interaction review. Automated tests never set this category.",
+      "additionalProperties": false,
+      "required": ["status", "evidence"],
+      "properties": {
+        "status": { "$ref": "#/$defs/verificationStatus" },
+        "evidence": {
+          "type": "array",
+          "description": "Review records. Empty when status is not-reviewed; at least one otherwise.",
+          "items": { "$ref": "#/$defs/manualReviewEvidence" }
+        }
+      },
+      "if": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "const": "not-reviewed"
+          }
+        },
+        "required": ["status"]
+      },
+      "then": {
+        "type": "object",
+        "properties": {
+          "evidence": {
+            "type": "array",
+            "maxItems": 0
+          }
+        }
+      },
+      "else": {
+        "type": "object",
+        "properties": {
+          "evidence": {
+            "type": "array",
+            "minItems": 1
+          }
+        }
+      }
+    },
+    "assistiveTechnologyVerification": {
+      "type": "object",
+      "description": "Assistive-technology review. Automated tests and manual keyboard review never set this category.",
+      "additionalProperties": false,
+      "required": ["status", "evidence"],
+      "properties": {
+        "status": { "$ref": "#/$defs/verificationStatus" },
+        "evidence": {
+          "type": "array",
+          "description": "Review records. Empty when status is not-reviewed; at least one otherwise.",
+          "items": { "$ref": "#/$defs/assistiveTechnologyReviewEvidence" }
+        }
+      },
+      "if": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "const": "not-reviewed"
+          }
+        },
+        "required": ["status"]
+      },
+      "then": {
+        "type": "object",
+        "properties": {
+          "evidence": {
+            "type": "array",
+            "maxItems": 0
+          }
+        }
+      },
+      "else": {
+        "type": "object",
+        "properties": {
+          "evidence": {
+            "type": "array",
+            "minItems": 1
+          }
         }
       }
     }

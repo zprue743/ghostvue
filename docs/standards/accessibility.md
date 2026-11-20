@@ -28,3 +28,13 @@ the product context. Tests should cover keyboard and focus behavior explicitly.
 Automated axe scans are a baseline, not evidence that a component is accessible.
 Meaningful components require manual reasoning and, before stable release,
 assistive-technology review proportionate to their complexity.
+
+## Recording verification
+
+Component manifests record APG conformance evidence in three separate
+categories: automated keyboard tests, manual interaction review, and
+assistive-technology review. See
+[accessibility verification](../architecture/component-manifest.md#accessibility-verification).
+Automated results never mark a manual or assistive-technology category as
+passed. Unreviewed categories stay `not-reviewed`; do not record a review that
+did not happen.

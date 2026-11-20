@@ -103,6 +103,15 @@ image (`mcr.microsoft.com/playwright:<version>-noble`, matching
 `@playwright/test` in `package.json`) with its bundled browsers and
 `--update-snapshots=none` so missing or drifted baselines always fail.
 
+### Keyboard evidence in manifests
+
+A manifest that records `accessibility.verification.automatedKeyboard` maps
+each declared key to the `chromium-e2e` tests that press it. Renaming or
+removing such a test fails `pnpm keyboard-evidence`; the CI `browser` job also
+fails when a mapped test did not run or did not pass. Update the manifest
+reference in the same change. See
+[accessibility verification](../architecture/component-manifest.md#accessibility-verification).
+
 ## Cross-browser functional matrix
 
 Keyboard, focus, `inert`, scroll locking, native radio Tab order, and RTL layout

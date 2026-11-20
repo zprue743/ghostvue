@@ -96,8 +96,19 @@ const manifest: ReferenceManifest = {
     states: [{ name: 'open', description: 'Open.' }],
     cssProperties: [{ name: '--ghost-color', description: 'Color.' }],
   },
-  accessibility: {},
+  accessibility: {
+    role: 'listbox',
+    apgPattern: 'https://www.w3.org/WAI/ARIA/apg/patterns/listbox/',
+    keyboard: { ArrowDown: 'Moves to the next option.', Home: 'First option.' },
+    requiredAriaAttributes: ['aria-label'],
+  },
   examples: ['fixture/basic'],
+}
+
+const keyboardTest = {
+  spec: 'tests/e2e/fixture.spec.ts',
+  title: 'GhostFixture › presses every key',
+  package: '@ghostvue/vue',
 }
 
 describe('component reference generation', () => {
@@ -129,6 +140,94 @@ describe('component reference generation', () => {
       expect(markdown).toContain(content)
     }
     expect(manifestToMarkdown(manifest)).toBe(markdown)
+  })
+
+  it('renders the accessibility contract with every category not reviewed when verification is absent', () => {
+    const markdown = manifestToMarkdown(manifest)
+    expect(markdown).toContain('## Accessibility')
+    expect(markdown).toContain('Role: <code>listbox</code>.')
+    expect(markdown).toContain(
+      '<a href="https://www.w3.org/WAI/ARIA/apg/patterns/listbox/">',
+    )
+    expect(markdown).toContain(
+      'Required ARIA attributes: <code>aria-label</code>.',
+    )
+    expect(markdown).toContain(
+      '| <code>ArrowDown</code> | Moves to the next option. | Not reviewed |',
+    )
+    expect(markdown).toContain('| Automated keyboard | Not reviewed |')
+    expect(markdown).toContain(
+      '| Manual interaction | Not reviewed | No review recorded. |',
+    )
+    expect(markdown).toContain(
+      '| Assistive technology | Not reviewed | No review recorded. |',
+    )
+  })
+
+  it('keeps automated keyboard success separate from manual and assistive-technology review', () => {
+    const markdown = manifestToMarkdown({
+      ...manifest,
+      accessibility: {
+        ...manifest.accessibility,
+        verification: {
+          automatedKeyboard: {
+            status: 'passed',
+            keys: { ArrowDown: [keyboardTest], Home: [keyboardTest] },
+          },
+          manual: { status: 'not-reviewed', evidence: [] },
+          assistiveTechnology: { status: 'not-reviewed', evidence: [] },
+        },
+      },
+    })
+    expect(markdown).toContain(
+      '| <code>ArrowDown</code> | Moves to the next option. | <a href="https://github.com/zprue743/ghostvue/blob/master/tests/e2e/fixture.spec.ts">GhostFixture › presses every key</a> (<code>@ghostvue/vue</code>) |',
+    )
+    expect(markdown).toContain('| Automated keyboard | Passed |')
+    expect(markdown).toContain(
+      '| Manual interaction | Not reviewed | No review recorded. |',
+    )
+    expect(markdown).toContain(
+      '| Assistive technology | Not reviewed | No review recorded. |',
+    )
+    expect(markdown).toContain(
+      'Automated keyboard and axe results do not attest manual or assistive-technology review.',
+    )
+  })
+
+  it('identifies the reviewed component revision and environment for review evidence', () => {
+    const markdown = manifestToMarkdown({
+      ...manifest,
+      accessibility: {
+        ...manifest.accessibility,
+        verification: {
+          automatedKeyboard: { status: 'not-reviewed', keys: {} },
+          manual: { status: 'not-reviewed', evidence: [] },
+          assistiveTechnology: {
+            status: 'failed',
+            evidence: [
+              {
+                component: 'GhostFixture',
+                package: '@ghostvue/vue',
+                revision: '0.4.0',
+                date: '2026-11-01',
+                reviewer: 'Accessibility guild',
+                environment: {
+                  assistiveTechnology: 'NVDA 2025.1',
+                  browser: 'Firefox 140',
+                  platform: 'Windows 11',
+                },
+                reference: 'https://example.com/reviews/1',
+                summary: 'Options are announced without position.',
+              },
+            ],
+          },
+        },
+      },
+    })
+    expect(markdown).toContain(
+      '| Assistive technology | Failed | 2026-11-01, Accessibility guild, <code>@ghostvue/vue</code> at <code>0.4.0</code> (NVDA 2025.1, Firefox 140, Windows 11): Options are announced without position. <a href="https://example.com/reviews/1">Record</a> |',
+    )
+    expect(markdown).toContain('| Automated keyboard | Not reviewed |')
   })
 
   it('lists extra data attributes with their values or presence', () => {

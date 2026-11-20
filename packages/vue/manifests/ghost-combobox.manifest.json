@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "1.0.0",
+  "schemaVersion": "1.1.0",
   "source": "generated",
   "name": "GhostCombobox",
   "package": "@ghostvue/vue",
@@ -239,7 +239,78 @@
       "aria-autocomplete",
       "aria-activedescendant",
       "aria-selected"
-    ]
+    ],
+    "verification": {
+      "automatedKeyboard": {
+        "status": "passed",
+        "keys": {
+          "ArrowDown": [
+            {
+              "spec": "tests/e2e/ghost-combobox.spec.ts",
+              "title": "GhostCombobox › keyboard interaction, highlight, multi-toggle, and axe",
+              "package": "@ghostvue/themes"
+            }
+          ],
+          "ArrowUp": [
+            {
+              "spec": "tests/e2e/ghost-combobox.spec.ts",
+              "title": "GhostCombobox › keyboard interaction, highlight, multi-toggle, and axe",
+              "package": "@ghostvue/themes"
+            }
+          ],
+          "Enter": [
+            {
+              "spec": "tests/e2e/ghost-combobox.spec.ts",
+              "title": "GhostCombobox › keyboard interaction, highlight, multi-toggle, and axe",
+              "package": "@ghostvue/themes"
+            }
+          ],
+          "Escape": [
+            {
+              "spec": "tests/e2e/ghost-combobox.spec.ts",
+              "title": "GhostCombobox › keyboard interaction, highlight, multi-toggle, and axe",
+              "package": "@ghostvue/themes"
+            }
+          ],
+          "Home": [
+            {
+              "spec": "tests/e2e/ghost-combobox.spec.ts",
+              "title": "GhostCombobox › keyboard interaction, highlight, multi-toggle, and axe",
+              "package": "@ghostvue/themes"
+            }
+          ],
+          "End": [
+            {
+              "spec": "tests/e2e/ghost-combobox.spec.ts",
+              "title": "GhostCombobox › keyboard interaction, highlight, multi-toggle, and axe",
+              "package": "@ghostvue/themes"
+            }
+          ],
+          "Tab": [
+            {
+              "spec": "tests/e2e/ghost-combobox.spec.ts",
+              "title": "GhostCombobox › focus departure (GHO-166) › inline content with trigger: Tab, Shift+Tab, external focus, and pointer selection",
+              "package": "@ghostvue/themes"
+            }
+          ],
+          "Shift+Tab": [
+            {
+              "spec": "tests/e2e/ghost-combobox.spec.ts",
+              "title": "GhostCombobox › focus departure (GHO-166) › inline content with trigger: Tab, Shift+Tab, external focus, and pointer selection",
+              "package": "@ghostvue/themes"
+            }
+          ]
+        }
+      },
+      "manual": {
+        "status": "not-reviewed",
+        "evidence": []
+      },
+      "assistiveTechnology": {
+        "status": "not-reviewed",
+        "evidence": []
+      }
+    }
   },
   "examples": [
     "combobox/basic",

@@ -93,6 +93,7 @@ pnpm boundaries
 pnpm adapters
 pnpm manifests
 pnpm manifests:write
+pnpm keyboard-evidence
 pnpm registries
 pnpm registries:write
 pnpm typecheck
