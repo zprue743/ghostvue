@@ -49,7 +49,11 @@ function onSubmit(event: Event): void {
 
 <template>
   <form class="date-picker-validation" @submit.prevent="onSubmit">
-    <div role="group" aria-labelledby="date-picker-validation-legend">
+    <div
+      class="date-picker-validation__group"
+      role="group"
+      aria-labelledby="date-picker-validation-legend"
+    >
       <span id="date-picker-validation-legend">Stay (required)</span>
       <GhostDatePicker
         v-slot="{ errors }"
@@ -92,6 +96,11 @@ function onSubmit(event: Event): void {
   display: grid;
   gap: 0.5rem;
   justify-items: start;
+}
+
+.date-picker-validation__group {
+  display: grid;
+  gap: 0.25rem;
 }
 
 .date-picker-validation__row {

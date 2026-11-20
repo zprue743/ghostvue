@@ -170,6 +170,24 @@ describe('GhostDatePicker native form ownership', () => {
     })
   })
 
+  it('exempts readonly inputs from constraint validation, like native controls', async () => {
+    mountPicker({
+      props: { readonly: true, invalid: true, required: true, name: 'due' },
+    })
+    await settle()
+    const input = document.querySelector<HTMLInputElement>('input[type="text"]')
+    expect(input?.willValidate).toBe(false)
+    expect(input?.getAttribute('aria-invalid')).toBe('true')
+    const form = document.querySelector('form')
+    expect(form?.checkValidity()).toBe(true)
+  })
+
+  it('blocks submission for an externally invalid editable value', async () => {
+    mountPicker({ props: { invalid: true, name: 'due' } })
+    await settle()
+    expect(document.querySelector('form')?.checkValidity()).toBe(false)
+  })
+
   it('ignores input-local name and form attributes', () => {
     mountPicker({
       props: { name: 'due' },

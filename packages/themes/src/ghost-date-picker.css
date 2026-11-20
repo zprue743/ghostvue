@@ -25,7 +25,11 @@
     font-feature-settings: var(--ghost-type-feature-default);
     font-size: var(--ghost-control-size-md-font);
     font-variant-numeric: tabular-nums;
-    inline-size: 11ch;
+    /* Room for "YYYY-MM-DD" plus padding and borders. */
+    inline-size: calc(
+      11ch + 2 * var(--ghost-control-size-md-padding-inline) + 2 *
+        var(--ghost-border-hairline-width)
+    );
     line-height: var(--ghost-type-line-normal);
     margin: 0;
     max-inline-size: 100%;

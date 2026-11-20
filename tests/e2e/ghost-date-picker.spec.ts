@@ -423,6 +423,28 @@ test.describe('GhostDatePicker', { tag }, () => {
     await axe(page)
   })
 
+  test('reflows at a 320px-wide viewport (400% zoom equivalent)', async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 320, height: 640 })
+    const { dialog, day, trigger } = await openExample(
+      page,
+      'date-picker/themed',
+    )
+    await trigger.click()
+    await expect(day('2026-12-04')).toBeFocused()
+    const box = await dialog.boundingBox()
+    expect(box).not.toBeNull()
+    if (box) {
+      expect(box.x).toBeGreaterThanOrEqual(0)
+      expect(box.x + box.width).toBeLessThanOrEqual(320)
+    }
+    const scrollWidth = await page.evaluate(
+      () => document.documentElement.scrollWidth,
+    )
+    expect(scrollWidth).toBeLessThanOrEqual(320)
+  })
+
   test('forced colors and reduced motion keep the picker usable', async ({
     page,
   }) => {
