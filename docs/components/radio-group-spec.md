@@ -1,3 +1,51 @@
+---
+schemaVersion: 1.0.0
+component: GhostRadioGroup
+components:
+  - GhostRadioGroup
+  - GhostRadioGroupItem
+packages:
+  - '@ghostvue/vue'
+  - '@ghostvue/themes'
+specStatus: proposed
+manifests:
+  - packages/vue/manifests/ghost-radio-group.manifest.json
+  - packages/vue/manifests/ghost-radio-group-item.manifest.json
+  - packages/themes/manifests/ghost-radio-group.manifest.json
+sections:
+  purpose:
+    applicable: true
+  nonGoals:
+    applicable: true
+  publicApi:
+    applicable: true
+  stateModel:
+    applicable: true
+  consumerData:
+    applicable: false
+    reason: 'Component does not accept consumer data collections or typed item accessors.'
+  accessibility:
+    applicable: true
+  rendering:
+    applicable: false
+    reason: 'No dedicated section: data-state and data-orientation styling hooks are specified under Public API and State model, and themed appearance lives in @ghostvue/themes.'
+  environment:
+    applicable: false
+    reason: 'No dedicated section: items render native radio inputs, generated names come from SSR-stable useGhostId, and the spec defines no browser-only behavior.'
+  performance:
+    applicable: false
+    reason: 'No dedicated section: items are consumer-authored slot children with no data-driven collection, and the spec sets no budget beyond ordinary rendering.'
+  composition:
+    applicable: true
+  testPlan:
+    applicable: true
+  documentationPlan:
+    applicable: true
+  compatibility:
+    applicable: true
+unresolvedQuestions: []
+---
+
 # GhostRadioGroup specification
 
 **Status:** Proposed for GHO-30. Spec and implementation ship together; Zac

@@ -63,5 +63,10 @@
     "visually-hidden/table-header",
     "visually-hidden/skip-link",
     "visually-hidden/live-region"
-  ]
+  ],
+  "spec": {
+    "path": "docs/components/visually-hidden-spec.md",
+    "status": "approved",
+    "evidence": "Approved for issue #2 implementation scope on 2026-08-16."
+  }
 }

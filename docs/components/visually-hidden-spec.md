@@ -1,3 +1,45 @@
+---
+schemaVersion: 1.0.0
+component: GhostVisuallyHidden
+components:
+  - GhostVisuallyHidden
+packages:
+  - '@ghostvue/vue'
+specStatus: approved
+approval:
+  evidence: 'Approved for issue #2 implementation scope on 2026-08-16.'
+manifests:
+  - packages/vue/manifests/ghost-visually-hidden.manifest.json
+sections:
+  purpose:
+    applicable: true
+  nonGoals:
+    applicable: true
+  publicApi:
+    applicable: true
+  stateModel:
+    applicable: true
+  consumerData:
+    applicable: true
+  accessibility:
+    applicable: true
+  rendering:
+    applicable: true
+  environment:
+    applicable: true
+  performance:
+    applicable: true
+  composition:
+    applicable: true
+  testPlan:
+    applicable: true
+  documentationPlan:
+    applicable: true
+  compatibility:
+    applicable: true
+unresolvedQuestions: []
+---
+
 # GhostVisuallyHidden specification
 
 **Status:** Approved for issue #2 implementation scope on 2026-08-16.

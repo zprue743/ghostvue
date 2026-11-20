@@ -1,3 +1,53 @@
+---
+schemaVersion: 1.0.0
+component: GhostTree
+components:
+  - GhostTree
+  - GhostTreeItem
+  - GhostTreeTrigger
+  - GhostTreeGroup
+packages:
+  - '@ghostvue/vue'
+  - '@ghostvue/themes'
+specStatus: approved
+approval:
+  evidence: 'Direction (Option A) approved by Zac (maintainer) in chat on 2026-11-17; recorded in the GHO-105 Linear document and the "Approval and readiness update - November 17, 2026" note on GHO-105. See the Status line in this spec.'
+manifests:
+  - packages/vue/manifests/ghost-tree.manifest.json
+  - packages/vue/manifests/ghost-tree-item.manifest.json
+  - packages/vue/manifests/ghost-tree-trigger.manifest.json
+  - packages/vue/manifests/ghost-tree-group.manifest.json
+  - packages/themes/manifests/ghost-tree.manifest.json
+sections:
+  purpose:
+    applicable: true
+  nonGoals:
+    applicable: true
+  publicApi:
+    applicable: true
+  stateModel:
+    applicable: true
+  consumerData:
+    applicable: true
+  accessibility:
+    applicable: true
+  rendering:
+    applicable: true
+  environment:
+    applicable: true
+  performance:
+    applicable: true
+  composition:
+    applicable: true
+  testPlan:
+    applicable: true
+  documentationPlan:
+    applicable: true
+  compatibility:
+    applicable: true
+unresolvedQuestions: []
+---
+
 # GhostTree specification
 
 **Status:** Approved. Direction (Option A) approved by Zac (maintainer) in

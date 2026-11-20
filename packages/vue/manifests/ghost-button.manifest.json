@@ -100,5 +100,10 @@
     "button/basic",
     "button/composable",
     "button/ref"
-  ]
+  ],
+  "spec": {
+    "path": "docs/components/button-spec.md",
+    "status": "approved",
+    "evidence": "Approved for issue #1 implementation scope on 2026-08-15."
+  }
 }

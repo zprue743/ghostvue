@@ -74,6 +74,11 @@ export interface ComponentManifest extends DerivedContract {
   styling: unknown
   accessibility: unknown
   examples: unknown
+  spec?: {
+    path: string
+    status: 'approved'
+    evidence?: string
+  }
 }
 
 export interface ResolvedManifestPackage {
@@ -113,6 +118,11 @@ export function buildDerivedContract(
 export function mergeManifest(
   derived: DerivedContract,
   existing: unknown,
+  specMetadata?: {
+    path: string
+    status: 'approved'
+    evidence?: string
+  },
 ): ComponentManifest
 export function resolveManifestPackage(
   repositoryRoot: string,
