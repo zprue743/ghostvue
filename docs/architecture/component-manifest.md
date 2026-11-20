@@ -148,19 +148,22 @@ than inventing their own.
 
 Each `manual` or `assistiveTechnology` evidence entry names the reviewed
 `component` and `package` (both must equal the manifest's own), the `revision`
-(commit SHA or published version), `date`, `reviewer`, `environment`
-(`browser`, `platform`, and for AT reviews `assistiveTechnology`), a
-`reference` to the review record, and a `summary`. `passed` and `failed` need
-at least one entry. The review process itself is GHO-44.
+(commit SHA or published version), `date`, `reviewer` (crediting the actual
+tester), `environment` (`browser`, `platform`, and for AT reviews
+`assistiveTechnology`), a `reference` to the review record, and a `summary`.
+`passed` and `failed` need at least one entry. See the
+[assistive-technology review process](../standards/assistive-technology-review.md)
+for the required screen-reader matrix, review template, and `stable` promotion
+rules.
 
 ### Enforcement
 
-| Check                                  | Runs in                         | Fails when                                                                                                                                       |
-| -------------------------------------- | ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Schema (`pnpm test`)                   | `verify-unit`                   | Shape or status/evidence pairing is invalid                                                                                                      |
-| `pnpm manifests`                       | `verify-static`                 | A declared key is unmapped, a mapped key is undeclared, a spec is missing, evidence names another component, or `schemaVersion` is below `1.1.0` |
-| `pnpm keyboard-evidence`               | `verify-static`                 | A reference does not resolve to a `chromium-e2e` test in `playwright test --list`, or is skipped                                                 |
-| `check-keyboard-evidence.mjs --report` | `browser`, after merging shards | A mapped test did not execute in `chromium-e2e` or did not pass (a pass after a CI retry counts)                                                 |
+| Check                                  | Runs in                         | Fails when                                                                                                                                                                                                                                 |
+| -------------------------------------- | ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Schema (`pnpm test`)                   | `verify-unit`                   | Shape or status/evidence pairing is invalid                                                                                                                                                                                                |
+| `pnpm manifests`                       | `verify-static`                 | A declared key is unmapped, a mapped key is undeclared, a spec is missing, evidence names another component, `schemaVersion` is below `1.1.0`, or a `stable` manifest lacks passed AT evidence (NVDA+Firefox and VoiceOver+Safari desktop) |
+| `pnpm keyboard-evidence`               | `verify-static`                 | A reference does not resolve to a `chromium-e2e` test in `playwright test --list`, or is skipped                                                                                                                                           |
+| `check-keyboard-evidence.mjs --report` | `browser`, after merging shards | A mapped test did not execute in `chromium-e2e` or did not pass (a pass after a CI retry counts)                                                                                                                                           |
 
 The last check reads the merged Playwright JSON report of the same run, so a
 title that merely exists in source is not enough. Locally, run the mapped specs

@@ -34,7 +34,16 @@ assistive-technology review proportionate to their complexity.
 Component manifests record APG conformance evidence in three separate
 categories: automated keyboard tests, manual interaction review, and
 assistive-technology review. See
-[accessibility verification](../architecture/component-manifest.md#accessibility-verification).
+[accessibility verification](../architecture/component-manifest.md#accessibility-verification)
+and the
+[assistive-technology review process](./assistive-technology-review.md).
 Automated results never mark a manual or assistive-technology category as
 passed. Unreviewed categories stay `not-reviewed`; do not record a review that
 did not happen.
+
+Before promoting an interactive component to `stable`, the assistive-technology
+review process requires **NVDA + Firefox** (Windows) and **VoiceOver + Safari**
+(macOS) desktop testing, plus conditional **JAWS + Chrome**, **VoiceOver on
+iOS**, and **TalkBack + Chrome** testing where relevant (recording explicit
+exclusion reasons when skipped). Zac owns review coordination and final
+sign-off, while manifest `reviewer` entries credit the actual tester.
