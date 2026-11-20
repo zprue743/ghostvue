@@ -151,6 +151,29 @@
         "pattern": "^[a-z][a-z0-9-]+(/[a-z][a-z0-9-]+)?$"
       },
       "uniqueItems": true
+    },
+    "spec": {
+      "type": "object",
+      "description": "Reference to the approved component specification. Spec approval status is distinct from component stability status.",
+      "additionalProperties": false,
+      "required": ["path", "status"],
+      "properties": {
+        "path": {
+          "type": "string",
+          "description": "Repository-relative path to the component specification markdown file.",
+          "pattern": "^docs/components/[a-z0-9-]+-spec\\.md$"
+        },
+        "status": {
+          "type": "string",
+          "description": "Approval status of the referenced specification.",
+          "enum": ["approved"]
+        },
+        "evidence": {
+          "type": "string",
+          "description": "Approval evidence preserved from the specification frontmatter.",
+          "minLength": 1
+        }
+      }
     }
   },
   "$defs": {

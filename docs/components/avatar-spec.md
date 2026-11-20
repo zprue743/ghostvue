@@ -1,3 +1,45 @@
+---
+schemaVersion: 1.0.0
+component: GhostAvatar
+components:
+  - GhostAvatar
+packages:
+  - '@ghostvue/vue'
+  - '@ghostvue/themes'
+specStatus: proposed
+manifests:
+  - packages/vue/manifests/ghost-avatar.manifest.json
+  - packages/themes/manifests/ghost-avatar.manifest.json
+sections:
+  purpose:
+    applicable: true
+  nonGoals:
+    applicable: true
+  publicApi:
+    applicable: true
+  stateModel:
+    applicable: true
+  consumerData:
+    applicable: true
+  accessibility:
+    applicable: true
+  rendering:
+    applicable: true
+  environment:
+    applicable: true
+  performance:
+    applicable: true
+  composition:
+    applicable: true
+  testPlan:
+    applicable: true
+  documentationPlan:
+    applicable: true
+  compatibility:
+    applicable: true
+unresolvedQuestions: []
+---
+
 # GhostAvatar specification
 
 **Status:** Proposed for [GHO-95](https://linear.app/ghost-vue/issue/GHO-95)

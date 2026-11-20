@@ -84,5 +84,10 @@
   "examples": [
     "tooltip/basic",
     "tooltip/themed"
-  ]
+  ],
+  "spec": {
+    "path": "docs/components/tooltip-spec.md",
+    "status": "approved",
+    "evidence": "Approved for minimal `GhostTooltip` (GHO-79)."
+  }
 }

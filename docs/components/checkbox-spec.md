@@ -1,3 +1,45 @@
+---
+schemaVersion: 1.0.0
+component: GhostCheckbox
+components:
+  - GhostCheckbox
+packages:
+  - '@ghostvue/vue'
+  - '@ghostvue/themes'
+specStatus: proposed
+manifests:
+  - packages/vue/manifests/ghost-checkbox.manifest.json
+  - packages/themes/manifests/ghost-checkbox.manifest.json
+sections:
+  purpose:
+    applicable: true
+  nonGoals:
+    applicable: true
+  publicApi:
+    applicable: true
+  stateModel:
+    applicable: true
+  consumerData:
+    applicable: true
+  accessibility:
+    applicable: true
+  rendering:
+    applicable: true
+  environment:
+    applicable: true
+  performance:
+    applicable: true
+  composition:
+    applicable: true
+  testPlan:
+    applicable: true
+  documentationPlan:
+    applicable: true
+  compatibility:
+    applicable: true
+unresolvedQuestions: []
+---
+
 # GhostCheckbox specification
 
 **Status:** Proposed for GHO-74. Spec and implementation ship together; Zac

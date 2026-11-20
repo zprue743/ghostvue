@@ -46,5 +46,10 @@
   },
   "examples": [
     "tooltip-provider/skip-delay"
-  ]
+  ],
+  "spec": {
+    "path": "docs/components/tooltip-provider-spec.md",
+    "status": "approved",
+    "evidence": "Approved for GHO-118 (`GhostTooltipProvider`)."
+  }
 }

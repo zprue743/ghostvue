@@ -71,5 +71,10 @@
     },
     "requiredAriaAttributes": []
   },
-  "examples": []
+  "examples": [],
+  "spec": {
+    "path": "docs/components/drawer-spec.md",
+    "status": "approved",
+    "evidence": "Approved by Zac (maintainer) in chat on 2026-11-17; recorded in the GHO-91 Linear document (Drawer / Sheet design plan and specification). See the Status line in this spec."
+  }
 }

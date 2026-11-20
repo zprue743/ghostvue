@@ -1,3 +1,59 @@
+---
+schemaVersion: 1.0.0
+component: GhostBreadcrumb
+components:
+  - GhostBreadcrumb
+  - GhostBreadcrumbList
+  - GhostBreadcrumbItem
+  - GhostBreadcrumbLink
+  - GhostBreadcrumbPage
+  - GhostBreadcrumbSeparator
+  - GhostBreadcrumbEllipsis
+packages:
+  - '@ghostvue/vue'
+  - '@ghostvue/themes'
+specStatus: approved
+approval:
+  evidence: 'Approved and implemented (`GhostBreadcrumb` on `feat/gho-99-breadcrumb`, GHO-99).'
+manifests:
+  - packages/vue/manifests/ghost-breadcrumb.manifest.json
+  - packages/vue/manifests/ghost-breadcrumb-list.manifest.json
+  - packages/vue/manifests/ghost-breadcrumb-item.manifest.json
+  - packages/vue/manifests/ghost-breadcrumb-link.manifest.json
+  - packages/vue/manifests/ghost-breadcrumb-page.manifest.json
+  - packages/vue/manifests/ghost-breadcrumb-separator.manifest.json
+  - packages/vue/manifests/ghost-breadcrumb-ellipsis.manifest.json
+  - packages/themes/manifests/ghost-breadcrumb.manifest.json
+sections:
+  purpose:
+    applicable: true
+  nonGoals:
+    applicable: true
+  publicApi:
+    applicable: true
+  stateModel:
+    applicable: true
+  consumerData:
+    applicable: true
+  accessibility:
+    applicable: true
+  rendering:
+    applicable: true
+  environment:
+    applicable: true
+  performance:
+    applicable: true
+  composition:
+    applicable: true
+  testPlan:
+    applicable: true
+  documentationPlan:
+    applicable: true
+  compatibility:
+    applicable: true
+unresolvedQuestions: []
+---
+
 # GhostBreadcrumb specification
 
 **Status:** Approved and implemented (`GhostBreadcrumb` on `feat/gho-99-breadcrumb`, GHO-99).

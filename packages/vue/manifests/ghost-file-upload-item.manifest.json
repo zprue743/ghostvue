@@ -47,5 +47,10 @@
     "keyboard": {},
     "requiredAriaAttributes": []
   },
-  "examples": []
+  "examples": [],
+  "spec": {
+    "path": "docs/components/file-upload-spec.md",
+    "status": "approved",
+    "evidence": "Zac approved the GHO-106 design plan in chat on 2026-11-17 (recorded in GHO-210), including its six review points. See the Status line in this spec."
+  }
 }

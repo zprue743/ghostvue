@@ -1,3 +1,59 @@
+---
+schemaVersion: 1.0.0
+component: GhostTable
+components:
+  - GhostTable
+  - GhostTableCaption
+  - GhostTableHead
+  - GhostTableBody
+  - GhostTableFoot
+  - GhostTableRow
+  - GhostTableHeaderCell
+  - GhostTableCell
+packages:
+  - '@ghostvue/vue'
+  - '@ghostvue/themes'
+specStatus: proposed
+manifests:
+  - packages/vue/manifests/ghost-table.manifest.json
+  - packages/vue/manifests/ghost-table-caption.manifest.json
+  - packages/vue/manifests/ghost-table-head.manifest.json
+  - packages/vue/manifests/ghost-table-body.manifest.json
+  - packages/vue/manifests/ghost-table-foot.manifest.json
+  - packages/vue/manifests/ghost-table-row.manifest.json
+  - packages/vue/manifests/ghost-table-header-cell.manifest.json
+  - packages/vue/manifests/ghost-table-cell.manifest.json
+  - packages/themes/manifests/ghost-table.manifest.json
+sections:
+  purpose:
+    applicable: true
+  nonGoals:
+    applicable: true
+  publicApi:
+    applicable: true
+  stateModel:
+    applicable: true
+  consumerData:
+    applicable: true
+  accessibility:
+    applicable: true
+  rendering:
+    applicable: true
+  environment:
+    applicable: true
+  performance:
+    applicable: true
+  composition:
+    applicable: true
+  testPlan:
+    applicable: true
+  documentationPlan:
+    applicable: true
+  compatibility:
+    applicable: true
+unresolvedQuestions: []
+---
+
 # GhostTable specification
 
 **Status:** Proposed for GHO-85. Spec and implementation ship together; Zac

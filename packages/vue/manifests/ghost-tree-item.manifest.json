@@ -185,5 +185,10 @@
       "aria-selected"
     ]
   },
-  "examples": []
+  "examples": [],
+  "spec": {
+    "path": "docs/components/tree-spec.md",
+    "status": "approved",
+    "evidence": "Direction (Option A) approved by Zac (maintainer) in chat on 2026-11-17; recorded in the GHO-105 Linear document and the \"Approval and readiness update - November 17, 2026\" note on GHO-105. See the Status line in this spec."
+  }
 }
