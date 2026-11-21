@@ -54,34 +54,52 @@ function readFileAtRef(ref, file) {
   }
 }
 
-const { base, head } = resolveBaseHead()
-const diff = execFileSync(
-  'git',
-  ['diff', '--name-only', '--no-renames', base, head],
-  {
-    encoding: 'utf8',
-  },
-).trim()
-const files = diff ? diff.split('\n').filter(Boolean) : []
+let files = []
+let base = ''
+let head = 'HEAD'
 
-const { skipHeavy } = classifyChangedPaths({
+if (eventName !== 'schedule') {
+  ;({ base, head } = resolveBaseHead())
+  const diff = execFileSync(
+    'git',
+    ['diff', '--name-only', '--no-renames', base, head],
+    {
+      encoding: 'utf8',
+    },
+  ).trim()
+  files = diff ? diff.split('\n').filter(Boolean) : []
+}
+
+const classification = classifyChangedPaths({
   eventName,
   files,
-  readAtBase: (file) => readFileAtRef(base, file),
+  readAtBase: (file) => (base ? readFileAtRef(base, file) : null),
   readAtHead: (file) => readFileAtRef(head, file),
 })
 
-const summary = skipHeavy
+const summary = classification.skipHeavy
   ? `Skipping heavy CI for ${files.length} eligible path-only file(s).`
-  : files.length === 0
-    ? 'No changed files in diff; running full CI.'
-    : `Running full CI (${files.length} changed file(s), including non-eligible paths).`
+  : eventName === 'schedule'
+    ? 'Scheduled run; running full CI including full scaffold verify.'
+    : files.length === 0
+      ? 'No changed files in diff; running full CI.'
+      : `Running CI (${files.length} changed file(s); e2e_scope=${classification.e2eScope}, nuxt=${classification.runNuxt}, cross_browser=${classification.runCrossBrowser}, node24=${classification.runNode24}, full_scaffold=${classification.runFullScaffold}).`
 
 const outputPath = process.env.GITHUB_OUTPUT
 if (!outputPath) {
   throw new Error('ci-changed-paths.mjs requires GITHUB_OUTPUT')
 }
-appendFileSync(outputPath, `skip_heavy=${skipHeavy}\n`)
+appendFileSync(
+  outputPath,
+  [
+    `skip_heavy=${classification.skipHeavy}`,
+    `run_nuxt=${classification.runNuxt}`,
+    `run_cross_browser=${classification.runCrossBrowser}`,
+    `run_node24=${classification.runNode24}`,
+    `run_full_scaffold=${classification.runFullScaffold}`,
+    `e2e_scope=${classification.e2eScope}`,
+  ].join('\n') + '\n',
+)
 console.log(summary)
 if (files.length > 0 && files.length <= 30) {
   console.log('Changed files:\n' + files.map((f) => `  - ${f}`).join('\n'))

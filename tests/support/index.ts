@@ -18,3 +18,4 @@ export {
   expectScrollbarCompensation,
 } from './scrollbars'
 export { gotoPlayground, playgroundTest, expect } from './playground'
+export { docsTest } from './docs'

@@ -1,5 +1,8 @@
 #!/usr/bin/env node
-import { heavyIntegrationTestFiles } from './ci-heavy-integration-tests.mjs'
+import {
+  ciBuildCoveredIntegrationTestFiles,
+  heavyIntegrationTestFiles,
+} from './ci-heavy-integration-tests.mjs'
 
 const mode = process.argv[2]
 if (mode === 'integration-heavy') {
@@ -7,7 +10,10 @@ if (mode === 'integration-heavy') {
   process.exit(0)
 }
 if (mode === 'unit-exclude') {
-  for (const file of heavyIntegrationTestFiles) {
+  for (const file of [
+    ...heavyIntegrationTestFiles,
+    ...ciBuildCoveredIntegrationTestFiles,
+  ]) {
     process.stdout.write(` --exclude ${JSON.stringify(file)}`)
   }
   process.exit(0)

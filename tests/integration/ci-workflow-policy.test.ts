@@ -119,8 +119,12 @@ describe('CodeQL workflow', () => {
   const analyze = jobBlock(workflow, 'analyze')
 
   it('scans master pushes, pull requests to master, and a weekly schedule', () => {
-    expect(workflow).toMatch(/^ {2}push:\n {4}branches: \[master\]$/m)
-    expect(workflow).toMatch(/^ {2}pull_request:\n {4}branches: \[master\]$/m)
+    expect(workflow).toMatch(
+      /^ {2}push:\n {4}branches: \[master\]\n {4}paths:\n(?: {6}- .+\n)+/m,
+    )
+    expect(workflow).toMatch(
+      /^ {2}pull_request:\n {4}branches: \[master\]\n {4}paths:\n(?: {6}- .+\n)+/m,
+    )
     expect(workflow).toMatch(
       /^ {2}schedule:\n(?: {4}#.*\n)* {4}- cron: '[^']+'$/m,
     )
@@ -150,24 +154,32 @@ describe('CI workflow', () => {
     expect(workflow).toMatch(/^permissions:\n {2}contents: read$/m)
   })
 
-  it('runs the fast verify partitions on Node 22 and 24', () => {
+  it('runs static and coverage unit checks on Node 22 and unit compatibility on Node 24', () => {
     const engines = (
       JSON.parse(readRepoFile('package.json')) as { engines: { node: string } }
     ).engines.node
-    // The matrix floor must be the declared engines floor.
+    // The floor must match the declared engines floor.
     expect(engines).toBe('>=22.0.0')
 
     for (const jobId of ['verify-static', 'verify-unit']) {
       const block = jobBlock(workflow, jobId)
-      expect(block, jobId).toMatch(/^ {8}node: \[22, 24\]$/m)
-      expect(block, jobId).toMatch(/node-version: \$\{\{ matrix\.node \}\}/)
+      expect(block, jobId).toMatch(/node-version: 22/)
     }
+
+    const node24 = jobBlock(workflow, 'verify-unit-node24')
+    expect(node24).toMatch(/node-version: 24/)
+    expect(node24).toContain('--reporter=default')
+    expect(node24).not.toContain('--coverage')
   })
 
-  it('makes the aggregate verify check depend on every matrix partition', () => {
+  it('makes the aggregate verify check depend on every verify partition', () => {
     const needs = /needs:\s*\[([^\]]+)\]/.exec(jobBlock(workflow, 'verify'))
     expect(needs?.[1].split(',').map((need) => need.trim())).toEqual(
-      expect.arrayContaining(['verify-static', 'verify-unit']),
+      expect.arrayContaining([
+        'verify-static',
+        'verify-unit',
+        'verify-unit-node24',
+      ]),
     )
   })
 
@@ -243,7 +255,7 @@ describe('CI workflow', () => {
     )
   })
 
-  it('runs Chromium shards and a Firefox/WebKit cross-browser matrix behind the browser check', () => {
+  it('runs Chromium shards and consolidated Firefox/WebKit checks behind the browser check', () => {
     const shard = jobBlock(workflow, 'browser-shard')
     expect(shard).toMatch(
       /run: pnpm test:e2e:prebuilt --project=chromium --project=chromium-e2e /,
@@ -251,16 +263,14 @@ describe('CI workflow', () => {
 
     const cross = jobBlock(workflow, 'browser-cross')
     expect(cross).toMatch(/needs:\s*\[changes,\s*verify-build\]/)
-    expect(cross).toMatch(/^ {8}browser: \[firefox, webkit\]$/m)
+    expect(cross).not.toMatch(/\bmatrix:/)
     expect(cross).toContain(
-      'run: pnpm test:e2e:prebuilt --project=${{ matrix.browser }}-e2e',
+      'run: pnpm test:e2e:prebuilt --project=firefox-e2e --project=webkit-e2e',
     )
-    // Blob names must not collide with the Chromium shard reports when the
+    // Blob name must not collide with the Chromium shard reports when the
     // `browser` job merges every `playwright-blob-*` artifact.
-    expect(cross).toContain(
-      'PLAYWRIGHT_BLOB_OUTPUT_NAME: report-${{ matrix.browser }}.zip',
-    )
-    expect(cross).toContain('name: playwright-blob-${{ matrix.browser }}')
+    expect(cross).toContain('PLAYWRIGHT_BLOB_OUTPUT_NAME: report-cross.zip')
+    expect(cross).toContain('name: playwright-blob-cross')
 
     const aggregate = jobBlock(workflow, 'browser')
     expect(aggregate).toContain('needs.browser-cross.result')

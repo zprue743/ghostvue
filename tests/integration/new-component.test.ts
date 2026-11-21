@@ -98,11 +98,11 @@ async function copyRepository() {
   return root
 }
 
-function run(root: string, args: string[]) {
+function run(root: string, args: string[], extraEnv?: Record<string, string>) {
   // Vitest sets NODE_ENV=test. Inherited by the nested `pnpm verify`, it makes
   // @vitejs/plugin-vue compile SFCs in development mode, so `pnpm size` would
   // measure a non-production package build. Run the gate as a shell would.
-  const env = { ...process.env }
+  const env = { ...process.env, ...extraEnv }
   delete env.NODE_ENV
   try {
     // Full-repo verify in a copied workspace grows with every package and test:
@@ -238,7 +238,70 @@ describe('component scaffolding', () => {
         '@ghostvue/themes:GhostScaffoldProbe': 2000,
       })
       run(root, ['registries:write'])
-      run(root, ['verify'])
+      if (process.env.RUN_FULL_SCAFFOLD_VERIFY === '1') {
+        run(root, ['verify'])
+      } else {
+        // Normal runs validate every file and contract the scaffold touches
+        // without re-running the entire repository's test/docs suites. Set
+        // RUN_FULL_SCAFFOLD_VERIFY=1 (used on scaffolding changes and weekly
+        // CI) to run the full nested `pnpm verify` in the copied workspace.
+        const touchedFiles = [...result.created, ...result.updated]
+        const lintFiles = touchedFiles.filter((file) =>
+          /\.(?:ts|tsx|mts|js|mjs|cjs|vue)$/u.test(file),
+        )
+        const prettierFiles = touchedFiles.filter(
+          (file) => !file.endsWith('.manifest.json'),
+        )
+        const scaffoldTestFiles = result.created.filter((file) =>
+          file.endsWith('.test.ts'),
+        )
+        expect(lintFiles.length).toBeGreaterThan(0)
+        expect(prettierFiles.length).toBeGreaterThan(0)
+        expect(scaffoldTestFiles.length).toBeGreaterThanOrEqual(2)
+
+        const targetedEnv = { GHOSTVUE_REGISTRIES_READY: '1' }
+        run(
+          root,
+          ['exec', 'eslint', '--max-warnings=0', ...lintFiles],
+          targetedEnv,
+        )
+        run(
+          root,
+          [
+            'exec',
+            'prettier',
+            '--check',
+            '--ignore-path',
+            '.prettierignore',
+            ...prettierFiles,
+          ],
+          targetedEnv,
+        )
+        run(root, ['boundaries'], targetedEnv)
+        run(root, ['adapters'], targetedEnv)
+        run(root, ['manifests'], targetedEnv)
+        run(root, ['specs:check'], targetedEnv)
+        run(
+          root,
+          [
+            '--filter',
+            '@ghostvue/vue',
+            '--filter',
+            '@ghostvue/themes',
+            '--filter',
+            '@ghostvue/nuxt',
+            '--filter',
+            '@ghostvue/docs',
+            '--filter',
+            '@ghostvue/playground',
+            'typecheck',
+          ],
+          targetedEnv,
+        )
+        run(root, ['exec', 'vitest', 'run', ...scaffoldTestFiles], targetedEnv)
+        run(root, ['build'], targetedEnv)
+        run(root, ['published-exports'], targetedEnv)
+      }
       await expect(
         scaffoldComponent(root, 'GhostScaffoldProbe'),
       ).rejects.toThrow('Refusing to overwrite')

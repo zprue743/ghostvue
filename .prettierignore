@@ -21,6 +21,7 @@ packages/themes/tokens/generated
 .vitepress/dist
 playwright-report
 test-results
+.prettiercache
 pnpm-lock.yaml
 
 

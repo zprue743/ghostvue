@@ -71,9 +71,10 @@ prove visibility. `tests/e2e/docs-showcase-focus.spec.ts` runs it over every
 Tab stop and overlay item of the redesigned docs showcases, together with
 reduced-motion and 200% text checks.
 
-`tests/e2e/examples.spec.ts` axe-scans every registered example in `light` and
-`dark` mode in the non-visual Playwright project. Visual example snapshots stay
-in `examples-visual.spec.ts` (`@visual`).
+`tests/e2e/examples.spec.ts` checks the boundary/paint contract and axe-scans
+every registered example in both `light` and `dark` mode in a single navigation
+per example under the non-visual Playwright project. Visual example snapshots
+stay in `examples-visual.spec.ts` (`@visual`).
 
 - **Type tests:** compile-time consumer fixtures under
   `packages/vue/type-tests/` exercise public props, v-model controlled and
@@ -139,9 +140,10 @@ Slider geometry and pointer mapping in both orientations and directions,
 Select's opening keys moving real focus into the list, and the docs theme
 switcher's single Tab stop and arrow keys.
 
-CI runs Chromium in the `browser-shard` matrix and Firefox and WebKit in the
-`browser-cross` matrix, from the same pinned Playwright image, which already
-contains all three browsers and their system libraries. The `browser` check
+CI runs Chromium in two `browser-shard` workers and Firefox and WebKit together
+in the single `browser-cross` job from the same pinned Playwright image, which
+already contains all three browsers and their system libraries (skipped on PRs
+whose diff cannot affect cross-browser component behavior). The `browser` check
 merges every report and fails if any leg fails. Locally, `pnpm test:e2e` runs
 all four projects; select one with `--project`, for example
 `pnpm exec playwright test --project=webkit-e2e`. On a host without Firefox or
