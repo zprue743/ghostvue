@@ -103,8 +103,10 @@ jobs:
       # plus a second job's setup. The explicit blob name keeps this report
       # from overwriting verify-integration's default `blob.json` when
       # `verify` downloads every `vitest-blob-*` artifact into one directory.
+      # The `default` reporter prints failing tests in the job log; `blob`
+      # alone only writes the artifact (GHO-218).
       - name: Run unit coverage
-        run: pnpm exec vitest run --coverage --reporter=blob --outputFile.blob=.vitest-reports/blob-unit.json $(node scripts/vitest-ci-args.mjs unit-exclude)
+        run: pnpm exec vitest run --coverage --reporter=default --reporter=blob --outputFile.blob=.vitest-reports/blob-unit.json $(node scripts/vitest-ci-args.mjs unit-exclude)
       # Only the Node 22 legs feed the merged coverage report: the Node 24 legs
       # run the same tests, and merging both would count every file twice.
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
@@ -145,8 +147,9 @@ jobs:
             build-cache-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}-
             build-cache-${{ runner.os }}-
       - run: pnpm install --frozen-lockfile
+      # `default` names failing tests in the job log next to the blob (GHO-218).
       - name: Run heavy integration coverage
-        run: pnpm exec vitest run --coverage --reporter=blob $(node scripts/vitest-ci-args.mjs integration-heavy)
+        run: pnpm exec vitest run --coverage --reporter=default --reporter=blob $(node scripts/vitest-ci-args.mjs integration-heavy)
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         if: always()
         with:
