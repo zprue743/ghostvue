@@ -9,6 +9,12 @@ users operate one native button; pointer users also get a drop target.
 Import it from `@ghostvue/vue`. It is headless: the parts render plain elements
 with `data-part` and `data-state` hooks and no styles.
 
+<GhostExample id="file-upload/asset-submission" />
+
+The asset submission form composes themed `GhostFileUpload` inside
+`GhostField` with a drag-and-drop zone, seeded attachments, type/size
+constraints, and polite submission status.
+
 ::: warning Consumers own uploads
 The component never sends a request. `accept`, `maxFileSize`, `maxFiles`, and
 `validate` are client-side UX. They are not a security control, a guarantee

@@ -8,6 +8,11 @@ mode can be toggled off. Keyboard arrow keys rove among items via
 
 See the [specification](/specs/toggle-group) for the accessibility contract.
 
+<GhostExample id="toggle-group/editor-toolbar" />
+
+The announcement composer pairs a `multiple` formatting `GhostToggleGroup`
+with a `single` alignment `GhostToggleGroup`, updating the live preview text.
+
 ## Examples
 
 ### Single selection

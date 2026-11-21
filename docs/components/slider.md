@@ -5,6 +5,13 @@ single values and optional two-thumb intervals, native form participation
 through hidden inputs, and horizontal or vertical orientation. Keyboard support
 follows the APG Slider pattern (arrows, Page Up/Down, Home, End).
 
+<GhostExample id="slider/audio-mixer" />
+
+The mastering panel composes themed single-thumb, two-thumb `range`, and
+`disabled` `GhostSlider` controls inside `GhostCard` with live numeric readouts.
+
+## Basic use
+
 <GhostExample id="slider/basic" />
 
 ## Range mode

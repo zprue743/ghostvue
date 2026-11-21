@@ -124,7 +124,8 @@
    * exactly as in an app. Controls a themed example leaves unstyled (a plain
    * tooltip trigger) keep native chrome instead of rendering as bare text.
    */
-  :where(.ghost-example__preview) :where(button, input, select, textarea) {
+  :where(.ghost-example__preview)
+    :where(button, input:not([hidden]), select, textarea) {
     all: revert;
   }
 

@@ -19,6 +19,12 @@
   ],
   "examples": [
     {
+      "id": "textarea/release-notes",
+      "title": "Release notes composer",
+      "description": "Auto-resizing, readonly, and disabled GhostTextarea fields with live word count.",
+      "layer": "themed"
+    },
+    {
       "id": "textarea/basic",
       "title": "Basic",
       "description": "Labeled native textarea with v-model.",

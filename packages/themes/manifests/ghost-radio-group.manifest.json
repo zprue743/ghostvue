@@ -54,6 +54,7 @@
     "requiredAriaAttributes": []
   },
   "examples": [
+    "radio-group/deployment-tier",
     "radio-group/themed"
   ]
 }

@@ -21,6 +21,12 @@
   ],
   "examples": [
     {
+      "id": "segmented-control/analytics-period",
+      "title": "API traffic",
+      "description": "Time window and metric switchers with GhostSegmentedControl.",
+      "layer": "themed"
+    },
+    {
       "id": "segmented-control/basic",
       "title": "Segmented control",
       "description": "Single-select view switcher with sliding indicator vars.",

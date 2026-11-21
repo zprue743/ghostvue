@@ -40,6 +40,7 @@ export const GhostDialogDescription = defineComponent({
         GhostUnstyledDialogDescription,
         {
           ...attrs,
+          class: ['ghost-dialog-description', attrs.class],
           ref: inner,
           as: props.as,
         },

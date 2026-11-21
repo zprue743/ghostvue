@@ -3,12 +3,28 @@
     .ghost-theme .ghost-radio-group,
     .ghost-themed-scope .ghost-radio-group
   ) {
+    --_ghost-radio-hit: var(--ghost-control-size-md-min);
+
     border: none;
     display: flex;
     gap: var(--ghost-space-gap-sm);
     margin: 0;
     min-inline-size: 0;
     padding: 0;
+  }
+
+  :where(
+    .ghost-theme .ghost-radio-group[data-size='sm'],
+    .ghost-themed-scope .ghost-radio-group[data-size='sm']
+  ) {
+    --_ghost-radio-hit: var(--ghost-control-size-sm-min);
+  }
+
+  :where(
+    .ghost-theme .ghost-radio-group[data-size='lg'],
+    .ghost-themed-scope .ghost-radio-group[data-size='lg']
+  ) {
+    --_ghost-radio-hit: var(--ghost-control-size-lg-min);
   }
 
   :where(
@@ -31,20 +47,19 @@
     .ghost-theme .ghost-radio-group-item,
     .ghost-themed-scope .ghost-radio-group-item
   ) {
-    --_ghost-radio-hit: var(--ghost-control-size-md-min);
     --_ghost-radio-dot: calc(var(--ghost-action-icon-size) * 0.45);
     --_ghost-radio-ring: var(--ghost-action-primary-border);
     --_ghost-radio-fill: var(--ghost-surface-bg);
 
     appearance: none;
     background-color: transparent;
-    block-size: var(--_ghost-radio-hit);
+    block-size: var(--_ghost-radio-hit, var(--ghost-control-size-md-min));
     border: none;
     box-sizing: border-box;
     cursor: pointer;
     display: inline-grid;
     flex: none;
-    inline-size: var(--_ghost-radio-hit);
+    inline-size: var(--_ghost-radio-hit, var(--ghost-control-size-md-min));
     margin: 0;
     padding: 0;
     place-items: center;
@@ -92,8 +107,16 @@
   }
 
   :where(
-    .ghost-theme .ghost-radio-group-item:is(:focus-visible),
-    .ghost-themed-scope .ghost-radio-group-item:is(:focus-visible)
+    .ghost-theme
+      .ghost-radio-group-item:is(
+        :focus-visible,
+        [data-visual-state='focus-visible']
+      ),
+    .ghost-themed-scope
+      .ghost-radio-group-item:is(
+        :focus-visible,
+        [data-visual-state='focus-visible']
+      )
   )::before {
     box-shadow: 0 0 0 var(--ghost-focus-ring-offset)
       var(--ghost-focus-ring-contrast);
@@ -156,8 +179,16 @@
     }
 
     :where(
-      .ghost-theme .ghost-radio-group-item:focus-visible,
-      .ghost-themed-scope .ghost-radio-group-item:focus-visible
+      .ghost-theme
+        .ghost-radio-group-item:is(
+          :focus-visible,
+          [data-visual-state='focus-visible']
+        ),
+      .ghost-themed-scope
+        .ghost-radio-group-item:is(
+          :focus-visible,
+          [data-visual-state='focus-visible']
+        )
     )::before {
       box-shadow: none;
       outline-color: Highlight;

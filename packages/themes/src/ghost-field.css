@@ -8,8 +8,8 @@
   }
 
   :where(
-    .ghost-theme .ghost-field [data-part='label'],
-    .ghost-themed-scope .ghost-field [data-part='label']
+    .ghost-theme .ghost-field > [data-part='label'],
+    .ghost-themed-scope .ghost-field > [data-part='label']
   ) {
     color: var(--ghost-text-default);
     font-family: var(--ghost-type-family-sans);
@@ -19,15 +19,21 @@
   }
 
   :where(
-    .ghost-theme .ghost-field [data-part='required-indicator'],
-    .ghost-themed-scope .ghost-field [data-part='required-indicator']
+    .ghost-theme
+      .ghost-field
+      > [data-part='label']
+      > [data-part='required-indicator'],
+    .ghost-themed-scope
+      .ghost-field
+      > [data-part='label']
+      > [data-part='required-indicator']
   ) {
     color: var(--ghost-status-danger-fg);
   }
 
   :where(
-    .ghost-theme .ghost-field [data-part='description'],
-    .ghost-themed-scope .ghost-field [data-part='description']
+    .ghost-theme .ghost-field > [data-part='description'],
+    .ghost-themed-scope .ghost-field > [data-part='description']
   ) {
     color: var(--ghost-text-muted);
     font-family: var(--ghost-type-family-sans);
@@ -37,8 +43,8 @@
   }
 
   :where(
-    .ghost-theme .ghost-field [data-part='error'],
-    .ghost-themed-scope .ghost-field [data-part='error']
+    .ghost-theme .ghost-field > [data-part='error'],
+    .ghost-themed-scope .ghost-field > [data-part='error']
   ) {
     color: var(--ghost-status-danger-fg);
     font-family: var(--ghost-type-family-sans);
@@ -47,8 +53,10 @@
   }
 
   :where(
-    .ghost-theme .ghost-field[data-state='disabled'] [data-part='label'],
-    .ghost-themed-scope .ghost-field[data-state='disabled'] [data-part='label']
+    .ghost-theme .ghost-field[data-state='disabled'] > [data-part='label'],
+    .ghost-themed-scope
+      .ghost-field[data-state='disabled']
+      > [data-part='label']
   ) {
     color: var(--ghost-text-muted);
   }

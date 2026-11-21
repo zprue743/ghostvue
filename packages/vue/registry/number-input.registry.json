@@ -19,6 +19,12 @@
   ],
   "examples": [
     {
+      "id": "number-input/order-limits",
+      "title": "Plan & quota limits",
+      "description": "Bounded, currency-formatted, and disabled GhostNumberInput controls with live total.",
+      "layer": "themed"
+    },
+    {
       "id": "number-input/basic",
       "title": "Basic",
       "description": "Labeled spinbutton with min, max, and step.",

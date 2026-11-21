@@ -5,6 +5,12 @@
 headless use, or from `@ghostvue/themes` for the default track-and-thumb
 treatment.
 
+<GhostExample id="switch/workspace-security" />
+
+The security settings card pairs themed `GhostSwitch` with `GhostField` rows
+so each label and description aligns beside its switch and the locked policy
+row stays disabled.
+
 ## Basic use
 
 <GhostExample id="switch/basic" />

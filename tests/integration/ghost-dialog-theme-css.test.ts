@@ -60,4 +60,19 @@ describe('GhostDialog theme CSS tokens', () => {
     expect(css).toMatch(/\btop: 50%;/)
     expect(css).not.toMatch(/inset-inline-start/)
   })
+
+  it('scopes title and description selectors to direct children or dialog part classes', async () => {
+    const css = stripComments(await readFile(cssPath, 'utf8'))
+    expect(css).toMatch(
+      /\.ghost-dialog-content(?:\[data-themed\])?\s*>\s*\[data-part='title'\]/,
+    )
+    expect(css).toMatch(
+      /\.ghost-dialog-content(?:\[data-themed\])?\s*>\s*\[data-part='description'\]/,
+    )
+    expect(css).toContain('.ghost-dialog-title')
+    expect(css).toContain('.ghost-dialog-description')
+    expect(css).not.toMatch(
+      /\.ghost-dialog-content(?:\[data-themed\])?\s+\[data-part=/,
+    )
+  })
 })
