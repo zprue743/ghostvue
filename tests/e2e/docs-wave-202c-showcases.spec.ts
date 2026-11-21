@@ -65,12 +65,12 @@ async function readPortaledColors(
 }
 
 test.describe('docs Wave 202c showcases (GHO-215)', () => {
-  test('all 8 redesigned showcases lead their pages, pass axe, and fit 390px and 1280px', async ({
-    page,
-  }) => {
-    const docs = await startStaticServer('apps/docs/.vitepress/dist')
-    try {
-      for (const { slug, id } of redesignedHeroes) {
+  for (const { slug, id } of redesignedHeroes) {
+    test(`${id} leads its page, passes axe, and fits 390px and 1280px`, async ({
+      page,
+    }) => {
+      const docs = await startStaticServer('apps/docs/.vitepress/dist')
+      try {
         for (const width of [390, 1280] as const) {
           await page.setViewportSize({ width, height: 900 })
           const frame = await openDocsExample(page, docs.url, slug, id, 'light')
@@ -78,6 +78,7 @@ test.describe('docs Wave 202c showcases (GHO-215)', () => {
             page.locator('.vp-doc [data-example-id]').first(),
           ).toHaveAttribute('data-example-id', id)
           await expect(frame).toHaveAttribute('data-example-layer', 'themed')
+          await expect(frame.getByTestId('ghost-example-preview')).toBeVisible()
           await expectNoPageOverflow(page)
         }
 
@@ -88,11 +89,11 @@ test.describe('docs Wave 202c showcases (GHO-215)', () => {
             .analyze()
           expect(results.violations, `${slug} (${mode})`).toEqual([])
         }
+      } finally {
+        await docs.close()
       }
-    } finally {
-      await docs.close()
-    }
-  })
+    })
+  }
 
   test('body-portaled overlays inherit theme tokens and switch cleanly between light and dark', async ({
     page,
