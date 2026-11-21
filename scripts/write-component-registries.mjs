@@ -8,6 +8,13 @@ import { syncRepositoryRegistries } from './lib/component-registries.js'
 const repositoryRoot = fileURLToPath(new URL('..', import.meta.url))
 const writeMode = process.argv.includes('--write')
 
+if (writeMode && process.env.GHOSTVUE_REGISTRIES_READY === '1') {
+  // CI sets GHOSTVUE_REGISTRIES_READY=1 inside verify:static / verify:build
+  // after pnpm install (prepare) already generated registries, skipping repeated
+  // pretypecheck/prebuild rewrites while check mode still verifies everything.
+  process.exit(0)
+}
+
 const result = await syncRepositoryRegistries({
   repositoryRoot,
   write: writeMode,

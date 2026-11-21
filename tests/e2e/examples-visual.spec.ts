@@ -1,8 +1,6 @@
-import { expect, test } from '@playwright/test'
-
 import { ghostExamples } from '../../examples/registry'
 import { waitForExamplePreview, type GhostExampleHost } from '../support'
-import { startStaticServer } from './static-server'
+import { playgroundTest as test, expect } from '../support/playground'
 
 const modes = ['light', 'dark'] as const
 
@@ -43,27 +41,20 @@ test.describe('example visual baselines', { tag: '@visual' }, () => {
 
       test(`${example.id} matches ${name} host snapshots in light and dark`, async ({
         page,
+        playgroundUrl,
       }) => {
-        const playground = await startStaticServer('apps/playground/dist')
+        await page.emulateMedia({ reducedMotion: 'reduce' })
 
-        try {
-          await page.emulateMedia({ reducedMotion: 'reduce' })
+        for (const mode of modes) {
+          const preview = await waitForExamplePreview(
+            page,
+            playgroundUrl,
+            example.id,
+            { ...host, mode },
+          )
+          await page.evaluate(() => document.fonts.ready)
 
-          for (const mode of modes) {
-            const preview = await waitForExamplePreview(
-              page,
-              playground.url,
-              example.id,
-              { ...host, mode },
-            )
-            await page.evaluate(() => document.fonts.ready)
-
-            await expect(preview).toHaveScreenshot(
-              `${slug}${suffix}-${mode}.png`,
-            )
-          }
-        } finally {
-          await playground.close()
+          await expect(preview).toHaveScreenshot(`${slug}${suffix}-${mode}.png`)
         }
       })
     }

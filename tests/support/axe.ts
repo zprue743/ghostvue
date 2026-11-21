@@ -10,6 +10,8 @@ export type GhostColorMode = 'light' | 'dark'
 export interface AxeAnalyzeOptions {
   include?: string | readonly string[]
   exclude?: string | readonly string[]
+  exampleId?: string
+  mode?: GhostColorMode
 }
 
 export interface AxeScanOptions extends AxeAnalyzeOptions {
@@ -27,7 +29,7 @@ export async function expectNoAxeViolations(
   const results = await analyzePage(page, options)
   expect(
     results.violations,
-    formatViolationSummary(results.violations),
+    formatViolationSummary(results.violations, options.exampleId, options.mode),
   ).toEqual([])
 }
 

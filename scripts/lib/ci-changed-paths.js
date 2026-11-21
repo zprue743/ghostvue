@@ -90,8 +90,55 @@ export function isHeavySkipEligible(file, options = {}) {
   return false
 }
 
+const NUXT_TRIGGER_PATTERNS = [
+  /^packages\/(?:nuxt|vue|themes|core|shared)\//u,
+  /^apps\/nuxt-fixture\//u,
+  /^scripts\//u,
+  /^(?:package\.json|pnpm-lock\.yaml|pnpm-workspace\.yaml|playwright\.nuxt\.config\.ts)$/u,
+  /^\.github\/workflows\/ci\.yml$/u,
+]
+
+const CROSS_BROWSER_TRIGGER_PATTERNS = [
+  /^packages\/(?:vue|themes|core|shared)\//u,
+  /^apps\/playground\//u,
+  /^tests\/support\//u,
+  /^tests\/e2e\/(?!docs-|examples)/u,
+  /^(?:playwright\.config\.ts|package\.json|pnpm-lock\.yaml)$/u,
+  /^\.github\/workflows\/ci\.yml$/u,
+]
+
+const NODE24_TRIGGER_PATTERNS = [
+  /^(?:package\.json|pnpm-lock\.yaml|pnpm-workspace\.yaml|vitest\.config\.ts)$/u,
+  /^\.github\/workflows\/ci\.yml$/u,
+]
+
+const FULL_SCAFFOLD_TRIGGER_PATTERNS = [
+  /^scripts\/(?:lib\/)?(?:new-component|verify-component)/u,
+  /^tests\/integration\/new-component\.test\.ts$/u,
+]
+
+const DOCS_ONLY_E2E_PATTERNS = [
+  /^docs\//u,
+  /^apps\/docs\//u,
+  /^examples\//u,
+  /^tests\/e2e\/(?:docs-|examples)/u,
+  /^(?:AGENTS\.md|CLAUDE\.md)$/u,
+  /^\.cursor\//u,
+  /^\.changeset\//u,
+]
+
 /**
- * Classify a CI diff to determine whether heavy verify/browser jobs can be skipped.
+ * @param {string[]} files
+ * @param {readonly RegExp[]} patterns
+ * @returns {boolean}
+ */
+function matchesAny(files, patterns) {
+  return files.some((file) => patterns.some((pattern) => pattern.test(file)))
+}
+
+/**
+ * Classify a CI diff to determine whether heavy verify/browser jobs can be
+ * skipped and which optional partitions or E2E subsets a pull request needs.
  *
  * @param {{
  *   eventName: string
@@ -99,7 +146,15 @@ export function isHeavySkipEligible(file, options = {}) {
  *   readAtBase?: (file: string) => string | null
  *   readAtHead?: (file: string) => string | null
  * }} params
- * @returns {{ skipHeavy: boolean, files: string[] }}
+ * @returns {{
+ *   skipHeavy: boolean
+ *   runNuxt: boolean
+ *   runCrossBrowser: boolean
+ *   runNode24: boolean
+ *   runFullScaffold: boolean
+ *   e2eScope: 'docs' | 'full'
+ *   files: string[]
+ * }}
  */
 export function classifyChangedPaths({
   eventName,
@@ -107,10 +162,41 @@ export function classifyChangedPaths({
   readAtBase,
   readAtHead,
 }) {
+  const isPullRequest = eventName === 'pull_request'
+  const isScheduled = eventName === 'schedule'
+  const isFullRunEvent =
+    eventName === 'push' ||
+    eventName === 'merge_group' ||
+    isScheduled ||
+    files.length === 0
+
   const skipHeavy =
-    eventName !== 'push' &&
+    isPullRequest &&
     files.length > 0 &&
     files.every((file) => isHeavySkipEligible(file, { readAtBase, readAtHead }))
 
-  return { skipHeavy, files }
+  const runNuxt = isFullRunEvent || matchesAny(files, NUXT_TRIGGER_PATTERNS)
+  const runCrossBrowser =
+    isFullRunEvent || matchesAny(files, CROSS_BROWSER_TRIGGER_PATTERNS)
+  const runNode24 = isFullRunEvent || matchesAny(files, NODE24_TRIGGER_PATTERNS)
+  const runFullScaffold =
+    isScheduled || matchesAny(files, FULL_SCAFFOLD_TRIGGER_PATTERNS)
+  const e2eScope =
+    isPullRequest &&
+    files.length > 0 &&
+    files.every((file) =>
+      DOCS_ONLY_E2E_PATTERNS.some((pattern) => pattern.test(file)),
+    )
+      ? 'docs'
+      : 'full'
+
+  return {
+    skipHeavy,
+    runNuxt,
+    runCrossBrowser,
+    runNode24,
+    runFullScaffold,
+    e2eScope,
+    files,
+  }
 }

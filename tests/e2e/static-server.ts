@@ -16,6 +16,9 @@ export async function startStaticServer(relativeRoot: string): Promise<{
   close: () => Promise<void>
 }> {
   const root = resolve(process.cwd(), relativeRoot)
+  // Built dist outputs are immutable across a worker's lifetime, so caching
+  // resolved responses avoids repeated disk reads on every test navigation.
+  const cache = new Map<string, { body: Buffer; contentType: string }>()
   const server = createServer((request, response) => {
     const respond = async (): Promise<void> => {
       const requestUrl = new URL(request.url ?? '/', 'http://127.0.0.1')
@@ -35,6 +38,17 @@ export async function startStaticServer(relativeRoot: string): Promise<{
         return
       }
 
+      const cached = cache.get(requestedPath)
+      if (cached) {
+        response
+          .writeHead(200, {
+            'content-type': cached.contentType,
+            'cache-control': 'public, max-age=3600',
+          })
+          .end(cached.body)
+        return
+      }
+
       try {
         // Mirror Vercel `cleanUrls`: `/components/button` serves `button.html`.
         let servedPath = requestedPath
@@ -48,10 +62,13 @@ export async function startStaticServer(relativeRoot: string): Promise<{
           }
         }
         const body = await readFile(servedPath)
+        const contentType =
+          contentTypes[extname(servedPath)] ?? 'application/octet-stream'
+        cache.set(requestedPath, { body, contentType })
         response
           .writeHead(200, {
-            'content-type':
-              contentTypes[extname(servedPath)] ?? 'application/octet-stream',
+            'content-type': contentType,
+            'cache-control': 'public, max-age=3600',
           })
           .end(body)
       } catch {

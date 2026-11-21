@@ -1,6 +1,9 @@
 #!/usr/bin/env node
 import { execPackageManagerSync } from './lib/package-manager.js'
-import { heavyIntegrationTestFiles } from './ci-heavy-integration-tests.mjs'
+import {
+  ciBuildCoveredIntegrationTestFiles,
+  heavyIntegrationTestFiles,
+} from './ci-heavy-integration-tests.mjs'
 
 const [mode, ...extraArgs] = process.argv.slice(2)
 
@@ -13,7 +16,10 @@ if (mode !== 'integration-heavy' && mode !== 'unit-exclude') {
 const selectionArgs =
   mode === 'integration-heavy'
     ? heavyIntegrationTestFiles
-    : heavyIntegrationTestFiles.flatMap((file) => ['--exclude', file])
+    : [
+        ...heavyIntegrationTestFiles,
+        ...ciBuildCoveredIntegrationTestFiles,
+      ].flatMap((file) => ['--exclude', file])
 
 try {
   execPackageManagerSync(

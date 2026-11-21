@@ -72,7 +72,21 @@ try {
     )
   }
   console.log('\nRunning packed @ghostvue/themes/define smoke test…')
+  const tempEntriesBefore = new Set(
+    (await readdir(tmpdir())).filter((name) =>
+      name.startsWith('ghostvue-themes-'),
+    ),
+  )
   await runThemesDefinePackedSmoke({ prepackedTarballs: packedTarballsByName })
+  const leaked = (await readdir(tmpdir())).filter(
+    (name) =>
+      name.startsWith('ghostvue-themes-') && !tempEntriesBefore.has(name),
+  )
+  if (leaked.length > 0) {
+    throw new Error(
+      `Packed define smoke leaked temporary directories: ${leaked.join(', ')}`,
+    )
+  }
   console.log('Packed @ghostvue/themes/define smoke passed.')
 
   console.log(

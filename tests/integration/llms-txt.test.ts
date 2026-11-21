@@ -1,3 +1,5 @@
+/** @vitest-environment node */
+
 import { mkdtemp, readFile, rm } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join, resolve } from 'node:path'
