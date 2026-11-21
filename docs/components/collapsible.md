@@ -7,6 +7,15 @@ Import `GhostCollapsible`, `GhostCollapsibleTrigger`, and
 `GhostCollapsibleContent` from `@ghostvue/vue` for headless use, or from
 `@ghostvue/themes` for default trigger and panel styling.
 
+## Release verification log
+
+<GhostExample id="collapsible/release-notes" />
+
+A controlled `v-model:open` disclosure toggles a verification checklist inside a
+`GhostCard`. The slot props expose `{ open }` so the trigger label reflects the
+current state, and the rows adapt to the preview width with
+`@container ghost-demo`.
+
 ## Basic use
 
 <GhostExample id="collapsible/basic" />

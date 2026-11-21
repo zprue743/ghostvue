@@ -8,11 +8,24 @@ const pageCount = ref(6)
 </script>
 
 <template>
-  <GhostPagination
-    :model-value="page"
-    :page-count="pageCount"
-    aria-label="Controlled archives"
-    @update:model-value="page = $event"
-  />
-  <p class="example-status">Selected index: {{ page }} / {{ pageCount }}</p>
+  <div class="example-stack">
+    <GhostPagination
+      :model-value="page"
+      :page-count="pageCount"
+      aria-label="Controlled archives"
+      @update:model-value="page = $event"
+    />
+    <p class="example-status">Selected index: {{ page }} / {{ pageCount }}</p>
+  </div>
 </template>
+
+<style scoped>
+.example-stack {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.example-status {
+  margin: 0;
+}
+</style>

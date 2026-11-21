@@ -5,6 +5,14 @@ focus without moving focus. Import `GhostTooltip`, `GhostTooltipTrigger`, and
 `GhostTooltipContent` from `@ghostvue/vue` for headless use, or from
 `@ghostvue/themes` for the default compact elevation surface.
 
+<GhostExample id="tooltip/themed" />
+
+Importing from `@ghostvue/themes` loads `default.css`, styling
+`.ghost-tooltip-content` with elevation-2 surface, hairline border, radius,
+inset padding, and small type tokens. Tooltip content uses
+`pointer-events: none` so it never intercepts pointer input unless hoverable
+content is enabled.
+
 ## Basic use
 
 <GhostExample id="tooltip/basic" />
@@ -31,15 +39,6 @@ click-away layer: pressing outside still dismisses the dialog or popover
 beneath an open tooltip, and pressing the tooltip itself does not. Calling
 `event.preventDefault()` on `Escape` (or pressing it during IME composition)
 leaves every layer open.
-
-## Themed use
-
-<GhostExample id="tooltip/themed" />
-
-Importing from `@ghostvue/themes` loads `default.css`, styling
-`.ghost-tooltip-content` with elevation-2 surface, hairline border, radius,
-inset padding, and small type tokens. Tooltip content uses
-`pointer-events: none` so it never intercepts pointer input.
 
 ## API
 

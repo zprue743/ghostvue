@@ -5,6 +5,13 @@
 default spinning ring. The consumer owns when it mounts; the primitive does not
 start, cancel, or announce the result of asynchronous work.
 
+## Registry sync status
+
+<GhostExample id="spinner/sync-status" />
+
+A compact `GhostSpinner` pairs with a live status line inside a `GhostCard`
+while an action button lets you toggle between syncing and completed states.
+
 ## Basic use
 
 <GhostExample id="spinner/basic" />

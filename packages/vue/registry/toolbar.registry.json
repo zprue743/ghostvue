@@ -19,6 +19,12 @@
   ],
   "examples": [
     {
+      "id": "toolbar/editor-actions",
+      "title": "Document formatting toolbar",
+      "description": "Themed toolbar with grouped formatting controls, vertical separator, and roving focus.",
+      "layer": "themed"
+    },
+    {
       "id": "toolbar/basic",
       "title": "Basic",
       "description": "Horizontal action bar with roving focus among buttons.",

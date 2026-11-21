@@ -19,6 +19,12 @@
   ],
   "examples": [
     {
+      "id": "interactive-surface/feature-tiles",
+      "title": "Feature tiles",
+      "description": "Responsive grid of themed interactive surfaces with ambient pointer spotlight.",
+      "layer": "themed"
+    },
+    {
       "id": "interactive-surface/basic",
       "title": "Basic",
       "description": "Pointer spotlight on a content surface.",

@@ -3,12 +3,12 @@ import { GhostSpinner } from '@ghostvue/themes'
 </script>
 
 <template>
-  <p class="spinner-row">
+  <div class="spinner-row">
     <GhostSpinner />
     <GhostSpinner size="sm" label="Loading compact" />
     <GhostSpinner size="lg" tone="neutral" label="Loading spacious" />
     <GhostSpinner tone="danger" label="Deleting rows" />
-  </p>
+  </div>
 </template>
 
 <style scoped>
@@ -16,6 +16,6 @@ import { GhostSpinner } from '@ghostvue/themes'
   align-items: center;
   display: flex;
   flex-wrap: wrap;
-  gap: 1rem;
+  gap: var(--ghost-space-gap-md);
 }
 </style>

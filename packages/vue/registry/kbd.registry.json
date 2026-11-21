@@ -19,6 +19,12 @@
   ],
   "examples": [
     {
+      "id": "kbd/command-shortcuts",
+      "title": "Command shortcut sheet",
+      "description": "Platform-switchable keyboard shortcut list rendered with themed GhostKbd keycaps.",
+      "layer": "themed"
+    },
+    {
       "id": "kbd/basic",
       "title": "Basic",
       "description": "Native kbd chrome for a single key.",

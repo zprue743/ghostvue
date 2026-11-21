@@ -67,6 +67,12 @@ const selected = ref<GhostTreeValue>('src/main.ts')
         <GhostTreeTrigger>package.json</GhostTreeTrigger>
       </GhostTreeItem>
     </GhostTree>
-    <p>Selected: {{ selected ?? 'none' }}</p>
+    <p class="tree-status">Selected: {{ selected ?? 'none' }}</p>
   </div>
 </template>
+
+<style scoped>
+.tree-status {
+  margin: 0.5rem 0 0;
+}
+</style>

@@ -204,12 +204,12 @@ test.describe('docs example previews', () => {
         '[data-example-id="hover-card/themed"]',
       )
       const themedTrigger = themedExample.getByRole('button', {
-        name: 'Design token preview',
+        name: '@ghostvue/themes',
       })
       await themedTrigger.focus()
       const themedDialog = page
         .getByRole('dialog')
-        .filter({ hasText: 'Elevation-3 surface' })
+        .filter({ hasText: 'Semantic DTCG tokens' })
       await expect(themedDialog).toBeVisible({ timeout: 2000 })
 
       const themedStyles = await themedDialog.evaluate((el) => {
@@ -256,7 +256,7 @@ test.describe('docs example previews', () => {
 
       const themedExample = page.locator('[data-example-id="tooltip/themed"]')
       const themedTrigger = themedExample.getByRole('button', {
-        name: 'Hover for glossary',
+        name: 'Explain Latency p95',
       })
       await themedTrigger.focus()
       const themedTooltip = page
@@ -646,7 +646,7 @@ test.describe('docs example previews', () => {
         // Portaled content and its inline trigger share the page mode.
         await page.goto(`${docs.url}/components/tooltip.html`)
         await previewOf('tooltip/themed')
-          .getByRole('button', { name: 'Hover for glossary' })
+          .getByRole('button', { name: 'Explain Latency p95' })
           .focus()
         const tooltip = page
           .getByRole('tooltip')

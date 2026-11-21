@@ -40,7 +40,14 @@
     "role": "navigation",
     "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/breadcrumb/",
     "keyboard": {},
-    "requiredAriaAttributes": ["aria-label", "aria-current"]
+    "requiredAriaAttributes": [
+      "aria-label",
+      "aria-current"
+    ]
   },
-  "examples": ["breadcrumb/basic", "breadcrumb/collapsed"]
+  "examples": [
+    "breadcrumb/workspace-trail",
+    "breadcrumb/basic",
+    "breadcrumb/collapsed"
+  ]
 }

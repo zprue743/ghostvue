@@ -124,5 +124,8 @@
     },
     "requiredAriaAttributes": []
   },
-  "examples": ["avatar/themed"]
+  "examples": [
+    "avatar/team-roster",
+    "avatar/themed"
+  ]
 }

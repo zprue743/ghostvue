@@ -5,6 +5,13 @@ unstyled primitive from `@ghostvue/vue`, or the themed wrapper from
 `@ghostvue/themes`. v1 is **spotlight only**; tilt and magnetic are
 follow-ups. See [ADR 0009](../adr/0009-ambient-interactivity.md).
 
+## Feature tiles
+
+<GhostExample id="interactive-surface/feature-tiles" />
+
+Two `GhostInteractiveSurface` tiles sit in a `@container ghost-demo` grid,
+tracking pointer coordinates without making non-interactive surfaces focusable.
+
 ## Basic use
 
 <GhostExample id="interactive-surface/basic" />

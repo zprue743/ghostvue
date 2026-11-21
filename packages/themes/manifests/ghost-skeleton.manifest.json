@@ -86,7 +86,13 @@
     "keyboard": {
       "Tab": "Moves past the skeleton. The root is inert and is not a tab stop."
     },
-    "requiredAriaAttributes": ["aria-hidden"]
+    "requiredAriaAttributes": [
+      "aria-hidden"
+    ]
   },
-  "examples": ["skeleton/themed", "skeleton/table"]
+  "examples": [
+    "skeleton/profile-loading",
+    "skeleton/themed",
+    "skeleton/table"
+  ]
 }

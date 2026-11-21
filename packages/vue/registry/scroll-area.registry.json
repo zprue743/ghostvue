@@ -19,6 +19,12 @@
   ],
   "examples": [
     {
+      "id": "scroll-area/activity-feed",
+      "title": "Workspace activity feed",
+      "description": "Named scroll region inside a card displaying timestamped team events with responsive metadata.",
+      "layer": "themed"
+    },
+    {
       "id": "scroll-area/basic",
       "title": "Basic",
       "description": "Bounded vertical overflow with native scrolling.",

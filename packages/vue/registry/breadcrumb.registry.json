@@ -25,6 +25,12 @@
   ],
   "examples": [
     {
+      "id": "breadcrumb/workspace-trail",
+      "title": "Workspace breadcrumb trail",
+      "description": "Themed breadcrumb trail with collapsed parent segments above a release header.",
+      "layer": "themed"
+    },
+    {
       "id": "breadcrumb/basic",
       "title": "Basic",
       "description": "Ordered navigation trail with current page semantics.",

@@ -59,5 +59,8 @@
     "keyboard": {},
     "requiredAriaAttributes": []
   },
-  "examples": ["scroll-area/themed"]
+  "examples": [
+    "scroll-area/activity-feed",
+    "scroll-area/themed"
+  ]
 }

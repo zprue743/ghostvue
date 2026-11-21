@@ -19,6 +19,12 @@
   ],
   "examples": [
     {
+      "id": "card/project-summary",
+      "title": "Project summary cards",
+      "description": "Responsive two-card grid comparing an action card with footer buttons and a whole-card spotlight link.",
+      "layer": "themed"
+    },
+    {
       "id": "card/basic",
       "title": "Card basics",
       "description": "Header, content, and footer parts on a surface.",

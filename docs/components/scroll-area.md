@@ -4,6 +4,15 @@
 `@ghostvue/vue` for headless use, or from `@ghostvue/themes` for scrollbar
 containment and token-colored native scrollbars.
 
+## Workspace activity feed
+
+<GhostExample id="scroll-area/activity-feed" />
+
+A bounded `GhostScrollArea` inside a `GhostCard` keeps a fixed height while
+scrolling through deterministic activity entries. Because there are no
+focusable controls inside, `label` names the region (`role="region"` +
+`aria-label`) so keyboard users can focus and scroll it.
+
 ## Vertical region
 
 <GhostExample id="scroll-area/basic" />

@@ -7,21 +7,28 @@ import {
 </script>
 
 <template>
-  <!--
-    GhostCollapsible renders no element, so this plain block keeps the trigger
-    and panel stacked at one width. It is not a theme host: tokens and mode
-    come from the page, like every other themed demo.
-  -->
-  <div>
+  <div class="collapsible-themed-example">
     <GhostCollapsible>
       <GhostCollapsibleTrigger data-themed>
         Reveal inventory adjustments
       </GhostCollapsibleTrigger>
       <GhostCollapsibleContent data-themed>
-        <p>
+        <span class="collapsible-themed-example__copy">
           Themed disclosure surfaces use semantic elevation and motion tokens.
-        </p>
+        </span>
       </GhostCollapsibleContent>
     </GhostCollapsible>
   </div>
 </template>
+
+<style scoped>
+.collapsible-themed-example {
+  display: grid;
+}
+
+.collapsible-themed-example__copy {
+  color: var(--ghost-text-muted);
+  font-size: var(--ghost-type-size-sm);
+  line-height: var(--ghost-type-line-normal);
+}
+</style>

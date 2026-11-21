@@ -4,6 +4,14 @@
 the image is missing or fails to load. Import from `@ghostvue/vue` for headless
 use, or from `@ghostvue/themes` for the default circular treatment.
 
+## Team roster
+
+<GhostExample id="avatar/team-roster" />
+
+Each member row pairs a themed `GhostAvatar` with derived initials and a role
+`GhostBadge`, adapting from stacked to single-row alignment at `24rem` via
+`@container ghost-demo`.
+
 ## Initials
 
 <GhostExample id="avatar/basic" />

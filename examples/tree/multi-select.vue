@@ -74,7 +74,15 @@ const expanded = ref<string[]>(['frontend'])
         </template>
       </GhostTreeItem>
     </GhostTree>
-    <p>Selected: {{ Array.isArray(selected) ? selected.join(', ') : '' }}</p>
-    <p>Expanded: {{ expanded.join(', ') }}</p>
+    <p class="tree-status">
+      Selected: {{ Array.isArray(selected) ? selected.join(', ') : '' }}
+    </p>
+    <p class="tree-status">Expanded: {{ expanded.join(', ') }}</p>
   </div>
 </template>
+
+<style scoped>
+.tree-status {
+  margin: 0.25rem 0 0;
+}
+</style>

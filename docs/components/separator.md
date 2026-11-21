@@ -4,6 +4,14 @@
 layouts. Import it from `@ghostvue/vue` for headless use, or from
 `@ghostvue/themes` for the default hairline treatment.
 
+## Release metadata and action groups
+
+<GhostExample id="separator/release-header" />
+
+Decorative vertical rules separate inline metadata items, a horizontal rule
+divides the header from the action bar, and a semantic vertical separator
+appears between action groups when the preview is wide enough for one row.
+
 ## Basic use
 
 <GhostExample id="separator/basic" />

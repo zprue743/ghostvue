@@ -97,5 +97,8 @@
     },
     "requiredAriaAttributes": []
   },
-  "examples": ["card/themed"]
+  "examples": [
+    "card/project-summary",
+    "card/themed"
+  ]
 }

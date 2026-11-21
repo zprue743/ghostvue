@@ -141,5 +141,8 @@
     "keyboard": {},
     "requiredAriaAttributes": []
   },
-  "examples": ["kbd/themed"]
+  "examples": [
+    "kbd/command-shortcuts",
+    "kbd/themed"
+  ]
 }

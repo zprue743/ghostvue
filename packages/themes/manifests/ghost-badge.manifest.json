@@ -171,5 +171,10 @@
     },
     "requiredAriaAttributes": []
   },
-  "examples": ["badge/themed", "badge/icon", "badge/table"]
+  "examples": [
+    "badge/release-channels",
+    "badge/themed",
+    "badge/icon",
+    "badge/table"
+  ]
 }
