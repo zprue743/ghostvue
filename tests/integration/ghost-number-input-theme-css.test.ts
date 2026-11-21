@@ -72,7 +72,9 @@ describe('GhostNumberInput theme CSS', () => {
       'outline: var(--ghost-focus-ring-width) solid var(--ghost-focus-ring-color);',
     )
     expect(css).toContain('@media (forced-colors: active)')
-    expect(css).toContain('outline-color: Highlight;')
+    expect(css).toContain(
+      'outline: var(--ghost-focus-ring-width) solid Highlight;',
+    )
     expect(css).toContain('box-shadow: none;')
   })
 })
