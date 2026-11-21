@@ -279,4 +279,101 @@ describe('keyboard evidence against Playwright reports', () => {
       ).length,
     ).toBeGreaterThan(0)
   })
+
+  it('requires passed NVDA+Firefox and VoiceOver+Safari desktop AT evidence for stable manifests', () => {
+    const nvdaEntry = {
+      component: 'GhostFixture',
+      package: '@ghostvue/vue',
+      revision: '0.1.0',
+      date: '2026-11-20',
+      reviewer: 'Actual Tester',
+      environment: {
+        assistiveTechnology: 'NVDA 2025.1',
+        browser: 'Firefox 140',
+        platform: 'Windows 11',
+      },
+      reference: 'https://github.com/zprue743/ghostvue/issues/1',
+      summary: 'NVDA+Firefox passed.',
+    }
+    const voiceOverDesktopEntry = {
+      component: 'GhostFixture',
+      package: '@ghostvue/vue',
+      revision: '0.1.0',
+      date: '2026-11-20',
+      reviewer: 'Actual Tester',
+      environment: {
+        assistiveTechnology: 'VoiceOver',
+        browser: 'Safari 18.4',
+        platform: 'macOS 15.4',
+      },
+      reference: 'https://github.com/zprue743/ghostvue/issues/1',
+      summary: 'VoiceOver+Safari passed.',
+    }
+    const voiceOverIosEntry = {
+      ...voiceOverDesktopEntry,
+      environment: {
+        assistiveTechnology: 'VoiceOver',
+        browser: 'Safari 18.4',
+        platform: 'iOS 18.4',
+      },
+    }
+
+    const withoutVerification = {
+      ...passedFixture,
+      status: 'stable',
+      accessibility: {
+        ...(passedFixture.accessibility as Record<string, unknown>),
+      },
+    }
+    delete (withoutVerification.accessibility as Record<string, unknown>)
+      .verification
+    expect(validateVerificationContract(withoutVerification, options)).toEqual([
+      expect.stringContaining('assistiveTechnology.status to be "passed"'),
+    ])
+
+    expect(
+      validateVerificationContract(
+        { ...passedFixture, status: 'stable' },
+        options,
+      ),
+    ).toEqual([
+      expect.stringContaining('assistiveTechnology.status to be "passed"'),
+    ])
+
+    expect(
+      validateVerificationContract(
+        {
+          ...fixture(
+            { status: 'not-reviewed', keys: {} },
+            {
+              assistiveTechnology: {
+                status: 'passed',
+                evidence: [nvdaEntry, voiceOverIosEntry],
+              },
+            },
+          ),
+          status: 'stable',
+        },
+        options,
+      ),
+    ).toEqual([expect.stringContaining('VoiceOver + Safari desktop evidence')])
+
+    expect(
+      validateVerificationContract(
+        {
+          ...fixture(
+            { status: 'not-reviewed', keys: {} },
+            {
+              assistiveTechnology: {
+                status: 'passed',
+                evidence: [nvdaEntry, voiceOverDesktopEntry],
+              },
+            },
+          ),
+          status: 'stable',
+        },
+        options,
+      ),
+    ).toEqual([])
+  })
 })

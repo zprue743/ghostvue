@@ -275,5 +275,18 @@
       border-color: FieldText;
       color: FieldText;
     }
+
+    /* Disabled tokens map to ButtonText here; GrayText marks unavailability. */
+    :where(
+      .ghost-theme .ghost-date-picker-input:disabled,
+      .ghost-themed-scope .ghost-date-picker-input:disabled,
+      .ghost-date-picker-input[data-themed]:disabled,
+      .ghost-theme .ghost-date-picker-trigger:disabled,
+      .ghost-themed-scope .ghost-date-picker-trigger:disabled,
+      .ghost-date-picker-trigger[data-themed]:disabled
+    ) {
+      border-color: GrayText;
+      color: GrayText;
+    }
   }
 }
