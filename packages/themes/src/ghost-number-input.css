@@ -208,7 +208,7 @@
         > .ghost-number-input__input:focus-visible
     ) {
       box-shadow: none;
-      outline-color: Highlight;
+      outline: var(--ghost-focus-ring-width) solid Highlight;
     }
   }
 }
