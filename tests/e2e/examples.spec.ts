@@ -1,12 +1,6 @@
 import { ghostExamples } from '../../examples/registry'
-import {
-  axeScan,
-  expectNoAxeViolations,
-  waitForExamplePreview,
-} from '../support'
+import { expectNoAxeViolations, waitForExamplePreview } from '../support'
 import { playgroundTest as test, expect } from '../support/playground'
-
-const modes = ['light', 'dark'] as const
 
 /**
  * Parts and widgets whose only job is to paint. Headless components ship no
@@ -36,40 +30,9 @@ const closedOverlayExamples = new Set([
   'tooltip/themed',
 ])
 
-test.describe('registered examples accessibility', () => {
+test.describe('registered examples accessibility and host boundary', () => {
   for (const example of ghostExamples) {
-    for (const mode of modes) {
-      test(`${example.id} has no axe violations in ${mode} mode`, async ({
-        page,
-        playgroundUrl,
-      }) => {
-        await axeScan(page, playgroundUrl, example.id, { mode })
-      })
-    }
-  }
-
-  test('gallery lists every registered example without axe violations', async ({
-    page,
-    playgroundUrl,
-  }) => {
-    await page.goto(`${playgroundUrl}/examples.html`)
-    await expect(
-      page.getByRole('heading', { name: 'GhostVue examples' }),
-    ).toBeVisible()
-
-    for (const example of ghostExamples) {
-      await expect(
-        page.getByRole('link', { name: example.id, exact: true }),
-      ).toBeVisible()
-    }
-
-    await expectNoAxeViolations(page)
-  })
-})
-
-test.describe('registered examples on the docs-equivalent host', () => {
-  for (const example of ghostExamples) {
-    test(`${example.id} keeps its ${example.layer} boundary and paints every visual part`, async ({
+    test(`${example.id} keeps its ${example.layer} boundary, paints visual parts, and passes axe in light and dark modes`, async ({
       page,
       playgroundUrl,
     }) => {
@@ -132,6 +95,52 @@ test.describe('registered examples on the docs-equivalent host', () => {
       // The canvas has its own inset, so edge shadows and rings are captured.
       expect(report.paddingTop).toBeGreaterThan(0)
       expect(report.zeroSized, 'visual parts with an empty box').toEqual([])
+
+      await expectNoAxeViolations(page, {
+        exampleId: example.id,
+        mode: 'light',
+      })
+
+      // Switch to dark mode in-page (the route reads ?mode= only to set this
+      // attribute) and flush finite transitions while skipping infinite spinners.
+      await page.evaluate(async () => {
+        document.documentElement.setAttribute('data-ghost-mode', 'dark')
+        for (const animation of document.getAnimations()) {
+          if (animation.effect?.getComputedTiming().iterations !== Infinity) {
+            animation.finish()
+          }
+        }
+        await new Promise<void>((resolve) => {
+          requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+              resolve()
+            })
+          })
+        })
+      })
+
+      await expectNoAxeViolations(page, {
+        exampleId: example.id,
+        mode: 'dark',
+      })
     })
   }
+
+  test('gallery lists every registered example without axe violations', async ({
+    page,
+    playgroundUrl,
+  }) => {
+    await page.goto(`${playgroundUrl}/examples.html`)
+    await expect(
+      page.getByRole('heading', { name: 'GhostVue examples' }),
+    ).toBeVisible()
+
+    for (const example of ghostExamples) {
+      await expect(
+        page.getByRole('link', { name: example.id, exact: true }),
+      ).toBeVisible()
+    }
+
+    await expectNoAxeViolations(page)
+  })
 })

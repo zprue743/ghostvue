@@ -1,8 +1,10 @@
+/** @vitest-environment node */
+
 import { mkdtemp, mkdir, readFile, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 
-import { afterEach, describe, expect, it } from 'vitest'
+import { afterAll, afterEach, describe, expect, it } from 'vitest'
 
 import {
   buildDerivedContract,
@@ -142,8 +144,7 @@ function derivedFromWidget() {
   })
 }
 
-// `afterEach` clears the cached Volar/TypeScript checker; cold checker creation
-// under v8 coverage on 2-core CI runners can exceed Vitest's 5s default timeout.
+// Cold checker creation under v8 coverage on CI runners can exceed Vitest's 5s default timeout.
 const META_CHECKER_TIMEOUT_MS = 30_000
 
 const temporaryDirectories: string[] = []
@@ -155,12 +156,17 @@ async function createTempDir(prefix = 'ghost-manifests-'): Promise<string> {
 }
 
 afterEach(async () => {
-  resetMetaCheckers()
   await Promise.all(
     temporaryDirectories
       .splice(0)
       .map((dir) => rm(dir, { recursive: true, force: true })),
   )
+})
+
+afterAll(() => {
+  // Reuse the Volar/TypeScript checker across tests in this suite; none of
+  // these tests mutate checked-in SFCs or tsconfigs on disk.
+  resetMetaCheckers()
 })
 
 describe('manifest derivation helpers', () => {

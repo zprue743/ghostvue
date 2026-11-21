@@ -9,6 +9,7 @@ reports/verify-component/
 .vitepress/dist/
 playwright-report/
 test-results/
+.prettiercache
 packages/vue/.cache/
 packages/nuxt/.cache/
 *.tsbuildinfo

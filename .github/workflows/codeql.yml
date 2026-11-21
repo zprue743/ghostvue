@@ -3,15 +3,37 @@ name: CodeQL
 on:
   push:
     branches: [master]
+    paths:
+      - '**/*.js'
+      - '**/*.mjs'
+      - '**/*.cjs'
+      - '**/*.ts'
+      - '**/*.tsx'
+      - '**/*.mts'
+      - '**/*.vue'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+      - '.github/**'
   pull_request:
     branches: [master]
+    paths:
+      - '**/*.js'
+      - '**/*.mjs'
+      - '**/*.cjs'
+      - '**/*.ts'
+      - '**/*.tsx'
+      - '**/*.mts'
+      - '**/*.vue'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+      - '.github/**'
   schedule:
     # Weekly rescan picks up new CodeQL queries even when the code is unchanged.
     - cron: '27 4 * * 1'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+  cancel-in-progress: true
 
 # Least privilege: nothing at workflow level; the analyze job grants only what
 # CodeQL needs to read the repository and upload SARIF results.

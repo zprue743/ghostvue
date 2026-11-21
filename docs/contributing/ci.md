@@ -30,9 +30,9 @@ against upstream.
 Container images are pinned by exact tag. The Playwright image tag must match
 `@playwright/test` in `package.json`; it also provides the browsers (Chromium,
 Firefox, and WebKit with their system libraries), so CI never runs
-`playwright install`. The `browser-shard` jobs run the Chromium projects and
-the `browser-cross` jobs run the `firefox-e2e` and `webkit-e2e` projects from
-the same image; see the
+`playwright install`. The `browser-shard` matrix (2 Chromium shards) runs the
+Chromium projects and the consolidated `browser-cross` job runs both
+`firefox-e2e` and `webkit-e2e` from the same image; see the
 [cross-browser matrix](../standards/testing.md#cross-browser-functional-matrix).
 
 ## Token permissions
@@ -54,17 +54,42 @@ needs the review described in the [dependency policy](../standards/dependencies.
 
 ## Node versions
 
-`engines.node` is `>=22`. The `verify-static` and `verify-unit` jobs run on
-Node 22 and 24. Each `verify-unit` leg runs the whole unit suite unsharded;
-only the Node 22 leg uploads its coverage blob. Integration, build, and browser jobs (including
-`browser-cross`) run on Node 22 only. When a
-new Node LTS line ships, add it to both matrices. Raising the `engines` floor
+`engines.node` is `>=22`. The `verify-static`, `verify-unit` (with coverage),
+`verify-integration`, `verify-build`, `nuxt-fixture`, `browser-shard`, and
+`browser-cross` jobs run on Node 22. Node 24 compatibility is exercised without
+duplicate coverage instrumentation by `verify-unit-node24` on pushes to `master`,
+merge groups, weekly scheduled runs, and pull requests that change Node/tooling
+configuration (`package.json`, `pnpm-lock.yaml`, `pnpm-workspace.yaml`,
+`vitest.config.ts`, or `.github/workflows/ci.yml`). Raising the `engines` floor
 needs its own reviewed change.
+
+## Path-scoped checks and caching
+
+The `changes` job classifies pull request diffs via
+`scripts/ci-changed-paths.mjs`:
+
+- Prose-only docs (`docs/**/*.md` without live Vue/VitePress blocks), `AGENTS.md`,
+  and `.cursor/**` PRs set `skip_heavy=true` while keeping required `verify` and
+  `browser` checks green.
+- Docs, showcase, and example PRs (`e2e_scope=docs`) scope `browser-shard` to
+  `docs-*.spec.ts` and `examples*.spec.ts` and skip unrelated `nuxt-fixture`,
+  `browser-cross`, and `verify-unit-node24` jobs (`verify-static` still runs
+  `pnpm keyboard-evidence` in list mode).
+- `tests/integration/new-component.test.ts` runs targeted verification over
+  scaffolded artifacts by default; setting `RUN_FULL_SCAFFOLD_VERIFY=1` (used on
+  scaffolding changes and the weekly `CI` schedule) runs full nested
+  `pnpm verify`.
+- `verify-static` caches `.prettiercache` (`static-prettier-cache`) and
+  `verify-build` caches `apps/docs/.vitepress/cache` (`vitepress-cache`). Both
+  set `GHOSTVUE_REGISTRIES_READY=1` after `pnpm install` (`prepare`) runs
+  `registries:write` so `pretypecheck` and `prebuild` hooks skip redundant
+  rewrites while `pnpm registries` verification still executes.
 
 ## Keyboard evidence
 
 The `browser` job merges every Playwright blob report into HTML, GitHub
-annotations, and `.artifacts/playwright/results.json`, then runs
+annotations, and `.artifacts/playwright/results.json`, and on full E2E runs
+(`e2e_scope != 'docs'`) runs
 `node scripts/check-keyboard-evidence.mjs --report` on that JSON. It fails when
 any test mapped in a manifest's `accessibility.verification.automatedKeyboard`
 did not execute in `chromium-e2e` or did not pass. See
@@ -75,15 +100,17 @@ did not execute in `chromium-e2e` or did not pass. See
 The `nuxt-fixture` job builds `apps/nuxt-fixture` (the `@ghostvue/nuxt`
 consumer) in its headless default and themed opt-in variants and runs
 `pnpm test:nuxt` in the same pinned Playwright image as `browser-shard`. It
-checks server HTML, hydration console output, interactivity, and injected CSS.
-The aggregate `verify` check requires it. Run it locally after building the
-packages: `pnpm --filter "@ghostvue/nuxt-fixture^..." build && pnpm test:nuxt`.
+runs on `master`, merge groups, weekly runs, and PRs touching workspace
+packages, Nuxt fixture/config, `scripts/`, or CI configuration; when run, the
+aggregate `verify` check requires it. Run it locally after building the packages:
+`pnpm --filter "@ghostvue/nuxt-fixture^..." build && pnpm test:nuxt`.
 
 ## Security scanning
 
 `.github/workflows/codeql.yml` runs CodeQL for `javascript-typescript` and
-`actions`. It runs on pushes to `master`, on pull requests to `master`, and
-weekly. Results appear under the repository's code scanning alerts.
+`actions`. It runs on pushes and pull requests to `master` when code, package,
+or workflow files change, plus an unfiltered weekly schedule. Results appear
+under the repository's code scanning alerts.
 
 ## Automated dependency updates
 

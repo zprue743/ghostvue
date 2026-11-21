@@ -21,6 +21,9 @@ const CROSS_BROWSER_TIMEOUT = 60_000
 export default defineConfig({
   testDir: './tests/e2e',
   fullyParallel: true,
+  // GitHub's 4-vCPU ubuntu-latest runners handle 3 workers cleanly once static
+  // hosts are worker-scoped, keeping the suite comfortably within 2 shards.
+  ...(process.env.CI ? { workers: 3 } : {}),
   forbidOnly: Boolean(process.env.CI),
   retries: process.env.CI ? 2 : 0,
   reporter: process.env.CI

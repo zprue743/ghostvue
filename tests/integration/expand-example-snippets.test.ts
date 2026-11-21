@@ -1,3 +1,5 @@
+/** @vitest-environment node */
+
 import { describe, expect, it } from 'vitest'
 
 import { expandExampleSnippets } from '../../apps/docs/.vitepress/expand-example-snippets'
