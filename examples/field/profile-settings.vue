@@ -119,7 +119,6 @@ function clearStatus(): void {
               :rows="3"
               maxlength="200"
               name="bio"
-              block
             />
           </GhostFieldControl>
         </GhostField>

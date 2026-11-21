@@ -76,7 +76,6 @@ function clearStatus(): void {
               :rows="3"
               :maxlength="limit"
               name="summary"
-              block
             />
           </GhostFieldControl>
           <GhostFieldError v-if="summaryInvalid">
@@ -96,7 +95,6 @@ function clearStatus(): void {
               readonly
               :rows="2"
               name="checklist"
-              block
             />
           </GhostFieldControl>
         </GhostField>
@@ -109,7 +107,6 @@ function clearStatus(): void {
               :model-value="deprecatedNotice"
               :rows="2"
               name="deprecation"
-              block
             />
           </GhostFieldControl>
         </GhostField>
