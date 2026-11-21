@@ -19,6 +19,12 @@
   ],
   "examples": [
     {
+      "id": "spinner/sync-status",
+      "title": "Registry sync status",
+      "description": "Compact themed spinner paired with status copy and a state toggle inside a card.",
+      "layer": "themed"
+    },
+    {
       "id": "spinner/basic",
       "title": "Basic",
       "description": "Named status. The default label is Loading.",

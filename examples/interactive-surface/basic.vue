@@ -3,31 +3,38 @@ import { GhostInteractiveSurface } from '@ghostvue/themes'
 </script>
 
 <template>
-  <GhostInteractiveSurface class="report-card">
-    <p class="report-card__title">Quarterly report</p>
-    <p class="report-card__copy">
-      The glow follows the pointer. Copy stays readable without it.
-    </p>
-  </GhostInteractiveSurface>
+  <div class="surface-basic-example">
+    <GhostInteractiveSurface class="report-card">
+      <span class="report-card__title">Quarterly report</span>
+      <span class="report-card__copy">
+        The glow follows the pointer. Copy stays readable without it.
+      </span>
+    </GhostInteractiveSurface>
+  </div>
 </template>
 
 <style scoped>
-.report-card {
-  min-block-size: 8rem;
-  padding: var(--ghost-space-inset-md, 1.25rem);
+.surface-basic-example {
+  display: grid;
 }
 
-.report-card__title,
-.report-card__copy {
-  margin: 0;
+.report-card {
+  display: grid;
+  gap: var(--ghost-space-gap-xs);
+  min-block-size: 8rem;
+  padding: var(--ghost-space-inset-md);
 }
 
 .report-card__title {
-  font-size: 1.15rem;
-  font-weight: 650;
+  color: var(--ghost-text-default);
+  font-size: var(--ghost-type-size-md);
+  font-weight: var(--ghost-type-weight-semibold);
+  line-height: var(--ghost-type-line-snug);
 }
 
 .report-card__copy {
-  color: var(--ghost-text-muted, CanvasText);
+  color: var(--ghost-text-muted);
+  font-size: var(--ghost-type-size-sm);
+  line-height: var(--ghost-type-line-normal);
 }
 </style>

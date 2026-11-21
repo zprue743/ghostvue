@@ -101,7 +101,13 @@
       "Enter": "Toggles disclosure on native button triggers.",
       "Space": "Toggles disclosure on native button triggers."
     },
-    "requiredAriaAttributes": ["aria-expanded", "aria-controls"]
+    "requiredAriaAttributes": [
+      "aria-expanded",
+      "aria-controls"
+    ]
   },
-  "examples": ["collapsible/themed"]
+  "examples": [
+    "collapsible/release-notes",
+    "collapsible/themed"
+  ]
 }

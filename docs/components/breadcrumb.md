@@ -4,6 +4,14 @@
 list, item, link, page, separator, and ellipsis parts. Import from `@ghostvue/vue`
 for headless markup, or from `@ghostvue/themes` for default trail styling.
 
+## Workspace breadcrumb trail
+
+<GhostExample id="breadcrumb/workspace-trail" />
+
+A page header pairs a themed `GhostBreadcrumb` trail with a
+`GhostBreadcrumbEllipsis` popover for collapsed middle ancestors and
+`GhostBreadcrumbPage` for the current route.
+
 ## Basic trail
 
 <GhostExample id="breadcrumb/basic" />

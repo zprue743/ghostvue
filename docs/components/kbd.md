@@ -4,6 +4,13 @@
 semantics. Import it from `@ghostvue/vue` for headless use, or from
 `@ghostvue/themes` for default keycap chrome.
 
+## Command shortcut sheet
+
+<GhostExample id="kbd/command-shortcuts" />
+
+A shortcut list pairs `GhostKbd` combinations with a `GhostSegmentedControl`
+to preview Apple (`⌘`) and PC (`Ctrl`) modifier labels.
+
 ## Basic use
 
 <GhostExample id="kbd/basic" />

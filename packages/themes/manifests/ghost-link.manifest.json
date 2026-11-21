@@ -170,5 +170,10 @@
     },
     "requiredAriaAttributes": []
   },
-  "examples": ["link/themed", "link/external", "link/disabled"]
+  "examples": [
+    "link/documentation-footer",
+    "link/themed",
+    "link/external",
+    "link/disabled"
+  ]
 }

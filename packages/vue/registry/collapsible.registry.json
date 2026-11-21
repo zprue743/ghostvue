@@ -23,6 +23,12 @@
   ],
   "examples": [
     {
+      "id": "collapsible/release-notes",
+      "title": "Release verification log",
+      "description": "Controlled disclosure inside a release summary card with status badge and responsive rows.",
+      "layer": "themed"
+    },
+    {
       "id": "collapsible/basic",
       "title": "Collapsible disclosure",
       "description": "Headless trigger and content linked with aria-controls.",

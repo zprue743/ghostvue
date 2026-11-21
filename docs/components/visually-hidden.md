@@ -5,6 +5,14 @@ users do not see. Use it when an interface conveys meaning through position,
 iconography, or visual grouping, and the missing text has to exist without
 changing the design.
 
+## Document action bar
+
+<GhostExample id="visually-hidden/action-bar" />
+
+Icon-only download and share buttons use `GhostVisuallyHidden` for their
+accessible names, while a polite `role="status"` live region announces the
+completed action without shifting the layout.
+
 ## Basic use
 
 <GhostExample id="visually-hidden/basic" />

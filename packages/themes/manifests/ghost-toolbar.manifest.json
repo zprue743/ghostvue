@@ -100,7 +100,12 @@
       "Home": "First enabled item.",
       "End": "Last enabled item."
     },
-    "requiredAriaAttributes": ["aria-label"]
+    "requiredAriaAttributes": [
+      "aria-label"
+    ]
   },
-  "examples": ["toolbar/themed"]
+  "examples": [
+    "toolbar/editor-actions",
+    "toolbar/themed"
+  ]
 }

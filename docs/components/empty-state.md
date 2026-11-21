@@ -9,6 +9,14 @@ built-in mode enums.
 Import from `@ghostvue/vue` for headless use, or from `@ghostvue/themes` for
 the default visual treatment.
 
+## Filtered deployment list
+
+<GhostExample id="empty-state/search-results" />
+
+A filter input inside a `GhostCard` starts with an unmatched query so
+`GhostEmptyState` (`as="section"`) renders with a decorative visual, heading,
+description, and recovery action. Clearing the filter restores the list.
+
 ## Basic use
 
 <GhostExample id="empty-state/basic" />

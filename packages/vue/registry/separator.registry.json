@@ -19,6 +19,12 @@
   ],
   "examples": [
     {
+      "id": "separator/release-header",
+      "title": "Release metadata and action groups",
+      "description": "Horizontal section rule paired with vertical inline metadata and action-group separators.",
+      "layer": "themed"
+    },
+    {
       "id": "separator/basic",
       "title": "Basic",
       "description": "Native horizontal thematic break with separator semantics.",

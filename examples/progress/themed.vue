@@ -24,8 +24,7 @@ import { GhostProgress } from '@ghostvue/themes'
 <style scoped>
 .progress-stack {
   display: grid;
-  gap: 1rem;
-  /* Example previews are flex; shrink-wrap would collapse percentage fills to 0. */
+  gap: var(--ghost-space-stack-md);
   inline-size: min(100%, 24rem);
 }
 </style>

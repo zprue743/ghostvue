@@ -3,7 +3,7 @@ import { GhostButton, GhostSeparator, GhostToolbar } from '@ghostvue/themes'
 </script>
 
 <template>
-  <div class="ghost-theme">
+  <div class="toolbar-themed-example">
     <GhostToolbar label="Table selection">
       <GhostButton size="sm">Edit row</GhostButton>
       <GhostSeparator orientation="vertical" />
@@ -11,3 +11,9 @@ import { GhostButton, GhostSeparator, GhostToolbar } from '@ghostvue/themes'
     </GhostToolbar>
   </div>
 </template>
+
+<style scoped>
+.toolbar-themed-example {
+  display: grid;
+}
+</style>

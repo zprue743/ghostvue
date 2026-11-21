@@ -57,6 +57,7 @@
     "requiredAriaAttributes": []
   },
   "examples": [
+    "visually-hidden/action-bar",
     "visually-hidden/basic",
     "visually-hidden/composable",
     "visually-hidden/icon-name",

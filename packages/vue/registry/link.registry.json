@@ -20,6 +20,12 @@
   ],
   "examples": [
     {
+      "id": "link/documentation-footer",
+      "title": "Documentation resource links",
+      "description": "Inline, subtle, external, new-tab, and disabled links organized in a responsive resource card.",
+      "layer": "themed"
+    },
+    {
       "id": "link/basic",
       "title": "Basic",
       "description": "Native anchor with headless styling hooks.",

@@ -11,6 +11,13 @@ compact status for work with no percent; [`GhostSkeleton`](./skeleton.md) is the
 silent layout placeholder. The distinction is the contract, not a runtime
 dependency.
 
+## Artifact upload queue
+
+<GhostExample id="progress/upload-queue" />
+
+An upload queue card combines determinate percent progress, custom `valueText`
+for shard counts, and an indeterminate bar when the total is unknown.
+
 ## Basic use
 
 <GhostExample id="progress/basic" />

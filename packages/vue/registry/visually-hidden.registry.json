@@ -16,6 +16,12 @@
   ],
   "examples": [
     {
+      "id": "visually-hidden/action-bar",
+      "title": "Document action bar",
+      "description": "Icon-only document actions named with GhostVisuallyHidden and a polite status live region.",
+      "layer": "headless"
+    },
+    {
       "id": "visually-hidden/basic",
       "title": "Basic",
       "description": "Hidden text names an icon-only control.",

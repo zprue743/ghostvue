@@ -19,6 +19,12 @@
   ],
   "examples": [
     {
+      "id": "progress/upload-queue",
+      "title": "Artifact upload queue",
+      "description": "Determinate, custom-valueText, and indeterminate progress bars inside an upload queue card.",
+      "layer": "themed"
+    },
+    {
       "id": "progress/basic",
       "title": "Basic",
       "description": "Named determinate progressbar with value and max.",

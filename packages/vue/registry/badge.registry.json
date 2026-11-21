@@ -19,6 +19,12 @@
   ],
   "examples": [
     {
+      "id": "badge/release-channels",
+      "title": "Release channels",
+      "description": "Badge variants and semantic tones marking release channel status inside a card.",
+      "layer": "themed"
+    },
+    {
       "id": "badge/basic",
       "title": "Basic",
       "description": "Unstyled compact status text.",

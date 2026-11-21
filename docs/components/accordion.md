@@ -5,6 +5,14 @@
 Each panel reuses `GhostCollapsible` for open state and semantics. Import from
 `@ghostvue/vue` for headless use or `@ghostvue/themes` for default styling.
 
+## Release policy
+
+<GhostExample id="accordion/deployment-faq" />
+
+Multiple-expansion mode coordinates a controlled `string[]` of open section
+values alongside external expand/collapse actions. The header adapts to the
+preview width with `@container ghost-demo`.
+
 ## Basic use
 
 <GhostExample id="accordion/basic" />

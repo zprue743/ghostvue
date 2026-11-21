@@ -59,5 +59,8 @@
     "keyboard": {},
     "requiredAriaAttributes": []
   },
-  "examples": ["separator/themed"]
+  "examples": [
+    "separator/release-header",
+    "separator/themed"
+  ]
 }

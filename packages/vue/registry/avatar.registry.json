@@ -18,6 +18,12 @@
   ],
   "examples": [
     {
+      "id": "avatar/team-roster",
+      "title": "Team roster",
+      "description": "Member list pairing themed avatars with derived initials and role badges.",
+      "layer": "themed"
+    },
+    {
       "id": "avatar/basic",
       "title": "Initials",
       "description": "Fallback initials from name without an image URL.",

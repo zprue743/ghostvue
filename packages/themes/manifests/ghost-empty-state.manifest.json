@@ -90,6 +90,7 @@
     "requiredAriaAttributes": []
   },
   "examples": [
+    "empty-state/search-results",
     "empty-state/themed"
   ]
 }
