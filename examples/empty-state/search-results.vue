@@ -57,7 +57,7 @@ function clearSearch(): void {
         </li>
       </ul>
 
-      <GhostEmptyState v-else as="section" :heading-level="3">
+      <GhostEmptyState v-else as="section" :heading-level="2">
         <template #visual>
           <svg aria-hidden="true" viewBox="0 0 48 48" width="40" height="40">
             <circle

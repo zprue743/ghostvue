@@ -9,10 +9,10 @@ import {
 <template>
   <div class="collapsible-themed-example">
     <GhostCollapsible>
-      <GhostCollapsibleTrigger>
+      <GhostCollapsibleTrigger data-themed>
         Reveal inventory adjustments
       </GhostCollapsibleTrigger>
-      <GhostCollapsibleContent>
+      <GhostCollapsibleContent data-themed>
         <span class="collapsible-themed-example__copy">
           Themed disclosure surfaces use semantic elevation and motion tokens.
         </span>
