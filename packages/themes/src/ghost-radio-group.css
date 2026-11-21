@@ -108,4 +108,59 @@
     cursor: not-allowed;
     opacity: var(--ghost-action-disabled-opacity);
   }
+
+  /*
+   * Forced colors repaint backgrounds as Canvas, which erased the checked dot.
+   * Mirror the checkbox: system-color ring, a Highlight dot kept by opting the
+   * item out of adjustment, GrayText when disabled, and an outline-only ring.
+   */
+  @media (forced-colors: active) {
+    :where(
+      .ghost-theme .ghost-radio-group-item,
+      .ghost-themed-scope .ghost-radio-group-item
+    ) {
+      --_ghost-radio-fill: ButtonFace;
+      --_ghost-radio-ring: ButtonText;
+
+      forced-color-adjust: none;
+    }
+
+    :where(
+      .ghost-theme .ghost-radio-group-item[data-state='checked'],
+      .ghost-themed-scope .ghost-radio-group-item[data-state='checked']
+    ) {
+      --_ghost-radio-ring: Highlight;
+    }
+
+    :where(
+      .ghost-theme .ghost-radio-group-item[data-state='checked'],
+      .ghost-themed-scope .ghost-radio-group-item[data-state='checked']
+    )::after {
+      background-color: Highlight;
+    }
+
+    :where(
+      .ghost-theme .ghost-radio-group-item:disabled,
+      .ghost-themed-scope .ghost-radio-group-item:disabled
+    ) {
+      --_ghost-radio-ring: GrayText;
+
+      opacity: 1;
+    }
+
+    :where(
+      .ghost-theme .ghost-radio-group-item[data-state='checked']:disabled,
+      .ghost-themed-scope .ghost-radio-group-item[data-state='checked']:disabled
+    )::after {
+      background-color: GrayText;
+    }
+
+    :where(
+      .ghost-theme .ghost-radio-group-item:focus-visible,
+      .ghost-themed-scope .ghost-radio-group-item:focus-visible
+    )::before {
+      box-shadow: none;
+      outline-color: Highlight;
+    }
+  }
 }

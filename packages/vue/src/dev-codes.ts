@@ -57,6 +57,13 @@ export const ghostCodes = {
       'The GhostDatePicker format callback threw for {date}. The input shows the ISO YYYY-MM-DD text instead. Make format synchronous, pure, and total for valid CalendarDate values.',
     relatedDocs: './components/date-picker.md',
   },
+  GHOST005: {
+    level: 'warn',
+    title: 'Deprecated API used',
+    message:
+      '{api} is deprecated since {since} and will be removed in {removal}. {migration}',
+    relatedDocs: './standards/component-stability.md',
+  },
 } as const satisfies Record<string, GhostCodeEntry>
 
 /**
@@ -107,4 +114,44 @@ export function logGhostCode(
     ghostCodes[code].level,
     formatGhostCodeMessage(code, replacements),
   )
+}
+
+/**
+ * One deprecation notice. Every field is consumer-facing text in the GHOST005
+ * message, so `migration` names the replacement and how to move to it.
+ */
+export interface GhostDeprecation {
+  /** The deprecated API, e.g. `GhostFoo prop "size"` or `GhostFoo`. */
+  readonly api: string
+  /** Package version that first deprecated it, e.g. `0.4.0`. */
+  readonly since: string
+  /**
+   * Earliest release that may remove it: a minor before 1.0 and a major from
+   * 1.0 onward, at least one minor release and 30 days after `since`.
+   */
+  readonly removal: string
+  /** Replacement and migration steps. */
+  readonly migration: string
+}
+
+// Module-level on purpose: a deprecated prop used in a list would otherwise
+// warn once per instance and bury other diagnostics. On the server this means
+// once per process, which is still enough to surface the notice in logs.
+const reportedDeprecations = new Set<string>()
+
+/**
+ * Reports deprecated API use with GHOST005, once per `api` per JavaScript
+ * realm. This is the only sanctioned deprecation warning; see
+ * docs/standards/component-stability.md. Callers must wrap it in
+ * `process.env.NODE_ENV !== 'production'` like `logGhostCode`.
+ */
+export function warnGhostDeprecation(deprecation: GhostDeprecation): void {
+  if (reportedDeprecations.has(deprecation.api)) return
+  reportedDeprecations.add(deprecation.api)
+  logGhostCode('GHOST005', {
+    api: deprecation.api,
+    since: deprecation.since,
+    removal: deprecation.removal,
+    migration: deprecation.migration,
+  })
 }

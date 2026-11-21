@@ -87,6 +87,22 @@ Every manifest lists:
 Unknown keys are invalid. Native HTML/ARIA fallthrough is not duplicated into
 `props`. Native listeners on a native root are not duplicated into `events`.
 
+## Status
+
+`status` is the component's stability level. The
+[component stability policy](../standards/component-stability.md) defines each
+level and its promotion and deprecation rules. `pnpm manifests` enforces the
+evidence part (`scripts/lib/component-status.js`):
+
+| Status                          | Fails when                                                                                                                                                                  |
+| ------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `beta`                          | No approved `spec`, no usage page for that spec, no `examples`, a generated placeholder description remains, or `automatedKeyboard` is not `passed` while keys are declared |
+| `stable`                        | Any `beta` rule fails, or `manual` or `assistiveTechnology` verification is not `passed`                                                                                    |
+| `experimental` and `deprecated` | Never; no evidence is required                                                                                                                                              |
+
+The check rejects a status the evidence does not support. It never infers or
+writes one: `pnpm manifests:write` preserves the human-set value.
+
 ## Accessibility verification
 
 `accessibility.verification` (schema `1.1.0`, GHO-42) records APG conformance
@@ -148,19 +164,22 @@ than inventing their own.
 
 Each `manual` or `assistiveTechnology` evidence entry names the reviewed
 `component` and `package` (both must equal the manifest's own), the `revision`
-(commit SHA or published version), `date`, `reviewer`, `environment`
-(`browser`, `platform`, and for AT reviews `assistiveTechnology`), a
-`reference` to the review record, and a `summary`. `passed` and `failed` need
-at least one entry. The review process itself is GHO-44.
+(commit SHA or published version), `date`, `reviewer` (crediting the actual
+tester), `environment` (`browser`, `platform`, and for AT reviews
+`assistiveTechnology`), a `reference` to the review record, and a `summary`.
+`passed` and `failed` need at least one entry. See the
+[assistive-technology review process](../standards/assistive-technology-review.md)
+for the required screen-reader matrix, review template, and `stable` promotion
+rules.
 
 ### Enforcement
 
-| Check                                  | Runs in                         | Fails when                                                                                                                                       |
-| -------------------------------------- | ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Schema (`pnpm test`)                   | `verify-unit`                   | Shape or status/evidence pairing is invalid                                                                                                      |
-| `pnpm manifests`                       | `verify-static`                 | A declared key is unmapped, a mapped key is undeclared, a spec is missing, evidence names another component, or `schemaVersion` is below `1.1.0` |
-| `pnpm keyboard-evidence`               | `verify-static`                 | A reference does not resolve to a `chromium-e2e` test in `playwright test --list`, or is skipped                                                 |
-| `check-keyboard-evidence.mjs --report` | `browser`, after merging shards | A mapped test did not execute in `chromium-e2e` or did not pass (a pass after a CI retry counts)                                                 |
+| Check                                  | Runs in                         | Fails when                                                                                                                                                                                                                                 |
+| -------------------------------------- | ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Schema (`pnpm test`)                   | `verify-unit`                   | Shape or status/evidence pairing is invalid                                                                                                                                                                                                |
+| `pnpm manifests`                       | `verify-static`                 | A declared key is unmapped, a mapped key is undeclared, a spec is missing, evidence names another component, `schemaVersion` is below `1.1.0`, or a `stable` manifest lacks passed AT evidence (NVDA+Firefox and VoiceOver+Safari desktop) |
+| `pnpm keyboard-evidence`               | `verify-static`                 | A reference does not resolve to a `chromium-e2e` test in `playwright test --list`, or is skipped                                                                                                                                           |
+| `check-keyboard-evidence.mjs --report` | `browser`, after merging shards | A mapped test did not execute in `chromium-e2e` or did not pass (a pass after a CI retry counts)                                                                                                                                           |
 
 The last check reads the merged Playwright JSON report of the same run, so a
 title that merely exists in source is not enough. Locally, run the mapped specs

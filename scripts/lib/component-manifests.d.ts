@@ -96,6 +96,15 @@ export interface SyncResult {
   checked: string[]
 }
 
+export const PLACEHOLDER_DESCRIPTIONS: Readonly<{
+  component: (name: string) => string
+  prop: (name: string) => string
+  model: (prop: string) => string
+  event: (name: string) => string
+  slot: (name: string) => string
+  slotProp: (name: string) => string
+  exposed: (kind: string, name: string) => string
+}>
 export function pascalToKebab(name: string): string
 export function componentExamplePrefix(name: string): string
 export function validateExampleManifests(

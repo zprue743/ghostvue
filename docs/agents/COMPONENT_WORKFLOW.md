@@ -59,6 +59,16 @@ After the gate's specification item is satisfied:
 Do not create a production-looking placeholder to stand in for an unresolved
 component design.
 
+## Promoting to `stable`
+
+Promoting a component manifest from `experimental` or `beta` to `stable`
+requires completing the
+[assistive-technology review process](../standards/assistive-technology-review.md):
+`accessibility.verification.assistiveTechnology.status` must be `"passed"` with
+recorded **NVDA + Firefox** and **VoiceOver + Safari** desktop evidence (plus
+any relevant conditional pairings or documented exclusions) and Zac's final
+sign-off. `pnpm manifests` rejects `stable` manifests that lack this evidence.
+
 ## Spec completeness check
 
 `pnpm specs:check` (part of `pnpm verify:static`) reads the YAML frontmatter of

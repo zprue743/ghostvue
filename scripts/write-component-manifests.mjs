@@ -15,6 +15,7 @@ import {
   syncRepositoryManifests,
   validateExampleManifests,
 } from './lib/component-manifests.js'
+import { validateRepositoryStatus } from './lib/component-status.js'
 
 const repositoryRoot = fileURLToPath(new URL('..', import.meta.url))
 const writeMode = process.argv.includes('--write')
@@ -27,14 +28,23 @@ const exampleViolations = await validateExampleManifests(repositoryRoot)
 // Cross-field accessibility.verification rules (declared keys vs mapped
 // tests, evidence identity, schemaVersion). Execution is checked separately
 // by scripts/check-keyboard-evidence.mjs.
+const repositoryManifests = await loadRepositoryManifests(repositoryRoot)
 const verificationViolations = validateRepositoryVerification(
   repositoryRoot,
-  await loadRepositoryManifests(repositoryRoot),
+  repositoryManifests,
+)
+// Stability policy (docs/standards/component-stability.md): a declared beta or
+// stable status must be backed by the recorded spec, docs, and review
+// evidence. The check rejects a status; it never infers or promotes one.
+const statusViolations = validateRepositoryStatus(
+  repositoryRoot,
+  repositoryManifests,
 )
 const violations = [
   ...result.violations,
   ...exampleViolations,
   ...verificationViolations,
+  ...statusViolations,
 ]
 
 if (violations.length > 0) {

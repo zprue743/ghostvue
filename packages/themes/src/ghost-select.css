@@ -227,4 +227,48 @@
     padding-block: var(--ghost-space-inset-xs);
     padding-inline: var(--ghost-space-inset-sm);
   }
+
+  /*
+   * Forced colors flatten the muted checked fill and the faded disabled
+   * tokens to the same system colors as their neighbors. Paint the checked
+   * option as a Highlight row (HighlightText needs that background, so it
+   * opts out of adjustment) and disabled parts in GrayText.
+   */
+  @media (forced-colors: active) {
+    :where(
+      .ghost-theme .ghost-select-trigger:is(:disabled, [aria-disabled='true']),
+      .ghost-themed-scope
+        .ghost-select-trigger:is(:disabled, [aria-disabled='true']),
+      .ghost-select-trigger[data-themed]:is(:disabled, [aria-disabled='true']),
+      .ghost-theme
+        .ghost-select-content
+        [data-part='option'][data-state='disabled'],
+      .ghost-themed-scope
+        .ghost-select-content
+        [data-part='option'][data-state='disabled'],
+      .ghost-select-content[data-themed]
+        [data-part='option'][data-state='disabled']
+    ) {
+      border-color: GrayText;
+      color: GrayText;
+      opacity: 1;
+    }
+
+    :where(
+      .ghost-theme
+        .ghost-select-content
+        [data-part='option'][data-state='checked'],
+      .ghost-themed-scope
+        .ghost-select-content
+        [data-part='option'][data-state='checked'],
+      .ghost-select-content[data-themed]
+        [data-part='option'][data-state='checked']
+    ) {
+      background-color: Highlight;
+      color: HighlightText;
+      forced-color-adjust: none;
+      /* A focus ring drawn inset on the row must contrast with Highlight. */
+      outline-color: HighlightText;
+    }
+  }
 }

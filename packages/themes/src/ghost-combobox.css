@@ -203,4 +203,48 @@
     color: var(--ghost-text-muted);
     padding: var(--ghost-space-inset-sm);
   }
+
+  /*
+   * Same forced-colors mapping as GhostSelect: the checked option becomes a
+   * Highlight row and disabled parts use GrayText instead of faded tokens.
+   * The highlighted option keeps its token outline (Highlight in forced
+   * colors), so keyboard position stays distinct from the checked row.
+   */
+  @media (forced-colors: active) {
+    :where(
+      .ghost-theme .ghost-combobox-input:is(:disabled, [aria-disabled='true']),
+      .ghost-themed-scope
+        .ghost-combobox-input:is(:disabled, [aria-disabled='true']),
+      .ghost-combobox-input[data-themed]:is(:disabled, [aria-disabled='true']),
+      .ghost-theme
+        .ghost-combobox-content
+        [data-part='option'][data-state='disabled'],
+      .ghost-themed-scope
+        .ghost-combobox-content
+        [data-part='option'][data-state='disabled'],
+      .ghost-combobox-content[data-themed]
+        [data-part='option'][data-state='disabled']
+    ) {
+      border-color: GrayText;
+      color: GrayText;
+      opacity: 1;
+    }
+
+    :where(
+      .ghost-theme
+        .ghost-combobox-content
+        [data-part='option'][data-state='checked'],
+      .ghost-themed-scope
+        .ghost-combobox-content
+        [data-part='option'][data-state='checked'],
+      .ghost-combobox-content[data-themed]
+        [data-part='option'][data-state='checked']
+    ) {
+      background-color: Highlight;
+      color: HighlightText;
+      forced-color-adjust: none;
+      /* A focus ring drawn inset on the row must contrast with Highlight. */
+      outline-color: HighlightText;
+    }
+  }
 }

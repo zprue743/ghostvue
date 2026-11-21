@@ -91,6 +91,41 @@ export function resolveVerification(manifest) {
   }
 }
 
+function validateStableAssistiveTechnology(manifest, file) {
+  if (manifest.status !== 'stable') return []
+  const violations = []
+  const { assistiveTechnology } = resolveVerification(manifest)
+  if (assistiveTechnology.status !== 'passed') {
+    violations.push(
+      `${file}: stable components require accessibility.verification.assistiveTechnology.status to be "passed" (found ${String(assistiveTechnology.status)})`,
+    )
+    return violations
+  }
+  const evidence = assistiveTechnology.evidence
+  const hasNvdaFirefox = evidence.some(
+    (entry) =>
+      /\bnvda\b/i.test(entry?.environment?.assistiveTechnology ?? '') &&
+      /\bfirefox\b/i.test(entry?.environment?.browser ?? ''),
+  )
+  const hasVoiceOverSafari = evidence.some(
+    (entry) =>
+      /\bvoiceover\b/i.test(entry?.environment?.assistiveTechnology ?? '') &&
+      /\bsafari\b/i.test(entry?.environment?.browser ?? '') &&
+      !/\bios\b|\bipados\b/i.test(entry?.environment?.platform ?? ''),
+  )
+  if (!hasNvdaFirefox) {
+    violations.push(
+      `${file}: stable components require NVDA + Firefox desktop evidence in accessibility.verification.assistiveTechnology.evidence`,
+    )
+  }
+  if (!hasVoiceOverSafari) {
+    violations.push(
+      `${file}: stable components require VoiceOver + Safari desktop evidence in accessibility.verification.assistiveTechnology.evidence`,
+    )
+  }
+  return violations
+}
+
 /**
  * Repository rules the JSON Schema cannot express because they compare fields
  * against each other or against the file system. Schema validation runs
@@ -100,11 +135,11 @@ export function resolveVerification(manifest) {
  * @param {{ file: string, specExists: (spec: string) => boolean }} options
  */
 export function validateVerificationContract(manifest, { file, specExists }) {
+  const violations = [...validateStableAssistiveTechnology(manifest, file)]
   const accessibility = isRecord(manifest.accessibility)
     ? manifest.accessibility
     : {}
-  if (!isRecord(accessibility.verification)) return []
-  const violations = []
+  if (!isRecord(accessibility.verification)) return violations
   const verification = accessibility.verification
 
   if (!atLeast(manifest.schemaVersion, VERIFICATION_SCHEMA_VERSION)) {

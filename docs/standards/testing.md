@@ -192,6 +192,13 @@ with `animations: 'disabled'` and a default `maxDiffPixelRatio` of `0.03`
   `tests/e2e/examples.spec.ts` asserts the same boundary and that no track,
   thumb, indicator, slider, switch, separator, progress bar, or spinner paints
   an empty box.
+- **Forced-colors baselines:** `tests/e2e/forced-colors-visual.spec.ts`
+  snapshots one themed example per interactive family beyond `GhostButton`
+  (fields, checkbox/radio/switch, an open dialog, an open select listbox,
+  tabs, accordion, progress, slider, calendar, and pagination) with
+  `forcedColors: 'active'` on the `default` theme in light mode at
+  `comfortable` density. One screenshot per example; add a family only when it
+  introduces a new forced-colors treatment.
 - **Docs site baselines:** `tests/e2e/docs-visual.spec.ts` snapshots the docs
   nav, a themed `GhostInput` preview, and a headless checkbox preview at 390px in
   `light` and `dark` mode (requires `apps/docs` build; included in `pnpm test:visual`).
