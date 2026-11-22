@@ -48,14 +48,14 @@ On 2026-11-17, Zac approved **option A**: a Vue-first composable plus native
 
 ### 1. Public surface (phase one)
 
-| Export                               | Package         | Role                                                                                                                       |
-| ------------------------------------ | --------------- | -------------------------------------------------------------------------------------------------------------------------- |
-| `GhostDataTable`                     | `@ghostvue/vue` | Headless root: slot props or child `GhostDataTableTable`                                                                   |
-| `GhostDataTableTable`                | `@ghostvue/vue` | Default unstyled table mapper + `#columnId` slots (basic on-ramp)                                                          |
-| `defineDataTableColumns`             | `@ghostvue/vue` | Typed column builder; generic contexts keep `getValue(): unknown`                                                        |
-| `useGhostDataTable`                  | `@ghostvue/vue` | Primary composable; sort/filter/page/selection/expansion and derived row models                                            |
-| `useGhostDataTableServerRequest`     | `@ghostvue/vue` | Stale-response guard for consumer fetches (same shape as `useGhostComboboxAsyncSearch`)                                    |
-| Interaction prop helpers             | `@ghostvue/vue` | Sort, selection, expansion controls with localizable names                                                                 |
+| Export                           | Package         | Role                                                                                    |
+| -------------------------------- | --------------- | --------------------------------------------------------------------------------------- |
+| `GhostDataTable`                 | `@ghostvue/vue` | Headless root: slot props or child `GhostDataTableTable`                                |
+| `GhostDataTableTable`            | `@ghostvue/vue` | Default unstyled table mapper + `#columnId` slots (basic on-ramp)                       |
+| `defineDataTableColumns`         | `@ghostvue/vue` | Typed column builder; generic contexts keep `getValue(): unknown`                       |
+| `useGhostDataTable`              | `@ghostvue/vue` | Primary composable; sort/filter/page/selection/expansion and derived row models         |
+| `useGhostDataTableServerRequest` | `@ghostvue/vue` | Stale-response guard for consumer fetches (same shape as `useGhostComboboxAsyncSearch`) |
+| Interaction prop helpers         | `@ghostvue/vue` | Sort, selection, expansion controls with localizable names                              |
 
 Phase one ships **headless composition docs and executable examples only**.
 There is **no** themed `GhostDataTable` in `@ghostvue/themes` until a later
@@ -116,9 +116,10 @@ clamping.
 ### 5. State ownership, resets, and server fetch coalescing
 
 - v-models use `useControllableState` ([component-state.md](../architecture/component-state.md)).
-- **Pagination resets to page 1** when global or column filters change, or
-  `pageSize` changes (among rules in the component spec). Sort changes do not
-  implicitly reset page unless the consumer does so.
+- **Pagination resets to page 1** when global or column filters change **only
+  if `manualFiltering: true`** (server filter refetch). Page-local filtering with
+  server pagination **keeps** the current page. `pageSize` changes always reset to
+  page 1. Sort changes do not implicitly reset page unless the consumer does so.
 - **One server-oriented user action → one `stateChange` emit** carrying the
   **complete next query** (`sorting`, `columnFilters`, `globalFilter`,
   `pagination`) after all reset rules apply. Individual `update:*` emits still
@@ -127,9 +128,9 @@ clamping.
   page 4 with a new filter or double-fetch.
 - `stateChange` includes a monotonic `requestId` for `useGhostDataTableServerRequest`.
 - Filter input debouncing is **consumer-owned** (composable does not debounce).
-- Default local filter matching rules are specified in the component spec as
-  **proposed** pending Zac confirmation (case rules, OR global / AND column,
-  clear sentinels, default `filterFn`).
+- Default local filter matching rules are **approved** in the component spec
+  (case-insensitive OR global, AND column filters, clear sentinels, skip
+  `null`/`undefined` cells in text matching).
 
 ### 6. Selection and select-all
 
@@ -145,10 +146,11 @@ Selection is always keyed by **`RowId`**.
 **Query-wide bulk selection** (“select all 10,000 matching the filter on the
 server”) is **consumer-owned**, not a built-in phase-one affordance.
 
-When `manualPagination` is false, pruning on `data` reference change uses
-**source rows** in the new array only (ids absent from source are dropped).
-Filters and pagination must **not** cause pruning. Example: row selected, filtered
-out of view, source refreshed with same entities, filter cleared → selection kept.
+Automatic pruning applies only when **`manualPagination` and `manualFiltering` are
+both `false`**: on `data` reference change, drop ids absent from **source rows**.
+Filters, pagination slices, and server-filtered payloads must **not** prune.
+Server filter + local pagination preserves selection when a row drops from a
+response and returns later.
 
 ### 7. Expansion
 
