@@ -31,7 +31,7 @@ Example Cursor / Claude Desktop MCP fragment (paths adjust after the package exi
   "mcpServers": {
     "ghostvue": {
       "command": "npx",
-      "args": ["-y", "@ghostvue/mcp@<version>", "ghostvue-mcp"]
+      "args": ["-y", "-p", "@ghostvue/mcp@<version>", "ghostvue-mcp"]
     }
   }
 }

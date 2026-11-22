@@ -55,14 +55,14 @@ Clients may pass optional `expectedGhostvueVersion` on any tool input; when pres
 
 ### 3.2 Component identity
 
-| Field           | Rule                                                                                                     | Example         |
-| --------------- | -------------------------------------------------------------------------------------------------------- | --------------- |
-| `name`          | Manifest `name`; pattern `^Ghost[A-Z]…$`                                                                 | `GhostButton`   |
-| `package`       | Manifest `package`; enum `@ghostvue/vue` \| `@ghostvue/themes`                                           | `@ghostvue/vue` |
-| `family`        | Manifest file stem: `<kebab>` in `ghost-<kebab>.manifest.json` (same stem in vue and themes when paired) | `ghost-button`  |
-| `manifestPath`  | Bundle path: `manifests/vue/<family>.manifest.json` or `manifests/themes/<family>.manifest.json`         | `ghost-button`  |
-| `schemaVersion` | Per-instance manifest semver (`1.0.0`, `1.1.0`, …)                                                       | `1.0.0`         |
-| `status`        | `experimental` \| `beta` \| `stable` \| `deprecated`                                                     | `experimental`  |
+| Field           | Rule                                                                                             | Example                                    |
+| --------------- | ------------------------------------------------------------------------------------------------ | ------------------------------------------ |
+| `name`          | Manifest `name`; pattern `^Ghost[A-Z]…$`                                                         | `GhostButton`                              |
+| `package`       | Manifest `package`; enum `@ghostvue/vue` \| `@ghostvue/themes`                                   | `@ghostvue/vue`                            |
+| `family`        | Manifest filename stem (no `.manifest.json`); same value in vue and themes when paired           | `ghost-button`                             |
+| `manifestPath`  | Bundle path: `manifests/vue/<family>.manifest.json` or `manifests/themes/<family>.manifest.json` | `manifests/vue/ghost-button.manifest.json` |
+| `schemaVersion` | Per-instance manifest semver (`1.0.0`, `1.1.0`, …)                                               | `1.0.0`                                    |
+| `status`        | `experimental` \| `beta` \| `stable` \| `deprecated`                                             | `experimental`                             |
 
 **Name overlap (grounded).** All **47** `@ghostvue/themes` manifests share a
 `name` with a `@ghostvue/vue` manifest (0 themes-only names). **108** vue
@@ -356,7 +356,7 @@ When implementation lands, add to [`scripts/workspace-packages.mjs`](../../scrip
 },
 ```
 
-Update [package-boundaries.md](../architecture/package-boundaries.md) graph (see ADR 0015): `shared <- core <- vue <- themes`; `shared <- mcp` (tooling); mcp does not import vue/themes at runtime (assets copied at build).
+Update [package-boundaries.md](../architecture/package-boundaries.md) graph (see ADR 0015): `shared <- core <- vue <- themes`; `core <- mcp` (`@ghostvue/core` only); mcp does not import vue, themes, or shared at runtime (assets copied at build).
 
 Enforce via existing manifest checker: `@ghostvue/mcp` must not list `vue`, `@ghostvue/vue`, or `@ghostvue/themes` as dependencies. `.dependency-cruiser.mjs` should gain a rule mirroring `eslint-plugin` (no Vue in tooling package).
 

@@ -4,12 +4,16 @@ Allowed production dependency direction is:
 
 ```text
 shared <- core <- vue <- themes (optional; may depend on vue)
-   ^                         ^
-   |                         |
-   +--- mcp (optional tooling; proposed — see ADR 0015)
+            ^
+            |
+          mcp (optional tooling; proposed — see ADR 0015)
 
 nuxt (optional integration) -> vue (peer), themes (optional peer)
 ```
+
+`mcp` may depend on `core` only among `@ghostvue/*` packages. It does not import
+`vue`, `themes`, or `shared` at runtime; bundled assets supply manifest, example,
+docs, and token snapshots.
 
 - `shared` has no internal production dependency.
 - `core` may depend on `shared`.
