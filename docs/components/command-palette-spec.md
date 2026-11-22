@@ -211,7 +211,21 @@ palettes; `aria-label` on content remains an escape hatch (see Open questions).
 
 #### `GhostCommandPaletteInput`
 
-Same as `GhostComboboxInput` (`as`, `disabled`, placeholder via root or prop).
+Same presentation props as `GhostComboboxInput` (`as`, `disabled`, placeholder
+via root or prop). Keyboard handling lives in **`GhostComboboxInput.vue`**
+(`handleKeydown`), not in `useGhostCombobox` (which exposes `moveActive`,
+`select`, and related APIs only).
+
+`GhostCommandPaletteInput` **copies** that keydown handler so Arrow keys, `Home`,
+`End`, `Escape`, and IME composition guards stay aligned with the combobox input.
+**It does not import `GhostComboboxInput`** (palette avoids mounting combobox
+chrome parts). `Enter` must **not** call `context.select()`: it reads
+`activeOptionValue` and invokes palette `activateCommand(id)` instead.
+
+Palette `activateCommand` emits `command`, optionally requests dialog close, and
+never calls `select()`, never assigns combobox `modelValue`, and never replaces
+the search query with the item's `textValue` (so consumers do not get spurious
+`update:search` / `search` emissions or stale selected state on the next open).
 
 #### `GhostCommandPaletteList`
 
@@ -225,9 +239,12 @@ merge for scrollable max-height styling.
 
 | Prop        | Type      | Default     | Contract                                                                                      |
 | ----------- | --------- | ----------- | --------------------------------------------------------------------------------------------- |
-| `id`        | `string`  | (required)  | Stable command identity emitted on selection.                                                 |
-| `disabled`  | `boolean` | `false`     | Excluded from keyboard highlight and selection; `aria-disabled` / `data-state="disabled"`.    |
+| `id`        | `string`  | (required)  | Stable command identity; registry `value` for highlight; emitted on `command`.                |
+| `disabled`  | `boolean` | `false`     | Excluded from keyboard highlight and activation; `aria-disabled` / `data-state="disabled"`.   |
 | `textValue` | `string`  | `undefined` | Plain label for AT and announcements; falls back to flattened default slot text when omitted. |
+
+Primary pointer activation on an enabled item calls the same `activateCommand(id)`
+path as `Enter` on a highlighted item (never `select()`).
 
 #### `GhostCommandPaletteGroup` / `GhostCommandPaletteLabel`
 
@@ -247,10 +264,37 @@ empty result when appropriate.
 | Search | `search` | `update:search` | `defaultSearch`      |
 
 There is **no** selection `modelValue`. Command choice is an event, not persisted
-widget state.
+widget state. The palette does **not** call `useGhostCombobox`'s `select()` on
+activation; combobox selection state must remain unset so reopening shows an
+empty query (subject to consumer-controlled `search`) with no option marked
+selected.
 
 Open and search use `useControllableState`. Switching controlled ↔ uncontrolled
 after setup is unsupported ([GHOST001](../warnings.md#ghost001)).
+
+### Command activation (not `select()`)
+
+`GhostComboboxInput` wires `Enter` to `context.select(active)`; `select()` in
+`use-ghost-combobox.ts` commits `modelValue`, copies the option label into the
+search field, and closes the list. That behavior is correct for form comboboxes
+but wrong for a command palette: activation would emit `update:search` /
+`search` (triggering consumer refetches) and leave a committed selection visible
+on the next open.
+
+Palette activation uses a dedicated **`activateCommand(id)`** path on the palette
+root (invoked from `GhostCommandPaletteInput` on `Enter` and from
+`GhostCommandPaletteItem` on pointer activation):
+
+1. No-op when `disabled`, item disabled, or missing id.
+2. Emit `command` with `{ id }` synchronously.
+3. Do **not** call `select()`, do **not** mutate combobox selection / `modelValue`.
+4. Do **not** write the item's `textValue` into `search` (query text stays as
+   typed until close cleanup or explicit consumer control).
+5. When `closeOnSelect` is `true`, continue with dialog close and search reset
+   per [Selection versus close timing](#selection-versus-close-timing-and-controlled-rejection).
+
+Highlight APIs (`moveActive`, `setActiveOptionByValue`, registry keyed by item
+`id`) still use `useGhostCombobox`; only the commit primitive differs.
 
 ### Events, slots, and exposed methods
 
@@ -397,18 +441,20 @@ Development: reuse `GHOST002` when dialog content lacks an accessible name.
 ### Keyboard interaction
 
 Palette input keeps focus; the list does not take roving tabindex (APG combobox).
+Input key handling is implemented in **`GhostCommandPaletteInput`** (copied from
+`GhostComboboxInput.vue`); `useGhostCombobox` supplies highlight movement only.
 
-| Key                     | Where (focus on input, dialog open) | Behavior                                                            |
-| ----------------------- | ----------------------------------- | ------------------------------------------------------------------- |
-| `ArrowDown` / `ArrowUp` | Input                               | Moves `aria-activedescendant` among enabled items (wrap at ends).   |
-| `Enter`                 | Input                               | Activates highlighted enabled item → `command` + optional close.    |
-| `Escape`                | Input / dialog                      | Closes dialog when `closeOnEscape`; clears highlight; no `command`. |
-| Printable keys          | Input                               | Updates search; consumer updates items.                             |
-| `Home` / `End`          | Input                               | First / last enabled item highlight.                                |
-| `Tab` / `Shift+Tab`     | Inside dialog                       | Loops within modal dialog when `modal=true`.                        |
+| Key                     | Where (focus on input, dialog open) | Behavior                                                                            |
+| ----------------------- | ----------------------------------- | ----------------------------------------------------------------------------------- |
+| `ArrowDown` / `ArrowUp` | Input                               | `moveActive`; updates `aria-activedescendant` among enabled items.                  |
+| `Enter`                 | Input                               | `activateCommand(highlighted id)` → `command` + optional close; **not** `select()`. |
+| `Escape`                | Input / dialog                      | Dialog `closeOnEscape` closes palette; clears highlight; no `command`.              |
+| Printable keys          | Input                               | Updates search; consumer updates items.                                             |
+| `Home` / `End`          | Input                               | First / last enabled item highlight.                                                |
+| `Tab` / `Shift+Tab`     | Inside dialog                       | Loops within modal dialog when `modal=true`.                                        |
 
-IME composition guard matches `GhostCombobox` (`isComposing`, `keyCode` 229):
-arrow keys, `Home`/`End`, `Enter`, and `Escape` do not move highlight or select
+IME composition guard matches `GhostComboboxInput` (`isComposing`, `keyCode` 229):
+arrow keys, `Home`/`End`, `Enter`, and `Escape` do not move highlight or activate
 until composition completes.
 
 Documented **application** shortcut (for example Mod+K) is implemented in
@@ -496,28 +542,31 @@ Internal implementation **composes** (does not fork):
 - `GhostDialog` / `useGhostDialog` — overlay, content, focus trap, scroll lock,
   inert, dismissal (`GhostCommandPalette*` dialog parts delegate here)
 - `useGhostCombobox` at the palette root — search, highlight, item registry,
-  `aria-activedescendant`, polite live region, `searchRequestId` (same behavior
-  contract as `GhostCombobox`, without mounting the `GhostCombobox` root or
-  `GhostComboboxContent`)
+  `aria-activedescendant`, polite live region, `searchRequestId` (without
+  mounting `GhostCombobox` / `GhostComboboxContent` and **without** calling
+  `select()` on activation)
 - Palette-owned parts (`GhostCommandPaletteInput`, `GhostCommandPaletteList`,
-  `GhostCommandPaletteItem`, group/label/empty) consume that context. The list
-  part renders listbox markup in-flow; it must not call `useFloating` or reuse
-  `GhostComboboxContent` (that component always floating-positions its surface).
+  `GhostCommandPaletteItem`, group/label/empty) consume that context. Input
+  keyboard behavior is **copied** from `GhostComboboxInput.vue`. The list part
+  renders listbox markup in-flow without `useFloating` or `GhostComboboxContent`.
 - `useControllableState`, `useGhostId`
 - `useGhostComboboxAsyncSearch` (exposed as palette async helper)
+- Palette root `activateCommand(id)` — emits `command`; never `select()`;
 
-Palette root synchronizes dialog `open` with combobox list availability while the
-dialog is open and wires activation to `command` instead of
-`update:modelValue`.
+Palette root synchronizes dialog `open` with list availability while the dialog is
+open. Item `id` values register as combobox option values for highlight only.
 
-No `useRovingFocus` on the list. No new overlay primitives. No changes to
-`GhostCombobox` or `GhostComboboxContent` source.
+No `useRovingFocus` on the list. No new overlay primitives. No **public**
+changes to `GhostCombobox` or `GhostComboboxContent` (palette does not mount
+them; copying input keydown does not change combobox exports).
 
 ## Test plan
 
 - **Vue unit:** `v-model:open` and `v-model:search`; monotonic `search.requestId`;
   `useGhostCommandPaletteAsyncSearch` stale discard; highlight + Enter/Escape;
-  disabled items skip `command`; `command` payload `id`; `closeOnSelect` true/false;
+  Enter / pointer activation never calls `select()`; search text unchanged on
+  `command`; no combobox selection after close/reopen; disabled items skip
+  `command`; `command` payload `id`; `closeOnSelect` true/false;
   loading hides empty; empty visibility; controlled `open` rejection after
   `command` keeps palette open without duplicate `command` on same activation;
   controlled `search` rejection on close; search reset when close succeeds;
