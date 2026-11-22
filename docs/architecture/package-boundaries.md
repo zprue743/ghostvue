@@ -4,7 +4,9 @@ Allowed production dependency direction is:
 
 ```text
 shared <- core <- vue
-   ^               ^
+   ^       ^       ^
+   |       |       |
+   |       +--- mcp (optional tooling; proposed — see ADR 0014)
    +-------+-------+
            |
          themes (optional; may depend on vue)
@@ -36,6 +38,14 @@ nuxt (optional integration) -> vue (peer), themes (optional peer)
   `packages/themes/manifests` through a generated data module
   (`pnpm registries:write`), not through imports, so it never loads Vue or
   component code. See the [ESLint plugin](../tooling/eslint-plugin.md) docs.
+- **`mcp` (`@ghostvue/mcp`, proposed — [ADR 0014](../adr/0014-mcp-server-first-release.md),**
+  **[GHO-17 contract](../plans/gho-17-mcp-first-release.md))** is Node-only MCP
+  stdio tooling. It may depend on `@ghostvue/core` (manifest schema) and, after
+  approval, `@modelcontextprotocol/sdk`. It must not depend on `vue`,
+  `@ghostvue/vue`, or `@ghostvue/themes`; manifests, examples, docs, and tokens
+  are **copied into the package at build time**, not imported from source.
+  `scripts/workspace-packages.mjs` gains an entry when implementation starts; no
+  package may depend on `@ghostvue/mcp`.
 
 Themed Vue components belong in `themes`. Headless composables and thin
 unstyled components belong in `vue`. Do not add a third package merely to

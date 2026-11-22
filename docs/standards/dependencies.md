@@ -128,3 +128,15 @@ Residual advisories, all development-only and absent from `pnpm audit --prod`:
   advisory is a timeout-cancellation bypass. `@vue/test-utils` 2.5+ moves to
   js-beautify 2, which still uses a vulnerable glob 13. Follow-up: revisit when a
   release depends on glob 14.0.2+.
+
+## `@ghostvue/mcp` — proposed (GHO-17)
+
+**Not yet approved or in the lockfile.** Implementation awaits Zac sign-off on
+[ADR 0014](../adr/0014-mcp-server-first-release.md). Full review:
+[GHO-17 MCP first-release contract](../plans/gho-17-mcp-first-release.md) §7.
+
+**Candidate runtime dependency:** `@modelcontextprotocol/sdk` (MIT). Stdio-only
+server code should import `@modelcontextprotocol/sdk/server` narrowly; transitive
+HTTP packages (`hono`, `express`, …) are acceptable only if `pnpm audit --prod`
+and size checks pass on the published `@ghostvue/mcp` tarball. Record an exact
+pin and audit outcome here when the dependency lands.

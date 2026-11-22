@@ -19,6 +19,7 @@ const docsMainSidebar: LlmsSidebarGroup['items'] = [
       { text: 'Introduction', link: '/philosophy' },
       { text: 'Nuxt & auto-imports', link: '/auto-imports' },
       { text: 'ESLint plugin', link: '/tooling/eslint-plugin' },
+      { text: 'MCP server (spec)', link: '/tooling/mcp-server' },
     ],
   },
   {
@@ -77,6 +78,10 @@ const agentsSidebar: LlmsSidebarGroup['items'] = [
   { text: 'Architecture rules', link: '/agents/ARCHITECTURE_RULES' },
   { text: 'Testing rules', link: '/agents/TESTING_RULES' },
   { text: 'Component workflow', link: '/agents/COMPONENT_WORKFLOW' },
+  {
+    text: 'MCP server (GHO-17)',
+    link: '/plans/gho-17-mcp-first-release',
+  },
 ]
 
 const contributeSidebar: LlmsSidebarGroup[] = [
