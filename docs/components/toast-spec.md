@@ -75,7 +75,8 @@ notification becomes visible, without focus moving to the toast stack.
 The headless API centers on a **provider-scoped** imperative surface
 (`useGhostToast`) so any descendant can publish feedback, while
 `GhostToastViewport` owns the notification **region**, the visible stack, timers,
-and the screen-reader announcer. State never lives in a module-global queue, so
+and twin screen-reader announcers (polite and assertive). State never lives in a
+module-global queue, so
 SSR and multi-provider trees stay isolated.
 
 ## Non-goals
@@ -97,17 +98,17 @@ SSR and multi-provider trees stay isolated.
 
 Headless exports from `@ghostvue/vue`:
 
-| Export                         | Role                                                                                                           |
-| ------------------------------ | -------------------------------------------------------------------------------------------------------------- |
-| `GhostToastProvider`           | Renderless `provide` / `inject` root; owns toast store, timers, and queue policy for one subtree.              |
-| `GhostToastViewport`           | Renders the notification region, visible toast stack, and screen-reader announcer. Typically one per provider. |
-| `GhostToast`                   | Presentational root for one visible toast item (stable `data-ghost-toast` + part hooks).                       |
-| `GhostToastTitle`              | Short heading / primary line for a toast.                                                                      |
-| `GhostToastDescription`        | Supporting copy (optional).                                                                                    |
-| `GhostToastAction`             | Optional action control (native `<button type="button">`).                                                     |
-| `GhostToastClose`              | Optional dismiss control (native `<button type="button">`).                                                    |
-| `useGhostToast`                | Imperative API: `toast`, `update`, `dismiss`, `dismissAll`, plus reactive read models.                         |
-| `ghostToastProviderContextKey` | Advanced composition / testing.                                                                                |
+| Export                         | Role                                                                                                                 |
+| ------------------------------ | -------------------------------------------------------------------------------------------------------------------- |
+| `GhostToastProvider`           | Renderless `provide` / `inject` root; owns toast store, timers, and queue policy for one subtree.                    |
+| `GhostToastViewport`           | Renders the notification region, visible toast stack, and twin screen-reader announcers. Typically one per provider. |
+| `GhostToast`                   | Presentational root for one visible toast item (stable `data-ghost-toast` + part hooks).                             |
+| `GhostToastTitle`              | Short heading / primary line for a toast.                                                                            |
+| `GhostToastDescription`        | Supporting copy (optional).                                                                                          |
+| `GhostToastAction`             | Optional action control (native `<button type="button">`).                                                           |
+| `GhostToastClose`              | Optional dismiss control (native `<button type="button">`).                                                          |
+| `useGhostToast`                | Imperative API: `toast`, `update`, `dismiss`, `dismissAll`, plus reactive read models.                               |
+| `ghostToastProviderContextKey` | Advanced composition / testing.                                                                                      |
 
 Types (representative; exact names follow manifest generation):
 
@@ -121,21 +122,21 @@ Named ESM exports only; no default export.
 
 ### `GhostToastProvider`
 
-| Prop       | Type     | Default           | Contract                                                                                                                                                                                                |
-| ---------- | -------- | ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `duration` | `number` | `8000`            | Default auto-dismiss duration in milliseconds when a toast does not set `duration` and type defaults do not force persist. Must be a finite number `>= 0`. `0` means persist (see duration resolution). |
-| `limit`    | `number` | `3`               | Maximum concurrently **visible** toasts. Additional items wait in the FIFO overflow queue. Must be a finite integer `>= 1`.                                                                             |
-| `label`    | `string` | `'Notifications'` | Accessible name for the viewport region (`aria-label` on the viewport root).                                                                                                                            |
+| Prop       | Type     | Default           | Contract                                                                                                                                                                                                                                                                                                                                 |
+| ---------- | -------- | ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `duration` | `number` | `8000`            | Default auto-dismiss interval for **informational** toasts (no `action`, not `type: 'error'`). Must be a finite number `>= 0` after validation; non-finite or negative values log a development warning and fall back to **8000**. `0` means persist for those toasts. Error and action toasts always persist (see duration resolution). |
+| `limit`    | `number` | `3`               | Maximum concurrently **visible** toasts. Additional items wait in the FIFO overflow queue. Must be a finite integer `>= 1`.                                                                                                                                                                                                              |
+| `label`    | `string` | `'Notifications'` | Accessible name for the viewport region (`aria-label` on the viewport root).                                                                                                                                                                                                                                                             |
 
 No emits, slots, or exposed methods on the provider itself. The default slot
 renders children only (`provide` scope).
 
 ### `GhostToastViewport`
 
-| Prop     | Type                 | Default | Contract                                                                                                                                                                                                                  |
-| -------- | -------------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `as`     | `'div' \| 'section'` | `'div'` | Host element for the stack. Use `section` when the region should be a landmark.                                                                                                                                           |
-| `portal` | `boolean`            | `true`  | When `true`, teleports the viewport (and announcer) to `document.body` via `GhostPortal` so stacking context and `position: fixed` recipes stay predictable. When `false`, renders in place (SSR tests, embedded panels). |
+| Prop     | Type                 | Default | Contract                                                                                                                                                                                                                        |
+| -------- | -------------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `as`     | `'div' \| 'section'` | `'div'` | Host element for the stack. Use `section` when the region should be a landmark.                                                                                                                                                 |
+| `portal` | `boolean`            | `true`  | When `true`, teleports the viewport (and both announcers) to `document.body` via `GhostPortal` so stacking context and `position: fixed` recipes stay predictable. When `false`, renders in place (SSR tests, embedded panels). |
 
 Exposed template ref: `element: HTMLElement | null` (viewport host after mount).
 
@@ -143,7 +144,7 @@ The viewport renders:
 
 1. A **visible stack** of up to `limit` toast roots (consumer template or
    default structure).
-2. Two **screen-reader announcer** siblings (`polite` and `assertive`; see
+2. Two **screen-reader announcers** (`polite` and `assertive`; see
    Accessibility).
 
 Stable attributes on the viewport host:
@@ -182,34 +183,46 @@ instance (merged per call).
 
 ### Imperative options (`GhostToastOptions`)
 
-| Field         | Type                                     | Default     | Contract                                                                                                                                                                                                                                                                         |
-| ------------- | ---------------------------------------- | ----------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `id`          | `string`                                 | generated   | Stable identity for `update` / `dismiss`. When omitted, the store assigns a unique string id from a monotonically increasing per-provider counter (`toast-1`, `toast-2`, …) for the lifetime of that record. Callable from `toast()` outside `setup`; does not use `useGhostId`. |
-| `type`        | `'default' \| 'error'`                   | `'default'` | Themed `tone` hooks only; not a separate ARIA role on the visible root. When `duration` is omitted, `error` participates in type defaults (persist until dismiss).                                                                                                               |
-| `urgency`     | `'default' \| 'urgent'`                  | `'default'` | `urgent` routes this toast's show announcement to the **assertive** live region. Visible stack layout is unchanged.                                                                                                                                                              |
-| `duration`    | `number \| null \| undefined`            | `undefined` | Per-toast auto-dismiss override. `null` or `0` means persist. A positive finite number sets milliseconds. `undefined` applies resolution below.                                                                                                                                  |
-| `title`       | `string`                                 | —           | Primary message (required non-empty after trim for `toast()` to enqueue).                                                                                                                                                                                                        |
-| `description` | `string`                                 | `undefined` | Optional supporting text included in the announcer and visible UI.                                                                                                                                                                                                               |
-| `action`      | `{ label: string; onClick: () => void }` | `undefined` | When present, the toast **persists** until dismissed (same as `type: 'error'`). `onClick` runs in user activation; the store does not auto-dismiss after action unless the handler calls `dismiss`.                                                                              |
-| `onDismiss`   | `() => void`                             | `undefined` | Called once when the toast leaves the store (timer expiry, close button, programmatic `dismiss`, or provider disposal). Not called when `update` replaces content in place.                                                                                                      |
+| Field         | Type                                     | Default     | Contract                                                                                                                                                                                                                                                                                       |
+| ------------- | ---------------------------------------- | ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `id`          | `string`                                 | generated   | Stable identity for `update` / `dismiss`. When omitted, the store assigns an auto id (see Stable identity). Callable from `toast()` outside `setup`; auto ids do not use `useGhostId` at call time.                                                                                            |
+| `type`        | `'default' \| 'error'`                   | `'default'` | Themed `tone` hooks only; not a separate ARIA role on the visible root. `type: 'error'` **always persists** until dismiss and ignores `duration`.                                                                                                                                              |
+| `urgency`     | `'default' \| 'urgent'`                  | `'default'` | `urgent` routes this toast's show announcement to the **assertive** live region. Visible stack layout is unchanged.                                                                                                                                                                            |
+| `duration`    | `number \| null \| undefined`            | `undefined` | Auto-dismiss override for **informational** toasts only (`type: 'default'` without `action`). Ignored on error/action toasts (development warning). `null` or `0` → persist. Positive finite number → milliseconds. Non-finite or negative → development warning, then treated as `undefined`. |
+| `title`       | `string`                                 | —           | Primary message (required non-empty after trim for `toast()` to enqueue).                                                                                                                                                                                                                      |
+| `description` | `string`                                 | `undefined` | Optional supporting text included in the active live region and visible UI.                                                                                                                                                                                                                    |
+| `action`      | `{ label: string; onClick: () => void }` | `undefined` | When present, the toast **persists** until dismissed and ignores `duration` (development warning if `duration` is set). `onClick` runs in user activation; the store does not auto-dismiss after action unless the handler calls `dismiss`.                                                    |
+| `onDismiss`   | `() => void`                             | `undefined` | Called once when the toast leaves the store (timer expiry, close button, programmatic `dismiss`, or provider disposal). Not called when `update` replaces content in place.                                                                                                                    |
 
-**Duration resolution** (`0` and `null` always mean persist):
+**Duration resolution:**
 
-1. **Explicit per-toast `duration`** when the field is present (not `undefined`):
-   `null` or `0` → persist; finite `> 0` → that many milliseconds (including on
-   `type: 'error'` or with `action` — explicit wins over type defaults).
-2. **Provider default:** provider `duration` of `0` → persist; provider
-   `duration` `> 0` → provisional auto-dismiss interval (provider default
-   **8000**).
-3. **Type default:** when step 1 did not run, `type: 'error'` or `action` present
-   → **persist** (overrides step 2's provisional interval).
-4. Otherwise informational toasts use step 2's provisional interval.
+1. **Persisting toasts:** `type: 'error'` or `action` present → **persist until
+   dismiss**. The `duration` field is **ignored**. In development, log a warning
+   when `duration` is not `undefined` on these toasts.
+2. **Informational toasts only** (`type: 'default'`, no `action`), when step 1
+   does not apply (`0` and `null` always mean persist):
+   - **Explicit `duration`** when not `undefined`: non-finite or negative
+     (including `NaN`) → development warning, then treated as `undefined`;
+     `null` or `0` → persist; finite `> 0` → that many milliseconds.
+   - **Provider default:** non-finite or negative provider `duration` →
+     development warning, then **8000**; provider `duration` `0` → persist;
+     provider `duration` `> 0` → that interval.
+   - No applicable rule → **8000** ms.
 
-Examples: informational, no `duration` → 8000 ms. `type: 'error'`, no `duration`
-→ persist. Error with `duration: 5000` → 5000 ms. `duration: 0` on any type →
-persist. Provider `duration: 0` and informational → persist.
+Examples: informational, no `duration` → 8000 ms. `type: 'error'` → persist even
+with `duration: 5000` (warning in dev). Toast with `action` → persist. Informational
+with `duration: 5000` → 5000 ms. Informational with `duration: -1` → warning,
+then provider default (8000). Provider `duration: 0` and informational → persist.
 
 ### Stable identity
+
+During provider setup (in `setup()` only), the store captures a `storeKey` from
+`useGhostId('ghost-toast-store')`. **Generated** ids use the reserved form
+`${storeKey}:auto:${n}` where `n` is a monotonically increasing per-provider
+counter starting at `1`. Consumer **explicit** ids are accepted as-is but must
+not use the `${storeKey}:auto:` prefix; in development, a collision or
+prefix-masquerade attempt logs a warning and treats the call as an update to the
+existing record.
 
 - `toast({ id: 'save' })` when no record exists creates a new toast with that id.
 - `toast({ id: 'save', ... })` when a record with the same id exists **updates**
@@ -335,26 +348,27 @@ accessors.
 with `data-ghost-toast=""` and `data-part="root"`. Meaning comes from text nodes
 and controls (`GhostToastTitle`, `GhostToastDescription`, `GhostToastAction`,
 `GhostToastClose`). The visible toast root does **not** use `role="alert"` or
-`role="status"` (avoid duplicate announcements with the announcer).
+`role="status"` (avoid duplicate announcements with the live regions).
 
 **Notification region:** `GhostToastViewport` is `role="region"` with
 `aria-label` from provider `label`. It groups the visible stack for sighted users
 and landmark navigation. Individual toasts are not nested landmarks.
 
 **Screen-reader announcers:** Two visually hidden siblings via
-`useGhostVisuallyHidden` styles (same technique as `GhostFileUpload`). Each keeps
-a fixed `aria-live` value for its lifetime — the implementation does **not** flip
-one region between polite and assertive.
+`useGhostVisuallyHidden` styles (same technique as `GhostFileUpload`). The
+implementation does **not** flip one region between polite and assertive.
 
 | Region    | `role`   | `aria-live` | `data-part`           |
 | --------- | -------- | ----------- | --------------------- |
 | Polite    | `status` | `polite`    | `announcer-polite`    |
-| Assertive | `status` | `assertive` | `announcer-assertive` |
+| Assertive | `alert`  | (implicit)  | `announcer-assertive` |
 
-Both use `aria-atomic="true"`.
+The polite region uses `aria-atomic="true"`. The assertive region uses
+`role="alert"` (implicit assertive live output) and must not also use
+`role="status"`.
 
 **Single-announcement behavior:** When a toast transitions to `visible`, exactly
-one announcer receives one atomic string built from `title` and `description`
+one live region receives one atomic string built from `title` and `description`
 (filtered, joined with space): the **assertive** region when `urgency: 'urgent'`,
 otherwise the **polite** region. The implementation uses a monotonic `key` on the
 active region's child (file-upload pattern) so identical consecutive text still
@@ -391,11 +405,11 @@ Pointer hover and focus pause timers only; they do not transfer focus.
 
 ### Assistive technology expectations
 
-When a toast becomes visible, AT users hear the announcer text once (polite or
-assertive per urgency). Visible toast copy is available in the accessibility
-tree in document order inside the region. Dismissal does not announce by default.
-Errors persist until the user dismisses them; informational toasts may
-auto-dismiss without focus change.
+When a toast becomes visible, AT users hear the live-region text once (polite or
+assertive per urgency). Visible toast copy is available in the accessibility tree
+in document order inside the notification region. Dismissal does not announce by
+default. Error and action toasts persist until the user dismisses them;
+informational toasts may auto-dismiss without focus change.
 
 ## Rendering and customization
 
@@ -431,8 +445,8 @@ Default stack positioning (corner, gap, z-index) is theme-owned, not headless.
   the record becomes `visible` (open question: whether pre-mount enqueue is
   allowed or dev-warning only).
 
-Hydration tests (`expectSsrHydration`) cover viewport + announcer markup with an
-empty stack.
+Hydration tests (`expectSsrHydration`) cover viewport + both announcer regions
+with an empty stack.
 
 ### Mobile and touch
 
@@ -455,12 +469,13 @@ Machine-readable contracts (`packages/vue/manifests/ghost-toast-*.manifest.json`
 implementation starts; this proposed spec does not reference them until those
 files exist.
 
-| Primitive                                        | Use                                                  |
-| ------------------------------------------------ | ---------------------------------------------------- |
-| `GhostPortal`                                    | Optional body teleport for viewport (`portal=true`). |
-| `useGhostVisuallyHidden` / `visuallyHiddenStyle` | Announcer hiding.                                    |
-| `GhostButton`                                    | Themed actions only (headless uses native buttons).  |
-| `onScopeDispose` / provider `onUnmounted`        | Timer and listener cleanup.                          |
+| Primitive                                        | Use                                                                         |
+| ------------------------------------------------ | --------------------------------------------------------------------------- |
+| `GhostPortal`                                    | Optional body teleport for viewport (`portal=true`).                        |
+| `useGhostId`                                     | Provider-scoped `storeKey` during provider `setup()` only (auto id prefix). |
+| `useGhostVisuallyHidden` / `visuallyHiddenStyle` | Announcer hiding.                                                           |
+| `GhostButton`                                    | Themed actions only (headless uses native buttons).                         |
+| `onScopeDispose` / provider `onUnmounted`        | Timer and listener cleanup.                                                 |
 
 Does not compose `useFocusScope`, `useDismissableLayer`, or overlay stacks.
 
@@ -471,11 +486,12 @@ Does not compose `useFocusScope`, `useDismissableLayer`, or overlay stacks.
 - **FIFO visibility:** With `limit: 3`, creating four toasts leaves three
   visible (oldest three) and one queued; dismissing one promotes the fourth.
 - **Duration defaults:** Informational toast uses 8000 ms; `type: 'error'` and
-  `action` persist when `duration` is omitted; `duration: null` / `0` persist;
-  explicit `duration: 5000` on an error toast auto-dismisses in 5000 ms;
+  `action` always persist (`duration` ignored; dev warning when set);
+  informational `duration: null` / `0` persist; informational `duration: 5000` →
+  5000 ms; informational negative/`NaN` `duration` → warning then provider default;
   provider `duration: 0` makes informational toasts persist.
-- **Id generation:** Monotonic per-provider counter ids from imperative `toast()`
-  calls outside `setup` (no `useGhostId`).
+- **Id generation:** `${storeKey}:auto:${n}` from imperative `toast()`; explicit
+  id must not use the auto prefix; collision warning.
 - **Timer pause overlap:** Fake timers with simultaneous hover + focus + hidden
   flags; `remainingMs` decreases only while all clears; no time lost to
   double-counting pause intervals.
@@ -489,9 +505,10 @@ Does not compose `useFocusScope`, `useDismissableLayer`, or overlay stacks.
 ### Vue component tests
 
 - Viewport region attributes: `role="region"`, `aria-label`, `data-ghost-live`.
-- Both announcers keep fixed `aria-live` values; urgent shows update
-  `announcer-assertive` only, default shows update `announcer-polite` only.
-- Keyed child on the active announcer increments on each show.
+- Polite region keeps `role="status"` / `aria-live="polite"`; assertive region
+  keeps `role="alert"`; urgent shows update `announcer-assertive` only, default
+  shows update `announcer-polite` only.
+- Keyed child on the active live region increments on each show.
 - `GhostToastClose` dismisses without focusing itself on insert.
 - Portal on/off rendering targets.
 
@@ -508,8 +525,9 @@ Does not compose `useFocusScope`, `useDismissableLayer`, or overlay stacks.
 ### Accessibility and keyboard tests
 
 - Documented keys on close/action (activation only).
-- Integration test: urgent show touches assertive region only; default show
-  touches polite region only (neither region flips `aria-live`).
+- Integration test: urgent show touches assertive `role="alert"` region only;
+  default show touches polite `status` region only; assertive region never uses
+  `role="status"`.
 - Optional manual NVDA/VoiceOver scripts in manifest evidence when promoting to
   stable.
 
