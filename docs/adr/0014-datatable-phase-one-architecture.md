@@ -109,9 +109,15 @@ reorders or narrows the visible page without claiming to sort or filter the full
 remote dataset. Server-backed global sort/filter still requires the corresponding
 `manual*` flag plus consumer refetch.
 
-**Empty query results:** when `rowCount === 0`, effective pagination is **page
-1** with `pageCount === 1`, matching [GhostPagination](/specs/pagination)
-clamping.
+**Empty query results:** when **`rowCount === 0`**, effective pagination is **page
+1** with `pageCount === 1`. When **`rowCount > 0`** but the visible page slice is
+empty after page-local filter, **keep `pageIndex`** (spec recorded acceptance).
+
+**Pagination clamping (pending Zac):** proposed defaults in the component spec
+([Decisions pending Zac's review](/specs/data-table#decisions-pending-zacs-review))
+cover full-local filter clamp, local `data` refresh clamp, **`retry()`**, and
+server **`stateChange`** when clamping `pageIndex` after `rowCount`-driven
+`pageCount` changes.
 
 ### 5. State ownership, resets, and server fetch coalescing
 
@@ -227,7 +233,8 @@ default; premature extraction risks another slightly different virtualizer
 - Complete **pre-freeze** GhostVue vs PrimeVue invoice prototype before
   `specStatus: approved` (documented in spec; no PrimeVue in-repo).
 - Split implementation into child issues listed in the spec (composable core,
-  composition examples, themed wrapper, bench harness).
+  headless composition examples, bench harness); **themed `@ghostvue/themes`
+  wrapper deferred** to a later issue.
 - Implement child issues; defer multi-sort, virtualization, treegrid keyboard,
   optional PrimeVue 10k browser benchmark doc.
 - Separate specs for virtualization and treegrid navigation when prioritized.
