@@ -23,6 +23,12 @@
   ],
   "examples": [
     {
+      "id": "field/profile-settings",
+      "title": "Workspace profile",
+      "description": "Form composition with required, invalid, textarea, and disabled GhostField rows.",
+      "layer": "themed"
+    },
+    {
       "id": "field/basic",
       "title": "Labeled input",
       "description": "Label, hint, and control id wiring for GhostInput.",

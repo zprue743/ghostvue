@@ -432,9 +432,9 @@ test.describe('docs example previews', () => {
     expect(Number.parseFloat(inputStyles.paddingInlineStart)).toBeGreaterThan(0)
     expect(isTransparentColor(inputStyles.borderTopColor)).toBe(false)
 
-    // The themed focus treatment is a box-shadow ring with no outline.
+    // The themed focus treatment uses a solid outline ring with contrast offset.
     await numberInput.focus()
-    await expect(numberInput).toHaveCSS('outline-style', 'none')
+    await expect(numberInput).toHaveCSS('outline-style', 'solid')
 
     // Themed invalid state still overrides the default border color.
     await previewOf('number-input/themed')

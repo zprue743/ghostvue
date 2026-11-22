@@ -29,6 +29,12 @@
   ],
   "examples": [
     {
+      "id": "file-upload/asset-submission",
+      "title": "Release packet assets",
+      "description": "Dropzone, file list, validation errors, and submission status with GhostFileUpload.",
+      "layer": "themed"
+    },
+    {
       "id": "file-upload/basic",
       "title": "Basic",
       "description": "Dropzone, trigger, and a removable file list.",

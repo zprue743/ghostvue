@@ -93,6 +93,7 @@
     "requiredAriaAttributes": []
   },
   "examples": [
+    "field/profile-settings",
     "field/themed"
   ]
 }

@@ -201,6 +201,7 @@
     "requiredAriaAttributes": []
   },
   "examples": [
+    "number-input/order-limits",
     "number-input/themed"
   ]
 }

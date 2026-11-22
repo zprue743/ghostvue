@@ -60,5 +60,8 @@
     "keyboard": {},
     "requiredAriaAttributes": []
   },
-  "examples": ["toggle-group/themed"]
+  "examples": [
+    "toggle-group/editor-toolbar",
+    "toggle-group/themed"
+  ]
 }

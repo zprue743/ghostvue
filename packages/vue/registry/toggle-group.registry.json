@@ -21,6 +21,12 @@
   ],
   "examples": [
     {
+      "id": "toggle-group/editor-toolbar",
+      "title": "Announcement draft",
+      "description": "Single-select alignment and multi-select formatting with GhostToggleGroup.",
+      "layer": "themed"
+    },
+    {
       "id": "toggle-group/basic",
       "title": "Toggle group single",
       "description": "Exclusive aria-pressed density controls.",

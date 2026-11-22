@@ -19,6 +19,12 @@
   ],
   "examples": [
     {
+      "id": "switch/workspace-security",
+      "title": "Workspace security",
+      "description": "Policy toggles pairing GhostField labels and descriptions with GhostSwitch.",
+      "layer": "themed"
+    },
+    {
       "id": "switch/basic",
       "title": "Basic",
       "description": "Labeled native switch. The default state is off.",

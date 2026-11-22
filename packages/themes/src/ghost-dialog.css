@@ -49,10 +49,14 @@
     z-index: 50;
   }
 
+  /* Child combinators and part classes keep nested field/alert parts isolated. */
   :where(
-    .ghost-theme .ghost-dialog-content [data-part='title'],
-    .ghost-themed-scope .ghost-dialog-content [data-part='title'],
-    .ghost-dialog-content[data-themed] [data-part='title']
+    .ghost-theme .ghost-dialog-content > [data-part='title'],
+    .ghost-themed-scope .ghost-dialog-content > [data-part='title'],
+    .ghost-dialog-content[data-themed] > [data-part='title'],
+    .ghost-theme .ghost-dialog-content .ghost-dialog-title,
+    .ghost-themed-scope .ghost-dialog-content .ghost-dialog-title,
+    .ghost-dialog-content[data-themed] .ghost-dialog-title
   ) {
     font-size: var(--ghost-type-size-lg);
     font-weight: var(--ghost-type-weight-semibold);
@@ -61,9 +65,12 @@
   }
 
   :where(
-    .ghost-theme .ghost-dialog-content [data-part='description'],
-    .ghost-themed-scope .ghost-dialog-content [data-part='description'],
-    .ghost-dialog-content[data-themed] [data-part='description']
+    .ghost-theme .ghost-dialog-content > [data-part='description'],
+    .ghost-themed-scope .ghost-dialog-content > [data-part='description'],
+    .ghost-dialog-content[data-themed] > [data-part='description'],
+    .ghost-theme .ghost-dialog-content .ghost-dialog-description,
+    .ghost-themed-scope .ghost-dialog-content .ghost-dialog-description,
+    .ghost-dialog-content[data-themed] .ghost-dialog-description
   ) {
     color: var(--ghost-text-muted);
     font-size: var(--ghost-type-size-sm);

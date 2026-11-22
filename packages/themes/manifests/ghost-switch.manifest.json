@@ -275,7 +275,14 @@
       "Space": "Toggle the switch when it is enabled and not readonly.",
       "Enter": "Toggle the switch when it is enabled and not readonly. Implemented because the host is a native button; APG lists Enter as optional."
     },
-    "requiredAriaAttributes": ["aria-checked"]
+    "requiredAriaAttributes": [
+      "aria-checked"
+    ]
   },
-  "examples": ["switch/themed", "switch/states", "switch/form"]
+  "examples": [
+    "switch/workspace-security",
+    "switch/themed",
+    "switch/states",
+    "switch/form"
+  ]
 }

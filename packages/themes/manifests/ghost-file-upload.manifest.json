@@ -283,6 +283,7 @@
     "requiredAriaAttributes": []
   },
   "examples": [
+    "file-upload/asset-submission",
     "file-upload/themed"
   ]
 }

@@ -20,6 +20,12 @@
   ],
   "examples": [
     {
+      "id": "slider/audio-mixer",
+      "title": "Export mastering",
+      "description": "Single, range, and disabled GhostSlider controls with live value readouts.",
+      "layer": "themed"
+    },
+    {
       "id": "slider/basic",
       "title": "Single value",
       "description": "Headless numeric slider with stepped values.",

@@ -5,6 +5,12 @@
 from `@ghostvue/vue` for headless use, or from `@ghostvue/themes` for the default
 visual treatment.
 
+<GhostExample id="number-input/order-limits" />
+
+The quota form pairs themed `GhostNumberInput` with `GhostField`: active seats
+clamp between 1 and 50, the spend cap formats as USD currency in $50 steps, and
+the disabled legacy quota scales its stepper buttons at `size="sm"`.
+
 ## Basic use
 
 <GhostExample id="number-input/basic" />

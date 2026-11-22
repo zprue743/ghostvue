@@ -62,6 +62,7 @@
     "requiredAriaAttributes": []
   },
   "examples": [
+    "inline-alert/billing-notices",
     "inline-alert/themed",
     "inline-alert/live",
     "inline-alert/table-error"

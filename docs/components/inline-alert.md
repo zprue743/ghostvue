@@ -5,6 +5,11 @@ recoverable failures near the content they describe. Import it from
 `@ghostvue/vue` for headless use, or from `@ghostvue/themes` for the default
 visual treatment.
 
+<GhostExample id="inline-alert/billing-notices" />
+
+The billing status card stacks `solid`, `soft`, and `outline` `GhostInlineAlert`
+variants with contextual `GhostButton` actions and a polite status region.
+
 ## Basic use
 
 <GhostExample id="inline-alert/basic" />
