@@ -5,7 +5,7 @@ GhostVue exposes a **local, read-only** [Model Context Protocol](https://modelco
 **Status:** Not implemented. The first-release contract is specified in:
 
 - [GHO-17 MCP first-release contract](../plans/gho-17-mcp-first-release.md) (tool schemas, bundles, errors)
-- [ADR 0014](../adr/0014-mcp-server-first-release.md) (package boundary and scope)
+- [ADR 0015](../adr/0015-mcp-server-first-release.md) (package boundary and scope)
 
 ## What ships in v1
 

@@ -1,4 +1,4 @@
-# ADR 0014: `@ghostvue/mcp` first release (stdio, read-only discovery)
+# ADR 0015: `@ghostvue/mcp` first release (stdio, read-only discovery)
 
 - Status: proposed
 - Date: 2026-11-22

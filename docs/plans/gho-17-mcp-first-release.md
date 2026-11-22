@@ -1,10 +1,10 @@
 # GHO-17: `@ghostvue/mcp` first-release contract (spec)
 
-**Status:** draft (Zac approval required for ADR 0014, dependency adoption, and implementation start)  
+**Status:** draft (Zac approval required for ADR 0015, dependency adoption, and implementation start)  
 **Linear:** GHO-17  
 **Approved direction (Zac, 2026-11-17, option A):** Local, read-only stdio MCP server with five discovery tools. Version-matched offline bundles of manifests, examples, docs, and tokens. No Vue runtime in the tooling package. HTTP transport (GHO-205), `validate_usage` (GHO-206), arbitrary file access, code execution, HTTP hosting, and npm publication of the server as a network service are **out of scope** for this release.
 
-**Related:** [ADR 0014](../adr/0014-mcp-server-first-release.md), [package boundaries](../architecture/package-boundaries.md), [component manifests](../architecture/component-manifest.md), [ADR 0006](../adr/0006-component-manifest-schema.md), [tokens](../architecture/tokens.md), [executable examples](../contributing/examples.md).
+**Related:** [ADR 0015](../adr/0015-mcp-server-first-release.md), [package boundaries](../architecture/package-boundaries.md), [component manifests](../architecture/component-manifest.md), [ADR 0006](../adr/0006-component-manifest-schema.md), [tokens](../architecture/tokens.md), [executable examples](../contributing/examples.md).
 
 ## 1. Purpose and non-goals
 
@@ -313,7 +313,7 @@ When implementation lands, add to [`scripts/workspace-packages.mjs`](../../scrip
 },
 ```
 
-Update [package-boundaries.md](../architecture/package-boundaries.md) graph (see ADR 0014):
+Update [package-boundaries.md](../architecture/package-boundaries.md) graph (see ADR 0015):
 
 ```text
 core <- mcp          (optional tooling; no reverse edges)
@@ -341,7 +341,7 @@ Enforce via existing manifest checker: `@ghostvue/mcp` must not list `vue`, `@gh
 
 **Recommendation for Zac:** Approve adding `@modelcontextprotocol/sdk` as the **only** new runtime dependency of `@ghostvue/mcp`, with an exact version pin in implementation PR, a subsection under [dependencies.md](../standards/dependencies.md) mirroring GHO-59/November audit format, and a size budget (proposed: < 2 MB installed for server + sdk, excluding bundled GhostVue assets).
 
-**Not approved yet:** Dependency is spec-only until ADR 0014 is accepted and implementation PR lands.
+**Not approved yet:** Dependency is spec-only until ADR 0015 is accepted and implementation PR lands.
 
 ## 8. Open questions
 
@@ -396,7 +396,7 @@ All tools map failures to MCP tool errors with:
 
 ## 11. Decisions needing Zac's sign-off
 
-1. Accept [ADR 0014](../adr/0014-mcp-server-first-release.md) (package boundary + stdio-first scope).
+1. Accept [ADR 0015](../adr/0015-mcp-server-first-release.md) (package boundary + stdio-first scope).
 2. Accept MCP SDK dependency per §7.
 3. Accept offline bundle contract (§4) including docs corpus = sidebar/`llms-full` equivalence.
 4. Approve child-issue split (§9) or reprioritize GHO-205/206 relative to 17a–i.

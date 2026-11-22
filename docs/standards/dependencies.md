@@ -132,7 +132,7 @@ Residual advisories, all development-only and absent from `pnpm audit --prod`:
 ## `@ghostvue/mcp` — proposed (GHO-17)
 
 **Not yet approved or in the lockfile.** Implementation awaits Zac sign-off on
-[ADR 0014](../adr/0014-mcp-server-first-release.md). Full review:
+[ADR 0015](../adr/0015-mcp-server-first-release.md). Full review:
 [GHO-17 MCP first-release contract](../plans/gho-17-mcp-first-release.md) §7.
 
 **Candidate runtime dependency:** `@modelcontextprotocol/sdk` (MIT). Stdio-only

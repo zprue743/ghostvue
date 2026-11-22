@@ -6,7 +6,7 @@ Allowed production dependency direction is:
 shared <- core <- vue
    ^       ^       ^
    |       |       |
-   |       +--- mcp (optional tooling; proposed — see ADR 0014)
+   |       +--- mcp (optional tooling; proposed — see ADR 0015)
    +-------+-------+
            |
          themes (optional; may depend on vue)
@@ -38,7 +38,7 @@ nuxt (optional integration) -> vue (peer), themes (optional peer)
   `packages/themes/manifests` through a generated data module
   (`pnpm registries:write`), not through imports, so it never loads Vue or
   component code. See the [ESLint plugin](../tooling/eslint-plugin.md) docs.
-- **`mcp` (`@ghostvue/mcp`, proposed — [ADR 0014](../adr/0014-mcp-server-first-release.md),**
+- **`mcp` (`@ghostvue/mcp`, proposed — [ADR 0015](../adr/0015-mcp-server-first-release.md),**
   **[GHO-17 contract](../plans/gho-17-mcp-first-release.md))** is Node-only MCP
   stdio tooling. It may depend on `@ghostvue/core` (manifest schema) and, after
   approval, `@modelcontextprotocol/sdk`. It must not depend on `vue`,
