@@ -52,7 +52,7 @@ unresolvedQuestions: []
 
 **Status:** Proposed for [GHO-104](https://linear.app/ghost-vue/issue/GHO-104).
 **Approved direction (Zac, 2026-11-17, Option A):** compose existing
-`GhostDialog` and `GhostCombobox` to deliver grouped command results, keyboard
+`GhostDialog` with `useGhostCombobox` to deliver grouped command results, keyboard
 highlight selection, and empty/loading presentation following the WAI-ARIA APG
 [Combobox with list autocomplete](https://www.w3.org/WAI/ARIA/apg/patterns/combobox/examples/combobox-autocomplete-list/)
 pattern. Consumers own filtering, async result updates, command execution, and
@@ -61,8 +61,8 @@ and requests close on selection, subject to controlled-state ownership. Examples
 may demonstrate Cmd/Ctrl+K without installing a global listener. No global
 command registry and no built-in fuzzy search.
 
-**Dependencies:** [GhostDialog specification](./dialog-spec.md) (GHO-28),
-[GhostCombobox specification](./combobox-spec.md) (GHO-32), and
+**Dependencies:** [GhostDialog specification](/specs/dialog) (GHO-28),
+[GhostCombobox specification](/specs/combobox) (GHO-32), and
 [ADR 0012: Modal overlays](../adr/0012-modal-overlays.md).
 
 ## Purpose and user problems
@@ -77,9 +77,10 @@ with Enter or pointer selection.
 Applications need predictable overlay behavior (modal focus trap, scroll lock,
 background isolation, focus restoration) without reimplementing combobox
 semantics, live-region announcements, or stale async guards. The palette is a
-**composition component**: it coordinates `GhostDialog` and `GhostCombobox`
-behind a purpose-built part tree so consumers render commands as compound
-children rather than wiring Dialog + Combobox manually for every app.
+**composition component**: it coordinates a `GhostDialog` modal shell with
+`useGhostCombobox` combobox state behind a purpose-built part tree so consumers
+render commands as compound children rather than wiring Dialog and combobox
+behavior manually for every app.
 
 ## Non-goals
 
@@ -93,8 +94,10 @@ children rather than wiring Dialog + Combobox manually for every app.
 - Creatable options, free-text values, or tag editing.
 - Replacing `GhostDropdownMenu` action menus or `GhostCombobox` form fields.
 - Virtualization implementation or bundled virtualizer dependency.
-- Changing `GhostDialog` or `GhostCombobox` public contracts; reuse them as
-  documented.
+- Changing `GhostDialog` or `GhostCombobox` public contracts (including
+  `GhostComboboxContent` floating behavior). The palette reuses documented
+  dialog parts and `useGhostCombobox`; it does **not** mount
+  `GhostComboboxContent` or call `useFloating` for the command list.
 
 ## Public API
 
@@ -102,8 +105,9 @@ children rather than wiring Dialog + Combobox manually for every app.
 
 Headless exports from `@ghostvue/vue`:
 
-- `GhostCommandPalette` — renderless root coordinating dialog open state,
-  combobox search/open/loading, command selection, and polite announcements
+- `GhostCommandPalette` — renderless root providing `useGhostDialog` and
+  `useGhostCombobox` context, coordinating dialog open state, search/loading,
+  command selection, and polite announcements
 - `GhostCommandPaletteTrigger` — optional control that opens the palette
   (wraps dialog trigger semantics)
 - `GhostCommandPaletteOverlay` — modal backdrop while `open` and `modal=true`
@@ -112,8 +116,9 @@ Headless exports from `@ghostvue/vue`:
 - `GhostCommandPaletteTitle` — accessible dialog name (`h2`, linked via
   `aria-labelledby`)
 - `GhostCommandPaletteInput` — combobox query field (`role="combobox"`)
-- `GhostCommandPaletteList` — inline, non-floating listbox region inside the
-  dialog (always expanded while the dialog is open)
+- `GhostCommandPaletteList` — palette-owned listbox surface inside the dialog
+  (always expanded while the dialog is open; no portal, no `useFloating`, and
+  no dependency on `GhostComboboxContent`)
 - `GhostCommandPaletteItem` — one selectable command (`role="option"`)
 - `GhostCommandPaletteGroup` — optional `role="group"` wrapper for related
   commands
@@ -190,13 +195,14 @@ defaults:
   input when not overridden.
 - `GhostCommandPaletteContent` default `closeOnOutsideClick` is `true` for
   `role="dialog"`.
-- The combobox list inside is **not** portaled separately; it renders inline
-  within content (`GhostCommandPaletteList` uses combobox content with
-  `portal: false` and no floating anchor).
+- `GhostCommandPaletteList` renders in normal document flow inside content.
+  Because `GhostComboboxContent` always anchors with `useFloating`, the palette
+  list is a **separate part** that reads the same `useGhostCombobox` context and
+  renders listbox semantics without importing or wrapping `GhostComboboxContent`.
 
 Optional `returnFocus` / `initialFocus` on content follow
-[`GhostDialogContent`](./dialog-spec.md) (GHO-209): resolvers run at activation
-and close, supporting shortcut openers that are not the visible trigger.
+[`GhostDialogContent`](/specs/dialog) (GHO-209): resolvers run at activation and
+close, supporting shortcut openers that are not the visible trigger.
 
 #### `GhostCommandPaletteTitle`
 
@@ -209,8 +215,11 @@ Same as `GhostComboboxInput` (`as`, `disabled`, placeholder via root or prop).
 
 #### `GhostCommandPaletteList`
 
-Hosts the listbox. No floating props in v1 (fixed layout inside the dialog).
-Accepts consumer `class` / `style` merge for scrollable max-height styling.
+Hosts the listbox (`role="listbox"`, `aria-labelledby` → input id,
+`aria-busy` when loading). Static layout inside the dialog only: no
+`placement`, `offset`, `flip`, `shift`, `strategy`, `portal`, or `portalTo`
+props and no positioned `left`/`top` styles. Accepts consumer `class` / `style`
+merge for scrollable max-height styling.
 
 #### `GhostCommandPaletteItem`
 
@@ -484,17 +493,25 @@ virtualizer). No internal fuzzy search.
 
 Internal implementation **composes** (does not fork):
 
-- `GhostDialog` / `useGhostDialog` — open state, overlay, content, focus trap,
-  scroll lock, inert, dismissal
-- `GhostCombobox` / `useGhostCombobox` — search, highlight, option registry,
-  `aria-activedescendant`, live region, `searchRequestId`
+- `GhostDialog` / `useGhostDialog` — overlay, content, focus trap, scroll lock,
+  inert, dismissal (`GhostCommandPalette*` dialog parts delegate here)
+- `useGhostCombobox` at the palette root — search, highlight, item registry,
+  `aria-activedescendant`, polite live region, `searchRequestId` (same behavior
+  contract as `GhostCombobox`, without mounting the `GhostCombobox` root or
+  `GhostComboboxContent`)
+- Palette-owned parts (`GhostCommandPaletteInput`, `GhostCommandPaletteList`,
+  `GhostCommandPaletteItem`, group/label/empty) consume that context. The list
+  part renders listbox markup in-flow; it must not call `useFloating` or reuse
+  `GhostComboboxContent` (that component always floating-positions its surface).
 - `useControllableState`, `useGhostId`
 - `useGhostComboboxAsyncSearch` (exposed as palette async helper)
 
-Palette root synchronizes dialog `open` with combobox forced-open while dialog is
-open and wires `command` emission instead of combobox `update:modelValue`.
+Palette root synchronizes dialog `open` with combobox list availability while the
+dialog is open and wires activation to `command` instead of
+`update:modelValue`.
 
-No `useRovingFocus` on the list. No new overlay primitives.
+No `useRovingFocus` on the list. No new overlay primitives. No changes to
+`GhostCombobox` or `GhostComboboxContent` source.
 
 ## Test plan
 
@@ -540,8 +557,8 @@ implemented. No breaking changes to Dialog or Combobox.
 Decisions below need **Zac sign-off** before implementation. This spec does not
 pre-decide them silently.
 
-1. **Dedicated parts vs documented composition.** Option A approved
-   composition of Dialog + Combobox. Should v1 ship only the dedicated
+1. **Dedicated parts vs documented composition.** Option A approved Dialog +
+   combobox behavior via `useGhostCombobox`. Should v1 ship only the dedicated
    `GhostCommandPalette*` tree (recommended), or also export a documented
    "manual compose" recipe without a root coordinator?
 
