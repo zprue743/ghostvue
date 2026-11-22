@@ -136,10 +136,10 @@ Selection is always keyed by **`RowId`**.
 
 | Mode               | `manualPagination` | Header select-all                                                     | Cross-page selection                                                                     |
 | ------------------ | ------------------ | --------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
-| Local full dataset | `false`            | All ids in **`getRowModel()`** (one list)                             | N/A                                                                                      |
+| Local full dataset | `false`            | All ids in **`getPrePaginationRowModel()`** (filtered, pre-page)      | N/A                                                                                      |
 | Server page        | `true`             | All ids in **`getRowModel()`** (e.g. 3 of 25 after page-local filter) | Explicit toggles; **no prune** on page swap; ids on other pages kept in `selectedRowIds` |
 
-**`getRowModel()`** is the single visible row set for rendering and select-all.
+**`getRowModel()`** drives tbody rendering. Select-all uses **`getPrePaginationRowModel()`** locally and **`getRowModel()`** on server pages. Header `indeterminate` uses the same set as select-all.
 
 **Query-wide bulk selection** (“select all 10,000 matching the filter on the
 server”) is **consumer-owned**, not a built-in phase-one affordance.

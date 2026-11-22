@@ -183,7 +183,7 @@ runs local filtering.
 | ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Global filter participation**      | A column participates iff it has an accessor (`accessorKey` or `accessorFn`) and `enableColumnFilter !== false` (default **true** when an accessor exists). Columns with `enableColumnFilter: false` are ignored by the global filter.            |
 | **Global filter match**              | When `globalFilter` is a string, a row matches if **any** participating column’s cell value matches (logical **OR**). Comparison is **case-insensitive** substring match after `String(value)` on the cell side (`'acme'` matches `'ACME Corp'`). |
-| **Global filter non-string**         | Non-string `globalFilter` values use **strict equality** (`===`) against each participating column’s cell value; first match wins.                                                                                                                |
+| **Global filter non-string**         | Non-string `globalFilter` values use **strict equality** (`===`) against each participating column’s cell value (logical **OR** across columns).                                                                                                  |
 | **Clear global filter**              | `undefined`, `null`, or `''` (empty string) means no global filter; all rows pass the global stage.                                                                                                                                               |
 | **Column filter clear**              | A `columnFilters` entry is inactive when `value` is `undefined`, `null`, or `''`. Inactive entries do not constrain rows.                                                                                                                         |
 | **Column filter default `filterFn`** | When `filterFn` is omitted and the filter value is a non-empty string: case-insensitive substring on `String(cellValue)`. When the filter value is not a string: strict equality against the cell value.                                          |
@@ -204,13 +204,14 @@ column excluded via `enableColumnFilter: false`.
 | `true`             | `false`         | `true`            | One server page | **required**                | Page-local sort only                                      |
 | `true`             | `true`          | `true`            | One server page | **required**                | No reorder/filter; display `data` as-is                   |
 
-**Single visible row model:** whatever processing this matrix applies to the
-current `data` slice produces **`getRowModel()`** — the only row list used for
-**body rendering**, **header select-all**, and **header `indeterminate`** on the
-current view. There is no parallel “raw `data`” render path. Example (server
-page + page-local filter): server returns 25 rows, local filter leaves 3 →
-`getRowModel()` has 3 rows in processed order; select-all toggles exactly those 3
-ids; ids selected on other pages remain in `selectedRowIds`.
+**Row lists:** **`getPrePaginationRowModel()`** is sort + filter on the processing
+input (before pagination). **`getRowModel()`** is the paginated slice used for
+**tbody rendering** only when local pagination applies (server page: typically the
+processed page slice). **Select-all scope** (see below): **local** —
+`getPrePaginationRowModel()`; **server** — `getRowModel()`. Example (server page
+
+- page-local filter): 25 loaded, 3 visible after filter → body shows 3;
+  select-all toggles those 3; ids on other pages remain in `selectedRowIds`.
 
 **`pageCount` override:** optional. When omitted, `pageCount = max(1, ceil(rowCount / pageSize))`.
 When `rowCount === 0`, effective **`pagination.pageIndex` is 1** and
@@ -323,7 +324,7 @@ const expandedRowIds = ref<DataTableRowId[]>(['inv-2'])
         rows,
         getBodyCellContext,
         headerSelectionState,
-        toggleAllVisibleRowsSelected,
+        toggleAllRowsSelected,
       }"
     >
       <label>
@@ -338,7 +339,7 @@ const expandedRowIds = ref<DataTableRowId[]>(['inv-2'])
                 :model-value="headerSelectionState.allSelected"
                 :indeterminate="headerSelectionState.someSelected"
                 aria-label="Select all visible invoices"
-                @update:model-value="toggleAllVisibleRowsSelected"
+                @update:model-value="toggleAllRowsSelected"
               />
             </GhostTableHeaderCell>
             <GhostTableHeaderCell
@@ -410,8 +411,8 @@ fixture. Writable `ref` v-models accept composable updates.
 | `headers`                      | —                                      | Column header models (`column`, `toggleSort`, …) independent of body row count                                                        |
 | `detailRowProps`               | expansion `<tr>` via `GhostTableRow`   | Keeps `GhostTableRow` `data-part="row"`; adds **`data-detail-row="true"`** (consumer merge must not overwrite `data-part`; see below) |
 | `rows`                         | —                                      | Rows from `getRowModel()` with `cells`, selection helpers, etc.                                                                       |
-| `headerSelectionState`         | header `GhostCheckbox`                 | `{ allSelected, someSelected }` over **visible** row ids only                                                                         |
-| `toggleAllVisibleRowsSelected` | header checkbox                        | Toggles every id in current `getRowModel()`                                                                                           |
+| `headerSelectionState`         | header `GhostCheckbox`                 | `{ allSelected, someSelected }` over the **select-all target** (local: `getPrePaginationRowModel()` ids; server: `getRowModel()` ids) |
+| `toggleAllRowsSelected`        | header checkbox                        | Toggles every id in that same target set (not the current page only when local)                                                       |
 
 Sort direction on headers is **single-column** in phase one (at most one entry in
 `sorting`).
@@ -461,7 +462,7 @@ All use `useControllableState`.
   combinatorial updates; tests assert single fetch).
 - Default slot — bindings in table above.
 - `header`, `cell`, `expandedRow` slots — optional overrides.
-- Exposed: `toggleAllPageRowsSelected`, `toggleRowSelected`, `toggleRowExpanded`,
+- Exposed: `toggleAllRowsSelected`, `toggleRowSelected`, `toggleRowExpanded`,
   `resetRowSelection`, etc.
 
 `useGhostDataTableServerRequest` — `{ begin(requestId), isLatest(requestId) }`
@@ -469,17 +470,20 @@ All use `useControllableState`.
 
 ### Select-all behavior
 
-Select-all always targets **`getRowModel()`** (visible rows on the current view
-after all applicable processing in the [manual matrix](#manual-processing-matrix)).
+Header checkbox and **`headerSelectionState`** use the **same row-id set** as
+**`toggleAllRowsSelected`**.
 
-| Mode                            | Select-all effect                                                                                                   |
-| ------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
-| Local full dataset              | Toggles every row in the current **paginated, filtered** view (same set as `rows` in the default slot).             |
-| Server page + page-local filter | Toggles only the **visible subset** of the loaded page (e.g. 3 of 25); ids on other pages stay in `selectedRowIds`. |
+| Mode                              | Select-all target                | Effect                                                                                                                 |
+| --------------------------------- | -------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| Local (`manualPagination: false`) | **`getPrePaginationRowModel()`** | All rows matching current filters/sort **across pages** (not only the current page).                                   |
+| Server (`manualPagination: true`) | **`getRowModel()`**              | Visible subset of the loaded page after page-local processing (e.g. 3 of 25). Cross-page ids stay in `selectedRowIds`. |
 
 Header mixed state uses **`indeterminate`** on `GhostCheckbox`
-([checkbox-spec](/specs/checkbox)). Use `headerSelectionState` from the default
-slot.
+([checkbox-spec](/specs/checkbox)).
+
+**Acceptance (local):** 100 rows, page size 25, filter matches **40** →
+select-all adds **40** ids (including rows not on the current page); navigating
+pages does not drop them.
 
 **Acceptance (server + page-local filter):** load 25 rows, filter to 3 visible,
 select-all selects exactly those 3; clear filter; prior cross-page selections
@@ -487,12 +491,12 @@ unchanged.
 
 ### Derived models
 
-| Model                        | Definition                                                                                                                                              |
-| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `getPrePaginationRowModel()` | After sort + filter on the processing input (`data` or full local set per matrix); **before** pagination slice.                                         |
-| `getRowModel()`              | Rows rendered in the body and used for select-all — after matrix processing **and** pagination slice when local pagination applies. **Not** raw `data`. |
-| `getPaginationRowModel()`    | **Alias of `getRowModel()`** in phase one (same reference; no second row list).                                                                         |
-| `getSelectedRowModel()`      | Objects for ids in `selectedRowIds` that appear in the current `getRowModel()` (for display only; full id list may be larger on server).                |
+| Model                        | Definition                                                                                                                                                                                 |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `getPrePaginationRowModel()` | After sort + filter on the processing input (`data` or full local set per matrix); **before** pagination slice.                                                                            |
+| `getRowModel()`              | Rows rendered in the body (`rows` in the default slot) — after matrix processing **and** pagination slice when local pagination applies. Select-all uses this set only in **server** mode. |
+| `getPaginationRowModel()`    | **Alias of `getRowModel()`** in phase one (same reference; no second row list).                                                                                                            |
+| `getSelectedRowModel()`      | Objects for ids in `selectedRowIds` that appear in the current `getRowModel()` (for display only; full id list may be larger on server).                                                   |
 
 ## State model
 
@@ -620,7 +624,9 @@ Reuses `GhostTable*`, `GhostPagination`, `GhostCheckbox`, `GhostEmptyState`,
 - **Unit:** manual-processing matrix, empty `rowCount` pagination, coalesced
   `stateChange`, page-local vs global sort semantics.
 - **Unit:** default filter contract (case, clear, OR/AND, omitted `filterFn`).
-- **Unit:** `getRowModel()` drives render + select-all (3-of-25 server filter).
+- **Acceptance:** local select-all over pre-pagination set (100 rows, page 25, 40
+  matches filter).
+- **Unit:** server select-all uses `getRowModel()` only (3-of-25 page-local filter).
 - **Unit:** local pruning uses source `data` rows, not filtered view (select A,
   filter out A, refresh `data`, clear filter).
 - **Acceptance:** cross-page selection test (pages 1 → 2 → 1).
@@ -644,15 +650,16 @@ Reuses `GhostTable*`, `GhostPagination`, `GhostCheckbox`, `GhostEmptyState`,
 
 ## Decisions recorded (Zac, PR #265 review)
 
-| Topic                   | Decision                                                          |
-| ----------------------- | ----------------------------------------------------------------- |
-| Architecture            | Option A: composable + native `GhostTable`                        |
-| `getRowId`              | Required in every build                                           |
-| Filter debouncing       | Consumer-owned                                                    |
-| Themed `GhostDataTable` | **Not** in phase one; headless examples first                     |
-| Benchmark thresholds    | Informational until repeated CI runs show variance                |
-| Server `stateChange`    | One emit per user action with full `query`                        |
-| Server selection        | No prune on page change; select-all = visible page only on server |
+| Topic                   | Decision                                                                |
+| ----------------------- | ----------------------------------------------------------------------- |
+| Architecture            | Option A: composable + native `GhostTable`                              |
+| `getRowId`              | Required in every build                                                 |
+| Filter debouncing       | Consumer-owned                                                          |
+| Themed `GhostDataTable` | **Not** in phase one; headless examples first                           |
+| Benchmark thresholds    | Informational until repeated CI runs show variance                      |
+| Server `stateChange`    | One emit per user action with full `query`                              |
+| Local select-all        | `getPrePaginationRowModel()` (all filtered rows, not current page only) |
+| Server selection        | No prune on page change; select-all = `getRowModel()` visible subset    |
 
 ## Open architectural questions
 
