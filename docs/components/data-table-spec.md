@@ -36,6 +36,18 @@ sections:
   compatibility:
     applicable: true
 unresolvedQuestions:
+  - question: 'Full-local filter change: keep pageIndex then clamp to last valid page when filtered count shrinks.'
+    blocking: false
+    reviewer: Zac
+  - question: 'pageIndex vs pageCount clamping; rowCount === 0 forces pageIndex 1.'
+    blocking: false
+    reviewer: Zac
+  - question: 'Local manualPagination false: clamp pageIndex on data reference change instead of reset to page 1.'
+    blocking: false
+    reviewer: Zac
+  - question: 'Expose retry() re-emitting stateChange with same query and new internal requestId.'
+    blocking: false
+    reviewer: Zac
   - question: 'Multi-column sort keyboard and secondary aria-sort when enableMultiSort ships.'
     blocking: false
     reviewer: Zac
@@ -247,9 +259,11 @@ pages remain in `selectedRowIds`.
 **`pageCount` override:** optional. When omitted, `pageCount = max(1, ceil(rowCount / pageSize))`.
 **`pageIndex` clamping** (proposed; [pending Zac review](#decisions-pending-zacs-review)):
 after any derived `pageCount` change, if `pagination.pageIndex > pageCount`, set
-`pageIndex` to `pageCount`. When `rowCount === 0`, **`pageCount` is 1** and effective
-**`pagination.pageIndex` is 1** (empty table, including page-local server pages —
-matches [GhostPagination](/specs/pagination)).
+`pageIndex` to `pageCount`. When **`rowCount === 0`** (query-wide empty, including
+server total), **`pageCount` is 1** and effective **`pagination.pageIndex` is 1**
+(matches [GhostPagination](/specs/pagination)). When **`rowCount > 0`** but
+**`getRowModel()`** is empty after page-local processing, **keep `pageIndex`**
+(recorded acceptance: server page 4 + filter → 0 visible rows stays on page 4).
 
 ### Props and configuration
 
@@ -675,9 +689,9 @@ unchanged.
 - Shared **1-based** `pageIndex` with `GhostPagination`.
 - Whenever **`pageIndex > pageCount`**, clamp to `pageCount` (proposed default;
   [pending Zac review](#decisions-pending-zacs-review)).
-- **`rowCount === 0`** → **`pageCount` 1** and effective **`pageIndex` 1** for
-  local full, server page, and page-local modes (empty body + pagination chrome
-  stays coherent).
+- **`rowCount === 0`:** **`pageCount` 1**, **`pageIndex` 1** (query-wide empty).
+- **`rowCount > 0`** with empty **`getRowModel()`:** keep **`pageIndex`** (page-local
+  filter on a server page does not coerce page 1).
 
 ### Selection
 
@@ -695,11 +709,11 @@ Required acceptance test:
 
 ### Loading, empty, disabled, read-only, and error states
 
-| State      | Behavior                                                                   |
-| ---------- | -------------------------------------------------------------------------- |
-| `loading`  | `aria-busy="true"` via `tableRootProps`                                    |
-| Empty      | `GhostEmptyState` in body; **`pageIndex` clamped to 1** (all manual modes) |
-| `disabled` | No emits from controls                                                     |
+| State      | Behavior                                                                                                                                                                                                                                                                                       |
+| ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `loading`  | `aria-busy="true"` via `tableRootProps`                                                                                                                                                                                                                                                        |
+| Empty body | `GhostEmptyState` when **`getRowModel()`** has no rows. **`rowCount === 0`:** `pageCount` 1, `pageIndex` 1. **`rowCount > 0`** with an empty visible slice (page-local filter on server page 4): **keep `pageIndex`**, zero `stateChange` (aligned with recorded pagination reset acceptance). |
+| `disabled` | No emits from controls                                                                                                                                                                                                                                                                         |
 
 ### Async behavior
 
@@ -893,12 +907,13 @@ Reuses `GhostTable*`, `GhostPagination`, `GhostCheckbox`, `GhostEmptyState`,
 
 Proposed pagination defaults (round 5); not yet part of recorded decisions.
 
-| Topic                         | Proposed default                                                                                                                                   |
-| ----------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Full-local filter change      | Keep current `pageIndex`, then **clamp** to the last valid page (`min(pageIndex, pageCount)`) when the filtered row count shrinks                  |
-| `pageIndex` vs `pageCount`    | After any `pageCount` change, if `pageIndex > pageCount`, **clamp** to `pageCount`; empty result (`rowCount === 0`) → `pageCount` 1, `pageIndex` 1 |
-| `data` reference (local mode) | **Clamp** `pageIndex` instead of resetting to page 1 on every refresh/edit so in-place updates keep the user on the same page when still valid     |
-| Server **Retry**              | Expose **`retry()`** that re-emits `stateChange` with the frozen `query` and a composable-minted `requestId`                                       |
+| Topic                               | Proposed default                                                                                                                                                                                                             |
+| ----------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Full-local filter change            | Keep current `pageIndex`, then **clamp** to the last valid page (`min(pageIndex, pageCount)`) when the filtered row count shrinks                                                                                            |
+| `pageIndex` vs `pageCount`          | After any `pageCount` change, if `pageIndex > pageCount`, **clamp** to `pageCount`; empty result (`rowCount === 0`) → `pageCount` 1, `pageIndex` 1                                                                           |
+| `data` reference (local mode)       | **Clamp** `pageIndex` instead of resetting to page 1 on every refresh/edit so in-place updates keep the user on the same page when still valid                                                                               |
+| Server **Retry**                    | Expose **`retry()`** that re-emits `stateChange` with the frozen `query` and a composable-minted `requestId`                                                                                                                 |
+| Server **`manualPagination`** clamp | When a derived **`pageCount`** change forces **`pageIndex` down** (e.g. server `rowCount` shrinks), **emit one `stateChange`** with the clamped `query.pagination.pageIndex` so consumers refetch the valid page (proposed). |
 
 ## Open architectural questions
 
