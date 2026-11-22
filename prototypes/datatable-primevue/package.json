@@ -1,0 +1,29 @@
+{
+  "name": "@ghostvue-prototype/datatable-primevue",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "typecheck": "vue-tsc --noEmit && vue-tsc -p tsconfig.type-tests.json --noEmit",
+    "test:e2e": "playwright test",
+    "test:loc": "node scripts/measure-loc.mjs",
+    "verify": "pnpm run typecheck && pnpm run build && pnpm run test:e2e"
+  },
+  "dependencies": {
+    "@primevue/themes": "4.2.5",
+    "primevue": "4.2.5",
+    "vue": "3.5.45",
+    "vue-router": "4.5.0"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "4.10.1",
+    "@playwright/test": "1.51.0",
+    "@vitejs/plugin-vue": "5.2.1",
+    "typescript": "5.7.3",
+    "vite": "6.0.11",
+    "vue-tsc": "2.2.0"
+  }
+}
