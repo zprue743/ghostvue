@@ -126,28 +126,36 @@ clamping.
   page 4 with a new filter or double-fetch.
 - `stateChange` includes a monotonic `requestId` for `useGhostDataTableServerRequest`.
 - Filter input debouncing is **consumer-owned** (composable does not debounce).
+- Default local filter matching rules are specified in the component spec as
+  **proposed** pending Zac confirmation (case rules, OR global / AND column,
+  clear sentinels, default `filterFn`).
 
 ### 6. Selection and select-all
 
 Selection is always keyed by **`RowId`**.
 
-| Mode               | `manualPagination` | Header select-all                                                | Cross-page selection                                                                                                                                            |
-| ------------------ | ------------------ | ---------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Local full dataset | `false`            | All rows matching the **local filter pipeline** (pre-pagination) | N/A (all rows are addressable)                                                                                                                                  |
-| Server page        | `true`             | All **visible** rows on the current page only                    | Explicit per-row toggles only; **selected ids are preserved** when `data` changes to another page (**no pruning** of ids missing from the current `data` slice) |
+| Mode               | `manualPagination` | Header select-all                                                     | Cross-page selection                                                                     |
+| ------------------ | ------------------ | --------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| Local full dataset | `false`            | All ids in **`getRowModel()`** (one list)                             | N/A                                                                                      |
+| Server page        | `true`             | All ids in **`getRowModel()`** (e.g. 3 of 25 after page-local filter) | Explicit toggles; **no prune** on page swap; ids on other pages kept in `selectedRowIds` |
+
+**`getRowModel()`** is the single visible row set for rendering and select-all.
 
 **Query-wide bulk selection** (“select all 10,000 matching the filter on the
 server”) is **consumer-owned**, not a built-in phase-one affordance.
 
-Pruning selected or expanded ids that disappear from a **local** dataset remains
-allowed when `manualPagination` is false and `data` reference changes reflect
-removed entities.
+When `manualPagination` is false, pruning on `data` reference change uses
+**source rows** in the new array only (ids absent from source are dropped).
+Filters and pagination must **not** cause pruning. Example: row selected, filtered
+out of view, source refreshed with same entities, filter cleared → selection kept.
 
 ### 7. Expansion
 
 - `expandedRowIds` keyed by `RowId`; same **no-prune-on-server-page-change**
   rule as selection when `manualPagination` is true.
-- Detail row follows the data row as a native `<tr>` with colspan.
+- Detail row follows the data row as a native `<tr>` with colspan. Style with
+  `data-detail-row="true"` on `GhostTableRow`; keep `data-part="row"` (part
+  merge order in `mergeGhostTablePartAttrs` overwrites consumer `data-part`).
 
 ### 8. Performance and benchmarks
 
