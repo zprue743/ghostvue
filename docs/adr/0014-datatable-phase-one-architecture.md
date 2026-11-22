@@ -80,7 +80,7 @@ There is **no** `@ghostvue/data-table` package, **no** global table manager, and
 
 - Row type `TData` is consumer-defined. The library never clones the full
   `data` array.
-- **`getRowId` is required in every build** (no index fallback in production).
+- **`getRowId` is required in every build** (no index fallback in any build).
 - Columns are `DataTableColumnDef<TData>` with **`id`**, optional `accessorKey`
   or `accessorFn`, optional `cell` render hook, and local `sortFn` / `filterFn`
   when manual flags allow page-local processing.
@@ -176,30 +176,61 @@ response and returns later.
 
 ## Alternatives considered
 
-(Unchanged from initial proposal: grid-first, TanStack adapter, monolithic-only
-API, immediate virtualization — all rejected or deferred; see git history and
-initial ADR text.)
+### Option B — Spreadsheet-first `role="grid"` / treegrid
+
+Rejected for phase one. Delivers Excel-like keyboard navigation but fights native
+table semantics, duplicates work with future Tree treegrid, and diverges from the
+approved native-table direction.
+
+### Option C — TanStack Table adapter as the public API
+
+Rejected. Strong ecosystem but centers a non-Vue state model, encourages row
+record shapes the philosophy rejects, and hides Vue composition behind an
+adapter whose upgrades become a public compatibility surface.
+
+### Option D — Monolithic `GhostDataTable` SFC that owns all markup
+
+Rejected as the only API. Useful for quick starts as an optional themed bundle,
+but the headless contract must remain composable `GhostTable` parts for
+custom layouts and incremental adoption.
+
+### Option E — Immediate shared virtualization primitive
+
+Deferred. No phase-one consumer requires virtual rows when pagination is the
+default; premature extraction risks another slightly different virtualizer
+([philosophy.md](../philosophy.md)).
 
 ## Consequences
 
 **Benefits**
 
+- Aligns with existing `GhostTable`, `GhostPagination`, and `GhostCheckbox`
+  boundaries.
 - Server pagination cannot silently drop cross-page selection.
 - Coalesced `stateChange` prevents duplicate or stale-page fetches.
 - Manual-flag matrix matches how real admin tables mix client and server steps.
+- Clear deferral lines for virtualization and grid keyboard patterns.
 
 **Costs**
 
+- Consumers must compose more markup than a single monolithic table component.
 - Consumers own query-wide bulk actions and debouncing.
+- Server mode requires consumer discipline for `rowCount`, manual flags, and
+  stale-response guards.
 - Phase one omits themed batteries-included markup.
+- Benchmark and threshold proposals need maintainer approval before CI
+  enforcement.
 
 **Follow-up work**
 
 - Finalize [data-table spec](/specs/data-table) after PR #265 reviews.
 - Complete **pre-freeze** GhostVue vs PrimeVue invoice prototype before
   `specStatus: approved` (documented in spec; no PrimeVue in-repo).
+- Split implementation into child issues listed in the spec (composable core,
+  composition examples, themed wrapper, bench harness).
 - Implement child issues; defer multi-sort, virtualization, treegrid keyboard,
   optional PrimeVue 10k browser benchmark doc.
+- Separate specs for virtualization and treegrid navigation when prioritized.
 
 ## Compatibility implications
 
