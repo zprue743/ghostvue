@@ -366,11 +366,11 @@ Enforce via existing manifest checker: `@ghostvue/mcp` must not list `vue`, `@gh
 
 **Direct runtime dependencies (exact pins).**
 
-| Package                     | Pin     | Role                                                                                             |
-| --------------------------- | ------- | ------------------------------------------------------------------------------------------------ |
-| `@modelcontextprotocol/sdk` | 1.32.2  | Official MCP server (`./server`), stdio transport, `outputSchema` / `structuredContent`          |
-| `zod`                       | 3.25.76 | Required SDK peer (`peerDependenciesMeta.zod.optional: false` on 1.32.2) — tool input validation |
-| `ajv`                       | 8.20.0  | Serve-time manifest validation (`ajv/dist/2020`) against bundled schema — **declared directly**  |
+| Package                     | Pin    | Role                                                                                            |
+| --------------------------- | ------ | ----------------------------------------------------------------------------------------------- |
+| `@modelcontextprotocol/sdk` | 1.32.2 | Official MCP server (`./server`), stdio transport, `outputSchema` / `structuredContent`         |
+| `zod`                       | 4.6.7  | Required SDK peer (`^3.25 \|\| ^4.0`; pin 4.x on new package) — tool input validation           |
+| `ajv`                       | 8.20.0 | Serve-time manifest validation (`ajv/dist/2020`) against bundled schema — **declared directly** |
 
 `@ghostvue/mcp` may also depend on `@ghostvue/core` (workspace; manifest schema JSON).
 
@@ -379,13 +379,14 @@ Enforce via existing manifest checker: `@ghostvue/mcp` must not list `vue`, `@gh
 | Measurement                                                  | Bytes      | Notes                                                |
 | ------------------------------------------------------------ | ---------- | ---------------------------------------------------- |
 | `npm view … dist.unpackedSize` (`@modelcontextprotocol/sdk`) | 4,492,221  | SDK package alone                                    |
-| `du -sb node_modules` (sdk + zod + ajv pins, 95 packages)    | 14,852,794 | ~14.2 MiB production tree including HTTP transitives |
+| `du -sb node_modules` (sdk + zod + ajv pins, 95 packages)    | 17,407,541 | ~16.6 MiB production tree including HTTP transitives |
 
-Command (not committed): `npm i --prefix /tmp/gho17-mcp-measure @modelcontextprotocol/sdk@1.32.2 zod@3.25.76 ajv@8.20.0`.
+Command (not committed): `npm i --prefix /tmp/gho17-mcp-measure-z4 @modelcontextprotocol/sdk@1.32.2 zod@4.6.7 ajv@8.20.0`.
 
 **Size budget (excluding bundled GhostVue assets in `dist/assets/`):** published
-`@ghostvue/mcp` production `node_modules` must remain **≤ 18 MiB** installed
-(~3.8 MiB headroom above the 2026-11-22 measurement). CI records `du -sb` (or
+`@ghostvue/mcp` production `node_modules` must remain **≤ 18 MiB** installed. The
+2026-11-22 measurement **exceeds 16 MiB** (~16.6 MiB); the 18 MiB cap is
+unchanged with ~1.4 MiB headroom. CI records `du -sb` (or
 equivalent) on the package fixture after `pnpm --filter @ghostvue/mcp install
 --prod`.
 
@@ -459,6 +460,6 @@ All tools map failures to MCP tool errors with:
 ## 11. Decisions needing Zac's sign-off
 
 1. Accept [ADR 0015](../adr/0015-mcp-server-first-release.md) (package boundary + stdio-first scope).
-2. Accept runtime dependencies per §7 (`@modelcontextprotocol/sdk@1.32.2`, `zod@3.25.76`, `ajv@8.20.0`) and the **≤ 18 MiB** installed `node_modules` cap.
+2. Accept runtime dependencies per §7 (`@modelcontextprotocol/sdk@1.32.2`, `zod@4.6.7`, `ajv@8.20.0`) and the **≤ 18 MiB** installed `node_modules` cap.
 3. Accept offline bundle contract (§4) including docs corpus = sidebar/`llms-full` equivalence.
 4. Approve proposed child-issue split (§9) or reprioritize GHO-205/206 relative to implementation.

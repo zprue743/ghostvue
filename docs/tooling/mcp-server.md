@@ -53,7 +53,7 @@ Tool responses use MCP **structured content** (`structuredContent`) with a decla
 
 ## Dependencies
 
-Runtime pins are **not yet approved** for the lockfile. Zac sign-off is required for `@modelcontextprotocol/sdk@1.32.2`, `zod@3.25.76`, and `ajv@8.20.0` — see [dependencies.md](../standards/dependencies.md) § `@ghostvue/mcp`.
+Runtime pins are **not yet approved** for the lockfile. Zac sign-off is required for `@modelcontextprotocol/sdk@1.32.2`, `zod@4.6.7`, and `ajv@8.20.0` — see [dependencies.md](../standards/dependencies.md) § `@ghostvue/mcp`.
 
 ## Full contract
 

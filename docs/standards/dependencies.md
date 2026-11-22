@@ -137,17 +137,17 @@ Residual advisories, all development-only and absent from `pnpm audit --prod`:
 
 **Candidate runtime dependencies (exact pins, MIT):**
 
-| Package                     | Pin     | Why                                                                                                     |
-| --------------------------- | ------- | ------------------------------------------------------------------------------------------------------- |
-| `@modelcontextprotocol/sdk` | 1.32.2  | Official MCP stdio server, tool registration, protocol framing                                          |
-| `zod`                       | 3.25.76 | Required by the SDK (`peerDependenciesMeta.zod.optional: false` on 1.32.2) for tool input validation    |
-| `ajv`                       | 8.20.0  | Serve-time manifest validation against bundled `@ghostvue/core/manifest.schema.json` (same major as CI) |
+| Package                     | Pin    | Why                                                                                                     |
+| --------------------------- | ------ | ------------------------------------------------------------------------------------------------------- |
+| `@modelcontextprotocol/sdk` | 1.32.2 | Official MCP stdio server, tool registration, protocol framing                                          |
+| `zod`                       | 4.6.7  | Required SDK peer (`^3.25 \|\| ^4.0`; pin 4.x for new package) — tool input validation                  |
+| `ajv`                       | 8.20.0 | Serve-time manifest validation against bundled `@ghostvue/core/manifest.schema.json` (same major as CI) |
 
 Stdio-only code should import `@modelcontextprotocol/sdk/server` narrowly; the SDK
 still installs transitive HTTP packages (`hono`, `express`, …). Measured installed
-`node_modules` for these three direct pins plus transitives: **14,852,794 bytes**
-(`npm i --prefix /tmp` scratch, 2026-11-22); SDK package alone **4,492,221 bytes**
-unpacked per `npm view @modelcontextprotocol/sdk@1.32.2 dist.unpackedSize`.
-Implementation must stay within the plan’s published size cap (excluding bundled
-GhostVue assets). Record audit outcome and any cap change here when dependencies
-land.
+`node_modules` for these three direct pins plus transitives: **17,407,541 bytes**
+(scratch `npm i --prefix /tmp` with sdk@1.32.2, zod@4.6.7, ajv@8.20.0,
+2026-11-22); SDK package alone **4,492,221 bytes** unpacked per
+`npm view @modelcontextprotocol/sdk@1.32.2 dist.unpackedSize`. Measurement
+exceeds 16 MiB; **18 MiB cap** unchanged per plan §7. Record audit outcome when
+dependencies land.
