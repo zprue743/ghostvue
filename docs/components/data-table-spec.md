@@ -36,9 +36,6 @@ sections:
   compatibility:
     applicable: true
 unresolvedQuestions:
-  - question: 'Confirm default globalFilter/column filter matching rules (case, OR vs AND, clear sentinels).'
-    blocking: false
-    reviewer: Zac
   - question: 'Multi-column sort keyboard and secondary aria-sort when enableMultiSort ships.'
     blocking: false
     reviewer: Zac
@@ -208,24 +205,25 @@ for an `accessorFn` column returning `number`.
 Default comparators (when local sorting runs): locale-aware strings, numeric
 subtract, `Date#getTime`, `sortUndefined` default `'last'`.
 
-### Default filtering contract (proposed — Zac confirmation)
+### Default filtering contract (approved)
 
 Applies when the corresponding `manualFiltering` flag is `false` and the composable
-runs local filtering.
+runs local filtering. Approved by Zac (PR #265, fourth review).
 
-| Rule                                 | Proposed default                                                                                                                                                                                                                                  |
-| ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Global filter participation**      | A column participates iff it has an accessor (`accessorKey` or `accessorFn`) and `enableColumnFilter !== false` (default **true** when an accessor exists). Columns with `enableColumnFilter: false` are ignored by the global filter.            |
-| **Global filter match**              | When `globalFilter` is a string, a row matches if **any** participating column’s cell value matches (logical **OR**). Comparison is **case-insensitive** substring match after `String(value)` on the cell side (`'acme'` matches `'ACME Corp'`). |
-| **Global filter non-string**         | Non-string `globalFilter` values use **strict equality** (`===`) against each participating column’s cell value (logical **OR** across columns).                                                                                                  |
-| **Clear global filter**              | `undefined`, `null`, or `''` (empty string) means no global filter; all rows pass the global stage.                                                                                                                                               |
-| **Column filter clear**              | A `columnFilters` entry is inactive when `value` is `undefined`, `null`, or `''`. Inactive entries do not constrain rows.                                                                                                                         |
-| **Column filter default `filterFn`** | When `filterFn` is omitted and the filter value is a non-empty string: case-insensitive substring on `String(cellValue)`. When the filter value is not a string: strict equality against the cell value.                                          |
-| **Pipeline order**                   | Global filter stage, then per-column filters (logical **AND** across active column filters).                                                                                                                                                      |
+| Rule                                 | Default                                                                                                                                                                                                                                                                                                  |
+| ------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Global filter participation**      | A column participates iff it has an accessor (`accessorKey` or `accessorFn`) and `enableColumnFilter !== false` (default **true** when an accessor exists). Columns with `enableColumnFilter: false` are ignored by the global filter.                                                                   |
+| **Global filter match**              | When `globalFilter` is a string, a row matches if **any** participating column’s cell value matches (logical **OR**). **Skip** columns whose value is **`null` or `undefined`** (do not coerce with `String`). Otherwise case-insensitive substring on `String(value)` (`'acme'` matches `'ACME Corp'`). |
+| **Global filter non-string**         | Non-string `globalFilter` values use **strict equality** (`===`) against each participating column’s cell value (logical **OR** across columns). **Skip** `null` / `undefined` cell values.                                                                                                              |
+| **Clear global filter**              | `undefined`, `null`, or `''` (empty string) means no global filter; all rows pass the global stage.                                                                                                                                                                                                      |
+| **Column filter clear**              | A `columnFilters` entry is inactive when `value` is `undefined`, `null`, or `''`. Inactive entries do not constrain rows.                                                                                                                                                                                |
+| **Column filter default `filterFn`** | When `filterFn` is omitted and the filter value is a non-empty string: case-insensitive substring on `String(cellValue)` unless `cellValue` is **`null` or `undefined`** (row fails the column filter for that value). Non-string filter values: strict equality; skip `null` / `undefined` cells.       |
+| **Pipeline order**                   | Global filter stage, then per-column filters (logical **AND** across active column filters).                                                                                                                                                                                                             |
 
 Required tests when implemented: global case-insensitivity; OR across columns;
 AND across column filters; clear sentinels; omitted `filterFn` on a column;
-column excluded via `enableColumnFilter: false`.
+column excluded via `enableColumnFilter: false`; row with **missing** `customer`
+does not match global `'un'` (null/undefined skip).
 
 ### Manual-processing matrix
 
@@ -351,8 +349,10 @@ headers. This is the **gate for freezing** interaction bindings and the
 1. Focus the **Amount** sort button; press `Space` or `Enter` to sort.
 2. `Space` on row **inv-2** checkbox to toggle selection; `Space` on its expand
    button to toggle expansion (inv-2 starts selected and expanded).
-3. Type a global filter that matches **no** rows; **header row stays mounted**
-   (sort buttons and column titles visible) while the body shows empty state.
+3. `Space` on row **inv-2** **expand** button (`getRowExpandButtonProps`) to
+   collapse, then `Space` again to reopen the detail row.
+4. Type a global filter that matches **no** rows; **header row stays mounted**;
+   body shows `GhostEmptyState` with visible **#title** text `No invoices`.
 
 ```vue
 <script setup lang="ts">
@@ -472,8 +472,10 @@ const expandedRowIds = ref<DataTableRowId[]>(['inv-2'])
         </GhostTableHead>
         <GhostTableBody>
           <GhostTableRow v-if="rows.length === 0">
-            <GhostTableCell :colspan="headers.length + 1">
-              <GhostEmptyState title="No invoices" />
+            <GhostTableCell :colspan="headers.length + 2">
+              <GhostEmptyState>
+                <template #title>No invoices</template>
+              </GhostEmptyState>
             </GhostTableCell>
           </GhostTableRow>
           <template v-for="row in rows" :key="row.rowId">
@@ -513,7 +515,7 @@ const expandedRowIds = ref<DataTableRowId[]>(['inv-2'])
               </GhostTableCell>
             </GhostTableRow>
             <GhostTableRow v-if="row.isExpanded" v-bind="row.detailRowProps">
-              <GhostTableCell :colspan="headers.length + 1">
+              <GhostTableCell :colspan="headers.length + 2">
                 Details for {{ row.rowId }}
               </GhostTableCell>
             </GhostTableRow>
@@ -531,20 +533,20 @@ fixture. Writable `ref` v-models accept composable updates.
 
 ### Renderless root slot bindings
 
-| Binding                                         | Host                                   | Contract                                                                                                                                  |
-| ----------------------------------------------- | -------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
-| `tableRootProps`                                | `GhostTable` root wrapper or `<table>` | `aria-busy` when `loading`; `data-ghost-data-table`; optional `aria-labelledby` / `aria-label` from consumer                              |
-| `getHeaderCellProps(columnId)`                  | `GhostTableHeaderCell`                 | `scope: 'col'`; `aria-sort`: `ascending` \| `descending` \| omitted on **primary** sort column only; `data-sort` for styling              |
-| `getRowProps(rowId)`                            | `GhostTableRow` (data row)             | `data-selected="true"` when selected; `data-expanded="true"` when expanded (boolean data attributes, independent)                         |
-| `headers`                                       | —                                      | Column header models (`column`, `toggleSort`, …) independent of body row count                                                            |
-| `detailRowProps`                                | expansion `<tr>` via `GhostTableRow`   | Keeps `GhostTableRow` `data-part="row"`; adds **`data-detail-row="true"`** (consumer merge must not overwrite `data-part`; see below)     |
-| `rows`                                          | —                                      | Rows from `getRowModel()` with `cells`, selection helpers, etc.                                                                           |
-| `headerSelectionState`                          | header `GhostCheckbox`                 | `{ allSelected, someSelected }` over the **select-all target** (local: `getPrePaginationRowModel()` ids; server: `getRowModel()` ids)     |
-| `toggleAllRowsSelected`                         | header checkbox                        | Toggles every id in that same target set (not the current page only when local)                                                           |
-| `getSortButtonProps(columnId, options?)`        | sort `button` in `<th>`                | `type="button"`; `disabled` when `disabled`; merges consumer attrs; does **not** set `aria-sort` (parent `<th>` via `getHeaderCellProps`) |
-| `getRowSelectionCheckboxProps(rowId, options?)` | row `GhostCheckbox`                    | `aria-label` from `options.label` or default pattern; selection state wired                                                               |
-| `getHeaderSelectionCheckboxProps(options?)`     | header `GhostCheckbox`                 | Same for select-all; pair with `headerSelectionState`                                                                                     |
-| `getRowExpandButtonProps(rowId, options?)`      | expand `button`                        | `type="button"`; `aria-expanded`; `aria-controls` → detail row id; `aria-label` localizable via `options.label`                           |
+| Binding                                         | Host                                   | Contract                                                                                                                                                  |
+| ----------------------------------------------- | -------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `tableRootProps`                                | `GhostTable` root wrapper or `<table>` | `aria-busy` when `loading`; `data-ghost-data-table`; optional `aria-labelledby` / `aria-label` from consumer                                              |
+| `getHeaderCellProps(columnId)`                  | `GhostTableHeaderCell`                 | `scope: 'col'`; `aria-sort`: `ascending` \| `descending` \| omitted on **primary** sort column only; `data-sort` for styling                              |
+| `getRowProps(rowId)`                            | `GhostTableRow` (data row)             | `data-selected="true"` when selected; `data-expanded="true"` when expanded (boolean data attributes, independent)                                         |
+| `headers`                                       | —                                      | Column header models (`column`, `toggleSort`, …) independent of body row count                                                                            |
+| `detailRowProps`                                | expansion `<tr>` via `GhostTableRow`   | Keeps `GhostTableRow` `data-part="row"`; adds **`data-detail-row="true"`** (consumer merge must not overwrite `data-part`; see below)                     |
+| `rows`                                          | —                                      | Rows from `getRowModel()` with `cells`, selection helpers, etc.                                                                                           |
+| `headerSelectionState`                          | header `GhostCheckbox`                 | `{ allSelected, someSelected }` over the **select-all target** (local: `getPrePaginationRowModel()` ids; server: `getRowModel()` ids)                     |
+| `toggleAllRowsSelected`                         | header checkbox                        | Toggles every id in that same target set (not the current page only when local)                                                                           |
+| `getSortButtonProps(columnId, options?)`        | sort `button` in `<th>`                | `type="button"`; `disabled` when `disabled`; merges consumer attrs; does **not** set `aria-sort` (parent `<th>` via `getHeaderCellProps`)                 |
+| `getRowSelectionCheckboxProps(rowId, options?)` | row `GhostCheckbox`                    | `aria-label` from `options.label` or default pattern; selection state wired                                                                               |
+| `getHeaderSelectionCheckboxProps(options?)`     | header `GhostCheckbox`                 | Same for select-all; pair with `headerSelectionState`                                                                                                     |
+| `getRowExpandButtonProps(rowId, options?)`      | expand `button`                        | `type="button"`; `aria-expanded` synced to row; `aria-controls` → detail row id; `aria-label` localizable; native **Space** activates toggle when focused |
 
 Sort direction on headers is **single-column** in phase one (at most one entry in
 `sorting`).
@@ -568,31 +570,48 @@ All use `useControllableState`.
 
 **Reset rules** (applied before any `stateChange` emit):
 
-| Event                        | Sorting | Filters | Pagination                                                                                       | Selection / expansion |
-| ---------------------------- | ------- | ------- | ------------------------------------------------------------------------------------------------ | --------------------- |
-| `globalFilter` change        | kept    | updated | **page → 1**                                                                                     | kept                  |
-| `columnFilters` change       | kept    | updated | **page → 1**                                                                                     | kept                  |
-| `pagination.pageSize` change | kept    | kept    | **page → 1**                                                                                     | kept                  |
-| `data` reference change      | kept    | kept    | **page → 1** if local pagination; unchanged index if `manualPagination` only replaces page slice | see below             |
-| `sorting` change             | updated | kept    | kept                                                                                             | kept                  |
+| Event                        | Sorting | Filters | Pagination reset                                                                                                                                                                        |
+| ---------------------------- | ------- | ------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `globalFilter` change        | kept    | updated | **page → 1** only when **`manualFiltering: true`** (server filter refetch). When `manualFiltering: false` (full-local or **page-local** filter on a server page), **keep `pageIndex`**. |
+| `columnFilters` change       | kept    | updated | Same rule as `globalFilter`.                                                                                                                                                            |
+| `pagination.pageSize` change | kept    | kept    | **page → 1**                                                                                                                                                                            |
+| `data` reference change      | kept    | kept    | **page → 1** if local pagination (`manualPagination: false`); unchanged index if `manualPagination: true` and only the page slice was replaced                                          |
+| `sorting` change             | updated | kept    | kept                                                                                                                                                                                    |
+
+**Selection / expansion** on filter/pagination events: **kept** (pruning rules below).
+
+**Pagination reset acceptance:**
+
+| Setup                                                                      | Action on page 4            | Expected pagination | `stateChange` / server requests       |
+| -------------------------------------------------------------------------- | --------------------------- | ------------------- | ------------------------------------- |
+| `manualPagination: true`, **`manualFiltering: false`** (page-local filter) | Change global/column filter | **Stay on page 4**  | **Zero** (no server refetch)          |
+| `manualPagination: true`, **`manualFiltering: true`** (server filter)      | Change filter               | **page → 1**        | **Exactly one** fetch with new filter |
 
 **Selection / expansion pruning:**
 
-- **`manualPagination: false` (local):** when the `data` **source array**
-  reference changes, remove ids that no longer appear among **source rows**
-  (unfiltered `data` entries), keyed by `getRowId`. **Do not prune** because a
-  row is hidden by the active filter or pagination slice. Required test: select
-  row A, apply a filter that hides A, replace `data` with a new array containing
-  the same entities, clear the filter → A remains selected.
-- **`manualPagination: true` (server):** **never prune** `selectedRowIds` or
-  `expandedRowIds` solely because the current `data` page slice replaced ids
-  from a previous page. Explicit per-row selection persists across page changes.
+Automatic pruning runs **only** when the input is the **full collection** the
+table owns end-to-end: **`manualPagination: false` and `manualFiltering: false`**.
+On `data` reference change, drop ids that no longer appear among **source rows**
+in the new array (keyed by `getRowId`). **Do not prune** because a row is hidden
+by filter, pagination slice, or a transient server response.
+
+| Mode                                                                                     | Prune on filter hiding a row?     | Prune when server `data` omits a selected id?                                                                |
+| ---------------------------------------------------------------------------------------- | --------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| Local full (`manualPagination` + `manualFiltering` both `false`)                         | No (hidden ≠ removed from source) | N/A                                                                                                          |
+| **Server filter, local pagination** (`manualFiltering: true`, `manualPagination: false`) | No                                | **No** — preserve ids across filtered responses until consumer replaces full source or user clears selection |
+| **Server page** (`manualPagination: true`)                                               | No                                | **No** — ids stay when changing pages or filtered page payloads                                              |
+
+Required tests:
+
+- Local: select A, filter hides A, refresh `data` with same entities, clear filter → A still selected.
+- **Server filter + local pagination:** select A → server response excludes A → clear filter → A still selected.
 
 ### Events, callbacks, slots, and exposed methods
 
 - **`stateChange`** — `DataTableStateChangePayload`. Fired **once per user
-  action** after coalesced updates (e.g. filter on page 4 → one emit with
-  `query.pagination.pageIndex === 1` and new filter). Server consumers should
+  action** after coalesced updates (e.g. **server** filter on page 4 → one emit
+  with `query.pagination.pageIndex === 1` and new filter; **page-local** filter on
+  page 4 → **no** `stateChange`). Server consumers should
   fetch from `payload.query` only, not from separate v-model handlers.
 - **`update:*`** — still emitted for each affected v-model (same tick ordering as
   combinatorial updates; tests assert single fetch).
@@ -644,7 +663,7 @@ unchanged.
 
 ### Filtering
 
-- Follow [Default filtering contract](#default-filtering-contract-proposed--zac-confirmation) when local filtering runs.
+- Follow [Default filtering contract](#default-filtering-contract-approved) when local filtering runs.
 - Debouncing: **consumer-owned** (composable updates on every bound filter change).
 - Empty `getRowModel()`: head + filters remain; body shows empty state row.
 
@@ -684,9 +703,13 @@ Required acceptance test:
    or error state for a newer in-flight or completed request (tie-break with
    `requestId`, not wall-clock alone).
 
-**Required acceptance test:** With server pagination on page 4, changing a column
-filter produces **exactly one** fetch for **page 1** with the new filter. A
-late response for the old page-4 query must not apply when `isLatest` fails.
+**Required acceptance tests:**
+
+- With **`manualFiltering: true`** and server pagination on page 4, changing a
+  filter produces **exactly one** fetch for **page 1** with the new filter (stale
+  page-4 response rejected).
+- With **`manualFiltering: false`** (page-local) on page 4, changing a filter
+  keeps **page 4** and emits **no** `stateChange`.
 
 ### Server state, URL, Back, and Retry
 
@@ -704,10 +727,12 @@ identity** only. Pattern aligned with
 **Executable example:** `examples/data-table/server-invoices-router.vue` — Vue
 Router route with query string encoding filters + page; demonstrates open filtered
 URL → change sort → **Back** during pending request → **Retry** after error;
-asserts single fetch per action and no hydration `stateChange`.
+asserts single fetch per action, no hydration `stateChange`, and **both pagination
+reset acceptance cases** (page-local filter on page 4 → stay; server filter →
+page 1 + one request).
 
 **Required tests:** URL restore silent; sort+Back race; retry does not double-fetch;
-stale `finally` does not clear newest spinner.
+stale `finally` does not clear newest spinner; page-local vs server filter pagination.
 
 ## Consumer data
 
@@ -808,15 +833,18 @@ Reuses `GhostTable*`, `GhostPagination`, `GhostCheckbox`, `GhostEmptyState`,
 
 - **Unit:** manual-processing matrix, empty `rowCount` pagination, coalesced
   `stateChange`, page-local vs global sort semantics.
-- **Unit:** default filter contract (case, clear, OR/AND, omitted `filterFn`).
+- **Unit:** default filter contract (case, clear, OR/AND, omitted `filterFn`, null
+  cell skip).
+- **Unit:** server filter + local pagination selection survives filter cycle.
 - **Acceptance:** local select-all over pre-pagination set (100 rows, page 25, 40
   matches filter).
 - **Unit:** server select-all uses `getRowModel()` only (3-of-25 page-local filter).
 - **Unit:** local pruning uses source `data` rows, not filtered view (select A,
   filter out A, refresh `data`, clear filter).
 - **Acceptance:** cross-page selection test (pages 1 → 2 → 1).
-- **Acceptance:** headless (b) fixture script (sort, Space on checkbox and
-  expand, filter to zero with headers mounted).
+- **Playwright (approval fixture b):** sort Amount; `Space` on inv-2 checkbox;
+  `Space` on inv-2 **expand** button (collapse then reopen); filter to zero;
+  `getByRole('heading', { name: 'No invoices' })` visible; headers mounted.
 - **Acceptance:** filter on page 4 → single page-1 fetch; stale page-4 response ignored.
 - **Acceptance:** server router example (URL hydrate, Back while pending, Retry).
 - **Unit:** `useGhostDataTableServerRequest` races; stale `finally` cannot clear loading.
@@ -840,26 +868,26 @@ Reuses `GhostTable*`, `GhostPagination`, `GhostCheckbox`, `GhostEmptyState`,
 
 ## Decisions recorded (Zac, PR #265 review)
 
-| Topic                   | Decision                                                                |
-| ----------------------- | ----------------------------------------------------------------------- |
-| Architecture            | Option A: composable + native `GhostTable`                              |
-| `getRowId`              | Required in every build                                                 |
-| Filter debouncing       | Consumer-owned                                                          |
-| Themed `GhostDataTable` | **Not** in phase one; headless examples first                           |
-| Benchmark thresholds    | Informational until repeated CI runs show variance                      |
-| Server `stateChange`    | One emit per user action with full `query`                              |
-| Local select-all        | `getPrePaginationRowModel()` (all filtered rows, not current page only) |
-| Server selection        | No prune on page change; select-all = `getRowModel()` visible subset    |
+| Topic                   | Decision                                                                                                                  |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| Architecture            | Option A: composable + native `GhostTable`                                                                                |
+| `getRowId`              | Required in every build                                                                                                   |
+| Filter debouncing       | Consumer-owned                                                                                                            |
+| Themed `GhostDataTable` | **Not** in phase one; headless examples first                                                                             |
+| Benchmark thresholds    | Informational until repeated CI runs show variance                                                                        |
+| Server `stateChange`    | One emit per user action with full `query`                                                                                |
+| Local select-all        | `getPrePaginationRowModel()` (all filtered rows, not current page only)                                                   |
+| Server selection        | No prune on page change; select-all = `getRowModel()` visible subset                                                      |
+| Filtering defaults      | Case-insensitive OR global / AND column; clear `''`/`null`/`undefined`; skip `null`/`undefined` cell values in text match |
+| Filter pagination reset | page → 1 only when `manualFiltering: true`; page-local filter keeps page                                                  |
+| Selection pruning       | Auto-prune only when both `manualPagination` and `manualFiltering` are `false` (source `data` change)                     |
 
 ## Open architectural questions
 
 Non-blocking items (also in frontmatter with `blocking: false`):
 
-1. **Default filtering contract** — confirm proposed globals/column rules in
-   [Default filtering contract](#default-filtering-contract-proposed--zac-confirmation)
-   (especially global OR across columns and case-insensitive substring).
-2. **Multi-sort (deferred):** keyboard + AT when `enableMultiSort` ships later.
-3. **Benchmark gates:** When to promote informational thresholds to `pnpm verify`.
+1. **Multi-sort (deferred):** keyboard + AT when `enableMultiSort` ships later.
+2. **Benchmark gates:** When to promote informational thresholds to `pnpm verify`.
 
 ## Pre-freeze gate (before `specStatus: approved`)
 
@@ -888,7 +916,7 @@ sufficient for real apps without themed markup.
 | Interaction prop helpers                                | Sort / select / expand bindings + focus-on-collapse      | Medium     |
 | Server router example + Back/Retry tests                | `server-invoices-router.vue`, race tests                 | High       |
 | Column sorting UI and header a11y                       | Single-column sort, `aria-sort`                          | Medium     |
-| Filtering model and toolbar composition docs            | Filters + reset to page 1                                | Low        |
+| Filtering model and toolbar composition docs            | Conditional page reset vs `manualFiltering`              | Low        |
 | Pagination integration                                  | `rowCount`, empty → page 1, `GhostPagination`            | Low        |
 | Row selection (local + server)                          | Select-all rules, no server prune, cross-page tests      | High       |
 | Row expansion rows                                      | Detail `<tr>`, server no-prune                           | Medium     |
