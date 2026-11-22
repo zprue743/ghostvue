@@ -230,8 +230,9 @@ default; premature extraction risks another slightly different virtualizer
 **Follow-up work**
 
 - Finalize [data-table spec](/specs/data-table) after PR #265 reviews.
-- Complete **pre-freeze** GhostVue vs PrimeVue invoice prototype before
-  `specStatus: approved` (documented in spec; no PrimeVue in-repo).
+- **Pre-freeze prototype complete** ([PR #269](https://github.com/zprue743/ghostvue/pull/269),
+  `prototypes/datatable-primevue/FINDINGS.md`); summary in spec — Zac still promotes
+  `specStatus: approved` (no PrimeVue dependency on `master`).
 - Split implementation into child issues listed in the spec (composable core,
   headless composition examples, bench harness); **themed `@ghostvue/themes`
   wrapper deferred** to a later issue.
