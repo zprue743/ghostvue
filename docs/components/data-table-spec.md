@@ -3,6 +3,7 @@ schemaVersion: 1.0.0
 component: GhostDataTable
 components:
   - GhostDataTable
+  - GhostDataTableTable
 packages:
   - '@ghostvue/vue'
 specStatus: draft
@@ -164,12 +165,45 @@ interface DataTableStateChangePayload {
 }
 ```
 
-**`getValue()` typing policy:** the public method returns **`unknown`**. Compile-time
-narrowing is consumer responsibility (`accessorKey` literal types may improve
-inference in column definitions, but `getValue()` itself is not generically
-overloaded per column in v1). Required compile-time test: a column with
-`accessorKey: 'amount'` still types `getValue()` as `() => unknown` in
-`DataTableCellContext`.
+**`getValue()` typing policy:** `DataTableCellContext.getValue()` stays **`() =>
+unknown`** in generic/shared slots (any column). **Column definitions** should use
+**`defineDataTableColumns<TData>()`** so `cell` / column slots receive a typed
+**`value`** and **`getValue(): TValue`** for that column.
+
+```ts
+/** Factory; no runtime state */
+function defineDataTableColumns<TData>(): {
+  accessorKey: <K extends keyof TData & string>(
+    key: K,
+    column: Omit<DataTableColumnDef<TData>, 'accessorKey' | 'id'> & {
+      id?: string
+      cell?: (
+        ctx: DataTableCellContext<TData> & {
+          value: TData[K]
+          getValue: () => TData[K]
+        },
+      ) => import('vue').VNodeChild
+    },
+  ) => DataTableColumnDef<TData>
+  accessorFn: <TValue>(
+    id: string,
+    column: Omit<DataTableColumnDef<TData>, 'accessorFn' | 'id'> & {
+      accessorFn: (row: TData, index: number) => TValue
+      cell?: (
+        ctx: DataTableCellContext<TData> & {
+          value: TValue
+          getValue: () => TValue
+        },
+      ) => import('vue').VNodeChild
+    },
+  ) => DataTableColumnDef<TData>
+}
+```
+
+**Type-test acceptance (required in CI):** for `accessorKey: 'amount'` on
+`Invoice`, inside `cell`, `value.toFixed(2)` compiles, `value.toUpperCase()` is a
+type error, and renaming `Invoice.amount` breaks the column; the same three checks
+for an `accessorFn` column returning `number`.
 
 Default comparators (when local sorting runs): locale-aware strings, numeric
 subtract, `Date#getTime`, `sortUndefined` default `'last'`.
@@ -238,15 +272,81 @@ Headless `GhostDataTable` / `useGhostDataTable` options:
 | `loading`               | `boolean`                     | `false`  | Sets `aria-busy` on the table region.                                |
 | `disabled`              | `boolean`                     | `false`  | Disables sort, selection, expansion.                                 |
 
-Named exports (phase one): `GhostDataTable`, `useGhostDataTable`,
-`useGhostDataTableServerRequest`, and types above. **`enableMultiSort` is not
-part of phase one.**
+Named exports (phase one): `GhostDataTable`, `GhostDataTableTable`,
+`useGhostDataTable`, `useGhostDataTableServerRequest`,
+`defineDataTableColumns`, interaction helpers (`getDataTableSortButtonProps`, …),
+and types above. **`enableMultiSort` is not part of phase one.**
 
-### Headless composition example (typed)
+Phase one includes **`GhostDataTableTable`** — a headless (unstyled) default table
+renderer that maps `columns` + `rows` to `GhostTable*` markup, with named slots
+`#${columnId}` for typed cell overrides (PrimeVue-style ergonomics without a themed
+wrapper; see [PrimeVue basic usage](https://primevue.dev/datatable/#basic)).
 
-This example is the **gate for freezing** the headless API and the **approval
-fixture** for accessibility review. It must compile against the types above and
-support this manual script without reloading:
+### Examples (same invoice table)
+
+Two documented paths share `Invoice` rows and `defineDataTableColumns`:
+
+#### (a) Basic — sort, paginate, custom currency cell
+
+Short on-ramp: no manual `<thead>` / `<tbody>` shell. Consumer adds a currency
+format only via the `#amount` slot.
+
+```vue
+<script setup lang="ts">
+import { computed, ref } from 'vue'
+import {
+  GhostDataTable,
+  GhostDataTableTable,
+  GhostPagination,
+  defineDataTableColumns,
+} from '@ghostvue/vue'
+
+type Invoice = { id: string; customer: string; amount: number }
+
+const helper = defineDataTableColumns<Invoice>()
+const columns = [
+  helper.accessorKey('customer', { header: 'Customer', enableSorting: true }),
+  helper.accessorKey('amount', { header: 'Amount', enableSorting: true }),
+]
+
+const data = ref<Invoice[]>([
+  { id: 'inv-1', customer: 'ACME Corp', amount: 1200 },
+  { id: 'inv-2', customer: 'Globex', amount: 980.5 },
+])
+
+const pagination = ref({ pageIndex: 1, pageSize: 25 })
+const sorting = ref<{ id: string; desc: boolean }[]>([])
+
+const pageCount = computed(() =>
+  Math.max(1, Math.ceil(data.value.length / pagination.value.pageSize)),
+)
+</script>
+
+<template>
+  <GhostDataTable
+    v-model:pagination="pagination"
+    v-model:sorting="sorting"
+    :data="data"
+    :columns="columns"
+    :get-row-id="(row) => row.id"
+  >
+    <GhostDataTableTable>
+      <template #amount="{ value }">{{ value.toFixed(2) }} USD</template>
+    </GhostDataTableTable>
+    <GhostPagination v-model="pagination.pageIndex" :page-count="pageCount" />
+  </GhostDataTable>
+</template>
+```
+
+Without **`GhostDataTableTable`**, this shape is not achievable in a short
+example—the renderless default slot would force every consumer to recreate the
+table shell (see (b)).
+
+#### (b) Full composition — approval and accessibility fixture
+
+Manual `GhostTable*` composition for selection, expansion, filters, and custom
+headers. This is the **gate for freezing** interaction bindings and the
+**approval fixture**. Manual script without reload:
 
 1. Focus the **Amount** sort button; press `Space` or `Enter` to sort.
 2. `Space` on row **inv-2** checkbox to toggle selection; `Space` on its expand
@@ -323,6 +423,10 @@ const expandedRowIds = ref<DataTableRowId[]>(['inv-2'])
         getRowProps,
         rows,
         getBodyCellContext,
+        getSortButtonProps,
+        getRowSelectionCheckboxProps,
+        getHeaderSelectionCheckboxProps,
+        getRowExpandButtonProps,
         headerSelectionState,
         toggleAllRowsSelected,
       }"
@@ -336,9 +440,13 @@ const expandedRowIds = ref<DataTableRowId[]>(['inv-2'])
           <GhostTableRow>
             <GhostTableHeaderCell scope="col">
               <GhostCheckbox
+                v-bind="
+                  getHeaderSelectionCheckboxProps({
+                    label: 'Select all invoices matching filters',
+                  })
+                "
                 :model-value="headerSelectionState.allSelected"
                 :indeterminate="headerSelectionState.someSelected"
-                aria-label="Select all visible invoices"
                 @update:model-value="toggleAllRowsSelected"
               />
             </GhostTableHeaderCell>
@@ -349,10 +457,14 @@ const expandedRowIds = ref<DataTableRowId[]>(['inv-2'])
             >
               <button
                 v-if="header.column.enableSorting"
-                type="button"
+                v-bind="
+                  getSortButtonProps(header.column.id, {
+                    label: `${header.column.header} sort`,
+                  })
+                "
                 @click="header.toggleSort"
               >
-                {{ header.column.header }}
+                € {{ header.column.header }}
               </button>
               <template v-else>{{ header.column.header }}</template>
             </GhostTableHeaderCell>
@@ -368,10 +480,26 @@ const expandedRowIds = ref<DataTableRowId[]>(['inv-2'])
             <GhostTableRow v-bind="getRowProps(row.rowId)">
               <GhostTableCell>
                 <GhostCheckbox
+                  v-bind="
+                    getRowSelectionCheckboxProps(row.rowId, {
+                      label: `Select invoice ${row.rowId}`,
+                    })
+                  "
                   :model-value="row.isSelected"
                   @update:model-value="row.toggleSelected"
-                  :aria-label="`Select invoice ${row.rowId}`"
                 />
+              </GhostTableCell>
+              <GhostTableCell>
+                <button
+                  v-bind="
+                    getRowExpandButtonProps(row.rowId, {
+                      label: `Show details for ${row.rowId}`,
+                    })
+                  "
+                  @click="row.toggleExpanded"
+                >
+                  Details
+                </button>
               </GhostTableCell>
               <GhostTableCell v-for="cell in row.cells" :key="cell.column.id">
                 <component
@@ -403,19 +531,27 @@ fixture. Writable `ref` v-models accept composable updates.
 
 ### Renderless root slot bindings
 
-| Binding                        | Host                                   | Contract                                                                                                                              |
-| ------------------------------ | -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
-| `tableRootProps`               | `GhostTable` root wrapper or `<table>` | `aria-busy` when `loading`; `data-ghost-data-table`; optional `aria-labelledby` / `aria-label` from consumer                          |
-| `getHeaderCellProps(columnId)` | `GhostTableHeaderCell`                 | `scope: 'col'`; `aria-sort`: `ascending` \| `descending` \| omitted on **primary** sort column only; `data-sort` for styling          |
-| `getRowProps(rowId)`           | `GhostTableRow` (data row)             | `data-selected="true"` when selected; `data-expanded="true"` when expanded (boolean data attributes, independent)                     |
-| `headers`                      | —                                      | Column header models (`column`, `toggleSort`, …) independent of body row count                                                        |
-| `detailRowProps`               | expansion `<tr>` via `GhostTableRow`   | Keeps `GhostTableRow` `data-part="row"`; adds **`data-detail-row="true"`** (consumer merge must not overwrite `data-part`; see below) |
-| `rows`                         | —                                      | Rows from `getRowModel()` with `cells`, selection helpers, etc.                                                                       |
-| `headerSelectionState`         | header `GhostCheckbox`                 | `{ allSelected, someSelected }` over the **select-all target** (local: `getPrePaginationRowModel()` ids; server: `getRowModel()` ids) |
-| `toggleAllRowsSelected`        | header checkbox                        | Toggles every id in that same target set (not the current page only when local)                                                       |
+| Binding                                         | Host                                   | Contract                                                                                                                                  |
+| ----------------------------------------------- | -------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| `tableRootProps`                                | `GhostTable` root wrapper or `<table>` | `aria-busy` when `loading`; `data-ghost-data-table`; optional `aria-labelledby` / `aria-label` from consumer                              |
+| `getHeaderCellProps(columnId)`                  | `GhostTableHeaderCell`                 | `scope: 'col'`; `aria-sort`: `ascending` \| `descending` \| omitted on **primary** sort column only; `data-sort` for styling              |
+| `getRowProps(rowId)`                            | `GhostTableRow` (data row)             | `data-selected="true"` when selected; `data-expanded="true"` when expanded (boolean data attributes, independent)                         |
+| `headers`                                       | —                                      | Column header models (`column`, `toggleSort`, …) independent of body row count                                                            |
+| `detailRowProps`                                | expansion `<tr>` via `GhostTableRow`   | Keeps `GhostTableRow` `data-part="row"`; adds **`data-detail-row="true"`** (consumer merge must not overwrite `data-part`; see below)     |
+| `rows`                                          | —                                      | Rows from `getRowModel()` with `cells`, selection helpers, etc.                                                                           |
+| `headerSelectionState`                          | header `GhostCheckbox`                 | `{ allSelected, someSelected }` over the **select-all target** (local: `getPrePaginationRowModel()` ids; server: `getRowModel()` ids)     |
+| `toggleAllRowsSelected`                         | header checkbox                        | Toggles every id in that same target set (not the current page only when local)                                                           |
+| `getSortButtonProps(columnId, options?)`        | sort `button` in `<th>`                | `type="button"`; `disabled` when `disabled`; merges consumer attrs; does **not** set `aria-sort` (parent `<th>` via `getHeaderCellProps`) |
+| `getRowSelectionCheckboxProps(rowId, options?)` | row `GhostCheckbox`                    | `aria-label` from `options.label` or default pattern; selection state wired                                                               |
+| `getHeaderSelectionCheckboxProps(options?)`     | header `GhostCheckbox`                 | Same for select-all; pair with `headerSelectionState`                                                                                     |
+| `getRowExpandButtonProps(rowId, options?)`      | expand `button`                        | `type="button"`; `aria-expanded`; `aria-controls` → detail row id; `aria-label` localizable via `options.label`                           |
 
 Sort direction on headers is **single-column** in phase one (at most one entry in
 `sorting`).
+
+**`GhostDataTableTable` slots:** for each column `id`, optional
+`#${columnId}="{ row, rowId, value, getValue, column }"` with **`value` typed**
+when the column came from `defineDataTableColumns`.
 
 ### v-model contracts
 
@@ -543,11 +679,35 @@ Required acceptance test:
 
 1. User action → coalesced v-models + **one** `stateChange`.
 2. Consumer: `loading = true`; `begin(payload.requestId)`.
-3. Apply `data` / `rowCount` only if `isLatest(requestId)`.
+3. Apply `data` / `rowCount` / `error` only if `isLatest(requestId)`.
+4. **`finally` blocks** from stale requests must not clear `loading`, rows, totals,
+   or error state for a newer in-flight or completed request (tie-break with
+   `requestId`, not wall-clock alone).
 
 **Required acceptance test:** With server pagination on page 4, changing a column
 filter produces **exactly one** fetch for **page 1** with the new filter. A
 late response for the old page-4 query must not apply when `isLatest` fails.
+
+### Server state, URL, Back, and Retry
+
+Consumer-owned fetching; the composable owns **query state** and **request
+identity** only. Pattern aligned with
+[PrimeVue stateful tables](https://primevue.dev/datatable/#stateful).
+
+| Concern                             | Contract                                                                                                                                                                                                                          |
+| ----------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **URL hydration**                   | Applying `sorting` / `columnFilters` / `globalFilter` / `pagination` from a route or `history.state` on mount **does not emit `stateChange`** (no echo loop). Consumer may fetch once explicitly when the route is first entered. |
+| **One request per committed query** | Each user-driven commit that changes the effective server `query` emits **one** `stateChange` → **one** consumer fetch. Retries are explicit consumer actions, not automatic duplicate emits.                                     |
+| **Browser Back**                    | While a fetch is pending, Back restores prior query props; composable bumps `requestId`; stale responses must not apply; **only the latest `requestId` may mutate** `data`, `rowCount`, `loading`, or error UI.                   |
+| **Retry**                           | Consumer reuses the **same** `query` with a **new** `requestId` (manual retry handler); failed state remains visible until the retry succeeds.                                                                                    |
+
+**Executable example:** `examples/data-table/server-invoices-router.vue` — Vue
+Router route with query string encoding filters + page; demonstrates open filtered
+URL → change sort → **Back** during pending request → **Retry** after error;
+asserts single fetch per action and no hydration `stateChange`.
+
+**Required tests:** URL restore silent; sort+Back race; retry does not double-fetch;
+stale `finally` does not clear newest spinner.
 
 ## Consumer data
 
@@ -578,6 +738,17 @@ changes must not clear ids merely because rows left the slice.
 | `Tab`             | Table           | Between focusable controls                                                     |
 
 Phase one: **single-column sort** only (no multi-sort chord).
+
+**Customization survival** ([PrimeVue accessibility notes](https://primevue.dev/datatable/#accessibility)):
+required browser test with a **custom sort header** (non-default label/icon): after
+`Enter`, focus remains on the sort **button**, parent `<th>` reflects new
+`aria-sort`. Expansion and selection use the typed prop helpers above so custom
+labels stay localized without dropping ARIA.
+
+**Focus when detail row collapses:** if focus lies inside a detail row that
+collapses (toggle, filter, or `allowMultipleExpanded`), move focus to that row’s
+**expansion button** (the control from `getRowExpandButtonProps`). Required test
+with Playwright `toBeFocused()`.
 
 ### Assistive technology
 
@@ -614,6 +785,20 @@ post-mount effect per checkbox spec.
 - Proposed p95 &lt; 25ms and heap delta &lt; 5MB: **informational until CI
   variance is understood**; not a gate in phase one.
 
+**Deterministic regression checks (required in unit/integration tests):**
+
+| Scenario                            | Assertion                                                                  |
+| ----------------------------------- | -------------------------------------------------------------------------- |
+| Page change after local sort        | Comparator / `sortFn` **not invoked again** (zero additional sort passes). |
+| Toggle selection on one visible row | **Zero** sort or filter callback invocations.                              |
+
+**Proposed later task (not this PR):** production-browser comparison on
+identical 10k `Invoice` rows, same three columns and page size, GhostVue vs
+PrimeVue `DataTable`, measuring **input-to-paint** for sort, filter, and
+row selection. Document methodology in
+`docs/contributing/data-table-benchmark-comparison.md` when scheduled; **no
+PrimeVue dependency** in the GhostVue repo.
+
 ## Composition
 
 Reuses `GhostTable*`, `GhostPagination`, `GhostCheckbox`, `GhostEmptyState`,
@@ -630,17 +815,22 @@ Reuses `GhostTable*`, `GhostPagination`, `GhostCheckbox`, `GhostEmptyState`,
 - **Unit:** local pruning uses source `data` rows, not filtered view (select A,
   filter out A, refresh `data`, clear filter).
 - **Acceptance:** cross-page selection test (pages 1 → 2 → 1).
-- **Acceptance:** headless approval fixture script (sort, Space on checkbox and
+- **Acceptance:** headless (b) fixture script (sort, Space on checkbox and
   expand, filter to zero with headers mounted).
 - **Acceptance:** filter on page 4 → single page-1 fetch; stale page-4 response ignored.
-- **Unit:** `useGhostDataTableServerRequest` races.
-- **Vue:** headless composition example hydrates (SSR fixture).
-- **Browser:** `Space` on checkboxes; axe with `aria-busy`.
-- **Type:** `getValue(): unknown`; `accessorKey` does not change public `getValue` signature.
+- **Acceptance:** server router example (URL hydrate, Back while pending, Retry).
+- **Unit:** `useGhostDataTableServerRequest` races; stale `finally` cannot clear loading.
+- **Unit:** performance regressions (page after sort, selection without sort/filter).
+- **Vue:** basic (a) + full (b) examples hydrate; `GhostDataTableTable` slot types.
+- **Browser:** custom sort header + `Enter`; focus restore on detail collapse; axe.
+- **Type:** `defineDataTableColumns` acceptance trio (`toFixed`, `toUpperCase` error, rename break).
+- **Type:** generic slot contexts still expose `getValue(): unknown`.
 
 ## Documentation plan
 
-- `docs/components/data-table.md` and `examples/data-table/*` **before** themed work.
+- `docs/components/data-table.md` with **(a) basic** and **(b) full** paths first.
+- `examples/data-table/basic-invoices.vue`, `full-invoices.vue`,
+  `server-invoices-router.vue`.
 - Link ADR 0014 and prerequisites.
 
 ## Compatibility and release impact
@@ -671,19 +861,40 @@ Non-blocking items (also in frontmatter with `blocking: false`):
 2. **Multi-sort (deferred):** keyboard + AT when `enableMultiSort` ships later.
 3. **Benchmark gates:** When to promote informational thresholds to `pnpm verify`.
 
+## Pre-freeze gate (before `specStatus: approved`)
+
+Before promoting this spec past **`draft`**, complete a **side-by-side prototype**
+of the same invoice screen in GhostVue and PrimeVue (external repo or local
+playground fork — **no PrimeVue dependency in ghostvue**):
+
+| Dimension | Record                                                                                         |
+| --------- | ---------------------------------------------------------------------------------------------- |
+| Features  | Currency column, shareable URL filter, cross-page selection, expandable detail row             |
+| Metrics   | Consumer LOC, type errors caught at compile time, focus/selection behavior during data refresh |
+| Artifact  | `examples/data-table/comparison/README.md` procedure + captured notes (screenshots optional)   |
+
+Approval uses this exercise to validate that **(a)** + interaction helpers are
+sufficient for real apps without themed markup.
+
 ## Child work decomposition
 
 | Child issue                                             | Scope                                                    | Complexity |
 | ------------------------------------------------------- | -------------------------------------------------------- | ---------- |
+| **Pre-freeze:** GhostVue vs PrimeVue invoice prototype  | Comparison exercise above; blocks spec approval          | Medium     |
 | DataTable core types and local processing pipeline      | `useGhostDataTable`, manual matrix, row models           | High       |
-| GhostDataTable headless root and GhostTable composition | Slot bindings above, SSR example                         | Medium     |
+| `defineDataTableColumns` + column type tests            | Typed `value` / `getValue`, CI type tests                | Medium     |
+| `GhostDataTableTable` default renderer                  | Basic example (a), `#columnId` slots                     | Medium     |
+| GhostDataTable headless root and GhostTable composition | Slot bindings, example (b), SSR                          | Medium     |
+| Interaction prop helpers                                | Sort / select / expand bindings + focus-on-collapse      | Medium     |
+| Server router example + Back/Retry tests                | `server-invoices-router.vue`, race tests                 | High       |
 | Column sorting UI and header a11y                       | Single-column sort, `aria-sort`                          | Medium     |
 | Filtering model and toolbar composition docs            | Filters + reset to page 1                                | Low        |
 | Pagination integration                                  | `rowCount`, empty → page 1, `GhostPagination`            | Low        |
 | Row selection (local + server)                          | Select-all rules, no server prune, cross-page tests      | High       |
 | Row expansion rows                                      | Detail `<tr>`, server no-prune                           | Medium     |
 | Server mode and async guard                             | Coalesced `stateChange`, full `query`, stale guard tests | Medium     |
-| Performance benchmark harness                           | Vitest bench, informational thresholds                   | Low        |
+| Performance benchmark harness                           | Vitest bench, sort/page regression counters              | Low        |
+| **Deferred:** PrimeVue 10k browser comparison           | `docs/contributing/data-table-benchmark-comparison.md`   | Medium     |
 | Headless docs and executable examples                   | `data-table.md`, `examples/data-table/`                  | Medium     |
 | **Deferred:** Themed GhostDataTable                     | `@ghostvue/themes` wrapper                               | Medium     |
 | **Deferred:** Multi-column sort spec                    | Keyboard + AT                                            | Medium     |

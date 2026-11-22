@@ -50,10 +50,12 @@ On 2026-11-17, Zac approved **option A**: a Vue-first composable plus native
 
 | Export                               | Package         | Role                                                                                                                       |
 | ------------------------------------ | --------------- | -------------------------------------------------------------------------------------------------------------------------- |
-| `GhostDataTable`                     | `@ghostvue/vue` | Headless renderless root: slot props for `GhostTable*` composition, header ARIA hosts, region `aria-busy`                  |
-| `useGhostDataTable`                  | `@ghostvue/vue` | Primary Vue composable; owns sort/filter/page/selection/expansion state and derived row models                             |
-| `useGhostDataTableServerRequest`     | `@ghostvue/vue` | Optional stale-response guard for **consumer-owned** server fetches (same contract shape as `useGhostComboboxAsyncSearch`) |
-| Typed helpers and column/query types | `@ghostvue/vue` | Pure utilities colocated until a boundary justifies extraction                                                             |
+| `GhostDataTable`                     | `@ghostvue/vue` | Headless root: slot props or child `GhostDataTableTable`                                                                   |
+| `GhostDataTableTable`                | `@ghostvue/vue` | Default unstyled table mapper + `#columnId` slots (basic on-ramp)                                                          |
+| `defineDataTableColumns`             | `@ghostvue/vue` | Typed column builder; generic contexts keep `getValue(): unknown`                                                        |
+| `useGhostDataTable`                  | `@ghostvue/vue` | Primary composable; sort/filter/page/selection/expansion and derived row models                                            |
+| `useGhostDataTableServerRequest`     | `@ghostvue/vue` | Stale-response guard for consumer fetches (same shape as `useGhostComboboxAsyncSearch`)                                    |
+| Interaction prop helpers             | `@ghostvue/vue` | Sort, selection, expansion controls with localizable names                                                                 |
 
 Phase one ships **headless composition docs and executable examples only**.
 There is **no** themed `GhostDataTable` in `@ghostvue/themes` until a later
@@ -64,9 +66,8 @@ There is **no** `@ghostvue/data-table` package, **no** global table manager, and
 
 ### 2. Composition model
 
-- **Markup:** consumers render `GhostTable`, `GhostTableHead`, `GhostTableBody`,
-  `GhostTableRow`, `GhostTableHeaderCell`, and `GhostTableCell` using slot props
-  from `GhostDataTable` / `useGhostDataTable`.
+- **Markup:** either `GhostDataTableTable` for the short path, or manual
+  `GhostTable*` parts via slot props from `GhostDataTable` / `useGhostDataTable`.
 - **Roles:** sortable columns use `aria-sort` on `<th>`; selection uses
   `GhostCheckbox` per [checkbox-spec](/specs/checkbox) (mixed
   via `indeterminate`, not `aria-checked="mixed"`).
@@ -192,9 +193,11 @@ initial ADR text.)
 
 **Follow-up work**
 
-- Finalize [data-table spec](/specs/data-table) after Zac
-  review of PR #265 revisions.
-- Implement child issues; defer multi-sort, virtualization, treegrid keyboard.
+- Finalize [data-table spec](/specs/data-table) after PR #265 reviews.
+- Complete **pre-freeze** GhostVue vs PrimeVue invoice prototype before
+  `specStatus: approved` (documented in spec; no PrimeVue in-repo).
+- Implement child issues; defer multi-sort, virtualization, treegrid keyboard,
+  optional PrimeVue 10k browser benchmark doc.
 
 ## Compatibility implications
 
