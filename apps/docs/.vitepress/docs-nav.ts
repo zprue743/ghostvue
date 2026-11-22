@@ -19,7 +19,6 @@ const docsMainSidebar: LlmsSidebarGroup['items'] = [
       { text: 'Introduction', link: '/philosophy' },
       { text: 'Nuxt & auto-imports', link: '/auto-imports' },
       { text: 'ESLint plugin', link: '/tooling/eslint-plugin' },
-      { text: 'MCP server (spec)', link: '/tooling/mcp-server' },
     ],
   },
   {
@@ -53,6 +52,10 @@ const architectureSidebar: LlmsSidebarGroup['items'] = [
   { text: 'Styling', link: '/architecture/styling' },
   { text: 'Design tokens', link: '/architecture/tokens' },
   { text: 'Component manifests', link: '/architecture/component-manifest' },
+  {
+    text: 'MCP server (proposed)',
+    link: '/tooling/mcp-server',
+  },
 ]
 
 const standardsSidebar: LlmsSidebarGroup['items'] = [
@@ -79,7 +82,7 @@ const agentsSidebar: LlmsSidebarGroup['items'] = [
   { text: 'Testing rules', link: '/agents/TESTING_RULES' },
   { text: 'Component workflow', link: '/agents/COMPONENT_WORKFLOW' },
   {
-    text: 'MCP server (GHO-17)',
+    text: 'MCP contract (proposed)',
     link: '/plans/gho-17-mcp-first-release',
   },
 ]

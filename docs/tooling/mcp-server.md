@@ -1,11 +1,8 @@
-# MCP server (`@ghostvue/mcp`)
+# MCP server (`@ghostvue/mcp`) (proposed)
 
 GhostVue exposes a **local, read-only** [Model Context Protocol](https://modelcontextprotocol.io/) server so agents can discover components, manifests, executable examples, docs, and design tokens without the Vue runtime.
 
-**Status:** Not implemented. The first-release contract is specified in:
-
-- [GHO-17 MCP first-release contract](../plans/gho-17-mcp-first-release.md) (tool schemas, bundles, errors)
-- [ADR 0015](../adr/0015-mcp-server-first-release.md) (package boundary and scope)
+**Status:** Not implemented — contract only ([GHO-17](../plans/gho-17-mcp-first-release.md), [ADR 0015](../adr/0015-mcp-server-first-release.md) proposed).
 
 ## What ships in v1
 
@@ -23,6 +20,43 @@ Transport is **stdio** only. HTTP (GHO-205) and `validate_usage` (GHO-206) are d
 
 Arbitrary file access, executing examples, hosting a network endpoint, and importing `vue` inside `@ghostvue/mcp`.
 
-## After implementation
+## Bin and host configuration
 
-Consumers will run the published bin (name TBD) from their MCP host config. Setup instructions and copy-paste config land with implementation (GHO-17h); dependency on `@modelcontextprotocol/sdk` requires approval per [dependencies.md](../standards/dependencies.md) § GHO-17.
+Published **bin name:** `ghostvue-mcp` (stdio server entry; same executable whether installed globally or invoked via `npx @ghostvue/mcp`).
+
+Example Cursor / Claude Desktop MCP fragment (paths adjust after the package exists on npm):
+
+```json
+{
+  "mcpServers": {
+    "ghostvue": {
+      "command": "npx",
+      "args": ["-y", "@ghostvue/mcp@<version>", "ghostvue-mcp"]
+    }
+  }
+}
+```
+
+Prefer a global or project-local install when `npx` cold-start latency matters:
+
+```json
+{
+  "mcpServers": {
+    "ghostvue": {
+      "command": "ghostvue-mcp"
+    }
+  }
+}
+```
+
+Tool responses use MCP **structured content** (`structuredContent`) with a declared `outputSchema` per tool; each payload includes top-level `schemaVersion` (`1.0.0` for the GhostVue MCP tool contract). Details: [GHO-17 plan §5](../plans/gho-17-mcp-first-release.md).
+
+## Dependencies
+
+Runtime pins are **not yet approved** for the lockfile. Zac sign-off is required for `@modelcontextprotocol/sdk@1.32.2`, `zod@3.25.76`, and `ajv@8.20.0` — see [dependencies.md](../standards/dependencies.md) § `@ghostvue/mcp`.
+
+## Full contract
+
+Authoritative tool I/O, bundles, identity rules, and errors:
+
+- [GHO-17 MCP first-release contract](../plans/gho-17-mcp-first-release.md)

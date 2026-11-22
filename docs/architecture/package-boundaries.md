@@ -3,13 +3,10 @@
 Allowed production dependency direction is:
 
 ```text
-shared <- core <- vue
-   ^       ^       ^
-   |       |       |
-   |       +--- mcp (optional tooling; proposed — see ADR 0015)
-   +-------+-------+
-           |
-         themes (optional; may depend on vue)
+shared <- core <- vue <- themes (optional; may depend on vue)
+   ^                         ^
+   |                         |
+   +--- mcp (optional tooling; proposed — see ADR 0015)
 
 nuxt (optional integration) -> vue (peer), themes (optional peer)
 ```
@@ -41,7 +38,8 @@ nuxt (optional integration) -> vue (peer), themes (optional peer)
 - **`mcp` (`@ghostvue/mcp`, proposed — [ADR 0015](../adr/0015-mcp-server-first-release.md),**
   **[GHO-17 contract](../plans/gho-17-mcp-first-release.md))** is Node-only MCP
   stdio tooling. It may depend on `@ghostvue/core` (manifest schema) and, after
-  approval, `@modelcontextprotocol/sdk`. It must not depend on `vue`,
+  approval, pinned `@modelcontextprotocol/sdk`, `zod`, and `ajv` (see plan
+  §7; not yet approved). It must not depend on `vue`,
   `@ghostvue/vue`, or `@ghostvue/themes`; manifests, examples, docs, and tokens
   are **copied into the package at build time**, not imported from source.
   `scripts/workspace-packages.mjs` gains an entry when implementation starts; no

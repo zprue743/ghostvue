@@ -18,10 +18,11 @@ The executable spec is [GHO-17 first-release contract](../plans/gho-17-mcp-first
 2. **Transport:** MCP over stdio only for v1.
 3. **Tools:** `list_components`, `get_component`, `get_examples`, `search_docs`, `get_tokens` — schemas and semantics per the GHO-17 contract.
 4. **Data:** At build time, copy version-matched manifests (`packages/vue/manifests`, `packages/themes/manifests`), example sources + generated catalog, docs corpus aligned with `llms-full.txt` generation, and `@ghostvue/themes` `tokens.json`. The server reads only those bundled files at runtime.
-5. **Dependencies:** `@ghostvue/mcp` may depend on `@ghostvue/core` (manifest schema) and, after approval, `@modelcontextprotocol/sdk`. It must **not** depend on `vue`, `@ghostvue/vue`, or `@ghostvue/themes`.
+5. **Dependencies:** `@ghostvue/mcp` may depend on `@ghostvue/core` (manifest schema). After Zac approves [dependencies.md](../standards/dependencies.md) § GHO-17, pin **`@modelcontextprotocol/sdk@1.32.2`**, **`zod@3.25.76`**, and **`ajv@8.20.0`** as direct runtime dependencies. It must **not** depend on `vue`, `@ghostvue/vue`, or `@ghostvue/themes`.
 6. **Exclusions:** No arbitrary filesystem access, code execution, network hosting, or write tools.
+7. **Public bin:** `ghostvue-mcp` (stdio).
 
-Register in `scripts/workspace-packages.mjs` with `allowedDependencies: ['@ghostvue/core']` plus the approved SDK name once added.
+Register in `scripts/workspace-packages.mjs` with `allowedDependencies: ['@ghostvue/core']` only (`@ghostvue/*` edges). The MCP npm dependencies above are external packages checked by the root boundary rules, not `allowedDependencies` entries.
 
 ## Alternatives considered
 
@@ -38,8 +39,11 @@ Register in `scripts/workspace-packages.mjs` with `allowedDependencies: ['@ghost
 - New package boundary documented in [package-boundaries.md](../architecture/package-boundaries.md).
 - `pnpm boundaries` and dependency-cruiser must include `@ghostvue/mcp` when the package lands.
 - Release train includes MCP asset bundle hash checks.
-- Consumer documentation under `docs/tooling/` and AI nav (GHO-48).
+- Consumer documentation in [docs/tooling/mcp-server.md](../tooling/mcp-server.md) (host config, bin name) and AI nav (GHO-48).
 
 ## Compatibility implications
 
-New optional npm package; no change to Vue components, themes, or SSR. MIT SDK dependency subject to [dependencies.md](../standards/dependencies.md) approval subsection. No accessibility impact (read-only metadata).
+New optional npm package; no change to Vue components, themes, or SSR. MIT
+runtime dependencies (`@modelcontextprotocol/sdk`, `zod`, `ajv`) subject to
+[dependencies.md](../standards/dependencies.md) approval (not yet approved). No
+accessibility impact (read-only metadata).
