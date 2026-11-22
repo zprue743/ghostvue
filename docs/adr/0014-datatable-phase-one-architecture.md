@@ -6,7 +6,8 @@
 - Relates to: [GHO-35](https://linear.app/ghost-vue/issue/GHO-35),
   [ADR 0003](./0003-public-component-api-conventions.md) (naming),
   [ADR 0004](./0004-headless-styled-layering.md) (headless layering),
-  [GhostTable spec](../components/table-spec.md),
+  [GhostTable spec](/specs/table),
+  [GhostCheckbox spec](/specs/checkbox),
   [component-state.md](../architecture/component-state.md),
   [performance.md](../standards/performance.md),
   [philosophy.md](../philosophy.md)
@@ -40,175 +41,154 @@ Forces:
    nodes). Virtualization is explicitly deferred.
 
 On 2026-11-17, Zac approved **option A**: a Vue-first composable plus native
-`GhostTable` composition, typed column accessors, and stable row IDs.
+`GhostTable` composition, typed column accessors, and stable row IDs. PR
+#265 review (2026-11-22) endorses that direction with additional constraints below.
 
 ## Decision
 
 ### 1. Public surface (phase one)
 
-| Export                                                 | Package            | Role                                                                                                                           |
-| ------------------------------------------------------ | ------------------ | ------------------------------------------------------------------------------------------------------------------------------ |
-| `GhostDataTable`                                       | `@ghostvue/vue`    | Headless renderless root that wires state, ARIA on the table shell, and slot props for consumers composing `GhostTable*` parts |
-| `useGhostDataTable`                                    | `@ghostvue/vue`    | Primary Vue composable; owns sort/filter/page/selection/expansion state and derived row models                                 |
-| `useGhostDataTableServerRequest`                       | `@ghostvue/vue`    | Optional stale-response guard for **consumer-owned** server fetches (same contract shape as `useGhostComboboxAsyncSearch`)     |
-| Typed helpers (`getDataTableRowId`, column/sort types) | `@ghostvue/vue`    | Pure utilities colocated until a boundary justifies extraction                                                                 |
-| Themed `GhostDataTable`                                | `@ghostvue/themes` | Opinionated composition of primitives + default sort/selection chrome (phase-one themed child issue)                           |
+| Export                               | Package         | Role                                                                                                                       |
+| ------------------------------------ | --------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| `GhostDataTable`                     | `@ghostvue/vue` | Headless renderless root: slot props for `GhostTable*` composition, header ARIA hosts, region `aria-busy`                  |
+| `useGhostDataTable`                  | `@ghostvue/vue` | Primary Vue composable; owns sort/filter/page/selection/expansion state and derived row models                             |
+| `useGhostDataTableServerRequest`     | `@ghostvue/vue` | Optional stale-response guard for **consumer-owned** server fetches (same contract shape as `useGhostComboboxAsyncSearch`) |
+| Typed helpers and column/query types | `@ghostvue/vue` | Pure utilities colocated until a boundary justifies extraction                                                             |
+
+Phase one ships **headless composition docs and executable examples only**.
+There is **no** themed `GhostDataTable` in `@ghostvue/themes` until a later
+issue. Tokens and recipes may reference table parts consumers compose themselves.
 
 There is **no** `@ghostvue/data-table` package, **no** global table manager, and
-**no** mandatory render-prop engine. If pure processing later merits a
-framework-neutral module, extraction happens only when two consumers need it and
-tests prove the split — not in phase one.
+**no** mandatory render-prop engine.
 
 ### 2. Composition model
 
 - **Markup:** consumers render `GhostTable`, `GhostTableHead`, `GhostTableBody`,
-  `GhostTableRow`, `GhostTableHeaderCell`, and `GhostTableCell` (or themed
-  equivalents) using slot props / scoped data from `useGhostDataTable`.
-- **Roles:** the data table root sets `aria-sort` on sortable `<th>` hosts,
-  wires select-all and row `GhostCheckbox` instances, and exposes loading/empty
-  regions. It does **not** replace cells with `role="gridcell"` or add roving
-  `tabindex` on rows.
-- **Keyboard:** sort and selection use **native control tab order** (buttons and
-  checkboxes). Arrow-key row/column navigation is **out of scope** for phase one
-  and belongs to a deferred treegrid/grid-navigation spec.
+  `GhostTableRow`, `GhostTableHeaderCell`, and `GhostTableCell` using slot props
+  from `GhostDataTable` / `useGhostDataTable`.
+- **Roles:** sortable columns use `aria-sort` on `<th>`; selection uses
+  `GhostCheckbox` per [checkbox-spec](/specs/checkbox) (mixed
+  via `indeterminate`, not `aria-checked="mixed"`).
+- **Keyboard:** native control tab order only. **Single-column sort** in phase
+  one; multi-column sort is deferred until a keyboard contract exists.
+- Row chrome uses separate `data-selected` and `data-expanded` attributes (not a
+  single colliding `data-state`).
 
 ### 3. Consumer data and column model
 
 - Row type `TData` is consumer-defined. The library never clones the full
   `data` array.
-- Each row has a stable **`RowId`** (`string | number`) from required
-  `getRowId(row, index)` (fallback index only when documented and when ids are
-  truly unavailable — see open questions in the component spec).
+- **`getRowId` is required in every build** (no index fallback in production).
 - Columns are `DataTableColumnDef<TData>` with **`id`**, optional `accessorKey`
-  or `accessorFn`, and optional `cell` render hook. Accessors are typed against
-  `TData`; nested paths use `accessorFn`, not stringly-typed magic paths in v1.
-- Column definitions are **consumer-owned configuration**; the composable reads
-  them per render and does not mutate column objects.
+  or `accessorFn`, optional `cell` render hook, and local `sortFn` / `filterFn`
+  when manual flags allow page-local processing.
+- Column definitions are consumer-owned; the composable does not mutate them.
 
-### 4. Local vs server processing
+### 4. Local vs server (manual) processing
 
-Explicit boolean flags (names in the component spec) declare which steps run
-inside the composable vs which are **manual** (consumer computed):
+Each dimension is controlled by an explicit `manual*` flag:
 
-| Concern    | Local (default)                                          | Server / manual                                                                                    |
-| ---------- | -------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
-| Sorting    | Composable orders `data` with column `sortFn` or default | Consumer passes pre-sorted `data`; composable emits `onSortingChange`                              |
-| Filtering  | Composable filters rows (global + per-column)            | Consumer passes filtered `data`; composable emits `onColumnFiltersChange` / `onGlobalFilterChange` |
-| Pagination | Composable slices rows                                   | Consumer passes one page of rows + `rowCount`; composable emits `onPaginationChange`               |
-| Row count  | `data.length` after local pipeline                       | Required `rowCount` when any manual flag is true                                                   |
+| Concern    | Local (default)                                | Manual (server)                                                                                 |
+| ---------- | ---------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| Sorting    | Composable orders rows in the processing input | Consumer supplies globally sorted pages; composable emits sorting updates only                  |
+| Filtering  | Composable filters rows                        | Consumer supplies pre-filtered `data`                                                           |
+| Pagination | Composable slices after sort + filter          | Consumer passes **one page** of rows in `data`                                                  |
+| Row total  | `rowCount` derived from filtered local rows    | **`rowCount` required only when `manualPagination` is `true`** (total matching query on server) |
 
-Server mode is always **consumer-controlled**: the composable increments a
-monotonic `requestId` on processing inputs that should trigger a fetch,
-emits it on a `stateChange` (or per-dimension) event, and documents
-`useGhostDataTableServerRequest` for applying responses. The composable never
-calls `fetch`.
+**`pageCount` alone is insufficient** when `manualPagination` is true: consumers
+must supply `rowCount` so the composable can derive `pageCount =
+ceil(rowCount / pageSize)` and clamp pagination consistently with
+`GhostPagination`.
 
-### 5. State ownership and reset rules
+**Mixed manual flags:** when `manualPagination` is true but `manualSorting` or
+`manualFiltering` is false, the composable may sort or filter **only the rows
+currently in `data`** (the loaded page). That is **page-local** processing: it
+reorders or narrows the visible page without claiming to sort or filter the full
+remote dataset. Server-backed global sort/filter still requires the corresponding
+`manual*` flag plus consumer refetch.
 
-- Sort, filter, pagination, selection, and expansion use
-  `useControllableState` where exposed as v-models ([component-state.md](../architecture/component-state.md)).
-- **Pagination resets to page 1** when: global filter changes, any column
-  filter changes, page size changes, or `data` reference changes while not in a
-  manual-pagination-only workflow (exact matrix in the component spec).
-- **Selection and expansion** key by `RowId`, not row index. Reorder, insert,
-  filter, and page changes preserve selection for ids still present; ids
-  absent from the current `data` remain selected until the consumer clears them
-  (global scope) or are dropped from page scope per spec rules.
-- **Sort direction** cycles: none → asc → desc → none for tri-state columns unless
-  `enableMultiSort` and consumer opts into multi-column sort state.
+**Empty query results:** when `rowCount === 0`, effective pagination is **page
+1** with `pageCount === 1`, matching [GhostPagination](/specs/pagination)
+clamping.
 
-### 6. Selection scope
+### 5. State ownership, resets, and server fetch coalescing
 
-Phase one supports **`selectionScope: 'page' | 'all'`** (default `'page'`):
+- v-models use `useControllableState` ([component-state.md](../architecture/component-state.md)).
+- **Pagination resets to page 1** when global or column filters change, or
+  `pageSize` changes (among rules in the component spec). Sort changes do not
+  implicitly reset page unless the consumer does so.
+- **One server-oriented user action → one `stateChange` emit** carrying the
+  **complete next query** (`sorting`, `columnFilters`, `globalFilter`,
+  `pagination`) after all reset rules apply. Individual `update:*` emits still
+  fire for v-model writers. Example: changing a filter on page 4 coalesces to
+  `pagination.pageIndex === 1` and a single `stateChange` so consumers never fetch
+  page 4 with a new filter or double-fetch.
+- `stateChange` includes a monotonic `requestId` for `useGhostDataTableServerRequest`.
+- Filter input debouncing is **consumer-owned** (composable does not debounce).
 
-- **Page:** `selectedRowIds` affects only visible rows; select-all toggles the
-  current page; header checkbox uses `aria-checked="mixed"` when partial.
-- **All:** select-all means all rows matching the **current filter pipeline**
-  (local or consumer-provided), not merely the current page; row ids outside
-  the current page stay selected.
+### 6. Selection and select-all
+
+Selection is always keyed by **`RowId`**.
+
+| Mode               | `manualPagination` | Header select-all                                                | Cross-page selection                                                                                                                                            |
+| ------------------ | ------------------ | ---------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Local full dataset | `false`            | All rows matching the **local filter pipeline** (pre-pagination) | N/A (all rows are addressable)                                                                                                                                  |
+| Server page        | `true`             | All **visible** rows on the current page only                    | Explicit per-row toggles only; **selected ids are preserved** when `data` changes to another page (**no pruning** of ids missing from the current `data` slice) |
+
+**Query-wide bulk selection** (“select all 10,000 matching the filter on the
+server”) is **consumer-owned**, not a built-in phase-one affordance.
+
+Pruning selected or expanded ids that disappear from a **local** dataset remains
+allowed when `manualPagination` is false and `data` reference changes reflect
+removed entities.
 
 ### 7. Expansion
 
-- `expandedRowIds` is a set of `RowId` values (controlled or uncontrolled).
-- Expansion content renders in an additional row (full-width `td` with
-  `colspan`) **below** the data row, preserving native table structure.
-- Multiple expanded rows allowed unless `allowMultipleExpanded: false`.
+- `expandedRowIds` keyed by `RowId`; same **no-prune-on-server-page-change**
+  rule as selection when `manualPagination` is true.
+- Detail row follows the data row as a native `<tr>` with colspan.
 
 ### 8. Performance and benchmarks
 
-- Processing (sort + filter + slice for display) on **10k rows** must stay
-  within **proposed** budgets documented in the component spec (pending Zac
-  approval): wall-clock thresholds on a pinned Vitest bench fixture and a cap
-  on extra heap retained by the composable beyond the consumer `data` array.
-- Rendering must mount **at most** `pageSize` data rows (plus header/footer and
-  expansion rows) — never 10k `<tr>` elements.
-- Virtualization and sticky/frozen columns are **not** part of this ADR.
+- 10k-row **local** processing benchmarks are documented in the component spec.
+- Proposed time/memory thresholds are **informational** until repeated CI runs
+  establish variance; only then may they become gates (open question).
 
 ### 9. Accessibility
 
-- Sortable columns expose a **native `<button type="button">`** in the header cell
-  (default slot or primitive) with `aria-sort` on the `<th>` (`ascending`,
-  `descending`, or omitted when unsorted).
-- Selection uses `GhostCheckbox` with explicit `aria-label` patterns for row and
-  select-all controls.
-- Processing updates use `aria-busy` on the table region when `loading` is true
-  (consumer-owned flag); result counts are not blindly live-region announced on
-  every keystroke (filter debouncing is consumer-owned).
+- Sort: native `button` in `<th>`; **one** `aria-sort` on the active sort column
+  (single-column phase one).
+- Selection: `GhostCheckbox` with `Space` toggle; select-all mixed state via
+  `indeterminate` prop ([checkbox-spec](/specs/checkbox)).
+- `aria-busy` on the table region when `loading` is true.
 
 ## Alternatives considered
 
-### Option B — Spreadsheet-first `role="grid"` / treegrid
-
-Rejected for phase one. Delivers Excel-like keyboard navigation but fights native
-table semantics, duplicates work with future Tree treegrid, and diverges from the
-approved native-table direction.
-
-### Option C — TanStack Table adapter as the public API
-
-Rejected. Strong ecosystem but centers a non-Vue state model, encourages row
-record shapes the philosophy rejects, and hides Vue composition behind an
-adapter whose upgrades become a public compatibility surface.
-
-### Option D — Monolithic `GhostDataTable` SFC that owns all markup
-
-Rejected as the only API. Useful for quick starts as an optional themed bundle,
-but the headless contract must remain composable `GhostTable` parts for
-custom layouts and incremental adoption.
-
-### Option E — Immediate shared virtualization primitive
-
-Deferred. No phase-one consumer requires virtual rows when pagination is the
-default; premature extraction risks another slightly different virtualizer ([philosophy.md](../philosophy.md)).
+(Unchanged from initial proposal: grid-first, TanStack adapter, monolithic-only
+API, immediate virtualization — all rejected or deferred; see git history and
+initial ADR text.)
 
 ## Consequences
 
 **Benefits**
 
-- Aligns with existing `GhostTable`, `GhostPagination`, and `GhostCheckbox`
-  boundaries.
-- Keeps server integrations explicit and testable.
-- Preserves consumer object identity and conventional row types.
-- Clear deferral lines for virtualization and grid keyboard patterns.
+- Server pagination cannot silently drop cross-page selection.
+- Coalesced `stateChange` prevents duplicate or stale-page fetches.
+- Manual-flag matrix matches how real admin tables mix client and server steps.
 
 **Costs**
 
-- Consumers must compose more markup than a single monolithic table component.
-- Server mode requires consumer discipline for `rowCount`, manual flags, and
-  stale-response guards.
-- Benchmark and threshold proposals need maintainer approval before CI
-  enforcement.
+- Consumers own query-wide bulk actions and debouncing.
+- Phase one omits themed batteries-included markup.
 
 **Follow-up work**
 
-- Approve [data-table-spec.md](../components/data-table-spec.md) and this ADR.
-- Split implementation into child issues listed in the spec (composable core,
-  composition examples, themed wrapper, bench harness).
-- Separate specs for virtualization and treegrid navigation when prioritized.
+- Finalize [data-table spec](/specs/data-table) after Zac
+  review of PR #265 revisions.
+- Implement child issues; defer multi-sort, virtualization, treegrid keyboard.
 
 ## Compatibility implications
 
-- Additive public API in `@ghostvue/vue` and `@ghostvue/themes` when implemented.
-- No changes to `GhostTable` primitives.
-- Manifests and Changesets ship with implementation, not with this documentation-only PR.
-- SSR: table shell markup remains deterministic; client-only measurement stays in
-  benchmarks, not in composable hot paths.
+- Additive `@ghostvue/vue` exports when implemented; no `GhostTable` changes.
+- This ADR and spec remain **`specStatus: draft`** until explicit approval.
