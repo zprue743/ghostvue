@@ -1,0 +1,216 @@
+/*
+ * Themed GhostCommandPalette. The shell reuses the dialog scrim and
+ * elevation-4 surface; the input and list reuse the combobox control and
+ * option recipes. Semantic --ghost-* tokens only. The one public hook,
+ * --ghost-command-palette-list-max-size, caps the scrolling list height.
+ * Nested selectors use the palette's own part classes so components rendered
+ * inside items (badges, kbd) are never restyled.
+ */
+@layer ghostvue-theme {
+  :where(
+    .ghost-theme .ghost-command-palette-overlay,
+    .ghost-themed-scope .ghost-command-palette-overlay,
+    .ghost-command-palette-overlay[data-themed]
+  ) {
+    background-color: var(--ghost-scrim);
+    inset: 0;
+    position: fixed;
+    z-index: 50;
+  }
+
+  :where(
+    .ghost-theme .ghost-command-palette-content,
+    .ghost-themed-scope .ghost-command-palette-content,
+    .ghost-command-palette-content[data-themed]
+  ) {
+    background-color: var(--ghost-elevation-4-bg);
+    border: var(--ghost-border-hairline-width) solid
+      var(--ghost-elevation-4-border);
+    border-radius: var(--ghost-radius-lg);
+    box-shadow:
+      var(--ghost-elevation-4-shadow), var(--ghost-elevation-4-highlight);
+    box-sizing: border-box;
+    color: var(--ghost-surface-fg);
+    display: grid;
+    font-family: var(--ghost-type-family-sans);
+    font-feature-settings: var(--ghost-type-feature-default);
+    gap: var(--ghost-space-gap-sm);
+    inline-size: min(calc(100vw - 2 * var(--ghost-space-inset-lg)), 40rem);
+    /*
+     * Anchored near the top rather than centered so the input does not jump
+     * as results shrink and grow. Physical `left` pairs with the physical
+     * translate (same RTL reasoning as the themed dialog).
+     */
+    left: 50%;
+    max-block-size: calc(100dvh - 2 * var(--ghost-space-inset-lg));
+    overflow: hidden;
+    overflow-wrap: anywhere;
+    padding: var(--ghost-space-inset-sm);
+    position: fixed;
+    top: min(12dvh, 8rem);
+    transform: translateX(-50%);
+    z-index: 50;
+  }
+
+  :where(
+    .ghost-theme .ghost-command-palette-title,
+    .ghost-themed-scope .ghost-command-palette-title,
+    .ghost-command-palette-content[data-themed] .ghost-command-palette-title
+  ) {
+    font-size: var(--ghost-type-size-sm);
+    font-weight: var(--ghost-type-weight-semibold);
+    line-height: var(--ghost-type-line-snug);
+    margin: 0;
+    padding-inline: var(--ghost-space-inset-sm);
+  }
+
+  :where(
+    .ghost-theme .ghost-command-palette-input,
+    .ghost-themed-scope .ghost-command-palette-input,
+    .ghost-command-palette-content[data-themed] .ghost-command-palette-input
+  ) {
+    background-color: var(--ghost-surface-bg);
+    border: var(--ghost-border-hairline-width) solid var(--ghost-border-strong);
+    border-radius: var(--ghost-action-radius);
+    box-sizing: border-box;
+    color: var(--ghost-text-default);
+    font: inherit;
+    font-size: var(--ghost-control-size-md-font);
+    inline-size: 100%;
+    min-block-size: var(--ghost-control-size-md-min);
+    padding-block: var(--ghost-control-size-md-padding-block);
+    padding-inline: var(--ghost-control-size-md-padding-inline);
+  }
+
+  /* A pseudo-element is not allowed inside :where(), so it follows the list. */
+  :where(
+    .ghost-theme .ghost-command-palette-input,
+    .ghost-themed-scope .ghost-command-palette-input,
+    .ghost-command-palette-content[data-themed] .ghost-command-palette-input
+  )::placeholder {
+    color: var(--ghost-text-muted);
+    opacity: 1;
+  }
+
+  /* Focus stays in the input while the palette is open, so it keeps the ring. */
+  :where(
+    .ghost-theme .ghost-command-palette-input:focus-visible,
+    .ghost-themed-scope .ghost-command-palette-input:focus-visible,
+    .ghost-command-palette-content[data-themed]
+      .ghost-command-palette-input:focus-visible
+  ) {
+    box-shadow: 0 0 0 var(--ghost-focus-ring-offset)
+      var(--ghost-focus-ring-contrast);
+    outline: var(--ghost-focus-ring-width) solid var(--ghost-focus-ring-color);
+    outline-offset: var(--ghost-focus-ring-offset);
+  }
+
+  :where(
+    .ghost-theme .ghost-command-palette-list,
+    .ghost-themed-scope .ghost-command-palette-list,
+    .ghost-command-palette-content[data-themed] .ghost-command-palette-list
+  ) {
+    max-block-size: var(
+      --ghost-command-palette-list-max-size,
+      min(50dvh, 22rem)
+    );
+    overflow: auto;
+    overscroll-behavior: contain;
+  }
+
+  :where(
+    .ghost-theme .ghost-command-palette-item,
+    .ghost-themed-scope .ghost-command-palette-item,
+    .ghost-command-palette-content[data-themed] .ghost-command-palette-item
+  ) {
+    align-items: center;
+    border-radius: var(--ghost-radius-md);
+    cursor: default;
+    display: flex;
+    gap: var(--ghost-space-gap-sm);
+    min-block-size: var(--ghost-control-size-md-min);
+    padding-block: var(--ghost-control-size-sm-padding-block);
+    padding-inline: var(--ghost-space-inset-sm);
+  }
+
+  /*
+   * Focus stays in the input, so the highlighted item is the only sign of
+   * where Enter lands. Like the themed combobox, it pairs the muted fill
+   * with an inset token ring, which stays inside the list's scroll clip.
+   */
+  :where(
+    .ghost-theme .ghost-command-palette-item[data-highlighted],
+    .ghost-themed-scope .ghost-command-palette-item[data-highlighted],
+    .ghost-command-palette-content[data-themed]
+      .ghost-command-palette-item[data-highlighted]
+  ) {
+    background-color: var(--ghost-surface-muted-bg);
+    outline: var(--ghost-focus-ring-width) solid var(--ghost-focus-ring-color);
+    outline-offset: calc(var(--ghost-focus-ring-offset) * -1);
+  }
+
+  :where(
+    .ghost-theme .ghost-command-palette-item[data-state='disabled'],
+    .ghost-themed-scope .ghost-command-palette-item[data-state='disabled'],
+    .ghost-command-palette-content[data-themed]
+      .ghost-command-palette-item[data-state='disabled']
+  ) {
+    color: var(--ghost-text-muted);
+    cursor: not-allowed;
+  }
+
+  :where(
+    .ghost-theme .ghost-command-palette-label,
+    .ghost-themed-scope .ghost-command-palette-label,
+    .ghost-command-palette-content[data-themed] .ghost-command-palette-label,
+    .ghost-theme .ghost-command-palette-empty,
+    .ghost-themed-scope .ghost-command-palette-empty,
+    .ghost-command-palette-content[data-themed] .ghost-command-palette-empty
+  ) {
+    color: var(--ghost-text-muted);
+    font-size: var(--ghost-type-size-sm);
+    padding-block: var(--ghost-space-inset-xs);
+    padding-inline: var(--ghost-space-inset-sm);
+  }
+
+  :where(
+    .ghost-theme .ghost-command-palette-separator,
+    .ghost-themed-scope .ghost-command-palette-separator,
+    .ghost-command-palette-content[data-themed] .ghost-command-palette-separator
+  ) {
+    background-color: var(--ghost-border-default);
+    block-size: var(--ghost-border-hairline-width);
+    margin-block: var(--ghost-space-gap-xs);
+  }
+
+  @media (forced-colors: active) {
+    :where(
+      .ghost-theme .ghost-command-palette-content,
+      .ghost-themed-scope .ghost-command-palette-content,
+      .ghost-command-palette-content[data-themed]
+    ) {
+      background-color: Canvas;
+      border-color: CanvasText;
+      box-shadow: none;
+      color: CanvasText;
+    }
+
+    :where(
+      .ghost-theme .ghost-command-palette-item[data-state='disabled'],
+      .ghost-themed-scope .ghost-command-palette-item[data-state='disabled'],
+      .ghost-command-palette-content[data-themed]
+        .ghost-command-palette-item[data-state='disabled']
+    ) {
+      color: GrayText;
+    }
+
+    :where(
+      .ghost-theme .ghost-command-palette-separator,
+      .ghost-themed-scope .ghost-command-palette-separator,
+      .ghost-command-palette-content[data-themed]
+        .ghost-command-palette-separator
+    ) {
+      background-color: CanvasText;
+    }
+  }
+}

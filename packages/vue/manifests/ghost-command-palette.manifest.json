@@ -1,0 +1,359 @@
+{
+  "schemaVersion": "1.1.0",
+  "source": "generated",
+  "name": "GhostCommandPalette",
+  "package": "@ghostvue/vue",
+  "status": "experimental",
+  "description": "Headless command palette root: a GhostDialog shell composed with useGhostCombobox for grouped, consumer-filtered commands, keyboard highlight, loading and empty announcements, and a command event carrying the activated item id. Renders no element.",
+  "props": [
+    {
+      "name": "closeOnEscape",
+      "type": "boolean",
+      "default": true,
+      "required": false,
+      "description": "Whether `Escape` closes the palette.",
+      "deprecated": false
+    },
+    {
+      "name": "closeOnSelect",
+      "type": "boolean",
+      "default": true,
+      "required": false,
+      "description": "Requests close after a command is activated.",
+      "deprecated": false
+    },
+    {
+      "name": "defaultOpen",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Initial open state when `open` is omitted.",
+      "deprecated": false
+    },
+    {
+      "name": "defaultSearch",
+      "type": "string",
+      "default": "",
+      "required": false,
+      "description": "Initial query and the value it resets to on close.",
+      "deprecated": false
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Blocks opening, search, and command activation.",
+      "deprecated": false
+    },
+    {
+      "name": "loading",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Loading presentation: hides empty, sets `aria-busy`, announces loading.",
+      "deprecated": false
+    },
+    {
+      "name": "messages",
+      "type": "GhostComboboxMessages",
+      "required": false,
+      "description": "Overrides loading, empty, and results-count announcements.",
+      "deprecated": false
+    },
+    {
+      "name": "modal",
+      "type": "boolean",
+      "default": true,
+      "required": false,
+      "description": "Modal shell (focus trap, scroll lock, inert background, overlay).",
+      "deprecated": false
+    },
+    {
+      "name": "open",
+      "type": "boolean",
+      "required": false,
+      "description": "Controlled open state. Omit for uncontrolled mode.",
+      "deprecated": false
+    },
+    {
+      "name": "search",
+      "type": "string",
+      "required": false,
+      "description": "Controlled query text. Omit for uncontrolled mode.",
+      "deprecated": false
+    }
+  ],
+  "models": [
+    {
+      "prop": "open",
+      "event": "update:open",
+      "type": "boolean",
+      "description": "v-model binding for `open`."
+    },
+    {
+      "prop": "search",
+      "event": "update:search",
+      "type": "string",
+      "description": "v-model binding for `search`."
+    }
+  ],
+  "events": [
+    {
+      "name": "command",
+      "payloadType": "GhostCommandPaletteCommandPayload",
+      "description": "Emitted synchronously with { id } when an enabled command is activated. Not cancelable; runs before any close request."
+    },
+    {
+      "name": "search",
+      "payloadType": "GhostComboboxSearchPayload",
+      "description": "Emitted after each query change, including the reset on close, with a monotonic requestId for stale-response guards."
+    }
+  ],
+  "slots": [
+    {
+      "name": "default",
+      "props": [
+        {
+          "name": "close",
+          "type": "() => void",
+          "description": "Slot prop `close`."
+        },
+        {
+          "name": "focusInput",
+          "type": "() => void",
+          "description": "Slot prop `focusInput`."
+        },
+        {
+          "name": "loading",
+          "type": "boolean",
+          "description": "Slot prop `loading`."
+        },
+        {
+          "name": "open",
+          "type": "boolean",
+          "description": "Slot prop `open`."
+        },
+        {
+          "name": "search",
+          "type": "string",
+          "description": "Slot prop `search`."
+        }
+      ],
+      "description": "Palette parts composed by the consumer."
+    }
+  ],
+  "exposed": [
+    {
+      "name": "blur",
+      "kind": "method",
+      "type": "() => void",
+      "description": "Exposed method `blur`."
+    },
+    {
+      "name": "close",
+      "kind": "method",
+      "type": "() => void",
+      "description": "Requests close; a controlled parent may keep it open."
+    },
+    {
+      "name": "element",
+      "kind": "property",
+      "type": "HTMLElement | null",
+      "description": "Exposed property `element`."
+    },
+    {
+      "name": "focus",
+      "kind": "method",
+      "type": "(options?: FocusOptions) => void",
+      "description": "Exposed method `focus`."
+    },
+    {
+      "name": "focusInput",
+      "kind": "method",
+      "type": "() => void",
+      "description": "Moves focus to the command input when it is mounted."
+    }
+  ],
+  "styling": {
+    "parts": [
+      {
+        "name": "trigger",
+        "description": "Opener from GhostCommandPaletteTrigger."
+      },
+      {
+        "name": "overlay",
+        "description": "Modal backdrop from GhostCommandPaletteOverlay."
+      },
+      {
+        "name": "content",
+        "description": "Dialog surface from GhostCommandPaletteContent; hosts the polite announcer."
+      },
+      {
+        "name": "title",
+        "description": "Accessible name from GhostCommandPaletteTitle."
+      },
+      {
+        "name": "input",
+        "description": "Combobox query field from GhostCommandPaletteInput."
+      },
+      {
+        "name": "list",
+        "description": "In-flow listbox from GhostCommandPaletteList."
+      },
+      {
+        "name": "item",
+        "description": "Command option from GhostCommandPaletteItem."
+      },
+      {
+        "name": "group",
+        "description": "Labelled group from GhostCommandPaletteGroup."
+      },
+      {
+        "name": "label",
+        "description": "Group label from GhostCommandPaletteLabel."
+      },
+      {
+        "name": "separator",
+        "description": "Decorative divider from GhostCommandPaletteSeparator."
+      },
+      {
+        "name": "empty",
+        "description": "Message from GhostCommandPaletteEmpty when open, not loading, and no items are registered."
+      },
+      {
+        "name": "announcer",
+        "description": "Visually hidden polite live region inside the content."
+      }
+    ],
+    "states": [
+      {
+        "name": "open",
+        "description": "Trigger and input data-state while the palette is open."
+      },
+      {
+        "name": "active",
+        "description": "Item data-state (and data-highlighted) for the keyboard or pointer highlight."
+      },
+      {
+        "name": "disabled",
+        "description": "Item data-state when it cannot be highlighted or activated."
+      }
+    ],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "dialog",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/combobox/examples/combobox-autocomplete-list/",
+    "keyboard": {
+      "ArrowDown": "Highlights the next enabled command (wraps) and updates aria-activedescendant on the input.",
+      "ArrowUp": "Highlights the previous enabled command (wraps).",
+      "Home": "Highlights the first enabled command.",
+      "End": "Highlights the last enabled command.",
+      "Enter": "Activates the highlighted command: emits command with its id and, with closeOnSelect, closes. Never commits a selection or rewrites the query.",
+      "Escape": "Clears the highlight and closes the palette when closeOnEscape is true; focus returns to the opener.",
+      "Tab": "Cycles within the modal palette; in a non-modal palette, leaving the palette closes it without restoring focus.",
+      "Shift+Tab": "Cycles backward within the modal palette; in a non-modal palette, leaving closes it like Tab."
+    },
+    "requiredAriaAttributes": [
+      "aria-modal",
+      "aria-labelledby",
+      "aria-expanded",
+      "aria-controls",
+      "aria-autocomplete",
+      "aria-activedescendant"
+    ],
+    "verification": {
+      "automatedKeyboard": {
+        "status": "passed",
+        "keys": {
+          "ArrowDown": [
+            {
+              "spec": "tests/e2e/ghost-command-palette.spec.ts",
+              "title": "GhostCommandPalette › command-palette/basic: keyboard-only activation, grouped labels, Tab trap, empty state, focus restore, and axe",
+              "package": "@ghostvue/vue"
+            }
+          ],
+          "ArrowUp": [
+            {
+              "spec": "tests/e2e/ghost-command-palette.spec.ts",
+              "title": "GhostCommandPalette › command-palette/basic: keyboard-only activation, grouped labels, Tab trap, empty state, focus restore, and axe",
+              "package": "@ghostvue/vue"
+            }
+          ],
+          "Home": [
+            {
+              "spec": "tests/e2e/ghost-command-palette.spec.ts",
+              "title": "GhostCommandPalette › command-palette/basic: keyboard-only activation, grouped labels, Tab trap, empty state, focus restore, and axe",
+              "package": "@ghostvue/vue"
+            }
+          ],
+          "End": [
+            {
+              "spec": "tests/e2e/ghost-command-palette.spec.ts",
+              "title": "GhostCommandPalette › command-palette/basic: keyboard-only activation, grouped labels, Tab trap, empty state, focus restore, and axe",
+              "package": "@ghostvue/vue"
+            }
+          ],
+          "Enter": [
+            {
+              "spec": "tests/e2e/ghost-command-palette.spec.ts",
+              "title": "GhostCommandPalette › command-palette/basic: keyboard-only activation, grouped labels, Tab trap, empty state, focus restore, and axe",
+              "package": "@ghostvue/vue"
+            }
+          ],
+          "Escape": [
+            {
+              "spec": "tests/e2e/ghost-command-palette.spec.ts",
+              "title": "GhostCommandPalette › command-palette/basic: keyboard-only activation, grouped labels, Tab trap, empty state, focus restore, and axe",
+              "package": "@ghostvue/vue"
+            }
+          ],
+          "Tab": [
+            {
+              "spec": "tests/e2e/ghost-command-palette.spec.ts",
+              "title": "GhostCommandPalette › command-palette/basic: keyboard-only activation, grouped labels, Tab trap, empty state, focus restore, and axe",
+              "package": "@ghostvue/vue"
+            },
+            {
+              "spec": "tests/e2e/ghost-command-palette.spec.ts",
+              "title": "GhostCommandPalette › non-modal palette closes when Tab leaves it, without pulling focus back (C4)",
+              "package": "@ghostvue/themes"
+            }
+          ],
+          "Shift+Tab": [
+            {
+              "spec": "tests/e2e/ghost-command-palette.spec.ts",
+              "title": "GhostCommandPalette › command-palette/basic: keyboard-only activation, grouped labels, Tab trap, empty state, focus restore, and axe",
+              "package": "@ghostvue/vue"
+            },
+            {
+              "spec": "tests/e2e/ghost-command-palette.spec.ts",
+              "title": "GhostCommandPalette › non-modal palette closes when Tab leaves it, without pulling focus back (C4)",
+              "package": "@ghostvue/themes"
+            }
+          ]
+        }
+      },
+      "manual": {
+        "status": "not-reviewed",
+        "evidence": []
+      },
+      "assistiveTechnology": {
+        "status": "not-reviewed",
+        "evidence": []
+      }
+    }
+  },
+  "examples": [
+    "command-palette/basic",
+    "command-palette/async",
+    "command-palette/shortcut",
+    "command-palette/virtualized"
+  ],
+  "spec": {
+    "path": "docs/components/command-palette-spec.md",
+    "status": "approved",
+    "evidence": "Zac approved resolved decisions in chat on 2026-11-22; recorded in PR #270."
+  }
+}

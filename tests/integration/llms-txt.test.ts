@@ -7,6 +7,7 @@ import { join, resolve } from 'node:path'
 import { afterEach, beforeAll, describe, expect, it } from 'vitest'
 
 import { writeComponentReferences } from '../../scripts/lib/component-reference.js'
+import { buildDocsCorpusPages } from '../../scripts/lib/mcp-asset-sources.js'
 
 import {
   docsDescription,
@@ -240,5 +241,27 @@ kept fence
       )
     ).replace(/\n+$/, '')
     expect(button?.body.split(themed)).toHaveLength(2)
+  })
+
+  // Lives here rather than in the MCP bundle test so it shares this file's
+  // `docs/reference/` setup instead of racing another worker that rewrites it.
+  it('feeds the MCP docs corpus the llms-full page set minus docs/plans', async () => {
+    const { pages } = await generateLlmsDocuments({
+      docsRoot,
+      title: docsTitle,
+      description: docsDescription,
+      sidebar: docsSidebar,
+    })
+    const corpus = await buildDocsCorpusPages(process.cwd())
+
+    expect(corpus.length).toBeGreaterThan(0)
+    expect(corpus).toEqual(
+      pages.filter((page) => !page.sourcePath.startsWith('docs/plans/')),
+    )
+    expect(corpus.map((page) => page.link)).toEqual(
+      sidebarPages()
+        .map((page) => page.link)
+        .filter((link) => !link.startsWith('/plans/')),
+    )
   })
 })

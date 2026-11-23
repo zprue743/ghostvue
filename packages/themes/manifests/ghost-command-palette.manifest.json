@@ -1,0 +1,80 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "handwritten",
+  "name": "GhostCommandPalette",
+  "package": "@ghostvue/themes",
+  "status": "experimental",
+  "description": "Themed GhostCommandPalette root plus themed overlay and content wrappers that set data-themed, so the portaled palette picks up the scrim, elevation-4 surface, combobox input, and option recipes. Other parts are re-exported from @ghostvue/vue and styled through the content.",
+  "props": [],
+  "models": [],
+  "events": [],
+  "slots": [
+    {
+      "name": "default",
+      "props": [],
+      "description": "Palette parts composed by the consumer."
+    }
+  ],
+  "exposed": [],
+  "styling": {
+    "parts": [
+      {
+        "name": "overlay",
+        "description": "Scrim backdrop with .ghost-command-palette-overlay."
+      },
+      {
+        "name": "content",
+        "description": "Top-anchored elevation-4 surface with .ghost-command-palette-content."
+      },
+      {
+        "name": "input",
+        "description": "Query field with .ghost-command-palette-input and a focus ring."
+      },
+      {
+        "name": "list",
+        "description": "Scrolling listbox with .ghost-command-palette-list."
+      },
+      {
+        "name": "item",
+        "description": "Command row with .ghost-command-palette-item; the highlight draws the inset focus ring."
+      },
+      {
+        "name": "separator",
+        "description": "Hairline divider with .ghost-command-palette-separator."
+      }
+    ],
+    "states": [
+      {
+        "name": "active",
+        "description": "Highlighted item fill and inset focus ring."
+      },
+      {
+        "name": "disabled",
+        "description": "Muted, not-allowed item."
+      }
+    ],
+    "cssProperties": [
+      {
+        "name": "--ghost-command-palette-list-max-size",
+        "description": "Maximum block size of the scrolling list. Defaults to min(50dvh, 22rem)."
+      },
+      {
+        "name": "--ghost-elevation-4-bg",
+        "description": "Palette surface background."
+      },
+      {
+        "name": "--ghost-scrim",
+        "description": "Overlay color."
+      }
+    ]
+  },
+  "accessibility": {
+    "role": "dialog",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/combobox/examples/combobox-autocomplete-list/",
+    "keyboard": {},
+    "requiredAriaAttributes": []
+  },
+  "examples": [
+    "command-palette/themed"
+  ]
+}

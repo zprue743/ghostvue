@@ -1,8 +1,12 @@
 #!/usr/bin/env node
 /**
- * `ghostvue-mcp` executable. Delegates to the stub until the stdio server
- * lands; setting `exitCode` (not calling `process.exit`) lets stderr flush.
+ * `ghostvue-mcp` executable. Setting `exitCode` (rather than calling
+ * `process.exit`) lets pending stdout frames and stderr diagnostics flush.
  */
-import { runStub } from './index.js'
+import { runCli } from './cli.js'
 
-process.exitCode = runStub(process.stderr)
+process.exitCode = await runCli({
+  stdin: process.stdin,
+  stdout: process.stdout,
+  stderr: process.stderr,
+})

@@ -1,0 +1,88 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "generated",
+  "name": "GhostCommandPaletteInput",
+  "package": "@ghostvue/vue",
+  "status": "experimental",
+  "description": "Combobox query field. Its keyboard handling mirrors GhostComboboxInput, except that Enter activates the highlighted command instead of selecting it. Typing writes the root search and emits search.",
+  "props": [
+    {
+      "name": "as",
+      "type": "GhostCommandPaletteInputElement",
+      "default": "input",
+      "required": false,
+      "description": "Tag name or component rendered for the query field.",
+      "deprecated": false
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Disables typing and activation from this input.",
+      "deprecated": false
+    }
+  ],
+  "models": [],
+  "events": [],
+  "slots": [],
+  "exposed": [
+    {
+      "name": "blur",
+      "kind": "method",
+      "type": "() => void",
+      "description": "Exposed method `blur`."
+    },
+    {
+      "name": "element",
+      "kind": "property",
+      "type": "HTMLElement | null",
+      "description": "Exposed property `element`."
+    },
+    {
+      "name": "focus",
+      "kind": "method",
+      "type": "(options?: FocusOptions) => void",
+      "description": "Exposed method `focus`."
+    }
+  ],
+  "styling": {
+    "parts": [
+      {
+        "name": "input",
+        "description": "Field with class ghost-command-palette-input and data-part=\"input\"."
+      }
+    ],
+    "states": [
+      {
+        "name": "open",
+        "description": "data-state=\"open\" while the palette is open."
+      }
+    ],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "combobox",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/combobox/examples/combobox-autocomplete-list/",
+    "keyboard": {
+      "ArrowDown": "Highlights the next enabled command (wraps) and updates aria-activedescendant on the input.",
+      "ArrowUp": "Highlights the previous enabled command (wraps).",
+      "Home": "Highlights the first enabled command.",
+      "End": "Highlights the last enabled command.",
+      "Enter": "Activates the highlighted command: emits command with its id and, with closeOnSelect, closes. Never commits a selection or rewrites the query.",
+      "Escape": "Clears the highlight and closes the palette when closeOnEscape is true; focus returns to the opener."
+    },
+    "requiredAriaAttributes": [
+      "aria-expanded",
+      "aria-controls",
+      "aria-autocomplete",
+      "aria-activedescendant"
+    ]
+  },
+  "examples": [],
+  "spec": {
+    "path": "docs/components/command-palette-spec.md",
+    "status": "approved",
+    "evidence": "Zac approved resolved decisions in chat on 2026-11-22; recorded in PR #270."
+  }
+}

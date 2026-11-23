@@ -29,7 +29,7 @@ Related: [./architecture/component-state.md](./architecture/component-state.md)
 
 **Warning:** Dialog content missing accessible name
 
-GhostDialogContent and GhostDrawerContent require an accessible name. Render GhostDialogTitle or GhostDrawerTitle inside the content, or pass aria-label or aria-labelledby.
+GhostDialogContent, GhostDrawerContent, and GhostCommandPaletteContent require an accessible name. Render GhostDialogTitle, GhostDrawerTitle, or GhostCommandPaletteTitle inside the content, or pass aria-label or aria-labelledby.
 
 Related: [./components/dialog.md](./components/dialog.md)
 
@@ -104,4 +104,12 @@ Related: [./components/toast.md](./components/toast.md)
 toast() and update() need a non-empty title. The {call} call was ignored.
 
 Related: [./components/toast.md](./components/toast.md)
+
+## GHOST012
+
+**Warning:** Duplicate command palette item id
+
+Two GhostCommandPaletteItem components in one palette use the id "{id}". Give every command a unique, stable id; duplicates share one highlight and registry entry.
+
+Related: [./components/command-palette.md](./components/command-palette.md)
 

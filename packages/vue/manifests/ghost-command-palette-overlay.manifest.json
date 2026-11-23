@@ -1,0 +1,92 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "generated",
+  "name": "GhostCommandPaletteOverlay",
+  "package": "@ghostvue/vue",
+  "status": "experimental",
+  "description": "Modal backdrop rendered only while the palette is open and modal. Pressing it dismisses the palette.",
+  "props": [
+    {
+      "name": "as",
+      "type": "GhostCommandPaletteOverlayElement",
+      "default": "div",
+      "required": false,
+      "description": "Tag name or component rendered for the modal backdrop.",
+      "deprecated": false
+    },
+    {
+      "name": "portal",
+      "type": "boolean",
+      "default": true,
+      "required": false,
+      "description": "Teleport overlay through `GhostPortal` when `true`, or render inline when `false`.",
+      "deprecated": false
+    },
+    {
+      "name": "portalTo",
+      "type": "GhostPortalTarget",
+      "default": "body",
+      "required": false,
+      "description": "Teleport target passed to `GhostPortal` when `portal` is `true`.",
+      "deprecated": false
+    }
+  ],
+  "models": [],
+  "events": [],
+  "slots": [
+    {
+      "name": "default",
+      "props": [],
+      "description": "Primary content."
+    }
+  ],
+  "exposed": [
+    {
+      "name": "blur",
+      "kind": "method",
+      "type": "() => void",
+      "description": "Exposed method `blur`."
+    },
+    {
+      "name": "element",
+      "kind": "property",
+      "type": "HTMLElement | null",
+      "description": "Exposed property `element`."
+    },
+    {
+      "name": "focus",
+      "kind": "method",
+      "type": "(options?: FocusOptions) => void",
+      "description": "Exposed method `focus`."
+    }
+  ],
+  "styling": {
+    "parts": [
+      {
+        "name": "overlay",
+        "description": "Backdrop with class ghost-command-palette-overlay and data-part=\"overlay\"."
+      }
+    ],
+    "states": [
+      {
+        "name": "open",
+        "description": "data-state=\"open\" while mounted."
+      }
+    ],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "presentation",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/",
+    "keyboard": {},
+    "requiredAriaAttributes": [
+      "aria-hidden"
+    ]
+  },
+  "examples": [],
+  "spec": {
+    "path": "docs/components/command-palette-spec.md",
+    "status": "approved",
+    "evidence": "Zac approved resolved decisions in chat on 2026-11-22; recorded in PR #270."
+  }
+}

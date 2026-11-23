@@ -1,0 +1,69 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "generated",
+  "name": "GhostCommandPaletteTitle",
+  "package": "@ghostvue/vue",
+  "status": "experimental",
+  "description": "Accessible palette name (h2 by default) linked to the content with aria-labelledby, and reused as the input name when the input has none. Visually hide it for icon-only designs; there is no hidden default title.",
+  "props": [
+    {
+      "name": "as",
+      "type": "GhostCommandPaletteTitleElement",
+      "default": "h2",
+      "required": false,
+      "description": "Tag name or component rendered for the palette heading.",
+      "deprecated": false
+    }
+  ],
+  "models": [],
+  "events": [],
+  "slots": [
+    {
+      "name": "default",
+      "props": [],
+      "description": "Primary content."
+    }
+  ],
+  "exposed": [
+    {
+      "name": "blur",
+      "kind": "method",
+      "type": "() => void",
+      "description": "Exposed method `blur`."
+    },
+    {
+      "name": "element",
+      "kind": "property",
+      "type": "HTMLElement | null",
+      "description": "Exposed property `element`."
+    },
+    {
+      "name": "focus",
+      "kind": "method",
+      "type": "(options?: FocusOptions) => void",
+      "description": "Exposed method `focus`."
+    }
+  ],
+  "styling": {
+    "parts": [
+      {
+        "name": "title",
+        "description": "Heading with class ghost-command-palette-title and data-part=\"title\"."
+      }
+    ],
+    "states": [],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "heading",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/",
+    "keyboard": {},
+    "requiredAriaAttributes": []
+  },
+  "examples": [],
+  "spec": {
+    "path": "docs/components/command-palette-spec.md",
+    "status": "approved",
+    "evidence": "Zac approved resolved decisions in chat on 2026-11-22; recorded in PR #270."
+  }
+}

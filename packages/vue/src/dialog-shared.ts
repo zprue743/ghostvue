@@ -650,12 +650,19 @@ function hasFocusableAncestor(target: EventTarget | null): boolean {
  * `extraAttrs` lets a family add its own hooks (for example the drawer's
  * `data-side` / `data-dir`). They are applied after consumer attrs and before
  * the ARIA relationships, so they cannot override role or labelling.
+ *
+ * `suppressRestoreFocus` lets a family close without restoring focus when the
+ * user already moved focus elsewhere (the non-modal command palette's focus
+ * departure, GHO-166). Dialog and Drawer do not pass it.
  */
 export function useDialogContentPart(
   context: DialogPartsContext,
   props: DialogContentPartProps,
   hostRef: Readonly<ShallowRef<unknown>>,
-  options: { extraAttrs?: ExtraAttrs } = {},
+  options: {
+    extraAttrs?: ExtraAttrs
+    suppressRestoreFocus?: () => boolean
+  } = {},
 ) {
   const attrs = useAttrs()
 
@@ -721,6 +728,8 @@ export function useDialogContentPart(
   )
 
   const shouldRestoreFocus = shallowRef(true)
+  const allowRestoreFocus = (): boolean =>
+    shouldRestoreFocus.value && !(options.suppressRestoreFocus?.() ?? false)
 
   // Per-opening focus bookkeeping for `focusReady`. `openerAtOpen` is captured
   // synchronously when an opening starts (or at mount for an initially open
@@ -878,7 +887,7 @@ export function useDialogContentPart(
           wasOpen &&
           !activatedThisOpening &&
           activationDeferred &&
-          shouldRestoreFocus.value
+          allowRestoreFocus()
         ) {
           // Closed before the scope ever activated, so useFocusScope has
           // nothing to restore. Inert release is a pre-flush watcher, so the
@@ -910,7 +919,7 @@ export function useDialogContentPart(
     trapped: () => context.isModal.value,
     loop: () => context.isModal.value,
     autoFocus: () => context.isModal.value || !context.openedAtMount.value,
-    restoreFocus: shouldRestoreFocus,
+    restoreFocus: allowRestoreFocus,
     // Getters, so useFocusScope invokes the consumer resolvers lazily at
     // activation and restoration only (mounted lifecycle, never SSR setup).
     initialFocus: () => props.initialFocus?.() ?? null,

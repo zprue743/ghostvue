@@ -37,10 +37,17 @@
     "provenance": true
   },
   "scripts": {
-    "build": "tsc -p tsconfig.build.json",
+    "prebuild": "pnpm -w registries:write",
+    "build": "tsc -p tsconfig.build.json && node scripts/bundle-assets.mjs",
+    "assets:check": "node scripts/bundle-assets.mjs --check",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "devDependencies": {
     "@types/node": "22.20.1"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "1.32.2",
+    "ajv": "8.20.0",
+    "zod": "4.6.7"
   }
 }
