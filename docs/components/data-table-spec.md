@@ -7,7 +7,7 @@ components:
   - GhostDataTablePreset
 packages:
   - '@ghostvue/vue'
-specStatus: draft
+specStatus: proposed
 manifests: []
 sections:
   purpose:
@@ -1039,7 +1039,7 @@ intent, not production bundle performance.
 
 | Child issue                                                                                         | Scope                                                    | Complexity |
 | --------------------------------------------------------------------------------------------------- | -------------------------------------------------------- | ---------- |
-| **Done:** GhostVue vs PrimeVue prototype ([PR #269](https://github.com/zprue743/ghostvue/pull/269)) | Evidence folded into spec; Zac approval still required   | —          |
+| **Done:** GhostVue vs PrimeVue prototype ([PR #269](https://github.com/zprue743/ghostvue/pull/269)) | Evidence folded into spec; prototype PR closed unmerged  | —          |
 | DataTable core types and local processing pipeline                                                  | `useGhostDataTable`, manual matrix, row models           | High       |
 | `defineDataTableColumns` + column type tests                                                        | Typed `value` / `getValue`, CI type tests                | Medium     |
 | `GhostDataTableTable` default renderer                                                              | Basic example (a), `#columnId` slots                     | Medium     |
