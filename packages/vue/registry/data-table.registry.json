@@ -1,0 +1,8 @@
+{
+  "schemaVersion": "1.0.0",
+  "slug": "data-table",
+  "vueBarrel": [
+    "export { useGhostDataTable } from './use-ghost-data-table'",
+    "export type {\n  DataTableCellContext,\n  DataTableColumnDef,\n  DataTableColumnFilter,\n  DataTableColumnSort,\n  DataTableGetRowId,\n  DataTableHeaderSelectionState,\n  DataTablePaginationState,\n  DataTableQueryState,\n  DataTableRow,\n  DataTableRowId,\n  DataTableSortDirection,\n  DataTableStateChangePayload,\n  UseGhostDataTableBaseOptions,\n  UseGhostDataTableLocalPaginationOptions,\n  UseGhostDataTableManualPaginationOptions,\n  UseGhostDataTableOptions,\n  UseGhostDataTableReturn,\n} from './ghost-data-table'"
+  ]
+}

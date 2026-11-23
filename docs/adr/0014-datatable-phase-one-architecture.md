@@ -1,6 +1,6 @@
 # ADR 0014: DataTable phase-one architecture
 
-- Status: proposed
+- Status: accepted (Zac approved in chat on 2026-11-23; recorded in [PR #272](https://github.com/zprue743/ghostvue/pull/272))
 - Date: 2026-11-22
 - Decision owners: repository maintainers (Zac sign-off required)
 - Relates to: [GHO-35](https://linear.app/ghost-vue/issue/GHO-35),
@@ -237,8 +237,8 @@ default; premature extraction risks another slightly different virtualizer
 
 - Finalize [data-table spec](/specs/data-table) after PR #265 reviews.
 - **Pre-freeze prototype complete** ([PR #269](https://github.com/zprue743/ghostvue/pull/269),
-  `prototypes/datatable-primevue/FINDINGS.md`); summary in spec — Zac still promotes
-  `specStatus: approved` (no PrimeVue dependency on `master`).
+  `prototypes/datatable-primevue/FINDINGS.md`); summary in spec (no PrimeVue
+  dependency on `master`). Prototype evidence did not auto-approve the spec.
 - Split implementation into child issues listed in the spec (composable core,
   headless composition examples, bench harness); **themed `@ghostvue/themes`
   wrapper deferred** to a later issue.
@@ -249,4 +249,5 @@ default; premature extraction risks another slightly different virtualizer
 ## Compatibility implications
 
 - Additive `@ghostvue/vue` exports when implemented; no `GhostTable` changes.
-- This ADR and spec remain **`specStatus: draft`** until explicit approval.
+- This ADR is accepted and the spec is **`specStatus: approved`** (Zac approved
+  in chat on 2026-11-23; recorded in [PR #272](https://github.com/zprue743/ghostvue/pull/272)).
