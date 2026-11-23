@@ -53,7 +53,7 @@ const architectureSidebar: LlmsSidebarGroup['items'] = [
   { text: 'Design tokens', link: '/architecture/tokens' },
   { text: 'Component manifests', link: '/architecture/component-manifest' },
   {
-    text: 'MCP server (proposed)',
+    text: 'MCP server',
     link: '/tooling/mcp-server',
   },
 ]
@@ -82,7 +82,7 @@ const agentsSidebar: LlmsSidebarGroup['items'] = [
   { text: 'Testing rules', link: '/agents/TESTING_RULES' },
   { text: 'Component workflow', link: '/agents/COMPONENT_WORKFLOW' },
   {
-    text: 'MCP contract (proposed)',
+    text: 'MCP contract',
     link: '/plans/gho-17-mcp-first-release',
   },
 ]
@@ -170,7 +170,7 @@ const contributeSidebar: LlmsSidebarGroup[] = [
         link: '/adr/0014-datatable-phase-one-architecture',
       },
       {
-        text: '0015 — MCP server first release (proposed)',
+        text: '0015 — MCP server first release',
         link: '/adr/0015-mcp-server-first-release',
       },
     ],

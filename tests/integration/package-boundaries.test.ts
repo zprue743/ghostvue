@@ -229,6 +229,62 @@ describe('source import boundaries', () => {
       expect.stringContaining('@ghostvue/core may not depend on @ghostvue/vue'),
     )
   }, 20_000)
+
+  // GHO-17 plan §6: the Node-only MCP server must never pull in a Vue
+  // runtime, including the external `vue` package that the @ghostvue/*
+  // allow-list alone cannot express.
+  it.each([
+    ['dependencies', 'vue'],
+    ['dependencies', '@ghostvue/vue'],
+    ['peerDependencies', '@ghostvue/themes'],
+    ['devDependencies', 'vue'],
+  ])(
+    'rejects %s on %s for @ghostvue/mcp through the real checker',
+    async (group, dependency) => {
+      await writeFile(
+        resolve(workspace, 'packages/mcp/package.json'),
+        JSON.stringify({
+          name: '@ghostvue/mcp',
+          private: true,
+          type: 'module',
+          dependencies: { '@ghostvue/core': '*' },
+          [group]: { [dependency]: '*' },
+        }),
+      )
+      const check = execFileAsync(process.execPath, [checker, workspace])
+      await expect(check).rejects.toHaveProperty('code', 1)
+      await expect(check).rejects.toHaveProperty(
+        'stderr',
+        expect.stringContaining(
+          `@ghostvue/mcp must not declare forbidden dependency ${dependency}`,
+        ),
+      )
+    },
+    20_000,
+  )
+
+  it.each([
+    ['vue', 'vue'],
+    ['@ghostvue/vue', 'packages/vue/src/index.js'],
+    ['@ghostvue/shared', 'packages/shared/src/index.js'],
+  ])(
+    'rejects %s imports from @ghostvue/mcp source',
+    async (specifier, target) => {
+      const entry = 'packages/mcp/src/index.js'
+      await mkdir(resolve(workspace, 'packages/mcp/src'), { recursive: true })
+      await writeFile(
+        resolve(workspace, entry),
+        `import '${specifier}'\nexport const mcp = 'mcp'\n`,
+      )
+      const check = execFileAsync(process.execPath, [checker, workspace])
+      await expect(check).rejects.toHaveProperty('code', 1)
+      await expect(check).rejects.toHaveProperty(
+        'stderr',
+        expect.stringContaining(`[mcp-no-vue] ${entry} -> ${target}`),
+      )
+    },
+    20_000,
+  )
 })
 
 describe('workspace metadata', () => {

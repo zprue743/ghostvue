@@ -46,4 +46,16 @@ export const workspacePackages = [
     // registries:write time, so there is no runtime or source import edge.
     allowedDependencies: [],
   },
+  {
+    directory: 'mcp',
+    name: '@ghostvue/mcp',
+    responsibility:
+      'Node-only MCP stdio server: read-only discovery over bundled manifests, examples, docs, and tokens.',
+    allowedDependencies: ['@ghostvue/core'], // @ghostvue/* only; npm: sdk, zod, ajv per GHO-17 plan §7
+    // Component, example, docs, and token data are copied into the package at
+    // build time (GHO-17 plan §4), so the server must never load a Vue
+    // runtime. These names are rejected in every dependency group, including
+    // the external `vue` package that `allowedDependencies` cannot express.
+    forbiddenDependencies: ['vue', '@ghostvue/vue', '@ghostvue/themes'],
+  },
 ]
