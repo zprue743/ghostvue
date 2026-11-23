@@ -1,0 +1,27 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "handwritten",
+  "name": "GhostBadge",
+  "package": "@ghostvue/themes",
+  "status": "stable",
+  "description": "Themed wrapper around headless GhostBadge.",
+  "props": [],
+  "models": [],
+  "events": [],
+  "slots": [],
+  "exposed": [],
+  "styling": {
+    "parts": [],
+    "states": [],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "generic",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/",
+    "keyboard": {},
+    "requiredAriaAttributes": []
+  },
+  "examples": [
+    "badge/themed"
+  ]
+}

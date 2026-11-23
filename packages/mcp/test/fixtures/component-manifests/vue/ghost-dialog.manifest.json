@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "1.1.0",
+  "source": "generated",
+  "name": "GhostDialog",
+  "package": "@ghostvue/vue",
+  "status": "beta",
+  "description": "Modal window that traps focus.",
+  "props": [],
+  "models": [],
+  "events": [],
+  "slots": [],
+  "exposed": [],
+  "styling": {
+    "parts": [],
+    "states": [],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "dialog",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/",
+    "keyboard": {},
+    "requiredAriaAttributes": []
+  },
+  "examples": []
+}

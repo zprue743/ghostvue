@@ -1,0 +1,31 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "handwritten",
+  "name": "GhostButton",
+  "package": "@ghostvue/themes",
+  "status": "experimental",
+  "description": "Themed wrapper around headless GhostButton.",
+  "props": [],
+  "models": [],
+  "events": [],
+  "slots": [],
+  "exposed": [],
+  "styling": {
+    "parts": [],
+    "states": [],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "button",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/",
+    "keyboard": {},
+    "requiredAriaAttributes": []
+  },
+  "examples": [
+    "button/themed"
+  ],
+  "spec": {
+    "path": "docs/components/button-spec.md",
+    "status": "approved"
+  }
+}
