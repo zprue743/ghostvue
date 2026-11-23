@@ -83,6 +83,11 @@ async function readJson<Output>(
   return parsed.data
 }
 
+function fulfilled<Value>(result: PromiseSettledResult<Value>): Value {
+  if (result.status === 'rejected') throw result.reason
+  return result.value
+}
+
 /**
  * Reads the {@link GhostvueStamp} once at startup. A server that cannot
  * identify its bundle must not answer tool calls, so any failure is an
@@ -91,7 +96,10 @@ async function readJson<Output>(
 export async function loadGhostvueStamp(
   sources: StampSources,
 ): Promise<GhostvueStamp> {
-  const [packageJson, bundle, manifestSchema] = await Promise.all([
+  // allSettled + declared-order rejection keeps the diagnostic stable when
+  // several files are missing; Promise.all would surface whichever read
+  // happened to fail first.
+  const results = await Promise.allSettled([
     readJson(
       sources.packageJson,
       packageJsonSchema,
@@ -108,6 +116,11 @@ export async function loadGhostvueStamp(
       'Bundled manifest schema',
     ),
   ])
+  const [packageJson, bundle, manifestSchema] = [
+    fulfilled(results[0]),
+    fulfilled(results[1]),
+    fulfilled(results[2]),
+  ]
   return {
     version: packageJson.version,
     assetBundleId: bundle.assetBundleId,
