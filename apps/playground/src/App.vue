@@ -364,7 +364,6 @@ function submitPlaygroundComment(event: Event): void {
     <TooltipLayersReference />
     <HoverCardReference />
     <DialogReference />
-    <CommandPaletteReference />
     <DrawerReference />
     <TreeReference />
     <TabsReference />
@@ -1879,6 +1878,7 @@ function submitPlaygroundComment(event: Event): void {
         <GhostKbdThemed size="sm">Esc</GhostKbdThemed>
       </p>
     </section>
+    <CommandPaletteReference />
   </main>
 </template>
 
