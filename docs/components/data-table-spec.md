@@ -4,6 +4,7 @@ component: GhostDataTable
 components:
   - GhostDataTable
   - GhostDataTableTable
+  - GhostDataTablePreset
 packages:
   - '@ghostvue/vue'
 specStatus: draft
@@ -36,18 +37,6 @@ sections:
   compatibility:
     applicable: true
 unresolvedQuestions:
-  - question: 'Full-local filter change: keep pageIndex then clamp to last valid page when filtered count shrinks.'
-    blocking: false
-    reviewer: Zac
-  - question: 'pageIndex vs pageCount clamping; rowCount === 0 forces pageIndex 1.'
-    blocking: false
-    reviewer: Zac
-  - question: 'Local manualPagination false: clamp pageIndex on data reference change instead of reset to page 1.'
-    blocking: false
-    reviewer: Zac
-  - question: 'Expose retry() re-emitting stateChange with same query and new internal requestId.'
-    blocking: false
-    reviewer: Zac
   - question: 'Multi-column sort keyboard and secondary aria-sort when enableMultiSort ships.'
     blocking: false
     reviewer: Zac
@@ -69,7 +58,9 @@ stays `draft`** until gate approval; implementation waits on reviewed spec text.
 sortable columns, filters, pagination, row selection, and expandable detail
 rows. It targets teams that already own REST or GraphQL row records and want
 Vue-idiomatic composition without surrendering data ownership or adopting a
-spreadsheet interaction model.
+spreadsheet interaction model. **Product goal (Zac):** deliver a DataTable that is
+**better than PrimeVue** — stricter typing, explicit server contracts, and
+superior default behavior — not a behavioral clone with more markup.
 
 Sighted users get familiar table chrome built on `GhostTable` semantics.
 Assistive technology encounters a **native table** with sort buttons, checkbox
@@ -258,7 +249,7 @@ local pagination applies (server page: typically the processed page slice).
 pages remain in `selectedRowIds`.
 
 **`pageCount` override:** optional. When omitted, `pageCount = max(1, ceil(rowCount / pageSize))`.
-**`pageIndex` clamping** (proposed; [pending Zac review](#decisions-pending-zacs-review)):
+**`pageIndex` clamping** (recorded; see [Decisions recorded](#decisions-recorded-zac-pr-265-review)):
 after any derived `pageCount` change, if `pagination.pageIndex > pageCount`, set
 `pageIndex` to `pageCount`. When **`rowCount === 0`** (query-wide empty, including
 server total), **`pageCount` is 1** and effective **`pagination.pageIndex` is 1**
@@ -287,14 +278,28 @@ Headless `GhostDataTable` / `useGhostDataTable` options:
 | `disabled`              | `boolean`                     | `false`  | Disables sort, selection, expansion.                                 |
 
 Named exports (phase one): `GhostDataTable`, `GhostDataTableTable`,
-`useGhostDataTable`, `useGhostDataTableServerRequest`,
+**`GhostDataTablePreset`**, `useGhostDataTable`, `useGhostDataTableServerRequest`,
 `defineDataTableColumns`, interaction helpers (`getDataTableSortButtonProps`, …),
 and types above. **`enableMultiSort` is not part of phase one.**
 
-Phase one includes **`GhostDataTableTable`** — a headless (unstyled) default table
-renderer that maps `columns` + `rows` to `GhostTable*` markup, with named slots
-`#${columnId}` for typed cell overrides (PrimeVue-style ergonomics without a themed
-wrapper; see [PrimeVue basic usage](https://primevue.dev/datatable/#basic)).
+### Default rendering convenience (`GhostDataTablePreset`)
+
+**`GhostDataTableTable`** maps columns to a minimal `GhostTable*` body (example
+**(a)**). **`GhostDataTablePreset`** is the **batteries-included headless preset**
+for the [#269](https://github.com/zprue743/ghostvue/pull/269) invoice surface:
+global search field, selection + expansion columns, sort buttons, empty row, and
+detail `<tr>` — wired with the interaction prop helpers and a11y rules below.
+
+| Concern               | Contract                                                                                                                                                                                                                                                                     |
+| --------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Placement**         | Default child of `GhostDataTable` (same slot as manual composition). Mutually exclusive with a custom `#default` render in one tree (consumer picks preset **or** manual).                                                                                                   |
+| **Props**             | `emptyTitle?: string` (maps to `GhostEmptyState` **#title**); `searchLabel?: string`; `selectionHeaderLabel?`, `expansionHeaderLabel?`; `showGlobalFilter?: boolean` (default `true` when any column filterable). Passes through `disabled` / `loading` from parent context. |
+| **Slots**             | `#${columnId}` typed cell overrides (same as `GhostDataTableTable`); `#detail="{ row, rowId, rowIndex }"`; `#toolbar` before the table; optional `#search` to replace the default search control.                                                                            |
+| **Escape hatches**    | **(1)** `GhostDataTableTable` only — sort/page cells, no selection toolbar. **(2)** Manual `#default` slot + `GhostTable*` (example **(b)**). **(3)** `useGhostDataTable` without `GhostDataTable` for non-table layouts.                                                    |
+| **Line-count target** | Feature-equivalent to PrimeVue fixture (**sort, filter, paginate, select, expand**) with **`defineDataTableColumns`** must be **≤ 95 non-blank consumer lines** (PrimeVue baseline in FINDINGS.md). Verified on the spec example below (~**44** non-blank lines).            |
+
+Phase one includes **`GhostDataTableTable`** and **`GhostDataTablePreset`** as
+unstyled `@ghostvue/vue` exports (not `@ghostvue/themes`).
 
 ### Examples (same invoice table)
 
@@ -354,7 +359,69 @@ const pageCount = computed(() =>
 
 Without **`GhostDataTableTable`**, this shape is not achievable in a short
 example—the renderless default slot would force every consumer to recreate the
-table shell (see (b)).
+table shell (see **(c)** / **(b)**).
+
+#### (a′) Preset — invoice parity under PrimeVue LOC (target)
+
+Same features as the [#269](https://github.com/zprue743/ghostvue/pull/269) Ghost
+prototype (search, sort, pagination, selection, expansion, currency column) with
+typed columns. **Spec example: ~44 non-blank lines** (target **≤ 95** vs PrimeVue).
+
+```vue
+<script setup lang="ts">
+import { computed, ref } from 'vue'
+import {
+  GhostDataTable,
+  GhostDataTablePreset,
+  GhostPagination,
+  defineDataTableColumns,
+} from '@ghostvue/vue'
+
+type Invoice = { id: string; customer: string; amount: number }
+
+const columns = defineDataTableColumns<Invoice>()
+const columnDefs = [
+  columns.accessorKey('customer', { header: 'Customer', enableSorting: true }),
+  columns.accessorKey('amount', { header: 'Amount', enableSorting: true }),
+]
+
+const data = ref<Invoice[]>([
+  { id: 'inv-1', customer: 'ACME Corp', amount: 1200 },
+  { id: 'inv-2', customer: 'Globex', amount: 980.5 },
+  { id: 'inv-3', customer: 'Initech', amount: 42 },
+])
+
+const globalFilter = ref('')
+const selectedRowIds = ref<string[]>([])
+const pagination = ref({ pageIndex: 1, pageSize: 25 })
+
+const pageCount = computed(() =>
+  Math.max(1, Math.ceil(data.value.length / pagination.value.pageSize)),
+)
+</script>
+
+<template>
+  <GhostDataTable
+    v-model:global-filter="globalFilter"
+    v-model:selected-row-ids="selectedRowIds"
+    v-model:pagination="pagination"
+    :data="data"
+    :columns="columnDefs"
+    :get-row-id="(row) => row.id"
+    :enable-row-selection="true"
+    :enable-row-expansion="true"
+  >
+    <GhostDataTablePreset empty-title="No invoices">
+      <template #amount="{ value }">{{ value.toFixed(2) }} USD</template>
+      <template #detail="{ rowId }">Details for {{ rowId }}</template>
+    </GhostDataTablePreset>
+    <GhostPagination v-model="pagination.pageIndex" :page-count="pageCount" />
+  </GhostDataTable>
+</template>
+```
+
+Implementation must ship **`GhostDataTablePreset`** so this path is real, not
+spec-only.
 
 #### (b) Full composition — approval and accessibility fixture
 
@@ -591,13 +658,13 @@ All use `useControllableState`.
 
 **Reset rules** (applied before any `stateChange` emit):
 
-| Event                        | Sorting | Filters | Pagination reset                                                                                                                                                                                                                                                         |
-| ---------------------------- | ------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `globalFilter` change        | kept    | updated | **`manualFiltering: true`:** **page → 1** (server refetch). **`manualFiltering: false`:** keep `pageIndex`, then **[clamp](#decisions-pending-zacs-review)** (full-local and page-local). **Recorded (Zac):** page-local on server page stays on page 4 without refetch. |
-| `columnFilters` change       | kept    | updated | Same as `globalFilter`.                                                                                                                                                                                                                                                  |
-| `pagination.pageSize` change | kept    | kept    | **page → 1**                                                                                                                                                                                                                                                             |
-| `data` reference change      | kept    | kept    | **`manualPagination: false`:** keep index, **clamp** (no unconditional reset). **`manualPagination: true`:** keep index when only the page slice was replaced.                                                                                                           |
-| `sorting` change             | updated | kept    | kept (then clamp if `pageCount` shrinks)                                                                                                                                                                                                                                 |
+| Event                        | Sorting | Filters | Pagination reset                                                                                                                                                                                                                       |
+| ---------------------------- | ------- | ------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `globalFilter` change        | kept    | updated | **`manualFiltering: true`:** **page → 1** (server refetch). **`manualFiltering: false`:** keep `pageIndex`, then **clamp** (full-local and page-local). **Recorded (Zac):** page-local on server page stays on page 4 without refetch. |
+| `columnFilters` change       | kept    | updated | Same as `globalFilter`.                                                                                                                                                                                                                |
+| `pagination.pageSize` change | kept    | kept    | **page → 1**                                                                                                                                                                                                                           |
+| `data` reference change      | kept    | kept    | **`manualPagination: false`:** keep index, **clamp** (no unconditional reset). **`manualPagination: true`:** keep index when only the page slice was replaced.                                                                         |
+| `sorting` change             | updated | kept    | kept (then clamp if `pageCount` shrinks)                                                                                                                                                                                               |
 
 **Selection / expansion** on filter/pagination events: **kept** (pruning rules below).
 
@@ -709,8 +776,7 @@ recorded decision, not Prime’s default.
 ### Pagination
 
 - Shared **1-based** `pageIndex` with `GhostPagination`.
-- Whenever **`pageIndex > pageCount`**, clamp to `pageCount` (proposed default;
-  [pending Zac review](#decisions-pending-zacs-review)).
+- Whenever **`pageIndex > pageCount`**, **clamp** to `pageCount` (Zac approved).
 - **`rowCount === 0`:** **`pageCount` 1**, **`pageIndex` 1** (query-wide empty).
 - **`rowCount > 0`** with empty **`getRowModel()`:** keep **`pageIndex`** (page-local
   filter on a server page does not coerce page 1).
@@ -899,15 +965,19 @@ Reuses `GhostTable*`, `GhostPagination`, `GhostCheckbox`, `GhostEmptyState`,
 - **Unit:** `useGhostDataTableServerRequest` races; stale `finally` cannot clear loading.
 - **Unit:** performance regressions (page after sort, selection without sort/filter).
 - **Vue:** basic (a) + full (b) examples hydrate; `GhostDataTableTable` slot types.
-- **Browser:** custom sort header + `Enter`; focus restore on detail collapse; axe
-  (icon-only headers named; `aria-label` / `aria-expanded` on focusable controls).
+- **Browser:** custom sort header + `Enter`; focus restore on detail collapse.
+- **Acceptance (implementation gate):** reference fixture (**(b)** or preset once
+  shipped) — **zero axe violations** on the table scope (`@axe-core/playwright`),
+  including labeled icon-only header/selection cells, sort buttons, expansion
+  controls, search input, and co-located `GhostPagination` (no empty `<th>`, no
+  wrapper-only `aria-*` without focusable names).
 - **Type:** `defineDataTableColumns` acceptance trio (`toFixed`, `toUpperCase` error, rename break).
 - **Type:** generic slot contexts still expose `getValue(): unknown`.
 
 ## Documentation plan
 
 - `docs/components/data-table.md` with **(a) basic** and **(b) full** paths first.
-- `examples/data-table/basic-invoices.vue`, `full-invoices.vue`,
+- `examples/data-table/basic-invoices.vue`, `preset-invoices.vue`, `full-invoices.vue`,
   `server-invoices-router.vue`.
 - Link ADR 0014 and prerequisites.
 
@@ -931,18 +1001,13 @@ Reuses `GhostTable*`, `GhostPagination`, `GhostCheckbox`, `GhostEmptyState`,
 | Filtering defaults      | Case-insensitive OR global / AND column; clear `''`/`null`/`undefined`; skip `null`/`undefined` cell values in text match |
 | Filter pagination reset | page → 1 only when `manualFiltering: true`; page-local filter keeps page                                                  |
 | Selection pruning       | Auto-prune only when both `manualPagination` and `manualFiltering` are `false` (source `data` change)                     |
-
-## Decisions pending Zac's review
-
-Proposed pagination defaults (round 5); not yet part of recorded decisions.
-
-| Topic                               | Proposed default                                                                                                                                                                                                             |
-| ----------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Full-local filter change            | Keep current `pageIndex`, then **clamp** to the last valid page (`min(pageIndex, pageCount)`) when the filtered row count shrinks                                                                                            |
-| `pageIndex` vs `pageCount`          | After any `pageCount` change, if `pageIndex > pageCount`, **clamp** to `pageCount`; empty result (`rowCount === 0`) → `pageCount` 1, `pageIndex` 1                                                                           |
-| `data` reference (local mode)       | **Clamp** `pageIndex` instead of resetting to page 1 on every refresh/edit so in-place updates keep the user on the same page when still valid                                                                               |
-| Server **Retry**                    | Expose **`retry()`** that re-emits `stateChange` with the frozen `query` and a composable-minted `requestId`                                                                                                                 |
-| Server **`manualPagination`** clamp | When a derived **`pageCount`** change forces **`pageIndex` down** (e.g. server `rowCount` shrinks), **emit one `stateChange`** with the clamped `query.pagination.pageIndex` so consumers refetch the valid page (proposed). |
+| Full-local filter clamp | Keep `pageIndex`, then clamp to last valid page when filtered count shrinks (Zac, post-rebase)                            |
+| `pageIndex` clamping    | After `pageCount` changes, clamp when `pageIndex > pageCount`; `rowCount === 0` → page 1                                  |
+| Local `data` refresh    | Clamp `pageIndex` on `data` reference change; do not reset to page 1 unconditionally                                      |
+| Server **Retry**        | Expose **`retry()`** — one `stateChange` with same `query`, new internal `requestId`                                      |
+| Server clamp fetch      | When server `pageCount` forces `pageIndex` down, **one** `stateChange` with clamped pagination                            |
+| Preset LOC              | `GhostDataTablePreset` keeps invoice-parity apps **≤ 95** non-blank consumer lines with typed columns                     |
+| Reference axe           | **Zero** violations on reference fixture table scope (implementation acceptance)                                          |
 
 ## Open architectural questions
 
@@ -959,13 +1024,13 @@ Non-blocking items (also in frontmatter with `blocking: false`):
 **`specStatus` remains `draft`** until Zac promotes the spec through the component
 gate (this evidence does **not** auto-approve).
 
-| Dimension            | Finding                                                                                                                                                                                                       |
-| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Consumer LOC         | **171** (Ghost headless fixture) vs **95** (PrimeVue) non-blank lines (~**1.8×** markup cost for the headless contract)                                                                                       |
-| Typing               | Ghost `defineDataTableColumns` catches `amount.toFixed` / rejects `toUpperCase`; Prime `field` strings do not catch renamed keys at compile time                                                              |
-| Behavior             | Prototype passes Zac’s recorded rules (coalesced `stateChange`, page-local page 4, local/server select-all scopes). Prime differs on page-scoped select-all and paginator reset on filter (documented above). |
-| a11y                 | Approval keyboard script passes on Ghost stub fixture; axe flagged **empty icon-only `<th>`** without column names and wrapper-only attrs — addressed via interaction binding rules                           |
-| Perf (informational) | Playwright marks ~15–62ms sort/filter on 1k–10k rows in the **stub-based** harness; directional only, not CI gates                                                                                            |
+| Dimension            | Finding                                                                                                                                                                                                   |
+| -------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Consumer LOC         | Manual headless **(b)** was **171** vs Prime **95**; **`GhostDataTablePreset` (a′) targets ≤ 95** with **~44** lines in the spec example — **better than Prime on LOC** when using the preset path        |
+| Typing               | **Ghost exceeds Prime:** `defineDataTableColumns` catches `amount.toFixed` / rejects `toUpperCase`; Prime `field` strings do not catch renamed keys at compile time                                       |
+| Behavior             | **Ghost exceeds Prime:** coalesced `stateChange`, page-local page 4, local `getPrePaginationRowModel()` select-all — intentional, not Prime defaults (page-scoped select-all, paginator reset on filter). |
+| a11y                 | Keyboard approval script passes; implementation must hit **zero axe** on the reference fixture (stricter than prototype stub run).                                                                        |
+| Perf (informational) | Stub harness ~15–62ms sort/filter at 1k–10k rows; directional only, not CI gates                                                                                                                          |
 
 Prototype uses **local stubs**, not shipped `@ghostvue/vue`; numbers validate spec
 intent, not production bundle performance.
@@ -978,6 +1043,7 @@ intent, not production bundle performance.
 | DataTable core types and local processing pipeline                                                  | `useGhostDataTable`, manual matrix, row models           | High       |
 | `defineDataTableColumns` + column type tests                                                        | Typed `value` / `getValue`, CI type tests                | Medium     |
 | `GhostDataTableTable` default renderer                                                              | Basic example (a), `#columnId` slots                     | Medium     |
+| **`GhostDataTablePreset`** (invoice parity, ≤95 LOC)                                                | Example (a′), wired a11y + interaction helpers           | Medium     |
 | GhostDataTable headless root and GhostTable composition                                             | Slot bindings, example (b), SSR                          | Medium     |
 | Interaction prop helpers                                                                            | Sort / select / expand bindings + focus-on-collapse      | Medium     |
 | Server router example + Back/Retry tests                                                            | `server-invoices-router.vue`, race tests                 | High       |

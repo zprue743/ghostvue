@@ -48,14 +48,15 @@ On 2026-11-17, Zac approved **option A**: a Vue-first composable plus native
 
 ### 1. Public surface (phase one)
 
-| Export                           | Package         | Role                                                                                    |
-| -------------------------------- | --------------- | --------------------------------------------------------------------------------------- |
-| `GhostDataTable`                 | `@ghostvue/vue` | Headless root: slot props or child `GhostDataTableTable`                                |
-| `GhostDataTableTable`            | `@ghostvue/vue` | Default unstyled table mapper + `#columnId` slots (basic on-ramp)                       |
-| `defineDataTableColumns`         | `@ghostvue/vue` | Typed column builder; generic contexts keep `getValue(): unknown`                       |
-| `useGhostDataTable`              | `@ghostvue/vue` | Primary composable; sort/filter/page/selection/expansion and derived row models         |
-| `useGhostDataTableServerRequest` | `@ghostvue/vue` | Stale-response guard for consumer fetches (same shape as `useGhostComboboxAsyncSearch`) |
-| Interaction prop helpers         | `@ghostvue/vue` | Sort, selection, expansion controls with localizable names                              |
+| Export                           | Package         | Role                                                                                      |
+| -------------------------------- | --------------- | ----------------------------------------------------------------------------------------- |
+| `GhostDataTable`                 | `@ghostvue/vue` | Headless root: slot props or child `GhostDataTableTable`                                  |
+| `GhostDataTableTable`            | `@ghostvue/vue` | Default unstyled table mapper + `#columnId` slots (basic on-ramp)                         |
+| `GhostDataTablePreset`           | `@ghostvue/vue` | Batteries-included headless preset (search, selection, expansion); ≤95 LOC invoice target |
+| `defineDataTableColumns`         | `@ghostvue/vue` | Typed column builder; generic contexts keep `getValue(): unknown`                         |
+| `useGhostDataTable`              | `@ghostvue/vue` | Primary composable; sort/filter/page/selection/expansion and derived row models           |
+| `useGhostDataTableServerRequest` | `@ghostvue/vue` | Stale-response guard for consumer fetches (same shape as `useGhostComboboxAsyncSearch`)   |
+| Interaction prop helpers         | `@ghostvue/vue` | Sort, selection, expansion controls with localizable names                                |
 
 Phase one ships **headless composition docs and executable examples only**.
 There is **no** themed `GhostDataTable` in `@ghostvue/themes` until a later
@@ -66,8 +67,11 @@ There is **no** `@ghostvue/data-table` package, **no** global table manager, and
 
 ### 2. Composition model
 
-- **Markup:** either `GhostDataTableTable` for the short path, or manual
+- **Markup:** `GhostDataTablePreset` for the short **feature-rich** path (≤ PrimeVue
+  LOC with typed columns), `GhostDataTableTable` for minimal tables, or manual
   `GhostTable*` parts via slot props from `GhostDataTable` / `useGhostDataTable`.
+- **Better than PrimeVue:** stricter contracts (typing, server `manual*` matrix,
+  select-all semantics) plus preset ergonomics — not behavioral parity cloning.
 - **Roles:** sortable columns use `aria-sort` on `<th>`; selection uses
   `GhostCheckbox` per [checkbox-spec](/specs/checkbox) (mixed
   via `indeterminate`, not `aria-checked="mixed"`).
@@ -113,11 +117,10 @@ remote dataset. Server-backed global sort/filter still requires the correspondin
 1** with `pageCount === 1`. When **`rowCount > 0`** but the visible page slice is
 empty after page-local filter, **keep `pageIndex`** (spec recorded acceptance).
 
-**Pagination clamping (pending Zac):** proposed defaults in the component spec
-([Decisions pending Zac's review](/specs/data-table#decisions-pending-zacs-review))
-cover full-local filter clamp, local `data` refresh clamp, **`retry()`**, and
-server **`stateChange`** when clamping `pageIndex` after `rowCount`-driven
-`pageCount` changes.
+**Pagination clamping (Zac approved):** full-local filter clamp, local `data`
+refresh clamp, **`retry()`**, and server **`stateChange`** when clamping
+`pageIndex` after `rowCount`-driven `pageCount` changes — recorded in the
+component spec.
 
 ### 5. State ownership, resets, and server fetch coalescing
 
@@ -179,6 +182,9 @@ response and returns later.
 - Selection: `GhostCheckbox` with `Space` toggle; select-all mixed state via
   `indeterminate` prop ([checkbox-spec](/specs/checkbox)).
 - `aria-busy` on the table region when `loading` is true.
+- Reference fixture (preset or full composition): **zero axe violations** on the
+  table scope at implementation gate (labeled icon-only headers, sort buttons,
+  pagination).
 
 ## Alternatives considered
 
