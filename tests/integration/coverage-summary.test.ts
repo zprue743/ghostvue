@@ -56,6 +56,7 @@ describe('coverage summary', () => {
         '| packages/core/src | 80.00% PASS | 88.88% | 50.00% | 100.00% |',
         // A cataloged package with no measured files reports as fully covered.
         '| packages/eslint-plugin/src | 100.00% PASS | 100.00% | 100.00% | 100.00% |',
+        '| packages/mcp/src | 100.00% PASS | 100.00% | 100.00% | 100.00% |',
         '| packages/nuxt/src | 100.00% PASS | 100.00% | 100.00% | 100.00% |',
         '| packages/shared/src | 100.00% PASS | 100.00% | 100.00% | 100.00% |',
         '| packages/themes/src | 75.00% FAIL | 75.00% | 75.00% | 75.00% |',
