@@ -1,0 +1,321 @@
+/*
+ * Themed GhostToast stack. Visual values come from semantic --ghost-* tokens.
+ * Private --_ghost-toast-* properties are per-instance wiring, not a public
+ * API. Defaults are surface / neutral (omitted data-* hooks); type: 'error'
+ * records pick the danger tone in the wrapper.
+ *
+ * Stack placement (corner, gap, width, stacking order) is theme-owned per the
+ * spec. Nested selectors use child combinators so content rendered inside a
+ * toast (badges, links, buttons) is never restyled.
+ *
+ * Motion (spec T7) is enter-only: a CSS animation plays once when a toast
+ * root is inserted. Updates patch the same keyed element, so nothing replays.
+ * There is no exit animation because dismissed roots unmount immediately, and
+ * no animation at all under prefers-reduced-motion.
+ */
+@layer ghostvue-theme {
+  :where(
+    .ghost-theme .ghost-toast-viewport,
+    .ghost-themed-scope .ghost-toast-viewport,
+    .ghost-toast-viewport[data-themed]
+  ) {
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: var(--ghost-space-gap-sm);
+    inline-size: min(24rem, calc(100vw - 2 * var(--ghost-space-inset-lg)));
+    inset-block-end: var(--ghost-space-inset-lg);
+    inset-inline-end: var(--ghost-space-inset-lg);
+    margin: 0;
+    max-block-size: calc(100dvh - 2 * var(--ghost-space-inset-lg));
+    /* The empty region stays mounted for landmark stability; it must not
+       swallow clicks on the page beneath it. Toasts opt back in. */
+    pointer-events: none;
+    position: fixed;
+    /* Above modal layers (dialog, drawer, palette use 50) so a toast shown
+       while a dialog is open stays visible and operable (ADR 0012). */
+    z-index: 60;
+  }
+
+  :where(
+    .ghost-theme .ghost-toast-viewport[data-inline],
+    .ghost-themed-scope .ghost-toast-viewport[data-inline],
+    .ghost-toast-viewport[data-themed][data-inline]
+  ) {
+    inset: auto;
+    max-block-size: none;
+    position: static;
+    z-index: auto;
+  }
+
+  :where(
+    .ghost-theme .ghost-toast-viewport > .ghost-toast,
+    .ghost-themed-scope .ghost-toast-viewport > .ghost-toast,
+    .ghost-toast[data-themed]
+  ) {
+    --_ghost-toast-tone-color: var(--ghost-action-neutral-bg);
+    --_ghost-toast-tone-contrast: var(--ghost-action-neutral-fg);
+    --_ghost-toast-tone-border: var(--ghost-action-neutral-border);
+    --_ghost-toast-fill: none;
+    --_ghost-toast-background: var(--ghost-elevation-3-bg);
+    --_ghost-toast-border-color: var(--ghost-elevation-3-border);
+    --_ghost-toast-color: var(--ghost-surface-fg);
+    --_ghost-toast-description-color: var(--ghost-text-muted);
+
+    align-items: center;
+    background-color: var(--_ghost-toast-background);
+    background-image: var(--_ghost-toast-fill);
+    border: var(--ghost-border-hairline-width) solid
+      var(--_ghost-toast-border-color);
+    border-radius: var(--ghost-radius-lg);
+    box-shadow:
+      var(--ghost-elevation-3-shadow), var(--ghost-elevation-3-highlight);
+    box-sizing: border-box;
+    color: var(--_ghost-toast-color);
+    column-gap: var(--ghost-space-gap-sm);
+    display: grid;
+    font-family: var(--ghost-type-family-sans);
+    font-feature-settings: var(--ghost-type-feature-default);
+    grid-template-areas:
+      'title action close'
+      'description action close';
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    overflow-wrap: anywhere;
+    padding: var(--ghost-space-inset-sm);
+    pointer-events: auto;
+  }
+
+  :where(
+    .ghost-theme .ghost-toast > [data-part='title'],
+    .ghost-themed-scope .ghost-toast > [data-part='title'],
+    .ghost-toast[data-themed] > [data-part='title']
+  ) {
+    font-size: var(--ghost-type-size-sm);
+    font-weight: var(--ghost-type-weight-semibold);
+    grid-area: title;
+    line-height: var(--ghost-type-line-snug);
+  }
+
+  :where(
+    .ghost-theme .ghost-toast > [data-part='description'],
+    .ghost-themed-scope .ghost-toast > [data-part='description'],
+    .ghost-toast[data-themed] > [data-part='description']
+  ) {
+    color: var(--_ghost-toast-description-color);
+    font-size: var(--ghost-type-size-sm);
+    grid-area: description;
+    line-height: var(--ghost-type-line-snug);
+    /* A margin, not row-gap, so a toast without a description has no empty
+       second row of spacing. */
+    margin-block-start: var(--ghost-space-gap-xs);
+  }
+
+  :where(
+    .ghost-theme .ghost-toast > [data-part='action'],
+    .ghost-themed-scope .ghost-toast > [data-part='action'],
+    .ghost-toast[data-themed] > [data-part='action'],
+    .ghost-theme .ghost-toast > [data-part='close'],
+    .ghost-themed-scope .ghost-toast > [data-part='close'],
+    .ghost-toast[data-themed] > [data-part='close']
+  ) {
+    align-items: center;
+    appearance: none;
+    background-color: transparent;
+    border: var(--ghost-border-hairline-width) solid transparent;
+    border-radius: var(--ghost-action-radius);
+    box-sizing: border-box;
+    color: inherit;
+    cursor: pointer;
+    display: inline-flex;
+    font-family: var(--ghost-action-label-family);
+    font-size: var(--ghost-control-size-sm-font);
+    font-weight: var(--ghost-action-label-weight);
+    justify-content: center;
+    line-height: var(--ghost-action-label-line);
+    margin: 0;
+    min-block-size: var(--ghost-control-size-sm-min);
+    padding-block: var(--ghost-control-size-sm-padding-block);
+    padding-inline: var(--ghost-control-size-sm-padding-inline);
+    transition: background-color var(--ghost-action-duration)
+      var(--ghost-motion-easing-standard);
+  }
+
+  :where(
+    .ghost-theme .ghost-toast > [data-part='action'],
+    .ghost-themed-scope .ghost-toast > [data-part='action'],
+    .ghost-toast[data-themed] > [data-part='action']
+  ) {
+    border-color: currentColor;
+    grid-area: action;
+  }
+
+  :where(
+    .ghost-theme .ghost-toast > [data-part='close'],
+    .ghost-themed-scope .ghost-toast > [data-part='close'],
+    .ghost-toast[data-themed] > [data-part='close']
+  ) {
+    grid-area: close;
+    min-inline-size: var(--ghost-control-size-sm-min);
+    padding-inline: 0;
+  }
+
+  :where(
+    .ghost-theme .ghost-toast > [data-part='action']:hover,
+    .ghost-themed-scope .ghost-toast > [data-part='action']:hover,
+    .ghost-toast[data-themed] > [data-part='action']:hover,
+    .ghost-theme .ghost-toast > [data-part='close']:hover,
+    .ghost-themed-scope .ghost-toast > [data-part='close']:hover,
+    .ghost-toast[data-themed] > [data-part='close']:hover
+  ) {
+    background-color: color-mix(
+      in oklch,
+      currentColor calc(100% * var(--ghost-state-mix-soft)),
+      transparent
+    );
+  }
+
+  :where(
+    .ghost-theme .ghost-toast > [data-part='action']:focus-visible,
+    .ghost-themed-scope .ghost-toast > [data-part='action']:focus-visible,
+    .ghost-toast[data-themed] > [data-part='action']:focus-visible,
+    .ghost-theme .ghost-toast > [data-part='close']:focus-visible,
+    .ghost-themed-scope .ghost-toast > [data-part='close']:focus-visible,
+    .ghost-toast[data-themed] > [data-part='close']:focus-visible
+  ) {
+    box-shadow: 0 0 0 var(--ghost-focus-ring-offset)
+      var(--ghost-focus-ring-contrast);
+    outline: var(--ghost-focus-ring-width) solid var(--ghost-focus-ring-color);
+    outline-offset: var(--ghost-focus-ring-offset);
+  }
+
+  /* Tones. On the surface variant they tint the fill and border with the same
+     soft mix as GhostInlineAlert, so body text keeps surface contrast. */
+  :where(
+    .ghost-theme .ghost-toast-viewport > .ghost-toast[data-tone='accent'],
+    .ghost-themed-scope
+      .ghost-toast-viewport
+      > .ghost-toast[data-tone='accent'],
+    .ghost-toast[data-themed][data-tone='accent']
+  ) {
+    --_ghost-toast-tone-color: var(--ghost-action-primary-bg);
+    --_ghost-toast-tone-contrast: var(--ghost-action-primary-fg);
+    --_ghost-toast-tone-border: var(--ghost-action-primary-border);
+  }
+
+  :where(
+    .ghost-theme .ghost-toast-viewport > .ghost-toast[data-tone='danger'],
+    .ghost-themed-scope
+      .ghost-toast-viewport
+      > .ghost-toast[data-tone='danger'],
+    .ghost-toast[data-themed][data-tone='danger']
+  ) {
+    --_ghost-toast-tone-color: var(--ghost-action-danger-bg);
+    --_ghost-toast-tone-contrast: var(--ghost-action-danger-fg);
+    --_ghost-toast-tone-border: var(--ghost-action-danger-border);
+  }
+
+  :where(
+    .ghost-theme .ghost-toast-viewport > .ghost-toast[data-tone],
+    .ghost-themed-scope .ghost-toast-viewport > .ghost-toast[data-tone],
+    .ghost-toast[data-themed][data-tone]
+  ) {
+    --_ghost-toast-background: color-mix(
+      in oklch,
+      var(--_ghost-toast-tone-color) calc(100% * var(--ghost-state-mix-soft)),
+      var(--ghost-elevation-3-bg)
+    );
+    --_ghost-toast-border-color: color-mix(
+      in oklch,
+      var(--_ghost-toast-tone-color) calc(100% * var(--ghost-state-mix-border)),
+      var(--ghost-elevation-3-bg)
+    );
+  }
+
+  :where(
+    .ghost-theme .ghost-toast-viewport > .ghost-toast[data-variant='solid'],
+    .ghost-themed-scope
+      .ghost-toast-viewport
+      > .ghost-toast[data-variant='solid'],
+    .ghost-toast[data-themed][data-variant='solid']
+  ) {
+    --_ghost-toast-background: var(--_ghost-toast-tone-color);
+    --_ghost-toast-border-color: var(--_ghost-toast-tone-border);
+    --_ghost-toast-color: var(--_ghost-toast-tone-contrast);
+    --_ghost-toast-description-color: var(--_ghost-toast-tone-contrast);
+    --_ghost-toast-fill: var(--ghost-gradient-action-neutral);
+  }
+
+  :where(.ghost-toast[data-themed][data-variant='solid'][data-tone='accent']) {
+    --_ghost-toast-fill: var(--ghost-gradient-action-primary);
+  }
+
+  :where(.ghost-toast[data-themed][data-variant='solid'][data-tone='danger']) {
+    --_ghost-toast-fill: var(--ghost-gradient-action-danger);
+  }
+
+  @keyframes ghost-toast-enter {
+    from {
+      opacity: 0;
+      translate: 0 var(--ghost-motion-translate);
+    }
+  }
+
+  /* Enter-only. The animation sits on the base rule (not on a state or tone
+     selector) so changing tone or copy through update() never restarts it. */
+  @media (prefers-reduced-motion: no-preference) {
+    :where(
+      .ghost-theme .ghost-toast-viewport > .ghost-toast,
+      .ghost-themed-scope .ghost-toast-viewport > .ghost-toast,
+      .ghost-toast[data-themed]
+    ) {
+      animation: ghost-toast-enter var(--ghost-motion-enter-duration)
+        var(--ghost-motion-enter-easing) both;
+    }
+  }
+
+  @media (forced-colors: active) {
+    :where(
+      .ghost-theme .ghost-toast-viewport > .ghost-toast,
+      .ghost-themed-scope .ghost-toast-viewport > .ghost-toast,
+      .ghost-toast[data-themed]
+    ) {
+      background-color: Canvas;
+      background-image: none;
+      border-color: CanvasText;
+      box-shadow: none;
+      color: CanvasText;
+    }
+
+    :where(
+      .ghost-theme .ghost-toast > [data-part='description'],
+      .ghost-themed-scope .ghost-toast > [data-part='description'],
+      .ghost-toast[data-themed] > [data-part='description']
+    ) {
+      color: CanvasText;
+    }
+
+    :where(
+      .ghost-theme .ghost-toast > [data-part='action'],
+      .ghost-themed-scope .ghost-toast > [data-part='action'],
+      .ghost-toast[data-themed] > [data-part='action'],
+      .ghost-theme .ghost-toast > [data-part='close'],
+      .ghost-themed-scope .ghost-toast > [data-part='close'],
+      .ghost-toast[data-themed] > [data-part='close']
+    ) {
+      border-color: ButtonText;
+      color: ButtonText;
+    }
+
+    :where(
+      .ghost-theme .ghost-toast > [data-part='action']:focus-visible,
+      .ghost-themed-scope .ghost-toast > [data-part='action']:focus-visible,
+      .ghost-toast[data-themed] > [data-part='action']:focus-visible,
+      .ghost-theme .ghost-toast > [data-part='close']:focus-visible,
+      .ghost-themed-scope .ghost-toast > [data-part='close']:focus-visible,
+      .ghost-toast[data-themed] > [data-part='close']:focus-visible
+    ) {
+      box-shadow: none;
+      outline-color: Highlight;
+    }
+  }
+}

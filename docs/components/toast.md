@@ -8,7 +8,9 @@ moves to the stack.
 
 Import it from `@ghostvue/vue`. It is headless: the parts render plain elements
 with `data-part` hooks and no styles, and the headless layer has no animation.
-Stack position, gaps, and stacking order are yours (or a theme's) to set.
+Stack position, gaps, and stacking order are yours (or a theme's) to set. For a
+styled stack, import the same names from `@ghostvue/themes` (see
+[Themed use](#themed-use)).
 
 ## Basic use
 
@@ -261,6 +263,73 @@ interrupts. `type: 'error'` alone does not make a toast urgent.
 | Assertive announcer | none                      | `announcer-assertive` | visually hidden, not for visible styling |
 
 `data-type` is omitted for default toasts.
+
+## Themed use
+
+<GhostExample id="toast/themed" />
+
+`@ghostvue/themes` exports a themed `GhostToastViewport` and `GhostToast`, and
+re-exports `GhostToastProvider`, `GhostToastTitle`, `GhostToastDescription`,
+`GhostToastAction`, `GhostToastClose`, and `useGhostToast` from
+`@ghostvue/vue`. Importing from `@ghostvue/themes` loads `default.css`. The
+wrappers only add styling hooks: the store, timers, pauses, announcements,
+`Escape`, and focus return are the headless ones, unchanged.
+
+```vue
+<script setup lang="ts">
+import { GhostToastProvider, GhostToastViewport } from '@ghostvue/themes'
+</script>
+
+<template>
+  <GhostToastProvider>
+    <RouterView />
+    <GhostToastViewport />
+  </GhostToastProvider>
+</template>
+```
+
+- **Stack:** the themed viewport sets `data-themed`, so the portaled region is a
+  fixed stack in the bottom-end corner (logical insets, so it flips in RTL),
+  above modal layers. The empty region ignores pointer events. With
+  `:portal="false"` it also sets `data-inline` and stays in normal flow, so
+  your layout places it.
+- **Default content:** without slots, each toast renders as a themed
+  `GhostToast` with title, description, an outlined action, and an icon-only
+  close button named "Dismiss". A `toast` or `default` slot replaces that
+  content exactly as on the headless viewport.
+- **Variant and tone:** the themed `GhostToast` takes `variant`
+  (`'surface'` default, or `'solid'`) and `tone` (`'neutral'`, `'accent'`,
+  `'danger'`). Without `tone`, `type: 'error'` toasts use `danger` and others
+  `neutral`. Defaults omit `data-variant` and `data-tone`, as on
+  `GhostInlineAlert`.
+
+```vue
+<GhostToastViewport>
+  <template #toast="{ toast }">
+    <GhostToast :toast="toast" variant="solid" tone="accent">
+      <GhostToastTitle>{{ toast.title }}</GhostToastTitle>
+      <GhostToastClose aria-label="Dismiss notification">×</GhostToastClose>
+    </GhostToast>
+  </template>
+</GhostToastViewport>
+```
+
+### Motion
+
+The themed toast plays a short enter animation (fade and rise by
+`--ghost-motion-translate` over `--ghost-motion-enter-duration` with
+`--ghost-motion-enter-easing`) once, when its element is inserted. There is no
+exit animation: dismissed toasts unmount immediately. With
+`prefers-reduced-motion: reduce` there is no animation at all.
+
+The viewport keys each toast by id, so `update()` and a repeated `toast()` with
+the same `id` patch the existing element and the animation does not replay,
+even when the update changes the type or tone. A new id is a new toast and
+animates in.
+
+Portaled toasts get token values from the nearest `data-ghost-theme` (or
+`.ghost-theme`) ancestor, usually `<html>`, as other portaled themed surfaces
+do.
 
 ## Specification
 

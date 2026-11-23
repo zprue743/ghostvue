@@ -159,9 +159,9 @@
   "@ghostvue/vue:GhostTreeItem": 2400,
   "@ghostvue/vue:GhostTreeTrigger": 1200,
   "@ghostvue/vue:GhostVisuallyHidden": 700,
-  "@ghostvue/themes": 110000,
+  "@ghostvue/themes": 113500,
   "@ghostvue/themes/define": 30800,
-  "@ghostvue/themes/default.css": 23500,
+  "@ghostvue/themes/default.css": 24000,
   "@ghostvue/themes/tokens.css": 6200,
   "@ghostvue/themes/calm.css": 6100,
   "@ghostvue/themes/vibrant.css": 6300,
@@ -231,5 +231,6 @@
   "@ghostvue/vue:GhostCommandPaletteSeparator": 900,
   "@ghostvue/vue:GhostCommandPaletteTitle": 1000,
   "@ghostvue/vue:GhostCommandPaletteTrigger": 1700,
-  "@ghostvue/themes:GhostCommandPalette": 4700
+  "@ghostvue/themes:GhostCommandPalette": 4700,
+  "@ghostvue/themes:GhostToast": 1200
 }

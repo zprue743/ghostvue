@@ -375,7 +375,8 @@
     "ghost-file-upload.css",
     "ghost-calendar.css",
     "ghost-date-picker.css",
-    "ghost-command-palette.css"
+    "ghost-command-palette.css",
+    "ghost-toast.css"
   ],
   "docsComponentNavOrder": [
     "accordion",

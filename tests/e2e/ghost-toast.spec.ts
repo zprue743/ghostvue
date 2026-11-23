@@ -1,5 +1,6 @@
 import type { Page } from '@playwright/test'
 
+import { waitForExamplePreview } from '../support'
 import { expectNoAxeViolations } from '../support/axe'
 import { expect, playgroundTest as test } from '../support/playground'
 
@@ -185,5 +186,136 @@ test.describe('GhostToast @component:GhostToast', () => {
     await expect(toasts(page)).toHaveCount(0)
     await expect(publish).toBeFocused()
     await expect(dialog).toBeVisible()
+  })
+})
+
+test.describe('themed GhostToast @component:GhostToast', () => {
+  test('renders the themed corner stack without moving focus and keeps headless keyboard behavior', async ({
+    page,
+    playgroundUrl,
+  }) => {
+    await openExample(page, playgroundUrl, 'toast/themed')
+    const region = page.getByRole('region', { name: 'Notifications' })
+    await expect(region).toHaveAttribute('data-themed', '')
+    await expect(region).toHaveCSS('position', 'fixed')
+    await expectNoAxeViolations(page)
+
+    const save = page.getByRole('button', { name: 'Save draft' })
+    const sync = page.getByRole('button', { name: 'Sync files' })
+    await save.focus()
+    await page.keyboard.press('Enter')
+    await sync.focus()
+    await page.keyboard.press('Space')
+    await expect(toasts(page)).toHaveCount(2)
+    await expect(sync).toBeFocused()
+    await expect(toasts(page).last()).toHaveAttribute('data-tone', 'danger')
+    await expect(page.locator('[data-part="announcer-polite"]')).toHaveText(
+      'Sync failed Three files could not be uploaded.',
+    )
+    await expectNoAxeViolations(page)
+
+    // Tab order: the page controls, then the stack, oldest toast first.
+    await page.keyboard.press('Tab')
+    const firstClose = toasts(page)
+      .first()
+      .getByRole('button', { name: 'Dismiss' })
+    await expect(firstClose).toBeFocused()
+    await page.keyboard.press('Tab')
+    await expect(region.getByRole('button', { name: 'Retry' })).toBeFocused()
+
+    // Escape dismisses only the focused toast and returns focus.
+    await page.keyboard.press('Escape')
+    await expect(toasts(page)).toHaveCount(1)
+    await expect(sync).toBeFocused()
+
+    // Enter on the icon close dismisses through the store.
+    await page.keyboard.press('Tab')
+    await expect(firstClose).toBeFocused()
+    await page.keyboard.press('Enter')
+    await expect(toasts(page)).toHaveCount(0)
+    await expect(sync).toBeFocused()
+  })
+
+  test('plays the enter animation once and not again on an in-place update (T7)', async ({
+    page,
+    playgroundUrl,
+  }) => {
+    await page.emulateMedia({ reducedMotion: 'no-preference' })
+    await openExample(page, playgroundUrl, 'toast/themed')
+    await page.getByRole('button', { name: 'Sync files' }).click()
+    const toast = toasts(page).first()
+    await expect(toast).toHaveCSS('animation-name', 'ghost-toast-enter')
+
+    // Remember the element and its animation, then let the animation finish.
+    await toast.evaluate(async (element) => {
+      const [animation] = element.getAnimations()
+      if (!animation) throw new Error('no enter animation')
+      await animation.finished
+      Object.assign(window, { __toastEl: element, __toastAnim: animation })
+    })
+
+    await toast.getByRole('button', { name: 'Retry' }).click()
+    await expect(toast).toContainText('Still failing')
+    await expect(toast).toHaveAttribute('data-tone', 'danger')
+
+    const replay = await toast.evaluate((element) => {
+      const state = window as unknown as {
+        __toastEl?: Element
+        __toastAnim?: Animation
+      }
+      const running = element
+        .getAnimations()
+        .filter((animation) => animation.playState === 'running')
+      return {
+        sameElement: state.__toastEl === element,
+        sameAnimation: element.getAnimations()[0] === state.__toastAnim,
+        running: running.length,
+      }
+    })
+    expect(replay).toEqual({
+      sameElement: true,
+      sameAnimation: true,
+      running: 0,
+    })
+  })
+
+  test('has no animation under prefers-reduced-motion', async ({
+    page,
+    playgroundUrl,
+  }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' })
+    await openExample(page, playgroundUrl, 'toast/themed')
+    await page.getByRole('button', { name: 'Save draft' }).click()
+    const toast = toasts(page).first()
+    await expect(toast).toBeVisible()
+    await expect(toast).toHaveCSS('animation-name', 'none')
+    expect(
+      await toast.evaluate((element) => element.getAnimations().length),
+    ).toBe(0)
+  })
+})
+
+test.describe('toast/themed stack', { tag: ['@visual'] }, () => {
+  test.use({ viewport: { width: 1280, height: 900 }, deviceScaleFactor: 1 })
+
+  test('toast/themed stack matches snapshots in light and dark', async ({
+    page,
+    playgroundUrl,
+  }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' })
+    // Informational toasts would auto-dismiss mid-run without a frozen clock.
+    await page.clock.install()
+    for (const mode of ['light', 'dark'] as const) {
+      await waitForExamplePreview(page, playgroundUrl, 'toast/themed', {
+        mode,
+      })
+      await page.evaluate(() => document.fonts.ready)
+      await page.getByRole('button', { name: 'Save draft' }).click()
+      await page.getByRole('button', { name: 'Sync files' }).click()
+      const region = page.getByRole('region', { name: 'Notifications' })
+      await expect(toasts(page)).toHaveCount(2)
+      await page.mouse.move(0, 0)
+      await expect(region).toHaveScreenshot(`toast-themed-stack-${mode}.png`)
+    }
   })
 })
