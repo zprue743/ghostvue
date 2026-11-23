@@ -12,7 +12,9 @@ components:
 packages:
   - '@ghostvue/vue'
   - '@ghostvue/themes'
-specStatus: proposed
+specStatus: approved
+approval:
+  evidence: 'Zac approved resolved decisions in chat on 2026-11-22; recorded in PR #270.'
 manifests: []
 sections:
   purpose:
@@ -46,8 +48,8 @@ unresolvedQuestions: []
 
 # GhostToast specification
 
-**Status:** Proposed for [GHO-33](https://linear.app/ghost-vue/issue/GHO-33).
-Approval is PR review of this spec together with a later implementation PR.
+**Status:** Approved for [GHO-33](https://linear.app/ghost-vue/issue/GHO-33).
+Implementation PRs must match this spec.
 
 **Approved direction (Zac, 2026-11-17, option A):** provider-scoped state through
 `useGhostToast` (canonical `useGhost*` naming); no module-global SSR queue; at
@@ -86,7 +88,7 @@ SSR and multi-provider trees stay isolated.
 - Rich two-way chat, inbox, or notification center UX (history, grouping, read
   state, pagination).
 - Swipe-to-dismiss gestures in v1 (pointer dismiss uses an explicit close
-  control; see open questions for touch parity).
+  control).
 - Replacing page-level `aria-live` regions owned by other widgets (for example
   `GhostFileUpload` batch announcers).
 - A parallel styling-hooks vocabulary beyond ADR 0004 (`data-part`, class,
@@ -150,9 +152,10 @@ The viewport renders:
 Stable attributes on the viewport host:
 
 - `role="region"`
-- `aria-label` from provider `label` (overridable via fallthrough only when it
-  does not contradict provider `label`; provider wins when both are set — see
-  open questions)
+- Accessible name: provider `label` supplies default `aria-label` on the
+  viewport host. Consumer fallthrough `aria-labelledby` on `GhostToastViewport`
+  passes through to the region and **suppresses** that default `aria-label` (no
+  separate viewport prop).
 - `data-ghost-live=""` per ADR 0012
 - `data-part="viewport"`
 - class `ghost-toast-viewport`
@@ -175,6 +178,13 @@ instance (merged per call).
 | `update`     | `(id, patch: GhostToastUpdateOptions) => void` | Merge updates into an existing toast in the store (visible or queued). No-op when id unknown.                    |
 | `dismiss`    | `(id: GhostToastId) => void`                   | Remove toast from store; if visible, may promote the next queued item.                                           |
 | `dismissAll` | `() => void`                                   | Clear visible and queued toasts; cancel all timers.                                                              |
+
+`GhostToastUpdateOptions` extends the mutable fields of `GhostToastOptions` and
+adds:
+
+| Field            | Type      | Default | Contract                                                                                                                                          |
+| ---------------- | --------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `announceUpdate` | `boolean` | `false` | When `true` and the toast is **visible**, re-announce merged `title` / `description` through the same polite or assertive announcer used on show. |
 
 `GhostToastRecord` (read model for controlled rendering) includes at minimum:
 `id`, resolved `type`, `urgency`, `title`, `description`, `duration`,
@@ -373,9 +383,9 @@ one live region receives one atomic string built from `title` and `description`
 otherwise the **polite** region. The implementation uses a monotonic `key` on the
 active region's child (file-upload pattern) so identical consecutive text still
 produces a new node and AT announces it. The inactive region is not updated for
-that show. Queued toasts do not write to either region until promotion. Updating
-copy on a **visible** toast does not re-announce by default (open question:
-opt-in `announceUpdate`).
+that show. Queued toasts do not write to either region until promotion. Updating copy on a
+**visible** toast re-announces only when `update(..., { announceUpdate: true })`
+(default `false`).
 
 **Urgency:** Only `urgency: 'urgent'` writes the show flush to
 `announcer-assertive`. All other shows use `announcer-polite`. Ordinary
@@ -386,11 +396,11 @@ leaves the stack interactive and readable during open modals (ADR 0012).
 
 ### Keyboard interaction
 
-| Key                 | Context                  | Behavior                                             |
-| ------------------- | ------------------------ | ---------------------------------------------------- |
-| `Tab` / `Shift+Tab` | Toast with action/close  | Normal tab order through focusable controls only.    |
-| `Enter` / `Space`   | Focused action or close  | Activates the focused button.                        |
-| `Escape`            | Optional (open question) | Not handled at provider level in v1 unless approved. |
+| Key                 | Context                                            | Behavior                                                                                                                                                                                                                             |
+| ------------------- | -------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `Tab` / `Shift+Tab` | Toast with action/close                            | Normal tab order through focusable controls only.                                                                                                                                                                                    |
+| `Enter` / `Space`   | Focused action or close                            | Activates the focused button.                                                                                                                                                                                                        |
+| `Escape`            | Focus within a toast (close and/or action present) | Dismisses **only that toast**; `stopPropagation()` so an open dialog behind is not closed. Focus returns to the element that was active before focus entered the toast region (same when `GhostToastClose` removes a focused toast). |
 
 No roving tabindex across toasts: each toast's controls participate in document
 tab order in stack order (oldest first) when focused from the tab key.
@@ -398,8 +408,11 @@ tab order in stack order (oldest first) when focused from the tab key.
 ### Focus behavior
 
 **Never steal focus:** Creating, updating, promoting, or auto-dismissing a toast
-must not call `focus()` or move the active element. The only focus changes come
-from the user activating `GhostToastAction` or `GhostToastClose`.
+must not call `focus()` or move the active element. User-driven focus changes
+come from activating `GhostToastAction` or `GhostToastClose`, from `Escape`
+dismissing a focused toast (T5), and from **focus return** after dismiss: focus
+restores to the element that was active before the user entered the toast
+region.
 
 Pointer hover and focus pause timers only; they do not transfer focus.
 
@@ -423,9 +436,13 @@ Headless customization uses:
 - class `ghost-toast`, `ghost-toast-viewport`, etc.
 - `data-ghost-toast=""` on each toast root for queries and theme recipes.
 
-Themed `@ghostvue/themes` `GhostToast` (optional follow-on) passes behavioral
-props through and adds `data-themed`, `data-variant`, and `data-tone` consistent
-with `GhostInlineAlert` / `GhostEmptyState`.
+Headless ships **no** enter/exit motion in v1. Themed `@ghostvue/themes`
+`GhostToast` (same release train as headless — see [Resolved decisions](#resolved-decisions))
+passes behavioral props through and adds `data-themed`, `data-variant`, and
+`data-tone` consistent with `GhostInlineAlert` / `GhostEmptyState`. Themed stack
+chrome adds **enter-only** animation via motion tokens, disabled under
+`prefers-reduced-motion`. In-place `update()` / duplicate `id` merges keep the
+toast root **key** stable so enter animation does not replay.
 
 Default stack positioning (corner, gap, z-index) is theme-owned, not headless.
 
@@ -440,10 +457,12 @@ Default stack positioning (corner, gap, z-index) is theme-owned, not headless.
   each request with SSR must mount its own provider (Nuxt layout pattern).
 - Auto-dismiss, `visibilitychange`, and pointer listeners register in
   `onMounted` (or equivalent) and clean up on unmount / provider disposal.
-- `useGhostToast()` during SSR returns the provider store but `toast()` calls
-  before mount should still enqueue records; timers start only after mount when
-  the record becomes `visible` (open question: whether pre-mount enqueue is
-  allowed or dev-warning only).
+- On the **client**, `toast()` before `GhostToastViewport` mounts queues records
+  silently in the provider store and **flushes** when the viewport mounts (promote
+  visible, start timers).
+- During **SSR**, `toast()` is a **no-op** with a development warning (no shared
+  queue or timers on the server).
+- Timers start only after mount when the record becomes `visible`.
 
 Hydration tests (`expectSsrHydration`) cover viewport + both announcer regions
 with an empty stack.
@@ -456,9 +475,11 @@ dismiss in v1.
 
 ## Performance
 
-Expected scale: shallow queues (single-digit waiting records, at most three
-visible). Store operations are `O(n)` in queue length with small `n`. One timer
-per visible auto-dismiss toast. Pause tracking is constant time per toast.
+Expected scale: at most three visible; the **waiting** overflow queue is
+**unbounded** in v1 (reusing an `id` merges in place). Development builds log a
+warning when more than **20** records are waiting. Store operations are `O(n)` in
+queue length. One timer per visible auto-dismiss toast. Pause tracking is constant
+time per toast.
 
 Identity: toast ids are strings; no `WeakMap` required for content deduplication.
 
@@ -501,10 +522,23 @@ Does not compose `useFocusScope`, `useDismissableLayer`, or overlay stacks.
   `onDismiss` once each, removes document listeners.
 - **SSR isolation:** Two providers in one test app do not share state; no import
   side effects on module globals.
+- **T1 pre-mount / SSR:** SSR `toast()` is a no-op with dev warning; client
+  `toast()` before viewport mount queues silently, then flushes on viewport mount
+  (visible promotion and timers).
+- **T2 `announceUpdate`:** Visible toast `update` without `announceUpdate` does
+  not touch live regions; `announceUpdate: true` re-announces via the correct
+  polite or assertive announcer.
+- **T4 queue warning:** More than 20 waiting records logs a dev warning;
+  unbounded queue still accepts new records.
+- **T5 Escape:** `Escape` on a focused toast dismisses only that toast,
+  `stopPropagation` leaves an open dialog behind; focus returns to the pre-toast
+  element (same when Close removes a focused toast).
 
 ### Vue component tests
 
 - Viewport region attributes: `role="region"`, `aria-label`, `data-ghost-live`.
+- **T3 viewport naming:** Consumer `aria-labelledby` on the viewport suppresses
+  default `aria-label` from provider `label`.
 - Polite region keeps `role="status"` / `aria-live="polite"`; assertive region
   keeps `role="alert"`; urgent shows update `announcer-assertive` only, default
   shows update `announcer-polite` only.
@@ -524,7 +558,8 @@ Does not compose `useFocusScope`, `useDismissableLayer`, or overlay stacks.
 
 ### Accessibility and keyboard tests
 
-- Documented keys on close/action (activation only).
+- Documented keys on close/action (activation only); **T5** Escape path with
+  dialog open behind the toast stack.
 - Integration test: urgent show touches assertive `role="alert"` region only;
   default show touches polite `status` region only; assertive region never uses
   `role="status"`.
@@ -552,27 +587,36 @@ Does not compose `useFocusScope`, `useDismissableLayer`, or overlay stacks.
 
 ## Compatibility and release impact
 
-Additive minor release for `@ghostvue/vue` (and `@ghostvue/themes` when themed
-wrapper ships). New exports only; no breaking changes. Changeset required when
-packages publish.
+Additive minor release for `@ghostvue/vue` and `@ghostvue/themes`. Headless and
+themed stack ship in the **same release** as two stacked PRs (headless first).
+New exports only; no breaking changes. Changeset required when packages publish.
 
-## Open architectural questions
+## Resolved decisions
 
-Decisions below need maintainer sign-off before implementation PR treats them
-as settled.
-
-1. **Pre-mount `toast()` calls:** Should records created during SSR / before
-   viewport mount queue silently, or should development warn when timers cannot
-   yet run?
-2. **`announceUpdate`:** Should `update()` on a visible toast optionally
-   re-announce copy changes (default `false` in this spec)?
-3. **Viewport `label` override:** Should `GhostToastViewport` allow
-   `aria-labelledby` pointing at visible page copy instead of `aria-label`?
-4. **Queue cap:** Is there a maximum **waiting** queue size (drop oldest, reject
-   new, or unbounded memory)?
-5. **Escape to dismiss:** Should focus-within toast respond to `Escape` when a
-   close button exists?
-6. **Themed v1 scope:** Ship headless-only first or themed stack chrome in the
-   same release as GHO-33 implementation?
-7. **Duplicate promotion animation:** Any enter/exit motion in headless, or
-   theme-only concern?
+1. **T1 — Pre-mount `toast()`:** Client queues silently and flushes on viewport
+   mount; SSR calls are no-ops with a dev warning (no shared queue/timers on the
+   server). **Reason:** Keeps SSR safe without module-global state. _Approved by
+   Zac, Nov 22, 2026._
+2. **T2 — `announceUpdate`:** Re-announce visible toast text only when
+   `GhostToastUpdateOptions.announceUpdate` is `true` (default `false`). **Reason:**
+   Avoids noisy live regions on routine progress updates. _Approved by Zac, Nov
+   22, 2026._
+3. **T3 — Viewport naming:** Consumer `aria-labelledby` on the viewport passes
+   through and suppresses the default `aria-label` from provider `label`; no new
+   prop. **Reason:** Reuses fallthrough instead of competing label props. _Approved
+   by Zac, Nov 22, 2026._
+4. **T4 — Queue cap:** No waiting-queue cap in v1; dev warning when more than 20
+   toasts are waiting; reusing an `id` merges/updates. **Reason:** Simplicity
+   with a loud dev signal for runaway enqueue. _Approved by Zac, Nov 22, 2026._
+5. **T5 — Escape:** `Escape` on a focused toast dismisses only that toast,
+   stops propagation so dialogs behind stay open, and restores focus to the
+   element focused before the user entered the toast region (same for Close
+   removing a focused toast). **Reason:** Matches non-modal dismiss without
+   breaking modal stacks. _Approved by Zac, Nov 22, 2026._
+6. **T6 — Themed v1:** Themed toast ships in the same release as headless, as two
+   PRs (headless first). **Reason:** Consumers get one release boundary while
+   keeping review slices small. _Approved by Zac, Nov 22, 2026._
+7. **T7 — Motion:** No animation in headless; themed adds enter-only animation
+   via motion tokens with `prefers-reduced-motion` off; in-place updates keep the
+   key so animation does not replay. **Reason:** Motion stays in the styled layer.
+   _Approved by Zac, Nov 22, 2026._

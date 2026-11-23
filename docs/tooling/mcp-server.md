@@ -53,7 +53,12 @@ Tool responses use MCP **structured content** (`structuredContent`) with a decla
 
 ## Dependencies
 
-Runtime pins are **not yet approved** for the lockfile. Zac sign-off is required for `@modelcontextprotocol/sdk@1.32.2`, `zod@4.6.7`, and `ajv@8.20.0` — see [dependencies.md](../standards/dependencies.md) § `@ghostvue/mcp`.
+Direct runtime pins (approved Nov 22, 2026): `@modelcontextprotocol/sdk@1.32.2`,
+`zod@4.6.7`, `ajv@8.20.0`, with production `node_modules` ≤ 18 MiB. Record in
+[dependencies.md](../standards/dependencies.md) § `@ghostvue/mcp` when
+`packages/mcp` lands. The package joins the monorepo release train at `0.1.0` but
+stays `"private": true` until [GHO-57](https://linear.app/ghost-vue/issue/GHO-57)
+publish authorization.
 
 ## Full contract
 
