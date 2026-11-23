@@ -284,3 +284,218 @@ export interface UseGhostDataTableReturn<TData> {
   /** Re-emits `stateChange` with the current query and a fresh `requestId`. */
   retry: () => void
 }
+
+/*
+ * GhostDataTable renderless root (GHO-235). The root renders no element of its
+ * own: its default slot receives the bindings from the spec's "Renderless root
+ * slot bindings" table, and consumers spread them onto native `GhostTable*`
+ * parts (ADR 0014 option A). Every binding is plain attributes; event handlers
+ * stay in the consumer template so a `v-bind` never doubles a click handler.
+ */
+
+/** Accessible-name options for the control prop getters. */
+export interface DataTableControlLabelOptions {
+  /**
+   * Localized accessible name, applied as `aria-label` on the focusable
+   * control itself (never a wrapper). Omit when visible text names it.
+   */
+  label?: string
+}
+
+/** Attributes for the `GhostTable` root (`<table>`). */
+export interface DataTableTableRootProps {
+  'data-ghost-data-table': ''
+  /** `'true'` while `loading`; omitted otherwise. */
+  'aria-busy'?: 'true'
+  'aria-label'?: string
+  'aria-labelledby'?: string
+}
+
+/** Attributes for a column `GhostTableHeaderCell`. */
+export interface DataTableHeaderCellProps {
+  scope: 'col'
+  /** Only on the sorted column (single-column sort in phase one). */
+  'aria-sort'?: 'ascending' | 'descending'
+  /** Styling hook mirroring `aria-sort`. */
+  'data-sort'?: 'asc' | 'desc'
+}
+
+/** Attributes for a data `GhostTableRow`. Both flags are independent. */
+export interface DataTableRowProps {
+  'data-selected'?: 'true'
+  'data-expanded'?: 'true'
+}
+
+/**
+ * Attributes for the expansion detail `GhostTableRow`. `GhostTableRow` keeps
+ * its own `data-part="row"`; this only adds `data-detail-row`.
+ */
+export interface DataTableDetailRowProps {
+  /** Target of the expand button's `aria-controls`. */
+  id: string
+  'data-detail-row': 'true'
+}
+
+/** Attributes for a sort `<button>` inside a header cell. */
+export interface DataTableSortButtonProps {
+  type: 'button'
+  'aria-label'?: string
+  /** Set while the table is disabled or the column cannot sort. */
+  disabled?: true
+}
+
+/**
+ * Props for a row or header `GhostCheckbox`. `aria-label` falls through to the
+ * native checkbox input (the focusable control).
+ */
+export interface DataTableSelectionCheckboxProps {
+  'aria-label'?: string
+  /** `true` while selection is not enabled or the table is disabled. */
+  disabled: boolean
+}
+
+/** Attributes for a row expand `<button>`. */
+export interface DataTableExpandButtonProps {
+  type: 'button'
+  'aria-label'?: string
+  'aria-expanded': 'true' | 'false'
+  /** Detail row id; only while expanded, so it never points at a missing node. */
+  'aria-controls'?: string
+  /** Set while expansion is not enabled or the table is disabled. */
+  disabled?: true
+}
+
+/** Column header model. Independent of body rows, so the head survives an empty body. */
+export interface DataTableHeader<TData> {
+  /** Column id (same as `column.id`). */
+  id: string
+  /** Consumer column definition (not cloned). */
+  column: DataTableColumnDef<TData>
+  /** Whether the column can sort (accessor or `sortFn`, `enableSorting !== false`). */
+  canSort: boolean
+  /** Current direction in the single-column sort. */
+  sortDirection: DataTableSortDirection
+  /** Tri-state sort cycle. Ignores arguments, so it can be an `@click` handler. */
+  toggleSort: () => void
+}
+
+/** Body row model passed to the default slot as `rows`. */
+export interface DataTableSlotRow<TData> extends DataTableRow<TData> {
+  /** One cell context per column, in column order. */
+  cells: DataTableCellContext<TData>[]
+  isSelected: boolean
+  isExpanded: boolean
+  /** Toggles, or sets with a boolean (`GhostCheckbox` `update:modelValue`). */
+  toggleSelected: (value?: boolean) => void
+  /** Toggles expansion. Ignores arguments, so it can be an `@click` handler. */
+  toggleExpanded: () => void
+  /** Bindings for this row's expansion detail `<tr>`. */
+  detailRowProps: DataTableDetailRowProps
+}
+
+/**
+ * Props for {@link GhostDataTable}. The options mirror
+ * {@link UseGhostDataTableBaseOptions}; v-model props are controlled when
+ * bound and fall back to their `default*` value otherwise.
+ */
+export interface GhostDataTableProps<TData> {
+  /** Consumer-owned rows, read by reference only (never cloned or mutated). */
+  data: readonly TData[]
+  /** Consumer-owned column definitions. Not mutated. */
+  columns: readonly DataTableColumnDef<TData>[]
+  /** Required in every build; there is no index fallback. */
+  getRowId: DataTableGetRowId<TData>
+  /** @default false */
+  manualSorting?: boolean
+  /** @default false */
+  manualFiltering?: boolean
+  /** When `true`, `data` is one server page and `rowCount` is required. @default false */
+  manualPagination?: boolean
+  /** Total rows matching the query on the server. Required with `manualPagination`. */
+  rowCount?: number
+  /** Optional page-count override. */
+  pageCount?: number
+  /** @default false */
+  enableRowSelection?: boolean
+  /** @default false */
+  enableRowExpansion?: boolean
+  /** When `false`, expanding one row collapses the others. @default true */
+  allowMultipleExpanded?: boolean
+  /** Sets `aria-busy="true"` through `tableRootProps`. @default false */
+  loading?: boolean
+  /** Makes sort, selection, and expansion inert and disables their controls. @default false */
+  disabled?: boolean
+  /** Accessible name for the table, applied through `tableRootProps`. */
+  ariaLabel?: string
+  /** Id of a visible label for the table, applied through `tableRootProps`. */
+  ariaLabelledby?: string
+
+  sorting?: DataTableColumnSort[]
+  defaultSorting?: DataTableColumnSort[]
+  columnFilters?: DataTableColumnFilter[]
+  defaultColumnFilters?: DataTableColumnFilter[]
+  globalFilter?: unknown
+  defaultGlobalFilter?: unknown
+  pagination?: DataTablePaginationState
+  defaultPagination?: DataTablePaginationState
+  selectedRowIds?: DataTableRowId[]
+  defaultSelectedRowIds?: DataTableRowId[]
+  expandedRowIds?: DataTableRowId[]
+  defaultExpandedRowIds?: DataTableRowId[]
+}
+
+/** Default slot props of {@link GhostDataTable} (spec: Renderless root slot bindings). */
+export interface GhostDataTableSlotProps<TData> {
+  tableRootProps: DataTableTableRootProps
+  headers: DataTableHeader<TData>[]
+  rows: DataTableSlotRow<TData>[]
+  headerSelectionState: DataTableHeaderSelectionState
+  getHeaderCellProps: (columnId: string) => DataTableHeaderCellProps
+  getRowProps: (rowId: DataTableRowId) => DataTableRowProps
+  /**
+   * Cell context for a row in `rows` and a column id. Throws for an id that is
+   * not rendered, which is a template bug rather than a runtime state.
+   */
+  getBodyCellContext: (
+    rowId: DataTableRowId,
+    columnId: string,
+  ) => DataTableCellContext<TData>
+  getSortButtonProps: (
+    columnId: string,
+    options?: DataTableControlLabelOptions,
+  ) => DataTableSortButtonProps
+  getRowSelectionCheckboxProps: (
+    rowId: DataTableRowId,
+    options?: DataTableControlLabelOptions,
+  ) => DataTableSelectionCheckboxProps
+  getHeaderSelectionCheckboxProps: (
+    options?: DataTableControlLabelOptions,
+  ) => DataTableSelectionCheckboxProps
+  getRowExpandButtonProps: (
+    rowId: DataTableRowId,
+    options?: DataTableControlLabelOptions,
+  ) => DataTableExpandButtonProps
+  /** Same id set as `headerSelectionState`; accepts the checkbox's next value. */
+  toggleAllRowsSelected: (value?: boolean) => void
+}
+
+/** Methods exposed on a `GhostDataTable` template ref. */
+export interface GhostDataTableExposed<TData> {
+  toggleAllRowsSelected: (value?: boolean) => void
+  toggleRowSelected: (rowId: DataTableRowId, value?: boolean) => void
+  toggleRowExpanded: (rowId: DataTableRowId, value?: boolean) => void
+  resetRowSelection: () => void
+  /** Re-emits `stateChange` with the current query and a fresh `requestId`. */
+  retry: () => void
+  setSorting: (sorting: DataTableColumnSort[]) => void
+  toggleSorting: (columnId: string) => void
+  setGlobalFilter: (globalFilter: unknown) => void
+  setColumnFilter: (columnId: string, value: unknown) => void
+  setColumnFilters: (columnFilters: DataTableColumnFilter[]) => void
+  setPagination: (pagination: DataTablePaginationState) => void
+  setPageIndex: (pageIndex: number) => void
+  setPageSize: (pageSize: number) => void
+  getRowModel: () => readonly DataTableRow<TData>[]
+  getPrePaginationRowModel: () => readonly DataTableRow<TData>[]
+  getSelectedRowModel: () => readonly DataTableRow<TData>[]
+}
