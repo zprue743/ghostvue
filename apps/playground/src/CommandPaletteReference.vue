@@ -36,7 +36,7 @@ function onCommand({ id }: { id: string }): void {
     <h2 id="command-palette-heading">GhostCommandPalette</h2>
     <p>
       Last command:
-      <output data-testid="palette-last">{{ lastCommand }}</output>
+      <span data-testid="palette-last">{{ lastCommand }}</span>
     </p>
 
     <GhostCommandPalette @command="onCommand">
