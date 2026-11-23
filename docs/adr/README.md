@@ -24,5 +24,5 @@ new context rather than rewriting history.
 - [0011 — Overlay primitives](./0011-overlay-primitives.md)
 - [0012 — Modal overlays](./0012-modal-overlays.md)
 - [0013 — Icon strategy](./0013-icon-strategy.md)
-- [0014 — DataTable phase-one architecture](./0014-datatable-phase-one-architecture.md) (proposed)
-- [0015 — MCP server first release](./0015-mcp-server-first-release.md) (proposed)
+- [0014 — DataTable phase-one architecture](./0014-datatable-phase-one-architecture.md)
+- [0015 — MCP server first release](./0015-mcp-server-first-release.md)

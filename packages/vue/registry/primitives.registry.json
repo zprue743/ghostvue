@@ -51,7 +51,8 @@
     "file-upload",
     "date-picker",
     "command-palette",
-    "toast"
+    "toast",
+    "data-table"
   ],
   "vueBarrel": [
     "export { useGhostId } from './use-ghost-id'",

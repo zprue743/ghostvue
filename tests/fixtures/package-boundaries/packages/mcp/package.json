@@ -1,0 +1,8 @@
+{
+  "name": "@ghostvue/mcp",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@ghostvue/core": "*"
+  }
+}

@@ -70,6 +70,25 @@ for (const directory of packageDirectories) {
       violations.push(`${packageJson.name} may not depend on ${dependencyName}`)
     }
   }
+
+  // Forbidden names also cover devDependencies: a Node-only tooling package
+  // has no reason to install Vue even for tests, and a dev-only edge is the
+  // usual first step toward an accidental runtime import.
+  const forbiddenDependencies = new Set(
+    catalogedPackage.forbiddenDependencies ?? [],
+  )
+  const declaredDependencies = new Set(
+    [...dependencyGroups, packageJson.devDependencies ?? {}].flatMap(
+      Object.keys,
+    ),
+  )
+  for (const dependencyName of declaredDependencies) {
+    if (forbiddenDependencies.has(dependencyName)) {
+      violations.push(
+        `${packageJson.name} must not declare forbidden dependency ${dependencyName}`,
+      )
+    }
+  }
 }
 
 for (const workspacePackage of workspacePackages) {
