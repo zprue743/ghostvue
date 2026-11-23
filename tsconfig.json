@@ -5,7 +5,8 @@
     "apps/docs/.vitepress/**/*.ts",
     "tests/**/*.ts",
     "scripts/lib/**/*.d.ts",
-    "packages/themes/scripts/lib/**/*.d.ts"
+    "packages/themes/scripts/lib/**/*.d.ts",
+    "packages/mcp/scripts/lib/**/*.d.ts"
   ],
   "references": [
     { "path": "./packages/shared" },

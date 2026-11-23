@@ -41,6 +41,9 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm build
+      # GHO-17 M1: the released @ghostvue/mcp must carry the asset bundle the
+      # current sources produce (no committed lock hash to compare against).
+      - run: pnpm --filter @ghostvue/mcp assets:check
       # Reuse the existing GHO-55/GHO-6 package gates (publint, attw, packed
       # define smoke) instead of duplicating them for the release.
       - run: pnpm published-exports
