@@ -57,3 +57,51 @@ Related: [./components/date-picker.md](./components/date-picker.md)
 
 Related: [./standards/component-stability.md](./standards/component-stability.md)
 
+## GHOST006
+
+**Warning:** Toast created during server rendering
+
+toast() ran during server-side rendering and was ignored. The server never queues toasts; call toast() from client code such as onMounted or an event handler.
+
+Related: [./components/toast.md](./components/toast.md)
+
+## GHOST007
+
+**Warning:** Toast duration ignored
+
+duration is ignored on toast "{id}" because {reason} toasts persist until dismissed. Remove duration, or make the toast informational.
+
+Related: [./components/toast.md](./components/toast.md)
+
+## GHOST008
+
+**Warning:** Invalid toast option
+
+{option} {value} is invalid; expected {expected}. Using {fallback} instead.
+
+Related: [./components/toast.md](./components/toast.md)
+
+## GHOST009
+
+**Warning:** Toast id uses the reserved prefix
+
+Toast id "{id}" starts with the generated-id prefix "{prefix}". It is treated as an update of an existing toast only; omit id for a generated one or choose another explicit id.
+
+Related: [./components/toast.md](./components/toast.md)
+
+## GHOST010
+
+**Warning:** Many toasts waiting
+
+{count} toasts are waiting behind the visible stack. Check for runaway toast() calls, and reuse an id to update a toast in place.
+
+Related: [./components/toast.md](./components/toast.md)
+
+## GHOST011
+
+**Warning:** Toast without a title
+
+toast() and update() need a non-empty title. The {call} call was ignored.
+
+Related: [./components/toast.md](./components/toast.md)
+

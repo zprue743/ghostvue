@@ -1,0 +1,48 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "generated",
+  "name": "GhostToastDescription",
+  "package": "@ghostvue/vue",
+  "status": "experimental",
+  "description": "Optional supporting copy of a toast (div), announced after the title.",
+  "props": [],
+  "models": [],
+  "events": [],
+  "slots": [
+    {
+      "name": "default",
+      "props": [],
+      "description": "Primary content."
+    }
+  ],
+  "exposed": [
+    {
+      "name": "element",
+      "kind": "property",
+      "type": "HTMLElement | null",
+      "description": "The rendered element, or `null` before mount."
+    }
+  ],
+  "styling": {
+    "parts": [
+      {
+        "name": "description",
+        "description": "Toast description."
+      }
+    ],
+    "states": [],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "generic",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/alert/",
+    "keyboard": {},
+    "requiredAriaAttributes": []
+  },
+  "examples": [],
+  "spec": {
+    "path": "docs/components/toast-spec.md",
+    "status": "approved",
+    "evidence": "Zac approved resolved decisions in chat on 2026-11-22; recorded in PR #270."
+  }
+}
