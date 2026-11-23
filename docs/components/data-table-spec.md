@@ -7,7 +7,9 @@ components:
   - GhostDataTablePreset
 packages:
   - '@ghostvue/vue'
-specStatus: proposed
+specStatus: approved
+approval:
+  evidence: 'Approved by Zac (maintainer) on November 22, 2026 (PR #265 review; option A recorded in ADR 0014, now accepted). Promoted with GHO-233; Zac confirms in that PR review. See the Status line in this spec.'
 manifests: []
 sections:
   purpose:
@@ -47,10 +49,13 @@ unresolvedQuestions:
 
 # GhostDataTable specification
 
-**Status:** Draft for [GHO-35](https://linear.app/ghost-vue/issue/GHO-35). Zac
-endorses **option A** (composable + native `GhostTable`; see
-[ADR 0014](../adr/0014-datatable-phase-one-architecture.md)). **`specStatus`
-stays `draft`** until gate approval; implementation waits on reviewed spec text.
+**Status:** Approved for [GHO-35](https://linear.app/ghost-vue/issue/GHO-35).
+Zac approved **option A** (composable + native `GhostTable`; see
+[ADR 0014](../adr/0014-datatable-phase-one-architecture.md), accepted) on
+November 22, 2026 (PR #265 review). **`specStatus: approved`** was recorded
+with the first implementation step
+([GHO-233](https://linear.app/ghost-vue/issue/GHO-233)); Zac confirms in that
+PR review.
 
 ## Purpose and user problems
 
@@ -1021,8 +1026,8 @@ Non-blocking items (also in frontmatter with `blocking: false`):
 **Gate status:** Exercise **completed** (throwaway prototype,
 [PR #269](https://github.com/zprue743/ghostvue/pull/269),
 [`prototypes/datatable-primevue/FINDINGS.md`](https://github.com/zprue743/ghostvue/blob/cursor/gho-35-primevue-prototype/prototypes/datatable-primevue/FINDINGS.md)).
-**`specStatus` remains `draft`** until Zac promotes the spec through the component
-gate (this evidence does **not** auto-approve).
+This evidence did **not** auto-approve the spec; Zac's November 22, 2026
+approval promoted it to **`specStatus: approved`**.
 
 | Dimension            | Finding                                                                                                                                                                                                   |
 | -------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -1061,5 +1066,5 @@ intent, not production bundle performance.
 | **Deferred:** Virtualization spec                                                                   | Scroll + a11y                                            | High       |
 | **Deferred:** Treegrid / grid keyboard spec                                                         | Roving focus                                             | High       |
 
-Parent **GHO-35** tracks specification approval at **`specStatus: draft`** until
-Zac promotes the spec through the component gate.
+Parent **GHO-35** records specification approval at **`specStatus: approved`**
+(Zac, November 22, 2026).

@@ -166,7 +166,7 @@ const contributeSidebar: LlmsSidebarGroup[] = [
       { text: '0012 — Modal overlays', link: '/adr/0012-modal-overlays' },
       { text: '0013 — Icon strategy', link: '/adr/0013-icon-strategy' },
       {
-        text: '0014 — DataTable phase one (proposed)',
+        text: '0014 — DataTable phase one',
         link: '/adr/0014-datatable-phase-one-architecture',
       },
       {
