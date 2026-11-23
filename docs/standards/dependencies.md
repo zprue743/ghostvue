@@ -128,3 +128,26 @@ Residual advisories, all development-only and absent from `pnpm audit --prod`:
   advisory is a timeout-cancellation bypass. `@vue/test-utils` 2.5+ moves to
   js-beautify 2, which still uses a vulnerable glob 13. Follow-up: revisit when a
   release depends on glob 14.0.2+.
+
+## `@ghostvue/mcp` — proposed (GHO-17)
+
+**Not yet approved or in the lockfile.** Implementation awaits Zac sign-off on
+[ADR 0015](../adr/0015-mcp-server-first-release.md). Full review:
+[GHO-17 MCP first-release contract](../plans/gho-17-mcp-first-release.md) §7.
+
+**Candidate runtime dependencies (exact pins, MIT):**
+
+| Package                     | Pin    | Why                                                                                                     |
+| --------------------------- | ------ | ------------------------------------------------------------------------------------------------------- |
+| `@modelcontextprotocol/sdk` | 1.32.2 | Official MCP stdio server, tool registration, protocol framing                                          |
+| `zod`                       | 4.6.7  | Required SDK peer (`^3.25 \|\| ^4.0`; pin 4.x for new package) — tool input validation                  |
+| `ajv`                       | 8.20.0 | Serve-time manifest validation against bundled `@ghostvue/core/manifest.schema.json` (same major as CI) |
+
+Stdio-only code should import `@modelcontextprotocol/sdk/server` narrowly; the SDK
+still installs transitive HTTP packages (`hono`, `express`, …). Measured installed
+`node_modules` for these three direct pins plus transitives: **17,407,541 bytes**
+(scratch `npm i --prefix /tmp` with sdk@1.32.2, zod@4.6.7, ajv@8.20.0,
+2026-11-22); SDK package alone **4,492,221 bytes** unpacked per
+`npm view @modelcontextprotocol/sdk@1.32.2 dist.unpackedSize`. Measurement
+exceeds 16 MiB; **18 MiB cap** unchanged per plan §7. Record audit outcome when
+dependencies land.
