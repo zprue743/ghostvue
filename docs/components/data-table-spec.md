@@ -923,7 +923,10 @@ post-mount effect per checkbox spec.
 ## Performance
 
 - Local 10k-row processing with **paginated DOM** (O(pageSize) rows).
-- Benchmark file: `tests/bench/data-table-processing.bench.ts`.
+- Benchmark file: `tests/bench/data-table-processing.bench.ts`. Run it with
+  `pnpm bench:data-table` (not part of `pnpm verify`). It times the sort and
+  filter stages, the composable pipeline, and a mounted 25-row page at 1k, 5k,
+  and 10k rows.
 - Proposed p95 &lt; 25ms and heap delta &lt; 5MB: **informational until CI
   variance is understood**; not a gate in phase one.
 
@@ -933,6 +936,11 @@ post-mount effect per checkbox spec.
 | ----------------------------------- | -------------------------------------------------------------------------- |
 | Page change after local sort        | Comparator / `sortFn` **not invoked again** (zero additional sort passes). |
 | Toggle selection on one visible row | **Zero** sort or filter callback invocations.                              |
+
+These counters live in `packages/vue/src/use-ghost-data-table.counters.test.ts`
+(whole sort and filter passes, including the default comparator) and
+`packages/vue/src/use-ghost-data-table.test.ts` (consumer `sortFn`, `filterFn`,
+and accessor callbacks).
 
 **Proposed later task (not this PR):** production-browser comparison on
 identical 10k `Invoice` rows, same three columns and page size, GhostVue vs

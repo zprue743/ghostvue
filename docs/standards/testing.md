@@ -326,6 +326,21 @@ entry and every single-component import, and confirms that Vue stays external.
 the update workflow are in the
 [performance standard](./performance.md#bundle-size-and-tree-shaking-budgets).
 
+## Benchmarks
+
+`*.bench.ts` files under `tests/bench/` run with `vitest bench`. They are
+informational: timings depend on the host, so they are not part of `pnpm test`,
+`pnpm verify`, or CI. Compare a change against `master` on the same machine.
+
+| Script                  | File                                            | Measures                                                   |
+| ----------------------- | ----------------------------------------------- | ---------------------------------------------------------- |
+| `pnpm bench:registry`   | `tests/bench/select-combobox-registry.bench.ts` | Select and Combobox option-registry churn                  |
+| `pnpm bench:data-table` | `tests/bench/data-table-processing.bench.ts`    | DataTable sort, filter, and page processing at 1k-10k rows |
+
+A guarantee that must never regress belongs in a unit test, not a bench. For
+example, the DataTable rule that a page change never re-sorts is a counter test
+in `packages/vue/src/use-ghost-data-table.counters.test.ts`.
+
 ## Coverage reporting
 
 `*.test.ts` files run in Vitest as unit and integration tests and count toward
