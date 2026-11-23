@@ -1,6 +1,7 @@
 import { type Readable, type Writable } from 'node:stream'
 
 import { type GhostvueStamp } from './contract.js'
+import { getTokensTool } from './get-tokens.js'
 import {
   AssetBundleError,
   loadGhostvueStamp,
@@ -14,11 +15,11 @@ import { type GhostvueTool } from './tool.js'
 export const binName = 'ghostvue-mcp'
 
 /**
- * Tools the published bin serves. Empty until the discovery tools land
- * (GHO-228 to GHO-231 register `list_components`, `get_component`,
- * `get_examples`, `search_docs`, and `get_tokens` here).
+ * Tools the published bin serves. The remaining discovery tools (GHO-228 to
+ * GHO-230: `list_components`, `get_component`, `get_examples`, `search_docs`)
+ * register here as they land.
  */
-export const builtInTools: readonly GhostvueTool[] = []
+export const builtInTools: readonly GhostvueTool[] = [getTokensTool]
 
 /** Process streams and overrides for {@link runCli}. */
 export interface CliOptions {

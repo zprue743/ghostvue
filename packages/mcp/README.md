@@ -7,8 +7,9 @@ time. Host setup lives in the
 [MCP server guide](../../docs/tooling/mcp-server.md); the contract is the
 [GHO-17 plan](../../docs/plans/gho-17-mcp-first-release.md).
 
-> The server is not implemented yet. The `ghostvue-mcp` bin is a stub that
-> exits non-zero; this package currently ships the offline asset bundle.
+> The server is in progress: `ghostvue-mcp` serves MCP over stdio from the
+> offline asset bundle and registers `get_tokens`; the other discovery tools
+> are not registered yet.
 
 ## Published contents
 
