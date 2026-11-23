@@ -2,7 +2,16 @@
   "schemaVersion": "1.0.0",
   "slug": "data-table",
   "vueBarrel": [
+    "export { default as GhostDataTable } from './GhostDataTable.vue'",
     "export { useGhostDataTable } from './use-ghost-data-table'",
-    "export type {\n  DataTableCellContext,\n  DataTableColumnDef,\n  DataTableColumnFilter,\n  DataTableColumnSort,\n  DataTableGetRowId,\n  DataTableHeaderSelectionState,\n  DataTablePaginationState,\n  DataTableQueryState,\n  DataTableRow,\n  DataTableRowId,\n  DataTableSortDirection,\n  DataTableStateChangePayload,\n  UseGhostDataTableBaseOptions,\n  UseGhostDataTableLocalPaginationOptions,\n  UseGhostDataTableManualPaginationOptions,\n  UseGhostDataTableOptions,\n  UseGhostDataTableReturn,\n} from './ghost-data-table'"
+    "export type {\n  DataTableCellContext,\n  DataTableColumnDef,\n  DataTableColumnFilter,\n  DataTableColumnSort,\n  DataTableControlLabelOptions,\n  DataTableDetailRowProps,\n  DataTableExpandButtonProps,\n  DataTableGetRowId,\n  DataTableHeader,\n  DataTableHeaderCellProps,\n  DataTableHeaderSelectionState,\n  DataTablePaginationState,\n  DataTableQueryState,\n  DataTableRow,\n  DataTableRowId,\n  DataTableRowProps,\n  DataTableSelectionCheckboxProps,\n  DataTableSlotRow,\n  DataTableSortButtonProps,\n  DataTableSortDirection,\n  DataTableStateChangePayload,\n  DataTableTableRootProps,\n  GhostDataTableExposed,\n  GhostDataTableProps,\n  GhostDataTableSlotProps,\n  UseGhostDataTableBaseOptions,\n  UseGhostDataTableLocalPaginationOptions,\n  UseGhostDataTableManualPaginationOptions,\n  UseGhostDataTableOptions,\n  UseGhostDataTableReturn,\n} from './ghost-data-table'"
+  ],
+  "examples": [
+    {
+      "id": "data-table/full-invoices",
+      "title": "Full composition",
+      "description": "Manual GhostTable composition with sort buttons, row selection, expandable detail rows, a global search, and an empty state.",
+      "layer": "headless"
+    }
   ]
 }

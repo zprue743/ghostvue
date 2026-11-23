@@ -10,7 +10,8 @@ packages:
 specStatus: approved
 approval:
   evidence: 'Zac approved in chat on 2026-11-23; recorded in PR #272.'
-manifests: []
+manifests:
+  - packages/vue/manifests/ghost-data-table.manifest.json
 sections:
   purpose:
     applicable: true

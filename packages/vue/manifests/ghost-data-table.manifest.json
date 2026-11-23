@@ -1,0 +1,283 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "generated",
+  "name": "GhostDataTable",
+  "package": "@ghostvue/vue",
+  "status": "experimental",
+  "description": "Renderless DataTable root over useGhostDataTable. Renders no element; its default slot supplies tableRootProps, headers, rows, and header, row, sort, selection, and expansion bindings for composing a native GhostTable.",
+  "props": [
+    {
+      "name": "allowMultipleExpanded",
+      "type": "boolean",
+      "default": true,
+      "required": false,
+      "description": "When `false`, expanding one row collapses the others.",
+      "deprecated": false
+    },
+    {
+      "name": "ariaLabel",
+      "type": "string",
+      "required": false,
+      "description": "Accessible name for the table, applied through `tableRootProps`.",
+      "deprecated": false
+    },
+    {
+      "name": "ariaLabelledby",
+      "type": "string",
+      "required": false,
+      "description": "Id of a visible label for the table, applied through `tableRootProps`.",
+      "deprecated": false
+    },
+    {
+      "name": "columnFilters",
+      "type": "DataTableColumnFilter[]",
+      "required": false,
+      "description": "Declared prop `columnFilters`.",
+      "deprecated": false
+    },
+    {
+      "name": "columns",
+      "type": "readonly DataTableColumnDef<TData>[]",
+      "required": true,
+      "description": "Consumer-owned column definitions. Not mutated.",
+      "deprecated": false
+    },
+    {
+      "name": "data",
+      "type": "readonly TData[]",
+      "required": true,
+      "description": "Consumer-owned rows, read by reference only (never cloned or mutated).",
+      "deprecated": false
+    },
+    {
+      "name": "defaultColumnFilters",
+      "type": "DataTableColumnFilter[]",
+      "required": false,
+      "description": "Declared prop `defaultColumnFilters`.",
+      "deprecated": false
+    },
+    {
+      "name": "defaultExpandedRowIds",
+      "type": "DataTableRowId[]",
+      "required": false,
+      "description": "Declared prop `defaultExpandedRowIds`.",
+      "deprecated": false
+    },
+    {
+      "name": "defaultGlobalFilter",
+      "type": "unknown",
+      "required": false,
+      "description": "Declared prop `defaultGlobalFilter`.",
+      "deprecated": false
+    },
+    {
+      "name": "defaultPagination",
+      "type": "DataTablePaginationState",
+      "required": false,
+      "description": "Declared prop `defaultPagination`.",
+      "deprecated": false
+    },
+    {
+      "name": "defaultSelectedRowIds",
+      "type": "DataTableRowId[]",
+      "required": false,
+      "description": "Declared prop `defaultSelectedRowIds`.",
+      "deprecated": false
+    },
+    {
+      "name": "defaultSorting",
+      "type": "DataTableColumnSort[]",
+      "required": false,
+      "description": "Declared prop `defaultSorting`.",
+      "deprecated": false
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Makes sort, selection, and expansion inert and disables their controls.",
+      "deprecated": false
+    },
+    {
+      "name": "enableRowExpansion",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Declared prop `enableRowExpansion`.",
+      "deprecated": false
+    },
+    {
+      "name": "enableRowSelection",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Declared prop `enableRowSelection`.",
+      "deprecated": false
+    },
+    {
+      "name": "expandedRowIds",
+      "type": "DataTableRowId[]",
+      "required": false,
+      "description": "Declared prop `expandedRowIds`.",
+      "deprecated": false
+    },
+    {
+      "name": "getRowId",
+      "type": "DataTableGetRowId<TData>",
+      "required": true,
+      "description": "Required in every build; there is no index fallback.",
+      "deprecated": false
+    },
+    {
+      "name": "globalFilter",
+      "type": "unknown",
+      "required": false,
+      "description": "Declared prop `globalFilter`.",
+      "deprecated": false
+    },
+    {
+      "name": "loading",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Sets `aria-busy=\"true\"` through `tableRootProps`.",
+      "deprecated": false
+    },
+    {
+      "name": "manualFiltering",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Declared prop `manualFiltering`.",
+      "deprecated": false
+    },
+    {
+      "name": "manualPagination",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "When `true`, `data` is one server page and `rowCount` is required.",
+      "deprecated": false
+    },
+    {
+      "name": "manualSorting",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Declared prop `manualSorting`.",
+      "deprecated": false
+    },
+    {
+      "name": "pageCount",
+      "type": "number",
+      "required": false,
+      "description": "Optional page-count override.",
+      "deprecated": false
+    },
+    {
+      "name": "pagination",
+      "type": "DataTablePaginationState",
+      "required": false,
+      "description": "Declared prop `pagination`.",
+      "deprecated": false
+    },
+    {
+      "name": "rowCount",
+      "type": "number",
+      "required": false,
+      "description": "Total rows matching the query on the server. Required with `manualPagination`.",
+      "deprecated": false
+    },
+    {
+      "name": "selectedRowIds",
+      "type": "DataTableRowId[]",
+      "required": false,
+      "description": "Declared prop `selectedRowIds`.",
+      "deprecated": false
+    },
+    {
+      "name": "sorting",
+      "type": "DataTableColumnSort[]",
+      "required": false,
+      "description": "Declared prop `sorting`.",
+      "deprecated": false
+    }
+  ],
+  "models": [
+    {
+      "prop": "columnFilters",
+      "event": "update:columnFilters",
+      "type": "DataTableColumnFilter[]",
+      "description": "v-model binding for `columnFilters`."
+    },
+    {
+      "prop": "expandedRowIds",
+      "event": "update:expandedRowIds",
+      "type": "DataTableRowId[]",
+      "description": "v-model binding for `expandedRowIds`."
+    },
+    {
+      "prop": "globalFilter",
+      "event": "update:globalFilter",
+      "type": "unknown",
+      "description": "v-model binding for `globalFilter`."
+    },
+    {
+      "prop": "pagination",
+      "event": "update:pagination",
+      "type": "DataTablePaginationState",
+      "description": "v-model binding for `pagination`."
+    },
+    {
+      "prop": "selectedRowIds",
+      "event": "update:selectedRowIds",
+      "type": "DataTableRowId[]",
+      "description": "v-model binding for `selectedRowIds`."
+    },
+    {
+      "prop": "sorting",
+      "event": "update:sorting",
+      "type": "DataTableColumnSort[]",
+      "description": "v-model binding for `sorting`."
+    }
+  ],
+  "events": [
+    {
+      "name": "stateChange",
+      "payloadType": "DataTableStateChangePayload",
+      "description": "Emitted as `stateChange`."
+    }
+  ],
+  "slots": [
+    {
+      "name": "default",
+      "props": [],
+      "description": "Primary content."
+    }
+  ],
+  "exposed": [],
+  "styling": {
+    "parts": [],
+    "states": [],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "table",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/table/",
+    "keyboard": {
+      "Tab": "Moves between the focusable controls the consumer renders (sort buttons, checkboxes, expand buttons) in DOM order. No grid or roving cell focus.",
+      "Space": "Toggles a focused selection GhostCheckbox, or activates a focused sort or expand button.",
+      "Enter": "Activates a focused sort or expand button. Does not toggle checkboxes."
+    },
+    "requiredAriaAttributes": []
+  },
+  "examples": [
+    "data-table/full-invoices"
+  ],
+  "spec": {
+    "path": "docs/components/data-table-spec.md",
+    "status": "approved",
+    "evidence": "Zac approved in chat on 2026-11-23; recorded in PR #272."
+  }
+}

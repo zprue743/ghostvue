@@ -1,7 +1,7 @@
 {
   "@ghostvue/shared": 100,
   "@ghostvue/core": 100,
-  "@ghostvue/vue": 93600,
+  "@ghostvue/vue": 104300,
   "@ghostvue/vue/resolver": 1000,
   "@ghostvue/vue:GhostAccordion": 1800,
   "@ghostvue/vue:GhostAccordionContent": 1900,
@@ -212,6 +212,7 @@
   "@ghostvue/themes:GhostToolbar": 2500,
   "@ghostvue/themes:GhostTooltip": 1700,
   "@ghostvue/themes:GhostTree": 4500,
+  "@ghostvue/vue:GhostDataTable": 4900,
   "@ghostvue/vue:GhostDatePicker": 8500,
   "@ghostvue/themes:GhostDatePicker": 8800,
   "@ghostvue/vue:GhostDatePickerCalendar": 10400,
