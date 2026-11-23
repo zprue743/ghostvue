@@ -654,7 +654,7 @@ describe('GhostCommandPalette', () => {
     expect(input().hasAttribute('aria-labelledby')).toBe(false)
   })
 
-  it('warns with GHOST006 when two items share an id', async () => {
+  it('warns with GHOST012 when two items share an id', async () => {
     const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined)
     mountPalette({
       props: { defaultOpen: true },
@@ -688,7 +688,7 @@ describe('GhostCommandPalette', () => {
     expect(
       warn.mock.calls.some(
         (args) =>
-          String(args[0]).includes('GHOST006') &&
+          String(args[0]).includes('GHOST012') &&
           String(args[0]).includes('"dup"'),
       ),
     ).toBe(true)

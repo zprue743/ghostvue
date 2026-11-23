@@ -18,6 +18,6 @@ selection, and the query resets only when the palette actually closes.
 `v-model:open`, `v-model:search`, `search` request ids, `loading`, and
 `messages` follow the combobox contract. `@ghostvue/themes` adds themed root,
 overlay, and content wrappers and the `ghost-command-palette.css` recipe. Adds
-the `GHOST006` development diagnostic for duplicate item ids and names the
+the `GHOST012` development diagnostic for duplicate item ids and names the
 palette in the `GHOST002` message. Dialog and Combobox public APIs are
 unchanged.

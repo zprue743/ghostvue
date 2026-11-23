@@ -67,7 +67,7 @@ let mounted = false
 
 function register(id: string): void {
   if (process.env.NODE_ENV !== 'production' && context.isItemRegistered(id)) {
-    logGhostCode('GHOST006', { id })
+    logGhostCode('GHOST012', { id })
   }
   context.registerItem(
     id,

@@ -1,0 +1,69 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "generated",
+  "name": "GhostToastAction",
+  "package": "@ghostvue/vue",
+  "status": "experimental",
+  "description": "Native button (type=button) that runs the action.onClick given to toast(), then emits click. It does not dismiss the toast. A toast with an action persists until dismissed.",
+  "props": [],
+  "models": [],
+  "events": [
+    {
+      "name": "click",
+      "payloadType": "MouseEvent",
+      "description": "After the action.onClick of the record ran."
+    }
+  ],
+  "slots": [
+    {
+      "name": "default",
+      "props": [],
+      "description": "Primary content."
+    }
+  ],
+  "exposed": [
+    {
+      "name": "blur",
+      "kind": "method",
+      "type": "() => void",
+      "description": "Blurs the button."
+    },
+    {
+      "name": "element",
+      "kind": "property",
+      "type": "HTMLButtonElement | null",
+      "description": "The rendered element, or `null` before mount."
+    },
+    {
+      "name": "focus",
+      "kind": "method",
+      "type": "(options?: FocusOptions) => void",
+      "description": "Focuses the button."
+    }
+  ],
+  "styling": {
+    "parts": [
+      {
+        "name": "action",
+        "description": "Action button."
+      }
+    ],
+    "states": [],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "button",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/button/",
+    "keyboard": {
+      "Enter": "Runs the action.",
+      "Space": "Runs the action."
+    },
+    "requiredAriaAttributes": []
+  },
+  "examples": [],
+  "spec": {
+    "path": "docs/components/toast-spec.md",
+    "status": "approved",
+    "evidence": "Zac approved resolved decisions in chat on 2026-11-22; recorded in PR #270."
+  }
+}

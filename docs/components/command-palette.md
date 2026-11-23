@@ -24,7 +24,7 @@ Render `GhostCommandPaletteItem` children for the commands that match the
 current query. Every item needs a stable, unique `id`. That `id` is the only
 value the `command` event carries (`{ id }`), so key your handlers and your
 command catalog by it. Two items with the same `id` log
-[GHOST006](../warnings.md#ghost006) in development.
+[GHOST012](../warnings.md#ghost012) in development.
 
 `GhostCommandPaletteGroup` with a `GhostCommandPaletteLabel` names a set of
 related commands. `GhostCommandPaletteSeparator` draws a divider with

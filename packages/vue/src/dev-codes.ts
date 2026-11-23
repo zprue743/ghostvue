@@ -40,7 +40,7 @@ export const ghostCodes = {
     level: 'warn',
     title: 'Dialog content missing accessible name',
     message:
-      'GhostDialogContent, GhostDrawerContent, and GhostCommandPaletteContent require an accessible name. Render GhostDialogTitle, GhostDrawerTitle, or GhostCommandPaletteTitle inside the content, or pass aria-label or aria-labelledby.',
+      'GhostDialogContent and GhostDrawerContent require an accessible name. Render GhostDialogTitle or GhostDrawerTitle inside the content, or pass aria-label or aria-labelledby.',
     relatedDocs: './components/dialog.md',
   },
   GHOST003: {
@@ -65,6 +65,48 @@ export const ghostCodes = {
     relatedDocs: './standards/component-stability.md',
   },
   GHOST006: {
+    level: 'warn',
+    title: 'Toast created during server rendering',
+    message:
+      'toast() ran during server-side rendering and was ignored. The server never queues toasts; call toast() from client code such as onMounted or an event handler.',
+    relatedDocs: './components/toast.md',
+  },
+  GHOST007: {
+    level: 'warn',
+    title: 'Toast duration ignored',
+    message:
+      'duration is ignored on toast "{id}" because {reason} toasts persist until dismissed. Remove duration, or make the toast informational.',
+    relatedDocs: './components/toast.md',
+  },
+  GHOST008: {
+    level: 'warn',
+    title: 'Invalid toast option',
+    message:
+      '{option} {value} is invalid; expected {expected}. Using {fallback} instead.',
+    relatedDocs: './components/toast.md',
+  },
+  GHOST009: {
+    level: 'warn',
+    title: 'Toast id uses the reserved prefix',
+    message:
+      'Toast id "{id}" starts with the generated-id prefix "{prefix}". It is treated as an update of an existing toast only; omit id for a generated one or choose another explicit id.',
+    relatedDocs: './components/toast.md',
+  },
+  GHOST010: {
+    level: 'warn',
+    title: 'Many toasts waiting',
+    message:
+      '{count} toasts are waiting behind the visible stack. Check for runaway toast() calls, and reuse an id to update a toast in place.',
+    relatedDocs: './components/toast.md',
+  },
+  GHOST011: {
+    level: 'warn',
+    title: 'Toast without a title',
+    message:
+      'toast() and update() need a non-empty title. The {call} call was ignored.',
+    relatedDocs: './components/toast.md',
+  },
+  GHOST012: {
     level: 'warn',
     title: 'Duplicate command palette item id',
     message:

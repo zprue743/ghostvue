@@ -4,7 +4,7 @@
   "name": "GhostCommandPaletteItem",
   "package": "@ghostvue/vue",
   "status": "experimental",
-  "description": "One command (role=\"option\") identified by its required id. Enter on the highlight or a primary click emits command with { id }; disabled items stay visible but are skipped. Duplicate ids log GHOST006.",
+  "description": "One command (role=\"option\") identified by its required id. Enter on the highlight or a primary click emits command with { id }; disabled items stay visible but are skipped. Duplicate ids log GHOST012.",
   "props": [
     {
       "name": "as",

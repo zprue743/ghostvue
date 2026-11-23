@@ -148,6 +148,28 @@ describe('useDismissableLayer', () => {
     outside.remove()
   })
 
+  it('does not treat pointerdown inside a [data-ghost-live] region as outside', () => {
+    const layer = ref<HTMLElement | null>(null)
+    const onDismiss = vi.fn()
+    mountLayer(
+      () => {
+        useDismissableLayer(layer, { onDismiss })
+      },
+      () => h('div', { ref: layer }, 'Layer'),
+    )
+
+    const live = document.createElement('div')
+    live.setAttribute('data-ghost-live', '')
+    const toastButton = document.createElement('button')
+    live.append(toastButton)
+    document.body.append(live)
+
+    pointerDown(toastButton)
+    pointerDown(live)
+    expect(onDismiss).not.toHaveBeenCalled()
+    live.remove()
+  })
+
   it('never counts elements in ignore (including trigger descendants) as outside', async () => {
     const layer = ref<HTMLElement | null>(null)
     const trigger = ref<HTMLElement | null>(null)
