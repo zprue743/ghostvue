@@ -11,11 +11,17 @@ components:
   - GhostToastClose
 packages:
   - '@ghostvue/vue'
-  - '@ghostvue/themes'
 specStatus: approved
 approval:
   evidence: 'Zac approved resolved decisions in chat on 2026-11-22; recorded in PR #270.'
-manifests: []
+manifests:
+  - packages/vue/manifests/ghost-toast-provider.manifest.json
+  - packages/vue/manifests/ghost-toast-viewport.manifest.json
+  - packages/vue/manifests/ghost-toast.manifest.json
+  - packages/vue/manifests/ghost-toast-title.manifest.json
+  - packages/vue/manifests/ghost-toast-description.manifest.json
+  - packages/vue/manifests/ghost-toast-action.manifest.json
+  - packages/vue/manifests/ghost-toast-close.manifest.json
 sections:
   purpose:
     applicable: true

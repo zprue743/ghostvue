@@ -1,0 +1,43 @@
+{
+  "schemaVersion": "1.0.0",
+  "slug": "toast",
+  "docs": {
+    "title": "GhostToast",
+    "specStatus": "approved",
+    "link": "/components/toast",
+    "specLink": "/specs/toast",
+    "category": "feedback",
+    "sidebarLabel": "Toast"
+  },
+  "vueBarrel": [
+    "export { default as GhostToastProvider } from './GhostToastProvider.vue'",
+    "export { default as GhostToastViewport } from './GhostToastViewport.vue'",
+    "export { default as GhostToast } from './GhostToast.vue'",
+    "export { default as GhostToastTitle } from './GhostToastTitle.vue'",
+    "export { default as GhostToastDescription } from './GhostToastDescription.vue'",
+    "export { default as GhostToastAction } from './GhostToastAction.vue'",
+    "export { default as GhostToastClose } from './GhostToastClose.vue'",
+    "export { useGhostToast } from './use-ghost-toast'",
+    "export {\n  ghostToastProviderContextKey,\n  type GhostToastActionExposed,\n  type GhostToastActionOptions,\n  type GhostToastAnnouncement,\n  type GhostToastCloseExposed,\n  type GhostToastDescriptionExposed,\n  type GhostToastExposed,\n  type GhostToastId,\n  type GhostToastOptions,\n  type GhostToastPauseReason,\n  type GhostToastProps,\n  type GhostToastProviderContext,\n  type GhostToastProviderProps,\n  type GhostToastRecord,\n  type GhostToastSlotProps,\n  type GhostToastState,\n  type GhostToastTitleExposed,\n  type GhostToastType,\n  type GhostToastUpdateOptions,\n  type GhostToastUrgency,\n  type GhostToastViewportElement,\n  type GhostToastViewportExposed,\n  type GhostToastViewportItemSlotProps,\n  type GhostToastViewportProps,\n  type GhostToastViewportSlotProps,\n  type UseGhostToastOptions,\n  type UseGhostToastReturn,\n} from './ghost-toast'"
+  ],
+  "examples": [
+    {
+      "id": "toast/basic",
+      "title": "Basic",
+      "description": "Provider, viewport, and an informational toast that auto-dismisses after eight seconds.",
+      "layer": "headless"
+    },
+    {
+      "id": "toast/persist-error",
+      "title": "Persistent error",
+      "description": "An urgent error toast with a retry action that stays until dismissed.",
+      "layer": "headless"
+    },
+    {
+      "id": "toast/queue-overflow",
+      "title": "Queue overflow",
+      "description": "Five toasts with a limit of three: two wait and appear as visible toasts are dismissed.",
+      "layer": "headless"
+    }
+  ]
+}

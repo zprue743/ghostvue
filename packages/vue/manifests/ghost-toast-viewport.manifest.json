@@ -1,0 +1,102 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "generated",
+  "name": "GhostToastViewport",
+  "package": "@ghostvue/vue",
+  "status": "experimental",
+  "description": "Notification region (role=region, data-ghost-live) that renders the visible stack and two visually hidden announcers: polite (role=status) for ordinary toasts and assertive (role=alert) for urgency: urgent. A toast is announced once when it becomes visible, never while it waits. The provider label names the region unless the consumer passes aria-labelledby or aria-label. Teleported to document.body by default. Creating, updating, promoting, or expiring a toast never moves focus.",
+  "props": [
+    {
+      "name": "as",
+      "type": "GhostToastViewportElement",
+      "default": "div",
+      "required": false,
+      "description": "Host element. Use `section` when the region should be a landmark.",
+      "deprecated": false
+    },
+    {
+      "name": "portal",
+      "type": "boolean",
+      "default": true,
+      "required": false,
+      "description": "Teleport the region and both announcers to `document.body` after mount.",
+      "deprecated": false
+    }
+  ],
+  "models": [],
+  "events": [],
+  "slots": [
+    {
+      "name": "default",
+      "props": [
+        {
+          "name": "dismiss",
+          "type": "(id: string) => void",
+          "description": "Dismisses a toast by id."
+        },
+        {
+          "name": "toasts",
+          "type": "readonly GhostToastRecord[]",
+          "description": "Visible toasts, oldest first."
+        }
+      ],
+      "description": "Replaces the whole stack. Render one `GhostToast` per item, keyed by `id`."
+    },
+    {
+      "name": "toast",
+      "props": [
+        {
+          "name": "dismiss",
+          "type": "(id: string) => void",
+          "description": "Dismisses a toast by id."
+        },
+        {
+          "name": "toast",
+          "type": "GhostToastRecord",
+          "description": "One visible toast record."
+        }
+      ],
+      "description": "Content of one toast, rendered per visible record (keyed by `id`)."
+    }
+  ],
+  "exposed": [
+    {
+      "name": "element",
+      "kind": "property",
+      "type": "HTMLElement | null",
+      "description": "Region host after mount."
+    }
+  ],
+  "styling": {
+    "parts": [
+      {
+        "name": "viewport",
+        "description": "Notification region host."
+      },
+      {
+        "name": "announcer-polite",
+        "description": "Visually hidden polite live region (role=status). Not a styling hook for visible UI."
+      },
+      {
+        "name": "announcer-assertive",
+        "description": "Visually hidden assertive live region (role=alert). Not a styling hook for visible UI."
+      }
+    ],
+    "states": [],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "region",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/alert/",
+    "keyboard": {},
+    "requiredAriaAttributes": [
+      "aria-label"
+    ]
+  },
+  "examples": [],
+  "spec": {
+    "path": "docs/components/toast-spec.md",
+    "status": "approved",
+    "evidence": "Zac approved resolved decisions in chat on 2026-11-22; recorded in PR #270."
+  }
+}

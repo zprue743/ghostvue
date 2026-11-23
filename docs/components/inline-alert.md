@@ -73,7 +73,8 @@ in `#actions` so retry controls stay keyboard reachable.
 
 ## When not to use it
 
-- **Global or transient feedback.** Use a future toast primitive and provider.
+- **Global or transient feedback.** Use [`GhostToast`](./toast.md) with
+  `GhostToastProvider` and `useGhostToast`.
 - **Field validation errors.** Use `GhostFieldError` inside `GhostField`.
 - **Always-on page chrome with `announce="alert"`.** That spuriously announces
   on every visit. Keep `announce="off"` for static copy.

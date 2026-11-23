@@ -936,6 +936,36 @@ describe('useFocusScope', () => {
     outsideHeading.remove()
   })
 
+  it('lets focus enter a [data-ghost-live] region while trapped, and Tab re-enters the trap', async () => {
+    const live = document.createElement('div')
+    live.setAttribute('data-ghost-live', '')
+    const toastButton = document.createElement('button')
+    toastButton.type = 'button'
+    live.append(toastButton)
+    document.body.append(live)
+
+    const container = ref<HTMLElement | null>(null)
+    const wrapper = mountScope(
+      () => {
+        useFocusScope(container, { trapped: true, autoFocus: true })
+      },
+      () =>
+        h('div', { ref: container }, [
+          h('button', { type: 'button', 'data-testid': 'first' }, 'First'),
+        ]),
+    )
+    await nextTick()
+    const first = wrapper.get<HTMLElement>('[data-testid="first"]').element
+
+    toastButton.focus()
+    expect(document.activeElement).toBe(toastButton)
+
+    const event = tab(toastButton)
+    expect(event.defaultPrevented).toBe(true)
+    expect(document.activeElement).toBe(first)
+    live.remove()
+  })
+
   it('falls back to initial focus when the last focused inside element becomes disabled or removed', async () => {
     const outside = document.createElement('button')
     outside.type = 'button'
