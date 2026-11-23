@@ -14,6 +14,7 @@
     "adapters": "node scripts/check-agent-adapters.mjs",
     "adapters:write": "node scripts/check-agent-adapters.mjs --write",
     "boundaries": "node scripts/check-package-boundaries.mjs",
+    "bench:data-table": "vitest bench --run tests/bench/data-table-processing.bench.ts",
     "bench:registry": "vitest bench --run tests/bench/select-combobox-registry.bench.ts",
     "build": "pnpm --filter @ghostvue/* --filter !@ghostvue/docs --filter !@ghostvue/mcp --if-present build && pnpm --filter @ghostvue/mcp build && node scripts/write-manifest-collection.mjs --workspace",
     "published-exports": "node scripts/check-published-exports.mjs",
