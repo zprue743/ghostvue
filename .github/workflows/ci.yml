@@ -183,6 +183,11 @@ jobs:
           # is written before the budget check exits, so failures are reported.
           BUNDLE_SIZE_REPORT: .artifacts/bundle-size/report.md
           GHOSTVUE_REGISTRIES_READY: '1'
+      # GHO-17 plan §4 / M1: there is no committed MCP asset lock hash. Rebuild
+      # the bundle from sources and compare its assetBundleId with the
+      # dist/assets that `pnpm build` produced, so stale assets cannot ship.
+      - name: Check MCP asset bundle freshness
+        run: pnpm --filter @ghostvue/mcp assets:check
       - name: Summarize bundle size
         if: always() && hashFiles('.artifacts/bundle-size/report.md') != ''
         run: cat .artifacts/bundle-size/report.md >> "$GITHUB_STEP_SUMMARY"
