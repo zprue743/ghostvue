@@ -1,0 +1,138 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "generated",
+  "name": "GhostCommandPaletteContent",
+  "package": "@ghostvue/vue",
+  "status": "experimental",
+  "description": "Dialog surface (role=\"dialog\") composing the shared dialog focus scope, scroll lock, inert background, and dismissal. Focuses the command input on open by default and hosts the polite live region. Unmounted while closed.",
+  "props": [
+    {
+      "name": "as",
+      "type": "GhostCommandPaletteContentElement",
+      "default": "div",
+      "required": false,
+      "description": "Tag name or component rendered for the dialog surface.",
+      "deprecated": false
+    },
+    {
+      "name": "closeOnEscape",
+      "type": "boolean",
+      "required": false,
+      "description": "Overrides the root `closeOnEscape` when set.",
+      "deprecated": false
+    },
+    {
+      "name": "closeOnOutsideClick",
+      "type": "boolean",
+      "default": true,
+      "required": false,
+      "description": "Dismisses the palette on outside pointerdown, including the overlay.",
+      "deprecated": false
+    },
+    {
+      "name": "focusReady",
+      "type": "boolean",
+      "default": true,
+      "required": false,
+      "description": "Gates the first focus-scope activation of each opening.",
+      "deprecated": false
+    },
+    {
+      "name": "initialFocus",
+      "type": "(() => HTMLElement | null)",
+      "required": false,
+      "description": "Resolves the element focused on open; defaults to the command input.",
+      "deprecated": false
+    },
+    {
+      "name": "portal",
+      "type": "boolean",
+      "default": true,
+      "required": false,
+      "description": "Teleport content through `GhostPortal` when `true`, or render inline when `false`.",
+      "deprecated": false
+    },
+    {
+      "name": "portalTo",
+      "type": "GhostPortalTarget",
+      "default": "body",
+      "required": false,
+      "description": "Teleport target passed to `GhostPortal` when `portal` is `true`.",
+      "deprecated": false
+    },
+    {
+      "name": "returnFocus",
+      "type": "(() => HTMLElement | null)",
+      "required": false,
+      "description": "Resolves the element focused on close; invalid or `null` keeps the saved opener.",
+      "deprecated": false
+    }
+  ],
+  "models": [],
+  "events": [],
+  "slots": [
+    {
+      "name": "default",
+      "props": [],
+      "description": "Primary content."
+    }
+  ],
+  "exposed": [
+    {
+      "name": "blur",
+      "kind": "method",
+      "type": "() => void",
+      "description": "Exposed method `blur`."
+    },
+    {
+      "name": "element",
+      "kind": "property",
+      "type": "HTMLElement | null",
+      "description": "Exposed property `element`."
+    },
+    {
+      "name": "focus",
+      "kind": "method",
+      "type": "(options?: FocusOptions) => void",
+      "description": "Exposed method `focus`."
+    }
+  ],
+  "styling": {
+    "parts": [
+      {
+        "name": "content",
+        "description": "Surface with class ghost-command-palette-content and data-part=\"content\"."
+      },
+      {
+        "name": "announcer",
+        "description": "Visually hidden polite live region for loading, empty, and result-count messages."
+      }
+    ],
+    "states": [
+      {
+        "name": "open",
+        "description": "data-state=\"open\" while mounted."
+      }
+    ],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "dialog",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/",
+    "keyboard": {
+      "Escape": "Closes the palette when closeOnEscape is true and restores focus.",
+      "Tab": "Cycles within a modal palette.",
+      "Shift+Tab": "Cycles backward within a modal palette."
+    },
+    "requiredAriaAttributes": [
+      "aria-modal",
+      "aria-labelledby"
+    ]
+  },
+  "examples": [],
+  "spec": {
+    "path": "docs/components/command-palette-spec.md",
+    "status": "approved",
+    "evidence": "Zac approved resolved decisions in chat on 2026-11-22; recorded in PR #270."
+  }
+}

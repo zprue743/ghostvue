@@ -20,7 +20,20 @@ packages:
 specStatus: approved
 approval:
   evidence: 'Zac approved resolved decisions in chat on 2026-11-22; recorded in PR #270.'
-manifests: []
+manifests:
+  - packages/vue/manifests/ghost-command-palette.manifest.json
+  - packages/vue/manifests/ghost-command-palette-trigger.manifest.json
+  - packages/vue/manifests/ghost-command-palette-overlay.manifest.json
+  - packages/vue/manifests/ghost-command-palette-content.manifest.json
+  - packages/vue/manifests/ghost-command-palette-title.manifest.json
+  - packages/vue/manifests/ghost-command-palette-input.manifest.json
+  - packages/vue/manifests/ghost-command-palette-list.manifest.json
+  - packages/vue/manifests/ghost-command-palette-item.manifest.json
+  - packages/vue/manifests/ghost-command-palette-group.manifest.json
+  - packages/vue/manifests/ghost-command-palette-label.manifest.json
+  - packages/vue/manifests/ghost-command-palette-empty.manifest.json
+  - packages/vue/manifests/ghost-command-palette-separator.manifest.json
+  - packages/themes/manifests/ghost-command-palette.manifest.json
 sections:
   purpose:
     applicable: true

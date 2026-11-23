@@ -40,7 +40,7 @@ export const ghostCodes = {
     level: 'warn',
     title: 'Dialog content missing accessible name',
     message:
-      'GhostDialogContent and GhostDrawerContent require an accessible name. Render GhostDialogTitle or GhostDrawerTitle inside the content, or pass aria-label or aria-labelledby.',
+      'GhostDialogContent, GhostDrawerContent, and GhostCommandPaletteContent require an accessible name. Render GhostDialogTitle, GhostDrawerTitle, or GhostCommandPaletteTitle inside the content, or pass aria-label or aria-labelledby.',
     relatedDocs: './components/dialog.md',
   },
   GHOST003: {
@@ -105,6 +105,13 @@ export const ghostCodes = {
     message:
       'toast() and update() need a non-empty title. The {call} call was ignored.',
     relatedDocs: './components/toast.md',
+  },
+  GHOST012: {
+    level: 'warn',
+    title: 'Duplicate command palette item id',
+    message:
+      'Two GhostCommandPaletteItem components in one palette use the id "{id}". Give every command a unique, stable id; duplicates share one highlight and registry entry.',
+    relatedDocs: './components/command-palette.md',
   },
 } as const satisfies Record<string, GhostCodeEntry>
 

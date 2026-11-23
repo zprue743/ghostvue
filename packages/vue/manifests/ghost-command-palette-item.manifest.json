@@ -1,0 +1,102 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "generated",
+  "name": "GhostCommandPaletteItem",
+  "package": "@ghostvue/vue",
+  "status": "experimental",
+  "description": "One command (role=\"option\") identified by its required id. Enter on the highlight or a primary click emits command with { id }; disabled items stay visible but are skipped. Duplicate ids log GHOST012.",
+  "props": [
+    {
+      "name": "as",
+      "type": "GhostCommandPaletteItemElement",
+      "required": false,
+      "description": "Tag name or component rendered for the option.",
+      "deprecated": false
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Excluded from highlight and activation.",
+      "deprecated": false
+    },
+    {
+      "name": "id",
+      "type": "string",
+      "required": true,
+      "description": "Stable command identity, unique within the palette; emitted on `command`.",
+      "deprecated": false
+    },
+    {
+      "name": "textValue",
+      "type": "string",
+      "required": false,
+      "description": "Plain-text label for assistive technology; falls back to the item's text.",
+      "deprecated": false
+    }
+  ],
+  "models": [],
+  "events": [],
+  "slots": [
+    {
+      "name": "default",
+      "props": [],
+      "description": "Primary content."
+    }
+  ],
+  "exposed": [
+    {
+      "name": "blur",
+      "kind": "method",
+      "type": "() => void",
+      "description": "Exposed method `blur`."
+    },
+    {
+      "name": "element",
+      "kind": "property",
+      "type": "HTMLElement | null",
+      "description": "Exposed property `element`."
+    },
+    {
+      "name": "focus",
+      "kind": "method",
+      "type": "(options?: FocusOptions) => void",
+      "description": "Exposed method `focus`."
+    }
+  ],
+  "styling": {
+    "parts": [
+      {
+        "name": "item",
+        "description": "Option with class ghost-command-palette-item, data-part=\"item\", and data-value set to the id."
+      }
+    ],
+    "states": [
+      {
+        "name": "active",
+        "description": "Highlighted (also data-highlighted)."
+      },
+      {
+        "name": "disabled",
+        "description": "Cannot be highlighted or activated."
+      }
+    ],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "option",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/combobox/examples/combobox-autocomplete-list/",
+    "keyboard": {},
+    "requiredAriaAttributes": [
+      "aria-selected",
+      "aria-disabled"
+    ]
+  },
+  "examples": [],
+  "spec": {
+    "path": "docs/components/command-palette-spec.md",
+    "status": "approved",
+    "evidence": "Zac approved resolved decisions in chat on 2026-11-22; recorded in PR #270."
+  }
+}

@@ -1,0 +1,89 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "generated",
+  "name": "GhostCommandPaletteTrigger",
+  "package": "@ghostvue/vue",
+  "status": "experimental",
+  "description": "Optional opener with GhostDialogTrigger semantics (type=\"button\", aria-haspopup=\"dialog\", aria-expanded, aria-controls). Disabled when the root is disabled.",
+  "props": [
+    {
+      "name": "as",
+      "type": "GhostCommandPaletteTriggerElement",
+      "default": "button",
+      "required": false,
+      "description": "Tag name or component rendered for the trigger control.",
+      "deprecated": false
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Disables opening from this trigger; the root `disabled` also applies.",
+      "deprecated": false
+    }
+  ],
+  "models": [],
+  "events": [],
+  "slots": [
+    {
+      "name": "default",
+      "props": [],
+      "description": "Primary content."
+    }
+  ],
+  "exposed": [
+    {
+      "name": "blur",
+      "kind": "method",
+      "type": "() => void",
+      "description": "Exposed method `blur`."
+    },
+    {
+      "name": "element",
+      "kind": "property",
+      "type": "HTMLElement | null",
+      "description": "Exposed property `element`."
+    },
+    {
+      "name": "focus",
+      "kind": "method",
+      "type": "(options?: FocusOptions) => void",
+      "description": "Exposed method `focus`."
+    }
+  ],
+  "styling": {
+    "parts": [
+      {
+        "name": "trigger",
+        "description": "Opener with class ghost-command-palette-trigger and data-part=\"trigger\"."
+      }
+    ],
+    "states": [
+      {
+        "name": "open",
+        "description": "data-state=\"open\" while the palette is open, otherwise closed."
+      }
+    ],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "button",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/",
+    "keyboard": {
+      "Enter": "Opens the palette.",
+      "Space": "Opens the palette."
+    },
+    "requiredAriaAttributes": [
+      "aria-haspopup",
+      "aria-expanded",
+      "aria-controls"
+    ]
+  },
+  "examples": [],
+  "spec": {
+    "path": "docs/components/command-palette-spec.md",
+    "status": "approved",
+    "evidence": "Zac approved resolved decisions in chat on 2026-11-22; recorded in PR #270."
+  }
+}

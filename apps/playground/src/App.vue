@@ -38,6 +38,7 @@ import AccordionReference from './AccordionReference.vue'
 import PopoverReference from './PopoverReference.vue'
 import DropdownMenuReference from './DropdownMenuReference.vue'
 import ComboboxReference from './ComboboxReference.vue'
+import CommandPaletteReference from './CommandPaletteReference.vue'
 import MenubarReference from './MenubarReference.vue'
 import SelectReference from './SelectReference.vue'
 import TabsReference from './TabsReference.vue'
@@ -1877,6 +1878,7 @@ function submitPlaygroundComment(event: Event): void {
         <GhostKbdThemed size="sm">Esc</GhostKbdThemed>
       </p>
     </section>
+    <CommandPaletteReference />
   </main>
 </template>
 
