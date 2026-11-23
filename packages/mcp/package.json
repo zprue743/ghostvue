@@ -37,7 +37,9 @@
     "provenance": true
   },
   "scripts": {
-    "build": "tsc -p tsconfig.build.json",
+    "prebuild": "pnpm -w registries:write",
+    "build": "tsc -p tsconfig.build.json && node scripts/bundle-assets.mjs",
+    "assets:check": "node scripts/bundle-assets.mjs --check",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "devDependencies": {
