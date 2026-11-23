@@ -129,13 +129,14 @@ Residual advisories, all development-only and absent from `pnpm audit --prod`:
   js-beautify 2, which still uses a vulnerable glob 13. Follow-up: revisit when a
   release depends on glob 14.0.2+.
 
-## `@ghostvue/mcp` — proposed (GHO-17)
+## `@ghostvue/mcp` (GHO-17)
 
-**Not yet approved or in the lockfile.** Implementation awaits Zac sign-off on
-[ADR 0015](../adr/0015-mcp-server-first-release.md). Full review:
-[GHO-17 MCP first-release contract](../plans/gho-17-mcp-first-release.md) §7.
+**Approved by Zac, Nov 22, 2026** for implementation. Runtime dependencies are
+not yet in the lockfile until `packages/mcp` lands ([GHO-227](https://linear.app/ghost-vue/issue/GHO-227)).
+Contract and footprint: [GHO-17 MCP first-release contract](../plans/gho-17-mcp-first-release.md)
+§7; [ADR 0015](../adr/0015-mcp-server-first-release.md).
 
-**Candidate runtime dependencies (exact pins, MIT):**
+**Runtime dependencies (exact pins, MIT):**
 
 | Package                     | Pin    | Why                                                                                                     |
 | --------------------------- | ------ | ------------------------------------------------------------------------------------------------------- |

@@ -457,7 +457,7 @@ production `node_modules` **≤ 18 MiB** installed (see measurement table above)
    Zac's separate authorization ([GHO-57](https://linear.app/ghost-vue/issue/GHO-57)).
    **Reason:** Matches monorepo release discipline. _Approved by Zac, Nov 22, 2026._
 
-**M6 / Q5 — SDK HTTP transitives:** Accept `@modelcontextprotocol/sdk@1.32.2`
+**Q5 — SDK HTTP transitives:** Accept `@modelcontextprotocol/sdk@1.32.2`
 with pinned `zod@4.6.7` and `ajv@8.20.0` under the **18 MiB** cap (stdio-only;
 HTTP stack ships transitively). _Approved by Zac, Nov 22, 2026._
 

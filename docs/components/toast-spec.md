@@ -14,7 +14,7 @@ packages:
   - '@ghostvue/themes'
 specStatus: approved
 approval:
-  evidence: 'Zac approved resolved decisions in chat, Nov 22, 2026. See https://github.com/zprue743/ghostvue/pull/266 and https://github.com/zprue743/ghostvue/pull/267.'
+  evidence: 'Zac approved resolved decisions in chat on 2026-11-22; recorded in PR #270.'
 manifests: []
 sections:
   purpose:
@@ -171,20 +171,20 @@ instance (merged per call).
 
 **Return value:**
 
-| Member   | Type                                           | Contract                                                                                                         |
-| -------- | ---------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
-| `toasts` | `Readonly<Ref<readonly GhostToastRecord[]>>`   | Reactive list of **visible** toasts only, oldest-first order (index `0` is the front of the FIFO visible stack). |
-| `toast`  | `(options: GhostToastOptions) => GhostToastId` | Create or replace by `id` (see Stable identity). Returns the toast id.                                           |
-| `update` | `(id, patch: GhostToastUpdateOptions) => void` | Merge updates into an existing toast in the store (visible or queued). No-op when id unknown.                    |
+| Member       | Type                                           | Contract                                                                                                         |
+| ------------ | ---------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| `toasts`     | `Readonly<Ref<readonly GhostToastRecord[]>>`   | Reactive list of **visible** toasts only, oldest-first order (index `0` is the front of the FIFO visible stack). |
+| `toast`      | `(options: GhostToastOptions) => GhostToastId` | Create or replace by `id` (see Stable identity). Returns the toast id.                                           |
+| `update`     | `(id, patch: GhostToastUpdateOptions) => void` | Merge updates into an existing toast in the store (visible or queued). No-op when id unknown.                    |
+| `dismiss`    | `(id: GhostToastId) => void`                   | Remove toast from store; if visible, may promote the next queued item.                                           |
+| `dismissAll` | `() => void`                                   | Clear visible and queued toasts; cancel all timers.                                                              |
 
 `GhostToastUpdateOptions` extends the mutable fields of `GhostToastOptions` and
 adds:
 
-| Field            | Type                         | Default                                                                | Contract                                                                                                                                          |
-| ---------------- | ---------------------------- | ---------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `announceUpdate` | `boolean`                    | `false`                                                                | When `true` and the toast is **visible**, re-announce merged `title` / `description` through the same polite or assertive announcer used on show. |
-| `dismiss`        | `(id: GhostToastId) => void` | Remove toast from store; if visible, may promote the next queued item. |
-| `dismissAll`     | `() => void`                 | Clear visible and queued toasts; cancel all timers.                    |
+| Field            | Type      | Default | Contract                                                                                                                                          |
+| ---------------- | --------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `announceUpdate` | `boolean` | `false` | When `true` and the toast is **visible**, re-announce merged `title` / `description` through the same polite or assertive announcer used on show. |
 
 `GhostToastRecord` (read model for controlled rendering) includes at minimum:
 `id`, resolved `type`, `urgency`, `title`, `description`, `duration`,
@@ -408,8 +408,11 @@ tab order in stack order (oldest first) when focused from the tab key.
 ### Focus behavior
 
 **Never steal focus:** Creating, updating, promoting, or auto-dismissing a toast
-must not call `focus()` or move the active element. The only focus changes come
-from the user activating `GhostToastAction` or `GhostToastClose`.
+must not call `focus()` or move the active element. User-driven focus changes
+come from activating `GhostToastAction` or `GhostToastClose`, from `Escape`
+dismissing a focused toast (T5), and from **focus return** after dismiss: focus
+restores to the element that was active before the user entered the toast
+region.
 
 Pointer hover and focus pause timers only; they do not transfer focus.
 
@@ -519,10 +522,23 @@ Does not compose `useFocusScope`, `useDismissableLayer`, or overlay stacks.
   `onDismiss` once each, removes document listeners.
 - **SSR isolation:** Two providers in one test app do not share state; no import
   side effects on module globals.
+- **T1 pre-mount / SSR:** SSR `toast()` is a no-op with dev warning; client
+  `toast()` before viewport mount queues silently, then flushes on viewport mount
+  (visible promotion and timers).
+- **T2 `announceUpdate`:** Visible toast `update` without `announceUpdate` does
+  not touch live regions; `announceUpdate: true` re-announces via the correct
+  polite or assertive announcer.
+- **T4 queue warning:** More than 20 waiting records logs a dev warning;
+  unbounded queue still accepts new records.
+- **T5 Escape:** `Escape` on a focused toast dismisses only that toast,
+  `stopPropagation` leaves an open dialog behind; focus returns to the pre-toast
+  element (same when Close removes a focused toast).
 
 ### Vue component tests
 
 - Viewport region attributes: `role="region"`, `aria-label`, `data-ghost-live`.
+- **T3 viewport naming:** Consumer `aria-labelledby` on the viewport suppresses
+  default `aria-label` from provider `label`.
 - Polite region keeps `role="status"` / `aria-live="polite"`; assertive region
   keeps `role="alert"`; urgent shows update `announcer-assertive` only, default
   shows update `announcer-polite` only.
@@ -542,7 +558,8 @@ Does not compose `useFocusScope`, `useDismissableLayer`, or overlay stacks.
 
 ### Accessibility and keyboard tests
 
-- Documented keys on close/action (activation only).
+- Documented keys on close/action (activation only); **T5** Escape path with
+  dialog open behind the toast stack.
 - Integration test: urgent show touches assertive `role="alert"` region only;
   default show touches polite `status` region only; assertive region never uses
   `role="status"`.

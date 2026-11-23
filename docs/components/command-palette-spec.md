@@ -19,7 +19,7 @@ packages:
   - '@ghostvue/themes'
 specStatus: approved
 approval:
-  evidence: 'Zac approved resolved decisions in chat, Nov 22, 2026. See https://github.com/zprue743/ghostvue/pull/266 and https://github.com/zprue743/ghostvue/pull/267.'
+  evidence: 'Zac approved resolved decisions in chat on 2026-11-22; recorded in PR #270.'
 manifests: []
 sections:
   purpose:
@@ -589,7 +589,12 @@ manual Dialog + Combobox recipe — consumers use `GhostCommandPalette*`.
   `command` keeps palette open without duplicate `command` on same activation;
   controlled `search` rejection on close; search reset when close succeeds;
   dialog `disabled` / `modal=false` passthrough; item registry order after
-  filter/reorder; cleanup on unmount; collision warning for duplicate `id`
+  filter/reorder; cleanup on unmount; collision warning for duplicate `id`;
+  `GhostCommandPaletteSeparator` exposes `role="none"` and is not tab-focusable;
+  root `messages` overrides change loading/empty/results announcements;
+  **C4** `modal=true` stays open when focus leaves the combobox input;
+  `modal=false` closes per GHO-166; **GHOST002** dev warning when dialog content
+  lacks an accessible name
 - **SSR:** `expectSsrHydration` for closed and `defaultOpen` palettes
 - **E2E + axe:** keyboard-only activation path, `aria-activedescendant` sync,
   grouped labels, loading/empty announcements, focus trap and restore (trigger
@@ -630,9 +635,10 @@ implemented. No breaking changes to Dialog or Combobox.
    reuse dialog GHOST002; no hidden default title; docs show visually hidden
    `Title` for icon-only designs. **Reason:** Matches dialog naming discipline.
    _Approved by Zac, Nov 22, 2026._
-3. **C3 — Search when staying open:** With `closeOnSelect=false`, search text is
-   kept; it clears only when the palette actually closes. **Reason:** Multi-pick
-   sessions without losing the query. _Approved by Zac, Nov 22, 2026._
+3. **C3 — Search when staying open:** Whenever the palette stays open after
+   `command` (parent keeps `open === true`, or `closeOnSelect=false`), search
+   text is kept; it clears only when the palette actually closes. **Reason:**
+   Multi-pick sessions without losing the query. _Approved by Zac, Nov 22, 2026._
 4. **C4 — Focus leaving input:** `modal=true` does not close on combobox focus
    departure; `modal=false` closes per GHO-166; nested popovers may take focus in
    modal mode. **Reason:** Modal shell vs non-modal combobox semantics. _Approved
