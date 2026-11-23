@@ -1,0 +1,72 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "generated",
+  "name": "GhostCommandPaletteList",
+  "package": "@ghostvue/vue",
+  "status": "experimental",
+  "description": "In-flow listbox inside the content (no portal or floating positioning). Labelled by the input, aria-busy while loading, and drops the listbox role while empty and not loading. Pressing its chrome keeps focus on the input.",
+  "props": [
+    {
+      "name": "as",
+      "type": "GhostCommandPaletteListElement",
+      "default": "div",
+      "required": false,
+      "description": "Tag name or component rendered for the listbox.",
+      "deprecated": false
+    }
+  ],
+  "models": [],
+  "events": [],
+  "slots": [
+    {
+      "name": "default",
+      "props": [],
+      "description": "Primary content."
+    }
+  ],
+  "exposed": [
+    {
+      "name": "blur",
+      "kind": "method",
+      "type": "() => void",
+      "description": "Exposed method `blur`."
+    },
+    {
+      "name": "element",
+      "kind": "property",
+      "type": "HTMLElement | null",
+      "description": "Exposed property `element`."
+    },
+    {
+      "name": "focus",
+      "kind": "method",
+      "type": "(options?: FocusOptions) => void",
+      "description": "Exposed method `focus`."
+    }
+  ],
+  "styling": {
+    "parts": [
+      {
+        "name": "list",
+        "description": "Listbox with class ghost-command-palette-list and data-part=\"list\"; scrolls in the themed recipe."
+      }
+    ],
+    "states": [],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "listbox",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/combobox/examples/combobox-autocomplete-list/",
+    "keyboard": {},
+    "requiredAriaAttributes": [
+      "aria-labelledby",
+      "aria-busy"
+    ]
+  },
+  "examples": [],
+  "spec": {
+    "path": "docs/components/command-palette-spec.md",
+    "status": "approved",
+    "evidence": "Zac approved resolved decisions in chat on 2026-11-22; recorded in PR #270."
+  }
+}

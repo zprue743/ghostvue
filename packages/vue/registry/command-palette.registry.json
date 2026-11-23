@@ -1,0 +1,66 @@
+{
+  "schemaVersion": "1.0.0",
+  "slug": "command-palette",
+  "docs": {
+    "title": "GhostCommandPalette",
+    "specStatus": "approved",
+    "link": "/components/command-palette",
+    "specLink": "/specs/command-palette",
+    "category": "overlays",
+    "sidebarLabel": "Command Palette"
+  },
+  "vueBarrel": [
+    "export { default as GhostCommandPalette } from './GhostCommandPalette.vue'",
+    "export { default as GhostCommandPaletteTrigger } from './GhostCommandPaletteTrigger.vue'",
+    "export { default as GhostCommandPaletteOverlay } from './GhostCommandPaletteOverlay.vue'",
+    "export { default as GhostCommandPaletteContent } from './GhostCommandPaletteContent.vue'",
+    "export { default as GhostCommandPaletteTitle } from './GhostCommandPaletteTitle.vue'",
+    "export { default as GhostCommandPaletteInput } from './GhostCommandPaletteInput.vue'",
+    "export { default as GhostCommandPaletteList } from './GhostCommandPaletteList.vue'",
+    "export { default as GhostCommandPaletteItem } from './GhostCommandPaletteItem.vue'",
+    "export { default as GhostCommandPaletteGroup } from './GhostCommandPaletteGroup.vue'",
+    "export { default as GhostCommandPaletteLabel } from './GhostCommandPaletteLabel.vue'",
+    "export { default as GhostCommandPaletteEmpty } from './GhostCommandPaletteEmpty.vue'",
+    "export { default as GhostCommandPaletteSeparator } from './GhostCommandPaletteSeparator.vue'",
+    "export {\n  useGhostCommandPalette,\n  useGhostCommandPaletteAsyncSearch,\n} from './use-ghost-command-palette'",
+    "export type {\n  GhostCommandPaletteCommandPayload,\n  GhostCommandPaletteContentElement,\n  GhostCommandPaletteContentExposed,\n  GhostCommandPaletteContentProps,\n  GhostCommandPaletteContext,\n  GhostCommandPaletteDialogContext,\n  GhostCommandPaletteEmptyElement,\n  GhostCommandPaletteEmptyExposed,\n  GhostCommandPaletteEmptyProps,\n  GhostCommandPaletteExposed,\n  GhostCommandPaletteGroupElement,\n  GhostCommandPaletteGroupExposed,\n  GhostCommandPaletteGroupProps,\n  GhostCommandPaletteInputElement,\n  GhostCommandPaletteInputExposed,\n  GhostCommandPaletteInputProps,\n  GhostCommandPaletteItemElement,\n  GhostCommandPaletteItemExposed,\n  GhostCommandPaletteItemProps,\n  GhostCommandPaletteLabelElement,\n  GhostCommandPaletteLabelExposed,\n  GhostCommandPaletteLabelProps,\n  GhostCommandPaletteListElement,\n  GhostCommandPaletteListExposed,\n  GhostCommandPaletteListProps,\n  GhostCommandPaletteOverlayElement,\n  GhostCommandPaletteOverlayExposed,\n  GhostCommandPaletteOverlayProps,\n  GhostCommandPalettePartExposed,\n  GhostCommandPaletteProps,\n  GhostCommandPaletteSearchPayload,\n  GhostCommandPaletteSeparatorElement,\n  GhostCommandPaletteSeparatorExposed,\n  GhostCommandPaletteSeparatorProps,\n  GhostCommandPaletteSlotProps,\n  GhostCommandPaletteTitleElement,\n  GhostCommandPaletteTitleExposed,\n  GhostCommandPaletteTitleProps,\n  GhostCommandPaletteTriggerElement,\n  GhostCommandPaletteTriggerExposed,\n  GhostCommandPaletteTriggerProps,\n  UseGhostCommandPaletteAsyncSearchReturn,\n  UseGhostCommandPaletteOptions,\n  UseGhostCommandPaletteReturn,\n} from './ghost-command-palette'"
+  ],
+  "themesBarrel": [
+    "export {\n  GhostCommandPalette,\n  type GhostCommandPaletteCommandPayload,\n  type GhostCommandPaletteExposed,\n  type GhostCommandPaletteSearchPayload,\n  type GhostCommandPaletteSlotProps,\n} from './ghost-command-palette'",
+    "export {\n  GhostCommandPaletteOverlay,\n  type GhostCommandPaletteOverlayElement,\n  type GhostCommandPaletteOverlayExposed,\n} from './ghost-command-palette-overlay'",
+    "export {\n  GhostCommandPaletteContent,\n  type GhostCommandPaletteContentElement,\n  type GhostCommandPaletteContentExposed,\n} from './ghost-command-palette-content'",
+    "export {\n  GhostCommandPaletteTrigger,\n  GhostCommandPaletteTitle,\n  GhostCommandPaletteInput,\n  GhostCommandPaletteList,\n  GhostCommandPaletteItem,\n  GhostCommandPaletteGroup,\n  GhostCommandPaletteLabel,\n  GhostCommandPaletteEmpty,\n  GhostCommandPaletteSeparator,\n  useGhostCommandPalette,\n  useGhostCommandPaletteAsyncSearch,\n} from '@ghostvue/vue'"
+  ],
+  "examples": [
+    {
+      "id": "command-palette/basic",
+      "title": "Basic",
+      "description": "Headless palette with static grouped commands, a separator, and consumer-owned filtering.",
+      "layer": "headless"
+    },
+    {
+      "id": "command-palette/async",
+      "title": "Async search",
+      "description": "Loading state, empty results, and stale-response guard with useGhostCommandPaletteAsyncSearch.",
+      "layer": "headless"
+    },
+    {
+      "id": "command-palette/shortcut",
+      "title": "Keyboard shortcut",
+      "description": "An app-owned Mod+K listener opens the palette; the palette registers no global listener.",
+      "layer": "headless"
+    },
+    {
+      "id": "command-palette/virtualized",
+      "title": "Large command sets",
+      "description": "Consumer-driven windowing over 2,000 commands: only a slice of stable ids is mounted at a time.",
+      "layer": "headless"
+    },
+    {
+      "id": "command-palette/themed",
+      "title": "Themed",
+      "description": "Elevation-4 palette from @ghostvue/themes with grouped commands, GhostKbd shortcut hints, and a consumer key-hint footer.",
+      "layer": "themed"
+    }
+  ]
+}
