@@ -2,7 +2,7 @@
 
 GhostVue exposes a **local, read-only** [Model Context Protocol](https://modelcontextprotocol.io/) server so agents can discover components, manifests, executable examples, docs, and design tokens without the Vue runtime.
 
-**Status:** In progress — the private `packages/mcp` package runs a stdio MCP server (`tools` capability, version stamp, error envelope), but it registers no discovery tools yet and needs the offline asset bundle that the package build will produce. Without that bundle, `ghostvue-mcp` prints a diagnostic to stderr and exits 1 ([GHO-17](../plans/gho-17-mcp-first-release.md), [ADR 0015](../adr/0015-mcp-server-first-release.md) accepted).
+**Status:** In progress — the private `packages/mcp` package runs a stdio MCP server (`tools` capability, version stamp, error envelope) over the offline asset bundle its build produces. It serves `get_tokens`; the other discovery tools are not registered yet. Without the bundle, `ghostvue-mcp` prints a diagnostic to stderr and exits 1 ([GHO-17](../plans/gho-17-mcp-first-release.md), [ADR 0015](../adr/0015-mcp-server-first-release.md) accepted).
 
 ## What ships in v1
 
@@ -50,6 +50,57 @@ Prefer a global or project-local install when `npx` cold-start latency matters:
 ```
 
 Tool responses use MCP **structured content** (`structuredContent`) with a declared `outputSchema` per tool; each payload includes top-level `schemaVersion` (`1.0.0` for the GhostVue MCP tool contract) and a `ghostvue` stamp (`version`, `assetBundleId`, `manifestSchemaId`). Every tool accepts an optional `expectedGhostvueVersion`; when it differs from the server version, the call fails with `VERSION_MISMATCH` before doing any work. Details: [GHO-17 plan §5](../plans/gho-17-mcp-first-release.md).
+
+## `get_tokens`
+
+Reads the bundled token catalog, a byte-for-byte copy of the
+`@ghostvue/themes` `./tokens.json` export
+([plan §5.5](../plans/gho-17-mcp-first-release.md#55-get_tokens)).
+
+| Input           | Default | Meaning                                                                       |
+| --------------- | ------- | ----------------------------------------------------------------------------- |
+| `name`          | —       | One token by exact name, e.g. `action.primary.bg`. Unknown name: `NOT_FOUND`. |
+| `prefix`        | —       | Every token whose name starts with `prefix.`, in catalog order.               |
+| `tier`          | all     | `primitive` or `semantic`.                                                    |
+| `includeValues` | `true`  | `false` drops `value`, leaving names, types, tiers, and CSS variables.        |
+| `limit`         | `100`   | 1–2000; caps a `prefix` query.                                                |
+
+`name` and `prefix` are mutually exclusive. With neither, the result is the
+catalog header only: `catalog` holds `schemaVersion`, `theme`, `modes`,
+`densities`, `attributes`, and `tokenCount`, and there is no `tokens` array.
+
+```json
+{
+  "schemaVersion": "1.0.0",
+  "ghostvue": {
+    "version": "0.1.0",
+    "assetBundleId": "sha256:…",
+    "manifestSchemaId": "…"
+  },
+  "catalog": {
+    "schemaVersion": "1.0.0",
+    "theme": "default",
+    "modes": ["light", "dark"],
+    "…": "…"
+  },
+  "tokens": [
+    {
+      "name": "action.primary.bg",
+      "type": "color",
+      "tier": "semantic",
+      "cssVar": "--ghost-action-primary-bg",
+      "value": { "light": "…", "dark": "…" }
+    }
+  ],
+  "matchCount": 7
+}
+```
+
+`matchCount` appears on `prefix` queries and counts matches before `limit`, so
+a client can tell when a page was cut short. `cssVar` is omitted for tokens the
+themes build emits no custom property for (primitives, which are inlined into
+semantic tokens). `name` combined with a `tier` the token does not have is
+`NOT_FOUND`.
 
 ## Errors
 

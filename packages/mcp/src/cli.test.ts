@@ -28,8 +28,8 @@ describe('runCli', () => {
     expect(packageJson.bin).toEqual({ [binName]: './dist/bin.js' })
   })
 
-  it('serves no tools until the discovery tools land', () => {
-    expect(builtInTools).toEqual([])
+  it('serves the landed discovery tools', () => {
+    expect(builtInTools.map((tool) => tool.name)).toContain('get_tokens')
   })
 
   it('serves until stdin ends, then resolves with exit code 0', async () => {
@@ -54,7 +54,7 @@ describe('runCli', () => {
     expect(JSON.parse(frame)).toEqual({
       jsonrpc: '2.0',
       id: 1,
-      result: { tools: [] },
+      result: { tools: builtInTools.map((tool) => tool.descriptor) },
     })
     expect(diagnostics()).toBe('')
   })
