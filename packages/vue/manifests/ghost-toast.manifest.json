@@ -1,0 +1,73 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "generated",
+  "name": "GhostToast",
+  "package": "@ghostvue/vue",
+  "status": "experimental",
+  "description": "Plain container (div, no live-region role) for one visible toast. Pauses its auto-dismiss timer while hovered or while focus is inside. Escape with focus inside dismisses only this toast, stops propagation so a dialog behind stays open, and returns focus to the element focused before focus entered the region.",
+  "props": [
+    {
+      "name": "toast",
+      "type": "GhostToastRecord",
+      "required": true,
+      "description": "Record to render, usually one item of the viewport's `toasts`.",
+      "deprecated": false
+    }
+  ],
+  "models": [],
+  "events": [],
+  "slots": [
+    {
+      "name": "default",
+      "props": [
+        {
+          "name": "dismiss",
+          "type": "() => void",
+          "description": "Dismisses this toast."
+        },
+        {
+          "name": "toast",
+          "type": "GhostToastRecord",
+          "description": "The rendered record."
+        }
+      ],
+      "description": "Primary content."
+    }
+  ],
+  "exposed": [
+    {
+      "name": "element",
+      "kind": "property",
+      "type": "HTMLElement | null",
+      "description": "Toast root after mount."
+    }
+  ],
+  "styling": {
+    "parts": [
+      {
+        "name": "root",
+        "description": "Toast root, also marked data-ghost-toast."
+      }
+    ],
+    "states": [],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "generic",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/alert/",
+    "keyboard": {
+      "Escape": "Dismisses only the focused toast and returns focus to where it was before it entered the region."
+    },
+    "requiredAriaAttributes": []
+  },
+  "examples": [
+    "toast/basic",
+    "toast/persist-error",
+    "toast/queue-overflow"
+  ],
+  "spec": {
+    "path": "docs/components/toast-spec.md",
+    "status": "approved",
+    "evidence": "Zac approved resolved decisions in chat on 2026-11-22; recorded in PR #270."
+  }
+}

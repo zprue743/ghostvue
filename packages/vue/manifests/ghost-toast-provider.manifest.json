@@ -1,0 +1,61 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "generated",
+  "name": "GhostToastProvider",
+  "package": "@ghostvue/vue",
+  "status": "experimental",
+  "description": "Renderless owner of one provider-scoped toast store (no module-global queue). Descendants publish with useGhostToast(); a descendant GhostToastViewport renders the stack. At most `limit` toasts are visible and later ones wait in FIFO order. Informational toasts auto-dismiss after `duration` ms (8000 by default); error and action toasts persist. During SSR toast() is a no-op with a development warning; on the client, toasts created before the viewport mounts wait and are shown when it mounts. Unmounting the provider dismisses every toast and calls each onDismiss once.",
+  "props": [
+    {
+      "name": "duration",
+      "type": "number",
+      "default": 8000,
+      "required": false,
+      "description": "Default auto-dismiss interval in ms for informational toasts. `0` persists.",
+      "deprecated": false
+    },
+    {
+      "name": "label",
+      "type": "string",
+      "default": "Notifications",
+      "required": false,
+      "description": "Accessible name of the viewport region.",
+      "deprecated": false
+    },
+    {
+      "name": "limit",
+      "type": "number",
+      "default": 3,
+      "required": false,
+      "description": "Maximum number of visible toasts; later toasts wait in FIFO order.",
+      "deprecated": false
+    }
+  ],
+  "models": [],
+  "events": [],
+  "slots": [
+    {
+      "name": "default",
+      "props": [],
+      "description": "Primary content."
+    }
+  ],
+  "exposed": [],
+  "styling": {
+    "parts": [],
+    "states": [],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "none",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/alert/",
+    "keyboard": {},
+    "requiredAriaAttributes": []
+  },
+  "examples": [],
+  "spec": {
+    "path": "docs/components/toast-spec.md",
+    "status": "approved",
+    "evidence": "Zac approved resolved decisions in chat on 2026-11-22; recorded in PR #270."
+  }
+}

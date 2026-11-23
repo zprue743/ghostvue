@@ -310,6 +310,13 @@ function handleDocumentFocusIn(event: FocusEvent): void {
     return
   }
 
+  // Live notification regions (toast stacks) stay operable while a modal is
+  // open (ADR 0012), so focus the user moves into one is not pulled back.
+  // Tab from there still re-enters the trap through handleTab.
+  if (target.closest('[data-ghost-live]')) {
+    return
+  }
+
   if (recoveringFocus) {
     return
   }

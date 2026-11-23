@@ -123,6 +123,12 @@ function dismissOnOutsidePointer(
   if (isEventInsideElement(event, layer.element)) {
     return
   }
+  // Pressing a live notification region (a toast's action or close button)
+  // is not an outside interaction: the toast stack stays operable above an
+  // open modal without dismissing it (ADR 0012).
+  if (isEventInsideLiveRegion(event)) {
+    return
+  }
   for (const ignored of resolveIgnoredElements(options.ignore)) {
     if (isEventInsideElement(event, ignored)) {
       return
@@ -141,6 +147,15 @@ function isEventInsideElement(
     return path.includes(container)
   }
   return event.target instanceof Node && container.contains(event.target)
+}
+
+function isEventInsideLiveRegion(event: PointerEvent): boolean {
+  const path =
+    typeof event.composedPath === 'function' ? event.composedPath() : []
+  const target = path[0] ?? event.target
+  return (
+    target instanceof Element && target.closest('[data-ghost-live]') !== null
+  )
 }
 
 function isIgnoreArray(
