@@ -428,13 +428,20 @@ jobs:
     env:
       HOME: /root
       PLAYWRIGHT_BLOB_REPORT: '1'
-    timeout-minutes: 15
-    # Two shards with 3 workers and worker-scoped HTTP servers keep browser checks
-    # fast while avoiding a third Playwright container startup.
+      # Unique per shard so `browser` can merge every blob with merge-multiple.
+      PLAYWRIGHT_BLOB_OUTPUT_NAME: report-chromium-${{ matrix.shard }}.zip
+    # Each balanced shard runs about a third of the Chromium suite (~4-5 min on
+    # master), so 10 minutes keeps roughly 2x headroom (GHO-254).
+    timeout-minutes: 10
+    # Three duration-balanced shards with 3 workers each (GHO-254). Playwright's
+    # own --shard splits by test count, and the cheap `chromium` screenshot
+    # tests made one of two count-based shards do ~1.6x the other's work.
+    # scripts/e2e-shard-plan.mjs packs project/spec-file units by the measured
+    # durations in scripts/e2e-shard-timings.json instead.
     strategy:
       fail-fast: false
       matrix:
-        shard: [1, 2]
+        shard: [1, 2, 3]
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
       - uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4.3.0
@@ -457,12 +464,15 @@ jobs:
       - name: Assert prebuilt dist
         run: test -f apps/playground/dist/index.html && test -f apps/docs/.vitepress/dist/index.html
       # Chromium projects only; Firefox and WebKit run in browser-cross.
-      - name: Run full Chromium e2e shard
+      - name: Plan full Chromium e2e shard
         if: needs.changes.outputs.e2e_scope != 'docs'
-        run: pnpm test:e2e:prebuilt --project=chromium --project=chromium-e2e --update-snapshots=none --shard=${{ matrix.shard }}/2
-      - name: Run docs and example Chromium e2e shard
+        run: node scripts/e2e-shard-plan.mjs --shard=${{ matrix.shard }}/3 --out=.artifacts/e2e-shard-tests.txt -- --project=chromium --project=chromium-e2e
+      - name: Plan docs and example Chromium e2e shard
         if: needs.changes.outputs.e2e_scope == 'docs'
-        run: pnpm test:e2e:prebuilt --project=chromium --project=chromium-e2e --update-snapshots=none --shard=${{ matrix.shard }}/2 tests/e2e/docs-*.spec.ts tests/e2e/examples*.spec.ts
+        run: node scripts/e2e-shard-plan.mjs --shard=${{ matrix.shard }}/3 --out=.artifacts/e2e-shard-tests.txt -- --project=chromium --project=chromium-e2e tests/e2e/docs-*.spec.ts tests/e2e/examples*.spec.ts
+      # --pass-with-no-tests: a tiny docs-scoped selection can leave a shard empty.
+      - name: Run Chromium e2e shard
+        run: pnpm test:e2e:prebuilt --project=chromium --project=chromium-e2e --update-snapshots=none --pass-with-no-tests --test-list .artifacts/e2e-shard-tests.txt
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         if: always()
         with:
@@ -583,6 +593,15 @@ jobs:
       - name: Verify keyboard evidence executed and passed
         if: needs.changes.outputs.skip_heavy != 'true' && needs.changes.outputs.e2e_scope != 'docs'
         run: node scripts/check-keyboard-evidence.mjs --report .artifacts/playwright/results.json
+      # Measured durations for refreshing scripts/e2e-shard-timings.json with
+      # `node scripts/e2e-shard-plan.mjs --write-timings=<results.json>` (GHO-254).
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        if: always() && needs.changes.outputs.skip_heavy != 'true'
+        with:
+          name: playwright-results-json
+          path: .artifacts/playwright/results.json
+          retention-days: 14
+          if-no-files-found: ignore
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         if: failure() && needs.changes.outputs.skip_heavy != 'true'
         with:

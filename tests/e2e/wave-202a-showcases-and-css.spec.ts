@@ -17,13 +17,18 @@ const showcases = [
 ] as const
 
 test.describe('Wave 202a showcases and CSS audit fixes', () => {
-  test('all 10 component pages lead with their themed hero showcase, pass axe, and fit 390px and 1280px', async ({
-    page,
-  }) => {
-    const docs = await startStaticServer('apps/docs/.vitepress/dist')
-    try {
-      for (const { slug, id } of showcases) {
-        for (const mode of ['light', 'dark'] as const) {
+  // One test per page and color mode. A single test that loaded all 20
+  // page/mode combinations and ran 20 axe scans needed ~30s on a 4-vCPU
+  // runner, so it routinely hit the default test timeout and burned two
+  // retries (GHO-254). Split tests stay well inside the timeout and let
+  // `fullyParallel` spread them across workers and shards.
+  for (const { slug, id } of showcases) {
+    for (const mode of ['light', 'dark'] as const) {
+      test(`${slug} page leads with its themed hero showcase (${id}), passes axe, and fits 390px and 1280px in ${mode} mode`, async ({
+        page,
+      }) => {
+        const docs = await startStaticServer('apps/docs/.vitepress/dist')
+        try {
           await page.addInitScript((appearance) => {
             localStorage.setItem('vitepress-theme-appearance', appearance)
           }, mode)
@@ -61,12 +66,12 @@ test.describe('Wave 202a showcases and CSS audit fixes', () => {
               document.documentElement.clientWidth,
           )
           expect(mobileOverflow, `${id} 390px overflow`).toBe(false)
+        } finally {
+          await docs.close()
         }
-      }
-    } finally {
-      await docs.close()
+      })
     }
-  })
+  }
 
   test('solid inline-alert title and message use contrast foreground in light and dark', async ({
     page,

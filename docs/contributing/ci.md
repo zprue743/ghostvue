@@ -30,7 +30,7 @@ against upstream.
 Container images are pinned by exact tag. The Playwright image tag must match
 `@playwright/test` in `package.json`; it also provides the browsers (Chromium,
 Firefox, and WebKit with their system libraries), so CI never runs
-`playwright install`. The `browser-shard` matrix (2 Chromium shards) runs the
+`playwright install`. The `browser-shard` matrix (3 Chromium shards) runs the
 Chromium projects and the consolidated `browser-cross` job runs both
 `firefox-e2e` and `webkit-e2e` from the same image; see the
 [cross-browser matrix](../standards/testing.md#cross-browser-functional-matrix).
@@ -84,6 +84,26 @@ The `changes` job classifies pull request diffs via
   set `GHOSTVUE_REGISTRIES_READY=1` after `pnpm install` (`prepare`) runs
   `registries:write` so `pretypecheck` and `prebuild` hooks skip redundant
   rewrites while `pnpm registries` verification still executes.
+
+## Browser shard balancing
+
+Playwright's `--shard` splits tests by count, but the cheap `chromium`
+screenshot tests and the heavy docs and example specs cost very different
+amounts, so equal counts left one shard doing most of the work. Each
+`browser-shard` job instead runs `scripts/e2e-shard-plan.mjs`, which lists the
+selected tests, groups them into project/spec-file units, costs each unit from
+the mean per-test durations in `scripts/e2e-shard-timings.json`, and packs the
+units onto the three shards heaviest first. The job then runs its share with
+`playwright test --test-list`. Every job computes the same plan, so the shards
+never overlap or drop a test. A spec file missing from the timing table is
+costed at its project's median, so new specs only make the balance slightly
+worse until the table is refreshed.
+
+Refresh the table when a shard's runtime drifts well away from the others:
+download the `playwright-results-json` artifact from a recent full `master`
+run and run
+`node scripts/e2e-shard-plan.mjs --write-timings=<path/to/results.json>`.
+Only relative durations matter, so a local full Chromium run also works.
 
 ## Keyboard evidence
 

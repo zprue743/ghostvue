@@ -140,7 +140,9 @@ Slider geometry and pointer mapping in both orientations and directions,
 Select's opening keys moving real focus into the list, and the docs theme
 switcher's single Tab stop and arrow keys.
 
-CI runs Chromium in two `browser-shard` workers and Firefox and WebKit together
+CI runs Chromium in three duration-balanced `browser-shard` jobs (see
+[browser shard balancing](../contributing/ci.md#browser-shard-balancing)) and
+Firefox and WebKit together
 in the single `browser-cross` job from the same pinned Playwright image, which
 already contains all three browsers and their system libraries (skipped on PRs
 whose diff cannot affect cross-browser component behavior). The `browser` check
