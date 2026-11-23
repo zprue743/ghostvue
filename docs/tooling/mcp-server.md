@@ -1,4 +1,4 @@
-# MCP server (`@ghostvue/mcp`) (proposed)
+# MCP server (`@ghostvue/mcp`)
 
 GhostVue exposes a **local, read-only** [Model Context Protocol](https://modelcontextprotocol.io/) server so agents can discover components, manifests, executable examples, docs, and design tokens without the Vue runtime.
 
