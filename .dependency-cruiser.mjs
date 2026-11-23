@@ -23,7 +23,7 @@ const config = {
         path: '^packages/shared/',
       },
       to: {
-        path: '^(@ghostvue/(core|vue|themes|eslint-plugin)(/|$)|packages/(core|vue|themes|eslint-plugin)/)',
+        path: '^(@ghostvue/(core|vue|themes|eslint-plugin|mcp)(/|$)|packages/(core|vue|themes|eslint-plugin|mcp)/)',
       },
     },
     {
@@ -35,7 +35,7 @@ const config = {
         path: '^packages/core/',
       },
       to: {
-        path: '^(@ghostvue/(vue|themes|eslint-plugin)(/|$)|packages/(vue|themes|eslint-plugin)/)',
+        path: '^(@ghostvue/(vue|themes|eslint-plugin|mcp)(/|$)|packages/(vue|themes|eslint-plugin|mcp)/)',
       },
     },
     {
@@ -47,7 +47,7 @@ const config = {
         path: '^packages/vue/',
       },
       to: {
-        path: '^(@ghostvue/(themes|eslint-plugin)(/|$)|packages/(themes|eslint-plugin)/)',
+        path: '^(@ghostvue/(themes|eslint-plugin|mcp)(/|$)|packages/(themes|eslint-plugin|mcp)/)',
       },
     },
     {
@@ -59,7 +59,7 @@ const config = {
         path: '^packages/themes/',
       },
       to: {
-        path: '^(@ghostvue/(core|shared|eslint-plugin)(/|$)|packages/(core|shared|eslint-plugin)/)',
+        path: '^(@ghostvue/(core|shared|eslint-plugin|mcp)(/|$)|packages/(core|shared|eslint-plugin|mcp)/)',
       },
     },
     {
@@ -71,7 +71,22 @@ const config = {
         path: '^packages/eslint-plugin/',
       },
       to: {
-        path: '^(@ghostvue/(shared|core|vue|themes)(/|$)|packages/(shared|core|vue|themes)/)',
+        path: '^(@ghostvue/(shared|core|vue|themes|mcp)(/|$)|packages/(shared|core|vue|themes|mcp)/)',
+      },
+    },
+    {
+      name: 'mcp-no-vue',
+      severity: 'error',
+      comment:
+        '@ghostvue/mcp is a Node-only MCP stdio server that reads bundled manifest, example, docs, and token assets; it may depend on @ghostvue/core only and never loads Vue, @ghostvue/vue, @ghostvue/themes, or @ghostvue/shared (docs/adr/0015-mcp-server-first-release.md).',
+      from: {
+        path: '^packages/mcp/',
+      },
+      to: {
+        // Matches bare specifiers, resolved node_modules paths, and workspace
+        // links (which resolve to packages/<name>/). Anchoring on node_modules
+        // keeps an mcp-local folder named `vue` from tripping the rule.
+        path: '(^|node_modules/)(vue|@vue/[^/]+|@ghostvue/(shared|vue|themes|nuxt|eslint-plugin))(/|$)|^packages/(shared|vue|themes|nuxt|eslint-plugin)/',
       },
     },
     {
@@ -96,7 +111,7 @@ const config = {
         path: '^packages/nuxt/',
       },
       to: {
-        path: '^(@ghostvue/(core|shared)(/|$)|packages/(core|shared)/)',
+        path: '^(@ghostvue/(core|shared|mcp)(/|$)|packages/(core|shared|mcp)/)',
       },
     },
     {

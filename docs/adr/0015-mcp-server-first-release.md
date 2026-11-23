@@ -1,7 +1,10 @@
 # ADR 0015: `@ghostvue/mcp` first release (stdio, read-only discovery)
 
-- Status: proposed
+- Status: accepted
 - Date: 2026-11-22
+- Accepted: 2026-11-23, on Zac's Nov 22, 2026 approval of the GHO-17 contract
+  and the merge of PR #268 (`docs(spec): GHO-17 @ghostvue/mcp first-release
+contract`). The `packages/mcp` scaffold (GHO-225) implements decision 1.
 - Decision owners: Zac (product), repository maintainers
 
 ## Context
@@ -14,7 +17,7 @@ The executable spec is [GHO-17 first-release contract](../plans/gho-17-mcp-first
 
 ## Decision
 
-1. Add workspace package `@ghostvue/mcp` under `packages/mcp/` when implementation starts (not in this docs-only PR).
+1. Add workspace package `@ghostvue/mcp` under `packages/mcp/` (scaffolded in GHO-225 with the `ghostvue-mcp` bin stub and no tools).
 2. **Transport:** MCP over stdio only for v1.
 3. **Tools:** `list_components`, `get_component`, `get_examples`, `search_docs`, `get_tokens` — schemas and semantics per the GHO-17 contract.
 4. **Data:** At build time, copy version-matched manifests (`packages/vue/manifests`, `packages/themes/manifests`), example sources + generated catalog, docs corpus/search index aligned with the VitePress sidebar (`llms-full.txt` equivalence), and `@ghostvue/themes` `tokens.json`. The server reads only those bundled files at runtime. CI rebuilds bundles for freshness; docs-only PRs do not bump a committed asset lock hash.
