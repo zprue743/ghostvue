@@ -9,7 +9,7 @@ packages:
   - '@ghostvue/vue'
 specStatus: approved
 approval:
-  evidence: 'Approved by Zac (maintainer) on November 22, 2026 (PR #265 review; option A recorded in ADR 0014, now accepted). Promoted with GHO-233; Zac confirms in that PR review. See the Status line in this spec.'
+  evidence: 'Zac approved in chat on 2026-11-23; recorded in PR #272.'
 manifests: []
 sections:
   purpose:
@@ -50,12 +50,12 @@ unresolvedQuestions:
 # GhostDataTable specification
 
 **Status:** Approved for [GHO-35](https://linear.app/ghost-vue/issue/GHO-35).
-Zac approved **option A** (composable + native `GhostTable`; see
-[ADR 0014](../adr/0014-datatable-phase-one-architecture.md), accepted) on
-November 22, 2026 (PR #265 review). **`specStatus: approved`** was recorded
-with the first implementation step
-([GHO-233](https://linear.app/ghost-vue/issue/GHO-233)); Zac confirms in that
-PR review.
+**Option A** (composable + native `GhostTable`; see
+[ADR 0014](../adr/0014-datatable-phase-one-architecture.md), accepted) is the
+phase-one architecture. **`specStatus: approved`** was recorded with the first
+implementation step ([GHO-233](https://linear.app/ghost-vue/issue/GHO-233)); Zac
+approved in chat on 2026-11-23; recorded in
+[PR #272](https://github.com/zprue743/ghostvue/pull/272).
 
 ## Purpose and user problems
 
@@ -1026,8 +1026,9 @@ Non-blocking items (also in frontmatter with `blocking: false`):
 **Gate status:** Exercise **completed** (throwaway prototype,
 [PR #269](https://github.com/zprue743/ghostvue/pull/269),
 [`prototypes/datatable-primevue/FINDINGS.md`](https://github.com/zprue743/ghostvue/blob/cursor/gho-35-primevue-prototype/prototypes/datatable-primevue/FINDINGS.md)).
-This evidence did **not** auto-approve the spec; Zac's November 22, 2026
-approval promoted it to **`specStatus: approved`**.
+This evidence did **not** auto-approve the spec; Zac approved in chat on
+2026-11-23 (recorded in [PR #272](https://github.com/zprue743/ghostvue/pull/272))
+to promote it to **`specStatus: approved`**.
 
 | Dimension            | Finding                                                                                                                                                                                                   |
 | -------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -1067,4 +1068,5 @@ intent, not production bundle performance.
 | **Deferred:** Treegrid / grid keyboard spec                                                         | Roving focus                                             | High       |
 
 Parent **GHO-35** records specification approval at **`specStatus: approved`**
-(Zac, November 22, 2026).
+(Zac approved in chat on 2026-11-23; recorded in
+[PR #272](https://github.com/zprue743/ghostvue/pull/272)).
