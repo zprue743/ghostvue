@@ -1,0 +1,121 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "handwritten",
+  "name": "GhostToast",
+  "package": "@ghostvue/themes",
+  "status": "experimental",
+  "description": "Themed toast stack: a themed GhostToastViewport that positions the portaled region as a fixed bottom-end stack and renders each record as a themed GhostToast, plus the themed GhostToast root with variant and tone hooks and enter-only motion. Provider, title, description, action, close, and useGhostToast are re-exported from @ghostvue/vue; all timers, queueing, announcements, and focus behavior stay on the headless parts.",
+  "props": [
+    {
+      "name": "toast",
+      "type": "GhostToastRecord",
+      "required": true,
+      "description": "Record to render, usually one item of the viewport's toasts.",
+      "deprecated": false
+    },
+    {
+      "name": "variant",
+      "type": "'surface' | 'solid'",
+      "default": "surface",
+      "required": false,
+      "description": "Visual treatment. The default omits data-variant.",
+      "deprecated": false
+    },
+    {
+      "name": "tone",
+      "type": "'neutral' | 'accent' | 'danger'",
+      "required": false,
+      "description": "Semantic color intent. When unset, type 'error' maps to danger and other records to neutral. Neutral omits data-tone.",
+      "deprecated": false
+    }
+  ],
+  "models": [],
+  "events": [],
+  "slots": [
+    {
+      "name": "default",
+      "props": [
+        {
+          "name": "dismiss",
+          "type": "() => void",
+          "description": "Dismisses this toast."
+        },
+        {
+          "name": "toast",
+          "type": "GhostToastRecord",
+          "description": "The rendered record."
+        }
+      ],
+      "description": "Toast content: title, description, action, and close parts."
+    }
+  ],
+  "exposed": [
+    {
+      "name": "element",
+      "kind": "property",
+      "type": "HTMLElement | null",
+      "description": "Delegates to the unstyled GhostToast root."
+    }
+  ],
+  "styling": {
+    "parts": [
+      {
+        "name": "viewport",
+        "description": "Fixed bottom-end stack with .ghost-toast-viewport; data-inline (portal false) keeps it in normal flow."
+      },
+      {
+        "name": "root",
+        "description": "Elevation-3 toast surface with .ghost-toast; plays the enter animation once on insert."
+      },
+      {
+        "name": "title",
+        "description": "Semibold primary line."
+      },
+      {
+        "name": "description",
+        "description": "Muted supporting copy."
+      },
+      {
+        "name": "action",
+        "description": "Compact outlined action button with a focus ring."
+      },
+      {
+        "name": "close",
+        "description": "Compact icon-only dismiss button with a focus ring."
+      }
+    ],
+    "states": [
+      {
+        "name": "tone",
+        "description": "data-tone='accent' | 'danger' tints the surface; solid fills it."
+      },
+      {
+        "name": "variant",
+        "description": "data-variant='solid' fills the toast with the tone color."
+      }
+    ],
+    "cssProperties": [
+      {
+        "name": "--ghost-motion-enter-duration",
+        "description": "Enter animation duration. No animation under prefers-reduced-motion."
+      },
+      {
+        "name": "--ghost-motion-translate",
+        "description": "Enter animation travel distance."
+      },
+      {
+        "name": "--ghost-elevation-3-bg",
+        "description": "Toast surface background."
+      }
+    ]
+  },
+  "accessibility": {
+    "role": "generic",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/alert/",
+    "keyboard": {},
+    "requiredAriaAttributes": []
+  },
+  "examples": [
+    "toast/themed"
+  ]
+}

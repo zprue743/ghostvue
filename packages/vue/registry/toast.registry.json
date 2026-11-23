@@ -20,6 +20,11 @@
     "export { useGhostToast } from './use-ghost-toast'",
     "export {\n  ghostToastProviderContextKey,\n  type GhostToastActionExposed,\n  type GhostToastActionOptions,\n  type GhostToastAnnouncement,\n  type GhostToastCloseExposed,\n  type GhostToastDescriptionExposed,\n  type GhostToastExposed,\n  type GhostToastId,\n  type GhostToastOptions,\n  type GhostToastPauseReason,\n  type GhostToastProps,\n  type GhostToastProviderContext,\n  type GhostToastProviderProps,\n  type GhostToastRecord,\n  type GhostToastSlotProps,\n  type GhostToastState,\n  type GhostToastTitleExposed,\n  type GhostToastType,\n  type GhostToastUpdateOptions,\n  type GhostToastUrgency,\n  type GhostToastViewportElement,\n  type GhostToastViewportExposed,\n  type GhostToastViewportItemSlotProps,\n  type GhostToastViewportProps,\n  type GhostToastViewportSlotProps,\n  type UseGhostToastOptions,\n  type UseGhostToastReturn,\n} from './ghost-toast'"
   ],
+  "themesBarrel": [
+    "export {\n  GhostToast,\n  type GhostToastExposed,\n  type GhostToastRecord,\n  type GhostToastSlotProps,\n  type GhostToastTone,\n  type GhostToastVariant,\n} from './ghost-toast'",
+    "export {\n  GhostToastViewport,\n  type GhostToastViewportElement,\n  type GhostToastViewportExposed,\n  type GhostToastViewportItemSlotProps,\n  type GhostToastViewportSlotProps,\n} from './ghost-toast-viewport'",
+    "export {\n  GhostToastProvider,\n  GhostToastTitle,\n  GhostToastDescription,\n  GhostToastAction,\n  GhostToastClose,\n  useGhostToast,\n  ghostToastProviderContextKey,\n  type GhostToastActionOptions,\n  type GhostToastId,\n  type GhostToastOptions,\n  type GhostToastProviderProps,\n  type GhostToastType,\n  type GhostToastUpdateOptions,\n  type GhostToastUrgency,\n  type UseGhostToastOptions,\n  type UseGhostToastReturn,\n} from '@ghostvue/vue'"
+  ],
   "examples": [
     {
       "id": "toast/basic",
@@ -38,6 +43,12 @@
       "title": "Queue overflow",
       "description": "Five toasts with a limit of three: two wait and appear as visible toasts are dismissed.",
       "layer": "headless"
+    },
+    {
+      "id": "toast/themed",
+      "title": "Themed",
+      "description": "Themed stack from @ghostvue/themes: a bottom-end corner stack, an informational toast, and a danger error whose retry updates it in place without replaying the enter animation.",
+      "layer": "themed"
     }
   ]
 }
