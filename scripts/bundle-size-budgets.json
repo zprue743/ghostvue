@@ -1,7 +1,7 @@
 {
   "@ghostvue/shared": 100,
   "@ghostvue/core": 100,
-  "@ghostvue/vue": 93600,
+  "@ghostvue/vue": 104300,
   "@ghostvue/vue/resolver": 1000,
   "@ghostvue/vue:GhostAccordion": 1800,
   "@ghostvue/vue:GhostAccordionContent": 1900,
