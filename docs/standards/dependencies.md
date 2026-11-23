@@ -131,9 +131,10 @@ Residual advisories, all development-only and absent from `pnpm audit --prod`:
 
 ## `@ghostvue/mcp` (GHO-17)
 
-**Approved by Zac, Nov 22, 2026** for implementation. Runtime dependencies are
-not yet in the lockfile until `packages/mcp` lands ([GHO-227](https://linear.app/ghost-vue/issue/GHO-227)).
-Contract and footprint: [GHO-17 MCP first-release contract](../plans/gho-17-mcp-first-release.md)
+**Approved by Zac, Nov 22, 2026** for implementation. Adopted in
+[GHO-227](https://linear.app/ghost-vue/issue/GHO-227) as exact pins in
+`packages/mcp/package.json` (stdio server, tool registration helper, error
+envelope). Contract and footprint: [GHO-17 MCP first-release contract](../plans/gho-17-mcp-first-release.md)
 §7; [ADR 0015](../adr/0015-mcp-server-first-release.md).
 
 **Runtime dependencies (exact pins, MIT):**
@@ -150,5 +151,12 @@ still installs transitive HTTP packages (`hono`, `express`, …). Measured insta
 (scratch `npm i --prefix /tmp` with sdk@1.32.2, zod@4.6.7, ajv@8.20.0,
 2026-11-22); SDK package alone **4,492,221 bytes** unpacked per
 `npm view @modelcontextprotocol/sdk@1.32.2 dist.unpackedSize`. Measurement
-exceeds 16 MiB; **18 MiB cap** unchanged per plan §7. Record audit outcome when
-dependencies land.
+exceeds 16 MiB; **18 MiB cap** unchanged per plan §7.
+
+**Adoption check (GHO-227, 2026-11-23):** the same scratch `npm i` of the three
+pins installs 95 packages at **17,408,020 bytes** (`du -sb node_modules`), and
+`pnpm --filter @ghostvue/mcp deploy --prod` measures **16,346,101 bytes**; both
+are under the 18 MiB cap. `npm audit --omit=dev` on that scratch install reports
+**0 vulnerabilities**. The server imports only `@modelcontextprotocol/sdk/server`,
+`…/server/stdio.js`, and `…/types.js`; `ajv` is pinned now and is first used
+for serve-time manifest validation in GHO-228.
