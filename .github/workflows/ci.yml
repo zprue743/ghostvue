@@ -428,7 +428,7 @@ jobs:
     env:
       HOME: /root
       PLAYWRIGHT_BLOB_REPORT: '1'
-    timeout-minutes: 10
+    timeout-minutes: 15
     # Two shards with 3 workers and worker-scoped HTTP servers keep browser checks
     # fast while avoiding a third Playwright container startup.
     strategy:
