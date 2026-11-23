@@ -29,7 +29,7 @@ Related: [./architecture/component-state.md](./architecture/component-state.md)
 
 **Warning:** Dialog content missing accessible name
 
-GhostDialogContent and GhostDrawerContent require an accessible name. Render GhostDialogTitle or GhostDrawerTitle inside the content, or pass aria-label or aria-labelledby.
+GhostDialogContent, GhostDrawerContent, and GhostCommandPaletteContent require an accessible name. Render GhostDialogTitle, GhostDrawerTitle, or GhostCommandPaletteTitle inside the content, or pass aria-label or aria-labelledby.
 
 Related: [./components/dialog.md](./components/dialog.md)
 
