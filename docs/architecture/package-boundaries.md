@@ -6,7 +6,7 @@ Allowed production dependency direction is:
 shared <- core <- vue <- themes (optional; may depend on vue)
             ^
             |
-          mcp (optional tooling; proposed — see ADR 0015)
+          mcp (optional Node-only tooling; ADR 0015)
 
 nuxt (optional integration) -> vue (peer), themes (optional peer)
 ```
@@ -39,15 +39,19 @@ docs, and token snapshots.
   `packages/themes/manifests` through a generated data module
   (`pnpm registries:write`), not through imports, so it never loads Vue or
   component code. See the [ESLint plugin](../tooling/eslint-plugin.md) docs.
-- **`mcp` (`@ghostvue/mcp`, proposed — [ADR 0015](../adr/0015-mcp-server-first-release.md),**
+- **`mcp` (`@ghostvue/mcp`, [ADR 0015](../adr/0015-mcp-server-first-release.md),**
   **[GHO-17 contract](../plans/gho-17-mcp-first-release.md))** is Node-only MCP
-  stdio tooling. It may depend on `@ghostvue/core` (manifest schema) and, after
-  approval, pinned `@modelcontextprotocol/sdk`, `zod`, and `ajv` (see plan
-  §7; not yet approved). It must not depend on `vue`,
-  `@ghostvue/vue`, or `@ghostvue/themes`; manifests, examples, docs, and tokens
-  are **copied into the package at build time**, not imported from source.
-  `scripts/workspace-packages.mjs` gains an entry when implementation starts; no
-  package may depend on `@ghostvue/mcp`.
+  stdio tooling with the `ghostvue-mcp` bin. It may depend on `@ghostvue/core`
+  (manifest schema) and the pinned `@modelcontextprotocol/sdk`, `zod`, and
+  `ajv` approved in plan §7 (added with the server, not the scaffold). It must
+  not depend on `vue`, `@ghostvue/vue`, or `@ghostvue/themes`, or import
+  `@ghostvue/shared`; manifests, examples, docs, and tokens are **copied into
+  the package at build time**, not imported from source. The catalog entry's
+  `forbiddenDependencies` makes `pnpm boundaries` reject `vue`,
+  `@ghostvue/vue`, and `@ghostvue/themes` in any `package.json` dependency
+  group (including devDependencies), and the `mcp-no-vue` rule in
+  `.dependency-cruiser.mjs` rejects those imports in source, mirroring
+  `eslint-plugin`. No package may depend on `@ghostvue/mcp`.
 
 Themed Vue components belong in `themes`. Headless composables and thin
 unstyled components belong in `vue`. Do not add a third package merely to
@@ -60,9 +64,10 @@ relative imports, and no direct imports from `dist`) are enforced by
 `scripts/check-package-boundaries.mjs` and `.dependency-cruiser.mjs`
 (`pnpm boundaries`). Each package `AGENTS.md` is generated from the same
 catalog and checked by `scripts/check-agent-adapters.mjs` (`pnpm adapters`).
-`tests/integration/package-boundaries.test.ts` exercises two representative import
-rules (core-to-Vue layering and cross-package relative imports) and the real
-checker CLI, including manifest validation and fixture/build-output exclusions.
+`tests/integration/package-boundaries.test.ts` exercises representative import
+rules (core-to-Vue layering, cross-package relative imports, and `mcp-no-vue`)
+and the real checker CLI, including manifest validation (`@ghostvue/mcp`
+forbidden dependencies among them) and fixture/build-output exclusions.
 
 ## Adding a package
 

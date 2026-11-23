@@ -1,0 +1,19 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "composite": true,
+    "rootDir": "src",
+    "outDir": "dist",
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    // The bin runs directly under Node's ESM loader, not a bundler, so
+    // relative imports must carry their emitted `.js` extension.
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    // Node-only stdio tooling: keep DOM globals out of the type surface.
+    "lib": ["ES2022"],
+    "types": ["node"]
+  },
+  "include": ["src/**/*.ts"]
+}

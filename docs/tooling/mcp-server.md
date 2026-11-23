@@ -1,8 +1,8 @@
-# MCP server (`@ghostvue/mcp`) (proposed)
+# MCP server (`@ghostvue/mcp`)
 
 GhostVue exposes a **local, read-only** [Model Context Protocol](https://modelcontextprotocol.io/) server so agents can discover components, manifests, executable examples, docs, and design tokens without the Vue runtime.
 
-**Status:** Not implemented — contract only ([GHO-17](../plans/gho-17-mcp-first-release.md), [ADR 0015](../adr/0015-mcp-server-first-release.md) proposed).
+**Status:** Not implemented — the private `packages/mcp` scaffold exists, but its `ghostvue-mcp` bin is a stub that registers no tools and exits with an error ([GHO-17](../plans/gho-17-mcp-first-release.md), [ADR 0015](../adr/0015-mcp-server-first-release.md) accepted).
 
 ## What ships in v1
 

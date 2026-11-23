@@ -14,6 +14,7 @@
     { "path": "./packages/vue" },
     { "path": "./packages/nuxt" },
     { "path": "./packages/eslint-plugin" },
+    { "path": "./packages/mcp" },
     { "path": "./apps/playground" }
   ]
 }

@@ -15,10 +15,14 @@ import { workspacePackages } from './workspace-packages.mjs'
 const root = fileURLToPath(new URL('..', import.meta.url))
 
 // The consumer installs only the runtime chain `@ghostvue/themes` needs. The
-// ESLint plugin is Node tooling with ESLint peer dependencies; installing it
-// here would make npm fetch ESLint without exercising anything themes uses.
+// ESLint plugin and the MCP server are Node tooling outside that chain;
+// installing them here would exercise nothing themes uses.
+const nodeToolingPackages = new Set([
+  '@ghostvue/eslint-plugin',
+  '@ghostvue/mcp',
+])
 const smokePackages = workspacePackages.filter(
-  ({ name }) => name !== '@ghostvue/eslint-plugin',
+  ({ name }) => !nodeToolingPackages.has(name),
 )
 
 /** Publish order for packed consumer installs (must match dependency chain). */
