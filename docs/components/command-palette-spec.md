@@ -13,10 +13,13 @@ components:
   - GhostCommandPaletteGroup
   - GhostCommandPaletteLabel
   - GhostCommandPaletteEmpty
+  - GhostCommandPaletteSeparator
 packages:
   - '@ghostvue/vue'
   - '@ghostvue/themes'
-specStatus: proposed
+specStatus: approved
+approval:
+  evidence: 'Zac approved resolved decisions in chat, Nov 22, 2026. See https://github.com/zprue743/ghostvue/pull/266 and https://github.com/zprue743/ghostvue/pull/267.'
 manifests: []
 sections:
   purpose:
@@ -50,7 +53,7 @@ unresolvedQuestions: []
 
 # GhostCommandPalette specification
 
-**Status:** Proposed for [GHO-104](https://linear.app/ghost-vue/issue/GHO-104).
+**Status:** Approved for [GHO-104](https://linear.app/ghost-vue/issue/GHO-104).
 **Approved direction (Zac, 2026-11-17, Option A):** compose existing
 `GhostDialog` with `useGhostCombobox` to deliver grouped command results, keyboard
 highlight selection, and empty/loading presentation following the WAI-ARIA APG
@@ -78,9 +81,9 @@ Applications need predictable overlay behavior (modal focus trap, scroll lock,
 background isolation, focus restoration) without reimplementing combobox
 semantics, live-region announcements, or stale async guards. The palette is a
 **composition component**: it coordinates a `GhostDialog` modal shell with
-`useGhostCombobox` combobox state behind a purpose-built part tree so consumers
-render commands as compound children rather than wiring Dialog and combobox
-behavior manually for every app.
+`useGhostCombobox` combobox state behind a dedicated `GhostCommandPalette*` part
+tree. v1 ships **only** that part tree — no documented hand-assembly recipe for
+wiring `GhostDialog` and `GhostCombobox` without the palette root.
 
 ## Non-goals
 
@@ -126,6 +129,8 @@ Headless exports from `@ghostvue/vue`:
   group)
 - `GhostCommandPaletteEmpty` — visible when the palette is open, not loading,
   and zero command items are registered
+- `GhostCommandPaletteSeparator` — visual group divider (`role="none"`), built
+  on `useGhostSeparator`; not a focus target
 - `useGhostCommandPalette` — composable exposing reactive open/search/loading
   state, `close()`, `open()`, and `focusInput()`
 - `useGhostCommandPaletteAsyncSearch` — thin re-export or alias of
@@ -133,7 +138,8 @@ Headless exports from `@ghostvue/vue`:
   command lists (same `begin` / `isLatest` contract tied to root `search` events)
 - Types: `GhostCommandPaletteProps`, `GhostCommandPaletteSlotProps`,
   `GhostCommandPaletteCommandPayload`, part prop/exposed/context types for each
-  part listed above, `UseGhostCommandPaletteOptions`,
+  part listed above (including `GhostCommandPaletteSeparator`),
+  `UseGhostCommandPaletteOptions`,
   `UseGhostCommandPaletteReturn`, `GhostCommandPaletteContext`,
   `UseGhostCommandPaletteAsyncSearchReturn`
 
@@ -164,17 +170,18 @@ order in the DOM is highlight traversal order (same contract as
 
 #### `GhostCommandPalette` (root)
 
-| Prop            | Type                   | Default     | Contract                                                                                                     |
-| --------------- | ---------------------- | ----------- | ------------------------------------------------------------------------------------------------------------ |
-| `open`          | `boolean \| undefined` | `undefined` | Controlled dialog open state. Omit for uncontrolled.                                                         |
-| `defaultOpen`   | `boolean`              | `false`     | Initial open in uncontrolled mode.                                                                           |
-| `search`        | `string \| undefined`  | `undefined` | Controlled query text. Omit for uncontrolled search.                                                         |
-| `defaultSearch` | `string`               | `''`        | Initial query when `search` is omitted.                                                                      |
-| `loading`       | `boolean`              | `false`     | Shows loading presentation; announces via polite live region; sets `aria-busy` on the listbox.               |
-| `modal`         | `boolean`              | `true`      | Passed through to dialog: focus trap, scroll lock, inert siblings, overlay.                                  |
-| `disabled`      | `boolean`              | `false`     | Prevents opening and disables input/items/trigger.                                                           |
-| `closeOnSelect` | `boolean`              | `true`      | When `true`, requests dialog close after a successful command selection (see Selection versus close timing). |
-| `closeOnEscape` | `boolean`              | `true`      | Whether `Escape` closes the dialog (combobox list close is subsumed by dialog close).                        |
+| Prop            | Type                    | Default          | Contract                                                                                                              |
+| --------------- | ----------------------- | ---------------- | --------------------------------------------------------------------------------------------------------------------- |
+| `open`          | `boolean \| undefined`  | `undefined`      | Controlled dialog open state. Omit for uncontrolled.                                                                  |
+| `defaultOpen`   | `boolean`               | `false`          | Initial open in uncontrolled mode.                                                                                    |
+| `search`        | `string \| undefined`   | `undefined`      | Controlled query text. Omit for uncontrolled search.                                                                  |
+| `defaultSearch` | `string`                | `''`             | Initial query when `search` is omitted.                                                                               |
+| `loading`       | `boolean`               | `false`          | Shows loading presentation; announces via polite live region; sets `aria-busy` on the listbox.                        |
+| `modal`         | `boolean`               | `true`           | Passed through to dialog: focus trap, scroll lock, inert siblings, overlay.                                           |
+| `disabled`      | `boolean`               | `false`          | Prevents opening and disables input/items/trigger.                                                                    |
+| `closeOnSelect` | `boolean`               | `true`           | When `true`, requests dialog close after a successful command selection (see Selection versus close timing).          |
+| `closeOnEscape` | `boolean`               | `true`           | Whether `Escape` closes the dialog (combobox list close is subsumed by dialog close).                                 |
+| `messages`      | `GhostComboboxMessages` | English defaults | Overrides loading, empty, and results-count polite strings (same type as `GhostCombobox`; English defaults built in). |
 
 `search` updates on input `input` events (every keystroke). Root increments an
 internal `searchRequestId` on each change and emits `search` with payload
@@ -206,8 +213,11 @@ close, supporting shortcut openers that are not the visible trigger.
 
 #### `GhostCommandPaletteTitle`
 
-Same as `GhostDialogTitle` (`as` default `'h2'`). Recommended for modal
-palettes; `aria-label` on content remains an escape hatch (see Open questions).
+Same as `GhostDialogTitle` (`as` default `'h2'`). **Required accessible name:**
+modal palettes must expose a name via `GhostCommandPaletteTitle` or consumer
+`aria-label` / `aria-labelledby` on content (reuse dialog **GHOST002** dev warning
+when missing). There is no hidden default title; docs show a visually hidden
+`Title` for icon-only chrome.
 
 #### `GhostCommandPaletteInput`
 
@@ -249,6 +259,12 @@ path as `Enter` on a highlighted item (never `select()`).
 #### `GhostCommandPaletteGroup` / `GhostCommandPaletteLabel`
 
 Same group/label contract as `GhostComboboxGroup` / `GhostComboboxLabel`.
+
+#### `GhostCommandPaletteSeparator`
+
+Built on `useGhostSeparator`. Renders a visual divider between groups or items
+with `role="none"` (presentational only; no keyboard target). Accepts consumer
+`class` / `style` merge. `data-part="separator"`.
 
 #### `GhostCommandPaletteEmpty`
 
@@ -313,7 +329,8 @@ interface GhostCommandPaletteCommandPayload {
 
 Emitted **synchronously** when the user activates an enabled item (Enter with
 highlight on that item, or primary pointer activation). Not emitted for disabled
-items or when the palette is `disabled`. Consumers run side effects here.
+items or when the palette is `disabled`. The event is **not cancelable**
+(fire-and-forget). Consumers run side effects here.
 
 - Default slot receives `{ open, search, loading, close, focusInput }`.
 - Each part exposes `{ element: HTMLElement | null, focus(options?: FocusOptions): void, blur(): void }`.
@@ -342,14 +359,14 @@ after step 2):
   idempotent if needed.
 - Focus remains on the combobox input unless the consumer moves it.
 - Search reset on close is **skipped** while the dialog stays open (the query
-  stays as typed so the user can pick another command). See Open questions for
-  whether an alternate reset-on-select mode is needed.
+  stays as typed so the user can pick another command).
 
 When the parent controls `search` and rejects a search reset during close, the
 parent's `search` wins (same pattern as combobox controlled rejection).
 
 `closeOnSelect: false` supports multi-invocation sessions (for example,
-preview-then-confirm flows); Escape and explicit `close()` still dismiss.
+preview-then-confirm flows): search text **stays** after `command` and clears only
+when the palette actually closes. Escape and explicit `close()` still dismiss.
 
 ## State model
 
@@ -481,13 +498,13 @@ portaled `GhostPopover` opened from a palette item owns `Tab` while focus is
 outside the dialog root; inline (`portal=false`) popovers keep Tab bounded
 inside the modal dialog.
 
-**Combobox focus departure (GHO-166):** Focus moving to an external element
-while the dialog remains open is uncommon for palettes; if focus leaves the
-composed combobox widget without closing the dialog, apply the combobox focus-
-departure close contract **only to the list subtree**, or keep the dialog open
-with input blurred — resolution required (Open questions). Minimum v1 behavior:
-closing the dialog always clears search and restores focus; partial widget focus
-loss without dialog close is undefined unless resolved before implementation.
+**Combobox focus departure (GHO-166):** When focus leaves the combobox input
+(and associated trigger/list widget) while the dialog stays open: **`modal=true`**
+(the default) does **not** close the dialog (nested portaled overlays per
+[ADR 0012](../adr/0012-modal-overlays.md) may take focus while the modal shell
+stays open). **`modal=false`** closes the palette, following the combobox
+focus-departure contract in [GHO-166](https://linear.app/ghost-vue/issue/GHO-166).
+Closing the dialog always clears search (when close succeeds) and restores focus.
 
 ### Assistive technology expectations
 
@@ -501,8 +518,8 @@ loss without dialog close is undefined unless resolved before implementation.
 ## Rendering and customization
 
 Stable `data-part` hooks: `trigger`, `overlay`, `content`, `title`, `input`,
-`list`, `item`, `group`, `label`, `empty`. `data-state` mirrors dialog/combobox
-where applicable.
+`list`, `item`, `group`, `label`, `separator`, `empty`. `data-state` mirrors
+dialog/combobox where applicable.
 
 Themed classes: `.ghost-command-palette-content`, `.ghost-command-palette-input`,
 `.ghost-command-palette-list`, `.ghost-command-palette-item`, etc., using
@@ -532,8 +549,8 @@ Outside tap dismisses when `closeOnOutsideClick` is enabled.
 No global listeners when closed. Filtering is O(n) consumer render cost. Item
 registry bookkeeping matches combobox (insertion-ordered map, O(1) per item
 update). Large command sets should use consumer-driven virtualization with stable
-`id` values and mounted-slice highlight rules (document pattern; no built-in
-virtualizer). No internal fuzzy search.
+`id` values and mounted-slice highlight rules (documented pattern and example
+only; **no** `virtualized` prop on the palette root). No internal fuzzy search.
 
 ## Composition
 
@@ -558,7 +575,8 @@ open. Item `id` values register as combobox option values for highlight only.
 
 No `useRovingFocus` on the list. No new overlay primitives. No **public**
 changes to `GhostCombobox` or `GhostComboboxContent` (palette does not mount
-them; copying input keydown does not change combobox exports).
+them; copying input keydown does not change combobox exports). No documented
+manual Dialog + Combobox recipe — consumers use `GhostCommandPalette*`.
 
 ## Test plan
 
@@ -592,6 +610,8 @@ After implementation (not in this spec-only PR):
   - `async` — `useGhostCommandPaletteAsyncSearch` + stale-response demo
   - `shortcut` — Mod+K listener calling `open()` without global registry
   - `themed` — token styling
+  - keyboard hints — consumer markup **after** `GhostCommandPaletteList` using
+    `GhostKbd` (no footer slot on the palette root)
 - Playground section; manifests via `pnpm manifests:write`; roadmap row update to
   reference approved spec; sidebar via `apps/docs/.vitepress/docs-nav.ts` if
   needed; spec route `/specs/command-palette` from this file
@@ -601,44 +621,35 @@ After implementation (not in this spec-only PR):
 Additive **minor** Changesets for `@ghostvue/vue` and `@ghostvue/themes` when
 implemented. No breaking changes to Dialog or Combobox.
 
-## Open architectural questions
+## Resolved decisions
 
-Decisions below need **Zac sign-off** before implementation. This spec does not
-pre-decide them silently.
-
-1. **Dedicated parts vs documented composition.** Option A approved Dialog +
-   combobox behavior via `useGhostCombobox`. Should v1 ship only the dedicated
-   `GhostCommandPalette*` tree (recommended), or also export a documented
-   "manual compose" recipe without a root coordinator?
-
-2. **`GhostCommandPaletteTitle` requirement.** Always require a title (or
-   explicit `aria-label`) for modal palettes, or allow icon-only chrome with a
-   visually hidden default title?
-
-3. **Search reset when `closeOnSelect` is rejected.** When controlled `open`
-   stays `true` after `command`, should search clear anyway, or only clear on
-   successful dialog close (current draft: only on close)?
-
-4. **Focus departure without dialog close.** If focus leaves the input while the
-   dialog stays open, should the dialog close (strict modal) or follow combobox
-   GHO-166 departure rules (risky inside modals)?
-
-5. **Group separators.** Add an optional `GhostCommandPaletteSeparator` part for
-   visual grouping, or rely on spacing/labels only?
-
-6. **Footer / hint region.** Optional slot for "↑↓ navigate · ↵ select" hints,
-   or leave entirely to consumer layout inside content?
-
-7. **Cancellable `command`.** Should consumers be able to call
-   `event.preventDefault()` on a cancellable command event to veto close and
-   side effects, or is `command` always fire-and-forget?
-
-8. **i18n (GHO-43).** Follow `GhostComboboxMessages` pattern for loading/empty/
-   results announcement strings on the palette root?
-
-9. **Virtualization.** Document-only pattern vs first-class `virtualized` boolean
-   mirroring combobox?
-
-10. **`textValue` vs `id`.** Is `id` always sufficient for consumer handlers, with
-    `textValue` only for AT (recommended), or should `command` also emit
-    `textValue` for convenience?
+1. **C1 — Dedicated parts:** Ship only the `GhostCommandPalette*` tree; no
+   documented hand-assembly recipe. **Reason:** One supported integration path.
+   _Approved by Zac, Nov 22, 2026._
+2. **C2 — Accessible name:** Title or `aria-label` / `aria-labelledby` required;
+   reuse dialog GHOST002; no hidden default title; docs show visually hidden
+   `Title` for icon-only designs. **Reason:** Matches dialog naming discipline.
+   _Approved by Zac, Nov 22, 2026._
+3. **C3 — Search when staying open:** With `closeOnSelect=false`, search text is
+   kept; it clears only when the palette actually closes. **Reason:** Multi-pick
+   sessions without losing the query. _Approved by Zac, Nov 22, 2026._
+4. **C4 — Focus leaving input:** `modal=true` does not close on combobox focus
+   departure; `modal=false` closes per GHO-166; nested popovers may take focus in
+   modal mode. **Reason:** Modal shell vs non-modal combobox semantics. _Approved
+   by Zac, Nov 22, 2026._
+5. **C5 — Separator:** Add `GhostCommandPaletteSeparator` (`role="none"`, built
+   on `useGhostSeparator`). **Reason:** Visual grouping without fake semantics.
+   _Approved by Zac, Nov 22, 2026._
+6. **C6 — Footer:** No footer slot; document consumer markup after `List` with
+   `GhostKbd` in one example. **Reason:** Keeps the root API small. _Approved by
+   Zac, Nov 22, 2026._
+7. **C7 — `command` event:** Not cancelable. **Reason:** Simpler activation
+   contract. _Approved by Zac, Nov 22, 2026._
+8. **C8 — `messages`:** Root `messages` prop uses `GhostComboboxMessages` with
+   English defaults. **Reason:** Consistent i18n override pattern (GHO-43).
+   _Approved by Zac, Nov 22, 2026._
+9. **C9 — Virtualization:** Documentation and example only; no `virtualized`
+   prop. **Reason:** Consumer owns list slicing. _Approved by Zac, Nov 22, 2026._
+10. **C10 — `command` payload:** `{ id }` only; `textValue` is for AT/labels, not
+    the event. **Reason:** Handlers key off stable ids. _Approved by Zac, Nov
+    22, 2026._

@@ -121,7 +121,59 @@ const contributeSidebar: LlmsSidebarGroup[] = [
   },
   {
     text: 'Decisions',
-    items: [{ text: 'ADR index', link: '/adr/' }],
+    items: [
+      { text: 'ADR index', link: '/adr/' },
+      {
+        text: '0002 — Exit foundation phase',
+        link: '/adr/0002-exit-foundation-phase',
+      },
+      {
+        text: '0003 — Public component API conventions',
+        link: '/adr/0003-public-component-api-conventions',
+      },
+      {
+        text: '0004 — Headless and styled layering',
+        link: '/adr/0004-headless-styled-layering',
+      },
+      {
+        text: '0005 — Design token taxonomy',
+        link: '/adr/0005-design-token-taxonomy',
+      },
+      {
+        text: '0006 — Component manifest JSON Schema',
+        link: '/adr/0006-component-manifest-schema',
+      },
+      {
+        text: '0007 — Token compile pipeline',
+        link: '/adr/0007-token-pipeline',
+      },
+      {
+        text: '0008 — defineTheme and flagship themes',
+        link: '/adr/0008-define-theme',
+      },
+      {
+        text: '0009 — Ambient interactivity',
+        link: '/adr/0009-ambient-interactivity',
+      },
+      {
+        text: '0010 — Rebrand to GhostVue',
+        link: '/adr/0010-rebrand-to-ghostvue',
+      },
+      {
+        text: '0011 — Overlay primitives',
+        link: '/adr/0011-overlay-primitives',
+      },
+      { text: '0012 — Modal overlays', link: '/adr/0012-modal-overlays' },
+      { text: '0013 — Icon strategy', link: '/adr/0013-icon-strategy' },
+      {
+        text: '0014 — DataTable phase one (proposed)',
+        link: '/adr/0014-datatable-phase-one-architecture',
+      },
+      {
+        text: '0015 — MCP server first release (proposed)',
+        link: '/adr/0015-mcp-server-first-release',
+      },
+    ],
   },
   {
     text: 'AI agents',
