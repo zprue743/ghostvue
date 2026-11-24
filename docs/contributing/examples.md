@@ -152,6 +152,19 @@ These constraints apply to every example the docs frame renders:
   the containing block. Do not add `position`, `transform`, `filter` or
   `contain` to example roots that hold inline overlays, or the stage's
   scroll box will clip them.
+- **Headless overlay surfaces.** The headless layer positions overlay content
+  but paints nothing: no background, border, stacking order or item states.
+  A headless example whose content opens over the page (select, combobox,
+  menus, popover, hover card, tooltip) must bring its own consumer CSS, or the
+  panel renders transparent, under the example frame, on top of the docs
+  prose. Put a prefixed class on the content part and style it in an
+  unscoped `<style>` block, because portaled and inline content roots do not
+  carry the example's scoped attribute. Give the panel an opaque background,
+  a border, a `z-index`, and visible highlighted, selected and disabled item
+  states. Read semantic tokens with system-color fallbacks
+  (`var(--ghost-elevation-3-bg, Canvas)`) so the copied source also works
+  without a theme, and repaint the highlight with `Highlight` under
+  `forced-colors`. `tests/e2e/docs-headless-overlays.spec.ts` checks each one.
 
 ## Manifests
 
