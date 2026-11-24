@@ -15,6 +15,12 @@
       "title": "Full composition",
       "description": "Manual GhostTable composition with sort buttons, row selection, expandable detail rows, a global search, and an empty state.",
       "layer": "headless"
+    },
+    {
+      "id": "data-table/paginated-invoices",
+      "title": "Pagination",
+      "description": "Manual GhostTable composition with a co-located GhostPagination bound to the root's pagination, pageCount, and setPageIndex slot bindings; searching clamps the page.",
+      "layer": "headless"
     }
   ]
 }

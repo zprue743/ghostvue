@@ -643,6 +643,8 @@ fixture. Writable `ref` v-models accept composable updates. Column `cell` hooks 
 | `getRowSelectionCheckboxProps(rowId, options?)` | row `GhostCheckbox`                    | **`aria-label`** merged onto the **focusable checkbox control** (not wrapper-only)                                                                                       |
 | `getHeaderSelectionCheckboxProps(options?)`     | header `GhostCheckbox`                 | **`aria-label`** on the header checkbox input; pair with `headerSelectionState`. Icon-only `<th>` also needs a **column name** (`aria-label` on `<th>` or visible text). |
 | `getRowExpandButtonProps(rowId, options?)`      | expand `button`                        | **`aria-label`** and **`aria-expanded`** on the **button**; `aria-controls` → detail row id; **Space** toggles when focused                                              |
+| `pagination`, `pageCount`, `rowCount`           | `GhostPagination`                      | Effective (clamped) pagination, pager page count, and query-wide row count ([Pagination](#pagination))                                                                   |
+| `setPageIndex(pageIndex)`                       | `GhostPagination` `update:modelValue`  | Commits a page: clamps, writes the `pagination` v-model, one `stateChange` with `manualPagination`                                                                       |
 
 Sort direction on headers is **single-column** in phase one (at most one entry in
 `sorting`).
@@ -914,6 +916,48 @@ function clearFilters(): void {
 - **`rowCount === 0`:** **`pageCount` 1**, **`pageIndex` 1** (query-wide empty).
 - **`rowCount > 0`** with empty **`getRowModel()`:** keep **`pageIndex`** (page-local
   filter on a server page does not coerce page 1).
+- **Which `rowCount`** ([GHO-238](https://linear.app/ghost-vue/issue/GHO-238)):
+  with `manualPagination` it is the `rowCount` prop (the server total for the
+  query), never the loaded page length; otherwise the filtered local row count.
+- **When the clamp runs:** whenever the derived `pageCount` changes (filter
+  shrink, local `data` reference change, server `rowCount` or `pageCount`
+  change). The clamp writes the `pagination` v-model once. With
+  `manualPagination` it also emits **exactly one** `stateChange`
+  (`trigger: 'pagination'`, clamped `query.pagination`) so the consumer fetches
+  the page it now shows; the parent's v-model echo emits nothing more. A
+  `pagination` value restored out of range (URL hydration, first render) is
+  clamped on read only: no write and no `stateChange`.
+
+#### GhostPagination wiring
+
+Co-locate `GhostPagination` in the root's default slot and bind it to the root,
+not to `data.length`. Only the root knows the filtered count, the server
+`rowCount`, the `pageCount` override, and the empty → page 1 rule, and only
+`setPageIndex` emits the server `stateChange`:
+
+```vue
+<GhostDataTable v-model:pagination="pagination" aria-label="Invoices" ...>
+  <template #default="{ pagination: page, pageCount, setPageIndex, ...table }">
+    <GhostTable v-bind="table.tableRootProps"><!-- rows --></GhostTable>
+    <GhostPagination
+      :model-value="page.pageIndex"
+      :page-count="pageCount"
+      aria-label="Invoice pages"
+      @update:model-value="setPageIndex"
+    />
+  </template>
+</GhostDataTable>
+```
+
+- Give the pager its own name (`aria-label`) when the page has more than one
+  `navigation` landmark.
+- `v-model="pagination.pageIndex"` (examples (a) and (a′)) mutates the bound
+  object in place. It is fine for local tables with no filter, but it bypasses
+  `setPageIndex`, so a server table emits no `stateChange` for the click.
+- Executable reference: `examples/data-table/paginated-invoices.vue` (local
+  search clamps the page; zero matches show page 1 of 1). The Playwright spec
+  `tests/e2e/ghost-data-table-pagination.spec.ts` runs axe on it with the pager
+  on several pages and empty (zero violations).
 
 ### Selection
 

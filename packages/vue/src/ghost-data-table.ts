@@ -519,6 +519,27 @@ export interface GhostDataTableSlotProps<TData> {
   ) => DataTableExpandButtonProps
   /** Same id set as `headerSelectionState`; accepts the checkbox's next value. */
   toggleAllRowsSelected: (value?: boolean) => void
+  /**
+   * Effective pagination: `pageIndex` is already clamped to `[1, pageCount]`.
+   * Bind `pagination.pageIndex` to `GhostPagination`'s `modelValue`.
+   */
+  pagination: DataTablePaginationState
+  /**
+   * Server `rowCount` with `manualPagination`; otherwise the filtered row
+   * count. Use it for "N results" text next to the pager.
+   */
+  rowCount: number
+  /**
+   * Pages for `GhostPagination`'s `pageCount`: the override, or
+   * `max(1, ceil(rowCount / pageSize))`; always `1` when `rowCount` is `0`.
+   */
+  pageCount: number
+  /**
+   * Commits a page from `GhostPagination`'s `update:modelValue`. Clamps to
+   * `pageCount`, updates the `pagination` v-model, and emits one
+   * `stateChange` with `manualPagination`.
+   */
+  setPageIndex: (pageIndex: number) => void
 }
 
 /** Methods exposed on a `GhostDataTable` template ref. */

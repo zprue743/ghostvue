@@ -273,7 +273,8 @@
     "requiredAriaAttributes": []
   },
   "examples": [
-    "data-table/full-invoices"
+    "data-table/full-invoices",
+    "data-table/paginated-invoices"
   ],
   "spec": {
     "path": "docs/components/data-table-spec.md",
