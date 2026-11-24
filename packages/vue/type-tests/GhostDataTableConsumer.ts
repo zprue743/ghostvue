@@ -2,11 +2,13 @@ import { ref } from 'vue'
 
 import {
   useGhostDataTable,
+  useGhostDataTableServerRequest,
   type DataTableCellContext,
   type DataTableColumnDef,
   type DataTableRowId,
   type DataTableStateChangePayload,
   type UseGhostDataTableReturn,
+  type UseGhostDataTableServerRequestReturn,
 } from '../src'
 
 interface Invoice {
@@ -80,6 +82,25 @@ useGhostDataTable({
   manualPagination: manualFlag,
   rowCount: 250,
 })
+
+// Server request guard pairs with table-minted ids only (spec Async behavior).
+const serverRequest: UseGhostDataTableServerRequestReturn =
+  useGhostDataTableServerRequest()
+useGhostDataTable({
+  data,
+  columns,
+  getRowId: (row) => row.id,
+  manualPagination: true,
+  manualFiltering: true,
+  rowCount: 250,
+  onStateChange: ({ requestId }) => {
+    serverRequest.begin(requestId)
+    const current: boolean = serverRequest.isLatest(requestId)
+    void current
+  },
+})
+// @ts-expect-error requestId is the numeric id from stateChange, not a string
+serverRequest.begin('request-1')
 
 void badColumn
 void typedValue

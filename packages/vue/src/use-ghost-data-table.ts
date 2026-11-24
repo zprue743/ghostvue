@@ -18,6 +18,7 @@ import type {
   DataTableSortDirection,
   UseGhostDataTableOptions,
   UseGhostDataTableReturn,
+  UseGhostDataTableServerRequestReturn,
 } from './ghost-data-table'
 import { useControllableState } from './use-controllable-state'
 
@@ -531,5 +532,54 @@ export function useGhostDataTable<TData>(
     isRowExpanded,
     toggleRowExpanded,
     retry,
+  }
+}
+
+/**
+ * Stale-response guard for server-mode DataTable fetches. Pair it with the
+ * `requestId` that `stateChange` (and `retry()`) mints:
+ *
+ * ```ts
+ * const request = useGhostDataTableServerRequest()
+ * async function onStateChange({ requestId, query }: DataTableStateChangePayload) {
+ *   request.begin(requestId)
+ *   loading.value = true
+ *   try {
+ *     const page = await fetchInvoices(query)
+ *     if (!request.isLatest(requestId)) return
+ *     data.value = page.rows
+ *     rowCount.value = page.total
+ *     error.value = undefined
+ *   } catch (cause) {
+ *     if (request.isLatest(requestId)) error.value = cause
+ *   } finally {
+ *     if (request.isLatest(requestId)) loading.value = false
+ *   }
+ * }
+ * ```
+ *
+ * Ordering is decided by `requestId`, never by which response resolves first,
+ * so out-of-order responses and a stale `finally` cannot overwrite rows,
+ * totals, error, or `loading` that belong to a newer request.
+ *
+ * Use one guard per table instance, created next to it. Ids are only
+ * monotonic within one `useGhostDataTable` call: a remounted table restarts at
+ * 1, so `begin` records the id as given (a running max would reject every
+ * request from the new instance). The guard holds a plain number (no
+ * reactivity, no lifecycle), so it works outside `setup` and needs no cleanup.
+ *
+ * Same shape as `useGhostComboboxAsyncSearch` (ADR 0014). It is a separate
+ * function rather than a re-export so the DataTable entry does not import the
+ * combobox module and each contract can evolve with its own component.
+ */
+export function useGhostDataTableServerRequest(): UseGhostDataTableServerRequestReturn {
+  let latest = 0
+  return {
+    begin(requestId: number): void {
+      latest = requestId
+    },
+    isLatest(requestId: number): boolean {
+      return requestId === latest
+    },
   }
 }
