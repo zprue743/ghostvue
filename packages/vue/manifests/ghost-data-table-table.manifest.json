@@ -1,0 +1,42 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "generated",
+  "name": "GhostDataTableTable",
+  "package": "@ghostvue/vue",
+  "status": "experimental",
+  "description": "Default renderer for GhostDataTable. Place it inside the root to render a native GhostTable with a header row, sort buttons for sortable columns, and one body row per rendered row. Each column id is an optional cell slot, #<columnId>=\"{ row, rowId, rowIndex, column, value, getValue }\"; with a columns array from defineDataTableColumns, value is typed per column.",
+  "props": [
+    {
+      "name": "columns",
+      "type": "TColumns",
+      "required": false,
+      "description": "Columns to render, in order, matched to the parent `GhostDataTable`\ncolumns by `id` (ids the parent does not have are skipped). Defaults to\nevery parent column. Pass the same array you give `GhostDataTable` to\ntype the `#<columnId>` slots.",
+      "deprecated": false
+    }
+  ],
+  "models": [],
+  "events": [],
+  "slots": [],
+  "exposed": [],
+  "styling": {
+    "parts": [],
+    "states": [],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "table",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/table/",
+    "keyboard": {
+      "Tab": "Moves between the header sort buttons and any focusable cell content in DOM order. No grid or roving cell focus.",
+      "Enter": "Activates a focused sort button.",
+      "Space": "Activates a focused sort button."
+    },
+    "requiredAriaAttributes": []
+  },
+  "examples": [],
+  "spec": {
+    "path": "docs/components/data-table-spec.md",
+    "status": "approved",
+    "evidence": "Zac approved in chat on 2026-11-23; recorded in PR #272."
+  }
+}

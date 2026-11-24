@@ -223,3 +223,51 @@ test.describe('GhostDataTable @component:GhostDataTable', () => {
     await expect(row).toBeChecked()
   })
 })
+
+test.describe('GhostDataTableTable @component:GhostDataTableTable', () => {
+  test('renders basic example (a) and sorts from the keyboard with zero axe violations', async ({
+    page,
+    playgroundUrl,
+  }) => {
+    await page.goto(
+      `${playgroundUrl}/examples.html?id=${encodeURIComponent('data-table/basic-invoices')}`,
+    )
+    const table = page.getByRole('table', { name: 'Invoices' })
+    await expect(table).toBeVisible()
+    await expectNoAxeViolations(page)
+
+    const customers = table.locator('tbody td:nth-child(1)')
+    const amounts = table.locator('tbody td:nth-child(2)')
+    await expect(table.getByRole('columnheader')).toHaveText([
+      'Customer',
+      'Amount',
+    ])
+    await expect(amounts).toHaveText(['1200.00 USD', '980.50 USD'])
+
+    // Enter and Space both activate the native sort button; focus stays on
+    // it and aria-sort moves on the <th>, not the button.
+    const amountSort = table.getByRole('button', { name: 'Amount' })
+    const amountHeader = table.getByRole('columnheader', { name: 'Amount' })
+    await amountSort.focus()
+    await page.keyboard.press('Enter')
+    await expect(amountSort).toBeFocused()
+    await expect(amountHeader).toHaveAttribute('aria-sort', 'ascending')
+    await expect(amountSort).not.toHaveAttribute('aria-sort', /.*/)
+    await expect(customers).toHaveText(['Globex', 'ACME Corp'])
+
+    await page.keyboard.press('Space')
+    await expect(amountSort).toBeFocused()
+    await expect(amountHeader).toHaveAttribute('aria-sort', 'descending')
+    await expect(customers).toHaveText(['ACME Corp', 'Globex'])
+
+    // Tab moves between the sort buttons in DOM order (no grid focus model).
+    const customerSort = table.getByRole('button', { name: 'Customer' })
+    await customerSort.focus()
+    await page.keyboard.press('Tab')
+    await expect(amountSort).toBeFocused()
+    await expect(
+      page.getByRole('navigation', { name: 'Pagination' }),
+    ).toBeVisible()
+    await expectNoAxeViolations(page)
+  })
+})

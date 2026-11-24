@@ -273,6 +273,7 @@
     "requiredAriaAttributes": []
   },
   "examples": [
+    "data-table/basic-invoices",
     "data-table/full-invoices",
     "data-table/paginated-invoices"
   ],

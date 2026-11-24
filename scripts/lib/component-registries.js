@@ -613,6 +613,14 @@ function docsSlugForManifest(stem, documentedSlugs) {
 }
 
 /**
+ * Components whose slot names come from consumer data (`GhostDataTableTable`
+ * has one optional slot per column id), so no manifest can list them. Their
+ * index entry records `slots: null`, `no-unknown-slots` stays silent for them,
+ * and vue-tsc checks the slot names against the typed column array instead.
+ */
+const DATA_DRIVEN_SLOT_COMPONENTS = new Set(['GhostDataTableTable'])
+
+/**
  * Static usage contract for `@ghostvue/eslint-plugin`: prop, v-model, and slot
  * names per package and component, plus the docs page slug.
  *
@@ -664,11 +672,13 @@ async function buildEslintComponentIndex(repositoryRoot, families) {
             (source?.models ?? []).map((model) => model.prop),
           ),
         ),
-        slots: sortedUnique(
-          sources.flatMap((source) =>
-            (source?.slots ?? []).map((slot) => slot.name),
-          ),
-        ),
+        slots: DATA_DRIVEN_SLOT_COMPONENTS.has(name)
+          ? null
+          : sortedUnique(
+              sources.flatMap((source) =>
+                (source?.slots ?? []).map((slot) => slot.name),
+              ),
+            ),
         docs: docsSlugForManifest(own.stem, documentedSlugs),
       }
     }

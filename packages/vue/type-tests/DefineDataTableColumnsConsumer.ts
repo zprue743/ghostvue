@@ -107,10 +107,12 @@ const table = useGhostDataTable({
   getRowId: (row) => row.id,
 })
 
-// Columns for another row type are rejected.
+// Columns for another row type are rejected. The typed column now carries its
+// literal accessor key, so TypeScript infers the row type from it and reports
+// the mismatch on `data` instead of on `columns`.
 useGhostDataTable({
-  data,
   // @ts-expect-error RenamedInvoice columns do not fit Invoice rows
+  data,
   columns: [renamed.accessorKey('total', {})],
   getRowId: (row) => row.id,
 })

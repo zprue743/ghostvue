@@ -213,6 +213,7 @@
   "@ghostvue/themes:GhostTooltip": 1700,
   "@ghostvue/themes:GhostTree": 4500,
   "@ghostvue/vue:GhostDataTable": 4900,
+  "@ghostvue/vue:GhostDataTableTable": 2100,
   "@ghostvue/vue:GhostDatePicker": 8500,
   "@ghostvue/themes:GhostDatePicker": 8800,
   "@ghostvue/vue:GhostDatePickerCalendar": 10400,

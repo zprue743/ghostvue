@@ -3,13 +3,21 @@
   "slug": "data-table",
   "vueBarrel": [
     "export { default as GhostDataTable } from './GhostDataTable.vue'",
+    "export { default as GhostDataTableTable } from './GhostDataTableTable.vue'",
     "export {\n  getDataTableHeaderCellProps,\n  getDataTableHeaderSelectionCheckboxProps,\n  getDataTableRowExpandButtonProps,\n  getDataTableRowSelectionCheckboxProps,\n  getDataTableSortButtonProps,\n} from './data-table-interaction'",
     "export {\n  useGhostDataTable,\n  useGhostDataTableServerRequest,\n} from './use-ghost-data-table'",
     "export { defineDataTableColumns } from './define-data-table-columns'",
-    "export type {\n  DataTableAccessorFnColumn,\n  DataTableAccessorKeyColumn,\n  DataTableColumnHelper,\n  DataTableTypedCellContext,\n} from './define-data-table-columns'",
-    "export type {\n  DataTableCellContext,\n  DataTableColumnDef,\n  DataTableColumnFilter,\n  DataTableColumnSort,\n  DataTableControlLabelOptions,\n  DataTableDetailRowProps,\n  DataTableExpandButtonOptions,\n  DataTableExpandButtonProps,\n  DataTableGetRowId,\n  DataTableHeader,\n  DataTableHeaderCellProps,\n  DataTableHeaderSelectionState,\n  DataTableInteractionState,\n  DataTablePaginationState,\n  DataTableQueryState,\n  DataTableRow,\n  DataTableRowId,\n  DataTableRowProps,\n  DataTableSelectionCheckboxProps,\n  DataTableSlotRow,\n  DataTableSortButtonProps,\n  DataTableSortDirection,\n  DataTableStateChangePayload,\n  DataTableTableRootProps,\n  GhostDataTableExposed,\n  GhostDataTableProps,\n  GhostDataTableSlotProps,\n  UseGhostDataTableBaseOptions,\n  UseGhostDataTableLocalPaginationOptions,\n  UseGhostDataTableManualPaginationOptions,\n  UseGhostDataTableOptions,\n  UseGhostDataTableReturn,\n  UseGhostDataTableServerRequestReturn,\n} from './ghost-data-table'"
+    "export type {\n  DataTableAccessorFnColumn,\n  DataTableAccessorFnColumnDef,\n  DataTableAccessorKeyColumn,\n  DataTableAccessorKeyColumnDef,\n  DataTableColumnHelper,\n  DataTableTypedCellContext,\n} from './define-data-table-columns'",
+    "export type {\n  DataTableCellContext,\n  DataTableColumnDef,\n  DataTableColumnFilter,\n  DataTableColumnSort,\n  DataTableControlLabelOptions,\n  DataTableDetailRowProps,\n  DataTableExpandButtonOptions,\n  DataTableExpandButtonProps,\n  DataTableGetRowId,\n  DataTableHeader,\n  DataTableHeaderCellProps,\n  DataTableHeaderSelectionState,\n  DataTableInteractionState,\n  DataTablePaginationState,\n  DataTableQueryState,\n  DataTableRow,\n  DataTableRowId,\n  DataTableRowProps,\n  DataTableSelectionCheckboxProps,\n  DataTableSlotRow,\n  DataTableSortButtonProps,\n  DataTableSortDirection,\n  DataTableStateChangePayload,\n  DataTableTableRootProps,\n  GhostDataTableExposed,\n  GhostDataTableProps,\n  GhostDataTableSlotProps,\n  UseGhostDataTableBaseOptions,\n  UseGhostDataTableLocalPaginationOptions,\n  UseGhostDataTableManualPaginationOptions,\n  UseGhostDataTableOptions,\n  UseGhostDataTableReturn,\n  UseGhostDataTableServerRequestReturn,\n} from './ghost-data-table'",
+    "export type {\n  DataTableColumnRow,\n  DataTableColumnValue,\n  DataTableTableColumnRef,\n  GhostDataTableTableCellSlotProps,\n  GhostDataTableTableProps,\n  GhostDataTableTableSlots,\n} from './ghost-data-table-table'"
   ],
   "examples": [
+    {
+      "id": "data-table/basic-invoices",
+      "title": "Basic table",
+      "description": "GhostDataTableTable renders headers, sort buttons, and rows from typed columns, with a custom currency cell and GhostPagination.",
+      "layer": "headless"
+    },
     {
       "id": "data-table/full-invoices",
       "title": "Full composition",

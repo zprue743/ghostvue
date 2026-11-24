@@ -1,4 +1,6 @@
 <script setup lang="ts" generic="TData">
+import { provide } from 'vue'
+
 import { useDataTableSlotBindings } from './data-table-slot-bindings'
 import type {
   DataTableColumnFilter,
@@ -10,6 +12,7 @@ import type {
   GhostDataTableProps,
   GhostDataTableSlotProps,
 } from './ghost-data-table'
+import { ghostDataTableContextKey } from './ghost-data-table-table'
 import { useGhostDataTable } from './use-ghost-data-table'
 import { useGhostId } from './use-ghost-id'
 
@@ -107,6 +110,12 @@ const slotProps = useDataTableSlotBindings(table, {
   baseId,
   ariaLabel: () => props.ariaLabel,
   ariaLabelledby: () => props.ariaLabelledby,
+})
+
+// Rendering children (GhostDataTableTable) read the same bindings as the
+// default slot, so manual and default rendering cannot drift apart.
+provide(ghostDataTableContextKey, {
+  withBindings: (read) => read(slotProps.value),
 })
 
 defineExpose<GhostDataTableExposed<TData>>({
