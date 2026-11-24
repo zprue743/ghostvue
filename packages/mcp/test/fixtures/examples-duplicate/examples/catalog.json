@@ -1,0 +1,18 @@
+{
+  "examples": [
+    {
+      "id": "button/basic",
+      "title": "Basic",
+      "description": "First copy.",
+      "layer": "headless",
+      "sourcePath": "examples/button/basic.vue"
+    },
+    {
+      "id": "button/basic",
+      "title": "Basic",
+      "description": "Second copy.",
+      "layer": "themed",
+      "sourcePath": "examples/button/basic.vue"
+    }
+  ]
+}

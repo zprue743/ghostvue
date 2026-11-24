@@ -1,0 +1,39 @@
+{
+  "examples": [
+    {
+      "id": "button/basic",
+      "title": "Basic",
+      "description": "Unstyled button.",
+      "layer": "headless",
+      "sourcePath": "examples/button/basic.vue"
+    },
+    {
+      "id": "button/icon-only",
+      "title": "Icon only",
+      "description": "Button with an accessible name and no visible text.",
+      "layer": "headless",
+      "sourcePath": "examples/button/icon-only.vue"
+    },
+    {
+      "id": "button/themed",
+      "title": "Themed",
+      "description": "Default theme button.",
+      "layer": "themed",
+      "sourcePath": "examples/button/themed.vue"
+    },
+    {
+      "id": "button-group/basic",
+      "title": "Basic group",
+      "description": "Shares the button prefix but is another family.",
+      "layer": "headless",
+      "sourcePath": "examples/button-group/basic.vue"
+    },
+    {
+      "id": "dialog/basic",
+      "title": "Basic dialog",
+      "description": "Modal dialog.",
+      "layer": "headless",
+      "sourcePath": "examples/dialog/basic.vue"
+    }
+  ]
+}

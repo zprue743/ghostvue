@@ -20,6 +20,8 @@ export default tseslint.config(
       '**/.declaration-build/**',
       '**/.cache/declaration-build/**',
       'packages/vue/type-tests-negative/**',
+      // Opaque bytes the MCP get_examples tests serve as text; never compiled.
+      'packages/mcp/test/fixtures/**/*.vue',
       '**/.nuxt/**',
       '**/.output/**',
     ],

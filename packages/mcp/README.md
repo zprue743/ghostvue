@@ -8,8 +8,8 @@ time. Host setup lives in the
 [GHO-17 plan](../../docs/plans/gho-17-mcp-first-release.md).
 
 > The server is in progress: `ghostvue-mcp` serves MCP over stdio from the
-> offline asset bundle and registers `get_tokens` and `search_docs`; the other
-> discovery tools are not registered yet.
+> offline asset bundle and registers `get_tokens`, `search_docs`, and
+> `get_examples`; the other discovery tools are not registered yet.
 
 ## Published contents
 

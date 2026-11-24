@@ -2,7 +2,7 @@
 
 GhostVue exposes a **local, read-only** [Model Context Protocol](https://modelcontextprotocol.io/) server so agents can discover components, manifests, executable examples, docs, and design tokens without the Vue runtime.
 
-**Status:** In progress — the private `packages/mcp` package runs a stdio MCP server (`tools` capability, version stamp, error envelope) over the offline asset bundle its build produces. It serves `get_tokens` and `search_docs`; the other discovery tools are not registered yet. Without the bundle, `ghostvue-mcp` prints a diagnostic to stderr and exits 1 ([GHO-17](../plans/gho-17-mcp-first-release.md), [ADR 0015](../adr/0015-mcp-server-first-release.md) accepted).
+**Status:** In progress — the private `packages/mcp` package runs a stdio MCP server (`tools` capability, version stamp, error envelope) over the offline asset bundle its build produces. It serves `get_tokens`, `search_docs`, and `get_examples`; the other discovery tools are not registered yet. Without the bundle, `ghostvue-mcp` prints a diagnostic to stderr and exits 1 ([GHO-17](../plans/gho-17-mcp-first-release.md), [ADR 0015](../adr/0015-mcp-server-first-release.md) accepted).
 
 ## What ships in v1
 
@@ -143,6 +143,44 @@ characters around the first match in the body, with `…` where text was cut. A
 page that matches only in its title or description shows the description or
 the start of the body. A query with no usable words returns no hits.
 
+## `get_examples`
+
+Reads the bundled example catalog (`examples/registry.ts` metadata) and the
+bundled `.vue` sources. Example files are returned as text and never run
+([plan §5.3](../plans/gho-17-mcp-first-release.md#53-get_examples)).
+
+| Input           | Default | Meaning                                                                               |
+| --------------- | ------- | ------------------------------------------------------------------------------------- |
+| `id`            | —       | One example, e.g. `button/basic`. Unknown id: `NOT_FOUND`.                            |
+| `component`     | —       | Every example whose id starts with `component/`, e.g. `button`. No match: empty page. |
+| `layer`         | both    | `headless` or `themed`.                                                               |
+| `includeSource` | `true`  | `false` drops `source`.                                                               |
+| `limit`         | `50`    | 1–100 examples per page.                                                              |
+| `cursor`        | —       | `nextCursor` from the previous page. A cursor from other filters is `INVALID_INPUT`.  |
+
+`id` and `component` are mutually exclusive. `component` is the `examples/`
+directory name (`button`), not the manifest family (`ghost-button`); a
+manifest's `examples` array lists the exact ids. With neither, the result is a
+metadata-only catalog page with no `source`, whatever `includeSource` says.
+`id` combined with a `layer` the example does not have is `NOT_FOUND`.
+
+```json
+{
+  "schemaVersion": "1.0.0",
+  "ghostvue": { "version": "0.1.0", "assetBundleId": "sha256:…", "…": "…" },
+  "examples": [
+    {
+      "id": "button/basic",
+      "title": "…",
+      "description": "…",
+      "layer": "headless",
+      "sourcePath": "examples/button/basic.vue",
+      "source": "<script setup lang=\"ts\">…</template>\n"
+    }
+  ],
+  "nextCursor": null
+}
+```
 ## Errors
 
 A failed tool call is an MCP tool result with `isError: true`. Its first text
