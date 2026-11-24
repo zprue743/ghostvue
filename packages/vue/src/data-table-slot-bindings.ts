@@ -202,6 +202,17 @@ export function useDataTableSlotBindings<TData>(
     table.toggleAllRowsSelected(value)
   }
 
+  /*
+   * Pager bindings come from the composable, not from `data.length`: only
+   * the composable knows the filtered count, the server `rowCount`, the
+   * `pageCount` override, and the empty → page 1 rule. Writing through
+   * `setPageIndex` (rather than mutating the bound pagination object) is what
+   * emits the server `stateChange`.
+   */
+  function setPageIndex(pageIndex: number): void {
+    table.setPageIndex(pageIndex)
+  }
+
   return computed(() => ({
     tableRootProps: tableRootProps.value,
     headers: headers.value,
@@ -215,5 +226,9 @@ export function useDataTableSlotBindings<TData>(
     getHeaderSelectionCheckboxProps,
     getRowExpandButtonProps,
     toggleAllRowsSelected,
+    pagination: table.pagination.value,
+    rowCount: table.rowCount.value,
+    pageCount: table.pageCount.value,
+    setPageIndex,
   }))
 }
