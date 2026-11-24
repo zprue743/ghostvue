@@ -32,6 +32,12 @@ export {
   type StampSources,
 } from './identity.js'
 export {
+  createSearchDocsTool,
+  docsPagesFile,
+  searchDocsTool,
+  type SearchDocsToolOptions,
+} from './search-docs.js'
+export {
   createGhostvueServer,
   serverName,
   serveStdio,
