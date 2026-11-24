@@ -23,6 +23,9 @@ stacks when it gets narrow.
 <GhostExample id="select/basic" />
 
 The trigger is a `role="combobox"` control; options live in a portaled listbox.
+The headless layer paints nothing, so the example styles its own trigger
+chevron, list surface, check mark, and highlighted, selected and disabled
+option states from `aria-selected`, `aria-disabled` and focus.
 
 ## Field integration
 
