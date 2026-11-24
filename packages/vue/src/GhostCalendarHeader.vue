@@ -28,12 +28,13 @@ const element = computed(() => resolveCalendarHtmlElement(hostRef.value))
 
 const headerAttrs = computed(() => ({
   role: 'group',
-  class: 'ghost-calendar-header',
   'data-part': 'header',
   'data-ghost-calendar': '',
   'aria-label':
     (attrs['aria-label'] as string | undefined) ?? 'Calendar navigation',
   ...attrs,
+  // Merge rather than replace so a consumer class keeps the part hook.
+  class: ['ghost-calendar-header', attrs.class],
 }))
 
 defineExpose<GhostCalendarPartExposed>({

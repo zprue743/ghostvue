@@ -34,7 +34,7 @@ const buttonAttrs = computed(() => {
   return {
     ...rest,
     type: isNativeButton.value ? (attrs['type'] ?? 'button') : attrs['type'],
-    class: 'ghost-calendar-prev',
+    class: ['ghost-calendar-prev', attrs.class],
     'data-part': 'prev',
     'data-ghost-calendar': '',
     'aria-label':

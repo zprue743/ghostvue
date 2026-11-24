@@ -370,8 +370,7 @@ export function useGhostCalendar(
     if (weekStartsOn.value === undefined) {
       return undefined
     }
-    const weekStart = resolveWeekStartName(weekStartsOn.value)
-    return weekStart as Parameters<typeof startOfWeek>[2]
+    return resolveWeekStartName(weekStartsOn.value)
   }
 
   function focusWeekBoundary(end = false): void {

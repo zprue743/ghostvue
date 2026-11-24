@@ -242,7 +242,8 @@ Follows [WAI-ARIA APG Date Picker Dialog](https://www.w3.org/WAI/ARIA/apg/patter
 - Date row: `role="row"`; each date: `role="gridcell"` containing a focusable
   control (default `button`) with `aria-label` = full spoken date, `aria-selected`
   when selected, and `aria-disabled` when unavailable or outside-month (native
-  `disabled` only for min/max/root-disabled dates).
+  `disabled` only for min/max/root-disabled dates). The `today` date also
+  carries `aria-current="date"`.
 - Visually hidden live region (`aria-live="polite"`) on the root announces month
   changes when `visibleMonth` updates from keyboard or buttons.
 - Stable `data-part`, `data-ghost-calendar`, `.ghost-calendar-*` classes.
@@ -281,7 +282,12 @@ last day of February).
   `ghost-calendar-prev`, `ghost-calendar-next`, `ghost-calendar-grid`,
   `ghost-calendar-cell` classes.
 - `data-state`, `data-outside-month`, `data-today` on cells.
-- Themed CSS uses existing `--ghost-*` tokens only.
+- Consumer `class` on parts is merged with the part class, never replaced.
+- Themed CSS uses existing `--ghost-*` tokens only. The themed root renders a
+  `.ghost-themed-scope` container so every part (weekday header, week rows,
+  cells) matches the recipe; week rows and the weekday header share one
+  7-column template. Themed previous/next buttons default to a decorative CSS
+  chevron and keep their `aria-label` as the accessible name.
 
 ## Environment behavior
 

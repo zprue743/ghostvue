@@ -8,7 +8,13 @@ import {
   type GhostCalendarValue,
 } from '@ghostvue/vue'
 
-/** Themed {@link GhostCalendar} root wrapper. */
+/**
+ * Themed {@link GhostCalendar} root wrapper. The headless root renders no
+ * element, so this wrapper adds a block `.ghost-themed-scope` container that
+ * activates the calendar recipe for every part, including the weekday header,
+ * week rows, and cells the grid renders itself. Consumer `class` and `style`
+ * land on that container; other attributes and props reach the headless root.
+ */
 export const GhostCalendar = defineComponent({
   name: 'GhostCalendar',
   inheritAttrs: false,
@@ -57,8 +63,9 @@ export const GhostCalendar = defineComponent({
   emits: ['update:modelValue', 'update:visibleMonth', 'select'],
   setup(props, { attrs, emit, slots }) {
     return () => {
+      const { class: scopeClass, style: scopeStyle, ...rootAttrs } = attrs
       const calendarProps: Record<string, unknown> = {
-        ...attrs,
+        ...rootAttrs,
         selectionMode: props.selectionMode,
         locale: props.locale,
         disabled: props.disabled,
@@ -96,7 +103,11 @@ export const GhostCalendar = defineComponent({
       if (props.today !== undefined) {
         calendarProps['today'] = props.today
       }
-      return h(GhostUnstyledCalendar, calendarProps, slots)
+      return h(
+        'div',
+        { class: ['ghost-themed-scope', scopeClass], style: scopeStyle },
+        [h(GhostUnstyledCalendar, calendarProps, slots)],
+      )
     }
   },
 })

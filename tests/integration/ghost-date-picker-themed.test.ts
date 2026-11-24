@@ -68,6 +68,13 @@ describe('themed GhostDatePicker', () => {
     expect(
       content?.querySelector('.ghost-themed-scope [role="grid"]'),
     ).not.toBeNull()
+    // The default calendar uses themed nav parts: chevron icons, same names.
+    const prev = content?.querySelector('[data-part="prev"]')
+    expect(prev?.getAttribute('aria-label')).toBe('Previous month')
+    expect(prev?.hasAttribute('data-themed')).toBe(true)
+    expect(
+      prev?.querySelector('[data-part="icon"][aria-hidden="true"]'),
+    ).not.toBeNull()
 
     document
       .querySelector<HTMLElement>('[data-ghost-calendar-date="2026-11-19"]')

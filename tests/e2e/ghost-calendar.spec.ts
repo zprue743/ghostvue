@@ -234,4 +234,106 @@ test.describe('GhostCalendar', { tag }, () => {
       await playground.close()
     }
   })
+
+  for (const width of [390, 1280]) {
+    test(`themed grid is 7 aligned columns at ${String(width)}px`, async ({
+      page,
+    }) => {
+      await page.setViewportSize({ width, height: 900 })
+      const { playground, grid, day } = await openExample(
+        page,
+        'calendar/themed',
+      )
+      try {
+        const layout = await grid.evaluate((element) => {
+          const box = (node: Element) => node.getBoundingClientRect()
+          const rows = [...element.querySelectorAll('[role="row"]')]
+          return rows.map((row) =>
+            [...row.children].map((cell) => {
+              const rect = box(cell)
+              return {
+                center: Math.round(rect.left + rect.width / 2),
+                top: Math.round(rect.top),
+                width: Math.round(rect.width),
+                text: cell.textContent.trim(),
+              }
+            }),
+          )
+        })
+        const [header, ...weeks] = layout
+        expect(header?.map((cell) => cell.text)).toEqual([
+          'Sun',
+          'Mon',
+          'Tue',
+          'Wed',
+          'Thu',
+          'Fri',
+          'Sat',
+        ])
+        // June 1, 2024 is a Saturday; June 30 starts the sixth week.
+        expect(weeks).toHaveLength(6)
+        expect(weeks[0]?.map((cell) => cell.text)).toEqual([
+          '26',
+          '27',
+          '28',
+          '29',
+          '30',
+          '31',
+          '1',
+        ])
+        const widths = new Set(weeks.flat().map((cell) => cell.width))
+        expect(widths.size).toBe(1)
+        for (const week of weeks) {
+          expect(week).toHaveLength(7)
+          // One visual line per week: no wrapping.
+          expect(new Set(week.map((cell) => cell.top)).size).toBe(1)
+          week.forEach((cell, column) => {
+            const label = header?.[column]
+            expect(Math.abs(cell.center - (label?.center ?? 0))).toBeLessThan(2)
+          })
+        }
+
+        await expect(day('2024-05-26')).toHaveAttribute(
+          'data-outside-month',
+          '',
+        )
+        await expect(day('2024-06-18')).toHaveAttribute('aria-current', 'date')
+        await expect(
+          page.getByRole('button', { name: 'Previous month' }),
+        ).toBeVisible()
+        await expect(
+          page.getByRole('button', { name: 'Next month' }),
+        ).toBeVisible()
+        await page.getByRole('button', { name: 'Next month' }).click()
+        await expect(page.getByRole('heading', { level: 2 })).toContainText(
+          'July 2024',
+        )
+
+        const results = await new AxeBuilder({ page }).analyze()
+        expect(results.violations).toEqual([])
+      } finally {
+        await playground.close()
+      }
+    })
+  }
+
+  test('Monday-first locales start the grid on Monday', async ({ page }) => {
+    const { playground, grid } = await openExample(page, 'calendar/locale')
+    try {
+      const firstWeek = grid
+        .getByRole('row')
+        .nth(1)
+        .locator('[data-ghost-calendar-date]')
+      await expect(firstWeek.first()).toHaveAttribute(
+        'data-ghost-calendar-date',
+        '2024-05-27',
+      )
+      await expect(firstWeek.nth(5)).toHaveAttribute(
+        'data-ghost-calendar-date',
+        '2024-06-01',
+      )
+    } finally {
+      await playground.close()
+    }
+  })
 })

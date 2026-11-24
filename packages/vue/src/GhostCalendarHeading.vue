@@ -63,7 +63,7 @@ const headingAttrs = computed(() => {
   return {
     ...rest,
     id: headingId.value,
-    class: 'ghost-calendar-heading',
+    class: ['ghost-calendar-heading', attrs.class],
     'data-part': 'heading',
     'data-ghost-calendar': '',
     'aria-live': 'polite',

@@ -12,9 +12,22 @@ objects from `@internationalized/date` (shipped as a runtime dependency of
 
 <GhostExample id="calendar/themed" />
 
-Themed parts set `data-themed` so calendar CSS applies under `.ghost-theme` or
-`.ghost-themed-scope`. Pass `today` when you need deterministic “today” styling
-in SSR, tests, or snapshots.
+The themed `GhostCalendar` renders a `.ghost-themed-scope` container (consumer
+`class` and `style` land on it), so the recipe styles every part without a
+page-level `.ghost-theme`. Week rows and the weekday header share seven
+equal-width columns; leading and trailing days from adjacent months fill the
+first and last weeks in a muted color. Today, selected, range, hover,
+focus-visible, unavailable (struck through), and outside-month dates each have
+a distinct style, including in forced colors. Day cells and navigation buttons
+reach the 44px touch target when the container is wide enough.
+
+Themed `GhostCalendarPrevButton` and `GhostCalendarNextButton` render a
+decorative chevron by default and keep their accessible names
+(`Previous month`, `Next month`); pass slot content to replace the icon. The
+example groups a Today button with the navigation inside
+`GhostCalendarHeader`. Pass `today` when you need deterministic “today”
+styling in SSR, tests, or snapshots. The today cell also carries
+`aria-current="date"`.
 
 ## Basic use
 
@@ -65,7 +78,8 @@ them. Resetting the bound value to `null` clears a pending range start.
 
 <GhostExample id="calendar/locale" />
 
-`locale` drives `Intl` labels; override week layout with `week-starts-on`
+`locale` drives `Intl` labels and the first day of the week (Sunday for
+`en-US`, Monday for `en-GB`); override week layout with `week-starts-on`
 (0 = Sunday).
 
 ## API
