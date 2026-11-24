@@ -112,14 +112,21 @@ describe('bindExampleSourceHtml', () => {
     }
   }, 60_000)
 
+  const ENTITIES: Record<string, string> = {
+    '&lt;': '<',
+    '&gt;': '>',
+    '&quot;': '"',
+    '&#x3C;': '<',
+    '&amp;': '&',
+  }
+
+  // One pass: tags are dropped and entities decoded in the same scan, so a
+  // decoded `<` is never re-read as markup (chained replaces could do that).
   function textOf(html: string): string {
-    return html
-      .replace(/<[^>]*>/g, '')
-      .replace(/&lt;/g, '<')
-      .replace(/&gt;/g, '>')
-      .replace(/&quot;/g, '"')
-      .replace(/&#x3C;/g, '<')
-      .replace(/&amp;/g, '&')
+    return html.replace(
+      /<[^>]*>|&(?:lt|gt|quot|amp|#x3C);/g,
+      (token) => ENTITIES[token] ?? '',
+    )
   }
 
   it('binds the host source as one v-html string with the same wrapper', () => {
