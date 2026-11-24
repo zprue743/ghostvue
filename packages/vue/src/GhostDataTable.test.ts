@@ -162,6 +162,7 @@ describe('GhostDataTable renderless root', () => {
     })
     expect(slot().getRowExpandButtonProps('inv-1')).toEqual({
       type: 'button',
+      id: expect.stringMatching(/-expand-sinv-1$/) as unknown,
       'aria-expanded': 'false',
       disabled: true,
     })
@@ -398,5 +399,170 @@ describe('GhostDataTable renderless root', () => {
     expect(wrapper.get('table').attributes('aria-busy')).toBe('true')
     expect(wrapper.findAll('tbody tr')).toHaveLength(3)
     expect(wrapper.get('tbody td').text()).toBe('ACME Corp')
+  })
+})
+
+describe('GhostDataTable focus on detail collapse', () => {
+  /**
+   * Expand buttons per row and, inside each open detail row, a "Hide" button
+   * that collapses its own row and a "Next" button that opens the next row
+   * (to collapse this one with `allowMultipleExpanded: false`).
+   */
+  function mountFocusFixture(props: Record<string, unknown> = {}) {
+    const globalFilter = ref('')
+    const expandedRowIds = ref<DataTableRowId[]>(['inv-2'])
+    const wrapper = mount(
+      defineComponent({
+        setup() {
+          return () =>
+            h(
+              GhostDataTable<Invoice>,
+              {
+                data: invoices,
+                columns: invoiceColumns,
+                getRowId: (row: Invoice) => row.id,
+                enableRowExpansion: true,
+                globalFilter: globalFilter.value,
+                expandedRowIds: expandedRowIds.value,
+                'onUpdate:expandedRowIds': (next: DataTableRowId[]) => {
+                  expandedRowIds.value = next
+                },
+                ...props,
+              },
+              {
+                default: (slot: GhostDataTableSlotProps<Invoice>) =>
+                  h(
+                    'div',
+                    slot.rows.flatMap((row, index) => [
+                      h(
+                        'button',
+                        {
+                          key: `${String(row.rowId)}-expand`,
+                          ...slot.getRowExpandButtonProps(row.rowId, {
+                            label: `Show details for ${String(row.rowId)}`,
+                          }),
+                          onClick: row.toggleExpanded,
+                        },
+                        'Details',
+                      ),
+                      row.isExpanded
+                        ? h(
+                            'div',
+                            {
+                              key: `${String(row.rowId)}-detail`,
+                              ...row.detailRowProps,
+                            },
+                            [
+                              h(
+                                'button',
+                                {
+                                  type: 'button',
+                                  class: 'hide',
+                                  onClick: row.toggleExpanded,
+                                },
+                                'Hide',
+                              ),
+                              h(
+                                'button',
+                                {
+                                  type: 'button',
+                                  class: 'next',
+                                  onClick: () =>
+                                    slot.rows[index + 1]?.toggleExpanded(),
+                                },
+                                'Next',
+                              ),
+                            ],
+                          )
+                        : null,
+                    ]),
+                  ),
+              },
+            )
+        },
+      }),
+      { attachTo: document.body },
+    )
+    const expandButton = (rowId: string): HTMLElement => {
+      const button = wrapper.find(
+        `button[aria-label="Show details for ${rowId}"]`,
+      )
+      return button.element as HTMLElement
+    }
+    return { wrapper, expandButton, expandedRowIds, globalFilter }
+  }
+
+  async function settle(): Promise<void> {
+    await nextTick()
+    await nextTick()
+  }
+
+  it('moves focus to the expand button when the focused detail row collapses', async () => {
+    const { wrapper, expandButton, expandedRowIds } = mountFocusFixture()
+    const hide = wrapper.get('[data-detail-row] .hide')
+    ;(hide.element as HTMLElement).focus()
+    await hide.trigger('click')
+    await settle()
+    expect(expandedRowIds.value).toEqual([])
+    expect(wrapper.find('[data-detail-row]').exists()).toBe(false)
+    expect(document.activeElement).toBe(expandButton('inv-2'))
+    expect(expandButton('inv-2').getAttribute('aria-expanded')).toBe('false')
+    wrapper.unmount()
+  })
+
+  it('restores focus after a programmatic collapse of the focused detail row', async () => {
+    const { wrapper, expandButton, expandedRowIds } = mountFocusFixture()
+    ;(wrapper.get('[data-detail-row] .next').element as HTMLElement).focus()
+    expandedRowIds.value = []
+    await settle()
+    expect(document.activeElement).toBe(expandButton('inv-2'))
+    wrapper.unmount()
+  })
+
+  it('restores focus when allowMultipleExpanded closes the focused detail row', async () => {
+    const { wrapper, expandButton, expandedRowIds } = mountFocusFixture({
+      allowMultipleExpanded: false,
+    })
+    const next = wrapper.get('[data-detail-row] .next')
+    ;(next.element as HTMLElement).focus()
+    await next.trigger('click')
+    await settle()
+    expect(expandedRowIds.value).toEqual(['inv-3'])
+    expect(document.activeElement).toBe(expandButton('inv-2'))
+    wrapper.unmount()
+  })
+
+  it('leaves focus alone when it is outside the collapsing detail row', async () => {
+    const { wrapper, expandButton } = mountFocusFixture()
+    const inv2 = expandButton('inv-2')
+    inv2.focus()
+    inv2.click()
+    await settle()
+    expect(document.activeElement).toBe(inv2)
+
+    const inv1 = expandButton('inv-1')
+    inv1.click()
+    await settle()
+    // Collapsing inv-1 while focus sits on inv-2's button does not move it.
+    inv2.focus()
+    inv1.click()
+    await settle()
+    expect(document.activeElement).toBe(inv2)
+    wrapper.unmount()
+  })
+
+  it('does not move focus when the row itself leaves the view', async () => {
+    const { wrapper, globalFilter } = mountFocusFixture()
+    const hide = wrapper.get('[data-detail-row] .hide')
+    ;(hide.element as HTMLElement).focus()
+    globalFilter.value = 'acme'
+    await settle()
+    expect(wrapper.find('[data-detail-row]').exists()).toBe(false)
+    expect(
+      wrapper.find('button[aria-label="Show details for inv-2"]').exists(),
+    ).toBe(false)
+    // No expand button left to return to: focus is not moved anywhere.
+    expect(document.activeElement).toBe(document.body)
+    wrapper.unmount()
   })
 })

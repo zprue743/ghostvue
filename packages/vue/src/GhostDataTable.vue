@@ -104,8 +104,6 @@ const baseId = useGhostId('ghost-data-table')
 
 const slotProps = useDataTableSlotBindings(table, {
   columns: () => props.columns,
-  enableRowSelection: () => props.enableRowSelection,
-  enableRowExpansion: () => props.enableRowExpansion,
   baseId,
   ariaLabel: () => props.ariaLabel,
   ariaLabelledby: () => props.ariaLabelledby,

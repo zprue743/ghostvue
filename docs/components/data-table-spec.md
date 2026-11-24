@@ -645,6 +645,20 @@ fixture. Writable `ref` v-models accept composable updates. Column `cell` hooks 
 Sort direction on headers is **single-column** in phase one (at most one entry in
 `sorting`).
 
+**Standalone interaction helpers** ([GHO-236](https://linear.app/ghost-vue/issue/GHO-236)):
+the slot getters above delegate to exported pure functions that take a
+`useGhostDataTable` return as their first argument, for layouts without the
+root: `getDataTableHeaderCellProps(table, columnId)`,
+`getDataTableSortButtonProps(table, columnId, options?)`,
+`getDataTableRowSelectionCheckboxProps(table, rowId, options?)`,
+`getDataTableHeaderSelectionCheckboxProps(table, options?)`, and
+`getDataTableRowExpandButtonProps(table, rowId, options?)` (options add `id`
+and `detailRowId`; the root fills both). They return attributes only, never
+listeners. The root's expand button props carry a generated **`id`**; it is the
+focus-restore target for [focus on collapse](#keyboard-interaction), so keep it
+when spreading. Focus restore belongs to the root; standalone layouts own their
+own focus handling.
+
 **`GhostDataTableTable` slots:** for each column `id`, optional
 `#${columnId}="{ row, rowId, value, getValue, column }"` with **`value` typed**
 when the column came from `defineDataTableColumns`.
