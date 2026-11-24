@@ -110,6 +110,23 @@
     padding: var(--ghost-space-inset-md);
   }
 
+  /* A `0fr` row still resolves to the grid item's minimum contribution, which
+   * always includes padding. Dropping the shell's block padding while closed
+   * lets the row (and the close transition) land on zero instead of a strip
+   * one padding-pair tall that clips the first line of body text (GHO-222). */
+  :where(
+    .ghost-theme
+      .ghost-collapsible-content[data-state='closed']
+      > [data-part='content-inner'],
+    .ghost-themed-scope
+      .ghost-collapsible-content[data-state='closed']
+      > [data-part='content-inner'],
+    .ghost-collapsible-content[data-themed][data-state='closed']
+      > [data-part='content-inner']
+  ) {
+    padding-block: 0;
+  }
+
   /* Themed panels without the animation shell (for example list hosts) keep
    * padding on the root and interpolate height when supported. */
   :where(
@@ -216,6 +233,60 @@
       transition: grid-template-rows var(--ghost-motion-duration-moderate)
         var(--ghost-motion-easing-standard);
     }
+
+    /* The shell's block padding collapses with the row so the panel shrinks
+     * smoothly to zero rather than stopping at the padding height. */
+    :where(
+      .ghost-theme
+        .ghost-collapsible-content:not([data-animation='off'])
+        > [data-part='content-inner'],
+      .ghost-themed-scope
+        .ghost-collapsible-content:not([data-animation='off'])
+        > [data-part='content-inner'],
+      .ghost-collapsible-content[data-themed]:not([data-animation='off'])
+        > [data-part='content-inner']
+    ) {
+      transition: padding-block var(--ghost-motion-duration-moderate)
+        var(--ghost-motion-easing-standard);
+    }
+
+    /* Opening leaves `display: none`, so the padding needs a starting value to
+     * transition from, mirroring the `grid-template-rows` starting style. */
+    @starting-style {
+      :where(
+        .ghost-theme
+          .ghost-collapsible-content[data-state='open']:not(
+            [data-animation='off']
+          )
+          > [data-part='content-inner'],
+        .ghost-themed-scope
+          .ghost-collapsible-content[data-state='open']:not(
+            [data-animation='off']
+          )
+          > [data-part='content-inner'],
+        .ghost-collapsible-content[data-themed][data-state='open']:not(
+            [data-animation='off']
+          )
+          > [data-part='content-inner']
+      ) {
+        padding-block: 0;
+      }
+    }
+  }
+
+  /* Author `display` declarations (the animation shell's `display: grid`)
+   * outrank the user-agent `[hidden] { display: none }` rule, which left closed
+   * panels rendered with their border and clipped body text (GHO-222). Restore
+   * `hidden` explicitly; it must follow every themed `display` rule in this
+   * layer because all of them share zero specificity through `:where()`. The
+   * runtime only sets `hidden` after the close transition ends (or at once when
+   * motion is reduced), so this does not cut the animation short. */
+  :where(
+    .ghost-theme .ghost-collapsible-content[hidden],
+    .ghost-themed-scope .ghost-collapsible-content[hidden],
+    .ghost-collapsible-content[data-themed][hidden]
+  ) {
+    display: none;
   }
 
   /* Opacity alone does not survive forced colors; use the system GrayText. */

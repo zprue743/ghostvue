@@ -59,4 +59,42 @@ test.describe('example visual baselines', { tag: '@visual' }, () => {
       })
     }
   }
+
+  // GHO-222: closed themed panels must collapse to their trigger rows, with no
+  // bordered strip of clipped body text, after a controlled Collapse all.
+  for (const width of [390, 1280]) {
+    test(`accordion/deployment-faq after Collapse all matches ${String(width)}px snapshots in light and dark`, async ({
+      page,
+      playgroundUrl,
+    }) => {
+      await page.setViewportSize({ width, height: 900 })
+      await page.emulateMedia({ reducedMotion: 'reduce' })
+
+      for (const mode of modes) {
+        const preview = await waitForExamplePreview(
+          page,
+          playgroundUrl,
+          'accordion/deployment-faq',
+          { mode },
+        )
+        await page.evaluate(() => document.fonts.ready)
+        await preview.getByRole('button', { name: 'Collapse all' }).click()
+        for (const content of await preview
+          .locator('[data-part="content"]')
+          .all()) {
+          await expect(content).toBeHidden()
+        }
+        // Keep the activated button's focus ring out of the baseline.
+        await page.evaluate(() => {
+          if (document.activeElement instanceof HTMLElement) {
+            document.activeElement.blur()
+          }
+        })
+
+        await expect(preview).toHaveScreenshot(
+          `accordion-deployment-faq-collapsed-${String(width)}-${mode}.png`,
+        )
+      }
+    })
+  }
 })
