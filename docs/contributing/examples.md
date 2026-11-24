@@ -42,6 +42,14 @@ renders it in a collapsible **Code** disclosure that never remounts the live
 demo. Do not paste a second copy or a sibling `<<<` snippet into the markdown;
 `llms-full.txt` gets exactly one `vue` fence per example.
 
+The highlighted snippet reaches the slot as one `v-html` string on its
+`language-*` wrapper, not as template markup. Vue never stringifies static
+markup inside a component slot, so markup there compiles to one vnode call
+per Shiki token; with many large examples that ran the docs build out of
+heap. `bindExampleSourceHtml` in
+`apps/docs/.vitepress/expand-example-snippets.ts` does this, and local search
+still renders the markup so example code stays indexed.
+
 `GhostExample` is a thin id adapter over the docs-only `DemoPreview` frame
 (`apps/docs/.vitepress/theme/DemoPreview.vue`, styles in `demo-preview.css`).
 The frame renders the title, layer badge, description, toolbar, optional
@@ -165,6 +173,10 @@ These constraints apply to every example the docs frame renders:
   (`var(--ghost-elevation-3-bg, Canvas)`) so the copied source also works
   without a theme, and repaint the highlight with `Highlight` under
   `forced-colors`. `tests/e2e/docs-headless-overlays.spec.ts` checks each one.
+  The headless date picker examples follow the same rule for their calendar
+  surface and month grid. They share one `date-picker-demo__*` block, kept
+  identical by `tests/integration/date-picker-examples-styles.test.ts` and
+  checked in the docs by `tests/e2e/docs-date-picker-examples.spec.ts`.
 
 ## Manifests
 
