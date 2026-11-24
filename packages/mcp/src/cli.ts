@@ -8,6 +8,7 @@ import {
   packageStampSources,
   type StampSources,
 } from './identity.js'
+import { searchDocsTool } from './search-docs.js'
 import { serveStdio } from './server.js'
 import { type GhostvueTool } from './tool.js'
 
@@ -16,10 +17,13 @@ export const binName = 'ghostvue-mcp'
 
 /**
  * Tools the published bin serves. The remaining discovery tools (GHO-228 to
- * GHO-230: `list_components`, `get_component`, `get_examples`, `search_docs`)
- * register here as they land.
+ * GHO-229: `list_components`, `get_component`, `get_examples`) register here
+ * as they land.
  */
-export const builtInTools: readonly GhostvueTool[] = [getTokensTool]
+export const builtInTools: readonly GhostvueTool[] = [
+  getTokensTool,
+  searchDocsTool,
+]
 
 /** Process streams and overrides for {@link runCli}. */
 export interface CliOptions {

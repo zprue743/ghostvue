@@ -1,0 +1,58 @@
+{
+  "pages": [
+    {
+      "section": "Docs",
+      "title": "Getting started",
+      "link": "/getting-started",
+      "sourcePath": "docs/getting-started.md",
+      "h1": "Getting started",
+      "description": "Install GhostVue and render your first component.",
+      "body": "# Getting started\n\nInstall GhostVue and render your first component.\n\nRun `pnpm add @ghostvue/vue`, then import a component such as a button."
+    },
+    {
+      "section": "Components",
+      "title": "Button",
+      "link": "/components/button",
+      "sourcePath": "docs/components/button.md",
+      "h1": "Button",
+      "description": "Accessible button primitive with native semantics.",
+      "body": "# Button\n\nAccessible button primitive with native semantics.\n\nGhostButton renders a native `<button type=\"button\">` by default.\n\n## Usage\n\nPass `disabled` to remove the button from the tab order. Consumers own every visual detail through parts and themes. Consumers own every visual detail through parts and themes. Consumers own every visual detail through parts and themes. Consumers own every visual detail through parts and themes. \n\n## Keyboard\n\nSpace and Enter activate the button, matching the platform."
+    },
+    {
+      "section": "Components",
+      "title": "Dialog",
+      "link": "/components/dialog",
+      "sourcePath": "docs/components/dialog.md",
+      "h1": "Dialog",
+      "description": "Modal dialog with a focus trap.",
+      "body": "# Dialog\n\nModal dialog with a focus trap.\n\nThe dialog moves focus to its first tabbable element and returns focus to the trigger on close."
+    },
+    {
+      "section": "Theming",
+      "title": "Tokens",
+      "link": "/themes/tokens",
+      "sourcePath": "docs/themes/tokens.md",
+      "h1": "Tokens",
+      "description": "Semantic design tokens such as action.primary.bg.",
+      "body": "# Tokens\n\nSemantic design tokens such as action.primary.bg.\n\nTokens resolve per mode. See `action.primary.bg` for the primary action background.\n\nShared paragraph about roundness."
+    },
+    {
+      "section": "Contribute",
+      "title": "ADR 0003",
+      "link": "/adr/0003-public-api",
+      "sourcePath": "docs/adr/0003-public-api.md",
+      "h1": "ADR 0003",
+      "description": "Decision record.",
+      "body": "# ADR 0003\n\nDecision record.\n\nShared paragraph about roundness."
+    },
+    {
+      "section": "Contribute",
+      "title": "ADR 0002",
+      "link": "/adr/0002-exit-foundation",
+      "sourcePath": "docs/adr/0002-exit-foundation.md",
+      "h1": "ADR 0002",
+      "description": "Decision record.",
+      "body": "# ADR 0002\n\nDecision record.\n\nShared paragraph about roundness."
+    }
+  ]
+}

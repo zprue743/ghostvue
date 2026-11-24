@@ -2,7 +2,7 @@
 
 GhostVue exposes a **local, read-only** [Model Context Protocol](https://modelcontextprotocol.io/) server so agents can discover components, manifests, executable examples, docs, and design tokens without the Vue runtime.
 
-**Status:** In progress — the private `packages/mcp` package runs a stdio MCP server (`tools` capability, version stamp, error envelope) over the offline asset bundle its build produces. It serves `get_tokens`; the other discovery tools are not registered yet. Without the bundle, `ghostvue-mcp` prints a diagnostic to stderr and exits 1 ([GHO-17](../plans/gho-17-mcp-first-release.md), [ADR 0015](../adr/0015-mcp-server-first-release.md) accepted).
+**Status:** In progress — the private `packages/mcp` package runs a stdio MCP server (`tools` capability, version stamp, error envelope) over the offline asset bundle its build produces. It serves `get_tokens` and `search_docs`; the other discovery tools are not registered yet. Without the bundle, `ghostvue-mcp` prints a diagnostic to stderr and exits 1 ([GHO-17](../plans/gho-17-mcp-first-release.md), [ADR 0015](../adr/0015-mcp-server-first-release.md) accepted).
 
 ## What ships in v1
 
@@ -101,6 +101,47 @@ a client can tell when a page was cut short. `cssVar` is omitted for tokens the
 themes build emits no custom property for (primitives, which are inlined into
 semantic tokens). `name` combined with a `tier` the token does not have is
 `NOT_FOUND`.
+
+## `search_docs`
+
+Full-text search over the bundled docs corpus `dist/assets/docs/pages.json`
+([plan §5.4](../plans/gho-17-mcp-first-release.md#54-search_docs)). The corpus
+is exactly the pages linked from the docs sidebar, the same set as
+`llms-full.txt`, minus `docs/plans/*`. Generated TypeDoc output and specs
+outside the sidebar are not searched.
+
+| Input     | Default | Meaning                                                                                                                    |
+| --------- | ------- | -------------------------------------------------------------------------------------------------------------------------- |
+| `query`   | —       | Required. Words separated by whitespace; words shorter than 2 characters are ignored. Blank: `INVALID_INPUT`.              |
+| `limit`   | `10`    | 1–25 hits.                                                                                                                 |
+| `section` | —       | Top-level sidebar label, matched exactly: `Docs`, `Components`, `Theming`, or `Contribute`. Other labels: `INVALID_INPUT`. |
+
+Ranking is a small BM25 over each page's title (weight 3), description
+(weight 2), and body. Matching is on whole, lowercased words: `v-model` and
+`action.primary.bg` stay one word, and there is no stemming or typo tolerance.
+Pages with score 0 are dropped. Equal scores sort by sidebar section order,
+then link path. A `section` filter narrows the list without changing scores.
+
+```json
+{
+  "schemaVersion": "1.0.0",
+  "ghostvue": { "…": "…" },
+  "hits": [
+    {
+      "title": "Button",
+      "link": "/components/button",
+      "section": "Components",
+      "score": 7.912,
+      "snippet": "…Space and Enter activate the button…"
+    }
+  ]
+}
+```
+
+`score` is rounded to 3 decimals. `snippet` is plain text of at most 280
+characters around the first match in the body, with `…` where text was cut. A
+page that matches only in its title or description shows the description or
+the start of the body. A query with no usable words returns no hits.
 
 ## Errors
 

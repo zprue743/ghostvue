@@ -29,7 +29,9 @@ describe('runCli', () => {
   })
 
   it('serves the landed discovery tools', () => {
-    expect(builtInTools.map((tool) => tool.name)).toContain('get_tokens')
+    expect(builtInTools.map((tool) => tool.name)).toEqual(
+      expect.arrayContaining(['get_tokens', 'search_docs']),
+    )
   })
 
   it('serves until stdin ends, then resolves with exit code 0', async () => {
