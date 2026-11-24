@@ -1,0 +1,11 @@
+{
+  "examples": [
+    {
+      "id": "button/basic",
+      "title": "Basic",
+      "description": "Catalog entry whose bundled source is missing.",
+      "layer": "headless",
+      "sourcePath": "examples/button/basic.vue"
+    }
+  ]
+}

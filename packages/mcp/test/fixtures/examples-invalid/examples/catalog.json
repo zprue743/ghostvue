@@ -1,0 +1,11 @@
+{
+  "examples": [
+    {
+      "id": "button/basic",
+      "title": "Basic",
+      "description": "Unstyled button.",
+      "layer": "headless",
+      "sourcePath": "examples/button/other.vue"
+    }
+  ]
+}

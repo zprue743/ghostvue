@@ -1,0 +1,11 @@
+{
+  "examples": [
+    {
+      "id": "../escape",
+      "title": "Escape",
+      "description": "An id that would leave the sources directory.",
+      "layer": "headless",
+      "sourcePath": "examples/../escape.vue"
+    }
+  ]
+}

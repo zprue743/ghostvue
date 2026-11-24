@@ -18,6 +18,12 @@ export {
   type ToolErrorEnvelope,
 } from './errors.js'
 export {
+  createGetExamplesTool,
+  exampleCatalogFile,
+  getExamplesTool,
+  type GetExamplesToolOptions,
+} from './get-examples.js'
+export {
   createGetTokensTool,
   getTokensTool,
   tokenCatalogFile,
