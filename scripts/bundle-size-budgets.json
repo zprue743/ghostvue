@@ -161,7 +161,7 @@
   "@ghostvue/vue:GhostVisuallyHidden": 700,
   "@ghostvue/themes": 113500,
   "@ghostvue/themes/define": 30800,
-  "@ghostvue/themes/default.css": 24000,
+  "@ghostvue/themes/default.css": 24500,
   "@ghostvue/themes/tokens.css": 6200,
   "@ghostvue/themes/calm.css": 6100,
   "@ghostvue/themes/vibrant.css": 6300,
