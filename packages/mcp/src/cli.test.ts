@@ -30,7 +30,13 @@ describe('runCli', () => {
 
   it('serves the landed discovery tools', () => {
     expect(builtInTools.map((tool) => tool.name)).toEqual(
-      expect.arrayContaining(['get_tokens', 'search_docs', 'get_examples']),
+      expect.arrayContaining([
+        'list_components',
+        'get_component',
+        'get_tokens',
+        'search_docs',
+        'get_examples',
+      ]),
     )
   })
 

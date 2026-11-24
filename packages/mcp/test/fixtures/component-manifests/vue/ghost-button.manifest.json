@@ -1,0 +1,33 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "generated",
+  "name": "GhostButton",
+  "package": "@ghostvue/vue",
+  "status": "experimental",
+  "description": "Headless native action control.",
+  "props": [],
+  "models": [],
+  "events": [],
+  "slots": [],
+  "exposed": [],
+  "styling": {
+    "parts": [],
+    "states": [],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "button",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/",
+    "keyboard": {},
+    "requiredAriaAttributes": []
+  },
+  "examples": [
+    "button/basic",
+    "button/composable"
+  ],
+  "spec": {
+    "path": "docs/components/button-spec.md",
+    "status": "approved",
+    "evidence": "Approved in fixture review."
+  }
+}

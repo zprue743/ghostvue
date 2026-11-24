@@ -2,7 +2,7 @@
 
 GhostVue exposes a **local, read-only** [Model Context Protocol](https://modelcontextprotocol.io/) server so agents can discover components, manifests, executable examples, docs, and design tokens without the Vue runtime.
 
-**Status:** In progress — the private `packages/mcp` package runs a stdio MCP server (`tools` capability, version stamp, error envelope) over the offline asset bundle its build produces. It serves `get_tokens`, `search_docs`, and `get_examples`; the other discovery tools are not registered yet. Without the bundle, `ghostvue-mcp` prints a diagnostic to stderr and exits 1 ([GHO-17](../plans/gho-17-mcp-first-release.md), [ADR 0015](../adr/0015-mcp-server-first-release.md) accepted).
+**Status:** In progress — the private `packages/mcp` package runs a stdio MCP server (`tools` capability, version stamp, error envelope) over the offline asset bundle its build produces. It serves `list_components`, `get_component`, `get_tokens`, `search_docs`, and `get_examples`. Without the bundle, `ghostvue-mcp` prints a diagnostic to stderr and exits 1 ([GHO-17](../plans/gho-17-mcp-first-release.md), [ADR 0015](../adr/0015-mcp-server-first-release.md) accepted).
 
 ## What ships in v1
 
@@ -50,6 +50,40 @@ Prefer a global or project-local install when `npx` cold-start latency matters:
 ```
 
 Tool responses use MCP **structured content** (`structuredContent`) with a declared `outputSchema` per tool; each payload includes top-level `schemaVersion` (`1.0.0` for the GhostVue MCP tool contract) and a `ghostvue` stamp (`version`, `assetBundleId`, `manifestSchemaId`). Every tool accepts an optional `expectedGhostvueVersion`; when it differs from the server version, the call fails with `VERSION_MISMATCH` before doing any work. Details: [GHO-17 plan §5](../plans/gho-17-mcp-first-release.md).
+
+## Components
+
+`list_components` returns summary rows; `get_component` returns one full
+manifest. Both identify a component the same way
+([GHO-17 plan §3.2](../plans/gho-17-mcp-first-release.md#32-component-identity)):
+
+- `family` is the manifest filename stem (`ghost-button`), shared by a
+  headless component and its themed wrapper.
+- `manifestPath` is the bundle path, `manifests/vue/<family>.manifest.json` or
+  `manifests/themes/<family>.manifest.json`.
+- `relatedManifest` (`package`, `family`, `manifestPath`) names the paired
+  manifest in the other package and is omitted when there is none. Every
+  `@ghostvue/themes` manifest has a `@ghostvue/vue` pair.
+
+`list_components` accepts `package` (`@ghostvue/vue`, `@ghostvue/themes`, or
+`all`, the default), `status` (one or more manifest statuses), `query` (a
+case-insensitive substring of the name or description), and `limit` (1–500,
+default 200). Rows are ordered by `family`, headless before themed. When
+`nextCursor` is not `null`, pass it back as `cursor` with the same `package`,
+`status`, and `query` to get the next page; a cursor reused with other filters
+fails with `INVALID_INPUT`. `totalApprox` counts every row matching the
+filters. Each row has `name`, `package`, `family`, `manifestPath`,
+`relatedManifest`, `status`, `manifestSchemaVersion` (the manifest's own
+`schemaVersion`), `description`, `exampleIds`, and `spec` (`path` and
+`status`, omitted when the manifest has none).
+
+`get_component` takes `name` and an optional `package` that defaults to
+`@ghostvue/vue`; pass `@ghostvue/themes` for the themed wrapper. An unknown
+name fails with `NOT_FOUND`, and the message says when the name exists only in
+the other package. The server validates every bundled manifest against the
+bundled `manifest.schema.json` with Ajv's 2020-12 build (the same options as
+`pnpm manifests` in CI) before serving it; a manifest that fails, or that is
+bundled under the wrong package, fails with `MANIFEST_INVALID`.
 
 ## `get_tokens`
 

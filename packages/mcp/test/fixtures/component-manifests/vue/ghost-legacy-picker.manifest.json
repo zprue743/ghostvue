@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "generated",
+  "name": "GhostLegacyPicker",
+  "package": "@ghostvue/vue",
+  "status": "deprecated",
+  "description": "Superseded picker kept for compatibility; use GhostSelect.",
+  "props": [],
+  "models": [],
+  "events": [],
+  "slots": [],
+  "exposed": [],
+  "styling": {
+    "parts": [],
+    "states": [],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "generic",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/",
+    "keyboard": {},
+    "requiredAriaAttributes": []
+  },
+  "examples": []
+}
