@@ -181,6 +181,7 @@ metadata-only catalog page with no `source`, whatever `includeSource` says.
   "nextCursor": null
 }
 ```
+
 ## Errors
 
 A failed tool call is an MCP tool result with `isError: true`. Its first text
