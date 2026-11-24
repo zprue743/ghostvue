@@ -58,6 +58,9 @@ test.describe('GhostCollapsible @component:GhostCollapsible', () => {
       await expect
         .poll(async () => panel.getAttribute('hidden'), { timeout: 2_000 })
         .toBe('')
+      // GHO-222: the themed shell's `display: grid` must not override `hidden`.
+      await expect(panel).toBeHidden()
+      expect(await panel.boundingBox()).toBeNull()
     } finally {
       await playground.close()
     }
@@ -75,6 +78,35 @@ test.describe('GhostCollapsible @component:GhostCollapsible', () => {
         page.getByRole('button', { name: 'Reveal inventory adjustments' }),
       ).toHaveClass(/ghost-collapsible-trigger/)
       await expect(page.locator('.ghost-collapsible-content')).toBeAttached()
+    } finally {
+      await playground.close()
+    }
+  })
+
+  test('themed example renders a closed panel at zero height on load', async ({
+    page,
+  }) => {
+    const playground = await startStaticServer('apps/playground/dist')
+
+    try {
+      await page.emulateMedia({ reducedMotion: 'reduce' })
+      await page.goto(`${playground.url}/examples.html?id=collapsible/themed`)
+
+      const trigger = page.getByRole('button', {
+        name: 'Reveal inventory adjustments',
+      })
+      const panel = page.locator('.ghost-collapsible-content')
+      await expect(trigger).toHaveAttribute('aria-expanded', 'false')
+      await expect(panel).toHaveAttribute('hidden', '')
+      await expect(panel).toHaveCSS('display', 'none')
+      expect(await panel.boundingBox()).toBeNull()
+
+      // Reduced motion opens and closes without waiting on a transition.
+      await trigger.click()
+      await expect(panel).toBeVisible()
+      await trigger.click()
+      await expect(panel).toHaveAttribute('hidden', '')
+      await expect(panel).toBeHidden()
     } finally {
       await playground.close()
     }
