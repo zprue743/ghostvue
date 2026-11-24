@@ -9,21 +9,28 @@ import {
   type CalendarDate,
   type DateDuration,
   type DateValue,
+  type DayOfWeek,
 } from '@internationalized/date'
 
+/*
+ * `@internationalized/date` keys week starts by three-letter ids. Any other
+ * string (for example `'sunday'`) is silently looked up as `undefined`, the
+ * week offset becomes `NaN`, and `startOfWeek` returns the input date, so the
+ * grid would start on the 1st instead of the locale's first weekday.
+ */
 const WEEK_START_NAMES = [
-  'sunday',
-  'monday',
-  'tuesday',
-  'wednesday',
-  'thursday',
-  'friday',
-  'saturday',
-] as const
+  'sun',
+  'mon',
+  'tue',
+  'wed',
+  'thu',
+  'fri',
+  'sat',
+] as const satisfies readonly DayOfWeek[]
 
 export type CalendarWeekStartName = (typeof WEEK_START_NAMES)[number]
 
-/** Map 0–6 (Sunday-based) to `@internationalized/date` week-start names. */
+/** Map 0–6 (Sunday-based) to `@internationalized/date` week-start ids. */
 export function resolveWeekStartName(
   weekStartsOn: number | undefined,
 ): CalendarWeekStartName | undefined {
@@ -32,7 +39,7 @@ export function resolveWeekStartName(
   }
   const name = WEEK_START_NAMES[weekStartsOn]
   if (!name) {
-    return 'sunday'
+    return 'sun'
   }
   return name
 }
@@ -49,16 +56,8 @@ export function getMonthGridDates(
   let gridStart: CalendarDate
   let gridEnd: CalendarDate
   if (weekStart) {
-    gridStart = toCalendarDate(
-      startOfWeek(
-        monthStart,
-        locale,
-        weekStart as Parameters<typeof startOfWeek>[2],
-      ),
-    )
-    gridEnd = toCalendarDate(
-      endOfWeek(monthEnd, locale, weekStart as Parameters<typeof endOfWeek>[2]),
-    )
+    gridStart = toCalendarDate(startOfWeek(monthStart, locale, weekStart))
+    gridEnd = toCalendarDate(endOfWeek(monthEnd, locale, weekStart))
   } else {
     gridStart = toCalendarDate(startOfWeek(monthStart, locale))
     gridEnd = toCalendarDate(endOfWeek(monthEnd, locale))

@@ -28,17 +28,7 @@ function resetToToday(): void {
 <template>
   <GhostCard class="release-calendar">
     <template #header>
-      <div class="release-calendar__header">
-        <span class="release-calendar__title">Release window</span>
-        <GhostButton
-          variant="ghost"
-          tone="neutral"
-          size="sm"
-          @click="resetToToday"
-        >
-          Today
-        </GhostButton>
-      </div>
+      <span class="release-calendar__title">Release window</span>
     </template>
 
     <GhostCalendar
@@ -46,9 +36,21 @@ function resetToToday(): void {
       v-model:visible-month="visibleMonth"
       :today="today"
     >
-      <GhostCalendarHeader>
-        <GhostCalendarPrevButton />
+      <!--
+        Today sits in the navigation group with the chevron buttons, so the
+        month title, jump-to-today, and previous/next read as one toolbar row.
+      -->
+      <GhostCalendarHeader class="release-calendar__nav">
         <GhostCalendarHeading />
+        <GhostButton
+          variant="outline"
+          tone="neutral"
+          size="sm"
+          @click="resetToToday"
+        >
+          Today
+        </GhostButton>
+        <GhostCalendarPrevButton />
         <GhostCalendarNextButton />
       </GhostCalendarHeader>
       <GhostCalendarGrid />
@@ -68,17 +70,14 @@ function resetToToday(): void {
   max-inline-size: 22rem;
 }
 
-.release-calendar__header {
-  align-items: center;
-  display: flex;
-  gap: var(--ghost-space-gap-sm);
-  justify-content: space-between;
-}
-
 .release-calendar__title {
   color: var(--ghost-surface-fg);
   font-size: var(--ghost-type-size-md);
   font-weight: var(--ghost-type-weight-semibold);
+}
+
+.release-calendar__nav :deep(.ghost-calendar-heading) {
+  text-align: start;
 }
 
 .release-calendar__status {

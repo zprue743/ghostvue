@@ -65,12 +65,14 @@ const cellAttrs = computed(() => {
   const base: Record<string, unknown> = {
     ...rest,
     role: 'gridcell',
-    class: 'ghost-calendar-cell',
+    class: ['ghost-calendar-cell', attrs.class],
     'data-part': 'cell',
     'data-ghost-calendar': '',
     'data-ghost-calendar-date': props.date.toString(),
     'data-outside-month': outsideMonth.value ? '' : undefined,
     'data-today': isToday.value ? '' : undefined,
+    // Announces "current date" so today is not conveyed by styling alone.
+    'aria-current': isToday.value ? 'date' : undefined,
     'data-state': state.value,
     tabindex: receivesTabStop.value ? 0 : -1,
     'aria-label': formattedDate.value,

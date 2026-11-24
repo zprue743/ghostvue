@@ -1,4 +1,9 @@
-/* Themed GhostCalendar month grid. Values use semantic --ghost-* tokens. */
+/*
+ * Themed GhostCalendar month grid, semantic --ghost-* tokens only. The themed
+ * root adds a `.ghost-themed-scope` so grid-rendered parts match. Weeks and
+ * the weekday header share one 7-column template; cells are squares up to
+ * the 44px touch target.
+ */
 @layer ghostvue-theme {
   :where(
     .ghost-theme .ghost-calendar-header,
@@ -7,8 +12,7 @@
   ) {
     align-items: center;
     display: flex;
-    gap: var(--ghost-space-gap-sm);
-    justify-content: space-between;
+    gap: var(--ghost-space-gap-xs);
     margin-block-end: var(--ghost-space-gap-sm);
   }
 
@@ -26,6 +30,7 @@
     text-align: center;
   }
 
+  /* Compact icon buttons; the accessible name stays on `aria-label`. */
   :where(
     .ghost-theme .ghost-calendar-prev,
     .ghost-themed-scope .ghost-calendar-prev,
@@ -34,28 +39,40 @@
     .ghost-themed-scope .ghost-calendar-next,
     .ghost-calendar-next[data-themed]
   ) {
-    background-color: var(--ghost-elevation-1-bg);
-    border: var(--ghost-border-hairline-width) solid
-      var(--ghost-elevation-1-border);
+    align-items: center;
+    background: transparent;
+    border: var(--ghost-border-hairline-width) solid transparent;
     border-radius: var(--ghost-radius-md);
     color: var(--ghost-surface-fg);
     cursor: pointer;
+    display: inline-flex;
     font: inherit;
-    min-block-size: var(--ghost-control-size-sm-min);
-    min-inline-size: var(--ghost-control-size-sm-min);
-    padding: var(--ghost-space-inset-xs);
+    justify-content: center;
+    min-block-size: var(--ghost-control-touch-min);
+    min-inline-size: var(--ghost-control-touch-min);
+    padding: 0 var(--ghost-space-inset-xs);
+  }
+
+  /*
+   * Default chevron from the themed wrappers, painted in CSS (ADR 0013). The
+   * top-left corner rotated -45deg points to the start side, 135deg to the
+   * end side; RTL swaps them so "previous" still points backwards.
+   */
+  :where(.ghost-calendar-prev[data-themed], .ghost-calendar-next[data-themed])
+    > [data-part='icon'] {
+    block-size: 0.5em;
+    border: solid currentColor;
+    border-width: 0.125em 0 0 0.125em;
+    inline-size: 0.5em;
+    rotate: -45deg;
   }
 
   :where(
-    .ghost-theme .ghost-calendar-prev:focus-visible,
-    .ghost-themed-scope .ghost-calendar-prev:focus-visible,
-    .ghost-calendar-prev[data-themed]:focus-visible,
-    .ghost-theme .ghost-calendar-next:focus-visible,
-    .ghost-themed-scope .ghost-calendar-next:focus-visible,
-    .ghost-calendar-next[data-themed]:focus-visible
-  ) {
-    outline: var(--ghost-focus-ring-width) solid var(--ghost-focus-ring-color);
-    outline-offset: var(--ghost-focus-ring-offset);
+      .ghost-calendar-next[data-themed]:dir(ltr),
+      .ghost-calendar-prev[data-themed]:dir(rtl)
+    )
+    > [data-part='icon'] {
+    rotate: 135deg;
   }
 
   :where(
@@ -63,42 +80,32 @@
     .ghost-themed-scope .ghost-calendar-grid,
     .ghost-calendar-grid[data-themed]
   ) {
-    border-collapse: collapse;
-    display: block;
+    display: grid;
     font-family: var(--ghost-type-family-sans);
-    width: 100%;
+    gap: var(--ghost-space-gap-xs);
+    inline-size: 100%;
   }
 
   :where(
     .ghost-theme .ghost-calendar-weekdays,
     .ghost-themed-scope .ghost-calendar-weekdays,
-    .ghost-calendar-weekdays[data-themed]
+    .ghost-theme .ghost-calendar-week,
+    .ghost-themed-scope .ghost-calendar-week
   ) {
     display: grid;
     gap: var(--ghost-space-gap-xs);
     grid-template-columns: repeat(7, minmax(2.25rem, 1fr));
-    margin-block-end: var(--ghost-space-gap-xs);
   }
 
   :where(
     .ghost-theme .ghost-calendar-weekday,
-    .ghost-themed-scope .ghost-calendar-weekday,
-    .ghost-calendar-weekday[data-themed]
+    .ghost-themed-scope .ghost-calendar-weekday
   ) {
-    color: var(--ghost-text-muted);
+    color: var(--ghost-text-subtle);
     font-size: var(--ghost-type-size-xs);
-    font-weight: var(--ghost-type-weight-semibold);
+    font-weight: var(--ghost-type-weight-medium);
+    padding-block: var(--ghost-space-inset-xs);
     text-align: center;
-  }
-
-  :where(
-    .ghost-theme .ghost-calendar-week,
-    .ghost-themed-scope .ghost-calendar-week,
-    .ghost-calendar-week[data-themed]
-  ) {
-    display: grid;
-    gap: var(--ghost-space-gap-xs);
-    grid-template-columns: repeat(7, minmax(2.25rem, 1fr));
   }
 
   :where(
@@ -115,28 +122,82 @@
     cursor: pointer;
     display: inline-flex;
     font: inherit;
+    font-variant-numeric: tabular-nums;
+    inline-size: 100%;
     justify-content: center;
-    min-block-size: var(--ghost-control-size-sm-min);
+    justify-self: center;
+    max-inline-size: var(--ghost-control-touch-min);
     padding: 0;
-    width: 100%;
   }
 
+  /* Hover first so selected and range fills below win at equal specificity. */
+  :where(
+    .ghost-theme .ghost-calendar-prev:hover:not(:disabled),
+    .ghost-themed-scope .ghost-calendar-prev:hover:not(:disabled),
+    .ghost-calendar-prev[data-themed]:hover:not(:disabled),
+    .ghost-theme .ghost-calendar-next:hover:not(:disabled),
+    .ghost-themed-scope .ghost-calendar-next:hover:not(:disabled),
+    .ghost-calendar-next[data-themed]:hover:not(:disabled),
+    .ghost-theme .ghost-calendar-cell:hover:not(:disabled, [aria-disabled]),
+    .ghost-themed-scope
+      .ghost-calendar-cell:hover:not(:disabled, [aria-disabled]),
+    .ghost-calendar-cell[data-themed]:hover:not(:disabled, [aria-disabled])
+  ) {
+    background-color: var(--ghost-surface-muted-bg);
+  }
+
+  /* Adjacent-month days fill the first and last weeks but are not selectable. */
   :where(
     .ghost-theme .ghost-calendar-cell[data-outside-month],
     .ghost-themed-scope .ghost-calendar-cell[data-outside-month],
     .ghost-calendar-cell[data-themed][data-outside-month]
   ) {
-    color: var(--ghost-text-muted);
-    opacity: 0.55;
+    color: var(--ghost-text-subtle);
+    cursor: default;
   }
 
   :where(
-    .ghost-theme .ghost-calendar-cell[data-today]:not([data-state='selected']),
-    .ghost-themed-scope
-      .ghost-calendar-cell[data-today]:not([data-state='selected']),
-    .ghost-calendar-cell[data-themed][data-today]:not([data-state='selected'])
+    .ghost-theme .ghost-calendar-cell[data-today],
+    .ghost-themed-scope .ghost-calendar-cell[data-today],
+    .ghost-calendar-cell[data-themed][data-today]
   ) {
-    border-color: var(--ghost-border-strong);
+    border-color: var(--ghost-border-primary);
+    color: var(--ghost-text-primary);
+    font-weight: var(--ghost-type-weight-semibold);
+  }
+
+  /* Unavailable days are struck through: distinct from adjacent-month days. */
+  :where(
+    .ghost-theme .ghost-calendar-prev:disabled,
+    .ghost-themed-scope .ghost-calendar-prev:disabled,
+    .ghost-calendar-prev[data-themed]:disabled,
+    .ghost-theme .ghost-calendar-next:disabled,
+    .ghost-themed-scope .ghost-calendar-next:disabled,
+    .ghost-calendar-next[data-themed]:disabled,
+    .ghost-theme
+      .ghost-calendar-cell:is(:disabled, [aria-disabled='true']):not(
+        [data-outside-month]
+      ),
+    .ghost-themed-scope
+      .ghost-calendar-cell:is(:disabled, [aria-disabled='true']):not(
+        [data-outside-month]
+      ),
+    .ghost-calendar-cell[data-themed]:is(:disabled, [aria-disabled='true']):not(
+        [data-outside-month]
+      )
+  ) {
+    color: var(--ghost-text-subtle);
+    cursor: not-allowed;
+    text-decoration: line-through;
+  }
+
+  :where(
+    .ghost-theme .ghost-calendar-cell[data-state='range-middle'],
+    .ghost-themed-scope .ghost-calendar-cell[data-state='range-middle'],
+    .ghost-calendar-cell[data-themed][data-state='range-middle']
+  ) {
+    background-color: var(--ghost-surface-muted-bg);
+    color: var(--ghost-surface-fg);
   }
 
   :where(
@@ -153,18 +214,16 @@
     background-color: var(--ghost-action-primary-bg);
     border-color: var(--ghost-action-primary-border);
     color: var(--ghost-action-primary-fg);
+    font-weight: var(--ghost-type-weight-semibold);
   }
 
   :where(
-    .ghost-theme .ghost-calendar-cell[data-state='range-middle'],
-    .ghost-themed-scope .ghost-calendar-cell[data-state='range-middle'],
-    .ghost-calendar-cell[data-themed][data-state='range-middle']
-  ) {
-    background-color: var(--ghost-elevation-2-bg);
-    color: var(--ghost-surface-fg);
-  }
-
-  :where(
+    .ghost-theme .ghost-calendar-prev:focus-visible,
+    .ghost-themed-scope .ghost-calendar-prev:focus-visible,
+    .ghost-calendar-prev[data-themed]:focus-visible,
+    .ghost-theme .ghost-calendar-next:focus-visible,
+    .ghost-themed-scope .ghost-calendar-next:focus-visible,
+    .ghost-calendar-next[data-themed]:focus-visible,
     .ghost-theme .ghost-calendar-cell:focus-visible,
     .ghost-themed-scope .ghost-calendar-cell:focus-visible,
     .ghost-calendar-cell[data-themed]:focus-visible
@@ -174,12 +233,37 @@
   }
 
   /*
-   * Forced colors erase the selected fill and give the selected and today
-   * borders the same system color. Selected and range ends become Highlight
-   * cells (opted out of adjustment so HighlightText stays on Highlight);
-   * range middles keep a Highlight border so the span still reads.
+   * Forced colors: only today keeps a visible border (CanvasText); inactive
+   * days use GrayText. Selected and range ends become Highlight cells (opted
+   * out so HighlightText stays on Highlight); range middles keep a Highlight
+   * border so the span still reads.
    */
   @media (forced-colors: active) {
+    :where(
+      .ghost-theme .ghost-calendar-cell,
+      .ghost-themed-scope .ghost-calendar-cell,
+      .ghost-calendar-cell[data-themed]
+    ) {
+      border-color: Canvas;
+    }
+
+    :where(
+      .ghost-theme .ghost-calendar-cell[data-today],
+      .ghost-themed-scope .ghost-calendar-cell[data-today],
+      .ghost-calendar-cell[data-themed][data-today]
+    ) {
+      border-color: CanvasText;
+    }
+
+    :where(
+      .ghost-theme .ghost-calendar-cell:is(:disabled, [aria-disabled='true']),
+      .ghost-themed-scope
+        .ghost-calendar-cell:is(:disabled, [aria-disabled='true']),
+      .ghost-calendar-cell[data-themed]:is(:disabled, [aria-disabled='true'])
+    ) {
+      color: GrayText;
+    }
+
     :where(
       .ghost-theme .ghost-calendar-cell[data-state='selected'],
       .ghost-themed-scope .ghost-calendar-cell[data-state='selected'],

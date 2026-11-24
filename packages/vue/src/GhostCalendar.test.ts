@@ -96,6 +96,79 @@ describe('GhostCalendar', () => {
     expect(todayCell.attributes('data-today')).toBe('')
   })
 
+  it('aligns dates under locale weekday columns and marks today', () => {
+    const rowDates = (wrapper: ReturnType<typeof mount>) =>
+      wrapper
+        .findAll('.ghost-calendar-week')
+        .map((row) =>
+          row
+            .findAll('[data-ghost-calendar-date]')
+            .map((cell) => cell.attributes('data-ghost-calendar-date')),
+        )
+
+    const us = mountCalendar(() => ({
+      defaultVisibleMonth: JUNE_2024,
+      today: FIXED_TODAY,
+    }))
+    const usRows = rowDates(us)
+    expect(us.findAll('[role="columnheader"]').map((h) => h.text())).toEqual([
+      'Sun',
+      'Mon',
+      'Tue',
+      'Wed',
+      'Thu',
+      'Fri',
+      'Sat',
+    ])
+    expect(usRows[0]?.[0]).toBe('2024-05-26')
+    expect(usRows[0]?.[6]).toBe('2024-06-01')
+    expect(usRows.every((row) => row.length === 7)).toBe(true)
+    const today = us.find('[data-ghost-calendar-date="2024-06-10"]')
+    expect(today.attributes('aria-current')).toBe('date')
+    expect(
+      us.find('[data-ghost-calendar-date="2024-06-11"]').attributes(),
+    ).not.toHaveProperty('aria-current')
+
+    const gb = mountCalendar(() => ({
+      locale: 'en-GB',
+      defaultVisibleMonth: JUNE_2024,
+    }))
+    expect(gb.find('[role="columnheader"]').text()).toBe('Mon')
+    expect(rowDates(gb)[0]?.[5]).toBe('2024-06-01')
+
+    const explicit = mountCalendar(() => ({
+      weekStartsOn: 1,
+      defaultVisibleMonth: JUNE_2024,
+    }))
+    expect(rowDates(explicit)[0]?.[0]).toBe('2024-05-27')
+  })
+
+  it('merges consumer classes with part classes', () => {
+    const wrapper = mountCalendar(() => ({ defaultVisibleMonth: JUNE_2024 }), {
+      default: () => [
+        h(GhostCalendarHeader, { class: 'nav' }, () => [
+          h(GhostCalendarPrevButton, { class: 'prev' }),
+          h(GhostCalendarHeading, { class: 'title' }),
+          h(GhostCalendarNextButton, { class: 'next' }),
+        ]),
+        h(GhostCalendarGrid),
+      ],
+    })
+    expect(wrapper.get('[data-part="header"]').classes()).toEqual([
+      'ghost-calendar-header',
+      'nav',
+    ])
+    expect(wrapper.get('[data-part="prev"]').classes()).toContain(
+      'ghost-calendar-prev',
+    )
+    expect(wrapper.get('[data-part="prev"]').classes()).toContain('prev')
+    expect(wrapper.get('[data-part="next"]').classes()).toContain('next')
+    expect(wrapper.get('[data-part="heading"]').classes()).toEqual([
+      'ghost-calendar-heading',
+      'title',
+    ])
+  })
+
   it('supports inclusive range selection', async () => {
     const range = ref({
       start: new CalendarDate(2024, 6, 10),

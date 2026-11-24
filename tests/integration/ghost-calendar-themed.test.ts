@@ -76,4 +76,48 @@ describe('themed GhostCalendar', () => {
     expect(wrapper.findAll('[aria-selected="true"]')).toHaveLength(0)
     wrapper.unmount()
   })
+
+  it('scopes the recipe to a themed container that takes class and style', () => {
+    const wrapper = mount(GhostCalendar, {
+      props: { defaultVisibleMonth: new CalendarDate(2024, 6, 1) },
+      attrs: { class: 'release', style: 'max-inline-size: 20rem' },
+      slots: { default: () => [h(GhostCalendarGrid)] },
+    })
+    const scope = wrapper.get('.ghost-themed-scope')
+    expect(scope.element.tagName).toBe('DIV')
+    expect(scope.classes()).toContain('release')
+    expect(scope.attributes('style')).toContain('max-inline-size: 20rem')
+    // Grid-rendered parts sit inside the scope the recipe selectors require.
+    expect(scope.find('.ghost-calendar-weekdays').exists()).toBe(true)
+    expect(
+      scope.findAll('.ghost-calendar-week > .ghost-calendar-cell'),
+    ).not.toHaveLength(0)
+    wrapper.unmount()
+  })
+
+  it('renders decorative chevrons with accessible names by default', () => {
+    const wrapper = mount(GhostCalendar, {
+      props: { defaultVisibleMonth: new CalendarDate(2024, 6, 1) },
+      slots: {
+        default: () => [
+          h(GhostCalendarHeader, null, () => [
+            h(GhostCalendarPrevButton),
+            h(GhostCalendarHeading),
+            h(GhostCalendarNextButton, null, () => 'Later'),
+          ]),
+        ],
+      },
+    })
+    const prev = wrapper.get('[data-part="prev"]')
+    expect(prev.attributes('aria-label')).toBe('Previous month')
+    expect(prev.text()).toBe('')
+    const icon = prev.get('[data-part="icon"]')
+    expect(icon.attributes('aria-hidden')).toBe('true')
+    // Consumer slot content replaces the default chevron.
+    const next = wrapper.get('[data-part="next"]')
+    expect(next.find('[data-part="icon"]').exists()).toBe(false)
+    expect(next.text()).toBe('Later')
+    expect(next.attributes('aria-label')).toBe('Next month')
+    wrapper.unmount()
+  })
 })
