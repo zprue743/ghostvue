@@ -1397,3 +1397,237 @@ describe('useGhostDataTable misc state', () => {
     expect(onColumnFiltersChange).not.toHaveBeenCalled()
   })
 })
+
+/*
+ * GHO-237 filter pagination reset acceptance. Each case drives v-models the
+ * way a parent component does (controlled refs written back from `on*Change`)
+ * and then applies the server response, so a follow-up clamp or pagination
+ * request would show up here even though the action itself coalesces.
+ */
+describe('useGhostDataTable filter pagination reset', () => {
+  function controlledServerTable(options: {
+    manualPagination: boolean
+    pageIndex: number
+  }) {
+    const onStateChange =
+      vi.fn<(payload: DataTableStateChangePayload) => void>()
+    const onPaginationChange = vi.fn<(next: DataTablePaginationState) => void>()
+    const pagination = ref<DataTablePaginationState>({
+      pageIndex: options.pageIndex,
+      pageSize: 10,
+    })
+    const globalFilter = ref<unknown>('')
+    const columnFilters = ref<DataTableColumnFilter[]>([])
+    const data = shallowRef(invoices(options.manualPagination ? 10 : 50))
+    const rowCount = ref(250)
+    const shared = {
+      data,
+      columns,
+      getRowId,
+      manualFiltering: true,
+      pagination,
+      globalFilter,
+      columnFilters,
+      onStateChange,
+      onPaginationChange: (next: DataTablePaginationState) => {
+        onPaginationChange(next)
+        pagination.value = next
+      },
+      onGlobalFilterChange: (next: unknown) => {
+        globalFilter.value = next
+      },
+      onColumnFiltersChange: (next: DataTableColumnFilter[]) => {
+        columnFilters.value = next
+      },
+    }
+    const table = options.manualPagination
+      ? setup({ ...shared, manualPagination: true, rowCount })
+      : setup(shared)
+    return {
+      table,
+      data,
+      rowCount,
+      pagination,
+      onStateChange,
+      onPaginationChange,
+    }
+  }
+
+  it('server filter on server page 4: one filter stateChange for page 1, none after the response', async () => {
+    const { table, data, rowCount, pagination, onStateChange } =
+      controlledServerTable({ manualPagination: true, pageIndex: 4 })
+
+    table.setGlobalFilter('acme')
+    await nextTick()
+    // The consumer fetches page 1 and the narrower result shrinks pageCount.
+    data.value = invoices(3)
+    rowCount.value = 3
+    await nextTick()
+
+    expect(onStateChange).toHaveBeenCalledTimes(1)
+    expect(onStateChange.mock.calls[0]?.[0]).toEqual({
+      requestId: 1,
+      trigger: 'globalFilter',
+      query: {
+        sorting: [],
+        columnFilters: [],
+        globalFilter: 'acme',
+        pagination: { pageIndex: 1, pageSize: 10 },
+      },
+    })
+    expect(pagination.value).toEqual({ pageIndex: 1, pageSize: 10 })
+    expect(table.pagination.value).toEqual({ pageIndex: 1, pageSize: 10 })
+    expect(table.pageCount.value).toBe(1)
+  })
+
+  it('server column filter on server page 4 coalesces the reset into the filter request', async () => {
+    const { table, data, rowCount, onStateChange, onPaginationChange } =
+      controlledServerTable({ manualPagination: true, pageIndex: 4 })
+
+    table.setColumnFilter('status', 'paid')
+    await nextTick()
+    data.value = invoices(8)
+    rowCount.value = 8
+    await nextTick()
+
+    expect(onPaginationChange).toHaveBeenCalledTimes(1)
+    expect(
+      onStateChange.mock.calls.map(([payload]) => [
+        payload.trigger,
+        payload.query.pagination.pageIndex,
+        payload.query.columnFilters,
+      ]),
+    ).toEqual([['columnFilters', 1, [{ id: 'status', value: 'paid' }]]])
+  })
+
+  it('server filter with local pagination resets a later local page to page 1', async () => {
+    const { table, data, pagination, onStateChange, onPaginationChange } =
+      controlledServerTable({ manualPagination: false, pageIndex: 3 })
+    expect(table.pagination.value.pageIndex).toBe(3)
+
+    table.setGlobalFilter('customer 1')
+    await nextTick()
+    data.value = invoices(12)
+    await nextTick()
+
+    expect(pagination.value.pageIndex).toBe(1)
+    expect(onPaginationChange).toHaveBeenCalledTimes(1)
+    expect(onStateChange).toHaveBeenCalledTimes(1)
+    expect(onStateChange.mock.calls[0]?.[0]).toMatchObject({
+      trigger: 'globalFilter',
+      query: { pagination: { pageIndex: 1, pageSize: 10 } },
+    })
+    // Server rows are already filtered: local pagination slices them as-is.
+    expect(ids(table.getRowModel())).toHaveLength(10)
+    expect(table.pageCount.value).toBe(2)
+  })
+
+  it('emits one stateChange per committed filter value (debouncing is consumer-owned)', () => {
+    const { table, onStateChange } = controlledServerTable({
+      manualPagination: true,
+      pageIndex: 1,
+    })
+    for (const value of ['a', 'ac', 'acm', 'acm', 'acme']) {
+      table.setGlobalFilter(value)
+    }
+    expect(
+      onStateChange.mock.calls.map(([payload]) => payload.query.globalFilter),
+    ).toEqual(['a', 'ac', 'acm', 'acme'])
+  })
+
+  it('page-local column filter on server page 4 keeps the page and emits nothing', async () => {
+    const onStateChange = vi.fn()
+    const onPaginationChange = vi.fn()
+    const table = setup({
+      data: sample,
+      columns,
+      getRowId,
+      manualPagination: true,
+      rowCount: 40,
+      defaultPagination: { pageIndex: 4, pageSize: 4 },
+      onStateChange,
+      onPaginationChange,
+    })
+    table.setColumnFilter('status', 'paid')
+    await nextTick()
+    expect(ids(table.getRowModel())).toEqual(['inv-1', 'inv-3'])
+    expect(table.pagination.value.pageIndex).toBe(4)
+    table.setColumnFilter('status', 'refunded')
+    await nextTick()
+    expect(table.getRowModel()).toHaveLength(0)
+    expect(table.pagination.value.pageIndex).toBe(4)
+    expect(onStateChange).not.toHaveBeenCalled()
+    expect(onPaginationChange).not.toHaveBeenCalled()
+  })
+
+  it('full-local column filter keeps the page, clamps on shrink, and does not jump back when cleared', async () => {
+    const onStateChange = vi.fn()
+    const onPaginationChange = vi.fn()
+    const table = setup({
+      data: invoices(100),
+      columns,
+      getRowId,
+      defaultPagination: { pageIndex: 9, pageSize: 10 },
+      onStateChange,
+      onPaginationChange,
+    })
+
+    // 12 matches ("Customer 1", "10".."19", "100") → 2 pages, so page 9 clamps.
+    table.setColumnFilter('customer', 'customer 1')
+    await nextTick()
+    expect(table.pagination.value.pageIndex).toBe(2)
+    expect(onPaginationChange).toHaveBeenLastCalledWith({
+      pageIndex: 2,
+      pageSize: 10,
+    })
+
+    // Widening the result never restores the pre-filter page.
+    table.setColumnFilter('customer', '')
+    await nextTick()
+    expect(table.pagination.value.pageIndex).toBe(2)
+    expect(onPaginationChange).toHaveBeenCalledTimes(1)
+    expect(onStateChange).not.toHaveBeenCalled()
+  })
+
+  it('server filter + local pagination: selection on several pages survives a filter cycle', async () => {
+    const onSelectedRowIdsChange = vi.fn()
+    const all = invoices(30)
+    const data = shallowRef(all)
+    const table = setup({
+      data,
+      columns,
+      getRowId,
+      manualFiltering: true,
+      enableRowSelection: true,
+      defaultPagination: { pageIndex: 1, pageSize: 10 },
+      onSelectedRowIdsChange,
+    })
+    table.toggleRowSelected('inv-2')
+    table.setPageIndex(3)
+    table.toggleRowSelected('inv-25')
+
+    // Server answers with a subset that excludes both selected rows.
+    table.setGlobalFilter('customer 1')
+    data.value = all.filter((row) => row.customer?.startsWith('Customer 1'))
+    await nextTick()
+    expect(table.pagination.value.pageIndex).toBe(1)
+    expect(table.headerSelectionState.value).toEqual({
+      allSelected: false,
+      someSelected: false,
+    })
+
+    // An empty server response must not prune either.
+    table.setGlobalFilter('nothing')
+    data.value = []
+    await nextTick()
+
+    table.setGlobalFilter('')
+    data.value = all.map((row) => ({ ...row }))
+    await nextTick()
+
+    expect(table.selectedRowIds.value).toEqual(['inv-2', 'inv-25'])
+    expect(table.isRowSelected('inv-25')).toBe(true)
+    expect(table.headerSelectionState.value.someSelected).toBe(true)
+    expect(onSelectedRowIdsChange).toHaveBeenCalledTimes(2)
+  })
+})
