@@ -743,7 +743,13 @@ Required tests:
   invent ids), etc.
 
 `useGhostDataTableServerRequest` — `{ begin(requestId), isLatest(requestId) }`
-([combobox async pattern](/specs/combobox#useghostcomboboxasyncsearch)).
+([combobox async pattern](/specs/combobox#useghostcomboboxasyncsearch)),
+exported from `@ghostvue/vue` with its return type
+`UseGhostDataTableServerRequestReturn`
+([GHO-239](https://linear.app/ghost-vue/issue/GHO-239)). It holds a plain
+number (no reactivity or lifecycle); create one per table instance. `begin`
+records the id as given, because ids are monotonic only within one
+`useGhostDataTable` call and restart at 1 when the table remounts.
 
 ### Select-all behavior
 
@@ -945,6 +951,34 @@ Required acceptance test:
 4. **`finally` blocks** from stale requests must not clear `loading`, rows, totals,
    or error state for a newer in-flight or completed request (tie-break with
    `requestId`, not wall-clock alone).
+
+```ts
+const request = useGhostDataTableServerRequest()
+
+async function onStateChange({
+  requestId,
+  query,
+}: DataTableStateChangePayload) {
+  request.begin(requestId) // synchronously, before any await
+  loading.value = true
+  try {
+    const page = await fetchInvoices(query)
+    if (!request.isLatest(requestId)) return
+    data.value = page.rows
+    rowCount.value = page.total
+    error.value = undefined
+  } catch (cause) {
+    if (request.isLatest(requestId)) error.value = cause
+  } finally {
+    if (request.isLatest(requestId)) loading.value = false
+  }
+}
+```
+
+Unit race tests for this loop (deferred responses resolved out of order, stale
+failure and stale `finally`, `retry()` superseding a pending request, and the
+filter-on-page-4 acceptance below) live in
+`packages/vue/src/use-ghost-data-table.server-request.test.ts`.
 
 **Required acceptance tests:**
 

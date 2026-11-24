@@ -82,7 +82,11 @@ export type DataTableGetRowId<TData> = (
 ) => DataTableRowId
 
 export interface DataTableStateChangePayload {
-  /** Monotonic id; pair with useGhostDataTableServerRequest */
+  /**
+   * Monotonic id minted by the table for this emit (including `retry()`).
+   * Pass it to {@link UseGhostDataTableServerRequestReturn.begin} and gate
+   * every response write with `isLatest(requestId)`. Consumers never mint ids.
+   */
   requestId: number
   /** What the user last changed */
   trigger: keyof DataTableQueryState
@@ -293,6 +297,22 @@ export interface UseGhostDataTableReturn<TData> {
 
   /** Re-emits `stateChange` with the current query and a fresh `requestId`. */
   retry: () => void
+}
+
+/** Return type of {@link useGhostDataTableServerRequest}. */
+export interface UseGhostDataTableServerRequestReturn {
+  /**
+   * Records `requestId` from a `stateChange` payload as the newest request.
+   * Call it synchronously at the start of the `stateChange` handler, before
+   * awaiting anything, so the newest emit always wins.
+   */
+  begin: (requestId: number) => void
+  /**
+   * True while `requestId` is still the newest id passed to `begin`. Gate
+   * every response write (`data`, `rowCount`, error) and the `finally` that
+   * clears `loading` with it, so a stale request cannot touch newer UI state.
+   */
+  isLatest: (requestId: number) => boolean
 }
 
 /*
