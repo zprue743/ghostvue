@@ -408,6 +408,7 @@ const pageCount = computed(() =>
 
 <template>
   <GhostDataTable
+    ref="table"
     v-model:global-filter="globalFilter"
     v-model:selected-row-ids="selectedRowIds"
     v-model:pagination="pagination"
@@ -494,6 +495,7 @@ const expandedRowIds = ref<DataTableRowId[]>(['inv-2'])
 
 <template>
   <GhostDataTable
+    ref="table"
     v-model:global-filter="globalFilter"
     v-model:selected-row-ids="selectedRowIds"
     v-model:expanded-row-ids="expandedRowIds"
@@ -778,6 +780,118 @@ recorded decision, not Prime’s default.
 - Follow [Default filtering contract](#default-filtering-contract-approved) when local filtering runs.
 - Debouncing: **consumer-owned** (composable updates on every bound filter change).
 - Empty `getRowModel()`: head + filters remain; body shows empty state row.
+- **Page after a filter change** ([GHO-237](https://linear.app/ghost-vue/issue/GHO-237)):
+
+  | Mode                                                | `pageIndex` after the filter change                                  | `stateChange`                                                                                      |
+  | --------------------------------------------------- | -------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+  | `manualFiltering: true` (server filter)             | **1**, written in the same action                                    | **One**, `trigger` `globalFilter` / `columnFilters`, `query.pagination.pageIndex: 1`; no follow-up |
+  | Full local (`manualPagination` and filtering false) | Kept; clamped to the last valid page when the filtered count shrinks | None                                                                                               |
+  | Page-local (`manualPagination: true` only)          | Kept, even when the visible slice is empty                           | None                                                                                               |
+
+  Widening a filter never restores an earlier page. Server filtering never
+  prunes selection or expansion, so ids selected on any page survive a
+  filter → clear cycle.
+
+#### Toolbar composition and consumer-owned debouncing
+
+The composable applies every filter write immediately; with
+`manualFiltering: true` every committed value is one `stateChange` (one fetch).
+Debounce **before** committing, and commit clears immediately. Commit user
+edits through the table's actions (`setGlobalFilter`, `setColumnFilter`,
+`setColumnFilters` on the template ref): they apply the page-reset rule above
+and emit `stateChange`. A parent writing the bound v-model ref directly is a
+state restore, like [URL hydration](#server-state-url-back-and-retry): the rows
+re-filter but no page reset or `stateChange` happens. Until
+`docs/components/data-table.md` ships
+([GHO-247](https://linear.app/ghost-vue/issue/GHO-247)), this is the reference
+composition; `packages/vue/src/GhostDataTable.toolbar-filter.test.ts` mounts the
+same structure.
+
+```vue
+<script setup lang="ts">
+import { computed, onBeforeUnmount, ref, useTemplateRef } from 'vue'
+import {
+  GhostButton,
+  GhostDataTable,
+  GhostInput,
+  GhostToolbar,
+  type DataTableColumnFilter,
+  type GhostDataTableExposed,
+} from '@ghostvue/vue'
+
+const table = useTemplateRef<GhostDataTableExposed<Invoice>>('table')
+const search = ref('') // what the field shows, updated on every keystroke
+const globalFilter = ref('') // what the table filters by (v-model mirror)
+const columnFilters = ref<DataTableColumnFilter[]>([])
+
+let timer: ReturnType<typeof setTimeout> | undefined
+function onSearch(value: string): void {
+  search.value = value
+  clearTimeout(timer)
+  timer = setTimeout(() => table.value?.setGlobalFilter(value), 250)
+}
+onBeforeUnmount(() => {
+  clearTimeout(timer)
+})
+
+const paidOnly = computed(() =>
+  columnFilters.value.some((f) => f.id === 'status' && f.value === 'paid'),
+)
+function togglePaid(): void {
+  table.value?.setColumnFilter('status', paidOnly.value ? '' : 'paid')
+}
+function clearFilters(): void {
+  clearTimeout(timer) // a pending keystroke must not re-apply the old text
+  search.value = ''
+  table.value?.setGlobalFilter('')
+  table.value?.setColumnFilters([])
+}
+</script>
+
+<template>
+  <div class="invoice-filters">
+    <label>
+      Search invoices
+      <GhostInput
+        :model-value="search"
+        type="search"
+        @update:model-value="onSearch"
+      />
+    </label>
+    <GhostToolbar label="Invoice filters">
+      <GhostButton :aria-pressed="paidOnly" @click="togglePaid"
+        >Paid only</GhostButton
+      >
+      <GhostButton @click="clearFilters">Clear filters</GhostButton>
+    </GhostToolbar>
+  </div>
+  <GhostDataTable
+    ref="table"
+    v-model:global-filter="globalFilter"
+    v-model:column-filters="columnFilters"
+    :data="invoices"
+    :columns="columns"
+    :get-row-id="(row) => row.id"
+    aria-label="Invoices"
+  >
+    <!-- GhostTable composition as in example (b) -->
+  </GhostDataTable>
+</template>
+```
+
+- **Search field beside, not inside, `GhostToolbar`.** Roving arrow keys are
+  ignored in text fields (the caret owns them), so a field inside
+  `role="toolbar"` is an arrow-key dead end inside the toolbar's single `Tab`
+  stop. Keep the labelled field its own `Tab` stop and put buttons and
+  toggles in the toolbar.
+- **Server mode:** add `manual-filtering` (and `manual-pagination` /
+  `row-count` as needed) and fetch from `@state-change`; each debounced commit
+  produces one request for page 1. Unchanged writes are no-ops, so **Clear
+  filters** emits one request per dimension it actually clears. Stale
+  responses are rejected by `requestId` (see [Async behavior](#async-behavior)),
+  so debouncing reduces traffic but is not the race guard.
+- The library ships **no** debounce option: delay, leading/trailing edge,
+  `Enter`-to-search, and IME handling stay app decisions (Zac, PR #265).
 
 ### Pagination
 
