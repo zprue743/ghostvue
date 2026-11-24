@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url'
 
 import { createMarkdownRenderer } from 'vitepress'
 import { beforeAll, describe, expect, it } from 'vitest'
-import { compileTemplate } from 'vue/compiler-sfc'
+import { compileTemplate, parse } from 'vue/compiler-sfc'
 
 import {
   bindExampleSourceHtml,
@@ -112,21 +112,25 @@ describe('bindExampleSourceHtml', () => {
     }
   }, 60_000)
 
-  const ENTITIES: Record<string, string> = {
-    '&lt;': '<',
-    '&gt;': '>',
-    '&quot;': '"',
-    '&#x3C;': '<',
-    '&amp;': '&',
+  /** `NodeTypes.TEXT` in @vue/compiler-core. */
+  const TEXT_NODE = 2
+
+  interface TemplateNode {
+    type: number
+    content?: unknown
+    children?: TemplateNode[]
   }
 
-  // One pass: tags are dropped and entities decoded in the same scan, so a
-  // decoded `<` is never re-read as markup (chained replaces could do that).
+  // Read the text through Vue's real HTML parser (which decodes entities)
+  // rather than stripping tags with a regex.
   function textOf(html: string): string {
-    return html.replace(
-      /<[^>]*>|&(?:lt|gt|quot|amp|#x3C);/g,
-      (token) => ENTITIES[token] ?? '',
-    )
+    const root = parse(`<template>${html}</template>`).descriptor.template
+      ?.ast as TemplateNode | undefined
+    const collect = (node: TemplateNode): string =>
+      node.type === TEXT_NODE && typeof node.content === 'string'
+        ? node.content
+        : (node.children ?? []).map(collect).join('')
+    return root ? collect(root) : ''
   }
 
   it('binds the host source as one v-html string with the same wrapper', () => {
