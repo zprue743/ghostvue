@@ -9,7 +9,8 @@ import { startStaticServer } from './static-server'
  * stacked under the example frame, and its text collided with the docs
  * prose. These checks prove every portaled headless overlay example opens
  * as an opaque panel that sits above the page, anchored to its trigger,
- * at a phone and a desktop width in light and dark.
+ * at a phone and a desktop width in light and dark. The headless HoverCard
+ * example (GHO-224) also keeps its open card inside the example frame.
  */
 
 const modes = ['light', 'dark'] as const
@@ -36,6 +37,15 @@ const selectBasic: OverlayCase = {
   trigger: (preview) => preview.getByRole('combobox', { name: 'Pick a fruit' }),
   panel: (page) => page.getByTestId('select-basic-content'),
   open: press('Enter'),
+}
+
+const hoverCardBasic: OverlayCase = {
+  slug: 'hover-card',
+  id: 'hover-card/basic',
+  trigger: (preview) =>
+    preview.getByRole('button', { name: 'Contributor profile preview' }),
+  panel: (page) => page.locator('.hover-card-basic__panel'),
+  open: (trigger) => trigger.focus(),
 }
 
 const overlays: readonly OverlayCase[] = [
@@ -78,14 +88,7 @@ const overlays: readonly OverlayCase[] = [
     panel: (page) => page.locator('.details-popover'),
     open: press('Enter'),
   },
-  {
-    slug: 'hover-card',
-    id: 'hover-card/basic',
-    trigger: (preview) =>
-      preview.getByRole('button', { name: 'Contributor profile preview' }),
-    panel: (page) => page.locator('.hover-card-basic__panel'),
-    open: (trigger) => trigger.focus(),
-  },
+  hoverCardBasic,
   {
     slug: 'tooltip',
     id: 'tooltip/basic',
@@ -282,8 +285,104 @@ test.describe('docs headless overlay examples', () => {
   })
 })
 
+test.describe('docs headless HoverCard example (GHO-224)', () => {
+  test('hover-card/basic opens a padded card below the trigger, inside the example frame', async ({
+    page,
+  }) => {
+    const docs = await startStaticServer('apps/docs/.vitepress/dist')
+    try {
+      for (const width of widths) {
+        await page.setViewportSize({ width, height: viewportHeight })
+        for (const mode of modes) {
+          const { control, popup } = await openExample(
+            page,
+            docs.url,
+            hoverCardBasic,
+            mode,
+          )
+          const frame = page.locator('[data-example-id="hover-card/basic"]')
+          const [frameBox, triggerBox, panelBox] = await Promise.all([
+            frame.boundingBox(),
+            control.boundingBox(),
+            popup.boundingBox(),
+          ])
+          if (!frameBox || !triggerBox || !panelBox) {
+            throw new Error('Frame, trigger and card must render.')
+          }
+          // bottom-start: below the trigger and aligned with its start edge.
+          expect(panelBox.y).toBeGreaterThan(triggerBox.y + triggerBox.height)
+          expect(Math.abs(panelBox.x - triggerBox.x)).toBeLessThanOrEqual(1)
+          // The example reserves room, so the open card stays in the frame.
+          expect(panelBox.x).toBeGreaterThanOrEqual(frameBox.x)
+          expect(panelBox.x + panelBox.width).toBeLessThanOrEqual(
+            frameBox.x + frameBox.width,
+          )
+          expect(panelBox.y + panelBox.height).toBeLessThanOrEqual(
+            frameBox.y + frameBox.height,
+          )
+
+          const look = await Promise.all([
+            popup.evaluate((element) => {
+              const style = getComputedStyle(element)
+              return {
+                padding: style.paddingTop,
+                border: style.borderTopWidth,
+              }
+            }),
+            control.evaluate((element) => {
+              const style = getComputedStyle(element)
+              return { border: style.borderTopStyle }
+            }),
+          ])
+          expect(parseFloat(look[0].padding)).toBeGreaterThan(0)
+          expect(parseFloat(look[0].border)).toBeGreaterThan(0)
+          expect(look[1].border).toBe('solid')
+
+          // Interactive content stays reachable, and Escape still dismisses.
+          await expect(
+            popup.getByRole('link', { name: 'View repository' }),
+          ).toBeVisible()
+          await page.keyboard.press('Escape')
+          await expect(popup).toBeHidden()
+          await expect(control).toBeFocused()
+        }
+      }
+    } finally {
+      await docs.close()
+    }
+  })
+
+  test('hover-card/basic keeps an opaque, bordered card under forced colors', async ({
+    page,
+  }) => {
+    await page.emulateMedia({ forcedColors: 'active' })
+    const docs = await startStaticServer('apps/docs/.vitepress/dist')
+    try {
+      const { popup } = await openExample(
+        page,
+        docs.url,
+        hoverCardBasic,
+        'light',
+      )
+      const look = await popup.evaluate((element) => {
+        const style = getComputedStyle(element)
+        return {
+          background: style.backgroundColor,
+          border: style.borderTopStyle,
+          borderColor: style.borderTopColor,
+        }
+      })
+      expect(alphaOf(look.background)).toBe(1)
+      expect(look.border).toBe('solid')
+      expect(look.borderColor).not.toBe(look.background)
+    } finally {
+      await docs.close()
+    }
+  })
+})
+
 test.describe(
-  'docs headless Select open-state visual baselines',
+  'docs headless overlay open-state visual baselines',
   { tag: '@visual' },
   () => {
     test.use({
@@ -291,47 +390,50 @@ test.describe(
       deviceScaleFactor: 1,
     })
 
-    test('select/basic open at 390 and 1280px in light and dark', async ({
-      page,
-    }) => {
-      await page.emulateMedia({ reducedMotion: 'reduce' })
-      const docs = await startStaticServer('apps/docs/.vitepress/dist')
-      try {
-        for (const width of widths) {
-          await page.setViewportSize({ width, height: viewportHeight })
-          for (const mode of modes) {
-            const { control, popup } = await openExample(
-              page,
-              docs.url,
-              selectBasic,
-              mode,
-            )
-            const [a, b] = await Promise.all([
-              control.boundingBox(),
-              popup.boundingBox(),
-            ])
-            if (!a || !b) throw new Error('Both must render.')
-            const x = Math.max(0, Math.floor(Math.min(a.x, b.x) - 16))
-            const y = Math.max(0, Math.floor(Math.min(a.y, b.y) - 16))
-            const right = Math.min(
-              width,
-              Math.ceil(Math.max(a.x + a.width, b.x + b.width) + 16),
-            )
-            const bottom = Math.min(
-              viewportHeight,
-              Math.ceil(Math.max(a.y + a.height, b.y + b.height) + 16),
-            )
-            await expect(page).toHaveScreenshot(
-              `select-basic-open-${String(width)}-${mode}.png`,
-              { clip: { x, y, width: right - x, height: bottom - y } },
-            )
-            await page.keyboard.press('Escape')
-            await expect(popup).toBeHidden()
+    for (const overlay of [selectBasic, hoverCardBasic]) {
+      const name = overlay.id.replace('/', '-')
+      test(`${overlay.id} open at 390 and 1280px in light and dark`, async ({
+        page,
+      }) => {
+        await page.emulateMedia({ reducedMotion: 'reduce' })
+        const docs = await startStaticServer('apps/docs/.vitepress/dist')
+        try {
+          for (const width of widths) {
+            await page.setViewportSize({ width, height: viewportHeight })
+            for (const mode of modes) {
+              const { control, popup } = await openExample(
+                page,
+                docs.url,
+                overlay,
+                mode,
+              )
+              const [a, b] = await Promise.all([
+                control.boundingBox(),
+                popup.boundingBox(),
+              ])
+              if (!a || !b) throw new Error('Both must render.')
+              const x = Math.max(0, Math.floor(Math.min(a.x, b.x) - 16))
+              const y = Math.max(0, Math.floor(Math.min(a.y, b.y) - 16))
+              const right = Math.min(
+                width,
+                Math.ceil(Math.max(a.x + a.width, b.x + b.width) + 16),
+              )
+              const bottom = Math.min(
+                viewportHeight,
+                Math.ceil(Math.max(a.y + a.height, b.y + b.height) + 16),
+              )
+              await expect(page).toHaveScreenshot(
+                `${name}-open-${String(width)}-${mode}.png`,
+                { clip: { x, y, width: right - x, height: bottom - y } },
+              )
+              await page.keyboard.press('Escape')
+              await expect(popup).toBeHidden()
+            }
           }
+        } finally {
+          await docs.close()
         }
-      } finally {
-        await docs.close()
-      }
-    })
+      })
+    }
   },
 )
