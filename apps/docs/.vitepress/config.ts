@@ -9,7 +9,10 @@ import {
   docsTitle,
 } from './docs-nav'
 import { buildSpecRewrites } from './spec-rewrites'
-import { expandExampleSnippets } from './expand-example-snippets'
+import {
+  bindExampleSourceHtml,
+  expandExampleSnippets,
+} from './expand-example-snippets'
 import { writeLlmsTxtFiles } from './generate-llms-txt'
 import {
   applyDocsThemeHost,
@@ -62,6 +65,10 @@ export default defineConfig({
       md.core.ruler.before('normalize', 'ghost-example-snippets', (state) => {
         state.src = expandExampleSnippets(state.src)
       })
+      // Hand that snippet to the slot as one `v-html` string: Vue compiles
+      // static markup in a component slot node by node, which made large
+      // examples dominate the docs build's heap.
+      bindExampleSourceHtml(md)
     },
   },
   vite: {

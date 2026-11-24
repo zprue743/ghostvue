@@ -1,5 +1,7 @@
 import type { MarkdownEnv } from 'vitepress'
 
+import { keepExampleSourceMarkup } from './expand-example-snippets'
+
 interface LocalSearchMarkdown {
   render(src: string, env: MarkdownEnv): string
 }
@@ -33,6 +35,8 @@ export function renderLocalSearchDocument(
   env: MarkdownEnv,
   md: LocalSearchMarkdown,
 ): string {
+  // Index example source text, not the page build's `v-html` string binding.
+  keepExampleSourceMarkup(env)
   const html = md.render(src, env)
   if (env.frontmatter?.search === false) {
     return ''
