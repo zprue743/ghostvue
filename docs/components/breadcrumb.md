@@ -27,7 +27,10 @@ link so separators never become invalid direct children of the `ol`.
 
 `GhostBreadcrumbEllipsis` composes `GhostPopover` so middle segments stay
 reachable by keyboard and assistive technologies. Put collapsed links in the
-ellipsis default slot.
+ellipsis default slot. Attributes such as `class` and `style` land on the
+ellipsis host element. The popover content is portaled to `body`; the themed
+part marks both the trigger and that content with `data-themed`, so the menu
+gets the elevated popover surface without a `.ghost-theme` ancestor.
 
 ## Custom separators
 

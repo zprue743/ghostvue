@@ -12,7 +12,7 @@
     flex-wrap: wrap;
     font-family: var(--ghost-type-family-sans);
     font-feature-settings: var(--ghost-type-feature-default);
-    gap: var(--ghost-space-gap-xs);
+    gap: var(--ghost-space-gap-sm);
     list-style: none;
     margin: 0;
     padding: 0;
@@ -25,7 +25,8 @@
   ) {
     align-items: center;
     display: inline-flex;
-    gap: var(--ghost-space-gap-xs);
+    /* gap-sm: compact densities resolve gap-xs to 0, gluing separators to links. */
+    gap: var(--ghost-space-gap-sm);
   }
 
   :where(
@@ -78,32 +79,53 @@
     user-select: none;
   }
 
+  /*
+   * The ellipsis class sits on the trigger button itself. The headless part
+   * mirrors `data-themed` onto the trigger and onto the body-portaled content,
+   * so both are reachable without a `.ghost-theme` ancestor.
+   */
   :where(
-    .ghost-theme .ghost-breadcrumb-ellipsis button,
-    .ghost-themed-scope .ghost-breadcrumb-ellipsis button,
-    .ghost-breadcrumb-ellipsis[data-themed] button
+    .ghost-theme .ghost-breadcrumb-ellipsis,
+    .ghost-themed-scope .ghost-breadcrumb-ellipsis,
+    .ghost-breadcrumb-ellipsis[data-themed]
   ) {
+    align-items: center;
     background: transparent;
     border: var(--ghost-border-hairline-width) solid transparent;
     border-radius: var(--ghost-radius-sm);
     color: var(--ghost-text-muted);
     cursor: pointer;
+    display: inline-flex;
     font: inherit;
+    justify-content: center;
     line-height: 1;
     min-height: var(--ghost-control-size-sm-min);
     min-width: var(--ghost-control-size-sm-min);
-    padding: var(--ghost-space-inset-xs);
+    padding: 0 var(--ghost-space-inset-xs);
   }
 
   :where(
-    .ghost-theme .ghost-breadcrumb-ellipsis button:focus-visible,
-    .ghost-themed-scope .ghost-breadcrumb-ellipsis button:focus-visible,
-    .ghost-breadcrumb-ellipsis[data-themed] button:focus-visible
+    .ghost-theme .ghost-breadcrumb-ellipsis:hover,
+    .ghost-themed-scope .ghost-breadcrumb-ellipsis:hover,
+    .ghost-breadcrumb-ellipsis[data-themed]:hover,
+    .ghost-theme .ghost-breadcrumb-ellipsis[aria-expanded='true'],
+    .ghost-themed-scope .ghost-breadcrumb-ellipsis[aria-expanded='true'],
+    .ghost-breadcrumb-ellipsis[data-themed][aria-expanded='true']
+  ) {
+    background-color: var(--ghost-surface-muted-bg);
+    color: var(--ghost-surface-fg);
+  }
+
+  :where(
+    .ghost-theme .ghost-breadcrumb-ellipsis:focus-visible,
+    .ghost-themed-scope .ghost-breadcrumb-ellipsis:focus-visible,
+    .ghost-breadcrumb-ellipsis[data-themed]:focus-visible
   ) {
     outline: var(--ghost-focus-ring-width) solid var(--ghost-focus-ring-color);
     outline-offset: var(--ghost-focus-ring-offset);
   }
 
+  /* Surface, border, elevation and z-index come from ghost-popover.css. */
   :where(
     .ghost-theme .ghost-breadcrumb-ellipsis-content,
     .ghost-themed-scope .ghost-breadcrumb-ellipsis-content,
@@ -111,8 +133,17 @@
   ) {
     display: flex;
     flex-direction: column;
-    gap: var(--ghost-space-gap-xs);
     min-width: 10rem;
-    padding: var(--ghost-space-inset-sm);
+  }
+
+  :where(
+    .ghost-theme .ghost-breadcrumb-ellipsis-content > .ghost-breadcrumb-link,
+    .ghost-themed-scope
+      .ghost-breadcrumb-ellipsis-content
+      > .ghost-breadcrumb-link,
+    .ghost-breadcrumb-ellipsis-content[data-themed] > .ghost-breadcrumb-link
+  ) {
+    border-radius: var(--ghost-radius-sm);
+    padding: var(--ghost-space-inset-xs);
   }
 }

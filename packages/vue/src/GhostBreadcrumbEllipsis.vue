@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, inject, useTemplateRef } from 'vue'
+import { computed, inject, useAttrs, useTemplateRef } from 'vue'
 
 import GhostPopover from './GhostPopover.vue'
 import GhostPopoverContent from './GhostPopoverContent.vue'
@@ -32,13 +32,24 @@ if (!context) {
   throw new Error('GhostBreadcrumbEllipsis must be used inside GhostBreadcrumb')
 }
 
+const attrs = useAttrs()
 const hostRef = useTemplateRef('host')
 const element = computed(() => resolveBreadcrumbHtmlElement(hostRef.value))
+
+// Themed wrappers mark the host with `data-themed`. The popover content is
+// portaled to `body`, outside the trail and usually outside any `.ghost-theme`
+// ancestor, so the marker is mirrored onto the trigger and the content.
+// Without it no theme rule can reach the body-level panel, which then renders
+// as transparent, unlayered text over the page (GHO-223).
+const themedMarker = computed(() =>
+  'data-themed' in attrs ? { 'data-themed': '' } : {},
+)
 
 const triggerAttrs = computed(() => ({
   'aria-label': props.label,
   class: 'ghost-breadcrumb-ellipsis',
   'data-part': 'ellipsis',
+  ...themedMarker.value,
 }))
 
 defineExpose<GhostBreadcrumbEllipsisExposed>({
@@ -57,12 +68,22 @@ defineExpose<GhostBreadcrumbEllipsisExposed>({
 </script>
 
 <template>
-  <span ref="host" class="ghost-breadcrumb-ellipsis-host" data-part="ellipsis">
+  <!-- Consumer attrs (class, style, data-*) land on the host, which is also
+       the exposed `element`; Vue merges class and style. -->
+  <span
+    ref="host"
+    v-bind="$attrs"
+    class="ghost-breadcrumb-ellipsis-host"
+    data-part="ellipsis"
+  >
     <GhostPopover>
       <GhostPopoverTrigger v-bind="triggerAttrs">
         <slot name="icon">…</slot>
       </GhostPopoverTrigger>
-      <GhostPopoverContent class="ghost-breadcrumb-ellipsis-content">
+      <GhostPopoverContent
+        class="ghost-breadcrumb-ellipsis-content"
+        v-bind="themedMarker"
+      >
         <slot />
       </GhostPopoverContent>
     </GhostPopover>

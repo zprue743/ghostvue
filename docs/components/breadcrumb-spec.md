@@ -203,6 +203,9 @@ segment with `aria-current="page"`. Separators are ignored.
 `data-part` values: `root`, `list`, `item`, `link`, `page`, `separator`,
 `ellipsis`. Root sets `data-ghost-breadcrumb=""`. Classes: `ghost-breadcrumb`,
 `ghost-breadcrumb-list`, etc., for unstyled layout hooks.
+`GhostBreadcrumbEllipsis` forwards consumer attributes to its host span. When
+the host carries `data-themed`, the part mirrors it onto the trigger and the
+portaled popover content so theme rules reach the body-level panel.
 
 ## Environment behavior
 
