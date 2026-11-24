@@ -26,6 +26,7 @@ import {
 
 import AmbientReference from './AmbientReference.vue'
 import ButtonStateMatrix from './ButtonStateMatrix.vue'
+import DataTableReference from './DataTableReference.vue'
 import DensityReference from './DensityReference.vue'
 import DialogReference from './DialogReference.vue'
 import DrawerReference from './DrawerReference.vue'
@@ -1879,6 +1880,7 @@ function submitPlaygroundComment(event: Event): void {
       </p>
     </section>
     <CommandPaletteReference />
+    <DataTableReference />
   </main>
 </template>
 

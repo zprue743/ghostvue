@@ -504,6 +504,8 @@ export function useGhostDataTable<TData>(
     query,
     loading,
     disabled,
+    rowSelectionEnabled: selectionEnabled,
+    rowExpansionEnabled: expansionEnabled,
     headerSelectionState,
     getCoreRowModel: () => coreRows.value,
     getSortedRowModel: () => sortedRows.value,

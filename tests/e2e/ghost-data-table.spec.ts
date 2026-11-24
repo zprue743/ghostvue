@@ -1,7 +1,11 @@
 import type { Page } from '@playwright/test'
 
 import { expectNoAxeViolations } from '../support/axe'
-import { expect, playgroundTest as test } from '../support/playground'
+import {
+  expect,
+  gotoPlayground,
+  playgroundTest as test,
+} from '../support/playground'
 
 async function openFullInvoices(page: Page, playgroundUrl: string) {
   await page.goto(
@@ -94,5 +98,128 @@ test.describe('GhostDataTable @component:GhostDataTable', () => {
     await expect(selectAll).toBeChecked()
     await expect(selectAll).toHaveJSProperty('indeterminate', false)
     await expect(page.locator('tbody tr[data-selected]')).toHaveCount(3)
+  })
+
+  test('custom icon-only sort header keeps focus and moves aria-sort on Enter', async ({
+    page,
+    playgroundUrl,
+  }) => {
+    await gotoPlayground(page, playgroundUrl)
+    const section = page.getByTestId('data-table-reference')
+    await section.scrollIntoViewIfNeeded()
+    // The icon-only button's only name is the helper label.
+    const sort = section.getByRole('button', {
+      name: 'Order invoices by Amount',
+      exact: true,
+    })
+    // `has` locators resolve inside each <th>, so they start from `page`.
+    const amountHeader = section.locator('th', {
+      has: page.getByRole('button', { name: 'Order invoices by Amount' }),
+    })
+    const customerHeader = section.locator('th', {
+      has: page.getByRole('button', { name: 'Order invoices by Customer' }),
+    })
+    const amounts = section.locator(
+      'tbody tr:not([data-detail-row]) td:nth-child(4)',
+    )
+    await expect(amountHeader).not.toHaveAttribute('aria-sort', /.*/)
+    await expect(sort).not.toHaveAttribute('aria-sort', /.*/)
+
+    await sort.focus()
+    await page.keyboard.press('Enter')
+    await expect(sort).toBeFocused()
+    await expect(amountHeader).toHaveAttribute('aria-sort', 'ascending')
+    await expect(amountHeader).toHaveAttribute('data-sort', 'asc')
+    await expect(sort).not.toHaveAttribute('aria-sort', /.*/)
+    await expect(customerHeader).not.toHaveAttribute('aria-sort', /.*/)
+    await expect(amounts).toHaveText(['42', '980.5', '1200'])
+
+    await page.keyboard.press('Enter')
+    await expect(sort).toBeFocused()
+    await expect(amountHeader).toHaveAttribute('aria-sort', 'descending')
+    await expect(amounts).toHaveText(['1200', '980.5', '42'])
+
+    await page.keyboard.press('Enter')
+    await expect(sort).toBeFocused()
+    await expect(amountHeader).not.toHaveAttribute('aria-sort', /.*/)
+    await expectNoAxeViolations(page, {
+      include: '[data-testid="data-table-reference"]',
+    })
+  })
+
+  test('returns focus to the expand button when a focused detail row collapses', async ({
+    page,
+    playgroundUrl,
+  }) => {
+    await gotoPlayground(page, playgroundUrl)
+    const section = page.getByTestId('data-table-reference')
+    await section.scrollIntoViewIfNeeded()
+    const expand = section.getByRole('button', {
+      name: 'Reference details for inv-2',
+    })
+    const hide = section.getByRole('button', {
+      name: 'Hide details for inv-2',
+    })
+    const detail = section.locator('tr[data-detail-row]')
+    await expect(expand).toHaveAttribute('aria-expanded', 'true')
+    await expect(expand).toHaveAttribute(
+      'aria-controls',
+      (await detail.getAttribute('id')) ?? '',
+    )
+    await expectNoAxeViolations(page, {
+      include: '[data-testid="data-table-reference"]',
+    })
+
+    // Enter on a control inside the detail row collapses it.
+    await hide.focus()
+    await page.keyboard.press('Enter')
+    await expect(detail).toHaveCount(0)
+    await expect(expand).toBeFocused()
+    await expect(expand).toHaveAttribute('aria-expanded', 'false')
+    await expect(expand).not.toHaveAttribute('aria-controls', /.*/)
+
+    // Space on the expand button reopens it; Space inside collapses again.
+    await page.keyboard.press('Space')
+    await expect(expand).toHaveAttribute('aria-expanded', 'true')
+    await expect(expand).toBeFocused()
+    await hide.focus()
+    await page.keyboard.press('Space')
+    await expect(detail).toHaveCount(0)
+    await expect(expand).toBeFocused()
+
+    // Collapsing from the expand button itself keeps focus there.
+    await page.keyboard.press('Enter')
+    await expect(expand).toHaveAttribute('aria-expanded', 'true')
+    await page.keyboard.press('Enter')
+    await expect(expand).toHaveAttribute('aria-expanded', 'false')
+    await expect(expand).toBeFocused()
+    await expectNoAxeViolations(page, {
+      include: '[data-testid="data-table-reference"]',
+    })
+  })
+
+  test('names every selection checkbox on the native input', async ({
+    page,
+    playgroundUrl,
+  }) => {
+    await gotoPlayground(page, playgroundUrl)
+    const section = page.getByTestId('data-table-reference')
+    const row = section.getByRole('checkbox', {
+      name: 'Select reference invoice inv-1',
+    })
+    const all = section.getByRole('checkbox', {
+      name: 'Select every reference invoice',
+    })
+    for (const checkbox of [row, all]) {
+      await expect(checkbox).toHaveJSProperty('tagName', 'INPUT')
+      await expect(checkbox).toHaveAttribute('aria-label', /Select/)
+    }
+    await row.focus()
+    await page.keyboard.press('Space')
+    await expect(row).toBeChecked()
+    await expect(all).toHaveJSProperty('indeterminate', true)
+    // Enter does not toggle a checkbox.
+    await page.keyboard.press('Enter')
+    await expect(row).toBeChecked()
   })
 })

@@ -1,5 +1,13 @@
 import { computed, toValue, type ComputedRef, type MaybeRefOrGetter } from 'vue'
 
+import {
+  getDataTableHeaderCellProps,
+  getDataTableHeaderSelectionCheckboxProps,
+  getDataTableRowExpandButtonProps,
+  getDataTableRowSelectionCheckboxProps,
+  getDataTableSortButtonProps,
+  useDataTableDetailRowFocus,
+} from './data-table-interaction'
 import { getCellValue } from './data-table-processing'
 import type {
   DataTableCellContext,
@@ -21,8 +29,6 @@ import type {
 
 export interface DataTableSlotBindingOptions<TData> {
   columns: MaybeRefOrGetter<readonly DataTableColumnDef<TData>[]>
-  enableRowSelection: MaybeRefOrGetter<boolean>
-  enableRowExpansion: MaybeRefOrGetter<boolean>
   /** SSR-stable prefix for detail row ids (`useId`-based). */
   baseId: MaybeRefOrGetter<string>
   ariaLabel?: MaybeRefOrGetter<string | undefined>
@@ -40,9 +46,10 @@ function rowIdToken(rowId: DataTableRowId): string {
 
 /**
  * Builds the GhostDataTable default-slot bindings on top of a
- * {@link useGhostDataTable} instance. Internal to the root component for now;
- * the prop getters return attributes only (no listeners), so spreading them
- * next to an explicit `@click` / `@update:model-value` never doubles a toggle.
+ * {@link useGhostDataTable} instance. Internal to the root component; the
+ * control prop getters delegate to the public interaction helpers in
+ * `data-table-interaction.ts` and add the root's generated ids, and this is
+ * where focus-on-collapse is installed for the expand buttons.
  *
  * Header models depend only on columns and sorting, so the head stays mounted
  * when the body is empty. Cell contexts are cached per row model, so toggling
@@ -101,6 +108,10 @@ export function useDataTableSlotBindings<TData>(
     return `${toValue(options.baseId)}-detail-${rowIdToken(rowId)}`
   }
 
+  function expandButtonId(rowId: DataTableRowId): string {
+    return `${toValue(options.baseId)}-expand-${rowIdToken(rowId)}`
+  }
+
   function getDetailRowProps(rowId: DataTableRowId): DataTableDetailRowProps {
     return { id: detailRowId(rowId), 'data-detail-row': 'true' }
   }
@@ -124,13 +135,7 @@ export function useDataTableSlotBindings<TData>(
   )
 
   function getHeaderCellProps(columnId: string): DataTableHeaderCellProps {
-    const direction = table.getSortDirection(columnId)
-    if (direction === false) return { scope: 'col' }
-    return {
-      scope: 'col',
-      'aria-sort': direction === 'asc' ? 'ascending' : 'descending',
-      'data-sort': direction,
-    }
+    return getDataTableHeaderCellProps(table, columnId)
   }
 
   function getRowProps(rowId: DataTableRowId): DataTableRowProps {
@@ -155,54 +160,43 @@ export function useDataTableSlotBindings<TData>(
     return cell
   }
 
-  const withLabel = <T extends object>(
-    props: T,
-    controlOptions: DataTableControlLabelOptions | undefined,
-  ): T & { 'aria-label'?: string } =>
-    controlOptions?.label
-      ? { ...props, 'aria-label': controlOptions.label }
-      : props
-
   function getSortButtonProps(
     columnId: string,
     controlOptions?: DataTableControlLabelOptions,
   ): DataTableSortButtonProps {
-    const props: DataTableSortButtonProps = { type: 'button' }
-    if (table.disabled.value || !table.canSort(columnId)) props.disabled = true
-    return withLabel(props, controlOptions)
+    return getDataTableSortButtonProps(table, columnId, controlOptions)
   }
 
-  const selectionInert = (): boolean =>
-    !toValue(options.enableRowSelection) || table.disabled.value
-  const expansionInert = (): boolean =>
-    !toValue(options.enableRowExpansion) || table.disabled.value
-
   function getRowSelectionCheckboxProps(
-    _rowId: DataTableRowId,
+    rowId: DataTableRowId,
     controlOptions?: DataTableControlLabelOptions,
   ): DataTableSelectionCheckboxProps {
-    return withLabel({ disabled: selectionInert() }, controlOptions)
+    return getDataTableRowSelectionCheckboxProps(table, rowId, controlOptions)
   }
 
   function getHeaderSelectionCheckboxProps(
     controlOptions?: DataTableControlLabelOptions,
   ): DataTableSelectionCheckboxProps {
-    return withLabel({ disabled: selectionInert() }, controlOptions)
+    return getDataTableHeaderSelectionCheckboxProps(table, controlOptions)
   }
 
+  /*
+   * The root owns both ids so focus-on-collapse can find the button, and
+   * `aria-controls` always matches `detailRowProps.id`; they override any
+   * id a caller smuggles in through the options object.
+   */
   function getRowExpandButtonProps(
     rowId: DataTableRowId,
     controlOptions?: DataTableControlLabelOptions,
   ): DataTableExpandButtonProps {
-    const expanded = table.isRowExpanded(rowId)
-    const props: DataTableExpandButtonProps = {
-      type: 'button',
-      'aria-expanded': expanded ? 'true' : 'false',
-    }
-    if (expanded) props['aria-controls'] = detailRowId(rowId)
-    if (expansionInert()) props.disabled = true
-    return withLabel(props, controlOptions)
+    return getDataTableRowExpandButtonProps(table, rowId, {
+      ...controlOptions,
+      id: expandButtonId(rowId),
+      detailRowId: detailRowId(rowId),
+    })
   }
+
+  useDataTableDetailRowFocus(table, { detailRowId, expandButtonId })
 
   function toggleAllRowsSelected(value?: boolean): void {
     table.toggleAllRowsSelected(value)

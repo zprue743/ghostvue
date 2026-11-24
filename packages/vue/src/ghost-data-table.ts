@@ -231,6 +231,16 @@ export interface UseGhostDataTableReturn<TData> {
   query: ComputedRef<DataTableQueryState>
   loading: ComputedRef<boolean>
   disabled: ComputedRef<boolean>
+  /**
+   * Resolved `enableRowSelection`. Selection is still inert while
+   * {@link disabled} is `true`.
+   */
+  rowSelectionEnabled: ComputedRef<boolean>
+  /**
+   * Resolved `enableRowExpansion`. Expansion is still inert while
+   * {@link disabled} is `true`.
+   */
+  rowExpansionEnabled: ComputedRef<boolean>
   /** Select-all state over the same id set as {@link toggleAllRowsSelected}. */
   headerSelectionState: ComputedRef<DataTableHeaderSelectionState>
 
@@ -354,9 +364,41 @@ export interface DataTableSelectionCheckboxProps {
   disabled: boolean
 }
 
+/**
+ * Options for the expand button helper. The root `GhostDataTable` fills `id`
+ * and `detailRowId` itself; standalone {@link useGhostDataTable} consumers
+ * pass the ids of the elements they render.
+ */
+export interface DataTableExpandButtonOptions extends DataTableControlLabelOptions {
+  /**
+   * DOM id for the button. `GhostDataTable` looks the button up by this id to
+   * restore focus when the row's detail row collapses, so keep it when
+   * spreading the props.
+   */
+  id?: string
+  /** Id of the detail row, used for `aria-controls` while the row is expanded. */
+  detailRowId?: string
+}
+
+/**
+ * The slice of {@link UseGhostDataTableReturn} the interaction prop helpers
+ * read. Any `useGhostDataTable` return satisfies it, whatever its row type.
+ */
+export type DataTableInteractionState = Pick<
+  UseGhostDataTableReturn<unknown>,
+  | 'disabled'
+  | 'canSort'
+  | 'getSortDirection'
+  | 'rowSelectionEnabled'
+  | 'rowExpansionEnabled'
+  | 'isRowExpanded'
+>
+
 /** Attributes for a row expand `<button>`. */
 export interface DataTableExpandButtonProps {
   type: 'button'
+  /** Focus-restore target when the detail row collapses (see the options). */
+  id?: string
   'aria-label'?: string
   'aria-expanded': 'true' | 'false'
   /** Detail row id; only while expanded, so it never points at a missing node. */
