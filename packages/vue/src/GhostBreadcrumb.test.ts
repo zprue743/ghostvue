@@ -107,4 +107,118 @@ describe('GhostBreadcrumb', () => {
     expect(hiddenLink).not.toBeNull()
     expect(hiddenLink?.getAttribute('data-part')).toBe('link')
   })
+
+  it('keeps collapsed links unrendered until the ellipsis opens', async () => {
+    const wrapper = mount(
+      defineComponent({
+        setup() {
+          return () =>
+            h(GhostBreadcrumb, null, () =>
+              h(GhostBreadcrumbList, null, () =>
+                h(GhostBreadcrumbItem, null, () =>
+                  h(GhostBreadcrumbEllipsis, { label: 'More crumbs' }, () =>
+                    h(GhostBreadcrumbLink, { href: '/hidden' }, () => 'Hidden'),
+                  ),
+                ),
+              ),
+            )
+        },
+      }),
+      { attachTo: document.body },
+    )
+    attached.push(wrapper)
+
+    expect(document.body.querySelector('a[href="/hidden"]')).toBeNull()
+    const trigger = wrapper.get('button[aria-label="More crumbs"]')
+    expect(trigger.attributes('aria-expanded')).toBe('false')
+    await trigger.trigger('click')
+    await nextTick()
+    expect(trigger.attributes('aria-expanded')).toBe('true')
+    expect(document.body.querySelector('a[href="/hidden"]')).not.toBeNull()
+  })
+
+  it('merges consumer attrs onto the ellipsis host and mirrors data-themed onto the trigger and portaled content', async () => {
+    const wrapper = mount(
+      defineComponent({
+        setup() {
+          return () =>
+            h(GhostBreadcrumb, null, () =>
+              h(GhostBreadcrumbList, null, () =>
+                h(GhostBreadcrumbItem, null, () =>
+                  h(
+                    GhostBreadcrumbEllipsis,
+                    {
+                      label: 'More crumbs',
+                      class: 'consumer-host',
+                      'data-testid': 'ellipsis-host',
+                      'data-themed': '',
+                    },
+                    () =>
+                      h(
+                        GhostBreadcrumbLink,
+                        { href: '/hidden' },
+                        () => 'Hidden',
+                      ),
+                  ),
+                ),
+              ),
+            )
+        },
+      }),
+      { attachTo: document.body },
+    )
+    attached.push(wrapper)
+
+    const host = wrapper.get('[data-testid="ellipsis-host"]')
+    expect(host.classes()).toEqual(
+      expect.arrayContaining([
+        'ghost-breadcrumb-ellipsis-host',
+        'consumer-host',
+      ]),
+    )
+    expect(host.attributes('data-part')).toBe('ellipsis')
+
+    const trigger = wrapper.get('button[aria-label="More crumbs"]')
+    expect(trigger.attributes('data-themed')).toBe('')
+    await trigger.trigger('click')
+    await nextTick()
+
+    const content = document.body.querySelector(
+      '.ghost-breadcrumb-ellipsis-content',
+    )
+    // Portaled out of the trail, so the marker must be on the content itself.
+    expect(host.element.contains(content)).toBe(false)
+    expect(content?.hasAttribute('data-themed')).toBe(true)
+  })
+
+  it('leaves the headless ellipsis trigger and content unmarked', async () => {
+    const wrapper = mount(
+      defineComponent({
+        setup() {
+          return () =>
+            h(GhostBreadcrumb, null, () =>
+              h(GhostBreadcrumbList, null, () =>
+                h(GhostBreadcrumbItem, null, () =>
+                  h(GhostBreadcrumbEllipsis, { label: 'More crumbs' }, () =>
+                    h(GhostBreadcrumbLink, { href: '/hidden' }, () => 'Hidden'),
+                  ),
+                ),
+              ),
+            )
+        },
+      }),
+      { attachTo: document.body },
+    )
+    attached.push(wrapper)
+
+    const trigger = wrapper.get('button[aria-label="More crumbs"]')
+    expect(trigger.attributes('data-themed')).toBeUndefined()
+    await trigger.trigger('click')
+    await nextTick()
+    const content = document.body.querySelector(
+      '.ghost-breadcrumb-ellipsis-content',
+    )
+    expect(content).not.toBeNull()
+    expect(content?.hasAttribute('data-themed')).toBe(false)
+  })
 })
