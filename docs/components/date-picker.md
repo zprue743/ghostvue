@@ -31,6 +31,14 @@ By default the input accepts strict ISO `YYYY-MM-DD`: no whitespace, zero
 padding required, and impossible dates such as `2023-02-29` are rejected
 rather than adjusted.
 
+The headless layer positions the calendar surface but paints nothing. The
+headless examples share one consumer stylesheet on the `date-picker-demo__*`
+classes: an opaque, layered surface, a 7-column month grid whose weekday
+header lines up with the weeks, and today, selected, range, outside-month and
+unavailable day states read from `data-today`, `data-state`,
+`data-outside-month` and `aria-disabled`. Copy it once per app, or use the
+themed parts.
+
 ### `today` and SSR
 
 The picker never reads the client clock. Pass `today` for "today" styling

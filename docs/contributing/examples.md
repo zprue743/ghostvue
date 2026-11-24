@@ -165,6 +165,10 @@ These constraints apply to every example the docs frame renders:
   (`var(--ghost-elevation-3-bg, Canvas)`) so the copied source also works
   without a theme, and repaint the highlight with `Highlight` under
   `forced-colors`. `tests/e2e/docs-headless-overlays.spec.ts` checks each one.
+  The headless date picker examples follow the same rule for their calendar
+  surface and month grid. They share one `date-picker-demo__*` block, kept
+  identical by `tests/integration/date-picker-examples-styles.test.ts` and
+  checked in the docs by `tests/e2e/docs-date-picker-examples.spec.ts`.
 
 ## Manifests
 
