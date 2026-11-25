@@ -378,6 +378,15 @@ than `package.json`, the README, and the license), installs it with
 installed `ghostvue-mcp` over stdio, lists the five tools, and calls each one
 offline. See the [MCP server guide](../tooling/mcp-server.md#release-checks).
 
+`pnpm verify` then runs `pnpm agents-guide` (`scripts/check-ai-agents-guide.mjs`).
+It reads every MCP host snippet in the
+[AI agents guide](../tooling/ai-agents.md), fails when one names a package, bin,
+or path that `@ghostvue/mcp` does not ship, and starts the built bin over stdio
+as those snippets do. The server must list exactly the tools the guide mentions
+and answer a call to each. `tests/integration/ai-agents-guide.test.ts` checks
+the same snippets, the ESLint rule and config names, and the parser without a
+build.
+
 Only attw's `cjs-resolves-to-esm` rule is ignored: these packages are ESM-only,
 so CommonJS consumers must use dynamic import. CSS and JSON asset subpaths are
 checked by publint but excluded from attw's JavaScript/type entrypoint analysis.

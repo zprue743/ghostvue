@@ -49,9 +49,16 @@ export function deriveGhoKey(pullRequest: {
   branch?: string | null
 }): string | null
 
+export function deriveTrackingKey(pullRequest: {
+  title?: string | null
+  branch?: string | null
+  body?: string | null
+}): string | null
+
 export function baselineCommitMessage(pullRequest: {
   title?: string | null
   branch?: string | null
+  body?: string | null
   prNumber: number | string
 }): string
 

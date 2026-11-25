@@ -19,6 +19,9 @@ const docsMainSidebar: LlmsSidebarGroup['items'] = [
       { text: 'Introduction', link: '/philosophy' },
       { text: 'Nuxt & auto-imports', link: '/auto-imports' },
       { text: 'ESLint plugin', link: '/tooling/eslint-plugin' },
+      // GHO-48: the consumer AI guide sits under Docs; the MCP reference stays
+      // under Contribute > Architecture because llms.txt needs unique pages.
+      { text: 'AI agents', link: '/tooling/ai-agents' },
     ],
   },
   {
@@ -29,7 +32,6 @@ const docsMainSidebar: LlmsSidebarGroup['items'] = [
       { text: 'Roadmap', link: '/roadmap' },
     ],
   },
-  // GHO-48: add consumer AI & MCP docs additively under Docs without altering top-level nav.
 ]
 
 const themingSidebar: LlmsSidebarGroup['items'] = [

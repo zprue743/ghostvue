@@ -1,3 +1,5 @@
+const AI_AGENTS_GUIDE = 'docs/tooling/ai-agents.md'
+
 const FENCE_OPEN = /^ {0,3}(`{3,}|~{3,})(.*)$/
 const INLINE_CODE = /(?<!`)(`+)(?!`)([\s\S]*?)(?<!`)\1(?!`)/g
 
@@ -78,6 +80,10 @@ export function isExecutableMarkdown(markdown) {
  * @returns {boolean}
  */
 export function isHeavySkipEligible(file, options = {}) {
+  // The AI agents guide's snippets are executed by `pnpm agents-guide` and
+  // tests/integration/ai-agents-guide*.test.ts, so prose edits there must
+  // still run verification.
+  if (file === AI_AGENTS_GUIDE) return false
   if (file === 'AGENTS.md') return true
   if (file.startsWith('.cursor/')) return true
   if (/^docs\/.*\.md$/u.test(file)) {

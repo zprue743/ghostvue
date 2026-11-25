@@ -242,14 +242,38 @@ export function deriveGhoKey({ title, branch }) {
 }
 
 /**
- * Commit message for a regenerated-baselines commit. Without a GHO key the
- * pull request number identifies what the commit belongs to.
+ * Resolves the tracking key for a pull request: `#<n>` from an
+ * `issue-<n>-<slug>` branch or a `Fixes #n` / `Closes #n` reference in the PR
+ * body, falling back to the legacy `GHO-n` key in the title or branch.
+ * Returns null when no tracking key is found.
  *
- * @param {{ title?: string | null, branch?: string | null, prNumber: number | string }} pullRequest
+ * @param {{ title?: string | null, branch?: string | null, body?: string | null }} pullRequest
+ * @returns {string | null}
+ */
+export function deriveTrackingKey({ title, branch, body }) {
+  const branchIssue = /(?:^|\/)issue-(\d+)(?:-|$)/i.exec(branch ?? '')
+  if (branchIssue) return `#${String(branchIssue[1])}`
+
+  for (const source of [body, title]) {
+    const bodyIssue = /\b(?:fix(?:e[sd])?|close[sd]?)\s+#(\d+)\b/i.exec(
+      source ?? '',
+    )
+    if (bodyIssue) return `#${String(bodyIssue[1])}`
+  }
+
+  return deriveGhoKey({ title, branch })
+}
+
+/**
+ * Commit message for a regenerated-baselines commit. Without a tracking key
+ * the pull request number identifies what the commit belongs to.
+ *
+ * @param {{ title?: string | null, branch?: string | null, body?: string | null, prNumber: number | string }} pullRequest
  * @returns {string}
  */
-export function baselineCommitMessage({ title, branch, prNumber }) {
-  const key = deriveGhoKey({ title, branch }) ?? `#${String(prNumber)}`
+export function baselineCommitMessage({ title, branch, body, prNumber }) {
+  const key =
+    deriveTrackingKey({ title, branch, body }) ?? `#${String(prNumber)}`
   return `test(visual): regenerate baselines (${key})`
 }
 
