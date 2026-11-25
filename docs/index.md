@@ -20,17 +20,13 @@ behavior, so you can mix or switch layers component by component.
 Simple use should look simple; consumers meet complexity only when their interface
 requires it. Configuration describes intent—not the library's nested DOM.
 
-## Built for real apps
+## Retheme without rewrites
 
-- **Zero style lock-in:** `@ghostvue/vue` has no dependency on `@ghostvue/themes`.
-  Theme styles live in `@layer ghostvue-theme` with `:where()` selectors so your
-  application CSS always wins.
-- **Contrast-checked themes:** `defineTheme` compiles DTCG seeds into
-  independently tuned light and dark OKLCH ramps and verifies WCAG 2 AA
-  contrast at build time.
-- **Typed, tested, and tool-ready:** Every `Ghost*` component ships with
-  TypeScript types, SSR support, keyboard and axe-core tests, Nuxt auto-imports,
-  and ESLint template validation.
+`defineTheme` compiles a brand colour into independently tuned light and dark
+OKLCH ramps and verifies WCAG 2 AA contrast at build time. Theme styles live in
+`@layer ghostvue-theme` behind `:where()` selectors, so your application CSS
+always wins, and `@ghostvue/vue` has no dependency on `@ghostvue/themes`. See
+[Flagships and defineTheme](/themes/define-theme).
 
 ## Component catalog
 
@@ -38,6 +34,19 @@ Browse every documented `Ghost*` component in [Components](/components/) or
 follow the [Getting started](/getting-started) guide to try GhostVue locally.
 For upcoming components and composable exports, see the
 [component roadmap](/roadmap).
+
+## Built for agents and tooling
+
+- **Component manifests:** every component ships a JSON
+  [manifest](/architecture/component-manifest) of its props, models, events,
+  slots, parts, and accessibility contract.
+- **MCP server:** [`@ghostvue/mcp`](/tooling/mcp-server) is a local, read-only
+  server that lets coding agents list components and fetch manifests, example
+  source, docs, and tokens.
+- **ESLint plugin:** [`@ghostvue/eslint-plugin`](/tooling/eslint-plugin) checks
+  props, slots, and `v-model` bindings in templates against the manifests.
+- **Nuxt auto-imports:** [`@ghostvue/nuxt`](/auto-imports) auto-imports the
+  headless layer; themed components and CSS are opt-in.
 
 > [!WARNING]
 > **Pre-release:** GhostVue is under active development and packages are not on
