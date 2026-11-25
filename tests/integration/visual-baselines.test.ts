@@ -26,6 +26,7 @@ import {
   checkSnapshotOnlyChanges,
   collectVisualFailures,
   deriveGhoKey,
+  deriveTrackingKey,
   failureLocations,
   formatResultMarkdown,
   isBaselineSnapshotPath,
@@ -278,6 +279,48 @@ describe('commit message', () => {
     expect(deriveGhoKey({ title: 'feat: XGHO-1', branch: 'main' })).toBeNull()
   })
 
+  it('resolves GitHub issue numbers from issue-<n>-* branches and Fixes/Closes #n', () => {
+    expect(
+      deriveTrackingKey({
+        title: 'fix: visual baselines',
+        branch: 'issue-322-visual-baselines-issue-branches',
+      }),
+    ).toBe('#322')
+    expect(
+      deriveTrackingKey({
+        title: 'fix: tooltip',
+        branch: 'agent/issue-42-tooltip-focus',
+      }),
+    ).toBe('#42')
+    expect(
+      deriveTrackingKey({
+        title: 'fix: tooltip',
+        branch: 'fix/tooltip',
+        body: 'Summary\n\nFixes #108\n',
+      }),
+    ).toBe('#108')
+    expect(
+      deriveTrackingKey({
+        title: 'fix: tooltip',
+        branch: 'fix/tooltip',
+        body: 'closes #215',
+      }),
+    ).toBe('#215')
+    expect(
+      deriveTrackingKey({
+        title: 'feat: card (GHO-12)',
+        branch: 'agent/gho-99-x',
+      }),
+    ).toBe('GHO-12')
+    expect(
+      deriveTrackingKey({
+        title: 'fix: unrelated',
+        branch: 'my-issue-7-branch',
+        body: 'Related to #7',
+      }),
+    ).toBeNull()
+  })
+
   it('falls back to the pull request number without a key', () => {
     expect(
       baselineCommitMessage({
@@ -286,6 +329,21 @@ describe('commit message', () => {
         prNumber: 5,
       }),
     ).toBe('test(visual): regenerate baselines (GHO-204)')
+    expect(
+      baselineCommitMessage({
+        title: 'fix: x',
+        branch: 'issue-322-slug',
+        prNumber: 5,
+      }),
+    ).toBe('test(visual): regenerate baselines (#322)')
+    expect(
+      baselineCommitMessage({
+        title: 'fix: x',
+        branch: 'fix-x',
+        body: 'Closes #77',
+        prNumber: 5,
+      }),
+    ).toBe('test(visual): regenerate baselines (#77)')
     expect(
       baselineCommitMessage({ title: 'fix: x', branch: 'fix-x', prNumber: 42 }),
     ).toBe('test(visual): regenerate baselines (#42)')

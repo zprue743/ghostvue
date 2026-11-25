@@ -228,6 +228,7 @@ function commitMessage() {
     baselineCommitMessage({
       title: process.env.PR_TITLE ?? null,
       branch: process.env.PR_HEAD_REF ?? null,
+      body: process.env.PR_BODY ?? null,
       prNumber,
     }),
   )
