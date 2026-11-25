@@ -59,7 +59,8 @@ release behavior.
 - [Commenting standard](../standards/commenting.md)
 - [Public API standard](../standards/public-api.md)
 - [Component stability policy](../standards/component-stability.md)
-- [Contribution workflow](../contributing/workflow.md)
+- [Contribution workflow](../contributing/workflow.md) (includes
+  [issue tracking](../contributing/workflow.md#issue-tracking))
 
 ## LLM-readable published docs
 

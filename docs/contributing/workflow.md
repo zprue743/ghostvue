@@ -14,6 +14,24 @@
    dependency, and licensing concerns.
 9. Open a pull request using the template and report exact validation results.
 
+## Issue tracking
+
+GhostVue tracks engineering work in
+[GitHub Issues](https://github.com/zprue743/ghostvue/issues). Linear is
+retired; historical `GHO-n` keys remain valid references in older docs and
+commits.
+
+- **New work:** open a GitHub issue. Apply `priority:*` labels for priority.
+- **Branches:** name the issue, for example `issue-42-fix-tooltip-focus`.
+- **Pull requests:** include `Fixes #<n>` in the body so the issue closes on
+  merge.
+- **Legacy `GHO-n` keys:** locate the GitHub issue whose title begins with
+  `GHO-n:` (for example `GHO-17: …`). Open GHO issues were migrated as
+  `#306`–`#320`.
+
+When editing [roadmap.md](../roadmap.md), change only the row for the component
+you are working on.
+
 Commits should be logical and readable. Conventional-style subjects such as
 `feat:`, `fix:`, `docs:`, `test:`, and `chore:` are encouraged because they make
 history scannable, but automated semantic-release behavior does not depend on

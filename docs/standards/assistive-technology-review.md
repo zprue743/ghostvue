@@ -89,7 +89,7 @@ repository-relative path):
 
 - **Overall outcome:** `<pass / fail>`
 - **Summary:** `<Concise summary of what was verified, defects found, and conditional exclusions>`
-- **Follow-up issues:** `<None or links to Linear/GitHub issues>`
+- **Follow-up issues:** `<None or links to GitHub issues>`
 ```
 
 ## Manifest integration

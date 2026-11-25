@@ -2,7 +2,7 @@
 
 GhostVue exposes a **local, read-only** [Model Context Protocol](https://modelcontextprotocol.io/) server so agents can discover components, manifests, executable examples, docs, and design tokens without the Vue runtime.
 
-**Status:** Implemented, not yet on npm. `@ghostvue/mcp` serves all five v1 tools over stdio from the offline asset bundle its build produces. It joins the first `0.1.0` release with the other `@ghostvue/*` packages and stays `"private": true` until publishing is authorized ([GHO-57](https://linear.app/ghost-vue/issue/GHO-57)). Until then, build it from this repository (see [Try it from a checkout](#try-it-from-a-checkout)). Contract: [GHO-17](../plans/gho-17-mcp-first-release.md), [ADR 0015](../adr/0015-mcp-server-first-release.md).
+**Status:** Implemented, not yet on npm. `@ghostvue/mcp` serves all five v1 tools over stdio from the offline asset bundle its build produces. It joins the first `0.1.0` release with the other `@ghostvue/*` packages and stays `"private": true` until publishing is authorized ([GHO-57](https://github.com/zprue743/ghostvue/issues?q=is%3Aissue+GHO-57+in%3Atitle)). Until then, build it from this repository (see [Try it from a checkout](#try-it-from-a-checkout)). Contract: [GHO-17](../plans/gho-17-mcp-first-release.md), [ADR 0015](../adr/0015-mcp-server-first-release.md).
 
 ## What ships in v1
 
@@ -328,7 +328,7 @@ Direct runtime pins (approved Nov 22, 2026): `@modelcontextprotocol/sdk@1.32.2`,
 `zod@4.6.7`, `ajv@8.20.0`, with production `node_modules` ≤ 18 MiB. Adoption and
 measurements are recorded in [dependencies.md](../standards/dependencies.md)
 § `@ghostvue/mcp`. The package joins the monorepo release train at `0.1.0` but
-stays `"private": true` until [GHO-57](https://linear.app/ghost-vue/issue/GHO-57)
+stays `"private": true` until [GHO-57](https://github.com/zprue743/ghostvue/issues?q=is%3Aissue+GHO-57+in%3Atitle)
 publish authorization.
 
 ## Release checks

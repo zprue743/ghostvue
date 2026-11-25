@@ -1,8 +1,12 @@
 # Component roadmap
 
-Sequencing of Linear issues toward DataTable ([GHO-35](https://linear.app/ghost-vue/issue/GHO-35)). The catalog is [GHO-28](https://linear.app/ghost-vue/issue/GHO-28)–[GHO-35](https://linear.app/ghost-vue/issue/GHO-35) (planned before the GitHub migration) and [GHO-70](https://linear.app/ghost-vue/issue/GHO-70)–[GHO-107](https://linear.app/ghost-vue/issue/GHO-107) (migrated GitHub `#3`–`#19` plus later planned components). Public names are `Ghost*` ([ADR 0010](./adr/0010-rebrand-to-ghostvue.md), [ADR 0003](./adr/0003-public-component-api-conventions.md)). Every component still passes the [component gate](./agents/COMPONENT_WORKFLOW.md).
+Sequencing of [GitHub Issues](https://github.com/zprue743/ghostvue/issues)
+toward DataTable ([GHO-35](https://linear.app/ghost-vue/issue/GHO-35)). The
+catalog is [GHO-28](https://linear.app/ghost-vue/issue/GHO-28)–[GHO-35](https://linear.app/ghost-vue/issue/GHO-35) (planned before the GitHub migration) and [GHO-70](https://linear.app/ghost-vue/issue/GHO-70)–[GHO-107](https://linear.app/ghost-vue/issue/GHO-107) (migrated GitHub `#3`–`#19` plus later planned components). Public names are `Ghost*` ([ADR 0010](./adr/0010-rebrand-to-ghostvue.md), [ADR 0003](./adr/0003-public-component-api-conventions.md)). Every component still passes the [component gate](./agents/COMPONENT_WORKFLOW.md).
 
-Evidence is Linear issue text, merged `master` code, and canonical docs. Unknowns are marked. Tiers are build order, not package boundaries.
+Evidence is the linked GitHub issue (titles may include historical `GHO-n`
+keys), merged `master` code, and canonical docs. Unknowns are marked. Tiers are
+build order, not package boundaries.
 
 | Status      | Meaning                                   |
 | ----------- | ----------------------------------------- |

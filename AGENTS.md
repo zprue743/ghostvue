@@ -24,7 +24,9 @@ run `pnpm adapters:write` rather than hand-editing them.
 
 ## Required workflow
 
-1. Establish the intended behavior and package boundary.
+1. Establish the intended behavior and package boundary. Track work in
+   [GitHub Issues](https://github.com/zprue743/ghostvue/issues); see
+   [issue tracking](./docs/contributing/workflow.md#issue-tracking).
 2. Reuse an existing canonical pattern when one exists.
 3. Update implementation, behavior-focused tests, public documentation, and
    change metadata together.

@@ -132,7 +132,7 @@ Residual advisories, all development-only and absent from `pnpm audit --prod`:
 ## `@ghostvue/mcp` (GHO-17)
 
 **Approved by Zac, Nov 22, 2026** for implementation. Adopted in
-[GHO-227](https://linear.app/ghost-vue/issue/GHO-227) as exact pins in
+[GHO-227](https://github.com/zprue743/ghostvue/issues?q=is%3Aissue+GHO-227+in%3Atitle) as exact pins in
 `packages/mcp/package.json` (stdio server, tool registration helper, error
 envelope). Contract and footprint: [GHO-17 MCP first-release contract](../plans/gho-17-mcp-first-release.md)
 §7; [ADR 0015](../adr/0015-mcp-server-first-release.md).
