@@ -160,3 +160,11 @@ are under the 18 MiB cap. `npm audit --omit=dev` on that scratch install reports
 **0 vulnerabilities**. The server imports only `@modelcontextprotocol/sdk/server`,
 `…/server/stdio.js`, and `…/types.js`; `ajv` is pinned now and is first used
 for serve-time manifest validation in GHO-228.
+
+**Installed-size gate (GHO-232, 2026-11-25):** `pnpm mcp:packed` installs the
+packed tarball with `pnpm install --prod` into a scratch project and fails
+above 18 MiB, excluding `dist/assets/`. First recorded run: 93 packages,
+**20,097,742 bytes** of `node_modules`, of which **3,619,281 bytes** are
+`dist/assets/`, so **16,478,461 bytes (15.72 MiB)** are gated. `pnpm audit
+--prod` in `packages/mcp`, and in that scratch install, reports no known
+vulnerabilities.

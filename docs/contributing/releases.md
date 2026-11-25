@@ -11,8 +11,9 @@ judgment; zero-major status is not permission for surprise breakage.
 ## Publication status
 
 Publication is **disabled**. The first public release is `0.1.0` of
-`@ghostvue/shared`, `@ghostvue/core`, `@ghostvue/vue`, `@ghostvue/themes`, and
-`@ghostvue/eslint-plugin` under the `@ghostvue` npm scope. The maintainer authorized preparing a dry-run
+`@ghostvue/shared`, `@ghostvue/core`, `@ghostvue/vue`, `@ghostvue/themes`,
+`@ghostvue/eslint-plugin`, and `@ghostvue/mcp` under the `@ghostvue` npm scope
+(every package in `scripts/workspace-packages.mjs`, including `@ghostvue/nuxt`). The maintainer authorized preparing a dry-run
 pipeline and approval gate only (GHO-57). Real publication requires a separate,
 explicit maintainer authorization. No agent may publish packages, create npm
 tokens, or create releases without that authorization.
@@ -63,8 +64,11 @@ Evidence lands in `reports/release-dry-run/` (ignored by git): `summary.json`,
 changelog previews. `pnpm release:dry-run --verify-evidence <dir>` re-checks a
 copy of that evidence.
 
-Packed-export quality is not duplicated here: run `pnpm published-exports` and
-`pnpm exports:check` (publint, attw, packed define smoke) first, as CI does.
+Packed-export quality is not duplicated here: run `pnpm published-exports`,
+`pnpm exports:check` (publint, attw, packed define smoke), and
+`pnpm mcp:packed` (`@ghostvue/mcp` contents, 18 MiB installed-size gate, and
+stdio smoke; see the [MCP server guide](../tooling/mcp-server.md#release-checks))
+first, as CI does.
 
 ## Release workflow
 
@@ -72,7 +76,7 @@ Packed-export quality is not duplicated here: run `pnpm published-exports` and
 `expected_version` (default `0.1.0`). Workflow permissions default to none.
 
 - **`dry-run`** (`contents: read`): install, build, `published-exports`,
-  `exports:check`, `release:dry-run`, confirm the checkout is unchanged, and
+  `exports:check`, `mcp:packed`, `release:dry-run`, confirm the checkout is unchanged, and
   upload the `release-dry-run-evidence` artifact. It runs on any branch.
 - **`maintainer-approval`** (master only, `environment: npm-release`,
   `contents: read`): waits for a required reviewer, verifies the downloaded

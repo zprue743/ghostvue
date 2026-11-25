@@ -366,6 +366,14 @@ artifacts are removed even on failure. `pnpm verify` runs this immediately after
 `@ghostvue/themes/define` consumer smoke (see `scripts/themes-define-packed-smoke.mjs`)
 fail the gate.
 
+`pnpm verify` then runs `pnpm mcp:packed` (`scripts/mcp-packed-smoke.mjs`). It
+packs `@ghostvue/mcp`, fails if the tarball holds anything outside `dist/` (other
+than `package.json`, the README, and the license), installs it with
+`pnpm install --prod` into a scratch project, and fails when that production
+`node_modules`, excluding `dist/assets/`, is over 18 MiB. It then starts the
+installed `ghostvue-mcp` over stdio, lists the five tools, and calls each one
+offline. See the [MCP server guide](../tooling/mcp-server.md#release-checks).
+
 Only attw's `cjs-resolves-to-esm` rule is ignored: these packages are ESM-only,
 so CommonJS consumers must use dynamic import. CSS and JSON asset subpaths are
 checked by publint but excluded from attw's JavaScript/type entrypoint analysis.

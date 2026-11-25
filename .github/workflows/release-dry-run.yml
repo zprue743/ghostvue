@@ -48,6 +48,10 @@ jobs:
       # define smoke) instead of duplicating them for the release.
       - run: pnpm published-exports
       - run: pnpm exports:check
+      # GHO-232: @ghostvue/mcp tarball holds dist/ only, its production install
+      # stays within 18 MiB (excluding dist/assets/), and the packed
+      # `ghostvue-mcp` answers every tool over stdio.
+      - run: pnpm mcp:packed
       - name: Credential-free release dry run
         env:
           EXPECTED_VERSION: ${{ inputs.expected_version }}
