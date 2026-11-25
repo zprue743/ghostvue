@@ -1,6 +1,14 @@
 {
   "schemaVersion": "1.0.0",
   "slug": "data-table",
+  "docs": {
+    "title": "GhostDataTable",
+    "specStatus": "approved",
+    "link": "/components/data-table",
+    "specLink": "/specs/data-table",
+    "category": "utilities",
+    "sidebarLabel": "Data table"
+  },
   "vueBarrel": [
     "export { default as GhostDataTable } from './GhostDataTable.vue'",
     "export { default as GhostDataTablePreset } from './GhostDataTablePreset.vue'",
