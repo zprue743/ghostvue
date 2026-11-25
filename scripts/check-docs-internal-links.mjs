@@ -21,6 +21,12 @@ if (htmlFiles.length === 0) {
 
 const violations = []
 
+for (const rootArtifact of ['llms.txt', 'llms-full.txt']) {
+  if (!(await exists(join(distRoot, rootArtifact)))) {
+    violations.push(`missing root docs artifact: /${rootArtifact}`)
+  }
+}
+
 for (const htmlFile of htmlFiles) {
   const source = await readFile(htmlFile, 'utf8')
   const pageLabel = toPosix(relative(distRoot, htmlFile))
