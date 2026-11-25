@@ -8,7 +8,7 @@ import { describe, expect, it } from 'vitest'
 import vitepressConfig from '../../apps/docs/.vitepress/config'
 
 describe('docs hosting', () => {
-  it('enables Vercel cleanUrls, master-only Git deploys, and permanent spec redirects', async () => {
+  it('enables Vercel cleanUrls, PR preview deploys, and permanent spec redirects', async () => {
     const raw = await readFile(
       resolve(process.cwd(), 'apps/docs/vercel.json'),
       'utf8',
@@ -16,12 +16,6 @@ describe('docs hosting', () => {
 
     expect(JSON.parse(raw)).toEqual({
       cleanUrls: true,
-      git: {
-        deploymentEnabled: {
-          '**': false,
-          master: true,
-        },
-      },
       redirects: [
         {
           source: '/components/:slug-spec',
