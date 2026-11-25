@@ -53,6 +53,12 @@ test.describe('example visual baselines', { tag: '@visual' }, () => {
             { ...host, mode },
           )
           await page.evaluate(() => document.fonts.ready)
+          // Server examples fetch on mount; capture the loaded page, not the
+          // loading state. Static busy tables (skeleton, spinner) are not
+          // DataTable roots and are captured as they are.
+          await expect(
+            preview.locator('[data-ghost-data-table][aria-busy="true"]'),
+          ).toHaveCount(0)
 
           await expect(preview).toHaveScreenshot(`${slug}${suffix}-${mode}.png`)
         }

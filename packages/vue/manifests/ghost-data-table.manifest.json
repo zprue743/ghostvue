@@ -274,7 +274,8 @@
   },
   "examples": [
     "data-table/full-invoices",
-    "data-table/paginated-invoices"
+    "data-table/paginated-invoices",
+    "data-table/server-invoices-router"
   ],
   "spec": {
     "path": "docs/components/data-table-spec.md",
