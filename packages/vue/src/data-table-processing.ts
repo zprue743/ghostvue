@@ -40,7 +40,7 @@ export function isColumnSortable<TData>(
  * accessor and `enableColumnFilter !== false`. The global filter never calls
  * `filterFn`; that predicate only serves the column's own filter entry.
  */
-function participatesInGlobalFilter<TData>(
+export function participatesInGlobalFilter<TData>(
   column: DataTableColumnDef<TData>,
 ): boolean {
   return column.enableColumnFilter !== false && hasAccessor(column)

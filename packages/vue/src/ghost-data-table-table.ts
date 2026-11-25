@@ -89,6 +89,22 @@ export interface GhostDataTableContext {
   withBindings: <TResult>(
     read: <TData>(bindings: GhostDataTableSlotProps<TData>) => TResult,
   ) => TResult
+  /*
+   * Root state GhostDataTablePreset reads beyond the slot bindings. Getters,
+   * so a read inside `computed` or render tracks the root.
+   */
+  /** Current global filter value (controlled prop or internal state). */
+  globalFilter: () => unknown
+  /** Commits a global filter through the root (page reset and `stateChange`). */
+  setGlobalFilter: (globalFilter: unknown) => void
+  /** Resolved `enableRowSelection`. */
+  rowSelectionEnabled: () => boolean
+  /** Resolved `enableRowExpansion`. */
+  rowExpansionEnabled: () => boolean
+  /** Resolved `disabled`. */
+  disabled: () => boolean
+  /** True when any root column takes part in the global filter. */
+  hasGlobalFilterColumns: () => boolean
 }
 
 export const ghostDataTableContextKey: InjectionKey<GhostDataTableContext> =

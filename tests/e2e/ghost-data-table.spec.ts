@@ -325,3 +325,92 @@ test.describe('GhostDataTableTable @component:GhostDataTableTable', () => {
     await expectNoAxeViolations(page)
   })
 })
+
+test.describe('GhostDataTablePreset @component:GhostDataTablePreset', () => {
+  test('runs preset example (a′) sort, filter, page, select, and expand with zero axe violations', async ({
+    page,
+    playgroundUrl,
+  }) => {
+    await page.goto(
+      `${playgroundUrl}/examples.html?id=${encodeURIComponent('data-table/preset-invoices')}`,
+    )
+    const table = page.getByRole('table', { name: 'Invoices' })
+    const pager = page.getByRole('navigation', { name: 'Invoice pages' })
+    // Reference axe gate: table, search field, and co-located pager.
+    const scope = { include: '.preset-invoices' }
+    await expect(table).toBeVisible()
+    await expect(pager).toBeVisible()
+    await expectNoAxeViolations(page, scope)
+
+    // Every header cell is named, including the icon-only ones.
+    await expect(table.getByRole('columnheader')).toHaveCount(4)
+    for (const name of ['Selection', 'Details', 'Customer', 'Amount']) {
+      await expect(
+        table.getByRole('columnheader', { name, exact: true }),
+      ).toBeVisible()
+    }
+    const customers = table.locator(
+      'tbody tr:not([data-detail-row]) td:nth-child(3)',
+    )
+
+    // Sort from the keyboard: focus stays on the button, aria-sort on the <th>.
+    const amountSort = table.getByRole('button', { name: 'Amount' })
+    const amountHeader = table.getByRole('columnheader', { name: 'Amount' })
+    await amountSort.focus()
+    await page.keyboard.press('Enter')
+    await expect(amountSort).toBeFocused()
+    await expect(amountHeader).toHaveAttribute('aria-sort', 'ascending')
+    await expect(customers.first()).toHaveText('Initech')
+    await page.keyboard.press('Space')
+    await expect(amountHeader).toHaveAttribute('aria-sort', 'descending')
+    await expect(customers.first()).toHaveText('Stark Industries')
+    await expectNoAxeViolations(page, scope)
+
+    // Space toggles a row checkbox on the native input.
+    const inv1 = table.getByRole('checkbox', { name: 'Select row inv-1' })
+    await inv1.focus()
+    await page.keyboard.press('Space')
+    await expect(inv1).toBeChecked()
+    await page.keyboard.press('Enter')
+    await expect(inv1).toBeChecked()
+
+    // Space collapses and reopens inv-2's detail row on the expand button.
+    const inv2Expand = table.getByRole('button', {
+      name: 'Show details for inv-2',
+    })
+    const detail = table.locator('tr[data-detail-row]')
+    await expect(inv2Expand).toHaveAttribute('aria-expanded', 'true')
+    await inv2Expand.focus()
+    await page.keyboard.press('Space')
+    await expect(inv2Expand).toHaveAttribute('aria-expanded', 'false')
+    await expect(detail).toHaveCount(0)
+    await page.keyboard.press('Space')
+    await expect(detail).toHaveText('inv-2 was billed to Globex.')
+    await expect(inv2Expand).toBeFocused()
+    await expect(inv2Expand).toHaveAttribute(
+      'aria-controls',
+      (await detail.getAttribute('id')) ?? '',
+    )
+    await expectNoAxeViolations(page, scope)
+
+    // Page 2 through the co-located pager.
+    const pageTwo = pager.getByRole('button', { name: 'Page 2' })
+    await pageTwo.focus()
+    await page.keyboard.press('Enter')
+    await expect(pageTwo).toHaveAttribute('aria-current', 'page')
+    await expect(customers).toHaveCount(1)
+    await expectNoAxeViolations(page, scope)
+
+    // A filter that matches nothing keeps the head and shows the empty state.
+    await page.getByRole('searchbox', { name: 'Search invoices' }).fill('zzz')
+    await expect(
+      page.getByRole('heading', { name: 'No invoices' }),
+    ).toBeVisible()
+    await expect(table.getByRole('columnheader')).toHaveCount(4)
+    await expect(pager.getByRole('button', { name: 'Page 1' })).toHaveAttribute(
+      'aria-current',
+      'page',
+    )
+    await expectNoAxeViolations(page, scope)
+  })
+})

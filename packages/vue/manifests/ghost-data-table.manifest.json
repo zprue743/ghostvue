@@ -276,6 +276,7 @@
     "data-table/basic-invoices",
     "data-table/full-invoices",
     "data-table/paginated-invoices",
+    "data-table/preset-invoices",
     "data-table/server-invoices-router"
   ],
   "spec": {

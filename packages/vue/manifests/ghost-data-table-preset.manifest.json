@@ -1,0 +1,150 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "generated",
+  "name": "GhostDataTablePreset",
+  "package": "@ghostvue/vue",
+  "status": "experimental",
+  "description": "Batteries-included default child of GhostDataTable (spec example (a′)). Renders a labelled global search field, a selection column with a select-all checkbox, an expansion column with labelled expand buttons and detail rows, sort buttons for sortable columns, and a GhostEmptyState row when nothing renders. Each column id is an optional typed cell slot like GhostDataTableTable; #detail, #toolbar, and #search add or replace content. Use it instead of a manual #default composition, not next to one.",
+  "props": [
+    {
+      "name": "columns",
+      "type": "TColumns",
+      "required": false,
+      "description": "Columns to render, in order, matched to the parent `GhostDataTable`\ncolumns by `id` (ids the parent does not have are skipped). Defaults to\nevery parent column. Pass the same array you give `GhostDataTable` to\ntype the `#<columnId>` slots.",
+      "deprecated": false
+    },
+    {
+      "name": "emptyHeadingLevel",
+      "type": "GhostEmptyStateHeadingLevel",
+      "default": 3,
+      "required": false,
+      "description": "Heading level of the empty-state title. Match the page outline (axe\n`heading-order`): one below the nearest heading above the table.",
+      "deprecated": false
+    },
+    {
+      "name": "emptyTitle",
+      "type": "string",
+      "default": "No results",
+      "required": false,
+      "description": "Visible title of the `GhostEmptyState` shown when no rows render.",
+      "deprecated": false
+    },
+    {
+      "name": "expansionHeaderLabel",
+      "type": "string",
+      "default": "Details",
+      "required": false,
+      "description": "Accessible name of the expansion column header (visually hidden text in\nthe `<th>`).",
+      "deprecated": false
+    },
+    {
+      "name": "rowExpansionLabel",
+      "type": "((rowId: DataTableRowId) => string)",
+      "default": "`Show details for ${String(rowId)}`",
+      "required": false,
+      "description": "Accessible name of a row's expand button.",
+      "deprecated": false
+    },
+    {
+      "name": "rowSelectionLabel",
+      "type": "((rowId: DataTableRowId) => string)",
+      "default": "`Select row ${String(rowId)}`",
+      "required": false,
+      "description": "Accessible name of a row's selection checkbox.",
+      "deprecated": false
+    },
+    {
+      "name": "searchLabel",
+      "type": "string",
+      "default": "Search",
+      "required": false,
+      "description": "Visible label of the default search field.",
+      "deprecated": false
+    },
+    {
+      "name": "selectAllLabel",
+      "type": "string",
+      "default": "Select all rows",
+      "required": false,
+      "description": "Accessible name of the select-all checkbox.",
+      "deprecated": false
+    },
+    {
+      "name": "selectionHeaderLabel",
+      "type": "string",
+      "default": "Selection",
+      "required": false,
+      "description": "Accessible name of the selection column header (`aria-label` on the\n`<th>`, which holds only the select-all checkbox).",
+      "deprecated": false
+    },
+    {
+      "name": "showGlobalFilter",
+      "type": "boolean",
+      "required": false,
+      "description": "Shows the search field (or `#search` slot). Defaults to `true` when any\ncolumn takes part in the global filter (an accessor and\n`enableColumnFilter !== false`).",
+      "deprecated": false
+    }
+  ],
+  "models": [],
+  "events": [],
+  "slots": [
+    {
+      "name": "detail",
+      "props": [],
+      "description": "Content of an expanded row's detail `<tr>` (one cell spanning the row)."
+    },
+    {
+      "name": "search",
+      "props": [
+        {
+          "name": "disabled",
+          "type": "boolean",
+          "description": "`true` while the parent `GhostDataTable` is disabled."
+        },
+        {
+          "name": "label",
+          "type": "string",
+          "description": "The preset's `searchLabel`."
+        },
+        {
+          "name": "setValue",
+          "type": "(value: string) => void",
+          "description": "Commits a global filter through the root (resets the page on server filtering)."
+        },
+        {
+          "name": "value",
+          "type": "string",
+          "description": "Current global filter as text (`''` when cleared)."
+        }
+      ],
+      "description": "Replaces the default search field (for example to debounce input)."
+    },
+    {
+      "name": "toolbar",
+      "props": [],
+      "description": "Rendered before the search field and the table."
+    }
+  ],
+  "exposed": [],
+  "styling": {
+    "parts": [],
+    "states": [],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "table",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/table/",
+    "keyboard": {
+      "Tab": "Moves between the search field, the select-all checkbox, sort buttons, row checkboxes, and expand buttons in DOM order. No grid or roving cell focus.",
+      "Space": "Toggles a focused selection checkbox, or activates a focused sort or expand button.",
+      "Enter": "Activates a focused sort or expand button. Does not toggle checkboxes."
+    },
+    "requiredAriaAttributes": []
+  },
+  "examples": [],
+  "spec": {
+    "path": "docs/components/data-table-spec.md",
+    "status": "approved",
+    "evidence": "Zac approved in chat on 2026-11-23; recorded in PR #272."
+  }
+}
