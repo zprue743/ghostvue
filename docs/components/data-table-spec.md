@@ -12,6 +12,7 @@ approval:
   evidence: 'Zac approved in chat on 2026-11-23; recorded in PR #272.'
 manifests:
   - packages/vue/manifests/ghost-data-table.manifest.json
+  - packages/vue/manifests/ghost-data-table-preset.manifest.json
   - packages/vue/manifests/ghost-data-table-table.manifest.json
 sections:
   purpose:
@@ -425,7 +426,7 @@ const pageCount = computed(() =>
     :enable-row-selection="true"
     :enable-row-expansion="true"
   >
-    <GhostDataTablePreset empty-title="No invoices">
+    <GhostDataTablePreset :columns="columnDefs" empty-title="No invoices">
       <template #amount="{ value }">{{ value.toFixed(2) }} USD</template>
       <template #detail="{ rowId }">Details for {{ rowId }}</template>
     </GhostDataTablePreset>
@@ -436,6 +437,37 @@ const pageCount = computed(() =>
 
 Implementation must ship **`GhostDataTablePreset`** so this path is real, not
 spec-only.
+
+**Shipped ([GHO-246](https://linear.app/ghost-vue/issue/GHO-246)).** As with
+`GhostDataTableTable`, pass the same array to the preset's `columns` prop to
+type `value` in `#amount` and `row` in `#detail`. Executable copy:
+`examples/data-table/preset-invoices.vue` (6 invoices, 5 per page; the pager
+binds `pagination`, `pageCount`, and `setPageIndex` from the root's default
+slot, per [GhostPagination wiring](#ghostpagination-wiring)). It is **82**
+non-blank lines including its layout CSS, and
+`tests/integration/data-table-preset-invoices-example.test.ts` fails if it
+exceeds 95. Implementation notes:
+
+- Additive props for localized control names: `selectAllLabel`
+  (`'Select all rows'`), `rowSelectionLabel(rowId)` (`Select row …`), and
+  `rowExpansionLabel(rowId)` (`Show details for …`). `emptyHeadingLevel`
+  (default `3`) sets the `GhostEmptyState` title level so the empty state
+  fits the page outline (axe `heading-order`).
+- The selection `<th>` is named by `aria-label` (it holds only the select-all
+  checkbox); the expansion `<th>` holds visually hidden text, so axe
+  `empty-table-header` passes. Expand buttons show an `aria-hidden` glyph and
+  are named by `aria-label` on the button.
+- The default search is a labelled `GhostInput type="search"` that commits
+  through the root's `setGlobalFilter` (server filtering resets to page 1
+  with one `stateChange`). Use `#search` to debounce. The field is disabled
+  while the root is `disabled`.
+- `detail`, `toolbar`, and `search` are reserved slot names; do not use them
+  as column ids. Attributes on the preset land on `GhostTable`.
+- Tests: `GhostDataTablePreset.test.ts` (unit), the example and SSR hydration
+  tests, `type-tests/GhostDataTablePresetConsumer.vue`, and a Playwright test
+  in `tests/e2e/ghost-data-table.spec.ts` that runs sort, select, expand,
+  page, and empty filter from the keyboard with **zero axe violations** on the
+  table, search field, and co-located pager.
 
 #### (b) Full composition — approval and accessibility fixture
 
@@ -1212,8 +1244,8 @@ Reuses `GhostTable*`, `GhostPagination`, `GhostCheckbox`, `GhostEmptyState`,
 - **Unit:** performance regressions (page after sort, selection without sort/filter).
 - **Vue:** basic (a) + full (b) examples hydrate; `GhostDataTableTable` slot types.
 - **Browser:** custom sort header + `Enter`; focus restore on detail collapse.
-- **Acceptance (implementation gate):** reference fixture (**(b)** or preset once
-  shipped) — **zero axe violations** on the table scope (`@axe-core/playwright`),
+- **Acceptance (implementation gate):** reference fixture (**(b)** and the
+  preset (a′), `data-table/preset-invoices`) — **zero axe violations** on the table scope (`@axe-core/playwright`),
   including labeled icon-only header/selection cells, sort buttons, expansion
   controls, search input, and co-located `GhostPagination` (no empty `<th>`, no
   wrapper-only `aria-*` without focusable names).

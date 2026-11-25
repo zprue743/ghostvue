@@ -3,13 +3,15 @@
   "slug": "data-table",
   "vueBarrel": [
     "export { default as GhostDataTable } from './GhostDataTable.vue'",
+    "export { default as GhostDataTablePreset } from './GhostDataTablePreset.vue'",
     "export { default as GhostDataTableTable } from './GhostDataTableTable.vue'",
     "export {\n  getDataTableHeaderCellProps,\n  getDataTableHeaderSelectionCheckboxProps,\n  getDataTableRowExpandButtonProps,\n  getDataTableRowSelectionCheckboxProps,\n  getDataTableSortButtonProps,\n} from './data-table-interaction'",
     "export {\n  useGhostDataTable,\n  useGhostDataTableServerRequest,\n} from './use-ghost-data-table'",
     "export { defineDataTableColumns } from './define-data-table-columns'",
     "export type {\n  DataTableAccessorFnColumn,\n  DataTableAccessorFnColumnDef,\n  DataTableAccessorKeyColumn,\n  DataTableAccessorKeyColumnDef,\n  DataTableColumnHelper,\n  DataTableTypedCellContext,\n} from './define-data-table-columns'",
     "export type {\n  DataTableCellContext,\n  DataTableColumnDef,\n  DataTableColumnFilter,\n  DataTableColumnSort,\n  DataTableControlLabelOptions,\n  DataTableDetailRowProps,\n  DataTableExpandButtonOptions,\n  DataTableExpandButtonProps,\n  DataTableGetRowId,\n  DataTableHeader,\n  DataTableHeaderCellProps,\n  DataTableHeaderSelectionState,\n  DataTableInteractionState,\n  DataTablePaginationState,\n  DataTableQueryState,\n  DataTableRow,\n  DataTableRowId,\n  DataTableRowProps,\n  DataTableSelectionCheckboxProps,\n  DataTableSlotRow,\n  DataTableSortButtonProps,\n  DataTableSortDirection,\n  DataTableStateChangePayload,\n  DataTableTableRootProps,\n  GhostDataTableExposed,\n  GhostDataTableProps,\n  GhostDataTableSlotProps,\n  UseGhostDataTableBaseOptions,\n  UseGhostDataTableLocalPaginationOptions,\n  UseGhostDataTableManualPaginationOptions,\n  UseGhostDataTableOptions,\n  UseGhostDataTableReturn,\n  UseGhostDataTableServerRequestReturn,\n} from './ghost-data-table'",
-    "export type {\n  DataTableColumnRow,\n  DataTableColumnValue,\n  DataTableTableColumnRef,\n  GhostDataTableTableCellSlotProps,\n  GhostDataTableTableProps,\n  GhostDataTableTableSlots,\n} from './ghost-data-table-table'"
+    "export type {\n  DataTableColumnRow,\n  DataTableColumnValue,\n  DataTableTableColumnRef,\n  GhostDataTableTableCellSlotProps,\n  GhostDataTableTableProps,\n  GhostDataTableTableSlots,\n} from './ghost-data-table-table'",
+    "export type {\n  GhostDataTablePresetDetailSlotProps,\n  GhostDataTablePresetProps,\n  GhostDataTablePresetSearchSlotProps,\n  GhostDataTablePresetSlots,\n} from './ghost-data-table-preset'"
   ],
   "examples": [
     {
@@ -28,6 +30,12 @@
       "id": "data-table/paginated-invoices",
       "title": "Pagination",
       "description": "Manual GhostTable composition with a co-located GhostPagination bound to the root's pagination, pageCount, and setPageIndex slot bindings; searching clamps the page.",
+      "layer": "headless"
+    },
+    {
+      "id": "data-table/preset-invoices",
+      "title": "Preset",
+      "description": "GhostDataTablePreset renders search, sort buttons, row selection, expandable detail rows, and an empty state from typed columns, with a custom currency cell and a co-located GhostPagination.",
       "layer": "headless"
     },
     {

@@ -1,6 +1,7 @@
 <script setup lang="ts" generic="TData">
 import { provide } from 'vue'
 
+import { participatesInGlobalFilter } from './data-table-processing'
 import { useDataTableSlotBindings } from './data-table-slot-bindings'
 import type {
   DataTableColumnFilter,
@@ -112,10 +113,16 @@ const slotProps = useDataTableSlotBindings(table, {
   ariaLabelledby: () => props.ariaLabelledby,
 })
 
-// Rendering children (GhostDataTableTable) read the same bindings as the
+// Rendering children (GhostDataTableTable, GhostDataTablePreset) read the same bindings as the
 // default slot, so manual and default rendering cannot drift apart.
 provide(ghostDataTableContextKey, {
   withBindings: (read) => read(slotProps.value),
+  globalFilter: () => table.globalFilter.value,
+  setGlobalFilter: table.setGlobalFilter,
+  rowSelectionEnabled: () => table.rowSelectionEnabled.value,
+  rowExpansionEnabled: () => table.rowExpansionEnabled.value,
+  disabled: () => table.disabled.value,
+  hasGlobalFilterColumns: () => props.columns.some(participatesInGlobalFilter),
 })
 
 defineExpose<GhostDataTableExposed<TData>>({
