@@ -81,6 +81,25 @@ describe('DataTable interaction prop helpers', () => {
     })
   })
 
+  it('moves aria-sort to a newly sorted column, which starts ascending', () => {
+    const { table } = createTable()
+    table.toggleSorting('amount')
+    table.toggleSorting('amount')
+    expect(getDataTableHeaderCellProps(table, 'amount')['aria-sort']).toBe(
+      'descending',
+    )
+    // Single-column sort: a different column replaces the entry at `asc`,
+    // so only one <th> ever announces a direction.
+    table.toggleSorting('customer')
+    expect(table.sorting.value).toEqual([{ id: 'customer', desc: false }])
+    expect(getDataTableHeaderCellProps(table, 'customer')['aria-sort']).toBe(
+      'ascending',
+    )
+    expect(getDataTableHeaderCellProps(table, 'amount')).toEqual({
+      scope: 'col',
+    })
+  })
+
   it('labels the sort button itself and never gives it aria-sort', () => {
     const { table, disabled } = createTable()
     table.toggleSorting('amount')

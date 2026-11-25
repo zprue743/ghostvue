@@ -84,6 +84,60 @@ test.describe('GhostDataTable @component:GhostDataTable', () => {
     await expectNoAxeViolations(page)
   })
 
+  test('cycles single-column sort from fixture (b) header buttons with zero axe violations on header cells', async ({
+    page,
+    playgroundUrl,
+  }) => {
+    await openFullInvoices(page, playgroundUrl)
+    const thead = page.locator('table[data-ghost-data-table] thead')
+    const sortedHeaders = thead.locator('th[aria-sort]')
+    const amountSort = page.getByRole('button', { name: 'Amount sort' })
+    const customerSort = page.getByRole('button', { name: 'Customer sort' })
+    const amountHeader = page.getByRole('columnheader', { name: 'Amount sort' })
+    const customerHeader = page.getByRole('columnheader', {
+      name: 'Customer sort',
+    })
+
+    // Every header cell has a name, including the icon-only selection cell.
+    for (const name of ['Selection', 'Details']) {
+      await expect(
+        page.getByRole('columnheader', { name, exact: true }),
+      ).toBeVisible()
+    }
+    await expect(sortedHeaders).toHaveCount(0)
+    await expectNoAxeViolations(page, { include: 'thead' })
+
+    // none → asc → desc → none, alternating Enter and Space on the button.
+    await amountSort.focus()
+    await page.keyboard.press('Enter')
+    await expect(amountHeader).toHaveAttribute('aria-sort', 'ascending')
+    await expect(sortedHeaders).toHaveCount(1)
+    await expectNoAxeViolations(page, { include: 'thead' })
+    await page.keyboard.press('Space')
+    await expect(amountHeader).toHaveAttribute('aria-sort', 'descending')
+    await expect(sortedHeaders).toHaveCount(1)
+    await expectNoAxeViolations(page, { include: 'thead' })
+    await page.keyboard.press('Enter')
+    await expect(amountSort).toBeFocused()
+    await expect(sortedHeaders).toHaveCount(0)
+    await expect(customerCells(page)).toHaveText([
+      'ACME Corp',
+      'Globex',
+      'Initech',
+    ])
+
+    // Sorting another column moves aria-sort; it never stays on two <th>s.
+    await page.keyboard.press('Space')
+    await customerSort.focus()
+    await page.keyboard.press('Space')
+    await expect(customerSort).toBeFocused()
+    await expect(customerHeader).toHaveAttribute('aria-sort', 'ascending')
+    await expect(amountHeader).not.toHaveAttribute('aria-sort', /.*/)
+    await expect(sortedHeaders).toHaveCount(1)
+    await expect(amountSort).not.toHaveAttribute('aria-sort', /.*/)
+    await expectNoAxeViolations(page, { include: 'thead' })
+  })
+
   test('selects every filtered row from the header checkbox', async ({
     page,
     playgroundUrl,
