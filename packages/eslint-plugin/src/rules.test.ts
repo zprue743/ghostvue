@@ -289,6 +289,14 @@ ruleTester.run('no-unknown-slots', rules['no-unknown-slots'], {
         '<GhostInput>\n</GhostInput><GhostInput />',
       ),
     },
+    // Data-driven slot names (one per DataTable column id) are not checked.
+    {
+      filename,
+      code: sfc(
+        "import { GhostDataTableTable } from '@ghostvue/vue'",
+        '<GhostDataTableTable><template #amount="{ value }">{{ value }}</template></GhostDataTableTable>',
+      ),
+    },
     // Themed contract includes the headless default slot it forwards.
     {
       filename,

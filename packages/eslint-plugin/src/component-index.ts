@@ -11,7 +11,11 @@ export type GhostComponentPackage = '@ghostvue/vue' | '@ghostvue/themes'
 export interface GhostComponentContract {
   readonly props: readonly string[]
   readonly models: readonly string[]
-  readonly slots: readonly string[]
+  /**
+   * `null` when slot names come from consumer data (for example one slot per
+   * DataTable column id), so they cannot be checked statically.
+   */
+  readonly slots: readonly string[] | null
   /** Page under `docs/components/` (without `.md`) that documents the component. */
   readonly docs: string
 }

@@ -51,7 +51,10 @@ export const noUnknownSlots: Rule.RuleModule = {
   },
   create(context) {
     return createGhostTemplateVisitor(context, (element, component) => {
-      const slots = new Set(component.contract.slots)
+      const declared = component.contract.slots
+      // Data-driven slot names (one per column id) are left to vue-tsc.
+      if (declared === null) return
+      const slots = new Set(declared)
       const report = (loc: AST.LocationRange, slot: string) => {
         context.report({
           loc,
@@ -60,7 +63,7 @@ export const noUnknownSlots: Rule.RuleModule = {
             component: component.name,
             packageName: component.packageName,
             slot,
-            slots: formatNames(component.contract.slots),
+            slots: formatNames(declared),
             docs: componentDocsUrl(component.contract),
           },
         })

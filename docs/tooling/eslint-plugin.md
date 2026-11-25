@@ -147,7 +147,8 @@ import { GhostCard, GhostInput } from '@ghostvue/vue'
 ```
 
 Whitespace and comments are not content. Dynamic slot names (`#[name]`) are
-skipped, and slot props are not checked.
+skipped, and slot props are not checked. `GhostDataTableTable` is skipped too:
+its slot names are your column ids, so vue-tsc checks them instead.
 
 ## no-undeclared-v-model
 

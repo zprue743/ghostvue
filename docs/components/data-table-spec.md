@@ -12,6 +12,7 @@ approval:
   evidence: 'Zac approved in chat on 2026-11-23; recorded in PR #272.'
 manifests:
   - packages/vue/manifests/ghost-data-table.manifest.json
+  - packages/vue/manifests/ghost-data-table-table.manifest.json
 sections:
   purpose:
     applicable: true
@@ -355,13 +356,19 @@ const pageCount = computed(() =>
     :columns="columns"
     :get-row-id="(row) => row.id"
   >
-    <GhostDataTableTable>
+    <GhostDataTableTable :columns="columns">
       <template #amount="{ value }">{{ value.toFixed(2) }} USD</template>
     </GhostDataTableTable>
     <GhostPagination v-model="pagination.pageIndex" :page-count="pageCount" />
   </GhostDataTable>
 </template>
 ```
+
+`:columns="columns"` on `GhostDataTableTable` is what types `value` as a
+number in `#amount` ([GHO-241](https://linear.app/ghost-vue/issue/GHO-241)): a
+child in the root's default slot cannot see the root's column types. Without
+it the renderer still renders every root column and `value` is `unknown`.
+Executable copy: `examples/data-table/basic-invoices.vue`.
 
 Without **`GhostDataTableTable`**, this shape is not achievable in a short
 example—the renderless default slot would force every consumer to recreate the
@@ -664,8 +671,16 @@ when spreading. Focus restore belongs to the root; standalone layouts own their
 own focus handling.
 
 **`GhostDataTableTable` slots:** for each column `id`, optional
-`#${columnId}="{ row, rowId, value, getValue, column }"` with **`value` typed**
-when the column came from `defineDataTableColumns`.
+`#${columnId}="{ row, rowId, rowIndex, value, getValue, column }"` with
+**`value` typed** when the column came from `defineDataTableColumns` and the
+same array is passed to the renderer's optional `columns` prop. `columns` also
+picks and orders the rendered columns by `id` (ids the root lacks are skipped);
+it defaults to every root column. A slot wins over the column `cell` hook,
+which wins over the plain value. Header text falls back to the column `id`, so
+no `<th>` is empty. Sortable columns (`canSort`) get a native sort button named
+by the header text; `aria-sort` stays on the `<th>`. The renderer reads the
+same bindings as the default slot (provided by the root), and attributes such
+as `class` or `contain-horizontal` fall through to `GhostTable`.
 
 ### v-model contracts
 

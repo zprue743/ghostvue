@@ -63,21 +63,57 @@ export type DataTableAccessorFnColumn<TData, TValue> = Omit<
   cell?: (context: DataTableTypedCellContext<TData, TValue>) => VNodeChild
 }
 
+/*
+ * The builders return an ordinary `DataTableColumnDef<TData>` narrowed with
+ * the literal column id and the accessor's own type. Nothing extra exists at
+ * runtime; the narrowing lets `GhostDataTableTable` type each `#<columnId>`
+ * slot's `value` from the column array (see `DataTableColumnValue`).
+ */
+
+/**
+ * Column returned by {@link DataTableColumnHelper.accessorKey}: a plain
+ * {@link DataTableColumnDef} whose `id` and `accessorKey` keep their literal
+ * types. `TId` is the key unless the options set their own `id`; with a custom
+ * id the type is `TId | K`, a harmless superset of the runtime id.
+ */
+export type DataTableAccessorKeyColumnDef<
+  TData,
+  K extends keyof TData & string,
+  TId extends string = K,
+> = DataTableColumnDef<TData> & {
+  id: TId | K
+  accessorKey: K
+}
+
+/**
+ * Column returned by {@link DataTableColumnHelper.accessorFn}: a plain
+ * {@link DataTableColumnDef} whose `id` is the literal id and whose
+ * `accessorFn` keeps its return type.
+ */
+export type DataTableAccessorFnColumnDef<
+  TData,
+  TValue,
+  TId extends string = string,
+> = DataTableColumnDef<TData> & {
+  id: TId
+  accessorFn: (row: TData, index: number) => TValue
+}
+
 /** Builders returned by {@link defineDataTableColumns}. */
 export interface DataTableColumnHelper<TData> {
   /**
    * Column that reads `row[key]`. `key` must be a string key of `TData`, so
    * renaming the row property breaks the definition at compile time.
    */
-  accessorKey: <K extends keyof TData & string>(
+  accessorKey: <K extends keyof TData & string, TId extends string = K>(
     key: K,
-    column: DataTableAccessorKeyColumn<TData, K>,
-  ) => DataTableColumnDef<TData>
+    column: DataTableAccessorKeyColumn<TData, K> & { id?: TId },
+  ) => DataTableAccessorKeyColumnDef<TData, K, TId>
   /** Column whose value comes from `accessorFn`. `id` is required. */
-  accessorFn: <TValue>(
-    id: string,
+  accessorFn: <TValue, TId extends string = string>(
+    id: TId,
     column: DataTableAccessorFnColumn<TData, TValue>,
-  ) => DataTableColumnDef<TData>
+  ) => DataTableAccessorFnColumnDef<TData, TValue, TId>
 }
 
 /**
@@ -105,7 +141,11 @@ export function defineDataTableColumns<TData>(): DataTableColumnHelper<TData> {
   return {
     accessorKey(key, column) {
       const { cell, id, ...rest } = column
-      const def: DataTableColumnDef<TData> = {
+      const def: DataTableAccessorKeyColumnDef<
+        TData,
+        typeof key,
+        NonNullable<typeof id>
+      > = {
         ...rest,
         id: id ?? key,
         accessorKey: key,
@@ -120,7 +160,11 @@ export function defineDataTableColumns<TData>(): DataTableColumnHelper<TData> {
     },
     accessorFn(id, column) {
       const { cell, accessorFn, ...rest } = column
-      const def: DataTableColumnDef<TData> = { ...rest, id, accessorFn }
+      const def: DataTableAccessorFnColumnDef<
+        TData,
+        ReturnType<typeof accessorFn>,
+        typeof id
+      > = { ...rest, id, accessorFn }
       if (cell) {
         def.cell = (context) =>
           cell(typedContext(context, accessorFn(context.row, context.rowIndex)))
