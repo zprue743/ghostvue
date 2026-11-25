@@ -290,6 +290,32 @@ describe('CI workflow', () => {
     expect(aggregate).toContain('pattern: playwright-blob-*')
   })
 
+  it('runs duration-balanced Chromium shards that the plan and blob names agree on', () => {
+    const shard = jobBlock(workflow, 'browser-shard')
+    const matrix = /shard: \[([^\]]+)\]/.exec(shard)
+    const shards = matrix?.[1].split(',').map((value) => value.trim()) ?? []
+    expect(shards.length).toBeGreaterThan(0)
+
+    // Every plan step must split into exactly as many shards as the matrix
+    // runs, or some planned tests would never execute.
+    const plans = [
+      ...shard.matchAll(
+        /scripts\/e2e-shard-plan\.mjs --shard=\$\{\{ matrix\.shard \}\}\/(\d+) /g,
+      ),
+    ]
+    expect(plans.length).toBe(2)
+    for (const plan of plans) expect(Number(plan[1])).toBe(shards.length)
+
+    expect(shard).toContain('--test-list .artifacts/e2e-shard-tests.txt')
+    // Playwright's own count-based --shard must not be layered on top.
+    expect(shard).not.toMatch(/test:e2e:prebuilt[^\n]*--shard=/)
+    // Distinct blob names so merge-multiple never overwrites a shard's report.
+    expect(shard).toContain(
+      'PLAYWRIGHT_BLOB_OUTPUT_NAME: report-chromium-${{ matrix.shard }}.zip',
+    )
+    expect(shard).toMatch(/timeout-minutes: \d+/)
+  })
+
   it('checks mapped keyboard evidence against the merged browser results', () => {
     const aggregate = jobBlock(workflow, 'browser')
     expect(aggregate).toContain(
