@@ -3,7 +3,8 @@
 Thank you for helping build GhostVue. The project accepts human-authored and
 AI-assisted contributions under the same engineering standards.
 
-Start with the [contribution workflow](./docs/contributing/workflow.md), then read
+Start with the [contribution workflow](./docs/contributing/workflow.md) (including
+[issue tracking](./docs/contributing/workflow.md#issue-tracking)), then read
 the architecture and standards relevant to your change. Component work requires
 an approved specification based on the
 [component template](./docs/components/spec-template.md).

@@ -277,9 +277,11 @@ The workflow runs in the same pinned Playwright image as CI and
    them again without updating to confirm they pass.
 4. Check that the only changed paths are
    `tests/e2e/*.spec.ts-snapshots/*-chromium-linux.png`, then push one commit,
-   `test(visual): regenerate baselines (GHO-123)`, to the PR branch. The key
-   comes from the PR title, then the branch name. Without a key, the commit uses
-   the PR number (`(#123)`).
+   `test(visual): regenerate baselines (#123)`, to the PR branch. Until
+   `scripts/lib/visual-baselines.js` is updated, the workflow still resolves a
+   legacy `GHO-n` token from the PR title or branch (`agent/gho-<n>-*`), and
+   falls back to the PR number (`#123`) when none is found. Prefer
+   `issue-<n>-<slug>` branches and `Fixes #n` in the PR body for new work.
 
 Any failure, including a test that still fails after its update, produces a PR
 comment and no push. The workflow removes the label when it finishes, so add it

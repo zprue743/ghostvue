@@ -2,6 +2,11 @@
 
 Explain the user or engineering problem and the chosen approach.
 
+## Tracking
+
+Link the GitHub issue so it can close on merge, for example `Fixes #123`. Branch
+names should follow `issue-<n>-<short-slug>` when the work maps to an issue.
+
 ## Public API and compatibility
 
 - Public API impact:

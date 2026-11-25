@@ -1,7 +1,7 @@
 # GHO-17: `@ghostvue/mcp` first-release contract (spec)
 
 **Status:** contract updated (resolved decisions below; ADR 0015 and implementation still gated on package landing)  
-**Linear:** GHO-17  
+**Historical key:** GHO-17 (find `GHO-17: …` in GitHub Issues)  
 **Approved direction (Zac, 2026-11-17, option A):** Local, read-only stdio MCP server with five discovery tools. Version-matched offline bundles of manifests, examples, docs, and tokens. No Vue runtime in the tooling package. HTTP transport (GHO-205), `validate_usage` (GHO-206), arbitrary file access, code execution, HTTP hosting, and npm publication of the server as a network service are **out of scope** for this release.
 
 **Related:** [ADR 0015](../adr/0015-mcp-server-first-release.md), [package boundaries](../architecture/package-boundaries.md), [component manifests](../architecture/component-manifest.md), [ADR 0006](../adr/0006-component-manifest-schema.md), [tokens](../architecture/tokens.md), [executable examples](../contributing/examples.md).
@@ -463,8 +463,9 @@ HTTP stack ships transitively). _Approved by Zac, Nov 22, 2026._
 
 ## 9. Implementation decomposition (proposed child issues)
 
-File Linear issues before implementation; titles below are placeholders until
-real GHO ids are assigned.
+File GitHub issues (`priority:*` labels) before implementation; titles below are
+placeholders until real ids are assigned. Legacy plans may still cite `GHO-n`
+keys in prose.
 
 | Proposed title                      | Scope                                                                                                                                                                                                                                                                                          | Complexity |
 | ----------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------- |
