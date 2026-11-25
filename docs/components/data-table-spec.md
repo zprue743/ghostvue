@@ -1045,12 +1045,20 @@ identity** only. Pattern aligned with
 | **Browser Back**                    | While a fetch is pending, Back restores prior query props; composable bumps `requestId`; stale responses must not apply; **only the latest `requestId` may mutate** `data`, `rowCount`, `loading`, or error UI.                   |
 | **Retry**                           | Call exposed **`retry()`** on the table/composable: re-emits **`stateChange`** with the **same** `query` and a **new internal `requestId`** (consumers cannot mint ids). Failed state stays visible until a successful response.  |
 
-**Executable example:** `examples/data-table/server-invoices-router.vue` — Vue
-Router route with query string encoding filters + page; demonstrates open filtered
-URL → change sort → **Back** during pending request → **Retry** after error;
-asserts single fetch per action, no hydration `stateChange`, and **both pagination
-reset acceptance cases** (page-local filter on page 4 → stay; server filter →
-page 1 + one request).
+**Executable example:** `examples/data-table/server-invoices-router.vue` — query
+string encoding sort, status filter, and page, read and written through a small
+router-style URL adapter (`window.history` by default; with Vue Router, read
+`route.query` and write with `router.push`). The workspace has no router
+dependency, so the example does not add one. It demonstrates open filtered
+URL → change sort → **Back** during pending request → **Retry** after error.
+Applying URL state is silent; the example fetches the restored query once through
+`retry()`, so Back mints a newer `requestId` and the pending response cannot
+apply. Tests: `tests/integration/data-table-server-invoices-router-example.test.ts`
+(single fetch per action, no hydration `stateChange`, both stale orders after
+Back, retry, server filter on page 4 → page 1 + one request) and
+`tests/e2e/ghost-data-table-server-router.spec.ts` (real browser Back).
+`manualFiltering` is table-wide, so the page-local filter case (page 4 → stay)
+is covered by the unit race tests rather than this server-filtered example.
 
 **Required tests:** URL restore silent; sort+Back race; retry does not double-fetch;
 stale `finally` does not clear newest spinner; page-local vs server filter pagination.

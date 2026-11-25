@@ -21,6 +21,12 @@
       "title": "Pagination",
       "description": "Manual GhostTable composition with a co-located GhostPagination bound to the root's pagination, pageCount, and setPageIndex slot bindings; searching clamps the page.",
       "layer": "headless"
+    },
+    {
+      "id": "data-table/server-invoices-router",
+      "title": "Server data with URL state",
+      "description": "Server sorting, filtering, and paging synced to the URL: hydrates from the query string, pushes one history entry per committed query, ignores stale responses after Back, and recovers with retry().",
+      "layer": "headless"
     }
   ]
 }
