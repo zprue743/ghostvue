@@ -164,6 +164,18 @@ describe('ci-changed-paths classifier', () => {
       ).toBe(false)
     })
 
+    it('requires full CI for prose edits to the AI agents guide, whose snippets are tested', () => {
+      const prose = '# Using GhostVue with AI agents\n\nProse only.\n'
+      const result = classifyChangedPaths({
+        eventName: 'pull_request',
+        files: ['docs/tooling/ai-agents.md'],
+        readAtBase: () => prose,
+        readAtHead: () => `${prose}\nMore prose.\n`,
+      })
+
+      expect(result.skipHeavy).toBe(false)
+    })
+
     it('requires full CI when prose-only docs are mixed with executable docs or code', () => {
       const files = new Map<string, string>([
         ['docs/philosophy.md', '# Philosophy\n\nProse.\n'],

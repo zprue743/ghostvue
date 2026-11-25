@@ -130,5 +130,6 @@ options.
   [flagships & `defineTheme`](/themes/define-theme)
 - [Nuxt and auto-imports](/auto-imports) and
   [ESLint plugin](/tooling/eslint-plugin)
+- [Using GhostVue with AI agents](/tooling/ai-agents)
 - [API reference](/reference/)
 - [Why GhostVue](/philosophy)
