@@ -550,13 +550,13 @@ const expandedRowIds = ref<DataTableRowId[]>(['inv-2'])
             <GhostTableHeaderCell scope="col">Details</GhostTableHeaderCell>
             <GhostTableHeaderCell
               v-for="header in headers"
-              :key="header.column.id"
-              v-bind="getHeaderCellProps(header.column.id)"
+              :key="header.id"
+              v-bind="getHeaderCellProps(header.id)"
             >
               <button
-                v-if="header.column.enableSorting"
+                v-if="header.canSort"
                 v-bind="
-                  getSortButtonProps(header.column.id, {
+                  getSortButtonProps(header.id, {
                     label: `${header.column.header} sort`,
                   })
                 "
@@ -628,7 +628,10 @@ const expandedRowIds = ref<DataTableRowId[]>(['inv-2'])
 ```
 
 `headers` is **independent of body rows** so the head remains when
-`getRowModel()` is empty. Row **inv-2** is selected and expanded in the initial
+`getRowModel()` is empty. Gate the sort button on **`header.canSort`**, not
+`column.enableSorting`: sorting defaults on for any column with an accessor or
+`sortFn`, so `enableSorting` is often omitted
+([GHO-242](https://linear.app/ghost-vue/issue/GHO-242)). Row **inv-2** is selected and expanded in the initial
 fixture. Writable `ref` v-models accept composable updates. Column `cell` hooks are
 **functions** — call `cell.column.cell(context)`; when the hook returns a VNode,
 `GhostDataTableTable` normalizes rendering (manual composition may use a small

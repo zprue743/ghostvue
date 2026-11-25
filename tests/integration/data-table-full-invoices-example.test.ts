@@ -72,6 +72,35 @@ describe('data-table/full-invoices example (approval fixture b)', () => {
     expect(amountHeader()?.attributes('data-sort')).toBeUndefined()
   })
 
+  it('gives every header cell a name and every sortable column a labeled sort button', () => {
+    const wrapper = mountFull()
+    const headers = wrapper.findAll('thead th')
+    // No empty <th>: the icon-only selection header is named by aria-label.
+    expect(
+      headers.map((th) => th.attributes('aria-label') ?? th.text()),
+    ).toEqual(['Selection', 'Details', 'Customer', 'Amount'])
+    const sortButtons = wrapper.findAll('thead button')
+    expect(
+      sortButtons.map((button) => button.attributes('aria-label')),
+    ).toEqual(['Customer sort', 'Amount sort'])
+    for (const button of sortButtons) {
+      expect(button.attributes('type')).toBe('button')
+      expect(button.attributes('disabled')).toBeUndefined()
+    }
+  })
+
+  it('moves aria-sort to the other column when sorting switches', async () => {
+    const wrapper = mountFull()
+    await byLabel(wrapper, 'Amount sort').trigger('click')
+    await byLabel(wrapper, 'Amount sort').trigger('click')
+    await byLabel(wrapper, 'Customer sort').trigger('click')
+    const sorted = wrapper.findAll('thead th[aria-sort]')
+    expect(sorted).toHaveLength(1)
+    expect(sorted[0]?.text()).toBe('Customer')
+    expect(sorted[0]?.attributes('aria-sort')).toBe('ascending')
+    expect(bodyCustomers(wrapper)).toEqual(['ACME Corp', 'Globex', 'Initech'])
+  })
+
   it('names row checkboxes on the native input and syncs data-selected', async () => {
     const wrapper = mountFull()
     const checkbox = byLabel(wrapper, 'Select invoice inv-2')

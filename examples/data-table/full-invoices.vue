@@ -98,13 +98,13 @@ const expandedRowIds = ref<DataTableRowId[]>(['inv-2'])
               <GhostTableHeaderCell scope="col">Details</GhostTableHeaderCell>
               <GhostTableHeaderCell
                 v-for="header in headers"
-                :key="header.column.id"
-                v-bind="getHeaderCellProps(header.column.id)"
+                :key="header.id"
+                v-bind="getHeaderCellProps(header.id)"
               >
                 <button
-                  v-if="header.column.enableSorting"
+                  v-if="header.canSort"
                   v-bind="
-                    getSortButtonProps(header.column.id, {
+                    getSortButtonProps(header.id, {
                       label: `${header.column.header} sort`,
                     })
                   "
