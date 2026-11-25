@@ -80,6 +80,37 @@ for (const directory of packageDirectories) {
     }
   }
 
+  // A `bin` target is what `npx` and MCP hosts execute: it must be a built
+  // file with a Node shebang, or the installed shim cannot start it.
+  const binTargets =
+    typeof packageJson.bin === 'string'
+      ? [packageJson.bin]
+      : Object.values(packageJson.bin ?? {})
+  for (const target of binTargets) {
+    try {
+      const source = await readFile(resolve(packageDirectory, target), 'utf8')
+      if (!source.startsWith('#!/usr/bin/env node\n')) {
+        violations.push(
+          `${packageJson.name} bin ${target} lacks a #!/usr/bin/env node shebang`,
+        )
+      }
+    } catch {
+      violations.push(`${packageJson.name} missing bin file: ${target}`)
+    }
+  }
+
+  if (packageJson.name === '@ghostvue/mcp') {
+    // GHO-17 plan §4: only dist/ is published, and the offline bundle in it.
+    if (JSON.stringify(packageJson.files) !== JSON.stringify(['dist'])) {
+      violations.push(`${packageJson.name} files must be exactly ["dist"]`)
+    }
+    try {
+      await stat(resolve(packageDirectory, 'dist/assets/bundle.json'))
+    } catch {
+      violations.push(`${packageJson.name} missing dist/assets/bundle.json`)
+    }
+  }
+
   if (packageJson.name === '@ghostvue/vue') {
     try {
       const bundle = await readFile(

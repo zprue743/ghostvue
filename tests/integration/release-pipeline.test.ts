@@ -1,6 +1,6 @@
 /** @vitest-environment node */
 
-import { readFileSync } from 'node:fs'
+import { readFileSync, readdirSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 
 import { describe, expect, it } from 'vitest'
@@ -120,6 +120,13 @@ describe('release workflow', () => {
     expect(dryRun).toMatch(/run: git diff --exit-code/)
   })
 
+  it('gates the packed MCP server before the dry run (GHO-232)', () => {
+    const dryRun = workflowJobs().get('dry-run') ?? ''
+    const packed = dryRun.indexOf('run: pnpm mcp:packed')
+    expect(packed).toBeGreaterThan(dryRun.indexOf('run: pnpm build'))
+    expect(packed).toBeLessThan(dryRun.indexOf('run: pnpm release:dry-run'))
+  })
+
   it('pins every action to the same commit SHA and release as CI', () => {
     // tests/integration/ci-workflow-policy.test.ts enforces SHA pins across
     // all workflows; this ties the release workflow to CI's exact pins.
@@ -161,6 +168,39 @@ describe('publishable package manifests', () => {
       expect(sourceManifestProblems(manifest, `packages/${directory}`)).toEqual(
         [],
       )
+    }
+  })
+
+  it('include the MCP server on the release train (GHO-17 M6)', () => {
+    // Zac approved M6 on Nov 22, 2026: @ghostvue/mcp releases 0.1.0 with the
+    // other packages and stays private until GHO-57 authorizes publishing.
+    const mcp = workspacePackages.find(({ name }) => name === '@ghostvue/mcp')
+    expect(mcp?.directory).toBe('mcp')
+    const manifest = readJson('packages/mcp/package.json')
+    expect(manifest.private).toBe(true)
+    expect(manifest.version).toBe('0.0.0')
+    expect(manifest.files).toEqual(['dist'])
+    expect(manifest.bin).toEqual({ 'ghostvue-mcp': './dist/bin.js' })
+  })
+
+  it('each have a pending minor Changeset for the first 0.1.0 release', () => {
+    // `pnpm release:dry-run --expect-version 0.1.0` fails for any package
+    // that Changesets would leave at 0.0.0.
+    const bumps = new Map<string, Set<string>>()
+    for (const file of readdirSync(`${root}/.changeset`)) {
+      if (!file.endsWith('.md') || file === 'README.md') continue
+      const source = readFileSync(`${root}/.changeset/${file}`, 'utf8')
+      const frontmatter = /^---\n([\s\S]*?)\n---/.exec(source)?.[1] ?? ''
+      for (const [, name = '', bump = ''] of frontmatter.matchAll(
+        /^['"]?(@ghostvue\/[\w-]+)['"]?:\s*(\w+)\s*$/gm,
+      )) {
+        bumps.set(name, (bumps.get(name) ?? new Set()).add(bump))
+      }
+    }
+    for (const { name } of workspacePackages) {
+      const planned = [...(bumps.get(name) ?? [])]
+      expect(planned, name).toContain('minor')
+      expect(planned, name).not.toContain('major')
     }
   })
 

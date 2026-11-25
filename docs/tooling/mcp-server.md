@@ -2,7 +2,7 @@
 
 GhostVue exposes a **local, read-only** [Model Context Protocol](https://modelcontextprotocol.io/) server so agents can discover components, manifests, executable examples, docs, and design tokens without the Vue runtime.
 
-**Status:** In progress — the private `packages/mcp` package runs a stdio MCP server (`tools` capability, version stamp, error envelope) over the offline asset bundle its build produces. It serves `list_components`, `get_component`, `get_tokens`, `search_docs`, and `get_examples`. Without the bundle, `ghostvue-mcp` prints a diagnostic to stderr and exits 1 ([GHO-17](../plans/gho-17-mcp-first-release.md), [ADR 0015](../adr/0015-mcp-server-first-release.md) accepted).
+**Status:** Implemented, not yet on npm. `@ghostvue/mcp` serves all five v1 tools over stdio from the offline asset bundle its build produces. It joins the first `0.1.0` release with the other `@ghostvue/*` packages and stays `"private": true` until publishing is authorized ([GHO-57](https://linear.app/ghost-vue/issue/GHO-57)). Until then, build it from this repository (see [Try it from a checkout](#try-it-from-a-checkout)). Contract: [GHO-17](../plans/gho-17-mcp-first-release.md), [ADR 0015](../adr/0015-mcp-server-first-release.md).
 
 ## What ships in v1
 
@@ -20,34 +20,115 @@ Transport is **stdio** only. HTTP (GHO-205) and `validate_usage` (GHO-206) are d
 
 Arbitrary file access, executing examples, hosting a network endpoint, and importing `vue` inside `@ghostvue/mcp`.
 
-## Bin and host configuration
+## Install and host configuration
 
-Published **bin name:** `ghostvue-mcp` (stdio server entry; same executable whether installed globally or invoked via `npx @ghostvue/mcp`).
+The package installs one executable, `ghostvue-mcp`. It speaks MCP over stdin
+and stdout, needs Node 22 or later, and makes no network requests: every
+answer comes from data bundled in the package. Use the same version as the
+`@ghostvue/vue` and `@ghostvue/themes` packages in your app, so the manifests
+and tokens match the components you use. Each tool's
+`expectedGhostvueVersion` input can enforce that.
 
-Example Cursor / Claude Desktop MCP fragment (paths adjust after the package exists on npm):
+Hosts start the server with `npx`, which downloads the package on first use:
+
+```bash
+npx -y -p @ghostvue/mcp@0.1.0 ghostvue-mcp
+```
+
+For a faster start, install it once with `npm install --save-dev
+@ghostvue/mcp@0.1.0` (or globally with `npm install -g`) and set `command` to
+`ghostvue-mcp` with no `args`.
+
+### Cursor
+
+Add to `.cursor/mcp.json` in the project, or `~/.cursor/mcp.json` for every
+project:
 
 ```json
 {
   "mcpServers": {
     "ghostvue": {
       "command": "npx",
-      "args": ["-y", "-p", "@ghostvue/mcp@<version>", "ghostvue-mcp"]
+      "args": ["-y", "-p", "@ghostvue/mcp@0.1.0", "ghostvue-mcp"]
     }
   }
 }
 ```
 
-Prefer a global or project-local install when `npx` cold-start latency matters:
+### Claude Code
+
+```bash
+claude mcp add ghostvue -- npx -y -p @ghostvue/mcp@0.1.0 ghostvue-mcp
+```
+
+Add `--scope project` to write the server to `.mcp.json` and share it with the
+repository.
+
+### Claude Desktop
+
+Add to `claude_desktop_config.json` (Settings → Developer → Edit Config), then
+restart Claude Desktop:
 
 ```json
 {
   "mcpServers": {
     "ghostvue": {
-      "command": "ghostvue-mcp"
+      "command": "npx",
+      "args": ["-y", "-p", "@ghostvue/mcp@0.1.0", "ghostvue-mcp"]
     }
   }
 }
 ```
+
+### VS Code
+
+Add to `.vscode/mcp.json` in the workspace. VS Code uses `servers`, not
+`mcpServers`:
+
+```json
+{
+  "servers": {
+    "ghostvue": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "-p", "@ghostvue/mcp@0.1.0", "ghostvue-mcp"]
+    }
+  }
+}
+```
+
+### Try it from a checkout
+
+Before the npm release, build the package in this repository and point the
+host at the built bin with an absolute path:
+
+```bash
+pnpm install
+pnpm build
+node packages/mcp/dist/bin.js   # waits for MCP frames on stdin; Ctrl+C to quit
+```
+
+```json
+{
+  "mcpServers": {
+    "ghostvue": {
+      "command": "node",
+      "args": ["/absolute/path/to/ghostvue/packages/mcp/dist/bin.js"]
+    }
+  }
+}
+```
+
+Without a built asset bundle, `ghostvue-mcp` prints a diagnostic to stderr and
+exits 1.
+
+### What the package contains
+
+Only `dist/` is published: the server code, its type declarations, and the
+asset bundle in `dist/assets/`. A production install is about 16 MiB of
+`node_modules` plus about 3.5 MiB of bundled assets. Most of the dependency
+size is the MCP SDK's HTTP stack, which a stdio server installs but never
+loads.
 
 Tool responses use MCP **structured content** (`structuredContent`) with a declared `outputSchema` per tool; each payload includes top-level `schemaVersion` (`1.0.0` for the GhostVue MCP tool contract) and a `ghostvue` stamp (`version`, `assetBundleId`, `manifestSchemaId`). Every tool accepts an optional `expectedGhostvueVersion`; when it differs from the server version, the call fails with `VERSION_MISMATCH` before doing any work. Details: [GHO-17 plan §5](../plans/gho-17-mcp-first-release.md).
 
@@ -249,6 +330,26 @@ measurements are recorded in [dependencies.md](../standards/dependencies.md)
 § `@ghostvue/mcp`. The package joins the monorepo release train at `0.1.0` but
 stays `"private": true` until [GHO-57](https://linear.app/ghost-vue/issue/GHO-57)
 publish authorization.
+
+## Release checks
+
+`pnpm mcp:packed` (part of `pnpm verify:build`, and run by the release dry
+run) checks what a consumer would install:
+
+1. `pnpm pack` output holds only `dist/` plus `package.json`, the README, and
+   the license.
+2. The tarball installed with `pnpm install --prod` into a scratch project
+   stays at or under **18 MiB** of `node_modules`, not counting
+   `dist/assets/`. Sizes are apparent bytes as `du -sb` reports them. The
+   measurement goes to the CI job summary.
+3. The installed `ghostvue-mcp` starts over stdio with network proxies
+   pointed at a closed port, lists exactly the five tools, and answers one
+   call to each. Every answer must match the tool's `outputSchema` and carry
+   the bundle's `assetBundleId`.
+
+`pnpm published-exports` also checks that the `bin` file exists with a Node
+shebang and that `files` is `["dist"]`. Run `pnpm audit --prod` in
+`packages/mcp` before publishing.
 
 ## Full contract
 

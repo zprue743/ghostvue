@@ -7,9 +7,10 @@ time. Host setup lives in the
 [MCP server guide](../../docs/tooling/mcp-server.md); the contract is the
 [GHO-17 plan](../../docs/plans/gho-17-mcp-first-release.md).
 
-> The server is in progress: `ghostvue-mcp` serves MCP over stdio from the
-> offline asset bundle and registers `list_components`, `get_component`,
-> `get_tokens`, `search_docs`, and `get_examples`.
+> `ghostvue-mcp` serves MCP over stdio from the offline asset bundle and
+> registers `list_components`, `get_component`, `get_tokens`, `search_docs`,
+> and `get_examples`. The package stays private until the first `0.1.0`
+> release is authorized (GHO-57).
 
 ## Published contents
 
@@ -20,7 +21,9 @@ Only `dist/` is published (plus `package.json`, this README, and the license):
 - `dist/assets/`: the offline asset bundle described below.
 
 No file in the tarball points back into the monorepo, so the server works
-without network access once the package is installed.
+without network access once the package is installed. `pnpm mcp:packed`
+checks the packed contents, the 18 MiB installed-size budget, and a stdio
+smoke test of the installed bin; `pnpm verify:build` runs it.
 
 ## Offline asset bundle
 
