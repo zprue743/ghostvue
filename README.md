@@ -56,6 +56,11 @@ agents must begin with [AGENTS.md](./AGENTS.md). `pnpm docs:build` also writes
 [`llms.txt`](https://llmstxt.org/) and `llms-full.txt` into the VitePress output
 so published docs are served at `/llms.txt` and `/llms-full.txt`.
 
+To use GhostVue from a coding agent (MCP server setup for Claude Code, Cursor,
+VS Code, and others, `llms.txt`, component manifests, the ESLint plugin, and an
+`AGENTS.md` block for your app), see
+[Using GhostVue with AI agents](./docs/tooling/ai-agents.md).
+
 ## Philosophy
 
 Simple usage should remain simple. Configuration should describe behavior, not
