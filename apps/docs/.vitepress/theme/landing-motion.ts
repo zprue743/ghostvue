@@ -120,6 +120,26 @@ function supportsViewTimeline(): boolean {
 
 const REDUCED_MOTION_QUERY = '(prefers-reduced-motion: reduce)'
 
+/**
+ * How long after the last scroll frame the rail's ghost counts as travelling.
+ * Long enough to bridge the gaps between wheel ticks, short enough that it
+ * settles as soon as the reader stops.
+ */
+const TRAVEL_SETTLE_MS = 180
+
+/** Scroll deltas below this are sub-pixel noise, not a change of direction. */
+const TRAVEL_MIN_DELTA = 0.5
+
+/** Direction the page last moved in, or `undefined` for no real movement. */
+export function resolveTravelDirection(
+  previousScrollTop: number,
+  scrollTop: number,
+): 'down' | 'up' | undefined {
+  const delta = scrollTop - previousScrollTop
+  if (Math.abs(delta) < TRAVEL_MIN_DELTA) return undefined
+  return delta > 0 ? 'down' : 'up'
+}
+
 /** Shrinks the observed band so a section must be well inside to count. */
 const OBSERVER_ROOT_MARGIN = '-18% 0px -18% 0px'
 
@@ -145,6 +165,8 @@ export function useLandingScroll(
   const motionMode = ref<LandingMotionMode>('static')
 
   let frame = 0
+  let lastScrollTop = 0
+  let travelTimer: ReturnType<typeof setTimeout> | undefined
   let observer: IntersectionObserver | undefined
   let motionQuery: MediaQueryList | undefined
 
@@ -154,10 +176,28 @@ export function useLandingScroll(
       .filter((element): element is HTMLElement => element !== null)
   }
 
+  /*
+   * Marks the page as travelling `down` or `up` while it scrolls, and clears
+   * the mark shortly after it stops. Purely presentational: the rail's ghost
+   * leans into the direction of travel. Written as an attribute for the same
+   * reason as the progress value below.
+   */
+  function trackTravel(host: HTMLElement): void {
+    const direction = resolveTravelDirection(lastScrollTop, window.scrollY)
+    lastScrollTop = window.scrollY
+    if (!direction) return
+    host.setAttribute('data-landing-travel', direction)
+    clearTimeout(travelTimer)
+    travelTimer = setTimeout(() => {
+      host.removeAttribute('data-landing-travel')
+    }, TRAVEL_SETTLE_MS)
+  }
+
   function measure(): void {
     frame = 0
     const host = root.value
     if (!host) return
+    trackTravel(host)
     const viewportHeight = window.innerHeight
     const progress = resolveScrollProgress(
       window.scrollY,
@@ -236,6 +276,8 @@ export function useLandingScroll(
     syncMotionMode()
     window.addEventListener('scroll', scheduleMeasure, { passive: true })
     window.addEventListener('resize', scheduleMeasure, { passive: true })
+    // A restored scroll position is where the page starts, not a movement.
+    lastScrollTop = window.scrollY
     measure()
   })
 
@@ -244,6 +286,7 @@ export function useLandingScroll(
     window.removeEventListener('scroll', scheduleMeasure)
     window.removeEventListener('resize', scheduleMeasure)
     if (frame !== 0) cancelAnimationFrame(frame)
+    clearTimeout(travelTimer)
     stopObserver()
   })
 

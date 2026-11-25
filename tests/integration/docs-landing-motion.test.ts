@@ -7,6 +7,7 @@ import {
   resolveRailProgress,
   resolveScrollProgress,
   resolveSectionPhase,
+  resolveTravelDirection,
 } from '../../apps/docs/.vitepress/theme/landing-motion'
 
 const VIEWPORT = 1000
@@ -100,6 +101,18 @@ describe('resolveRailProgress', () => {
 
   it('falls back to page progress with fewer than two sections', () => {
     expect(resolveRailProgress([0], VIEWPORT, 400, 0.4)).toBe(0.4)
+  })
+})
+
+describe('resolveTravelDirection', () => {
+  it('reports the direction the page moved in', () => {
+    expect(resolveTravelDirection(100, 180)).toBe('down')
+    expect(resolveTravelDirection(180, 100)).toBe('up')
+  })
+
+  it('ignores sub-pixel jitter and a page that did not move', () => {
+    expect(resolveTravelDirection(100, 100)).toBeUndefined()
+    expect(resolveTravelDirection(100, 100.3)).toBeUndefined()
   })
 })
 

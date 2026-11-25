@@ -324,6 +324,56 @@ test.describe('docs landing page', () => {
       })
     })
 
+    test('ghost leans into the scroll direction and settles when it stops', async ({
+      page,
+    }) => {
+      await page.emulateMedia({ reducedMotion: 'no-preference' })
+      await withLanding(page, async () => {
+        const landing = page.locator('.ghost-landing')
+        const lean = page.locator('.ghost-landing-rail__lean')
+        await expect(landing).not.toHaveAttribute('data-landing-travel')
+        await expect(lean).toHaveCSS('transform', 'none')
+
+        // The travel mark only lasts while the page moves, so record every
+        // value it takes instead of racing a single read against it.
+        await landing.evaluate((element) => {
+          const seen: string[] = []
+          Object.assign(window, { landingTravelLog: seen })
+          new MutationObserver(() => {
+            seen.push(element.getAttribute('data-landing-travel') ?? 'idle')
+          }).observe(element, {
+            attributes: true,
+            attributeFilter: ['data-landing-travel'],
+          })
+        })
+        const travelLog = () =>
+          page.evaluate(
+            () =>
+              (window as unknown as { landingTravelLog: string[] })
+                .landingTravelLog,
+          )
+
+        await page.evaluate(() => {
+          window.scrollTo({ top: 600, behavior: 'instant' })
+        })
+        await expect.poll(travelLog).toEqual(['down', 'idle'])
+        await page.evaluate(() => {
+          window.scrollTo({ top: 200, behavior: 'instant' })
+        })
+        await expect.poll(travelLog).toEqual(['down', 'idle', 'up', 'idle'])
+
+        // While travelling the ghost is tilted; idle, it is upright again.
+        await landing.evaluate((element) => {
+          element.setAttribute('data-landing-travel', 'down')
+        })
+        await expect(lean).not.toHaveCSS('transform', 'none')
+        await landing.evaluate((element) => {
+          element.removeAttribute('data-landing-travel')
+        })
+        await expect(lean).toHaveCSS('transform', 'none')
+      })
+    })
+
     test('hides on narrow viewports without horizontal overflow', async ({
       page,
     }) => {

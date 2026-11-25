@@ -69,6 +69,7 @@
 
 .ghost-landing-rail__marker {
   align-items: center;
+  position: relative;
   block-size: var(--_rail-marker);
   display: flex;
   inline-size: var(--_rail-marker);
@@ -182,21 +183,87 @@
   transform: translateY(calc(var(--ghost-landing-progress, 0) * 100%));
 }
 
+/*
+ * The ghost. It sits beside the thread at the traveller's top edge and has
+ * three behaviours, each on its own box so the transforms never fight:
+ * `__lean` tilts into the direction of travel, `__arrival` pops when a new
+ * section becomes active, and the SVG bobs while the page is still.
+ */
+.ghost-landing-rail__lean {
+  display: block;
+  inset-block-start: -11px;
+  inset-inline-start: calc(var(--_rail-marker) / 2 + 2px);
+  position: absolute;
+  transform-origin: center 30%;
+}
+
+.ghost-landing-rail__arrival,
 .ghost-landing-rail__ghost {
   display: block;
-  fill: color-mix(in oklch, var(--_rail-accent) 24%, var(--ghost-surface-bg));
-  inset-block-start: -9px;
-  inset-inline-start: calc(var(--_rail-marker) / 2 + 3px);
+}
+
+.ghost-landing-rail__ghost {
   overflow: visible;
-  position: absolute;
+}
+
+.ghost-landing-rail__ghost-body {
+  fill: color-mix(in oklch, var(--_rail-accent) 24%, var(--ghost-surface-bg));
   stroke: var(--_rail-accent);
   stroke-linejoin: round;
   stroke-width: 4;
 }
 
+.ghost-landing-rail__ghost-eyes {
+  fill: var(--_rail-accent);
+}
+
 @media (prefers-reduced-motion: no-preference) {
+  .ghost-landing-rail__lean {
+    transition: transform 0.28s cubic-bezier(0.3, 1.4, 0.5, 1);
+  }
+
+  .ghost-landing-rail__ghost-eyes {
+    animation: ghost-landing-rail-blink 5.5s infinite;
+    transform-box: fill-box;
+    transform-origin: center;
+    transition: translate 0.2s ease;
+  }
+
   .ghost-landing-rail__ghost {
     animation: ghost-landing-rail-bob 3.2s ease-in-out infinite;
+  }
+
+  /* Head first into the scroll, eyes on where it is going. */
+  .ghost-landing[data-landing-travel='down'] .ghost-landing-rail__lean {
+    transform: translateY(3px) rotate(16deg) scaleY(1.08);
+  }
+
+  .ghost-landing[data-landing-travel='up'] .ghost-landing-rail__lean {
+    transform: translateY(-3px) rotate(-16deg) scaleY(1.08);
+  }
+
+  .ghost-landing[data-landing-travel='down'] .ghost-landing-rail__ghost-eyes {
+    translate: 0 5px;
+  }
+
+  .ghost-landing[data-landing-travel='up'] .ghost-landing-rail__ghost-eyes {
+    translate: 0 -5px;
+  }
+
+  .ghost-landing-rail__arrival {
+    animation: ghost-landing-rail-arrive 0.55s cubic-bezier(0.3, 1.5, 0.5, 1);
+  }
+
+  /* The marker it just reached answers with one ripple. */
+  .ghost-landing-rail__link[aria-current] .ghost-landing-rail__marker::after {
+    animation: ghost-landing-rail-ripple 0.7s ease-out;
+    border: 2px solid var(--_rail-accent);
+    border-radius: 50%;
+    content: '';
+    inset: 0.4rem;
+    opacity: 0;
+    pointer-events: none;
+    position: absolute;
   }
 }
 
@@ -208,6 +275,48 @@
 
   50% {
     transform: translateY(1.5px);
+  }
+}
+
+@keyframes ghost-landing-rail-blink {
+  0%,
+  94%,
+  100% {
+    transform: scaleY(1);
+  }
+
+  97% {
+    transform: scaleY(0.1);
+  }
+}
+
+@keyframes ghost-landing-rail-arrive {
+  0% {
+    transform: scale(1);
+  }
+
+  35% {
+    transform: scale(1.45, 0.8);
+  }
+
+  70% {
+    transform: scale(0.92, 1.12);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes ghost-landing-rail-ripple {
+  from {
+    opacity: 0.7;
+    transform: scale(0.6);
+  }
+
+  to {
+    opacity: 0;
+    transform: scale(2.2);
   }
 }
 
@@ -253,9 +362,13 @@
     color: CanvasText;
   }
 
-  .ghost-landing-rail__ghost {
+  .ghost-landing-rail__ghost-body {
     fill: Canvas;
     stroke: CanvasText;
+  }
+
+  .ghost-landing-rail__ghost-eyes {
+    fill: CanvasText;
   }
 
   .ghost-landing-rail__link:focus-visible {

@@ -65,17 +65,32 @@ function markerNumber(index: number): string {
     <span class="ghost-landing-rail__thread" aria-hidden="true">
       <span class="ghost-landing-rail__fill"></span>
       <span class="ghost-landing-rail__traveller">
-        <svg
-          class="ghost-landing-rail__ghost"
-          viewBox="0 0 64 64"
-          width="18"
-          height="18"
-          focusable="false"
-        >
-          <path
-            d="M32 8C19.85 8 10 17.85 10 30V54L17.33 47.5L24.67 54L32 47.5L39.33 54L46.67 47.5L54 54V30C54 17.85 44.15 8 32 8Z"
-          />
-        </svg>
+        <!--
+          Three nested boxes so each behaviour owns one transform: the lean
+          follows scroll direction, the arrival pop replays whenever the
+          active section changes (the key remounts it, which restarts the
+          CSS animation), and the SVG itself bobs while idle.
+        -->
+        <span class="ghost-landing-rail__lean">
+          <span :key="props.activeId" class="ghost-landing-rail__arrival">
+            <svg
+              class="ghost-landing-rail__ghost"
+              viewBox="0 0 64 64"
+              width="22"
+              height="22"
+              focusable="false"
+            >
+              <path
+                class="ghost-landing-rail__ghost-body"
+                d="M32 8C19.85 8 10 17.85 10 30V54L17.33 47.5L24.67 54L32 47.5L39.33 54L46.67 47.5L54 54V30C54 17.85 44.15 8 32 8Z"
+              />
+              <g class="ghost-landing-rail__ghost-eyes">
+                <circle cx="24.5" cy="27" r="3.4" />
+                <circle cx="39.5" cy="27" r="3.4" />
+              </g>
+            </svg>
+          </span>
+        </span>
       </span>
     </span>
     <ol class="ghost-landing-rail__list">
