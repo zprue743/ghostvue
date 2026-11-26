@@ -1,8 +1,12 @@
+import { readFileSync } from 'node:fs'
 import { readdir, readFile, stat } from 'node:fs/promises'
 import { resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 import { checkBuiltCollections } from './lib/component-manifest-collections.js'
+import { execPackageManagerSync } from './lib/package-manager.js'
+import { packedContentProblems } from './lib/published-contents.js'
+import { publishableWorkspacePackages } from './workspace-packages.mjs'
 
 // Run after `pnpm build`; Vite empties dist before writing the Vue bundle.
 
@@ -143,6 +147,34 @@ for (const directory of packageDirectories) {
   }
 }
 
+// What each publishable tarball would contain, as npm computes it from
+// `files` and its always-included root files: no test files, a README, and no
+// source map pointing at a file the tarball lacks (#347). `--dry-run` writes
+// nothing and `--ignore-scripts` keeps it from rebuilding. A stale `dist/`
+// from an older build can fail this; rebuild from a clean `dist/`.
+for (const { directory, name } of publishableWorkspacePackages) {
+  const packageDirectory = resolve(fileURLToPath(packagesRoot), directory)
+  const output = execPackageManagerSync(
+    'npm',
+    ['pack', '--dry-run', '--json', '--ignore-scripts'],
+    {
+      cwd: packageDirectory,
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'pipe'],
+    },
+  )
+  const [pack] = JSON.parse(String(output))
+  violations.push(
+    ...packedContentProblems({
+      name,
+      files: pack.files.map(
+        (/** @type {{ path: string }} */ file) => file.path,
+      ),
+      readText: (path) => readFileSync(resolve(packageDirectory, path), 'utf8'),
+    }),
+  )
+}
+
 // Component manifest collections are public JSON exports (`./manifest.json`),
 // so existence alone is not enough: they must validate and match the sources.
 violations.push(...(await checkBuiltCollections(fileURLToPath(repositoryRoot))))
@@ -152,6 +184,6 @@ if (violations.length > 0) {
   process.exitCode = 1
 } else {
   console.log(
-    'Published types/exports targets exist; manifest collections are valid and current.',
+    'Published types/exports targets exist; packed contents have a README, no test files, and no dangling source maps; manifest collections are valid and current.',
   )
 }

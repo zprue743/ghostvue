@@ -362,7 +362,14 @@ failures before Vitest starts cannot produce coverage. Locally, run
 
 ## Packed export integrity
 
-After `pnpm build`, run `pnpm exports:check`. It packs every package marked
+After `pnpm build`, `pnpm published-exports` also reads the file list that
+`npm pack --dry-run` reports for each publishable package. It fails when a
+tarball has no root README, contains a test file (`*.test.*`, `*.spec.*`, or
+`__tests__/`), or contains a source map whose sources it neither ships nor
+embeds. Publish builds emit no source maps, so the last case means the build
+config changed or `dist/` is stale; rebuild from a clean `dist/`.
+
+Then run `pnpm exports:check`. It packs every package marked
 `publishable: true` in `scripts/workspace-packages.mjs` into a temporary
 directory and checks
 the actual tarballs with publint and Are the Types Wrong (`attw --pack`). Temporary

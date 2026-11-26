@@ -51,7 +51,9 @@ framework-neutral packages directly, including their `.d.ts` files. The Vue
 package runs `vue-tsc` after `vite build` because Vite empties `dist` before
 writing the bundle. `pnpm published-exports` then asserts that each library
 package's `types` and `exports` targets exist on disk so a missing
-`dist/index.d.ts` cannot pass `pnpm verify`. Vitest, Vue Test Utils, Playwright,
+`dist/index.d.ts` cannot pass `pnpm verify`, and that each publishable
+tarball has a README and no test files or dangling source maps. Published
+output carries no source maps because the tarballs ship `dist/` without `src/`. Vitest, Vue Test Utils, Playwright,
 and axe cover complementary test levels. VitePress publishes the same canonical
 Markdown that contributors and agents read.
 
