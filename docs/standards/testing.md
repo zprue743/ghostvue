@@ -362,8 +362,9 @@ failures before Vitest starts cannot produce coverage. Locally, run
 
 ## Packed export integrity
 
-After `pnpm build`, run `pnpm exports:check`. It packs every publishable package
-listed in `scripts/workspace-packages.mjs` into a temporary directory and checks
+After `pnpm build`, run `pnpm exports:check`. It packs every package marked
+`publishable: true` in `scripts/workspace-packages.mjs` into a temporary
+directory and checks
 the actual tarballs with publint and Are the Types Wrong (`attw --pack`). Temporary
 artifacts are removed even on failure. `pnpm verify` runs this immediately after
 `pnpm published-exports`; publint errors, attw problems, and the packed
@@ -377,6 +378,13 @@ than `package.json`, the README, and the license), installs it with
 `node_modules`, excluding `dist/assets/`, is over 18 MiB. It then starts the
 installed `ghostvue-mcp` over stdio, lists the five tools, and calls each one
 offline. See the [MCP server guide](../tooling/mcp-server.md#release-checks).
+
+`pnpm consumer:packed` (`scripts/consumer-packed-smoke.mjs`) follows. It installs
+the packed publishable tarballs with npm into Vite + Vue, Nuxt, and ESLint
+consumer projects from `tests/fixtures/consumer-packed/`, mounts themed Field,
+Input, Select, Dialog, Drawer, and Toast from the production bundle in jsdom,
+builds and server-renders the Nuxt auto-imports, and lints a valid and an
+invalid SFC. See [releases](../contributing/releases.md#release-dry-run).
 
 `pnpm verify` then runs `pnpm agents-guide` (`scripts/check-ai-agents-guide.mjs`).
 It reads every MCP host snippet in the

@@ -73,7 +73,7 @@ describe('component manifest collection schema', () => {
 
     const schema = parseJsonObject(canonical)
     expect(schema['$id']).toBe(
-      'https://unpkg.com/@ghostvue/core@1/manifest-collection.schema.json',
+      'https://ghostvue.dev/schemas/v1/manifest-collection.schema.json',
     )
 
     const corePackage = await readJsonObject(

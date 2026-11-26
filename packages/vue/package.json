@@ -38,8 +38,6 @@
   },
   "dependencies": {
     "@floating-ui/dom": "1.8.0",
-    "@ghostvue/core": "workspace:*",
-    "@ghostvue/shared": "workspace:*",
     "@internationalized/date": "3.12.4"
   },
   "peerDependencies": {

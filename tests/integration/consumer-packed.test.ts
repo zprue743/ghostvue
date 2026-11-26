@@ -1,0 +1,230 @@
+/** @vitest-environment node */
+
+import { describe, expect, it } from 'vitest'
+
+import {
+  consumerDependencyPins,
+  declaresThemeLayer,
+  eslintConsumerProblems,
+  nuxtAutoImportProblems,
+  nuxtComponentSources,
+  nuxtImportSources,
+  nuxtPageProblems,
+  viteAppMountProblems,
+  type MountObservation,
+} from '../../scripts/lib/consumer-packed.js'
+
+// Judgement rules for `pnpm consumer:packed` (GHO-217). The script itself
+// packs and installs real tarballs; it runs in `verify:build` and in
+// consumer-packed-smoke.test.ts.
+
+const passingMount: MountObservation = {
+  mounted: true,
+  input: { tag: 'INPUT', value: 'Ada', label: 'Workspace name' },
+  select: {
+    role: 'combobox',
+    value: 'Europe',
+    options: ['Europe', 'United States'],
+  },
+  dialog: {
+    open: ['Smoke dialog Mounted from packed tarballs. Close'],
+    afterClose: [],
+  },
+  drawer: { open: ['Smoke drawer Also mounted from packed tarballs.'] },
+  toast: { shown: true },
+  errors: [],
+}
+
+describe('consumerDependencyPins', () => {
+  it('reads exact third-party versions from the workspace manifests', async () => {
+    const pins = await consumerDependencyPins(process.cwd())
+    expect(Object.keys(pins).sort()).toEqual([
+      '@vitejs/plugin-vue',
+      'eslint',
+      'jsdom',
+      'nuxt',
+      'vite',
+      'vue',
+      'vue-eslint-parser',
+    ])
+    for (const version of Object.values(pins)) {
+      expect(version).toMatch(/^\d+\.\d+\.\d+$/)
+    }
+  })
+})
+
+describe('declaresThemeLayer', () => {
+  it('finds a ghostvue-theme layer block in minified or formatted CSS', () => {
+    expect(declaresThemeLayer('@layer ghostvue-theme{.ghost-button{}}')).toBe(
+      true,
+    )
+    expect(declaresThemeLayer('@layer ghostvue-theme {\n  .x {}\n}')).toBe(true)
+    // An order statement names the layer but carries no styles.
+    expect(declaresThemeLayer('@layer reset, ghostvue-theme;')).toBe(false)
+    expect(declaresThemeLayer('@layer ghostvue-themes{}')).toBe(false)
+    expect(declaresThemeLayer('.ghost-button{color:red}')).toBe(false)
+  })
+})
+
+describe('viteAppMountProblems', () => {
+  it('accepts a fully working mount', () => {
+    expect(viteAppMountProblems(passingMount)).toEqual([])
+  })
+
+  it('reports each component that did not behave', () => {
+    const problems = viteAppMountProblems({
+      ...passingMount,
+      input: { tag: 'INPUT', value: '', label: null },
+      select: { role: 'button', value: 'Europe', options: [] },
+      dialog: { open: [], afterClose: [] },
+      drawer: { open: [] },
+      toast: { shown: false },
+      errors: ['TypeError: boom'],
+    })
+    expect(problems).toEqual([
+      'GhostInput v-model rendered "", expected "Ada"',
+      'GhostFieldLabel is not associated with the GhostInput control',
+      'GhostSelectTrigger role is "button", expected "combobox"',
+      'opening GhostSelect did not list both options',
+      'GhostDialogTrigger did not open a role="dialog" with its title',
+      'GhostDrawerTrigger did not open a role="dialog" with its title',
+      'useGhostToast().toast() showed nothing',
+      'runtime errors: TypeError: boom',
+    ])
+  })
+
+  it('reports a dialog that stays open and an app that never mounted', () => {
+    expect(
+      viteAppMountProblems({
+        ...passingMount,
+        mounted: false,
+        dialog: { open: ['Smoke dialog'], afterClose: ['Smoke dialog'] },
+      }),
+    ).toEqual([
+      'the app did not mount into #app',
+      'GhostDialogClose did not close the dialog',
+    ])
+  })
+})
+
+describe('Nuxt auto-import declarations', () => {
+  const components = [
+    `export const GhostButton: typeof import("@ghostvue/vue")['GhostButton']`,
+    `export const GhostDialog: typeof import("@ghostvue/vue")['GhostDialog']`,
+    `export const GhostSelect: typeof import("@ghostvue/vue")['GhostSelect']`,
+    `export const LazyGhostButton: LazyComponent<typeof import("@ghostvue/vue")['GhostButton']>`,
+  ].join('\n')
+  const imports = [
+    `export { useHead } from '#app/composables/head';`,
+    `export { useGhostId, useGhostToast as useGhostToast } from '@ghostvue/vue';`,
+  ].join('\n')
+
+  it('parses components.d.ts and imports.d.ts', () => {
+    expect([...nuxtComponentSources(components)]).toEqual([
+      ['GhostButton', '@ghostvue/vue'],
+      ['GhostDialog', '@ghostvue/vue'],
+      ['GhostSelect', '@ghostvue/vue'],
+    ])
+    expect(nuxtImportSources(imports).get('useGhostToast')).toBe(
+      '@ghostvue/vue',
+    )
+    expect(nuxtImportSources(imports).get('useHead')).toBe(
+      '#app/composables/head',
+    )
+  })
+
+  it('requires components from the configured package and composables from @ghostvue/vue', () => {
+    const generated = {
+      components: nuxtComponentSources(components),
+      imports: nuxtImportSources(imports),
+    }
+    expect(
+      nuxtAutoImportProblems({
+        ...generated,
+        componentPackage: '@ghostvue/vue',
+      }),
+    ).toEqual([])
+    expect(
+      nuxtAutoImportProblems({
+        ...generated,
+        componentPackage: '@ghostvue/themes',
+      }),
+    ).toHaveLength(3)
+    expect(
+      nuxtAutoImportProblems({
+        components: generated.components,
+        imports: new Map(),
+        componentPackage: '@ghostvue/vue',
+      }),
+    ).toEqual([
+      'useGhostId() auto-imports from undefined, expected @ghostvue/vue',
+      'useGhostToast() auto-imports from undefined, expected @ghostvue/vue',
+    ])
+  })
+})
+
+describe('nuxtPageProblems', () => {
+  it('requires the server-rendered button with an SSR id', () => {
+    expect(
+      nuxtPageProblems(
+        '<main><button class="ghost-button" data-smoke-id="smoke-v-0" type="button"><!--[-->Auto-imported<!--]--></button></main>',
+      ),
+    ).toEqual([])
+    expect(
+      nuxtPageProblems(
+        '<button class="ghost-button" type="button">Auto-imported</button>',
+      ),
+    ).toEqual(['the auto-imported useGhostId() did not run during SSR'])
+    expect(
+      nuxtPageProblems('<ghostbutton>Auto-imported</ghostbutton>'),
+    ).toEqual(['the auto-imported <GhostButton> did not server-render'])
+  })
+})
+
+describe('eslintConsumerProblems', () => {
+  const flagged = (ruleIds: string[]) =>
+    ruleIds.map((ruleId) => ({ ruleId, message: `${ruleId} failed` }))
+
+  it('requires a clean valid file and every rule on the invalid file', () => {
+    expect(
+      eslintConsumerProblems([
+        { filePath: '/c/src/Valid.vue', messages: [] },
+        {
+          filePath: '/c/src/Invalid.vue',
+          messages: flagged([
+            'ghostvue/no-unknown-props',
+            'ghostvue/no-unknown-slots',
+            'ghostvue/no-undeclared-v-model',
+          ]),
+        },
+      ]),
+    ).toEqual([])
+  })
+
+  it('reports false positives, missed rules, and unrelated errors', () => {
+    expect(
+      eslintConsumerProblems([
+        {
+          filePath: 'C:\\c\\src\\Valid.vue',
+          messages: flagged(['ghostvue/no-unknown-props']),
+        },
+        {
+          filePath: 'C:\\c\\src\\Invalid.vue',
+          messages: [
+            ...flagged(['ghostvue/no-unknown-props']),
+            { ruleId: null, message: 'Parsing error' },
+          ],
+        },
+      ]),
+    ).toEqual([
+      'Valid.vue should pass, got: ghostvue/no-unknown-props: ghostvue/no-unknown-props failed',
+      'Invalid.vue was not flagged by ghostvue/no-unknown-slots',
+      'Invalid.vue was not flagged by ghostvue/no-undeclared-v-model',
+      'Invalid.vue has non-GhostVue problems: Parsing error',
+    ])
+    expect(eslintConsumerProblems([])).toEqual([
+      'ESLint did not lint Valid.vue',
+      'ESLint did not lint Invalid.vue',
+    ])
+  })
+})

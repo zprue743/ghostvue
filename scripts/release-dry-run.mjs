@@ -20,7 +20,11 @@ import {
   runReleaseDryRun,
   verifyReleaseEvidence,
 } from './lib/release-dry-run.js'
-import { workspacePackages } from './workspace-packages.mjs'
+import { publishableWorkspacePackages } from './workspace-packages.mjs'
+
+// Only the release train is dry-run. `@ghostvue/core` and `@ghostvue/shared`
+// are internal (`publishable: false`) and never released.
+const releasePackages = publishableWorkspacePackages
 
 const root = fileURLToPath(new URL('..', import.meta.url))
 
@@ -30,7 +34,7 @@ try {
   if (options.verifyEvidence) {
     const problems = await verifyReleaseEvidence({
       evidenceDir: options.verifyEvidence,
-      packages: workspacePackages,
+      packages: releasePackages,
       expectVersion: options.expectVersion,
     })
     if (problems.length) {
@@ -39,10 +43,10 @@ try {
       )
     }
     console.log(
-      `Release evidence verified for ${workspacePackages.length} packages. Nothing was published.`,
+      `Release evidence verified for ${releasePackages.length} packages. Nothing was published.`,
     )
   } else {
-    for (const { directory, name } of workspacePackages) {
+    for (const { directory, name } of releasePackages) {
       try {
         readFileSync(join(root, 'packages', directory, 'dist', 'index.d.ts'))
       } catch {
@@ -51,7 +55,7 @@ try {
     }
     await runReleaseDryRun({
       root,
-      packages: workspacePackages,
+      packages: releasePackages,
       outDir: options.outDir,
       expectVersion: options.expectVersion,
       log: (message) => console.log(message),

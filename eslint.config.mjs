@@ -22,6 +22,9 @@ export default tseslint.config(
       'packages/vue/type-tests-negative/**',
       // Opaque bytes the MCP get_examples tests serve as text; never compiled.
       'packages/mcp/test/fixtures/**/*.vue',
+      // Plain-JS consumer projects that `pnpm consumer:packed` installs and
+      // lints with their own config; Invalid.vue must stay invalid.
+      'tests/fixtures/consumer-packed/**',
       '**/.nuxt/**',
       '**/.output/**',
     ],

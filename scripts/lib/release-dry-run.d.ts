@@ -47,6 +47,8 @@ export function planReleaseVersions(
 export interface ReleasePackage {
   directory: string
   name: string
+  /** `false` marks an internal package; the dry run refuses it. */
+  publishable?: boolean
 }
 
 export interface ReleaseDryRunSummary {

@@ -36,7 +36,7 @@ describe('packed @ghostvue/mcp', () => {
       'listed get_component, get_examples, get_tokens, list_components, search_docs',
     )
     expect(output).toContain(
-      'called list_components, get_component, get_examples, search_docs, get_tokens',
+      'called list_components, get_component, get_examples, search_docs, get_tokens; manifestSchemaId https://ghostvue.dev/schemas/v1/manifest.schema.json.',
     )
 
     const leaked = (await readdir(tmpdir())).filter(

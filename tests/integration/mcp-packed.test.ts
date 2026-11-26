@@ -246,6 +246,34 @@ describe('runMcpStdioSmoke', () => {
     ).rejects.toThrow(/assetBundleId sha256:abc, expected sha256:other/)
   })
 
+  it('rejects a stamp that names a different manifest schema', async () => {
+    const script = await fakeServer({
+      tools: MCP_TOOL_NAMES,
+      callResult: {
+        structuredContent: {
+          schemaVersion: '1.0.0',
+          ghostvue: {
+            ...stamp,
+            manifestSchemaId:
+              'https://unpkg.com/@ghostvue/core@1/manifest.schema.json',
+          },
+        },
+      },
+    })
+    await expect(
+      runMcpStdioSmoke({
+        command: process.execPath,
+        args: [script],
+        cwd: tmpdir(),
+        assetBundleId: stamp.assetBundleId,
+        manifestSchemaId:
+          'https://ghostvue.dev/schemas/v1/manifest.schema.json',
+      }),
+    ).rejects.toThrow(
+      /list_components reported manifestSchemaId https:\/\/unpkg\.com\/.*, expected https:\/\/ghostvue\.dev\/schemas\/v1\/manifest\.schema\.json/,
+    )
+  })
+
   it('reports a server that exits before answering', async () => {
     await expect(
       runMcpStdioSmoke({
