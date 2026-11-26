@@ -22,7 +22,9 @@ pnpm docs:dev   # this site, with live examples
 ## Install
 
 Once published, add the headless package, and the themes package if you want the
-default look. Vue 3.5 or newer is a peer dependency.
+default look. Vue 3.5 or newer is a peer dependency, and `@ghostvue/themes`
+peers on `@ghostvue/vue` so both share one copy. The GhostVue packages share one
+version; keep them on the same release.
 
 ```bash
 pnpm add @ghostvue/vue @ghostvue/themes

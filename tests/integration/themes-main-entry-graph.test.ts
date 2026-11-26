@@ -81,7 +81,8 @@ export const transition = startThemeTransition
       dependencies?: Record<string, string>
       devDependencies?: Record<string, string>
     }
-    expect(packageJson.dependencies).not.toHaveProperty('culori')
+    // Themes has no runtime dependencies at all; @ghostvue/vue is a peer (#345).
+    expect(packageJson.dependencies ?? {}).not.toHaveProperty('culori')
     expect(packageJson.devDependencies).toHaveProperty('culori')
   }, 60_000)
 

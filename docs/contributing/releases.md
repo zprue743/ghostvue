@@ -33,6 +33,15 @@ Until then, these invariants hold and are enforced by
 - Every publishable package declares `publishConfig.access: "public"` (required
   for a scoped package), `publishConfig.provenance: true`, and a `repository`
   that matches this GitHub repository (npm provenance rejects a mismatch).
+- Every `@ghostvue/*` entry in a publishable package's `dependencies`,
+  `peerDependencies`, or `optionalDependencies` uses `workspace:^`, which packs
+  to a caret range such as `^0.1.0`. `workspace:*` and exact versions pack to
+  pins that nest duplicate copies or fail installs with ERESOLVE (#345). See
+  the [dependency policy](../standards/dependencies.md#internal-ghostvue-ranges-345).
+- `.changeset/config.json` puts the five publishable packages in one `fixed`
+  group, so they always share a version: a minor Changeset for any one of them
+  bumps all five. `tests/integration/release-dry-run.test.ts` simulates a
+  `@ghostvue/vue`-only minor after 0.1.0 and expects all five at 0.2.0.
 - Neither the release workflow nor any root script contains `npm publish`, `pnpm publish`,
   `changeset publish`, the Changesets action, or npm credentials.
 - The release workflow grants `id-token: write` to no job, and every action is
@@ -55,10 +64,11 @@ only and refuses an entry marked `publishable: false`. For each package it:
    `.changeset/` to get the planned version and changelog preview (the checkout
    is never modified);
 3. packs the package with `pnpm pack`, which applies `files` and rewrites
-   `workspace:*`;
+   `workspace:^` to a caret range;
 4. stages the packed tree in a temporary directory, sets the planned version and
-   exact internal dependency versions, and removes `private` from that
-   temporary copy only;
+   caret ranges on the planned internal versions (refusing any internal range
+   that packed to an exact pin), and removes `private` from that temporary copy
+   only;
 5. runs `npm pack` and `npm publish --dry-run` on the staged copy and checks that
    both report the same sha1 as the tarball on disk.
 

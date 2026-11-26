@@ -36,8 +36,8 @@
     "@nuxt/schema": "4.6.4"
   },
   "peerDependencies": {
-    "@ghostvue/themes": "workspace:*",
-    "@ghostvue/vue": "workspace:*",
+    "@ghostvue/themes": "workspace:^",
+    "@ghostvue/vue": "workspace:^",
     "nuxt": "^4.6.0"
   },
   "peerDependenciesMeta": {
