@@ -2,7 +2,11 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "composite": false,
-    "tsBuildInfoFile": null
+    "tsBuildInfoFile": null,
+    // Published output carries no source maps: the tarball ships only dist/,
+    // so maps would point at src/ files consumers never receive (#347).
+    "declarationMap": false,
+    "sourceMap": false
   },
   "exclude": ["src/**/*.test.ts"],
   "references": []
