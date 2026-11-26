@@ -46,24 +46,52 @@ label. The default `associate="reference"` sets `for` to the generated control i
 
 ### `GhostField`
 
-| Prop       | Type      | Default | Description                                       |
-| ---------- | --------- | ------- | ------------------------------------------------- |
-| `id`       | `string`  | —       | Optional control id override.                     |
-| `disabled` | `boolean` | `false` | Disables the control and sets root `data-state`.  |
-| `invalid`  | `boolean` | `false` | Marks invalid and sets `aria-invalid` on control. |
-| `required` | `boolean` | `false` | Sets native `required` on the control.            |
+<!-- @generated docs-api:vue/ghost-field begin -->
+
+<!-- Source: packages/vue/manifests/ghost-field.manifest.json. Run pnpm docs:api:write after it changes. -->
+
+| Prop       | Type      | Default | Description                                         |
+| ---------- | --------- | ------- | --------------------------------------------------- |
+| `disabled` | `boolean` | `false` | Propagates disabled semantics to the control.       |
+| `id`       | `string`  | —       | Optional control id override for label association. |
+| `invalid`  | `boolean` | `false` | Propagates invalid semantics and root data-state.   |
+| `required` | `boolean` | `false` | Propagates required semantics to the control.       |
+
+| Slot      | Slot props | Description                                                                |
+| --------- | ---------- | -------------------------------------------------------------------------- |
+| `default` | —          | Field parts (label, description, control, error) in consumer-chosen order. |
+
+<!-- @generated docs-api:vue/ghost-field end -->
+
+<!-- @generated docs-api:themes/ghost-field begin -->
+
+<!-- Source: packages/themes/manifests/ghost-field.manifest.json. Run pnpm docs:api:write after it changes. -->
+
+`@ghostvue/themes` adds no props, events, or slots to the headless `GhostField` API, which it forwards.
+
+<!-- @generated docs-api:themes/ghost-field end -->
 
 Root: class `ghost-field`, `data-ghost-field`, `data-part="root"`, optional
 `data-state="invalid" | "disabled"`.
 
 ### `GhostFieldLabel`
 
-| Prop           | Type                    | Default     | Description                                     |
-| -------------- | ----------------------- | ----------- | ----------------------------------------------- |
-| `as`           | `string \| Component`   | `'label'`   | Label element.                                  |
-| `associate`    | `'reference' \| 'wrap'` | `reference` | `for` association or nested labeling.           |
-| `required`     | `boolean`               | `false`     | Shows the required marker with root `required`. |
-| `showRequired` | `boolean`               | `true`      | Toggles the visual required indicator.          |
+<!-- @generated docs-api:vue/ghost-field-label begin -->
+
+<!-- Source: packages/vue/manifests/ghost-field-label.manifest.json. Run pnpm docs:api:write after it changes. -->
+
+| Prop           | Type                       | Default       | Description                                     |
+| -------------- | -------------------------- | ------------- | ----------------------------------------------- |
+| `as`           | `GhostFieldLabelElement`   | `"label"`     | Label element.                                  |
+| `associate`    | `GhostFieldLabelAssociate` | `"reference"` | `for` association or nested labeling.           |
+| `required`     | `boolean`                  | `false`       | Shows the required marker with root `required`. |
+| `showRequired` | `boolean`                  | `true`        | Toggles the visual required indicator.          |
+
+| Slot      | Slot props | Description      |
+| --------- | ---------- | ---------------- |
+| `default` | —          | Primary content. |
+
+<!-- @generated docs-api:vue/ghost-field-label end -->
 
 ### `GhostFieldDescription`
 

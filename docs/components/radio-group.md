@@ -38,23 +38,51 @@ restores that mounted value.
 
 ### `GhostRadioGroup`
 
+<!-- @generated docs-api:vue/ghost-radio-group begin -->
+
+<!-- Source: packages/vue/manifests/ghost-radio-group.manifest.json. Run pnpm docs:api:write after it changes. -->
+
 | Prop           | Type                         | Default      | Description                                                                                 |
 | -------------- | ---------------------------- | ------------ | ------------------------------------------------------------------------------------------- |
-| `modelValue`   | `string`                     | `undefined`  | Controlled selected value. Omit for uncontrolled use.                                       |
-| `defaultValue` | `string`                     | `undefined`  | Initial value when uncontrolled; omitted means none checked. Form reset restores this seed. |
-| `name`         | `string`                     | `undefined`  | Shared native `name`; generated when omitted.                                               |
+| `as`           | `GhostRadioGroupElement`     | `"fieldset"` | Root host. Non-fieldset hosts use `role="radiogroup"`.                                      |
+| `defaultValue` | `string`                     | —            | Initial value when uncontrolled; omitted means none checked. Form reset restores this seed. |
 | `disabled`     | `boolean`                    | `false`      | Disables the group.                                                                         |
-| `required`     | `boolean`                    | `false`      | Native required on item inputs.                                                             |
 | `invalid`      | `boolean`                    | `false`      | Sets `aria-invalid` on the root for Field.                                                  |
-| `orientation`  | `'horizontal' \| 'vertical'` | `'vertical'` | Themed layout (`data-orientation`); not keyboard behavior.                                  |
-| `as`           | `string \| Component`        | `'fieldset'` | Root host. Non-fieldset hosts use `role="radiogroup"`.                                      |
+| `modelValue`   | `string`                     | —            | Controlled selected value. Omit for uncontrolled use.                                       |
+| `name`         | `string`                     | —            | Shared native `name`; generated when omitted.                                               |
+| `orientation`  | `GhostRadioGroupOrientation` | `"vertical"` | Themed layout (`data-orientation`); not keyboard behavior.                                  |
+| `required`     | `boolean`                    | `false`      | Native required on item inputs.                                                             |
+
+| Slot      | Slot props | Description        |
+| --------- | ---------- | ------------------ |
+| `default` | —          | Container content. |
+
+<!-- @generated docs-api:vue/ghost-radio-group end -->
+
+<!-- @generated docs-api:themes/ghost-radio-group begin -->
+
+<!-- Source: packages/themes/manifests/ghost-radio-group.manifest.json. Run pnpm docs:api:write after it changes. -->
+
+`@ghostvue/themes` adds these to the headless `GhostRadioGroup` API, which it forwards:
+
+| Prop   | Type                   | Default | Description                                                                              |
+| ------ | ---------------------- | ------- | ---------------------------------------------------------------------------------------- |
+| `size` | `'sm' \| 'md' \| 'lg'` | `"md"`  | Group layout density. The default omits data-size so CSS can treat a missing hook as md. |
+
+<!-- @generated docs-api:themes/ghost-radio-group end -->
 
 ### `GhostRadioGroupItem`
 
-| Prop       | Type      | Default | Description                                |
-| ---------- | --------- | ------- | ------------------------------------------ |
-| `value`    | `string`  | —       | Option value; must be unique in the group. |
-| `disabled` | `boolean` | `false` | Disables this option only.                 |
+<!-- @generated docs-api:vue/ghost-radio-group-item begin -->
+
+<!-- Source: packages/vue/manifests/ghost-radio-group-item.manifest.json. Run pnpm docs:api:write after it changes. -->
+
+| Prop       | Type      | Default  | Description                                |
+| ---------- | --------- | -------- | ------------------------------------------ |
+| `disabled` | `boolean` | `false`  | Disables this option only.                 |
+| `value`    | `string`  | Required | Option value; must be unique in the group. |
+
+<!-- @generated docs-api:vue/ghost-radio-group-item end -->
 
 ## Themed use
 

@@ -177,21 +177,49 @@ adapter for `route.query` and `router.push`.
 
 ### `GhostDataTable`
 
-| Prop                    | Type                          | Default  | Description                                               |
-| ----------------------- | ----------------------------- | -------- | --------------------------------------------------------- |
-| `data`                  | `readonly TData[]`            | required | Your rows. A new array reference applies the reset rules. |
-| `columns`               | `DataTableColumnDef<TData>[]` | required | Column definitions. Never mutated.                        |
-| `getRowId`              | `(row, index) => RowId`       | required | Stable row key.                                           |
-| `manualSorting`         | `boolean`                     | `false`  | The server sorts; the root does not reorder `data`.       |
-| `manualFiltering`       | `boolean`                     | `false`  | The server filters; filter changes reset to page 1.       |
-| `manualPagination`      | `boolean`                     | `false`  | `data` is one page; `rowCount` is required.               |
-| `rowCount`              | `number`                      | derived  | Total rows matching the server query.                     |
-| `pageCount`             | `number`                      | derived  | Override for the pager's page count.                      |
-| `enableRowSelection`    | `boolean`                     | `false`  | Turns on selection.                                       |
-| `enableRowExpansion`    | `boolean`                     | `false`  | Turns on detail rows.                                     |
-| `allowMultipleExpanded` | `boolean`                     | `true`   | When `false`, opening a row closes the others.            |
-| `loading`               | `boolean`                     | `false`  | Sets `aria-busy` on the table.                            |
-| `disabled`              | `boolean`                     | `false`  | Disables sort, selection, and expansion.                  |
+<!-- @generated docs-api:vue/ghost-data-table begin -->
+
+<!-- Source: packages/vue/manifests/ghost-data-table.manifest.json. Run pnpm docs:api:write after it changes. -->
+
+| Prop                    | Type                                   | Default  | Description                                                                    |
+| ----------------------- | -------------------------------------- | -------- | ------------------------------------------------------------------------------ |
+| `allowMultipleExpanded` | `boolean`                              | `true`   | When `false`, expanding one row collapses the others.                          |
+| `ariaLabel`             | `string`                               | —        | Accessible name for the table, applied through `tableRootProps`.               |
+| `ariaLabelledby`        | `string`                               | —        | Id of a visible label for the table, applied through `tableRootProps`.         |
+| `columnFilters`         | `DataTableColumnFilter[]`              | —        | Declared prop `columnFilters`.                                                 |
+| `columns`               | `readonly DataTableColumnDef<TData>[]` | Required | Consumer-owned column definitions. Not mutated.                                |
+| `data`                  | `readonly TData[]`                     | Required | Consumer-owned rows, read by reference only (never cloned or mutated).         |
+| `defaultColumnFilters`  | `DataTableColumnFilter[]`              | —        | Declared prop `defaultColumnFilters`.                                          |
+| `defaultExpandedRowIds` | `DataTableRowId[]`                     | —        | Declared prop `defaultExpandedRowIds`.                                         |
+| `defaultGlobalFilter`   | `unknown`                              | —        | Declared prop `defaultGlobalFilter`.                                           |
+| `defaultPagination`     | `DataTablePaginationState`             | —        | Declared prop `defaultPagination`.                                             |
+| `defaultSelectedRowIds` | `DataTableRowId[]`                     | —        | Declared prop `defaultSelectedRowIds`.                                         |
+| `defaultSorting`        | `DataTableColumnSort[]`                | —        | Declared prop `defaultSorting`.                                                |
+| `disabled`              | `boolean`                              | `false`  | Makes sort, selection, and expansion inert and disables their controls.        |
+| `enableRowExpansion`    | `boolean`                              | `false`  | Turns on detail rows.                                                          |
+| `enableRowSelection`    | `boolean`                              | `false`  | Turns on selection.                                                            |
+| `expandedRowIds`        | `DataTableRowId[]`                     | —        | Declared prop `expandedRowIds`.                                                |
+| `getRowId`              | `DataTableGetRowId<TData>`             | Required | Required in every build; there is no index fallback.                           |
+| `globalFilter`          | `unknown`                              | —        | Declared prop `globalFilter`.                                                  |
+| `loading`               | `boolean`                              | `false`  | Sets `aria-busy="true"` through `tableRootProps`.                              |
+| `manualFiltering`       | `boolean`                              | `false`  | The server filters; filter changes reset to page 1.                            |
+| `manualPagination`      | `boolean`                              | `false`  | When `true`, `data` is one server page and `rowCount` is required.             |
+| `manualSorting`         | `boolean`                              | `false`  | The server sorts; the root does not reorder `data`.                            |
+| `pageCount`             | `number`                               | —        | Optional page-count override.                                                  |
+| `pagination`            | `DataTablePaginationState`             | —        | Declared prop `pagination`.                                                    |
+| `rowCount`              | `number`                               | —        | Total rows matching the query on the server. Required with `manualPagination`. |
+| `selectedRowIds`        | `DataTableRowId[]`                     | —        | Declared prop `selectedRowIds`.                                                |
+| `sorting`               | `DataTableColumnSort[]`                | —        | Declared prop `sorting`.                                                       |
+
+| Event         | Payload                       | Description               |
+| ------------- | ----------------------------- | ------------------------- |
+| `stateChange` | `DataTableStateChangePayload` | Emitted as `stateChange`. |
+
+| Slot      | Slot props | Description      |
+| --------- | ---------- | ---------------- |
+| `default` | —          | Primary content. |
+
+<!-- @generated docs-api:vue/ghost-data-table end -->
 
 Each state is a `v-model` with a `default*` prop for uncontrolled use:
 `sorting`, `columnFilters`, `globalFilter`, `pagination`, `selectedRowIds`, and

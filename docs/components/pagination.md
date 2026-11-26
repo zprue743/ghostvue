@@ -10,9 +10,17 @@ component.
 Themed instances wrap the headless root in `.ghost-themed-scope` and style list
 layout, page buttons, and ellipsis affordances.
 
-| Prop   | Type                   | Default | Description     |
-| ------ | ---------------------- | ------- | --------------- |
-| `size` | `'sm' \| 'md' \| 'lg'` | `'md'`  | Control sizing. |
+<!-- @generated docs-api:themes/ghost-pagination begin -->
+
+<!-- Source: packages/themes/manifests/ghost-pagination.manifest.json. Run pnpm docs:api:write after it changes. -->
+
+`@ghostvue/themes` adds these to the headless `GhostPagination` API, which it forwards:
+
+| Prop   | Type                   | Default | Description                              |
+| ------ | ---------------------- | ------- | ---------------------------------------- |
+| `size` | `'sm' \| 'md' \| 'lg'` | `"md"`  | Control sizing. Default omits data-size. |
+
+<!-- @generated docs-api:themes/ghost-pagination end -->
 
 ## Basic use
 
@@ -38,16 +46,33 @@ and ellipsis markers from `siblingCount` and `boundaryCount` (both default `1`).
 
 ## API
 
-| Prop            | Type      | Default        | Description                        |
-| --------------- | --------- | -------------- | ---------------------------------- |
-| `modelValue`    | `number`  | omitted        | Controlled current page (1-based). |
-| `defaultPage`   | `number`  | `1`            | Initial page when uncontrolled.    |
-| `pageCount`     | `number`  | required       | Total pages (`≥ 1`).               |
-| `siblingCount`  | `number`  | `1`            | Pages beside the current page.     |
-| `boundaryCount` | `number`  | `1`            | Pages pinned at each end.          |
-| `showEdges`     | `boolean` | `true`         | Render first and last controls.    |
-| `disabled`      | `boolean` | `false`        | Disable every control.             |
-| `ariaLabel`     | `string`  | `'Pagination'` | `aria-label` on the `nav` root.    |
+<!-- @generated docs-api:vue/ghost-pagination begin -->
+
+<!-- Source: packages/vue/manifests/ghost-pagination.manifest.json. Run pnpm docs:api:write after it changes. -->
+
+| Prop            | Type                         | Default           | Description                        |
+| --------------- | ---------------------------- | ----------------- | ---------------------------------- |
+| `ariaLabel`     | `string`                     | `"Pagination"`    | `aria-label` on the `nav` root.    |
+| `boundaryCount` | `number`                     | `1`               | Pages pinned at each end.          |
+| `defaultPage`   | `number`                     | `1`               | Initial page when uncontrolled.    |
+| `disabled`      | `boolean`                    | `false`           | Disable every control.             |
+| `ellipsisLabel` | `string`                     | `"More pages"`    | Declared prop `ellipsisLabel`.     |
+| `firstLabel`    | `string`                     | `"First page"`    | Declared prop `firstLabel`.        |
+| `getPageLabel`  | `((page: number) => string)` | —                 | Declared prop `getPageLabel`.      |
+| `lastLabel`     | `string`                     | `"Last page"`     | Declared prop `lastLabel`.         |
+| `modelValue`    | `number`                     | —                 | Controlled current page (1-based). |
+| `nextLabel`     | `string`                     | `"Next page"`     | Declared prop `nextLabel`.         |
+| `pageCount`     | `number`                     | Required          | Total pages (`≥ 1`).               |
+| `previousLabel` | `string`                     | `"Previous page"` | Declared prop `previousLabel`.     |
+| `showEdges`     | `boolean`                    | `true`            | Render first and last controls.    |
+| `siblingCount`  | `number`                     | `1`               | Pages beside the current page.     |
+
+| Slot       | Slot props                         | Description            |
+| ---------- | ---------------------------------- | ---------------------- |
+| `ellipsis` | `placement: 'end' \| 'start'`      | Named slot `ellipsis`. |
+| `page`     | `current: boolean`, `page: number` | Named slot `page`.     |
+
+<!-- @generated docs-api:vue/ghost-pagination end -->
 
 Native attributes fall through to the `nav`. Template refs expose `element`,
 `focus()`, and `blur()`. Optional slots: `page` and `ellipsis`.

@@ -113,18 +113,41 @@ before it scrolls (default `min(50dvh, 22rem)`).
 
 ### `GhostCommandPalette` (root)
 
-| Prop            | Type                    | Default          | Description                                                   |
-| --------------- | ----------------------- | ---------------- | ------------------------------------------------------------- |
-| `open`          | `boolean \| undefined`  | `undefined`      | Controlled open state. Omit for uncontrolled.                 |
-| `defaultOpen`   | `boolean`               | `false`          | Initial open state.                                           |
-| `search`        | `string \| undefined`   | `undefined`      | Controlled query.                                             |
-| `defaultSearch` | `string`                | `''`             | Initial query and the value it resets to on close.            |
-| `loading`       | `boolean`               | `false`          | Hides empty, sets `aria-busy`, and announces loading.         |
-| `modal`         | `boolean`               | `true`           | Focus trap, scroll lock, inert background, and overlay.       |
-| `disabled`      | `boolean`               | `false`          | Blocks opening, typing, and activation.                       |
-| `closeOnSelect` | `boolean`               | `true`           | Requests close after a command.                               |
-| `closeOnEscape` | `boolean`               | `true`           | Whether `Escape` closes the palette.                          |
-| `messages`      | `GhostComboboxMessages` | English defaults | Overrides the loading, empty, and result-count announcements. |
+<!-- @generated docs-api:vue/ghost-command-palette begin -->
+
+<!-- Source: packages/vue/manifests/ghost-command-palette.manifest.json. Run pnpm docs:api:write after it changes. -->
+
+| Prop            | Type                    | Default | Description                                                             |
+| --------------- | ----------------------- | ------- | ----------------------------------------------------------------------- |
+| `closeOnEscape` | `boolean`               | `true`  | Whether `Escape` closes the palette.                                    |
+| `closeOnSelect` | `boolean`               | `true`  | Requests close after a command is activated.                            |
+| `defaultOpen`   | `boolean`               | `false` | Initial open state when `open` is omitted.                              |
+| `defaultSearch` | `string`                | `""`    | Initial query and the value it resets to on close.                      |
+| `disabled`      | `boolean`               | `false` | Blocks opening, search, and command activation.                         |
+| `loading`       | `boolean`               | `false` | Loading presentation: hides empty, sets `aria-busy`, announces loading. |
+| `messages`      | `GhostComboboxMessages` | —       | Overrides loading, empty, and results-count announcements.              |
+| `modal`         | `boolean`               | `true`  | Modal shell (focus trap, scroll lock, inert background, overlay).       |
+| `open`          | `boolean`               | —       | Controlled open state. Omit for uncontrolled mode.                      |
+| `search`        | `string`                | —       | Controlled query text. Omit for uncontrolled mode.                      |
+
+| Event     | Payload                             | Description                                                                                                            |
+| --------- | ----------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| `command` | `GhostCommandPaletteCommandPayload` | Emitted synchronously with { id } when an enabled command is activated. Not cancelable; runs before any close request. |
+| `search`  | `GhostComboboxSearchPayload`        | Emitted after each query change, including the reset on close, with a monotonic requestId for stale-response guards.   |
+
+| Slot      | Slot props                                                                                           | Description                             |
+| --------- | ---------------------------------------------------------------------------------------------------- | --------------------------------------- |
+| `default` | `close: () => void`, `focusInput: () => void`, `loading: boolean`, `open: boolean`, `search: string` | Palette parts composed by the consumer. |
+
+<!-- @generated docs-api:vue/ghost-command-palette end -->
+
+<!-- @generated docs-api:themes/ghost-command-palette begin -->
+
+<!-- Source: packages/themes/manifests/ghost-command-palette.manifest.json. Run pnpm docs:api:write after it changes. -->
+
+`@ghostvue/themes` adds no props, events, or slots to the headless `GhostCommandPalette` API, which it forwards.
+
+<!-- @generated docs-api:themes/ghost-command-palette end -->
 
 Events: `update:open`, `update:search`, `search` (`{ query, requestId }`), and
 `command` (`{ id }`). The default slot receives

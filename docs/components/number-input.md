@@ -21,21 +21,27 @@ the text field, not the surrounding buttons.
 
 ## API
 
-| Prop             | Type                       | Default    | Description                                                    |
-| ---------------- | -------------------------- | ---------- | -------------------------------------------------------------- |
-| `modelValue`     | `number \| null`           | omitted    | Controlled value. Omit for uncontrolled mode. `null` is empty. |
-| `defaultValue`   | `number \| null`           | `null`     | Initial uncontrolled value and form-reset seed.                |
-| `min`            | `number`                   | omitted    | Inclusive minimum (`aria-valuemin`).                           |
-| `max`            | `number`                   | omitted    | Inclusive maximum (`aria-valuemax`).                           |
-| `step`           | `number`                   | `1`        | Step for buttons and arrow keys.                               |
-| `locale`         | `string`                   | omitted    | `Intl.NumberFormat` locale.                                    |
-| `formatOptions`  | `Intl.NumberFormatOptions` | `{}`       | Display and round-trip parse options (`notation: 'standard'`). |
-| `disabled`       | `boolean`                  | `false`    | Disables the field and buttons.                                |
-| `readonly`       | `boolean`                  | `false`    | Focusable; edits and buttons do not change the value.          |
-| `invalid`        | `boolean`                  | `false`    | Sets `aria-invalid` on the spinbutton.                         |
-| `required`       | `boolean`                  | `false`    | Native `required` on the spinbutton.                           |
-| `decrementLabel` | `string`                   | `Decrease` | `aria-label` on the decrement button.                          |
-| `incrementLabel` | `string`                   | `Increase` | `aria-label` on the increment button.                          |
+<!-- @generated docs-api:vue/ghost-number-input begin -->
+
+<!-- Source: packages/vue/manifests/ghost-number-input.manifest.json. Run pnpm docs:api:write after it changes. -->
+
+| Prop             | Type                       | Default      | Description                                                    |
+| ---------------- | -------------------------- | ------------ | -------------------------------------------------------------- |
+| `decrementLabel` | `string`                   | `"Decrease"` | `aria-label` on the decrement button.                          |
+| `defaultValue`   | `null \| number`           | `null`       | Initial uncontrolled value and form-reset seed.                |
+| `disabled`       | `boolean`                  | `false`      | Disables the field and buttons.                                |
+| `formatOptions`  | `Intl.NumberFormatOptions` | —            | Display and round-trip parse options (`notation: 'standard'`). |
+| `incrementLabel` | `string`                   | `"Increase"` | `aria-label` on the increment button.                          |
+| `invalid`        | `boolean`                  | `false`      | Sets `aria-invalid` on the spinbutton.                         |
+| `locale`         | `string`                   | —            | `Intl.NumberFormat` locale.                                    |
+| `max`            | `number`                   | —            | Inclusive maximum (`aria-valuemax`).                           |
+| `min`            | `number`                   | —            | Inclusive minimum (`aria-valuemin`).                           |
+| `modelValue`     | `null \| number`           | —            | Controlled value. Omit for uncontrolled mode. `null` is empty. |
+| `readonly`       | `boolean`                  | `false`      | Focusable; edits and buttons do not change the value.          |
+| `required`       | `boolean`                  | `false`      | Native `required` on the spinbutton.                           |
+| `step`           | `number`                   | `1`          | Step for buttons and arrow keys.                               |
+
+<!-- @generated docs-api:vue/ghost-number-input end -->
 
 `v-model` emits `update:modelValue` when a value commits (blur after typing,
 Enter, buttons, or keyboard stepping). While typing, the draft text is local
@@ -79,10 +85,18 @@ Bind `GhostFieldControl` slot props to the spinbutton input through `v-bind`.
 
 <GhostExample id="number-input/themed" />
 
-| Prop    | Type                   | Default | Description                 |
-| ------- | ---------------------- | ------- | --------------------------- |
-| `size`  | `'sm' \| 'md' \| 'lg'` | `'md'`  | Control size.               |
-| `block` | `boolean`              | `false` | Stretch to available width. |
+<!-- @generated docs-api:themes/ghost-number-input begin -->
+
+<!-- Source: packages/themes/manifests/ghost-number-input.manifest.json. Run pnpm docs:api:write after it changes. -->
+
+`@ghostvue/themes` adds these to the headless `GhostNumberInput` API, which it forwards:
+
+| Prop    | Type                   | Default | Description                                |
+| ------- | ---------------------- | ------- | ------------------------------------------ |
+| `size`  | `'sm' \| 'md' \| 'lg'` | `"md"`  | Control size. Default omits data-size.     |
+| `block` | `boolean`              | `false` | Stretch to available width via data-block. |
+
+<!-- @generated docs-api:themes/ghost-number-input end -->
 
 ## Component refs
 

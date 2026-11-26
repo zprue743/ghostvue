@@ -47,6 +47,29 @@ Decorative separators are always `aria-hidden="true"`.
 See the [specification](/specs/breadcrumb). Generated manifests live under
 `packages/vue/manifests/ghost-breadcrumb*.manifest.json`.
 
+<!-- @generated docs-api:vue/ghost-breadcrumb begin -->
+
+<!-- Source: packages/vue/manifests/ghost-breadcrumb.manifest.json. Run pnpm docs:api:write after it changes. -->
+
+| Prop        | Type                     | Default        | Description                                                 |
+| ----------- | ------------------------ | -------------- | ----------------------------------------------------------- |
+| `ariaLabel` | `string`                 | `"Breadcrumb"` | Accessible name for the breadcrumb navigation.              |
+| `as`        | `GhostBreadcrumbElement` | `"nav"`        | Tag name or component rendered for the navigation landmark. |
+
+| Slot      | Slot props | Description      |
+| --------- | ---------- | ---------------- |
+| `default` | —          | Primary content. |
+
+<!-- @generated docs-api:vue/ghost-breadcrumb end -->
+
+<!-- @generated docs-api:themes/ghost-breadcrumb begin -->
+
+<!-- Source: packages/themes/manifests/ghost-breadcrumb.manifest.json. Run pnpm docs:api:write after it changes. -->
+
+`@ghostvue/themes` adds no props, events, or slots to the headless `GhostBreadcrumb` API, which it forwards.
+
+<!-- @generated docs-api:themes/ghost-breadcrumb end -->
+
 | Part                       | Element | Key semantics                    |
 | -------------------------- | ------- | -------------------------------- |
 | `GhostBreadcrumb`          | `nav`   | `aria-label`                     |

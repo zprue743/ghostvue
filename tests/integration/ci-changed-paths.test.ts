@@ -164,6 +164,29 @@ describe('ci-changed-paths classifier', () => {
       ).toBe(false)
     })
 
+    it('requires full CI for prose pages with generated docs-api tables, which pnpm docs:api checks', () => {
+      const generated = [
+        '# MCP',
+        '',
+        '<!-- @generated docs-api:mcp-tools begin -->',
+        '| Tool | Description |',
+        '<!-- @generated docs-api:mcp-tools end -->',
+        '',
+      ].join('\n')
+      expect(
+        isHeavySkipEligible('docs/tooling/mcp-server.md', {
+          readAtBase: () => generated,
+          readAtHead: () => generated.replace('Description', 'Purpose'),
+        }),
+      ).toBe(false)
+      expect(
+        isHeavySkipEligible('docs/tooling/mcp-server.md', {
+          readAtBase: () => generated,
+          readAtHead: () => '# MCP\n\nProse only.\n',
+        }),
+      ).toBe(false)
+    })
+
     it('requires full CI for prose edits to the AI agents guide, whose snippets are tested', () => {
       const prose = '# Using GhostVue with AI agents\n\nProse only.\n'
       const result = classifyChangedPaths({

@@ -43,6 +43,7 @@ import {
   runMcpStdioSmoke,
 } from './lib/mcp-packed.js'
 import { execPackageManagerSync } from './lib/package-manager.js'
+import { ensureWorkspaceBuilt } from './lib/workspace-build-lock.js'
 
 const root = fileURLToPath(new URL('..', import.meta.url))
 const packageDirectory = join(root, 'packages', 'mcp')
@@ -71,11 +72,18 @@ function offlineEnv() {
 
 const temporary = await mkdtemp(join(tmpdir(), 'ghostvue-mcp-packed-'))
 try {
-  if (!existsSync(join(packageDirectory, 'dist', 'assets', 'bundle.json'))) {
+  const mcpBuilt = () =>
+    existsSync(join(packageDirectory, 'dist', 'assets', 'bundle.json'))
+  if (!mcpBuilt()) {
     if (!process.argv.includes('--ensure-built')) {
       throw new Error('@ghostvue/mcp is not built. Run `pnpm build` first.')
     }
-    execPackageManagerSync('pnpm', ['build'], { cwd: root, stdio: 'pipe' })
+    ensureWorkspaceBuilt({
+      root,
+      isBuilt: mcpBuilt,
+      build: () =>
+        execPackageManagerSync('pnpm', ['build'], { cwd: root, stdio: 'pipe' }),
+    })
   }
 
   // 1. Published contents.

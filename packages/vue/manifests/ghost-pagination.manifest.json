@@ -11,7 +11,7 @@
       "type": "string",
       "default": "Pagination",
       "required": false,
-      "description": "Declared prop `ariaLabel`.",
+      "description": "`aria-label` on the `nav` root.",
       "deprecated": false
     },
     {
@@ -19,7 +19,7 @@
       "type": "number",
       "default": 1,
       "required": false,
-      "description": "Declared prop `boundaryCount`.",
+      "description": "Pages pinned at each end.",
       "deprecated": false
     },
     {
@@ -27,7 +27,7 @@
       "type": "number",
       "default": 1,
       "required": false,
-      "description": "Declared prop `defaultPage`.",
+      "description": "Initial page when uncontrolled.",
       "deprecated": false
     },
     {
@@ -35,7 +35,7 @@
       "type": "boolean",
       "default": false,
       "required": false,
-      "description": "Declared prop `disabled`.",
+      "description": "Disable every control.",
       "deprecated": false
     },
     {
@@ -73,7 +73,7 @@
       "name": "modelValue",
       "type": "number",
       "required": false,
-      "description": "Declared prop `modelValue`.",
+      "description": "Controlled current page (1-based).",
       "deprecated": false
     },
     {
@@ -88,7 +88,7 @@
       "name": "pageCount",
       "type": "number",
       "required": true,
-      "description": "Declared prop `pageCount`.",
+      "description": "Total pages (`≥ 1`).",
       "deprecated": false
     },
     {
@@ -104,7 +104,7 @@
       "type": "boolean",
       "default": true,
       "required": false,
-      "description": "Declared prop `showEdges`.",
+      "description": "Render first and last controls.",
       "deprecated": false
     },
     {
@@ -112,7 +112,7 @@
       "type": "number",
       "default": 1,
       "required": false,
-      "description": "Declared prop `siblingCount`.",
+      "description": "Pages beside the current page.",
       "deprecated": false
     }
   ],

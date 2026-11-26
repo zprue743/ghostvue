@@ -5,6 +5,7 @@ import { dirname, join } from 'node:path'
 import { format, resolveConfig } from 'prettier'
 
 import { pascalToKebab, serializeManifest } from './component-manifests.js'
+import { beginMarker, endMarker, renderComponentApi } from './docs-api.js'
 import { execPackageManagerSync } from './package-manager.js'
 
 const BUNDLE_SIZE_BUDGETS_PATH = 'scripts/bundle-size-budgets.json'
@@ -91,6 +92,21 @@ export async function scaffoldComponent(
 ) {
   const { name, suffix, slug } = componentIdentity(input)
   const base = `ghost-${slug}`
+  const vueManifest = manifest(name, '@ghostvue/vue', slug)
+  const themesManifest = manifest(name, '@ghostvue/themes', slug)
+  // Pre-render the docs-api blocks so the new page already passes
+  // `pnpm docs:api`, which requires both blocks on every component page.
+  const docsApiBlock = (block, entry, headless) =>
+    [
+      beginMarker(block),
+      '',
+      renderComponentApi(entry, {
+        sourcePath: `packages/${block.split('/')[0]}/manifests/${base}.manifest.json`,
+        headless,
+      }),
+      '',
+      endMarker(block),
+    ].join('\n')
   const files = new Map([
     [
       `packages/vue/src/${base}.ts`,
@@ -182,11 +198,11 @@ export type { ${name}Exposed }
     ],
     [
       `packages/vue/manifests/${base}.manifest.json`,
-      serializeManifest(manifest(name, '@ghostvue/vue', slug)),
+      serializeManifest(vueManifest),
     ],
     [
       `packages/themes/manifests/${base}.manifest.json`,
-      serializeManifest(manifest(name, '@ghostvue/themes', slug)),
+      serializeManifest(themesManifest),
     ],
     [
       `docs/components/${slug}.md`,
@@ -203,8 +219,11 @@ using it in production.
 
 ## API
 
-No declared props or emits. The default slot holds content. The root has
-\`data-part="root"\`, \`data-${base}\`, and class \`${base}\`.
+${docsApiBlock(`vue/${base}`, vueManifest)}
+
+${docsApiBlock(`themes/${base}`, themesManifest, vueManifest)}
+
+The root has \`data-part="root"\`, \`data-${base}\`, and class \`${base}\`.
 The themed wrapper uses \`--ghost-surface-fg\`.
 
 ## Accessibility and follow-ups

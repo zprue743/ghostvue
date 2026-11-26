@@ -29,12 +29,23 @@ Headless use of the same contract without the SFC:
 See the [generated component references](/reference/) for props, emits, slots,
 exposed members, styling hooks, CSS variables, and executable examples.
 
+<!-- @generated docs-api:vue/ghost-link begin -->
+
+<!-- Source: packages/vue/manifests/ghost-link.manifest.json. Run pnpm docs:api:write after it changes. -->
+
 | Prop          | Type               | Default              | Description                                                     |
 | ------------- | ------------------ | -------------------- | --------------------------------------------------------------- |
-| `as`          | `'a' \| Component` | `'a'`                | Host element or router component (`RouterLink`, `NuxtLink`, …). |
+| `as`          | `GhostLinkElement` | `"a"`                | Host element or router component (`RouterLink`, `NuxtLink`, …). |
 | `disabled`    | `boolean`          | `false`              | Removes `href`, sets `aria-disabled`, and cancels activation.   |
 | `external`    | `boolean`          | `false`              | Shows the external icon for same-tab outbound links.            |
-| `newTabLabel` | `string`           | `'Opens in new tab'` | Visually hidden hint when `target="_blank"`.                    |
+| `newTabLabel` | `string`           | `"Opens in new tab"` | Visually hidden hint when `target="_blank"`.                    |
+
+| Slot                | Slot props | Description                                                                                |
+| ------------------- | ---------- | ------------------------------------------------------------------------------------------ |
+| `default`           | —          | Visible link text. Provide aria-label or aria-labelledby when the slot is empty.           |
+| `externalIndicator` | —          | Decorative external icon inside data-part=external-icon. Hidden from assistive technology. |
+
+<!-- @generated docs-api:vue/ghost-link end -->
 
 ## External and new-tab links
 
@@ -67,10 +78,18 @@ does not bundle or import `vue-router`.
 Importing the themed component loads the default stylesheet. Visual props exist
 only on this wrapper:
 
-| Prop      | Type                    | Default    | Description          |
-| --------- | ----------------------- | ---------- | -------------------- |
-| `variant` | `'inline' \| 'subtle'`  | `'inline'` | Underline treatment. |
-| `tone`    | `'accent' \| 'neutral'` | `'accent'` | Link color intent.   |
+<!-- @generated docs-api:themes/ghost-link begin -->
+
+<!-- Source: packages/themes/manifests/ghost-link.manifest.json. Run pnpm docs:api:write after it changes. -->
+
+`@ghostvue/themes` adds these to the headless `GhostLink` API, which it forwards:
+
+| Prop      | Type                    | Default    | Description                                          |
+| --------- | ----------------------- | ---------- | ---------------------------------------------------- |
+| `variant` | `'inline' \| 'subtle'`  | `"inline"` | Underline treatment. The default omits data-variant. |
+| `tone`    | `'accent' \| 'neutral'` | `"accent"` | Link color intent. The default omits data-tone.      |
+
+<!-- @generated docs-api:themes/ghost-link end -->
 
 Defaults omit matching `data-*` hooks so CSS can treat a missing attribute as
 `inline` / `accent`. Focus-visible uses the shared focus-ring tokens.

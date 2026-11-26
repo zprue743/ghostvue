@@ -11,7 +11,7 @@
       "type": "string",
       "default": "Decrease",
       "required": false,
-      "description": "Declared prop `decrementLabel`.",
+      "description": "`aria-label` on the decrement button.",
       "deprecated": false
     },
     {
@@ -19,7 +19,7 @@
       "type": "null | number",
       "default": null,
       "required": false,
-      "description": "Declared prop `defaultValue`.",
+      "description": "Initial uncontrolled value and form-reset seed.",
       "deprecated": false
     },
     {
@@ -27,14 +27,14 @@
       "type": "boolean",
       "default": false,
       "required": false,
-      "description": "Declared prop `disabled`.",
+      "description": "Disables the field and buttons.",
       "deprecated": false
     },
     {
       "name": "formatOptions",
       "type": "Intl.NumberFormatOptions",
       "required": false,
-      "description": "Declared prop `formatOptions`.",
+      "description": "Display and round-trip parse options (`notation: 'standard'`).",
       "deprecated": false
     },
     {
@@ -42,7 +42,7 @@
       "type": "string",
       "default": "Increase",
       "required": false,
-      "description": "Declared prop `incrementLabel`.",
+      "description": "`aria-label` on the increment button.",
       "deprecated": false
     },
     {
@@ -50,35 +50,35 @@
       "type": "boolean",
       "default": false,
       "required": false,
-      "description": "Declared prop `invalid`.",
+      "description": "Sets `aria-invalid` on the spinbutton.",
       "deprecated": false
     },
     {
       "name": "locale",
       "type": "string",
       "required": false,
-      "description": "Declared prop `locale`.",
+      "description": "`Intl.NumberFormat` locale.",
       "deprecated": false
     },
     {
       "name": "max",
       "type": "number",
       "required": false,
-      "description": "Declared prop `max`.",
+      "description": "Inclusive maximum (`aria-valuemax`).",
       "deprecated": false
     },
     {
       "name": "min",
       "type": "number",
       "required": false,
-      "description": "Declared prop `min`.",
+      "description": "Inclusive minimum (`aria-valuemin`).",
       "deprecated": false
     },
     {
       "name": "modelValue",
       "type": "null | number",
       "required": false,
-      "description": "Declared prop `modelValue`.",
+      "description": "Controlled value. Omit for uncontrolled mode. `null` is empty.",
       "deprecated": false
     },
     {
@@ -86,7 +86,7 @@
       "type": "boolean",
       "default": false,
       "required": false,
-      "description": "Declared prop `readonly`.",
+      "description": "Focusable; edits and buttons do not change the value.",
       "deprecated": false
     },
     {
@@ -94,7 +94,7 @@
       "type": "boolean",
       "default": false,
       "required": false,
-      "description": "Declared prop `required`.",
+      "description": "Native `required` on the spinbutton.",
       "deprecated": false
     },
     {
@@ -102,7 +102,7 @@
       "type": "number",
       "default": 1,
       "required": false,
-      "description": "Declared prop `step`.",
+      "description": "Step for buttons and arrow keys.",
       "deprecated": false
     }
   ],

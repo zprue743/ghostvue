@@ -48,15 +48,33 @@ selection like `GhostToggleGroup` single mode.
 
 ### `GhostSegmentedControl`
 
-| Prop           | Type                         | Default        | Description                               |
-| -------------- | ---------------------------- | -------------- | ----------------------------------------- |
-| `modelValue`   | `string \| undefined`        | —              | Controlled selection.                     |
-| `defaultValue` | `string \| undefined`        | —              | Initial uncontrolled selection.           |
-| `orientation`  | `'horizontal' \| 'vertical'` | `'horizontal'` | Roving arrows and indicator axis.         |
-| `dir`          | `'ltr' \| 'rtl'`             | —              | Explicit direction for horizontal arrows. |
-| `as`           | `string \| Component`        | `'div'`        | Root `role="group"` host.                 |
-| `disabled`     | `boolean`                    | `false`        | Disables all items.                       |
-| `deselectable` | `boolean`                    | `false`        | Allow clearing the pressed segment.       |
+<!-- @generated docs-api:vue/ghost-segmented-control begin -->
+
+<!-- Source: packages/vue/manifests/ghost-segmented-control.manifest.json. Run pnpm docs:api:write after it changes. -->
+
+| Prop           | Type                           | Default        | Description                                                                         |
+| -------------- | ------------------------------ | -------------- | ----------------------------------------------------------------------------------- |
+| `as`           | `GhostSegmentedControlElement` | `"div"`        | Root host element.                                                                  |
+| `defaultValue` | `GhostSegmentedControlValue`   | —              | Initial selection when `modelValue` is omitted.                                     |
+| `deselectable` | `boolean`                      | `false`        | When false, pressing the active segment keeps it selected (default view switching). |
+| `dir`          | `'ltr' \| 'rtl'`               | —              | Explicit text direction for horizontal roving.                                      |
+| `disabled`     | `boolean`                      | `false`        | Disables every item.                                                                |
+| `modelValue`   | `GhostSegmentedControlValue`   | —              | Controlled selection.                                                               |
+| `orientation`  | `'horizontal' \| 'vertical'`   | `"horizontal"` | Arrow-key roving layout and indicator slide axis.                                   |
+
+| Slot      | Slot props | Description    |
+| --------- | ---------- | -------------- |
+| `default` | —          | Segment items. |
+
+<!-- @generated docs-api:vue/ghost-segmented-control end -->
+
+<!-- @generated docs-api:themes/ghost-segmented-control begin -->
+
+<!-- Source: packages/themes/manifests/ghost-segmented-control.manifest.json. Run pnpm docs:api:write after it changes. -->
+
+`@ghostvue/themes` adds no props, events, or slots to the headless `GhostSegmentedControl` API, which it forwards.
+
+<!-- @generated docs-api:themes/ghost-segmented-control end -->
 
 **Emits:** `update:modelValue` with `string | undefined`.
 
@@ -64,11 +82,21 @@ selection like `GhostToggleGroup` single mode.
 
 ### `GhostSegmentedControlItem`
 
-| Prop       | Type                  | Default    | Description                   |
-| ---------- | --------------------- | ---------- | ----------------------------- |
-| `value`    | `string`              | required   | Stable id in the group model. |
-| `as`       | `string \| Component` | `'button'` | Control element.              |
-| `disabled` | `boolean`             | `false`    | Skips roving and toggling.    |
+<!-- @generated docs-api:vue/ghost-segmented-control-item begin -->
+
+<!-- Source: packages/vue/manifests/ghost-segmented-control-item.manifest.json. Run pnpm docs:api:write after it changes. -->
+
+| Prop       | Type                               | Default    | Description                                       |
+| ---------- | ---------------------------------- | ---------- | ------------------------------------------------- |
+| `as`       | `GhostSegmentedControlItemElement` | `"button"` | Tag name or component for the segment control.    |
+| `disabled` | `boolean`                          | `false`    | Disables toggling and roving focus for this item. |
+| `value`    | `string`                           | Required   | Stable value for this item in the group model.    |
+
+| Slot      | Slot props | Description      |
+| --------- | ---------- | ---------------- |
+| `default` | —          | Primary content. |
+
+<!-- @generated docs-api:vue/ghost-segmented-control-item end -->
 
 **Exposed:** `{ element, focus(), blur() }`.
 

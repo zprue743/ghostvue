@@ -33,12 +33,18 @@ Headless use of the same contract without the SFC:
 
 ## API
 
-| Prop        | Type             | Default | Description                                                                                             |
-| ----------- | ---------------- | ------- | ------------------------------------------------------------------------------------------------------- |
-| `value`     | `number \| null` | omitted | Current progress. Omit or pass `null` for the indeterminate fallback. Clamped to `[0, max]`.            |
-| `max`       | `number`         | `100`   | Exclusive upper bound. Invalid values fall back to `100`.                                               |
-| `label`     | `string`         | omitted | Accessible name (`aria-label`). Prefer `aria-labelledby` when a visible heading already names the task. |
-| `valueText` | `string`         | omitted | Accessible value text. Defaults to a rounded percent while determinate.                                 |
+<!-- @generated docs-api:vue/ghost-progress begin -->
+
+<!-- Source: packages/vue/manifests/ghost-progress.manifest.json. Run pnpm docs:api:write after it changes. -->
+
+| Prop        | Type             | Default | Description                                                                                                                                                                   |
+| ----------- | ---------------- | ------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `label`     | `string`         | —       | Accessible name applied as aria-label. role=progressbar is nameFrom author; contents are presentational and cannot name the widget.                                           |
+| `max`       | `number`         | `100`   | Exclusive upper bound of the range. Defaults to 100 (ARIA progressbar valuemax), not HTML progress's 1. Invalid values fall back to 100.                                      |
+| `value`     | `null \| number` | —       | Current progress in the same unit as max. Omit or pass null for the indeterminate fallback. Non-finite numbers are treated as unknown. Finite values are clamped to [0, max]. |
+| `valueText` | `string`         | —       | Accessible value text (aria-valuetext) for determinate instances. When omitted, the default is the rounded percent. Ignored while indeterminate.                              |
+
+<!-- @generated docs-api:vue/ghost-progress end -->
 
 Native attributes and listeners fall through to the progressbar root. There is
 no default slot, no v-model, and no exposed ref. The fill is
@@ -65,10 +71,18 @@ Override the percent when the unit is not 0–100:
 Importing the themed component loads the default stylesheet. Visual props exist
 only on this wrapper:
 
-| Prop   | Type                                | Default    | Description            |
-| ------ | ----------------------------------- | ---------- | ---------------------- |
-| `tone` | `'accent' \| 'neutral' \| 'danger'` | `'accent'` | Semantic color intent. |
-| `size` | `'sm' \| 'md' \| 'lg'`              | `'md'`     | Track thickness.       |
+<!-- @generated docs-api:themes/ghost-progress begin -->
+
+<!-- Source: packages/themes/manifests/ghost-progress.manifest.json. Run pnpm docs:api:write after it changes. -->
+
+`@ghostvue/themes` adds these to the headless `GhostProgress` API, which it forwards:
+
+| Prop   | Type                                | Default    | Description                                                                                   |
+| ------ | ----------------------------------- | ---------- | --------------------------------------------------------------------------------------------- |
+| `tone` | `'accent' \| 'neutral' \| 'danger'` | `"accent"` | Semantic color intent. The default omits data-tone so CSS can treat a missing hook as accent. |
+| `size` | `'sm' \| 'md' \| 'lg'`              | `"md"`     | Track thickness. The default omits data-size so CSS can treat a missing hook as md.           |
+
+<!-- @generated docs-api:themes/ghost-progress end -->
 
 Defaults omit `data-size` / `data-tone` so CSS can treat a missing hook as `md`
 / `accent`. Thickness uses `--ghost-track-thickness-sm` / `md` / `lg` (4 / 6 /

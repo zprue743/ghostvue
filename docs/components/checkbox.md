@@ -37,12 +37,18 @@ Headless use of the same contract without the SFC:
 
 ## API
 
-| Prop            | Type      | Default     | Description                                                                                         |
-| --------------- | --------- | ----------- | --------------------------------------------------------------------------------------------------- |
-| `modelValue`    | `boolean` | `undefined` | Controlled checked state. Omit it for uncontrolled use. Mixed is not a third model value.           |
-| `defaultValue`  | `boolean` | `false`     | Initial checked state when `modelValue` is omitted. Later changes are ignored.                      |
-| `indeterminate` | `boolean` | `false`     | Mixed state. Applied through the DOM `indeterminate` property. Consumer-owned; not part of v-model. |
-| `disabled`      | `boolean` | `false`     | Native disabled: no activation, no sequential focus, excluded from submit.                          |
+<!-- @generated docs-api:vue/ghost-checkbox begin -->
+
+<!-- Source: packages/vue/manifests/ghost-checkbox.manifest.json. Run pnpm docs:api:write after it changes. -->
+
+| Prop            | Type      | Default | Description                                                                                                                                                      |
+| --------------- | --------- | ------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `defaultValue`  | `boolean` | `false` | Initial checked state when modelValue is omitted. Later changes are ignored.                                                                                     |
+| `disabled`      | `boolean` | `false` | Native disabled semantics: no activation, no sequential focus, and excluded from form submission.                                                                |
+| `indeterminate` | `boolean` | `false` | Mixed state for select-all and similar. Applied through the DOM indeterminate property. Consumer-owned; not part of the v-model.                                 |
+| `modelValue`    | `boolean` | —       | Controlled checked state. Omit it for uncontrolled use. undefined is uncontrolled; false is unchecked. Mixed is the indeterminate prop, not a third model value. |
+
+<!-- @generated docs-api:vue/ghost-checkbox end -->
 
 `v-model` emits `update:modelValue` with a boolean after native activation.
 `type` is always `"checkbox"`. `checked` is not a public prop; the model owns
@@ -62,10 +68,18 @@ Mixed clears on the first click, the way a resolved select-all would.
 Importing the themed component loads the default stylesheet. Visual props exist
 only on this wrapper:
 
-| Prop   | Type                                | Default    | Description            |
-| ------ | ----------------------------------- | ---------- | ---------------------- |
-| `size` | `'sm' \| 'md' \| 'lg'`              | `'md'`     | Control size.          |
-| `tone` | `'accent' \| 'neutral' \| 'danger'` | `'accent'` | Semantic color intent. |
+<!-- @generated docs-api:themes/ghost-checkbox begin -->
+
+<!-- Source: packages/themes/manifests/ghost-checkbox.manifest.json. Run pnpm docs:api:write after it changes. -->
+
+`@ghostvue/themes` adds these to the headless `GhostCheckbox` API, which it forwards:
+
+| Prop   | Type                                | Default    | Description                                                                      |
+| ------ | ----------------------------------- | ---------- | -------------------------------------------------------------------------------- |
+| `size` | `'sm' \| 'md' \| 'lg'`              | `"md"`     | Control size. The default omits data-size so CSS can treat a missing hook as md. |
+| `tone` | `'accent' \| 'neutral' \| 'danger'` | `"accent"` | Semantic color intent. The default omits data-tone.                              |
+
+<!-- @generated docs-api:themes/ghost-checkbox end -->
 
 The hit target uses `--ghost-control-size-*-min`. The painted box uses
 `--ghost-action-icon-size`. Corners use `--ghost-radius-sm`. Color comes from

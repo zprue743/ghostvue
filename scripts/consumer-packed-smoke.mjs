@@ -46,6 +46,7 @@ import {
   viteAppMountProblems,
 } from './lib/consumer-packed.js'
 import { execPackageManagerSync } from './lib/package-manager.js'
+import { ensureWorkspaceBuilt } from './lib/workspace-build-lock.js'
 import { packGhostvueTarballs } from './themes-define-packed-smoke.mjs'
 import { publishableWorkspacePackages } from './workspace-packages.mjs'
 
@@ -328,7 +329,15 @@ try {
         `Publishable packages are not built (${missing.join(', ')}). Run \`pnpm build\` first.`,
       )
     }
-    execPackageManagerSync('pnpm', ['build'], { cwd: root, stdio: 'pipe' })
+    ensureWorkspaceBuilt({
+      root,
+      isBuilt: () =>
+        builtArtifactMarkers.every((relative) =>
+          existsSync(join(root, relative)),
+        ),
+      build: () =>
+        execPackageManagerSync('pnpm', ['build'], { cwd: root, stdio: 'pipe' }),
+    })
   }
 
   const tarballs = await packGhostvueTarballs(

@@ -50,6 +50,29 @@ keeping anchor measurement on the inner `<button>` element.
 See the [generated component references](/reference/) for props, emits, slots,
 exposed members, styling hooks, CSS variables, and executable examples.
 
+<!-- @generated docs-api:vue/ghost-popover begin -->
+
+<!-- Source: packages/vue/manifests/ghost-popover.manifest.json. Run pnpm docs:api:write after it changes. -->
+
+| Prop          | Type      | Default | Description                                        |
+| ------------- | --------- | ------- | -------------------------------------------------- |
+| `defaultOpen` | `boolean` | `false` | Initial open state when `open` is omitted.         |
+| `open`        | `boolean` | —       | Controlled open state. Omit for uncontrolled mode. |
+
+| Slot      | Slot props                           | Description                                                                 |
+| --------- | ------------------------------------ | --------------------------------------------------------------------------- |
+| `default` | `close: () => void`, `open: boolean` | Trigger and content parts plus optional custom UI reading the scoped state. |
+
+<!-- @generated docs-api:vue/ghost-popover end -->
+
+<!-- @generated docs-api:themes/ghost-popover begin -->
+
+<!-- Source: packages/themes/manifests/ghost-popover.manifest.json. Run pnpm docs:api:write after it changes. -->
+
+`@ghostvue/themes` adds no props, events, or slots to the headless `GhostPopover` API, which it forwards.
+
+<!-- @generated docs-api:themes/ghost-popover end -->
+
 ### `GhostPopover` (root)
 
 Emits `update:open` with `(open: boolean)`. The default slot receives

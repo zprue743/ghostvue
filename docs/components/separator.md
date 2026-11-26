@@ -27,11 +27,25 @@ Headless use of the same contract without the SFC:
 
 ## API
 
-| Prop          | Type                         | Default                                       | Description                                                        |
-| ------------- | ---------------------------- | --------------------------------------------- | ------------------------------------------------------------------ |
-| `orientation` | `'horizontal' \| 'vertical'` | `'horizontal'`                                | Axis of the line.                                                  |
-| `decorative`  | `boolean`                    | `false`                                       | Omits the line from the accessibility tree (`role="none"`).        |
-| `as`          | `'hr' \| 'div' \| 'li'`      | `'hr'` when horizontal; `'div'` when vertical | Selects the rendered element so the result is valid in its parent. |
+<!-- @generated docs-api:vue/ghost-separator begin -->
+
+<!-- Source: packages/vue/manifests/ghost-separator.manifest.json. Run pnpm docs:api:write after it changes. -->
+
+| Prop          | Type                        | Default        | Description                                                                                                                                                   |
+| ------------- | --------------------------- | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `as`          | `GhostSeparatorElement`     | —              | Rendered root element. Omit to get hr when horizontal and div when vertical. li is valid inside a list-shaped menu (role=menu).                               |
+| `decorative`  | `boolean`                   | `false`        | When true, sets role=none so the line is omitted from the accessibility tree. Defaults false so native hr and menu/toolbar grouping keep separator semantics. |
+| `orientation` | `GhostSeparatorOrientation` | `"horizontal"` | Axis of the line. Vertical has no native element, so the default as becomes div.                                                                              |
+
+<!-- @generated docs-api:vue/ghost-separator end -->
+
+<!-- @generated docs-api:themes/ghost-separator begin -->
+
+<!-- Source: packages/themes/manifests/ghost-separator.manifest.json. Run pnpm docs:api:write after it changes. -->
+
+`@ghostvue/themes` adds no props, events, or slots to the headless `GhostSeparator` API, which it forwards.
+
+<!-- @generated docs-api:themes/ghost-separator end -->
 
 Native attributes fall through to the single root. The component owns `role`
 and `aria-orientation`; pass `id`, `class`, `data-*`, or `aria-label` as

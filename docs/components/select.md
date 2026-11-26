@@ -69,18 +69,37 @@ muted and medium weight.
 
 ### `GhostSelect`
 
-| Prop           | Type                  | Default     | Description                                                                                |
-| -------------- | --------------------- | ----------- | ------------------------------------------------------------------------------------------ |
-| `modelValue`   | `string \| undefined` | `undefined` | Controlled value.                                                                          |
-| `defaultValue` | `string \| undefined` | `undefined` | Uncontrolled seed and reset value.                                                         |
-| `name`         | `string`              | `undefined` | Submit input name.                                                                         |
-| `disabled`     | `boolean`             | `false`     | Disables the control.                                                                      |
-| `required`     | `boolean`             | `false`     | Required when `name` is set.                                                               |
-| `invalid`      | `boolean`             | `false`     | `aria-invalid` on the trigger.                                                             |
-| `open`         | `boolean`             | `undefined` | Controlled listbox open state.                                                             |
-| `defaultOpen`  | `boolean`             | `false`     | Initial open state.                                                                        |
-| `placeholder`  | `string`              | `undefined` | Shown when no value is selected.                                                           |
-| `messages`     | `GhostSelectMessages` | `undefined` | Overridable internal strings (`required` validation message, default `'Select a value.'`). |
+<!-- @generated docs-api:vue/ghost-select begin -->
+
+<!-- Source: packages/vue/manifests/ghost-select.manifest.json. Run pnpm docs:api:write after it changes. -->
+
+| Prop           | Type                  | Default | Description                                                                                |
+| -------------- | --------------------- | ------- | ------------------------------------------------------------------------------------------ |
+| `defaultOpen`  | `boolean`             | `false` | Initial open state.                                                                        |
+| `defaultValue` | `string`              | —       | Uncontrolled seed and reset value.                                                         |
+| `disabled`     | `boolean`             | `false` | Disables the control.                                                                      |
+| `form`         | `string`              | —       | Declared prop `form`.                                                                      |
+| `invalid`      | `boolean`             | `false` | `aria-invalid` on the trigger.                                                             |
+| `messages`     | `GhostSelectMessages` | —       | Overridable internal strings (`required` validation message, default `'Select a value.'`). |
+| `modelValue`   | `string`              | —       | Controlled value.                                                                          |
+| `name`         | `string`              | —       | Submit input name.                                                                         |
+| `open`         | `boolean`             | —       | Controlled listbox open state.                                                             |
+| `placeholder`  | `string`              | —       | Shown when no value is selected.                                                           |
+| `required`     | `boolean`             | `false` | Required when `name` is set.                                                               |
+
+| Slot      | Slot props | Description      |
+| --------- | ---------- | ---------------- |
+| `default` | —          | Primary content. |
+
+<!-- @generated docs-api:vue/ghost-select end -->
+
+<!-- @generated docs-api:themes/ghost-select begin -->
+
+<!-- Source: packages/themes/manifests/ghost-select.manifest.json. Run pnpm docs:api:write after it changes. -->
+
+`@ghostvue/themes` adds no props, events, or slots to the headless `GhostSelect` API, which it forwards.
+
+<!-- @generated docs-api:themes/ghost-select end -->
 
 ### Parts
 

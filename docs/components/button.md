@@ -36,6 +36,39 @@ Headless use of the same contract without the SFC:
 See the [generated component references](/reference/) for props, emits, slots,
 exposed members, styling hooks, CSS variables, and executable examples.
 
+<!-- @generated docs-api:vue/ghost-button begin -->
+
+<!-- Source: packages/vue/manifests/ghost-button.manifest.json. Run pnpm docs:api:write after it changes. -->
+
+| Prop       | Type              | Default    | Description                                                                                                                                                                       |
+| ---------- | ----------------- | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `disabled` | `boolean`         | `false`    | Applies native disabled semantics, prevents activation, and removes the button from sequential focus order.                                                                       |
+| `loading`  | `boolean`         | `false`    | Consumer-owned pending state. Prevents activation while remaining focusable, sets aria-disabled and aria-busy, and preserves slot content so the accessible name does not change. |
+| `type`     | `GhostButtonType` | `"button"` | Native button behavior. Defaults to button so a control inside a form does not submit unless the consumer opts in.                                                                |
+
+| Slot      | Slot props | Description                                                                                                                       |
+| --------- | ---------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| `default` | —          | Button label and optional decorative content such as an icon. Icon-only use requires aria-label, aria-labelledby, or hidden text. |
+
+<!-- @generated docs-api:vue/ghost-button end -->
+
+<!-- @generated docs-api:themes/ghost-button begin -->
+
+<!-- Source: packages/themes/manifests/ghost-button.manifest.json. Run pnpm docs:api:write after it changes. -->
+
+`@ghostvue/themes` adds these to the headless `GhostButton` API, which it forwards:
+
+| Prop          | Type                                        | Default    | Description                                                                                                                               |
+| ------------- | ------------------------------------------- | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| `variant`     | `'solid' \| 'soft' \| 'outline' \| 'ghost'` | `"solid"`  | Visual treatment. The default omits data-variant so CSS can treat a missing hook as solid.                                                |
+| `tone`        | `'accent' \| 'neutral' \| 'danger'`         | `"accent"` | Semantic color intent, independent of variant. The default omits data-tone.                                                               |
+| `size`        | `'sm' \| 'md' \| 'lg'`                      | `"md"`     | Control size. The default omits data-size so CSS can treat a missing hook as md.                                                          |
+| `block`       | `boolean`                                   | `false`    | Stretch to the available inline size via data-block.                                                                                      |
+| `iconOnly`    | `boolean`                                   | `false`    | Square icon-button treatment via data-icon-only. Still requires an accessible name.                                                       |
+| `interactive` | `'spotlight'`                               | —          | Opt-in pointer spotlight. Off by default. Sets data-interactive and tracks on data-interactive-state so loading/disabled keep data-state. |
+
+<!-- @generated docs-api:themes/ghost-button end -->
+
 All native button attributes and event listeners fall through to the root
 button. The default slot is the only content slot. The component does not
 generate an `id`; pass one as a native attribute when you need it. There is no

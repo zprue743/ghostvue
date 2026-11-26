@@ -28,6 +28,29 @@ comes from `useGhostMenuCollection` (shared with `GhostDropdownMenu`). The nativ
 See the [generated component references](/reference/) for props, emits, slots, and
 styling hooks.
 
+<!-- @generated docs-api:vue/ghost-context-menu begin -->
+
+<!-- Source: packages/vue/manifests/ghost-context-menu.manifest.json. Run pnpm docs:api:write after it changes. -->
+
+| Prop          | Type      | Default | Description                  |
+| ------------- | --------- | ------- | ---------------------------- |
+| `defaultOpen` | `boolean` | `false` | Declared prop `defaultOpen`. |
+| `open`        | `boolean` | —       | Declared prop `open`.        |
+
+| Slot      | Slot props                           | Description        |
+| --------- | ------------------------------------ | ------------------ |
+| `default` | `close: () => void`, `open: boolean` | Container content. |
+
+<!-- @generated docs-api:vue/ghost-context-menu end -->
+
+<!-- @generated docs-api:themes/ghost-context-menu begin -->
+
+<!-- Source: packages/themes/manifests/ghost-context-menu.manifest.json. Run pnpm docs:api:write after it changes. -->
+
+`@ghostvue/themes` adds no props, events, or slots to the headless `GhostContextMenu` API, which it forwards.
+
+<!-- @generated docs-api:themes/ghost-context-menu end -->
+
 ## Specification
 
 See [GhostContextMenu specification](/specs/context-menu) and
