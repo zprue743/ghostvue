@@ -329,21 +329,21 @@ test.describe('docs landing page', () => {
     }) => {
       await page.emulateMedia({ reducedMotion: 'no-preference' })
       await withLanding(page, async () => {
-        const landing = page.locator('.ghost-landing')
+        const railRoot = page.locator('.ghost-landing-rail')
         const lean = page.locator('.ghost-landing-rail__lean')
-        await expect(landing).not.toHaveAttribute('data-landing-travel')
+        await expect(railRoot).not.toHaveAttribute('data-travel')
         await expect(lean).toHaveCSS('transform', 'none')
 
         // The travel mark only lasts while the page moves, so record every
         // value it takes instead of racing a single read against it.
-        await landing.evaluate((element) => {
+        await railRoot.evaluate((element) => {
           const seen: string[] = []
           Object.assign(window, { landingTravelLog: seen })
           new MutationObserver(() => {
-            seen.push(element.getAttribute('data-landing-travel') ?? 'idle')
+            seen.push(element.getAttribute('data-travel') ?? 'idle')
           }).observe(element, {
             attributes: true,
-            attributeFilter: ['data-landing-travel'],
+            attributeFilter: ['data-travel'],
           })
         })
         const travelLog = () =>
@@ -363,12 +363,12 @@ test.describe('docs landing page', () => {
         await expect.poll(travelLog).toEqual(['down', 'idle', 'up', 'idle'])
 
         // While travelling the ghost is tilted; idle, it is upright again.
-        await landing.evaluate((element) => {
-          element.setAttribute('data-landing-travel', 'down')
+        await railRoot.evaluate((element) => {
+          element.setAttribute('data-travel', 'down')
         })
         await expect(lean).not.toHaveCSS('transform', 'none')
-        await landing.evaluate((element) => {
-          element.removeAttribute('data-landing-travel')
+        await railRoot.evaluate((element) => {
+          element.removeAttribute('data-travel')
         })
         await expect(lean).toHaveCSS('transform', 'none')
       })

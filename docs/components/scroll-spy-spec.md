@@ -9,8 +9,15 @@ components:
 packages:
   - '@ghostvue/vue'
   - '@ghostvue/themes'
-specStatus: proposed
-manifests: []
+specStatus: approved
+approval:
+  evidence: 'Approved by Zac (admin) on 2026-11-26 for issue #339 / PR #361 open questions (Tab-per-link, optional container, SSR first item, lazy tabindex, vertical RTL logical CSS).'
+manifests:
+  - packages/vue/manifests/ghost-scroll-spy.manifest.json
+  - packages/vue/manifests/ghost-scroll-spy-list.manifest.json
+  - packages/vue/manifests/ghost-scroll-spy-item.manifest.json
+  - packages/vue/manifests/ghost-scroll-spy-link.manifest.json
+  - packages/themes/manifests/ghost-scroll-spy.manifest.json
 sections:
   purpose:
     applicable: true
@@ -58,9 +65,9 @@ unresolvedQuestions:
 
 # GhostScrollSpy specification
 
-**Status:** Proposed for [Issue #339](https://github.com/zprue743/ghostvue/issues/339).
-No production markup or package exports land before Zac signs off on the open
-architectural questions below and promotes `specStatus` to `approved`.
+**Status:** Approved for [Issue #339](https://github.com/zprue743/ghostvue/issues/339)
+(admin sign-off 2026-11-26). Implementation follows the recommended defaults for
+the open architectural questions below unless noted in the PR.
 
 **Related:** [GhostLink specification](/specs/link),
 [GhostBreadcrumb specification](/specs/breadcrumb),

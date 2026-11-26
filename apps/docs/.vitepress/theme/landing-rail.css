@@ -3,8 +3,8 @@
  * ghost that rides the thread as the page scrolls. Only `transform` and
  * `opacity` move, so the rail never causes layout work while scrolling.
  *
- * `--ghost-landing-progress` (0..1) is written on `.ghost-landing` by
- * `useLandingScroll`; without JavaScript it stays 0 and the rail is still a
+ * `--ghost-scroll-spy-section-progress` (0..1) is written on the rail
+ * `GhostScrollSpy` root; without JavaScript it stays 0 and the rail is still a
  * working list of fragment links.
  */
 .ghost-landing-rail {
@@ -175,7 +175,7 @@
   border-radius: inherit;
   inset: 0;
   position: absolute;
-  transform: scaleY(var(--ghost-landing-progress, 0));
+  transform: scaleY(var(--ghost-scroll-spy-section-progress, 0));
   transform-origin: center top;
 }
 
@@ -187,7 +187,9 @@
 .ghost-landing-rail__traveller {
   inset: 0;
   position: absolute;
-  transform: translateY(calc(var(--ghost-landing-progress, 0) * 100%));
+  transform: translateY(
+    calc(var(--ghost-scroll-spy-section-progress, 0) * 100%)
+  );
 }
 
 /*
@@ -241,19 +243,19 @@
   }
 
   /* Head first into the scroll, eyes on where it is going. */
-  .ghost-landing[data-landing-travel='down'] .ghost-landing-rail__lean {
+  .ghost-landing-rail[data-travel='down'] .ghost-landing-rail__lean {
     transform: translateY(3px) rotate(16deg) scaleY(1.08);
   }
 
-  .ghost-landing[data-landing-travel='up'] .ghost-landing-rail__lean {
+  .ghost-landing-rail[data-travel='up'] .ghost-landing-rail__lean {
     transform: translateY(-3px) rotate(-16deg) scaleY(1.08);
   }
 
-  .ghost-landing[data-landing-travel='down'] .ghost-landing-rail__ghost-eyes {
+  .ghost-landing-rail[data-travel='down'] .ghost-landing-rail__ghost-eyes {
     translate: 0 5px;
   }
 
-  .ghost-landing[data-landing-travel='up'] .ghost-landing-rail__ghost-eyes {
+  .ghost-landing-rail[data-travel='up'] .ghost-landing-rail__ghost-eyes {
     translate: 0 -5px;
   }
 

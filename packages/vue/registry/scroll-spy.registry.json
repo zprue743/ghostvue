@@ -1,0 +1,46 @@
+{
+  "schemaVersion": "1.0.0",
+  "slug": "scroll-spy",
+  "docs": {
+    "title": "GhostScrollSpy",
+    "specStatus": "approved",
+    "link": "/components/scroll-spy",
+    "specLink": "/specs/scroll-spy",
+    "category": "navigation-disclosure",
+    "sidebarLabel": "Scroll spy"
+  },
+  "vueBarrel": [
+    "export { default as GhostScrollSpy } from './GhostScrollSpy.vue'",
+    "export { default as GhostScrollSpyList } from './GhostScrollSpyList.vue'",
+    "export { default as GhostScrollSpyItem } from './GhostScrollSpyItem.vue'",
+    "export { default as GhostScrollSpyLink } from './GhostScrollSpyLink.vue'",
+    "export { useGhostScrollSpy } from './use-ghost-scroll-spy'",
+    "export {\n  resolveScrollSpyActiveIndex,\n  resolveScrollSpyProgress,\n  resolveScrollSpySegmentProgress,\n  resolveScrollSpyTravelDirection,\n  resolveScrollSpyProbeY,\n  isScrollSpyScrollable,\n  SCROLL_SPY_DEFAULT_PROBE_OFFSET,\n  SCROLL_SPY_DEFAULT_END_THRESHOLD,\n  SCROLL_SPY_TRAVEL_MIN_DELTA,\n} from './scroll-spy-motion'",
+    "export {\n  ghostScrollSpyContextKey,\n  normalizeScrollSpyTargetId,\n  isScrollSpyPlainActivation,\n  resolveScrollSpyHtmlElement,\n} from './ghost-scroll-spy'",
+    "export type {\n  GhostScrollSpyElement,\n  GhostScrollSpyListElement,\n  GhostScrollSpyItemElement,\n  GhostScrollSpyProps,\n  GhostScrollSpySlotProps,\n  GhostScrollSpyExposed,\n  GhostScrollSpyListProps,\n  GhostScrollSpyItemProps,\n  GhostScrollSpyLinkProps,\n  GhostScrollSpyListExposed,\n  GhostScrollSpyItemExposed,\n  GhostScrollSpyLinkExposed,\n  GhostScrollSpyHistoryMode,\n  GhostScrollSpyOrientation,\n  GhostScrollSpyTravelDirection,\n  GhostScrollSpyContainer,\n  GhostScrollSpyActivateDetail,\n  UseGhostScrollSpyOptions,\n} from './ghost-scroll-spy'",
+    "export type { UseGhostScrollSpyReturn } from './use-ghost-scroll-spy'"
+  ],
+  "themesBarrel": [
+    "export {\n  GhostScrollSpy,\n  GhostScrollSpyList,\n  GhostScrollSpyItem,\n  GhostScrollSpyLink,\n  type GhostScrollSpyElement,\n  type GhostScrollSpyExposed,\n  type GhostScrollSpyListElement,\n  type GhostScrollSpyListExposed,\n  type GhostScrollSpyItemElement,\n  type GhostScrollSpyItemExposed,\n  type GhostScrollSpyLinkExposed,\n  type GhostScrollSpyProps,\n} from './ghost-scroll-spy'"
+  ],
+  "examples": [
+    {
+      "id": "scroll-spy/basic",
+      "title": "Basic",
+      "description": "Headless section navigation with CSS progress variables.",
+      "layer": "headless"
+    },
+    {
+      "id": "scroll-spy/themed",
+      "title": "Themed rail",
+      "description": "Vertical TOC rail styled with @ghostvue/themes.",
+      "layer": "themed"
+    },
+    {
+      "id": "scroll-spy/composable",
+      "title": "Composable layout",
+      "description": "Custom markup powered by useGhostScrollSpy.",
+      "layer": "headless"
+    }
+  ]
+}

@@ -18,7 +18,6 @@ import {
   onMounted,
   onUnmounted,
   ref,
-  useTemplateRef,
   watch,
   type Component,
 } from 'vue'
@@ -48,8 +47,8 @@ import {
  * the library with the code the component docs already publish.
  *
  * Section motion lives in `landing-page.css` (CSS scroll-driven animations)
- * with `useLandingScroll` as the fallback and as the source of the rail's
- * active section. The server render and the no-JavaScript page show every
+ * with `useLandingScroll` as the fallback for section phases; the rail uses
+ * `GhostScrollSpy`. The server render and the no-JavaScript page show every
  * section in its final state.
  */
 
@@ -185,8 +184,7 @@ const tooling = [
   },
 ] as const
 
-const root = useTemplateRef<HTMLElement>('root')
-const { activeId, motionMode } = useLandingScroll(root)
+const { motionMode } = useLandingScroll()
 
 onMounted(() => {
   readDocsTheme()
@@ -206,7 +204,7 @@ onUnmounted(() => {
 
 <template>
   <div ref="root" class="ghost-landing" :data-landing-motion="motionMode">
-    <LandingSectionRail :active-id="activeId" />
+    <LandingSectionRail />
 
     <main class="ghost-landing__main">
       <!-- 1. Hero -->

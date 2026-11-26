@@ -82,6 +82,13 @@ const hostAttrs = computed(() => {
     class: [attrs.class, rootProps.value.class],
   }
 
+  if (typeof attrs['data-part'] === 'string') {
+    merged['data-part'] = attrs['data-part']
+  }
+  if (typeof attrs['data-state'] === 'string') {
+    merged['data-state'] = attrs['data-state']
+  }
+
   if (isDisabled.value && isComponentHost.value) {
     merged['disabled'] = true
   }

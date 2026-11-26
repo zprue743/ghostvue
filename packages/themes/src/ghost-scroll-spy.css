@@ -1,0 +1,72 @@
+/*
+ * Themed GhostScrollSpy. Visual values come from semantic --ghost-* tokens.
+ * Section progress is written on the headless root as
+ * --ghost-scroll-spy-section-progress; this recipe does not paint that value
+ * directly so token lint stays design-token-only.
+ */
+@layer ghostvue-theme {
+  :where(.ghost-theme) .ghost-scroll-spy,
+  :where(.ghost-themed-scope) .ghost-scroll-spy,
+  :where(.ghost-scroll-spy[data-themed]) {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: var(--ghost-space-gap-sm);
+    padding-inline: var(--ghost-space-gap-md);
+    border-inline-start: var(--ghost-border-hairline-width) solid
+      var(--ghost-border-default);
+  }
+
+  :where(.ghost-theme) .ghost-scroll-spy-list,
+  :where(.ghost-themed-scope) .ghost-scroll-spy-list,
+  :where(.ghost-scroll-spy-list[data-themed]) {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--ghost-space-gap-xs);
+  }
+
+  :where(.ghost-theme) .ghost-scroll-spy-link,
+  :where(.ghost-themed-scope) .ghost-scroll-spy-link,
+  :where(.ghost-scroll-spy-link[data-themed]) {
+    display: inline-flex;
+    align-items: center;
+    min-block-size: 2.75rem;
+    padding-inline: var(--ghost-space-gap-sm);
+    color: var(--ghost-text-muted);
+    text-decoration: none;
+    border-radius: var(--ghost-radius-md);
+  }
+
+  :where(.ghost-theme) .ghost-scroll-spy-link[data-state='active'],
+  :where(.ghost-themed-scope) .ghost-scroll-spy-link[data-state='active'],
+  :where(.ghost-scroll-spy-link[data-themed][data-state='active']) {
+    color: var(--ghost-text-default);
+    font-weight: 600;
+  }
+
+  :where(.ghost-theme) .ghost-scroll-spy-link:focus-visible,
+  :where(.ghost-themed-scope) .ghost-scroll-spy-link:focus-visible,
+  :where(.ghost-scroll-spy-link[data-themed]:focus-visible) {
+    outline: var(--ghost-focus-ring-width) solid var(--ghost-focus-ring-color);
+    outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    :where(.ghost-theme) .ghost-scroll-spy-link,
+    :where(.ghost-themed-scope) .ghost-scroll-spy-link,
+    :where(.ghost-scroll-spy-link[data-themed]) {
+      transition: none;
+    }
+  }
+
+  @media (forced-colors: active) {
+    :where(.ghost-theme) .ghost-scroll-spy-link:focus-visible,
+    :where(.ghost-themed-scope) .ghost-scroll-spy-link:focus-visible,
+    :where(.ghost-scroll-spy-link[data-themed]:focus-visible) {
+      outline-color: Highlight;
+    }
+  }
+}

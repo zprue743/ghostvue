@@ -1,0 +1,244 @@
+{
+  "schemaVersion": "1.1.0",
+  "source": "generated",
+  "name": "GhostScrollSpy",
+  "package": "@ghostvue/vue",
+  "status": "experimental",
+  "description": "Headless section-navigation landmark coordinating scroll position, CSS progress variables, and fragment links.",
+  "props": [
+    {
+      "name": "as",
+      "type": "GhostScrollSpyElement",
+      "default": "nav",
+      "required": false,
+      "description": "Declared prop `as`.",
+      "deprecated": false
+    },
+    {
+      "name": "container",
+      "type": "HTMLElement | null | Window",
+      "required": false,
+      "description": "Declared prop `container`.",
+      "deprecated": false
+    },
+    {
+      "name": "defaultValue",
+      "type": "string",
+      "required": false,
+      "description": "Declared prop `defaultValue`.",
+      "deprecated": false
+    },
+    {
+      "name": "endThreshold",
+      "type": "number",
+      "required": false,
+      "description": "Declared prop `endThreshold`.",
+      "deprecated": false
+    },
+    {
+      "name": "focusTarget",
+      "type": "boolean",
+      "default": true,
+      "required": false,
+      "description": "Declared prop `focusTarget`.",
+      "deprecated": false
+    },
+    {
+      "name": "historyMode",
+      "type": "'none' | 'push' | 'replace'",
+      "default": "replace",
+      "required": false,
+      "description": "Declared prop `historyMode`.",
+      "deprecated": false
+    },
+    {
+      "name": "label",
+      "type": "string",
+      "default": "Page sections",
+      "required": false,
+      "description": "Declared prop `label`.",
+      "deprecated": false
+    },
+    {
+      "name": "modelValue",
+      "type": "string",
+      "required": false,
+      "description": "Declared prop `modelValue`.",
+      "deprecated": false
+    },
+    {
+      "name": "orientation",
+      "type": "GhostScrollSpyOrientation",
+      "default": "vertical",
+      "required": false,
+      "description": "Declared prop `orientation`.",
+      "deprecated": false
+    },
+    {
+      "name": "probeOffset",
+      "type": "number",
+      "required": false,
+      "description": "Declared prop `probeOffset`.",
+      "deprecated": false
+    },
+    {
+      "name": "scrollBehavior",
+      "type": "ScrollBehavior",
+      "default": "smooth",
+      "required": false,
+      "description": "Declared prop `scrollBehavior`.",
+      "deprecated": false
+    },
+    {
+      "name": "travelSettleMs",
+      "type": "number",
+      "default": 180,
+      "required": false,
+      "description": "Declared prop `travelSettleMs`.",
+      "deprecated": false
+    }
+  ],
+  "models": [
+    {
+      "prop": "modelValue",
+      "event": "update:modelValue",
+      "type": "string",
+      "description": "v-model binding for `modelValue`."
+    }
+  ],
+  "events": [
+    {
+      "name": "activate",
+      "payloadType": "{ id: string; element: HTMLElement | null; event: MouseEvent | KeyboardEvent; }",
+      "description": "Emitted as `activate`."
+    }
+  ],
+  "slots": [
+    {
+      "name": "default",
+      "props": [
+        {
+          "name": "activeId",
+          "type": "string | undefined",
+          "description": "Slot prop `activeId`."
+        },
+        {
+          "name": "itemCount",
+          "type": "number",
+          "description": "Slot prop `itemCount`."
+        },
+        {
+          "name": "scrollTo",
+          "type": "(targetId: string, options?: { behavior?: ScrollBehavior; focus?: boolean; }) => void",
+          "description": "Slot prop `scrollTo`."
+        },
+        {
+          "name": "travelDirection",
+          "type": "GhostScrollSpyTravelDirection | undefined",
+          "description": "Slot prop `travelDirection`."
+        }
+      ],
+      "description": "Primary content."
+    }
+  ],
+  "exposed": [
+    {
+      "name": "activeId",
+      "kind": "property",
+      "type": "string",
+      "description": "Exposed property `activeId`."
+    },
+    {
+      "name": "element",
+      "kind": "property",
+      "type": "HTMLElement | null",
+      "description": "Exposed property `element`."
+    },
+    {
+      "name": "measure",
+      "kind": "method",
+      "type": "() => void",
+      "description": "Exposed method `measure`."
+    },
+    {
+      "name": "scrollTo",
+      "kind": "method",
+      "type": "(targetId: string, options?: { behavior?: ScrollBehavior; focus?: boolean; }) => void",
+      "description": "Exposed method `scrollTo`."
+    }
+  ],
+  "styling": {
+    "parts": [
+      {
+        "name": "root",
+        "description": "Navigation landmark hosting scroll measurement and CSS custom properties."
+      }
+    ],
+    "states": [
+      {
+        "name": "travel",
+        "description": "Present as data-travel=\"up\" | \"down\" while the scroll container is moving."
+      }
+    ],
+    "cssProperties": [
+      {
+        "name": "--ghost-scroll-spy-progress",
+        "description": "Overall normalized scroll progress (0..1)."
+      },
+      {
+        "name": "--ghost-scroll-spy-section-progress",
+        "description": "Interpolated marker position between registered sections (0..1)."
+      }
+    ]
+  },
+  "accessibility": {
+    "role": "navigation",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/landmarks/",
+    "keyboard": {
+      "Tab": "Moves focus between enabled section links.",
+      "Enter": "Activates the focused section link (scroll, hash update, optional focus transfer)."
+    },
+    "requiredAriaAttributes": [
+      "aria-label"
+    ],
+    "verification": {
+      "automatedKeyboard": {
+        "status": "passed",
+        "keys": {
+          "Tab": [
+            {
+              "spec": "tests/e2e/scroll-spy.spec.ts",
+              "title": "GhostScrollSpy › tracks aria-current while scrolling and supports keyboard activation",
+              "package": "@ghostvue/vue"
+            }
+          ],
+          "Enter": [
+            {
+              "spec": "tests/e2e/scroll-spy.spec.ts",
+              "title": "GhostScrollSpy › tracks aria-current while scrolling and supports keyboard activation",
+              "package": "@ghostvue/vue"
+            }
+          ]
+        }
+      },
+      "manual": {
+        "status": "not-reviewed",
+        "evidence": []
+      },
+      "assistiveTechnology": {
+        "status": "not-reviewed",
+        "evidence": []
+      }
+    }
+  },
+  "examples": [
+    "scroll-spy/basic",
+    "scroll-spy/themed",
+    "scroll-spy/composable"
+  ],
+  "spec": {
+    "path": "docs/components/scroll-spy-spec.md",
+    "status": "approved",
+    "evidence": "Approved by Zac (admin) on 2026-11-26 for issue #339 / PR #361 open questions (Tab-per-link, optional container, SSR first item, lazy tabindex, vertical RTL logical CSS)."
+  }
+}
