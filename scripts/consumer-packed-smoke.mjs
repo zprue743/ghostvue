@@ -11,9 +11,12 @@
  * aliases), copied from `tests/fixtures/consumer-packed/`:
  *
  * 1. `@ghostvue/vue` + `@ghostvue/themes`: a Vite + Vue app with themed
- *    Field, Input, Select, Dialog, Drawer, and Toast. Its production build
- *    must emit `@layer ghostvue-theme` CSS, and the built bundle is mounted
- *    in jsdom and driven once per component.
+ *    Field, Input, Select, Dialog, Drawer, and Toast, set up exactly as the
+ *    getting-started guide documents (only the flagship `calm.css` imported
+ *    explicitly; the base stylesheet comes from importing `@ghostvue/themes`).
+ *    Its production build must emit the `@layer ghostvue-theme` base recipes
+ *    and the calm token host, and the built bundle is mounted in jsdom and
+ *    driven once per component.
  * 2. `@ghostvue/nuxt`: a Nuxt app that uses only module auto-imports. The
  *    headless default is built and server-rendered; the themed opt-in is
  *    prepared and must resolve tags to `@ghostvue/themes`.
@@ -37,12 +40,12 @@ import { fileURLToPath } from 'node:url'
 
 import {
   consumerDependencyPins,
-  declaresThemeLayer,
   eslintConsumerProblems,
   nuxtAutoImportProblems,
   nuxtComponentSources,
   nuxtImportSources,
   nuxtPageProblems,
+  themedBuildCssProblems,
   viteAppMountProblems,
 } from './lib/consumer-packed.js'
 import { execPackageManagerSync } from './lib/package-manager.js'
@@ -148,11 +151,10 @@ async function checkViteApp(temporary, tarballs, pins) {
         .map((file) => readFile(join(app, 'dist', 'assets', file), 'utf8')),
     )
   ).join('\n')
-  if (!declaresThemeLayer(css)) {
-    throw new Error(
-      'The Vite consumer build emitted no `@layer ghostvue-theme` CSS.',
-    )
-  }
+  assertNoProblems(
+    'The Vite consumer production build emitted incomplete theme CSS',
+    themedBuildCssProblems(css, { flagship: 'calm' }),
+  )
   const output = execFileSync(process.execPath, ['mount.mjs'], {
     cwd: app,
     encoding: 'utf8',
@@ -163,7 +165,7 @@ async function checkViteApp(temporary, tarballs, pins) {
     viteAppMountProblems(JSON.parse(lastLine)),
   )
   console.log(
-    'Vite + Vue consumer: built with @layer ghostvue-theme CSS; mounted Field, Input, Select, Dialog, Drawer, and Toast in jsdom.',
+    'Vite + Vue consumer: production build of the documented setup emitted @layer ghostvue-theme base and calm CSS; mounted Field, Input, Select, Dialog, Drawer, and Toast in jsdom.',
   )
 }
 

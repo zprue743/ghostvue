@@ -84,9 +84,12 @@ tarballs with npm into consumer projects outside the monorepo, copied from
 `tests/fixtures/consumer-packed/`:
 
 - `@ghostvue/vue` + `@ghostvue/themes`: a Vite + Vue app with themed Field,
-  Input, Select, Dialog, Drawer, and Toast. The production build must emit
-  `@layer ghostvue-theme` CSS, and the built bundle is mounted in jsdom and
-  driven once per component.
+  Input, Select, Dialog, Drawer, and Toast, set up as
+  [Getting started](../getting-started.md#add-a-theme) documents: it imports
+  only `@ghostvue/themes/calm.css`, never `default.css`. The production build
+  must emit the base `@layer ghostvue-theme` recipes that the
+  `@ghostvue/themes` entry imports, plus the calm token host, and the built
+  bundle is mounted in jsdom and driven once per component.
 - `@ghostvue/nuxt`: a Nuxt app that uses only module auto-imports. The headless
   default is built and server-rendered; the themed opt-in must resolve tags to
   `@ghostvue/themes`.

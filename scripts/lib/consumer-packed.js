@@ -60,6 +60,47 @@ export function declaresThemeLayer(css) {
 }
 
 /**
+ * Recipe classes that only the base `@ghostvue/themes/default.css` defines,
+ * one per themed wrapper family the Vite fixture renders. Flagship and token
+ * stylesheets also open a `ghostvue-theme` layer, so the layer alone cannot
+ * prove that the base stylesheet survived the consumer's production build.
+ */
+export const baseRecipeClasses = [
+  'ghost-button',
+  'ghost-field',
+  'ghost-input',
+  'ghost-toast',
+]
+
+/**
+ * Judge the CSS a production build of the documented themed setup emitted:
+ * the base recipes loaded by importing `@ghostvue/themes` (which bundlers drop
+ * when the entry is wrongly declared side-effect free) plus the flagship
+ * stylesheet the quick start imports explicitly.
+ *
+ * @param {string} css Every emitted stylesheet, concatenated.
+ * @param {{ flagship: string }} options Theme named by the fixture's `data-ghost-theme`.
+ * @returns {string[]}
+ */
+export function themedBuildCssProblems(css, { flagship }) {
+  const problems = []
+  if (!declaresThemeLayer(css)) {
+    problems.push('no `@layer ghostvue-theme` block')
+  }
+  for (const name of baseRecipeClasses) {
+    if (!new RegExp(`\\.${name}(?![\\w-])`).test(css)) {
+      problems.push(
+        `no \`.${name}\` recipe; the base stylesheet imported by \`@ghostvue/themes\` was dropped`,
+      )
+    }
+  }
+  if (!new RegExp(`\\[data-ghost-theme=['"]?${flagship}['"]?\\]`).test(css)) {
+    problems.push(`no \`[data-ghost-theme=${flagship}]\` token host`)
+  }
+  return problems
+}
+
+/**
  * @typedef {{
  *   mounted?: boolean
  *   input?: { tag?: string | null, value?: string | null, label?: string | null }
