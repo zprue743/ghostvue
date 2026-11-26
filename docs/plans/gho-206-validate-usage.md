@@ -36,8 +36,11 @@ code. It does not replace the plugin, `vue-tsc`, or accessibility review.
 2. The tool stays read-only, offline, and idempotent, like the five v1 tools
    (GHO-17 §2). It reads only bundled assets and the submitted string.
 3. A diagnostic is reported only when the bundled manifests prove the usage
-   wrong. Anything the server cannot resolve statically is listed as
-   unverified (§5.3) and is never reported as an error.
+   wrong for every runtime the snippet could have. Anything the server cannot
+   resolve statically is listed as unverified (§5.3) and is never reported as
+   an error. A problem that holds only under a caller-supplied
+   `assumePackage` is reported as conditional (§5.2), never as a diagnostic,
+   because the assumption is not something the server can prove.
 4. The result never claims a snippet is correct. A clean result means only
    "no proven problems in what was checked" (§5.1).
 
@@ -76,8 +79,8 @@ Proposed description, which the generated tool table in
 > Statically check how a Vue SFC or template snippet uses GhostVue components
 > against the bundled manifests: unknown props, unknown slots, and undeclared
 > v-model bindings. The snippet is never executed. Results list proven
-> problems separately from usages that could not be checked, and are not a
-> type or accessibility check.
+> problems separately from problems that depend on an assumed package and from
+> usages that could not be checked, and are not a type or accessibility check.
 
 ## 3. Input contract
 
@@ -106,9 +109,9 @@ where its components come from through imports. Without `assumePackage`, a
   `outcome: "not-validated"` with reason `too-deep` (§5.1), not a tool error,
   because the input was well-formed for the schema.
 - **Empty or whitespace-only `source`:** `INVALID_INPUT`.
-- **Diagnostics cap:** at most **200** diagnostics and 200 unverified entries
-  per response, sorted as in §5.2, with `truncated: true` when either list was
-  cut.
+- **Diagnostics cap:** at most **200** diagnostics, 200 conditional entries,
+  and 200 unverified entries per response, sorted as in §5.2, with
+  `truncated: true` when any list was cut.
 
 The limits are deliberately small. A larger file can be checked by running
 `@ghostvue/eslint-plugin` locally. See open question **Q4**.
@@ -132,7 +135,10 @@ The limits are deliberately small. A larger file can be checked by running
 **`kind: "template"`.** Markup as it would appear inside `<template>` (no
 outer `<template>` wrapper required). Tags are resolved only through
 `assumePackage` (§4.1), and the response marks every such resolution as
-assumed.
+assumed. Because the snippet itself does not say where its tags come from, any
+problem found on an assumed resolution is **conditional** on that assumption:
+it is reported in `conditional`, never in `diagnostics` (§5.1, §5.2). A
+`template` call therefore never has `outcome: "findings"`.
 
 **Not accepted** (always `not-validated` or unverified, never an error):
 render functions, JSX/TSX bodies, `h()` calls, Options API objects, and
@@ -245,12 +251,27 @@ Not in the ESLint plugin today. Listed so Zac can accept or drop them
 
 Every success payload has an `outcome`:
 
-| `outcome`       | Meaning                                                                                                                |
-| --------------- | ---------------------------------------------------------------------------------------------------------------------- |
-| `findings`      | At least one diagnostic. Unverified entries may also be present.                                                       |
-| `no-findings`   | No diagnostics in what was checked. **Not** a statement that the snippet is valid; read `unverified` and `notChecked`. |
-| `not-validated` | The server could not analyze the snippet (`notValidatedReason`). `diagnostics` and `unverified` are empty.             |
+| `outcome`       | Meaning                                                                                                                       |
+| --------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| `findings`      | At least one proven diagnostic. Conditional and unverified entries may also be present.                                       |
+| `conditional`   | No proven diagnostics, and at least one conditional entry (a problem that holds only under `assumePackage`).                  |
+| `no-findings`   | No diagnostics and no conditional entries. **Not** a statement that the snippet is valid; read `unverified` and `notChecked`. |
+| `not-validated` | The server could not analyze the snippet (`notValidatedReason`). `diagnostics`, `conditional`, and `unverified` are empty.    |
 
+`outcome` is computed in that order: `not-validated` if the scan stopped;
+otherwise `findings` if `diagnostics` is non-empty; otherwise `conditional` if
+`conditional` is non-empty; otherwise `no-findings`. Unverified entries never
+change the outcome.
+
+**Rule for assumed resolution.** A finding is proven only when the element's
+package comes from the snippet itself (a `<script setup>` import, §3.4). Every
+finding on an element resolved through `assumePackage` is conditional, with no
+exceptions. The server evaluates only the assumed package's contract and does
+not try to prove that a finding is invariant across packages: a bare tag in a
+template fragment may also be a locally registered or non-GhostVue component,
+so even a finding that holds under both GhostVue packages is not proven for
+every runtime. Whether a later version should report such cross-package
+agreement is open question **Q9**.
 `notValidatedReason` is one of `syntax` (markup the scanner cannot tokenize
 safely, for example an unclosed tag or attribute quote), `too-deep`,
 `unsupported-template-lang`, `external-block`, `multiple-blocks` (two
@@ -273,6 +294,7 @@ use the existing GHO-17 §10 envelope. **No new error codes** are added.
     "manifestSchemaId": "https://ghostvue.dev/schemas/v1/manifest.schema.json"
   },
   "outcome": "findings",
+  "assumption": null,
   "diagnostics": [
     {
       "rule": "ghostvue/no-unknown-props",
@@ -288,6 +310,7 @@ use the existing GHO-17 §10 envelope. **No new error codes** are added.
       "docs": "/components/button"
     }
   ],
+  "conditional": [],
   "unverified": [
     {
       "reason": "spread-binding",
@@ -334,6 +357,17 @@ use the existing GHO-17 §10 envelope. **No new error codes** are added.
 
 Field rules:
 
+- `assumption` is `{ "package": "<assumePackage>" }` when the call passed
+  `assumePackage`, and `null` otherwise. It is the single place the payload
+  records the assumption that `conditional` entries depend on.
+- `diagnostics` holds proven findings only. It is always empty for
+  `kind: "template"`, because every resolution there is assumed (§3.3).
+- `conditional[]` entries have exactly the shape of a diagnostic (`rule`,
+  `severity`, `message`, `component`, `name`, `location`, `docs`) plus
+  `assumption: { "package": … }`, repeated per entry so an entry can be read on
+  its own. `severity` is the severity the rule would have if the assumption
+  holds. `component.package` is the assumed package. A client that reads only
+  `diagnostics` never sees an assumption-dependent problem as proven.
 - `diagnostics[].severity` is `error` (the manifest proves the usage wrong) or
   `warning` (valid today but discouraged, only `no-deprecated-api`). There is
   no `info` severity: anything uncertain belongs in `unverified`, so a client
@@ -354,8 +388,11 @@ Field rules:
   that resolved to a manifest and were checked by at least one rule.
 - `notChecked` is a fixed list for a given server version so clients can show
   it without guessing. It is part of the contract, not a per-call computation.
-- Sort order: by `location` (line, then column), then `rule` or `reason`, so
-  the same input always yields the same payload.
+- `unverified[].component` is present when the element resolved to a
+  component, and omitted for `unresolved-tag` and `dynamic-component`, where
+  nothing resolved.
+- Sort order: each list by `location` (line, then column), then `rule` or
+  `reason`, so the same input always yields the same payload.
 
 ### 5.3 Unverified reasons
 
@@ -377,9 +414,31 @@ what was not checked on that element.
 
 ### 5.4 Text summary
 
-The `content` text is one sentence built from fixed templates, for example:
-"2 proven problems; 1 usage could not be checked statically. Not a type or
-accessibility check." It never includes snippet text.
+The `content` text is one sentence built from fixed templates and follows the
+same rule as the payload: only `diagnostics` are counted as proven, and
+conditional entries are counted separately next to the assumption they depend
+on. It never includes snippet text. The sentence is built from these clauses,
+joined with `; ` and ended with `. Not a type or accessibility check.`:
+
+1. Always: `N proven problem(s)` from `diagnostics.length`, or
+   `No proven problems` when it is zero.
+2. Only when `assumption` is not `null`:
+   `K problem(s) if bare Ghost tags come from <package>` from
+   `conditional.length`, or `none if bare Ghost tags come from <package>` when
+   it is zero.
+3. Only when `unverified` is non-empty:
+   `M usage(s) could not be checked statically`.
+
+Counts use the singular noun for 1 (`1 proven problem`, `1 problem`,
+`1 usage`), and the first letter of the sentence is capitalized.
+
+For `not-validated`, the sentence is instead
+`Not validated (<notValidatedReason>). Not a type or accessibility check.`
+For example: "2 proven problems; 1 usage could not be checked statically. Not
+a type or accessibility check.", or for a template under `@ghostvue/vue`, "No
+proven problems; 1 problem if bare Ghost tags come from @ghostvue/vue. Not a
+type or accessibility check." The text never calls a conditional entry a
+proven problem, and never omits the assumption when one was made.
 
 ### 5.5 Tool contract version
 
@@ -464,17 +523,19 @@ that.
 
 ## 8. False-positive boundaries
 
-A diagnostic must be correct for every runtime the snippet could have. These
+A diagnostic must be correct for every runtime the snippet could have. A
+problem that is correct only under an assumption the caller supplied
+(`assumePackage`) is not a diagnostic; it is a conditional entry (§5.1). These
 are the known edges and how the contract treats them:
 
-| Case                                                              | Treatment                                                                                                                  |
-| ----------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
-| Custom non-native attribute meant to fall through (`foo-bar="x"`) | Reported by `no-unknown-props`, matching the plugin. The message suggests a `data-*` attribute or a declared prop.         |
-| Native attribute valid on some element but not the rendered one   | Accepted. The native list is the union across elements, because manifests do not say which element a component renders.    |
-| Kebab-case and camelCase forms of the same prop                   | Treated as the same prop, as Vue does.                                                                                     |
-| Globally registered components (plugin install, Nuxt auto-import) | `unresolved-tag` for `kind: "sfc"`. `kind: "template"` with `assumePackage` is the way to check such snippets.             |
-| `assumePackage` picks the wrong package                           | Diagnostics are still correct for that package. `coverage.resolution: "assumed"` tells the client the package was a guess. |
-| Manifest is wrong or out of date                                  | A manifest bug, fixed in the manifest. The bundle is version-matched, so results match the release the server ships with.  |
+| Case                                                              | Treatment                                                                                                                                                                                                                                                                          |
+| ----------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Custom non-native attribute meant to fall through (`foo-bar="x"`) | Reported by `no-unknown-props`, matching the plugin. The message suggests a `data-*` attribute or a declared prop.                                                                                                                                                                 |
+| Native attribute valid on some element but not the rendered one   | Accepted. The native list is the union across elements, because manifests do not say which element a component renders.                                                                                                                                                            |
+| Kebab-case and camelCase forms of the same prop                   | Treated as the same prop, as Vue does.                                                                                                                                                                                                                                             |
+| Globally registered components (plugin install, Nuxt auto-import) | `unresolved-tag` for `kind: "sfc"`. `kind: "template"` with `assumePackage` is the way to check such snippets.                                                                                                                                                                     |
+| `assumePackage` picks the wrong package                           | No diagnostic is affected: every finding under the assumption is in `conditional`, tagged with the assumed package, and the text summary names it. For example, `<GhostButton variant="outline">` is clean under `@ghostvue/themes` and conditional under `@ghostvue/vue` (§10.1). |
+| Manifest is wrong or out of date                                  | A manifest bug, fixed in the manifest. The bundle is version-matched, so results match the release the server ships with.                                                                                                                                                          |
 
 False negatives are expected and allowed. Under-reporting is the safe
 direction; every skip is visible in `unverified`.
@@ -494,8 +555,9 @@ When an implementation issue is approved:
 - **Unit tests** in `packages/mcp/src/validate-usage.test.ts`: each rule
   positive and negative; every unverified reason; every `not-validated`
   reason; size, depth, and diagnostics caps; sort order and determinism;
-  themed union semantics; `MANIFEST_INVALID` for a corrupt referenced
-  manifest; and the no-execution test in §7.
+  themed union semantics; `outcome` precedence (§5.1); every text summary
+  clause (§5.4); `MANIFEST_INVALID` for a corrupt referenced manifest; the
+  no-execution test in §7; and the assumed-package fixture in §10.1.
 - **Corpus and parity tests** in §6.
 - **Server tests:** `tools/list` returns six tools; `pnpm mcp:packed` smoke
   calls `validate_usage` once and checks its `outputSchema`. The packed smoke
@@ -506,6 +568,66 @@ When an implementation issue is approved:
   tools.
 - **Release:** a minor Changeset for `@ghostvue/mcp`, which bumps the
   `fixed` group of publishable packages together.
+
+### 10.1 Fixture: one template under both package assumptions
+
+The same `kind: "template"` source is validated three times, with only
+`assumePackage` changed. Today's manifests declare `variant` on the themed
+`GhostButton` but not on the headless one.
+
+```vue
+<GhostButton variant="outline">Save</GhostButton>
+```
+
+`variant="outline"` spans line 1, columns 14 to 31 (exclusive). Each case
+asserts the fields below; `schemaVersion`, `ghostvue`, `notChecked`, and
+`truncated: false` are as in §5.2.
+
+| Case                                | `outcome`     | `assumption`                        | `diagnostics` | `conditional`        | `unverified`         | `coverage`                                                                              |
+| ----------------------------------- | ------------- | ----------------------------------- | ------------- | -------------------- | -------------------- | --------------------------------------------------------------------------------------- |
+| `assumePackage: "@ghostvue/themes"` | `no-findings` | `{ "package": "@ghostvue/themes" }` | `[]`          | `[]`                 | `[]`                 | `resolution: "assumed"`, `elementsChecked: 1`, `GhostButton` from `@ghostvue/themes` ×1 |
+| `assumePackage: "@ghostvue/vue"`    | `conditional` | `{ "package": "@ghostvue/vue" }`    | `[]`          | one entry, see below | `[]`                 | `resolution: "assumed"`, `elementsChecked: 1`, `GhostButton` from `@ghostvue/vue` ×1    |
+| no `assumePackage`                  | `no-findings` | `null`                              | `[]`          | `[]`                 | one `unresolved-tag` | `resolution: "none"`, `elementsChecked: 0`, `components: []`                            |
+
+The conditional entry under `@ghostvue/vue`:
+
+```json
+{
+  "rule": "ghostvue/no-unknown-props",
+  "severity": "error",
+  "message": "GhostButton from @ghostvue/vue has no prop 'variant'. 'variant' is a themed prop; import GhostButton from @ghostvue/themes.",
+  "component": {
+    "name": "GhostButton",
+    "package": "@ghostvue/vue",
+    "family": "ghost-button"
+  },
+  "name": "variant",
+  "location": { "line": 1, "column": 14, "endLine": 1, "endColumn": 31 },
+  "docs": "/components/button",
+  "assumption": { "package": "@ghostvue/vue" }
+}
+```
+
+The `unresolved-tag` entry without an assumption covers the tag name
+`GhostButton` (line 1, columns 2 to 13), has no `component` field (§5.2), and
+lists every enabled rule in `skipped`.
+
+Expected text summaries (§5.4), asserted exactly:
+
+| Case               | `content` text                                                                                                 |
+| ------------------ | -------------------------------------------------------------------------------------------------------------- |
+| `@ghostvue/themes` | `No proven problems; none if bare Ghost tags come from @ghostvue/themes. Not a type or accessibility check.`   |
+| `@ghostvue/vue`    | `No proven problems; 1 problem if bare Ghost tags come from @ghostvue/vue. Not a type or accessibility check.` |
+| no `assumePackage` | `No proven problems; 1 usage could not be checked statically. Not a type or accessibility check.`              |
+
+A fourth, control case submits the same markup as `kind: "sfc"` with
+`import { GhostButton } from '@ghostvue/vue'` in `<script setup>`. There the
+package comes from the snippet, so the same finding is a proven diagnostic:
+`outcome: "findings"`, `assumption: null`, the entry in `diagnostics` without
+an `assumption` field, `conditional: []`, and the text
+`1 proven problem. Not a type or accessibility check.` This pins the rule
+that the source of resolution, not the finding itself, decides proven versus
+conditional.
 
 ## 11. Open questions for Zac
 
@@ -534,10 +656,19 @@ When an implementation issue is approved:
    `no-deprecated-api` can wait until a deprecation exists.
 7. **Q7 — Template snippets.** Keep `kind: "template"` with `assumePackage`,
    or accept only whole SFCs? Recommendation: keep it, because agents often
-   produce template fragments and the result marks the resolution as assumed.
+   produce template fragments, and every finding under an assumed package is
+   reported as conditional, never as proven (§5.1).
 8. **Q8 — ADR.** Record the sixth tool as an amendment to ADR 0015 or as a new
    ADR? Recommendation: amend ADR 0015, since transport, data, and boundary are
    unchanged under option C.
+9. **Q9 — Cross-package agreement for templates.** Should a later version
+   evaluate a `template` snippet against both package contracts and mark a
+   conditional entry that holds under both (for example an unknown slot on a
+   component both packages declare identically)? It would still not be
+   proven, because a bare tag may be a non-GhostVue component, but it would
+   tell the agent the package choice does not matter. Recommendation: not in
+   the first version; the single-assumption rule in §5.1 is simpler to test and
+   explain.
 
 ## 12. Candidate follow-ups (not proposed for the first version)
 
