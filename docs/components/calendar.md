@@ -31,6 +31,12 @@ styling in SSR, tests, or snapshots. The today cell also carries
 
 ## Basic use
 
+The remaining examples on this page are headless: they import the parts from
+`@ghostvue/vue`, which ships behavior only. Each one brings the same small
+block of consumer CSS, shown in its source, that lays out the month grid and
+styles the today, selected, range, unavailable, and outside-month states
+through the parts' `data-part` and `data-state` attributes.
+
 <GhostExample id="calendar/basic" />
 
 When `today` is omitted, no implicit runtime clock is used during render.

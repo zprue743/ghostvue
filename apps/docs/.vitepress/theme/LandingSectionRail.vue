@@ -1,7 +1,11 @@
 <script setup lang="ts">
 import { GhostLink } from '@ghostvue/vue'
 
-import { landingSections, type LandingSectionId } from './landing-motion'
+import {
+  landingSectionNumber,
+  landingSections,
+  type LandingSectionId,
+} from './landing-motion'
 
 /*
  * Section rail for the landing page: a fixed column of markers on the right
@@ -47,10 +51,6 @@ function goToSection(event: MouseEvent, id: LandingSectionId): void {
   // Move focus with the viewport so the next Tab continues inside the
   // section instead of returning to the top of the page.
   target.focus({ preventScroll: true })
-}
-
-function markerNumber(index: number): string {
-  return String(index + 1).padStart(2, '0')
 }
 </script>
 
@@ -108,7 +108,7 @@ function markerNumber(index: number): string {
         >
           <span class="ghost-landing-rail__label">
             <span class="ghost-landing-rail__number" aria-hidden="true">{{
-              markerNumber(index)
+              landingSectionNumber(index)
             }}</span>
             {{ section.label }}
           </span>

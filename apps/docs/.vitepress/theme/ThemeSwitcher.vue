@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { nextTick, onMounted, onUnmounted, ref } from 'vue'
 
+import { switchDocsTheme } from './docs-theme-transition'
 import {
   DOCS_DEFAULT_THEME,
   DOCS_THEME_OPTIONS,
-  DOCS_THEME_STORAGE_KEY,
   isDocsThemeName,
   type DocsThemeName,
 } from './restore-theme'
@@ -25,9 +25,10 @@ function readTheme(): DocsThemeName {
 }
 
 function applyTheme(next: DocsThemeName): void {
-  document.documentElement.setAttribute('data-ghost-theme', next)
-  localStorage.setItem(DOCS_THEME_STORAGE_KEY, next)
+  // Checked state follows the choice at once. The attribute itself is
+  // written a frame later, inside the crossfade.
   theme.value = next
+  switchDocsTheme(next)
 }
 
 /*

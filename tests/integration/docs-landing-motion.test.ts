@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest'
 import {
   LANDING_ACTIVE_PROBE,
   isPageScrollable,
+  landingSectionNumber,
   landingSections,
   resolveActiveSection,
   resolveRailProgress,
@@ -23,6 +24,18 @@ describe('landing section list', () => {
   it('has unique ids, because each one is a fragment target', () => {
     const ids = landingSections.map((section) => section.id)
     expect(new Set(ids).size).toBe(ids.length)
+  })
+})
+
+describe('landingSectionNumber', () => {
+  it('numbers sections from 01 with two digits', () => {
+    expect(
+      landingSections.map((_, index) => landingSectionNumber(index)),
+    ).toEqual(['01', '02', '03', '04', '05', '06', '07'])
+  })
+
+  it('keeps two digits past the ninth section', () => {
+    expect(landingSectionNumber(9)).toBe('10')
   })
 })
 
