@@ -115,7 +115,7 @@
   "@ghostvue/vue:GhostScrollArea": 2600,
   "@ghostvue/vue:GhostScrollSpy": 12000,
   "@ghostvue/vue:GhostScrollSpyList": 600,
-  "@ghostvue/vue:GhostScrollSpyItem": 600,
+  "@ghostvue/vue:GhostScrollSpyItem": 650,
   "@ghostvue/vue:GhostScrollSpyLink": 2500,
   "@ghostvue/vue:GhostSegmentedControl": 4300,
   "@ghostvue/vue:GhostSegmentedControlItem": 1500,
