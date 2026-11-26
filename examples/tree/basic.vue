@@ -32,8 +32,7 @@ const selected = ref<GhostTreeValue>('src/main.ts')
               <template #default="{ expanded: guidesExpanded }">
                 <GhostTreeTrigger>
                   <span aria-hidden="true"
-                    >{{ guidesExpanded ? '▾' : '▸' }} </span
-                  >guides
+                    >{{ guidesExpanded ? '▾' : '▸' }} </span>guides
                 </GhostTreeTrigger>
                 <GhostTreeGroup>
                   <GhostTreeItem value="docs/guides/install.md">

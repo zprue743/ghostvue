@@ -65,8 +65,8 @@ const expanded = ref<string[]>(['frontend'])
             >
               <template #default="{ selected: childChecked }">
                 <GhostTreeTrigger>
-                  <span aria-hidden="true">{{ childChecked ? '☑' : '☐' }} </span
-                  >{{ child.label }}
+                  <span aria-hidden="true"
+                    >{{ childChecked ? '☑' : '☐' }} </span>{{ child.label }}
                 </GhostTreeTrigger>
               </template>
             </GhostTreeItem>
