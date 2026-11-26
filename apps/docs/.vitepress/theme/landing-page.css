@@ -26,6 +26,16 @@
 
   color: var(--ghost-surface-fg);
   font-size: 1rem;
+  /*
+   * The docs chrome tightens tracking on `<html>` under the `mono` flagship
+   * (`docs-theme.css`). Inherited here, it re-wrapped the page's prose when
+   * the reader switched theme: with the fonts CI renders, the theming
+   * section's intro lost a line and everything beside and below it moved.
+   * That section exists to show that a retheme changes the look and nothing
+   * else, so the page keeps one tracking for every theme. Headings and
+   * components that set their own tracking are unaffected.
+   */
+  letter-spacing: normal;
   line-height: 1.6;
   /* Containing block for the background section number's clipping layer. */
   position: relative;
