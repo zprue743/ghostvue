@@ -23,10 +23,6 @@ function openFromApp(): void {
 
 <template>
   <div class="controlled-popover">
-    <!--
-      Controlled: bind `open` with v-model:open and react in @update:open.
-      Uncontrolled disclosure uses `defaultOpen` instead and omits `open`.
-    -->
     <GhostPopover v-model:open="open" @update:open="onOpenChange">
       <GhostPopoverTrigger>Toggle details</GhostPopoverTrigger>
       <GhostPopoverContent

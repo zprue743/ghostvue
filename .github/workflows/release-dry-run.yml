@@ -52,6 +52,9 @@ jobs:
       # stays within 18 MiB (excluding dist/assets/), and the packed
       # `ghostvue-mcp` answers every tool over stdio.
       - run: pnpm mcp:packed
+      # GHO-217: every publishable tarball works for an external consumer
+      # (Vite + Vue app with themes, Nuxt auto-imports, ESLint plugin).
+      - run: pnpm consumer:packed
       - name: Credential-free release dry run
         env:
           EXPECTED_VERSION: ${{ inputs.expected_version }}

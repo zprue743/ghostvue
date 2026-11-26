@@ -14,7 +14,10 @@ import {
   sourceManifestProblems,
   stagePublishManifest,
 } from '../../scripts/lib/release-dry-run.js'
-import { workspacePackages } from '../../scripts/workspace-packages.mjs'
+import {
+  publishableWorkspacePackages,
+  workspacePackages,
+} from '../../scripts/workspace-packages.mjs'
 
 // GHO-57: the maintainer authorized a dry-run pipeline and approval gate only.
 // These tests pin the invariants that keep real publication impossible until a
@@ -127,6 +130,13 @@ describe('release workflow', () => {
     expect(packed).toBeLessThan(dryRun.indexOf('run: pnpm release:dry-run'))
   })
 
+  it('runs the packed consumer smoke before the dry run (GHO-217)', () => {
+    const dryRun = workflowJobs().get('dry-run') ?? ''
+    const consumers = dryRun.indexOf('run: pnpm consumer:packed')
+    expect(consumers).toBeGreaterThan(dryRun.indexOf('run: pnpm build'))
+    expect(consumers).toBeLessThan(dryRun.indexOf('run: pnpm release:dry-run'))
+  })
+
   it('pins every action to the same commit SHA and release as CI', () => {
     // tests/integration/ci-workflow-policy.test.ts enforces SHA pins across
     // all workflows; this ties the release workflow to CI's exact pins.
@@ -155,9 +165,71 @@ describe('release workflow', () => {
   })
 })
 
+/** Pending Changeset bump types keyed by package name. */
+function pendingChangesetBumps(): Map<string, Set<string>> {
+  const bumps = new Map<string, Set<string>>()
+  for (const file of readdirSync(`${root}/.changeset`)) {
+    if (!file.endsWith('.md') || file === 'README.md') continue
+    const source = readFileSync(`${root}/.changeset/${file}`, 'utf8')
+    const frontmatter = /^---\n([\s\S]*?)\n---/.exec(source)?.[1] ?? ''
+    for (const [, name = '', bump = ''] of frontmatter.matchAll(
+      /^['"]?(@ghostvue\/[\w-]+)['"]?:\s*(\w+)\s*$/gm,
+    )) {
+      bumps.set(name, (bumps.get(name) ?? new Set()).add(bump))
+    }
+  }
+  return bumps
+}
+
+describe('release train', () => {
+  it('is the five 0.1.0 packages; core and shared stay internal (GHO-217)', () => {
+    expect(publishableWorkspacePackages.map(({ name }) => name)).toEqual([
+      '@ghostvue/vue',
+      '@ghostvue/themes',
+      '@ghostvue/nuxt',
+      '@ghostvue/eslint-plugin',
+      '@ghostvue/mcp',
+    ])
+    expect(
+      workspacePackages
+        .filter(({ publishable }) => !publishable)
+        .map(({ name }) => name),
+    ).toEqual(['@ghostvue/shared', '@ghostvue/core'])
+  })
+
+  it('keeps internal packages private, unprepared for npm, and out of every published dependency group', () => {
+    const internal = workspacePackages.filter(({ publishable }) => !publishable)
+    for (const { directory, name } of internal) {
+      const manifest = readJson(`packages/${directory}/package.json`)
+      expect(manifest.name).toBe(name)
+      expect(manifest.private, name).toBe(true)
+      expect(manifest.publishConfig, name).toBeUndefined()
+    }
+    // A published package that names an internal one would install a package
+    // that does not exist on npm.
+    const internalNames = new Set(internal.map(({ name }) => name))
+    for (const { directory, name } of publishableWorkspacePackages) {
+      const manifest = readJson(`packages/${directory}/package.json`)
+      for (const field of [
+        'dependencies',
+        'peerDependencies',
+        'optionalDependencies',
+      ]) {
+        const names = Object.keys(
+          (manifest[field] as Record<string, string> | undefined) ?? {},
+        )
+        expect(
+          names.filter((dependency) => internalNames.has(dependency)),
+          `${name} ${field}`,
+        ).toEqual([])
+      }
+    }
+  })
+})
+
 describe('publishable package manifests', () => {
   it('stay private with public access and provenance prepared', () => {
-    for (const { directory, name } of workspacePackages) {
+    for (const { directory, name } of publishableWorkspacePackages) {
       const manifest = readJson(`packages/${directory}/package.json`)
       expect(manifest.name).toBe(name)
       expect(manifest.private).toBe(true)
@@ -186,21 +258,19 @@ describe('publishable package manifests', () => {
   it('each have a pending minor Changeset for the first 0.1.0 release', () => {
     // `pnpm release:dry-run --expect-version 0.1.0` fails for any package
     // that Changesets would leave at 0.0.0.
-    const bumps = new Map<string, Set<string>>()
-    for (const file of readdirSync(`${root}/.changeset`)) {
-      if (!file.endsWith('.md') || file === 'README.md') continue
-      const source = readFileSync(`${root}/.changeset/${file}`, 'utf8')
-      const frontmatter = /^---\n([\s\S]*?)\n---/.exec(source)?.[1] ?? ''
-      for (const [, name = '', bump = ''] of frontmatter.matchAll(
-        /^['"]?(@ghostvue\/[\w-]+)['"]?:\s*(\w+)\s*$/gm,
-      )) {
-        bumps.set(name, (bumps.get(name) ?? new Set()).add(bump))
-      }
-    }
-    for (const { name } of workspacePackages) {
+    const bumps = pendingChangesetBumps()
+    for (const { name } of publishableWorkspacePackages) {
       const planned = [...(bumps.get(name) ?? [])]
       expect(planned, name).toContain('minor')
       expect(planned, name).not.toContain('major')
+    }
+  })
+
+  it('pend no Changeset for internal packages, which never release', () => {
+    const bumps = pendingChangesetBumps()
+    for (const { name, publishable } of workspacePackages) {
+      if (publishable) continue
+      expect(bumps.has(name), name).toBe(false)
     }
   })
 
@@ -306,12 +376,12 @@ describe('release dry-run guards', () => {
 
   it('stages a planned manifest without mutating the packed one', () => {
     const packed = {
-      name: '@ghostvue/vue',
+      name: '@ghostvue/themes',
       version: '0.0.0',
       private: true,
       dependencies: {
-        '@ghostvue/core': '0.0.0',
-        '@floating-ui/dom': '1.8.0',
+        '@ghostvue/vue': '0.0.0',
+        culori: '4.0.2',
       },
       peerDependencies: { vue: '^3.5.0' },
     }
@@ -319,15 +389,15 @@ describe('release dry-run guards', () => {
       packed,
       new Map([
         ['@ghostvue/vue', '0.1.0'],
-        ['@ghostvue/core', '0.1.0'],
+        ['@ghostvue/themes', '0.1.0'],
       ]),
     )
     expect(staged).toEqual({
-      name: '@ghostvue/vue',
+      name: '@ghostvue/themes',
       version: '0.1.0',
       dependencies: {
-        '@ghostvue/core': '0.1.0',
-        '@floating-ui/dom': '1.8.0',
+        '@ghostvue/vue': '0.1.0',
+        culori: '4.0.2',
       },
       peerDependencies: { vue: '^3.5.0' },
     })
@@ -341,7 +411,7 @@ describe('release dry-run guards', () => {
       stagePublishManifest(
         {
           name: '@ghostvue/themes',
-          dependencies: { '@ghostvue/playground': '0.0.0' },
+          dependencies: { '@ghostvue/core': '0.0.0' },
         },
         versions,
       ),

@@ -197,7 +197,8 @@ async function callEveryTool(call) {
  * Start an MCP stdio server, list its tools, and call each one, as an MCP
  * host would. Every tool result must be a success whose `structuredContent`
  * matches the tool's declared `outputSchema` and carries the expected
- * `assetBundleId`.
+ * `assetBundleId`, and, when `manifestSchemaId` is given, a stamp that names
+ * that manifest schema `$id` (the hosted URL clients resolve, ADR 0006).
  *
  * @param {{
  *   command: string
@@ -205,6 +206,7 @@ async function callEveryTool(call) {
  *   cwd: string
  *   env?: NodeJS.ProcessEnv
  *   assetBundleId: string
+ *   manifestSchemaId?: string
  *   timeoutMs?: number
  * }} options
  * @returns {Promise<{ tools: string[], calls: string[] }>}
@@ -345,12 +347,21 @@ export async function runMcpStdioSmoke(options) {
           `${name} structuredContent does not match its outputSchema: ${validator?.ajv.errorsText(validator.validate.errors) ?? 'no schema'}`,
         )
       }
-      const stamp = /** @type {{ assetBundleId?: string }} */ (
-        structured.ghostvue
-      )
+      const stamp =
+        /** @type {{ assetBundleId?: string, manifestSchemaId?: string }} */ (
+          structured.ghostvue
+        )
       if (stamp?.assetBundleId !== options.assetBundleId) {
         throw new Error(
           `${name} reported assetBundleId ${String(stamp?.assetBundleId)}, expected ${options.assetBundleId}`,
+        )
+      }
+      if (
+        options.manifestSchemaId !== undefined &&
+        stamp?.manifestSchemaId !== options.manifestSchemaId
+      ) {
+        throw new Error(
+          `${name} reported manifestSchemaId ${String(stamp?.manifestSchemaId)}, expected ${options.manifestSchemaId}`,
         )
       }
       calls.push(name)

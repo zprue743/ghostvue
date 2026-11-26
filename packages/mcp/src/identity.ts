@@ -14,6 +14,16 @@ export const assetBundleIdentityFile = 'bundle.json'
 /** Bundled copy of `@ghostvue/core/manifest.schema.json` (GHO-17 plan §4). */
 export const manifestSchemaFile = 'manifest.schema.json'
 
+/**
+ * `$id` of the component manifest schema this server speaks (ADR 0006). It is
+ * hosted at this URL on the docs site because `@ghostvue/core`, which carries
+ * the source copy, is never published. The bundled schema must carry exactly
+ * this `$id`, so the `manifestSchemaId` stamp cannot drift from the URL that
+ * clients resolve.
+ */
+export const manifestSchemaId =
+  'https://ghostvue.dev/schemas/v1/manifest.schema.json'
+
 /** Where the identity of a server process comes from. */
 export interface StampSources {
   /** Directory holding the bundled assets, with a trailing slash. */
@@ -50,7 +60,9 @@ const bundleIdentitySchema = z.looseObject({
   assetBundleId: z.string().regex(/^sha256:[0-9a-f]{64}$/),
 })
 
-const manifestSchemaIdSchema = z.looseObject({ $id: z.url() })
+const manifestSchemaIdSchema = z.looseObject({
+  $id: z.literal(manifestSchemaId),
+})
 
 async function readJson<Output>(
   file: URL,

@@ -173,6 +173,21 @@ describe('release dry run', () => {
       runReleaseDryRun({ root: workspace, packages, outDir: 'evidence' }),
     ).rejects.toThrow(/must stay "private": true/)
   })
+
+  it('refuses internal packages marked publishable: false', async () => {
+    await expect(
+      runReleaseDryRun({
+        root: workspace,
+        packages: [
+          packages[0],
+          { directory: 'beta', name: '@ghostvue/beta', publishable: false },
+        ],
+        outDir: 'evidence',
+      }),
+    ).rejects.toThrow(
+      /@ghostvue\/beta is an internal package \(publishable: false\)/,
+    )
+  })
 })
 
 describe('release dry-run CLI', () => {

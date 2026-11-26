@@ -463,7 +463,10 @@ function parseNpmJson(output) {
 }
 
 /**
- * @typedef {{ directory: string, name: string }} ReleasePackage
+ * `publishable: false` marks an internal workspace package that is never
+ * released; it is refused rather than silently dry-run.
+ *
+ * @typedef {{ directory: string, name: string, publishable?: boolean }} ReleasePackage
  */
 
 /**
@@ -492,7 +495,13 @@ export async function runReleaseDryRun(options) {
     const problems = []
     /** @type {Map<string, Record<string, unknown>>} */
     const sourceManifests = new Map()
-    for (const { directory, name } of packages) {
+    for (const { directory, name, publishable } of packages) {
+      if (publishable === false) {
+        problems.push(
+          `${name} is an internal package (publishable: false) and is not part of the release`,
+        )
+        continue
+      }
       const manifest = JSON.parse(
         await readFile(
           join(root, 'packages', directory, 'package.json'),

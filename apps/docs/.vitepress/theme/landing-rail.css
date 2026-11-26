@@ -1,0 +1,401 @@
+/*
+ * Landing section rail. A thin thread with one ring per section and a small
+ * ghost that rides the thread as the page scrolls. Only `transform` and
+ * `opacity` move, so the rail never causes layout work while scrolling.
+ *
+ * `--ghost-landing-progress` (0..1) is written on `.ghost-landing` by
+ * `useLandingScroll`; without JavaScript it stays 0 and the rail is still a
+ * working list of fragment links.
+ */
+.ghost-landing-rail {
+  --_rail-marker: 1.75rem;
+  --_rail-lane: 1.375rem;
+  --_rail-accent: var(--ghost-action-primary-bg);
+
+  /*
+   * Sized and centred from `--_landing-vh` (set on `.ghost-landing`, one
+   * hundredth of the viewport height) rather than `vh` and `50%`, so the
+   * rail follows the same single viewport-height input as the page.
+   */
+  block-size: min(calc(var(--_landing-vh, 1vh) * 62), 23rem);
+  inset-block-start: calc(
+    var(--_landing-vh, 1vh) * 50 + var(--vp-nav-height, 64px) / 2
+  );
+  inset-inline-end: 0.75rem;
+  /*
+   * The nav box also covers the lane the ghost travels in, which must not
+   * swallow clicks meant for the page. Only the marker column takes the
+   * pointer.
+   */
+  pointer-events: none;
+  position: fixed;
+  transform: translateY(-50%);
+  z-index: 20;
+}
+
+.ghost-landing-rail__list {
+  block-size: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  list-style: none;
+  margin: 0;
+  margin-inline-end: var(--_rail-lane);
+  padding: 0;
+  pointer-events: auto;
+}
+
+.ghost-landing-rail__item {
+  display: flex;
+  justify-content: flex-end;
+  margin: 0;
+}
+
+/*
+ * The link's box is exactly its marker, so the pointer target, the focus
+ * ring, and the visible control are the same shape. The label hangs off the
+ * marker's inline-start edge and never takes part in hit testing while it is
+ * hidden.
+ */
+.ghost-landing-rail__link {
+  border-radius: 50%;
+  color: var(--ghost-text-muted);
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 600;
+  line-height: 1;
+  position: relative;
+  text-decoration: none;
+}
+
+.ghost-landing-rail__link:focus-visible {
+  outline: var(--ghost-focus-ring-width, 2px) solid
+    var(--ghost-focus-ring-color, var(--_rail-accent));
+  outline-offset: 2px;
+}
+
+.ghost-landing-rail__marker {
+  align-items: center;
+  position: relative;
+  block-size: var(--_rail-marker);
+  display: flex;
+  inline-size: var(--_rail-marker);
+  justify-content: center;
+}
+
+.ghost-landing-rail__marker::before {
+  background: var(--ghost-surface-bg);
+  block-size: 0.625rem;
+  border: 2px solid var(--ghost-border-strong, var(--ghost-border-default));
+  border-radius: 50%;
+  box-sizing: border-box;
+  content: '';
+  inline-size: 0.625rem;
+  transition:
+    transform 0.25s ease,
+    opacity 0.25s ease;
+}
+
+.ghost-landing-rail__link:hover .ghost-landing-rail__marker::before,
+.ghost-landing-rail__link:focus-visible .ghost-landing-rail__marker::before {
+  border-color: var(--_rail-accent);
+  transform: scale(1.25);
+}
+
+.ghost-landing-rail__link[aria-current] {
+  color: var(--ghost-surface-fg);
+}
+
+.ghost-landing-rail__link[aria-current] .ghost-landing-rail__marker::before {
+  background: var(--_rail-accent);
+  border-color: var(--_rail-accent);
+  box-shadow: 0 0 0 4px
+    color-mix(in oklch, var(--_rail-accent) 22%, transparent);
+  transform: scale(1.35);
+}
+
+.ghost-landing-rail__label {
+  align-items: center;
+  background: var(--ghost-elevation-2-bg, var(--ghost-surface-bg));
+  border: 1px solid var(--ghost-border-default);
+  border-radius: var(--ghost-radius-pill, 999px);
+  box-shadow: var(--ghost-elevation-2-shadow, none);
+  display: inline-flex;
+  gap: 0.45rem;
+  inset-block-start: 50%;
+  inset-inline-end: calc(100% + 0.35rem);
+  opacity: 0;
+  padding: 0.4rem 0.7rem;
+  pointer-events: none;
+  position: absolute;
+  transform: translate(0.5rem, -50%);
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
+  white-space: nowrap;
+}
+
+.ghost-landing-rail__number {
+  color: var(--_rail-accent);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.7rem;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Labels appear for the whole rail on hover or keyboard focus. */
+.ghost-landing-rail__list:hover .ghost-landing-rail__label,
+.ghost-landing-rail__list:focus-within .ghost-landing-rail__label {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translate(0, -50%);
+}
+
+/* Wide screens have gutter to spare, so the current section stays labelled. */
+@media (min-width: 1500px) {
+  .ghost-landing-rail__link[aria-current] .ghost-landing-rail__label {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translate(0, -50%);
+  }
+}
+
+.ghost-landing-rail__thread {
+  background: var(--ghost-border-default);
+  border-radius: 1px;
+  inline-size: 2px;
+  inset-block: calc(var(--_rail-marker) / 2);
+  inset-inline-end: calc(var(--_rail-lane) + var(--_rail-marker) / 2 - 1px);
+  position: absolute;
+  /* Behind the rings, which paint their own surface colour over it. */
+  z-index: -1;
+}
+
+.ghost-landing-rail__fill {
+  background: var(--_rail-accent);
+  border-radius: inherit;
+  inset: 0;
+  position: absolute;
+  transform: scaleY(var(--ghost-landing-progress, 0));
+  transform-origin: center top;
+}
+
+/*
+ * The traveller is a thread-sized box moved by its own height times the
+ * progress, which puts the ghost (pinned to its top edge) at the right point
+ * on the thread without animating `top`.
+ */
+.ghost-landing-rail__traveller {
+  inset: 0;
+  position: absolute;
+  transform: translateY(calc(var(--ghost-landing-progress, 0) * 100%));
+}
+
+/*
+ * The ghost. It sits beside the thread at the traveller's top edge and has
+ * three behaviours, each on its own box so the transforms never fight:
+ * `__lean` tilts into the direction of travel, `__arrival` pops when a new
+ * section becomes active, and the SVG bobs while the page is still.
+ */
+.ghost-landing-rail__lean {
+  display: block;
+  inset-block-start: -11px;
+  inset-inline-start: calc(var(--_rail-marker) / 2 + 2px);
+  position: absolute;
+  transform-origin: center 30%;
+}
+
+.ghost-landing-rail__arrival,
+.ghost-landing-rail__ghost {
+  display: block;
+}
+
+.ghost-landing-rail__ghost {
+  overflow: visible;
+}
+
+.ghost-landing-rail__ghost-body {
+  fill: color-mix(in oklch, var(--_rail-accent) 24%, var(--ghost-surface-bg));
+  stroke: var(--_rail-accent);
+  stroke-linejoin: round;
+  stroke-width: 4;
+}
+
+.ghost-landing-rail__ghost-eyes {
+  fill: var(--_rail-accent);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .ghost-landing-rail__lean {
+    transition: transform 0.28s cubic-bezier(0.3, 1.4, 0.5, 1);
+  }
+
+  .ghost-landing-rail__ghost-eyes {
+    animation: ghost-landing-rail-blink 5.5s infinite;
+    transform-box: fill-box;
+    transform-origin: center;
+    transition: translate 0.2s ease;
+  }
+
+  .ghost-landing-rail__ghost {
+    animation: ghost-landing-rail-bob 3.2s ease-in-out infinite;
+  }
+
+  /* Head first into the scroll, eyes on where it is going. */
+  .ghost-landing[data-landing-travel='down'] .ghost-landing-rail__lean {
+    transform: translateY(3px) rotate(16deg) scaleY(1.08);
+  }
+
+  .ghost-landing[data-landing-travel='up'] .ghost-landing-rail__lean {
+    transform: translateY(-3px) rotate(-16deg) scaleY(1.08);
+  }
+
+  .ghost-landing[data-landing-travel='down'] .ghost-landing-rail__ghost-eyes {
+    translate: 0 5px;
+  }
+
+  .ghost-landing[data-landing-travel='up'] .ghost-landing-rail__ghost-eyes {
+    translate: 0 -5px;
+  }
+
+  .ghost-landing-rail__arrival {
+    animation: ghost-landing-rail-arrive 0.55s cubic-bezier(0.3, 1.5, 0.5, 1);
+  }
+
+  /* The marker it just reached answers with one ripple. */
+  .ghost-landing-rail__link[aria-current] .ghost-landing-rail__marker::after {
+    animation: ghost-landing-rail-ripple 0.7s ease-out;
+    border: 2px solid var(--_rail-accent);
+    border-radius: 50%;
+    content: '';
+    inset: 0.4rem;
+    opacity: 0;
+    pointer-events: none;
+    position: absolute;
+  }
+}
+
+@keyframes ghost-landing-rail-bob {
+  0%,
+  100% {
+    transform: translateY(-1.5px);
+  }
+
+  50% {
+    transform: translateY(1.5px);
+  }
+}
+
+@keyframes ghost-landing-rail-blink {
+  0%,
+  94%,
+  100% {
+    transform: scaleY(1);
+  }
+
+  97% {
+    transform: scaleY(0.1);
+  }
+}
+
+@keyframes ghost-landing-rail-arrive {
+  0% {
+    transform: scale(1);
+  }
+
+  35% {
+    transform: scale(1.45, 0.8);
+  }
+
+  70% {
+    transform: scale(0.92, 1.12);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes ghost-landing-rail-ripple {
+  from {
+    opacity: 0.7;
+    transform: scale(0.6);
+  }
+
+  to {
+    opacity: 0;
+    transform: scale(2.2);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ghost-landing-rail__marker::before,
+  .ghost-landing-rail__label {
+    transition: none;
+  }
+}
+
+/*
+ * Forced colors drops authored backgrounds and shadows, so state is carried
+ * by system colours and a thicker ring instead of fill and glow.
+ */
+@media (forced-colors: active) {
+  .ghost-landing-rail__thread {
+    background: CanvasText;
+  }
+
+  .ghost-landing-rail__fill {
+    background: Highlight;
+  }
+
+  .ghost-landing-rail__marker::before {
+    background: Canvas;
+    border-color: CanvasText;
+  }
+
+  .ghost-landing-rail__link[aria-current] .ghost-landing-rail__marker::before {
+    background: Highlight;
+    border-color: Highlight;
+    outline: 2px solid Highlight;
+    outline-offset: 2px;
+  }
+
+  .ghost-landing-rail__label {
+    background: Canvas;
+    border-color: CanvasText;
+    color: CanvasText;
+  }
+
+  .ghost-landing-rail__number {
+    color: CanvasText;
+  }
+
+  .ghost-landing-rail__ghost-body {
+    fill: Canvas;
+    stroke: CanvasText;
+  }
+
+  .ghost-landing-rail__ghost-eyes {
+    fill: CanvasText;
+  }
+
+  .ghost-landing-rail__link:focus-visible {
+    outline-color: Highlight;
+  }
+}
+
+/*
+ * Below this width the rail would sit on top of section content, and on very
+ * short viewports the markers would crowd. The page still scrolls normally
+ * and every section stays reachable from its heading.
+ */
+@media (max-width: 1099px), (max-height: 479px) {
+  .ghost-landing-rail {
+    display: none;
+  }
+}
+
+@media print {
+  .ghost-landing-rail {
+    display: none;
+  }
+}

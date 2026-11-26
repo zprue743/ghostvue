@@ -25,7 +25,6 @@ onBeforeUnmount(() => {
     while the pending request runs.
   -->
   <GhostButton
-    type="button"
     variant="solid"
     tone="accent"
     size="md"

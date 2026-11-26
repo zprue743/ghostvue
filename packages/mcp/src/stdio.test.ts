@@ -119,7 +119,7 @@ describe('ghostvue-mcp over stdio', () => {
             version: '0.0.0',
             assetBundleId: `sha256:${'0'.repeat(64)}`,
             manifestSchemaId:
-              'https://unpkg.com/@ghostvue/core@1/manifest.schema.json',
+              'https://ghostvue.dev/schemas/v1/manifest.schema.json',
           },
           greeting: 'Hello, Ada',
         },

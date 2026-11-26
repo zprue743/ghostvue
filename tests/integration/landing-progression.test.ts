@@ -14,11 +14,22 @@ function exampleSource(id: string): string {
   return readFileSync(join(repositoryRoot, ghostExampleSourcePath(id)), 'utf8')
 }
 
+/**
+ * Badges must match real markup and script, not comments that merely mention an
+ * API.
+ */
+function exampleSourceWithoutComments(source: string): string {
+  return source
+    .replace(/<!--[\s\S]*?-->/g, '')
+    .replace(/\/\*[\s\S]*?\*\//g, '')
+    .replace(/(^|\s)\/\/.*$/gm, '$1')
+}
+
 describe('docs landing progression examples', () => {
   it.each(landingProgressionStages.map((stage) => [stage.sourceId, stage]))(
     '%s source exposes the API named on its tab',
     (_id, stage) => {
-      const source = exampleSource(stage.sourceId)
+      const source = exampleSourceWithoutComments(exampleSource(stage.sourceId))
       for (const pattern of stage.sourceMustMatch) {
         expect(source).toMatch(pattern)
       }

@@ -4,7 +4,7 @@ import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 import { execPackageManagerSync } from './lib/package-manager.js'
-import { workspacePackages } from './workspace-packages.mjs'
+import { publishableWorkspacePackages } from './workspace-packages.mjs'
 import { runThemesDefinePackedSmoke } from './themes-define-packed-smoke.mjs'
 
 // Run after `pnpm build` so the tarballs contain the release artifacts.
@@ -15,7 +15,9 @@ const temporary = await mkdtemp(join(tmpdir(), 'ghostvue-exports-'))
 const packedTarballsByName = {}
 
 try {
-  for (const { directory, name } of workspacePackages) {
+  // Internal packages (`publishable: false`) never ship, so their tarballs
+  // are not checked.
+  for (const { directory, name } of publishableWorkspacePackages) {
     const destination = join(temporary, directory)
     console.log(`\nChecking packed exports: ${name}`)
     execPackageManagerSync(

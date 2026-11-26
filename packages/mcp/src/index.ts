@@ -34,6 +34,7 @@ export {
   assetBundleIdentityFile,
   loadGhostvueStamp,
   manifestSchemaFile,
+  manifestSchemaId,
   packageStampSources,
   type StampSources,
 } from './identity.js'
