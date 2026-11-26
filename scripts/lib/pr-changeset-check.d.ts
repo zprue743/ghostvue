@@ -44,3 +44,17 @@ export function formatPrChangesetFailure(result: {
   changedPublishableFiles: readonly string[]
   affectedPackages: readonly string[]
 }): string
+
+export function extractLabelNames(
+  labels: readonly unknown[] | undefined,
+): string[]
+
+export function resolvePrLabels(params: {
+  payloadLabels?: readonly unknown[]
+  repository?: string
+  prNumber?: number
+  token?: string
+  apiUrl?: string
+  fetchImpl?: typeof fetch
+  onWarning?: (message: string) => void
+}): Promise<string[]>

@@ -291,3 +291,93 @@ export function formatPrChangesetFailure(result) {
     '  2. Or apply the `no-changeset` label to this PR if no consumer-visible behavior changed.',
   ].join('\n')
 }
+
+/**
+ * Extract label names from GitHub label objects or strings.
+ *
+ * @param {readonly unknown[] | undefined} labels
+ * @returns {string[]}
+ */
+export function extractLabelNames(labels) {
+  if (!Array.isArray(labels)) return []
+  return labels
+    .map((label) =>
+      typeof label === 'string'
+        ? label
+        : label && typeof label === 'object' && 'name' in label
+          ? label.name
+          : undefined,
+    )
+    .filter((name) => typeof name === 'string')
+}
+
+/**
+ * Resolve current PR labels via the GitHub API when credentials and PR metadata
+ * are available, falling back to the event payload labels so manual re-runs see
+ * label updates made after the original webhook delivery.
+ *
+ * @param {{
+ *   payloadLabels?: readonly unknown[]
+ *   repository?: string
+ *   prNumber?: number
+ *   token?: string
+ *   apiUrl?: string
+ *   fetchImpl?: typeof fetch
+ *   onWarning?: (message: string) => void
+ * }} params
+ * @returns {Promise<string[]>}
+ */
+export async function resolvePrLabels({
+  payloadLabels,
+  repository,
+  prNumber,
+  token,
+  apiUrl = 'https://api.github.com',
+  fetchImpl = globalThis.fetch,
+  onWarning = (message) => console.warn(message),
+}) {
+  const fallback = extractLabelNames(payloadLabels)
+  if (
+    !token ||
+    !repository ||
+    typeof prNumber !== 'number' ||
+    !Number.isFinite(prNumber) ||
+    typeof fetchImpl !== 'function'
+  ) {
+    return fallback
+  }
+
+  const baseUrl = apiUrl.replace(/\/+$/u, '')
+  const url = `${baseUrl}/repos/${repository}/issues/${prNumber}/labels?per_page=100`
+
+  try {
+    const response = await fetchImpl(url, {
+      headers: {
+        Accept: 'application/vnd.github+json',
+        Authorization: `Bearer ${token}`,
+        'User-Agent': 'ghostvue-pr-changeset-check',
+        'X-GitHub-Api-Version': '2022-11-28',
+      },
+    })
+    if (!response.ok) {
+      onWarning(
+        `Failed to fetch live PR labels (${response.status}); falling back to event payload labels.`,
+      )
+      return fallback
+    }
+    const data = await response.json()
+    if (!Array.isArray(data)) {
+      onWarning(
+        'Unexpected GitHub API response when fetching PR labels; falling back to event payload labels.',
+      )
+      return fallback
+    }
+    return extractLabelNames(data)
+  } catch (error) {
+    const detail = error instanceof Error ? error.message : String(error)
+    onWarning(
+      `Failed to fetch live PR labels (${detail}); falling back to event payload labels.`,
+    )
+    return fallback
+  }
+}

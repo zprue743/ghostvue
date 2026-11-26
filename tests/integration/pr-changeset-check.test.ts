@@ -4,9 +4,11 @@ import { describe, expect, it } from 'vitest'
 
 import {
   evaluatePrChangeset,
+  extractLabelNames,
   formatPrChangesetFailure,
   isAddedOrModifiedChangeset,
   matchPublishablePackageInput,
+  resolvePrLabels,
 } from '../../scripts/lib/pr-changeset-check.js'
 
 describe('pr-changeset-check', () => {
@@ -265,6 +267,79 @@ describe('pr-changeset-check', () => {
         readAtHead: () => headRuntimeBump,
       })
       expect(runtimeBumpResult.status).toBe('fail')
+    })
+  })
+
+  describe('resolvePrLabels', () => {
+    it('extracts label names from mixed string and object entries', () => {
+      expect(
+        extractLabelNames([
+          'dependencies',
+          { name: 'no-changeset' },
+          null,
+          { id: 1 },
+        ]),
+      ).toEqual(['dependencies', 'no-changeset'])
+    })
+
+    it('reads live PR labels from the GitHub API when token and PR metadata are provided', async () => {
+      const requestedUrls: string[] = []
+      const fetchImpl = ((input: string | URL | Request) => {
+        requestedUrls.push(
+          typeof input === 'string'
+            ? input
+            : input instanceof URL
+              ? input.toString()
+              : input.url,
+        )
+        return Promise.resolve(
+          new Response(
+            JSON.stringify([{ name: 'no-changeset' }, { name: 'ci' }]),
+            { status: 200, headers: { 'content-type': 'application/json' } },
+          ),
+        )
+      }) as typeof fetch
+
+      const labels = await resolvePrLabels({
+        payloadLabels: [{ name: 'stale-label' }],
+        repository: 'zprue743/ghostvue',
+        prNumber: 365,
+        token: 'test-token',
+        apiUrl: 'https://api.github.com/',
+        fetchImpl,
+      })
+
+      expect(requestedUrls).toEqual([
+        'https://api.github.com/repos/zprue743/ghostvue/issues/365/labels?per_page=100',
+      ])
+      expect(labels).toEqual(['no-changeset', 'ci'])
+    })
+
+    it('falls back to event payload labels when token is missing or API request fails', async () => {
+      const noToken = await resolvePrLabels({
+        payloadLabels: [{ name: 'no-changeset' }],
+        repository: 'zprue743/ghostvue',
+        prNumber: 365,
+      })
+      expect(noToken).toEqual(['no-changeset'])
+
+      const warnings: string[] = []
+      const failingFetch = (() =>
+        Promise.resolve(
+          new Response('Forbidden', { status: 403 }),
+        )) as typeof fetch
+      const failedApi = await resolvePrLabels({
+        payloadLabels: [{ name: 'dependencies' }],
+        repository: 'zprue743/ghostvue',
+        prNumber: 365,
+        token: 'test-token',
+        fetchImpl: failingFetch,
+        onWarning: (msg) => warnings.push(msg),
+      })
+
+      expect(failedApi).toEqual(['dependencies'])
+      expect(warnings).toHaveLength(1)
+      expect(warnings[0]).toContain('403')
     })
   })
 })

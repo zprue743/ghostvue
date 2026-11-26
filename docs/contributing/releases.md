@@ -11,7 +11,7 @@ Internal refactors, tests, and documentation that do not affect a package releas
 usually need no Changeset. Pre-1.0 versions still require explicit compatibility
 judgment; zero-major status is not permission for surprise breakage.
 
-CI (`scripts/check-pr-changeset.mjs` in `verify-static`) enforces that pull
+CI (`scripts/check-pr-changeset.mjs` in `.github/workflows/pr-changeset.yml`) enforces that pull
 requests touching publishable package inputs (`packages/{vue,themes,nuxt,eslint-plugin,mcp}/src/**`,
 `packages/themes/tokens/**`, or `packages/*/package.json`, excluding `*.test.*`,
 `*.spec.*`, `manifests/**`, and `AGENTS.md`) either add or update a

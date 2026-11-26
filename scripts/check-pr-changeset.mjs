@@ -9,6 +9,7 @@ import { readFileSync } from 'node:fs'
 import {
   evaluatePrChangeset,
   formatPrChangesetFailure,
+  resolvePrLabels,
 } from './lib/pr-changeset-check.js'
 
 const eventName = process.env.GITHUB_EVENT_NAME ?? 'unknown'
@@ -68,9 +69,13 @@ function readFileAtRef(ref, file) {
   }
 }
 
-const labels = (pullRequest.labels ?? [])
-  .map((label) => (typeof label === 'string' ? label : label?.name))
-  .filter((name) => typeof name === 'string')
+const labels = await resolvePrLabels({
+  payloadLabels: pullRequest.labels,
+  repository: process.env.GITHUB_REPOSITORY,
+  prNumber: pullRequest.number,
+  token: process.env.GITHUB_TOKEN,
+  apiUrl: process.env.GITHUB_API_URL || undefined,
+})
 
 const authorLogin =
   typeof pullRequest.user?.login === 'string' ? pullRequest.user.login : ''

@@ -55,11 +55,6 @@ jobs:
         with:
           node-version: 22
           cache: pnpm
-      - name: Check PR Changeset presence
-        if: github.event_name == 'pull_request'
-        env:
-          GITHUB_EVENT_NAME: ${{ github.event_name }}
-        run: node scripts/check-pr-changeset.mjs
       - name: Restore Prettier cache
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
