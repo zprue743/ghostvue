@@ -105,7 +105,7 @@ export async function readPackageEntries(repositoryRoot, pkg) {
       ? expanded
       : [{ star: undefined, target: declaredFile }]) {
       const concreteSubpath =
-        star === undefined ? subpath : subpath.replace('*', star)
+        star === undefined ? subpath : subpath.replaceAll('*', star)
       const specifier =
         concreteSubpath === '.'
           ? pkg.name
