@@ -179,6 +179,181 @@ test.describe('docs landing page', () => {
     })
   })
 
+  test.describe('theme switching', () => {
+    const themes = ['default', 'calm', 'vibrant', 'mono'] as const
+    const themeLabels = {
+      default: 'Default',
+      calm: 'Calm',
+      vibrant: 'Vibrant',
+      mono: 'Mono',
+    } as const
+
+    /**
+     * Counts `document.startViewTransition` calls on `<html>`, so a test can
+     * tell a crossfaded switch from an instant one without timing anything.
+     */
+    async function countViewTransitions(page: Page): Promise<void> {
+      await page.addInitScript(() => {
+        if (typeof document.startViewTransition !== 'function') return
+        const start = document.startViewTransition.bind(document)
+        document.startViewTransition = (
+          ...args: Parameters<typeof start>
+        ): ReturnType<typeof start> => {
+          const root = document.documentElement
+          const count = Number(root.dataset.viewTransitions ?? '0')
+          root.dataset.viewTransitions = String(count + 1)
+          return start(...args)
+        }
+      })
+    }
+
+    test('flagship and appearance switches crossfade', async ({ page }) => {
+      await page.setViewportSize(DESKTOP)
+      await page.emulateMedia({ colorScheme: 'light' })
+      await countViewTransitions(page)
+      await withLanding(page, async () => {
+        const theming = page.locator('#theming')
+        await theming.scrollIntoViewIfNeeded()
+        const root = page.locator('html')
+        // Restoring the theme on load is not a switch and must not animate.
+        await expect(root).not.toHaveAttribute('data-view-transitions')
+
+        await theming
+          .getByRole('group', { name: 'Flagship theme' })
+          .getByRole('button', { name: 'Vibrant' })
+          .click()
+        await expect(root).toHaveAttribute('data-ghost-theme', 'vibrant')
+        await expect(root).toHaveAttribute('data-view-transitions', '1')
+
+        // The nav switcher shares the helper, so it crossfades too.
+        await page.getByTestId('docs-theme-mono').first().click()
+        await expect(root).toHaveAttribute('data-ghost-theme', 'mono')
+        await expect(root).toHaveAttribute('data-view-transitions', '2')
+
+        await theming.getByRole('switch', { name: 'Dark appearance' }).click()
+        await expect(root).toHaveAttribute('data-ghost-mode', 'dark')
+        await expect(root).toHaveAttribute('data-view-transitions', '3')
+      })
+    })
+
+    test('quick switches inside one crossfade end on the last theme', async ({
+      page,
+    }) => {
+      await page.setViewportSize(DESKTOP)
+      await withLanding(page, async () => {
+        const theming = page.locator('#theming')
+        await theming.scrollIntoViewIfNeeded()
+        const group = theming.getByRole('group', { name: 'Flagship theme' })
+        // No waiting between clicks: each lands while the previous crossfade
+        // is still running, which only works if the page stays clickable.
+        await group.getByRole('button', { name: 'Vibrant' }).click()
+        await group.getByRole('button', { name: 'Mono' }).click()
+        await group.getByRole('button', { name: 'Default' }).click()
+
+        const root = page.locator('html')
+        await expect(root).toHaveAttribute('data-ghost-theme', 'default')
+        await expect(
+          group.getByRole('button', { name: 'Default' }),
+        ).toHaveAttribute('aria-pressed', 'true')
+        expect(
+          await page.evaluate(() => localStorage.getItem('ghost-docs-theme')),
+        ).toBe('default')
+        // Still the last theme once every crossfade has finished. Only the
+        // crossfade's own animations are awaited: the page also runs idle
+        // and scroll-driven animations that never finish.
+        await expect
+          .poll(() =>
+            page.evaluate(
+              () =>
+                document
+                  .getAnimations()
+                  .filter(
+                    (item) =>
+                      item.effect instanceof KeyframeEffect &&
+                      (item.effect.pseudoElement ?? '').startsWith(
+                        '::view-transition',
+                      ),
+                  ).length,
+            ),
+          )
+          .toBe(0)
+        await expect(root).toHaveAttribute('data-ghost-theme', 'default')
+      })
+    })
+
+    test('reduced motion switches the theme without a view transition', async ({
+      page,
+    }) => {
+      await page.setViewportSize(DESKTOP)
+      await page.emulateMedia({ reducedMotion: 'reduce' })
+      await countViewTransitions(page)
+      await withLanding(page, async () => {
+        const theming = page.locator('#theming')
+        await theming.scrollIntoViewIfNeeded()
+        await theming
+          .getByRole('group', { name: 'Flagship theme' })
+          .getByRole('button', { name: 'Vibrant' })
+          .click()
+        const root = page.locator('html')
+        await expect(root).toHaveAttribute('data-ghost-theme', 'vibrant')
+        await expect(root).not.toHaveAttribute('data-view-transitions')
+      })
+    })
+
+    test('the page keeps its layout across flagship themes', async ({
+      page,
+    }) => {
+      await page.setViewportSize(DESKTOP)
+      // Instant switches: this measures layout, not the crossfade.
+      await page.emulateMedia({ reducedMotion: 'reduce' })
+      await withLanding(page, async () => {
+        const theming = page.locator('#theming')
+        await theming.scrollIntoViewIfNeeded()
+        await expect(theming.locator('.ghost-example__status')).toHaveCount(0)
+        const group = theming.getByRole('group', { name: 'Flagship theme' })
+
+        /*
+         * Size and document position of both theming demos, plus the page
+         * height. `calm` defaults to compact density and the other flagships
+         * to comfortable, so without the page's density pin all of these
+         * changed with the theme.
+         */
+        const measure = () =>
+          page.evaluate(() => ({
+            demos: Array.from(
+              document.querySelectorAll('#theming [data-landing-example]'),
+            ).map((element) => {
+              const box = element.getBoundingClientRect()
+              return {
+                top: Math.round(box.top + window.scrollY),
+                left: Math.round(box.left),
+                width: Math.round(box.width),
+                height: Math.round(box.height),
+              }
+            }),
+            pageHeight: document.documentElement.scrollHeight,
+          }))
+
+        await group.getByRole('button', { name: themeLabels.calm }).click()
+        await expect(page.locator('html')).toHaveAttribute(
+          'data-ghost-theme',
+          'calm',
+        )
+        const atCalm = await measure()
+        expect(atCalm.demos).toHaveLength(2)
+
+        for (const theme of themes) {
+          await group.getByRole('button', { name: themeLabels[theme] }).click()
+          await expect(page.locator('html')).toHaveAttribute(
+            'data-ghost-theme',
+            theme,
+          )
+          expect(await measure(), `layout under ${theme}`).toEqual(atCalm)
+        }
+      })
+    })
+  })
+
   test('theming controls switch the flagship theme and appearance', async ({
     page,
   }) => {
@@ -206,6 +381,117 @@ test.describe('docs landing page', () => {
       await expect(root).toHaveClass(/dark/)
       await expect(root).toHaveAttribute('data-ghost-mode', 'dark')
       await expect(dark).toHaveAttribute('aria-checked', 'true')
+    })
+  })
+
+  test.describe('hero mark', () => {
+    test.use({ viewport: DESKTOP })
+
+    const mark = (page: Page): Locator =>
+      page.locator('#hero .ghost-landing-mark')
+
+    test('twirls and winks on arrival and replays on return', async ({
+      page,
+    }) => {
+      await page.emulateMedia({ reducedMotion: 'no-preference' })
+      await withLanding(page, async () => {
+        await expect(mark(page)).toHaveAttribute('data-landing-mark', 'playing')
+        // The twirl and the wink are both attached to the mark's subtree.
+        const animationNames = () =>
+          mark(page).evaluate((element) =>
+            element
+              .getAnimations({ subtree: true })
+              .map((animation) =>
+                animation instanceof CSSAnimation
+                  ? animation.animationName
+                  : '',
+              )
+              .sort(),
+          )
+        expect(await animationNames()).toEqual([
+          'ghost-landing-mark-twirl',
+          'ghost-landing-mark-wink',
+        ])
+        // Scrolling inside the hero must not restart the sequence.
+        await page.evaluate(() => {
+          window.scrollTo({ top: 60, behavior: 'instant' })
+        })
+        await expect(railLink(page, 'hero')).toHaveAttribute(
+          'aria-current',
+          'location',
+        )
+        await expect(mark(page)).toHaveAttribute('data-landing-mark', 'playing')
+
+        // Leaving the hero resets the logo to its resting pose.
+        await scrollSection(page, 'theming', 'start')
+        await expect(mark(page)).not.toHaveAttribute('data-landing-mark')
+        expect(await animationNames()).toEqual([])
+
+        // Coming back starts both animations again from the beginning.
+        await page.evaluate(() => {
+          window.scrollTo({ top: 0, behavior: 'instant' })
+        })
+        await expect(mark(page)).toHaveAttribute('data-landing-mark', 'playing')
+        await expect
+          .poll(animationNames)
+          .toEqual(['ghost-landing-mark-twirl', 'ghost-landing-mark-wink'])
+      })
+    })
+
+    test('ends on the resting pose with one accessible image', async ({
+      page,
+    }) => {
+      await page.emulateMedia({ reducedMotion: 'no-preference' })
+      await withLanding(page, async () => {
+        await expect(mark(page)).toHaveAttribute('data-landing-mark', 'playing')
+        await expect(
+          page.locator('#hero').getByRole('img', {
+            name: 'GhostVue Phantom V logo',
+          }),
+        ).toHaveCount(1)
+        // Nothing fills forwards: once finished, no transform is left over.
+        await mark(page).evaluate((element) =>
+          Promise.all(
+            element
+              .getAnimations({ subtree: true })
+              .map((animation) => animation.finished),
+          ),
+        )
+        expect(
+          await mark(page).evaluate((element) =>
+            [
+              element.querySelector('.ghost-landing-mark__turn'),
+              element.querySelector('.ghost-landing-mark__wink'),
+            ].map((part) => (part ? getComputedStyle(part).transform : '')),
+          ),
+        ).toEqual(['none', 'none'])
+      })
+    })
+
+    test('stays still under reduced motion', async ({ page }) => {
+      await page.emulateMedia({ reducedMotion: 'reduce' })
+      await withLanding(page, async () => {
+        await expect(page.locator('.ghost-landing')).toHaveAttribute(
+          'data-landing-motion',
+          'static',
+        )
+        await expect(mark(page)).not.toHaveAttribute('data-landing-mark')
+        expect(
+          await mark(page).evaluate(
+            (element) => element.getAnimations({ subtree: true }).length,
+          ),
+        ).toBe(0)
+
+        await scrollSection(page, 'theming', 'start')
+        await page.evaluate(() => {
+          window.scrollTo({ top: 0, behavior: 'instant' })
+        })
+        await expect(railLink(page, 'hero')).toHaveAttribute(
+          'aria-current',
+          'location',
+        )
+        await expect(mark(page)).not.toHaveAttribute('data-landing-mark')
+      })
     })
   })
 
@@ -507,6 +793,126 @@ test.describe('docs landing page', () => {
         })
         await expect(hero).toHaveAttribute('data-landing-phase', 'active')
         await expect(closing).toHaveAttribute('data-landing-phase', 'before')
+      })
+    })
+  })
+
+  test.describe('section number', () => {
+    test.use({ viewport: DESKTOP })
+
+    const sectionNumber = (page: Page): Locator =>
+      page.getByTestId('landing-section-number')
+    const flaps = (page: Page): Locator =>
+      page.locator('.ghost-landing-number__flap')
+
+    test('follows the active section down and back up', async ({ page }) => {
+      await page.emulateMedia({ reducedMotion: 'no-preference' })
+      await withLanding(page, async () => {
+        const number = sectionNumber(page)
+        await expect(number).toBeVisible()
+        await expect(number).toHaveAttribute('data-value', '01')
+
+        await scrollSection(page, 'theming', 'start')
+        await expect(railLink(page, 'theming')).toHaveAttribute(
+          'aria-current',
+          'location',
+        )
+        await expect(number).toHaveAttribute('data-value', '04')
+        // The flip finishes on its own and leaves no flaps behind.
+        await expect(number).not.toHaveAttribute('data-flip')
+        await expect(flaps(page)).toHaveCount(0)
+
+        await scrollSection(page, 'layers', 'start')
+        await expect(number).toHaveAttribute('data-value', '02')
+        await expect(number).not.toHaveAttribute('data-flip')
+      })
+    })
+
+    test('flips forward going down and backward going up', async ({ page }) => {
+      await page.emulateMedia({ reducedMotion: 'no-preference' })
+      await withLanding(page, async () => {
+        const number = sectionNumber(page)
+        await expect(page.locator('.ghost-landing')).not.toHaveAttribute(
+          'data-landing-motion',
+          'static',
+        )
+        // Hold every flip at its first frame so the direction can be read.
+        await page.addStyleTag({
+          content:
+            '.ghost-landing-number__flap { animation-play-state: paused !important; }',
+        })
+
+        await scrollSection(page, 'layers', 'start')
+        await expect(number).toHaveAttribute('data-flip', 'forward')
+        // 01 -> 02: only the digit that changes gets flaps.
+        await expect(flaps(page)).toHaveCount(2)
+
+        // Let the held flip finish, then go back up.
+        await page.evaluate(() => {
+          // Only the flaps: section reveals are scroll-driven and never end.
+          for (const animation of document.getAnimations()) {
+            const target =
+              animation.effect instanceof KeyframeEffect
+                ? animation.effect.target
+                : null
+            if (target?.classList.contains('ghost-landing-number__flap')) {
+              animation.finish()
+            }
+          }
+        })
+        await expect(number).not.toHaveAttribute('data-flip')
+        await scrollSection(page, 'hero', 'start')
+        await expect(number).toHaveAttribute('data-flip', 'backward')
+      })
+    })
+
+    test('is decorative: hidden from assistive technology and the pointer', async ({
+      page,
+    }) => {
+      await withLanding(page, async () => {
+        const number = sectionNumber(page)
+        await expect(
+          page.locator('.ghost-landing-number-layer'),
+        ).toHaveAttribute('aria-hidden', 'true')
+        await expect(number).toHaveCSS('pointer-events', 'none')
+        await expect(number).toHaveCSS('position', 'fixed')
+        await expect(
+          number.locator('a, button, input, [tabindex]'),
+        ).toHaveCount(0)
+        // Nothing on the page is hit-tested through to the number.
+        const box = await number.boundingBox()
+        expect(box).not.toBeNull()
+        if (!box) return
+        const hitsNumber = await page.evaluate(
+          ([x, y]) =>
+            document
+              .elementFromPoint(x, y)
+              ?.closest('.ghost-landing-number-layer') !== null,
+          [box.x + box.width / 2, box.y + box.height / 2] as const,
+        )
+        expect(hitsNumber).toBe(false)
+      })
+    })
+
+    test('reduced motion swaps the number with no flip', async ({ page }) => {
+      await page.emulateMedia({ reducedMotion: 'reduce' })
+      await withLanding(page, async () => {
+        const number = sectionNumber(page)
+        await expect(page.locator('.ghost-landing')).toHaveAttribute(
+          'data-landing-motion',
+          'static',
+        )
+        await scrollSection(page, 'components', 'start')
+        await expect(number).toHaveAttribute('data-value', '05')
+        await expect(number).not.toHaveAttribute('data-flip')
+        await expect(flaps(page)).toHaveCount(0)
+      })
+    })
+
+    test('hides where the rail hides', async ({ page }) => {
+      await page.setViewportSize({ width: 1000, height: 900 })
+      await withLanding(page, async () => {
+        await expect(sectionNumber(page)).toBeHidden()
       })
     })
   })

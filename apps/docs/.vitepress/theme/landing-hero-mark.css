@@ -1,0 +1,90 @@
+/*
+ * Landing hero logo: a twirl about the vertical axis, then a wink. The tile
+ * (`.ghost-landing__hero-mark`, styled in `landing-page.css`) stays still.
+ * Only `transform` animates, so nothing here causes layout.
+ *
+ * At rest every rule below resolves to the plain logo: the turn has no
+ * transform, the front face is the only one visible, and no animation is
+ * attached. The keyframes also end on that pose and nothing fills forwards,
+ * so an interrupted or finished run can never leave the ghost half-turned or
+ * with an eye shut.
+ */
+.ghost-landing-mark {
+  /* Depth for the turn; without it rotateY only squashes the ghost flat. */
+  perspective: 16rem;
+}
+
+/*
+ * Both faces share one grid cell, so the turn is exactly the size of the
+ * logo and the tile centres it as it centred the single SVG before.
+ */
+.ghost-landing-mark__turn {
+  display: grid;
+  transform-style: preserve-3d;
+}
+
+.ghost-landing-mark__face {
+  backface-visibility: hidden;
+  grid-area: 1 / 1;
+}
+
+/* Faces away at rest, so it is culled until the ghost turns its back. */
+.ghost-landing-mark__face--back {
+  transform: rotateY(180deg);
+}
+
+.ghost-landing-mark__wink {
+  /* Squash the eye about its own centre, not the SVG origin. */
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+@keyframes ghost-landing-mark-twirl {
+  from {
+    /* A turn and a half: starts facing away, ends facing the reader. */
+    transform: rotateY(-540deg);
+  }
+
+  to {
+    transform: rotateY(0deg);
+  }
+}
+
+@keyframes ghost-landing-mark-wink {
+  0%,
+  100% {
+    transform: scaleY(1);
+  }
+
+  45%,
+  60% {
+    transform: scaleY(0.1);
+  }
+}
+
+/*
+ * Reduced motion never enters this block, and `LandingHeroMark` also keeps
+ * the attribute off in that case, so the logo stays at rest.
+ *
+ * Durations are fixed on purpose. Component motion scales with the theme's
+ * `--ghost-motion-intensity`, but that is 0.6 under Calm (the docs default)
+ * and 0.45 under Mono, which would run a turn and a half in about half a
+ * second: too fast to read as a twirl, and the wink would be a flicker.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  .ghost-landing-mark[data-landing-mark='playing'] {
+    --_mark-twirl: 1100ms;
+  }
+
+  .ghost-landing-mark[data-landing-mark='playing'] .ghost-landing-mark__turn {
+    /* Decelerates into the final pose, like a spin running out. */
+    animation: ghost-landing-mark-twirl var(--_mark-twirl)
+      cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+
+  .ghost-landing-mark[data-landing-mark='playing'] .ghost-landing-mark__wink {
+    /* Waits for the twirl to settle, plus a beat, before the eye closes. */
+    animation: ghost-landing-mark-wink 350ms ease-in-out
+      calc(var(--_mark-twirl) + 120ms);
+  }
+}

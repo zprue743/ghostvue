@@ -299,3 +299,14 @@ html[data-ghost-theme='mono'] {
   line-height: 1.45;
   color: var(--vp-c-text-2);
 }
+
+/*
+ * Theme and appearance switches crossfade through a view transition (see
+ * `docs-theme-transition.ts`). While one runs, its snapshot layer sits over
+ * the page and would swallow pointer input, so a second click on the theme
+ * control inside the crossfade did nothing. Let input through to the live
+ * page underneath; a new switch then simply restarts the crossfade.
+ */
+::view-transition {
+  pointer-events: none;
+}

@@ -16,6 +16,15 @@ export const landingSections = [
 
 export type LandingSectionId = (typeof landingSections)[number]['id']
 
+/**
+ * Two-digit display number of the section at `index` (`01` for the first).
+ * The rail markers and the background section number both print it, so the
+ * two can never disagree about which number a section carries.
+ */
+export function landingSectionNumber(index: number): string {
+  return String(index + 1).padStart(2, '0')
+}
+
 /** Where a section sits relative to the viewport band that counts as "in view". */
 export type LandingSectionPhase = 'before' | 'active' | 'after'
 

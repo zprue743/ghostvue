@@ -27,6 +27,8 @@
   color: var(--ghost-surface-fg);
   font-size: 1rem;
   line-height: 1.6;
+  /* Containing block for the background section number's clipping layer. */
+  position: relative;
   width: 100%;
 }
 
@@ -74,6 +76,13 @@
   margin-inline: auto;
   max-inline-size: 78rem;
   padding-inline: var(--_landing-gutter);
+  /*
+   * Section content paints above the background section number, which sits
+   * at `z-index: 0` over the section backgrounds
+   * (`landing-section-number.css`).
+   */
+  position: relative;
+  z-index: 1;
 }
 
 /* Leave the right-hand gutter to the section rail once it is visible. */
