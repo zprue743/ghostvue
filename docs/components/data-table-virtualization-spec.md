@@ -35,7 +35,7 @@ sections:
   compatibility:
     applicable: true
 unresolvedQuestions:
-  - question: 'GHO-251 (0.3.0 DataTable virtualization): Zac sign-off required on V1–V8 (opt-in surface, pagination opt-out, aria-rowcount scope, scroll reset policy, measured mode in 0.3.0, in-house windowing vs adapter, document scrolling, viewport tab stop) before any implementation.'
+  - question: 'GHO-251 (0.3.0 DataTable virtualization): Zac sign-off required on V1–V9 (opt-in surface, pagination opt-out, aria-rowcount scope, scroll reset policy, measured mode in 0.3.0, in-house windowing vs adapter, document scrolling, viewport tab stop, Tab traversal hint and probe limit) before any implementation.'
     blocking: false
     reviewer: Zac
 ---
@@ -82,7 +82,11 @@ element scrolls, which rows are mounted, how rows report their position to
 assistive technology (`aria-rowcount`, `aria-rowindex`), and what happens to
 focus when a focused row would scroll out of the mounted window. The table
 stays a native `<table>` built from `GhostTable*` parts, with native `Tab`
-order, exactly as ADR 0014 requires.
+order, exactly as ADR 0014 requires. The one addition is
+[Tab traversal across unmounted rows](#tab-traversal-across-unmounted-rows):
+when the next control in `Tab` order is in a row that is not mounted, the
+viewport mounts that row and moves focus to it, so the order stays the same as
+in a fully rendered table.
 
 ## Non-goals
 
@@ -161,14 +165,16 @@ Why a child component rather than a prop on the root:
 
 ### `GhostDataTableViewport` props
 
-| Prop              | Type                    | Default             | Contract                                                                                                                                                                                        |
-| ----------------- | ----------------------- | ------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `rowHeight`       | `number`                | required            | Data-row block size in CSS pixels. In `'fixed'` mode it is exact; in `'measured'` mode it is the estimate for rows not yet measured. Non-finite or `< 1` values fall back to `1` (dev warning). |
-| `rowHeightMode`   | `'fixed' \| 'measured'` | `'fixed'`           | See [Row-height model](#row-height-model). Detail rows are always measured.                                                                                                                     |
-| `overscan`        | `number`                | `5`                 | Extra data rows mounted on **each** side of the visible range. Normalized like `maxMultiSortColCount`: `Math.floor`, then minimum `1` (focus continuity needs at least one row).                |
-| `initialRowCount` | `number`                | `20`                | Rows rendered before the viewport is measured: on the server and in the first client render. Same normalization, minimum `1`. See [SSR and hydration](#ssr-and-hydration).                      |
-| `label`           | `string`                | inherits table name | Accessible name of the scroll region. Falls back to the root's `ariaLabelledby` (as `aria-labelledby`), then `ariaLabel`. Dev warning when no name resolves.                                    |
-| `labelledby`      | `string`                | —                   | Id of a visible label for the region; wins over `label`.                                                                                                                                        |
+| Prop              | Type                                        | Default             | Contract                                                                                                                                                                                                                                                                       |
+| ----------------- | ------------------------------------------- | ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `rowHeight`       | `number`                                    | required            | Data-row block size in CSS pixels. In `'fixed'` mode it is exact; in `'measured'` mode it is the estimate for rows not yet measured. Non-finite or `< 1` values fall back to `1` (dev warning).                                                                                |
+| `rowHeightMode`   | `'fixed' \| 'measured'`                     | `'fixed'`           | See [Row-height model](#row-height-model). Detail rows are always measured.                                                                                                                                                                                                    |
+| `overscan`        | `number`                                    | `5`                 | Extra data rows mounted on **each** side of the visible range. Normalized like `maxMultiSortColCount`: `Math.floor`, then minimum `1` (focus continuity needs at least one row).                                                                                               |
+| `initialRowCount` | `number`                                    | `20`                | Rows rendered before the viewport is measured: on the server and in the first client render. Same normalization, minimum `1`. See [SSR and hydration](#ssr-and-hydration).                                                                                                     |
+| `label`           | `string`                                    | inherits table name | Accessible name of the scroll region. Falls back to the root's `ariaLabelledby` (as `aria-labelledby`), then `ariaLabel`. Dev warning when no name resolves.                                                                                                                   |
+| `labelledby`      | `string`                                    | —                   | Id of a visible label for the region; wins over `label`.                                                                                                                                                                                                                       |
+| `rowHasTabbable`  | `(row: DataTableSlotRow<TData>) => boolean` | —                   | Hint for [Tab traversal](#tab-traversal-across-unmounted-rows): whether the row group (data row plus open detail row) renders at least one tabbable control. Called only for unmounted rows; must be pure and cheap. When omitted, unmounted rows are probed by mounting them. |
+| `tabSearchLimit`  | `number`                                    | `200`               | Most rows the probe may mount for one `Tab` / `Shift+Tab` press when `rowHasTabbable` is omitted or wrong. Same normalization as `overscan`, minimum `1`. Rows the hint answers do not count.                                                                                  |
 
 Consumer `class` and `style` merge onto the viewport element and are never
 overwritten (`mergeGhostTablePartAttrs` rules). The consumer must give the
@@ -283,7 +289,7 @@ because a 10k-row local virtual list is the first concrete consumer.
   is byte-identical to phase one (`virtualItems` has no spacers and
   `headerRowProps` is empty).
 - **`GhostDataTablePreset`** gains `virtualization?: GhostDataTablePresetVirtualization`
-  (`{ rowHeight; rowHeightMode?; overscan?; initialRowCount?; label? }`). When
+  (`{ rowHeight; rowHeightMode?; overscan?; initialRowCount?; label?; rowHasTabbable?; tabSearchLimit? }`). When
   set, the preset wraps only its `GhostTable` in a `GhostDataTableViewport`
   (toolbar and search stay outside). Consumer `class`/`style` for the viewport
   go through `virtualization.viewportAttrs` so the block size can be set
@@ -325,7 +331,9 @@ scrollToOffset, getScrollOffset }`. `GhostDataTableViewport` is a thin
 component over this composable, so both paths share one implementation. As
 with the interaction helpers, focus pinning (below) is installed by the
 component; standalone layouts get it by binding `viewportProps`, which carries
-the `focusin`/`focusout` listeners.
+the `focusin`/`focusout` listeners and the `keydown` listener for
+[Tab traversal](#tab-traversal-across-unmounted-rows). The composable options
+accept `rowHasTabbable` and `tabSearchLimit`.
 
 ## State model
 
@@ -403,9 +411,128 @@ always equals display order and `aria-rowindex` stays truthful.
   a known control, not dropped.
 - **Focus-driven mounting:** on `focusin` inside a row at `displayIndex` _i_,
   the viewport synchronously ensures rows `i - 1` and `i + 1` are mounted (in
-  the same tick, not on the next scroll frame). This keeps `Tab` and
-  `Shift+Tab` from leaving the table early when the browser's
-  focus-into-view scroll has not yet produced a scroll event.
+  the same tick, not on the next scroll frame). This keeps the common case
+  (every row has a control, such as a selection checkbox) on native `Tab`
+  order when the browser's focus-into-view scroll has not yet produced a
+  scroll event. It guarantees only the adjacent rows. When the next control
+  is further away (a run of rows without controls that reaches past the
+  mounted window), the
+  [Tab traversal](#tab-traversal-across-unmounted-rows) rule below applies.
+
+### Tab traversal across unmounted rows
+
+**Guarantee:** with a viewport registered, `Tab` and `Shift+Tab` visit the
+tabbable controls of the header and of every row group of the windowed set in
+display order, the same order a fully rendered table would have. Focus never
+skips a control and never leaves the table while a row in that direction
+still has a tabbable control. This holds for runs of rows without controls of
+any length, including runs longer than `overscan` and longer than the
+viewport. With an accurate `rowHasTabbable` hint, every key press moves focus
+exactly once. Without one, crossing a long run can take extra key presses
+(see [Probe without a hint](#probe-without-a-hint)), but the order guarantee
+still holds.
+
+**Terms.** A row group is a data row plus its open detail row. A control is
+_tabbable_ when it matches the phase-one tabbable query (focusable, not
+`disabled`, `tabindex` not negative, not `inert`, not hidden). Whether row
+group _r_ is tabbable is decided as follows:
+
+- mounted: read from the DOM;
+- unmounted and in the known-empty set (below): no;
+- unmounted, `rowHasTabbable` provided: its return value for _r_;
+- unmounted, no hint: assumed yes (unknown until probed).
+
+**Mechanism.** The viewport has one `keydown` listener on its element (no
+document listener). It reacts only to `Tab` and `Shift+Tab` without `Alt`,
+`Ctrl`, or `Meta`, when the event target is the viewport element, a header
+control, or a control in a body row group, and `defaultPrevented` is false (so
+widgets in cells that own `Tab` keep it). On such a key press:
+
+1. **Same row.** If the focused row (header row or body row group) has another
+   tabbable control in the key's direction, do nothing. Native `Tab` moves to
+   it.
+2. **Start position.** Forward: from display index `i + 1` when focus is in
+   row group `i`, or from `0` when focus is on the viewport element or in the
+   header. Backward: from `i - 1`. `Shift+Tab` from the header or the viewport
+   element does nothing (native order to the previous header control, the
+   viewport, or out of the table is already correct).
+3. **Find the target** _j_: the first row group from the start position, in
+   the key's direction, that is tabbable per the terms above. This is a
+   synchronous scan over row ids and, for unmounted rows, the hint. It mounts
+   nothing.
+4. **No target:** do nothing. No body row in that direction has a control, so
+   native order is the correct next stop (forward: the first tabbable after
+   the table, such as a pager outside the viewport; backward: the last header
+   control or the viewport).
+5. **Mounted target:** do nothing. DOM order equals display order and every
+   row group between the focused row and _j_ is either unmounted or has no
+   control, so native `Tab` lands on _j_'s first (forward) or last (backward)
+   tabbable control.
+6. **Unmounted target:** call `preventDefault()`, mount _j_ as
+   `scrollToRow(j, { align: 'nearest', behavior: 'auto' })` would (the focused
+   row stays pinned meanwhile), and after that render move focus with
+   `focus({ preventScroll: true })` to _j_'s first tabbable control (forward)
+   or last (backward). If the mounted row group has no tabbable control (the
+   hint was wrong, or there was no hint), _j_ joins the known-empty set and
+   the search repeats from _j_ in the same direction (the probe).
+
+`Tab` / `Shift+Tab` presses that arrive while a step 6 search is pending are
+prevented and dropped, so one press moves focus at most once. A pending search
+is cancelled, leaving focus where it is, when focus moves by other means
+(pointer, script), the row model changes, or the viewport unmounts. No
+intermediate element (sentinel or spacer) ever receives focus, and spacer rows
+stay `aria-hidden` with no focusable content.
+
+**Known-empty set.** Row ids that were mounted and found to have no tabbable
+control, so later searches skip them. An id is removed when that row mounts
+again with a control or its expansion changes; the whole set is cleared on a
+`data` reference change or a column-set change.
+
+**Scroll behaviour.** Traversal scrolls only in step 6, instantly (never
+smooth, so reduced motion needs no special case), with `align: 'nearest'`, so
+the target row ends just inside the viewport edge in the key's direction.
+`scroll-padding-block-start` from the sticky-header recipe applies. In steps
+1–5 the browser's native focus scroll applies.
+
+**Hint contract.** `rowHasTabbable(row)` receives the slot row
+(`row.isExpanded` tells it whether the detail row counts). A wrong `true`
+costs one probe step. A wrong `false` skips that row's controls while the row
+is unmounted; that is a consumer bug, and dev builds warn when such a row
+mounts with a tabbable control. Return `true` when unsure.
+
+**Work per key press.** Steps 1–5: constant DOM work plus a scan over at most
+`count` row ids and hint calls (the hint must be cheap). Step 6 with an
+accurate hint: one window mount and one `focus()` call. Without a hint: at
+most `tabSearchLimit` probed rows, mounted one window at a time. No sort,
+filter, or accessor calls in any case.
+
+**Server mode and unloaded rows.** The search covers the windowed set only:
+the rows of the loaded `data` page. It never triggers a fetch and never changes
+the page. The last loaded row is the end of the data for traversal, so `Tab`
+past it continues natively to controls after the viewport (for example the
+pager). Sparse placeholder rows are a non-goal, so there are no unloaded
+indices inside the set. While `loading` is true the search runs over the
+current rows; a `data` change cancels a pending search.
+
+#### Probe without a hint
+
+Each probe step mounts one window around the candidate row and reads the DOM.
+Per key press the probe mounts at most `tabSearchLimit` rows that the hint did
+not answer. When the probe reaches the end of the windowed set, or the limit,
+without finding a control:
+
+- focus stays on the control the key was pressed on (it never leaves the table
+  early and never drops to `<body>`), and the viewport scrolls back to it with
+  `align: 'nearest'`;
+- every probed row is now in the known-empty set, so the **next** press
+  continues past them: after reaching the end, the next press finds no target
+  (step 4) and native order leaves the table; after reaching the limit, the
+  next press probes the following rows;
+- a dev warning (once per viewport) names `rowHasTabbable` as the fix.
+
+So without an accurate hint, crossing a run of control-less rows longer than
+the mounted window costs one extra press per `tabSearchLimit` rows probed, plus
+one at the end of the data. Focus order is never wrong.
 
 ### Scroll position across state changes (proposed, see V4)
 
@@ -465,7 +592,12 @@ outside `<table>`, so they are never scrolled or clipped.
   `rowId`. An id that changes on refresh drops the row's measured height and
   the focus pin.
 - The viewport never reads row objects. It reads `rowId` and `displayIndex`
-  only, so consumer data stays unwatched and unmutated.
+  only, so consumer data stays unwatched and unmutated. The one exception is
+  passing slot rows to the consumer's own `rowHasTabbable` hint during
+  [Tab traversal](#tab-traversal-across-unmounted-rows).
+- Tables where some rows have no tabbable control (no selection column, links
+  only in some rows) should pass `rowHasTabbable`, derived from the same data
+  that decides whether the cell renders a control.
 - Consumers own row and cell CSS that makes `'fixed'` mode true. Content that
   can wrap (long text, localized strings) needs `'measured'` mode.
 
@@ -509,16 +641,19 @@ When a viewport is registered and the windowed set is not empty:
 
 ### Keyboard interaction
 
-| Key                                   | Context                     | Behavior                                                                                                                                                  |
-| ------------------------------------- | --------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `Tab` / `Shift+Tab`                   | Controls in rows            | Native order through mounted controls. Focus-driven mounting keeps the next and previous row mounted, so tabbing reaches every row's controls in order.   |
-| `Tab`                                 | Viewport element            | The viewport is one tab stop before the table's first control, so keyboard users can scroll a table that has no focusable cells.                          |
-| `ArrowUp` / `ArrowDown`               | Viewport or a control in it | Native scrolling of the nearest scroll container (the viewport). Not intercepted. Arrow keys inside text inputs and other widgets keep their own meaning. |
-| `PageUp` / `PageDown`, `Home` / `End` | Viewport element            | Native scrolling. `End` reaches the true end because the spacer after the window has the remaining height.                                                |
-| `Space` / `Enter`                     | Sort, checkbox, expand      | Phase-one behavior, unchanged.                                                                                                                            |
+| Key                                   | Context                        | Behavior                                                                                                                                                                                                                               |
+| ------------------------------------- | ------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Tab` / `Shift+Tab`                   | Viewport, header, row controls | Display order through every row's controls, as if all rows were mounted. Native when the next control is mounted; otherwise the viewport mounts the target row and focuses it ([Tab traversal](#tab-traversal-across-unmounted-rows)). |
+| `Tab`                                 | Viewport element               | The viewport is one tab stop before the table's first control, so keyboard users can scroll a table that has no focusable cells.                                                                                                       |
+| `ArrowUp` / `ArrowDown`               | Viewport or a control in it    | Native scrolling of the nearest scroll container (the viewport). Not intercepted. Arrow keys inside text inputs and other widgets keep their own meaning.                                                                              |
+| `PageUp` / `PageDown`, `Home` / `End` | Viewport element               | Native scrolling. `End` reaches the true end because the spacer after the window has the remaining height.                                                                                                                             |
+| `Space` / `Enter`                     | Sort, checkbox, expand         | Phase-one behavior, unchanged.                                                                                                                                                                                                         |
 
-The library does not intercept any key for virtualization. Grid-style arrow
-navigation is #319's scope.
+The only key the library handles for virtualization is `Tab` / `Shift+Tab`,
+and only when the next control in display order is in an unmounted row (step 6
+of [Tab traversal](#tab-traversal-across-unmounted-rows)). Arrow, paging, and
+activation keys are never intercepted. Grid-style arrow navigation is #319's
+scope.
 
 **Focus visibility:** when focus moves to a control in a row partly hidden
 under a sticky header, the browser's focus scroll may leave it covered.
@@ -544,6 +679,9 @@ The viewport does not change `scroll-padding` itself.
     `virtualRange` and `rowCount`).
 - **No live announcements on scroll.** The viewport never writes to a live
   region. Mounting and unmounting rows is silent.
+- **`Tab` across unmounted rows** moves focus straight to the next control, so
+  screen readers announce an ordinary focus change with that row's
+  `aria-rowindex`. When a probe keeps focus in place, nothing is announced.
 - `aria-busy` on the table while `loading` is unchanged.
 
 ### Reduced motion
@@ -590,7 +728,8 @@ The viewport does not change `scroll-padding` itself.
 
 ### Browser-only behavior and cleanup
 
-- One passive `scroll` listener on the viewport element, one
+- One passive `scroll` listener and one `keydown` listener (Tab traversal
+  only) on the viewport element, one
   `ResizeObserver` for the viewport, and (measured mode or open detail rows)
   one `ResizeObserver` for mounted rows. All are removed on unmount. No
   `window` or `document` listeners.
@@ -670,6 +809,10 @@ builds on this spec's hooks rather than adding its own:
 
 - `scrollToRow(rowId)` mounts and reveals a row before focus moves to it.
 - Focus pinning keeps the active row mounted.
+- The Tab traversal target search (`rowHasTabbable`, known-empty set) is the
+  same "next row with a focus target" lookup arrow-key navigation needs. When
+  #319's grid mode is active it replaces Tab traversal (one tab stop, roving
+  `tabindex`), and the `keydown` handler above stays off.
 - `aria-rowindex` / `aria-rowcount` are already required by `grid` and
   `treegrid` when rows are missing from the DOM.
 
@@ -684,6 +827,12 @@ Anything about roving `tabindex`, cell focus, or `role` changes belongs in
   row above the viewport grows and shrinks; cache keyed by `rowId` survives a
   sort; cache pruning on `data` change; pinned row splits spacers into
   `before` / `between` / `after` with sizes summing to the total.
+- **Unit (Tab traversal search):** target search forward and backward from a
+  row, the header, and the viewport element; mounted rows read from the DOM,
+  unmounted rows from the hint, the known-empty set, or "assumed yes"; no
+  target at both ends; known-empty invalidation on expansion, `data`, and
+  column changes; probe stops at `tabSearchLimit` (normalized like `overscan`)
+  and at the end of the set; no sort, filter, or accessor calls.
 - **Unit (bindings):** `aria-rowcount` and `aria-rowindex` values with zero,
   one, and several expanded rows before the window; empty set omits both;
   no viewport means no new attributes; `displayIndex` differs from `rowIndex`
@@ -709,6 +858,32 @@ Anything about roving `tabindex`, cell focus, or `role` changes belongs in
   - `Tab` from the first row checkbox through 60 rows: each checkbox is
     `toBeFocused()`, the viewport scrolls, and the mounted row count stays
     within budget. Same with `Shift+Tab` upward.
+  - **Gap fixture** (`overscan: 5`, about 10 visible rows): rows 100–139 render
+    no control (a 40-row gap, longer than `overscan` and than the mounted
+    window); every other row has one link. A `focusin` recorder on `document`
+    asserts that every focus target during each sequence is inside the
+    viewport until the documented exit, so focus never leaves the table early.
+    With an accurate `rowHasTabbable`:
+    - `Tab` from row 99's link: one press focuses row 140's link, which is in
+      view and has the `aria-rowindex` of display index 140.
+    - `Shift+Tab` from row 140's link: one press focuses row 99's link.
+    - Leading gap (rows 0–39 without controls, scrolled to row 200): `Shift+Tab`
+      from row 40's link focuses the last header control; `Tab` from the last
+      header control focuses row 40's link.
+    - Trailing gap (the last 40 rows without controls): `Tab` from the last
+      row control focuses the first element after the viewport.
+    - `Tab` from the last header control while scrolled to row 5,000 focuses
+      row 0's control (display order, not scroll position).
+  - **Gap fixture without a hint:** with the default `tabSearchLimit`, `Tab`
+    from row 99 focuses row 140 in one press and `Shift+Tab` returns to row 99
+    in one press. With `tabSearchLimit: 10`, `Tab` from row 99 keeps focus on
+    row 99 (viewport scrolled back to it, focus never leaves the viewport)
+    until the press that focuses row 140, after `ceil(40 / 10) + 1` presses in
+    total; same for `Shift+Tab` from row 140 back to row 99. Trailing gap
+    without a hint: the first `Tab` from the last row control keeps focus
+    there, the next one leaves the table.
+  - A cell widget that calls `preventDefault()` on `Tab` keeps it; the
+    viewport does not move focus.
   - Focus a row checkbox, scroll it far out of view with the mouse wheel and
     with `scrollToOffset`: the checkbox stays `toBeFocused()`, `Space` toggles
     it, and its row has the correct `aria-rowindex`.
@@ -801,3 +976,13 @@ Implementation must not begin until Zac approves this spec and resolves:
    - **Alternative:** a tab stop only when the table has no focusable controls,
      matching `GhostScrollArea`; saves one `Tab` press but makes keyboard
      scrolling depend on table content.
+9. **Tab traversal hint and probe (V9).**
+   - **Recommended:** ship
+     [Tab traversal](#tab-traversal-across-unmounted-rows) with the optional
+     `rowHasTabbable` hint and the mount-and-probe fallback capped by
+     `tabSearchLimit` (default `200`), so the order guarantee holds with or
+     without the hint and only the number of presses differs.
+   - **Alternative:** require `rowHasTabbable` for tables where some rows have
+     no controls and drop the probe. Smaller implementation, but without the
+     hint the guarantee narrows to tables where every row has a control, and
+     `Tab` can leave the table early otherwise (a dev warning would flag it).
