@@ -190,8 +190,7 @@ export function useGhostScrollSpy(
 
   let frame = 0
   let travelTimer: ReturnType<typeof setTimeout> | undefined
-  let lastScrollTop = 0
-  let restoredInitialScroll = false
+  let lastScrollTop: number | undefined
   let resizeObserver: ResizeObserver | undefined
   let observedElements = new Set<Element>()
   let reducedMotionQuery: MediaQueryList | undefined
@@ -398,15 +397,15 @@ export function useGhostScrollSpy(
 
   function trackTravel(nextScrollTop: number): void {
     const root = rootElement.value
-    if (!root || !restoredInitialScroll) {
-      lastScrollTop = nextScrollTop
+    const previousScrollTop = lastScrollTop
+    lastScrollTop = nextScrollTop
+    if (!root || previousScrollTop === undefined) {
       return
     }
     const direction = resolveScrollSpyTravelDirection(
-      lastScrollTop,
+      previousScrollTop,
       nextScrollTop,
     )
-    lastScrollTop = nextScrollTop
     if (!direction) {
       return
     }
@@ -453,12 +452,11 @@ export function useGhostScrollSpy(
     }
 
     const tops = measured.map((entry) => entry.top)
-    const scrollable = isScrollSpyScrollable(scrollHeight, viewportHeight)
-    const progress = resolveScrollSpyProgress(
-      scrollTop,
-      scrollHeight,
-      viewportHeight,
-    )
+    const scrollable =
+      measured.length > 0 && isScrollSpyScrollable(scrollHeight, viewportHeight)
+    const progress = scrollable
+      ? resolveScrollSpyProgress(scrollTop, scrollHeight, viewportHeight)
+      : 0
 
     const segmentProgress = scrollable
       ? resolveScrollSpySegmentProgress(
@@ -471,10 +469,7 @@ export function useGhostScrollSpy(
         )
       : 0
 
-    root.style.setProperty(
-      '--ghost-scroll-spy-progress',
-      (scrollable ? progress : 0).toFixed(4),
-    )
+    root.style.setProperty('--ghost-scroll-spy-progress', progress.toFixed(4))
     root.style.setProperty(
       '--ghost-scroll-spy-section-progress',
       segmentProgress.toFixed(4),
@@ -557,36 +552,36 @@ export function useGhostScrollSpy(
     { flush: 'post' },
   )
 
-  function onScroll(): void {
-    scheduleMeasure()
-  }
-
   function mountClient(): void {
-    scrollContainer = resolveScrollContainer(toValue(options.container))
-    if (!scrollContainer) {
-      return
-    }
-
     if (typeof window.matchMedia === 'function') {
       reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
     }
 
-    lastScrollTop = readScrollMetrics(scrollContainer).scrollTop
-    restoredInitialScroll = false
-
-    scrollContainer.addEventListener('scroll', onScroll, { passive: true })
     window.addEventListener('resize', scheduleMeasure)
 
     if (typeof ResizeObserver === 'function') {
-      resizeObserver = new ResizeObserver(() => {
-        scheduleMeasure()
-      })
+      resizeObserver = new ResizeObserver(scheduleMeasure)
     }
 
-    scheduleMeasure()
-    window.requestAnimationFrame(() => {
-      restoredInitialScroll = true
-    })
+    watch(
+      () => resolveScrollContainer(toValue(options.container)),
+      (container, _previous, onCleanup) => {
+        if (!container) return
+        scrollContainer = container
+        // The first measurement in this scrollport establishes its own position.
+        lastScrollTop = undefined
+        clearTimeout(travelTimer)
+        rootElement.value?.removeAttribute('data-travel')
+        travelDirection.value = undefined
+
+        container.addEventListener('scroll', scheduleMeasure, { passive: true })
+        onCleanup(() => {
+          container.removeEventListener('scroll', scheduleMeasure)
+        })
+        scheduleMeasure()
+      },
+      { immediate: true, flush: 'post' },
+    )
   }
 
   function unmountClient(): void {
@@ -595,10 +590,7 @@ export function useGhostScrollSpy(
       window.cancelAnimationFrame(frame)
       frame = 0
     }
-    scrollContainer?.removeEventListener('scroll', onScroll)
-    if (scrollContainer) {
-      window.removeEventListener('resize', scheduleMeasure)
-    }
+    window.removeEventListener('resize', scheduleMeasure)
     resizeObserver?.disconnect()
     observedElements.clear()
     resizeObserver = undefined

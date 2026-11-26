@@ -1,4 +1,4 @@
-import { defineComponent, h, nextTick, ref } from 'vue'
+import { defineComponent, h, nextTick, ref, useTemplateRef } from 'vue'
 import { mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
@@ -52,20 +52,9 @@ interface ContainerHarness {
   setScrollTop: (value: number) => Promise<void>
 }
 
-function mountContainerHarness(
-  options: {
-    probeOffset?: number
-    endThreshold?: number
-    extraLinks?: boolean
-    showGamma?: ReturnType<typeof ref<boolean>>
-    reversed?: ReturnType<typeof ref<boolean>>
-    duplicateBeta?: boolean
-    historyMode?: 'replace' | 'push' | 'none'
-  } = {},
-): ContainerHarness {
-  const container = document.createElement('div')
-  document.body.append(container)
-
+function mockScrollport(
+  container: HTMLDivElement,
+): ContainerHarness['setScrollTop'] {
   const sectionOffsets: Record<string, number> = {
     alpha: 0,
     beta: 400,
@@ -107,6 +96,28 @@ function mountContainerHarness(
     container.append(section)
   }
 
+  return async (value) => {
+    container.scrollTop = value
+    container.dispatchEvent(new Event('scroll'))
+    await flushScrollSpyMeasure()
+  }
+}
+
+function mountContainerHarness(
+  options: {
+    probeOffset?: number
+    endThreshold?: number
+    extraLinks?: boolean
+    showGamma?: ReturnType<typeof ref<boolean>>
+    showLinks?: ReturnType<typeof ref<boolean>>
+    reversed?: ReturnType<typeof ref<boolean>>
+    duplicateBeta?: boolean
+    historyMode?: 'replace' | 'push' | 'none'
+  } = {},
+): ContainerHarness {
+  const container = document.createElement('div')
+  document.body.append(container)
+  const setScrollTop = mockScrollport(container)
   const showGamma = options.showGamma ?? ref(options.extraLinks ?? true)
 
   const wrapper = mount(
@@ -134,10 +145,11 @@ function mountContainerHarness(
           if (options.reversed?.value) links.reverse()
           return h(GhostScrollSpy, spyProps, () =>
             h(GhostScrollSpyList, null, () =>
-              links.map(({ target, label }) =>
-                h(GhostScrollSpyItem, { key: label }, () =>
-                  h(GhostScrollSpyLink, { target }, () => label),
-                ),
+              (options.showLinks?.value === false ? [] : links).map(
+                ({ target, label }) =>
+                  h(GhostScrollSpyItem, { key: label }, () =>
+                    h(GhostScrollSpyLink, { target }, () => label),
+                  ),
               ),
             ),
           )
@@ -148,15 +160,7 @@ function mountContainerHarness(
   )
   attached.push(wrapper)
 
-  return {
-    wrapper,
-    container,
-    setScrollTop: async (value: number) => {
-      scrollTop = value
-      container.dispatchEvent(new Event('scroll', { bubbles: true }))
-      await flushScrollSpyMeasure()
-    },
-  }
+  return { wrapper, container, setScrollTop }
 }
 
 function activeLinkText(wrapper: ReturnType<typeof mount>): string {
@@ -211,6 +215,72 @@ describe('useGhostScrollSpy', () => {
 
     await setScrollTop(950)
     expect(activeLinkText(wrapper)).toBe('Gamma')
+  })
+
+  it('tracks a sibling template ref after it resolves and when its element is replaced', async () => {
+    const key = ref(0)
+    const wrapper = mount(
+      defineComponent({
+        setup() {
+          const scrollport = useTemplateRef<HTMLDivElement>('scrollport')
+          return () => [
+            h(GhostScrollSpy, { container: scrollport.value }, () =>
+              h(GhostScrollSpyList, null, () =>
+                ['alpha', 'beta'].map((target) =>
+                  h(GhostScrollSpyItem, { key: target }, () =>
+                    h(GhostScrollSpyLink, { target }, () => target),
+                  ),
+                ),
+              ),
+            ),
+            h('div', { key: key.value, ref: 'scrollport' }),
+          ]
+        },
+      }),
+      { attachTo: document.body },
+    )
+    attached.push(wrapper)
+
+    const first = wrapper.get('div').element
+    const scrollFirst = mockScrollport(first)
+    await flushScrollSpyMeasure()
+    expect(activeLinkText(wrapper)).toBe('alpha')
+    await scrollFirst(350)
+    expect(activeLinkText(wrapper)).toBe('beta')
+
+    const removeListener = vi.spyOn(first, 'removeEventListener')
+    key.value += 1
+    await nextTick()
+    const scrollSecond = mockScrollport(wrapper.get('div').element)
+    await flushScrollSpyMeasure()
+    expect(activeLinkText(wrapper)).toBe('alpha')
+    expect(wrapper.get('nav').attributes('data-travel')).toBeUndefined()
+    expect(removeListener).toHaveBeenCalledWith('scroll', expect.any(Function))
+
+    await scrollSecond(350)
+    expect(activeLinkText(wrapper)).toBe('beta')
+  })
+
+  it('resets both progress properties when the last link is removed', async () => {
+    const showLinks = ref(true)
+    const { wrapper, setScrollTop } = mountContainerHarness({ showLinks })
+    const { style } = wrapper.get('nav').element
+    await setScrollTop(350)
+    expect(style.getPropertyValue('--ghost-scroll-spy-progress')).toBe('0.3500')
+
+    showLinks.value = false
+    await flushScrollSpyMeasure()
+    expect(style.getPropertyValue('--ghost-scroll-spy-progress')).toBe('0.0000')
+    expect(style.getPropertyValue('--ghost-scroll-spy-section-progress')).toBe(
+      '0.0000',
+    )
+
+    await setScrollTop(500)
+    expect(style.getPropertyValue('--ghost-scroll-spy-progress')).toBe('0.0000')
+    expect(style.getPropertyValue('--ghost-scroll-spy-section-progress')).toBe(
+      '0.0000',
+    )
+    expect(wrapper.find('[aria-current]').exists()).toBe(false)
   })
 
   it('writes progress custom properties on the root while scrolling', async () => {

@@ -18,9 +18,11 @@ Disabled links are skipped when choosing the current section. If several links
 share a target, the first enabled link in DOM order owns the current state and
 the section counts once toward progress.
 
-For a nested scroll area, pass its element as `container`. Navigation scrolls
-that element and honors vertical scroll padding on the container and scroll
-margin on the section. Viewport and observed content resizes refresh tracking.
+For a nested scroll area, pass its element or a template ref as `container`.
+Tracking follows the ref when it resolves or changes. Navigation honors the
+container's vertical scroll padding and the section's scroll margin. Viewport
+and observed content resizes refresh tracking. Both progress values stay at
+zero when there are no measurable targets.
 
 ## Themed rail
 
