@@ -38,6 +38,23 @@ through eslint-plugin-vue) for types and rule tests. The list of native HTML
 and SVG attribute names is kept locally instead of adding an attribute-list
 package, since only set membership is needed.
 
+### Internal `@ghostvue/*` ranges (#345)
+
+A publishable package that needs a sibling `@ghostvue/*` package at runtime
+declares it as a peer dependency with `workspace:^` (plus a `workspace:*`
+development dependency so the workspace build links it). `@ghostvue/themes`
+peers on `@ghostvue/vue`, and `@ghostvue/nuxt` peers on both. Peers keep a
+single copy of `@ghostvue/vue` in the consumer's app, so themed wrappers and
+headless parts share state. `workspace:^` packs to a caret range (`^0.1.0`),
+not the exact version that `workspace:*` produces, so a patch difference
+neither nests a second copy nor fails npm with ERESOLVE. The five publishable
+packages version in lockstep (the Changesets `fixed` group in
+`.changeset/config.json`), so a caret range on a `0.x` version admits only
+same-minor siblings. `internalRangeProblems()` in
+`scripts/lib/release-dry-run.js` rejects any other specifier in `dependencies`,
+`peerDependencies`, or `optionalDependencies`; the release dry run and
+`tests/integration/release-pipeline.test.ts` both run it.
+
 Run `pnpm boundaries` after changing package manifests. Do not bypass pnpm's
 strict peer dependency checks merely to accept an invalid graph.
 

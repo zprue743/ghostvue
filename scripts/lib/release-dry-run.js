@@ -228,6 +228,7 @@ export function sourceManifestProblems(manifest, directory) {
   if (repository?.directory !== directory) {
     problems.push(`${name} repository.directory must be ${directory}`)
   }
+  problems.push(...internalRangeProblems(manifest))
   return problems
 }
 
@@ -238,9 +239,51 @@ const dependencyFields = /** @type {const} */ ([
 ])
 
 /**
+ * The only specifier a publishable package may use for a sibling `@ghostvue/*`
+ * package in a published dependency group (#345).
+ *
+ * pnpm packs `workspace:*` to an exact version, so a consumer whose
+ * `@ghostvue/vue` differs by a patch gets a second, nested copy under
+ * `@ghostvue/themes` (themed wrappers and headless parts stop sharing state),
+ * and exact peers fail npm installs with ERESOLVE. `workspace:^` packs to a
+ * caret range instead. The packages version in lockstep (the Changesets
+ * `fixed` group), so a caret range on a `0.x` version still admits only
+ * same-minor siblings. `devDependencies` are not published and may stay
+ * `workspace:*`.
+ */
+export const INTERNAL_RANGE = 'workspace:^'
+
+/**
+ * Report `@ghostvue/*` entries in published dependency groups that would pack
+ * to an exact pin instead of a caret range.
+ *
+ * @param {Record<string, unknown>} manifest
+ * @returns {string[]} Human-readable problems; empty when every range is `workspace:^`.
+ */
+export function internalRangeProblems(manifest) {
+  const name = String(manifest.name)
+  /** @type {string[]} */
+  const problems = []
+  for (const field of dependencyFields) {
+    const dependencies = /** @type {Record<string, string> | undefined} */ (
+      manifest[field]
+    )
+    for (const [dependency, range] of Object.entries(dependencies ?? {})) {
+      if (!dependency.startsWith('@ghostvue/') || range === INTERNAL_RANGE) {
+        continue
+      }
+      problems.push(
+        `${name} ${field} must use "${INTERNAL_RANGE}" for ${dependency}, not "${range}" (exact pins duplicate or reject sibling installs)`,
+      )
+    }
+  }
+  return problems
+}
+
+/**
  * Turn a packed manifest into the manifest the authorized release would
- * publish: planned version, exact internal versions, and no `private` flag.
- * Returns a new object; the input is not mutated.
+ * publish: planned version, caret ranges on the planned internal versions, and
+ * no `private` flag. Returns a new object; the input is not mutated.
  *
  * @param {Record<string, unknown>} packedManifest
  * @param {Map<string, string>} plannedVersions Planned version by package name.
@@ -274,9 +317,16 @@ export function stagePublishManifest(packedManifest, plannedVersions) {
           `${name} depends on ${dependency}, which is not part of the release`,
         )
       }
-      // pnpm rewrites `workspace:*` to the exact sibling version at publish
-      // time; mirror that with the planned version.
-      dependencies[dependency] = dependencyVersion
+      // pnpm rewrites `workspace:^` to `^<sibling version>` at publish time;
+      // mirror that with the planned version. An exact pin here means the
+      // source used another workspace range, which internalRangeProblems
+      // rejects, so refuse it rather than publish a pin (#345).
+      if (!range.startsWith('^')) {
+        throw new Error(
+          `${name} packed ${dependency}@${range}; internal ranges must pack to a caret range (use "${INTERNAL_RANGE}")`,
+        )
+      }
+      dependencies[dependency] = `^${dependencyVersion}`
     }
   }
   return staged
@@ -643,6 +693,7 @@ export async function runReleaseDryRun(options) {
         plannedVersion: plannedVersions.get(name),
         publishConfig: stagedManifest.publishConfig,
         dependencies: stagedManifest.dependencies ?? {},
+        peerDependencies: stagedManifest.peerDependencies ?? {},
         tarball: `tarballs/${tarball}`,
         shasum: published.shasum,
         integrity: published.integrity,

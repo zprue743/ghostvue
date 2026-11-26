@@ -48,13 +48,12 @@
     "define-theme": "node scripts/define-theme.mjs",
     "typecheck": "node scripts/compile-tokens.mjs && vue-tsc -p tsconfig.json --noEmit"
   },
-  "dependencies": {
-    "@ghostvue/vue": "workspace:*"
-  },
   "peerDependencies": {
+    "@ghostvue/vue": "workspace:^",
     "vue": "^3.5.0"
   },
   "devDependencies": {
+    "@ghostvue/vue": "workspace:*",
     "culori": "4.0.2",
     "esbuild": "0.28.1",
     "vue": "3.5.45"

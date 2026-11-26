@@ -10,10 +10,15 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 
 import {
   REPOSITORY_URL,
+  planReleaseVersions,
   runReleaseDryRun,
   verifyReleaseEvidence,
 } from '../../scripts/lib/release-dry-run.js'
 import { execPackageManagerSync } from '../../scripts/lib/package-manager.js'
+import {
+  publishableWorkspacePackages,
+  workspacePackages,
+} from '../../scripts/workspace-packages.mjs'
 
 // End-to-end dry run against a two-package fixture workspace, so the
 // pack -> stage -> npm publish --dry-run path is exercised without building
@@ -78,11 +83,11 @@ beforeEach(async () => {
       files: ['dist'],
       publishConfig: { access: 'public', provenance: true },
       ...(directory === 'beta'
-        ? { dependencies: { '@ghostvue/alpha': 'workspace:*' } }
+        ? { peerDependencies: { '@ghostvue/alpha': 'workspace:^' } }
         : {}),
     })
   }
-  // pnpm pack resolves `workspace:*` from installed links; the fixture has no
+  // pnpm pack resolves `workspace:^` from installed links; the fixture has no
   // external dependencies, so an offline install only creates those links.
   execPackageManagerSync('pnpm', ['install', '--offline'], {
     cwd: workspace,
@@ -119,7 +124,8 @@ describe('release dry run', () => {
       expect.objectContaining({
         name: '@ghostvue/beta',
         plannedVersion: '0.1.0',
-        dependencies: { '@ghostvue/alpha': '0.1.0' },
+        // A caret range, not an exact pin (#345).
+        peerDependencies: { '@ghostvue/alpha': '^0.1.0' },
       }),
     ])
     // Sources stay private and unversioned; only the scratch copy was bumped.
@@ -188,6 +194,64 @@ describe('release dry run', () => {
       /@ghostvue\/beta is an internal package \(publishable: false\)/,
     )
   })
+})
+
+describe('lockstep release plan (#345)', () => {
+  it('bumps all five publishable packages when one package has a minor Changeset', async () => {
+    // Simulates the release after 0.1.0 from the real manifests and Changesets
+    // config: only @ghostvue/vue changes, yet the `fixed` group must move every
+    // publishable package to 0.2.0, and the `workspace:^` peers must not
+    // trigger Changesets' major bump for dependents of a bumped peer.
+    const source = await mkdtemp(join(tmpdir(), 'ghostvue-lockstep-source-'))
+    const scratch = await mkdtemp(join(tmpdir(), 'ghostvue-lockstep-plan-'))
+    try {
+      await writeFile(
+        join(source, 'package.json'),
+        await readFile(join(root, 'package.json'), 'utf8'),
+      )
+      await writeFile(
+        join(source, 'pnpm-workspace.yaml'),
+        'packages:\n  - packages/*\n',
+      )
+      await mkdir(join(source, '.changeset'))
+      await writeFile(
+        join(source, '.changeset', 'config.json'),
+        await readFile(join(root, '.changeset', 'config.json'), 'utf8'),
+      )
+      await writeFile(
+        join(source, '.changeset', 'vue-only.md'),
+        "---\n'@ghostvue/vue': minor\n---\n\nVue-only change.\n",
+      )
+      for (const { directory, publishable } of workspacePackages) {
+        const manifest = JSON.parse(
+          await readFile(
+            join(root, 'packages', directory, 'package.json'),
+            'utf8',
+          ),
+        ) as Record<string, unknown>
+        if (publishable) manifest.version = '0.1.0'
+        await mkdir(join(source, 'packages', directory), { recursive: true })
+        await writeJson(
+          join(source, 'packages', directory, 'package.json'),
+          manifest,
+        )
+      }
+
+      const plan = await planReleaseVersions(source, scratch)
+      for (const { name } of publishableWorkspacePackages) {
+        expect(plan.get(name), name).toMatchObject({
+          before: '0.1.0',
+          after: '0.2.0',
+        })
+      }
+      for (const { name, publishable } of workspacePackages) {
+        if (!publishable) expect(plan.get(name)?.after, name).toBe('0.0.0')
+      }
+    } finally {
+      await rm(source, { recursive: true, force: true })
+      await rm(scratch, { recursive: true, force: true })
+    }
+  }, 120_000)
 })
 
 describe('release dry-run CLI', () => {
