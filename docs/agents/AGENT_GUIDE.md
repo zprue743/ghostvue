@@ -56,6 +56,7 @@ release behavior.
 - [Architecture rules](./ARCHITECTURE_RULES.md)
 - [Testing rules](./TESTING_RULES.md)
 - [Component workflow](./COMPONENT_WORKFLOW.md)
+- [Agent eval harness](./EVAL_HARNESS.md)
 - [Commenting standard](../standards/commenting.md)
 - [Public API standard](../standards/public-api.md)
 - [Component stability policy](../standards/component-stability.md)

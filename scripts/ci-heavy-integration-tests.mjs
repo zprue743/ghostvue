@@ -13,6 +13,7 @@ export const heavyIntegrationTestFiles = [
   'tests/integration/component-registries.test.ts',
   'tests/integration/release-dry-run.test.ts',
   'tests/integration/bundle-tree-shaking.test.ts',
+  'tests/integration/eval-harness.test.ts',
 ]
 
 /**

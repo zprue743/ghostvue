@@ -13,6 +13,7 @@ coverage
 # Scoped component reports and temporary checker configs.
 reports/verify-component/
 reports/release-dry-run/
+reports/eval/
 docs/warnings.md
 docs/themes/tokens.md
 packages/themes/src/generated

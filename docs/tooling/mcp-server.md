@@ -365,3 +365,4 @@ shebang and that `files` is `["dist"]`. Run `pnpm audit --prod` in
 Authoritative tool I/O, bundles, identity rules, and errors:
 
 - [GHO-17 MCP first-release contract](../plans/gho-17-mcp-first-release.md)
+- [Agent eval harness](../agents/EVAL_HARNESS.md)
