@@ -104,7 +104,7 @@
       "type": "boolean",
       "default": false,
       "required": false,
-      "description": "Declared prop `enableRowExpansion`.",
+      "description": "Turns on detail rows.",
       "deprecated": false
     },
     {
@@ -112,7 +112,7 @@
       "type": "boolean",
       "default": false,
       "required": false,
-      "description": "Declared prop `enableRowSelection`.",
+      "description": "Turns on selection.",
       "deprecated": false
     },
     {
@@ -149,7 +149,7 @@
       "type": "boolean",
       "default": false,
       "required": false,
-      "description": "Declared prop `manualFiltering`.",
+      "description": "The server filters; filter changes reset to page 1.",
       "deprecated": false
     },
     {
@@ -165,7 +165,7 @@
       "type": "boolean",
       "default": false,
       "required": false,
-      "description": "Declared prop `manualSorting`.",
+      "description": "The server sorts; the root does not reorder `data`.",
       "deprecated": false
     },
     {

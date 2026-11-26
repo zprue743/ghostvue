@@ -71,6 +71,32 @@ animation: closing unmounts the panel immediately.
 See the [generated component references](/reference/) for props, emits, slots,
 exposed members, styling hooks, CSS variables, and executable examples.
 
+<!-- @generated docs-api:vue/ghost-drawer begin -->
+
+<!-- Source: packages/vue/manifests/ghost-drawer.manifest.json. Run pnpm docs:api:write after it changes. -->
+
+| Prop          | Type                   | Default | Description                                                                        |
+| ------------- | ---------------------- | ------- | ---------------------------------------------------------------------------------- |
+| `defaultOpen` | `boolean`              | `false` | Initial open state when `open` is omitted.                                         |
+| `dir`         | `GhostDrawerDirection` | —       | Explicit writing direction for mapping logical `start` / `end` sides.              |
+| `modal`       | `boolean`              | `true`  | Enables modal behavior (trapped focus, scroll lock, inert background, overlay).    |
+| `open`        | `boolean`              | —       | Controlled open state. Omit for uncontrolled mode.                                 |
+| `side`        | `GhostDrawerSide`      | `"end"` | Viewport edge the drawer is anchored to (`'start'`, `'end'`, `'top'`, `'bottom'`). |
+
+| Slot      | Slot props                                                    | Description                                                            |
+| --------- | ------------------------------------------------------------- | ---------------------------------------------------------------------- |
+| `default` | `close: () => void`, `open: boolean`, `side: GhostDrawerSide` | Drawer trigger, overlay, content, title, description, and close parts. |
+
+<!-- @generated docs-api:vue/ghost-drawer end -->
+
+<!-- @generated docs-api:themes/ghost-drawer begin -->
+
+<!-- Source: packages/themes/manifests/ghost-drawer.manifest.json. Run pnpm docs:api:write after it changes. -->
+
+`@ghostvue/themes` adds no props, events, or slots to the headless `GhostDrawer` API, which it forwards.
+
+<!-- @generated docs-api:themes/ghost-drawer end -->
+
 ### `GhostDrawer` (root)
 
 Props: `open`, `defaultOpen`, `modal` (default `true`), `side` (default

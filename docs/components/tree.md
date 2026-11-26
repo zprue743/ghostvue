@@ -129,6 +129,43 @@ recognized after hydration.
 See the [generated component references](/reference/) for props, emits, slots,
 exposed members, and styling hooks.
 
+<!-- @generated docs-api:vue/ghost-tree begin -->
+
+<!-- Source: packages/vue/manifests/ghost-tree.manifest.json. Run pnpm docs:api:write after it changes. -->
+
+| Prop              | Type                     | Default    | Description                                                           |
+| ----------------- | ------------------------ | ---------- | --------------------------------------------------------------------- |
+| `allowDeselect`   | `boolean`                | `false`    | In single mode, re-activating the selected node clears the selection. |
+| `as`              | `GhostTreeElement`       | `"ul"`     | Tag name or component rendered for the `role="tree"` container.       |
+| `defaultExpanded` | `string[]`               | `"[]"`     | Initial expanded branch values when `expanded` is omitted.            |
+| `defaultValue`    | `GhostTreeValue`         | —          | Initial uncontrolled selection.                                       |
+| `dir`             | `GhostTreeDirection`     | —          | Explicit writing direction; otherwise inherited from `[dir]`.         |
+| `disabled`        | `boolean`                | `false`    | Disables every interaction in the tree.                               |
+| `expanded`        | `string[]`               | —          | Controlled expanded branch values (`v-model:expanded`).               |
+| `expandOnClick`   | `boolean`                | `true`     | Pointer clicks on a branch row also toggle expansion.                 |
+| `loop`            | `boolean`                | `false`    | `ArrowDown` / `ArrowUp` wrap at the ends of the visible node list.    |
+| `modelValue`      | `GhostTreeValue`         | —          | Controlled selection (`v-model`). Omit for uncontrolled mode.         |
+| `selectionMode`   | `GhostTreeSelectionMode` | `"single"` | Single (`string \| undefined`) or multiple (`string[]`) selection.    |
+
+| Event    | Payload                  | Description          |
+| -------- | ------------------------ | -------------------- |
+| `select` | `GhostTreeSelectPayload` | Emitted as `select`. |
+| `toggle` | `GhostTreeTogglePayload` | Emitted as `toggle`. |
+
+| Slot      | Slot props                                                                                                                                                                                                                                                                                              | Description                                                                                     |
+| --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| `default` | `expandAllSiblings: (value: string) => void`, `expanded: string[]`, `focusedValue: string \| undefined`, `isExpanded: (value: string) => boolean`, `isSelected: (value: string) => boolean`, `modelValue: GhostTreeValue`, `select: (value: string) => void`, `toggleExpanded: (value: string) => void` | GhostTreeItem nodes; receives selection, expansion, and focus state plus select/toggle helpers. |
+
+<!-- @generated docs-api:vue/ghost-tree end -->
+
+<!-- @generated docs-api:themes/ghost-tree begin -->
+
+<!-- Source: packages/themes/manifests/ghost-tree.manifest.json. Run pnpm docs:api:write after it changes. -->
+
+`@ghostvue/themes` adds no props, events, or slots to the headless `GhostTree` API, which it forwards.
+
+<!-- @generated docs-api:themes/ghost-tree end -->
+
 ### `GhostTree`
 
 Props: `as` (default `'ul'`), `selectionMode`, `modelValue`, `defaultValue`,

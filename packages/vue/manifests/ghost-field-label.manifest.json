@@ -11,7 +11,7 @@
       "type": "GhostFieldLabelElement",
       "default": "label",
       "required": false,
-      "description": "Declared prop `as`.",
+      "description": "Label element.",
       "deprecated": false
     },
     {
@@ -19,7 +19,7 @@
       "type": "GhostFieldLabelAssociate",
       "default": "reference",
       "required": false,
-      "description": "Declared prop `associate`.",
+      "description": "`for` association or nested labeling.",
       "deprecated": false
     },
     {
@@ -27,7 +27,7 @@
       "type": "boolean",
       "default": false,
       "required": false,
-      "description": "Declared prop `required`.",
+      "description": "Shows the required marker with root `required`.",
       "deprecated": false
     },
     {
@@ -35,7 +35,7 @@
       "type": "boolean",
       "default": true,
       "required": false,
-      "description": "Declared prop `showRequired`.",
+      "description": "Toggles the visual required indicator.",
       "deprecated": false
     }
   ],

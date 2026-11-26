@@ -30,6 +30,7 @@ import {
 } from './lib/ai-agents-guide.js'
 import { runMcpStdioSmoke } from './lib/mcp-packed.js'
 import { execPackageManagerSync } from './lib/package-manager.js'
+import { ensureWorkspaceBuilt } from './lib/workspace-build-lock.js'
 
 const root = fileURLToPath(new URL('..', import.meta.url))
 const packageDirectory = join(root, 'packages', 'mcp')
@@ -78,7 +79,12 @@ if (!existsSync(bundlePath)) {
   if (!process.argv.includes('--ensure-built')) {
     throw new Error('@ghostvue/mcp is not built. Run `pnpm build` first.')
   }
-  execPackageManagerSync('pnpm', ['build'], { cwd: root, stdio: 'pipe' })
+  ensureWorkspaceBuilt({
+    root,
+    isBuilt: () => existsSync(bundlePath),
+    build: () =>
+      execPackageManagerSync('pnpm', ['build'], { cwd: root, stdio: 'pipe' }),
+  })
 }
 const { assetBundleId } = JSON.parse(await readFile(bundlePath, 'utf8'))
 

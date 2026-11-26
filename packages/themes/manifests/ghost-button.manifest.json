@@ -387,8 +387,10 @@
   },
   "examples": [
     "button/action-bar",
+    "button/configured",
     "button/themed",
     "button/loading",
+    "button/marked-parts",
     "button/icon-only"
   ]
 }

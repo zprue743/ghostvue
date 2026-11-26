@@ -30,9 +30,19 @@ Headless use of the same contract without the SFC:
 
 ## API
 
-| Prop | Type                                             | Default  | Description                                                        |
-| ---- | ------------------------------------------------ | -------- | ------------------------------------------------------------------ |
-| `as` | `'span' \| 'div' \| 'p' \| 'li' \| 'td' \| 'th'` | `'span'` | Selects the rendered element so the result is valid in its parent. |
+<!-- @generated docs-api:vue/ghost-skeleton begin -->
+
+<!-- Source: packages/vue/manifests/ghost-skeleton.manifest.json. Run pnpm docs:api:write after it changes. -->
+
+| Prop | Type                   | Default  | Description                                                                                                            |
+| ---- | ---------------------- | -------- | ---------------------------------------------------------------------------------------------------------------------- |
+| `as` | `GhostSkeletonElement` | `"span"` | Rendered root element. Choose the tag that is valid in the parent context. Interactive and void elements are excluded. |
+
+| Slot      | Slot props | Description                                                                                 |
+| --------- | ---------- | ------------------------------------------------------------------------------------------- |
+| `default` | —          | Optional. Leave empty. Content inside stays hidden from assistive technology with the root. |
+
+<!-- @generated docs-api:vue/ghost-skeleton end -->
 
 The default slot is optional and should stay empty. Native attributes and
 listeners fall through to the single root, which is how you set `class`,
@@ -48,9 +58,17 @@ The component does not generate an `id` and has no v-model.
 Importing the themed component loads the default stylesheet. Visual props
 exist only on this wrapper:
 
-| Prop    | Type                           | Default  | Description                        |
-| ------- | ------------------------------ | -------- | ---------------------------------- |
-| `shape` | `'text' \| 'rect' \| 'circle'` | `'text'` | Visual treatment via `data-shape`. |
+<!-- @generated docs-api:themes/ghost-skeleton begin -->
+
+<!-- Source: packages/themes/manifests/ghost-skeleton.manifest.json. Run pnpm docs:api:write after it changes. -->
+
+`@ghostvue/themes` adds these to the headless `GhostSkeleton` API, which it forwards:
+
+| Prop    | Type                           | Default  | Description                                                                                    |
+| ------- | ------------------------------ | -------- | ---------------------------------------------------------------------------------------------- |
+| `shape` | `'text' \| 'rect' \| 'circle'` | `"text"` | Visual treatment. The default omits data-shape so CSS can treat a missing hook as a text line. |
+
+<!-- @generated docs-api:themes/ghost-skeleton end -->
 
 The default `text` shape omits `data-shape` so CSS can treat a missing hook as
 a line. `rect` is a block placeholder. `circle` is square with a 50% radius

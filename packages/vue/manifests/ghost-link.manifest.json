@@ -11,7 +11,7 @@
       "type": "GhostLinkElement",
       "default": "a",
       "required": false,
-      "description": "Declared prop `as`.",
+      "description": "Host element or router component (`RouterLink`, `NuxtLink`, …).",
       "deprecated": false
     },
     {
@@ -19,7 +19,7 @@
       "type": "boolean",
       "default": false,
       "required": false,
-      "description": "Declared prop `disabled`.",
+      "description": "Removes `href`, sets `aria-disabled`, and cancels activation.",
       "deprecated": false
     },
     {
@@ -27,7 +27,7 @@
       "type": "boolean",
       "default": false,
       "required": false,
-      "description": "Declared prop `external`.",
+      "description": "Shows the external icon for same-tab outbound links.",
       "deprecated": false
     },
     {
@@ -35,7 +35,7 @@
       "type": "string",
       "default": "Opens in new tab",
       "required": false,
-      "description": "Declared prop `newTabLabel`.",
+      "description": "Visually hidden hint when `target=\"_blank\"`.",
       "deprecated": false
     }
   ],

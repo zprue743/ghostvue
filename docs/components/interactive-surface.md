@@ -25,6 +25,29 @@ Headless use of the same contract without the SFC:
 See the [generated component references](/reference/) for props, emits, slots,
 exposed members, styling hooks, CSS variables, and executable examples.
 
+<!-- @generated docs-api:vue/ghost-interactive-surface begin -->
+
+<!-- Source: packages/vue/manifests/ghost-interactive-surface.manifest.json. Run pnpm docs:api:write after it changes. -->
+
+| Prop      | Type                        | Default             | Description                                                                                           |
+| --------- | --------------------------- | ------------------- | ----------------------------------------------------------------------------------------------------- |
+| `as`      | `InteractiveSurfaceElement` | `"div"`             | Rendered root element. Choose the tag that is valid in the parent context.                            |
+| `effects` | `'spotlight'[]`             | `"[\"spotlight\"]"` | Recipes advertised on data-interactive. v1 supports spotlight only. An empty list is an explicit off. |
+
+| Slot      | Slot props | Description                                                                  |
+| --------- | ---------- | ---------------------------------------------------------------------------- |
+| `default` | —          | Surface content. The glow layer is rendered by the component, not this slot. |
+
+<!-- @generated docs-api:vue/ghost-interactive-surface end -->
+
+<!-- @generated docs-api:themes/ghost-interactive-surface begin -->
+
+<!-- Source: packages/themes/manifests/ghost-interactive-surface.manifest.json. Run pnpm docs:api:write after it changes. -->
+
+`@ghostvue/themes` adds no props, events, or slots to the headless `GhostInteractiveSurface` API, which it forwards.
+
+<!-- @generated docs-api:themes/ghost-interactive-surface end -->
+
 `InteractiveEffect` is `'spotlight'`. Native attributes fall through to the
 root. The default slot is the content. A template ref exposes `element`.
 

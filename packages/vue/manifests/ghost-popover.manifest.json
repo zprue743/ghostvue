@@ -92,7 +92,8 @@
     ]
   },
   "examples": [
-    "popover/basic"
+    "popover/basic",
+    "popover/controlled"
   ],
   "spec": {
     "path": "docs/components/popover-spec.md",

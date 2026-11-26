@@ -25,6 +25,21 @@ an icon. No stylesheet import or bundler configuration is required.
 See the [generated component references](/reference/) for props, emits, slots,
 exposed members, styling hooks, CSS variables, and executable examples.
 
+<!-- @generated docs-api:vue/ghost-visually-hidden begin -->
+
+<!-- Source: packages/vue/manifests/ghost-visually-hidden.manifest.json. Run pnpm docs:api:write after it changes. -->
+
+| Prop        | Type                         | Default  | Description                                                                                                                                                              |
+| ----------- | ---------------------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `as`        | `GhostVisuallyHiddenElement` | `"span"` | Rendered root element. Choose the tag that is valid in the parent context. Interactive and void elements are excluded.                                                   |
+| `focusable` | `boolean`                    | `false`  | Reveals the content while focus is inside the subtree and hides it again when focus leaves. Required whenever the slot contains anything focusable, such as a skip link. |
+
+| Slot      | Slot props | Description                                                                                                           |
+| --------- | ---------- | --------------------------------------------------------------------------------------------------------------------- |
+| `default` | —          | Content that must exist in the accessibility tree without a visual box. Keep it short; the text is announced in full. |
+
+<!-- @generated docs-api:vue/ghost-visually-hidden end -->
+
 The default slot is the only slot. Native attributes and listeners fall through
 to the single root element, which is how you attach `id`, `role`, `lang`,
 `aria-live`, `data-*`, and anything else a given pattern needs.

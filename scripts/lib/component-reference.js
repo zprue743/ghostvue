@@ -26,6 +26,10 @@ function code(value) {
   return `<code>${text(value)}</code>`
 }
 
+// Shared with the docs API tables (scripts/lib/docs-api.js) so hand-maintained
+// pages and the generated reference escape manifest text the same way.
+export { code as referenceCode, text as referenceText }
+
 function table(title, columns, rows, heading = '##') {
   return [
     `${heading} ${title}`,

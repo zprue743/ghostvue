@@ -35,10 +35,28 @@ during SSR hydration.
 
 ### `GhostTable`
 
-| Prop                | Type      | Default | Description                                                                                      |
-| ------------------- | --------- | ------- | ------------------------------------------------------------------------------------------------ |
-| `containHorizontal` | `boolean` | `false` | Wraps the table in `data-part="scroll-container"` for horizontal scroll.                         |
-| `scrollLabel`       | `string`  | —       | Accessible name for the scroll region; otherwise uses `GhostTableCaption` via `aria-labelledby`. |
+<!-- @generated docs-api:vue/ghost-table begin -->
+
+<!-- Source: packages/vue/manifests/ghost-table.manifest.json. Run pnpm docs:api:write after it changes. -->
+
+| Prop                | Type      | Default | Description                                                                                                                                                 |
+| ------------------- | --------- | ------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `containHorizontal` | `boolean` | `false` | When true, wraps the table in a scroll container for explicit horizontal overflow. The table itself never receives implicit overflow.                       |
+| `scrollLabel`       | `string`  | —       | Accessible name for the horizontal scroll region. When omitted and GhostTableCaption is rendered, the scroll region uses aria-labelledby on the caption id. |
+
+| Slot      | Slot props | Description                                                                    |
+| --------- | ---------- | ------------------------------------------------------------------------------ |
+| `default` | —          | GhostTableCaption, GhostTableHead, GhostTableBody, and GhostTableFoot content. |
+
+<!-- @generated docs-api:vue/ghost-table end -->
+
+<!-- @generated docs-api:themes/ghost-table begin -->
+
+<!-- Source: packages/themes/manifests/ghost-table.manifest.json. Run pnpm docs:api:write after it changes. -->
+
+`@ghostvue/themes` adds no props, events, or slots to the headless `GhostTable` API, which it forwards.
+
+<!-- @generated docs-api:themes/ghost-table end -->
 
 Native attributes fall through to the `<table>` element. Exposes `element`:
 `HTMLTableElement | null`.

@@ -54,6 +54,29 @@ menus pick up tokens outside a `.ghost-theme` host.
 See the [generated component references](/reference/) for props, emits, slots,
 exposed members, styling hooks, CSS variables, and executable examples.
 
+<!-- @generated docs-api:vue/ghost-dropdown-menu begin -->
+
+<!-- Source: packages/vue/manifests/ghost-dropdown-menu.manifest.json. Run pnpm docs:api:write after it changes. -->
+
+| Prop          | Type      | Default | Description                  |
+| ------------- | --------- | ------- | ---------------------------- |
+| `defaultOpen` | `boolean` | `false` | Declared prop `defaultOpen`. |
+| `open`        | `boolean` | —       | Declared prop `open`.        |
+
+| Slot      | Slot props                           | Description      |
+| --------- | ------------------------------------ | ---------------- |
+| `default` | `close: () => void`, `open: boolean` | Primary content. |
+
+<!-- @generated docs-api:vue/ghost-dropdown-menu end -->
+
+<!-- @generated docs-api:themes/ghost-dropdown-menu begin -->
+
+<!-- Source: packages/themes/manifests/ghost-dropdown-menu.manifest.json. Run pnpm docs:api:write after it changes. -->
+
+`@ghostvue/themes` adds no props, events, or slots to the headless `GhostDropdownMenu` API, which it forwards.
+
+<!-- @generated docs-api:themes/ghost-dropdown-menu end -->
+
 ### `GhostDropdownMenu` (root)
 
 Emits `update:open` with `(open: boolean)`. The default slot receives

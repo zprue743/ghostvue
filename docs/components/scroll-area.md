@@ -23,12 +23,30 @@ component applies native `overflow-y: auto` by default and exposes
 
 ## API
 
-| Prop          | Type                                   | Default      | Description                                                                                            |
-| ------------- | -------------------------------------- | ------------ | ------------------------------------------------------------------------------------------------------ |
-| `orientation` | `'vertical' \| 'horizontal' \| 'both'` | `'vertical'` | Axes that may scroll.                                                                                  |
-| `type`        | `'auto' \| 'scroll'`                   | `'auto'`     | Native `overflow-*` mode on enabled axes.                                                              |
-| `as`          | `'div'`                                | `'div'`      | Host element.                                                                                          |
-| `label`       | `string`                               | —            | Required when the root is a tab stop with no focusables inside: sets `role="region"` and `aria-label`. |
+<!-- @generated docs-api:vue/ghost-scroll-area begin -->
+
+<!-- Source: packages/vue/manifests/ghost-scroll-area.manifest.json. Run pnpm docs:api:write after it changes. -->
+
+| Prop          | Type                          | Default      | Description                                                                            |
+| ------------- | ----------------------------- | ------------ | -------------------------------------------------------------------------------------- |
+| `as`          | `'div'`                       | `"div"`      | Scroll root host. Closed union; only div is supported initially.                       |
+| `label`       | `string`                      | —            | When the root is a tab stop with no inner focusables, sets role=region and aria-label. |
+| `orientation` | `GhostScrollAreaOrientation`  | `"vertical"` | Which axes may scroll when content exceeds the box.                                    |
+| `type`        | `GhostScrollAreaOverflowType` | `"auto"`     | Native overflow mode on enabled axes: auto or scroll.                                  |
+
+| Slot      | Slot props | Description                                         |
+| --------- | ---------- | --------------------------------------------------- |
+| `default` | —          | Scrollable content inside the native overflow root. |
+
+<!-- @generated docs-api:vue/ghost-scroll-area end -->
+
+<!-- @generated docs-api:themes/ghost-scroll-area begin -->
+
+<!-- Source: packages/themes/manifests/ghost-scroll-area.manifest.json. Run pnpm docs:api:write after it changes. -->
+
+`@ghostvue/themes` adds no props, events, or slots to the headless `GhostScrollArea` API, which it forwards.
+
+<!-- @generated docs-api:themes/ghost-scroll-area end -->
 
 Native attributes fall through to the scroll root (`id`, `class`, `dir`,
 `aria-labelledby`, sizing styles). There is no v-model.

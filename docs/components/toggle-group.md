@@ -52,15 +52,33 @@ slot content or `aria-label`.
 
 ### `GhostToggleGroup`
 
-| Prop           | Type                              | Default        | Description                                          |
-| -------------- | --------------------------------- | -------------- | ---------------------------------------------------- |
-| `type`         | `'single' \| 'multiple'`          | `'single'`     | Single allows one pressed item; multiple any subset. |
-| `modelValue`   | `string \| string[] \| undefined` | —              | Controlled value(s).                                 |
-| `defaultValue` | `string \| string[] \| undefined` | —              | Initial uncontrolled selection (`[]` for multiple).  |
-| `orientation`  | `'horizontal' \| 'vertical'`      | `'horizontal'` | Arrow-key roving direction.                          |
-| `dir`          | `'ltr' \| 'rtl'`                  | —              | Explicit direction for horizontal arrows.            |
-| `as`           | `string \| Component`             | `'div'`        | Root `role="group"` host.                            |
-| `disabled`     | `boolean`                         | `false`        | Disables all items.                                  |
+<!-- @generated docs-api:vue/ghost-toggle-group begin -->
+
+<!-- Source: packages/vue/manifests/ghost-toggle-group.manifest.json. Run pnpm docs:api:write after it changes. -->
+
+| Prop           | Type                         | Default        | Description                                     |
+| -------------- | ---------------------------- | -------------- | ----------------------------------------------- |
+| `as`           | `GhostToggleGroupElement`    | `"div"`        | Root host element.                              |
+| `defaultValue` | `GhostToggleGroupValue`      | —              | Initial selection when `modelValue` is omitted. |
+| `dir`          | `'ltr' \| 'rtl'`             | —              | Explicit text direction for horizontal roving.  |
+| `disabled`     | `boolean`                    | `false`        | Disables every item.                            |
+| `modelValue`   | `GhostToggleGroupValue`      | —              | Controlled selection; shape follows `type`.     |
+| `orientation`  | `'horizontal' \| 'vertical'` | `"horizontal"` | Arrow-key roving layout.                        |
+| `type`         | `'multiple' \| 'single'`     | `"single"`     | Single vs multiple pressed items.               |
+
+| Slot      | Slot props | Description         |
+| --------- | ---------- | ------------------- |
+| `default` | —          | Toggle group items. |
+
+<!-- @generated docs-api:vue/ghost-toggle-group end -->
+
+<!-- @generated docs-api:themes/ghost-toggle-group begin -->
+
+<!-- Source: packages/themes/manifests/ghost-toggle-group.manifest.json. Run pnpm docs:api:write after it changes. -->
+
+`@ghostvue/themes` adds no props, events, or slots to the headless `GhostToggleGroup` API, which it forwards.
+
+<!-- @generated docs-api:themes/ghost-toggle-group end -->
 
 **Emits:** `update:modelValue` with `string`, `string[]`, or `undefined`.
 
@@ -68,11 +86,21 @@ slot content or `aria-label`.
 
 ### `GhostToggleGroupItem`
 
-| Prop       | Type                  | Default    | Description                   |
-| ---------- | --------------------- | ---------- | ----------------------------- |
-| `value`    | `string`              | required   | Stable id in the group model. |
-| `as`       | `string \| Component` | `'button'` | Control element.              |
-| `disabled` | `boolean`             | `false`    | Skips roving and toggling.    |
+<!-- @generated docs-api:vue/ghost-toggle-group-item begin -->
+
+<!-- Source: packages/vue/manifests/ghost-toggle-group-item.manifest.json. Run pnpm docs:api:write after it changes. -->
+
+| Prop       | Type                          | Default    | Description                                       |
+| ---------- | ----------------------------- | ---------- | ------------------------------------------------- |
+| `as`       | `GhostToggleGroupItemElement` | `"button"` | Tag name or component for the toggle control.     |
+| `disabled` | `boolean`                     | `false`    | Disables toggling and roving focus for this item. |
+| `value`    | `string`                      | Required   | Stable value for this item in the group model.    |
+
+| Slot      | Slot props | Description      |
+| --------- | ---------- | ---------------- |
+| `default` | —          | Primary content. |
+
+<!-- @generated docs-api:vue/ghost-toggle-group-item end -->
 
 **Exposed:** `{ element, focus(), blur() }`.
 

@@ -36,6 +36,10 @@ export type ReferenceManifest = Omit<
   examples: string[]
 }
 
+/** Escapes manifest prose for Markdown and VitePress (no HTML, pipes, or Vue interpolation). */
+export function referenceText(value: unknown): string
+/** {@link referenceText} wrapped in `<code>`. */
+export function referenceCode(value: unknown): string
 export function stabilityBadge(status: string): string
 export function manifestToMarkdown(manifest: ReferenceManifest): string
 export function writeComponentReferences(repositoryRoot: string): Promise<void>

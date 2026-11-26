@@ -281,6 +281,7 @@ describe('component scaffolding', () => {
         run(root, ['boundaries'], targetedEnv)
         run(root, ['adapters'], targetedEnv)
         run(root, ['manifests'], targetedEnv)
+        run(root, ['docs:api'], targetedEnv)
         run(root, ['specs:check'], targetedEnv)
         run(
           root,
