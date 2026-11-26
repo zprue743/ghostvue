@@ -86,7 +86,7 @@ export const FLAGSHIP_THEME_INPUTS = [
     name: 'calm',
     primary: 215,
     neutralTint: 215,
-    roundness: 0.3,
+    roundness: 0.5,
     density: 'compact',
     motionIntensity: 0.6,
     elevation: 'subtle',
@@ -411,11 +411,12 @@ function walkTokens(node, visit) {
   }
 }
 
-function retintOklchString(value, hue) {
+function retintOklchString(value, hue, chromaScale = 1) {
   if (typeof value !== 'string') return value
   return value.replace(
     /oklch\(\s*([\d.]+)\s+([\d.]+)\s+[\d.]+\s*(\/[\s\d.]+)?\)/g,
-    (_all, l, c, alpha) => `oklch(${l} ${c} ${hue}${alpha ?? ''})`,
+    (_all, l, c, alpha) =>
+      `oklch(${l} ${chromaScale === 0 ? '0' : c} ${hue}${alpha ?? ''})`,
   )
 }
 
@@ -571,13 +572,37 @@ function pinActionGradientStops(tree, mode = 'light') {
 function applyPrimitiveTint(primitives, seeds) {
   // Round the hue: the raw value's last digits differ between V8 releases
   // (Node 22 vs 24), which would make generated CSS depend on the Node version.
-  const lightHue =
-    Math.round(oklchOfHex(seeds.modes.light.neutral.hex).h * 1e6) / 1e6
+  const lightNeutral = oklchOfHex(seeds.modes.light.neutral.hex)
+  const lightHue = Math.round(lightNeutral.h * 1e6) / 1e6
+  const chromaScale = lightNeutral.c === 0 ? 0 : 1
   walkTokens(primitives, (node) => {
     if (node.$type === 'color' && typeof node.$value === 'string') {
-      node.$value = retintOklchString(node.$value, lightHue)
+      node.$value = retintOklchString(node.$value, lightHue, chromaScale)
     }
   })
+  // Retint the dark surface/elevation slate progression onto the theme's
+  // neutral hue (or chroma 0 for monochrome themes) while keeping hex literals
+  // for static WCAG AA evaluation.
+  for (const path of [
+    'color.surface.dark.canvas',
+    'color.surface.dark.subtle',
+    'color.surface.dark.muted',
+    'color.raised.1',
+    'color.raised.2',
+    'color.raised.3',
+    'color.raised.4',
+    'color.raised.5',
+  ]) {
+    const parts = path.split('.')
+    let node = primitives
+    for (const part of parts) {
+      node = node?.[part]
+    }
+    if (isPlainObject(node) && isHexColor(node.$value)) {
+      const parsed = oklchOfHex(node.$value)
+      node.$value = hexFromOklch(parsed.l, parsed.c * chromaScale, lightHue)
+    }
+  }
 }
 
 function relatedHue(tokenName) {

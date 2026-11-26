@@ -256,7 +256,7 @@ test.describe('Nested named themes under ancestor mode', () => {
         })
 
       const beforeForced = await readColors()
-      expect(beforeForced['system-nested-dark-probe'].surfaceBg).toBe('#0f172a')
+      expect(beforeForced['system-nested-dark-probe'].surfaceBg).toBe('#0d1219')
       expect(beforeForced['light-nested-dark-probe'].actionBg).toBe('#60a5fa')
       expect(beforeForced['nested-calm-inherited-probe'].actionBg).toBe(
         '#00b6d4',

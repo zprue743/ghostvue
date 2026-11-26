@@ -220,7 +220,7 @@ function resetSaved(): void {
 .prefs__header {
   display: grid;
   gap: var(--ghost-space-gap-xs);
-  padding-block-end: var(--ghost-space-stack-md);
+  padding-block-end: var(--ghost-space-stack-sm);
 }
 
 .prefs__title {
@@ -243,19 +243,19 @@ function resetSaved(): void {
 
 .prefs__groups {
   display: grid;
-  gap: var(--ghost-space-stack-lg);
+  gap: var(--ghost-space-stack-md);
 }
 
 /* Each group heading sits above its options. */
 .prefs__group {
   display: grid;
-  gap: var(--ghost-space-stack-md);
+  gap: var(--ghost-space-stack-sm);
 }
 
 .prefs__group + .prefs__group {
   border-block-start: var(--ghost-border-hairline-width) solid
     var(--ghost-border-muted);
-  padding-block-start: var(--ghost-space-stack-lg);
+  padding-block-start: var(--ghost-space-stack-md);
 }
 
 .prefs__group-header {

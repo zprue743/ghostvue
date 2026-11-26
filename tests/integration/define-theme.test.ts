@@ -112,6 +112,7 @@ describe('defineTheme', () => {
     const byName = Object.fromEntries(
       FLAGSHIP_THEME_INPUTS.map((input) => [input.name, input]),
     )
+    expect(byName.calm?.roundness).toBe(0.5)
     expect(byName.calm?.interactivity).toBe('subtle')
     expect(byName.mono?.interactivity).toBe('subtle')
     expect(byName.vibrant?.interactivity).toBe('expressive')

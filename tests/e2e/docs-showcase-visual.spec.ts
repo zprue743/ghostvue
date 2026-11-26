@@ -24,7 +24,7 @@ import { startStaticServer } from './static-server'
  *   separate from the browser-width captures because it narrows the query
  *   container without changing the viewport.
  *
- * The docs host is never changed from its first paint: `calm`, density unset.
+ * The docs host is never changed from its first paint: `default`, density unset.
  * The suite never pads, resizes, or restyles the canvas, and uses the
  * project-wide diff tolerance.
  */
@@ -62,8 +62,8 @@ async function openHero(
   await page.goto(`${url}/components/${slug}.html`)
   const html = page.locator('html')
   await expect(html).toHaveAttribute('data-ghost-mode', mode)
-  // The docs first paint: `calm` tokens, no density override.
-  await expect(html).toHaveAttribute('data-ghost-theme', 'calm')
+  // The docs first paint: `default` tokens, no density override.
+  await expect(html).toHaveAttribute('data-ghost-theme', 'default')
   await expect(html).not.toHaveAttribute('data-ghost-density', /.*/)
   // The hero leads the page.
   await expect(

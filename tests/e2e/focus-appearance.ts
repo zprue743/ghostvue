@@ -51,8 +51,12 @@ export interface FocusChangeOptions {
   }[]
 }
 
-/** How far inside the border box an inset ring may sit and still count. */
-const INSET_BAND = 7
+/**
+ * How far inside the border box an inset ring may sit and still count.
+ * Covers the 9.2px transparent hit padding around a centered 1.1rem radio
+ * circle inside a 36px control-size-md-min box while still catching clipped edges.
+ */
+const INSET_BAND = 8
 
 /**
  * Capture `target` while it shows focus, then the same region once per

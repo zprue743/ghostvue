@@ -363,7 +363,7 @@ function setLinkRole(value: unknown): void {
   color: var(--ghost-text-default);
   display: grid;
   font-size: var(--ghost-type-size-sm);
-  gap: var(--ghost-space-stack-md);
+  gap: var(--ghost-space-stack-sm);
   inline-size: min(20rem, 100vw - 4rem);
   line-height: var(--ghost-type-line-snug);
 }
@@ -421,7 +421,7 @@ function setLinkRole(value: unknown): void {
 
 .share-panel__group {
   display: grid;
-  gap: var(--ghost-space-gap-sm);
+  gap: var(--ghost-space-gap-xs);
 }
 
 /*
@@ -439,7 +439,7 @@ function setLinkRole(value: unknown): void {
   display: grid;
   gap: var(--ghost-space-gap-sm) var(--ghost-space-gap-md);
   grid-template-columns: minmax(0, 1fr) auto;
-  padding-block-start: var(--ghost-space-stack-md);
+  padding-block-start: var(--ghost-space-stack-sm);
 }
 
 .share-panel__switch-label {

@@ -11,15 +11,15 @@ const densities = ['compact', 'comfortable', 'spacious'] as const
 const roundnesses = [0, 0.5, 1] as const
 
 const heights = {
-  compact: { sm: '28px', md: '32px', lg: '40px' },
-  comfortable: { sm: '32px', md: '40px', lg: '48px' },
-  spacious: { sm: '36px', md: '48px', lg: '48px' },
+  compact: { sm: '28px', md: '32px', lg: '36px' },
+  comfortable: { sm: '32px', md: '36px', lg: '40px' },
+  spacious: { sm: '36px', md: '40px', lg: '44px' },
 } as const
 
 const radii = {
   compact: { 0: '0px', 0.5: '2px', 1: '4px' },
-  comfortable: { 0: '0px', 0.5: '4px', 1: '8px' },
-  spacious: { 0: '0px', 0.5: '6px', 1: '12px' },
+  comfortable: { 0: '0px', 0.5: '3px', 1: '6px' },
+  spacious: { 0: '0px', 0.5: '4px', 1: '8px' },
 } as const
 
 test.describe('density, type, and roundness', () => {
@@ -126,13 +126,16 @@ test.describe('coarse pointer touch floor', () => {
       ).toHaveCSS('min-height', '44px')
       await expect(
         page.getByTestId('density-comfortable-roundness-1-lg'),
-      ).toHaveCSS('min-height', '48px')
+      ).toHaveCSS('min-height', '44px')
       await expect(
         page.getByTestId('density-spacious-roundness-1-sm'),
       ).toHaveCSS('min-height', '44px')
       await expect(
         page.getByTestId('density-spacious-roundness-1-md'),
-      ).toHaveCSS('min-height', '48px')
+      ).toHaveCSS('min-height', '44px')
+      await expect(
+        page.getByTestId('density-spacious-roundness-1-lg'),
+      ).toHaveCSS('min-height', '44px')
     } finally {
       await playground.close()
     }

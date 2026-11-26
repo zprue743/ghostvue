@@ -271,7 +271,7 @@ async function save(event: SubmitEvent): Promise<void> {
 
 .profile__details {
   display: grid;
-  gap: var(--ghost-space-stack-md);
+  gap: var(--ghost-space-stack-sm);
   margin: 0;
 }
 
@@ -293,6 +293,14 @@ async function save(event: SubmitEvent): Promise<void> {
   line-height: var(--ghost-type-line-normal);
   margin: 0;
   overflow-wrap: anywhere;
+}
+
+/* Give labels their own column when the preview has room for the values. */
+@container ghost-demo (min-width: 26rem) {
+  .profile__detail {
+    align-items: baseline;
+    grid-template-columns: 5rem minmax(0, 1fr);
+  }
 }
 
 .profile__actions {

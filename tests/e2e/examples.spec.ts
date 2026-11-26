@@ -82,8 +82,8 @@ test.describe('registered examples accessibility and host boundary', () => {
         }
       }, PAINT_SELECTOR)
 
-      // Same token host as the docs first paint: calm, density left unset.
-      expect(report.hostTheme).toBe('calm')
+      // Same token host as the docs first paint: default, density left unset.
+      expect(report.hostTheme).toBe('default')
       expect(report.hostDensity).toBeNull()
       // Recipes are opted into per example, never by the host.
       expect(report.globalRecipes).toBe(false)

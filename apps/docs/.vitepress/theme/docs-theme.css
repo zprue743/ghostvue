@@ -1,6 +1,6 @@
 /*
  * Map VitePress chrome onto GhostVue tokens so the docs dogfood the selected
- * flagship (calm on first paint). Unlayered so they win over the VP theme.
+ * theme (`default` on first paint). Unlayered so they win over the VP theme.
  */
 html[data-ghost-theme] {
   --vp-c-bg: var(--ghost-surface-bg);
@@ -30,8 +30,9 @@ html[data-ghost-theme] {
   --vp-c-success-1: var(--ghost-status-success-fg);
   --vp-c-tip-1: var(--ghost-action-primary-bg);
   --vp-sidebar-bg-color: var(--ghost-surface-bg);
+  /* Keep the theme hue when compositing the translucent navbar. */
   --vp-nav-bg-color: color-mix(
-    in oklch,
+    in srgb,
     var(--ghost-surface-bg) 88%,
     transparent
   );
@@ -53,9 +54,10 @@ html[data-ghost-theme] {
 }
 
 /*
- * Keep dark code fences closer to the navy canvas (`--ghost-surface-bg`) than
- * component muted wells so Shiki tokens stay readable without washing out
- * Skeleton, Input, or Pagination fills that use `--ghost-surface-muted-bg`.
+ * Keep dark code fences aligned with the neutral-tinted slate/ink progression
+ * between `--ghost-surface-bg` and `--ghost-surface-muted-bg` so page canvas,
+ * demo stage, and Shiki blocks share one hue family without washing out muted
+ * component wells.
  */
 html[data-ghost-theme].dark {
   --vp-code-block-bg: color-mix(
@@ -243,8 +245,11 @@ html[data-ghost-theme='mono'] {
   margin-inline-start: 0.75rem;
   padding: 0.15rem;
   border: 1px solid var(--ghost-border-default);
-  border-radius: calc(0.75rem * var(--ghost-roundness, 1));
-  background: color-mix(in oklch, var(--ghost-surface-bg) 82%, transparent);
+  border-radius: var(
+    --ghost-radius-lg,
+    calc(0.5rem * var(--ghost-roundness, 1))
+  );
+  background: color-mix(in srgb, var(--ghost-surface-bg) 82%, transparent);
 }
 
 .ghost-docs-theme-switcher__option {
@@ -252,13 +257,16 @@ html[data-ghost-theme='mono'] {
   margin: 0;
   padding: 0.25rem 0.55rem;
   border: 0;
-  border-radius: calc(0.55rem * var(--ghost-roundness, 1));
+  border-radius: var(
+    --ghost-radius-md,
+    calc(0.375rem * var(--ghost-roundness, 1))
+  );
   background: transparent;
   color: var(--ghost-text-muted);
   cursor: pointer;
   font: inherit;
   font-size: 0.75rem;
-  font-weight: 600;
+  font-weight: var(--ghost-action-label-weight, 500);
   letter-spacing: 0.02em;
   line-height: 1.2;
 }
@@ -400,7 +408,7 @@ html[data-ghost-theme='mono'] {
   min-block-size: 100%;
   padding: 0.85rem 1rem;
   border: 1px solid var(--vp-c-divider);
-  border-radius: var(--ghost-radius-md, 0.5rem);
+  border-radius: var(--ghost-radius-md, 0.375rem);
   background: var(--vp-c-bg-elv);
   color: var(--vp-c-text-1);
   text-decoration: none;

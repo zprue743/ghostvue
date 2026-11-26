@@ -6,7 +6,7 @@
   "surface": {
     "bg": {
       "$type": "color",
-      "$value": "{color.ink}"
+      "$value": "{color.surface.dark.canvas}"
     },
     "fg": {
       "$type": "color",
@@ -366,11 +366,11 @@
       "gradient": {
         "from": {
           "$type": "color",
-          "$value": "{color.primary.dark.400}"
+          "$value": "{action.primary.bg}"
         },
         "to": {
           "$type": "color",
-          "$value": "{color.info.dark.400}"
+          "$value": "{action.primary.bg}"
         }
       }
     },
@@ -394,11 +394,11 @@
       "gradient": {
         "from": {
           "$type": "color",
-          "$value": "{color.neutral.dark.400}"
+          "$value": "{action.neutral.bg}"
         },
         "to": {
           "$type": "color",
-          "$value": "{color.neutral.dark.300}"
+          "$value": "{action.neutral.bg}"
         }
       }
     },
@@ -458,11 +458,11 @@
       "gradient": {
         "from": {
           "$type": "color",
-          "$value": "{color.danger.dark.400}"
+          "$value": "{action.danger.bg}"
         },
         "to": {
           "$type": "color",
-          "$value": "{color.danger.dark.300}"
+          "$value": "{action.danger.bg}"
         }
       }
     },

@@ -23,7 +23,7 @@
     --ghost-action-disabled-fg: #26464d;
     --ghost-action-disabled-opacity: 0.55;
     --ghost-action-gap: 0.5rem;
-    --ghost-action-highlight: inset 0px 0.5px 0px 0px oklch(1 0.012 213.303574/ 0.28);
+    --ghost-action-highlight: inset 0px 0.5px 0px 0px oklch(1 0.008 213.303574/ 0.16);
     --ghost-action-icon-size: 1.1em;
     --ghost-action-info-bg: #0369a1;
     --ghost-action-info-bg-active: #003454;
@@ -33,8 +33,8 @@
     --ghost-action-label-family: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
     --ghost-action-label-letter: 0em;
     --ghost-action-label-line: 1.2;
-    --ghost-action-label-size: clamp(0.9375rem, 0.9167rem + 0.1042vw, 1rem);
-    --ghost-action-label-weight: 600;
+    --ghost-action-label-size: 0.875rem;
+    --ghost-action-label-weight: 500;
     --ghost-action-neutral-bg: #26464d;
     --ghost-action-neutral-bg-active: #11262b;
     --ghost-action-neutral-bg-hover: #1a363c;
@@ -49,8 +49,8 @@
     --ghost-action-primary-fg: #ffffff;
     --ghost-action-primary-gradient-from: #006c7e;
     --ghost-action-primary-gradient-to: #00505e;
-    --ghost-action-shadow: 0px 1px 2px 0px oklch(0.254 0.028 213.303574/ 0.08), 0px 2px 5px 0px oklch(0.254 0.028 213.303574/ 0.14);
-    --ghost-action-shadow-press: 0px 0.5px 1px 0px oklch(0.254 0.028 213.303574/ 0.08), 0px 0.5px 1.5px 0px oklch(0.254 0.028 213.303574/ 0.14);
+    --ghost-action-shadow: 0px 0.5px 1px 0px oklch(0.254 0.028 213.303574/ 0.08), 0px 0.5px 1.5px 0px oklch(0.254 0.028 213.303574/ 0.14);
+    --ghost-action-shadow-press: 0px 0px 0px 0px transparent;
     --ghost-action-spinner-opacity: 0.35;
     --ghost-action-spinner-size: 1.1em;
     --ghost-action-spinner-width: 2px;
@@ -75,18 +75,18 @@
     --ghost-border-strong: #66838a;
     --ghost-border-success: #15803d;
     --ghost-border-warning: #b45309;
-    --ghost-control-size-lg-font: clamp(1.0625rem, 1.0417rem + 0.1042vw, 1.125rem);
-    --ghost-control-size-lg-min: 3rem;
-    --ghost-control-size-lg-padding-block: 1rem;
-    --ghost-control-size-lg-padding-inline: 1.25rem;
-    --ghost-control-size-md-font: clamp(0.9375rem, 0.9167rem + 0.1042vw, 1rem);
-    --ghost-control-size-md-min: 2.5rem;
-    --ghost-control-size-md-padding-block: 0.75rem;
-    --ghost-control-size-md-padding-inline: 1rem;
-    --ghost-control-size-sm-font: clamp(0.8125rem, 0.7917rem + 0.1042vw, 0.875rem);
+    --ghost-control-size-lg-font: 0.9375rem;
+    --ghost-control-size-lg-min: 2.5rem;
+    --ghost-control-size-lg-padding-block: 0.5rem;
+    --ghost-control-size-lg-padding-inline: 1rem;
+    --ghost-control-size-md-font: 0.875rem;
+    --ghost-control-size-md-min: 2.25rem;
+    --ghost-control-size-md-padding-block: 0.375rem;
+    --ghost-control-size-md-padding-inline: 0.75rem;
+    --ghost-control-size-sm-font: 0.8125rem;
     --ghost-control-size-sm-min: 2rem;
-    --ghost-control-size-sm-padding-block: 0.5rem;
-    --ghost-control-size-sm-padding-inline: 0.75rem;
+    --ghost-control-size-sm-padding-block: 0.25rem;
+    --ghost-control-size-sm-padding-inline: 0.625rem;
     --ghost-control-touch-min: 2.75rem;
     --ghost-elevation-0-bg: #ffffff;
     --ghost-elevation-0-border: transparent;
@@ -115,7 +115,7 @@
     --ghost-focus-ring-color: #0f172a;
     --ghost-focus-ring-contrast: #ffffff;
     --ghost-focus-ring-offset: 2px;
-    --ghost-focus-ring-width: 3px;
+    --ghost-focus-ring-width: 2px;
     --ghost-gradient-accent: linear-gradient(135deg in oklch, #006c7e 0%, #006c7e 100%);
     --ghost-gradient-action-danger: linear-gradient(135deg in oklch, #b91c1c 0%, #b91c1c 100%);
     --ghost-gradient-action-neutral: linear-gradient(135deg in oklch, #26464d 0%, #26464d 100%);
@@ -149,7 +149,7 @@
     --ghost-motion-spring-gentle: linear(0, 0.0191 2.1429%, 0.0866 5%, 0.4534 15.7143%, 0.6359 22.1429%, 0.767 28.5714%, 0.8204 32.1429%, 0.8698 36.4286%, 0.9065 40.7143%, 0.9369 45.7143%, 0.9751 57.1429%, 0.9934 72.8571%, 1);
     --ghost-motion-spring-snappy: linear(0, 0.0043 0.8264%, 0.036 2.4793%, 0.1271 4.9587%, 0.6578 14.876%, 0.8392 19.0083%, 0.9867 23.9669%, 1.0328 26.4463%, 1.063 28.9256%, 1.0832 32.2314%, 1.0853 36.3636%, 1.0164 52.8926%, 0.9952 62.8099%, 1);
     --ghost-motion-translate: 0.5rem;
-    --ghost-roundness: 0.3;
+    --ghost-roundness: 0.5;
     --ghost-scrim: color-mix(in srgb, #050d0f 60%, transparent);
     --ghost-space-gap-lg: 1rem;
     --ghost-space-gap-md: 0.75rem;
@@ -215,11 +215,11 @@
     --ghost-type-numeric-tabular: tabular-nums;
     --ghost-type-size-2xl: clamp(1.5rem, 1.3333rem + 0.8333vw, 2rem);
     --ghost-type-size-3xl: clamp(1.875rem, 1.6667rem + 1.0417vw, 2.5rem);
-    --ghost-type-size-lg: clamp(1.0625rem, 1.0417rem + 0.1042vw, 1.125rem);
-    --ghost-type-size-md: clamp(0.9375rem, 0.9167rem + 0.1042vw, 1rem);
-    --ghost-type-size-sm: clamp(0.8125rem, 0.7917rem + 0.1042vw, 0.875rem);
+    --ghost-type-size-lg: 0.9375rem;
+    --ghost-type-size-md: 0.875rem;
+    --ghost-type-size-sm: 0.8125rem;
     --ghost-type-size-xl: clamp(1.25rem, 1.1667rem + 0.4167vw, 1.5rem);
-    --ghost-type-size-xs: clamp(0.75rem, 0.7292rem + 0.1042vw, 0.8125rem);
+    --ghost-type-size-xs: 0.75rem;
     --ghost-type-weight-bold: 700;
     --ghost-type-weight-medium: 500;
     --ghost-type-weight-regular: 400;
@@ -243,13 +243,13 @@
     --ghost-motion-spring-gentle-duration: calc(583ms * var(--ghost-motion-intensity, 1));
     --ghost-motion-spring-snappy-duration: calc(504ms * var(--ghost-motion-intensity, 1));
     --ghost-motion-stagger: calc(40ms * var(--ghost-motion-intensity, 1));
-    --ghost-action-radius: calc(0.5rem * var(--ghost-roundness, 1));
-    --ghost-radius-lg: calc(0.75rem * var(--ghost-roundness, 1));
-    --ghost-radius-md: calc(0.5rem * var(--ghost-roundness, 1));
+    --ghost-action-radius: calc(0.375rem * var(--ghost-roundness, 1));
+    --ghost-radius-lg: calc(0.5rem * var(--ghost-roundness, 1));
+    --ghost-radius-md: calc(0.375rem * var(--ghost-roundness, 1));
     --ghost-radius-none: calc(0px * var(--ghost-roundness, 1));
     --ghost-radius-pill: calc(999px * var(--ghost-roundness, 1));
     --ghost-radius-sm: calc(0.25rem * var(--ghost-roundness, 1));
-    --ghost-radius-xl: calc(1rem * var(--ghost-roundness, 1));
+    --ghost-radius-xl: calc(0.75rem * var(--ghost-roundness, 1));
   }
 
   @media (prefers-color-scheme: dark) {
@@ -276,8 +276,8 @@
       --ghost-action-label-family: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
       --ghost-action-label-letter: 0em;
       --ghost-action-label-line: 1.2;
-      --ghost-action-label-size: clamp(0.9375rem, 0.9167rem + 0.1042vw, 1rem);
-      --ghost-action-label-weight: 600;
+      --ghost-action-label-size: 0.875rem;
+      --ghost-action-label-weight: 500;
       --ghost-action-neutral-bg: #c6d8dc;
       --ghost-action-neutral-bg-active: #dbe6e8;
       --ghost-action-neutral-bg-hover: #cfdfe2;
@@ -292,8 +292,8 @@
       --ghost-action-primary-fg: #0f172a;
       --ghost-action-primary-gradient-from: #00b6d4;
       --ghost-action-primary-gradient-to: #50c7e2;
-      --ghost-action-shadow: 0px 1px 2px 0px oklch(0.08 0.02 258 / 0.3), 0px 1.5px 4px 0px oklch(0.08 0.02 258 / 0.18);
-      --ghost-action-shadow-press: 0px 0.5px 1px 0px oklch(0.08 0.02 258 / 0.28), 0px 0.5px 1px 0px oklch(0.08 0.02 258 / 0.16);
+      --ghost-action-shadow: 0px 0.5px 1px 0px oklch(0.08 0.02 258 / 0.28), 0px 0.5px 1px 0px oklch(0.08 0.02 258 / 0.16);
+      --ghost-action-shadow-press: 0px 0px 0px 0px transparent;
       --ghost-action-spinner-opacity: 0.35;
       --ghost-action-spinner-size: 1.1em;
       --ghost-action-spinner-width: 2px;
@@ -318,52 +318,52 @@
       --ghost-border-strong: #9fb0b4;
       --ghost-border-success: #4ade80;
       --ghost-border-warning: #fbbf24;
-      --ghost-control-size-lg-font: clamp(1.0625rem, 1.0417rem + 0.1042vw, 1.125rem);
-      --ghost-control-size-lg-min: 3rem;
-      --ghost-control-size-lg-padding-block: 1rem;
-      --ghost-control-size-lg-padding-inline: 1.25rem;
-      --ghost-control-size-md-font: clamp(0.9375rem, 0.9167rem + 0.1042vw, 1rem);
-      --ghost-control-size-md-min: 2.5rem;
-      --ghost-control-size-md-padding-block: 0.75rem;
-      --ghost-control-size-md-padding-inline: 1rem;
-      --ghost-control-size-sm-font: clamp(0.8125rem, 0.7917rem + 0.1042vw, 0.875rem);
+      --ghost-control-size-lg-font: 0.9375rem;
+      --ghost-control-size-lg-min: 2.5rem;
+      --ghost-control-size-lg-padding-block: 0.5rem;
+      --ghost-control-size-lg-padding-inline: 1rem;
+      --ghost-control-size-md-font: 0.875rem;
+      --ghost-control-size-md-min: 2.25rem;
+      --ghost-control-size-md-padding-block: 0.375rem;
+      --ghost-control-size-md-padding-inline: 0.75rem;
+      --ghost-control-size-sm-font: 0.8125rem;
       --ghost-control-size-sm-min: 2rem;
-      --ghost-control-size-sm-padding-block: 0.5rem;
-      --ghost-control-size-sm-padding-inline: 0.75rem;
+      --ghost-control-size-sm-padding-block: 0.25rem;
+      --ghost-control-size-sm-padding-inline: 0.625rem;
       --ghost-control-touch-min: 2.75rem;
-      --ghost-elevation-0-bg: #0f172a;
+      --ghost-elevation-0-bg: #091416;
       --ghost-elevation-0-border: transparent;
       --ghost-elevation-0-highlight: inset 0px 0.5px 0px 0px transparent;
       --ghost-elevation-0-shadow: 0px 0px 0px 0px transparent;
-      --ghost-elevation-1-bg: #1c2533;
+      --ghost-elevation-1-bg: #182325;
       --ghost-elevation-1-border: oklch(0.96 0.005 250 / 0.16);
       --ghost-elevation-1-highlight: inset 0px 0.5px 0px 0px oklch(1 0.005 213.303574/ 0.12);
       --ghost-elevation-1-shadow: 0px 0.5px 1px 0px oklch(0.08 0.02 258 / 0.28), 0px 0.5px 1px 0px oklch(0.08 0.02 258 / 0.16);
-      --ghost-elevation-2-bg: #242c3a;
+      --ghost-elevation-2-bg: #1f2a2c;
       --ghost-elevation-2-border: oklch(0.96 0.005 250 / 0.16);
       --ghost-elevation-2-highlight: inset 0px 0.5px 0px 0px oklch(1 0.005 213.303574/ 0.12);
       --ghost-elevation-2-shadow: 0px 1px 2px 0px oklch(0.08 0.02 258 / 0.3), 0px 1.5px 4px 0px oklch(0.08 0.02 258 / 0.18);
-      --ghost-elevation-3-bg: #2b3441;
+      --ghost-elevation-3-bg: #263235;
       --ghost-elevation-3-border: oklch(0.96 0.005 250 / 0.16);
       --ghost-elevation-3-highlight: inset 0px 0.5px 0px 0px oklch(1 0.005 213.303574/ 0.12);
       --ghost-elevation-3-shadow: 0px 2px 4px 0px oklch(0.08 0.02 258 / 0.32), 0px 3px 8px 0px oklch(0.08 0.02 258 / 0.2);
-      --ghost-elevation-4-bg: #343c48;
+      --ghost-elevation-4-bg: #2e3a3d;
       --ghost-elevation-4-border: oklch(0.96 0.005 250 / 0.16);
       --ghost-elevation-4-highlight: inset 0px 0.5px 0px 0px oklch(1 0.005 213.303574/ 0.12);
       --ghost-elevation-4-shadow: 0px 3px 6px 0px oklch(0.08 0.02 258 / 0.34), 0px 5px 12px 0px oklch(0.08 0.02 258 / 0.22);
-      --ghost-elevation-5-bg: #3d4550;
+      --ghost-elevation-5-bg: #364245;
       --ghost-elevation-5-border: oklch(0.96 0.005 250 / 0.16);
       --ghost-elevation-5-highlight: inset 0px 0.5px 0px 0px oklch(1 0.005 213.303574/ 0.12);
       --ghost-elevation-5-shadow: 0px 4px 8px 0px oklch(0.08 0.02 258 / 0.36), 0px 7px 16px 0px oklch(0.08 0.02 258 / 0.24);
       --ghost-focus-ring-color: #ffffff;
       --ghost-focus-ring-contrast: #0f172a;
       --ghost-focus-ring-offset: 2px;
-      --ghost-focus-ring-width: 3px;
+      --ghost-focus-ring-width: 2px;
       --ghost-gradient-accent: linear-gradient(135deg in oklch, #00b6d4 0%, #00b6d4 100%);
       --ghost-gradient-action-danger: linear-gradient(135deg in oklch, #f87171 0%, #f87171 100%);
       --ghost-gradient-action-neutral: linear-gradient(135deg in oklch, #c6d8dc 0%, #c6d8dc 100%);
       --ghost-gradient-action-primary: linear-gradient(135deg in oklch, #00b6d4 0%, #00b6d4 100%);
-      --ghost-gradient-aurora: linear-gradient(135deg in oklch, #0f172a 0%, #0f172a 100%);
+      --ghost-gradient-aurora: linear-gradient(135deg in oklch, #091416 0%, #091416 100%);
       --ghost-gradient-border: linear-gradient(135deg in oklch, #00b6d4 0%, #00b6d4 100%);
       --ghost-interactive-leave-spring: linear(0, 0.0043 0.8264%, 0.036 2.4793%, 0.1271 4.9587%, 0.6578 14.876%, 0.8392 19.0083%, 0.9867 23.9669%, 1.0328 26.4463%, 1.063 28.9256%, 1.0832 32.2314%, 1.0853 36.3636%, 1.0164 52.8926%, 0.9952 62.8099%, 1);
       --ghost-interactive-spotlight-color: #00b6d4;
@@ -372,14 +372,14 @@
       --ghost-material-glass-bg: oklch(0.27 0.018 258 / 0.55);
       --ghost-material-glass-blur: 1.25rem;
       --ghost-material-glass-border: oklch(0.96 0.005 250 / 0.16);
-      --ghost-material-glass-fallback-bg: #242c3a;
+      --ghost-material-glass-fallback-bg: #1f2a2c;
       --ghost-material-glass-noise: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20160%20160%22%3E%3Cfilter%20id%3D%22n%22%3E%3CfeTurbulence%20type%3D%22fractalNoise%22%20baseFrequency%3D%220.8%22%20numOctaves%3D%224%22%20seed%3D%222%22%20stitchTiles%3D%22stitch%22%2F%3E%3C%2Ffilter%3E%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20filter%3D%22url(%23n)%22%2F%3E%3C%2Fsvg%3E");
       --ghost-material-glass-noise-opacity: 0.04;
       --ghost-material-glass-saturate: 1.45;
-      --ghost-material-grain-bg: #0f172a;
+      --ghost-material-grain-bg: #091416;
       --ghost-material-grain-noise: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20160%20160%22%3E%3Cfilter%20id%3D%22n%22%3E%3CfeTurbulence%20type%3D%22fractalNoise%22%20baseFrequency%3D%220.8%22%20numOctaves%3D%224%22%20seed%3D%222%22%20stitchTiles%3D%22stitch%22%2F%3E%3C%2Ffilter%3E%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20filter%3D%22url(%23n)%22%2F%3E%3C%2Fsvg%3E");
       --ghost-material-grain-noise-opacity: 0.08;
-      --ghost-material-solid-bg: #0f172a;
+      --ghost-material-solid-bg: #091416;
       --ghost-motion-easing-accelerate: cubic-bezier(0.3, 0, 1, 1);
       --ghost-motion-easing-decelerate: cubic-bezier(0, 0, 0, 1);
       --ghost-motion-easing-standard: cubic-bezier(0.2, 0, 0, 1);
@@ -392,7 +392,7 @@
       --ghost-motion-spring-gentle: linear(0, 0.0191 2.1429%, 0.0866 5%, 0.4534 15.7143%, 0.6359 22.1429%, 0.767 28.5714%, 0.8204 32.1429%, 0.8698 36.4286%, 0.9065 40.7143%, 0.9369 45.7143%, 0.9751 57.1429%, 0.9934 72.8571%, 1);
       --ghost-motion-spring-snappy: linear(0, 0.0043 0.8264%, 0.036 2.4793%, 0.1271 4.9587%, 0.6578 14.876%, 0.8392 19.0083%, 0.9867 23.9669%, 1.0328 26.4463%, 1.063 28.9256%, 1.0832 32.2314%, 1.0853 36.3636%, 1.0164 52.8926%, 0.9952 62.8099%, 1);
       --ghost-motion-translate: 0.5rem;
-      --ghost-roundness: 0.3;
+      --ghost-roundness: 0.5;
       --ghost-scrim: color-mix(in srgb, #0b0e0e 60%, transparent);
       --ghost-space-gap-lg: 1rem;
       --ghost-space-gap-md: 0.75rem;
@@ -423,12 +423,12 @@
       --ghost-status-warning-bg: #261a00;
       --ghost-status-warning-border: #5c4300;
       --ghost-status-warning-fg: #fed98e;
-      --ghost-surface-bg: #0f172a;
+      --ghost-surface-bg: #091416;
       --ghost-surface-fg: #f8fafc;
       --ghost-surface-inverse-bg: #f8fafc;
       --ghost-surface-inverse-fg: #0f172a;
-      --ghost-surface-muted-bg: #293240;
-      --ghost-surface-subtle-bg: #151d2d;
+      --ghost-surface-muted-bg: #232e31;
+      --ghost-surface-subtle-bg: #101b1d;
       --ghost-text-danger: #f87171;
       --ghost-text-default: #f8fafc;
       --ghost-text-info: #38bdf8;
@@ -458,11 +458,11 @@
       --ghost-type-numeric-tabular: tabular-nums;
       --ghost-type-size-2xl: clamp(1.5rem, 1.3333rem + 0.8333vw, 2rem);
       --ghost-type-size-3xl: clamp(1.875rem, 1.6667rem + 1.0417vw, 2.5rem);
-      --ghost-type-size-lg: clamp(1.0625rem, 1.0417rem + 0.1042vw, 1.125rem);
-      --ghost-type-size-md: clamp(0.9375rem, 0.9167rem + 0.1042vw, 1rem);
-      --ghost-type-size-sm: clamp(0.8125rem, 0.7917rem + 0.1042vw, 0.875rem);
+      --ghost-type-size-lg: 0.9375rem;
+      --ghost-type-size-md: 0.875rem;
+      --ghost-type-size-sm: 0.8125rem;
       --ghost-type-size-xl: clamp(1.25rem, 1.1667rem + 0.4167vw, 1.5rem);
-      --ghost-type-size-xs: clamp(0.75rem, 0.7292rem + 0.1042vw, 0.8125rem);
+      --ghost-type-size-xs: 0.75rem;
       --ghost-type-weight-bold: 700;
       --ghost-type-weight-medium: 500;
       --ghost-type-weight-regular: 400;
@@ -486,13 +486,13 @@
       --ghost-motion-spring-gentle-duration: calc(583ms * var(--ghost-motion-intensity, 1));
       --ghost-motion-spring-snappy-duration: calc(504ms * var(--ghost-motion-intensity, 1));
       --ghost-motion-stagger: calc(40ms * var(--ghost-motion-intensity, 1));
-      --ghost-action-radius: calc(0.5rem * var(--ghost-roundness, 1));
-      --ghost-radius-lg: calc(0.75rem * var(--ghost-roundness, 1));
-      --ghost-radius-md: calc(0.5rem * var(--ghost-roundness, 1));
+      --ghost-action-radius: calc(0.375rem * var(--ghost-roundness, 1));
+      --ghost-radius-lg: calc(0.5rem * var(--ghost-roundness, 1));
+      --ghost-radius-md: calc(0.375rem * var(--ghost-roundness, 1));
       --ghost-radius-none: calc(0px * var(--ghost-roundness, 1));
       --ghost-radius-pill: calc(999px * var(--ghost-roundness, 1));
       --ghost-radius-sm: calc(0.25rem * var(--ghost-roundness, 1));
-      --ghost-radius-xl: calc(1rem * var(--ghost-roundness, 1));
+      --ghost-radius-xl: calc(0.75rem * var(--ghost-roundness, 1));
     }
   }
 
@@ -510,7 +510,7 @@
     --ghost-action-disabled-fg: #26464d;
     --ghost-action-disabled-opacity: 0.55;
     --ghost-action-gap: 0.5rem;
-    --ghost-action-highlight: inset 0px 0.5px 0px 0px oklch(1 0.012 213.303574/ 0.28);
+    --ghost-action-highlight: inset 0px 0.5px 0px 0px oklch(1 0.008 213.303574/ 0.16);
     --ghost-action-icon-size: 1.1em;
     --ghost-action-info-bg: #0369a1;
     --ghost-action-info-bg-active: #003454;
@@ -520,8 +520,8 @@
     --ghost-action-label-family: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
     --ghost-action-label-letter: 0em;
     --ghost-action-label-line: 1.2;
-    --ghost-action-label-size: clamp(0.9375rem, 0.9167rem + 0.1042vw, 1rem);
-    --ghost-action-label-weight: 600;
+    --ghost-action-label-size: 0.875rem;
+    --ghost-action-label-weight: 500;
     --ghost-action-neutral-bg: #26464d;
     --ghost-action-neutral-bg-active: #11262b;
     --ghost-action-neutral-bg-hover: #1a363c;
@@ -536,8 +536,8 @@
     --ghost-action-primary-fg: #ffffff;
     --ghost-action-primary-gradient-from: #006c7e;
     --ghost-action-primary-gradient-to: #00505e;
-    --ghost-action-shadow: 0px 1px 2px 0px oklch(0.254 0.028 213.303574/ 0.08), 0px 2px 5px 0px oklch(0.254 0.028 213.303574/ 0.14);
-    --ghost-action-shadow-press: 0px 0.5px 1px 0px oklch(0.254 0.028 213.303574/ 0.08), 0px 0.5px 1.5px 0px oklch(0.254 0.028 213.303574/ 0.14);
+    --ghost-action-shadow: 0px 0.5px 1px 0px oklch(0.254 0.028 213.303574/ 0.08), 0px 0.5px 1.5px 0px oklch(0.254 0.028 213.303574/ 0.14);
+    --ghost-action-shadow-press: 0px 0px 0px 0px transparent;
     --ghost-action-spinner-opacity: 0.35;
     --ghost-action-spinner-size: 1.1em;
     --ghost-action-spinner-width: 2px;
@@ -562,18 +562,18 @@
     --ghost-border-strong: #66838a;
     --ghost-border-success: #15803d;
     --ghost-border-warning: #b45309;
-    --ghost-control-size-lg-font: clamp(1.0625rem, 1.0417rem + 0.1042vw, 1.125rem);
-    --ghost-control-size-lg-min: 3rem;
-    --ghost-control-size-lg-padding-block: 1rem;
-    --ghost-control-size-lg-padding-inline: 1.25rem;
-    --ghost-control-size-md-font: clamp(0.9375rem, 0.9167rem + 0.1042vw, 1rem);
-    --ghost-control-size-md-min: 2.5rem;
-    --ghost-control-size-md-padding-block: 0.75rem;
-    --ghost-control-size-md-padding-inline: 1rem;
-    --ghost-control-size-sm-font: clamp(0.8125rem, 0.7917rem + 0.1042vw, 0.875rem);
+    --ghost-control-size-lg-font: 0.9375rem;
+    --ghost-control-size-lg-min: 2.5rem;
+    --ghost-control-size-lg-padding-block: 0.5rem;
+    --ghost-control-size-lg-padding-inline: 1rem;
+    --ghost-control-size-md-font: 0.875rem;
+    --ghost-control-size-md-min: 2.25rem;
+    --ghost-control-size-md-padding-block: 0.375rem;
+    --ghost-control-size-md-padding-inline: 0.75rem;
+    --ghost-control-size-sm-font: 0.8125rem;
     --ghost-control-size-sm-min: 2rem;
-    --ghost-control-size-sm-padding-block: 0.5rem;
-    --ghost-control-size-sm-padding-inline: 0.75rem;
+    --ghost-control-size-sm-padding-block: 0.25rem;
+    --ghost-control-size-sm-padding-inline: 0.625rem;
     --ghost-control-touch-min: 2.75rem;
     --ghost-elevation-0-bg: #ffffff;
     --ghost-elevation-0-border: transparent;
@@ -602,7 +602,7 @@
     --ghost-focus-ring-color: #0f172a;
     --ghost-focus-ring-contrast: #ffffff;
     --ghost-focus-ring-offset: 2px;
-    --ghost-focus-ring-width: 3px;
+    --ghost-focus-ring-width: 2px;
     --ghost-gradient-accent: linear-gradient(135deg in oklch, #006c7e 0%, #006c7e 100%);
     --ghost-gradient-action-danger: linear-gradient(135deg in oklch, #b91c1c 0%, #b91c1c 100%);
     --ghost-gradient-action-neutral: linear-gradient(135deg in oklch, #26464d 0%, #26464d 100%);
@@ -636,7 +636,7 @@
     --ghost-motion-spring-gentle: linear(0, 0.0191 2.1429%, 0.0866 5%, 0.4534 15.7143%, 0.6359 22.1429%, 0.767 28.5714%, 0.8204 32.1429%, 0.8698 36.4286%, 0.9065 40.7143%, 0.9369 45.7143%, 0.9751 57.1429%, 0.9934 72.8571%, 1);
     --ghost-motion-spring-snappy: linear(0, 0.0043 0.8264%, 0.036 2.4793%, 0.1271 4.9587%, 0.6578 14.876%, 0.8392 19.0083%, 0.9867 23.9669%, 1.0328 26.4463%, 1.063 28.9256%, 1.0832 32.2314%, 1.0853 36.3636%, 1.0164 52.8926%, 0.9952 62.8099%, 1);
     --ghost-motion-translate: 0.5rem;
-    --ghost-roundness: 0.3;
+    --ghost-roundness: 0.5;
     --ghost-scrim: color-mix(in srgb, #050d0f 60%, transparent);
     --ghost-space-gap-lg: 1rem;
     --ghost-space-gap-md: 0.75rem;
@@ -702,11 +702,11 @@
     --ghost-type-numeric-tabular: tabular-nums;
     --ghost-type-size-2xl: clamp(1.5rem, 1.3333rem + 0.8333vw, 2rem);
     --ghost-type-size-3xl: clamp(1.875rem, 1.6667rem + 1.0417vw, 2.5rem);
-    --ghost-type-size-lg: clamp(1.0625rem, 1.0417rem + 0.1042vw, 1.125rem);
-    --ghost-type-size-md: clamp(0.9375rem, 0.9167rem + 0.1042vw, 1rem);
-    --ghost-type-size-sm: clamp(0.8125rem, 0.7917rem + 0.1042vw, 0.875rem);
+    --ghost-type-size-lg: 0.9375rem;
+    --ghost-type-size-md: 0.875rem;
+    --ghost-type-size-sm: 0.8125rem;
     --ghost-type-size-xl: clamp(1.25rem, 1.1667rem + 0.4167vw, 1.5rem);
-    --ghost-type-size-xs: clamp(0.75rem, 0.7292rem + 0.1042vw, 0.8125rem);
+    --ghost-type-size-xs: 0.75rem;
     --ghost-type-weight-bold: 700;
     --ghost-type-weight-medium: 500;
     --ghost-type-weight-regular: 400;
@@ -730,13 +730,13 @@
     --ghost-motion-spring-gentle-duration: calc(583ms * var(--ghost-motion-intensity, 1));
     --ghost-motion-spring-snappy-duration: calc(504ms * var(--ghost-motion-intensity, 1));
     --ghost-motion-stagger: calc(40ms * var(--ghost-motion-intensity, 1));
-    --ghost-action-radius: calc(0.5rem * var(--ghost-roundness, 1));
-    --ghost-radius-lg: calc(0.75rem * var(--ghost-roundness, 1));
-    --ghost-radius-md: calc(0.5rem * var(--ghost-roundness, 1));
+    --ghost-action-radius: calc(0.375rem * var(--ghost-roundness, 1));
+    --ghost-radius-lg: calc(0.5rem * var(--ghost-roundness, 1));
+    --ghost-radius-md: calc(0.375rem * var(--ghost-roundness, 1));
     --ghost-radius-none: calc(0px * var(--ghost-roundness, 1));
     --ghost-radius-pill: calc(999px * var(--ghost-roundness, 1));
     --ghost-radius-sm: calc(0.25rem * var(--ghost-roundness, 1));
-    --ghost-radius-xl: calc(1rem * var(--ghost-roundness, 1));
+    --ghost-radius-xl: calc(0.75rem * var(--ghost-roundness, 1));
   }
 
   :where(:where([data-ghost-theme='calm']):where([data-ghost-mode='dark']), :where([data-ghost-theme='calm']) :where([data-ghost-mode='dark'])) {
@@ -763,8 +763,8 @@
     --ghost-action-label-family: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
     --ghost-action-label-letter: 0em;
     --ghost-action-label-line: 1.2;
-    --ghost-action-label-size: clamp(0.9375rem, 0.9167rem + 0.1042vw, 1rem);
-    --ghost-action-label-weight: 600;
+    --ghost-action-label-size: 0.875rem;
+    --ghost-action-label-weight: 500;
     --ghost-action-neutral-bg: #c6d8dc;
     --ghost-action-neutral-bg-active: #dbe6e8;
     --ghost-action-neutral-bg-hover: #cfdfe2;
@@ -779,8 +779,8 @@
     --ghost-action-primary-fg: #0f172a;
     --ghost-action-primary-gradient-from: #00b6d4;
     --ghost-action-primary-gradient-to: #50c7e2;
-    --ghost-action-shadow: 0px 1px 2px 0px oklch(0.08 0.02 258 / 0.3), 0px 1.5px 4px 0px oklch(0.08 0.02 258 / 0.18);
-    --ghost-action-shadow-press: 0px 0.5px 1px 0px oklch(0.08 0.02 258 / 0.28), 0px 0.5px 1px 0px oklch(0.08 0.02 258 / 0.16);
+    --ghost-action-shadow: 0px 0.5px 1px 0px oklch(0.08 0.02 258 / 0.28), 0px 0.5px 1px 0px oklch(0.08 0.02 258 / 0.16);
+    --ghost-action-shadow-press: 0px 0px 0px 0px transparent;
     --ghost-action-spinner-opacity: 0.35;
     --ghost-action-spinner-size: 1.1em;
     --ghost-action-spinner-width: 2px;
@@ -805,52 +805,52 @@
     --ghost-border-strong: #9fb0b4;
     --ghost-border-success: #4ade80;
     --ghost-border-warning: #fbbf24;
-    --ghost-control-size-lg-font: clamp(1.0625rem, 1.0417rem + 0.1042vw, 1.125rem);
-    --ghost-control-size-lg-min: 3rem;
-    --ghost-control-size-lg-padding-block: 1rem;
-    --ghost-control-size-lg-padding-inline: 1.25rem;
-    --ghost-control-size-md-font: clamp(0.9375rem, 0.9167rem + 0.1042vw, 1rem);
-    --ghost-control-size-md-min: 2.5rem;
-    --ghost-control-size-md-padding-block: 0.75rem;
-    --ghost-control-size-md-padding-inline: 1rem;
-    --ghost-control-size-sm-font: clamp(0.8125rem, 0.7917rem + 0.1042vw, 0.875rem);
+    --ghost-control-size-lg-font: 0.9375rem;
+    --ghost-control-size-lg-min: 2.5rem;
+    --ghost-control-size-lg-padding-block: 0.5rem;
+    --ghost-control-size-lg-padding-inline: 1rem;
+    --ghost-control-size-md-font: 0.875rem;
+    --ghost-control-size-md-min: 2.25rem;
+    --ghost-control-size-md-padding-block: 0.375rem;
+    --ghost-control-size-md-padding-inline: 0.75rem;
+    --ghost-control-size-sm-font: 0.8125rem;
     --ghost-control-size-sm-min: 2rem;
-    --ghost-control-size-sm-padding-block: 0.5rem;
-    --ghost-control-size-sm-padding-inline: 0.75rem;
+    --ghost-control-size-sm-padding-block: 0.25rem;
+    --ghost-control-size-sm-padding-inline: 0.625rem;
     --ghost-control-touch-min: 2.75rem;
-    --ghost-elevation-0-bg: #0f172a;
+    --ghost-elevation-0-bg: #091416;
     --ghost-elevation-0-border: transparent;
     --ghost-elevation-0-highlight: inset 0px 0.5px 0px 0px transparent;
     --ghost-elevation-0-shadow: 0px 0px 0px 0px transparent;
-    --ghost-elevation-1-bg: #1c2533;
+    --ghost-elevation-1-bg: #182325;
     --ghost-elevation-1-border: oklch(0.96 0.005 250 / 0.16);
     --ghost-elevation-1-highlight: inset 0px 0.5px 0px 0px oklch(1 0.005 213.303574/ 0.12);
     --ghost-elevation-1-shadow: 0px 0.5px 1px 0px oklch(0.08 0.02 258 / 0.28), 0px 0.5px 1px 0px oklch(0.08 0.02 258 / 0.16);
-    --ghost-elevation-2-bg: #242c3a;
+    --ghost-elevation-2-bg: #1f2a2c;
     --ghost-elevation-2-border: oklch(0.96 0.005 250 / 0.16);
     --ghost-elevation-2-highlight: inset 0px 0.5px 0px 0px oklch(1 0.005 213.303574/ 0.12);
     --ghost-elevation-2-shadow: 0px 1px 2px 0px oklch(0.08 0.02 258 / 0.3), 0px 1.5px 4px 0px oklch(0.08 0.02 258 / 0.18);
-    --ghost-elevation-3-bg: #2b3441;
+    --ghost-elevation-3-bg: #263235;
     --ghost-elevation-3-border: oklch(0.96 0.005 250 / 0.16);
     --ghost-elevation-3-highlight: inset 0px 0.5px 0px 0px oklch(1 0.005 213.303574/ 0.12);
     --ghost-elevation-3-shadow: 0px 2px 4px 0px oklch(0.08 0.02 258 / 0.32), 0px 3px 8px 0px oklch(0.08 0.02 258 / 0.2);
-    --ghost-elevation-4-bg: #343c48;
+    --ghost-elevation-4-bg: #2e3a3d;
     --ghost-elevation-4-border: oklch(0.96 0.005 250 / 0.16);
     --ghost-elevation-4-highlight: inset 0px 0.5px 0px 0px oklch(1 0.005 213.303574/ 0.12);
     --ghost-elevation-4-shadow: 0px 3px 6px 0px oklch(0.08 0.02 258 / 0.34), 0px 5px 12px 0px oklch(0.08 0.02 258 / 0.22);
-    --ghost-elevation-5-bg: #3d4550;
+    --ghost-elevation-5-bg: #364245;
     --ghost-elevation-5-border: oklch(0.96 0.005 250 / 0.16);
     --ghost-elevation-5-highlight: inset 0px 0.5px 0px 0px oklch(1 0.005 213.303574/ 0.12);
     --ghost-elevation-5-shadow: 0px 4px 8px 0px oklch(0.08 0.02 258 / 0.36), 0px 7px 16px 0px oklch(0.08 0.02 258 / 0.24);
     --ghost-focus-ring-color: #ffffff;
     --ghost-focus-ring-contrast: #0f172a;
     --ghost-focus-ring-offset: 2px;
-    --ghost-focus-ring-width: 3px;
+    --ghost-focus-ring-width: 2px;
     --ghost-gradient-accent: linear-gradient(135deg in oklch, #00b6d4 0%, #00b6d4 100%);
     --ghost-gradient-action-danger: linear-gradient(135deg in oklch, #f87171 0%, #f87171 100%);
     --ghost-gradient-action-neutral: linear-gradient(135deg in oklch, #c6d8dc 0%, #c6d8dc 100%);
     --ghost-gradient-action-primary: linear-gradient(135deg in oklch, #00b6d4 0%, #00b6d4 100%);
-    --ghost-gradient-aurora: linear-gradient(135deg in oklch, #0f172a 0%, #0f172a 100%);
+    --ghost-gradient-aurora: linear-gradient(135deg in oklch, #091416 0%, #091416 100%);
     --ghost-gradient-border: linear-gradient(135deg in oklch, #00b6d4 0%, #00b6d4 100%);
     --ghost-interactive-leave-spring: linear(0, 0.0043 0.8264%, 0.036 2.4793%, 0.1271 4.9587%, 0.6578 14.876%, 0.8392 19.0083%, 0.9867 23.9669%, 1.0328 26.4463%, 1.063 28.9256%, 1.0832 32.2314%, 1.0853 36.3636%, 1.0164 52.8926%, 0.9952 62.8099%, 1);
     --ghost-interactive-spotlight-color: #00b6d4;
@@ -859,14 +859,14 @@
     --ghost-material-glass-bg: oklch(0.27 0.018 258 / 0.55);
     --ghost-material-glass-blur: 1.25rem;
     --ghost-material-glass-border: oklch(0.96 0.005 250 / 0.16);
-    --ghost-material-glass-fallback-bg: #242c3a;
+    --ghost-material-glass-fallback-bg: #1f2a2c;
     --ghost-material-glass-noise: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20160%20160%22%3E%3Cfilter%20id%3D%22n%22%3E%3CfeTurbulence%20type%3D%22fractalNoise%22%20baseFrequency%3D%220.8%22%20numOctaves%3D%224%22%20seed%3D%222%22%20stitchTiles%3D%22stitch%22%2F%3E%3C%2Ffilter%3E%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20filter%3D%22url(%23n)%22%2F%3E%3C%2Fsvg%3E");
     --ghost-material-glass-noise-opacity: 0.04;
     --ghost-material-glass-saturate: 1.45;
-    --ghost-material-grain-bg: #0f172a;
+    --ghost-material-grain-bg: #091416;
     --ghost-material-grain-noise: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20160%20160%22%3E%3Cfilter%20id%3D%22n%22%3E%3CfeTurbulence%20type%3D%22fractalNoise%22%20baseFrequency%3D%220.8%22%20numOctaves%3D%224%22%20seed%3D%222%22%20stitchTiles%3D%22stitch%22%2F%3E%3C%2Ffilter%3E%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20filter%3D%22url(%23n)%22%2F%3E%3C%2Fsvg%3E");
     --ghost-material-grain-noise-opacity: 0.08;
-    --ghost-material-solid-bg: #0f172a;
+    --ghost-material-solid-bg: #091416;
     --ghost-motion-easing-accelerate: cubic-bezier(0.3, 0, 1, 1);
     --ghost-motion-easing-decelerate: cubic-bezier(0, 0, 0, 1);
     --ghost-motion-easing-standard: cubic-bezier(0.2, 0, 0, 1);
@@ -879,7 +879,7 @@
     --ghost-motion-spring-gentle: linear(0, 0.0191 2.1429%, 0.0866 5%, 0.4534 15.7143%, 0.6359 22.1429%, 0.767 28.5714%, 0.8204 32.1429%, 0.8698 36.4286%, 0.9065 40.7143%, 0.9369 45.7143%, 0.9751 57.1429%, 0.9934 72.8571%, 1);
     --ghost-motion-spring-snappy: linear(0, 0.0043 0.8264%, 0.036 2.4793%, 0.1271 4.9587%, 0.6578 14.876%, 0.8392 19.0083%, 0.9867 23.9669%, 1.0328 26.4463%, 1.063 28.9256%, 1.0832 32.2314%, 1.0853 36.3636%, 1.0164 52.8926%, 0.9952 62.8099%, 1);
     --ghost-motion-translate: 0.5rem;
-    --ghost-roundness: 0.3;
+    --ghost-roundness: 0.5;
     --ghost-scrim: color-mix(in srgb, #0b0e0e 60%, transparent);
     --ghost-space-gap-lg: 1rem;
     --ghost-space-gap-md: 0.75rem;
@@ -910,12 +910,12 @@
     --ghost-status-warning-bg: #261a00;
     --ghost-status-warning-border: #5c4300;
     --ghost-status-warning-fg: #fed98e;
-    --ghost-surface-bg: #0f172a;
+    --ghost-surface-bg: #091416;
     --ghost-surface-fg: #f8fafc;
     --ghost-surface-inverse-bg: #f8fafc;
     --ghost-surface-inverse-fg: #0f172a;
-    --ghost-surface-muted-bg: #293240;
-    --ghost-surface-subtle-bg: #151d2d;
+    --ghost-surface-muted-bg: #232e31;
+    --ghost-surface-subtle-bg: #101b1d;
     --ghost-text-danger: #f87171;
     --ghost-text-default: #f8fafc;
     --ghost-text-info: #38bdf8;
@@ -945,11 +945,11 @@
     --ghost-type-numeric-tabular: tabular-nums;
     --ghost-type-size-2xl: clamp(1.5rem, 1.3333rem + 0.8333vw, 2rem);
     --ghost-type-size-3xl: clamp(1.875rem, 1.6667rem + 1.0417vw, 2.5rem);
-    --ghost-type-size-lg: clamp(1.0625rem, 1.0417rem + 0.1042vw, 1.125rem);
-    --ghost-type-size-md: clamp(0.9375rem, 0.9167rem + 0.1042vw, 1rem);
-    --ghost-type-size-sm: clamp(0.8125rem, 0.7917rem + 0.1042vw, 0.875rem);
+    --ghost-type-size-lg: 0.9375rem;
+    --ghost-type-size-md: 0.875rem;
+    --ghost-type-size-sm: 0.8125rem;
     --ghost-type-size-xl: clamp(1.25rem, 1.1667rem + 0.4167vw, 1.5rem);
-    --ghost-type-size-xs: clamp(0.75rem, 0.7292rem + 0.1042vw, 0.8125rem);
+    --ghost-type-size-xs: 0.75rem;
     --ghost-type-weight-bold: 700;
     --ghost-type-weight-medium: 500;
     --ghost-type-weight-regular: 400;
@@ -973,13 +973,13 @@
     --ghost-motion-spring-gentle-duration: calc(583ms * var(--ghost-motion-intensity, 1));
     --ghost-motion-spring-snappy-duration: calc(504ms * var(--ghost-motion-intensity, 1));
     --ghost-motion-stagger: calc(40ms * var(--ghost-motion-intensity, 1));
-    --ghost-action-radius: calc(0.5rem * var(--ghost-roundness, 1));
-    --ghost-radius-lg: calc(0.75rem * var(--ghost-roundness, 1));
-    --ghost-radius-md: calc(0.5rem * var(--ghost-roundness, 1));
+    --ghost-action-radius: calc(0.375rem * var(--ghost-roundness, 1));
+    --ghost-radius-lg: calc(0.5rem * var(--ghost-roundness, 1));
+    --ghost-radius-md: calc(0.375rem * var(--ghost-roundness, 1));
     --ghost-radius-none: calc(0px * var(--ghost-roundness, 1));
     --ghost-radius-pill: calc(999px * var(--ghost-roundness, 1));
     --ghost-radius-sm: calc(0.25rem * var(--ghost-roundness, 1));
-    --ghost-radius-xl: calc(1rem * var(--ghost-roundness, 1));
+    --ghost-radius-xl: calc(0.75rem * var(--ghost-roundness, 1));
   }
 
   @scope ([data-ghost-mode='light']) to ([data-ghost-mode]) {
@@ -997,7 +997,7 @@
       --ghost-action-disabled-fg: #26464d;
       --ghost-action-disabled-opacity: 0.55;
       --ghost-action-gap: 0.5rem;
-      --ghost-action-highlight: inset 0px 0.5px 0px 0px oklch(1 0.012 213.303574/ 0.28);
+      --ghost-action-highlight: inset 0px 0.5px 0px 0px oklch(1 0.008 213.303574/ 0.16);
       --ghost-action-icon-size: 1.1em;
       --ghost-action-info-bg: #0369a1;
       --ghost-action-info-bg-active: #003454;
@@ -1007,8 +1007,8 @@
       --ghost-action-label-family: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
       --ghost-action-label-letter: 0em;
       --ghost-action-label-line: 1.2;
-      --ghost-action-label-size: clamp(0.9375rem, 0.9167rem + 0.1042vw, 1rem);
-      --ghost-action-label-weight: 600;
+      --ghost-action-label-size: 0.875rem;
+      --ghost-action-label-weight: 500;
       --ghost-action-neutral-bg: #26464d;
       --ghost-action-neutral-bg-active: #11262b;
       --ghost-action-neutral-bg-hover: #1a363c;
@@ -1023,8 +1023,8 @@
       --ghost-action-primary-fg: #ffffff;
       --ghost-action-primary-gradient-from: #006c7e;
       --ghost-action-primary-gradient-to: #00505e;
-      --ghost-action-shadow: 0px 1px 2px 0px oklch(0.254 0.028 213.303574/ 0.08), 0px 2px 5px 0px oklch(0.254 0.028 213.303574/ 0.14);
-      --ghost-action-shadow-press: 0px 0.5px 1px 0px oklch(0.254 0.028 213.303574/ 0.08), 0px 0.5px 1.5px 0px oklch(0.254 0.028 213.303574/ 0.14);
+      --ghost-action-shadow: 0px 0.5px 1px 0px oklch(0.254 0.028 213.303574/ 0.08), 0px 0.5px 1.5px 0px oklch(0.254 0.028 213.303574/ 0.14);
+      --ghost-action-shadow-press: 0px 0px 0px 0px transparent;
       --ghost-action-spinner-opacity: 0.35;
       --ghost-action-spinner-size: 1.1em;
       --ghost-action-spinner-width: 2px;
@@ -1049,18 +1049,18 @@
       --ghost-border-strong: #66838a;
       --ghost-border-success: #15803d;
       --ghost-border-warning: #b45309;
-      --ghost-control-size-lg-font: clamp(1.0625rem, 1.0417rem + 0.1042vw, 1.125rem);
-      --ghost-control-size-lg-min: 3rem;
-      --ghost-control-size-lg-padding-block: 1rem;
-      --ghost-control-size-lg-padding-inline: 1.25rem;
-      --ghost-control-size-md-font: clamp(0.9375rem, 0.9167rem + 0.1042vw, 1rem);
-      --ghost-control-size-md-min: 2.5rem;
-      --ghost-control-size-md-padding-block: 0.75rem;
-      --ghost-control-size-md-padding-inline: 1rem;
-      --ghost-control-size-sm-font: clamp(0.8125rem, 0.7917rem + 0.1042vw, 0.875rem);
+      --ghost-control-size-lg-font: 0.9375rem;
+      --ghost-control-size-lg-min: 2.5rem;
+      --ghost-control-size-lg-padding-block: 0.5rem;
+      --ghost-control-size-lg-padding-inline: 1rem;
+      --ghost-control-size-md-font: 0.875rem;
+      --ghost-control-size-md-min: 2.25rem;
+      --ghost-control-size-md-padding-block: 0.375rem;
+      --ghost-control-size-md-padding-inline: 0.75rem;
+      --ghost-control-size-sm-font: 0.8125rem;
       --ghost-control-size-sm-min: 2rem;
-      --ghost-control-size-sm-padding-block: 0.5rem;
-      --ghost-control-size-sm-padding-inline: 0.75rem;
+      --ghost-control-size-sm-padding-block: 0.25rem;
+      --ghost-control-size-sm-padding-inline: 0.625rem;
       --ghost-control-touch-min: 2.75rem;
       --ghost-elevation-0-bg: #ffffff;
       --ghost-elevation-0-border: transparent;
@@ -1089,7 +1089,7 @@
       --ghost-focus-ring-color: #0f172a;
       --ghost-focus-ring-contrast: #ffffff;
       --ghost-focus-ring-offset: 2px;
-      --ghost-focus-ring-width: 3px;
+      --ghost-focus-ring-width: 2px;
       --ghost-gradient-accent: linear-gradient(135deg in oklch, #006c7e 0%, #006c7e 100%);
       --ghost-gradient-action-danger: linear-gradient(135deg in oklch, #b91c1c 0%, #b91c1c 100%);
       --ghost-gradient-action-neutral: linear-gradient(135deg in oklch, #26464d 0%, #26464d 100%);
@@ -1123,7 +1123,7 @@
       --ghost-motion-spring-gentle: linear(0, 0.0191 2.1429%, 0.0866 5%, 0.4534 15.7143%, 0.6359 22.1429%, 0.767 28.5714%, 0.8204 32.1429%, 0.8698 36.4286%, 0.9065 40.7143%, 0.9369 45.7143%, 0.9751 57.1429%, 0.9934 72.8571%, 1);
       --ghost-motion-spring-snappy: linear(0, 0.0043 0.8264%, 0.036 2.4793%, 0.1271 4.9587%, 0.6578 14.876%, 0.8392 19.0083%, 0.9867 23.9669%, 1.0328 26.4463%, 1.063 28.9256%, 1.0832 32.2314%, 1.0853 36.3636%, 1.0164 52.8926%, 0.9952 62.8099%, 1);
       --ghost-motion-translate: 0.5rem;
-      --ghost-roundness: 0.3;
+      --ghost-roundness: 0.5;
       --ghost-scrim: color-mix(in srgb, #050d0f 60%, transparent);
       --ghost-space-gap-lg: 1rem;
       --ghost-space-gap-md: 0.75rem;
@@ -1189,11 +1189,11 @@
       --ghost-type-numeric-tabular: tabular-nums;
       --ghost-type-size-2xl: clamp(1.5rem, 1.3333rem + 0.8333vw, 2rem);
       --ghost-type-size-3xl: clamp(1.875rem, 1.6667rem + 1.0417vw, 2.5rem);
-      --ghost-type-size-lg: clamp(1.0625rem, 1.0417rem + 0.1042vw, 1.125rem);
-      --ghost-type-size-md: clamp(0.9375rem, 0.9167rem + 0.1042vw, 1rem);
-      --ghost-type-size-sm: clamp(0.8125rem, 0.7917rem + 0.1042vw, 0.875rem);
+      --ghost-type-size-lg: 0.9375rem;
+      --ghost-type-size-md: 0.875rem;
+      --ghost-type-size-sm: 0.8125rem;
       --ghost-type-size-xl: clamp(1.25rem, 1.1667rem + 0.4167vw, 1.5rem);
-      --ghost-type-size-xs: clamp(0.75rem, 0.7292rem + 0.1042vw, 0.8125rem);
+      --ghost-type-size-xs: 0.75rem;
       --ghost-type-weight-bold: 700;
       --ghost-type-weight-medium: 500;
       --ghost-type-weight-regular: 400;
@@ -1217,13 +1217,13 @@
       --ghost-motion-spring-gentle-duration: calc(583ms * var(--ghost-motion-intensity, 1));
       --ghost-motion-spring-snappy-duration: calc(504ms * var(--ghost-motion-intensity, 1));
       --ghost-motion-stagger: calc(40ms * var(--ghost-motion-intensity, 1));
-      --ghost-action-radius: calc(0.5rem * var(--ghost-roundness, 1));
-      --ghost-radius-lg: calc(0.75rem * var(--ghost-roundness, 1));
-      --ghost-radius-md: calc(0.5rem * var(--ghost-roundness, 1));
+      --ghost-action-radius: calc(0.375rem * var(--ghost-roundness, 1));
+      --ghost-radius-lg: calc(0.5rem * var(--ghost-roundness, 1));
+      --ghost-radius-md: calc(0.375rem * var(--ghost-roundness, 1));
       --ghost-radius-none: calc(0px * var(--ghost-roundness, 1));
       --ghost-radius-pill: calc(999px * var(--ghost-roundness, 1));
       --ghost-radius-sm: calc(0.25rem * var(--ghost-roundness, 1));
-      --ghost-radius-xl: calc(1rem * var(--ghost-roundness, 1));
+      --ghost-radius-xl: calc(0.75rem * var(--ghost-roundness, 1));
     }
   }
 
@@ -1252,8 +1252,8 @@
       --ghost-action-label-family: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
       --ghost-action-label-letter: 0em;
       --ghost-action-label-line: 1.2;
-      --ghost-action-label-size: clamp(0.9375rem, 0.9167rem + 0.1042vw, 1rem);
-      --ghost-action-label-weight: 600;
+      --ghost-action-label-size: 0.875rem;
+      --ghost-action-label-weight: 500;
       --ghost-action-neutral-bg: #c6d8dc;
       --ghost-action-neutral-bg-active: #dbe6e8;
       --ghost-action-neutral-bg-hover: #cfdfe2;
@@ -1268,8 +1268,8 @@
       --ghost-action-primary-fg: #0f172a;
       --ghost-action-primary-gradient-from: #00b6d4;
       --ghost-action-primary-gradient-to: #50c7e2;
-      --ghost-action-shadow: 0px 1px 2px 0px oklch(0.08 0.02 258 / 0.3), 0px 1.5px 4px 0px oklch(0.08 0.02 258 / 0.18);
-      --ghost-action-shadow-press: 0px 0.5px 1px 0px oklch(0.08 0.02 258 / 0.28), 0px 0.5px 1px 0px oklch(0.08 0.02 258 / 0.16);
+      --ghost-action-shadow: 0px 0.5px 1px 0px oklch(0.08 0.02 258 / 0.28), 0px 0.5px 1px 0px oklch(0.08 0.02 258 / 0.16);
+      --ghost-action-shadow-press: 0px 0px 0px 0px transparent;
       --ghost-action-spinner-opacity: 0.35;
       --ghost-action-spinner-size: 1.1em;
       --ghost-action-spinner-width: 2px;
@@ -1294,52 +1294,52 @@
       --ghost-border-strong: #9fb0b4;
       --ghost-border-success: #4ade80;
       --ghost-border-warning: #fbbf24;
-      --ghost-control-size-lg-font: clamp(1.0625rem, 1.0417rem + 0.1042vw, 1.125rem);
-      --ghost-control-size-lg-min: 3rem;
-      --ghost-control-size-lg-padding-block: 1rem;
-      --ghost-control-size-lg-padding-inline: 1.25rem;
-      --ghost-control-size-md-font: clamp(0.9375rem, 0.9167rem + 0.1042vw, 1rem);
-      --ghost-control-size-md-min: 2.5rem;
-      --ghost-control-size-md-padding-block: 0.75rem;
-      --ghost-control-size-md-padding-inline: 1rem;
-      --ghost-control-size-sm-font: clamp(0.8125rem, 0.7917rem + 0.1042vw, 0.875rem);
+      --ghost-control-size-lg-font: 0.9375rem;
+      --ghost-control-size-lg-min: 2.5rem;
+      --ghost-control-size-lg-padding-block: 0.5rem;
+      --ghost-control-size-lg-padding-inline: 1rem;
+      --ghost-control-size-md-font: 0.875rem;
+      --ghost-control-size-md-min: 2.25rem;
+      --ghost-control-size-md-padding-block: 0.375rem;
+      --ghost-control-size-md-padding-inline: 0.75rem;
+      --ghost-control-size-sm-font: 0.8125rem;
       --ghost-control-size-sm-min: 2rem;
-      --ghost-control-size-sm-padding-block: 0.5rem;
-      --ghost-control-size-sm-padding-inline: 0.75rem;
+      --ghost-control-size-sm-padding-block: 0.25rem;
+      --ghost-control-size-sm-padding-inline: 0.625rem;
       --ghost-control-touch-min: 2.75rem;
-      --ghost-elevation-0-bg: #0f172a;
+      --ghost-elevation-0-bg: #091416;
       --ghost-elevation-0-border: transparent;
       --ghost-elevation-0-highlight: inset 0px 0.5px 0px 0px transparent;
       --ghost-elevation-0-shadow: 0px 0px 0px 0px transparent;
-      --ghost-elevation-1-bg: #1c2533;
+      --ghost-elevation-1-bg: #182325;
       --ghost-elevation-1-border: oklch(0.96 0.005 250 / 0.16);
       --ghost-elevation-1-highlight: inset 0px 0.5px 0px 0px oklch(1 0.005 213.303574/ 0.12);
       --ghost-elevation-1-shadow: 0px 0.5px 1px 0px oklch(0.08 0.02 258 / 0.28), 0px 0.5px 1px 0px oklch(0.08 0.02 258 / 0.16);
-      --ghost-elevation-2-bg: #242c3a;
+      --ghost-elevation-2-bg: #1f2a2c;
       --ghost-elevation-2-border: oklch(0.96 0.005 250 / 0.16);
       --ghost-elevation-2-highlight: inset 0px 0.5px 0px 0px oklch(1 0.005 213.303574/ 0.12);
       --ghost-elevation-2-shadow: 0px 1px 2px 0px oklch(0.08 0.02 258 / 0.3), 0px 1.5px 4px 0px oklch(0.08 0.02 258 / 0.18);
-      --ghost-elevation-3-bg: #2b3441;
+      --ghost-elevation-3-bg: #263235;
       --ghost-elevation-3-border: oklch(0.96 0.005 250 / 0.16);
       --ghost-elevation-3-highlight: inset 0px 0.5px 0px 0px oklch(1 0.005 213.303574/ 0.12);
       --ghost-elevation-3-shadow: 0px 2px 4px 0px oklch(0.08 0.02 258 / 0.32), 0px 3px 8px 0px oklch(0.08 0.02 258 / 0.2);
-      --ghost-elevation-4-bg: #343c48;
+      --ghost-elevation-4-bg: #2e3a3d;
       --ghost-elevation-4-border: oklch(0.96 0.005 250 / 0.16);
       --ghost-elevation-4-highlight: inset 0px 0.5px 0px 0px oklch(1 0.005 213.303574/ 0.12);
       --ghost-elevation-4-shadow: 0px 3px 6px 0px oklch(0.08 0.02 258 / 0.34), 0px 5px 12px 0px oklch(0.08 0.02 258 / 0.22);
-      --ghost-elevation-5-bg: #3d4550;
+      --ghost-elevation-5-bg: #364245;
       --ghost-elevation-5-border: oklch(0.96 0.005 250 / 0.16);
       --ghost-elevation-5-highlight: inset 0px 0.5px 0px 0px oklch(1 0.005 213.303574/ 0.12);
       --ghost-elevation-5-shadow: 0px 4px 8px 0px oklch(0.08 0.02 258 / 0.36), 0px 7px 16px 0px oklch(0.08 0.02 258 / 0.24);
       --ghost-focus-ring-color: #ffffff;
       --ghost-focus-ring-contrast: #0f172a;
       --ghost-focus-ring-offset: 2px;
-      --ghost-focus-ring-width: 3px;
+      --ghost-focus-ring-width: 2px;
       --ghost-gradient-accent: linear-gradient(135deg in oklch, #00b6d4 0%, #00b6d4 100%);
       --ghost-gradient-action-danger: linear-gradient(135deg in oklch, #f87171 0%, #f87171 100%);
       --ghost-gradient-action-neutral: linear-gradient(135deg in oklch, #c6d8dc 0%, #c6d8dc 100%);
       --ghost-gradient-action-primary: linear-gradient(135deg in oklch, #00b6d4 0%, #00b6d4 100%);
-      --ghost-gradient-aurora: linear-gradient(135deg in oklch, #0f172a 0%, #0f172a 100%);
+      --ghost-gradient-aurora: linear-gradient(135deg in oklch, #091416 0%, #091416 100%);
       --ghost-gradient-border: linear-gradient(135deg in oklch, #00b6d4 0%, #00b6d4 100%);
       --ghost-interactive-leave-spring: linear(0, 0.0043 0.8264%, 0.036 2.4793%, 0.1271 4.9587%, 0.6578 14.876%, 0.8392 19.0083%, 0.9867 23.9669%, 1.0328 26.4463%, 1.063 28.9256%, 1.0832 32.2314%, 1.0853 36.3636%, 1.0164 52.8926%, 0.9952 62.8099%, 1);
       --ghost-interactive-spotlight-color: #00b6d4;
@@ -1348,14 +1348,14 @@
       --ghost-material-glass-bg: oklch(0.27 0.018 258 / 0.55);
       --ghost-material-glass-blur: 1.25rem;
       --ghost-material-glass-border: oklch(0.96 0.005 250 / 0.16);
-      --ghost-material-glass-fallback-bg: #242c3a;
+      --ghost-material-glass-fallback-bg: #1f2a2c;
       --ghost-material-glass-noise: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20160%20160%22%3E%3Cfilter%20id%3D%22n%22%3E%3CfeTurbulence%20type%3D%22fractalNoise%22%20baseFrequency%3D%220.8%22%20numOctaves%3D%224%22%20seed%3D%222%22%20stitchTiles%3D%22stitch%22%2F%3E%3C%2Ffilter%3E%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20filter%3D%22url(%23n)%22%2F%3E%3C%2Fsvg%3E");
       --ghost-material-glass-noise-opacity: 0.04;
       --ghost-material-glass-saturate: 1.45;
-      --ghost-material-grain-bg: #0f172a;
+      --ghost-material-grain-bg: #091416;
       --ghost-material-grain-noise: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20160%20160%22%3E%3Cfilter%20id%3D%22n%22%3E%3CfeTurbulence%20type%3D%22fractalNoise%22%20baseFrequency%3D%220.8%22%20numOctaves%3D%224%22%20seed%3D%222%22%20stitchTiles%3D%22stitch%22%2F%3E%3C%2Ffilter%3E%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20filter%3D%22url(%23n)%22%2F%3E%3C%2Fsvg%3E");
       --ghost-material-grain-noise-opacity: 0.08;
-      --ghost-material-solid-bg: #0f172a;
+      --ghost-material-solid-bg: #091416;
       --ghost-motion-easing-accelerate: cubic-bezier(0.3, 0, 1, 1);
       --ghost-motion-easing-decelerate: cubic-bezier(0, 0, 0, 1);
       --ghost-motion-easing-standard: cubic-bezier(0.2, 0, 0, 1);
@@ -1368,7 +1368,7 @@
       --ghost-motion-spring-gentle: linear(0, 0.0191 2.1429%, 0.0866 5%, 0.4534 15.7143%, 0.6359 22.1429%, 0.767 28.5714%, 0.8204 32.1429%, 0.8698 36.4286%, 0.9065 40.7143%, 0.9369 45.7143%, 0.9751 57.1429%, 0.9934 72.8571%, 1);
       --ghost-motion-spring-snappy: linear(0, 0.0043 0.8264%, 0.036 2.4793%, 0.1271 4.9587%, 0.6578 14.876%, 0.8392 19.0083%, 0.9867 23.9669%, 1.0328 26.4463%, 1.063 28.9256%, 1.0832 32.2314%, 1.0853 36.3636%, 1.0164 52.8926%, 0.9952 62.8099%, 1);
       --ghost-motion-translate: 0.5rem;
-      --ghost-roundness: 0.3;
+      --ghost-roundness: 0.5;
       --ghost-scrim: color-mix(in srgb, #0b0e0e 60%, transparent);
       --ghost-space-gap-lg: 1rem;
       --ghost-space-gap-md: 0.75rem;
@@ -1399,12 +1399,12 @@
       --ghost-status-warning-bg: #261a00;
       --ghost-status-warning-border: #5c4300;
       --ghost-status-warning-fg: #fed98e;
-      --ghost-surface-bg: #0f172a;
+      --ghost-surface-bg: #091416;
       --ghost-surface-fg: #f8fafc;
       --ghost-surface-inverse-bg: #f8fafc;
       --ghost-surface-inverse-fg: #0f172a;
-      --ghost-surface-muted-bg: #293240;
-      --ghost-surface-subtle-bg: #151d2d;
+      --ghost-surface-muted-bg: #232e31;
+      --ghost-surface-subtle-bg: #101b1d;
       --ghost-text-danger: #f87171;
       --ghost-text-default: #f8fafc;
       --ghost-text-info: #38bdf8;
@@ -1434,11 +1434,11 @@
       --ghost-type-numeric-tabular: tabular-nums;
       --ghost-type-size-2xl: clamp(1.5rem, 1.3333rem + 0.8333vw, 2rem);
       --ghost-type-size-3xl: clamp(1.875rem, 1.6667rem + 1.0417vw, 2.5rem);
-      --ghost-type-size-lg: clamp(1.0625rem, 1.0417rem + 0.1042vw, 1.125rem);
-      --ghost-type-size-md: clamp(0.9375rem, 0.9167rem + 0.1042vw, 1rem);
-      --ghost-type-size-sm: clamp(0.8125rem, 0.7917rem + 0.1042vw, 0.875rem);
+      --ghost-type-size-lg: 0.9375rem;
+      --ghost-type-size-md: 0.875rem;
+      --ghost-type-size-sm: 0.8125rem;
       --ghost-type-size-xl: clamp(1.25rem, 1.1667rem + 0.4167vw, 1.5rem);
-      --ghost-type-size-xs: clamp(0.75rem, 0.7292rem + 0.1042vw, 0.8125rem);
+      --ghost-type-size-xs: 0.75rem;
       --ghost-type-weight-bold: 700;
       --ghost-type-weight-medium: 500;
       --ghost-type-weight-regular: 400;
@@ -1462,13 +1462,13 @@
       --ghost-motion-spring-gentle-duration: calc(583ms * var(--ghost-motion-intensity, 1));
       --ghost-motion-spring-snappy-duration: calc(504ms * var(--ghost-motion-intensity, 1));
       --ghost-motion-stagger: calc(40ms * var(--ghost-motion-intensity, 1));
-      --ghost-action-radius: calc(0.5rem * var(--ghost-roundness, 1));
-      --ghost-radius-lg: calc(0.75rem * var(--ghost-roundness, 1));
-      --ghost-radius-md: calc(0.5rem * var(--ghost-roundness, 1));
+      --ghost-action-radius: calc(0.375rem * var(--ghost-roundness, 1));
+      --ghost-radius-lg: calc(0.5rem * var(--ghost-roundness, 1));
+      --ghost-radius-md: calc(0.375rem * var(--ghost-roundness, 1));
       --ghost-radius-none: calc(0px * var(--ghost-roundness, 1));
       --ghost-radius-pill: calc(999px * var(--ghost-roundness, 1));
       --ghost-radius-sm: calc(0.25rem * var(--ghost-roundness, 1));
-      --ghost-radius-xl: calc(1rem * var(--ghost-roundness, 1));
+      --ghost-radius-xl: calc(0.75rem * var(--ghost-roundness, 1));
     }
   }
 
@@ -1478,14 +1478,17 @@
 
   :where([data-ghost-theme='calm']):not([data-ghost-density]):not(:where([data-ghost-density] *)) {
     --ghost-action-gap: 0.25rem;
-    --ghost-control-size-lg-min: 2.5rem;
-    --ghost-control-size-lg-padding-block: 0.75rem;
-    --ghost-control-size-lg-padding-inline: 1rem;
+    --ghost-control-size-lg-font: 0.875rem;
+    --ghost-control-size-lg-min: 2.25rem;
+    --ghost-control-size-lg-padding-block: 0.375rem;
+    --ghost-control-size-lg-padding-inline: 0.75rem;
+    --ghost-control-size-md-font: 0.8125rem;
     --ghost-control-size-md-min: 2rem;
-    --ghost-control-size-md-padding-block: 0.5rem;
-    --ghost-control-size-md-padding-inline: 0.75rem;
+    --ghost-control-size-md-padding-block: 0.25rem;
+    --ghost-control-size-md-padding-inline: 0.625rem;
+    --ghost-control-size-sm-font: 0.75rem;
     --ghost-control-size-sm-min: 1.75rem;
-    --ghost-control-size-sm-padding-block: 0.25rem;
+    --ghost-control-size-sm-padding-block: 0.125rem;
     --ghost-control-size-sm-padding-inline: 0.5rem;
     --ghost-space-gap-lg: 0.75rem;
     --ghost-space-gap-md: 0.5rem;
@@ -1502,22 +1505,25 @@
 
   :where([data-ghost-theme='calm']):not([data-ghost-density]):not(:where([data-ghost-density] *)), :where([data-ghost-theme='calm']):not([data-ghost-density]):not(:where([data-ghost-density] *)) :where(*) {
     --ghost-action-radius: calc(0.25rem * var(--ghost-roundness, 1));
-    --ghost-radius-lg: calc(0.5rem * var(--ghost-roundness, 1));
+    --ghost-radius-lg: calc(0.375rem * var(--ghost-roundness, 1));
     --ghost-radius-md: calc(0.25rem * var(--ghost-roundness, 1));
     --ghost-radius-sm: calc(0px * var(--ghost-roundness, 1));
-    --ghost-radius-xl: calc(0.75rem * var(--ghost-roundness, 1));
+    --ghost-radius-xl: calc(0.5rem * var(--ghost-roundness, 1));
   }
 
   :where(:where([data-ghost-theme='calm']):where([data-ghost-density='compact']), :where([data-ghost-theme='calm']) :where([data-ghost-density='compact'])) {
     --ghost-action-gap: 0.25rem;
-    --ghost-control-size-lg-min: 2.5rem;
-    --ghost-control-size-lg-padding-block: 0.75rem;
-    --ghost-control-size-lg-padding-inline: 1rem;
+    --ghost-control-size-lg-font: 0.875rem;
+    --ghost-control-size-lg-min: 2.25rem;
+    --ghost-control-size-lg-padding-block: 0.375rem;
+    --ghost-control-size-lg-padding-inline: 0.75rem;
+    --ghost-control-size-md-font: 0.8125rem;
     --ghost-control-size-md-min: 2rem;
-    --ghost-control-size-md-padding-block: 0.5rem;
-    --ghost-control-size-md-padding-inline: 0.75rem;
+    --ghost-control-size-md-padding-block: 0.25rem;
+    --ghost-control-size-md-padding-inline: 0.625rem;
+    --ghost-control-size-sm-font: 0.75rem;
     --ghost-control-size-sm-min: 1.75rem;
-    --ghost-control-size-sm-padding-block: 0.25rem;
+    --ghost-control-size-sm-padding-block: 0.125rem;
     --ghost-control-size-sm-padding-inline: 0.5rem;
     --ghost-space-gap-lg: 0.75rem;
     --ghost-space-gap-md: 0.5rem;
@@ -1534,23 +1540,26 @@
 
   :where(:where([data-ghost-theme='calm']):where([data-ghost-density='compact']), :where([data-ghost-theme='calm']) :where([data-ghost-density='compact'])), :where(:where([data-ghost-theme='calm']):where([data-ghost-density='compact']), :where([data-ghost-theme='calm']) :where([data-ghost-density='compact'])) :where(*) {
     --ghost-action-radius: calc(0.25rem * var(--ghost-roundness, 1));
-    --ghost-radius-lg: calc(0.5rem * var(--ghost-roundness, 1));
+    --ghost-radius-lg: calc(0.375rem * var(--ghost-roundness, 1));
     --ghost-radius-md: calc(0.25rem * var(--ghost-roundness, 1));
     --ghost-radius-sm: calc(0px * var(--ghost-roundness, 1));
-    --ghost-radius-xl: calc(0.75rem * var(--ghost-roundness, 1));
+    --ghost-radius-xl: calc(0.5rem * var(--ghost-roundness, 1));
   }
 
   :where(:where([data-ghost-theme='calm']):where([data-ghost-density='comfortable']), :where([data-ghost-theme='calm']) :where([data-ghost-density='comfortable'])) {
     --ghost-action-gap: 0.5rem;
-    --ghost-control-size-lg-min: 3rem;
-    --ghost-control-size-lg-padding-block: 1rem;
-    --ghost-control-size-lg-padding-inline: 1.25rem;
-    --ghost-control-size-md-min: 2.5rem;
-    --ghost-control-size-md-padding-block: 0.75rem;
-    --ghost-control-size-md-padding-inline: 1rem;
+    --ghost-control-size-lg-font: 0.9375rem;
+    --ghost-control-size-lg-min: 2.5rem;
+    --ghost-control-size-lg-padding-block: 0.5rem;
+    --ghost-control-size-lg-padding-inline: 1rem;
+    --ghost-control-size-md-font: 0.875rem;
+    --ghost-control-size-md-min: 2.25rem;
+    --ghost-control-size-md-padding-block: 0.375rem;
+    --ghost-control-size-md-padding-inline: 0.75rem;
+    --ghost-control-size-sm-font: 0.8125rem;
     --ghost-control-size-sm-min: 2rem;
-    --ghost-control-size-sm-padding-block: 0.5rem;
-    --ghost-control-size-sm-padding-inline: 0.75rem;
+    --ghost-control-size-sm-padding-block: 0.25rem;
+    --ghost-control-size-sm-padding-inline: 0.625rem;
     --ghost-space-gap-lg: 1rem;
     --ghost-space-gap-md: 0.75rem;
     --ghost-space-gap-sm: 0.5rem;
@@ -1565,24 +1574,27 @@
   }
 
   :where(:where([data-ghost-theme='calm']):where([data-ghost-density='comfortable']), :where([data-ghost-theme='calm']) :where([data-ghost-density='comfortable'])), :where(:where([data-ghost-theme='calm']):where([data-ghost-density='comfortable']), :where([data-ghost-theme='calm']) :where([data-ghost-density='comfortable'])) :where(*) {
-    --ghost-action-radius: calc(0.5rem * var(--ghost-roundness, 1));
-    --ghost-radius-lg: calc(0.75rem * var(--ghost-roundness, 1));
-    --ghost-radius-md: calc(0.5rem * var(--ghost-roundness, 1));
+    --ghost-action-radius: calc(0.375rem * var(--ghost-roundness, 1));
+    --ghost-radius-lg: calc(0.5rem * var(--ghost-roundness, 1));
+    --ghost-radius-md: calc(0.375rem * var(--ghost-roundness, 1));
     --ghost-radius-sm: calc(0.25rem * var(--ghost-roundness, 1));
-    --ghost-radius-xl: calc(1rem * var(--ghost-roundness, 1));
+    --ghost-radius-xl: calc(0.75rem * var(--ghost-roundness, 1));
   }
 
   :where(:where([data-ghost-theme='calm']):where([data-ghost-density='spacious']), :where([data-ghost-theme='calm']) :where([data-ghost-density='spacious'])) {
     --ghost-action-gap: 0.75rem;
-    --ghost-control-size-lg-min: 3rem;
-    --ghost-control-size-lg-padding-block: 1.25rem;
-    --ghost-control-size-lg-padding-inline: 1.5rem;
-    --ghost-control-size-md-min: 3rem;
-    --ghost-control-size-md-padding-block: 1rem;
-    --ghost-control-size-md-padding-inline: 1.25rem;
+    --ghost-control-size-lg-font: 1rem;
+    --ghost-control-size-lg-min: 2.75rem;
+    --ghost-control-size-lg-padding-block: 0.625rem;
+    --ghost-control-size-lg-padding-inline: 1.25rem;
+    --ghost-control-size-md-font: 0.9375rem;
+    --ghost-control-size-md-min: 2.5rem;
+    --ghost-control-size-md-padding-block: 0.5rem;
+    --ghost-control-size-md-padding-inline: 1rem;
+    --ghost-control-size-sm-font: 0.8125rem;
     --ghost-control-size-sm-min: 2.25rem;
-    --ghost-control-size-sm-padding-block: 0.75rem;
-    --ghost-control-size-sm-padding-inline: 1rem;
+    --ghost-control-size-sm-padding-block: 0.375rem;
+    --ghost-control-size-sm-padding-inline: 0.75rem;
     --ghost-space-gap-lg: 1.25rem;
     --ghost-space-gap-md: 1rem;
     --ghost-space-gap-sm: 0.75rem;
@@ -1597,11 +1609,11 @@
   }
 
   :where(:where([data-ghost-theme='calm']):where([data-ghost-density='spacious']), :where([data-ghost-theme='calm']) :where([data-ghost-density='spacious'])), :where(:where([data-ghost-theme='calm']):where([data-ghost-density='spacious']), :where([data-ghost-theme='calm']) :where([data-ghost-density='spacious'])) :where(*) {
-    --ghost-action-radius: calc(0.75rem * var(--ghost-roundness, 1));
-    --ghost-radius-lg: calc(1rem * var(--ghost-roundness, 1));
-    --ghost-radius-md: calc(0.75rem * var(--ghost-roundness, 1));
-    --ghost-radius-sm: calc(0.5rem * var(--ghost-roundness, 1));
-    --ghost-radius-xl: calc(1rem * var(--ghost-roundness, 1));
+    --ghost-action-radius: calc(0.5rem * var(--ghost-roundness, 1));
+    --ghost-radius-lg: calc(0.75rem * var(--ghost-roundness, 1));
+    --ghost-radius-md: calc(0.5rem * var(--ghost-roundness, 1));
+    --ghost-radius-sm: calc(0.375rem * var(--ghost-roundness, 1));
+    --ghost-radius-xl: calc(0.75rem * var(--ghost-roundness, 1));
   }
 
   @media (pointer: coarse) {
@@ -1618,14 +1630,14 @@
     }
 
     :where(:where([data-ghost-theme='calm']):where([data-ghost-density='comfortable']), :where([data-ghost-theme='calm']) :where([data-ghost-density='comfortable'])) {
-      --ghost-control-size-lg-min: 3rem;
+      --ghost-control-size-lg-min: 2.75rem;
       --ghost-control-size-md-min: 2.75rem;
       --ghost-control-size-sm-min: 2.75rem;
     }
 
     :where(:where([data-ghost-theme='calm']):where([data-ghost-density='spacious']), :where([data-ghost-theme='calm']) :where([data-ghost-density='spacious'])) {
-      --ghost-control-size-lg-min: 3rem;
-      --ghost-control-size-md-min: 3rem;
+      --ghost-control-size-lg-min: 2.75rem;
+      --ghost-control-size-md-min: 2.75rem;
       --ghost-control-size-sm-min: 2.75rem;
     }
   }

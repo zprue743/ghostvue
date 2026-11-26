@@ -184,7 +184,7 @@ defineTheme({
   name: 'calm',
   primary: 215,
   neutralTint: 215,
-  roundness: 0.3,
+  roundness: 0.5,
   density: 'compact',
   motionIntensity: 0.6,
   elevation: 'subtle',
@@ -215,9 +215,13 @@ defineTheme({
 ```
 
 `mono` keeps default **status** hues so danger/success stay
-distinguishable. Docs chrome dogfoods `calm` (`class="ghost-theme"
-data-ghost-theme="calm"`) and ships a switcher for `default` | `calm` |
-`vibrant` | `mono`.
+distinguishable. Docs chrome boots into `default` (`data-ghost-theme="default"`)
+on first paint and ships a switcher for `default` | `calm` |
+`vibrant` | `mono`. (Calibrated in `#330`: `calm` roundness moved from `0.3`
+to `0.5` so compact corners land on crisp `2px` geometry instead of subpixel
+`1.2px`/`2.4px`, and docs first paint switched from `calm` to the calibrated
+`default` Precision SaaS baseline while keeping all four themes in the live
+switcher.)
 
 ### 5. Contrast: auto-adjust fg, then fail loudly
 
@@ -270,8 +274,9 @@ into the brand color.
 
 - Node `defineTheme` lives at `@ghostvue/themes/define` (not the main
   entry). Flagship CSS is compiled at package build. `pnpm contrast`
-  gates `default`, `calm`, `vibrant`, and `mono`. Docs chrome dogfoods
-  `calm` and restores a persisted choice with a blocking inline script.
+  gates `default`, `calm`, `vibrant`, and `mono`. Docs chrome boots into
+  `default` on first paint and restores a persisted choice with a blocking
+  inline script.
 - `default` DTCG pipeline is unchanged.
 - Nested themed wrappers inherit the nearest `data-ghost-theme` because
   `.ghost-themed-scope` is no longer a token host.
@@ -290,8 +295,10 @@ generated theme.
 1. **Node-only.** `defineTheme` runs in Node. `culori` stays a
    `devDependency` of `@ghostvue/themes`. No new runtime dependency.
 2. **Flagship names:** `calm`, `vibrant`, and `mono`.
-3. **Docs chrome dogfoods `calm` on first paint.** `default` stays the
-   published baseline theme.
+3. **Docs chrome dogfoods `calm` on first paint** (amended in `#330` to
+   boot into `default` on first paint once authored tokens were calibrated to
+   Precision SaaS proportions, while keeping `calm`, `vibrant`, and `mono` in
+   the live docs switcher). `default` stays the published baseline theme.
 4. **`default` stays hand-authored DTCG** for now.
 5. **Ship `elevation` and `gradient` flavor knobs in v1.**
 6. **A small blocking inline script in the docs is acceptable** to restore

@@ -28,7 +28,7 @@ import { startStaticServer } from './static-server'
  * therefore the page as laid out for that viewport, with the rail where a
  * reader first sees it.
  *
- * The docs host is never changed from its first paint (`calm`). Apart from
+ * The docs host is never changed from its first paint (`default`). Apart from
  * that pin, the page is never padded or restyled by the test.
  */
 
@@ -68,7 +68,7 @@ test.describe('docs landing visual baselines', { tag: '@visual' }, () => {
 
           const html = page.locator('html')
           await expect(html).toHaveAttribute('data-ghost-mode', mode)
-          await expect(html).toHaveAttribute('data-ghost-theme', 'calm')
+          await expect(html).toHaveAttribute('data-ghost-theme', 'default')
 
           const landing = page.locator('.ghost-landing')
           // Hydrated, with reduced motion recognised: nothing is animating.

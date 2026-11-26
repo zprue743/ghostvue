@@ -104,16 +104,21 @@
           "$value": "{control.height.28}",
           "$description": "Small control height at compact density. 28px."
         },
+        "font": {
+          "$type": "fontSize",
+          "$value": "{font.size.xs}",
+          "$description": "Small control font size at compact density. 12px."
+        },
         "padding": {
           "block": {
             "$type": "dimension",
-            "$value": "{space.1}",
-            "$description": "Small control block padding at compact density."
+            "$value": "{space.0_5}",
+            "$description": "Small control block padding at compact density. 2px."
           },
           "inline": {
             "$type": "dimension",
             "$value": "{space.2}",
-            "$description": "Small control inline padding at compact density."
+            "$description": "Small control inline padding at compact density. 8px."
           }
         }
       },
@@ -123,35 +128,45 @@
           "$value": "{control.height.32}",
           "$description": "Medium control height at compact density. 32px."
         },
+        "font": {
+          "$type": "fontSize",
+          "$value": "{font.size.sm}",
+          "$description": "Medium control font size at compact density. 13px."
+        },
         "padding": {
           "block": {
             "$type": "dimension",
-            "$value": "{space.2}",
-            "$description": "Medium control block padding at compact density."
+            "$value": "{space.1}",
+            "$description": "Medium control block padding at compact density. 4px."
           },
           "inline": {
             "$type": "dimension",
-            "$value": "{space.3}",
-            "$description": "Medium control inline padding at compact density."
+            "$value": "{space.2_5}",
+            "$description": "Medium control inline padding at compact density. 10px."
           }
         }
       },
       "lg": {
         "min": {
           "$type": "dimension",
-          "$value": "{control.height.40}",
-          "$description": "Large control height at compact density. 40px."
+          "$value": "{control.height.36}",
+          "$description": "Large control height at compact density. 36px."
+        },
+        "font": {
+          "$type": "fontSize",
+          "$value": "{font.size.md}",
+          "$description": "Large control font size at compact density. 14px."
         },
         "padding": {
           "block": {
             "$type": "dimension",
-            "$value": "{space.3}",
-            "$description": "Large control block padding at compact density."
+            "$value": "{space.1_5}",
+            "$description": "Large control block padding at compact density. 6px."
           },
           "inline": {
             "$type": "dimension",
-            "$value": "{space.4}",
-            "$description": "Large control inline padding at compact density."
+            "$value": "{space.3}",
+            "$description": "Large control inline padding at compact density. 12px."
           }
         }
       }

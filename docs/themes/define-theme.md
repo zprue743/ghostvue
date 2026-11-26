@@ -70,7 +70,7 @@ inside a nested flagship inherits that flagship. `data-ghost-mode` and
 
 | `data-ghost-theme` | Intent              | Knobs                                                                                                             |
 | ------------------ | ------------------- | ----------------------------------------------------------------------------------------------------------------- |
-| `calm`             | Refined enterprise  | hue 215, compact, roundness 0.3, motion 0.6, elevation subtle, gradient none, interactivity subtle                |
+| `calm`             | Refined enterprise  | hue 215, compact, roundness 0.5, motion 0.6, elevation subtle, gradient none, interactivity subtle                |
 | `vibrant`          | Striking expressive | hue 292, comfortable, roundness 1, motion 1, elevation dramatic, gradient aurora, interactivity expressive        |
 | `mono`             | Crisp monochrome    | `#171717`, `neutralTint: 'none'`, roundness 0, motion 0.45, elevation subtle, gradient none, interactivity subtle |
 
@@ -81,7 +81,7 @@ distinguishable. These files are package exports:
 - `@ghostvue/themes/vibrant.css`
 - `@ghostvue/themes/mono.css`
 
-Docs chrome dogfoods `calm` on first paint and ships a switcher for
+Docs chrome boots into `default` on first paint and ships a switcher for
 `default` \| `calm` \| `vibrant` \| `mono`. A blocking inline script restores
 a persisted choice from `localStorage` before paint. `default` remains the
 published baseline for applications.
