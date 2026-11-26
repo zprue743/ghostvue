@@ -8,6 +8,7 @@ import {
   describePreviewWidth,
   resolvePreviewWidth,
 } from '../../apps/docs/.vitepress/theme/demo-preview-controls'
+import { enhanceMarkdownCodeFences } from '../../apps/docs/.vitepress/theme/enhance-code-fences'
 import DemoPreview from '../../apps/docs/.vitepress/theme/DemoPreview.vue'
 
 const SOURCE = '<template>\n  <button>Live demo</button>\n</template>'
@@ -108,7 +109,10 @@ describe('DemoPreview copy', () => {
     expect(writeText).toHaveBeenCalledWith(`${SOURCE}\n`)
     expect(status.text()).toBe('Copied')
     expect(status.attributes('data-state')).toBe('copied')
-    expect(copy.text()).toBe('Copy')
+    expect(copy.attributes('aria-label')).toBe('Copy Themed source')
+    expect(copy.attributes('data-copied')).toBe('')
+    expect(copy.find('.ghost-copy-icon__copy').exists()).toBe(true)
+    expect(copy.find('.ghost-copy-icon__check').exists()).toBe(true)
 
     // A second copy restarts the timer instead of letting the first clear it.
     await vi.advanceTimersByTimeAsync(DEMO_COPY_STATUS_MS - 500)
@@ -116,8 +120,10 @@ describe('DemoPreview copy', () => {
     await flushPromises()
     await vi.advanceTimersByTimeAsync(DEMO_COPY_STATUS_MS - 500)
     expect(status.text()).toBe('Copied')
+    expect(copy.attributes('data-copied')).toBe('')
     await vi.advanceTimersByTimeAsync(500)
     expect(status.text()).toBe('')
+    expect(copy.attributes('data-copied')).toBeUndefined()
   })
 
   it('reports failure, opens the source and selects it when no clipboard exists', async () => {
@@ -248,5 +254,98 @@ describe('DemoPreview preview width', () => {
     demo.focus()
     await sourceToggle.trigger('click')
     expect(document.activeElement).toBe(demo)
+  })
+})
+
+describe('enhanceMarkdownCodeFences', () => {
+  beforeEach(() => {
+    vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] })
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
+    removeClipboard()
+    document.body.innerHTML = ''
+  })
+
+  it('hydrates standalone fences with SVG icons and status, skipping DemoPreview source', async () => {
+    const writeText = vi.fn(() => Promise.resolve())
+    stubClipboard(writeText)
+
+    document.body.innerHTML = `
+      <div class="vp-doc">
+        <div class="language-bash">
+          <button title="Copy Code" class="copy"></button>
+          <span class="lang">bash</span>
+          <pre><code>$ pnpm install\n</code></pre>
+        </div>
+        <div class="ghost-example__source">
+          <div class="language-vue">
+            <button title="Copy Code" class="copy"></button>
+            <span class="lang">vue</span>
+            <pre><code>&lt;template /&gt;</code></pre>
+          </div>
+        </div>
+      </div>
+    `
+
+    enhanceMarkdownCodeFences()
+
+    const standaloneBtn = document.querySelector<HTMLButtonElement>(
+      '.vp-doc > .language-bash > button.copy',
+    )
+    const demoSourceBtn = document.querySelector<HTMLButtonElement>(
+      '.ghost-example__source button.copy',
+    )
+    expect(standaloneBtn?.getAttribute('aria-label')).toBe('Copy bash code')
+    expect(
+      standaloneBtn?.querySelector('.ghost-copy-icon__copy'),
+    ).not.toBeNull()
+    expect(
+      standaloneBtn?.querySelector('.ghost-copy-icon__check'),
+    ).not.toBeNull()
+    expect(demoSourceBtn?.dataset.ghostEnhanced).toBeUndefined()
+
+    standaloneBtn?.click()
+    await flushPromises()
+
+    expect(writeText).toHaveBeenCalledWith('pnpm install')
+    expect(standaloneBtn?.classList.contains('copied')).toBe(true)
+    const status = document.querySelector(
+      '.vp-doc > .language-bash > [role="status"]',
+    )
+    expect(status?.textContent).toBe('Copied')
+
+    await vi.advanceTimersByTimeAsync(DEMO_COPY_STATUS_MS)
+    expect(standaloneBtn?.classList.contains('copied')).toBe(false)
+    expect(status?.textContent).toBe('')
+  })
+
+  it('selects fence code and announces failure when clipboard is unavailable', async () => {
+    removeClipboard()
+
+    document.body.innerHTML = `
+      <div class="vp-doc">
+        <div class="language-ts">
+          <button title="Copy Code" class="copy"></button>
+          <span class="lang">ts</span>
+          <pre><code>const x = 1</code></pre>
+        </div>
+      </div>
+    `
+
+    enhanceMarkdownCodeFences()
+    const btn = document.querySelector<HTMLButtonElement>(
+      '.vp-doc > .language-ts > button.copy',
+    )
+    btn?.click()
+    await flushPromises()
+
+    const status = document.querySelector(
+      '.vp-doc > .language-ts > [role="status"]',
+    )
+    expect(status?.getAttribute('data-state')).toBe('failed')
+    expect(status?.textContent).toContain('Copy failed')
+    expect(String(window.getSelection())).toBe('const x = 1')
   })
 })
