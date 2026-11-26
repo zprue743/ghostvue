@@ -14,7 +14,7 @@ import { defineTool, type GhostvueTool } from './tool.js'
 const stamp: GhostvueStamp = {
   version: '0.1.0',
   assetBundleId: `sha256:${'b'.repeat(64)}`,
-  manifestSchemaId: 'https://unpkg.com/@ghostvue/core@1/manifest.schema.json',
+  manifestSchemaId: 'https://ghostvue.dev/schemas/v1/manifest.schema.json',
 }
 
 const findTool = defineTool({

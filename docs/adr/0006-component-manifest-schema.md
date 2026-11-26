@@ -1,6 +1,8 @@
 # ADR 0006: Component manifest JSON Schema
 
-Identifiers updated for the GhostVue rebrand (ADR 0010).
+Identifiers updated for the GhostVue rebrand (ADR 0010). Schema `$id` URLs
+amended for the `0.1.0` release (GHO-217); see
+[Amendment: hosted v1 URLs](#amendment-hosted-v1-urls).
 
 - Status: accepted
 - Date: 2026-11-11
@@ -29,11 +31,12 @@ framework-independent contracts; Vue-specific fields in the instance (v-model,
 slots) are still data, not Vue runtime.
 
 **Identity.** The schema `$id` is
-`https://unpkg.com/@ghostvue/core@1/manifest.schema.json` (major version in the
-URL). Each instance sets required `schemaVersion`, starting at `1.0.0`. A
+`https://ghostvue.dev/schemas/v1/manifest.schema.json` (major version in the
+URL; originally `https://unpkg.com/@ghostvue/core@1/manifest.schema.json`, see
+the amendment below). Each instance sets required `schemaVersion`, starting at `1.0.0`. A
 breaking change to the instance shape bumps both the `$id` major version and
 `schemaVersion` major. Additive fields may bump `schemaVersion` minor while
-keeping `$id` `@1` only if old documents remain valid.
+keeping `$id` `v1` only if old documents remain valid.
 
 **Validation.** Root-only `ajv` 8 (`ajv/dist/2020`). No `ajv-formats`; strings
 that look like URLs use `pattern`. Manifests are not loaded at runtime by
@@ -94,9 +97,37 @@ dependency.
   breaking, same as a renamed prop. CSS variable names follow
   [ADR 0007](./0007-token-pipeline.md).
 
+## Amendment: hosted v1 URLs
+
+- Date: 2026-11-26 (GHO-217, maintainer decision recorded on issue #314)
+
+`@ghostvue/core` stays private for `0.1.0`, so the unpkg `$id` URLs above would
+never resolve. The schemas now use distinct URLs on the docs site:
+
+| Schema              | `$id`                                                             |
+| ------------------- | ----------------------------------------------------------------- |
+| Component manifest  | `https://ghostvue.dev/schemas/v1/manifest.schema.json`            |
+| Manifest collection | `https://ghostvue.dev/schemas/v1/manifest-collection.schema.json` |
+
+- The collection's `properties.components.items.$ref` is the component schema
+  `$id`, so validators resolve it by identity, not by relative path.
+- `schemas/` stays canonical. `packages/core/` and `docs/public/schemas/v1/`
+  hold byte-identical copies; VitePress serves `docs/public/` unchanged, so each
+  `$id` URL returns exactly the checked-in file.
+  `tests/integration/manifest-schema-hosting.test.ts` enforces the ids, the
+  `$ref`, and byte equality of every copy.
+- `@ghostvue/mcp` exports `manifestSchemaId` with the component `$id`, refuses a
+  bundled schema with any other `$id`, and stamps it on every tool response.
+- A breaking change publishes a new `v2/` directory beside `v1/`; `v1` files
+  are never edited in place once released except for additive changes that keep
+  old documents valid.
+- Live resolution of both URLs is verified on `https://ghostvue.dev` after the
+  docs deploy that ships them.
+
 ## Compatibility implications
 
-Additive public export: `@ghostvue/core/manifest.schema.json`. No runtime
+Additive public export: `@ghostvue/core/manifest.schema.json` (internal since
+GHO-217; the hosted v1 URL is the public identity). No runtime
 behavior change. No SSR, browser, or accessibility impact beyond documenting
 those contracts. Hand-written `GhostButton` is not a published component; it does
 not start Button's compatibility clock.

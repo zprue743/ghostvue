@@ -234,7 +234,11 @@ schemas/component-manifest-collection.schema.json
 @ghostvue/core/manifest-collection.schema.json   // byte-identical published copy
 ```
 
-Its `$id` is `https://unpkg.com/@ghostvue/core@1/manifest-collection.schema.json`.
+Its `$id` is `https://ghostvue.dev/schemas/v1/manifest-collection.schema.json`,
+distinct from the component schema `$id`
+(`https://ghostvue.dev/schemas/v1/manifest.schema.json`), which its
+`components.items.$ref` names. Both are served from byte-identical copies in
+`docs/public/schemas/v1/` ([ADR 0006](../adr/0006-component-manifest-schema.md#amendment-hosted-v1-urls)).
 Envelope fields:
 
 - `schemaVersion` — envelope schema version (`1.0.0`), independent of each

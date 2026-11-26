@@ -42,14 +42,14 @@ component-manifest `schemaVersion`) and a **`ghostvue`** stamp:
   "ghostvue": {
     "version": "0.x.y",
     "assetBundleId": "sha256:…",
-    "manifestSchemaId": "https://unpkg.com/@ghostvue/core@1/manifest.schema.json"
+    "manifestSchemaId": "https://ghostvue.dev/schemas/v1/manifest.schema.json"
   }
 }
 ```
 
 - `version` — semver of the published `@ghostvue/mcp` package, aligned with the monorepo release that produced the bundle (same Changeset train as `@ghostvue/vue`).
 - `assetBundleId` — deterministic hash over all bundled bytes (manifests, examples, docs corpus, tokens). Implementation must document the hash algorithm and file set in `packages/mcp/README.md`.
-- `manifestSchemaId` — `$id` from [ADR 0006](../adr/0006-component-manifest-schema.md); today `https://unpkg.com/@ghostvue/core@1/manifest.schema.json`.
+- `manifestSchemaId` — `$id` from [ADR 0006](../adr/0006-component-manifest-schema.md); today `https://ghostvue.dev/schemas/v1/manifest.schema.json` (was the unpkg `@ghostvue/core@1` URL before GHO-217).
 
 Clients may pass optional `expectedGhostvueVersion` on any tool input; when present and mismatched, the server returns `VERSION_MISMATCH` (see §10) before doing work.
 

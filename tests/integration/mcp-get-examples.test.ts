@@ -28,7 +28,7 @@ const repositoryRoot = resolve(process.cwd())
 const stamp: GhostvueStamp = {
   version: '0.0.0',
   assetBundleId: `sha256:${'0'.repeat(64)}`,
-  manifestSchemaId: 'https://unpkg.com/@ghostvue/core@1/manifest.schema.json',
+  manifestSchemaId: 'https://ghostvue.dev/schemas/v1/manifest.schema.json',
 }
 
 const manifestDirectories = [

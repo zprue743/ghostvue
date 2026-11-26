@@ -25,10 +25,6 @@
     "manifest.schema.json",
     "manifest-collection.schema.json"
   ],
-  "publishConfig": {
-    "access": "public",
-    "provenance": true
-  },
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
     "typecheck": "tsc -p tsconfig.json --noEmit"

@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://unpkg.com/@ghostvue/core@1/manifest.schema.json",
+  "$id": "https://ghostvue.dev/schemas/v1/manifest.schema.json",
   "title": "GhostVue component manifest",
   "description": "Machine-readable public contract for one GhostVue component. Docs, the future @ghostvue/mcp server, codegen, and evals all read this shape. Instance documents set schemaVersion; breaking schema changes bump the $id major version.",
   "type": "object",
