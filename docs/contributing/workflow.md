@@ -29,6 +29,26 @@ commits.
   `GHO-n:` (for example `GHO-17: …`). Open GHO issues were migrated as
   `#306`–`#320`.
 
+### Agent readiness
+
+When you create or triage an open issue, apply `agent:ready` if it meets all
+three conditions below.
+
+- The issue describes the problem, intended outcome, and scope clearly enough to
+  start work.
+- The acceptance criteria describe how to verify the outcome.
+- Any decisions, approvals, and prerequisites required for the scoped work are
+  in place, and the work can start now.
+
+If an issue is ineligible, remove `agent:ready` if present and record what needs
+to change. For open issue dependencies, add `blocked` and list them in the body
+as `Blocked by: #123, #456`. Reassess readiness when blockers clear and remove
+`blocked` when the issue becomes eligible. Before handing off, confirm the labels
+on the GitHub issue.
+
+`agent:ready` clears the scoped work for automatic pickup. The usual review,
+merge, and publication approval rules still apply.
+
 ### Release planning
 
 The [release roadmap](https://github.com/users/zprue743/projects/5/views/2) shows major
