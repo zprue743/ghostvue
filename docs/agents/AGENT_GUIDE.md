@@ -7,6 +7,8 @@ links here for canonical detail.
 ## Default workflow
 
 1. Read the root `AGENTS.md` and relevant canonical documentation.
+   When filing or triaging a GitHub issue, apply the
+   [agent readiness rules](../contributing/workflow.md#agent-readiness).
 2. Inspect existing related code, tests, exports, and docs before proposing a
    pattern.
 3. Confirm the package boundary and public API impact.
