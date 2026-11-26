@@ -8,7 +8,7 @@
  * Prettier-formatted layout: two-space indentation and one `uses:` per line.
  */
 
-import { readdirSync, readFileSync } from 'node:fs'
+import { existsSync, readdirSync, readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 
 import { describe, expect, it } from 'vitest'
@@ -345,24 +345,57 @@ describe('CI workflow', () => {
   })
 })
 
-describe('Renovate configuration', () => {
-  const config = JSON.parse(readRepoFile('renovate.json')) as {
-    extends: string[]
-    rangeStrategy: string
-    lockFileMaintenance: { enabled: boolean }
+describe('Dependabot configuration', () => {
+  const dependabotConfig = readRepoFile('.github/dependabot.yml')
+
+  function ecosystemBlock(ecosystem: 'npm' | 'github-actions'): string {
+    const marker = `  - package-ecosystem: ${ecosystem}`
+    const start = dependabotConfig.indexOf(marker)
+    if (start === -1) throw new Error(`Ecosystem ${ecosystem} not found`)
+    const rest = dependabotConfig.slice(start + marker.length)
+    const next = rest.indexOf('\n  - package-ecosystem:')
+    return next === -1 ? rest : rest.slice(0, next)
   }
 
-  it('pins npm versions and GitHub Action digests', () => {
-    expect(config.extends).toContain('helpers:pinGitHubActionDigests')
-    expect(config.rangeStrategy).toBe('pin')
-    expect(config.lockFileMaintenance.enabled).toBe(true)
+  it('replaces Renovate with a checked-in Dependabot v2 config', () => {
+    expect(existsSync(resolve(repositoryRoot, 'renovate.json'))).toBe(false)
+    expect(dependabotConfig).toMatch(/^version: 2$/m)
   })
 
-  it('never enables automerge', () => {
-    // Every update PR goes through the normal CI gate and human review.
-    expect(readRepoFile('renovate.json')).not.toMatch(
-      /"(?:platform)?automerge"\s*:\s*true/i,
-    )
+  it('schedules weekly Monday UTC updates with PR limits and labels', () => {
+    const npm = ecosystemBlock('npm')
+    expect(npm).toContain('directory: /')
+    expect(npm).toContain('interval: weekly')
+    expect(npm).toContain('day: monday')
+    expect(npm).toContain("time: '05:00'")
+    expect(npm).toContain('timezone: UTC')
+    expect(npm).toContain('open-pull-requests-limit: 5')
+    expect(npm).toContain('- dependencies')
+
+    const actions = ecosystemBlock('github-actions')
+    expect(actions).toContain('directory: /')
+    expect(actions).toContain('interval: weekly')
+    expect(actions).toContain('day: monday')
+    expect(actions).toContain("time: '05:00'")
+    expect(actions).toContain('timezone: UTC')
+    expect(actions).toContain('open-pull-requests-limit: 2')
+    expect(actions).toContain('- dependencies')
+  })
+
+  it('enforces a 3-day release cooldown, exact versioning, and grouping', () => {
+    const npm = ecosystemBlock('npm')
+    expect(npm).toContain('versioning-strategy: increase')
+    expect(npm).toMatch(/cooldown:\n\s+default-days: 3/)
+    expect(npm).toMatch(/playwright:\n\s+patterns:/)
+    expect(npm).toContain("'@playwright/test'")
+    expect(npm).toContain('- playwright\n')
+    expect(npm).toContain('- playwright-core\n')
+    for (const dep of ['node', "'@types/node'", 'pnpm']) {
+      expect(npm).toContain(`dependency-name: ${dep}`)
+    }
+
+    const actions = ecosystemBlock('github-actions')
+    expect(actions).toMatch(/github-actions:\n\s+patterns:\n\s+- '\*'/)
   })
 })
 

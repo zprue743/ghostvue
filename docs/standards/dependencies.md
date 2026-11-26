@@ -15,7 +15,7 @@ packages do not add an icon library or icon adapter package; see
 
 Development tooling may be broader but remains intentional. Avoid overlapping
 tools that enforce the same rule in different ways. Pin exact development
-versions through the lockfile and update them in reviewed changes. Renovate
+versions through the lockfile and update them in reviewed changes. Dependabot
 opens those update pull requests; see
 [CI and dependency updates](../contributing/ci.md).
 
