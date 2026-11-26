@@ -1,0 +1,241 @@
+/*
+ * Landing background section number (`LandingSectionNumber.vue`). A fixed,
+ * faint, split-flap number behind the section content. Only `transform`
+ * animates, so a flip never causes layout work.
+ *
+ * Layering (with the two rules in `landing-page.css`): the layer comes after
+ * `<main>` at `z-index: 0`, so it paints over the section backgrounds, and
+ * `.ghost-landing__inner` sits at `z-index: 1`, so all section content paints
+ * over the number.
+ */
+.ghost-landing-number-layer {
+  /*
+   * `clip-path` clips every descendant, fixed ones included, but unlike
+   * `transform`, `filter`, or `contain` it does not become the containing
+   * block for them. The number below therefore stays fixed to the viewport
+   * while being cut off at the edges of the landing page, so it never shows
+   * over the site footer.
+   */
+  clip-path: inset(0);
+  inset: 0;
+  pointer-events: none;
+  position: absolute;
+  z-index: 0;
+}
+
+.ghost-landing-number {
+  --_number-gap: 0.02em;
+  /*
+   * Fixed, not scaled by `--ghost-motion-intensity`: under Calm (0.6) and
+   * Mono (0.45) a scaled flip finishes too fast to read as a flap falling.
+   */
+  --_number-flip: 500ms;
+
+  color: var(--ghost-surface-fg);
+  display: flex;
+  font-size: clamp(9rem, 20vw, 17rem);
+  font-variant-numeric: tabular-nums;
+  font-weight: 800;
+  gap: 0.04em;
+  /*
+   * Top inline-end corner, just under the fixed nav. Both offsets are fixed
+   * lengths, so the number does not depend on viewport height at all: the
+   * visual spec captures the page in a window as tall as the page, and the
+   * number has to stay where a reader first sees it. The inline offset
+   * matches the gutter `.ghost-landing__inner` leaves for the section rail,
+   * so the number sits beside the rail's column, not underneath its markers.
+   */
+  inset-block-start: calc(var(--_landing-nav, 64px) + 1rem);
+  inset-inline-end: 4.5rem;
+  letter-spacing: 0;
+  line-height: 1;
+  /*
+   * The faintness lives here, on the whole number, not in the colours.
+   * During a flip a flap overlaps the half behind it; translucent glyphs
+   * would show through each other. Opaque glyphs on opaque tiles (see the
+   * flipping digit below), composited as one group at low opacity, hide
+   * what is behind a flap and still read as a watermark.
+   */
+  opacity: 0.06;
+  position: fixed;
+  user-select: none;
+}
+
+.ghost-landing-number__digit {
+  block-size: 1em;
+  display: block;
+  inline-size: 0.68em;
+  /* Depth for the flaps; each digit is its own vanishing point. */
+  perspective: 3em;
+  position: relative;
+}
+
+/*
+ * A half is a window onto the top or bottom of a full-height glyph. The thin
+ * gap between the two halves is the split of a split-flap display.
+ */
+.ghost-landing-number__half {
+  block-size: calc(50% - var(--_number-gap) / 2);
+  display: block;
+  inset-inline: 0;
+  overflow: hidden;
+  position: absolute;
+}
+
+/*
+ * Only a digit that is flipping gets opaque tiles: they stop the character
+ * behind a flap from showing through it. At rest the halves are transparent,
+ * because sections with different backgrounds scroll underneath and a
+ * page-coloured tile would show as a faint box on the tinted ones.
+ */
+.ghost-landing-number__digit[data-flipping] > .ghost-landing-number__half {
+  background: var(--ghost-surface-bg);
+}
+
+.ghost-landing-number__half--top {
+  inset-block-start: 0;
+}
+
+.ghost-landing-number__half--bottom {
+  inset-block-end: 0;
+}
+
+.ghost-landing-number__glyph {
+  block-size: 1em;
+  display: block;
+  inset-inline: 0;
+  line-height: 1em;
+  position: absolute;
+  text-align: center;
+}
+
+.ghost-landing-number__half--top > .ghost-landing-number__glyph {
+  inset-block-start: 0;
+}
+
+.ghost-landing-number__half--bottom > .ghost-landing-number__glyph {
+  inset-block-end: 0;
+}
+
+/*
+ * Flaps exist only while a flip runs and only render where motion is
+ * welcome. The component never mounts them under reduced motion; hiding them
+ * by default is the stylesheet's own guarantee of the same thing.
+ */
+.ghost-landing-number__flap {
+  display: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .ghost-landing-number__flap {
+    backface-visibility: hidden;
+    display: block;
+    z-index: 1;
+  }
+
+  /* A flap hinges on the split: the edge it shares with the other half. */
+  .ghost-landing-number__flap.ghost-landing-number__half--top {
+    transform-origin: 50% 100%;
+  }
+
+  .ghost-landing-number__flap.ghost-landing-number__half--bottom {
+    transform-origin: 50% 0%;
+  }
+
+  /* First half of the flip: the old character folds away to edge-on. */
+  .ghost-landing-number__flap--out {
+    animation: calc(var(--_number-flip) / 2) ease-in both;
+  }
+
+  /*
+   * Second half: the new character lands. `both` holds it edge-on (and so
+   * invisible) until its turn comes.
+   */
+  .ghost-landing-number__flap--in {
+    animation: calc(var(--_number-flip) / 2) ease-out
+      calc(var(--_number-flip) / 2) both;
+  }
+
+  .ghost-landing-number__flap--out.ghost-landing-number__half--top {
+    animation-name: ghost-landing-number-top-out;
+  }
+
+  .ghost-landing-number__flap--in.ghost-landing-number__half--bottom {
+    animation-name: ghost-landing-number-bottom-in;
+  }
+
+  .ghost-landing-number__flap--out.ghost-landing-number__half--bottom {
+    animation-name: ghost-landing-number-bottom-out;
+  }
+
+  .ghost-landing-number__flap--in.ghost-landing-number__half--top {
+    animation-name: ghost-landing-number-top-in;
+  }
+}
+
+@keyframes ghost-landing-number-top-out {
+  from {
+    transform: rotateX(0deg);
+  }
+
+  to {
+    transform: rotateX(-90deg);
+  }
+}
+
+@keyframes ghost-landing-number-bottom-in {
+  from {
+    transform: rotateX(90deg);
+  }
+
+  to {
+    transform: rotateX(0deg);
+  }
+}
+
+@keyframes ghost-landing-number-bottom-out {
+  from {
+    transform: rotateX(0deg);
+  }
+
+  to {
+    transform: rotateX(90deg);
+  }
+}
+
+@keyframes ghost-landing-number-top-in {
+  from {
+    transform: rotateX(-90deg);
+  }
+
+  to {
+    transform: rotateX(0deg);
+  }
+}
+
+/*
+ * Same limits as the rail: below this width the number would sit under
+ * section text with no free margin, and on very short viewports it would
+ * fill the screen.
+ */
+@media (max-width: 1099px), (max-height: 479px) {
+  .ghost-landing-number-layer {
+    display: none;
+  }
+}
+
+/*
+ * Forced colors replaces the faint tile and glyph colours with system
+ * colours at full strength, which would no longer read as decoration.
+ */
+@media (forced-colors: active) {
+  .ghost-landing-number-layer {
+    display: none;
+  }
+}
+
+@media print {
+  .ghost-landing-number-layer {
+    display: none;
+  }
+}

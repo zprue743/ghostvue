@@ -21,7 +21,7 @@ import { startStaticServer } from './static-server'
  * window of the page's height has nothing to emulate.
  *
  * That only works because the landing page routes every viewport-height
- * length (section spacing, the first-screen hero, the rail's size and
+ * length (section spacing, each section's full-page minimum, the rail's size and
  * position) through one property, `--_landing-vh`. Each test pins it to the
  * pixels it resolves to at the named viewport, proves the page height no
  * longer follows the window, and then grows the window. The capture is

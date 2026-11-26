@@ -15,6 +15,7 @@ import {
 import { useData } from 'vitepress'
 import {
   computed,
+  nextTick,
   onMounted,
   onUnmounted,
   ref,
@@ -24,9 +25,12 @@ import {
 
 import { exampleLoader, exampleSource } from '../../../../examples/load'
 import { defineDemoPreview } from './demo-preview-async'
+import { runDocsViewTransition, switchDocsTheme } from './docs-theme-transition'
 import LandingActionLink from './LandingActionLink.vue'
+import LandingHeroMark from './LandingHeroMark.vue'
 import { useLandingScroll } from './landing-motion'
 import { landingProgressionStages } from './landing-progression'
+import LandingSectionNumber from './LandingSectionNumber.vue'
 import LandingSectionRail from './LandingSectionRail.vue'
 import {
   landingCatalog,
@@ -36,7 +40,6 @@ import {
 import {
   DOCS_DEFAULT_THEME,
   DOCS_THEME_OPTIONS,
-  DOCS_THEME_STORAGE_KEY,
   isDocsThemeName,
   type DocsThemeName,
 } from './restore-theme'
@@ -129,17 +132,20 @@ function readDocsTheme(): void {
 
 function applyDocsTheme(next: string): void {
   if (!isDocsThemeName(next)) return
-  document.documentElement.setAttribute('data-ghost-theme', next)
-  try {
-    localStorage.setItem(DOCS_THEME_STORAGE_KEY, next)
-  } catch {
-    // Storage can be unavailable (private mode); the theme still applies.
-  }
+  // The control follows the choice at once. The attribute itself is written
+  // a frame later, inside the crossfade.
   themeName.value = next
+  switchDocsTheme(next)
 }
 
 function setDarkMode(next: boolean): void {
-  isDark.value = next
+  runDocsViewTransition(async () => {
+    isDark.value = next
+    // VitePress applies the appearance class when Vue flushes, and the docs
+    // theme mirrors it to `data-ghost-mode` from there. The transition must
+    // not take its "after" snapshot before both have landed.
+    await nextTick()
+  })
 }
 
 watch(isDark, (next) => {
@@ -203,7 +209,19 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div ref="root" class="ghost-landing" :data-landing-motion="motionMode">
+  <!--
+    Density is pinned for the whole page. `calm`, the docs default, is the
+    only flagship whose unset density is compact, so without the pin every
+    themed component on the page changed size when the reader switched theme
+    in the theming section, and the page moved under them. Compact keeps the
+    first view (calm) exactly as it was.
+  -->
+  <div
+    ref="root"
+    class="ghost-landing"
+    data-ghost-density="compact"
+    :data-landing-motion="motionMode"
+  >
     <LandingSectionRail />
 
     <main class="ghost-landing__main">
@@ -216,42 +234,10 @@ onUnmounted(() => {
       >
         <div class="ghost-landing__inner">
           <div class="ghost-landing__hero-copy" data-reveal="lift">
-            <div class="ghost-landing__hero-mark">
-              <svg
-                width="44"
-                height="44"
-                viewBox="0 0 64 64"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-                role="img"
-                aria-label="GhostVue Phantom V logo"
-              >
-                <path
-                  d="M32 8C19.85 8 10 17.85 10 30V54L17.33 47.5L24.67 54L32 47.5L39.33 54L46.67 47.5L54 54V30C54 17.85 44.15 8 32 8Z"
-                  fill="var(--ghost-action-primary-bg)"
-                  fill-opacity="0.18"
-                  stroke="var(--ghost-action-primary-bg)"
-                  stroke-width="3"
-                  stroke-linejoin="round"
-                />
-                <path
-                  d="M20 24L32 44L44 24H36.5L32 32L27.5 24H20Z"
-                  fill="var(--ghost-action-primary-bg)"
-                />
-                <circle
-                  cx="24.5"
-                  cy="18.5"
-                  r="2.2"
-                  fill="var(--ghost-surface-fg)"
-                />
-                <circle
-                  cx="39.5"
-                  cy="18.5"
-                  r="2.2"
-                  fill="var(--ghost-surface-fg)"
-                />
-              </svg>
-            </div>
+            <LandingHeroMark
+              :active="activeId === 'hero'"
+              :motion-mode="motionMode"
+            />
             <GhostBadge variant="outline" tone="accent" size="md">
               Pre-release · not on npm yet
             </GhostBadge>
@@ -728,6 +714,12 @@ onUnmounted(() => {
         </div>
       </section>
     </main>
+
+    <!--
+      After `<main>` on purpose: source order is what lets this decorative
+      layer paint over the section backgrounds (see its stylesheet).
+    -->
+    <LandingSectionNumber :active-id="activeId" :motion-mode="motionMode" />
   </div>
 </template>
 

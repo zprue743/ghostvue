@@ -177,6 +177,16 @@ These constraints apply to every example the docs frame renders:
   surface and month grid. They share one `date-picker-demo__*` block, kept
   identical by `tests/integration/date-picker-examples-styles.test.ts` and
   checked in the docs by `tests/e2e/docs-date-picker-examples.spec.ts`.
+- **Headless calendars.** The inline headless calendar examples are not
+  overlays, but an unstyled month grid reads as broken, so they follow the
+  same rule. Headless `GhostCalendar` renders no element of its own: wrap it
+  in a `calendar-demo` element and style the parts beneath it through their
+  `data-part`, `data-state`, `data-today` and `data-outside-month` hooks, in
+  an unscoped `<style>` block (the grid's rows and cells sit inside
+  `GhostCalendarGrid`, out of reach of the example's scoped attribute). Reset
+  the `<h2>` heading fully, because it picks up docs prose styles. Every
+  headless calendar example carries the same block, kept identical by
+  `tests/integration/calendar-examples-styles.test.ts`.
 
 ## Manifests
 

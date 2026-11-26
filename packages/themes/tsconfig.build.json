@@ -4,13 +4,15 @@
     "rootDir": "src",
     "outDir": "dist",
     "declaration": true,
+    // Published output carries no source maps: the tarball ships only dist/,
+    // so maps would point at src/ files consumers never receive (#347).
     "declarationMap": false,
-    "sourceMap": true
+    "sourceMap": false
   },
   "include": [
     "src/**/*.ts",
     "src/**/*.d.ts",
     "src/.publish-index.generated.ts"
   ],
-  "exclude": ["src/index.ts", "src/.registries/**/*.ts"]
+  "exclude": ["src/index.ts", "src/**/*.test.ts", "src/.registries/**/*.ts"]
 }

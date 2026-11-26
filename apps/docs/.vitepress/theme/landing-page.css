@@ -26,7 +26,19 @@
 
   color: var(--ghost-surface-fg);
   font-size: 1rem;
+  /*
+   * The docs chrome tightens tracking on `<html>` under the `mono` flagship
+   * (`docs-theme.css`). Inherited here, it re-wrapped the page's prose when
+   * the reader switched theme: with the fonts CI renders, the theming
+   * section's intro lost a line and everything beside and below it moved.
+   * That section exists to show that a retheme changes the look and nothing
+   * else, so the page keeps one tracking for every theme. Headings and
+   * components that set their own tracking are unaffected.
+   */
+  letter-spacing: normal;
   line-height: 1.6;
+  /* Containing block for the background section number's clipping layer. */
+  position: relative;
   width: 100%;
 }
 
@@ -48,6 +60,13 @@
    * would also detach its view timeline from the document scroller.
    */
   overflow-x: clip;
+  /*
+   * Every section is at least one full page: the viewport below the fixed
+   * nav, which is also where `scroll-margin-block-start` parks a section the
+   * rail jumps to. A section whose content is shorter centres it in the
+   * page; a taller one (most of them on a phone) simply grows.
+   */
+  min-block-size: calc(var(--_landing-vh) * 100 - var(--_landing-nav));
   padding-block: clamp(4rem, calc(var(--_landing-vh) * 11), 7.5rem);
   position: relative;
   scroll-margin-block-start: var(--_landing-nav);
@@ -74,6 +93,13 @@
   margin-inline: auto;
   max-inline-size: 78rem;
   padding-inline: var(--_landing-gutter);
+  /*
+   * Section content paints above the background section number, which sits
+   * at `z-index: 0` over the section backgrounds
+   * (`landing-section-number.css`).
+   */
+  position: relative;
+  z-index: 1;
 }
 
 /* Leave the right-hand gutter to the section rail once it is visible. */
@@ -237,8 +263,6 @@
 /* ---------- 1. Hero ---------- */
 
 .ghost-landing__section--hero {
-  /* Fills the first screen so the outro starts from a settled page. */
-  min-block-size: calc(var(--_landing-vh) * 100 - var(--_landing-nav));
   padding-block-start: clamp(2.5rem, calc(var(--_landing-vh) * 7), 5rem);
 }
 
@@ -593,10 +617,6 @@
 }
 
 /* ---------- 7. Closing ---------- */
-
-.ghost-landing__section--closing {
-  min-block-size: calc(var(--_landing-vh) * 72);
-}
 
 .ghost-landing__section--closing::before {
   background: radial-gradient(

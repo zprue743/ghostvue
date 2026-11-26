@@ -42,7 +42,7 @@ sections:
   compatibility:
     applicable: true
 unresolvedQuestions:
-  - question: 'Multi-column sort keyboard and secondary aria-sort when enableMultiSort ships.'
+  - question: 'GHO-250 (0.3.0 multi-column sort addendum): Zac sign-off required on secondary aria-sort policy, unmodified activation when >1 columns are sorted, maxMultiSortColCount overflow policy, AT/touch no-modifier affordances, and per-column enableMultiSort.'
     blocking: false
     reviewer: Zac
   - question: 'Promote informational 10k-row bench thresholds to verify gates after CI variance is known.'
@@ -88,7 +88,9 @@ Phase one explicitly excludes:
   (separate future specs; see [Child work decomposition](#child-work-decomposition)).
 - `role="grid"`, `role="treegrid"`, arrow-key cell navigation, and single-Tab-stop
   roving row focus (deferred grid-navigation spec).
-- **Multi-column sort in phase one** (deferred; single primary sort column only).
+- **Multi-column sort in phase one** (deferred to `0.3.0`; phase one supports a
+  single primary sort column only; see the proposed
+  [Multi-column sort specification (GHO-250)](#multi-column-sort-specification-gho-250-proposed-for-0-3-0)).
 - **Themed `GhostDataTable`** in `@ghostvue/themes` (headless examples and docs
   first).
 - Query-wide server bulk selection (“select all matching rows on the server”).
@@ -1291,7 +1293,12 @@ Reuses `GhostTable*`, `GhostPagination`, `GhostCheckbox`, `GhostEmptyState`,
 
 Non-blocking items (also in frontmatter with `blocking: false`):
 
-1. **Multi-sort (deferred):** keyboard + AT when `enableMultiSort` ships later.
+1. **Multi-sort (`GHO-250`, proposed for `0.3.0`):** Drafted in
+   [Multi-column sort specification (GHO-250)](#multi-column-sort-specification-gho-250-proposed-for-0-3-0);
+   held for Zac's sign-off on five design decisions (secondary `aria-sort`
+   policy, unmodified activation when `sorting.length > 1`, `maxMultiSortColCount`
+   overflow, no-modifier AT/touch affordance, and per-column `enableMultiSort`)
+   before `0.3.0` implementation begins.
 2. **Benchmark gates:** When to promote informational thresholds to `pnpm verify`.
 
 ## Side-by-side results (PrimeVue prototype)
@@ -1316,30 +1323,437 @@ intent, not production bundle performance.
 
 ## Child work decomposition
 
-| Child issue                                                                                         | Scope                                                    | Complexity |
-| --------------------------------------------------------------------------------------------------- | -------------------------------------------------------- | ---------- |
-| **Done:** GhostVue vs PrimeVue prototype ([PR #269](https://github.com/zprue743/ghostvue/pull/269)) | Evidence folded into spec; prototype PR closed unmerged  | —          |
-| DataTable core types and local processing pipeline                                                  | `useGhostDataTable`, manual matrix, row models           | High       |
-| `defineDataTableColumns` + column type tests                                                        | Typed `value` / `getValue`, CI type tests                | Medium     |
-| `GhostDataTableTable` default renderer                                                              | Basic example (a), `#columnId` slots                     | Medium     |
-| **`GhostDataTablePreset`** (invoice parity, ≤95 LOC)                                                | Example (a′), wired a11y + interaction helpers           | Medium     |
-| GhostDataTable headless root and GhostTable composition                                             | Slot bindings, example (b), SSR                          | Medium     |
-| Interaction prop helpers                                                                            | Sort / select / expand bindings + focus-on-collapse      | Medium     |
-| Server router example + Back/Retry tests                                                            | `server-invoices-router.vue`, race tests                 | High       |
-| Column sorting UI and header a11y                                                                   | Single-column sort, `aria-sort`                          | Medium     |
-| Filtering model and toolbar composition docs                                                        | Conditional page reset vs `manualFiltering`              | Low        |
-| Pagination integration                                                                              | `rowCount`, empty → page 1, `GhostPagination`            | Low        |
-| Row selection (local + server)                                                                      | Select-all rules, no server prune, cross-page tests      | High       |
-| Row expansion rows                                                                                  | Detail `<tr>`, server no-prune                           | Medium     |
-| Server mode and async guard                                                                         | Coalesced `stateChange`, full `query`, stale guard tests | Medium     |
-| Performance benchmark harness                                                                       | Vitest bench, sort/page regression counters              | Low        |
-| **Deferred:** PrimeVue 10k browser comparison                                                       | `docs/contributing/data-table-benchmark-comparison.md`   | Medium     |
-| Headless docs and executable examples                                                               | `data-table.md`, `examples/data-table/`                  | Medium     |
-| **Deferred:** Themed GhostDataTable                                                                 | `@ghostvue/themes` wrapper                               | Medium     |
-| **Deferred:** Multi-column sort spec                                                                | Keyboard + AT                                            | Medium     |
-| **Deferred:** Virtualization spec                                                                   | Scroll + a11y                                            | High       |
-| **Deferred:** Treegrid / grid keyboard spec                                                         | Roving focus                                             | High       |
+| Child issue                                                                                             | Scope                                                                                                                    | Complexity |
+| ------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ | ---------- |
+| **Done:** GhostVue vs PrimeVue prototype ([PR #269](https://github.com/zprue743/ghostvue/pull/269))     | Evidence folded into spec; prototype PR closed unmerged                                                                  | —          |
+| DataTable core types and local processing pipeline                                                      | `useGhostDataTable`, manual matrix, row models                                                                           | High       |
+| `defineDataTableColumns` + column type tests                                                            | Typed `value` / `getValue`, CI type tests                                                                                | Medium     |
+| `GhostDataTableTable` default renderer                                                                  | Basic example (a), `#columnId` slots                                                                                     | Medium     |
+| **`GhostDataTablePreset`** (invoice parity, ≤95 LOC)                                                    | Example (a′), wired a11y + interaction helpers                                                                           | Medium     |
+| GhostDataTable headless root and GhostTable composition                                                 | Slot bindings, example (b), SSR                                                                                          | Medium     |
+| Interaction prop helpers                                                                                | Sort / select / expand bindings + focus-on-collapse                                                                      | Medium     |
+| Server router example + Back/Retry tests                                                                | `server-invoices-router.vue`, race tests                                                                                 | High       |
+| Column sorting UI and header a11y                                                                       | Single-column sort, `aria-sort`                                                                                          | Medium     |
+| Filtering model and toolbar composition docs                                                            | Conditional page reset vs `manualFiltering`                                                                              | Low        |
+| Pagination integration                                                                                  | `rowCount`, empty → page 1, `GhostPagination`                                                                            | Low        |
+| Row selection (local + server)                                                                          | Select-all rules, no server prune, cross-page tests                                                                      | High       |
+| Row expansion rows                                                                                      | Detail `<tr>`, server no-prune                                                                                           | Medium     |
+| Server mode and async guard                                                                             | Coalesced `stateChange`, full `query`, stale guard tests                                                                 | Medium     |
+| Performance benchmark harness                                                                           | Vitest bench, sort/page regression counters                                                                              | Low        |
+| **Deferred:** PrimeVue 10k browser comparison                                                           | `docs/contributing/data-table-benchmark-comparison.md`                                                                   | Medium     |
+| Headless docs and executable examples                                                                   | `data-table.md`, `examples/data-table/`                                                                                  | Medium     |
+| **Deferred:** Themed GhostDataTable                                                                     | `@ghostvue/themes` wrapper                                                                                               | Medium     |
+| **Deferred:** Multi-column sort spec ([#317](https://github.com/zprue743/ghostvue/issues/317), GHO-250) | Proposed `0.3.0` addendum (`enableMultiSort` keyboard, state, and secondary `aria-sort` contract); held for Zac approval | Medium     |
+| **Deferred:** Virtualization spec                                                                       | Scroll + a11y                                                                                                            | High       |
+| **Deferred:** Treegrid / grid keyboard spec                                                             | Roving focus                                                                                                             | High       |
 
 Parent **GHO-35** records specification approval at **`specStatus: approved`**
 (Zac approved in chat on 2026-11-23; recorded in
 [PR #272](https://github.com/zprue743/ghostvue/pull/272)).
+
+## Multi-column sort specification (GHO-250, proposed for 0.3.0)
+
+> [!IMPORTANT]
+> **Status:** Proposed ([GHO-250](https://linear.app/ghost-vue/issue/GHO-250),
+> [#317](https://github.com/zprue743/ghostvue/issues/317)) — **held for Zac's
+> approval before implementation.** Phase one (`0.1.0`) — including the
+> decoupled themed `GhostDataTable` wrapper ([#316](https://github.com/zprue743/ghostvue/issues/316)) —
+> remains strictly on the approved single-column sort contract above.
+> Multi-column sort implementation is targeted for `0.3.0`.
+
+### Purpose and scope
+
+Real admin and financial tables frequently sort by a primary grouping key and a
+secondary tie-breaker (for example, `status` ascending, then `amount`
+descending). Phase one intentionally capped `sorting: DataTableColumnSort[]` at
+one entry (`slice(0, 1)`) while keeping the public array shape so multi-column
+sorting can be enabled additively behind `enableMultiSort`.
+
+This addendum defines the `0.3.0` behavioral, API, keyboard, pointer, and
+assistive-technology contract when `enableMultiSort` is `true`, preserving
+100% backwards compatibility when `enableMultiSort` is omitted or `false`.
+
+**Non-goals for `0.3.0` multi-sort:**
+
+- Spreadsheet `role="grid"` navigation or arrow-key cell traversal (still native
+  `<table>` + `Tab` order per [ADR 0014](../adr/0014-datatable-phase-one-architecture.md)).
+- Built-in multi-sort toolbar UI, drag-to-reorder sort pills, or opinionated
+  popover sort builders (consumers can compose those via `setSorting`,
+  `toggleSorting`, and `clearSorting`).
+- Breaking changes to `DataTableColumnSort` or `DataTableQueryState`.
+
+### Public API additions (proposed)
+
+All additions to `@ghostvue/vue` are additive and backwards-compatible with the
+phase-one contracts in `packages/vue/src/ghost-data-table.ts`.
+
+#### Options and props
+
+Additions to `UseGhostDataTableBaseOptions<TData>` and `GhostDataTableProps<TData>`:
+
+| Option / Prop          | Type                                              | Default                     | Contract                                                                                                                                                      |
+| ---------------------- | ------------------------------------------------- | --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `enableMultiSort`      | `boolean`                                         | `false`                     | Opts the table into multi-column sorting. When `false`, behavior is identical to phase one (`sorting` capped to 1 entry; no priority badges or descriptions). |
+| `maxMultiSortColCount` | `number \| undefined`                             | `undefined`                 | Optional cap (`>= 1`, integer) on simultaneous sorted columns when `enableMultiSort` is `true`. `undefined` allows sorting by any number of sortable columns. |
+| `isMultiSortEvent`     | `(event: MouseEvent \| KeyboardEvent) => boolean` | `(event) => event.shiftKey` | Predicate evaluated when a header sort control activates with an event. Ignored when `enableMultiSort` is `false`.                                            |
+
+- **Invalid `maxMultiSortColCount`:** Values `< 1` or non-finite values normalize
+  to `1` (minimum meaningful bound; values with fractional parts use
+  `Math.floor`). When `maxMultiSortColCount === 1` and `enableMultiSort: true`,
+  at most one column may be active at a time.
+- **No `Shift`-locking requirement:** Consumers wanting additive multi-sort on
+  every click (for example, touch-first or screen-reader-heavy tables without
+  modifier keys) can pass `:is-multi-sort-event="() => true"`.
+
+#### Localized accessibility strings (preset & default renderer)
+
+Additions to `GhostDataTableTableProps` and `GhostDataTablePresetProps` (with
+defaults matching GhostVue's existing callback convention in
+`GhostDataTablePresetProps`):
+
+```ts
+interface DataTableSortDescriptionContext {
+  columnId: string
+  label: string
+  direction: 'asc' | 'desc'
+  /** 1-based priority rank (1 = primary sort) */
+  priority: number
+  /** Total active sorted columns */
+  total: number
+}
+
+interface DataTableSortAnnouncementEntry {
+  columnId: string
+  label: string
+  direction: 'asc' | 'desc'
+  /** 1-based priority rank */
+  priority: number
+}
+```
+
+| Prop                    | Type                                                             | Default                                                                                                                                |
+| ----------------------- | ---------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| `sortDescriptionLabel`  | `(ctx: DataTableSortDescriptionContext) => string`               | `({ direction, priority, total }) => \`Sorted ${direction === 'asc' ? 'ascending' : 'descending'}, priority ${priority} of ${total}\`` |
+| `sortAnnouncementLabel` | `(entries: readonly DataTableSortAnnouncementEntry[]) => string` | Empty: `'Sorting cleared.'`; non-empty: `'Sorted by Customer ascending (1), then Amount descending (2).'`                              |
+
+#### Composable, slot, and exposed actions
+
+Additions to `UseGhostDataTableReturn<TData>`, `GhostDataTableSlotProps<TData>`,
+and `GhostDataTableExposed<TData>`:
+
+| Symbol                                   | Surface                                   | Signature / Type                                          | Contract                                                                                                                                                                          |
+| ---------------------------------------- | ----------------------------------------- | --------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `getSortIndex(columnId)`                 | Composable, slot props                    | `(columnId: string) => number`                            | Returns **0-based** priority index in `sorting` (`0` = primary, `1` = secondary), or `-1` when unsorted.                                                                          |
+| `getSortDirection(columnId)`             | Composable (existing)                     | `(columnId: string) => DataTableSortDirection`            | Extended from `sorting[0]` only to search **all** entries in `sorting` (`'asc' \| 'desc' \| false`).                                                                              |
+| `toggleSorting(columnId, multi?)`        | Composable, exposed                       | `(columnId: string, multi?: boolean) => void`             | Existing 1-arg calls stay single-column (`multi = false`). When `enableMultiSort` is `true` and `multi === true`, modifies `columnId` in place/appends.                           |
+| `clearSorting()`                         | Composable, slot props, exposed           | `() => void`                                              | Sets `sorting` to `[]` (no-op if already empty). Emits one `stateChange` when `manualSorting` is `true`.                                                                          |
+| `header.sortIndex`                       | `DataTableHeader<TData>`                  | `number`                                                  | `0`-based index in `sorting`, or `-1` when unsorted.                                                                                                                              |
+| `header.sortPriority`                    | `DataTableHeader<TData>`                  | `number \| undefined`                                     | `1`-based rank (`sortIndex + 1`) when sorted; `undefined` when unsorted.                                                                                                          |
+| `header.toggleSort(event?)`              | `DataTableHeader<TData>`                  | `(event?: MouseEvent \| KeyboardEvent) => void`           | Backwards-compatible with `@click="header.toggleSort"` (Vue forwards `$event`) and 0-arg `header.toggleSort()`. Calls `isMultiSortEvent(event)` when `enableMultiSort` is `true`. |
+| `getHeaderCellProps(columnId)`           | Slot props, `getDataTableHeaderCellProps` | `DataTableHeaderCellProps`                                | See [Secondary `aria-sort` and AT contract](#secondary-aria-sort-and-at-contract).                                                                                                |
+| `getSortButtonProps(columnId, options?)` | Slot props, `getDataTableSortButtonProps` | `(columnId, options?: DataTableSortButtonOptions) => ...` | Extends `DataTableControlLabelOptions` with optional `describedById?: string` (merged with existing/consumer `aria-describedby`, never dropped).                                  |
+| `sortAnnouncement`                       | Slot props                                | `string`                                                  | Reactive polite live-region message updated only on user-driven sort actions (empty string on initial SSR/mount and silent URL hydration).                                        |
+
+`DataTableInteractionState` (read by `getDataTableHeaderCellProps` and
+`getDataTableSortButtonProps`) gains `enableMultiSort: ComputedRef<boolean>` and
+`getSortIndex: (columnId: string) => number` (while keeping `getDataTable*`
+pure attribute getters without listeners).
+
+### State model and sorting rules
+
+#### Priority order and normalization
+
+1. **Order = priority:** `sorting[0]` is primary (priority `1`), `sorting[1]` is
+   secondary (priority `2`), and so on.
+2. **Deduplication:** At most one `DataTableColumnSort` per `column.id`.
+   `setSorting(next)` deduplicates by `id` keeping the **first** (highest
+   priority) occurrence.
+3. **Capacity:**
+   - When `enableMultiSort` is `false`: `setSorting(next)` slices to `next.slice(0, 1)`
+     (phase-one contract unchanged).
+   - When `enableMultiSort` is `true` and `maxMultiSortColCount` is set: `setSorting(next)`
+     slices to `next.slice(0, max)`.
+4. **Inert when disabled or non-sortable:** `toggleSorting(columnId, multi)` is
+   a no-op when `disabled.value` is `true` or `!canSort(columnId)` (same as
+   phase one).
+
+#### Multi-sort transition rules
+
+Let `C` be a sortable column (`canSort(C) === true`) and `enableMultiSort === true`:
+
+| Action                         | Current state of `C` in `sorting`  | Next `sorting` state                                                                                                                              |
+| ------------------------------ | ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Multi** (`multi === true`)   | Unsorted (`index === -1`)          | If under `maxMultiSortColCount`: append `{ id: C, desc: false }` at the end (priority `sorting.length + 1`). If at cap: no-op (proposed; see Q3). |
+| **Multi** (`multi === true`)   | Sorted `asc` at `index`            | Replace entry at `index` in place with `{ id: C, desc: true }` (priority rank unchanged).                                                         |
+| **Multi** (`multi === true`)   | Sorted `desc` at `index`           | Remove entry at `index`; all entries with `j > index` shift up by 1 (`priority` decreases by 1).                                                  |
+| **Single** (`multi === false`) | Unsorted (`index === -1`)          | Replace entire `sorting` with `[{ id: C, desc: false }]`.                                                                                         |
+| **Single** (`multi === false`) | Sole sort (`length === 1`)         | Phase-one cycle: `asc` → `desc` → `[]`.                                                                                                           |
+| **Single** (`multi === false`) | Primary (`index === 0`, `len > 1`) | Collapse to single-column sort and advance direction: `asc` → `[{ id: C, desc: true }]`; `desc` → `[]` (proposed; see Q2).                        |
+| **Single** (`multi === false`) | Secondary (`index > 0`, `len > 1`) | Collapse to single-column sort starting ascending: `[{ id: C, desc: false }]` (proposed; see Q2).                                                 |
+
+#### Local multi-column pipeline (`sortRows`)
+
+When `manualSorting` is `false`:
+
+- `sortRows` accepts `sorting: readonly DataTableColumnSort[]` and
+  `columnsById: ReadonlyMap<string, DataTableColumnDef<TData>>`.
+- **Single-column fast path:** When `sorting.length === 1`, execute the existing
+  phase-one single-column decorate-and-sort path with zero extra allocations.
+- **Multi-column decorate-once:** For `sorting.length > 1`, resolve the active
+  sortable columns (`isColumnSortable(col)`). Decorate each row **once** with
+  its extracted values for those active columns (`O(n * k)` accessor calls,
+  never `O(n log n * k)`).
+- **Comparator chain:** Compare column `0`, then `1`, ..., then `k - 1` until a
+  non-zero result is found:
+  - Per-column `sortUndefined` (`'first' | 'last' | false`, default `'last'`)
+    applies at that column's comparison tier (`'first'` and `'last'` stay
+    absolute and do not invert with `desc`, matching phase-one `sortRows`).
+  - Per-column `sortFn` or `compareValues` runs next, multiplied by
+    `entry.desc ? -1 : 1`.
+  - If all active columns compare equal (`0`), ES2019+ stable `Array.prototype.sort`
+    preserves `coreRows` input order.
+- **Immutability & memoization:** Consumer row objects and `data` remain
+  untouched; filtering, pagination, selection, and expansion still never re-run
+  `sortRows`.
+
+#### Server mode, `stateChange`, and URL serialization
+
+- **Zero payload breaking changes:** `DataTableQueryState.sorting` is already
+  `DataTableColumnSort[]`. With `manualSorting: true`, any `toggleSorting`,
+  `setSorting`, or `clearSorting` change emits **one** `stateChange` with
+  `trigger: 'sorting'` and the full ordered `query.sorting` array.
+- **Pagination reset rule:** Unchanged from phase one — sorting never resets
+  `pagination.pageIndex` (the `pageCount` clamp still applies if `pageCount`
+  shrinks).
+- **Recommended URL format (additive to `server-invoices-router.vue`):** Encode
+  comma-separated `id:dir` pairs in priority order, e.g.
+  `?sort=customer:asc,amount:desc`, which remains backwards-compatible with
+  single-column `?sort=amount:desc`. Hydrating `sorting` on mount or Browser Back
+  remains silent (no `stateChange` echo loop).
+
+### Keyboard and pointer interaction contract
+
+| Input                      | Context      | Behavior (`enableMultiSort: false`) | Behavior (`enableMultiSort: true`)                                                         |
+| -------------------------- | ------------ | ----------------------------------- | ------------------------------------------------------------------------------------------ |
+| `Click` (no modifier)      | Sort button  | Phase-one single-column cycle       | Single-column cycle / collapse to single sort on this column                               |
+| `Enter` / `Space` (no mod) | Sort button  | Phase-one single-column cycle       | Single-column cycle / collapse to single sort on this column                               |
+| `Shift+Click`              | Sort button  | Phase-one single-column cycle       | Multi-sort add / cycle in place / remove (or custom via `isMultiSortEvent`)                |
+| `Shift+Enter`              | Sort button  | Phase-one single-column cycle       | Multi-sort add / cycle in place / remove                                                   |
+| `Shift+Space`              | Sort button  | Phase-one single-column cycle       | Multi-sort add / cycle in place / remove (see `Shift+Space` `keyup` guard below)           |
+| `Tab` / `Shift+Tab`        | Table header | Native focus order                  | Native focus order (no roving grid tabindex)                                               |
+| `Escape`                   | Sort button  | No-op                               | **No-op** (never clears sorts; `Escape` is reserved for dismissable overlays per ADR 0011) |
+
+#### `Shift+Space` activation and focus stability
+
+- **Focus stays on the button:** Activating any sort button (plain or
+  `Shift`-modified) keeps focus on that `<button>` (`toBeFocused()`), never
+  resetting focus to `<body>` or the table wrapper when DOM rows reorder.
+- **`Shift+Space` `keyup` vs `keydown` hazard:** Native `<button>` elements fire
+  `click` on `Enter` `keydown`, but fire `click` on `Space` **`keyup`**. If a
+  keyboard user presses `Shift+Space` and releases `Shift` a few milliseconds
+  before releasing `Space`, the browser's synthesized `click` event carries
+  `shiftKey === false`.
+  - **Requirement for `GhostDataTableTable` and `GhostDataTablePreset`:** Track
+    whether `Shift` (or `isMultiSortEvent`) was active on `Space` `keydown` on
+    that sort button and combine it with the resulting `click` event before
+    calling `header.toggleSort`, resetting the pending flag on `blur` or `click`.
+  - **Preventing page scroll on `Shift+Space`:** Native `<button>` suppresses
+    `Space` scrolling, and `Space` with `Shift` on a focused `<button>` must
+    likewise never scroll the viewport.
+- **Screen-reader & touch parity without `Shift`:** Screen readers in browse /
+  virtual-cursor mode (NVDA, JAWS, VoiceOver `VO+Space`) and touch screen
+  readers often synthesize a bare `click` without `Shift`, and mobile touch has
+  no `Shift` key. Consumers requiring multi-sort without modifier keys should
+  either:
+  1. Set `:is-multi-sort-event="() => true"` (additive click mode paired with a
+     consumer "Clear sorting" button calling `clearSorting()`), or
+  2. Compose a sort menu / priority controls using `toggleSorting(columnId, true)`
+     and `setSorting(...)`.
+
+### Secondary `aria-sort` and AT contract
+
+#### WAI-ARIA 1.2 `aria-sort` constraint
+
+Per [WAI-ARIA 1.2 `aria-sort`](https://www.w3.org/TR/wai-aria-1.2/#aria-sort)
+and the ARIA Authoring Practices Guide (APG) Sortable Table pattern:
+
+1. `aria-sort` accepts `'ascending' | 'descending' | 'other' | 'none'`.
+2. `aria-sort` is designed for **one sorted column at a time**; it has no syntax
+   to express secondary rank (`priority 2 of 3`), and applying `aria-sort` to
+   multiple `<th>` elements causes assistive technologies to announce multiple
+   columns as equally sorted without hierarchy (or ignore secondary headers).
+3. `aria-sort="other"` is **not** used for secondary columns: WAI-ARIA defines
+   `"other"` for non-alphanumeric custom algorithms, so announcing `"sorted other"`
+   for an ascending secondary column actively misleads screen-reader users.
+
+#### Proposed header and button attribute contract
+
+When `enableMultiSort` is `true`:
+
+1. **Primary sorted column (`sorting[0]`, `sortPriority === 1`):**
+   - `<th>` (`getHeaderCellProps`): `scope="col"`,
+     `aria-sort="ascending" | "descending"`, `data-sort="asc" | "desc"`,
+     `data-sort-priority="1"`.
+2. **Secondary+ sorted columns (`sorting[1..k-1]`, `sortPriority >= 2`):**
+   - `<th>` (`getHeaderCellProps`): `scope="col"`, **`aria-sort` omitted**
+     (proposed default; see Open Question Q1), `data-sort="asc" | "desc"`,
+     `data-sort-priority="2" | "3" | ...`.
+3. **Unsorted columns:**
+   - `<th>` (`getHeaderCellProps`): `scope="col"`, `aria-sort` omitted,
+     `data-sort` omitted, `data-sort-priority` omitted.
+4. **Sort `<button>` (`getSortButtonProps`) — accessible name vs description:**
+   - **Never put raw rank digits into the button's accessible name** (do not let
+     a visual `2` badge concatenate as `"Amount 2"`). Keep the visual badge
+     `aria-hidden="true"`.
+   - **Never place a `GhostVisuallyHidden` status span directly inside `<th>` as
+     text content:** doing so alters the `<th>` accessible name, breaks
+     `getByRole('columnheader', { name: 'Amount' })`, and forces screen readers to
+     re-read `"Sorted descending, priority 2 of 2"` on every `<td>` cell in that
+     column.
+   - Instead, keep the button's accessible name clean (`"Amount"` or custom
+     `options.label`) and attach `aria-describedby` pointing to a visually hidden
+     description node rendered **outside `<table>`** (for example, an indexed
+     `GhostVisuallyHidden` container rendered by `GhostDataTableTable` /
+     `GhostDataTablePreset`, or consumer-wired via `describedById` in manual
+     composition):
+     - Primary when multi-sorted (`total > 1`): `"Sorted ascending, priority 1 of 2"`.
+     - Secondary+: `"Sorted descending, priority 2 of 2"`.
+     - Single-sorted (`total === 1`): `aria-sort` on `<th>` already conveys
+       direction; description is optional (or omitted so single-sort matches
+       phase one cleanly).
+   - If the consumer already passed `aria-describedby`, merge ids space-separated
+     rather than overwriting.
+5. **Polite live-region announcement (`aria-live="polite"`):**
+   - Because secondary columns omit `aria-sort`, activating `Shift+Enter` on a
+     secondary column would otherwise produce no `aria-sort` mutation announcement.
+   - `GhostDataTableTable` and `GhostDataTablePreset` render a
+     `GhostVisuallyHidden` node with `aria-live="polite"` and `aria-atomic="true"`
+     bound to `sortAnnouncement` (outside `<table>`), announcing user-driven
+     changes when `enableMultiSort` is `true` — e.g.
+     `"Sorted by Customer ascending (1), then Amount descending (2)."` or
+     `"Sorting cleared."`.
+   - **No mount/hydration spam:** Initial `defaultSorting` and silent URL
+     hydration (`sorting` prop sync) must **not** populate the live region. Only
+     user-initiated transitions (`toggleSorting`, `clearSorting`, or `setSorting`
+     triggered by user actions) update `sortAnnouncement`.
+   - **Renderless root invariant:** `GhostDataTable` itself remains renderless
+     (emits zero DOM elements per ADR 0014) and exposes `sortAnnouncement` in
+     `GhostDataTableSlotProps` for manual `#default` compositions.
+
+### Rendering, theming, and CSS hooks
+
+- **Headless DOM invariants:** `GhostTable*` `data-part` attributes are
+  unchanged. Every sorted `<th>` receives `data-sort="asc" | "desc"` and (when
+  `enableMultiSort` is `true`) `data-sort-priority="<1-based-rank>"`.
+- **Additive layering with `@ghostvue/themes` (`#316`):** The `0.1.0` themed
+  `GhostDataTable` wrapper ships on the single-sort `data-sort` contract. In
+  `0.3.0`, themed styles can target `th[data-sort-priority]::after` or the
+  priority badge slot using `content: attr(data-sort-priority)` / CSS tokens
+  without breaking any `0.1.0` single-sort selectors.
+- **Decorative indicators:** Any arrow glyph or priority pill rendered inside
+  `GhostDataTableTable` / `GhostDataTablePreset` carries `aria-hidden="true"` and
+  stays separated from visible text so screen readers do not concatenate glyphs
+  into the button name.
+
+### Environment, SSR, and performance
+
+- **SSR & hydration:** `sorting` state, `aria-sort` on `sorting[0]`,
+  `data-sort`, `data-sort-priority`, and deterministic `useGhostId`-based
+  `aria-describedby` ids match identically between SSR and client hydration.
+  `sortAnnouncement` starts empty (`""`) on SSR and initial mount so hydration
+  never mismatches or fires spurious announcements.
+- **Mobile & touch:** Touch users without a hardware keyboard rely on either
+  `:is-multi-sort-event="() => true"` or consumer-composed sort controls;
+  `GhostTable.containHorizontal` behavior is unchanged.
+- **Performance (10k rows):**
+  - When `sorting.length === 1`, phase-one `sortRows` fast path keeps zero
+    overhead vs `0.1.0`.
+  - When `sorting.length > 1`, decorate-once evaluates accessors `O(n * k)`
+    times total across `k` sorted columns instead of inside the comparator.
+  - Required regression counter test (matching `use-ghost-data-table.counters.test.ts`):
+    2-column sort over 1,000 rows calls each active column's accessor once per
+    row (`<= n` calls per sorted column), and paging or toggling row selection
+    triggers **zero** comparator/accessor re-evaluations.
+
+### Test plan (required for `0.3.0` implementation gate)
+
+- **Unit (`use-ghost-data-table.test.ts` / `data-table-processing.test.ts`):**
+  - Multi-column sort ordering (2 and 3 columns, mixed `asc`/`desc`, tie-breaking,
+    stable fallback on total ties, per-column `sortUndefined` `'first' | 'last' | false`,
+    custom `sortFn`).
+  - `enableMultiSort: false` regression: `setSorting` still truncates to 1,
+    `toggleSorting(id, true)` stays single-sort, `data-sort-priority` omitted.
+  - Transition matrix: append, in-place `asc -> desc -> remove`, priority
+    promotion when priority 1 is removed, unmodified click collapsing `>1` sorts,
+    `maxMultiSortColCount` enforcement, `clearSorting()`, deduplication in `setSorting`.
+  - Server mode: single `stateChange` per multi-sort toggle with ordered `query.sorting`,
+    no page reset, URL hydration silent (no `stateChange` and no `sortAnnouncement`).
+  - Counter test (`use-ghost-data-table.counters.test.ts`): multi-column
+    decorate-once accessor count and zero re-sort on page/selection change.
+- **Interaction helpers & Vue (`data-table-interaction.test.ts`, `GhostDataTableTable.test.ts`, `GhostDataTablePreset.test.ts`, SSR):**
+  - Primary `<th>` carries `aria-sort` and `data-sort-priority="1"`; secondary
+    `<th>` omits `aria-sort` and carries `data-sort` + `data-sort-priority="2"`.
+  - Sort button keeps clean accessible name (excludes decorative badge), exposes
+    merged `aria-describedby` pointing outside `<table>`, and `<th>` accessible
+    name stays clean (`Amount`, not `"Amount Sorted descending..."`).
+  - `sortAnnouncement` live region stays empty on SSR/mount and updates on user
+    sort changes.
+  - SSR hydration test with `defaultSorting` of length 2 produces zero
+    hydration mismatches.
+- **Playwright keyboard, focus & axe (`tests/e2e/ghost-data-table.spec.ts`):**
+  - `Shift+Click`, `Shift+Enter`, and `Shift+Space` (including releasing `Shift`
+    before `Space` `keyup`) add secondary sort, cycle secondary `asc -> desc -> remove`,
+    and preserve `toBeFocused()` on the activated sort button.
+  - Unmodified `Enter` / `Space` collapses multi-sort back to single-sort;
+    `Escape` does not clear sorts.
+  - `:is-multi-sort-event="() => true"` + `clearSorting()` flow works without
+    modifier keys.
+  - Zero `@axe-core/playwright` violations across `thead`, `tbody`, and
+    visually hidden live/description nodes with 0, 1, 2, and 3 active sorted
+    columns.
+- **Manual AT verification (before `stable`):**
+  - Record NVDA + Firefox and VoiceOver + Safari evidence per
+    [assistive-technology-review.md](../standards/assistive-technology-review.md),
+    verifying primary `aria-sort`, secondary `aria-describedby` priority/direction
+    readout, clean `<td>` column-header announcements, and polite live-region
+    announcements.
+- **Bench (`tests/bench/data-table-processing.bench.ts`):**
+  - Add 2-column and 3-column 10k-row `sortRows` cases to verify single-column
+    fast path has zero regression and multi-column sort stays well within budget.
+
+### Open architectural decisions for Zac (`0.3.0` sign-off)
+
+Production implementation must not begin until Zac approves this addendum and
+resolves the decisions below:
+
+1. **Secondary `aria-sort` policy (Q1):**
+   - **Recommended (Option A):** Apply `aria-sort="ascending" | "descending"` to
+     the **primary** (`sorting[0]`) `<th>` only; omit `aria-sort` on secondary+
+     `<th>`s and communicate secondary direction + rank via `aria-describedby` on
+     the sort `<button>` (referencing a visually hidden node outside `<table>`)
+     plus `aria-live="polite"` announcements. Keeps `th[aria-sort]` `<= 1` per
+     WAI-ARIA 1.2.
+   - **Alternative (Option B):** Apply `aria-sort="ascending" | "descending"` to
+     **all** sorted `<th>`s alongside `aria-describedby` priority text and live
+     announcements.
+2. **Unmodified activation when `sorting.length > 1` (Q2):**
+   - **Recommended:** If the activated column is currently primary (`index === 0`),
+     collapse to single-sort and advance its direction (`asc -> desc -> none`);
+     if secondary (`index > 0`) or unsorted, collapse to `[{ id, desc: false }]`.
+   - **Alternative:** Always reset to `[{ id, desc: false }]` for any column
+     when `sorting.length > 1`.
+3. **`maxMultiSortColCount` overflow policy (Q3):**
+   - **Recommended:** Ignore adding a new column once `sorting.length >= maxMultiSortColCount`
+     (existing active sorts keep their priorities until toggled off or cleared).
+   - **Alternative:** FIFO-evict the lowest-priority (last) or oldest entry when
+     adding a new column at the cap.
+4. **No-modifier AT / touch affordance scope (Q4):**
+   - **Recommended:** Ship `isMultiSortEvent` (enabling `() => true` additive
+     click mode) and `clearSorting()` in `0.3.0`; defer any built-in sort-pill
+     toolbar or per-header priority menu UI.
+   - **Alternative:** Add a dedicated `alwaysMultiSort?: boolean` prop or
+     built-in clear-sort control to `GhostDataTablePreset`.
+5. **Per-column `enableMultiSort` override (Q5):**
+   - **Recommended:** Keep `enableMultiSort` table-level in `0.3.0`; add
+     `DataTableColumnDef.enableMultiSort?: boolean` only if a concrete use case
+     requires a sortable column to forbid multi-sort participation.

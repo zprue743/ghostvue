@@ -118,8 +118,9 @@ export default defineConfig({
   components, fall through to the next resolver.
 - It does not auto-import composables or themed wrappers. Import themed
   components from `@ghostvue/themes` by name.
-- `@ghostvue/vue` does not depend on `unplugin-vue-components`; install the
-  plugin yourself. The resolver matches its resolver contract structurally.
+- `@ghostvue/vue` declares `unplugin-vue-components` `^32.0.0` as an optional
+  peer, so it is never installed for you; install the plugin yourself. The
+  resolver matches its resolver contract structurally and does not import it.
 
 ## Supported versions
 
