@@ -41,7 +41,7 @@ import {
         </GhostScrollSpyItem>
       </GhostScrollSpyList>
     </GhostScrollSpy>
-    <main class="scroll-spy-basic__main">
+    <div class="scroll-spy-basic__main">
       <section
         id="scroll-spy-intro"
         tabindex="-1"
@@ -72,7 +72,7 @@ import {
           Summary paragraph {{ index }} wrapping up the scroll-spy walkthrough.
         </p>
       </section>
-    </main>
+    </div>
   </div>
 </template>
 

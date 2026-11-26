@@ -25,7 +25,7 @@ import {
         </GhostScrollSpyItem>
       </GhostScrollSpyList>
     </GhostScrollSpy>
-    <main>
+    <div class="scroll-spy-composable__main">
       <section
         v-for="id in ['custom-a', 'custom-b']"
         :id="id"
@@ -36,7 +36,7 @@ import {
         <h2>{{ id }}</h2>
         <p v-for="index in 8" :key="index">Section content {{ index }}.</p>
       </section>
-    </main>
+    </div>
   </div>
 </template>
 

@@ -26,7 +26,7 @@ import {
         </GhostScrollSpyItem>
       </GhostScrollSpyList>
     </GhostScrollSpy>
-    <main>
+    <div class="scroll-spy-themed__main">
       <section id="themed-one" tabindex="-1" class="scroll-spy-themed__section">
         <h2>Section one</h2>
         <p v-for="index in 10" :key="index">Themed demo content {{ index }}.</p>
@@ -37,7 +37,7 @@ import {
           More themed demo content {{ index }}.
         </p>
       </section>
-    </main>
+    </div>
   </div>
 </template>
 
