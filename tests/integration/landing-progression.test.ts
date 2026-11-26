@@ -19,10 +19,22 @@ function exampleSource(id: string): string {
  * API.
  */
 function exampleSourceWithoutComments(source: string): string {
-  return source
-    .replace(/<!--[\s\S]*?-->/g, '')
-    .replace(/\/\*[\s\S]*?\*\//g, '')
-    .replace(/(^|\s)\/\/.*$/gm, '$1')
+  let withoutHtmlComments = source
+  // Repeat until stable so nested comment markers cannot survive one pass.
+  for (let pass = 0; pass < 16; pass += 1) {
+    const next = withoutHtmlComments.replace(/<!--[\s\S]*?-->/g, '')
+    if (next === withoutHtmlComments) break
+    withoutHtmlComments = next
+  }
+
+  let withoutBlockComments = withoutHtmlComments
+  for (let pass = 0; pass < 16; pass += 1) {
+    const next = withoutBlockComments.replace(/\/\*[\s\S]*?\*\//g, '')
+    if (next === withoutBlockComments) break
+    withoutBlockComments = next
+  }
+
+  return withoutBlockComments.replace(/(^|\s)\/\/.*$/gm, '$1')
 }
 
 describe('docs landing progression examples', () => {
