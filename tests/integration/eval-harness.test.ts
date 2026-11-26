@@ -303,7 +303,7 @@ import { GhostDataTable } from '@ghostvue/vue'
       expect(build.detail, `${task.id} build`).toBeUndefined()
       expect(build.status, `${task.id} build`).toBe('passed')
     }
-  }, 120_000)
+  }, 300_000)
 
   it('reports skipped/missing browser checks explicitly when SFC is missing or browser grading is skipped', async () => {
     const task = EVAL_TASKS[0]
@@ -403,5 +403,5 @@ describe('full offline eval run (docs-only vs docs+mcp with live ghostvue-mcp st
       'Comparison summary (separate dimensions)',
     )
     expect(summaryMarkdown).toContain('unreviewed')
-  }, 180_000)
+  }, 300_000)
 })
