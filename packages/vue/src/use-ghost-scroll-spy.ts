@@ -537,6 +537,8 @@ export function useGhostScrollSpy(
     scheduleMeasure()
   }
 
+  watch([probeOffset, endThreshold], scheduleMeasure)
+
   watch(
     rootElement,
     (root, _previous, onCleanup) => {

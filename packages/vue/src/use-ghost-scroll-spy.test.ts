@@ -1,4 +1,12 @@
-import { defineComponent, h, nextTick, ref, useTemplateRef } from 'vue'
+import {
+  defineComponent,
+  h,
+  nextTick,
+  ref,
+  toValue,
+  useTemplateRef,
+  type MaybeRef,
+} from 'vue'
 import { mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
@@ -107,8 +115,8 @@ function mockScrollport(
 
 function mountContainerHarness(
   options: {
-    probeOffset?: number
-    endThreshold?: number
+    probeOffset?: MaybeRef<number>
+    endThreshold?: MaybeRef<number>
     extraLinks?: boolean
     showGamma?: ReturnType<typeof ref<boolean>>
     showLinks?: ReturnType<typeof ref<boolean>>
@@ -126,18 +134,16 @@ function mountContainerHarness(
   const wrapper = mount(
     defineComponent({
       setup() {
-        const spyProps: Record<string, unknown> = {
-          container,
-          historyMode: options.historyMode ?? 'none',
-          ref: scrollSpy,
-        }
-        if (options.probeOffset !== undefined) {
-          spyProps['probeOffset'] = options.probeOffset
-        }
-        if (options.endThreshold !== undefined) {
-          spyProps['endThreshold'] = options.endThreshold
-        }
         return () => {
+          const probeOffset = toValue(options.probeOffset)
+          const endThreshold = toValue(options.endThreshold)
+          const spyProps = {
+            container,
+            historyMode: options.historyMode ?? 'none',
+            ref: scrollSpy,
+            ...(probeOffset === undefined ? {} : { probeOffset }),
+            ...(endThreshold === undefined ? {} : { endThreshold }),
+          }
           const links = [
             { target: 'alpha', label: 'Alpha' },
             { target: 'beta', label: 'Beta' },
@@ -321,6 +327,51 @@ describe('useGhostScrollSpy', () => {
         .element.style.getPropertyValue('--ghost-scroll-spy-section-progress'),
     ).toBe('1.0000')
   })
+
+  it.each([
+    {
+      option: 'probeOffset',
+      initial: 0.4,
+      next: 120,
+      scrollTop: 300,
+      before: 'Alpha',
+      after: 'Beta',
+      progress: '0.5250',
+    },
+    {
+      option: 'endThreshold',
+      initial: 0.995,
+      next: 0.5,
+      scrollTop: 520,
+      before: 'Beta',
+      after: 'Gamma',
+      progress: '1.0000',
+    },
+  ] as const)(
+    'remeasures when $option changes at a fixed scroll position',
+    async ({ option, initial, next, scrollTop, before, after, progress }) => {
+      const threshold = ref<number>(initial)
+      const { wrapper, container, setScrollTop } = mountContainerHarness({
+        [option]: threshold,
+      })
+      await setScrollTop(scrollTop)
+      const currentLink = () => wrapper.get('a[aria-current="location"]').text()
+      expect(currentLink()).toBe(before)
+
+      threshold.value = next
+      await flushScrollSpyMeasure()
+
+      expect(container.scrollTop).toBe(scrollTop)
+      expect(currentLink()).toBe(after)
+      expect(
+        wrapper
+          .get('nav')
+          .element.style.getPropertyValue(
+            '--ghost-scroll-spy-section-progress',
+          ),
+      ).toBe(progress)
+    },
+  )
 
   it('aligns nested-container navigation to its padded scrollport and target margin', async () => {
     const { wrapper, container } = mountContainerHarness()

@@ -256,9 +256,9 @@ Themed exports from `@ghostvue/themes`:
 
 Not directly async, though target sections may mount, resize, or load async
 content (images, collapsible panels, tabs). Tracking follows the container when
-a template ref resolves or the element is replaced. Container changes, window
-resize, link registration changes, navigation subtree changes such as keyed
-moves, and `ResizeObserver` notifications schedule a coalesced
+a template ref resolves or the element is replaced. Container and activation
+threshold changes, window resize, link registration changes, navigation subtree
+changes such as keyed moves, and `ResizeObserver` notifications schedule a coalesced
 `requestAnimationFrame` measurement.
 
 ## Consumer data

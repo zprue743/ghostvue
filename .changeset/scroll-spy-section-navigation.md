@@ -12,3 +12,5 @@ Tracking follows changes to the scroll container, including template refs that r
 Enabled custom link components receive the resolved `href`.
 
 Link activation and `scrollTo()` jump immediately when reduced motion is requested, even with CSS smooth scrolling.
+
+Changes to `probeOffset` or `endThreshold` refresh the active section and its progress at the current scroll position.
