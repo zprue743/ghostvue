@@ -49,7 +49,7 @@ describe('GhostLink theme CSS tokens', () => {
       /\[data-variant='subtle'\][\s\S]*text-decoration-color:\s*transparent/,
     )
     expect(css).toMatch(
-      /:where\(\.ghost-theme \.ghost-link[\s\S]*text-decoration-color:\s*color-mix/,
+      /:where\(\s*\.ghost-theme \.ghost-link[\s\S]*text-decoration-color:\s*color-mix/,
     )
     expect(findHardcodedVisuals(css)).toEqual([])
   })

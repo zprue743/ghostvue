@@ -95,15 +95,25 @@ slot replaces the default decorative icon (the slot wrapper stays
 Themed `@ghostvue/themes` `GhostLink` wraps the unstyled component and adds
 visual props. Same behavioral props; these exist only on the themed wrapper:
 
-| Prop      | Type                    | Default    | Contract                                                                                       |
-| --------- | ----------------------- | ---------- | ---------------------------------------------------------------------------------------------- |
-| `variant` | `'inline' \| 'subtle'`  | `'inline'` | `inline` underlines on hover/focus; `subtle` stays text-colored without underline until hover. |
-| `tone`    | `'accent' \| 'neutral'` | `'accent'` | Semantic color intent for the link text.                                                       |
+| Prop         | Type                                                                | Default                | Contract                                                                                                              |
+| ------------ | ------------------------------------------------------------------- | ---------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| `appearance` | `'link' \| 'button'`                                                | `'link'`               | Selects inline link styling (`'link'`) or the `GhostButton` visual recipe (`'button'`).                               |
+| `variant`    | `'inline' \| 'subtle' \| 'solid' \| 'soft' \| 'outline' \| 'ghost'` | `'inline'` / `'solid'` | `'inline'` \| `'subtle'` when `appearance="link"`; `'solid'` \| `'soft'` \| `'outline'` \| `'ghost'` when `'button'`. |
+| `tone`       | `'accent' \| 'neutral' \| 'danger'`                                 | `'accent'`             | Semantic color intent. `'danger'` applies when `appearance="button"`.                                                 |
+| `size`       | `'sm' \| 'md' \| 'lg'`                                              | `'md'`                 | Control size matching `GhostButton` when `appearance="button"`.                                                       |
 
-The themed wrapper sets matching `data-variant` and `data-tone` on the inner
-host. Defaults omit the attribute so CSS treats a missing hook as the default
-(`inline` / `accent`). It wraps the host in `.ghost-themed-scope`
+The themed wrapper sets matching `data-appearance`, `data-variant`, `data-tone`,
+and `data-size` attributes on the inner host. Defaults omit the attribute so CSS
+treats a missing hook as the default (`link` / `inline` (or `solid` when
+`appearance="button"`) / `accent` / `md`). It wraps the host in `.ghost-themed-scope`
 (`display: contents`) like other themed primitives.
+
+> **API decision (#340):** Button-styled navigation links live on themed
+> `GhostLink` via `appearance="button"` rather than adding `as` / `href` to
+> `GhostButton`. Keeping navigation on `GhostLink` preserves real `<a>` /
+> router-link semantics, `disabled` `href` removal, capture-phase `click` and
+> `auxclick` cancellation, `target="_blank"` `rel` safety, and `GhostButton`'s
+> invariant that its root is always a native `<button>`.
 
 ### v-model contracts
 

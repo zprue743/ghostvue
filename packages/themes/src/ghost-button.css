@@ -4,7 +4,11 @@
  * data-visual-state freezes hover/press/focus for docs and snapshots.
  */
 @layer ghostvue-theme {
-  :where(.ghost-theme .ghost-button, .ghost-themed-scope .ghost-button) {
+  :where(
+    .ghost-theme :is(.ghost-button, .ghost-link[data-appearance='button']),
+    .ghost-themed-scope
+      :is(.ghost-button, .ghost-link[data-appearance='button'])
+  ) {
     --_ghost-button-tone-color: var(--ghost-action-primary-bg);
     --_ghost-button-tone-contrast: var(--ghost-action-primary-fg);
     --_ghost-button-tone-border: var(--ghost-action-primary-border);
@@ -46,6 +50,7 @@
     padding-inline: var(--_ghost-button-padding-inline);
     position: relative;
     scale: 1;
+    text-decoration: none;
     transition:
       background-color var(--ghost-action-duration)
         var(--ghost-motion-easing-standard),
@@ -60,7 +65,11 @@
         var(--ghost-motion-spring-snappy);
   }
 
-  :where(.ghost-theme .ghost-button, .ghost-themed-scope .ghost-button)::after {
+  :where(
+    .ghost-theme :is(.ghost-button, .ghost-link[data-appearance='button']),
+    .ghost-themed-scope
+      :is(.ghost-button, .ghost-link[data-appearance='button'])
+  )::after {
     background-color: var(--_ghost-button-color);
     border-radius: inherit;
     content: '';
@@ -74,8 +83,16 @@
   }
 
   :where(
-    .ghost-theme .ghost-button[data-tone='neutral'],
-    .ghost-themed-scope .ghost-button[data-tone='neutral']
+    .ghost-theme
+      :is(
+        .ghost-button,
+        .ghost-link[data-appearance='button']
+      )[data-tone='neutral'],
+    .ghost-themed-scope
+      :is(
+        .ghost-button,
+        .ghost-link[data-appearance='button']
+      )[data-tone='neutral']
   ) {
     --_ghost-button-tone-color: var(--ghost-action-neutral-bg);
     --_ghost-button-tone-contrast: var(--ghost-action-neutral-fg);
@@ -84,8 +101,16 @@
   }
 
   :where(
-    .ghost-theme .ghost-button[data-tone='danger'],
-    .ghost-themed-scope .ghost-button[data-tone='danger']
+    .ghost-theme
+      :is(
+        .ghost-button,
+        .ghost-link[data-appearance='button']
+      )[data-tone='danger'],
+    .ghost-themed-scope
+      :is(
+        .ghost-button,
+        .ghost-link[data-appearance='button']
+      )[data-tone='danger']
   ) {
     --_ghost-button-tone-color: var(--ghost-action-danger-bg);
     --_ghost-button-tone-contrast: var(--ghost-action-danger-fg);
@@ -94,8 +119,16 @@
   }
 
   :where(
-    .ghost-theme .ghost-button[data-variant='soft'],
-    .ghost-themed-scope .ghost-button[data-variant='soft']
+    .ghost-theme
+      :is(
+        .ghost-button,
+        .ghost-link[data-appearance='button']
+      )[data-variant='soft'],
+    .ghost-themed-scope
+      :is(
+        .ghost-button,
+        .ghost-link[data-appearance='button']
+      )[data-variant='soft']
   ) {
     --_ghost-button-background: color-mix(
       in oklch,
@@ -113,8 +146,16 @@
   }
 
   :where(
-    .ghost-theme .ghost-button[data-variant='outline'],
-    .ghost-themed-scope .ghost-button[data-variant='outline']
+    .ghost-theme
+      :is(
+        .ghost-button,
+        .ghost-link[data-appearance='button']
+      )[data-variant='outline'],
+    .ghost-themed-scope
+      :is(
+        .ghost-button,
+        .ghost-link[data-appearance='button']
+      )[data-variant='outline']
   ) {
     --_ghost-button-background: transparent;
     --_ghost-button-border-color: var(--_ghost-button-tone-border);
@@ -124,8 +165,16 @@
   }
 
   :where(
-    .ghost-theme .ghost-button[data-variant='ghost'],
-    .ghost-themed-scope .ghost-button[data-variant='ghost']
+    .ghost-theme
+      :is(
+        .ghost-button,
+        .ghost-link[data-appearance='button']
+      )[data-variant='ghost'],
+    .ghost-themed-scope
+      :is(
+        .ghost-button,
+        .ghost-link[data-appearance='button']
+      )[data-variant='ghost']
   ) {
     --_ghost-button-background: transparent;
     --_ghost-button-border-color: transparent;
@@ -135,8 +184,10 @@
   }
 
   :where(
-    .ghost-theme .ghost-button[data-size='sm'],
-    .ghost-themed-scope .ghost-button[data-size='sm']
+    .ghost-theme
+      :is(.ghost-button, .ghost-link[data-appearance='button'])[data-size='sm'],
+    .ghost-themed-scope
+      :is(.ghost-button, .ghost-link[data-appearance='button'])[data-size='sm']
   ) {
     --_ghost-button-min-size: var(--ghost-control-size-sm-min);
     --_ghost-button-padding-block: var(--ghost-control-size-sm-padding-block);
@@ -145,8 +196,10 @@
   }
 
   :where(
-    .ghost-theme .ghost-button[data-size='lg'],
-    .ghost-themed-scope .ghost-button[data-size='lg']
+    .ghost-theme
+      :is(.ghost-button, .ghost-link[data-appearance='button'])[data-size='lg'],
+    .ghost-themed-scope
+      :is(.ghost-button, .ghost-link[data-appearance='button'])[data-size='lg']
   ) {
     --_ghost-button-min-size: var(--ghost-control-size-lg-min);
     --_ghost-button-padding-block: var(--ghost-control-size-lg-padding-block);
@@ -156,13 +209,13 @@
 
   :where(
     .ghost-theme
-      .ghost-button:is(
+      :is(.ghost-button, .ghost-link[data-appearance='button']):is(
         :hover,
         [data-visual-state='hover'],
         [data-visual-state='hover-focus']
       ):not(:disabled):not([aria-disabled='true']),
     .ghost-themed-scope
-      .ghost-button:is(
+      :is(.ghost-button, .ghost-link[data-appearance='button']):is(
         :hover,
         [data-visual-state='hover'],
         [data-visual-state='hover-focus']
@@ -173,47 +226,55 @@
 
   :where(
     .ghost-theme
-      .ghost-button[aria-pressed='true']:not(:disabled):not(
-        [aria-disabled='true']
-      ),
+      :is(
+        .ghost-button,
+        .ghost-link[data-appearance='button']
+      )[aria-pressed='true']:not(:disabled):not([aria-disabled='true']),
     .ghost-themed-scope
-      .ghost-button[aria-pressed='true']:not(:disabled):not(
-        [aria-disabled='true']
-      ),
+      :is(
+        .ghost-button,
+        .ghost-link[data-appearance='button']
+      )[aria-pressed='true']:not(:disabled):not([aria-disabled='true']),
     .ghost-theme
-      .ghost-button[data-visual-state='selected']:not(:disabled):not(
+      :is(
+        .ghost-button,
+        .ghost-link[data-appearance='button']
+      )[data-visual-state='selected']:not(:disabled):not(
         [aria-disabled='true']
       ),
     .ghost-themed-scope
-      .ghost-button[data-visual-state='selected']:not(:disabled):not(
-        [aria-disabled='true']
-      )
+      :is(
+        .ghost-button,
+        .ghost-link[data-appearance='button']
+      )[data-visual-state='selected']:not(:disabled):not([aria-disabled='true'])
   ) {
     --_ghost-button-layer: var(--ghost-state-layer-selected);
   }
 
   :where(
     .ghost-theme
-      .ghost-button[aria-grabbed='true']:not(:disabled):not(
-        [aria-disabled='true']
-      ),
+      :is(
+        .ghost-button,
+        .ghost-link[data-appearance='button']
+      )[aria-grabbed='true']:not(:disabled):not([aria-disabled='true']),
     .ghost-themed-scope
-      .ghost-button[aria-grabbed='true']:not(:disabled):not(
-        [aria-disabled='true']
-      )
+      :is(
+        .ghost-button,
+        .ghost-link[data-appearance='button']
+      )[aria-grabbed='true']:not(:disabled):not([aria-disabled='true'])
   ) {
     --_ghost-button-layer: var(--ghost-state-layer-dragged);
   }
 
   :where(
     .ghost-theme
-      .ghost-button:is(
+      :is(.ghost-button, .ghost-link[data-appearance='button']):is(
         :active,
         [data-visual-state='active'],
         [data-visual-state='press-focus']
       ):not(:disabled):not([aria-disabled='true']),
     .ghost-themed-scope
-      .ghost-button:is(
+      :is(.ghost-button, .ghost-link[data-appearance='button']):is(
         :active,
         [data-visual-state='active'],
         [data-visual-state='press-focus']
@@ -227,7 +288,7 @@
 
   :where(
     .ghost-theme
-      .ghost-button:is(
+      :is(.ghost-button, .ghost-link[data-appearance='button']):is(
         :focus-visible,
         [data-visual-state='focus-visible'],
         [data-visual-state='hover-focus'],
@@ -235,7 +296,7 @@
         [data-visual-state='loading-focus']
       ),
     .ghost-themed-scope
-      .ghost-button:is(
+      :is(.ghost-button, .ghost-link[data-appearance='button']):is(
         :focus-visible,
         [data-visual-state='focus-visible'],
         [data-visual-state='hover-focus'],
@@ -253,8 +314,16 @@
   }
 
   :where(
-    .ghost-theme .ghost-button:is(:disabled, [data-state='disabled']),
-    .ghost-themed-scope .ghost-button:is(:disabled, [data-state='disabled'])
+    .ghost-theme
+      :is(.ghost-button, .ghost-link[data-appearance='button']):is(
+        :disabled,
+        [data-state='disabled']
+      ),
+    .ghost-themed-scope
+      :is(.ghost-button, .ghost-link[data-appearance='button']):is(
+        :disabled,
+        [data-state='disabled']
+      )
   ) {
     --_ghost-button-background: var(--ghost-action-disabled-bg);
     --_ghost-button-border-color: var(--ghost-action-disabled-border);
@@ -268,8 +337,16 @@
   }
 
   :where(
-    .ghost-theme .ghost-button[data-state='loading'],
-    .ghost-themed-scope .ghost-button[data-state='loading']
+    .ghost-theme
+      :is(
+        .ghost-button,
+        .ghost-link[data-appearance='button']
+      )[data-state='loading'],
+    .ghost-themed-scope
+      :is(
+        .ghost-button,
+        .ghost-link[data-appearance='button']
+      )[data-state='loading']
   ) {
     color: transparent;
     cursor: wait;
@@ -277,8 +354,16 @@
   }
 
   :where(
-    .ghost-theme .ghost-button[data-state='loading'],
-    .ghost-themed-scope .ghost-button[data-state='loading']
+    .ghost-theme
+      :is(
+        .ghost-button,
+        .ghost-link[data-appearance='button']
+      )[data-state='loading'],
+    .ghost-themed-scope
+      :is(
+        .ghost-button,
+        .ghost-link[data-appearance='button']
+      )[data-state='loading']
   )::before {
     animation: ghost-button-spin var(--ghost-action-spinner-duration) linear
       infinite;
@@ -297,18 +382,28 @@
   }
 
   :where(
-    .ghost-theme .ghost-button [data-part='loading-indicator'],
-    .ghost-themed-scope .ghost-button [data-part='loading-indicator']
+    .ghost-theme
+      :is(.ghost-button, .ghost-link[data-appearance='button'])
+      [data-part='loading-indicator'],
+    .ghost-themed-scope
+      :is(.ghost-button, .ghost-link[data-appearance='button'])
+      [data-part='loading-indicator']
   ) {
     display: none;
   }
 
   :where(
     .ghost-theme
-      .ghost-button[data-state='loading']
+      :is(
+        .ghost-button,
+        .ghost-link[data-appearance='button']
+      )[data-state='loading']
       [data-part='loading-indicator'],
     .ghost-themed-scope
-      .ghost-button[data-state='loading']
+      :is(
+        .ghost-button,
+        .ghost-link[data-appearance='button']
+      )[data-state='loading']
       [data-part='loading-indicator']
   ) {
     block-size: var(--ghost-action-spinner-size);
@@ -324,31 +419,45 @@
 
   :where(
     .ghost-theme
-      .ghost-button[data-state='loading']:has([data-part='loading-indicator']),
+      :is(
+        .ghost-button,
+        .ghost-link[data-appearance='button']
+      )[data-state='loading']:has([data-part='loading-indicator']),
     .ghost-themed-scope
-      .ghost-button[data-state='loading']:has([data-part='loading-indicator'])
+      :is(
+        .ghost-button,
+        .ghost-link[data-appearance='button']
+      )[data-state='loading']:has([data-part='loading-indicator'])
   )::before {
     content: none;
   }
 
   :where(
-    .ghost-theme .ghost-button[data-block],
-    .ghost-themed-scope .ghost-button[data-block]
+    .ghost-theme
+      :is(.ghost-button, .ghost-link[data-appearance='button'])[data-block],
+    .ghost-themed-scope
+      :is(.ghost-button, .ghost-link[data-appearance='button'])[data-block]
   ) {
     inline-size: 100%;
   }
 
   :where(
-    .ghost-theme .ghost-button[data-icon-only],
-    .ghost-themed-scope .ghost-button[data-icon-only]
+    .ghost-theme
+      :is(.ghost-button, .ghost-link[data-appearance='button'])[data-icon-only],
+    .ghost-themed-scope
+      :is(.ghost-button, .ghost-link[data-appearance='button'])[data-icon-only]
   ) {
     inline-size: var(--_ghost-button-min-size);
     padding: 0;
   }
 
   :where(
-    .ghost-theme .ghost-button [data-part='icon'],
-    .ghost-themed-scope .ghost-button [data-part='icon']
+    .ghost-theme
+      :is(.ghost-button, .ghost-link[data-appearance='button'])
+      [data-part='icon'],
+    .ghost-themed-scope
+      :is(.ghost-button, .ghost-link[data-appearance='button'])
+      [data-part='icon']
   ) {
     block-size: var(--ghost-action-icon-size);
     flex: none;
@@ -356,8 +465,14 @@
   }
 
   :where(
-    .ghost-theme .ghost-button [data-part='icon'] svg,
-    .ghost-themed-scope .ghost-button [data-part='icon'] svg
+    .ghost-theme
+      :is(.ghost-button, .ghost-link[data-appearance='button'])
+      [data-part='icon']
+      svg,
+    .ghost-themed-scope
+      :is(.ghost-button, .ghost-link[data-appearance='button'])
+      [data-part='icon']
+      svg
   ) {
     block-size: 100%;
     display: block;
@@ -366,8 +481,16 @@
 
   @media (prefers-reduced-motion: reduce) {
     :where(
-      .ghost-theme .ghost-button[data-state='loading'],
-      .ghost-themed-scope .ghost-button[data-state='loading']
+      .ghost-theme
+        :is(
+          .ghost-button,
+          .ghost-link[data-appearance='button']
+        )[data-state='loading'],
+      .ghost-themed-scope
+        :is(
+          .ghost-button,
+          .ghost-link[data-appearance='button']
+        )[data-state='loading']
     )::before {
       animation: ghost-button-pulse var(--ghost-action-spinner-duration)
         var(--ghost-motion-easing-standard) infinite;
@@ -376,7 +499,11 @@
   }
 
   @media (forced-colors: active) {
-    :where(.ghost-theme .ghost-button, .ghost-themed-scope .ghost-button) {
+    :where(
+      .ghost-theme :is(.ghost-button, .ghost-link[data-appearance='button']),
+      .ghost-themed-scope
+        :is(.ghost-button, .ghost-link[data-appearance='button'])
+    ) {
       --_ghost-button-color: ButtonText;
       --_ghost-button-fill: none;
       --_ghost-button-layer: 0;
@@ -391,8 +518,16 @@
     }
 
     :where(
-      .ghost-theme .ghost-button:is(:disabled, [data-state='disabled']),
-      .ghost-themed-scope .ghost-button:is(:disabled, [data-state='disabled'])
+      .ghost-theme
+        :is(.ghost-button, .ghost-link[data-appearance='button']):is(
+          :disabled,
+          [data-state='disabled']
+        ),
+      .ghost-themed-scope
+        :is(.ghost-button, .ghost-link[data-appearance='button']):is(
+          :disabled,
+          [data-state='disabled']
+        )
     ) {
       --_ghost-button-color: GrayText;
 
@@ -401,15 +536,23 @@
     }
 
     :where(
-      .ghost-theme .ghost-button[data-state='loading'],
-      .ghost-themed-scope .ghost-button[data-state='loading']
+      .ghost-theme
+        :is(
+          .ghost-button,
+          .ghost-link[data-appearance='button']
+        )[data-state='loading'],
+      .ghost-themed-scope
+        :is(
+          .ghost-button,
+          .ghost-link[data-appearance='button']
+        )[data-state='loading']
     ) {
       color: transparent;
     }
 
     :where(
       .ghost-theme
-        .ghost-button:is(
+        :is(.ghost-button, .ghost-link[data-appearance='button']):is(
           :focus-visible,
           [data-visual-state='focus-visible'],
           [data-visual-state='hover-focus'],
@@ -417,7 +560,7 @@
           [data-visual-state='loading-focus']
         ),
       .ghost-themed-scope
-        .ghost-button:is(
+        :is(.ghost-button, .ghost-link[data-appearance='button']):is(
           :focus-visible,
           [data-visual-state='focus-visible'],
           [data-visual-state='hover-focus'],
@@ -431,16 +574,25 @@
     }
 
     :where(
-      .ghost-theme .ghost-button[data-state='loading'],
-      .ghost-themed-scope .ghost-button[data-state='loading']
+      .ghost-theme
+        :is(
+          .ghost-button,
+          .ghost-link[data-appearance='button']
+        )[data-state='loading'],
+      .ghost-themed-scope
+        :is(
+          .ghost-button,
+          .ghost-link[data-appearance='button']
+        )[data-state='loading']
     )::before {
       border-color: var(--_ghost-button-color);
       border-inline-end-color: transparent;
     }
 
     :where(
-      .ghost-theme .ghost-button,
-      .ghost-themed-scope .ghost-button
+      .ghost-theme :is(.ghost-button, .ghost-link[data-appearance='button']),
+      .ghost-themed-scope
+        :is(.ghost-button, .ghost-link[data-appearance='button'])
     )::after {
       content: none;
     }

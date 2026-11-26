@@ -165,12 +165,6 @@
   padding: 0.1rem 0.36rem;
 }
 
-.ghost-landing__action-link {
-  color: inherit;
-  display: inline-flex;
-  text-decoration: none;
-}
-
 .ghost-landing__section-actions {
   display: flex;
   justify-content: center;
