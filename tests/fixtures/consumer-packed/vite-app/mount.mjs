@@ -8,15 +8,16 @@ import { pathToFileURL } from 'node:url'
 
 import { JSDOM } from 'jsdom'
 
-// Scripts and stylesheet links are stripped: the bundle is imported directly
-// below, and jsdom does not apply CSS layout anyway.
-const html = readFileSync('dist/index.html', 'utf8')
-  .replace(/<script[\s\S]*?<\/script>/g, '')
-  .replace(/<link[^>]*>/g, '')
-const { window } = new JSDOM(html, {
+// jsdom neither runs scripts nor loads subresources by default. Scripts and
+// stylesheet links are still removed from the parsed document: the bundle is
+// imported directly below, and jsdom does not apply CSS layout anyway.
+const { window } = new JSDOM(readFileSync('dist/index.html', 'utf8'), {
   url: 'http://localhost/',
   pretendToBeVisual: true,
 })
+for (const node of window.document.querySelectorAll('script, link')) {
+  node.remove()
+}
 for (const key of Object.getOwnPropertyNames(window)) {
   if (key in globalThis) continue
   Object.defineProperty(globalThis, key, {
