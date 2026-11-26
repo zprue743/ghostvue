@@ -3,7 +3,10 @@
  * --_ghost-link-* properties are per-instance wiring, not a public API.
  */
 @layer ghostvue-theme {
-  :where(.ghost-theme .ghost-link, .ghost-themed-scope .ghost-link) {
+  :where(
+    .ghost-theme .ghost-link:not([data-appearance='button']),
+    .ghost-themed-scope .ghost-link:not([data-appearance='button'])
+  ) {
     --_ghost-link-color: var(--ghost-action-primary-bg);
     --_ghost-link-underline-active: currentColor;
     --_ghost-link-gap: var(--ghost-space-gap-xs);
@@ -35,45 +38,59 @@
   }
 
   :where(
-    .ghost-theme .ghost-link[data-tone='neutral'],
-    .ghost-themed-scope .ghost-link[data-tone='neutral']
+    .ghost-theme
+      .ghost-link:not([data-appearance='button'])[data-tone='neutral'],
+    .ghost-themed-scope
+      .ghost-link:not([data-appearance='button'])[data-tone='neutral']
   ) {
     --_ghost-link-color: var(--ghost-surface-fg);
   }
 
   :where(
-    .ghost-theme .ghost-link[data-variant='subtle'],
-    .ghost-themed-scope .ghost-link[data-variant='subtle']
+    .ghost-theme
+      .ghost-link:not([data-appearance='button'])[data-variant='subtle'],
+    .ghost-themed-scope
+      .ghost-link:not([data-appearance='button'])[data-variant='subtle']
   ) {
     text-decoration-color: transparent;
   }
 
   :where(
-    .ghost-theme .ghost-link[data-variant='subtle']:is(:hover, :focus-visible),
+    .ghost-theme
+      .ghost-link:not([data-appearance='button'])[data-variant='subtle']:is(
+        :hover,
+        :focus-visible
+      ),
     .ghost-themed-scope
-      .ghost-link[data-variant='subtle']:is(:hover, :focus-visible)
+      .ghost-link:not([data-appearance='button'])[data-variant='subtle']:is(
+        :hover,
+        :focus-visible
+      )
   ) {
     text-decoration-color: var(--_ghost-link-underline-active);
   }
 
   :where(
-    .ghost-theme .ghost-link:is(:hover, :focus-visible),
-    .ghost-themed-scope .ghost-link:is(:hover, :focus-visible)
+    .ghost-theme
+      .ghost-link:not([data-appearance='button']):is(:hover, :focus-visible),
+    .ghost-themed-scope
+      .ghost-link:not([data-appearance='button']):is(:hover, :focus-visible)
   ) {
     --_ghost-link-color: var(--ghost-action-primary-bg-hover);
     text-decoration-color: var(--_ghost-link-underline-active);
   }
 
   :where(
-    .ghost-theme .ghost-link:active,
-    .ghost-themed-scope .ghost-link:active
+    .ghost-theme .ghost-link:not([data-appearance='button']):active,
+    .ghost-themed-scope .ghost-link:not([data-appearance='button']):active
   ) {
     --_ghost-link-color: var(--ghost-action-primary-bg-active);
   }
 
   :where(
-    .ghost-theme .ghost-link:is(:focus-visible),
-    .ghost-themed-scope .ghost-link:is(:focus-visible)
+    .ghost-theme .ghost-link:not([data-appearance='button']):is(:focus-visible),
+    .ghost-themed-scope
+      .ghost-link:not([data-appearance='button']):is(:focus-visible)
   ) {
     border-radius: var(--ghost-radius-sm);
     outline: var(--ghost-focus-ring-width) solid var(--ghost-focus-ring-color);
@@ -81,8 +98,10 @@
   }
 
   :where(
-    .ghost-theme .ghost-link[data-state='disabled'],
-    .ghost-themed-scope .ghost-link[data-state='disabled']
+    .ghost-theme
+      .ghost-link:not([data-appearance='button'])[data-state='disabled'],
+    .ghost-themed-scope
+      .ghost-link:not([data-appearance='button'])[data-state='disabled']
   ) {
     --_ghost-link-color: var(--ghost-action-disabled-fg);
 
@@ -111,20 +130,27 @@
   }
 
   @media (forced-colors: active) {
-    :where(.ghost-theme .ghost-link, .ghost-themed-scope .ghost-link) {
+    :where(
+      .ghost-theme .ghost-link:not([data-appearance='button']),
+      .ghost-themed-scope .ghost-link:not([data-appearance='button'])
+    ) {
       color: LinkText;
     }
 
     :where(
-      .ghost-theme .ghost-link[data-state='disabled'],
-      .ghost-themed-scope .ghost-link[data-state='disabled']
+      .ghost-theme
+        .ghost-link:not([data-appearance='button'])[data-state='disabled'],
+      .ghost-themed-scope
+        .ghost-link:not([data-appearance='button'])[data-state='disabled']
     ) {
       color: GrayText;
     }
 
     :where(
-      .ghost-theme .ghost-link:is(:focus-visible),
-      .ghost-themed-scope .ghost-link:is(:focus-visible)
+      .ghost-theme
+        .ghost-link:not([data-appearance='button']):is(:focus-visible),
+      .ghost-themed-scope
+        .ghost-link:not([data-appearance='button']):is(:focus-visible)
     ) {
       outline-color: Highlight;
     }

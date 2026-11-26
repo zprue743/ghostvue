@@ -162,4 +162,34 @@ test.describe('GhostLink', () => {
       await playground.close()
     }
   })
+
+  test('button-styled link example keeps link role, keyboard focus, disabled contract, and passes axe', async ({
+    page,
+  }) => {
+    const playground = await startStaticServer('apps/playground/dist')
+    try {
+      await page.goto(
+        `${playground.url}/examples.html?id=link/button&theme=default&mode=light`,
+      )
+      const primary = page.getByRole('link', { name: 'Get started' })
+      await expect(primary).toBeVisible()
+      await expect(primary).toHaveAttribute('href', '/getting-started')
+      await expect(primary).toHaveAttribute('data-appearance', 'button')
+      // No nested interactive elements inside the link.
+      await expect(primary.locator('button, a')).toHaveCount(0)
+
+      await primary.focus()
+      await expect(primary).toBeFocused()
+
+      const disabled = page.getByText('Unavailable destination')
+      await expect(disabled).toHaveAttribute('aria-disabled', 'true')
+      await expect(disabled).toHaveAttribute('tabindex', '-1')
+      await expect(disabled).not.toHaveAttribute('href')
+
+      const results = await new AxeBuilder({ page }).analyze()
+      expect(results.violations).toEqual([])
+    } finally {
+      await playground.close()
+    }
+  })
 })

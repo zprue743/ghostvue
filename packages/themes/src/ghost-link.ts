@@ -6,11 +6,23 @@ import {
   type GhostLinkExposed,
 } from '@ghostvue/vue'
 
-/** Text decoration treatment. Omitting it selects `inline`. */
-export type GhostLinkVariant = 'inline' | 'subtle'
+import type {
+  GhostButtonSize,
+  GhostButtonTone,
+  GhostButtonVariant,
+} from './ghost-button'
 
-/** Semantic color intent. Omitting it selects `accent`. */
-export type GhostLinkTone = 'accent' | 'neutral'
+/** Visual presentation mode. Omitting it selects `link`. */
+export type GhostLinkAppearance = 'link' | 'button'
+
+/** Visual treatment. Link appearance uses `inline` | `subtle`; button appearance uses `GhostButtonVariant`. */
+export type GhostLinkVariant = 'inline' | 'subtle' | GhostButtonVariant
+
+/** Semantic color intent. Link appearance uses `accent` | `neutral`; button appearance uses `GhostButtonTone`. */
+export type GhostLinkTone = 'accent' | 'neutral' | GhostButtonTone
+
+/** Control size when `appearance` is `'button'`. Omitting it selects `md`. */
+export type GhostLinkSize = GhostButtonSize
 
 /**
  * Themed wrapper: visual props as `data-*`, instance-scoped CSS. Behavior stays
@@ -24,8 +36,16 @@ export const GhostLink = defineComponent({
     disabled: { type: Boolean, default: false },
     external: { type: Boolean, default: false },
     newTabLabel: { type: String, default: 'Opens in new tab' },
-    variant: { type: String as PropType<GhostLinkVariant>, default: 'inline' },
+    appearance: {
+      type: String as PropType<GhostLinkAppearance>,
+      default: 'link',
+    },
+    variant: {
+      type: String as PropType<GhostLinkVariant>,
+      default: undefined,
+    },
     tone: { type: String as PropType<GhostLinkTone>, default: 'accent' },
+    size: { type: String as PropType<GhostLinkSize>, default: 'md' },
   },
   setup(props, { attrs, slots, expose }) {
     const inner = ref<GhostLinkExposed | null>(null)
@@ -42,8 +62,12 @@ export const GhostLink = defineComponent({
       },
     } satisfies GhostLinkExposed)
 
-    return () =>
-      h('span', { class: 'ghost-themed-scope' }, [
+    return () => {
+      const isButton = props.appearance === 'button'
+      const defaultVariant = isButton ? 'solid' : 'inline'
+      const resolvedVariant = props.variant ?? defaultVariant
+
+      return h('span', { class: 'ghost-themed-scope' }, [
         h(
           GhostUnstyledLink,
           {
@@ -53,13 +77,17 @@ export const GhostLink = defineComponent({
             disabled: props.disabled,
             external: props.external,
             newTabLabel: props.newTabLabel,
+            'data-appearance': isButton ? 'button' : undefined,
             'data-variant':
-              props.variant === 'inline' ? undefined : props.variant,
+              resolvedVariant === defaultVariant ? undefined : resolvedVariant,
             'data-tone': props.tone === 'accent' ? undefined : props.tone,
+            'data-size':
+              isButton && props.size !== 'md' ? props.size : undefined,
           },
           slots,
         ),
       ])
+    }
   },
 })
 
