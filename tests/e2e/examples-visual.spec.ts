@@ -13,10 +13,12 @@ async function stabilizeScrollSpyExample(preview: Locator): Promise<void> {
   await expect(root).toBeVisible()
   await expect(preview.locator('a[data-part="link"]').first()).toBeVisible()
   await root.evaluate(
-    (element) =>
+    () =>
       new Promise<void>((resolve) => {
         requestAnimationFrame(() => {
-          requestAnimationFrame(() => resolve())
+          requestAnimationFrame(() => {
+            resolve()
+          })
         })
       }),
   )

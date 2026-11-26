@@ -14,7 +14,7 @@ import {
   >
     <GhostScrollSpy
       label="Sections"
-      class="scroll-spy-themed__nav"
+      class="scroll-spy-themed__nav vp-raw"
       data-testid="scroll-spy-themed"
     >
       <GhostScrollSpyList>

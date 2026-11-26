@@ -9,7 +9,11 @@ import {
 
 <template>
   <div class="scroll-spy-composable" data-testid="scroll-spy-composable">
-    <GhostScrollSpy v-slot="{ activeId, scrollTo }" label="Custom layout">
+    <GhostScrollSpy
+      v-slot="{ activeId, scrollTo }"
+      label="Custom layout"
+      class="vp-raw"
+    >
       <p class="scroll-spy-composable__status">
         Active section:
         <strong>{{ activeId ?? '—' }}</strong>

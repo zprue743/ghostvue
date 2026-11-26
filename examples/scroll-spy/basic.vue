@@ -9,9 +9,10 @@ import {
 
 <template>
   <div class="scroll-spy-basic" data-testid="scroll-spy-basic-page">
+    <!-- Keep VitePress routing from intercepting the demo's fragment links. -->
     <GhostScrollSpy
       label="On this page"
-      class="scroll-spy-basic__nav"
+      class="scroll-spy-basic__nav vp-raw"
       data-testid="scroll-spy-basic"
     >
       <GhostScrollSpyList>

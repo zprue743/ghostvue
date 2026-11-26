@@ -48,6 +48,31 @@ async function pageOverflow(page: Page): Promise<number> {
 }
 
 test.describe('docs example previews', () => {
+  test('ScrollSpy demos focus the linked section and replace the current history entry', async ({
+    page,
+    docsUrl,
+  }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' })
+    await page.goto(`${docsUrl}/components/scroll-spy.html`)
+    const historyLength = await page.evaluate(() => window.history.length)
+
+    for (const { example, label, target } of [
+      { example: 'basic', label: 'Details', target: 'scroll-spy-details' },
+      { example: 'themed', label: 'Two', target: 'themed-two' },
+      { example: 'composable', label: 'custom-b', target: 'custom-b' },
+    ]) {
+      const preview = page.locator(`[data-example-id="scroll-spy/${example}"]`)
+      await preview
+        .getByRole('link', { name: label, exact: true })
+        .press('Enter')
+      await expect(page.locator(`#${target}`)).toBeFocused()
+      await expect(page).toHaveURL(new RegExp(`#${target}$`))
+      expect(await page.evaluate(() => window.history.length)).toBe(
+        historyLength,
+      )
+    }
+  })
+
   test('GhostButton themed preview has recipe chrome and highlighted source', async ({
     page,
     docsUrl,
