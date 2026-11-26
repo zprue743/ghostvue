@@ -35,6 +35,33 @@ accordions on the same page.
 See the [generated component references](/reference/) for props, emits, slots,
 exposed members, styling hooks, and executable examples.
 
+<!-- @generated docs-api:vue/ghost-accordion begin -->
+
+<!-- Source: packages/vue/manifests/ghost-accordion.manifest.json. Run pnpm docs:api:write after it changes. -->
+
+| Prop           | Type                         | Default    | Description                                                |
+| -------------- | ---------------------------- | ---------- | ---------------------------------------------------------- |
+| `collapsible`  | `boolean`                    | `false`    | When `type` is `single`, allow closing the active panel.   |
+| `defaultValue` | `GhostAccordionValue`        | —          | Initial expansion when `modelValue` is omitted.            |
+| `disabled`     | `boolean`                    | `false`    | Disables toggling on every item when `true`.               |
+| `headingLevel` | `GhostAccordionHeadingLevel` | `3`        | Heading level wrapping each accordion trigger (`h1`–`h6`). |
+| `modelValue`   | `GhostAccordionValue`        | —          | Controlled expansion value. Omit for uncontrolled mode.    |
+| `type`         | `GhostAccordionType`         | `"single"` | Single or multiple expanded panels.                        |
+
+| Slot      | Slot props | Description      |
+| --------- | ---------- | ---------------- |
+| `default` | —          | Accordion items. |
+
+<!-- @generated docs-api:vue/ghost-accordion end -->
+
+<!-- @generated docs-api:themes/ghost-accordion begin -->
+
+<!-- Source: packages/themes/manifests/ghost-accordion.manifest.json. Run pnpm docs:api:write after it changes. -->
+
+`@ghostvue/themes` adds no props, events, or slots to the headless `GhostAccordion` API, which it forwards.
+
+<!-- @generated docs-api:themes/ghost-accordion end -->
+
 ### `GhostAccordion` (root)
 
 Emits `update:modelValue` with `string | string[] | undefined` depending on

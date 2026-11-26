@@ -33,21 +33,44 @@ without changing layout or the focus ring.
 
 ## API
 
+<!-- @generated docs-api:vue/ghost-slider begin -->
+
+<!-- Source: packages/vue/manifests/ghost-slider.manifest.json. Run pnpm docs:api:write after it changes. -->
+
 | Prop           | Type                         | Default        | Description                                                                                                                             |
 | -------------- | ---------------------------- | -------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
-| `v-model`      | `number \| [number, number]` | —              | Controlled value; tuple when `range` is true.                                                                                           |
-| `defaultValue` | same                         | `min` / tuple  | Uncontrolled seed and form-reset baseline.                                                                                              |
-| `min`          | `number`                     | `0`            | Lower bound.                                                                                                                            |
-| `max`          | `number`                     | `100`          | Upper bound.                                                                                                                            |
-| `step`         | `number`                     | `1`            | Snap increment.                                                                                                                         |
-| `range`        | `boolean`                    | `false`        | Two-thumb interval mode.                                                                                                                |
-| `orientation`  | `'horizontal' \| 'vertical'` | `'horizontal'` | Axis and keyboard mapping.                                                                                                              |
+| `defaultValue` | `GhostSliderValue`           | —              | Uncontrolled seed and form-reset baseline.                                                                                              |
 | `disabled`     | `boolean`                    | `false`        | Non-operable; hidden inputs not submitted.                                                                                              |
+| `form`         | `string`                     | —              | External form association.                                                                                                              |
+| `max`          | `number`                     | `100`          | Upper bound.                                                                                                                            |
+| `messages`     | `GhostSliderMessages`        | —              | Overridable range-thumb naming strings (`minimum`, `maximum`) and `aria-label` formatters (`formatMinimumLabel`, `formatMaximumLabel`). |
+| `min`          | `number`                     | `0`            | Lower bound.                                                                                                                            |
+| `modelValue`   | `GhostSliderValue`           | —              | Controlled value; tuple when `range` is true.                                                                                           |
 | `name`         | `string`                     | —              | Primary hidden field name.                                                                                                              |
 | `nameMax`      | `string`                     | —              | High thumb name when `range` is true.                                                                                                   |
-| `form`         | `string`                     | —              | External form association.                                                                                                              |
+| `orientation`  | `'horizontal' \| 'vertical'` | `"horizontal"` | Axis and keyboard mapping.                                                                                                              |
+| `range`        | `boolean`                    | `false`        | Two-thumb interval mode.                                                                                                                |
+| `step`         | `number`                     | `1`            | Snap increment.                                                                                                                         |
 | `valueText`    | `string`                     | —              | `aria-valuetext` for single-thumb mode.                                                                                                 |
-| `messages`     | `GhostSliderMessages`        | —              | Overridable range-thumb naming strings (`minimum`, `maximum`) and `aria-label` formatters (`formatMinimumLabel`, `formatMaximumLabel`). |
+
+| Slot      | Slot props | Description                                                          |
+| --------- | ---------- | -------------------------------------------------------------------- |
+| `default` | —          | Optional inner content. Prefer aria-labelledby or an external label. |
+
+<!-- @generated docs-api:vue/ghost-slider end -->
+
+<!-- @generated docs-api:themes/ghost-slider begin -->
+
+<!-- Source: packages/themes/manifests/ghost-slider.manifest.json. Run pnpm docs:api:write after it changes. -->
+
+`@ghostvue/themes` adds these to the headless `GhostSlider` API, which it forwards:
+
+| Prop   | Type                                | Default    | Description                                              |
+| ------ | ----------------------------------- | ---------- | -------------------------------------------------------- |
+| `tone` | `'accent' \| 'neutral' \| 'danger'` | `"accent"` | Semantic color intent for the range fill and thumb ring. |
+| `size` | `'sm' \| 'md' \| 'lg'`              | `"md"`     | Track thickness and thumb diameter.                      |
+
+<!-- @generated docs-api:themes/ghost-slider end -->
 
 Native attributes (`id`, `class`, `aria-labelledby`, and listeners) fall
 through to the root (`data-part="root"`). Thumbs expose `role="slider"` with

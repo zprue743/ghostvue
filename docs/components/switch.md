@@ -31,15 +31,25 @@ Headless use of the same contract without the SFC:
 
 ## API
 
-| Prop           | Type      | Default | Description                                                                          |
-| -------------- | --------- | ------- | ------------------------------------------------------------------------------------ |
-| `modelValue`   | `boolean` | omitted | Controlled on/off. Omit for uncontrolled mode.                                       |
-| `defaultValue` | `boolean` | `false` | Initial on/off when `modelValue` is omitted. Form reset restores this mounted value. |
-| `disabled`     | `boolean` | `false` | Native disabled: not focusable, not operable, not submitted.                         |
-| `readonly`     | `boolean` | `false` | Focusable and submitted, but not user-operable.                                      |
-| `name`         | `string`  | omitted | Form field name. Submits `name=value` while on and enabled.                          |
-| `value`        | `string`  | `'on'`  | Submitted string when on.                                                            |
-| `form`         | `string`  | omitted | Associates the hidden input with an external form id.                                |
+<!-- @generated docs-api:vue/ghost-switch begin -->
+
+<!-- Source: packages/vue/manifests/ghost-switch.manifest.json. Run pnpm docs:api:write after it changes. -->
+
+| Prop           | Type      | Default | Description                                                                        |
+| -------------- | --------- | ------- | ---------------------------------------------------------------------------------- |
+| `defaultValue` | `boolean` | `false` | Initial on/off when modelValue is omitted. Form reset restores this mounted value. |
+| `disabled`     | `boolean` | `false` | Native disabled: not focusable, not operable, and not submitted.                   |
+| `form`         | `string`  | —       | Associates the hidden input with an external form id.                              |
+| `modelValue`   | `boolean` | —       | Controlled on/off. Omit for uncontrolled mode.                                     |
+| `name`         | `string`  | —       | Form field name. Submits name=value while on and enabled.                          |
+| `readonly`     | `boolean` | `false` | Focusable and submitted, but not user-operable. Expressed as aria-readonly.        |
+| `value`        | `string`  | `"on"`  | Submitted string when on. Same default as a native checkbox.                       |
+
+| Slot      | Slot props | Description                                                                                                                                                         |
+| --------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `default` | —          | Optional inner content, usually a visible name. Prefer a label for=id or aria-label when the name should not sit inside the control. Do not put On/Off in the name. |
+
+<!-- @generated docs-api:vue/ghost-switch end -->
 
 `v-model` is a boolean. Native attributes and listeners fall through to the
 button, except `name`, `value`, and `form`, which route to the hidden form
@@ -59,10 +69,18 @@ input so the switch stays the only labelable element.
 Importing the themed component loads the default stylesheet. Visual props
 exist only on this wrapper:
 
-| Prop   | Type                                | Default    | Description                     |
-| ------ | ----------------------------------- | ---------- | ------------------------------- |
-| `size` | `'sm' \| 'md' \| 'lg'`              | `'md'`     | Control size.                   |
-| `tone` | `'accent' \| 'neutral' \| 'danger'` | `'accent'` | Semantic color of the on track. |
+<!-- @generated docs-api:themes/ghost-switch begin -->
+
+<!-- Source: packages/themes/manifests/ghost-switch.manifest.json. Run pnpm docs:api:write after it changes. -->
+
+`@ghostvue/themes` adds these to the headless `GhostSwitch` API, which it forwards:
+
+| Prop   | Type                                | Default    | Description                                                                      |
+| ------ | ----------------------------------- | ---------- | -------------------------------------------------------------------------------- |
+| `size` | `'sm' \| 'md' \| 'lg'`              | `"md"`     | Control size. The default omits data-size so CSS can treat a missing hook as md. |
+| `tone` | `'accent' \| 'neutral' \| 'danger'` | `"accent"` | Semantic color of the on track. The default omits data-tone.                     |
+
+<!-- @generated docs-api:themes/ghost-switch end -->
 
 Themed track size comes from `--ghost-control-size-*-min`. The on fill uses
 `--ghost-action-primary-*` (or the matching tone) and

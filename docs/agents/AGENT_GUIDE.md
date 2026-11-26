@@ -79,3 +79,16 @@ copying those rules. Edit `scripts/agent-adapter-catalog.mjs` or
 them. `pnpm adapters` is part of `pnpm verify` and fails when an adapter drifts
 from that catalog. `pnpm manifests` is also part of `pnpm verify`; regenerate
 SFC-backed manifests with `pnpm manifests:write`.
+
+## Generated API tables in docs
+
+Component pages (`docs/components/<slug>.md`) and the MCP tool list in
+`docs/tooling/mcp-server.md` embed tables between
+`<!-- @generated docs-api:… begin -->` and `end` markers. `pnpm docs:api`
+(part of `pnpm verify`) fails when a table differs from its source, when a
+component page lacks its `vue/ghost-<slug>` block (and `themes/ghost-<slug>`
+block when a themed manifest exists), or when a props, events, or slots table
+is hand-written outside a block. Edit the manifest description, Vue source, or
+MCP `defineTool` call instead of the table, then run `pnpm docs:api:write`.
+Other manifests, such as sub-components, can get their own block wherever a
+page documents them.

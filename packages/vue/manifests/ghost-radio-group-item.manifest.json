@@ -11,14 +11,14 @@
       "type": "boolean",
       "default": false,
       "required": false,
-      "description": "Declared prop `disabled`.",
+      "description": "Disables this option only.",
       "deprecated": false
     },
     {
       "name": "value",
       "type": "string",
       "required": true,
-      "description": "Declared prop `value`.",
+      "description": "Option value; must be unique in the group.",
       "deprecated": false
     }
   ],

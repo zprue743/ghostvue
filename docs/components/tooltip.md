@@ -45,6 +45,32 @@ leaves every layer open.
 See the [generated component references](/reference/) for props, emits, slots,
 exposed members, styling hooks, CSS variables, and executable examples.
 
+<!-- @generated docs-api:vue/ghost-tooltip begin -->
+
+<!-- Source: packages/vue/manifests/ghost-tooltip.manifest.json. Run pnpm docs:api:write after it changes. -->
+
+| Prop                      | Type      | Default | Description                                                               |
+| ------------------------- | --------- | ------- | ------------------------------------------------------------------------- |
+| `closeDelay`              | `number`  | `300`   | Milliseconds before hiding after hover/focus ends (WCAG hoverable grace). |
+| `defaultOpen`             | `boolean` | `false` | Initial open state when `open` is omitted.                                |
+| `delayDuration`           | `number`  | —       | Milliseconds before showing after hover or focus begins.                  |
+| `disableHoverableContent` | `boolean` | `false` | When `true`, hides immediately on pointer/focus leave.                    |
+| `open`                    | `boolean` | —       | Controlled open state. Omit for uncontrolled mode.                        |
+
+| Slot      | Slot props      | Description                        |
+| --------- | --------------- | ---------------------------------- |
+| `default` | `open: boolean` | Tooltip trigger and content parts. |
+
+<!-- @generated docs-api:vue/ghost-tooltip end -->
+
+<!-- @generated docs-api:themes/ghost-tooltip begin -->
+
+<!-- Source: packages/themes/manifests/ghost-tooltip.manifest.json. Run pnpm docs:api:write after it changes. -->
+
+`@ghostvue/themes` adds no props, events, or slots to the headless `GhostTooltip` API, which it forwards.
+
+<!-- @generated docs-api:themes/ghost-tooltip end -->
+
 ### `GhostTooltip` (root)
 
 Supports `delayDuration`, `closeDelay`, and `disableHoverableContent`.

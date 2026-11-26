@@ -19,7 +19,7 @@
       "type": "boolean",
       "default": false,
       "required": false,
-      "description": "Declared prop `defaultOpen`.",
+      "description": "Initial open state.",
       "deprecated": false
     },
     {
@@ -27,14 +27,14 @@
       "type": "string",
       "default": "",
       "required": false,
-      "description": "Declared prop `defaultSearch`.",
+      "description": "Initial query when `search` is omitted.",
       "deprecated": false
     },
     {
       "name": "defaultValue",
       "type": "GhostComboboxValue",
       "required": false,
-      "description": "Declared prop `defaultValue`.",
+      "description": "Uncontrolled seed and reset value.",
       "deprecated": false
     },
     {
@@ -42,7 +42,7 @@
       "type": "boolean",
       "default": false,
       "required": false,
-      "description": "Declared prop `disabled`.",
+      "description": "Disables input, trigger, and options.",
       "deprecated": false
     },
     {
@@ -57,7 +57,7 @@
       "type": "boolean",
       "default": false,
       "required": false,
-      "description": "Declared prop `invalid`.",
+      "description": "`aria-invalid` on the input.",
       "deprecated": false
     },
     {
@@ -65,7 +65,7 @@
       "type": "boolean",
       "default": false,
       "required": false,
-      "description": "Declared prop `loading`.",
+      "description": "Hides empty slot; sets listbox `aria-busy`.",
       "deprecated": false
     },
     {
@@ -79,7 +79,7 @@
       "name": "modelValue",
       "type": "GhostComboboxValue",
       "required": false,
-      "description": "Declared prop `modelValue`.",
+      "description": "Controlled selection; `undefined` clears.",
       "deprecated": false
     },
     {
@@ -87,28 +87,28 @@
       "type": "boolean",
       "default": false,
       "required": false,
-      "description": "Declared prop `multiple`.",
+      "description": "Multi-select toggles membership in `string[]`.",
       "deprecated": false
     },
     {
       "name": "name",
       "type": "string",
       "required": false,
-      "description": "Declared prop `name`.",
+      "description": "Submit input name.",
       "deprecated": false
     },
     {
       "name": "open",
       "type": "boolean",
       "required": false,
-      "description": "Declared prop `open`.",
+      "description": "Controlled listbox open state.",
       "deprecated": false
     },
     {
       "name": "placeholder",
       "type": "string",
       "required": false,
-      "description": "Declared prop `placeholder`.",
+      "description": "Input placeholder (wins over the input's own).",
       "deprecated": false
     },
     {
@@ -116,14 +116,14 @@
       "type": "boolean",
       "default": false,
       "required": false,
-      "description": "Declared prop `required`.",
+      "description": "Required when `name` is set.",
       "deprecated": false
     },
     {
       "name": "search",
       "type": "string",
       "required": false,
-      "description": "Declared prop `search`.",
+      "description": "Controlled query in the input.",
       "deprecated": false
     },
     {

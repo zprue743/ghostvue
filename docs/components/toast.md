@@ -175,6 +175,35 @@ Each record has `id`, `type`, `urgency`, `title`, `description`, `action`, the
 resolved `duration` (`null` when it persists), `remainingMs`, `pauseReasons`,
 and `state`.
 
+## API
+
+<!-- @generated docs-api:vue/ghost-toast begin -->
+
+<!-- Source: packages/vue/manifests/ghost-toast.manifest.json. Run pnpm docs:api:write after it changes. -->
+
+| Prop    | Type               | Default  | Description                                                    |
+| ------- | ------------------ | -------- | -------------------------------------------------------------- |
+| `toast` | `GhostToastRecord` | Required | Record to render, usually one item of the viewport's `toasts`. |
+
+| Slot      | Slot props                                       | Description      |
+| --------- | ------------------------------------------------ | ---------------- |
+| `default` | `dismiss: () => void`, `toast: GhostToastRecord` | Primary content. |
+
+<!-- @generated docs-api:vue/ghost-toast end -->
+
+<!-- @generated docs-api:themes/ghost-toast begin -->
+
+<!-- Source: packages/themes/manifests/ghost-toast.manifest.json. Run pnpm docs:api:write after it changes. -->
+
+`@ghostvue/themes` adds these to the headless `GhostToast` API, which it forwards:
+
+| Prop      | Type                                | Default     | Description                                                                                                           |
+| --------- | ----------------------------------- | ----------- | --------------------------------------------------------------------------------------------------------------------- |
+| `variant` | `'surface' \| 'solid'`              | `"surface"` | Visual treatment. The default omits data-variant.                                                                     |
+| `tone`    | `'neutral' \| 'accent' \| 'danger'` | —           | Semantic color intent. When unset, type 'error' maps to danger and other records to neutral. Neutral omits data-tone. |
+
+<!-- @generated docs-api:themes/ghost-toast end -->
+
 ## Provider and viewport props
 
 | Prop (provider) | Default           | Contract                                                        |

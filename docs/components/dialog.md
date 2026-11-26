@@ -82,6 +82,30 @@ is announced in a polite `role="status"` next to the trigger.
 See the [generated component references](/reference/) for props, emits, slots,
 exposed members, styling hooks, CSS variables, and executable examples.
 
+<!-- @generated docs-api:vue/ghost-dialog begin -->
+
+<!-- Source: packages/vue/manifests/ghost-dialog.manifest.json. Run pnpm docs:api:write after it changes. -->
+
+| Prop          | Type      | Default | Description                                                                     |
+| ------------- | --------- | ------- | ------------------------------------------------------------------------------- |
+| `defaultOpen` | `boolean` | `false` | Initial open state when `open` is omitted.                                      |
+| `modal`       | `boolean` | `true`  | Enables modal behavior (trapped focus, scroll lock, inert background, overlay). |
+| `open`        | `boolean` | —       | Controlled open state. Omit for uncontrolled mode.                              |
+
+| Slot      | Slot props                           | Description                                                                                                  |
+| --------- | ------------------------------------ | ------------------------------------------------------------------------------------------------------------ |
+| `default` | `close: () => void`, `open: boolean` | Trigger, overlay, content, title, description, close parts, and optional custom UI reading the scoped state. |
+
+<!-- @generated docs-api:vue/ghost-dialog end -->
+
+<!-- @generated docs-api:themes/ghost-dialog begin -->
+
+<!-- Source: packages/themes/manifests/ghost-dialog.manifest.json. Run pnpm docs:api:write after it changes. -->
+
+`@ghostvue/themes` adds no props, events, or slots to the headless `GhostDialog` API, which it forwards.
+
+<!-- @generated docs-api:themes/ghost-dialog end -->
+
 ### `GhostDialog` (root)
 
 Emits `update:open` with `(open: boolean)`. The default slot receives

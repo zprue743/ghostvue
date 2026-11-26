@@ -10,7 +10,7 @@
       "name": "alt",
       "type": "string",
       "required": false,
-      "description": "Declared prop `alt`.",
+      "description": "`img` accessible name; defaults to `name`.",
       "deprecated": false
     },
     {
@@ -18,21 +18,21 @@
       "type": "GhostAvatarElement",
       "default": "span",
       "required": false,
-      "description": "Declared prop `as`.",
+      "description": "Root host.",
       "deprecated": false
     },
     {
       "name": "name",
       "type": "string",
       "required": false,
-      "description": "Declared prop `name`.",
+      "description": "Initials source and default `alt`.",
       "deprecated": false
     },
     {
       "name": "src",
       "type": "string",
       "required": false,
-      "description": "Declared prop `src`.",
+      "description": "Image URL. Load is confirmed after mount on the client.",
       "deprecated": false
     }
   ],
@@ -42,7 +42,7 @@
     {
       "name": "fallback",
       "props": [],
-      "description": "Named slot `fallback`."
+      "description": "Shown when the image is not displayed."
     }
   ],
   "exposed": [

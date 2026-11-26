@@ -38,6 +38,30 @@ tokens. Optional height transitions respect `prefers-reduced-motion`; set
 See the [generated component references](/reference/) for props, emits, slots,
 exposed members, styling hooks, CSS variables, and executable examples.
 
+<!-- @generated docs-api:vue/ghost-collapsible begin -->
+
+<!-- Source: packages/vue/manifests/ghost-collapsible.manifest.json. Run pnpm docs:api:write after it changes. -->
+
+| Prop          | Type      | Default | Description                                        |
+| ------------- | --------- | ------- | -------------------------------------------------- |
+| `defaultOpen` | `boolean` | `false` | Initial open state when `open` is omitted.         |
+| `disabled`    | `boolean` | `false` | Disables toggling on the trigger when `true`.      |
+| `open`        | `boolean` | —       | Controlled open state. Omit for uncontrolled mode. |
+
+| Slot      | Slot props                            | Description                                                             |
+| --------- | ------------------------------------- | ----------------------------------------------------------------------- |
+| `default` | `open: boolean`, `toggle: () => void` | Trigger and content parts plus optional custom UI reading scoped state. |
+
+<!-- @generated docs-api:vue/ghost-collapsible end -->
+
+<!-- @generated docs-api:themes/ghost-collapsible begin -->
+
+<!-- Source: packages/themes/manifests/ghost-collapsible.manifest.json. Run pnpm docs:api:write after it changes. -->
+
+`@ghostvue/themes` adds no props, events, or slots to the headless `GhostCollapsible` API, which it forwards.
+
+<!-- @generated docs-api:themes/ghost-collapsible end -->
+
 ### `GhostCollapsible` (root)
 
 Emits `update:open` with `(open: boolean)`. The default slot receives

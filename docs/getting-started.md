@@ -44,7 +44,9 @@ start themed and replace pieces with headless ones later.
 
 Import a flagship stylesheet once and name it on a root element. Themed components
 read tokens from the nearest `data-ghost-theme` host. Importing from
-`@ghostvue/themes` already loads the base stylesheet.
+`@ghostvue/themes` already loads the base stylesheet, in development and in
+production builds, so you do not need a separate
+`@ghostvue/themes/default.css` import.
 
 ```ts
 // main.ts

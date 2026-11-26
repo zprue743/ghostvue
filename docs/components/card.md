@@ -54,16 +54,34 @@ card is reserved for consumer semantics.
 
 ## API
 
-| Prop      | Type                                                            | Default     | Description                                |
-| --------- | --------------------------------------------------------------- | ----------- | ------------------------------------------ |
-| `as`      | `'div' \| 'article' \| 'section' \| 'aside' \| 'a' \| 'button'` | `'article'` | Root element.                              |
-| `effects` | `('spotlight')[]`                                               | `[]`        | Ambient spotlight; empty keeps card inert. |
+<!-- @generated docs-api:vue/ghost-card begin -->
 
-| Slot      | Description                  |
-| --------- | ---------------------------- |
-| `header`  | Optional top region          |
-| `default` | Body (`data-part="content"`) |
-| `footer`  | Optional bottom region       |
+<!-- Source: packages/vue/manifests/ghost-card.manifest.json. Run pnpm docs:api:write after it changes. -->
+
+| Prop      | Type               | Default     | Description                                                                       |
+| --------- | ------------------ | ----------- | --------------------------------------------------------------------------------- |
+| `as`      | `GhostCardElement` | `"article"` | Root element. Use `a` only when the whole card navigates without nested controls. |
+| `effects` | `'spotlight'[]`    | `"[]"`      | Ambient spotlight recipes. Empty list keeps the card inert.                       |
+
+| Slot      | Slot props | Description                                         |
+| --------- | ---------- | --------------------------------------------------- |
+| `default` | —          | Primary body; rendered in data-part="content".      |
+| `footer`  | —          | Optional bottom region for actions on static roots. |
+| `header`  | —          | Optional top region.                                |
+
+<!-- @generated docs-api:vue/ghost-card end -->
+
+<!-- @generated docs-api:themes/ghost-card begin -->
+
+<!-- Source: packages/themes/manifests/ghost-card.manifest.json. Run pnpm docs:api:write after it changes. -->
+
+`@ghostvue/themes` adds these to the headless `GhostCard` API, which it forwards:
+
+| Prop          | Type          | Default | Description                           |
+| ------------- | ------------- | ------- | ------------------------------------- |
+| `interactive` | `'spotlight'` | `null`  | Opt-in ambient spotlight on the card. |
+
+<!-- @generated docs-api:themes/ghost-card end -->
 
 Native attributes fall through to the root. The component sets `class`,
 `data-ghost-card`, `data-part="root"`, and spotlight hooks when enabled.

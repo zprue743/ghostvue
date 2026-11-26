@@ -27,6 +27,7 @@ import { exampleLoader, exampleSource } from '../../../../examples/load'
 import { defineDemoPreview } from './demo-preview-async'
 import LandingActionLink from './LandingActionLink.vue'
 import { useLandingScroll } from './landing-motion'
+import { landingProgressionStages } from './landing-progression'
 import LandingSectionRail from './LandingSectionRail.vue'
 import {
   landingCatalog,
@@ -88,40 +89,7 @@ const activeLayer = computed(
 )
 
 /* Progressive escape hatches: one example source per stage. */
-const stages = [
-  {
-    id: 'props',
-    title: 'Props and configuration',
-    code: '<GhostButton>',
-    file: 'examples/button/themed.vue',
-    note: 'Safe default type="button"; preserves focus when loading',
-    sourceId: 'button/themed',
-  },
-  {
-    id: 'controlled',
-    title: 'Controllable state and callbacks',
-    code: 'v-model:open',
-    file: 'examples/popover/basic.vue',
-    note: 'Works controlled (v-model:open) or uncontrolled (defaultOpen)',
-    sourceId: 'popover/basic',
-  },
-  {
-    id: 'slots',
-    title: 'Slots and marked parts',
-    code: 'data-part',
-    file: 'examples/button/loading.vue',
-    note: 'Slot content owns icons and custom loading indicators via data-part',
-    sourceId: 'button/loading',
-  },
-  {
-    id: 'composable',
-    title: 'Lower-level primitives',
-    code: 'useGhostButton()',
-    file: 'examples/button/composable.vue',
-    note: 'Attach behavior directly to custom elements without wrapper SFCs',
-    sourceId: 'button/composable',
-  },
-] as const
+const stages = landingProgressionStages
 
 const progressionStage = ref<(typeof stages)[number]['id']>('props')
 

@@ -381,7 +381,9 @@ offline. See the [MCP server guide](../tooling/mcp-server.md#release-checks).
 
 `pnpm consumer:packed` (`scripts/consumer-packed-smoke.mjs`) follows. It installs
 the packed publishable tarballs with npm into Vite + Vue, Nuxt, and ESLint
-consumer projects from `tests/fixtures/consumer-packed/`, mounts themed Field,
+consumer projects from `tests/fixtures/consumer-packed/`, checks that a
+production Vite build of the documented themed setup keeps the base stylesheet
+imported by the `@ghostvue/themes` entry, mounts themed Field,
 Input, Select, Dialog, Drawer, and Toast from the production bundle in jsdom,
 builds and server-renders the Nuxt auto-imports, and lints a valid and an
 invalid SFC. See [releases](../contributing/releases.md#release-dry-run).

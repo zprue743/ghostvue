@@ -37,6 +37,18 @@
       "layer": "headless"
     },
     {
+      "id": "button/configured",
+      "title": "Configured action",
+      "description": "Typed visual props and a loading state the application owns.",
+      "layer": "themed"
+    },
+    {
+      "id": "button/marked-parts",
+      "title": "Marked slot parts",
+      "description": "Icons and a custom loading indicator using data-part in the default slot.",
+      "layer": "themed"
+    },
+    {
       "id": "button/themed",
       "title": "Themed",
       "description": "Visual props on the @ghostvue/themes wrapper.",

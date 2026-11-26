@@ -25,6 +25,16 @@ Headless use of the same contract without the SFC:
 
 ## API
 
+<!-- @generated docs-api:vue/ghost-badge begin -->
+
+<!-- Source: packages/vue/manifests/ghost-badge.manifest.json. Run pnpm docs:api:write after it changes. -->
+
+| Slot      | Slot props | Description                                                                                                                                                 |
+| --------- | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `default` | —          | Short status or metadata text and optional decorative icon content. Icon-only use needs real hidden text (GhostVisuallyHidden), not aria-label on the span. |
+
+<!-- @generated docs-api:vue/ghost-badge end -->
+
 The unstyled component declares no behavioral props. All native span attributes
 and event listeners fall through to the root. The default slot is the only
 content slot. The component does not generate an `id`; pass one as a native
@@ -37,11 +47,19 @@ attribute when you need it. There is no model.
 Importing the themed component loads the default stylesheet. Visual props exist
 only on this wrapper:
 
-| Prop      | Type                                        | Default     | Description                               |
-| --------- | ------------------------------------------- | ----------- | ----------------------------------------- |
-| `variant` | `'solid' \| 'soft' \| 'outline' \| 'ghost'` | `'soft'`    | Visual treatment.                         |
-| `tone`    | `'accent' \| 'neutral' \| 'danger'`         | `'neutral'` | Semantic color intent, not a status enum. |
-| `size`    | `'sm' \| 'md'`                              | `'sm'`      | Compact type and padding.                 |
+<!-- @generated docs-api:themes/ghost-badge begin -->
+
+<!-- Source: packages/themes/manifests/ghost-badge.manifest.json. Run pnpm docs:api:write after it changes. -->
+
+`@ghostvue/themes` adds these to the headless `GhostBadge` API, which it forwards:
+
+| Prop      | Type                                        | Default     | Description                                                                                                                      |
+| --------- | ------------------------------------------- | ----------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| `variant` | `'solid' \| 'soft' \| 'outline' \| 'ghost'` | `"soft"`    | Visual treatment. The default omits data-variant so CSS can treat a missing hook as soft.                                        |
+| `tone`    | `'accent' \| 'neutral' \| 'danger'`         | `"neutral"` | Semantic color intent, independent of variant and not a status vocabulary. The default omits data-tone.                          |
+| `size`    | `'sm' \| 'md'`                              | `"sm"`      | Compact type and padding. The default omits data-size so CSS can treat a missing hook as sm. Does not use control minimum sizes. |
+
+<!-- @generated docs-api:themes/ghost-badge end -->
 
 Defaults omit the matching `data-*` attribute so CSS can treat a missing hook as
 `soft` / `neutral` / `sm`. `tone` matches themed `GhostButton`. Do not treat

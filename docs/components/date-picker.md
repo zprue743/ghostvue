@@ -255,3 +255,49 @@ See the [specification](/specs/date-picker) and the generated
 [component references](/reference/). Manifests live in
 `packages/vue/manifests/ghost-date-picker*.manifest.json` and
 `packages/themes/manifests/ghost-date-picker.manifest.json`.
+
+<!-- @generated docs-api:vue/ghost-date-picker begin -->
+
+<!-- Source: packages/vue/manifests/ghost-date-picker.manifest.json. Run pnpm docs:api:write after it changes. -->
+
+| Prop                  | Type                                        | Default        | Description                                                                          |
+| --------------------- | ------------------------------------------- | -------------- | ------------------------------------------------------------------------------------ |
+| `defaultOpen`         | `boolean`                                   | `false`        | Initial uncontrolled open state.                                                     |
+| `defaultValue`        | `GhostDatePickerValue`                      | `null`         | Initial uncontrolled value and uncontrolled form-reset target.                       |
+| `defaultVisibleMonth` | `CalendarDate`                              | —              | Month shown when the picker opens empty.                                             |
+| `disabled`            | `boolean`                                   | `false`        | Blocks all interaction and closes the calendar.                                      |
+| `endName`             | `string`                                    | —              | Range end submission name override.                                                  |
+| `form`                | `string`                                    | —              | External `<form>` id for submission, validation, and reset.                          |
+| `format`              | `GhostDatePickerFormat`                     | —              | Synchronous display formatter; defaults to ISO `YYYY-MM-DD`.                         |
+| `formatHint`          | `string`                                    | `"YYYY-MM-DD"` | Format description linked to every input.                                            |
+| `invalid`             | `boolean`                                   | `false`        | Consumer-supplied invalid state (`external-invalid`).                                |
+| `isDateDisabled`      | `((date: CalendarDate) => boolean)`         | —              | Unavailable endpoint dates (focusable, not selectable).                              |
+| `locale`              | `string`                                    | `"en-US"`      | Calendar and formatting locale.                                                      |
+| `maxValue`            | `CalendarDate`                              | —              | Inclusive upper bound.                                                               |
+| `minValue`            | `CalendarDate`                              | —              | Inclusive lower bound.                                                               |
+| `modelValue`          | `GhostDatePickerValue`                      | —              | Controlled committed value; `undefined` is uncontrolled, `null` is controlled empty. |
+| `name`                | `string`                                    | —              | Form name: `name` (single) or `name[start]` / `name[end]` (range).                   |
+| `open`                | `boolean`                                   | —              | Controlled requested open state.                                                     |
+| `parse`               | `GhostDatePickerParse`                      | —              | Synchronous parser; defaults to strict ISO `YYYY-MM-DD`.                             |
+| `readonly`            | `boolean`                                   | `false`        | Keeps text focusable and selectable but prevents editing, clearing, and opening.     |
+| `required`            | `boolean`                                   | `false`        | Native required constraint on an empty committed value.                              |
+| `selectionMode`       | `GhostDatePickerSelectionMode`              | `"single"`     | `'single'` or `'range'`; fixed for the instance (remount with a new `key`).          |
+| `startName`           | `string`                                    | —              | Range start submission name override.                                                |
+| `today`               | `CalendarDate`                              | —              | Explicit current date for SSR-safe "today" styling and focus fallback.               |
+| `validateRange`       | `GhostDatePickerValidateRange`              | —              | Whole-range business validation returning an error message or `null`.                |
+| `validationMessage`   | `((error: GhostDatePickerError) => string)` | —              | Localizes built-in error messages.                                                   |
+| `weekStartsOn`        | `GhostDatePickerWeekday`                    | —              | Week start override (Sunday = `0`).                                                  |
+
+| Slot      | Slot props                                                                                                                                                                 | Description        |
+| --------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------ |
+| `default` | `clear: () => void`, `close: () => void`, `errors: GhostDatePickerError[]`, `open: boolean`, `openCalendar: () => void`, `pending: boolean`, `value: GhostDatePickerValue` | Container content. |
+
+<!-- @generated docs-api:vue/ghost-date-picker end -->
+
+<!-- @generated docs-api:themes/ghost-date-picker begin -->
+
+<!-- Source: packages/themes/manifests/ghost-date-picker.manifest.json. Run pnpm docs:api:write after it changes. -->
+
+`@ghostvue/themes` adds no props, events, or slots to the headless `GhostDatePicker` API, which it forwards.
+
+<!-- @generated docs-api:themes/ghost-date-picker end -->

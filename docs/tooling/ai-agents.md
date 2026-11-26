@@ -27,15 +27,13 @@ repository's `AGENTS.md`.
 [Model Context Protocol](https://modelcontextprotocol.io/) server. It installs
 one executable, `ghostvue-mcp`, which speaks MCP over stdio, needs Node 22 or
 later, and makes no network requests: every answer comes from data bundled in
-the package. It exposes five tools:
-
-| Tool              | Use it to                                                                                 |
-| ----------------- | ----------------------------------------------------------------------------------------- |
-| `list_components` | Find components by name, description, package, or status                                  |
-| `get_component`   | Read one component's full manifest: props, models, events, slots, styling hooks, and a11y |
-| `get_examples`    | Read the `.vue` source of the executable examples shown on the docs site                  |
-| `search_docs`     | Search the published docs pages (the pages in `llms-full.txt`)                            |
-| `get_tokens`      | Look up design tokens, their CSS custom properties, and light and dark values             |
+the package. It exposes five read-only tools: `list_components` and
+`get_component` for component manifests (props, models, events, slots, styling
+hooks, and accessibility), `get_examples` for the `.vue` source of the docs
+examples, `search_docs` for the published docs pages, and `get_tokens` for
+design tokens. The [generated tool list](./mcp-server.md#what-ships-in-v1) in
+the MCP server reference is the authoritative list, built from the server
+source by `pnpm docs:api`.
 
 Inputs, outputs, pagination, and error codes are in the
 [MCP server reference](./mcp-server.md). The server does not write files, run

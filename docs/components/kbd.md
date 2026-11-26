@@ -24,10 +24,20 @@ Headless use of the same contract without the SFC:
 
 ## API
 
-| Prop       | Type                          | Default  | Description                                                                                         |
-| ---------- | ----------------------------- | -------- | --------------------------------------------------------------------------------------------------- |
-| `keys`     | `string \| readonly string[]` | omitted  | Key tokens rendered as nested `<kbd>` elements. A string is one key; an array is a combination.     |
-| `platform` | `'auto' \| 'apple' \| 'pc'`   | `'auto'` | Modifier label set. `'auto'` uses PC labels until after mount, then Apple labels on Apple browsers. |
+<!-- @generated docs-api:vue/ghost-kbd begin -->
+
+<!-- Source: packages/vue/manifests/ghost-kbd.manifest.json. Run pnpm docs:api:write after it changes. -->
+
+| Prop       | Type                          | Default  | Description                                                                                                                                                                                              |
+| ---------- | ----------------------------- | -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `keys`     | `readonly string[] \| string` | `"[]"`   | Key tokens rendered as nested kbd elements. A string is one key; an array is a combination. Tokens are matched case-insensitively. Unknown tokens render as given, except a single letter is uppercased. |
+| `platform` | `GhostKbdPlatform`            | `"auto"` | Modifier label set. auto uses PC labels until after mount, then Apple labels when the browser looks like Apple. Explicit apple and pc are deterministic from the prop.                                   |
+
+| Slot      | Slot props | Description                                                                                                                                                 |
+| --------- | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `default` | —          | Key content. When keys is omitted, this is the entire kbd contents. When keys is set, this is appended after a plus separator as extra combination content. |
+
+<!-- @generated docs-api:vue/ghost-kbd end -->
 
 All native phrasing attributes and event listeners fall through to the root
 `kbd`. The default slot is the only content slot. When `keys` is set, the slot
@@ -72,9 +82,17 @@ hydration mismatch.
 Importing the themed component loads the default stylesheet. Visual props exist
 only on this wrapper:
 
-| Prop   | Type                   | Default | Description           |
-| ------ | ---------------------- | ------- | --------------------- |
-| `size` | `'sm' \| 'md' \| 'lg'` | `'md'`  | Type and inset scale. |
+<!-- @generated docs-api:themes/ghost-kbd begin -->
+
+<!-- Source: packages/themes/manifests/ghost-kbd.manifest.json. Run pnpm docs:api:write after it changes. -->
+
+`@ghostvue/themes` adds these to the headless `GhostKbd` API, which it forwards:
+
+| Prop   | Type                   | Default | Description                                                                              |
+| ------ | ---------------------- | ------- | ---------------------------------------------------------------------------------------- |
+| `size` | `'sm' \| 'md' \| 'lg'` | `"md"`  | Type and inset scale. The default omits data-size so CSS can treat a missing hook as md. |
+
+<!-- @generated docs-api:themes/ghost-kbd end -->
 
 The default omits `data-size`. Sizes use type and space tokens, not control
 minimums: `GhostKbd` is inline chrome, not a 40px action.

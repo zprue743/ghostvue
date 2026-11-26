@@ -29,6 +29,29 @@ keyboard behavior).
 See the [generated component references](/reference/) for props, emits, slots,
 exposed members, styling hooks, and executable examples.
 
+<!-- @generated docs-api:vue/ghost-menubar begin -->
+
+<!-- Source: packages/vue/manifests/ghost-menubar.manifest.json. Run pnpm docs:api:write after it changes. -->
+
+| Prop  | Type                  | Default | Description          |
+| ----- | --------------------- | ------- | -------------------- |
+| `as`  | `Component \| string` | `"div"` | Declared prop `as`.  |
+| `dir` | `'ltr' \| 'rtl'`      | —       | Declared prop `dir`. |
+
+| Slot      | Slot props | Description        |
+| --------- | ---------- | ------------------ |
+| `default` | —          | Container content. |
+
+<!-- @generated docs-api:vue/ghost-menubar end -->
+
+<!-- @generated docs-api:themes/ghost-menubar begin -->
+
+<!-- Source: packages/themes/manifests/ghost-menubar.manifest.json. Run pnpm docs:api:write after it changes. -->
+
+`@ghostvue/themes` adds no props, events, or slots to the headless `GhostMenubar` API, which it forwards.
+
+<!-- @generated docs-api:themes/ghost-menubar end -->
+
 ### Composition
 
 - `GhostMenubar` — `role="menubar"` container; optional `dir` for RTL arrow flip.

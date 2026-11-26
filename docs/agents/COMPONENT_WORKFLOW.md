@@ -28,7 +28,9 @@ predecessor. Do not start markup to stand in for an unresolved design.
    file exists, run `pnpm manifests:write` so props, emits, slots, and
    exposed types are derived from source; keep descriptions, accessibility,
    styling hooks, and examples as prose in that file. `pnpm manifests` is
-   part of `pnpm verify`. Do not invent a parallel shape.
+   part of `pnpm verify`. Do not invent a parallel shape. The docs page's
+   props, events, and slots tables are generated from the manifest: run
+   `pnpm docs:api:write` after it changes (`pnpm docs:api` checks them).
 5. **Changeset.** Required when a publishable package's consumer-visible
    behavior changes.
 

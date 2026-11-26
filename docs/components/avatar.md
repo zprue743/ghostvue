@@ -43,16 +43,22 @@ still needs a real name nearby or in hidden text.
 
 ## API
 
-| Prop   | Type              | Default  | Description                                             |
-| ------ | ----------------- | -------- | ------------------------------------------------------- |
-| `src`  | `string`          | —        | Image URL. Load is confirmed after mount on the client. |
-| `alt`  | `string`          | —        | `img` accessible name; defaults to `name`.              |
-| `name` | `string`          | —        | Initials source and default `alt`.                      |
-| `as`   | `'span' \| 'div'` | `'span'` | Root host.                                              |
+<!-- @generated docs-api:vue/ghost-avatar begin -->
 
-| Slot       | Description                            |
-| ---------- | -------------------------------------- |
-| `fallback` | Shown when the image is not displayed. |
+<!-- Source: packages/vue/manifests/ghost-avatar.manifest.json. Run pnpm docs:api:write after it changes. -->
+
+| Prop   | Type                 | Default  | Description                                             |
+| ------ | -------------------- | -------- | ------------------------------------------------------- |
+| `alt`  | `string`             | —        | `img` accessible name; defaults to `name`.              |
+| `as`   | `GhostAvatarElement` | `"span"` | Root host.                                              |
+| `name` | `string`             | —        | Initials source and default `alt`.                      |
+| `src`  | `string`             | —        | Image URL. Load is confirmed after mount on the client. |
+
+| Slot       | Slot props | Description                            |
+| ---------- | ---------- | -------------------------------------- |
+| `fallback` | —          | Shown when the image is not displayed. |
+
+<!-- @generated docs-api:vue/ghost-avatar end -->
 
 Template ref: `element` (`HTMLElement | null`).
 
@@ -62,9 +68,17 @@ Template ref: `element` (`HTMLElement | null`).
 
 <GhostExample id="avatar/themed" />
 
-| Prop   | Type                   | Default | Description        |
-| ------ | ---------------------- | ------- | ------------------ |
-| `size` | `'sm' \| 'md' \| 'lg'` | `'md'`  | Square dimensions. |
+<!-- @generated docs-api:themes/ghost-avatar begin -->
+
+<!-- Source: packages/themes/manifests/ghost-avatar.manifest.json. Run pnpm docs:api:write after it changes. -->
+
+`@ghostvue/themes` adds these to the headless `GhostAvatar` API, which it forwards:
+
+| Prop   | Type                   | Default | Description                                 |
+| ------ | ---------------------- | ------- | ------------------------------------------- |
+| `size` | `'sm' \| 'md' \| 'lg'` | `"md"`  | Square dimensions. Default omits data-size. |
+
+<!-- @generated docs-api:themes/ghost-avatar end -->
 
 Default `md` omits `data-size`.
 
