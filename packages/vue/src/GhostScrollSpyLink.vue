@@ -1,7 +1,15 @@
 <script setup lang="ts">
-import { computed, inject, onBeforeUnmount, useTemplateRef, watch } from 'vue'
+import {
+  computed,
+  inject,
+  onBeforeUnmount,
+  useAttrs,
+  useTemplateRef,
+  watch,
+} from 'vue'
 
-import GhostLink from './GhostLink.vue'
+import type { GhostLinkElement } from './ghost-link'
+import { resolveGhostLinkHtmlElement } from './ghost-link'
 import {
   ghostScrollSpyContextKey,
   isScrollSpyPlainActivation,
@@ -9,7 +17,7 @@ import {
   resolveScrollSpyHtmlElement,
   type GhostScrollSpyLinkExposed,
 } from './ghost-scroll-spy'
-import type { GhostLinkElement } from './ghost-link'
+import { useGhostLink } from './use-ghost-link'
 
 defineOptions({ inheritAttrs: false })
 
@@ -31,6 +39,7 @@ defineSlots<{
   default(props: { active: boolean; target: string }): unknown
 }>()
 
+const attrs = useAttrs()
 const scrollSpyContext = inject(ghostScrollSpyContextKey, null)
 if (scrollSpyContext === null) {
   throw new Error('GhostScrollSpyLink must be used inside GhostScrollSpy')
@@ -38,13 +47,25 @@ if (scrollSpyContext === null) {
 
 const registrationId = Symbol('ghost-scroll-spy-link')
 const hostRef = useTemplateRef('host')
-const element = computed(() => resolveScrollSpyHtmlElement(hostRef.value))
+const element = computed(() => {
+  const fromHost = resolveGhostLinkHtmlElement(hostRef.value)
+  if (fromHost) {
+    return fromHost
+  }
+  return resolveScrollSpyHtmlElement(hostRef.value)
+})
 
 const targetId = computed(() => normalizeScrollSpyTargetId(props.target))
 const resolvedHref = computed(() =>
   props.href.length > 0 ? props.href : `#${targetId.value}`,
 )
 const active = computed(() => scrollSpyContext.isActive(targetId.value))
+
+const { isDisabled, isComponentHost, rootProps } = useGhostLink({
+  as: () => props.as,
+  disabled: () => props.disabled,
+  href: () => resolvedHref.value,
+})
 
 function getLinkElement(): HTMLElement | null {
   return element.value
@@ -76,14 +97,33 @@ onBeforeUnmount(() => {
   scrollSpyContext.unregisterItem(registrationId)
 })
 
-const linkAttrs = computed(() => ({
-  class: 'ghost-scroll-spy-link',
-  'data-part': 'link',
-  ...(active.value
-    ? { 'data-state': 'active' as const, 'aria-current': 'location' as const }
-    : {}),
-  href: resolvedHref.value,
-}))
+const hostAttrs = computed(() => {
+  const rest: Record<string, unknown> = {}
+  for (const [key, value] of Object.entries(attrs)) {
+    if (key === 'href' || key === 'rel') {
+      continue
+    }
+    rest[key] = value
+  }
+
+  const merged: Record<string, unknown> = {
+    ...rest,
+    ...rootProps.value,
+    class: ['ghost-scroll-spy-link', attrs.class, rootProps.value.class],
+    'data-part': 'link',
+  }
+
+  if (active.value && !isDisabled.value) {
+    merged['data-state'] = 'active'
+    merged['aria-current'] = 'location'
+  }
+
+  if (isDisabled.value && isComponentHost.value) {
+    merged['disabled'] = true
+  }
+
+  return merged
+})
 
 function onClick(event: MouseEvent): void {
   if (scrollSpyContext === null || props.disabled) {
@@ -106,6 +146,14 @@ function onClick(event: MouseEvent): void {
   })
 }
 
+function handleActivationCapture(event: MouseEvent): void {
+  if (!isDisabled.value) {
+    return
+  }
+  event.preventDefault()
+  event.stopImmediatePropagation()
+}
+
 defineExpose<GhostScrollSpyLinkExposed>({
   get element() {
     return element.value
@@ -123,13 +171,14 @@ defineExpose<GhostScrollSpyLinkExposed>({
 </script>
 
 <template>
-  <GhostLink
+  <component
+    :is="as"
     ref="host"
-    :as="as"
-    :disabled="disabled"
-    v-bind="{ ...$attrs, ...linkAttrs }"
+    v-bind="hostAttrs"
+    @click.capture="handleActivationCapture"
+    @auxclick.capture="handleActivationCapture"
     @click="onClick"
   >
     <slot :active="active" :target="targetId" />
-  </GhostLink>
+  </component>
 </template>
