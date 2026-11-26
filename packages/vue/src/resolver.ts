@@ -4,9 +4,10 @@
  *
  * This entry runs in build tooling (Vite, webpack, Rollup config), not in the
  * browser bundle. It deliberately imports nothing from Vue or the component
- * graph, and `@ghostvue/vue` takes no dependency on `unplugin-vue-components`:
- * the returned object matches the plugin's resolver contract structurally, so
- * consumers who never auto-import pay nothing for it.
+ * graph, and never imports `unplugin-vue-components` (only an optional peer of
+ * `@ghostvue/vue`, declared for its supported range): the returned object
+ * matches the plugin's resolver contract structurally, so consumers who never
+ * auto-import pay nothing for it.
  *
  * Only headless components resolve here, always to `@ghostvue/vue`. Themed
  * wrappers live in the optional `@ghostvue/themes` package, which this package

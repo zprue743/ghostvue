@@ -18,5 +18,5 @@
     "type-tests/**/*.vue",
     "vite.config.ts"
   ],
-  "references": [{ "path": "../core" }, { "path": "../shared" }]
+  "references": []
 }
