@@ -33,20 +33,20 @@
 
   color: var(--ghost-surface-fg);
   display: flex;
-  font-size: clamp(12rem, 26vw, 22rem);
+  font-size: clamp(9rem, 20vw, 17rem);
   font-variant-numeric: tabular-nums;
   font-weight: 800;
   gap: 0.04em;
   /*
-   * Bottom inline-start corner, away from the rail on the other edge. The
-   * block position is derived from `--_landing-vh` (set on `.ghost-landing`)
-   * instead of `bottom`, so it follows the page's single viewport-height
-   * input: the visual spec pins that property and then grows the window to
-   * the page's height, and the number has to stay where a reader first sees
-   * it. `em` here is the number's own font size, which is also its height.
+   * Top inline-end corner, just under the fixed nav. Both offsets are fixed
+   * lengths, so the number does not depend on viewport height at all: the
+   * visual spec captures the page in a window as tall as the page, and the
+   * number has to stay where a reader first sees it. The inline offset
+   * matches the gutter `.ghost-landing__inner` leaves for the section rail,
+   * so the number sits beside the rail's column, not underneath its markers.
    */
-  inset-block-start: calc(var(--_landing-vh, 1vh) * 100 - 1em - 1.25rem);
-  inset-inline-start: clamp(0.75rem, 2vw, 2rem);
+  inset-block-start: calc(var(--_landing-nav, 64px) + 1rem);
+  inset-inline-end: 4.5rem;
   letter-spacing: 0;
   line-height: 1;
   /*
