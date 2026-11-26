@@ -11,9 +11,21 @@ export function themedBuildCssProblems(
   options: { flagship: string },
 ): string[]
 
+export function optInBuildCssProblems(
+  css: string,
+  options: { flagship: string; recipes: string[]; absentRecipes: string[] },
+): string[]
+
+export function cssTransferSize(stylesheets: string[]): {
+  files: number
+  minifiedBytes: number
+  gzipBytes: number
+}
+
 export interface MountObservation {
   mounted?: boolean
   input?: { tag?: string | null; value?: string | null; label?: string | null }
+  button?: { tag?: string; text?: string } | null
   select?: { role?: string | null; value?: string | null; options?: string[] }
   dialog?: { open?: string[]; afterClose?: string[] }
   drawer?: { open?: string[] }
@@ -22,6 +34,8 @@ export interface MountObservation {
 }
 
 export function viteAppMountProblems(result: MountObservation): string[]
+
+export function viteOptInMountProblems(result: MountObservation): string[]
 
 export function nuxtComponentSources(declarations: string): Map<string, string>
 

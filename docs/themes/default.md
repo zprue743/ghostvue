@@ -39,6 +39,88 @@ values come from `.ghost-theme` / `[data-ghost-theme]`. This makes it possible t
 compare the headless primitive with the default theme or nest a flagship around
 themed wrappers.
 
+## Opt-in theme CSS
+
+Importing anything from `@ghostvue/themes` loads `default.css`: the default
+palette, the shared base, and the recipe for every themed component. That is
+the simplest setup, but an app that renders a few themed components still
+ships every recipe. When CSS size matters, use the opt-in path instead: one
+palette, the shared base, and only the recipes your app renders.
+
+```ts
+// main.ts
+import { createApp } from 'vue'
+
+// One palette: calm.css, vibrant.css, mono.css, or tokens.css (default).
+import '@ghostvue/themes/calm.css'
+// Shared base every recipe needs: wrapper scopes, elevation, materials,
+// gradients, motion, and spotlight recipes.
+import '@ghostvue/themes/base.css'
+// One recipe per themed component family the app renders.
+import '@ghostvue/themes/recipes/button.css'
+import '@ghostvue/themes/recipes/field.css'
+import '@ghostvue/themes/recipes/input.css'
+
+import App from './App.vue'
+
+createApp(App).mount('#app')
+```
+
+```vue
+<!-- App.vue -->
+<script setup lang="ts">
+import {
+  GhostButton,
+  GhostField,
+  GhostFieldControl,
+  GhostFieldLabel,
+  GhostInput,
+} from '@ghostvue/themes/components'
+</script>
+
+<template>
+  <div data-ghost-theme="calm">
+    <GhostField>
+      <GhostFieldLabel>Workspace name</GhostFieldLabel>
+      <GhostFieldControl v-slot="field">
+        <GhostInput v-bind="field" />
+      </GhostFieldControl>
+    </GhostField>
+    <GhostButton>Save</GhostButton>
+  </div>
+</template>
+```
+
+`@ghostvue/themes/components` exports exactly the same components, composables,
+and types as `@ghostvue/themes`. The only difference is that it never imports
+`default.css`, so the stylesheets you list are the only theme CSS in the
+build. Both paths use the same recipe files, so a component looks the same
+either way.
+
+- **Recipes.** `@ghostvue/themes/recipes/<family>.css` uses the component family
+  name in kebab case: `GhostDropdownMenu` and its parts use
+  `dropdown-menu.css`, and `GhostRadioGroupItem` uses `radio-group.css`.
+  A component without a recipe stays unstyled; nothing fails at runtime.
+- **Families that need two recipes.** `GhostDatePicker` renders the calendar
+  recipe's parts, so import both `date-picker.css` and `calendar.css`.
+  `GhostLink` with `appearance="button"` uses the button recipe, so import
+  `button.css` as well as `link.css`. `GhostInteractiveSurface` needs only
+  `base.css`.
+- **Palette.** Name the palette you imported on a root element with
+  `data-ghost-theme` (for `tokens.css`, `class="ghost-theme"` or
+  `data-ghost-theme="default"`). Light, dark, density, and nested modes work as
+  in the all-in setup. To switch palettes at runtime, import each one you need.
+- **Do not mix entries.** A single import from `@ghostvue/themes`, whether in
+  your code or in a library you use, loads `default.css` again and removes the
+  savings. Nuxt's themed auto-imports resolve to `@ghostvue/themes`, so they
+  use the all-in setup.
+
+In a production Vite build of the packed consumer fixture
+(`pnpm consumer:packed`), with the calm palette, the all-in setup emits about
+393 KB of CSS (27.7 KB gzip). The opt-in setup with the button, field, and
+input recipes emits about 121 KB (8.7 KB gzip). Most of the opt-in CSS is the
+palette itself; each recipe adds roughly 0.2 to 2 KB gzip.
+
 ## Button examples
 
 Slot content still controls text and icons. Mark icon and loading-indicator

@@ -69,6 +69,12 @@ createApp(App).mount('#app')
 Flagships: `default`, `calm`, `vibrant`, `mono`. Light and dark follow
 `prefers-color-scheme`. Set `data-ghost-mode="dark"` on any element to force it.
 
+Importing from `@ghostvue/themes` loads the recipe for every themed component.
+If your app renders only a few of them and CSS size matters, see
+[opt-in theme CSS](/themes/default#opt-in-theme-css): one palette, a shared
+base, and only the recipes you use, with components from
+`@ghostvue/themes/components`.
+
 ## Your first headless component
 
 Import primitives from `@ghostvue/vue` when you want full control over CSS.

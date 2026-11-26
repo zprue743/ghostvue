@@ -41,6 +41,12 @@ import { GhostButton } from '@ghostvue/themes'
 </template>
 ```
 
+Importing from `@ghostvue/themes` loads every component recipe. To ship only
+the recipes you use, import components from `@ghostvue/themes/components` and
+add one palette, `@ghostvue/themes/base.css`, and the
+`@ghostvue/themes/recipes/<family>.css` files you need. See
+[opt-in theme CSS](https://ghostvue.dev/themes/default#opt-in-theme-css).
+
 ## Documentation
 
 [ghostvue.dev](https://ghostvue.dev): see

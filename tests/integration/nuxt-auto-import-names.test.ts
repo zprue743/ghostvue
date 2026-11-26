@@ -71,7 +71,13 @@ describe('generated auto-import names', () => {
         'utf8',
       ),
     ) as { exports: Record<string, unknown> }
+    // `base.css` and `recipes/*.css` are building blocks of the opt-in theme
+    // CSS path (#386), which pairs them with `@ghostvue/themes/components`.
+    // Nuxt's themed mode resolves tags to the all-in `@ghostvue/themes`
+    // entry, so its `css` option offers only complete theme stylesheets.
+    const optInBuildingBlocks = new Set(['./base.css', './recipes/*.css'])
     const cssExports = Object.keys(manifest.exports)
+      .filter((subpath) => !optInBuildingBlocks.has(subpath))
       .map((subpath) => /^\.\/(.+)\.css$/.exec(subpath)?.[1])
       .filter((name): name is string => name !== undefined)
     expect(sorted(ghostVueNuxtStylesheets)).toEqual(sorted(cssExports))

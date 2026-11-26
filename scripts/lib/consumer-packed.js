@@ -7,6 +7,7 @@
  */
 import { readFile } from 'node:fs/promises'
 import { join } from 'node:path'
+import { gzipSync } from 'node:zlib'
 
 /**
  * Third-party packages each consumer installs, and the workspace manifest that
@@ -88,22 +89,114 @@ export function themedBuildCssProblems(css, { flagship }) {
     problems.push('no `@layer ghostvue-theme` block')
   }
   for (const name of baseRecipeClasses) {
-    if (!new RegExp(`\\.${name}(?![\\w-])`).test(css)) {
+    if (!hasClassRule(css, name)) {
       problems.push(
         `no \`.${name}\` recipe; the base stylesheet imported by \`@ghostvue/themes\` was dropped`,
       )
     }
   }
-  if (!new RegExp(`\\[data-ghost-theme=['"]?${flagship}['"]?\\]`).test(css)) {
+  if (!hasThemeHost(css, flagship)) {
     problems.push(`no \`[data-ghost-theme=${flagship}]\` token host`)
   }
   return problems
 }
 
 /**
+ * Whether minified or formatted CSS has a rule for `.name` (not a longer
+ * class that merely starts with it, such as `.ghost-input-group`).
+ *
+ * @param {string} css
+ * @param {string} name Class name without the dot.
+ */
+function hasClassRule(css, name) {
+  return new RegExp(`\\.${name}(?![\\w-])`).test(css)
+}
+
+/**
+ * Whether the CSS hosts the named theme's tokens. Vite drops the quotes
+ * around attribute values when it minifies.
+ *
+ * @param {string} css
+ * @param {string} theme
+ */
+function hasThemeHost(css, theme) {
+  return new RegExp(`\\[data-ghost-theme=['"]?${theme}['"]?\\]`).test(css)
+}
+
+/**
+ * Judge the CSS a production build of the opt-in theme setup emitted (#386):
+ * one flagship palette, `@ghostvue/themes/base.css`, and selected
+ * `@ghostvue/themes/recipes/*.css` files, with components imported from
+ * `@ghostvue/themes/components`. The selected recipes, the shared base, and
+ * the palette must be present; recipes the app never imported and the
+ * default palette must be absent, or the opt-in path saved nothing.
+ *
+ * @param {string} css Every emitted stylesheet, concatenated.
+ * @param {{ flagship: string, recipes: string[], absentRecipes: string[] }} options
+ *   Recipe class names without the dot (`ghost-button`).
+ * @returns {string[]}
+ */
+export function optInBuildCssProblems(
+  css,
+  { flagship, recipes, absentRecipes },
+) {
+  const problems = []
+  if (!declaresThemeLayer(css)) {
+    problems.push('no `@layer ghostvue-theme` block')
+  }
+  // `.ghost-themed-scope` must not generate a box, or every themed wrapper
+  // gains a layout wrapper; only base.css declares it.
+  if (!/\.ghost-themed-scope\)?\s*\{\s*display\s*:\s*contents/.test(css)) {
+    problems.push(
+      'no `.ghost-themed-scope { display: contents }` rule; `@ghostvue/themes/base.css` was dropped',
+    )
+  }
+  for (const name of recipes) {
+    if (!hasClassRule(css, name)) {
+      problems.push(`no \`.${name}\` recipe that the app imported`)
+    }
+  }
+  for (const name of absentRecipes) {
+    if (hasClassRule(css, name)) {
+      problems.push(
+        `unrelated \`.${name}\` recipe shipped; the all-in stylesheet leaked into the opt-in build`,
+      )
+    }
+  }
+  if (!hasThemeHost(css, flagship)) {
+    problems.push(`no \`[data-ghost-theme=${flagship}]\` token host`)
+  }
+  if (hasThemeHost(css, 'default')) {
+    problems.push(
+      'default palette tokens shipped; the opt-in build should carry only the chosen flagship',
+    )
+  }
+  return problems
+}
+
+/**
+ * Transfer cost of the stylesheets one consumer page loads: minified bytes as
+ * emitted, and gzip bytes per file (browsers fetch each stylesheet as its own
+ * response), matching how `pnpm size` measures.
+ *
+ * @param {string[]} stylesheets Emitted CSS file contents.
+ * @returns {{ files: number, minifiedBytes: number, gzipBytes: number }}
+ */
+export function cssTransferSize(stylesheets) {
+  let minifiedBytes = 0
+  let gzipBytes = 0
+  for (const css of stylesheets) {
+    minifiedBytes += Buffer.byteLength(css)
+    gzipBytes += gzipSync(css, { level: 9 }).length
+  }
+  return { files: stylesheets.length, minifiedBytes, gzipBytes }
+}
+
+/**
  * @typedef {{
  *   mounted?: boolean
  *   input?: { tag?: string | null, value?: string | null, label?: string | null }
+ *   button?: { tag?: string, text?: string } | null
  *   select?: { role?: string | null, value?: string | null, options?: string[] }
  *   dialog?: { open?: string[], afterClose?: string[] }
  *   drawer?: { open?: string[] }
@@ -113,13 +206,12 @@ export function themedBuildCssProblems(css, { flagship }) {
  */
 
 /**
- * Problems with what `vite-app/mount.mjs` observed after mounting the
- * production bundle.
+ * Mount and Field/Input checks both fixture pages share.
  *
- * @param {MountObservation} result Parsed JSON printed by the mount runner.
+ * @param {MountObservation} result
  * @returns {string[]}
  */
-export function viteAppMountProblems(result) {
+function fieldMountProblems(result) {
   /** @type {string[]} */
   const problems = []
   /** @param {boolean} condition @param {string} message */
@@ -136,6 +228,48 @@ export function viteAppMountProblems(result) {
     result.input?.label === 'Workspace name',
     'GhostFieldLabel is not associated with the GhostInput control',
   )
+  return problems
+}
+
+/**
+ * @param {MountObservation} result
+ */
+function runtimeErrorProblems(result) {
+  return Array.isArray(result.errors) && result.errors.length > 0
+    ? [`runtime errors: ${result.errors.join('; ')}`]
+    : []
+}
+
+/**
+ * Problems with what `vite-app/mount.mjs` observed after mounting the opt-in
+ * theme CSS page, which renders Field, Input, and Button imported from
+ * `@ghostvue/themes/components`.
+ *
+ * @param {MountObservation} result Parsed JSON printed by the mount runner.
+ * @returns {string[]}
+ */
+export function viteOptInMountProblems(result) {
+  const problems = fieldMountProblems(result)
+  if (result.button?.tag !== 'BUTTON' || result.button.text !== 'Save') {
+    problems.push('GhostButton from @ghostvue/themes/components did not render')
+  }
+  return [...problems, ...runtimeErrorProblems(result)]
+}
+
+/**
+ * Problems with what `vite-app/mount.mjs` observed after mounting the
+ * production bundle.
+ *
+ * @param {MountObservation} result Parsed JSON printed by the mount runner.
+ * @returns {string[]}
+ */
+export function viteAppMountProblems(result) {
+  /** @type {string[]} */
+  const problems = fieldMountProblems(result)
+  /** @param {boolean} condition @param {string} message */
+  const expect = (condition, message) => {
+    if (!condition) problems.push(message)
+  }
   expect(
     result.select?.role === 'combobox',
     `GhostSelectTrigger role is ${JSON.stringify(result.select?.role)}, expected "combobox"`,
@@ -165,10 +299,7 @@ export function viteAppMountProblems(result) {
     'GhostDrawerTrigger did not open a role="dialog" with its title',
   )
   expect(result.toast?.shown === true, 'useGhostToast().toast() showed nothing')
-  if (Array.isArray(result.errors) && result.errors.length > 0) {
-    problems.push(`runtime errors: ${result.errors.join('; ')}`)
-  }
-  return problems
+  return [...problems, ...runtimeErrorProblems(result)]
 }
 
 /**
