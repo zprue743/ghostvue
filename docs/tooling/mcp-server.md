@@ -353,7 +353,8 @@ run) checks what a consumer would install:
 3. The installed `ghostvue-mcp` starts over stdio with network proxies
    pointed at a closed port, lists exactly the five tools, and answers one
    call to each. Every answer must match the tool's `outputSchema` and carry
-   the bundle's `assetBundleId`.
+   the bundle's `assetBundleId` and the `manifestSchemaId`
+   `https://ghostvue.dev/schemas/v1/manifest.schema.json`.
 
 `pnpm published-exports` also checks that the `bin` file exists with a Node
 shebang and that `files` is `["dist"]`. Run `pnpm audit --prod` in

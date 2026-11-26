@@ -14,7 +14,8 @@
  *    goes to stdout and, in GitHub Actions, the job summary.
  * 3. Starts the installed `ghostvue-mcp` bin over stdio with every proxy
  *    variable pointed at a closed local port, lists the five tools, and calls
- *    each one once (plan §9).
+ *    each one once (plan §9), checking that every `ghostvue.manifestSchemaId`
+ *    stamp is the hosted schema URL (GHO-217).
  *
  * Nothing is published; the package stays `"private": true`.
  */
@@ -167,6 +168,14 @@ try {
   const { assetBundleId } = JSON.parse(
     await readFile(join(assets, 'bundle.json'), 'utf8'),
   )
+  // The stamp must name the hosted schema URL from the canonical schema, not
+  // whatever the bundle happens to carry (ADR 0006, GHO-217).
+  const { $id: manifestSchemaId } = JSON.parse(
+    await readFile(
+      join(root, 'schemas', 'component-manifest.schema.json'),
+      'utf8',
+    ),
+  )
   const bin = join(installed, 'dist', 'bin.js')
   const smoke = await runMcpStdioSmoke({
     // The `.bin` shim exercises the `bin` link and shebang; Windows shims are
@@ -179,9 +188,10 @@ try {
     cwd: consumer,
     env: offlineEnv(),
     assetBundleId,
+    manifestSchemaId,
   })
   console.log(
-    `ghostvue-mcp stdio smoke passed offline: listed ${smoke.tools.join(', ')}; called ${smoke.calls.join(', ')}.`,
+    `ghostvue-mcp stdio smoke passed offline: listed ${smoke.tools.join(', ')}; called ${smoke.calls.join(', ')}; manifestSchemaId ${manifestSchemaId}.`,
   )
 } catch (error) {
   console.error(error instanceof Error ? error.message : error)

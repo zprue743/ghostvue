@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://unpkg.com/@ghostvue/core@1/manifest.schema.json",
+  "$id": "https://ghostvue.dev/schemas/v1/manifest.schema.json",
   "title": "Fixture stand-in for the bundled component manifest schema",
   "type": "object"
 }

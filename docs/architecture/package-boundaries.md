@@ -13,7 +13,9 @@ nuxt (optional integration) -> vue (peer), themes (optional peer)
 
 `mcp` may depend on `core` only among `@ghostvue/*` packages. It does not import
 `vue`, `themes`, or `shared` at runtime; bundled assets supply manifest, example,
-docs, and token snapshots.
+docs, and token snapshots. Because `core` is internal and never published, that
+edge is build-time only: the schema is copied into the bundle, and `mcp` must
+not list `core` in a production dependency group.
 
 - `shared` has no internal production dependency.
 - `core` may depend on `shared`.
@@ -58,7 +60,11 @@ unstyled components belong in `vue`. Do not add a third package merely to
 host styled twins.
 
 `scripts/workspace-packages.mjs` is the executable catalog of package
-responsibilities and allowed internal dependencies. Manifest edges and
+responsibilities and allowed internal dependencies. Its `publishable` flag
+marks the npm release train (`vue`, `themes`, `nuxt`, `eslint-plugin`, `mcp`);
+`core` and `shared` are internal, never released, and no publishable package
+may list them in a production dependency group (see
+[releases](../contributing/releases.md#publication-status)). Manifest edges and
 source-level import boundaries (layering, no circular imports, no cross-package
 relative imports, and no direct imports from `dist`) are enforced by
 `scripts/check-package-boundaries.mjs` and `.dependency-cruiser.mjs`

@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://unpkg.com/@ghostvue/core@1/manifest-collection.schema.json",
+  "$id": "https://ghostvue.dev/schemas/v1/manifest-collection.schema.json",
   "title": "GhostVue component manifest collection",
   "description": "Versioned envelope that bundles unchanged GhostVue component manifests. Each component package publishes one as <package>/manifest.json (scope package); the repository build also writes an unpublished workspace collection (scope workspace). Components are sorted by package, then component name, and each (package, name) identity appears once. Breaking envelope changes bump the $id major version.",
   "type": "object",
@@ -27,7 +27,7 @@
       "type": "array",
       "description": "Component manifests embedded exactly as checked in, sorted by package and then component name. Each item validates against the component manifest schema.",
       "items": {
-        "$ref": "https://unpkg.com/@ghostvue/core@1/manifest.schema.json"
+        "$ref": "https://ghostvue.dev/schemas/v1/manifest.schema.json"
       }
     }
   },

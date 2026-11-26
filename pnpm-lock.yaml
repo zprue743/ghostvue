@@ -198,12 +198,6 @@ importers:
       '@floating-ui/dom':
         specifier: 1.8.0
         version: 1.8.0
-      '@ghostvue/core':
-        specifier: workspace:*
-        version: link:../core
-      '@ghostvue/shared':
-        specifier: workspace:*
-        version: link:../shared
       '@internationalized/date':
         specifier: 3.12.4
         version: 3.12.4

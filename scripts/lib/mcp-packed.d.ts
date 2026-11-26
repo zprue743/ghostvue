@@ -32,5 +32,7 @@ export function runMcpStdioSmoke(options: {
   cwd: string
   env?: NodeJS.ProcessEnv
   assetBundleId: string
+  /** When set, every tool's `ghostvue.manifestSchemaId` stamp must equal it. */
+  manifestSchemaId?: string
   timeoutMs?: number
 }): Promise<{ tools: string[]; calls: string[] }>

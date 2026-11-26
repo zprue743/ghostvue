@@ -1,6 +1,6 @@
 /** @vitest-environment node */
 
-import { mkdtemp, rm, writeFile } from 'node:fs/promises'
+import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { pathToFileURL } from 'node:url'
@@ -10,6 +10,7 @@ import { afterEach, describe, expect, it } from 'vitest'
 import {
   AssetBundleError,
   loadGhostvueStamp,
+  manifestSchemaId,
   packageStampSources,
 } from './identity.js'
 
@@ -38,7 +39,7 @@ async function assetsWith(files: Record<string, string>): Promise<URL> {
 }
 
 const validSchema = JSON.stringify({
-  $id: 'https://unpkg.com/@ghostvue/core@1/manifest.schema.json',
+  $id: 'https://ghostvue.dev/schemas/v1/manifest.schema.json',
 })
 const validBundle = JSON.stringify({
   assetBundleId: `sha256:${'c'.repeat(64)}`,
@@ -51,9 +52,25 @@ describe('loadGhostvueStamp', () => {
     ).resolves.toEqual({
       version: '0.0.0',
       assetBundleId: `sha256:${'0'.repeat(64)}`,
-      manifestSchemaId:
-        'https://unpkg.com/@ghostvue/core@1/manifest.schema.json',
+      manifestSchemaId: 'https://ghostvue.dev/schemas/v1/manifest.schema.json',
     })
+  })
+
+  it('pins the hosted v1 schema URL shared with the repository schema', async () => {
+    const canonical = JSON.parse(
+      await readFile(
+        new URL(
+          '../../../schemas/component-manifest.schema.json',
+          import.meta.url,
+        ),
+        'utf8',
+      ),
+    ) as { $id?: unknown }
+
+    expect(manifestSchemaId).toBe(
+      'https://ghostvue.dev/schemas/v1/manifest.schema.json',
+    )
+    expect(canonical.$id).toBe(manifestSchemaId)
   })
 
   it('resolves default sources inside the package, not the working directory', () => {
@@ -83,6 +100,11 @@ describe('loadGhostvueStamp', () => {
     [
       'manifest.schema.json',
       '{"title":"no id"}',
+      /Bundled manifest schema .* is invalid/,
+    ],
+    [
+      'manifest.schema.json',
+      '{"$id":"https://unpkg.com/@ghostvue/core@1/manifest.schema.json"}',
       /Bundled manifest schema .* is invalid/,
     ],
   ])('rejects a malformed %s', async (file, text, message) => {

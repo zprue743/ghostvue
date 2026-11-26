@@ -11,19 +11,17 @@ import { fileURLToPath, pathToFileURL } from 'node:url'
 
 import { execPackageManagerSync } from './lib/package-manager.js'
 import { ensureWorkspaceBuilt } from './lib/workspace-build-lock.js'
-import { workspacePackages } from './workspace-packages.mjs'
+import { publishableWorkspacePackages } from './workspace-packages.mjs'
 
 const root = fileURLToPath(new URL('..', import.meta.url))
 
-// The consumer installs only the runtime chain `@ghostvue/themes` needs. The
-// ESLint plugin and the MCP server are Node tooling outside that chain;
-// installing them here would exercise nothing themes uses.
-const nodeToolingPackages = new Set([
-  '@ghostvue/eslint-plugin',
-  '@ghostvue/mcp',
-])
-const smokePackages = workspacePackages.filter(
-  ({ name }) => !nodeToolingPackages.has(name),
+// The consumer installs only the published runtime chain `@ghostvue/themes`
+// needs: itself and `@ghostvue/vue`. Internal packages are never published,
+// and the Nuxt module, ESLint plugin, and MCP server are outside that chain
+// (`pnpm consumer:packed` installs them as consumers would).
+const themesRuntimeChain = new Set(['@ghostvue/vue', '@ghostvue/themes'])
+const smokePackages = publishableWorkspacePackages.filter(({ name }) =>
+  themesRuntimeChain.has(name),
 )
 
 /** Publish order for packed consumer installs (must match dependency chain). */
@@ -33,8 +31,6 @@ export const themesPackedSmokeOrder = smokePackages.map(
 
 /** Marker files that `pnpm build` must emit before `pnpm pack` is meaningful. */
 const builtArtifactMarkers = [
-  'packages/shared/dist/index.js',
-  'packages/core/dist/index.js',
   'packages/vue/dist/ghostvue.js',
   'packages/themes/dist/define.js',
 ]

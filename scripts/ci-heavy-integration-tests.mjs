@@ -22,5 +22,6 @@ export const heavyIntegrationTestFiles = [
 export const ciBuildCoveredIntegrationTestFiles = [
   'tests/integration/themes-define-packed.test.ts',
   'tests/integration/mcp-packed-smoke.test.ts',
+  'tests/integration/consumer-packed-smoke.test.ts',
   'tests/integration/ai-agents-guide-stdio.test.ts',
 ]
