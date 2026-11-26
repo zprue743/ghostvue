@@ -161,6 +161,16 @@
   color: var(--ghost-text-muted);
 }
 
+/* VitePress fixes the desktop nav over controls scrolled to the top edge. */
+@media (min-width: 960px) {
+  .ghost-example__copy {
+    scroll-margin-block-start: calc(
+      var(--vp-layout-top-height, 0px) + var(--vp-nav-height) +
+        var(--ghost-space-gap-sm)
+    );
+  }
+}
+
 .ghost-example__copy:hover,
 .ghost-example__copy:focus-visible {
   color: var(--ghost-surface-fg);
