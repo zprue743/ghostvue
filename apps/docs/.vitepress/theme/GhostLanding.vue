@@ -12,6 +12,11 @@ import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { exampleSource } from '../../../../examples/load'
 import LandingActionLink from './LandingActionLink.vue'
 import { landingComponentSurface } from './landing-surface'
+import {
+  landingProgressionStageCodes,
+  landingProgressionStages,
+  landingProgressionStageTitles,
+} from './landing-progression'
 
 const headlessSource = `import { GhostButton } from '@ghostvue/vue'
 
@@ -26,46 +31,9 @@ const themedSource = `import { GhostButton } from '@ghostvue/themes'
 <GhostButton variant="outline">Outline</GhostButton>
 <GhostButton variant="ghost" tone="danger">Danger</GhostButton>`
 
-const stageTitles = [
-  'Props and configuration',
-  'Controllable state and callbacks',
-  'Slots and marked parts',
-  'Lower-level primitives',
-] as const
-
-const stageCodes = [
-  '<GhostButton>',
-  'v-model:open',
-  'data-part',
-  'useGhostButton()',
-] as const
-
-const stages = [
-  {
-    id: 'props',
-    file: 'examples/button/themed.vue',
-    note: 'Safe default type="button"; preserves focus when loading',
-    sourceId: 'button/themed',
-  },
-  {
-    id: 'controlled',
-    file: 'examples/popover/basic.vue',
-    note: 'Works controlled (v-model:open) or uncontrolled (defaultOpen)',
-    sourceId: 'popover/basic',
-  },
-  {
-    id: 'slots',
-    file: 'examples/button/loading.vue',
-    note: 'Slot content owns icons and custom loading indicators via data-part',
-    sourceId: 'button/loading',
-  },
-  {
-    id: 'composable',
-    file: 'examples/button/composable.vue',
-    note: 'Attach behavior directly to custom elements without wrapper SFCs',
-    sourceId: 'button/composable',
-  },
-] as const
+const stageTitles = landingProgressionStageTitles
+const stageCodes = landingProgressionStageCodes
+const stages = landingProgressionStages
 
 const pending = ref(false)
 const progressionStage = ref<(typeof stages)[number]['id']>('props')
