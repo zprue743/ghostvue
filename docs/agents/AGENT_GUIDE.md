@@ -73,7 +73,8 @@ order) into the docs output. They follow the
 
 ## Tool adapters
 
-`CLAUDE.md`, `.cursor/rules/*.mdc`, and each package `AGENTS.md` are adapters.
+`.github/copilot-instructions.md`, `CLAUDE.md`, `.cursor/rules/*.mdc`, and each
+package `AGENTS.md` are adapters.
 They must remain thin pointers into `docs/` and the root `AGENTS.md` rather than
 copying those rules. Edit `scripts/agent-adapter-catalog.mjs` or
 `scripts/workspace-packages.mjs`, then run `pnpm adapters:write` to regenerate

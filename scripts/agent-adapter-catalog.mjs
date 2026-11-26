@@ -1,11 +1,24 @@
 /**
  * Canonical bodies for tool-specific agent adapters.
  *
- * Cursor rules and CLAUDE.md stay thin pointers into `docs/` and the
+ * Tool instructions stay thin pointers into `docs/` and the
  * root `AGENTS.md`. Edit this catalog, then run `pnpm adapters:write`.
  * `pnpm adapters` fails when a checked-in adapter drifts.
  */
 export const toolAdapters = [
+  {
+    path: '.github/copilot-instructions.md',
+    canonicalTargets: ['AGENTS.md', 'docs/agents/COMPONENT_WORKFLOW.md'],
+    content: [
+      '# GitHub Copilot instructions for GhostVue',
+      '',
+      'Start with the [repository instructions](../AGENTS.md). When working in a',
+      'package, also read its AGENTS.md for its responsibility and allowed dependencies.',
+      'For component work, follow the [component gate](../docs/agents/COMPONENT_WORKFLOW.md)',
+      'and read the approved specification before writing production markup.',
+      '',
+    ].join('\n'),
+  },
   {
     path: 'CLAUDE.md',
     canonicalTargets: ['AGENTS.md'],
