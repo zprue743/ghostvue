@@ -4,7 +4,7 @@ import type { AST } from 'vue-eslint-parser'
 import {
   type GhostComponentContract,
   type GhostComponentPackage,
-  isGhostComponentPackage,
+  resolveGhostComponentPackage,
   lookupComponentContract,
 } from './component-index.js'
 import { camelize } from './native-attributes.js'
@@ -87,14 +87,16 @@ function collectBindings(
   for (const statement of program.body) {
     if (statement.type !== 'ImportDeclaration') continue
     const source = statement.source.value
-    if (typeof source !== 'string' || !isGhostComponentPackage(source)) continue
+    if (typeof source !== 'string') continue
+    const packageName = resolveGhostComponentPackage(source)
+    if (!packageName) continue
     // `import type` (a typescript-eslint extension of ESTree) cannot bind a
     // runtime component.
     if (isTypeOnly(statement)) continue
 
     for (const specifier of statement.specifiers) {
       if (specifier.type === 'ImportNamespaceSpecifier') {
-        namespaces.set(specifier.local.name, source)
+        namespaces.set(specifier.local.name, packageName)
       } else if (
         specifier.type === 'ImportSpecifier' &&
         !isTypeOnly(specifier)
@@ -103,7 +105,7 @@ function collectBindings(
           specifier.imported.type === 'Identifier'
             ? specifier.imported.name
             : String(specifier.imported.value)
-        named.set(specifier.local.name, { packageName: source, exportName })
+        named.set(specifier.local.name, { packageName, exportName })
       }
     }
   }

@@ -34,11 +34,30 @@ const componentIndex: ComponentIndex = generatedComponentIndex
 const DOCS_BASE_URL =
   'https://github.com/zprue743/ghostvue/blob/master/docs/components/'
 
-/** True when `source` is an import specifier the rules resolve components from. */
-export function isGhostComponentPackage(
-  source: string,
-): source is GhostComponentPackage {
+/**
+ * Import specifiers that re-export a package's components unchanged.
+ * `@ghostvue/themes/components` (the opt-in theme CSS entry) exports exactly
+ * the `@ghostvue/themes` wrappers without loading `default.css`, so its tags
+ * are checked against the themed contracts and reported as `@ghostvue/themes`.
+ */
+const componentPackageAliases: Readonly<Record<string, GhostComponentPackage>> =
+  { '@ghostvue/themes/components': '@ghostvue/themes' }
+
+function isIndexedPackage(source: string): source is GhostComponentPackage {
   return Object.hasOwn(componentIndex, source)
+}
+
+/**
+ * Package whose component contracts apply to imports from `source`, or
+ * `undefined` when the rules do not resolve components from it.
+ */
+export function resolveGhostComponentPackage(
+  source: string,
+): GhostComponentPackage | undefined {
+  if (isIndexedPackage(source)) return source
+  return Object.hasOwn(componentPackageAliases, source)
+    ? componentPackageAliases[source]
+    : undefined
 }
 
 /**

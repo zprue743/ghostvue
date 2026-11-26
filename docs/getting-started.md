@@ -42,8 +42,10 @@ start themed and replace pieces with headless ones later.
 
 ## Add a theme
 
-Import a flagship stylesheet once and name it on a root element. Themed components
-read tokens from the nearest `data-ghost-theme` host. Importing from
+Import a flagship stylesheet once and name it on the `<html>` element. Themed
+components read tokens from the nearest `data-ghost-theme` host, and overlays
+such as dialogs and menus teleport to `<body>` by default, so a host on `<html>`
+covers them too. Importing from
 `@ghostvue/themes` already loads the base stylesheet, in development and in
 production builds, so you do not need a separate
 `@ghostvue/themes/default.css` import.
@@ -57,13 +59,9 @@ import App from './App.vue'
 createApp(App).mount('#app')
 ```
 
-```vue
-<!-- App.vue -->
-<template>
-  <div data-ghost-theme="calm">
-    <RouterView />
-  </div>
-</template>
+```html
+<!-- index.html -->
+<html lang="en" data-ghost-theme="calm"></html>
 ```
 
 Flagships: `default`, `calm`, `vibrant`, `mono`. Light and dark follow

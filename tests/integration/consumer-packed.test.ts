@@ -33,6 +33,10 @@ const passingMount: MountObservation = {
   dialog: {
     open: ['Smoke dialog Mounted from packed tarballs. Close'],
     afterClose: [],
+    portals: {
+      content: { teleported: true, theme: 'calm', themed: true },
+      overlay: { teleported: true, theme: 'calm', themed: true },
+    },
   },
   drawer: { open: ['Smoke drawer Also mounted from packed tarballs.'] },
   toast: { shown: true },
@@ -148,7 +152,11 @@ describe('viteAppMountProblems', () => {
       viteAppMountProblems({
         ...passingMount,
         mounted: false,
-        dialog: { open: ['Smoke dialog'], afterClose: ['Smoke dialog'] },
+        dialog: {
+          ...passingMount.dialog,
+          open: ['Smoke dialog'],
+          afterClose: ['Smoke dialog'],
+        },
       }),
     ).toEqual([
       'the app did not mount into #app',
@@ -228,11 +236,44 @@ describe('viteOptInMountProblems', () => {
     mounted: true,
     input: { tag: 'INPUT', value: 'Ada', label: 'Workspace name' },
     button: { tag: 'BUTTON', text: 'Save' },
+    dialog: passingMount.dialog,
     errors: [],
   }
 
-  it('accepts Field, Input, and Button without the all-in components', () => {
+  it('accepts Field, Input, Button, and a portaled Dialog without the all-in components', () => {
     expect(viteOptInMountProblems(optInMount)).toEqual([])
+  })
+
+  it('reports portaled dialog parts that left the palette host', () => {
+    // #386 review: with the palette on an app wrapper, the overlay and content
+    // teleport to <body> outside it and their recipe reads unset tokens.
+    expect(
+      viteOptInMountProblems({
+        ...optInMount,
+        dialog: {
+          ...optInMount.dialog,
+          portals: {
+            content: { teleported: true, theme: null, themed: true },
+            overlay: { teleported: false, theme: 'calm', themed: true },
+          },
+        },
+      }),
+    ).toEqual([
+      'teleported GhostDialog content sits under null instead of the calm palette host, so its recipe has no tokens',
+      'GhostDialog overlay was not a themed part teleported out of #app',
+    ])
+    expect(
+      viteAppMountProblems({
+        ...passingMount,
+        dialog: {
+          ...passingMount.dialog,
+          portals: { content: null, overlay: null },
+        },
+      }),
+    ).toEqual([
+      'GhostDialog content did not render',
+      'GhostDialog overlay did not render',
+    ])
   })
 
   it('reports a missing button and runtime errors', () => {

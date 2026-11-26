@@ -78,9 +78,36 @@ result.select.options = [
   ...document.querySelectorAll('[role="listbox"] [role="option"]'),
 ].map((option) => option.textContent.trim())
 
+/**
+ * Where a teleported part landed and which palette host it inherits tokens
+ * from. Portaled parts leave #app, so the host must be an ancestor of the
+ * portal target (<html> in both pages) or the recipe has no tokens.
+ *
+ * @param {string} selector
+ */
+const portalPlacement = (selector) => {
+  const node = document.querySelector(selector)
+  return node
+    ? {
+        teleported: !node.closest('#app'),
+        theme:
+          node
+            .closest('[data-ghost-theme]')
+            ?.getAttribute('data-ghost-theme') ?? null,
+        themed: node.hasAttribute('data-themed'),
+      }
+    : null
+}
+
 smoke('dialog-trigger')?.click()
 await settle()
-result.dialog = { open: dialogs() }
+result.dialog = {
+  open: dialogs(),
+  portals: {
+    content: portalPlacement('.ghost-dialog-content'),
+    overlay: portalPlacement('.ghost-dialog-overlay'),
+  },
+}
 smoke('dialog-close')?.click()
 await settle()
 result.dialog.afterClose = dialogs()

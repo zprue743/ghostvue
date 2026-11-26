@@ -47,6 +47,12 @@ the simplest setup, but an app that renders a few themed components still
 ships every recipe. When CSS size matters, use the opt-in path instead: one
 palette, the shared base, and only the recipes your app renders.
 
+```html
+<!-- index.html: the palette host is <html>, so parts that teleport to
+     <body> (dialogs, drawers, menus, popovers, tooltips) inherit it. -->
+<html lang="en" data-ghost-theme="calm"></html>
+```
+
 ```ts
 // main.ts
 import { createApp } from 'vue'
@@ -58,6 +64,7 @@ import '@ghostvue/themes/calm.css'
 import '@ghostvue/themes/base.css'
 // One recipe per themed component family the app renders.
 import '@ghostvue/themes/recipes/button.css'
+import '@ghostvue/themes/recipes/dialog.css'
 import '@ghostvue/themes/recipes/field.css'
 import '@ghostvue/themes/recipes/input.css'
 
@@ -71,6 +78,11 @@ createApp(App).mount('#app')
 <script setup lang="ts">
 import {
   GhostButton,
+  GhostDialog,
+  GhostDialogContent,
+  GhostDialogOverlay,
+  GhostDialogTitle,
+  GhostDialogTrigger,
   GhostField,
   GhostFieldControl,
   GhostFieldLabel,
@@ -79,15 +91,19 @@ import {
 </script>
 
 <template>
-  <div data-ghost-theme="calm">
-    <GhostField>
-      <GhostFieldLabel>Workspace name</GhostFieldLabel>
-      <GhostFieldControl v-slot="field">
-        <GhostInput v-bind="field" />
-      </GhostFieldControl>
-    </GhostField>
-    <GhostButton>Save</GhostButton>
-  </div>
+  <GhostField>
+    <GhostFieldLabel>Workspace name</GhostFieldLabel>
+    <GhostFieldControl v-slot="field">
+      <GhostInput v-bind="field" />
+    </GhostFieldControl>
+  </GhostField>
+  <GhostDialog>
+    <GhostDialogTrigger :as="GhostButton">Rename</GhostDialogTrigger>
+    <GhostDialogOverlay />
+    <GhostDialogContent>
+      <GhostDialogTitle>Rename workspace</GhostDialogTitle>
+    </GhostDialogContent>
+  </GhostDialog>
 </template>
 ```
 
@@ -106,10 +122,16 @@ either way.
   `GhostLink` with `appearance="button"` uses the button recipe, so import
   `button.css` as well as `link.css`. `GhostInteractiveSurface` needs only
   `base.css`.
-- **Palette.** Name the palette you imported on a root element with
-  `data-ghost-theme` (for `tokens.css`, `class="ghost-theme"` or
-  `data-ghost-theme="default"`). Light, dark, density, and nested modes work as
-  in the all-in setup. To switch palettes at runtime, import each one you need.
+- **Palette host.** Name the palette you imported with `data-ghost-theme`
+  (for `tokens.css`, `class="ghost-theme"` or `data-ghost-theme="default"`).
+  Put it on `<html>` or `<body>` when the app renders overlays: dialog,
+  drawer, command palette, menu, popover, hover card, tooltip, select, and
+  combobox content teleport to `<body>` by default, and a portaled part only
+  gets palette tokens from an ancestor. To keep the host on an app wrapper,
+  set the part's `portal-to` prop to an element inside that wrapper. The
+  all-in setup follows the same rule. Light, dark, density, and nested modes
+  work as in the all-in setup. To switch palettes at runtime, import each one
+  you need.
 - **Do not mix entries.** A single import from `@ghostvue/themes`, whether in
   your code or in a library you use, loads `default.css` again and removes the
   savings. Nuxt's themed auto-imports resolve to `@ghostvue/themes`, so they
@@ -117,8 +139,8 @@ either way.
 
 In a production Vite build of the packed consumer fixture
 (`pnpm consumer:packed`), with the calm palette, the all-in setup emits about
-393 KB of CSS (27.7 KB gzip). The opt-in setup with the button, field, and
-input recipes emits about 121 KB (8.7 KB gzip). Most of the opt-in CSS is the
+393 KB of CSS (27.7 KB gzip). The opt-in setup with the button, dialog,
+field, and input recipes emits about 124 KB (9.0 KB gzip). Most of the opt-in CSS is the
 palette itself; each recipe adds roughly 0.2 to 2 KB gzip.
 
 ## Button examples

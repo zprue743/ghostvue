@@ -193,12 +193,20 @@ export function cssTransferSize(stylesheets) {
 }
 
 /**
+ * @typedef {{ teleported: boolean, theme: string | null, themed: boolean }} PortalPlacement
+ */
+
+/**
  * @typedef {{
  *   mounted?: boolean
  *   input?: { tag?: string | null, value?: string | null, label?: string | null }
  *   button?: { tag?: string, text?: string } | null
  *   select?: { role?: string | null, value?: string | null, options?: string[] }
- *   dialog?: { open?: string[], afterClose?: string[] }
+ *   dialog?: {
+ *     open?: string[]
+ *     afterClose?: string[]
+ *     portals?: Record<'content' | 'overlay', PortalPlacement | null>
+ *   }
  *   drawer?: { open?: string[] }
  *   toast?: { shown?: boolean }
  *   errors?: string[]
@@ -240,10 +248,58 @@ function runtimeErrorProblems(result) {
     : []
 }
 
+/** Palette both fixture pages name on `<html>`. */
+const FIXTURE_PALETTE = 'calm'
+
+/**
+ * Dialog checks both fixture pages share: it opens and closes, and its
+ * overlay and content teleport out of `#app` while still sitting under the
+ * palette host. A portaled part outside every `data-ghost-theme` host gets
+ * the dialog recipe but none of the tokens it reads (#386 review), so the
+ * surface and scrim would paint with unset custom properties.
+ *
+ * @param {MountObservation} result
+ * @returns {string[]}
+ */
+function dialogMountProblems(result) {
+  /** @type {string[]} */
+  const problems = []
+  const opened =
+    Array.isArray(result.dialog?.open) &&
+    result.dialog.open.some((text) => text.includes('Smoke dialog'))
+  if (!opened) {
+    problems.push(
+      'GhostDialogTrigger did not open a role="dialog" with its title',
+    )
+  } else {
+    for (const part of /** @type {const} */ (['content', 'overlay'])) {
+      const placement = result.dialog?.portals?.[part]
+      if (!placement) {
+        problems.push(`GhostDialog ${part} did not render`)
+      } else if (!placement.teleported || !placement.themed) {
+        problems.push(
+          `GhostDialog ${part} was not a themed part teleported out of #app`,
+        )
+      } else if (placement.theme !== FIXTURE_PALETTE) {
+        problems.push(
+          `teleported GhostDialog ${part} sits under ${JSON.stringify(placement.theme)} instead of the ${FIXTURE_PALETTE} palette host, so its recipe has no tokens`,
+        )
+      }
+    }
+  }
+  if (
+    !Array.isArray(result.dialog?.afterClose) ||
+    result.dialog.afterClose.some((text) => text.includes('Smoke dialog'))
+  ) {
+    problems.push('GhostDialogClose did not close the dialog')
+  }
+  return problems
+}
+
 /**
  * Problems with what `vite-app/mount.mjs` observed after mounting the opt-in
- * theme CSS page, which renders Field, Input, and Button imported from
- * `@ghostvue/themes/components`.
+ * theme CSS page, which renders Field, Input, Button, and a portaled Dialog
+ * imported from `@ghostvue/themes/components`.
  *
  * @param {MountObservation} result Parsed JSON printed by the mount runner.
  * @returns {string[]}
@@ -253,6 +309,7 @@ export function viteOptInMountProblems(result) {
   if (result.button?.tag !== 'BUTTON' || result.button.text !== 'Save') {
     problems.push('GhostButton from @ghostvue/themes/components did not render')
   }
+  problems.push(...dialogMountProblems(result))
   return [...problems, ...runtimeErrorProblems(result)]
 }
 
@@ -283,16 +340,7 @@ export function viteAppMountProblems(result) {
       JSON.stringify(['Europe', 'United States']),
     'opening GhostSelect did not list both options',
   )
-  expect(
-    Array.isArray(result.dialog?.open) &&
-      result.dialog.open.some((text) => text.includes('Smoke dialog')),
-    'GhostDialogTrigger did not open a role="dialog" with its title',
-  )
-  expect(
-    Array.isArray(result.dialog?.afterClose) &&
-      !result.dialog.afterClose.some((text) => text.includes('Smoke dialog')),
-    'GhostDialogClose did not close the dialog',
-  )
+  problems.push(...dialogMountProblems(result))
   expect(
     Array.isArray(result.drawer?.open) &&
       result.drawer.open.some((text) => text.includes('Smoke drawer')),

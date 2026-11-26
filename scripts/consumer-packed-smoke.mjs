@@ -17,7 +17,7 @@
  *    Its production build must emit the `@layer ghostvue-theme` base recipes
  *    and the calm token host, and the built bundle is mounted in jsdom and
  *    driven once per component. The same fixture also builds an opt-in page
- *    (#386: calm, `base.css`, and three `recipes/*.css` with components from
+ *    (#386: calm, `base.css`, and four `recipes/*.css` with components from
  *    `@ghostvue/themes/components`) that must ship only those recipes, and
  *    both pages' minified and gzip CSS sizes are printed for comparison.
  * 2. `@ghostvue/nuxt`: a Nuxt app that uses only module auto-imports. The
@@ -178,16 +178,25 @@ function formatCssSize({ minifiedBytes, gzipBytes }) {
 }
 
 /**
- * Recipes the opt-in page imports, and recipes it must not ship (the all-in
- * page renders all of them, so their absence proves the savings are real).
+ * Recipe classes for the families the opt-in page imports, and for families
+ * it must not ship. Recipes style parts (`.ghost-dialog-content`), not always
+ * the family name, so each entry names a part class its recipe file defines;
+ * every entry must also appear in the all-in build, or its absence from the
+ * opt-in build would prove nothing.
  */
-const optInRecipes = ['ghost-button', 'ghost-field', 'ghost-input']
+const optInRecipes = [
+  'ghost-button',
+  'ghost-dialog-content',
+  'ghost-dialog-overlay',
+  'ghost-field',
+  'ghost-input',
+]
 const optInAbsentRecipes = [
-  'ghost-dialog',
-  'ghost-drawer',
-  'ghost-select',
+  'ghost-drawer-content',
+  'ghost-select-trigger',
   'ghost-toast',
-  'ghost-calendar',
+  'ghost-calendar-cell',
+  'ghost-tabs-list',
 ]
 
 /**
@@ -213,6 +222,16 @@ async function checkViteApp(temporary, tarballs, pins) {
   assertNoProblems(
     'Mounting the packed Vite + Vue consumer failed',
     viteAppMountProblems(mountViteVariant(app, [])),
+  )
+  // Guard the opt-in absence checks: every class they look for must exist in
+  // the all-in CSS built from the same tarball.
+  assertNoProblems(
+    'The opt-in recipe classes are missing from the all-in build',
+    optInBuildCssProblems(allIn.stylesheets.join('\n'), {
+      flagship: 'calm',
+      recipes: [...optInRecipes, ...optInAbsentRecipes],
+      absentRecipes: [],
+    }).filter((problem) => !problem.startsWith('default palette')),
   )
 
   const optIn = await buildViteVariant(app, 'opt-in')
@@ -244,13 +263,13 @@ async function checkViteApp(temporary, tarballs, pins) {
     'Vite + Vue consumer: production build of the documented setup emitted @layer ghostvue-theme base and calm CSS; mounted Field, Input, Select, Dialog, Drawer, and Toast in jsdom.',
   )
   console.log(
-    'Vite + Vue opt-in theme CSS: calm palette, base, and button/field/input recipes only; no default palette or unrelated recipes; mounted Field, Input, and Button in jsdom.',
+    'Vite + Vue opt-in theme CSS: calm palette, base, and button/dialog/field/input recipes only; no default palette or unrelated recipes; mounted Field, Input, Button, and a portaled Dialog under the <html> palette host in jsdom.',
   )
   console.log(
     `CSS size, all-in @ghostvue/themes + calm.css: ${formatCssSize(allInSize)}`,
   )
   console.log(
-    `CSS size, opt-in calm.css + base.css + 3 recipes: ${formatCssSize(optInSize)}`,
+    `CSS size, opt-in calm.css + base.css + 4 recipes: ${formatCssSize(optInSize)}`,
   )
 }
 

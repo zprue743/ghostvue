@@ -6,6 +6,7 @@
 import '@ghostvue/themes/calm.css'
 import '@ghostvue/themes/base.css'
 import '@ghostvue/themes/recipes/button.css'
+import '@ghostvue/themes/recipes/dialog.css'
 import '@ghostvue/themes/recipes/field.css'
 import '@ghostvue/themes/recipes/input.css'
 

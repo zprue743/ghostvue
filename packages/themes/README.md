@@ -17,7 +17,9 @@ Vue `^3.5.0` is a peer dependency.
 
 ## Usage
 
-Import a flagship stylesheet once and name it on a root element:
+Import a flagship stylesheet once and name it on the `<html>` element, so
+overlays that teleport to `<body>` (dialogs, menus, popovers) share the
+palette:
 
 ```ts
 // main.ts
@@ -28,6 +30,11 @@ import App from './App.vue'
 createApp(App).mount('#app')
 ```
 
+```html
+<!-- index.html -->
+<html lang="en" data-ghost-theme="calm"></html>
+```
+
 ```vue
 <!-- App.vue -->
 <script setup lang="ts">
@@ -35,9 +42,7 @@ import { GhostButton } from '@ghostvue/themes'
 </script>
 
 <template>
-  <div data-ghost-theme="calm">
-    <GhostButton variant="outline" tone="danger">Delete</GhostButton>
-  </div>
+  <GhostButton variant="outline" tone="danger">Delete</GhostButton>
 </template>
 ```
 

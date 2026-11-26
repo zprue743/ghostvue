@@ -22,12 +22,22 @@ export function cssTransferSize(stylesheets: string[]): {
   gzipBytes: number
 }
 
+export interface PortalPlacement {
+  teleported: boolean
+  theme: string | null
+  themed: boolean
+}
+
 export interface MountObservation {
   mounted?: boolean
   input?: { tag?: string | null; value?: string | null; label?: string | null }
   button?: { tag?: string; text?: string } | null
   select?: { role?: string | null; value?: string | null; options?: string[] }
-  dialog?: { open?: string[]; afterClose?: string[] }
+  dialog?: {
+    open?: string[]
+    afterClose?: string[]
+    portals?: Record<'content' | 'overlay', PortalPlacement | null>
+  }
   drawer?: { open?: string[] }
   toast?: { shown?: boolean }
   errors?: string[]
