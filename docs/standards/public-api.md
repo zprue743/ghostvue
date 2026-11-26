@@ -59,8 +59,8 @@ They apply to public components in `@ghostvue/vue` and themed wrappers in
   entry must not augment globals.
 - `unplugin-vue-components` support is `GhostVueResolver()` from
   `@ghostvue/vue/resolver`, resolving `GhostButton` to `@ghostvue/vue`. It
-  matches the plugin's resolver contract structurally; `@ghostvue/vue` never
-  depends on the plugin. Its component list is generated from the registry
+  matches the plugin's resolver contract structurally and never imports the
+  plugin, which is only an optional peer of `@ghostvue/vue`. Its component list is generated from the registry
   barrels (`pnpm registries:write`), not maintained by hand.
 - Nuxt auto-import is the separate `@ghostvue/nuxt` module. It auto-imports
   headless exports by default; themed wrappers and theme CSS require explicit
