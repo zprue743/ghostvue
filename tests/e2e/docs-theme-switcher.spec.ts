@@ -29,18 +29,17 @@ async function tabIntoSwitcher(page: Page, group: Locator): Promise<void> {
 }
 
 test.describe('docs theme switcher', () => {
-  test('dogfoods calm on first paint and persists a flagship choice', async ({
+  test('boots into default on first paint and persists a flagship choice', async ({
     page,
   }) => {
     const docs = await startStaticServer('apps/docs/.vitepress/dist')
     try {
       await page.goto(docs.url)
       const root = page.locator('html')
-      await expect(root).toHaveAttribute('data-ghost-theme', 'calm')
-      await expect(page.getByTestId('docs-theme-calm').first()).toHaveAttribute(
-        'aria-checked',
-        'true',
-      )
+      await expect(root).toHaveAttribute('data-ghost-theme', 'default')
+      await expect(
+        page.getByTestId('docs-theme-default').first(),
+      ).toHaveAttribute('aria-checked', 'true')
 
       await page.getByTestId('docs-theme-vibrant').first().click()
       await expect(root).toHaveAttribute('data-ghost-theme', 'vibrant')
@@ -104,16 +103,17 @@ test.describe('docs theme switcher', () => {
 
       // Tab lands on the checked theme only, then leaves the group.
       await tabIntoSwitcher(page, group)
-      await expect(radio('Calm')).toBeFocused()
+      await expect(radio('Default')).toBeFocused()
       await page.keyboard.press('Tab')
       expect(
         await group.evaluate((node) => node.contains(document.activeElement)),
       ).toBe(false)
       await page.keyboard.press('Shift+Tab')
-      await expect(radio('Calm')).toBeFocused()
+      await expect(radio('Default')).toBeFocused()
 
       // Arrows move focus and check, wrapping at both ends.
       const steps = [
+        ['ArrowRight', 'Calm', 'calm'],
         ['ArrowRight', 'Vibrant', 'vibrant'],
         ['ArrowRight', 'Mono', 'mono'],
         ['ArrowRight', 'Default', 'default'],
@@ -224,7 +224,7 @@ test.describe('docs theme switcher', () => {
       await page.goto(`${docs.url}/components/button`)
       const group = navSwitcher(page)
       await expect(
-        group.getByRole('radio', { name: 'Calm', exact: true }),
+        group.getByRole('radio', { name: 'Default', exact: true }),
       ).toHaveAttribute('aria-checked', 'true')
       /*
        * Computed colours cannot answer this: forced colours keep a
@@ -239,7 +239,10 @@ test.describe('docs theme switcher', () => {
             .getByRole('radio', { name, exact: true })
             .screenshot({ animations: 'disabled' })
         ).toString('base64')
-      const [checked, unchecked] = [await paint('Calm'), await paint('Vibrant')]
+      const [checked, unchecked] = [
+        await paint('Default'),
+        await paint('Vibrant'),
+      ]
       const ratios = await page.evaluate(
         async ([on, off]) => {
           async function load(base64: string): Promise<ImageData> {
@@ -307,21 +310,21 @@ test.describe('docs theme switcher', () => {
         await expect(group).toBeVisible({ timeout: 500 })
       }).toPass()
       await group.getByRole('radio', { checked: true }).focus()
-      await page.keyboard.press('ArrowLeft')
-      const fallback = group.getByRole('radio', {
-        name: 'Default',
+      await page.keyboard.press('ArrowRight')
+      const nextOption = group.getByRole('radio', {
+        name: 'Calm',
         exact: true,
       })
-      await expect(fallback).toBeFocused()
-      await expect(fallback).toHaveAttribute('aria-checked', 'true')
+      await expect(nextOption).toBeFocused()
+      await expect(nextOption).toHaveAttribute('aria-checked', 'true')
       await expect(page.locator('html')).toHaveAttribute(
         'data-ghost-theme',
-        'default',
+        'calm',
       )
       // Both copies read the shared attribute, so the hidden nav bar copy
       // agrees and offers the same roving stop when the viewport widens.
       await expect(
-        page.locator('.VPNavBar [data-testid="docs-theme-default"]'),
+        page.locator('.VPNavBar [data-testid="docs-theme-calm"]'),
       ).toHaveAttribute('aria-checked', 'true')
       const overflow = await page.evaluate(
         () => document.documentElement.scrollWidth - window.innerWidth,

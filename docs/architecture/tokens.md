@@ -156,13 +156,14 @@ nested `--ghost-motion-intensity` re-evaluates. Under
 or 80ms feedback so state changes stay visible. See
 [motion](../themes/motion.md).
 
-Density, fluid type, and roundness are GHO-66. Default density is
-comfortable. Compact and spacious overlay spacing, control heights, and
-radius through `data-ghost-density`. `--ghost-roundness` (0 sharp → 1 designed,
-including pill) scales every radius token via `calc()`. Type uses a system
-font stack and `clamp()` sizes; letter-spacing, tabular numbers, and
-OpenType feature tokens are semantic `--ghost-type-*` variables. Coarse
-pointers floor control heights to 44px. See
+Density, type, and roundness are GHO-66 (recalibrated in `#330`). Default
+density is comfortable. Compact and spacious overlay spacing, control heights,
+control font sizes, and radius through `data-ghost-density`.
+`--ghost-roundness` (0 sharp → 1 designed, including pill) scales every radius
+token via `calc()`. Type uses a system font stack, crisp `rem` UI sizes
+(`xs`–`lg`), and fluid `clamp()` display sizes (`xl`–`3xl`); letter-spacing,
+tabular numbers, and OpenType feature tokens are semantic `--ghost-type-*`
+variables. Coarse pointers floor control heights to 44px. See
 [density, type, and roundness](../themes/density.md).
 
 State-layer overlay opacities (`state.layer.hover` / `press` /

@@ -10,7 +10,7 @@ import type { GhostColorMode } from './axe'
 
 /**
  * Token host for `/examples.html`. Omitted fields keep the docs first paint
- * (`calm`, unset density, light). The host never adds `.ghost-theme`, so
+ * (`default`, unset density, light). The host never adds `.ghost-theme`, so
  * headless examples stay unthemed exactly as in the docs.
  */
 export interface GhostExampleHost {

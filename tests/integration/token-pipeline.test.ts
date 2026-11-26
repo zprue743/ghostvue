@@ -125,7 +125,10 @@ describe('token pipeline', () => {
     expect(compiled.css).toContain("[data-ghost-density='spacious']")
     expect(compiled.css).toContain('pointer: coarse')
     expect(compiled.css).toContain(
-      '--ghost-radius-md: calc(0.5rem * var(--ghost-roundness, 1));',
+      '--ghost-radius-md: calc(0.375rem * var(--ghost-roundness, 1));',
+    )
+    expect(compiled.css).toContain(
+      '--ghost-radius-lg: calc(0.5rem * var(--ghost-roundness, 1));',
     )
     expect(compiled.css).toContain('--ghost-roundness: 1;')
     expect(compiled.css).toContain('--ghost-type-family-sans:')
@@ -169,13 +172,59 @@ describe('token pipeline', () => {
       tokens['motion.spring.gentle'].value.light.startsWith('linear('),
     ).toBe(true)
     expect(tokens['roundness.amount'].cssVar).toBe('--ghost-roundness')
-    expect(tokens['control.size.md.min'].value.light).toBe('2.5rem')
+    expect(tokens['control.size.sm.min'].value.light).toBe('2rem')
+    expect(tokens['control.size.sm.min'].density).toEqual({
+      compact: '1.75rem',
+      spacious: '2.25rem',
+    })
+    expect(tokens['control.size.md.min'].value.light).toBe('2.25rem')
     expect(tokens['control.size.md.min'].density).toEqual({
       compact: '2rem',
-      spacious: '3rem',
+      spacious: '2.5rem',
     })
     expect(tokens['control.size.md.min'].touchMin).toBe('2.75rem')
-    expect(tokens['radius.md'].value.light).toBe('0.5rem')
+    expect(tokens['control.size.lg.min'].value.light).toBe('2.5rem')
+    expect(tokens['control.size.lg.min'].density).toEqual({
+      compact: '2.25rem',
+      spacious: '2.75rem',
+    })
+    expect(tokens['control.size.sm.font'].value.light).toBe('0.8125rem')
+    expect(tokens['control.size.sm.font'].density).toEqual({
+      compact: '0.75rem',
+      spacious: '0.8125rem',
+    })
+    expect(tokens['control.size.md.font'].value.light).toBe('0.875rem')
+    expect(tokens['control.size.md.font'].density).toEqual({
+      compact: '0.8125rem',
+      spacious: '0.9375rem',
+    })
+    expect(tokens['control.size.lg.font'].value.light).toBe('0.9375rem')
+    expect(tokens['control.size.lg.font'].density).toEqual({
+      compact: '0.875rem',
+      spacious: '1rem',
+    })
+    expect(tokens['control.size.sm.padding.block'].value.light).toBe('0.25rem')
+    expect(tokens['control.size.sm.padding.inline'].value.light).toBe(
+      '0.625rem',
+    )
+    expect(tokens['control.size.md.padding.block'].value.light).toBe('0.375rem')
+    expect(tokens['control.size.md.padding.inline'].value.light).toBe('0.75rem')
+    expect(tokens['control.size.lg.padding.block'].value.light).toBe('0.5rem')
+    expect(tokens['control.size.lg.padding.inline'].value.light).toBe('1rem')
+    expect(tokens['action.label.weight'].value.light).toBe('500')
+    expect(tokens['focus.ring.width'].value.light).toBe('2px')
+    expect(tokens['focus.ring.offset'].value.light).toBe('2px')
+    expect(tokens['radius.md'].value.light).toBe('0.375rem')
+    expect(tokens['radius.lg'].value.light).toBe('0.5rem')
+    expect(tokens['action.shadow'].value.light).toBe(
+      tokens['elevation.1.shadow'].value.light,
+    )
+    expect(tokens['action.primary.gradient.from'].value.light).toBe(
+      tokens['action.primary.bg'].value.light,
+    )
+    expect(tokens['action.primary.gradient.to'].value.light).toBe(
+      tokens['action.primary.bg'].value.light,
+    )
     expect(tokens['type.family.sans'].cssVar).toBe('--ghost-type-family-sans')
     expect(tokens['type.numeric.tabular'].value.light).toBe('tabular-nums')
   })

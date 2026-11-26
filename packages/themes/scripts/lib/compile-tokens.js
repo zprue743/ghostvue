@@ -36,8 +36,8 @@ export const DENSITY_ATTRIBUTE = 'data-ghost-density'
 export const ROUNDNESS_TOKEN_NAME = 'roundness.amount'
 export const ROUNDNESS_VAR = `${CSS_PREFIX}roundness`
 
-const ALIAS = /^\{([a-z0-9]+(?:\.[a-z0-9-]+)*)\}$/i
-const TOKEN_NAME = /^[a-z][a-z0-9]*(?:\.[a-z0-9][a-z0-9-]*)+$/
+const ALIAS = /^\{([a-z0-9]+(?:\.[a-z0-9_-]+)*)\}$/i
+const TOKEN_NAME = /^[a-z][a-z0-9]*(?:\.[a-z0-9][a-z0-9_-]*)+$/
 const STANDALONE_SEMANTIC_TOKENS = new Set(['scrim'])
 
 /**
@@ -128,7 +128,7 @@ export const TOKEN_SOURCES = [
 export function cssVariableName(tokenName) {
   // Public knob name is --ghost-roundness (0 sharp → 1 designed / pill).
   if (tokenName === ROUNDNESS_TOKEN_NAME) return ROUNDNESS_VAR
-  return `${CSS_PREFIX}${tokenName.replaceAll('.', '-')}`
+  return `${CSS_PREFIX}${tokenName.replaceAll('.', '-').replaceAll('_', '-')}`
 }
 
 function isPlainObject(value) {
@@ -272,19 +272,22 @@ function interpolateEmbeddedAliases(
   stack,
   fromName,
 ) {
-  return value.replace(/\{([a-z0-9]+(?:\.[a-z0-9-]+)*)\}/gi, (match, alias) => {
-    if (!tokensByName.has(alias)) {
-      throw new Error(`Unknown token "${alias}"`)
-    }
-    assertPrimitiveAlias(tokensByName, fromName, alias)
-    const resolved = resolveAuthored(tokensByName, alias, mode, stack)
-    if (typeof resolved === 'object') {
-      throw new Error(
-        `Token "${fromName}" cannot interpolate composite alias "${alias}"`,
-      )
-    }
-    return String(resolved)
-  })
+  return value.replace(
+    /\{([a-z0-9]+(?:\.[a-z0-9_-]+)*)\}/gi,
+    (match, alias) => {
+      if (!tokensByName.has(alias)) {
+        throw new Error(`Unknown token "${alias}"`)
+      }
+      assertPrimitiveAlias(tokensByName, fromName, alias)
+      const resolved = resolveAuthored(tokensByName, alias, mode, stack)
+      if (typeof resolved === 'object') {
+        throw new Error(
+          `Token "${fromName}" cannot interpolate composite alias "${alias}"`,
+        )
+      }
+      return String(resolved)
+    },
+  )
 }
 
 function resolveTokenValue(tokensByName, value, mode, stack, fromName) {

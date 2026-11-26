@@ -20,7 +20,8 @@ any subtree; every radius token is `calc(<designed> * var(--ghost-roundness, 1))
 
 ## Spacing
 
-The primitive scale is 4px (`0`, `1` = 4px, `2` = 8px, through `16` = 64px).
+The primitive scale is 4px (`0`, `1` = 4px, `2` = 8px, through `16` = 64px),
+with half-steps `0_5` (2px), `1_5` (6px), and `2_5` (10px) for control padding.
 Semantic roles are `space.gap.*`, `space.inset.*`, and `space.stack.*`.
 Density remaps those roles one step down (compact) or up (spacious).
 Compact `space.gap.xs` is `0`, so spacing roles never size paint. Painted
@@ -30,39 +31,48 @@ density and theme. `GhostProgress` and `GhostSlider` read these.
 
 ## Control heights
 
-Heights are the five-step scale 28 / 32 / 36 / 40 / 48px. Size and density
-map onto that scale:
+Heights are the five-step Precision SaaS scale 28 / 32 / 36 / 40 / 44px. Size
+and density map onto that scale:
 
 | Size | compact | comfortable (default) | spacious |
 | ---- | ------- | --------------------- | -------- |
 | sm   | 28px    | 32px                  | 36px     |
-| md   | 32px    | 40px                  | 48px     |
-| lg   | 40px    | 48px                  | 48px     |
+| md   | 32px    | 36px                  | 40px     |
+| lg   | 36px    | 40px                  | 44px     |
 
-Comfortable is 4px below the previous GhostButton snapshot (36 / 44 / 52).
+Control padding and font size step alongside height:
+
+| Size | compact (`font` / `padding`) | comfortable (`font` / `padding`) | spacious (`font` / `padding`) |
+| ---- | ---------------------------- | -------------------------------- | ----------------------------- |
+| sm   | 12px / 2px × 8px             | 13px / 4px × 10px                | 13px / 6px × 12px             |
+| md   | 13px / 4px × 10px            | 14px / 6px × 12px                | 15px / 8px × 16px             |
+| lg   | 14px / 6px × 12px            | 15px / 8px × 16px                | 16px / 10px × 20px            |
+
 `@media (pointer: coarse)` floors every control minimum to 44px
-(`control.touch`, 2.75rem) so touch targets do not shrink with compact or
-small sizes. Fine pointers keep the mapped height.
+(`control.touch`, 2.75rem) so touch targets do not shrink with compact,
+comfortable, or small sizes. Fine pointers keep the mapped height.
 
-Radius follows the same density step: compact is one step tighter,
-spacious one step rounder, then multiplied by `--ghost-roundness`.
+Radius follows the same density step (`4px` / `6px` / `8px` for
+`action.radius` and `radius.md`), then multiplied by `--ghost-roundness`.
 
 ## Type
 
-Fluid `clamp()` sizes from 320px–1280px viewports. The stack is system UI
-only (`ui-sans-serif, system-ui, sans-serif` plus emoji fallbacks). No web
-font.
+UI sizes (`type.size.xs`–`lg`: 12 / 13 / 14 / 15px) resolve to crisp
+deterministic `rem` values; display heading sizes (`type.size.xl`–`3xl`) use
+fluid `clamp()` from 320px–1280px viewports. The stack is system UI only
+(`ui-sans-serif, system-ui, sans-serif` plus emoji fallbacks). No web font.
 
-| Token                  | CSS                            | Use                    |
-| ---------------------- | ------------------------------ | ---------------------- |
-| `type.family.sans`     | `--ghost-type-family-sans`     | System sans            |
-| `type.size.sm`–`3xl`   | `--ghost-type-size-*`          | Fluid type scale       |
-| `type.letter.tight`    | `--ghost-type-letter-tight`    | `-0.02em`              |
-| `type.letter.normal`   | `--ghost-type-letter-normal`   | `0em`                  |
-| `type.letter.wide`     | `--ghost-type-letter-wide`     | `0.04em`               |
-| `type.numeric.tabular` | `--ghost-type-numeric-tabular` | `font-variant-numeric` |
-| `type.feature.default` | `--ghost-type-feature-default` | kern / liga / calt     |
-| `type.feature.tabular` | `--ghost-type-feature-tabular` | `tnum` plus kerning    |
+| Token                  | CSS                            | Use                          |
+| ---------------------- | ------------------------------ | ---------------------------- |
+| `type.family.sans`     | `--ghost-type-family-sans`     | System sans                  |
+| `type.size.xs`–`lg`    | `--ghost-type-size-*`          | Crisp UI `rem` scale (12–15) |
+| `type.size.xl`–`3xl`   | `--ghost-type-size-*`          | Fluid display scale          |
+| `type.letter.tight`    | `--ghost-type-letter-tight`    | `-0.02em`                    |
+| `type.letter.normal`   | `--ghost-type-letter-normal`   | `0em`                        |
+| `type.letter.wide`     | `--ghost-type-letter-wide`     | `0.04em`                     |
+| `type.numeric.tabular` | `--ghost-type-numeric-tabular` | `font-variant-numeric`       |
+| `type.feature.default` | `--ghost-type-feature-default` | kern / liga / calt           |
+| `type.feature.tabular` | `--ghost-type-feature-tabular` | `tnum` plus kerning          |
 
 ```css
 .price {
@@ -71,8 +81,10 @@ font.
 }
 ```
 
-Type does not change with density. GhostButton maps `sm` / `md` / `lg` onto
-`control.size.*.font` (fluid sm / md / lg).
+Prose `type.size.*` tokens do not change with density, while interactive
+controls (`GhostButton`, `GhostInput`, `GhostSelect`, and peers) scale label
+size with density through `control.size.*.font` (medium weight `500` on
+`action.label.weight`).
 
 ## Roundness
 
@@ -127,7 +139,7 @@ comfortable page still wins.
   </div>
   <p class="demo-type">
     <span class="demo-xs">xs</span>
-    <span class="demo-md">Body uses fluid <code>type.size.md</code>.</span>
+    <span class="demo-md">Body uses crisp <code>type.size.md</code>.</span>
     <span class="demo-tabular">12,345.00</span>
   </p>
 </div>

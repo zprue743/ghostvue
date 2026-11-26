@@ -49,7 +49,7 @@ playgroundTest('section behavior', async ({ page, playgroundUrl }) => {
 ## Accessibility helpers
 
 - `axeScan(page, playgroundUrl, exampleId, { mode?: 'light' | 'dark' })` —
-  opens a registered example on the docs-equivalent token host (`calm`, unset
+  opens a registered example on the docs-equivalent token host (`default`, unset
   density) in the given mode and asserts zero axe violations.
 - `exampleUrl` / `waitForExamplePreview` — lower-level example navigation used
   by registry scans and component specs. Pass `{ theme, density, mode }` to

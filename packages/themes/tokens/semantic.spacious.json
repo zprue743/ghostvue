@@ -104,54 +104,69 @@
           "$value": "{control.height.36}",
           "$description": "Small control height at spacious density. 36px."
         },
+        "font": {
+          "$type": "fontSize",
+          "$value": "{font.size.sm}",
+          "$description": "Small control font size at spacious density. 13px."
+        },
         "padding": {
           "block": {
             "$type": "dimension",
-            "$value": "{space.3}",
-            "$description": "Small control block padding at spacious density."
+            "$value": "{space.1_5}",
+            "$description": "Small control block padding at spacious density. 6px."
           },
           "inline": {
             "$type": "dimension",
-            "$value": "{space.4}",
-            "$description": "Small control inline padding at spacious density."
+            "$value": "{space.3}",
+            "$description": "Small control inline padding at spacious density. 12px."
           }
         }
       },
       "md": {
         "min": {
           "$type": "dimension",
-          "$value": "{control.height.48}",
-          "$description": "Medium control height at spacious density. 48px."
+          "$value": "{control.height.40}",
+          "$description": "Medium control height at spacious density. 40px."
+        },
+        "font": {
+          "$type": "fontSize",
+          "$value": "{font.size.lg}",
+          "$description": "Medium control font size at spacious density. 15px."
         },
         "padding": {
           "block": {
             "$type": "dimension",
-            "$value": "{space.4}",
-            "$description": "Medium control block padding at spacious density."
+            "$value": "{space.2}",
+            "$description": "Medium control block padding at spacious density. 8px."
           },
           "inline": {
             "$type": "dimension",
-            "$value": "{space.5}",
-            "$description": "Medium control inline padding at spacious density."
+            "$value": "{space.4}",
+            "$description": "Medium control inline padding at spacious density. 16px."
           }
         }
       },
       "lg": {
         "min": {
           "$type": "dimension",
-          "$value": "{control.height.48}",
-          "$description": "Large control height at spacious density. 48px (scale cap)."
+          "$value": "{control.height.44}",
+          "$description": "Large control height at spacious density. 44px."
+        },
+        "font": {
+          "$type": "fontSize",
+          "$value": "{font.size.base}",
+          "$description": "Large control font size at spacious density. 16px."
         },
         "padding": {
           "block": {
             "$type": "dimension",
-            "$value": "{space.5}",
-            "$description": "Large control block padding at spacious density."
+            "$value": "{space.2_5}",
+            "$description": "Large control block padding at spacious density. 10px."
           },
           "inline": {
             "$type": "dimension",
-            "$value": "{space.6}",
-            "$description": "Large control inline padding at spacious density."
+            "$value": "{space.5}",
+            "$description": "Large control inline padding at spacious density. 20px."
           }
         }
       }

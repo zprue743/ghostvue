@@ -79,10 +79,10 @@ export const tokens = {
     cssVar: "--ghost-action-danger-gradient-to",
     type: "color",
     tier: "semantic",
-    description: "Danger action gradient end. Must meet WCAG AA with action.danger.fg.",
+    description: "Danger action gradient end. Single-hue default; must meet WCAG AA with action.danger.fg.",
     value: {
-      light: "#900009",
-      dark: "#ff908d",
+      light: "#b91c1c",
+      dark: "#f87171",
     },
   },
   "action.disabled.bg": {
@@ -161,9 +161,9 @@ export const tokens = {
     cssVar: "--ghost-action-highlight",
     type: "shadow",
     tier: "semantic",
-    description: "Inset top sheen on solid actions.",
+    description: "Inset hairline bevel on solid actions.",
     value: {
-      light: "inset 0px 1px 0px 0px oklch(1 0.012 258 / 0.28)",
+      light: "inset 0px 1px 0px 0px oklch(1 0.008 258 / 0.16)",
       dark: "inset 0px 1px 0px 0px oklch(1 0.005 258 / 0.12)",
     },
   },
@@ -273,8 +273,8 @@ export const tokens = {
     tier: "semantic",
     description: "Default action label size. Size variants use control.size.*.font.",
     value: {
-      light: "clamp(0.9375rem, 0.9167rem + 0.1042vw, 1rem)",
-      dark: "clamp(0.9375rem, 0.9167rem + 0.1042vw, 1rem)",
+      light: "0.875rem",
+      dark: "0.875rem",
     },
   },
   "action.label.weight": {
@@ -284,8 +284,8 @@ export const tokens = {
     tier: "semantic",
     description: "Action label font weight.",
     value: {
-      light: "600",
-      dark: "600",
+      light: "500",
+      dark: "500",
     },
   },
   "action.neutral.bg": {
@@ -359,10 +359,10 @@ export const tokens = {
     cssVar: "--ghost-action-neutral-gradient-to",
     type: "color",
     tier: "semantic",
-    description: "Neutral action gradient end. Must meet WCAG AA with action.neutral.fg.",
+    description: "Neutral action gradient end. Single-hue default; must meet WCAG AA with action.neutral.fg.",
     value: {
-      light: "#263243",
-      dark: "#d3dce7",
+      light: "#334155",
+      dark: "#cbd5e1",
     },
   },
   "action.primary.bg": {
@@ -436,10 +436,10 @@ export const tokens = {
     cssVar: "--ghost-action-primary-gradient-to",
     type: "color",
     tier: "semantic",
-    description: "Primary action gradient end. Subtle hue shift; must meet WCAG AA with action.primary.fg.",
+    description: "Primary action gradient end. Single-hue default; must meet WCAG AA with action.primary.fg.",
     value: {
-      light: "#004e7a",
-      dark: "#38bdf8",
+      light: "#1d4ed8",
+      dark: "#60a5fa",
     },
   },
   "action.radius": {
@@ -447,14 +447,14 @@ export const tokens = {
     cssVar: "--ghost-action-radius",
     density: {
       compact: "0.25rem",
-      spacious: "0.75rem",
+      spacious: "0.5rem",
     },
     type: "dimension",
     tier: "semantic",
     description: "Action corner radius. Follows --ghost-roundness.",
     value: {
-      light: "0.5rem",
-      dark: "0.5rem",
+      light: "0.375rem",
+      dark: "0.375rem",
     },
   },
   "action.shadow": {
@@ -464,8 +464,8 @@ export const tokens = {
     tier: "semantic",
     description: "Rest elevation on solid actions.",
     value: {
-      light: "0px 2px 4px 0px oklch(0.254 0.028 257.5 / 0.08), 0px 4px 10px 0px oklch(0.254 0.028 257.5 / 0.14)",
-      dark: "0px 2px 4px 0px oklch(0.08 0.02 258 / 0.3), 0px 3px 8px 0px oklch(0.08 0.02 258 / 0.18)",
+      light: "0px 1px 2px 0px oklch(0.254 0.028 257.5 / 0.08), 0px 1px 3px 0px oklch(0.254 0.028 257.5 / 0.14)",
+      dark: "0px 1px 2px 0px oklch(0.08 0.02 258 / 0.28), 0px 1px 2px 0px oklch(0.08 0.02 258 / 0.16)",
     },
   },
   "action.shadow.press": {
@@ -475,8 +475,8 @@ export const tokens = {
     tier: "semantic",
     description: "Compressed elevation on a pressed solid action.",
     value: {
-      light: "0px 1px 2px 0px oklch(0.254 0.028 257.5 / 0.08), 0px 1px 3px 0px oklch(0.254 0.028 257.5 / 0.14)",
-      dark: "0px 1px 2px 0px oklch(0.08 0.02 258 / 0.28), 0px 1px 2px 0px oklch(0.08 0.02 258 / 0.16)",
+      light: "0px 0px 0px 0px transparent",
+      dark: "0px 0px 0px 0px transparent",
     },
   },
   "action.spinner.duration": {
@@ -1019,10 +1019,10 @@ export const tokens = {
     name: "color.highlight.inset",
     type: "color",
     tier: "primitive",
-    description: "Inset top sheen for raised actions in light mode.",
+    description: "Inset hairline top bevel for solid actions in light mode.",
     value: {
-      light: "oklch(1 0.012 258 / 0.28)",
-      dark: "oklch(1 0.012 258 / 0.28)",
+      light: "oklch(1 0.008 258 / 0.16)",
+      dark: "oklch(1 0.008 258 / 0.16)",
     },
   },
   "color.info.100": {
@@ -1771,8 +1771,8 @@ export const tokens = {
     tier: "primitive",
     description: "Dark-mode elevation 1 fill for resting cards and controls above subtle surfaces.",
     value: {
-      light: "#1c2533",
-      dark: "#1c2533",
+      light: "#1b2128",
+      dark: "#1b2128",
     },
   },
   "color.raised.2": {
@@ -1781,8 +1781,8 @@ export const tokens = {
     tier: "primitive",
     description: "Dark-mode elevation 2 fill for raised cards, menus, and tooltips.",
     value: {
-      light: "#242c3a",
-      dark: "#242c3a",
+      light: "#23282f",
+      dark: "#23282f",
     },
   },
   "color.raised.3": {
@@ -1791,8 +1791,8 @@ export const tokens = {
     tier: "primitive",
     description: "Dark-mode elevation 3 fill for popovers and floating panels.",
     value: {
-      light: "#2b3441",
-      dark: "#2b3441",
+      light: "#2a3038",
+      dark: "#2a3038",
     },
   },
   "color.raised.4": {
@@ -1801,8 +1801,8 @@ export const tokens = {
     tier: "primitive",
     description: "Dark-mode elevation 4 fill for dialogs and sheets.",
     value: {
-      light: "#343c48",
-      dark: "#343c48",
+      light: "#323840",
+      dark: "#323840",
     },
   },
   "color.raised.5": {
@@ -1811,8 +1811,8 @@ export const tokens = {
     tier: "primitive",
     description: "Dark-mode elevation 5 fill for the highest floating layer.",
     value: {
-      light: "#3d4550",
-      dark: "#3d4550",
+      light: "#3a4048",
+      dark: "#3a4048",
     },
   },
   "color.shadow.ambient": {
@@ -2085,24 +2085,34 @@ export const tokens = {
       dark: "#05220f",
     },
   },
+  "color.surface.dark.canvas": {
+    name: "color.surface.dark.canvas",
+    type: "color",
+    tier: "primitive",
+    description: "Dark-mode canvas surface in the neutral-tinted OKLCH slate/ink progression.",
+    value: {
+      light: "#0d1219",
+      dark: "#0d1219",
+    },
+  },
   "color.surface.dark.muted": {
     name: "color.surface.dark.muted",
     type: "color",
     tier: "primitive",
-    description: "Dark-mode muted well surface harmonized with canvas ink.",
+    description: "Dark-mode muted well surface in the neutral-tinted OKLCH slate/ink progression.",
     value: {
-      light: "#293240",
-      dark: "#293240",
+      light: "#272c34",
+      dark: "#272c34",
     },
   },
   "color.surface.dark.subtle": {
     name: "color.surface.dark.subtle",
     type: "color",
     tier: "primitive",
-    description: "Dark-mode subtle inset surface harmonized with canvas ink.",
+    description: "Dark-mode subtle inset surface in the neutral-tinted OKLCH slate/ink progression.",
     value: {
-      light: "#151d2d",
-      dark: "#151d2d",
+      light: "#141920",
+      dark: "#141920",
     },
   },
   "color.warning.100": {
@@ -2395,6 +2405,16 @@ export const tokens = {
       dark: "2.5rem",
     },
   },
+  "control.height.44": {
+    name: "control.height.44",
+    type: "dimension",
+    tier: "primitive",
+    description: "Control height 44px.",
+    value: {
+      light: "2.75rem",
+      dark: "2.75rem",
+    },
+  },
   "control.height.48": {
     name: "control.height.48",
     type: "dimension",
@@ -2408,12 +2428,16 @@ export const tokens = {
   "control.size.lg.font": {
     name: "control.size.lg.font",
     cssVar: "--ghost-control-size-lg-font",
+    density: {
+      compact: "0.875rem",
+      spacious: "1rem",
+    },
     type: "fontSize",
     tier: "semantic",
-    description: "Large control font size.",
+    description: "Large control font size. Comfortable 15px; compact 14px; spacious 16px.",
     value: {
-      light: "clamp(1.0625rem, 1.0417rem + 0.1042vw, 1.125rem)",
-      dark: "clamp(1.0625rem, 1.0417rem + 0.1042vw, 1.125rem)",
+      light: "0.9375rem",
+      dark: "0.9375rem",
     },
   },
   "control.size.lg.min": {
@@ -2421,56 +2445,60 @@ export const tokens = {
     cssVar: "--ghost-control-size-lg-min",
     touchMin: "2.75rem",
     density: {
-      compact: "2.5rem",
-      spacious: "3rem",
+      compact: "2.25rem",
+      spacious: "2.75rem",
     },
     type: "dimension",
     tier: "semantic",
-    description: "Large control minimum block size. Comfortable and spacious 48px; compact 40.",
+    description: "Large control minimum block size. Comfortable 40px; compact 36; spacious 44.",
     value: {
-      light: "3rem",
-      dark: "3rem",
+      light: "2.5rem",
+      dark: "2.5rem",
     },
   },
   "control.size.lg.padding.block": {
     name: "control.size.lg.padding.block",
     cssVar: "--ghost-control-size-lg-padding-block",
     density: {
-      compact: "0.75rem",
-      spacious: "1.25rem",
+      compact: "0.375rem",
+      spacious: "0.625rem",
     },
     type: "dimension",
     tier: "semantic",
-    description: "Large control block padding.",
+    description: "Large control block padding. Comfortable 8px; compact 6px; spacious 10px.",
     value: {
-      light: "1rem",
-      dark: "1rem",
+      light: "0.5rem",
+      dark: "0.5rem",
     },
   },
   "control.size.lg.padding.inline": {
     name: "control.size.lg.padding.inline",
     cssVar: "--ghost-control-size-lg-padding-inline",
     density: {
-      compact: "1rem",
-      spacious: "1.5rem",
+      compact: "0.75rem",
+      spacious: "1.25rem",
     },
     type: "dimension",
     tier: "semantic",
-    description: "Large control inline padding.",
+    description: "Large control inline padding. Comfortable 16px; compact 12px; spacious 20px.",
     value: {
-      light: "1.25rem",
-      dark: "1.25rem",
+      light: "1rem",
+      dark: "1rem",
     },
   },
   "control.size.md.font": {
     name: "control.size.md.font",
     cssVar: "--ghost-control-size-md-font",
+    density: {
+      compact: "0.8125rem",
+      spacious: "0.9375rem",
+    },
     type: "fontSize",
     tier: "semantic",
-    description: "Medium control font size.",
+    description: "Medium control font size. Comfortable 14px; compact 13px; spacious 15px.",
     value: {
-      light: "clamp(0.9375rem, 0.9167rem + 0.1042vw, 1rem)",
-      dark: "clamp(0.9375rem, 0.9167rem + 0.1042vw, 1rem)",
+      light: "0.875rem",
+      dark: "0.875rem",
     },
   },
   "control.size.md.min": {
@@ -2479,55 +2507,59 @@ export const tokens = {
     touchMin: "2.75rem",
     density: {
       compact: "2rem",
-      spacious: "3rem",
+      spacious: "2.5rem",
     },
     type: "dimension",
     tier: "semantic",
-    description: "Medium control minimum block size. Comfortable 40px; compact 32; spacious 48.",
+    description: "Medium control minimum block size. Comfortable 36px; compact 32; spacious 40.",
     value: {
-      light: "2.5rem",
-      dark: "2.5rem",
+      light: "2.25rem",
+      dark: "2.25rem",
     },
   },
   "control.size.md.padding.block": {
     name: "control.size.md.padding.block",
     cssVar: "--ghost-control-size-md-padding-block",
     density: {
-      compact: "0.5rem",
-      spacious: "1rem",
+      compact: "0.25rem",
+      spacious: "0.5rem",
     },
     type: "dimension",
     tier: "semantic",
-    description: "Medium control block padding.",
+    description: "Medium control block padding. Comfortable 6px; compact 4px; spacious 8px.",
     value: {
-      light: "0.75rem",
-      dark: "0.75rem",
+      light: "0.375rem",
+      dark: "0.375rem",
     },
   },
   "control.size.md.padding.inline": {
     name: "control.size.md.padding.inline",
     cssVar: "--ghost-control-size-md-padding-inline",
     density: {
-      compact: "0.75rem",
-      spacious: "1.25rem",
+      compact: "0.625rem",
+      spacious: "1rem",
     },
     type: "dimension",
     tier: "semantic",
-    description: "Medium control inline padding.",
+    description: "Medium control inline padding. Comfortable 12px; compact 10px; spacious 16px.",
     value: {
-      light: "1rem",
-      dark: "1rem",
+      light: "0.75rem",
+      dark: "0.75rem",
     },
   },
   "control.size.sm.font": {
     name: "control.size.sm.font",
     cssVar: "--ghost-control-size-sm-font",
+    density: {
+      compact: "0.75rem",
+      spacious: "0.8125rem",
+    },
     type: "fontSize",
     tier: "semantic",
-    description: "Small control font size.",
+    description: "Small control font size. Comfortable 13px; compact 12px; spacious 13px.",
     value: {
-      light: "clamp(0.8125rem, 0.7917rem + 0.1042vw, 0.875rem)",
-      dark: "clamp(0.8125rem, 0.7917rem + 0.1042vw, 0.875rem)",
+      light: "0.8125rem",
+      dark: "0.8125rem",
     },
   },
   "control.size.sm.min": {
@@ -2550,15 +2582,15 @@ export const tokens = {
     name: "control.size.sm.padding.block",
     cssVar: "--ghost-control-size-sm-padding-block",
     density: {
-      compact: "0.25rem",
-      spacious: "0.75rem",
+      compact: "0.125rem",
+      spacious: "0.375rem",
     },
     type: "dimension",
     tier: "semantic",
-    description: "Small control block padding.",
+    description: "Small control block padding. Comfortable 4px; compact 2px; spacious 6px.",
     value: {
-      light: "0.5rem",
-      dark: "0.5rem",
+      light: "0.25rem",
+      dark: "0.25rem",
     },
   },
   "control.size.sm.padding.inline": {
@@ -2566,14 +2598,14 @@ export const tokens = {
     cssVar: "--ghost-control-size-sm-padding-inline",
     density: {
       compact: "0.5rem",
-      spacious: "1rem",
+      spacious: "0.75rem",
     },
     type: "dimension",
     tier: "semantic",
-    description: "Small control inline padding.",
+    description: "Small control inline padding. Comfortable 10px; compact 8px; spacious 12px.",
     value: {
-      light: "0.75rem",
-      dark: "0.75rem",
+      light: "0.625rem",
+      dark: "0.625rem",
     },
   },
   "control.touch": {
@@ -2705,7 +2737,7 @@ export const tokens = {
     description: "Level 0 surface. Flush with the canvas.",
     value: {
       light: "#ffffff",
-      dark: "#0f172a",
+      dark: "#0d1219",
     },
   },
   "elevation.0.border": {
@@ -2749,7 +2781,7 @@ export const tokens = {
     description: "Level 1 surface. Resting cards and controls.",
     value: {
       light: "#ffffff",
-      dark: "#1c2533",
+      dark: "#1b2128",
     },
   },
   "elevation.1.border": {
@@ -2793,7 +2825,7 @@ export const tokens = {
     description: "Level 2 surface. Raised cards and menus.",
     value: {
       light: "#ffffff",
-      dark: "#242c3a",
+      dark: "#23282f",
     },
   },
   "elevation.2.border": {
@@ -2837,7 +2869,7 @@ export const tokens = {
     description: "Level 3 surface. Popovers and floating panels.",
     value: {
       light: "#ffffff",
-      dark: "#2b3441",
+      dark: "#2a3038",
     },
   },
   "elevation.3.border": {
@@ -2881,7 +2913,7 @@ export const tokens = {
     description: "Level 4 surface. Dialogs and sheets.",
     value: {
       light: "#ffffff",
-      dark: "#343c48",
+      dark: "#323840",
     },
   },
   "elevation.4.border": {
@@ -2925,7 +2957,7 @@ export const tokens = {
     description: "Level 5 surface. Highest floating layer.",
     value: {
       light: "#ffffff",
-      dark: "#3d4550",
+      dark: "#3a4048",
     },
   },
   "elevation.5.border": {
@@ -3013,8 +3045,8 @@ export const tokens = {
     tier: "semantic",
     description: "Focus outline thickness.",
     value: {
-      light: "3px",
-      dark: "3px",
+      light: "2px",
+      dark: "2px",
     },
   },
   "font.family.sans": {
@@ -3141,7 +3173,7 @@ export const tokens = {
     name: "font.size.2xl",
     type: "fontSize",
     tier: "primitive",
-    description: "Fluid 2xl type. 24–32px from 320–1280px.",
+    description: "Fluid 2xl display type. 24–32px from 320–1280px.",
     value: {
       light: "clamp(1.5rem, 1.3333rem + 0.8333vw, 2rem)",
       dark: "clamp(1.5rem, 1.3333rem + 0.8333vw, 2rem)",
@@ -3151,47 +3183,57 @@ export const tokens = {
     name: "font.size.3xl",
     type: "fontSize",
     tier: "primitive",
-    description: "Fluid 3xl type. 30–40px from 320–1280px.",
+    description: "Fluid 3xl display type. 30–40px from 320–1280px.",
     value: {
       light: "clamp(1.875rem, 1.6667rem + 1.0417vw, 2.5rem)",
       dark: "clamp(1.875rem, 1.6667rem + 1.0417vw, 2.5rem)",
+    },
+  },
+  "font.size.base": {
+    name: "font.size.base",
+    type: "fontSize",
+    tier: "primitive",
+    description: "Base 16px UI type used by spacious large controls.",
+    value: {
+      light: "1rem",
+      dark: "1rem",
     },
   },
   "font.size.lg": {
     name: "font.size.lg",
     type: "fontSize",
     tier: "primitive",
-    description: "Fluid large type. 17–18px from 320–1280px.",
+    description: "Large UI control and subheading type. 15px.",
     value: {
-      light: "clamp(1.0625rem, 1.0417rem + 0.1042vw, 1.125rem)",
-      dark: "clamp(1.0625rem, 1.0417rem + 0.1042vw, 1.125rem)",
+      light: "0.9375rem",
+      dark: "0.9375rem",
     },
   },
   "font.size.md": {
     name: "font.size.md",
     type: "fontSize",
     tier: "primitive",
-    description: "Fluid body type. 15–16px from 320–1280px.",
+    description: "Medium UI body and control type. 14px.",
     value: {
-      light: "clamp(0.9375rem, 0.9167rem + 0.1042vw, 1rem)",
-      dark: "clamp(0.9375rem, 0.9167rem + 0.1042vw, 1rem)",
+      light: "0.875rem",
+      dark: "0.875rem",
     },
   },
   "font.size.sm": {
     name: "font.size.sm",
     type: "fontSize",
     tier: "primitive",
-    description: "Fluid small type. 13–14px from 320–1280px.",
+    description: "Small UI type. 13px.",
     value: {
-      light: "clamp(0.8125rem, 0.7917rem + 0.1042vw, 0.875rem)",
-      dark: "clamp(0.8125rem, 0.7917rem + 0.1042vw, 0.875rem)",
+      light: "0.8125rem",
+      dark: "0.8125rem",
     },
   },
   "font.size.xl": {
     name: "font.size.xl",
     type: "fontSize",
     tier: "primitive",
-    description: "Fluid extra-large type. 20–24px from 320–1280px.",
+    description: "Fluid extra-large display type. 20–24px from 320–1280px.",
     value: {
       light: "clamp(1.25rem, 1.1667rem + 0.4167vw, 1.5rem)",
       dark: "clamp(1.25rem, 1.1667rem + 0.4167vw, 1.5rem)",
@@ -3201,10 +3243,10 @@ export const tokens = {
     name: "font.size.xs",
     type: "fontSize",
     tier: "primitive",
-    description: "Fluid extra-small type. 12–13px from 320–1280px.",
+    description: "Extra-small UI type. 12px.",
     value: {
-      light: "clamp(0.75rem, 0.7292rem + 0.1042vw, 0.8125rem)",
-      dark: "clamp(0.75rem, 0.7292rem + 0.1042vw, 0.8125rem)",
+      light: "0.75rem",
+      dark: "0.75rem",
     },
   },
   "font.weight.bold": {
@@ -3263,10 +3305,10 @@ export const tokens = {
     cssVar: "--ghost-gradient-action-danger",
     type: "gradient",
     tier: "semantic",
-    description: "Solid danger action fill. Interpolated in oklch; both stops meet WCAG AA with action.danger.fg.",
+    description: "Solid danger action fill. Restrained single-hue default; both stops meet WCAG AA with action.danger.fg.",
     value: {
-      light: "linear-gradient(165deg in oklch, #b91c1c 0%, #900009 100%)",
-      dark: "linear-gradient(165deg in oklch, #f87171 0%, #ff908d 100%)",
+      light: "linear-gradient(180deg in oklch, #b91c1c 0%, #b91c1c 100%)",
+      dark: "linear-gradient(180deg in oklch, #f87171 0%, #f87171 100%)",
     },
   },
   "gradient.action.neutral": {
@@ -3274,10 +3316,10 @@ export const tokens = {
     cssVar: "--ghost-gradient-action-neutral",
     type: "gradient",
     tier: "semantic",
-    description: "Solid neutral action fill. Interpolated in oklch; both stops meet WCAG AA with action.neutral.fg.",
+    description: "Solid neutral action fill. Restrained single-hue default; both stops meet WCAG AA with action.neutral.fg.",
     value: {
-      light: "linear-gradient(165deg in oklch, #334155 0%, #263243 100%)",
-      dark: "linear-gradient(165deg in oklch, #cbd5e1 0%, #d3dce7 100%)",
+      light: "linear-gradient(180deg in oklch, #334155 0%, #334155 100%)",
+      dark: "linear-gradient(180deg in oklch, #cbd5e1 0%, #cbd5e1 100%)",
     },
   },
   "gradient.action.primary": {
@@ -3285,10 +3327,10 @@ export const tokens = {
     cssVar: "--ghost-gradient-action-primary",
     type: "gradient",
     tier: "semantic",
-    description: "Solid primary action fill. Interpolated in oklch; both stops meet WCAG AA with action.primary.fg.",
+    description: "Solid primary action fill. Restrained single-hue default; both stops meet WCAG AA with action.primary.fg.",
     value: {
-      light: "linear-gradient(165deg in oklch, #1d4ed8 0%, #004e7a 100%)",
-      dark: "linear-gradient(165deg in oklch, #60a5fa 0%, #38bdf8 100%)",
+      light: "linear-gradient(180deg in oklch, #1d4ed8 0%, #1d4ed8 100%)",
+      dark: "linear-gradient(180deg in oklch, #60a5fa 0%, #60a5fa 100%)",
     },
   },
   "gradient.aurora": {
@@ -3410,7 +3452,7 @@ export const tokens = {
     description: "Opaque glass fallback when backdrop-filter is unavailable.",
     value: {
       light: "#ffffff",
-      dark: "#242c3a",
+      dark: "#23282f",
     },
   },
   "material.glass.noise": {
@@ -3454,7 +3496,7 @@ export const tokens = {
     description: "Grain material fill.",
     value: {
       light: "#ffffff",
-      dark: "#0f172a",
+      dark: "#0d1219",
     },
   },
   "material.grain.noise": {
@@ -3487,7 +3529,7 @@ export const tokens = {
     description: "Opaque solid material fill.",
     value: {
       light: "#ffffff",
-      dark: "#0f172a",
+      dark: "#0d1219",
     },
   },
   "motion.duration.expressive": {
@@ -3873,15 +3915,15 @@ export const tokens = {
     name: "radius.lg",
     cssVar: "--ghost-radius-lg",
     density: {
-      compact: "0.5rem",
-      spacious: "1rem",
+      compact: "0.375rem",
+      spacious: "0.75rem",
     },
     type: "dimension",
     tier: "semantic",
-    description: "Large radius. 12px at comfortable density and roundness 1.",
+    description: "Large radius. 8px at comfortable density and roundness 1.",
     value: {
-      light: "0.75rem",
-      dark: "0.75rem",
+      light: "0.5rem",
+      dark: "0.5rem",
     },
   },
   "radius.md": {
@@ -3889,14 +3931,14 @@ export const tokens = {
     cssVar: "--ghost-radius-md",
     density: {
       compact: "0.25rem",
-      spacious: "0.75rem",
+      spacious: "0.5rem",
     },
     type: "dimension",
     tier: "semantic",
-    description: "Medium radius. 8px at comfortable density and roundness 1.",
+    description: "Medium radius. 6px at comfortable density and roundness 1.",
     value: {
-      light: "0.5rem",
-      dark: "0.5rem",
+      light: "0.375rem",
+      dark: "0.375rem",
     },
   },
   "radius.none": {
@@ -3925,20 +3967,20 @@ export const tokens = {
     name: "radius.scale.lg",
     type: "dimension",
     tier: "primitive",
-    description: "Large corner radius. 12px at roundness 1.",
+    description: "Large corner radius. 8px at roundness 1.",
     value: {
-      light: "0.75rem",
-      dark: "0.75rem",
+      light: "0.5rem",
+      dark: "0.5rem",
     },
   },
   "radius.scale.md": {
     name: "radius.scale.md",
     type: "dimension",
     tier: "primitive",
-    description: "Medium corner radius. 8px at roundness 1.",
+    description: "Medium corner radius. 6px at roundness 1.",
     value: {
-      light: "0.5rem",
-      dark: "0.5rem",
+      light: "0.375rem",
+      dark: "0.375rem",
     },
   },
   "radius.scale.none": {
@@ -3975,10 +4017,10 @@ export const tokens = {
     name: "radius.scale.xl",
     type: "dimension",
     tier: "primitive",
-    description: "Extra-large corner radius. 16px at roundness 1.",
+    description: "Extra-large corner radius. 12px at roundness 1.",
     value: {
-      light: "1rem",
-      dark: "1rem",
+      light: "0.75rem",
+      dark: "0.75rem",
     },
   },
   "radius.sm": {
@@ -3986,7 +4028,7 @@ export const tokens = {
     cssVar: "--ghost-radius-sm",
     density: {
       compact: "0px",
-      spacious: "0.5rem",
+      spacious: "0.375rem",
     },
     type: "dimension",
     tier: "semantic",
@@ -4000,15 +4042,15 @@ export const tokens = {
     name: "radius.xl",
     cssVar: "--ghost-radius-xl",
     density: {
-      compact: "0.75rem",
-      spacious: "1rem",
+      compact: "0.5rem",
+      spacious: "0.75rem",
     },
     type: "dimension",
     tier: "semantic",
-    description: "Extra-large radius. 16px at comfortable density and roundness 1.",
+    description: "Extra-large radius. 12px at comfortable density and roundness 1.",
     value: {
-      light: "1rem",
-      dark: "1rem",
+      light: "0.75rem",
+      dark: "0.75rem",
     },
   },
   "roundness.amount": {
@@ -4089,8 +4131,8 @@ export const tokens = {
     tier: "primitive",
     description: "Focus outline thickness.",
     value: {
-      light: "3px",
-      dark: "3px",
+      light: "2px",
+      dark: "2px",
     },
   },
   "size.hairline": {
@@ -4213,6 +4255,16 @@ export const tokens = {
       dark: "0px",
     },
   },
+  "space.0_5": {
+    name: "space.0_5",
+    type: "dimension",
+    tier: "primitive",
+    description: "Space 0.5. 2px.",
+    value: {
+      light: "0.125rem",
+      dark: "0.125rem",
+    },
+  },
   "space.1": {
     name: "space.1",
     type: "dimension",
@@ -4221,6 +4273,16 @@ export const tokens = {
     value: {
       light: "0.25rem",
       dark: "0.25rem",
+    },
+  },
+  "space.1_5": {
+    name: "space.1_5",
+    type: "dimension",
+    tier: "primitive",
+    description: "Space 1.5. 6px.",
+    value: {
+      light: "0.375rem",
+      dark: "0.375rem",
     },
   },
   "space.10": {
@@ -4261,6 +4323,16 @@ export const tokens = {
     value: {
       light: "0.5rem",
       dark: "0.5rem",
+    },
+  },
+  "space.2_5": {
+    name: "space.2_5",
+    type: "dimension",
+    tier: "primitive",
+    description: "Space 2.5. 10px.",
+    value: {
+      light: "0.625rem",
+      dark: "0.625rem",
     },
   },
   "space.3": {
@@ -4714,7 +4786,7 @@ export const tokens = {
     description: "Theme canvas background.",
     value: {
       light: "#ffffff",
-      dark: "#0f172a",
+      dark: "#0d1219",
     },
   },
   "surface.fg": {
@@ -4758,7 +4830,7 @@ export const tokens = {
     description: "Muted surface fill behind grouped content.",
     value: {
       light: "#eceff3",
-      dark: "#293240",
+      dark: "#272c34",
     },
   },
   "surface.subtle.bg": {
@@ -4769,7 +4841,7 @@ export const tokens = {
     description: "Subtle surface fill for inset regions.",
     value: {
       light: "#f9fafc",
-      dark: "#151d2d",
+      dark: "#141920",
     },
   },
   "text.danger": {
@@ -5074,7 +5146,7 @@ export const tokens = {
     cssVar: "--ghost-type-size-2xl",
     type: "fontSize",
     tier: "semantic",
-    description: "Fluid 2xl type.",
+    description: "Fluid 2xl display type.",
     value: {
       light: "clamp(1.5rem, 1.3333rem + 0.8333vw, 2rem)",
       dark: "clamp(1.5rem, 1.3333rem + 0.8333vw, 2rem)",
@@ -5085,7 +5157,7 @@ export const tokens = {
     cssVar: "--ghost-type-size-3xl",
     type: "fontSize",
     tier: "semantic",
-    description: "Fluid 3xl type.",
+    description: "Fluid 3xl display type.",
     value: {
       light: "clamp(1.875rem, 1.6667rem + 1.0417vw, 2.5rem)",
       dark: "clamp(1.875rem, 1.6667rem + 1.0417vw, 2.5rem)",
@@ -5096,10 +5168,10 @@ export const tokens = {
     cssVar: "--ghost-type-size-lg",
     type: "fontSize",
     tier: "semantic",
-    description: "Fluid large type.",
+    description: "Large UI subheading type. 15px.",
     value: {
-      light: "clamp(1.0625rem, 1.0417rem + 0.1042vw, 1.125rem)",
-      dark: "clamp(1.0625rem, 1.0417rem + 0.1042vw, 1.125rem)",
+      light: "0.9375rem",
+      dark: "0.9375rem",
     },
   },
   "type.size.md": {
@@ -5107,10 +5179,10 @@ export const tokens = {
     cssVar: "--ghost-type-size-md",
     type: "fontSize",
     tier: "semantic",
-    description: "Fluid body type.",
+    description: "Medium UI body type. 14px.",
     value: {
-      light: "clamp(0.9375rem, 0.9167rem + 0.1042vw, 1rem)",
-      dark: "clamp(0.9375rem, 0.9167rem + 0.1042vw, 1rem)",
+      light: "0.875rem",
+      dark: "0.875rem",
     },
   },
   "type.size.sm": {
@@ -5118,10 +5190,10 @@ export const tokens = {
     cssVar: "--ghost-type-size-sm",
     type: "fontSize",
     tier: "semantic",
-    description: "Fluid small type.",
+    description: "Small UI type. 13px.",
     value: {
-      light: "clamp(0.8125rem, 0.7917rem + 0.1042vw, 0.875rem)",
-      dark: "clamp(0.8125rem, 0.7917rem + 0.1042vw, 0.875rem)",
+      light: "0.8125rem",
+      dark: "0.8125rem",
     },
   },
   "type.size.xl": {
@@ -5129,7 +5201,7 @@ export const tokens = {
     cssVar: "--ghost-type-size-xl",
     type: "fontSize",
     tier: "semantic",
-    description: "Fluid extra-large type.",
+    description: "Fluid extra-large display type.",
     value: {
       light: "clamp(1.25rem, 1.1667rem + 0.4167vw, 1.5rem)",
       dark: "clamp(1.25rem, 1.1667rem + 0.4167vw, 1.5rem)",
@@ -5140,10 +5212,10 @@ export const tokens = {
     cssVar: "--ghost-type-size-xs",
     type: "fontSize",
     tier: "semantic",
-    description: "Fluid extra-small type.",
+    description: "Extra-small UI type. 12px.",
     value: {
-      light: "clamp(0.75rem, 0.7292rem + 0.1042vw, 0.8125rem)",
-      dark: "clamp(0.75rem, 0.7292rem + 0.1042vw, 0.8125rem)",
+      light: "0.75rem",
+      dark: "0.75rem",
     },
   },
   "type.weight.bold": {

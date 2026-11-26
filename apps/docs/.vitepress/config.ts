@@ -38,7 +38,7 @@ export default defineConfig({
   rewrites: buildSpecRewrites(
     fileURLToPath(new URL('../../../docs', import.meta.url)),
   ),
-  // Restore a persisted theme before paint; first paint dogfoods calm (ADR 0008).
+  // Restore a persisted theme before paint; first paint boots into default (ADR 0008).
   head: [
     ['link', { rel: 'icon', href: '/favicon.svg', type: 'image/svg+xml' }],
     ['link', { rel: 'icon', href: '/favicon.ico', sizes: 'any' }],

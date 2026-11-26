@@ -59,6 +59,9 @@
     cursor: pointer;
     display: inline-grid;
     flex: none;
+    /* Keep the painted radio circle at 1rem so compact parent text (13px) does
+       not shrink the indicator and focus ring deep inside the 36px hit box. */
+    font-size: 1rem;
     inline-size: var(--_ghost-radio-hit, var(--ghost-control-size-md-min));
     margin: 0;
     padding: 0;

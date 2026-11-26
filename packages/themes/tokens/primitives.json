@@ -17,42 +17,47 @@
     },
     "surface": {
       "dark": {
+        "canvas": {
+          "$type": "color",
+          "$value": "#0d1219",
+          "$description": "Dark-mode canvas surface in the neutral-tinted OKLCH slate/ink progression."
+        },
         "subtle": {
           "$type": "color",
-          "$value": "#151d2d",
-          "$description": "Dark-mode subtle inset surface harmonized with canvas ink."
+          "$value": "#141920",
+          "$description": "Dark-mode subtle inset surface in the neutral-tinted OKLCH slate/ink progression."
         },
         "muted": {
           "$type": "color",
-          "$value": "#293240",
-          "$description": "Dark-mode muted well surface harmonized with canvas ink."
+          "$value": "#272c34",
+          "$description": "Dark-mode muted well surface in the neutral-tinted OKLCH slate/ink progression."
         }
       }
     },
     "raised": {
       "1": {
         "$type": "color",
-        "$value": "#1c2533",
+        "$value": "#1b2128",
         "$description": "Dark-mode elevation 1 fill for resting cards and controls above subtle surfaces."
       },
       "2": {
         "$type": "color",
-        "$value": "#242c3a",
+        "$value": "#23282f",
         "$description": "Dark-mode elevation 2 fill for raised cards, menus, and tooltips."
       },
       "3": {
         "$type": "color",
-        "$value": "#2b3441",
+        "$value": "#2a3038",
         "$description": "Dark-mode elevation 3 fill for popovers and floating panels."
       },
       "4": {
         "$type": "color",
-        "$value": "#343c48",
+        "$value": "#323840",
         "$description": "Dark-mode elevation 4 fill for dialogs and sheets."
       },
       "5": {
         "$type": "color",
-        "$value": "#3d4550",
+        "$value": "#3a4048",
         "$description": "Dark-mode elevation 5 fill for the highest floating layer."
       }
     },
@@ -81,8 +86,8 @@
     "highlight": {
       "inset": {
         "$type": "color",
-        "$value": "oklch(1 0.012 258 / 0.28)",
-        "$description": "Inset top sheen for raised actions in light mode."
+        "$value": "oklch(1 0.008 258 / 0.16)",
+        "$description": "Inset hairline top bevel for solid actions in light mode."
       }
     }
   },
@@ -160,15 +165,30 @@
       "$value": "0px",
       "$description": "Space 0. 4px grid."
     },
+    "0_5": {
+      "$type": "dimension",
+      "$value": "0.125rem",
+      "$description": "Space 0.5. 2px."
+    },
     "1": {
       "$type": "dimension",
       "$value": "0.25rem",
       "$description": "Space 1. 4px."
     },
+    "1_5": {
+      "$type": "dimension",
+      "$value": "0.375rem",
+      "$description": "Space 1.5. 6px."
+    },
     "2": {
       "$type": "dimension",
       "$value": "0.5rem",
       "$description": "Space 2. 8px."
+    },
+    "2_5": {
+      "$type": "dimension",
+      "$value": "0.625rem",
+      "$description": "Space 2.5. 10px."
     },
     "3": {
       "$type": "dimension",
@@ -233,6 +253,11 @@
         "$value": "2.5rem",
         "$description": "Control height 40px."
       },
+      "44": {
+        "$type": "dimension",
+        "$value": "2.75rem",
+        "$description": "Control height 44px."
+      },
       "48": {
         "$type": "dimension",
         "$value": "3rem",
@@ -259,18 +284,18 @@
       },
       "md": {
         "$type": "dimension",
-        "$value": "0.5rem",
-        "$description": "Medium corner radius. 8px at roundness 1."
+        "$value": "0.375rem",
+        "$description": "Medium corner radius. 6px at roundness 1."
       },
       "lg": {
         "$type": "dimension",
-        "$value": "0.75rem",
-        "$description": "Large corner radius. 12px at roundness 1."
+        "$value": "0.5rem",
+        "$description": "Large corner radius. 8px at roundness 1."
       },
       "xl": {
         "$type": "dimension",
-        "$value": "1rem",
-        "$description": "Extra-large corner radius. 16px at roundness 1."
+        "$value": "0.75rem",
+        "$description": "Extra-large corner radius. 12px at roundness 1."
       },
       "pill": {
         "$type": "dimension",
@@ -361,38 +386,43 @@
     "size": {
       "xs": {
         "$type": "fontSize",
-        "$value": "clamp(0.75rem, 0.7292rem + 0.1042vw, 0.8125rem)",
-        "$description": "Fluid extra-small type. 12–13px from 320–1280px."
+        "$value": "0.75rem",
+        "$description": "Extra-small UI type. 12px."
       },
       "sm": {
         "$type": "fontSize",
-        "$value": "clamp(0.8125rem, 0.7917rem + 0.1042vw, 0.875rem)",
-        "$description": "Fluid small type. 13–14px from 320–1280px."
+        "$value": "0.8125rem",
+        "$description": "Small UI type. 13px."
       },
       "md": {
         "$type": "fontSize",
-        "$value": "clamp(0.9375rem, 0.9167rem + 0.1042vw, 1rem)",
-        "$description": "Fluid body type. 15–16px from 320–1280px."
+        "$value": "0.875rem",
+        "$description": "Medium UI body and control type. 14px."
       },
       "lg": {
         "$type": "fontSize",
-        "$value": "clamp(1.0625rem, 1.0417rem + 0.1042vw, 1.125rem)",
-        "$description": "Fluid large type. 17–18px from 320–1280px."
+        "$value": "0.9375rem",
+        "$description": "Large UI control and subheading type. 15px."
+      },
+      "base": {
+        "$type": "fontSize",
+        "$value": "1rem",
+        "$description": "Base 16px UI type used by spacious large controls."
       },
       "xl": {
         "$type": "fontSize",
         "$value": "clamp(1.25rem, 1.1667rem + 0.4167vw, 1.5rem)",
-        "$description": "Fluid extra-large type. 20–24px from 320–1280px."
+        "$description": "Fluid extra-large display type. 20–24px from 320–1280px."
       },
       "2xl": {
         "$type": "fontSize",
         "$value": "clamp(1.5rem, 1.3333rem + 0.8333vw, 2rem)",
-        "$description": "Fluid 2xl type. 24–32px from 320–1280px."
+        "$description": "Fluid 2xl display type. 24–32px from 320–1280px."
       },
       "3xl": {
         "$type": "fontSize",
         "$value": "clamp(1.875rem, 1.6667rem + 1.0417vw, 2.5rem)",
-        "$description": "Fluid 3xl type. 30–40px from 320–1280px."
+        "$description": "Fluid 3xl display type. 30–40px from 320–1280px."
       }
     },
     "weight": {
@@ -495,7 +525,7 @@
       },
       "width": {
         "$type": "dimension",
-        "$value": "3px",
+        "$value": "2px",
         "$description": "Focus outline thickness."
       }
     },
