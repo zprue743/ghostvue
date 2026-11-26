@@ -10,6 +10,7 @@ import { join } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 
 import { execPackageManagerSync } from './lib/package-manager.js'
+import { ensureWorkspaceBuilt } from './lib/workspace-build-lock.js'
 import { workspacePackages } from './workspace-packages.mjs'
 
 const root = fileURLToPath(new URL('..', import.meta.url))
@@ -148,13 +149,19 @@ export async function runThemesDefinePackedSmoke(options = {}) {
   let buildStart
   if (options.ensureBuilt && !ghostvuePackArtifactsPresent()) {
     buildStart = performance.now()
-    execPackageManagerSync('pnpm', ['build'], {
-      cwd: root,
-      stdio: 'pipe',
-      env: {
-        ...process.env,
-        COREPACK_HOME: process.env.COREPACK_HOME ?? join(tmpdir(), 'corepack'),
-      },
+    ensureWorkspaceBuilt({
+      root,
+      isBuilt: ghostvuePackArtifactsPresent,
+      build: () =>
+        execPackageManagerSync('pnpm', ['build'], {
+          cwd: root,
+          stdio: 'pipe',
+          env: {
+            ...process.env,
+            COREPACK_HOME:
+              process.env.COREPACK_HOME ?? join(tmpdir(), 'corepack'),
+          },
+        }),
     })
     mark('buildMs', buildStart)
   } else if (options.ensureBuilt) {
