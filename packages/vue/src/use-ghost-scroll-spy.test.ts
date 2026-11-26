@@ -6,6 +6,7 @@ import GhostScrollSpy from './GhostScrollSpy.vue'
 import GhostScrollSpyItem from './GhostScrollSpyItem.vue'
 import GhostScrollSpyLink from './GhostScrollSpyLink.vue'
 import GhostScrollSpyList from './GhostScrollSpyList.vue'
+import type { GhostScrollSpyExposed } from './ghost-scroll-spy'
 import { useGhostScrollSpy } from './use-ghost-scroll-spy'
 
 const attached: ReturnType<typeof mount>[] = []
@@ -50,6 +51,7 @@ interface ContainerHarness {
   wrapper: ReturnType<typeof mount>
   container: HTMLDivElement
   setScrollTop: (value: number) => Promise<void>
+  scrollSpy: ReturnType<typeof ref<GhostScrollSpyExposed | null>>
 }
 
 function mockScrollport(
@@ -119,6 +121,7 @@ function mountContainerHarness(
   document.body.append(container)
   const setScrollTop = mockScrollport(container)
   const showGamma = options.showGamma ?? ref(options.extraLinks ?? true)
+  const scrollSpy = ref<GhostScrollSpyExposed | null>(null)
 
   const wrapper = mount(
     defineComponent({
@@ -126,6 +129,7 @@ function mountContainerHarness(
         const spyProps: Record<string, unknown> = {
           container,
           historyMode: options.historyMode ?? 'none',
+          ref: scrollSpy,
         }
         if (options.probeOffset !== undefined) {
           spyProps['probeOffset'] = options.probeOffset
@@ -160,7 +164,7 @@ function mountContainerHarness(
   )
   attached.push(wrapper)
 
-  return { wrapper, container, setScrollTop }
+  return { wrapper, container, setScrollTop, scrollSpy }
 }
 
 function activeLinkText(wrapper: ReturnType<typeof mount>): string {
@@ -333,6 +337,25 @@ describe('useGhostScrollSpy', () => {
       behavior: 'smooth',
     })
     expect(outerScroll).not.toHaveBeenCalled()
+  })
+
+  it('forces instant scrolling for both navigation methods under reduced motion', async () => {
+    vi.stubGlobal('matchMedia', () => ({ matches: true }))
+    const { wrapper, container, scrollSpy } = mountContainerHarness()
+    container.style.scrollBehavior = 'smooth'
+    const scrollTo = vi.spyOn(container, 'scrollTo')
+
+    await wrapper.get('a[href="#beta"]').trigger('click')
+    scrollSpy.value?.scrollTo('gamma', { behavior: 'smooth' })
+
+    expect(scrollTo).toHaveBeenNthCalledWith(1, {
+      top: 400,
+      behavior: 'instant',
+    })
+    expect(scrollTo).toHaveBeenNthCalledWith(2, {
+      top: 800,
+      behavior: 'instant',
+    })
   })
 
   it('remeasures on viewport resize and removes the listener on unmount', async () => {

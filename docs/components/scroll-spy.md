@@ -44,6 +44,9 @@ Use the root scoped slot (`activeId`, `scrollTo`, `travelDirection`,
 - `Enter` scrolls to the target, updates the URL hash (`historyMode` defaults to
   `replace`), and moves focus into the section (`focusTarget` defaults to `true`).
 
+Link activation and `scrollTo()` jump to the section immediately when reduced
+motion is requested, even if the scroll container uses CSS smooth scrolling.
+
 ## API
 
 See the [specification](/specs/scroll-spy).

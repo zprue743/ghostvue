@@ -333,11 +333,11 @@ export function useGhostScrollSpy(
   function resolveEffectiveBehavior(
     behavior: ScrollBehavior | undefined,
   ): ScrollBehavior {
-    const preferred = behavior ?? scrollBehavior.value
     if (reducedMotionQuery?.matches) {
-      return 'auto'
+      // 'auto' follows CSS scroll-behavior, which may still request smooth motion.
+      return 'instant'
     }
-    return preferred
+    return behavior ?? scrollBehavior.value
   }
 
   function scrollTo(

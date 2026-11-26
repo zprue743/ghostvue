@@ -48,4 +48,38 @@ test.describe('GhostScrollSpy', () => {
       await playground.close()
     }
   })
+
+  test('jumps immediately under reduced motion even when the viewport uses CSS smooth scrolling', async ({
+    page,
+  }) => {
+    const playground = await startStaticServer('apps/playground/dist')
+    try {
+      await page.emulateMedia({ reducedMotion: 'reduce' })
+      await page.goto(playground.url)
+
+      const details = page.getByTestId('scroll-spy-link-details')
+      const position = await details.evaluate((link) => {
+        const target = document.getElementById('scroll-spy-play-details')
+        if (!(link instanceof HTMLAnchorElement) || !target) {
+          throw new Error('Missing scroll-spy link or target')
+        }
+        document.documentElement.style.scrollBehavior = 'smooth'
+        window.scrollTo({ top: 0, behavior: 'instant' })
+        const before = target.getBoundingClientRect().top
+        link.click()
+        return {
+          before,
+          after: target.getBoundingClientRect().top,
+          behavior: getComputedStyle(document.documentElement).scrollBehavior,
+        }
+      })
+
+      expect(position.behavior).toBe('smooth')
+      expect(position.before).toBeGreaterThan(0)
+      expect(Math.abs(position.after)).toBeLessThan(1)
+      await expect(page.locator('#scroll-spy-play-details')).toBeFocused()
+    } finally {
+      await playground.close()
+    }
+  })
 })

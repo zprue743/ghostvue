@@ -10,3 +10,5 @@ ScrollSpy preserves consumer classes and link metadata, tracks each enabled sect
 Tracking follows changes to the scroll container, including template refs that resolve after mount. Progress stays at zero when no targets can be measured.
 
 Enabled custom link components receive the resolved `href`.
+
+Link activation and `scrollTo()` jump immediately when reduced motion is requested, even with CSS smooth scrolling.
