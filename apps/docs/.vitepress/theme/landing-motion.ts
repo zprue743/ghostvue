@@ -58,6 +58,18 @@ export function resolveActiveSection(
   return active
 }
 
+/**
+ * Whether the page is taller than the viewport. A page that fits has no
+ * scroll position to report: the reader is at its start, whatever share of
+ * the sections happens to sit above the probe line.
+ */
+export function isPageScrollable(
+  scrollHeight: number,
+  viewportHeight: number,
+): boolean {
+  return scrollHeight - viewportHeight > 0
+}
+
 /** Fraction of the scrollable distance already covered, clamped to 0..1. */
 export function resolveScrollProgress(
   scrollTop: number,
@@ -199,9 +211,11 @@ export function useLandingScroll(
     if (!host) return
     trackTravel(host)
     const viewportHeight = window.innerHeight
+    const scrollHeight = document.documentElement.scrollHeight
+    const scrollable = isPageScrollable(scrollHeight, viewportHeight)
     const progress = resolveScrollProgress(
       window.scrollY,
-      document.documentElement.scrollHeight,
+      scrollHeight,
       viewportHeight,
     )
     const tops = sectionElements().map(
@@ -211,14 +225,14 @@ export function useLandingScroll(
     // would re-render the rail for a value only CSS consumes.
     host.style.setProperty(
       '--ghost-landing-progress',
-      resolveRailProgress(
-        tops,
-        viewportHeight,
-        window.scrollY,
-        progress,
+      (scrollable
+        ? resolveRailProgress(tops, viewportHeight, window.scrollY, progress)
+        : 0
       ).toFixed(4),
     )
-    const index = resolveActiveSection(tops, viewportHeight, progress)
+    const index = scrollable
+      ? resolveActiveSection(tops, viewportHeight, progress)
+      : 0
     const next = landingSections[index]
     if (next && next.id !== activeId.value) activeId.value = next.id
   }

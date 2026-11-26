@@ -13,16 +13,23 @@ import { startStaticServer } from './static-server'
  * scrolled, and it stops the rail ghost's idle animation. A full-page capture
  * without it would record sections mid-fade.
  *
- * A full-page capture renders beyond the viewport, and while it does, `vh`
- * and `svh` resolve against the whole page instead of the window. The landing
- * page sizes its section spacing and first-screen hero from viewport height,
- * so an unpinned capture changes the page height while measuring it and never
- * settles. The page routes every such length through `--_landing-vh`; each
- * test pins that one property to the pixels it already resolves to, then
- * proves the page height no longer follows the viewport before capturing.
+ * The page is captured in a window as tall as the page itself rather than
+ * with `fullPage`. A `fullPage` capture renders beyond the viewport, and
+ * while it does, viewport-relative lengths resolve against the whole page;
+ * on CI that made the page height flip between two values from one capture
+ * to the next ("Failed to take two consecutive stable screenshots"). A real
+ * window of the page's height has nothing to emulate.
+ *
+ * That only works because the landing page routes every viewport-height
+ * length (section spacing, the first-screen hero, the rail's size and
+ * position) through one property, `--_landing-vh`. Each test pins it to the
+ * pixels it resolves to at the named viewport, proves the page height no
+ * longer follows the window, and then grows the window. The capture is
+ * therefore the page as laid out for that viewport, with the rail where a
+ * reader first sees it.
  *
  * The docs host is never changed from its first paint (`calm`). Apart from
- * that pin, the page is never padded, resized, or restyled by the test.
+ * that pin, the page is never padded or restyled by the test.
  */
 
 const modes = ['light', 'dark'] as const
@@ -105,15 +112,24 @@ test.describe('docs landing visual baselines', { tag: '@visual' }, () => {
             height: viewport.height * 3,
           })
           expect(await pageHeight()).toBe(heightAtRest)
+          // A window as tall as the page: everything is in view, so the
+          // capture needs no beyond-viewport rendering.
           await page.setViewportSize({
             width: viewport.width,
-            height: viewport.height,
+            height: heightAtRest,
           })
           expect(await pageHeight()).toBe(heightAtRest)
+          // Nothing left to scroll, so the rail reports the start of the page.
+          if (viewport.width >= 1100) {
+            await expect(page.getByTestId('landing-rail-hero')).toHaveAttribute(
+              'aria-current',
+              'location',
+            )
+          }
+          await page.mouse.move(0, 0)
 
           await expect(page).toHaveScreenshot(
             `docs-landing-${viewport.name}-${mode}.png`,
-            { fullPage: true },
           )
         } finally {
           await docs.close()

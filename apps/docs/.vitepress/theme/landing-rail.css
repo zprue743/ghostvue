@@ -12,8 +12,15 @@
   --_rail-lane: 1.375rem;
   --_rail-accent: var(--ghost-action-primary-bg);
 
-  block-size: min(62vh, 23rem);
-  inset-block-start: calc(50% + var(--vp-nav-height, 64px) / 2);
+  /*
+   * Sized and centred from `--_landing-vh` (set on `.ghost-landing`, one
+   * hundredth of the viewport height) rather than `vh` and `50%`, so the
+   * rail follows the same single viewport-height input as the page.
+   */
+  block-size: min(calc(var(--_landing-vh, 1vh) * 62), 23rem);
+  inset-block-start: calc(
+    var(--_landing-vh, 1vh) * 50 + var(--vp-nav-height, 64px) / 2
+  );
   inset-inline-end: 0.75rem;
   /*
    * The nav box also covers the lane the ghost travels in, which must not

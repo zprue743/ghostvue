@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 
 import {
   LANDING_ACTIVE_PROBE,
+  isPageScrollable,
   landingSections,
   resolveActiveSection,
   resolveRailProgress,
@@ -39,6 +40,14 @@ describe('resolveScrollProgress', () => {
 
   it('reports no progress when the page does not scroll', () => {
     expect(resolveScrollProgress(0, 800, 1000)).toBe(0)
+  })
+})
+
+describe('isPageScrollable', () => {
+  it('is true only when the page is taller than the viewport', () => {
+    expect(isPageScrollable(3000, 1000)).toBe(true)
+    expect(isPageScrollable(1000, 1000)).toBe(false)
+    expect(isPageScrollable(800, 1000)).toBe(false)
   })
 })
 
