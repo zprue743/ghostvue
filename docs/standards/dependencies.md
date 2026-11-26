@@ -9,6 +9,26 @@ bundle impact, license, maintenance health, security posture, and SSR/browser
 requirements. Prefer a peer dependency when the consumer must own a singleton
 runtime, as with Vue.
 
+## Third-party ranges in published packages (#348)
+
+Runtime `dependencies` of a publishable package declare third-party packages
+with caret ranges (`^1.8.0`), not exact versions. An exact pin in a library
+installs a second copy whenever the consumer's own range resolves to a
+different patch, and it stops consumers from taking a security fix until we
+publish again. The floor of each range is the version we build and test with;
+`pnpm-lock.yaml` still pins exactly what CI installs, and Renovate moves both
+together. `devDependencies` are not published and stay exact.
+
+Integration contracts the consumer installs themselves are peers. A peer that
+only some consumers need is marked optional in `peerDependenciesMeta`, so npm
+and pnpm check its range without installing it. `@ghostvue/vue` declares
+`unplugin-vue-components` (`^32.0.0`, the supported resolver major) this way
+for `@ghostvue/vue/resolver`; the resolver still never imports the plugin.
+
+`tests/integration/third-party-ranges.test.ts` enforces this for
+`@ghostvue/vue` and `@ghostvue/mcp`. `@ghostvue/nuxt` still pins `@nuxt/kit`
+and `@nuxt/schema` exactly; relaxing those is a separate change.
+
 Icons are not a dependency. Components take icon content from consumers, and
 packages do not add an icon library or icon adapter package; see
 [ADR 0013](../adr/0013-icon-strategy.md).
@@ -52,7 +72,7 @@ MIT-licensed and build-time only: none ships in a browser bundle.
 | `@nuxt/schema`            | 4.6.4                    | `@ghostvue/nuxt` dependency                            | Types for the published `NuxtModule` signature and the `ghostvue` config-key augmentation. `@nuxt/kit` only declares it as an optional peer.  |
 | `nuxt`                    | `^4.6.0` peer; 4.6.4 dev | `@ghostvue/nuxt` peer and dev, `apps/nuxt-fixture` dev | The consumer owns its Nuxt runtime. 4.6.4 is the tested version; the peer floor matches the module's `compatibility`.                         |
 | `vite`                    | 8.3.5                    | `@ghostvue/nuxt` dev, `apps/nuxt-fixture`              | Nuxt 4.6.4's `@nuxt/vite-server` peers on `vite ^8.3.5`; the root stays on 8.2.6 so this does not move the library build toolchain.           |
-| `unplugin-vue-components` | 32.1.0                   | root dev dependency                                    | Test-only: proves `GhostVueResolver()` inside the real plugin. `@ghostvue/vue` does not depend on it; the resolver is structural.             |
+| `unplugin-vue-components` | `^32.0.0` peer; 32.1.0   | `@ghostvue/vue` optional peer, root dev dependency     | Root dev copy proves `GhostVueResolver()` in the real plugin. The optional peer (#348) sets the supported major.                              |
 
 - `@ghostvue/vue` is a peer of `@ghostvue/nuxt` (one Vue runtime and one copy
   of the components, owned by the app). `@ghostvue/themes` is an optional peer
@@ -137,9 +157,10 @@ Residual advisories, all development-only and absent from `pnpm audit --prod`:
 envelope). Contract and footprint: [GHO-17 MCP first-release contract](../plans/gho-17-mcp-first-release.md)
 §7; [ADR 0015](../adr/0015-mcp-server-first-release.md).
 
-**Runtime dependencies (exact pins, MIT):**
+**Runtime dependencies (MIT).** Adopted as exact pins; since #348 the manifest
+declares caret ranges on these floors and the lockfile pins the tested version:
 
-| Package                     | Pin    | Why                                                                                                     |
+| Package                     | Floor  | Why                                                                                                     |
 | --------------------------- | ------ | ------------------------------------------------------------------------------------------------------- |
 | `@modelcontextprotocol/sdk` | 1.32.2 | Official MCP stdio server, tool registration, protocol framing                                          |
 | `zod`                       | 4.6.7  | Required SDK peer (`^3.25 \|\| ^4.0`; pin 4.x for new package) — tool input validation                  |

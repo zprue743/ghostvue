@@ -37,11 +37,17 @@
     "typecheck": "vue-tsc -p tsconfig.json --noEmit && node ../../scripts/vue-type-tests-negative.mjs"
   },
   "dependencies": {
-    "@floating-ui/dom": "1.8.0",
-    "@internationalized/date": "3.12.4"
+    "@floating-ui/dom": "^1.8.0",
+    "@internationalized/date": "^3.12.4"
   },
   "peerDependencies": {
+    "unplugin-vue-components": "^32.0.0",
     "vue": "^3.5.0"
+  },
+  "peerDependenciesMeta": {
+    "unplugin-vue-components": {
+      "optional": true
+    }
   },
   "devDependencies": {
     "vue": "3.5.45"
