@@ -22,7 +22,9 @@ pnpm docs:dev   # this site, with live examples
 ## Install
 
 Once published, add the headless package, and the themes package if you want the
-default look. Vue 3.5 or newer is a peer dependency.
+default look. Vue 3.5 or newer is a peer dependency, and `@ghostvue/themes`
+peers on `@ghostvue/vue` so both share one copy. The GhostVue packages share one
+version; keep them on the same release.
 
 ```bash
 pnpm add @ghostvue/vue @ghostvue/themes
@@ -42,7 +44,9 @@ start themed and replace pieces with headless ones later.
 
 Import a flagship stylesheet once and name it on a root element. Themed components
 read tokens from the nearest `data-ghost-theme` host. Importing from
-`@ghostvue/themes` already loads the base stylesheet.
+`@ghostvue/themes` already loads the base stylesheet, in development and in
+production builds, so you do not need a separate
+`@ghostvue/themes/default.css` import.
 
 ```ts
 // main.ts

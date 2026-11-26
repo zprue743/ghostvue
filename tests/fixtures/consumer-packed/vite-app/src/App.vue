@@ -36,61 +36,63 @@ const region = ref('eu')
 </script>
 
 <template>
-  <GhostToastProvider>
-    <main>
-      <GhostField>
-        <GhostFieldLabel>Workspace name</GhostFieldLabel>
-        <GhostFieldControl v-slot="field">
-          <GhostInput
-            v-bind="field"
-            v-model="workspace"
-            name="workspace"
-            data-smoke="input"
-          />
-        </GhostFieldControl>
-      </GhostField>
+  <div data-ghost-theme="calm">
+    <GhostToastProvider>
+      <main>
+        <GhostField>
+          <GhostFieldLabel>Workspace name</GhostFieldLabel>
+          <GhostFieldControl v-slot="field">
+            <GhostInput
+              v-bind="field"
+              v-model="workspace"
+              name="workspace"
+              data-smoke="input"
+            />
+          </GhostFieldControl>
+        </GhostField>
 
-      <GhostSelect v-model="region" placeholder="Region">
-        <GhostSelectTrigger aria-label="Region" data-smoke="select-trigger">
-          <GhostSelectValue />
-        </GhostSelectTrigger>
-        <GhostSelectContent>
-          <GhostSelectOption value="eu">Europe</GhostSelectOption>
-          <GhostSelectOption value="us">United States</GhostSelectOption>
-        </GhostSelectContent>
-      </GhostSelect>
+        <GhostSelect v-model="region" placeholder="Region">
+          <GhostSelectTrigger aria-label="Region" data-smoke="select-trigger">
+            <GhostSelectValue />
+          </GhostSelectTrigger>
+          <GhostSelectContent>
+            <GhostSelectOption value="eu">Europe</GhostSelectOption>
+            <GhostSelectOption value="us">United States</GhostSelectOption>
+          </GhostSelectContent>
+        </GhostSelect>
 
-      <GhostDialog>
-        <GhostDialogTrigger :as="GhostButton" data-smoke="dialog-trigger"
-          >Open dialog</GhostDialogTrigger
-        >
-        <GhostDialogOverlay />
-        <GhostDialogContent>
-          <GhostDialogTitle>Smoke dialog</GhostDialogTitle>
-          <GhostDialogDescription
-            >Mounted from packed tarballs.</GhostDialogDescription
+        <GhostDialog>
+          <GhostDialogTrigger :as="GhostButton" data-smoke="dialog-trigger"
+            >Open dialog</GhostDialogTrigger
           >
-          <GhostDialogClose :as="GhostButton" data-smoke="dialog-close"
-            >Close</GhostDialogClose
-          >
-        </GhostDialogContent>
-      </GhostDialog>
+          <GhostDialogOverlay />
+          <GhostDialogContent>
+            <GhostDialogTitle>Smoke dialog</GhostDialogTitle>
+            <GhostDialogDescription
+              >Mounted from packed tarballs.</GhostDialogDescription
+            >
+            <GhostDialogClose :as="GhostButton" data-smoke="dialog-close"
+              >Close</GhostDialogClose
+            >
+          </GhostDialogContent>
+        </GhostDialog>
 
-      <GhostDrawer>
-        <GhostDrawerTrigger :as="GhostButton" data-smoke="drawer-trigger"
-          >Open drawer</GhostDrawerTrigger
-        >
-        <GhostDrawerOverlay />
-        <GhostDrawerContent>
-          <GhostDrawerTitle>Smoke drawer</GhostDrawerTitle>
-          <GhostDrawerDescription
-            >Also mounted from packed tarballs.</GhostDrawerDescription
+        <GhostDrawer>
+          <GhostDrawerTrigger :as="GhostButton" data-smoke="drawer-trigger"
+            >Open drawer</GhostDrawerTrigger
           >
-        </GhostDrawerContent>
-      </GhostDrawer>
+          <GhostDrawerOverlay />
+          <GhostDrawerContent>
+            <GhostDrawerTitle>Smoke drawer</GhostDrawerTitle>
+            <GhostDrawerDescription
+              >Also mounted from packed tarballs.</GhostDrawerDescription
+            >
+          </GhostDrawerContent>
+        </GhostDrawer>
 
-      <ToastButton />
-    </main>
-    <GhostToastViewport />
-  </GhostToastProvider>
+        <ToastButton />
+      </main>
+      <GhostToastViewport />
+    </GhostToastProvider>
+  </div>
 </template>

@@ -10,6 +10,7 @@ import {
   nuxtComponentSources,
   nuxtImportSources,
   nuxtPageProblems,
+  themedBuildCssProblems,
   viteAppMountProblems,
   type MountObservation,
 } from '../../scripts/lib/consumer-packed.js'
@@ -63,6 +64,52 @@ describe('declaresThemeLayer', () => {
     expect(declaresThemeLayer('@layer reset, ghostvue-theme;')).toBe(false)
     expect(declaresThemeLayer('@layer ghostvue-themes{}')).toBe(false)
     expect(declaresThemeLayer('.ghost-button{color:red}')).toBe(false)
+  })
+})
+
+describe('themedBuildCssProblems', () => {
+  // Minified the way Vite emits it: quotes dropped from attribute values.
+  const base =
+    '@layer ghostvue-theme{:where(.ghost-theme .ghost-button){}.ghost-field{}:where(.ghost-theme .ghost-input){}.ghost-toast{}}'
+  const calmHost = '@layer ghostvue-theme{[data-ghost-theme=calm]{--x:1}}'
+
+  it('accepts base recipes plus the flagship token host', () => {
+    expect(
+      themedBuildCssProblems(base + calmHost, { flagship: 'calm' }),
+    ).toEqual([])
+    expect(
+      themedBuildCssProblems(base + "[data-ghost-theme='calm']{}", {
+        flagship: 'calm',
+      }),
+    ).toEqual([])
+  })
+
+  it('reports a dropped base stylesheet even when the flagship opens the layer', () => {
+    // Regression for #346: Vite tree-shook the `@ghostvue/themes` entry's
+    // `import './default.css'`, leaving only the explicitly imported flagship.
+    const problems = themedBuildCssProblems(calmHost, { flagship: 'calm' })
+    expect(problems).toHaveLength(4)
+    expect(problems.join('\n')).toContain('`.ghost-button` recipe')
+  })
+
+  it('does not count prefixed class names or a missing flagship', () => {
+    expect(
+      themedBuildCssProblems(
+        '@layer ghostvue-theme{.ghost-button-group{}.ghost-field{}.ghost-input{}.ghost-toast{}}',
+        { flagship: 'calm' },
+      ),
+    ).toEqual([
+      'no `.ghost-button` recipe; the base stylesheet imported by `@ghostvue/themes` was dropped',
+      'no `[data-ghost-theme=calm]` token host',
+    ])
+    expect(
+      themedBuildCssProblems(
+        '.ghost-button{}.ghost-field{}.ghost-input{}.ghost-toast{}[data-ghost-theme=calm]{}',
+        {
+          flagship: 'calm',
+        },
+      ),
+    ).toEqual(['no `@layer ghostvue-theme` block'])
   })
 })
 

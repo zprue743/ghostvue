@@ -4,6 +4,13 @@ export function consumerDependencyPins(
 
 export function declaresThemeLayer(css: string): boolean
 
+export const baseRecipeClasses: string[]
+
+export function themedBuildCssProblems(
+  css: string,
+  options: { flagship: string },
+): string[]
+
 export interface MountObservation {
   mounted?: boolean
   input?: { tag?: string | null; value?: string | null; label?: string | null }

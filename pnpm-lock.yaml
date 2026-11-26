@@ -178,11 +178,10 @@ importers:
   packages/shared: {}
 
   packages/themes:
-    dependencies:
+    devDependencies:
       '@ghostvue/vue':
         specifier: workspace:*
         version: link:../vue
-    devDependencies:
       culori:
         specifier: 4.0.2
         version: 4.0.2

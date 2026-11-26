@@ -10,6 +10,7 @@ import {
   ReleaseSafetyError,
   assertSafeNpmArgs,
   createIsolatedNpmEnv,
+  internalRangeProblems,
   parseReleaseDryRunArgs,
   sourceManifestProblems,
   stagePublishManifest,
@@ -243,6 +244,57 @@ describe('publishable package manifests', () => {
     }
   })
 
+  it('range every internal dependency and peer with workspace:^ so packing yields ^x.y.z (#345)', () => {
+    // An exact pin nests a second @ghostvue/vue under themes (split state) or
+    // fails npm installs with ERESOLVE when a consumer's versions differ.
+    for (const { directory } of publishableWorkspacePackages) {
+      expect(
+        internalRangeProblems(readJson(`packages/${directory}/package.json`)),
+      ).toEqual([])
+    }
+    const themes = readJson('packages/themes/package.json')
+    expect(themes.dependencies).toBeUndefined()
+    expect(themes.peerDependencies).toMatchObject({
+      '@ghostvue/vue': 'workspace:^',
+    })
+    // Peers are not installed in the workspace; the build still needs vue.
+    expect(themes.devDependencies).toMatchObject({
+      '@ghostvue/vue': 'workspace:*',
+    })
+  })
+
+  it('flag exact or workspace:* internal ranges in published dependency groups', () => {
+    expect(
+      internalRangeProblems({
+        name: '@ghostvue/nuxt',
+        dependencies: { '@ghostvue/vue': 'workspace:*', culori: '4.0.2' },
+        peerDependencies: { '@ghostvue/themes': '0.1.0', vue: '^3.5.0' },
+        optionalDependencies: { '@ghostvue/mcp': 'workspace:~' },
+        devDependencies: { '@ghostvue/vue': 'workspace:*' },
+      }),
+    ).toEqual([
+      expect.stringContaining(
+        'dependencies must use "workspace:^" for @ghostvue/vue, not "workspace:*"',
+      ),
+      expect.stringContaining(
+        'peerDependencies must use "workspace:^" for @ghostvue/themes, not "0.1.0"',
+      ),
+      expect.stringContaining(
+        'optionalDependencies must use "workspace:^" for @ghostvue/mcp, not "workspace:~"',
+      ),
+    ])
+  })
+
+  it('version the five publishable packages in lockstep (#345)', () => {
+    // A `fixed` group gives every member the highest pending bump, so a minor
+    // change to one package moves all five and caret ranges keep matching.
+    const config = readJson('.changeset/config.json')
+    expect(config.fixed).toEqual([
+      publishableWorkspacePackages.map(({ name }) => name),
+    ])
+    expect(config.linked).toEqual([])
+  })
+
   it('include the MCP server on the release train (GHO-17 M6)', () => {
     // Zac approved M6 on Nov 22, 2026: @ghostvue/mcp releases 0.1.0 with the
     // other packages and stays private until GHO-57 authorizes publishing.
@@ -379,11 +431,8 @@ describe('release dry-run guards', () => {
       name: '@ghostvue/themes',
       version: '0.0.0',
       private: true,
-      dependencies: {
-        '@ghostvue/vue': '0.0.0',
-        culori: '4.0.2',
-      },
-      peerDependencies: { vue: '^3.5.0' },
+      dependencies: { culori: '4.0.2' },
+      peerDependencies: { '@ghostvue/vue': '^0.0.0', vue: '^3.5.0' },
     }
     const staged = stagePublishManifest(
       packed,
@@ -395,11 +444,8 @@ describe('release dry-run guards', () => {
     expect(staged).toEqual({
       name: '@ghostvue/themes',
       version: '0.1.0',
-      dependencies: {
-        '@ghostvue/vue': '0.1.0',
-        culori: '4.0.2',
-      },
-      peerDependencies: { vue: '^3.5.0' },
+      dependencies: { culori: '4.0.2' },
+      peerDependencies: { '@ghostvue/vue': '^0.1.0', vue: '^3.5.0' },
     })
     expect(packed.private).toBe(true)
     expect(packed.version).toBe('0.0.0')
@@ -425,5 +471,18 @@ describe('release dry-run guards', () => {
         versions,
       ),
     ).toThrow(/unresolved/)
+    // `workspace:*` packs to an exact version; staging refuses to publish it.
+    expect(() =>
+      stagePublishManifest(
+        {
+          name: '@ghostvue/nuxt',
+          peerDependencies: { '@ghostvue/themes': '0.0.0' },
+        },
+        new Map([
+          ['@ghostvue/nuxt', '0.1.0'],
+          ['@ghostvue/themes', '0.1.0'],
+        ]),
+      ),
+    ).toThrow(/must pack to a caret range/)
   })
 })

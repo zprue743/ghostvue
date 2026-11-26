@@ -9,7 +9,10 @@
 Initial public release of GhostVue: a Vue 3, headless-first component library
 with an optional theme layer, a Nuxt module, an ESLint plugin, and an MCP
 server for coding agents. The component packages need Vue `^3.5.0`;
-`@ghostvue/mcp` needs Node `>=22`.
+`@ghostvue/mcp` needs Node `>=22`. The five packages share one version and
+move together. `@ghostvue/themes` and `@ghostvue/nuxt` declare `@ghostvue/vue`
+(and Nuxt also `@ghostvue/themes`) as caret-ranged peer dependencies, so install
+`@ghostvue/vue` alongside them and keep a single copy in your app.
 
 - `@ghostvue/vue`: unstyled, accessible `Ghost*` components and `useGhost*`
   composables, including Button, Field, Input, Textarea, Number Input,

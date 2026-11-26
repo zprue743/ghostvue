@@ -81,7 +81,35 @@ export const transition = startThemeTransition
       dependencies?: Record<string, string>
       devDependencies?: Record<string, string>
     }
-    expect(packageJson.dependencies).not.toHaveProperty('culori')
+    // Themes has no runtime dependencies at all; @ghostvue/vue is a peer (#345).
+    expect(packageJson.dependencies ?? {}).not.toHaveProperty('culori')
     expect(packageJson.devDependencies).toHaveProperty('culori')
   }, 60_000)
+
+  it('keeps the published main entry side-effectful so its base CSS import survives', async () => {
+    // #346: with only CSS listed in `sideEffects`, Vite production builds
+    // treat `dist/index.js` as side-effect free, keep the re-exported
+    // components, and drop its `import './default.css'`, so documented
+    // consumers shipped unstyled themed components. `pnpm consumer:packed`
+    // proves the fix end to end; this catches a regression without a build.
+    const packageJson = JSON.parse(
+      await readFile(
+        new URL('../../packages/themes/package.json', import.meta.url),
+        'utf8',
+      ),
+    ) as {
+      sideEffects?: string[] | boolean
+      exports: Record<string, string | Record<string, string>>
+    }
+    const mainEntry = packageJson.exports['.']
+    const mainImport =
+      typeof mainEntry === 'string' ? mainEntry : mainEntry?.import
+    expect(mainImport).toBe('./dist/index.js')
+    expect(packageJson.sideEffects).toEqual(
+      expect.arrayContaining(['**/*.css', mainImport]),
+    )
+
+    const source = await readFile(themesEntry, 'utf8')
+    expect(source).toMatch(/^import '\.\/default\.css'$/m)
+  })
 })

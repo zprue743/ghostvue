@@ -27,6 +27,12 @@ export function sourceManifestProblems(
   directory: string,
 ): string[]
 
+export const INTERNAL_RANGE: 'workspace:^'
+
+export function internalRangeProblems(
+  manifest: Record<string, unknown>,
+): string[]
+
 export function stagePublishManifest(
   packedManifest: Record<string, unknown>,
   plannedVersions: Map<string, string>,
