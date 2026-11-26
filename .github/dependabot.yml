@@ -1,0 +1,46 @@
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: '05:00'
+      timezone: UTC
+    open-pull-requests-limit: 5
+    labels:
+      - dependencies
+    versioning-strategy: increase
+    cooldown:
+      default-days: 3
+    groups:
+      playwright:
+        patterns:
+          - '@playwright/test'
+          - playwright
+          - playwright-core
+    ignore:
+      - dependency-name: node
+        update-types:
+          - version-update:semver-major
+      - dependency-name: '@types/node'
+        update-types:
+          - version-update:semver-major
+      - dependency-name: pnpm
+        update-types:
+          - version-update:semver-major
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: '05:00'
+      timezone: UTC
+    open-pull-requests-limit: 2
+    labels:
+      - dependencies
+    groups:
+      github-actions:
+        patterns:
+          - '*'

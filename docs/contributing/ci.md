@@ -134,23 +134,32 @@ under the repository's code scanning alerts.
 
 ## Automated dependency updates
 
-[Renovate](https://docs.renovatebot.com/) (`renovate.json`) opens update pull
-requests on Monday mornings (UTC):
+[Dependabot](https://docs.github.com/en/code-security/dependabot)
+(`.github/dependabot.yml`) opens update pull requests on Monday mornings
+(UTC) for `npm` and `github-actions`:
 
-- npm versions stay exact (`rangeStrategy: "pin"`), matching `saveExact` in
-  `pnpm-workspace.yaml`. Installs keep `strictPeerDependencies` and
-  `engineStrict`; Renovate does not override them.
-- A new release must be at least 3 days old before Renovate proposes it
-  (`minimumReleaseAge`), which gives the registry time to pull a bad or
-  compromised version. Security fixes are not delayed.
-- GitHub Actions are grouped into one pull request and kept as commit SHAs with
-  a version comment (`helpers:pinGitHubActionDigests`).
-- Playwright packages and the Playwright container image are updated together.
-- Weekly lock file maintenance refreshes transitive dependencies within their
-  declared ranges.
-- Node and pnpm major updates wait for approval on the Dependency Dashboard.
-- Automerge is disabled. Every update pull request runs the normal CI gate and
-  needs a human review before merge.
+- npm versions stay exact (`versioning-strategy: increase` alongside `saveExact`
+  in `pnpm-workspace.yaml`). Installs keep `strictPeerDependencies` and
+  `engineStrict`; Dependabot does not override them.
+- A new npm release must be at least 3 days old before Dependabot proposes it
+  (`cooldown.default-days: 3`), which gives the registry time to pull a bad or
+  compromised version. Dependabot security updates continue immediately without
+  delay.
+- GitHub Actions are grouped into one `github-actions` pull request and
+  Dependabot preserves the full 40-character commit SHA pins and version
+  comments enforced by `tests/integration/ci-workflow-policy.test.ts`.
+- Playwright packages (`@playwright/test`, `playwright`, and `playwright-core`)
+  are grouped into one `playwright` pull request. Dependabot does not rewrite
+  container image tags in `.github/workflows/ci.yml`,
+  `scripts/lib/test-visual-docker.js`, or `.cursor/environment.json`, so when a
+  Playwright PR updates `@playwright/test`, update the pinned
+  `mcr.microsoft.com/playwright` tag in those files to match (enforced in CI by
+  `tests/integration/ci-workflow-policy.test.ts`).
+- Major updates for `node`, `@types/node`, and `pnpm` are ignored in
+  `.github/dependabot.yml` so runtime floor bumps remain explicit human pull
+  requests.
+- Every update pull request runs the normal CI gate and needs a human review
+  before merge.
 
 Security advisories are triaged as described in the
 [dependency policy](../standards/dependencies.md#security-audit-triage).
