@@ -1,6 +1,14 @@
 /*
  * Themed GhostSegmentedControl with equal-width segments and a sliding
  * indicator positioned from CSS variables (no layout reads).
+ *
+ * The indicator assumes every segment is exactly 1/n of the track, so the
+ * track is a grid of equal `fr` columns rather than a row of `flex: 1 1 0`
+ * items. A shrink-to-fit flex container sizes itself to the *sum* of the
+ * labels and then splits that sum evenly, which leaves long labels overflowing
+ * their segment (and the indicator) while short ones get extra room. Grid
+ * resolves `1fr` from the widest label when the control sizes to content, so
+ * every segment fits its label and still matches the indicator's fraction.
  */
 @layer ghostvue-theme {
   :where(
@@ -9,7 +17,14 @@
     .ghost-segmented-control[data-themed]
   ) {
     box-sizing: border-box;
-    display: inline-flex;
+    display: inline-grid;
+    grid-auto-flow: column;
+    /*
+     * `minmax(0, 1fr)` keeps the columns equal even when a consumer constrains
+     * the control below its content width; a bare `1fr` would let one track
+     * grow to its min-content width and break the indicator's 1/n geometry.
+     */
+    grid-auto-columns: minmax(0, 1fr);
     position: relative;
     font-family: var(--ghost-type-family-sans);
     font-feature-settings: var(--ghost-type-feature-default);
@@ -27,8 +42,9 @@
     .ghost-themed-scope .ghost-segmented-control[aria-orientation='vertical'],
     .ghost-segmented-control[data-themed][aria-orientation='vertical']
   ) {
-    flex-direction: column;
-    align-items: stretch;
+    grid-auto-flow: row;
+    grid-auto-columns: auto;
+    grid-auto-rows: minmax(0, 1fr);
     width: max-content;
   }
 
@@ -114,7 +130,6 @@
   ) {
     position: relative;
     z-index: 1;
-    flex: 1 1 0;
     min-width: 0;
     background: transparent;
     border: var(--ghost-border-hairline-width) solid transparent;
@@ -123,6 +138,8 @@
     cursor: pointer;
     font: inherit;
     padding: var(--ghost-space-inset-sm) var(--ghost-space-inset-md);
+    /* Buttons center by default; non-button `as` hosts should match. */
+    text-align: center;
   }
 
   :where(
@@ -139,7 +156,14 @@
     .ghost-segmented-control-item[data-themed]:focus-visible
   ) {
     outline: var(--ghost-focus-ring-width) solid var(--ghost-focus-ring-color);
-    outline-offset: var(--ghost-focus-ring-offset);
+    /*
+     * Inset ring: segments sit only a few pixels inside the track, so the
+     * usual outward offset doubled up with the indicator's border and spilled
+     * past the control's edge. Drawn over the segment's own edge, the ring
+     * replaces the indicator border instead of stacking on it, and stays
+     * inside the control while leaving the label's padding clear.
+     */
+    outline-offset: calc(-1 * var(--ghost-focus-ring-width));
   }
 
   :where(
@@ -173,6 +197,19 @@
       .ghost-segmented-control[data-themed] [data-part='indicator']
     ) {
       border-color: Highlight;
+    }
+
+    /*
+     * Forced colors paint every segment's transparent border as ButtonBorder,
+     * so an inset ring would land on that border and barely change. Move the
+     * ring back outside the segment, where it stays distinguishable.
+     */
+    :where(
+      .ghost-theme .ghost-segmented-control-item:focus-visible,
+      .ghost-themed-scope .ghost-segmented-control-item:focus-visible,
+      .ghost-segmented-control-item[data-themed]:focus-visible
+    ) {
+      outline-offset: var(--ghost-focus-ring-offset);
     }
   }
 }

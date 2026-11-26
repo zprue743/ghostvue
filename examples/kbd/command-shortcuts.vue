@@ -28,7 +28,6 @@ const shortcuts = [
           <GhostSegmentedControl
             v-model="platform"
             aria-label="Keycap platform"
-            size="sm"
           >
             <GhostSegmentedControlItem value="apple">
               Apple
