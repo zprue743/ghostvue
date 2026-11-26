@@ -88,6 +88,43 @@ See the [specification](/specs/calendar). Generated manifest data lives under
 `packages/vue/manifests/ghost-calendar.manifest.json` and themed
 `packages/themes/manifests/ghost-calendar.manifest.json`.
 
+<!-- @generated docs-api:vue/ghost-calendar begin -->
+
+<!-- Source: packages/vue/manifests/ghost-calendar.manifest.json. Run pnpm docs:api:write after it changes. -->
+
+| Prop                  | Type                                | Default    | Description                          |
+| --------------------- | ----------------------------------- | ---------- | ------------------------------------ |
+| `defaultValue`        | `GhostCalendarValue`                | —          | Declared prop `defaultValue`.        |
+| `defaultVisibleMonth` | `CalendarDate`                      | —          | Declared prop `defaultVisibleMonth`. |
+| `disabled`            | `boolean`                           | `false`    | Declared prop `disabled`.            |
+| `isDateDisabled`      | `((date: CalendarDate) => boolean)` | —          | Declared prop `isDateDisabled`.      |
+| `locale`              | `string`                            | `"en-US"`  | Declared prop `locale`.              |
+| `maxValue`            | `CalendarDate`                      | —          | Declared prop `maxValue`.            |
+| `minValue`            | `CalendarDate`                      | —          | Declared prop `minValue`.            |
+| `modelValue`          | `GhostCalendarValue \| null`        | —          | Declared prop `modelValue`.          |
+| `selectionMode`       | `GhostCalendarSelectionMode`        | `"single"` | Declared prop `selectionMode`.       |
+| `today`               | `CalendarDate`                      | —          | Declared prop `today`.               |
+| `visibleMonth`        | `CalendarDate`                      | —          | Declared prop `visibleMonth`.        |
+| `weekStartsOn`        | `number`                            | —          | Declared prop `weekStartsOn`.        |
+
+| Event    | Payload        | Description          |
+| -------- | -------------- | -------------------- |
+| `select` | `CalendarDate` | Emitted as `select`. |
+
+| Slot      | Slot props                                                                                                  | Description        |
+| --------- | ----------------------------------------------------------------------------------------------------------- | ------------------ |
+| `default` | `modelValue: GhostCalendarValue`, `selectionMode: GhostCalendarSelectionMode`, `visibleMonth: CalendarDate` | Container content. |
+
+<!-- @generated docs-api:vue/ghost-calendar end -->
+
+<!-- @generated docs-api:themes/ghost-calendar begin -->
+
+<!-- Source: packages/themes/manifests/ghost-calendar.manifest.json. Run pnpm docs:api:write after it changes. -->
+
+`@ghostvue/themes` adds no props, events, or slots to the headless `GhostCalendar` API, which it forwards.
+
+<!-- @generated docs-api:themes/ghost-calendar end -->
+
 | Part                      | Role       | Key attributes                         |
 | ------------------------- | ---------- | -------------------------------------- |
 | `GhostCalendar`           | —          | `v-model`, `selectionMode`, `locale`   |

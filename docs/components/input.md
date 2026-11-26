@@ -31,15 +31,21 @@ Headless use of the same contract without the SFC:
 
 ## API
 
-| Prop           | Type                                                            | Default  | Description                                                                                  |
-| -------------- | --------------------------------------------------------------- | -------- | -------------------------------------------------------------------------------------------- |
-| `modelValue`   | `string`                                                        | omitted  | Controlled value. Omit for uncontrolled mode. `''` is a real empty value.                    |
-| `defaultValue` | `string`                                                        | `''`     | Initial uncontrolled value. Later changes are ignored.                                       |
-| `type`         | `'text' \| 'search' \| 'email' \| 'password' \| 'tel' \| 'url'` | `'text'` | Native text-like type. Checkbox, radio, file, and `number` are out of scope.                 |
-| `disabled`     | `boolean`                                                       | `false`  | Native disabled: not focusable, not submitted.                                               |
-| `readonly`     | `boolean`                                                       | `false`  | Native readonly: focusable and submitted, not editable.                                      |
-| `invalid`      | `boolean`                                                       | `false`  | Consumer-owned validity. Sets `aria-invalid="true"`. Does not mirror native `ValidityState`. |
-| `required`     | `boolean`                                                       | `false`  | Native required constraint.                                                                  |
+<!-- @generated docs-api:vue/ghost-input begin -->
+
+<!-- Source: packages/vue/manifests/ghost-input.manifest.json. Run pnpm docs:api:write after it changes. -->
+
+| Prop           | Type             | Default  | Description                                                                                                          |
+| -------------- | ---------------- | -------- | -------------------------------------------------------------------------------------------------------------------- |
+| `defaultValue` | `string`         | `""`     | Initial uncontrolled value. Later changes are ignored. Also the form-reset seed.                                     |
+| `disabled`     | `boolean`        | `false`  | Applies native disabled semantics, prevents editing and sequential focus, and omits the field from form submit.      |
+| `invalid`      | `boolean`        | `false`  | Consumer-owned validity. Sets aria-invalid and data-state=invalid. Does not mirror native ValidityState.             |
+| `modelValue`   | `string`         | —        | Controlled value. Omit for uncontrolled mode. An empty string is a real controlled value, not unset.                 |
+| `readonly`     | `boolean`        | `false`  | Applies native readonly semantics. The field stays focusable and is submitted, but cannot be edited.                 |
+| `required`     | `boolean`        | `false`  | Applies the native required constraint.                                                                              |
+| `type`         | `GhostInputType` | `"text"` | Native text-like type (text, search, email, password, tel, url). Checkbox, radio, file, and number are out of scope. |
+
+<!-- @generated docs-api:vue/ghost-input end -->
 
 `v-model` emits `update:modelValue` on the native `input` event, matching Vue
 on a plain `<input>`. Native listeners such as `@change` and `@blur` still
@@ -55,10 +61,18 @@ The component does not generate an `id`. There is no content slot.
 Importing the themed component loads the default stylesheet. Visual props exist
 only on this wrapper:
 
-| Prop    | Type                   | Default | Description                     |
-| ------- | ---------------------- | ------- | ------------------------------- |
-| `size`  | `'sm' \| 'md' \| 'lg'` | `'md'`  | Control size.                   |
-| `block` | `boolean`              | `false` | Stretch to the available width. |
+<!-- @generated docs-api:themes/ghost-input begin -->
+
+<!-- Source: packages/themes/manifests/ghost-input.manifest.json. Run pnpm docs:api:write after it changes. -->
+
+`@ghostvue/themes` adds these to the headless `GhostInput` API, which it forwards:
+
+| Prop    | Type                   | Default | Description                                                                      |
+| ------- | ---------------------- | ------- | -------------------------------------------------------------------------------- |
+| `size`  | `'sm' \| 'md' \| 'lg'` | `"md"`  | Control size. The default omits data-size so CSS can treat a missing hook as md. |
+| `block` | `boolean`              | `false` | Stretch to the available inline size via data-block.                             |
+
+<!-- @generated docs-api:themes/ghost-input end -->
 
 Themed size, padding, radius, and type come from density and control tokens.
 Comfortable `md` is 40px tall with an 8px radius at `--ghost-roundness: 1`.

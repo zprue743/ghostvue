@@ -79,6 +79,32 @@ as the tabs. In forced-colors mode the selected tab is painted with
 See the [specification](/specs/tabs) for the full contract. Generated manifest
 data is available under `packages/vue/manifests/ghost-tabs*.manifest.json`.
 
+<!-- @generated docs-api:vue/ghost-tabs begin -->
+
+<!-- Source: packages/vue/manifests/ghost-tabs.manifest.json. Run pnpm docs:api:write after it changes. -->
+
+| Prop             | Type                         | Default        | Description                                                                 |
+| ---------------- | ---------------------------- | -------------- | --------------------------------------------------------------------------- |
+| `activationMode` | `'automatic' \| 'manual'`    | `"automatic"`  | Focus-driven (`automatic`) vs explicit activation (`manual`) tab selection. |
+| `defaultValue`   | `string`                     | —              | Initial selected value when `modelValue` is omitted.                        |
+| `dir`            | `'ltr' \| 'rtl'`             | —              | Explicit text direction for roving focus within the tab list.               |
+| `modelValue`     | `string`                     | —              | Controlled selected tab value. Omit for uncontrolled mode.                  |
+| `orientation`    | `'horizontal' \| 'vertical'` | `"horizontal"` | Tab list orientation for arrow-key roving and `aria-orientation`.           |
+
+| Slot      | Slot props                        | Description        |
+| --------- | --------------------------------- | ------------------ |
+| `default` | `modelValue: string \| undefined` | Container content. |
+
+<!-- @generated docs-api:vue/ghost-tabs end -->
+
+<!-- @generated docs-api:themes/ghost-tabs begin -->
+
+<!-- Source: packages/themes/manifests/ghost-tabs.manifest.json. Run pnpm docs:api:write after it changes. -->
+
+`@ghostvue/themes` adds no props, events, or slots to the headless `GhostTabs` API, which it forwards.
+
+<!-- @generated docs-api:themes/ghost-tabs end -->
+
 | Part               | Role       | Key attributes                                     |
 | ------------------ | ---------- | -------------------------------------------------- |
 | `GhostTabs`        | —          | `v-model`, `activationMode`, `orientation`, `dir`  |

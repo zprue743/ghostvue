@@ -11,14 +11,14 @@
       "type": "boolean",
       "default": false,
       "required": false,
-      "description": "Declared prop `defaultOpen`.",
+      "description": "Initial open state.",
       "deprecated": false
     },
     {
       "name": "defaultValue",
       "type": "string",
       "required": false,
-      "description": "Declared prop `defaultValue`.",
+      "description": "Uncontrolled seed and reset value.",
       "deprecated": false
     },
     {
@@ -26,7 +26,7 @@
       "type": "boolean",
       "default": false,
       "required": false,
-      "description": "Declared prop `disabled`.",
+      "description": "Disables the control.",
       "deprecated": false
     },
     {
@@ -41,42 +41,42 @@
       "type": "boolean",
       "default": false,
       "required": false,
-      "description": "Declared prop `invalid`.",
+      "description": "`aria-invalid` on the trigger.",
       "deprecated": false
     },
     {
       "name": "messages",
       "type": "GhostSelectMessages",
       "required": false,
-      "description": "Declared prop `messages`.",
+      "description": "Overridable internal strings (`required` validation message, default `'Select a value.'`).",
       "deprecated": false
     },
     {
       "name": "modelValue",
       "type": "string",
       "required": false,
-      "description": "Declared prop `modelValue`.",
+      "description": "Controlled value.",
       "deprecated": false
     },
     {
       "name": "name",
       "type": "string",
       "required": false,
-      "description": "Declared prop `name`.",
+      "description": "Submit input name.",
       "deprecated": false
     },
     {
       "name": "open",
       "type": "boolean",
       "required": false,
-      "description": "Declared prop `open`.",
+      "description": "Controlled listbox open state.",
       "deprecated": false
     },
     {
       "name": "placeholder",
       "type": "string",
       "required": false,
-      "description": "Declared prop `placeholder`.",
+      "description": "Shown when no value is selected.",
       "deprecated": false
     },
     {
@@ -84,7 +84,7 @@
       "type": "boolean",
       "default": false,
       "required": false,
-      "description": "Declared prop `required`.",
+      "description": "Required when `name` is set.",
       "deprecated": false
     }
   ],

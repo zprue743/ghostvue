@@ -252,22 +252,44 @@ See the [generated component references](/reference/) for full tables.
 
 ### `GhostFileUpload`
 
-| Prop                  | Type                               | Default   | Description                                                 |
-| --------------------- | ---------------------------------- | --------- | ----------------------------------------------------------- |
-| `modelValue`          | `File[]`                           | omitted   | Controlled list.                                            |
-| `defaultValue`        | `File[]`                           | `[]`      | Uncontrolled seed and reset baseline, captured once.        |
-| `accept`              | `string`                           | omitted   | Native `accept` grammar; enforced on intake.                |
-| `maxFiles`            | `number`                           | unlimited | Total capacity. `1` turns `multiple` off.                   |
-| `maxFileSize`         | `number`                           | omitted   | Per-file limit in bytes.                                    |
-| `validate`            | `GhostFileUploadValidate`          | omitted   | Synchronous check; return a string to reject.               |
-| `disabled`            | `boolean`                          | `false`   | Disables intake, buttons, and submit.                       |
-| `invalid`             | `boolean`                          | `false`   | Consumer validity; combines with native `required` failure. |
-| `required`            | `boolean`                          | `false`   | Native `required` on the form mirror. Needs `name`.         |
-| `name`                | `string`                           | omitted   | Form field name. Enables the form mirror.                   |
-| `form`                | `string`                           | omitted   | External form id.                                           |
-| `id`                  | `string`                           | generated | Id of the trigger, not the root.                            |
-| `messages`            | `Partial<GhostFileUploadMessages>` | English   | Announcement and label text.                                |
-| `preventDocumentDrop` | `boolean`                          | `true`    | Cancel stray file drops outside dropzones.                  |
+<!-- @generated docs-api:vue/ghost-file-upload begin -->
+
+<!-- Source: packages/vue/manifests/ghost-file-upload.manifest.json. Run pnpm docs:api:write after it changes. -->
+
+| Prop                  | Type                               | Default | Description                                                                                 |
+| --------------------- | ---------------------------------- | ------- | ------------------------------------------------------------------------------------------- |
+| `accept`              | `string`                           | —       | Native `accept` grammar: a picker hint that is also enforced on intake.                     |
+| `defaultValue`        | `File[]`                           | `"[]"`  | Uncontrolled seed and form-reset baseline, captured once at setup.                          |
+| `disabled`            | `boolean`                          | `false` | Disables the trigger, drops, and remove buttons, and omits the mirror from submit.          |
+| `form`                | `string`                           | —       | `form` attribute for the mirror and the picker.                                             |
+| `id`                  | `string`                           | —       | Id of the trigger (the labelable control), not of the root element.                         |
+| `invalid`             | `boolean`                          | `false` | Consumer validity, combined with native constraint failure.                                 |
+| `maxFiles`            | `number`                           | —       | Total list capacity. Floored; not finite or below 1 is unlimited. `1` turns `multiple` off. |
+| `maxFileSize`         | `number`                           | —       | Per-file limit in bytes; equal is accepted. Not finite or negative is unset.                |
+| `messages`            | `Partial<GhostFileUploadMessages>` | —       | Typed, reactive overrides of announcement and label text.                                   |
+| `modelValue`          | `File[]`                           | —       | Controlled list. `undefined` is uncontrolled; `[]` is a real empty value.                   |
+| `name`                | `string`                           | —       | Form mirror `name`. Without it no mirror renders and nothing is submitted.                  |
+| `preventDocumentDrop` | `boolean`                          | `true`  | Cancel file drags and drops outside every dropzone while an enabled dropzone is mounted.    |
+| `required`            | `boolean`                          | `false` | Native `required` on the form mirror when `name` is set.                                    |
+| `validate`            | `GhostFileUploadValidate`          | —       | Synchronous, pure check after `accept` and `maxFileSize`; return a string to reject.        |
+
+| Event    | Payload                      | Description                                                                                                                              |
+| -------- | ---------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| `reject` | `GhostFileUploadRejection[]` | Once per intake batch with at least one rejection, after update:modelValue. Fires even when a controlled parent ignores the list update. |
+
+| Slot      | Slot props                                                                                                                                                                                                                                                        | Description                                                                                                                                       |
+| --------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `default` | `clear: () => void`, `clearRejections: () => void`, `entries: readonly GhostFileUploadEntry[]`, `invalid: boolean`, `openPicker: () => void`, `rejections: readonly GhostFileUploadRejection[]`, `remaining: number \| undefined`, `remove: (file: File) => void` | Consumer layout of the parts, with the list entries, rejections from the latest intake, remaining capacity, effective invalid state, and actions. |
+
+<!-- @generated docs-api:vue/ghost-file-upload end -->
+
+<!-- @generated docs-api:themes/ghost-file-upload begin -->
+
+<!-- Source: packages/themes/manifests/ghost-file-upload.manifest.json. Run pnpm docs:api:write after it changes. -->
+
+`@ghostvue/themes` adds no props, events, or slots to the headless `GhostFileUpload` API, which it forwards.
+
+<!-- @generated docs-api:themes/ghost-file-upload end -->
 
 Emits `update:modelValue` (`File[]`) and `reject` (`GhostFileUploadRejection[]`).
 Other attributes, `class`, `style`, and listeners fall through to the root, so

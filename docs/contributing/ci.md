@@ -68,9 +68,11 @@ needs its own reviewed change.
 The `changes` job classifies pull request diffs via
 `scripts/ci-changed-paths.mjs`:
 
-- Prose-only docs (`docs/**/*.md` without live Vue/VitePress blocks), `AGENTS.md`,
-  and `.cursor/**` PRs set `skip_heavy=true` while keeping required `verify` and
-  `browser` checks green.
+- Prose-only docs (`docs/**/*.md` without live Vue/VitePress blocks or
+  `<!-- @generated docs-api:… -->` tables), `AGENTS.md`, and `.cursor/**` PRs
+  set `skip_heavy=true` while keeping required `verify` and `browser` checks
+  green. Pages with generated API tables still run `verify-static`, whose
+  `pnpm docs:api` step checks those tables.
 - Docs, showcase, and example PRs (`e2e_scope=docs`) scope `browser-shard` to
   `docs-*.spec.ts` and `examples*.spec.ts` and skip unrelated `nuxt-fixture`,
   `browser-cross`, and `verify-unit-node24` jobs (`verify-static` still runs

@@ -25,6 +25,32 @@ applies open/close delays for WCAG 1.4.13, positions the floating panel with
 See the [generated component references](/reference/) for props, emits, slots,
 exposed members, styling hooks, CSS variables, and executable examples.
 
+<!-- @generated docs-api:vue/ghost-hover-card begin -->
+
+<!-- Source: packages/vue/manifests/ghost-hover-card.manifest.json. Run pnpm docs:api:write after it changes. -->
+
+| Prop            | Type      | Default | Description                                                                  |
+| --------------- | --------- | ------- | ---------------------------------------------------------------------------- |
+| `closeDelay`    | `number`  | `300`   | Milliseconds before hiding after hover/focus leaves the trigger and content. |
+| `closeOnEscape` | `boolean` | `true`  | When `true`, `Escape` dismisses the open card via `useDismissableLayer`.     |
+| `defaultOpen`   | `boolean` | `false` | Initial open state when `open` is omitted.                                   |
+| `open`          | `boolean` | —       | Controlled open state. Omit for uncontrolled mode.                           |
+| `openDelay`     | `number`  | `700`   | Milliseconds before showing after hover or focus begins.                     |
+
+| Slot      | Slot props                           | Description      |
+| --------- | ------------------------------------ | ---------------- |
+| `default` | `close: () => void`, `open: boolean` | Primary content. |
+
+<!-- @generated docs-api:vue/ghost-hover-card end -->
+
+<!-- @generated docs-api:themes/ghost-hover-card begin -->
+
+<!-- Source: packages/themes/manifests/ghost-hover-card.manifest.json. Run pnpm docs:api:write after it changes. -->
+
+`@ghostvue/themes` adds no props, events, or slots to the headless `GhostHoverCard` API, which it forwards.
+
+<!-- @generated docs-api:themes/ghost-hover-card end -->
+
 ### `GhostHoverCard` (root)
 
 Supports `openDelay`, `closeDelay`, and `closeOnEscape`. Emits `update:open` with

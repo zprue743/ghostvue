@@ -95,6 +95,8 @@ pnpm boundaries
 pnpm adapters
 pnpm manifests
 pnpm manifests:write
+pnpm docs:api
+pnpm docs:api:write
 pnpm keyboard-evidence
 pnpm registries
 pnpm registries:write

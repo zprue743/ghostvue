@@ -42,17 +42,31 @@ only when you need a landmark and the parent context allows it.
 
 ## API
 
-| Prop           | Type                         | Default | Description                                 |
-| -------------- | ---------------------------- | ------- | ------------------------------------------- |
-| `as`           | `'div' \| 'section'`         | `'div'` | Root element.                               |
-| `headingLevel` | `1 \| 2 \| 3 \| 4 \| 5 \| 6` | `3`     | Native heading level for the `#title` slot. |
+<!-- @generated docs-api:vue/ghost-empty-state begin -->
 
-| Slot          | Description                                      |
-| ------------- | ------------------------------------------------ |
-| `visual`      | Optional decorative graphic (`aria-hidden` wrap) |
-| `title`       | Optional heading text                            |
-| `description` | Optional supporting copy (`<div>` wrapper)       |
-| `actions`     | Optional buttons or links                        |
+<!-- Source: packages/vue/manifests/ghost-empty-state.manifest.json. Run pnpm docs:api:write after it changes. -->
+
+| Prop           | Type                          | Default | Description                                    |
+| -------------- | ----------------------------- | ------- | ---------------------------------------------- |
+| `as`           | `GhostEmptyStateElement`      | `"div"` | Root element. Prefer `div` inside table cells. |
+| `headingLevel` | `GhostEmptyStateHeadingLevel` | `3`     | Heading level wrapping the `title` slot.       |
+
+| Slot          | Slot props | Description                                                 |
+| ------------- | ---------- | ----------------------------------------------------------- |
+| `actions`     | —          | Optional buttons or links; not a tab stop itself.           |
+| `description` | —          | Optional supporting copy in a div wrapper.                  |
+| `title`       | —          | Optional heading copy. Rendered as h1–h6 from headingLevel. |
+| `visual`      | —          | Optional decorative graphic. Wrapper is aria-hidden.        |
+
+<!-- @generated docs-api:vue/ghost-empty-state end -->
+
+<!-- @generated docs-api:themes/ghost-empty-state begin -->
+
+<!-- Source: packages/themes/manifests/ghost-empty-state.manifest.json. Run pnpm docs:api:write after it changes. -->
+
+`@ghostvue/themes` adds no props, events, or slots to the headless `GhostEmptyState` API, which it forwards.
+
+<!-- @generated docs-api:themes/ghost-empty-state end -->
 
 Native attributes fall through to the root. The component sets `class`,
 `data-ghost-empty-state`, `data-part="root"`, and `aria-labelledby` when

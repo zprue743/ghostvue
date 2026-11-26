@@ -37,8 +37,9 @@ obtain design approval, then replace the scaffolding with the approved contract
 and behavior tests. Keep the headless component thin and behavior in its composable.
 Do not ship the starter as a production widget.
 
-After implementation, run `pnpm manifests:write`, fill out manifest prose, and
-run `pnpm verify` and `pnpm test:e2e`. New registered examples need visual
+After implementation, run `pnpm manifests:write`, fill out manifest prose, run
+`pnpm docs:api:write` to refresh the page's generated API tables, and run
+`pnpm verify` and `pnpm test:e2e`. New registered examples need visual
 baselines via `pnpm test:visual:docker` before browser CI can pass (without
 Docker, add the `update-baselines` label to the PR; see
 [regenerating baselines in CI](../standards/testing.md#regenerating-baselines-in-ci)). Add a

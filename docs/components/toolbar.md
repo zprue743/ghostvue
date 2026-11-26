@@ -26,13 +26,31 @@ Headless use of the same contract without the SFC. Pass a template ref as
 
 ## API
 
-| Prop          | Type                                         | Default        | Description                                                                           |
-| ------------- | -------------------------------------------- | -------------- | ------------------------------------------------------------------------------------- |
-| `orientation` | `'horizontal' \| 'vertical'`                 | `'horizontal'` | Drives `aria-orientation` when vertical and roving arrow keys.                        |
-| `loop`        | `boolean`                                    | `true`         | Wrap arrow and Home/End movement from last to first.                                  |
-| `dir`         | `'ltr' \| 'rtl' \| undefined`                | `undefined`    | Optional text direction for horizontal arrow reversal.                                |
-| `label`       | `string \| undefined`                        | `undefined`    | Sets `aria-label`. Prefer `aria-labelledby` fallthrough when a heading names the bar. |
-| `as`          | `'div' \| 'section' \| 'footer' \| 'header'` | `'div'`        | Root element for the toolbar.                                                         |
+<!-- @generated docs-api:vue/ghost-toolbar begin -->
+
+<!-- Source: packages/vue/manifests/ghost-toolbar.manifest.json. Run pnpm docs:api:write after it changes. -->
+
+| Prop          | Type                      | Default        | Description                                                                |
+| ------------- | ------------------------- | -------------- | -------------------------------------------------------------------------- |
+| `as`          | `GhostToolbarElement`     | `"div"`        | Root element tag for the toolbar container.                                |
+| `dir`         | `GhostToolbarDirection`   | —              | Optional text direction for horizontal arrow reversal in RTL.              |
+| `label`       | `string`                  | —              | Accessible name via aria-label when a visible label element is not used.   |
+| `loop`        | `boolean`                 | `true`         | Wrap arrow and Home/End movement from last enabled item to first.          |
+| `orientation` | `GhostToolbarOrientation` | `"horizontal"` | Toolbar layout and roving arrow axis. Sets aria-orientation when vertical. |
+
+| Slot      | Slot props | Description                                                         |
+| --------- | ---------- | ------------------------------------------------------------------- |
+| `default` | —          | Toolbar items such as GhostButton, GhostSwitch, and GhostSeparator. |
+
+<!-- @generated docs-api:vue/ghost-toolbar end -->
+
+<!-- @generated docs-api:themes/ghost-toolbar begin -->
+
+<!-- Source: packages/themes/manifests/ghost-toolbar.manifest.json. Run pnpm docs:api:write after it changes. -->
+
+`@ghostvue/themes` adds no props, events, or slots to the headless `GhostToolbar` API, which it forwards.
+
+<!-- @generated docs-api:themes/ghost-toolbar end -->
 
 Native attributes and listeners fall through to the root. There is no v-model.
 `defineExpose` provides `element`, `focus()`, and `blur()` on the toolbar root.

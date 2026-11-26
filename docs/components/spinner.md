@@ -28,9 +28,15 @@ Headless use of the same contract without the SFC:
 
 ## API
 
-| Prop    | Type     | Default     | Description                                                     |
-| ------- | -------- | ----------- | --------------------------------------------------------------- |
-| `label` | `string` | `'Loading'` | Status message rendered as visually hidden live-region content. |
+<!-- @generated docs-api:vue/ghost-spinner begin -->
+
+<!-- Source: packages/vue/manifests/ghost-spinner.manifest.json. Run pnpm docs:api:write after it changes. -->
+
+| Prop    | Type     | Default     | Description                                                                                                                                             |
+| ------- | -------- | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `label` | `string` | `"Loading"` | Status message rendered as visually hidden live-region content. role=status is nameFrom author; contents, not aria-label, are what polite AT announces. |
+
+<!-- @generated docs-api:vue/ghost-spinner end -->
 
 Native attributes and listeners fall through to the status span. There is no
 default slot, no v-model, and no exposed ref. The component does not generate an
@@ -44,10 +50,18 @@ relationship needs it.
 Importing the themed component loads the default stylesheet. Visual props exist
 only on this wrapper:
 
-| Prop   | Type                                | Default    | Description            |
-| ------ | ----------------------------------- | ---------- | ---------------------- |
-| `tone` | `'accent' \| 'neutral' \| 'danger'` | `'accent'` | Semantic color intent. |
-| `size` | `'sm' \| 'md' \| 'lg'`              | `'md'`     | Compact status size.   |
+<!-- @generated docs-api:themes/ghost-spinner begin -->
+
+<!-- Source: packages/themes/manifests/ghost-spinner.manifest.json. Run pnpm docs:api:write after it changes. -->
+
+`@ghostvue/themes` adds these to the headless `GhostSpinner` API, which it forwards:
+
+| Prop   | Type                                | Default    | Description                                                                                   |
+| ------ | ----------------------------------- | ---------- | --------------------------------------------------------------------------------------------- |
+| `tone` | `'accent' \| 'neutral' \| 'danger'` | `"accent"` | Semantic color intent. The default omits data-tone so CSS can treat a missing hook as accent. |
+| `size` | `'sm' \| 'md' \| 'lg'`              | `"md"`     | Compact status size. The default omits data-size so CSS can treat a missing hook as md.       |
+
+<!-- @generated docs-api:themes/ghost-spinner end -->
 
 Size scales through `--ghost-control-size-*-font` because
 `--ghost-action-spinner-size` is `em`-relative. Color uses

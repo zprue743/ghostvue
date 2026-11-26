@@ -6,13 +6,21 @@ GhostVue exposes a **local, read-only** [Model Context Protocol](https://modelco
 
 ## What ships in v1
 
-| Tool              | Purpose                                                                              |
-| ----------------- | ------------------------------------------------------------------------------------ |
-| `list_components` | Summarize manifests under `@ghostvue/vue` and `@ghostvue/themes`                     |
-| `get_component`   | Full JSON manifest ([ADR 0006](../adr/0006-component-manifest-schema.md))            |
-| `get_examples`    | Metadata and `.vue` source from [`examples/registry.ts`](../../examples/registry.ts) |
-| `search_docs`     | Search sidebar-published docs (same corpus as `llms-full.txt`)                       |
-| `get_tokens`      | Resolved catalog from `@ghostvue/themes/tokens.json`                                 |
+<!-- @generated docs-api:mcp-tools begin -->
+
+<!-- Source: defineTool calls in packages/mcp/src and packages/mcp/src/contract.ts. Run pnpm docs:api:write after they change. -->
+
+| Tool              | Title             | Inputs                                                         | Description                                                                                                                                                                                                                                                                                                                   |
+| ----------------- | ----------------- | -------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `get_component`   | Get component     | `name`, `package`                                              | Return one full GhostVue component manifest, validated against the bundled manifest schema. Pass package "@ghostvue/themes" for the themed wrapper.                                                                                                                                                                           |
+| `get_examples`    | Get examples      | `id`, `component`, `layer`, `includeSource`, `limit`, `cursor` | Read GhostVue executable examples (examples/registry.ts). Pass `id` (e.g. button/basic) for one example or `component` (e.g. button) for every example under `component/`, with .vue source unless includeSource is false. With neither, list catalog metadata only (no source), paged with cursor/nextCursor.                |
+| `get_tokens`      | Get design tokens | `name`, `prefix`, `tier`, `includeValues`, `limit`             | Read the resolved GhostVue design-token catalog (@ghostvue/themes tokens.json). Pass `name` for one exact token or `prefix` for every token under `prefix.`; omit both for the catalog header (modes, densities, attributes, token count) only.                                                                               |
+| `list_components` | List components   | `package`, `status`, `query`, `limit`, `cursor`                | List GhostVue component manifests as summary rows with optional package, status, and text filters. Use get_component for a full manifest.                                                                                                                                                                                     |
+| `search_docs`     | Search docs       | `query`, `limit`, `section`                                    | Full-text search over the GhostVue docs site pages listed in its sidebar (the llms-full.txt corpus). Ranks pages by BM25 over title, description, and body, matching whole words only (no fuzzy matching), and returns each hit with a short snippet. Use `section` to search one top-level sidebar section, e.g. Components. |
+
+Every tool also accepts `expectedGhostvueVersion`. Every successful payload carries tool contract `schemaVersion` `1.0.0` (`toolContractSchemaVersion`).
+
+<!-- @generated docs-api:mcp-tools end -->
 
 Transport is **stdio** only. HTTP (GHO-205) and `validate_usage` (GHO-206) are deferred.
 

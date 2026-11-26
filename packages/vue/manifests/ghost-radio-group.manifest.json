@@ -11,14 +11,14 @@
       "type": "GhostRadioGroupElement",
       "default": "fieldset",
       "required": false,
-      "description": "Declared prop `as`.",
+      "description": "Root host. Non-fieldset hosts use `role=\"radiogroup\"`.",
       "deprecated": false
     },
     {
       "name": "defaultValue",
       "type": "string",
       "required": false,
-      "description": "Declared prop `defaultValue`.",
+      "description": "Initial value when uncontrolled; omitted means none checked. Form reset restores this seed.",
       "deprecated": false
     },
     {
@@ -26,7 +26,7 @@
       "type": "boolean",
       "default": false,
       "required": false,
-      "description": "Declared prop `disabled`.",
+      "description": "Disables the group.",
       "deprecated": false
     },
     {
@@ -34,21 +34,21 @@
       "type": "boolean",
       "default": false,
       "required": false,
-      "description": "Declared prop `invalid`.",
+      "description": "Sets `aria-invalid` on the root for Field.",
       "deprecated": false
     },
     {
       "name": "modelValue",
       "type": "string",
       "required": false,
-      "description": "Declared prop `modelValue`.",
+      "description": "Controlled selected value. Omit for uncontrolled use.",
       "deprecated": false
     },
     {
       "name": "name",
       "type": "string",
       "required": false,
-      "description": "Declared prop `name`.",
+      "description": "Shared native `name`; generated when omitted.",
       "deprecated": false
     },
     {
@@ -56,7 +56,7 @@
       "type": "GhostRadioGroupOrientation",
       "default": "vertical",
       "required": false,
-      "description": "Declared prop `orientation`.",
+      "description": "Themed layout (`data-orientation`); not keyboard behavior.",
       "deprecated": false
     },
     {
@@ -64,7 +64,7 @@
       "type": "boolean",
       "default": false,
       "required": false,
-      "description": "Declared prop `required`.",
+      "description": "Native required on item inputs.",
       "deprecated": false
     }
   ],

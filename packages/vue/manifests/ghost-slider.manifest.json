@@ -10,7 +10,7 @@
       "name": "defaultValue",
       "type": "GhostSliderValue",
       "required": false,
-      "description": "Declared prop `defaultValue`.",
+      "description": "Uncontrolled seed and form-reset baseline.",
       "deprecated": false
     },
     {
@@ -18,14 +18,14 @@
       "type": "boolean",
       "default": false,
       "required": false,
-      "description": "Declared prop `disabled`.",
+      "description": "Non-operable; hidden inputs not submitted.",
       "deprecated": false
     },
     {
       "name": "form",
       "type": "string",
       "required": false,
-      "description": "Declared prop `form`.",
+      "description": "External form association.",
       "deprecated": false
     },
     {
@@ -33,14 +33,14 @@
       "type": "number",
       "default": 100,
       "required": false,
-      "description": "Declared prop `max`.",
+      "description": "Upper bound.",
       "deprecated": false
     },
     {
       "name": "messages",
       "type": "GhostSliderMessages",
       "required": false,
-      "description": "Declared prop `messages`.",
+      "description": "Overridable range-thumb naming strings (`minimum`, `maximum`) and `aria-label` formatters (`formatMinimumLabel`, `formatMaximumLabel`).",
       "deprecated": false
     },
     {
@@ -48,28 +48,28 @@
       "type": "number",
       "default": 0,
       "required": false,
-      "description": "Declared prop `min`.",
+      "description": "Lower bound.",
       "deprecated": false
     },
     {
       "name": "modelValue",
       "type": "GhostSliderValue",
       "required": false,
-      "description": "Declared prop `modelValue`.",
+      "description": "Controlled value; tuple when `range` is true.",
       "deprecated": false
     },
     {
       "name": "name",
       "type": "string",
       "required": false,
-      "description": "Declared prop `name`.",
+      "description": "Primary hidden field name.",
       "deprecated": false
     },
     {
       "name": "nameMax",
       "type": "string",
       "required": false,
-      "description": "Declared prop `nameMax`.",
+      "description": "High thumb name when `range` is true.",
       "deprecated": false
     },
     {
@@ -77,7 +77,7 @@
       "type": "'horizontal' | 'vertical'",
       "default": "horizontal",
       "required": false,
-      "description": "Declared prop `orientation`.",
+      "description": "Axis and keyboard mapping.",
       "deprecated": false
     },
     {
@@ -85,7 +85,7 @@
       "type": "boolean",
       "default": false,
       "required": false,
-      "description": "Declared prop `range`.",
+      "description": "Two-thumb interval mode.",
       "deprecated": false
     },
     {
@@ -93,14 +93,14 @@
       "type": "number",
       "default": 1,
       "required": false,
-      "description": "Declared prop `step`.",
+      "description": "Snap increment.",
       "deprecated": false
     },
     {
       "name": "valueText",
       "type": "string",
       "required": false,
-      "description": "Declared prop `valueText`.",
+      "description": "`aria-valuetext` for single-thumb mode.",
       "deprecated": false
     }
   ],

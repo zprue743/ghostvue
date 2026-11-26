@@ -78,21 +78,47 @@ long option text wraps.
 
 ### `GhostCombobox`
 
-| Prop            | Type                              | Default     | Description                                    |
-| --------------- | --------------------------------- | ----------- | ---------------------------------------------- |
-| `modelValue`    | `string \| string[] \| undefined` | `undefined` | Controlled selection; `undefined` clears.      |
-| `defaultValue`  | same                              | `undefined` | Uncontrolled seed and reset value.             |
-| `multiple`      | `boolean`                         | `false`     | Multi-select toggles membership in `string[]`. |
-| `search`        | `string \| undefined`             | `undefined` | Controlled query in the input.                 |
-| `defaultSearch` | `string`                          | `''`        | Initial query when `search` is omitted.        |
-| `name`          | `string`                          | `undefined` | Submit input name.                             |
-| `disabled`      | `boolean`                         | `false`     | Disables input, trigger, and options.          |
-| `required`      | `boolean`                         | `false`     | Required when `name` is set.                   |
-| `invalid`       | `boolean`                         | `false`     | `aria-invalid` on the input.                   |
-| `loading`       | `boolean`                         | `false`     | Hides empty slot; sets listbox `aria-busy`.    |
-| `open`          | `boolean \| undefined`            | `undefined` | Controlled listbox open state.                 |
-| `defaultOpen`   | `boolean`                         | `false`     | Initial open state.                            |
-| `placeholder`   | `string`                          | `undefined` | Input placeholder (wins over the input's own). |
+<!-- @generated docs-api:vue/ghost-combobox begin -->
+
+<!-- Source: packages/vue/manifests/ghost-combobox.manifest.json. Run pnpm docs:api:write after it changes. -->
+
+| Prop            | Type                    | Default | Description                                    |
+| --------------- | ----------------------- | ------- | ---------------------------------------------- |
+| `allowDeselect` | `boolean`               | `false` | Declared prop `allowDeselect`.                 |
+| `defaultOpen`   | `boolean`               | `false` | Initial open state.                            |
+| `defaultSearch` | `string`                | `""`    | Initial query when `search` is omitted.        |
+| `defaultValue`  | `GhostComboboxValue`    | —       | Uncontrolled seed and reset value.             |
+| `disabled`      | `boolean`               | `false` | Disables input, trigger, and options.          |
+| `form`          | `string`                | —       | Declared prop `form`.                          |
+| `invalid`       | `boolean`               | `false` | `aria-invalid` on the input.                   |
+| `loading`       | `boolean`               | `false` | Hides empty slot; sets listbox `aria-busy`.    |
+| `messages`      | `GhostComboboxMessages` | —       | Declared prop `messages`.                      |
+| `modelValue`    | `GhostComboboxValue`    | —       | Controlled selection; `undefined` clears.      |
+| `multiple`      | `boolean`               | `false` | Multi-select toggles membership in `string[]`. |
+| `name`          | `string`                | —       | Submit input name.                             |
+| `open`          | `boolean`               | —       | Controlled listbox open state.                 |
+| `placeholder`   | `string`                | —       | Input placeholder (wins over the input's own). |
+| `required`      | `boolean`               | `false` | Required when `name` is set.                   |
+| `search`        | `string`                | —       | Controlled query in the input.                 |
+| `virtualized`   | `boolean`               | `false` | Declared prop `virtualized`.                   |
+
+| Event    | Payload                                 | Description          |
+| -------- | --------------------------------------- | -------------------- |
+| `search` | `{ query: string; requestId: number; }` | Emitted as `search`. |
+
+| Slot      | Slot props | Description        |
+| --------- | ---------- | ------------------ |
+| `default` | —          | Container content. |
+
+<!-- @generated docs-api:vue/ghost-combobox end -->
+
+<!-- @generated docs-api:themes/ghost-combobox begin -->
+
+<!-- Source: packages/themes/manifests/ghost-combobox.manifest.json. Run pnpm docs:api:write after it changes. -->
+
+`@ghostvue/themes` adds no props, events, or slots to the headless `GhostCombobox` API, which it forwards.
+
+<!-- @generated docs-api:themes/ghost-combobox end -->
 
 ### Events
 
