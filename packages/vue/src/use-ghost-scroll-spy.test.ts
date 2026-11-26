@@ -130,29 +130,22 @@ function mountContainerHarness(
           spyProps['endThreshold'] = options.endThreshold
         }
         return () =>
-          h(
-            GhostScrollSpy,
-            spyProps,
-            () =>
-              h(GhostScrollSpyList, null, () => [
-                h(GhostScrollSpyItem, null, () =>
-                  h(GhostScrollSpyLink, { target: 'alpha' }, () => 'Alpha'),
-                ),
-                h(GhostScrollSpyItem, null, () =>
-                  h(GhostScrollSpyLink, { target: 'beta' }, () => 'Beta'),
-                ),
-                ...(showGamma.value
-                  ? [
-                      h(GhostScrollSpyItem, null, () =>
-                        h(
-                          GhostScrollSpyLink,
-                          { target: 'gamma' },
-                          () => 'Gamma',
-                        ),
-                      ),
-                    ]
-                  : []),
-              ]),
+          h(GhostScrollSpy, spyProps, () =>
+            h(GhostScrollSpyList, null, () => [
+              h(GhostScrollSpyItem, null, () =>
+                h(GhostScrollSpyLink, { target: 'alpha' }, () => 'Alpha'),
+              ),
+              h(GhostScrollSpyItem, null, () =>
+                h(GhostScrollSpyLink, { target: 'beta' }, () => 'Beta'),
+              ),
+              ...(showGamma.value
+                ? [
+                    h(GhostScrollSpyItem, null, () =>
+                      h(GhostScrollSpyLink, { target: 'gamma' }, () => 'Gamma'),
+                    ),
+                  ]
+                : []),
+            ]),
           )
       },
     }),
