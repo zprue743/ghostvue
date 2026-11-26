@@ -104,6 +104,13 @@ test.describe('docs quick wins', () => {
       await page.mouse.move(640, 400)
       expect(await animationName()).toBe('none')
 
+      // Hover is read from the non-transforming brand link, never the rotating
+      // <img>, so the pointer cannot fall out of a tilted hit box and restart
+      // the wiggle. Hovering the wordmark proves the trigger is the link.
+      await wordmark.hover()
+      expect(await animationName()).toBe('ghost-nav-logo-wiggle')
+      await page.mouse.move(640, 400)
+
       await page.emulateMedia({ reducedMotion: 'reduce' })
       await logo.hover()
       expect(await animationName()).toBe('none')
