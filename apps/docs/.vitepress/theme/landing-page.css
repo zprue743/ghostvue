@@ -1,23 +1,32 @@
 /*
- * Layout B landing page chrome. Scoped under .ghost-landing so marketing layout
- * rules do not leak into VitePress doc pages.
+ * Docs home page. Every selector is rooted at `.ghost-landing`, so these
+ * marketing rules cannot reach VitePress doc pages. The block is unscoped
+ * because most of the page is rendered by `Ghost*` components and example
+ * SFCs whose elements a scoped block could not address.
+ *
+ * Contents: canvas and sections, section chrome, per-section layout, then
+ * scroll motion (CSS scroll-driven animations with an observer fallback).
  */
 .ghost-landing {
-  --ghost-hero-glow: radial-gradient(
-    360px circle at 50% 0%,
-    color-mix(in oklch, var(--ghost-action-primary-bg) 16%, transparent),
-    transparent 70%
-  );
-  --ghost-landing-card-shadow:
-    0 4px 16px color-mix(in oklch, var(--ghost-surface-fg) 8%, transparent),
-    inset 0 1px 0 color-mix(in oklch, var(--ghost-surface-fg) 6%, transparent);
-  box-sizing: border-box;
+  --_landing-gutter: clamp(1.25rem, 4vw, 2.5rem);
+  --_landing-nav: var(--vp-nav-height, 64px);
+  /*
+   * One hundredth of the viewport height. Every height-relative length on
+   * the page goes through this property so the page has a single dependency
+   * on viewport height. A full-page screenshot renders beyond the viewport,
+   * which changes what `vh` and `svh` resolve to mid-capture; the visual
+   * spec pins this property to pixels so the layout cannot move under it.
+   * `svh` rather than `vh` keeps mobile layouts still while browser chrome
+   * collapses.
+   */
+  --_landing-vh: 1svh;
+  --_landing-accent: var(--ghost-action-primary-bg);
+  --_landing-code-font:
+    ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
   color: var(--ghost-surface-fg);
-  font-size: 15px;
+  font-size: 1rem;
   line-height: 1.6;
-  margin-inline: auto;
-  max-inline-size: 1040px;
-  padding: 2.5rem 1.5rem 4.5rem;
   width: 100%;
 }
 
@@ -27,217 +36,107 @@
   box-sizing: border-box;
 }
 
-html:not(.dark) .ghost-landing {
-  --ghost-hero-glow: radial-gradient(
-    360px circle at 50% 0%,
-    color-mix(in oklch, var(--ghost-action-primary-bg) 10%, transparent),
-    transparent 70%
-  );
-  --ghost-landing-card-shadow:
-    0 2px 8px color-mix(in oklch, var(--ghost-surface-fg) 6%, transparent),
-    inset 0 1px 0 color-mix(in oklch, #ffffff 80%, transparent);
-}
+/* ---------- Sections ---------- */
 
-html.dark .ghost-landing {
-  background-image: var(--ghost-hero-glow);
-  background-repeat: no-repeat;
-}
-
-.ghost-landing__hero {
-  margin-block-end: 3.25rem;
-  margin-inline: auto;
-  max-inline-size: 680px;
-  text-align: center;
-}
-
-.ghost-landing__hero-mark {
+.ghost-landing__section {
   align-items: center;
-  background: var(--ghost-elevation-1-bg, var(--ghost-surface-subtle-bg));
-  border: 1px solid var(--ghost-border-default);
-  border-radius: calc(1.1rem * var(--ghost-roundness, 1));
-  box-shadow: var(--ghost-landing-card-shadow);
-  display: inline-flex;
-  height: 4.5rem;
-  justify-content: center;
-  margin-block-end: 1.15rem;
-  width: 4.5rem;
-}
-
-.ghost-landing__title {
-  color: var(--ghost-surface-fg);
-  font-size: clamp(2.25rem, 4.5vw, 3.2rem);
-  font-weight: 760;
-  letter-spacing: -0.03em;
-  line-height: 1.1;
-  margin: 0 0 0.85rem;
-}
-
-.ghost-landing__tagline {
-  color: var(--ghost-text-muted);
-  font-size: 1.1rem;
-  line-height: 1.55;
-  margin: 0 auto 1.75rem;
-  max-inline-size: 54ch;
-}
-
-.ghost-landing__tagline code {
-  background: var(--ghost-surface-subtle-bg);
-  border: 1px solid var(--ghost-border-muted);
-  border-radius: calc(0.35rem * var(--ghost-roundness, 1));
-  color: var(--ghost-surface-fg);
-  font-size: 0.92em;
-  padding: 0.12rem 0.38rem;
-}
-
-.ghost-landing__actions {
-  align-items: center;
+  border-block-start: 1px solid var(--ghost-border-muted);
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.65rem;
-  justify-content: center;
-}
-
-.ghost-landing__install {
-  align-items: center;
-  background: var(--vp-code-block-bg, var(--ghost-surface-muted-bg));
-  border: 1px solid var(--ghost-border-default);
-  border-radius: calc(0.5rem * var(--ghost-roundness, 1));
-  color: var(--ghost-text-muted);
-  cursor: pointer;
-  display: inline-flex;
-  font: inherit;
-  font-size: 0.8125rem;
-  gap: 0.5rem;
-  height: var(--ghost-control-height, 2.25rem);
-  padding: 0 0.9rem;
-  text-decoration: none;
-  white-space: nowrap;
-}
-
-.ghost-landing__install:hover {
-  border-color: var(--ghost-action-primary-bg);
-  color: var(--ghost-surface-fg);
-}
-
-.ghost-landing__install code {
-  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  font-size: inherit;
-}
-
-.ghost-landing__comparison {
-  display: grid;
-  gap: 1.25rem;
-  grid-template-columns: 1fr 1fr;
-  margin-block-end: 4.5rem;
-}
-
-.ghost-landing .ghost-landing-example {
-  background: var(--ghost-elevation-1-bg, var(--ghost-surface-subtle-bg));
-  border: 1px solid var(--ghost-border-default);
-  border-radius: calc(0.85rem * var(--ghost-roundness, 1));
-  box-shadow: var(--ghost-landing-card-shadow);
-  display: flex;
-  flex-direction: column;
-  margin: 0;
-  overflow: hidden;
-}
-
-.ghost-landing .ghost-landing-example__header {
-  align-items: baseline;
-  background: var(--ghost-elevation-1-bg, var(--ghost-surface-subtle-bg));
-  display: flex;
-  gap: 0.75rem;
-  justify-content: space-between;
-  padding: 0.9rem 1.15rem 0.8rem;
-}
-
-.ghost-landing .ghost-landing-example__title {
-  color: var(--ghost-surface-fg);
-  font-size: 0.92rem;
-  font-weight: 650;
-}
-
-.ghost-landing .ghost-landing-example__meta {
-  color: var(--ghost-action-primary-bg);
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-size: 0.76rem;
-}
-
-.ghost-landing .ghost-landing-example__preview {
-  align-items: center;
-  background-color: var(--ghost-surface-bg);
-  background-image: radial-gradient(
-    var(--ghost-border-default) 1px,
-    transparent 1px
-  );
-  background-size: 0.85rem 0.85rem;
-  border-block: 1px solid var(--ghost-border-muted);
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.65rem;
-  justify-content: center;
-  min-height: 9.25rem;
-  padding: 2.1rem 1.25rem 1.5rem;
+  /*
+   * Horizontal intro/outro offsets must never widen the page. `clip` (not
+   * `hidden`) keeps the section from becoming a scroll container, which
+   * would also detach its view timeline from the document scroller.
+   */
+  overflow-x: clip;
+  padding-block: clamp(4rem, calc(var(--_landing-vh) * 11), 7.5rem);
   position: relative;
+  scroll-margin-block-start: var(--_landing-nav);
 }
 
-.ghost-landing .ghost-landing-example__hint {
-  color: var(--ghost-text-subtle);
-  font-size: 0.68rem;
-  font-weight: 650;
-  inset-block-start: 0.65rem;
-  inset-inline-start: 0.9rem;
-  letter-spacing: 0.06em;
+.ghost-landing__section:first-child {
+  border-block-start: 0;
+}
+
+/*
+ * Sections take programmatic focus from the rail so Tab continues inside
+ * them. They are not in the Tab order, so they show no focus ring.
+ */
+.ghost-landing__section:focus {
+  outline: none;
+}
+
+.ghost-landing__section:nth-child(even) {
+  background: var(--ghost-surface-subtle-bg);
+}
+
+.ghost-landing__inner {
+  inline-size: 100%;
+  margin-inline: auto;
+  max-inline-size: 78rem;
+  padding-inline: var(--_landing-gutter);
+}
+
+/* Leave the right-hand gutter to the section rail once it is visible. */
+@media (min-width: 1100px) {
+  .ghost-landing__inner {
+    padding-inline: 4.5rem;
+  }
+}
+
+.ghost-landing__split {
+  align-items: center;
+  display: grid;
+  gap: clamp(2rem, 5vw, 4rem);
+  grid-template-columns: minmax(0, 1fr);
+}
+
+@media (min-width: 960px) {
+  .ghost-landing__split {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+  }
+}
+
+/* ---------- Section chrome ---------- */
+
+.ghost-landing__header {
+  display: grid;
+  gap: 0.9rem;
+  justify-items: start;
+  margin-block-end: clamp(1.75rem, calc(var(--_landing-vh) * 4), 2.75rem);
+  max-inline-size: 46rem;
+}
+
+.ghost-landing__header h2 {
+  color: var(--ghost-surface-fg);
+  font-size: clamp(1.75rem, 3.4vw, 2.6rem);
+  font-weight: 740;
+  letter-spacing: -0.025em;
+  line-height: 1.12;
   margin: 0;
-  position: absolute;
+}
+
+.ghost-landing__header p {
+  color: var(--ghost-text-muted);
+  font-size: 1.05rem;
+  margin: 0;
+}
+
+.ghost-landing__header .ghost-landing__eyebrow {
+  color: var(--ghost-text-primary, var(--_landing-accent));
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
   text-transform: uppercase;
 }
 
-.ghost-landing .ghost-landing-example__preview--headless :deep(button) {
-  all: revert;
-  cursor: pointer;
-}
-
-.ghost-landing .ghost-landing-example__code {
-  background: var(--vp-code-block-bg, var(--ghost-surface-muted-bg));
+.ghost-landing :is(.ghost-landing__header, .ghost-landing__tagline) code {
+  background: var(--ghost-surface-muted-bg);
+  border: 1px solid var(--ghost-border-muted);
+  border-radius: calc(0.35rem * var(--ghost-roundness, 1));
   color: var(--ghost-surface-fg);
-  flex: 1;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  font-size: 0.78rem;
-  line-height: 1.55;
-  margin: 0;
-  overflow-x: auto;
-  padding: 0.95rem 1.15rem;
-  white-space: pre;
-}
-
-.ghost-landing__section {
-  border-block-start: 1px solid var(--ghost-border-default);
-  margin-block-end: 4.25rem;
-  padding-block-start: 3.25rem;
-}
-
-.ghost-landing__section-split {
-  align-items: start;
-  display: grid;
-  gap: 2.75rem;
-  grid-template-columns: 5fr 7fr;
-}
-
-.ghost-landing__section h2 {
-  color: var(--ghost-surface-fg);
-  font-size: 1.45rem;
-  font-weight: 720;
-  letter-spacing: -0.02em;
-  line-height: 1.25;
-  margin: 0 0 0.7rem;
-}
-
-.ghost-landing__section > p,
-.ghost-landing__section-split > div > p {
-  color: var(--ghost-text-muted);
-  font-size: 0.95rem;
-  margin: 0 0 1rem;
+  font-family: var(--_landing-code-font);
+  font-size: 0.88em;
+  padding: 0.1rem 0.36rem;
 }
 
 .ghost-landing__action-link {
@@ -246,41 +145,262 @@ html.dark .ghost-landing {
   text-decoration: none;
 }
 
+.ghost-landing__section-actions {
+  display: flex;
+  justify-content: center;
+  margin-block-start: 2rem;
+}
+
+/*
+ * Live example canvases reuse `.ghost-example__preview` for its native
+ * control reset (see docs-demo-compat.css). The docs frame's own inset and
+ * fill do not apply here; each landing stage sets its own.
+ *
+ * Examples adapt to their canvas with `@container ghost-demo` queries, the
+ * same contract as the docs preview frame, so every stage is that container.
+ */
+.ghost-landing .ghost-example__preview {
+  background: transparent;
+  container: ghost-demo / inline-size;
+  min-inline-size: 0;
+  overflow: visible;
+  padding: 0;
+}
+
+.ghost-landing .ghost-landing__stage {
+  align-items: center;
+  background-color: var(--ghost-surface-bg);
+  background-image: radial-gradient(
+    var(--ghost-border-default) 1px,
+    transparent 1px
+  );
+  background-size: 0.85rem 0.85rem;
+  border: 1px solid var(--ghost-border-muted);
+  border-radius: calc(0.6rem * var(--ghost-roundness, 1));
+  display: grid;
+  justify-items: center;
+  min-block-size: 11rem;
+  padding: 1.5rem 1.25rem;
+}
+
+/* A wide example fills the stage instead of sitting centred in it. */
+.ghost-landing .ghost-landing__stage--fill {
+  justify-items: stretch;
+}
+
+/* Examples that bring their own card need no second frame around them. */
+.ghost-landing .ghost-landing__stage--bare {
+  background: transparent;
+  border: 0;
+  display: block;
+  min-block-size: 0;
+  padding: 0;
+}
+
+.ghost-landing__code-window pre {
+  background: var(--vp-code-block-bg, var(--ghost-surface-muted-bg));
+  border-radius: calc(0.5rem * var(--ghost-roundness, 1));
+  color: var(--ghost-surface-fg);
+  font-family: var(--_landing-code-font);
+  font-size: 0.8125rem;
+  line-height: 1.6;
+  margin: 0;
+  max-block-size: 26rem;
+  max-inline-size: 100%;
+  overflow: auto;
+  padding: 1rem 1.1rem;
+  white-space: pre;
+}
+
+.ghost-landing__code-window pre:focus-visible {
+  outline: var(--ghost-focus-ring-width, 2px) solid
+    var(--ghost-focus-ring-color, var(--_landing-accent));
+  outline-offset: 2px;
+}
+
+.ghost-landing__code-window-bar {
+  align-items: baseline;
+  color: var(--ghost-text-muted);
+  display: flex;
+  flex-wrap: wrap;
+  font-size: 0.8rem;
+  gap: 0.35rem 0.9rem;
+  justify-content: space-between;
+}
+
+.ghost-landing__code-window-file {
+  color: var(--ghost-surface-fg);
+  font-family: var(--_landing-code-font);
+  font-weight: 600;
+}
+
+/* ---------- 1. Hero ---------- */
+
+.ghost-landing__section--hero {
+  /* Fills the first screen so the outro starts from a settled page. */
+  min-block-size: calc(var(--_landing-vh) * 100 - var(--_landing-nav));
+  padding-block-start: clamp(2.5rem, calc(var(--_landing-vh) * 7), 5rem);
+}
+
+.ghost-landing__section--hero::before {
+  background: radial-gradient(
+    42rem circle at 50% 0%,
+    color-mix(in oklch, var(--_landing-accent) 14%, transparent),
+    transparent 70%
+  );
+  content: '';
+  inset: 0;
+  pointer-events: none;
+  position: absolute;
+}
+
+.ghost-landing__section--hero .ghost-landing__inner {
+  /*
+   * Wider than other sections: the cluster examples switch to their roomy
+   * layout at a 24rem canvas, which three columns only reach out here.
+   */
+  max-inline-size: 88rem;
+  position: relative;
+}
+
+.ghost-landing__hero-copy {
+  display: grid;
+  gap: 1rem;
+  justify-items: center;
+  margin-inline: auto;
+  max-inline-size: 54rem;
+  text-align: center;
+}
+
+.ghost-landing__hero-mark {
+  align-items: center;
+  background: var(--ghost-elevation-1-bg, var(--ghost-surface-subtle-bg));
+  border: 1px solid var(--ghost-border-default);
+  border-radius: calc(1.1rem * var(--ghost-roundness, 1));
+  box-shadow: var(--ghost-elevation-1-shadow, none);
+  display: inline-flex;
+  height: 4.25rem;
+  justify-content: center;
+  width: 4.25rem;
+}
+
+.ghost-landing__title {
+  color: var(--ghost-surface-fg);
+  font-size: clamp(2.4rem, 6vw, 4rem);
+  font-weight: 780;
+  letter-spacing: -0.035em;
+  line-height: 1.04;
+  margin: 0;
+}
+
+.ghost-landing__tagline {
+  color: var(--ghost-text-muted);
+  font-size: clamp(1.05rem, 1.6vw, 1.2rem);
+  line-height: 1.55;
+  margin: 0;
+  max-inline-size: 56ch;
+}
+
+.ghost-landing__actions,
+.ghost-landing__closing-actions {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: center;
+  margin-block-start: 0.5rem;
+}
+
+.ghost-landing__cluster {
+  align-items: start;
+  display: grid;
+  gap: 1.25rem;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 19rem), 1fr));
+  margin-block-start: clamp(2.5rem, calc(var(--_landing-vh) * 7), 4.5rem);
+}
+
+.ghost-landing .ghost-landing__cluster-item {
+  text-align: start;
+}
+
+/* ---------- 2. Headless or themed ---------- */
+
+.ghost-landing__layers {
+  display: grid;
+  gap: 1.25rem;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+@media (min-width: 820px) {
+  .ghost-landing__layers {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.ghost-landing__layer-header {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 0.75rem;
+  justify-content: space-between;
+}
+
+.ghost-landing__layer-title {
+  font-weight: 650;
+}
+
+/* Equal-width segments need room for the longest label. */
+.ghost-landing__layer-picker {
+  inline-size: min(100%, 27rem);
+}
+
+.ghost-landing__import {
+  color: var(--ghost-text-muted);
+  display: block;
+  font-family: var(--_landing-code-font);
+  font-size: 0.8rem;
+  overflow-wrap: anywhere;
+}
+
+/* ---------- 3. Progressive escape hatches ---------- */
+
 .ghost-landing__progression-layout {
   align-items: start;
   display: grid;
-  gap: 2.75rem;
-  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
-  margin-block-start: 1.25rem;
-  max-inline-size: 100%;
-  min-inline-size: 0;
+  gap: clamp(1.25rem, 4vw, 2.75rem);
+  grid-template-columns: minmax(0, 1fr);
 }
 
-#progression .ghost-tabs-list {
-  grid-column: 1;
-  grid-row: 1 / -1;
-  max-inline-size: 100%;
-  min-inline-size: 0;
+@media (min-width: 900px) {
+  .ghost-landing__progression-layout {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  }
 }
 
-#progression .ghost-tabs-content {
-  grid-column: 2;
-  max-inline-size: 100%;
+.ghost-landing__progression-layout > * {
   min-inline-size: 0;
 }
 
 /*
- * GhostTabsTrigger/List/Content replace the consumer `class` instead of merging it
- * (see GhostTabsTrigger.vue). Style tabs from the landing wrapper until the library
- * merges attrs.class.
+ * GhostTabs parts are styled from the section wrapper: the list doubles as a
+ * step index, so each trigger is a full-width row with its API on the right.
  */
+#progression .ghost-tabs-list {
+  border-block-start: 1px solid var(--ghost-border-muted);
+  gap: 0;
+  max-inline-size: 100%;
+  min-inline-size: 0;
+}
+
 #progression .ghost-tabs-trigger {
   align-items: baseline;
+  border-block-end: 1px solid var(--ghost-border-muted);
   border-inline-start: 2px solid transparent;
   border-radius: 0;
+  box-shadow: none;
   display: flex;
   flex-wrap: wrap;
-  font-size: 0.88rem;
+  font-size: 0.92rem;
   gap: 0.35rem 0.75rem;
   justify-content: space-between;
   max-inline-size: 100%;
@@ -290,13 +410,19 @@ html.dark .ghost-landing {
 }
 
 #progression .ghost-tabs-trigger[data-state='active'] {
-  border-inline-start-color: var(--ghost-action-primary-bg);
+  border-inline-start-color: var(--_landing-accent);
   font-weight: 650;
 }
 
+#progression .ghost-tabs-trigger span {
+  flex: 1 1 12rem;
+  min-inline-size: 0;
+}
+
 #progression .ghost-tabs-trigger code {
-  color: var(--ghost-action-primary-bg);
-  font-size: 0.76rem;
+  color: var(--ghost-text-primary, var(--_landing-accent));
+  font-family: var(--_landing-code-font);
+  font-size: 0.78rem;
   overflow-wrap: anywhere;
   white-space: normal;
 }
@@ -310,241 +436,372 @@ html.dark .ghost-landing {
   padding: 0;
 }
 
-#progression .ghost-tabs-list {
-  border-block-start: 1px solid var(--ghost-border-muted);
-  gap: 0;
+/* ---------- 4. Theming ---------- */
+
+.ghost-landing__theme-controls {
+  display: grid;
+  gap: 1.1rem;
+  justify-items: start;
+}
+
+.ghost-landing__theme-control {
+  display: grid;
+  font-size: 0.9rem;
+  font-weight: 600;
+  gap: 0.45rem;
+  justify-items: start;
   max-inline-size: 100%;
-  min-inline-size: 0;
 }
 
-#progression .ghost-tabs-trigger {
-  border-block-end: 1px solid var(--ghost-border-muted);
-  box-shadow: none;
-}
-
-#progression .ghost-tabs-trigger span {
-  flex: 1 1 12rem;
-  min-inline-size: 0;
-}
-
-.ghost-landing__code-window {
-  background: var(--vp-code-block-bg, var(--ghost-surface-muted-bg));
-  border: 1px solid var(--ghost-border-default);
-  border-radius: calc(0.75rem * var(--ghost-roundness, 1));
-  box-shadow: var(--ghost-landing-card-shadow);
-  max-inline-size: 100%;
-  min-inline-size: 0;
-  overflow: hidden;
-}
-
-.ghost-landing__code-window-bar {
+.ghost-landing__theme-control--inline {
   align-items: center;
-  background: var(--ghost-elevation-1-bg, var(--ghost-surface-subtle-bg));
-  border-block-end: 1px solid var(--ghost-border-muted);
+  grid-auto-flow: column;
+  gap: 0.75rem;
+}
+
+.ghost-landing__swatches {
+  display: grid;
+  gap: 0.5rem 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(9.5rem, 1fr));
+  inline-size: 100%;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.ghost-landing__swatch {
+  align-items: center;
   color: var(--ghost-text-muted);
   display: flex;
-  flex-wrap: wrap;
-  font-size: 0.78rem;
-  gap: 0.35rem 0.75rem;
-  justify-content: space-between;
-  max-inline-size: 100%;
-  padding: 0.65rem 1.1rem;
-}
-
-.ghost-landing__code-window-file {
-  color: var(--ghost-surface-fg);
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-weight: 600;
-}
-
-.ghost-landing__code-window pre {
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-size: 0.8125rem;
-  line-height: 1.6;
+  font-size: 0.85rem;
+  gap: 0.55rem;
   margin: 0;
-  max-inline-size: 100%;
-  overflow-x: auto;
-  overflow-wrap: anywhere;
-  padding: 1.15rem 1.25rem;
-  white-space: pre-wrap;
 }
 
-.ghost-landing__principles {
+.ghost-landing__swatch-chip {
+  block-size: 1.35rem;
+  border: 1px solid var(--ghost-border-default);
+  border-radius: calc(0.4rem * var(--ghost-roundness, 1));
+  flex: none;
+  /* Keep the token colour itself visible when forced colors is on. */
+  forced-color-adjust: none;
+  inline-size: 1.35rem;
+}
+
+.ghost-landing__theme-demos {
+  display: grid;
+  gap: 1.25rem;
+  min-inline-size: 0;
+}
+
+/* ---------- 5. Component surface ---------- */
+
+.ghost-landing__catalog {
   display: grid;
   gap: 1.5rem;
-  grid-template-columns: repeat(3, 1fr);
-  margin-block-start: 1.25rem;
+  grid-template-columns: minmax(0, 1fr);
 }
 
-.ghost-landing__principle {
-  background: var(--ghost-elevation-1-bg, var(--ghost-surface-subtle-bg));
-  border: 1px solid var(--ghost-border-default);
-  border-radius: calc(0.75rem * var(--ghost-roundness, 1));
-  box-shadow: var(--ghost-landing-card-shadow);
-  padding: 1.25rem;
+#components .ghost-tabs-list {
+  flex-wrap: wrap;
+  max-inline-size: 100%;
 }
 
-.ghost-landing__principle h3 {
-  color: var(--ghost-surface-fg);
-  font-size: 0.98rem;
-  font-weight: 650;
-  margin: 0 0 0.5rem;
+#components .ghost-tabs-content {
+  background: transparent;
+  border: 0;
+  margin: 0;
+  padding: 0;
 }
 
-.ghost-landing__principle p {
-  color: var(--ghost-text-muted);
-  font-size: 0.875rem;
-  line-height: 1.6;
+.ghost-landing__catalog-panel {
+  align-items: start;
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+@media (min-width: 1000px) {
+  .ghost-landing__catalog-panel {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  }
+}
+
+.ghost-landing__tiles {
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 12.5rem), 1fr));
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.ghost-landing__tiles > li {
+  display: grid;
   margin: 0;
 }
 
-.ghost-landing__principle code {
-  color: var(--ghost-action-primary-bg);
-  font-size: 0.84em;
+.ghost-landing .ghost-landing__tile {
+  color: inherit;
+  min-inline-size: 0;
+  text-decoration: none;
 }
 
-.ghost-landing__ledger-wrap {
-  background: var(--ghost-elevation-1-bg, var(--ghost-surface-subtle-bg));
-  border: 1px solid var(--ghost-border-default);
-  border-radius: calc(0.75rem * var(--ghost-roundness, 1));
-  box-shadow: var(--ghost-landing-card-shadow);
-  margin-block-start: 1.25rem;
-  overflow: hidden;
-}
-
-.ghost-landing__ledger {
-  border-collapse: collapse;
-  font-size: 0.88rem;
-  width: 100%;
-}
-
-.ghost-landing__ledger :is(th, td) {
-  border-block-end: 1px solid var(--ghost-border-muted);
-  padding: 0.8rem 1rem;
-  text-align: start;
-  vertical-align: top;
-}
-
-.ghost-landing__ledger tr:last-child td {
-  border-block-end: 0;
-}
-
-.ghost-landing__ledger th {
-  background: var(--ghost-surface-subtle-bg);
-  color: var(--ghost-text-muted);
-  font-size: 0.73rem;
+.ghost-landing__tile-title {
+  display: block;
   font-weight: 650;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
 }
 
-.ghost-landing__ledger td:first-child {
-  color: var(--ghost-action-primary-bg);
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-weight: 650;
-  white-space: nowrap;
-}
-
-.ghost-landing__ledger td:nth-child(2) {
+.ghost-landing__tile-summary {
   color: var(--ghost-text-muted);
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-size: 0.78rem;
-  white-space: nowrap;
+  display: block;
+  font-size: 0.84rem;
+  line-height: 1.45;
+  margin-block-start: 0.25rem;
+  /* Summaries can contain long unbroken API names. */
+  overflow-wrap: anywhere;
 }
 
-.ghost-landing__ledger td:last-child {
+/* ---------- 6. Agents and tooling ---------- */
+
+.ghost-landing__tooling {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.ghost-landing__tooling > li {
+  display: grid;
+  margin: 0;
+}
+
+.ghost-landing__tool h3 {
+  font-size: 1.02rem;
+  font-weight: 680;
+  line-height: 1.3;
+  margin: 0 0 0.4rem;
+}
+
+.ghost-landing__tool p {
   color: var(--ghost-text-muted);
+  font-size: 0.9rem;
+  line-height: 1.55;
+  margin: 0;
 }
 
-.ghost-landing__ledger td:last-child code {
-  color: var(--ghost-action-primary-bg);
-  font-size: 0.9em;
+/* ---------- 7. Closing ---------- */
+
+.ghost-landing__section--closing {
+  min-block-size: calc(var(--_landing-vh) * 72);
+}
+
+.ghost-landing__section--closing::before {
+  background: radial-gradient(
+    38rem circle at 50% 100%,
+    color-mix(in oklch, var(--_landing-accent) 13%, transparent),
+    transparent 70%
+  );
+  content: '';
+  inset: 0;
+  pointer-events: none;
+  position: absolute;
+}
+
+.ghost-landing__closing {
+  display: grid;
+  gap: 2rem;
+  justify-items: center;
+  position: relative;
+}
+
+.ghost-landing__closing .ghost-landing__header {
+  justify-items: center;
+  margin-block-end: 0;
+  text-align: center;
+}
+
+.ghost-landing__closing .ghost-landing__header h2 {
+  font-size: clamp(2rem, 4.6vw, 3.4rem);
+}
+
+.ghost-landing__closing-notice {
+  inline-size: 100%;
+  max-inline-size: 40rem;
+}
+
+.ghost-landing__notice-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 1.25rem;
 }
 
 .ghost-landing__footnote {
-  align-items: baseline;
-  border-block-start: 1px solid var(--ghost-border-default);
-  color: var(--ghost-text-muted);
   display: flex;
   flex-wrap: wrap;
-  font-size: 0.84rem;
-  gap: 1rem;
-  justify-content: space-between;
-  margin-block-start: 3.5rem;
-  padding-block-start: 1.5rem;
+  font-size: 0.88rem;
+  gap: 0.5rem 1.25rem;
+  justify-content: center;
+  margin: 0;
 }
 
-.ghost-landing__footnote a {
-  color: var(--ghost-action-primary-bg);
-  text-decoration: underline;
-  text-underline-offset: 3px;
+/* ---------- Scroll motion ---------- */
+
+/*
+ * Each `[data-reveal]` element names where it comes from (`--_reveal-from`,
+ * the intro) and where it leaves to (`--_reveal-to`, the outro). Both the
+ * scroll-driven path and the observer fallback read the same pair, so a
+ * section keeps one art direction whichever engine drives it. Only
+ * `transform` and `opacity` change; nothing here affects layout.
+ */
+.ghost-landing [data-reveal] {
+  --_reveal-from: translate3d(0, 3.5rem, 0);
+  --_reveal-to: translate3d(0, -2.5rem, 0);
 }
 
-@media (max-width: 820px) {
-  .ghost-landing__comparison,
-  .ghost-landing__section-split,
-  .ghost-landing__progression-layout,
-  .ghost-landing__principles {
-    grid-template-columns: minmax(0, 1fr);
+/* Hero copy drifts up and recedes as the page begins to scroll. */
+.ghost-landing [data-reveal='lift'] {
+  --_reveal-from: translate3d(0, 2rem, 0);
+  --_reveal-to: translate3d(0, -4rem, 0) scale(0.95);
+}
+
+/* Paired panels arrive from opposite sides and part the same way. */
+.ghost-landing [data-reveal='left'] {
+  --_reveal-from: translate3d(-5rem, 0, 0);
+  --_reveal-to: translate3d(-5rem, 0, 0);
+}
+
+.ghost-landing [data-reveal='right'] {
+  --_reveal-from: translate3d(5rem, 0, 0);
+  --_reveal-to: translate3d(5rem, 0, 0);
+}
+
+.ghost-landing [data-reveal='zoom'] {
+  --_reveal-from: scale(0.9);
+  --_reveal-to: scale(1.06);
+}
+
+/* The code window tips up toward the reader, then away. */
+.ghost-landing [data-reveal='tilt'] {
+  --_reveal-from: perspective(75rem) translate3d(0, 3rem, 0) rotateX(14deg);
+  --_reveal-to: perspective(75rem) translate3d(0, -2rem, 0) rotateX(-10deg);
+}
+
+/* Theme demos swing in like a turned swatch card. */
+.ghost-landing [data-reveal='swing'] {
+  --_reveal-from: perspective(75rem) translate3d(3rem, 0, 0) rotateY(-16deg);
+  --_reveal-to: perspective(75rem) translate3d(3rem, 0, 0) rotateY(12deg);
+}
+
+.ghost-landing [data-reveal='cascade'] {
+  --_reveal-from: translate3d(0, 6rem, 0);
+  --_reveal-to: translate3d(0, -1.5rem, 0);
+}
+
+@keyframes ghost-landing-intro {
+  from {
+    opacity: 0;
+    transform: var(--_reveal-from);
   }
 
-  #progression .ghost-tabs-list,
-  #progression .ghost-tabs-content {
-    grid-column: 1;
-    grid-row: auto;
-    width: 100%;
+  to {
+    opacity: 1;
+    transform: none;
   }
 }
 
-@media (max-width: 639px) {
-  .ghost-landing__ledger-wrap {
-    overflow: visible;
+@keyframes ghost-landing-outro {
+  from {
+    opacity: 1;
+    transform: none;
   }
 
-  .ghost-landing__ledger thead {
-    display: none;
+  to {
+    opacity: 0;
+    transform: var(--_reveal-to);
+  }
+}
+
+/*
+ * Primary path: the section is a view timeline and its reveal elements play
+ * the intro across its entry and the outro across its exit. Scroll position
+ * is the clock, so scrolling back up runs both in reverse with no script.
+ *
+ * The intro fills both ways and the outro fills forwards only. Before the
+ * outro's range it contributes nothing (the finished intro shows through),
+ * and once it starts it takes over; listing it second gives it priority.
+ *
+ * Reduced motion never enters this block, so every section renders in its
+ * final state. So do browsers without `animation-timeline`.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    .ghost-landing__section {
+      view-timeline: --ghost-landing-section block;
+      /* The fixed nav covers the top of the scrollport. */
+      view-timeline-inset: var(--_landing-nav) 0;
+    }
+
+    .ghost-landing [data-reveal] {
+      animation:
+        ghost-landing-intro linear both,
+        ghost-landing-outro linear forwards;
+      animation-timeline: --ghost-landing-section, --ghost-landing-section;
+      animation-range:
+        entry 0% entry 55%,
+        exit 45% exit 100%;
+    }
+
+    /* Later steps trail the first, which staggers a section's parts. */
+    .ghost-landing [data-reveal][data-reveal-step='1'] {
+      animation-range:
+        entry 10% entry 65%,
+        exit 40% exit 95%;
+    }
+
+    .ghost-landing [data-reveal][data-reveal-step='2'] {
+      animation-range:
+        entry 20% entry 75%,
+        exit 35% exit 90%;
+    }
+  }
+}
+
+/*
+ * Fallback path, opted into by script only where `animation-timeline` is
+ * missing (`data-landing-motion="observer"`). `useLandingScroll` marks each
+ * section `before`, `active`, or `after`; ordinary transitions play the same
+ * intro and outro and reverse when the phase flips back. Without the
+ * attribute nothing below matches, so the page stays fully visible.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  .ghost-landing[data-landing-motion='observer'] [data-reveal] {
+    transition:
+      opacity 0.6s ease,
+      transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
   }
 
-  .ghost-landing__ledger,
-  .ghost-landing__ledger tbody,
-  .ghost-landing__ledger tr {
-    display: block;
-    width: 100%;
+  .ghost-landing[data-landing-motion='observer'] [data-reveal-step='1'] {
+    transition-delay: 80ms;
   }
 
-  .ghost-landing__ledger tr {
-    border-block-end: 1px solid var(--ghost-border-muted);
-    padding: 0.85rem 1rem;
+  .ghost-landing[data-landing-motion='observer'] [data-reveal-step='2'] {
+    transition-delay: 160ms;
   }
 
-  .ghost-landing__ledger tr:last-child {
-    border-block-end: 0;
+  .ghost-landing[data-landing-motion='observer']
+    [data-landing-phase='before']
+    [data-reveal] {
+    opacity: 0;
+    transform: var(--_reveal-from);
   }
 
-  .ghost-landing__ledger :is(th, td) {
-    border: 0;
-    display: block;
-    overflow-wrap: anywhere;
-    padding: 0.15rem 0;
-    white-space: normal;
-  }
-
-  .ghost-landing__ledger td:first-child {
-    font-size: 0.95rem;
-    margin-block-end: 0.35rem;
-  }
-
-  .ghost-landing__ledger td:nth-child(2) {
-    font-size: 0.75rem;
-    margin-block-end: 0.35rem;
-  }
-
-  .ghost-landing__progression-layout {
-    gap: 1.25rem;
-  }
-
-  #progression .ghost-tabs-trigger {
-    align-items: flex-start;
-    flex-direction: column;
+  .ghost-landing[data-landing-motion='observer']
+    [data-landing-phase='after']
+    [data-reveal] {
+    opacity: 0;
+    transform: var(--_reveal-to);
   }
 }
