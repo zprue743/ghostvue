@@ -14,6 +14,9 @@ The compound parts render `<nav>` → `<ol>` → `<li>` → `<a href="#...">` vi
 `--ghost-scroll-spy-section-progress` on the root without per-frame Vue
 re-renders.
 
+When enabled, `GhostScrollSpyLink` forwards its default fragment or explicit
+`href` to a custom link component passed through `as`.
+
 Disabled links are skipped when choosing the current section. If several links
 share a target, the first enabled link in DOM order owns the current state and
 the section counts once toward progress.

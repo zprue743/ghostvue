@@ -125,8 +125,12 @@ const hostAttrs = computed(() => {
     merged['aria-current'] = 'location'
   }
 
-  if (isDisabled.value && isComponentHost.value) {
-    merged['disabled'] = true
+  if (isComponentHost.value) {
+    if (isDisabled.value) {
+      merged['disabled'] = true
+    } else {
+      merged['href'] = resolvedHref.value
+    }
   }
 
   return merged

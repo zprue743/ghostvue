@@ -1,4 +1,4 @@
-import { defineComponent, h, nextTick } from 'vue'
+import { defineComponent, h, nextTick, reactive } from 'vue'
 import { mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
@@ -109,6 +109,44 @@ describe('GhostScrollSpy', () => {
       expect.arrayContaining(['ghost-scroll-spy-link', 'consumer-link']),
     )
     expect(link.attributes('rel')).toBe('nofollow')
+  })
+
+  it('forwards the default and explicit href to a custom anchor while enabled', async () => {
+    const CustomAnchor = defineComponent({
+      props: { href: { type: String, default: undefined } },
+      setup(props, { slots }) {
+        return () => h('a', { href: props.href }, slots['default']?.())
+      },
+    })
+    const linkProps = reactive({ href: '', disabled: false })
+    const wrapper = mount(
+      defineComponent({
+        setup() {
+          return () =>
+            h(GhostScrollSpy, null, () =>
+              h(
+                GhostScrollSpyLink,
+                { as: CustomAnchor, target: 'alpha', ...linkProps },
+                () => 'Alpha',
+              ),
+            )
+        },
+      }),
+      { attachTo: document.body },
+    )
+    attached.push(wrapper)
+    const link = wrapper.get('a')
+
+    expect(link.attributes('href')).toBe('#alpha')
+    linkProps.href = '#custom'
+    await nextTick()
+    expect(link.attributes('href')).toBe('#custom')
+
+    linkProps.disabled = true
+    await nextTick()
+    expect(link.attributes('href')).toBeUndefined()
+    expect(link.attributes('aria-disabled')).toBe('true')
+    expect(link.attributes('tabindex')).toBe('-1')
   })
 
   it('throws when parts are composed outside the root', () => {

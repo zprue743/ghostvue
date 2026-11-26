@@ -22,6 +22,7 @@ test.describe('GhostScrollSpy', () => {
       const intro = page.getByTestId('scroll-spy-link-intro')
       const details = page.getByTestId('scroll-spy-link-details')
 
+      await expect(intro).toHaveAttribute('href', '#scroll-spy-play-intro')
       await expect(intro).toHaveAttribute('aria-current', 'location')
 
       await page.locator('#scroll-spy-play-details').scrollIntoViewIfNeeded()

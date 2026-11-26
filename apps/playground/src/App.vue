@@ -1,5 +1,12 @@
 <script setup lang="ts">
-import { computed, reactive, ref, useTemplateRef } from 'vue'
+import {
+  computed,
+  defineComponent,
+  h,
+  reactive,
+  ref,
+  useTemplateRef,
+} from 'vue'
 
 import {
   GhostBadge as GhostBadgeThemed,
@@ -94,6 +101,13 @@ import {
 
 const flagships = ['calm', 'vibrant', 'mono'] as const
 const flagshipDensities = ['comfortable'] as const
+
+const ScrollSpyAnchor = defineComponent({
+  props: { href: { type: String, default: undefined } },
+  setup(props, { slots }) {
+    return () => h('a', { href: props.href }, slots['default']?.())
+  },
+})
 
 interface Report {
   name: string
@@ -1586,6 +1600,7 @@ function submitPlaygroundComment(event: Event): void {
         <GhostScrollSpyList>
           <GhostScrollSpyItem>
             <GhostScrollSpyLink
+              :as="ScrollSpyAnchor"
               target="scroll-spy-play-intro"
               data-testid="scroll-spy-link-intro"
             >
