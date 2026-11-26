@@ -1,3 +1,4 @@
+import AxeBuilder from '@axe-core/playwright'
 import { expect, test } from '@playwright/test'
 
 import { exampleSourceBlock, openExampleSource } from './docs-example-source'
@@ -261,6 +262,118 @@ test.describe('docs code blocks', () => {
       )
       expect(colors.previewBg[2]).toBeGreaterThan(colors.previewBg[1])
       expect(colors.cardBg[2]).toBeGreaterThan(colors.cardBg[1])
+    } finally {
+      await docs.close()
+    }
+  })
+
+  test('standalone fences and DemoPreview share unified Shiki framing and copy-to-checkmark control', async ({
+    browser,
+  }) => {
+    const docs = await startStaticServer('apps/docs/.vitepress/dist')
+    const context = await browser.newContext()
+    await context.grantPermissions(['clipboard-read', 'clipboard-write'])
+    const page = await context.newPage()
+
+    try {
+      await page.emulateMedia({ reducedMotion: 'reduce' })
+      await page.goto(`${docs.url}/getting-started.html`)
+
+      const fence = page
+        .locator(
+          '.vp-doc div[class*="language-"]:not(.ghost-example__source div)',
+        )
+        .first()
+      await expect(fence).toBeVisible()
+
+      const metrics = await fence.evaluate((el) => {
+        const fenceStyle = getComputedStyle(el)
+        const probe = document.createElement('div')
+        probe.style.borderRadius = 'var(--ghost-radius-lg)'
+        el.append(probe)
+        const expectedRadius = getComputedStyle(probe).borderTopLeftRadius
+        probe.remove()
+        const codeEl = el.querySelector('pre code')
+        const codeStyle = codeEl ? getComputedStyle(codeEl) : null
+        const copyBtn = el.querySelector('button.copy')
+        const copyStyle = copyBtn ? getComputedStyle(copyBtn) : null
+        return {
+          borderWidth: fenceStyle.borderTopWidth,
+          borderRadius: fenceStyle.borderTopLeftRadius,
+          expectedRadius,
+          fontSize: codeStyle?.fontSize ?? '',
+          lineHeight: codeStyle?.lineHeight ?? '',
+          copyWidth: copyStyle?.width ?? '',
+          copyHeight: copyStyle?.height ?? '',
+          copyRadius: copyStyle?.borderTopLeftRadius ?? '',
+        }
+      })
+
+      expect(metrics.borderWidth).toBe('1px')
+      expect(Number.parseFloat(metrics.borderRadius)).toBeGreaterThan(0)
+      expect(metrics.borderRadius).toBe(metrics.expectedRadius)
+      expect(metrics.fontSize).toBe('13px')
+      expect(Number.parseFloat(metrics.lineHeight)).toBeCloseTo(13 * 1.6, 0)
+      expect(metrics.copyWidth).toBe('28px')
+      expect(metrics.copyHeight).toBe('28px')
+      expect(metrics.copyRadius).toBe('6px')
+
+      const copyBtn = fence.locator('button.copy')
+      const status = fence.getByRole('status')
+      await expect(copyBtn.locator('.ghost-copy-icon__copy')).toHaveCount(1)
+      await expect(copyBtn.locator('.ghost-copy-icon__check')).toHaveCount(1)
+
+      await copyBtn.focus()
+      await page.keyboard.press('Enter')
+      await expect(copyBtn).toHaveClass(/\bcopied\b/)
+      await expect(status).toHaveText('Copied')
+      await expect(copyBtn).toBeFocused()
+
+      const axe = await new AxeBuilder({ page })
+        .include('.vp-doc div[class*="language-"]')
+        .analyze()
+      expect(axe.violations).toEqual([])
+    } finally {
+      await context.close()
+      await docs.close()
+    }
+  })
+
+  test('DemoPreview copy button is 28x28 with 6px radius and flush source fence', async ({
+    page,
+  }) => {
+    const docs = await startStaticServer('apps/docs/.vitepress/dist')
+    try {
+      await page.goto(`${docs.url}/components/button.html`)
+      await openExampleSource(page, 'button/themed')
+      const sourceFence = exampleSourceBlock(page, 'button/themed')
+      const copyBtn = page
+        .locator('[data-example-id="button/themed"]')
+        .getByRole('button', { name: 'Copy Themed source' })
+
+      const metrics = await Promise.all([
+        sourceFence.evaluate((el) => {
+          const style = getComputedStyle(el)
+          return {
+            borderWidth: style.borderTopWidth,
+            borderRadius: style.borderTopLeftRadius,
+          }
+        }),
+        copyBtn.evaluate((el) => {
+          const style = getComputedStyle(el)
+          return {
+            width: style.width,
+            height: style.height,
+            radius: style.borderTopLeftRadius,
+          }
+        }),
+      ])
+
+      expect(metrics[0].borderWidth).toBe('0px')
+      expect(metrics[0].borderRadius).toBe('0px')
+      expect(metrics[1].width).toBe('28px')
+      expect(metrics[1].height).toBe('28px')
+      expect(metrics[1].radius).toBe('6px')
     } finally {
       await docs.close()
     }

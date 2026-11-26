@@ -11,6 +11,7 @@ import {
 
 import { GhostButton } from '@ghostvue/themes'
 
+import CopyCodeIcon from './CopyCodeIcon.vue'
 import {
   DEMO_COPY_STATUS_MS,
   DEMO_PREVIEW_MIN_WIDTH,
@@ -295,9 +296,11 @@ onBeforeUnmount(() => {
           variant="ghost"
           tone="neutral"
           :aria-label="`Copy ${title} source`"
+          :data-copied="copyState === 'copied' ? '' : undefined"
+          :data-state="copyState"
           @click="copySource"
         >
-          Copy
+          <CopyCodeIcon />
         </GhostButton>
         <GhostButton
           :id="widthToggleId"

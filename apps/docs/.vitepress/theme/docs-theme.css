@@ -45,6 +45,9 @@ html[data-ghost-theme] {
     var(--ghost-surface-muted-bg)
   );
   --vp-code-bg: var(--vp-code-block-bg);
+  --vp-code-font-size: 0.8125rem;
+  --vp-code-line-height: 1.6;
+  --vp-code-lang-color: var(--ghost-text-subtle);
   --vp-code-copy-code-bg: var(--ghost-surface-bg);
   --vp-code-copy-code-hover-bg: var(--ghost-surface-subtle-bg);
 }
@@ -77,20 +80,145 @@ html[data-ghost-theme] {
 }
 
 /*
+ * Unified Geist/shadcn-style Shiki code frame for standalone markdown fences
+ * (`.vp-doc div[class*='language-']`): 13px monospace, 1.6 leading, hairline
+ * muted border, 8px radius, subtle language label, and 28x28 SVG copy control.
+ */
+.vp-doc div[class*='language-'] {
+  margin: 1rem 0;
+  border: 1px solid var(--ghost-border-muted);
+  border-radius: var(--ghost-radius-lg);
+  background-color: var(--vp-code-block-bg);
+}
+
+.vp-doc div[class*='language-'] pre {
+  padding: 1rem 0;
+}
+
+.vp-doc div[class*='language-'] code {
+  padding: 0 1.25rem;
+  font-size: var(--vp-code-font-size);
+  line-height: var(--vp-code-line-height);
+}
+
+.vp-doc div[class*='language-'] > span.lang {
+  top: 0.625rem;
+  right: 2.75rem;
+  color: var(--ghost-text-subtle);
+  font-family: var(--ghost-type-family-mono, var(--vp-font-family-mono));
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1.25rem;
+  letter-spacing: 0.01em;
+  opacity: 1;
+  transition: none;
+}
+
+.vp-doc [class*='language-']:hover > button.copy + span.lang,
+.vp-doc [class*='language-'] > button.copy:focus + span.lang {
+  opacity: 1;
+}
+
+.vp-doc div[class*='language-'] > button.copy {
+  top: 0.5rem;
+  right: 0.5rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 1.75rem;
+  block-size: 1.75rem;
+  width: 1.75rem;
+  height: 1.75rem;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background-color: transparent;
+  background-image: none;
+  color: var(--ghost-text-muted);
+  opacity: 1;
+  transition:
+    background-color 150ms ease,
+    border-color 150ms ease,
+    color 150ms ease;
+}
+
+.vp-doc div[class*='language-'] > button.copy:hover {
+  border-color: var(--ghost-border-default);
+  background-color: var(--ghost-surface-bg);
+  color: var(--ghost-surface-fg);
+}
+
+.vp-doc div[class*='language-'] > button.copy:focus-visible {
+  opacity: 1;
+  border-color: var(--ghost-border-default);
+  background-color: var(--ghost-surface-bg);
+  color: var(--ghost-surface-fg);
+  outline: 2px solid var(--ghost-focus-ring-color);
+  outline-offset: 2px;
+}
+
+.vp-doc div[class*='language-'] > button.copy.copied,
+.vp-doc div[class*='language-'] > button.copy:hover.copied {
+  border-radius: 6px;
+  border-color: var(--ghost-border-default);
+  background-color: var(--ghost-surface-bg);
+  background-image: none;
+}
+
+.vp-doc div[class*='language-'] > button.copy.copied::before,
+.vp-doc div[class*='language-'] > button.copy:hover.copied::before {
+  content: none;
+}
+
+.ghost-code-copy-status {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vp-doc div[class*='language-'] > button.copy {
+    transition: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .vp-doc div[class*='language-'] > button.copy {
+    forced-color-adjust: auto;
+    border: 1px solid ButtonText;
+    color: ButtonText;
+    background-color: ButtonFace;
+  }
+
+  .vp-doc div[class*='language-'] > button.copy:focus-visible {
+    outline: 2px solid Highlight;
+    outline-offset: 2px;
+  }
+}
+
+/*
  * `<GhostExample>` hands its highlighted `<<<` snippet to the DemoPreview
  * source slot (frame styles live in `demo-preview.css`). Undo
- * only the `.vp-doc div[class*='language-']` card chrome (outer margin, the
- * mobile negative bleed, radius) so the fence sits flush inside the example
- * card while Shiki, dark-mode token mapping and scrolling still apply.
+ * only the `.vp-doc div[class*='language-']` card chrome (outer margin,
+ * border, radius) so the fence sits flush inside the example card while
+ * Shiki, dark-mode token mapping and scrolling still apply.
  */
 .vp-doc .ghost-example__source > div[class*='language-'] {
   margin: 0;
+  border: 0;
   border-radius: 0;
   background-color: var(--vp-code-block-bg);
 }
 
 .vp-doc .ghost-example__source > div[class*='language-'] pre {
   max-block-size: 22rem;
+}
+
+.vp-doc .ghost-example__source > div[class*='language-'] > span.lang {
+  right: 0.75rem;
 }
 
 .vp-doc .ghost-example__source > div[class*='language-'] > button.copy {

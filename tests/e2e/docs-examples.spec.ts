@@ -837,8 +837,12 @@ test.describe('docs example previews', () => {
         await copy.click()
         await expect(status).toHaveText('Copied', { timeout: 500 })
       }).toPass()
-      // The label never changes, so the toolbar does not reflow.
-      await expect(copy).toHaveText('Copy')
+      // The accessible name never changes, so the toolbar does not reflow,
+      // and the icon transitions to the checkmark state.
+      await expect(copy).toHaveAttribute('aria-label', 'Copy Themed source')
+      await expect(copy).toHaveAttribute('data-copied', '')
+      await expect(copy.locator('.ghost-copy-icon__copy')).toHaveCount(1)
+      await expect(copy.locator('.ghost-copy-icon__check')).toHaveCount(1)
 
       // The unhighlighted SFC from disk, not the Shiki markup.
       const clipboard = await page.evaluate(() =>
