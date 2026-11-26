@@ -117,6 +117,8 @@ function mountContainerHarness(
   options: {
     probeOffset?: MaybeRef<number>
     endThreshold?: MaybeRef<number>
+    modelValue?: MaybeRef<string | undefined>
+    style?: MaybeRef<string | undefined>
     extraLinks?: boolean
     showGamma?: ReturnType<typeof ref<boolean>>
     showLinks?: ReturnType<typeof ref<boolean>>
@@ -139,6 +141,8 @@ function mountContainerHarness(
           const endThreshold = toValue(options.endThreshold)
           const spyProps = {
             container,
+            modelValue: toValue(options.modelValue),
+            style: toValue(options.style),
             historyMode: options.historyMode ?? 'none',
             ref: scrollSpy,
             ...(probeOffset === undefined ? {} : { probeOffset }),
@@ -306,6 +310,65 @@ describe('useGhostScrollSpy', () => {
     const style = nav.attributes('style') ?? ''
     expect(style).toMatch(/--ghost-scroll-spy-progress:\s*[\d.]+/)
     expect(style).toMatch(/--ghost-scroll-spy-section-progress:\s*[\d.]+/)
+  })
+
+  it('preserves measured progress when the consumer changes or removes a style string', async () => {
+    const consumerStyle = ref<string | undefined>('color: red')
+    const { wrapper, setScrollTop } = mountContainerHarness({
+      style: consumerStyle,
+    })
+    const { style } = wrapper.get('nav').element
+    await setScrollTop(350)
+    const progress = '--ghost-scroll-spy-progress'
+    const sectionProgress = '--ghost-scroll-spy-section-progress'
+    const measuredSectionProgress = style.getPropertyValue(sectionProgress)
+    expect(style.color).toBe('red')
+    expect(style.getPropertyValue(progress)).toBe('0.3500')
+    expect(measuredSectionProgress).not.toBe('')
+
+    consumerStyle.value = 'color: blue'
+    await nextTick()
+    expect(style.color).toBe('blue')
+    expect(style.getPropertyValue(progress)).toBe('0.3500')
+    expect(style.getPropertyValue(sectionProgress)).toBe(
+      measuredSectionProgress,
+    )
+
+    consumerStyle.value = undefined
+    await nextTick()
+    expect(style.color).toBe('')
+    expect(style.getPropertyValue(progress)).toBe('0.3500')
+    expect(style.getPropertyValue(sectionProgress)).toBe(
+      measuredSectionProgress,
+    )
+  })
+
+  it('only requests a controlled update once for repeated measurements of the same section', async () => {
+    const modelValue = ref('alpha')
+    const { wrapper, setScrollTop } = mountContainerHarness({ modelValue })
+    const spy = wrapper.getComponent(GhostScrollSpy)
+    await setScrollTop(350)
+    await setScrollTop(370)
+    expect(spy.emitted('update:modelValue')).toEqual([['beta']])
+    expect(activeLinkText(wrapper)).toBe('Alpha')
+
+    await setScrollTop(750)
+    await setScrollTop(350)
+    expect(spy.emitted('update:modelValue')).toEqual([
+      ['beta'],
+      ['gamma'],
+      ['beta'],
+    ])
+
+    modelValue.value = 'gamma'
+    await setScrollTop(365)
+    expect(spy.emitted('update:modelValue')).toEqual([
+      ['beta'],
+      ['gamma'],
+      ['beta'],
+      ['beta'],
+    ])
+    expect(activeLinkText(wrapper)).toBe('Gamma')
   })
 
   it('honors probeOffset and endThreshold from options', async () => {

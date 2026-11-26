@@ -29,6 +29,10 @@ zero when there are no measurable targets. Changing `probeOffset` or
 `endThreshold` refreshes the current section and its progress at the current
 scroll position.
 
+With a controlled `modelValue`, ScrollSpy requests a selection change once for
+consecutive measurements of the same section while the current value stays the
+same.
+
 ## Themed rail
 
 <GhostExample id="scroll-spy/themed" />

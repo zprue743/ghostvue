@@ -191,6 +191,8 @@ export function useGhostScrollSpy(
   let frame = 0
   let travelTimer: ReturnType<typeof setTimeout> | undefined
   let lastScrollTop: number | undefined
+  let lastMeasuredSelection:
+    { target: string | undefined; current: string | undefined } | undefined
   let resizeObserver: ResizeObserver | undefined
   let observedElements = new Set<Element>()
   let reducedMotionQuery: MediaQueryList | undefined
@@ -491,9 +493,18 @@ export function useGhostScrollSpy(
       nextActive = measured[index]?.target
     }
 
-    if (!Object.is(modelValue.value, nextActive)) {
-      modelValue.value = nextActive
+    const current = modelValue.value
+    if (
+      lastMeasuredSelection &&
+      lastMeasuredSelection.target === nextActive &&
+      lastMeasuredSelection.current === current
+    ) {
+      return
     }
+    // A controlled parent can defer the update. Only repeat the proposal when
+    // the measured section or the parent's selection has changed.
+    lastMeasuredSelection = { target: nextActive, current }
+    modelValue.value = nextActive
   }
 
   function syncResizeObserver(

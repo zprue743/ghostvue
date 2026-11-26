@@ -14,3 +14,5 @@ Enabled custom link components receive the resolved `href`.
 Link activation and `scrollTo()` jump immediately when reduced motion is requested, even with CSS smooth scrolling.
 
 Changes to `probeOffset` or `endThreshold` refresh the active section and its progress at the current scroll position.
+
+Consecutive scroll measurements request the same controlled selection change only once while the current value stays the same.

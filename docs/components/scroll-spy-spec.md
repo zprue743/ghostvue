@@ -187,7 +187,8 @@ Themed exports from `@ghostvue/themes`:
   guard — never emits on every scroll frame).
 - In controlled mode, `update:modelValue` is emitted when scroll measurement or
   activation resolves a different ID; the rendered `aria-current` reflects the
-  parent's `modelValue` prop.
+  parent's `modelValue` prop. Consecutive measurements of the same section emit
+  once while the parent's selection stays the same.
 - Calling `scrollTo(id)` scrolls to the target and updates/emits the active ID
   immediately (or lets scroll measurement confirm it; if controlled `modelValue`
   does not update, `aria-current` remains bound to `modelValue`).
