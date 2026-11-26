@@ -13,8 +13,16 @@ import { startStaticServer } from './static-server'
  * scrolled, and it stops the rail ghost's idle animation. A full-page capture
  * without it would record sections mid-fade.
  *
- * The docs host is never changed from its first paint (`calm`), and the page
- * is never padded, resized, or restyled by the test.
+ * A full-page capture renders beyond the viewport, and while it does, `vh`
+ * and `svh` resolve against the whole page instead of the window. The landing
+ * page sizes its section spacing and first-screen hero from viewport height,
+ * so an unpinned capture changes the page height while measuring it and never
+ * settles. The page routes every such length through `--_landing-vh`; each
+ * test pins that one property to the pixels it already resolves to, then
+ * proves the page height no longer follows the viewport before capturing.
+ *
+ * The docs host is never changed from its first paint (`calm`). Apart from
+ * that pin, the page is never padded, resized, or restyled by the test.
  */
 
 const modes = ['light', 'dark'] as const
@@ -82,6 +90,26 @@ test.describe('docs landing visual baselines', { tag: '@visual' }, () => {
                 document.documentElement.clientWidth,
             ),
           ).toBeLessThanOrEqual(0)
+
+          // Pin the page's one viewport-height input to its current value.
+          await page.addStyleTag({
+            content: `.ghost-landing { --_landing-vh: ${String(viewport.height / 100)}px; }`,
+          })
+          const pageHeight = () =>
+            page.evaluate(() => document.documentElement.scrollHeight)
+          const heightAtRest = await pageHeight()
+          // A taller window must not move the layout, or the capture below
+          // would resize the page it is measuring.
+          await page.setViewportSize({
+            width: viewport.width,
+            height: viewport.height * 3,
+          })
+          expect(await pageHeight()).toBe(heightAtRest)
+          await page.setViewportSize({
+            width: viewport.width,
+            height: viewport.height,
+          })
+          expect(await pageHeight()).toBe(heightAtRest)
 
           await expect(page).toHaveScreenshot(
             `docs-landing-${viewport.name}-${mode}.png`,

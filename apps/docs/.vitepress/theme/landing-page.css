@@ -10,6 +10,16 @@
 .ghost-landing {
   --_landing-gutter: clamp(1.25rem, 4vw, 2.5rem);
   --_landing-nav: var(--vp-nav-height, 64px);
+  /*
+   * One hundredth of the viewport height. Every height-relative length on
+   * the page goes through this property so the page has a single dependency
+   * on viewport height. A full-page screenshot renders beyond the viewport,
+   * which changes what `vh` and `svh` resolve to mid-capture; the visual
+   * spec pins this property to pixels so the layout cannot move under it.
+   * `svh` rather than `vh` keeps mobile layouts still while browser chrome
+   * collapses.
+   */
+  --_landing-vh: 1svh;
   --_landing-accent: var(--ghost-action-primary-bg);
   --_landing-code-font:
     ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
@@ -38,7 +48,7 @@
    * would also detach its view timeline from the document scroller.
    */
   overflow-x: clip;
-  padding-block: clamp(4rem, 11vh, 7.5rem);
+  padding-block: clamp(4rem, calc(var(--_landing-vh) * 11), 7.5rem);
   position: relative;
   scroll-margin-block-start: var(--_landing-nav);
 }
@@ -92,7 +102,7 @@
   display: grid;
   gap: 0.9rem;
   justify-items: start;
-  margin-block-end: clamp(1.75rem, 4vh, 2.75rem);
+  margin-block-end: clamp(1.75rem, calc(var(--_landing-vh) * 4), 2.75rem);
   max-inline-size: 46rem;
 }
 
@@ -228,8 +238,8 @@
 
 .ghost-landing__section--hero {
   /* Fills the first screen so the outro starts from a settled page. */
-  min-block-size: calc(100svh - var(--_landing-nav));
-  padding-block-start: clamp(2.5rem, 7vh, 5rem);
+  min-block-size: calc(var(--_landing-vh) * 100 - var(--_landing-nav));
+  padding-block-start: clamp(2.5rem, calc(var(--_landing-vh) * 7), 5rem);
 }
 
 .ghost-landing__section--hero::before {
@@ -306,7 +316,7 @@
   display: grid;
   gap: 1.25rem;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 19rem), 1fr));
-  margin-block-start: clamp(2.5rem, 7vh, 4.5rem);
+  margin-block-start: clamp(2.5rem, calc(var(--_landing-vh) * 7), 4.5rem);
 }
 
 .ghost-landing .ghost-landing__cluster-item {
@@ -585,7 +595,7 @@
 /* ---------- 7. Closing ---------- */
 
 .ghost-landing__section--closing {
-  min-block-size: 72svh;
+  min-block-size: calc(var(--_landing-vh) * 72);
 }
 
 .ghost-landing__section--closing::before {
