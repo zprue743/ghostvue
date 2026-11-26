@@ -129,6 +129,65 @@ test.describe('docs landing page', () => {
     })
   })
 
+  /*
+   * A reader should never see the end of one section and the start of the
+   * next as two half pages. Short content is the case that used to slip:
+   * the taller the window, the more sections fell short of it. The phone
+   * viewport covers the other direction, where content outgrows the page
+   * and the minimum must not clip it.
+   */
+  for (const viewport of [
+    { name: 'desktop', ...DESKTOP },
+    { name: 'tall desktop', width: 1920, height: 1400 },
+    { name: 'phone', width: 390, height: 844 },
+  ]) {
+    test(`every section fills the page below the nav (${viewport.name})`, async ({
+      page,
+    }) => {
+      await page.setViewportSize({
+        width: viewport.width,
+        height: viewport.height,
+      })
+      // Final state everywhere: reveal transforms must not skew the boxes.
+      await page.emulateMedia({ reducedMotion: 'reduce' })
+      await withLanding(page, async () => {
+        await expect(
+          page.locator('.ghost-landing .ghost-example__status'),
+        ).toHaveCount(0)
+
+        const navBottom = await page
+          .locator('.VPNav')
+          .evaluate((nav) => nav.getBoundingClientRect().bottom)
+        const pageHeight = viewport.height - navBottom
+
+        for (const id of sectionIds) {
+          const section = page.locator(`#${id}`)
+          const { height, contentOverflow } = await section.evaluate(
+            (element) => ({
+              height: element.getBoundingClientRect().height,
+              contentOverflow: element.scrollHeight - element.clientHeight,
+            }),
+          )
+          expect(
+            height,
+            `#${id} is at least one page tall`,
+          ).toBeGreaterThanOrEqual(pageHeight - 0.5)
+          expect(contentOverflow, `#${id} contains its content`).toBe(0)
+
+          // Parked under the nav, where the rail leaves it, the section
+          // covers the rest of the viewport: the next one has not started.
+          await scrollSectionTopTo(page, id, navBottom)
+          const box = await section.evaluate((element) => {
+            const rect = element.getBoundingClientRect()
+            return { top: rect.top, bottom: rect.bottom }
+          })
+          expect(Math.abs(box.top - navBottom)).toBeLessThanOrEqual(1)
+          expect(box.bottom).toBeGreaterThanOrEqual(viewport.height - 0.5)
+        }
+      })
+    })
+  }
+
   test('progression GhostTabs exposes tabpanel and arrow keys move focus', async ({
     page,
   }) => {

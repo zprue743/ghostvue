@@ -60,6 +60,13 @@
    * would also detach its view timeline from the document scroller.
    */
   overflow-x: clip;
+  /*
+   * Every section is at least one full page: the viewport below the fixed
+   * nav, which is also where `scroll-margin-block-start` parks a section the
+   * rail jumps to. A section whose content is shorter centres it in the
+   * page; a taller one (most of them on a phone) simply grows.
+   */
+  min-block-size: calc(var(--_landing-vh) * 100 - var(--_landing-nav));
   padding-block: clamp(4rem, calc(var(--_landing-vh) * 11), 7.5rem);
   position: relative;
   scroll-margin-block-start: var(--_landing-nav);
@@ -256,8 +263,6 @@
 /* ---------- 1. Hero ---------- */
 
 .ghost-landing__section--hero {
-  /* Fills the first screen so the outro starts from a settled page. */
-  min-block-size: calc(var(--_landing-vh) * 100 - var(--_landing-nav));
   padding-block-start: clamp(2.5rem, calc(var(--_landing-vh) * 7), 5rem);
 }
 
@@ -612,10 +617,6 @@
 }
 
 /* ---------- 7. Closing ---------- */
-
-.ghost-landing__section--closing {
-  min-block-size: calc(var(--_landing-vh) * 72);
-}
 
 .ghost-landing__section--closing::before {
   background: radial-gradient(
