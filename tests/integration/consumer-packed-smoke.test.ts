@@ -27,7 +27,7 @@ describe('packed consumer smoke', () => {
       { cwd: root, encoding: 'utf8' },
     )
     expect(output).toContain(
-      'Vite + Vue consumer: built with @layer ghostvue-theme CSS; mounted Field, Input, Select, Dialog, Drawer, and Toast in jsdom.',
+      'Vite + Vue consumer: production build of the documented setup emitted @layer ghostvue-theme base and calm CSS; mounted Field, Input, Select, Dialog, Drawer, and Toast in jsdom.',
     )
     expect(output).toContain(
       'Nuxt consumer: headless auto-imports built and server-rendered; themed opt-in resolves to @ghostvue/themes.',

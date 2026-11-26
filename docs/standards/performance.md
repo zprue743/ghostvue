@@ -33,7 +33,9 @@ of fixture:
   component manifest that the package's main entry actually exports.
 
 Each fixture is a minified Vite production build with package `sideEffects`
-honored. Only `vue` stays external. Runtime dependencies such as
+honored. Every `@ghostvue/themes` component fixture therefore includes the base
+stylesheet that the package entry imports, because a consumer's build ships it
+too. Only `vue` stays external. Runtime dependencies such as
 `@floating-ui/dom` and `@internationalized/date` are bundled, so their cost
 counts against every import that needs them. Gzip sizes are measured separately
 for JavaScript and CSS and then added together.
