@@ -83,6 +83,7 @@ const agentsSidebar: LlmsSidebarGroup['items'] = [
   { text: 'Architecture rules', link: '/agents/ARCHITECTURE_RULES' },
   { text: 'Testing rules', link: '/agents/TESTING_RULES' },
   { text: 'Component workflow', link: '/agents/COMPONENT_WORKFLOW' },
+  { text: 'Agent eval harness', link: '/agents/EVAL_HARNESS' },
   {
     text: 'MCP contract',
     link: '/plans/gho-17-mcp-first-release',

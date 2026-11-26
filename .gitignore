@@ -35,6 +35,9 @@ docs/.registries/
 # Release dry-run evidence (pnpm release:dry-run).
 reports/release-dry-run/
 
+# Per-run agent eval harness outputs (pnpm eval).
+reports/eval/
+
 # Nuxt fixture build output (pnpm test:nuxt).
 apps/nuxt-fixture/.nuxt/
 apps/nuxt-fixture/.output/
