@@ -25,7 +25,8 @@ For a nested scroll area, pass its element or a template ref as `container`.
 Tracking follows the ref when it resolves or changes. Navigation honors the
 container's vertical scroll padding and the section's scroll margin. Viewport
 and observed content resizes refresh tracking. Both progress values stay at
-zero when there are no measurable targets. Changing `probeOffset` or
+zero when there are no measurable targets. Adding or removing a target section
+in the scroll container refreshes tracking. Changing `probeOffset` or
 `endThreshold` refreshes the current section and its progress at the current
 scroll position.
 

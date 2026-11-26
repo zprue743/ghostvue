@@ -15,4 +15,4 @@ Link activation and `scrollTo()` jump immediately when reduced motion is request
 
 Changes to `probeOffset` or `endThreshold` refresh the active section and its progress at the current scroll position.
 
-Consecutive scroll measurements request the same controlled selection change only once while the current value stays the same.
+Consecutive scroll measurements request the same controlled selection change only once while the current value stays the same. Adding or removing a target section refreshes tracking even when the scroll container does not resize.

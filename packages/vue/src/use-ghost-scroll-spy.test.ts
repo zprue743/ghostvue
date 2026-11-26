@@ -297,6 +297,25 @@ describe('useGhostScrollSpy', () => {
     expect(wrapper.find('[aria-current]').exists()).toBe(false)
   })
 
+  it('measures targets inserted into or removed from a fixed scrollport', async () => {
+    const { wrapper, container, setScrollTop } = mountContainerHarness()
+    const content = document.createElement('main')
+    content.append(...Array.from(container.children))
+    await setScrollTop(350)
+    expect(wrapper.find('[aria-current]').exists()).toBe(false)
+
+    container.append(content)
+    await flushScrollSpyMeasure()
+    expect(activeLinkText(wrapper)).toBe('Beta')
+    const { style } = wrapper.get('nav').element
+    expect(style.getPropertyValue('--ghost-scroll-spy-progress')).toBe('0.3500')
+
+    content.remove()
+    await flushScrollSpyMeasure()
+    expect(wrapper.find('[aria-current]').exists()).toBe(false)
+    expect(style.getPropertyValue('--ghost-scroll-spy-progress')).toBe('0.0000')
+  })
+
   it('writes progress custom properties on the root while scrolling', async () => {
     const { wrapper, setScrollTop } = mountContainerHarness()
     await flushScrollSpyMeasure()

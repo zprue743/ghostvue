@@ -588,8 +588,36 @@ export function useGhostScrollSpy(
         travelDirection.value = undefined
 
         container.addEventListener('scroll', scheduleMeasure, { passive: true })
+        // A fixed scrollport can gain or lose an async target without resizing.
+        const contentObserver =
+          typeof MutationObserver === 'function'
+            ? new MutationObserver((records) => {
+                const targets = enabledEntries.value
+                if (targets.size === 0) return
+                const containsTarget = (node: Node): boolean =>
+                  node instanceof Element &&
+                  (targets.has(node.id) ||
+                    Array.from(node.querySelectorAll('[id]')).some((element) =>
+                      targets.has(element.id),
+                    ))
+                if (
+                  records.some(
+                    ({ addedNodes, removedNodes }) =>
+                      Array.from(addedNodes).some(containsTarget) ||
+                      Array.from(removedNodes).some(containsTarget),
+                  )
+                ) {
+                  scheduleMeasure()
+                }
+              })
+            : undefined
+        contentObserver?.observe(
+          isWindowContainer(container) ? container.document.body : container,
+          { childList: true, subtree: true },
+        )
         onCleanup(() => {
           container.removeEventListener('scroll', scheduleMeasure)
+          contentObserver?.disconnect()
         })
         scheduleMeasure()
       },
