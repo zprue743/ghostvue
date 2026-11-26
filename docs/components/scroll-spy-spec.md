@@ -256,8 +256,9 @@ Themed exports from `@ghostvue/themes`:
 
 Not directly async, though target sections may mount, resize, or load async
 content (images, collapsible panels, tabs). Window resize, link registration
-changes, and `ResizeObserver` notifications for the scroll root and its
-content or targets schedule a coalesced `requestAnimationFrame` measurement.
+changes, navigation subtree changes such as keyed moves, and `ResizeObserver`
+notifications for the scroll root and its content or targets schedule a
+coalesced `requestAnimationFrame` measurement.
 
 ## Consumer data
 

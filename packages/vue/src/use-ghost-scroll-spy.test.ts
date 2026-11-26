@@ -187,7 +187,7 @@ describe('useGhostScrollSpy', () => {
     expect(activeLinkText(wrapper)).toBe('Gamma')
   })
 
-  it('uses current DOM order when measuring reordered keyed links', async () => {
+  it('remeasures when keyed links move without a scroll or resize event', async () => {
     const reversed = ref(false)
     const { wrapper, setScrollTop } = mountContainerHarness({
       reversed,
@@ -197,8 +197,7 @@ describe('useGhostScrollSpy', () => {
     expect(activeLinkText(wrapper)).toBe('Beta')
 
     reversed.value = true
-    await nextTick()
-    await setScrollTop(450)
+    await flushScrollSpyMeasure()
     expect(activeLinkText(wrapper)).toBe('Alpha')
   })
 

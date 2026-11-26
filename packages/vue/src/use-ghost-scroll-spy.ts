@@ -4,6 +4,7 @@ import {
   onMounted,
   shallowRef,
   toValue,
+  watch,
   type ComputedRef,
   type Ref,
 } from 'vue'
@@ -540,6 +541,21 @@ export function useGhostScrollSpy(
     }
     scheduleMeasure()
   }
+
+  watch(
+    rootElement,
+    (root, _previous, onCleanup) => {
+      if (!root || typeof MutationObserver !== 'function') return
+
+      // Keyed moves can change link order without changing any observed box.
+      const observer = new MutationObserver(scheduleMeasure)
+      observer.observe(root, { childList: true, subtree: true })
+      onCleanup(() => {
+        observer.disconnect()
+      })
+    },
+    { flush: 'post' },
+  )
 
   function onScroll(): void {
     scheduleMeasure()
