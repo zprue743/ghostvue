@@ -143,6 +143,107 @@
   }
 }
 
+/*
+ * Copy control (`DemoPreview.vue`) and shared `.ghost-copy-icon` SVG crossfade
+ * (also used by standalone markdown fences in `docs-theme.css`).
+ */
+.ghost-example__copy {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 1.75rem;
+  block-size: 1.75rem;
+  min-inline-size: 1.75rem;
+  min-block-size: 1.75rem;
+  padding: 0;
+  border-radius: 6px;
+  color: var(--ghost-text-muted);
+}
+
+.ghost-example__copy:hover,
+.ghost-example__copy:focus-visible {
+  color: var(--ghost-surface-fg);
+}
+
+.ghost-example__copy:focus-visible {
+  outline: 2px solid var(--ghost-focus-ring-color);
+  outline-offset: 2px;
+}
+
+.ghost-copy-icon {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 1rem;
+  block-size: 1rem;
+  pointer-events: none;
+}
+
+.ghost-copy-icon__copy,
+.ghost-copy-icon__check {
+  position: absolute;
+  inset: 0;
+  transition:
+    opacity 150ms ease,
+    transform 150ms ease;
+}
+
+.ghost-copy-icon__copy {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.ghost-copy-icon__check {
+  opacity: 0;
+  transform: scale(0.75);
+  color: var(--ghost-status-success-fg);
+}
+
+[data-copied] .ghost-copy-icon__copy,
+button.copy.copied .ghost-copy-icon__copy {
+  opacity: 0;
+  transform: scale(0.75);
+}
+
+[data-copied] .ghost-copy-icon__check,
+button.copy.copied .ghost-copy-icon__check {
+  opacity: 1;
+  transform: scale(1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ghost-copy-icon__copy,
+  .ghost-copy-icon__check {
+    transition: none;
+    transform: none;
+  }
+
+  [data-copied] .ghost-copy-icon__copy,
+  button.copy.copied .ghost-copy-icon__copy {
+    transform: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .ghost-example__copy {
+    forced-color-adjust: auto;
+    border: 1px solid ButtonText;
+    color: ButtonText;
+    background-color: ButtonFace;
+  }
+
+  .ghost-example__copy:focus-visible {
+    outline: 2px solid Highlight;
+    outline-offset: 2px;
+  }
+
+  .ghost-copy-icon__check {
+    color: ButtonText;
+  }
+}
+
 /* Copy feedback sits after the buttons; empty while idle so it takes no room. */
 .ghost-example__copy-status {
   color: var(--ghost-text-muted);
