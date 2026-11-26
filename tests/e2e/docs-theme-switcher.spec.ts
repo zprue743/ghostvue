@@ -57,6 +57,68 @@ test.describe('docs theme switcher', () => {
     }
   })
 
+  test('the translucent desktop navbar keeps the dark theme canvas color', async ({
+    page,
+  }) => {
+    const docs = await startStaticServer('apps/docs/.vitepress/dist')
+    try {
+      await page.emulateMedia({ colorScheme: 'dark', reducedMotion: 'reduce' })
+      await page.goto(`${docs.url}/components/`)
+      const root = page.locator('html')
+      await expect(root).toHaveAttribute('data-ghost-mode', 'dark')
+      const bar = page.locator('.VPNavBar.has-sidebar .content-body')
+
+      for (const theme of themes) {
+        await navSwitcher(page).getByTestId(`docs-theme-${theme}`).click()
+        await expect(root).toHaveAttribute('data-ghost-theme', theme)
+        await expect
+          .poll(async () =>
+            bar.evaluate((element) => {
+              const style = getComputedStyle(element)
+              const canvas = document.createElement('canvas')
+              canvas.width = 1
+              canvas.height = 1
+              const context = canvas.getContext('2d')
+              if (!context) throw new Error('Could not sample navbar color')
+
+              // Normalize through the same sRGB canvas to compare color and alpha.
+              const sample = (color: string, opacity = 1): number[] => {
+                context.clearRect(0, 0, 1, 1)
+                context.globalAlpha = opacity
+                context.fillStyle = color
+                context.fillRect(0, 0, 1, 1)
+                return Array.from(context.getImageData(0, 0, 1, 1).data)
+              }
+
+              const switcher = element.querySelector(
+                '.ghost-docs-theme-switcher',
+              )
+              if (!switcher)
+                throw new Error('Could not find the theme switcher')
+              const canvasColor = style
+                .getPropertyValue('--ghost-surface-bg')
+                .trim()
+              const surfaces = [
+                [style.backgroundColor, 0.88],
+                [getComputedStyle(switcher).backgroundColor, 0.82],
+              ] as const
+              return Math.max(
+                ...surfaces.flatMap(([color, opacity]) => {
+                  const expected = sample(canvasColor, opacity)
+                  return sample(color).map((channel, index) =>
+                    Math.abs(channel - (expected[index] ?? 0)),
+                  )
+                }),
+              )
+            }),
+          )
+          .toBeLessThanOrEqual(1)
+      }
+    } finally {
+      await docs.close()
+    }
+  })
+
   test('appearance toggle stays responsive and syncs data-ghost-mode', async ({
     page,
   }) => {

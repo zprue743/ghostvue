@@ -30,8 +30,9 @@ html[data-ghost-theme] {
   --vp-c-success-1: var(--ghost-status-success-fg);
   --vp-c-tip-1: var(--ghost-action-primary-bg);
   --vp-sidebar-bg-color: var(--ghost-surface-bg);
+  /* Keep the theme hue when compositing the translucent navbar. */
   --vp-nav-bg-color: color-mix(
-    in oklch,
+    in srgb,
     var(--ghost-surface-bg) 88%,
     transparent
   );
@@ -248,7 +249,7 @@ html[data-ghost-theme='mono'] {
     --ghost-radius-lg,
     calc(0.5rem * var(--ghost-roundness, 1))
   );
-  background: color-mix(in oklch, var(--ghost-surface-bg) 82%, transparent);
+  background: color-mix(in srgb, var(--ghost-surface-bg) 82%, transparent);
 }
 
 .ghost-docs-theme-switcher__option {
