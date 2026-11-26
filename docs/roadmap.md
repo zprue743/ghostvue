@@ -1,5 +1,9 @@
 # Component roadmap
 
+See the [release roadmap](https://github.com/users/zprue743/projects/5/views/2) for planned
+deliverables and launch gates, or the
+[execution board](https://github.com/users/zprue743/projects/5/views/3) for issue status by release. Both views require access to the private GitHub Project.
+
 Sequencing of [GitHub Issues](https://github.com/zprue743/ghostvue/issues)
 toward DataTable ([GHO-35](https://linear.app/ghost-vue/issue/GHO-35)). The
 catalog is [GHO-28](https://linear.app/ghost-vue/issue/GHO-28)–[GHO-35](https://linear.app/ghost-vue/issue/GHO-35) (planned before the GitHub migration) and [GHO-70](https://linear.app/ghost-vue/issue/GHO-70)–[GHO-107](https://linear.app/ghost-vue/issue/GHO-107) (migrated GitHub `#3`–`#19` plus later planned components). Public names are `Ghost*` ([ADR 0010](./adr/0010-rebrand-to-ghostvue.md), [ADR 0003](./adr/0003-public-component-api-conventions.md)). Every component still passes the [component gate](./agents/COMPONENT_WORKFLOW.md).

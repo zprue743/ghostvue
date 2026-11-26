@@ -29,8 +29,27 @@ commits.
   `GHO-n:` (for example `GHO-17: …`). Open GHO issues were migrated as
   `#306`–`#320`.
 
-When editing [roadmap.md](../roadmap.md), change only the row for the component
-you are working on.
+### Release planning
+
+The [release roadmap](https://github.com/users/zprue743/projects/5/views/2) shows major
+deliverables and release gates. The
+[execution board](https://github.com/users/zprue743/projects/5/views/3) groups tracked
+issues by status and target release. Both views require project access.
+
+- GitHub adds new open issues and updates card status when issues close or
+  reopen. Agents reconcile missing cards and triage the intake group. Set
+  `Target release` when an issue or approved plan names a release. Set
+  `Roadmap` to `Show` for major deliverables and release gates.
+- Preserve existing project field choices unless a maintainer decision or a
+  documented release change calls for an update. Leave ambiguous work in the
+  unassigned release group. Apply the `roadmap:manual` issue label to keep
+  its planning fields under manual control.
+- Use issue and linked PR activity as evidence for execution status. Release
+  readiness and publication are separate gates. Follow the
+  [release authorization rules](./releases.md) before treating either as complete.
+
+When editing the component catalog in [roadmap.md](../roadmap.md), change only
+the row for the component you are working on.
 
 Commits should be logical and readable. Conventional-style subjects such as
 `feat:`, `fix:`, `docs:`, `test:`, and `chore:` are encouraged because they make
