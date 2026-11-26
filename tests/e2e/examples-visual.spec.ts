@@ -1,6 +1,26 @@
+import type { Locator } from '@playwright/test'
+
 import { ghostExamples } from '../../examples/registry'
 import { waitForExamplePreview, type GhostExampleHost } from '../support'
 import { playgroundTest as test, expect } from '../support/playground'
+
+/**
+ * Scroll-spy examples paint active link state on the next animation frame after
+ * mount. Wait for that pass so CI prebuilt previews match Docker baselines.
+ */
+async function stabilizeScrollSpyExample(preview: Locator): Promise<void> {
+  const root = preview.locator('[data-part="root"]').first()
+  await expect(root).toBeVisible()
+  await expect(preview.locator('a[data-part="link"]').first()).toBeVisible()
+  await root.evaluate(
+    (element) =>
+      new Promise<void>((resolve) => {
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => resolve())
+        })
+      }),
+  )
+}
 
 const modes = ['light', 'dark'] as const
 
@@ -59,6 +79,10 @@ test.describe('example visual baselines', { tag: '@visual' }, () => {
           await expect(
             preview.locator('[data-ghost-data-table][aria-busy="true"]'),
           ).toHaveCount(0)
+
+          if (example.id.startsWith('scroll-spy/')) {
+            await stabilizeScrollSpyExample(preview)
+          }
 
           await expect(preview).toHaveScreenshot(`${slug}${suffix}-${mode}.png`)
         }
