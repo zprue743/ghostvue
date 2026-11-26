@@ -8,7 +8,9 @@
 4. Make the smallest coherent change with tests and documentation. Component
    usage samples belong in `examples/` ([executable examples](./examples.md)).
 5. Add intent-focused comments for non-obvious reasoning.
-6. Add a Changeset when a publishable package's consumer-visible behavior changes.
+6. Add a Changeset when a publishable package's consumer-visible behavior changes,
+   or apply the `no-changeset` PR label for internal-only changes inside
+   publishable packages (enforced by CI; see [releases](./releases.md)).
 7. Run focused checks, then `pnpm verify`; run `pnpm test:e2e` for browser behavior.
 8. Review the diff for API, accessibility, reactivity, SSR, cleanup, security,
    dependency, and licensing concerns.
