@@ -75,6 +75,43 @@ test.describe('docs quick wins', () => {
     }
   })
 
+  test('navbar logo wiggles on hover without moving the nav, except under reduced motion', async ({
+    page,
+  }) => {
+    const docs = await startStaticServer('apps/docs/.vitepress/dist')
+    try {
+      await page.setViewportSize({ width: 1280, height: 800 })
+      await page.goto(`${docs.url}/components/button.html`)
+      const logo = page.locator('.VPNavBarTitle .logo:visible')
+      const wordmark = page.locator('.VPNavBarTitle .title span').first()
+      await expect(logo).toHaveCount(1)
+      // Decorative: the wordmark text names the link, not the image.
+      await expect(logo).toHaveAttribute('alt', '')
+      await expect(page.locator('.VPNavBarTitle .title')).toHaveAccessibleName(
+        'GhostVue',
+      )
+
+      const animationName = () =>
+        logo.evaluate((element) => getComputedStyle(element).animationName)
+      const wordmarkBox = await wordmark.boundingBox()
+
+      expect(await animationName()).toBe('none')
+      await logo.hover()
+      expect(await animationName()).toBe('ghost-nav-logo-wiggle')
+      // Transform-only motion: the wordmark beside the ghost stays put.
+      expect(await wordmark.boundingBox()).toEqual(wordmarkBox)
+
+      await page.mouse.move(640, 400)
+      expect(await animationName()).toBe('none')
+
+      await page.emulateMedia({ reducedMotion: 'reduce' })
+      await logo.hover()
+      expect(await animationName()).toBe('none')
+    } finally {
+      await docs.close()
+    }
+  })
+
   test('homepage has no horizontal overflow at 390px', async ({ page }) => {
     const docs = await startStaticServer('apps/docs/.vitepress/dist')
     try {
