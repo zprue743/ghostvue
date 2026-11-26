@@ -113,6 +113,13 @@ export const ghostCodes = {
       'Two GhostCommandPaletteItem components in one palette use the id "{id}". Give every command a unique, stable id; duplicates share one highlight and registry entry.',
     relatedDocs: './components/command-palette.md',
   },
+  GHOST013: {
+    level: 'warn',
+    title: 'Duplicate scroll spy target',
+    message:
+      'Two GhostScrollSpyLink components in one GhostScrollSpy use the target "{target}". Each section id should appear once. Duplicate registrations resolve to the first enabled link in DOM order.',
+    relatedDocs: './components/scroll-spy.md',
+  },
 } as const satisfies Record<string, GhostCodeEntry>
 
 /**

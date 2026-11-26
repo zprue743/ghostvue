@@ -48,6 +48,31 @@ async function pageOverflow(page: Page): Promise<number> {
 }
 
 test.describe('docs example previews', () => {
+  test('ScrollSpy demos focus the linked section and replace the current history entry', async ({
+    page,
+    docsUrl,
+  }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' })
+    await page.goto(`${docsUrl}/components/scroll-spy.html`)
+    const historyLength = await page.evaluate(() => window.history.length)
+
+    for (const { example, label, target } of [
+      { example: 'basic', label: 'Details', target: 'scroll-spy-details' },
+      { example: 'themed', label: 'Two', target: 'themed-two' },
+      { example: 'composable', label: 'custom-b', target: 'custom-b' },
+    ]) {
+      const preview = page.locator(`[data-example-id="scroll-spy/${example}"]`)
+      await preview
+        .getByRole('link', { name: label, exact: true })
+        .press('Enter')
+      await expect(page.locator(`#${target}`)).toBeFocused()
+      await expect(page).toHaveURL(new RegExp(`#${target}$`))
+      expect(await page.evaluate(() => window.history.length)).toBe(
+        historyLength,
+      )
+    }
+  })
+
   test('GhostButton themed preview has recipe chrome and highlighted source', async ({
     page,
     docsUrl,
@@ -258,6 +283,8 @@ test.describe('docs example previews', () => {
     page,
     docsUrl,
   }) => {
+    // Visiting every component page can exceed 30s on a shared CI runner.
+    test.setTimeout(60_000)
     expect(componentPages.length).toBeGreaterThan(0)
     const errors: string[] = []
     page.on('pageerror', (error) => errors.push(error.message))
@@ -267,7 +294,10 @@ test.describe('docs example previews', () => {
       const stages = page.locator('.ghost-example__stage')
       await expect(stages.first()).toBeVisible()
       for (const stage of await stages.all()) {
-        await expect(stage.locator(':scope > *').first()).toBeAttached()
+        await expect(
+          stage.locator(':scope > *').first(),
+          `Demo preview on ${link}`,
+        ).toBeAttached()
       }
     }
     expect(errors).toEqual([])

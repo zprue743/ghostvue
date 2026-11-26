@@ -1,0 +1,52 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "generated",
+  "name": "GhostScrollSpyList",
+  "package": "@ghostvue/vue",
+  "status": "experimental",
+  "description": "Public GhostScrollSpyList component.",
+  "props": [
+    {
+      "name": "as",
+      "type": "GhostScrollSpyListElement",
+      "default": "ol",
+      "required": false,
+      "description": "Declared prop `as`.",
+      "deprecated": false
+    }
+  ],
+  "models": [],
+  "events": [],
+  "slots": [
+    {
+      "name": "default",
+      "props": [],
+      "description": "Primary content."
+    }
+  ],
+  "exposed": [
+    {
+      "name": "element",
+      "kind": "property",
+      "type": "HTMLElement | null",
+      "description": "Exposed property `element`."
+    }
+  ],
+  "styling": {
+    "parts": [],
+    "states": [],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "generic",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/",
+    "keyboard": {},
+    "requiredAriaAttributes": []
+  },
+  "examples": [],
+  "spec": {
+    "path": "docs/components/scroll-spy-spec.md",
+    "status": "approved",
+    "evidence": "Approved by Zac (admin) on 2026-11-26 for issue #339 / PR #361 open questions (Tab-per-link, optional container, SSR first item, lazy tabindex, vertical RTL logical CSS)."
+  }
+}

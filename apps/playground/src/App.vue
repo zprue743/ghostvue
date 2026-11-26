@@ -1,5 +1,12 @@
 <script setup lang="ts">
-import { computed, reactive, ref, useTemplateRef } from 'vue'
+import {
+  computed,
+  defineComponent,
+  h,
+  reactive,
+  ref,
+  useTemplateRef,
+} from 'vue'
 
 import {
   GhostBadge as GhostBadgeThemed,
@@ -14,6 +21,7 @@ import {
   GhostSlider as GhostSliderThemed,
   GhostSeparator as GhostSeparatorThemed,
   GhostScrollArea as GhostScrollAreaThemed,
+  GhostScrollSpy as GhostScrollSpyThemed,
   GhostEmptyState as GhostEmptyStateThemed,
   GhostInlineAlert as GhostInlineAlertThemed,
   GhostSkeleton as GhostSkeletonThemed,
@@ -68,6 +76,10 @@ import {
   GhostSlider,
   GhostSeparator,
   GhostScrollArea,
+  GhostScrollSpy,
+  GhostScrollSpyItem,
+  GhostScrollSpyLink,
+  GhostScrollSpyList,
   GhostTable,
   GhostTableBody,
   GhostTableCaption,
@@ -89,6 +101,13 @@ import {
 
 const flagships = ['calm', 'vibrant', 'mono'] as const
 const flagshipDensities = ['comfortable'] as const
+
+const ScrollSpyAnchor = defineComponent({
+  props: { href: { type: String, default: undefined } },
+  setup(props, { slots }) {
+    return () => h('a', { href: props.href }, slots['default']?.())
+  },
+})
 
 interface Report {
   name: string
@@ -1566,6 +1585,65 @@ function submitPlaygroundComment(event: Event): void {
         <button type="button">Inside control</button>
         <p v-for="row in 6" :key="row">Row {{ row }}</p>
       </GhostScrollArea>
+    </section>
+
+    <section
+      aria-labelledby="scroll-spy-heading"
+      data-testid="scroll-spy-playground"
+    >
+      <h2 id="scroll-spy-heading">GhostScrollSpy</h2>
+      <GhostScrollSpy
+        label="Playground sections"
+        data-testid="scroll-spy-playground-nav"
+        style="position: sticky; inset-block-start: 0; margin-block-end: 1rem"
+      >
+        <GhostScrollSpyList>
+          <GhostScrollSpyItem>
+            <GhostScrollSpyLink
+              :as="ScrollSpyAnchor"
+              target="scroll-spy-play-intro"
+              data-testid="scroll-spy-link-intro"
+            >
+              Intro
+            </GhostScrollSpyLink>
+          </GhostScrollSpyItem>
+          <GhostScrollSpyItem>
+            <GhostScrollSpyLink
+              target="scroll-spy-play-details"
+              data-testid="scroll-spy-link-details"
+            >
+              Details
+            </GhostScrollSpyLink>
+          </GhostScrollSpyItem>
+        </GhostScrollSpyList>
+      </GhostScrollSpy>
+      <section
+        id="scroll-spy-play-intro"
+        tabindex="-1"
+        style="min-block-size: 70vh"
+      >
+        <h3>Intro</h3>
+        <p v-for="line in 8" :key="line">Intro copy {{ line }}</p>
+      </section>
+      <section
+        id="scroll-spy-play-details"
+        tabindex="-1"
+        style="min-block-size: 70vh"
+      >
+        <h3>Details</h3>
+        <p v-for="line in 8" :key="line">Details copy {{ line }}</p>
+      </section>
+      <div class="ghost-theme" style="margin-block-start: 1rem">
+        <GhostScrollSpyThemed label="Themed" data-testid="scroll-spy-themed">
+          <GhostScrollSpyList>
+            <GhostScrollSpyItem>
+              <GhostScrollSpyLink target="scroll-spy-play-intro">
+                Intro
+              </GhostScrollSpyLink>
+            </GhostScrollSpyItem>
+          </GhostScrollSpyList>
+        </GhostScrollSpyThemed>
+      </div>
     </section>
 
     <section aria-labelledby="separator-heading">

@@ -98,6 +98,8 @@ test.describe('docs Wave 202c showcases (GHO-215)', () => {
   test('body-portaled overlays inherit theme tokens and switch cleanly between light and dark', async ({
     page,
   }) => {
+    // This sweep opens and scans every overlay in both color modes.
+    test.setTimeout(60_000)
     const docs = await startStaticServer('apps/docs/.vitepress/dist')
     try {
       // 1. ContextMenu

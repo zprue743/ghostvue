@@ -1,0 +1,44 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "handwritten",
+  "name": "GhostScrollSpy",
+  "package": "@ghostvue/themes",
+  "status": "experimental",
+  "description": "Themed wrappers for GhostScrollSpy compound parts. Importing any part loads ghost-scroll-spy.css via default.css.",
+  "props": [],
+  "models": [],
+  "events": [],
+  "slots": [],
+  "exposed": [],
+  "styling": {
+    "parts": [
+      {
+        "name": "root",
+        "description": "Vertical TOC rail with track and progress fill."
+      },
+      {
+        "name": "link",
+        "description": "Section link with focus-visible ring."
+      }
+    ],
+    "states": [
+      {
+        "name": "active",
+        "description": "Current section link and item."
+      }
+    ],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "navigation",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/landmarks/",
+    "keyboard": {},
+    "requiredAriaAttributes": ["aria-label"]
+  },
+  "examples": ["scroll-spy/themed"],
+  "spec": {
+    "path": "docs/components/scroll-spy-spec.md",
+    "status": "approved",
+    "evidence": "Approved by Zac (admin) on 2026-11-26 for issue #339 / PR #361 open questions (Tab-per-link, optional container, SSR first item, lazy tabindex, vertical RTL logical CSS)."
+  }
+}

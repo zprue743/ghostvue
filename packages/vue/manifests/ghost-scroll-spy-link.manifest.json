@@ -1,0 +1,98 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "generated",
+  "name": "GhostScrollSpyLink",
+  "package": "@ghostvue/vue",
+  "status": "experimental",
+  "description": "Public GhostScrollSpyLink component.",
+  "props": [
+    {
+      "name": "as",
+      "type": "GhostLinkElement",
+      "default": "a",
+      "required": false,
+      "description": "Declared prop `as`.",
+      "deprecated": false
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Declared prop `disabled`.",
+      "deprecated": false
+    },
+    {
+      "name": "href",
+      "type": "string",
+      "default": "",
+      "required": false,
+      "description": "Declared prop `href`.",
+      "deprecated": false
+    },
+    {
+      "name": "target",
+      "type": "string",
+      "required": true,
+      "description": "Declared prop `target`.",
+      "deprecated": false
+    }
+  ],
+  "models": [],
+  "events": [],
+  "slots": [
+    {
+      "name": "default",
+      "props": [
+        {
+          "name": "active",
+          "type": "boolean",
+          "description": "Slot prop `active`."
+        },
+        {
+          "name": "target",
+          "type": "string",
+          "description": "Slot prop `target`."
+        }
+      ],
+      "description": "Primary content."
+    }
+  ],
+  "exposed": [
+    {
+      "name": "blur",
+      "kind": "method",
+      "type": "() => void",
+      "description": "Exposed method `blur`."
+    },
+    {
+      "name": "element",
+      "kind": "property",
+      "type": "HTMLElement | null",
+      "description": "Exposed property `element`."
+    },
+    {
+      "name": "focus",
+      "kind": "method",
+      "type": "(options?: FocusOptions) => void",
+      "description": "Exposed method `focus`."
+    }
+  ],
+  "styling": {
+    "parts": [],
+    "states": [],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "generic",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/",
+    "keyboard": {},
+    "requiredAriaAttributes": []
+  },
+  "examples": [],
+  "spec": {
+    "path": "docs/components/scroll-spy-spec.md",
+    "status": "approved",
+    "evidence": "Approved by Zac (admin) on 2026-11-26 for issue #339 / PR #361 open questions (Tab-per-link, optional container, SSR first item, lazy tabindex, vertical RTL logical CSS)."
+  }
+}

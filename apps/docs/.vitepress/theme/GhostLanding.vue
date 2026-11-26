@@ -19,7 +19,6 @@ import {
   onMounted,
   onUnmounted,
   ref,
-  useTemplateRef,
   watch,
   type Component,
 } from 'vue'
@@ -28,7 +27,7 @@ import { exampleLoader, exampleSource } from '../../../../examples/load'
 import { defineDemoPreview } from './demo-preview-async'
 import { runDocsViewTransition, switchDocsTheme } from './docs-theme-transition'
 import LandingHeroMark from './LandingHeroMark.vue'
-import { useLandingScroll } from './landing-motion'
+import { useLandingScroll, type LandingSectionId } from './landing-motion'
 import { landingProgressionStages } from './landing-progression'
 import LandingSectionNumber from './LandingSectionNumber.vue'
 import LandingSectionRail from './LandingSectionRail.vue'
@@ -50,8 +49,8 @@ import {
  * the library with the code the component docs already publish.
  *
  * Section motion lives in `landing-page.css` (CSS scroll-driven animations)
- * with `useLandingScroll` as the fallback and as the source of the rail's
- * active section. The server render and the no-JavaScript page show every
+ * with `useLandingScroll` as the fallback for section phases; the rail uses
+ * `GhostScrollSpy`. The server render and the no-JavaScript page show every
  * section in its final state.
  */
 
@@ -190,8 +189,8 @@ const tooling = [
   },
 ] as const
 
-const root = useTemplateRef<HTMLElement>('root')
-const { activeId, motionMode } = useLandingScroll(root)
+const { motionMode } = useLandingScroll()
+const activeId = ref<LandingSectionId>('hero')
 
 onMounted(() => {
   readDocsTheme()
@@ -223,7 +222,7 @@ onUnmounted(() => {
     data-ghost-density="compact"
     :data-landing-motion="motionMode"
   >
-    <LandingSectionRail :active-id="activeId" />
+    <LandingSectionRail v-model="activeId" />
 
     <main class="ghost-landing__main">
       <!-- 1. Hero -->

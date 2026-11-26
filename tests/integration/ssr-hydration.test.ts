@@ -36,6 +36,10 @@ import GhostSelectContent from '../../packages/vue/src/GhostSelectContent.vue'
 import GhostSelectOption from '../../packages/vue/src/GhostSelectOption.vue'
 import GhostSelectTrigger from '../../packages/vue/src/GhostSelectTrigger.vue'
 import GhostSelectValue from '../../packages/vue/src/GhostSelectValue.vue'
+import GhostScrollSpy from '../../packages/vue/src/GhostScrollSpy.vue'
+import GhostScrollSpyItem from '../../packages/vue/src/GhostScrollSpyItem.vue'
+import GhostScrollSpyLink from '../../packages/vue/src/GhostScrollSpyLink.vue'
+import GhostScrollSpyList from '../../packages/vue/src/GhostScrollSpyList.vue'
 import GhostTree from '../../packages/vue/src/GhostTree.vue'
 import GhostTreeGroup from '../../packages/vue/src/GhostTreeGroup.vue'
 import GhostTreeItem from '../../packages/vue/src/GhostTreeItem.vue'
@@ -450,6 +454,45 @@ describe('SSR hydration harness', () => {
         },
       }),
     ).rejects.toThrow()
+  })
+
+  it('hydrates GhostScrollSpy with the first enabled link current', async () => {
+    await expectSsrHydration(
+      ssrHydrationRoot(
+        GhostScrollSpy,
+        {},
+        {
+          default: () =>
+            h(GhostScrollSpyList, null, {
+              default: () => [
+                h(GhostScrollSpyItem, null, {
+                  default: () =>
+                    h(
+                      GhostScrollSpyLink,
+                      { target: 'alpha', disabled: true },
+                      () => 'Alpha',
+                    ),
+                }),
+                h(GhostScrollSpyItem, null, {
+                  default: () =>
+                    h(GhostScrollSpyLink, { target: 'beta' }, () => 'Beta'),
+                }),
+              ],
+            }),
+        },
+      ),
+      {
+        assertServerHtml(html) {
+          expect(html).toContain('ghost-scroll-spy')
+          expect(html).toContain('aria-label="Page sections"')
+          const server = new DOMParser().parseFromString(html, 'text/html')
+          const current = server.querySelectorAll('a[aria-current="location"]')
+          expect(Array.from(current, (link) => link.textContent)).toEqual([
+            'Beta',
+          ])
+        },
+      },
+    )
   })
 
   it('hydrates GhostInlineAlert title id without mismatch', async () => {

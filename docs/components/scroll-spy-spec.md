@@ -9,8 +9,15 @@ components:
 packages:
   - '@ghostvue/vue'
   - '@ghostvue/themes'
-specStatus: proposed
-manifests: []
+specStatus: approved
+approval:
+  evidence: 'Approved by Zac (admin) on 2026-11-26 for issue #339 / PR #361 open questions (Tab-per-link, optional container, SSR first item, lazy tabindex, vertical RTL logical CSS).'
+manifests:
+  - packages/vue/manifests/ghost-scroll-spy.manifest.json
+  - packages/vue/manifests/ghost-scroll-spy-list.manifest.json
+  - packages/vue/manifests/ghost-scroll-spy-item.manifest.json
+  - packages/vue/manifests/ghost-scroll-spy-link.manifest.json
+  - packages/themes/manifests/ghost-scroll-spy.manifest.json
 sections:
   purpose:
     applicable: true
@@ -58,9 +65,9 @@ unresolvedQuestions:
 
 # GhostScrollSpy specification
 
-**Status:** Proposed for [Issue #339](https://github.com/zprue743/ghostvue/issues/339).
-No production markup or package exports land before Zac signs off on the open
-architectural questions below and promotes `specStatus` to `approved`.
+**Status:** Approved for [Issue #339](https://github.com/zprue743/ghostvue/issues/339)
+(admin sign-off 2026-11-26). Implementation follows the recommended defaults for
+the open architectural questions below unless noted in the PR.
 
 **Related:** [GhostLink specification](/specs/link),
 [GhostBreadcrumb specification](/specs/breadcrumb),
@@ -157,7 +164,7 @@ Themed exports from `@ghostvue/themes`:
 | `container`      | `HTMLElement \| Window \| null \| undefined` | `undefined` (`window`) | Scroll container to observe and scroll (see Open Question #3).                                                                                                        |
 | `probeOffset`    | `number`                                     | `0.4`                  | Viewport/container activation threshold: values in `(0, 1]` are treated as a fraction of container height; values `> 1` or `0` are pixel offsets from the start edge. |
 | `endThreshold`   | `number`                                     | `0.995`                | Normalized scroll progress (`0..1`) at or above which the final target becomes active even if shorter than `1 - probeOffset`.                                         |
-| `scrollBehavior` | `'smooth' \| 'auto'`                         | `'smooth'`             | Scroll behavior on link activation; coerced to `'auto'` when `prefers-reduced-motion: reduce` matches.                                                                |
+| `scrollBehavior` | `'smooth' \| 'auto'`                         | `'smooth'`             | Scroll behavior for link activation and `scrollTo()`. Navigation is instant when `prefers-reduced-motion: reduce` matches, even with CSS smooth scrolling.            |
 | `historyMode`    | `'replace' \| 'push' \| 'none'`              | `'replace'`            | How URL hash is updated on plain link activation (`history.replaceState` avoids stacking back-button entries).                                                        |
 | `focusTarget`    | `boolean`                                    | `true`                 | Moves focus (`target.focus({ preventScroll: true })`) to the resolved section element after activation.                                                               |
 | `travelSettleMs` | `number`                                     | `180`                  | Milliseconds after the last scroll frame before `data-travel` clears.                                                                                                 |
@@ -180,7 +187,8 @@ Themed exports from `@ghostvue/themes`:
   guard — never emits on every scroll frame).
 - In controlled mode, `update:modelValue` is emitted when scroll measurement or
   activation resolves a different ID; the rendered `aria-current` reflects the
-  parent's `modelValue` prop.
+  parent's `modelValue` prop. Consecutive measurements of the same section emit
+  once while the parent's selection stays the same.
 - Calling `scrollTo(id)` scrolls to the target and updates/emits the active ID
   immediately (or lets scroll measurement confirm it; if controlled `modelValue`
   does not update, `aria-current` remains bound to `modelValue`).
@@ -248,10 +256,12 @@ Themed exports from `@ghostvue/themes`:
 ### Async behavior
 
 Not directly async, though target sections may mount, resize, or load async
-content (images, collapsible panels, tabs). `ResizeObserver` on the scroll
-root/document body and `measure()` on item registration/unregistration schedules
-a coalesced `requestAnimationFrame` measurement so active state and progress stay
-accurate without polling.
+content (images, collapsible panels, tabs). Tracking follows the container when
+a template ref resolves or the element is replaced. Container and activation
+threshold changes, window resize, link registration changes, navigation subtree
+changes such as keyed moves, insertion or removal of target sections in the
+scroll container, and `ResizeObserver` notifications schedule a coalesced
+`requestAnimationFrame` measurement.
 
 ## Consumer data
 
@@ -262,7 +272,8 @@ accurate without polling.
   conditional `v-if` toggles, and reordering (using DOM order comparison via
   `compareDocumentPosition` or ordered array reconciliation on mount/unmount).
 - Duplicate `target` values in the same `GhostScrollSpy` warn in development
-  (`GHOST*` dev warning) and resolve deterministically by first registered item.
+  (`GHOST013` dev warning). The first enabled link in DOM order owns the active
+  state, and each enabled target contributes only one progress stop.
 
 ## Accessibility contract
 
@@ -295,8 +306,8 @@ accurate without polling.
 ### Focus behavior
 
 - When a link is activated (click or `Enter`):
-  1. Target scrolls into view (`block: 'start'`, respecting CSS `scroll-margin-block-start`
-     for fixed headers).
+  1. Target scrolls to the start of the scrollport, respecting the section's
+     vertical scroll margin and the container's vertical scroll padding.
   2. Target receives focus via `target.focus({ preventScroll: true })` (when
      `focusTarget` is `true`), so the next `Tab` moves to the first interactive
      control _inside_ that section rather than continuing through the rest of
@@ -485,7 +496,7 @@ exports:
 4. **SSR output before client measurement.**
    - _Option A (Recommended):_ Render `aria-current="location"` on `modelValue`
      if controlled, else `defaultValue` if provided, else **the first registered
-     item** once registered (matching `LandingSectionRail.vue` SSR output), and
+     enabled item** once registered (matching `LandingSectionRail.vue` SSR output), and
      reconcile to actual scroll position in `onMounted` after hydration. Note:
      for compound children without `defaultValue`, `GhostScrollSpyLink` setup
      order must not mutate parent state _after_ the first link renders; either
