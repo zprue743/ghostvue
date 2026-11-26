@@ -22,7 +22,7 @@ Every tool also accepts `expectedGhostvueVersion`. Every successful payload carr
 
 <!-- @generated docs-api:mcp-tools end -->
 
-Transport is **stdio** only. HTTP (GHO-205) and `validate_usage` (GHO-206) are deferred.
+Transport is **stdio** only. HTTP (GHO-205) and `validate_usage` (GHO-206) are deferred. A [draft `validate_usage` contract](../plans/gho-206-validate-usage.md) awaits approval; it is not implemented.
 
 ## What is excluded
 
