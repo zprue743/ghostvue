@@ -84,15 +84,27 @@ only on this wrapper:
 
 `@ghostvue/themes` adds these to the headless `GhostLink` API, which it forwards:
 
-| Prop      | Type                    | Default    | Description                                          |
-| --------- | ----------------------- | ---------- | ---------------------------------------------------- |
-| `variant` | `'inline' \| 'subtle'`  | `"inline"` | Underline treatment. The default omits data-variant. |
-| `tone`    | `'accent' \| 'neutral'` | `"accent"` | Link color intent. The default omits data-tone.      |
+| Prop         | Type                                                                | Default    | Description                                                                               |
+| ------------ | ------------------------------------------------------------------- | ---------- | ----------------------------------------------------------------------------------------- |
+| `appearance` | `'link' \| 'button'`                                                | `"link"`   | Visual presentation mode. Use button for GhostButton-styled navigation links.             |
+| `variant`    | `'inline' \| 'subtle' \| 'solid' \| 'soft' \| 'outline' \| 'ghost'` | `"inline"` | Visual treatment. Defaults to inline for link appearance and solid for button appearance. |
+| `tone`       | `'accent' \| 'neutral' \| 'danger'`                                 | `"accent"` | Color intent. Danger applies when appearance is button. The default omits data-tone.      |
+| `size`       | `'sm' \| 'md' \| 'lg'`                                              | `"md"`     | Control size when appearance is button. The default omits data-size.                      |
 
 <!-- @generated docs-api:themes/ghost-link end -->
 
 Defaults omit matching `data-*` hooks so CSS can treat a missing attribute as
 `inline` / `accent`. Focus-visible uses the shared focus-ring tokens.
+
+## Button-styled links
+
+<GhostExample id="link/button" />
+
+Set `appearance="button"` when a navigation link should look like a
+`GhostButton` (for example hero calls to action). It keeps real `<a>` semantics,
+`disabled` `href` removal, and `target="_blank"` safety while accepting
+`variant` (`solid`, `soft`, `outline`, `ghost`), `tone` (`accent`, `neutral`,
+`danger`), and `size` (`sm`, `md`, `lg`).
 
 ## Accessibility
 

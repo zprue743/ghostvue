@@ -16,7 +16,7 @@
     "export { resolveGhostLinkHtmlElement, mergeLinkRel } from './ghost-link'"
   ],
   "themesBarrel": [
-    "export {\n  GhostLink,\n  type GhostLinkExposed,\n  type GhostLinkTone,\n  type GhostLinkVariant,\n} from './ghost-link'"
+    "export {\n  GhostLink,\n  type GhostLinkAppearance,\n  type GhostLinkExposed,\n  type GhostLinkSize,\n  type GhostLinkTone,\n  type GhostLinkVariant,\n} from './ghost-link'"
   ],
   "examples": [
     {
@@ -41,6 +41,12 @@
       "id": "link/themed",
       "title": "Themed",
       "description": "Default inline link visuals from @ghostvue/themes.",
+      "layer": "themed"
+    },
+    {
+      "id": "link/button",
+      "title": "Button-styled link",
+      "description": "Navigation link rendered with the GhostButton visual recipe.",
       "layer": "themed"
     },
     {

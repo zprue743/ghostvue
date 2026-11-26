@@ -12,7 +12,7 @@ import {
   GhostTabsList,
   GhostTabsTrigger,
 } from '@ghostvue/themes'
-import { useData } from 'vitepress'
+import { useData, withBase } from 'vitepress'
 import {
   computed,
   nextTick,
@@ -26,7 +26,6 @@ import {
 import { exampleLoader, exampleSource } from '../../../../examples/load'
 import { defineDemoPreview } from './demo-preview-async'
 import { runDocsViewTransition, switchDocsTheme } from './docs-theme-transition'
-import LandingActionLink from './LandingActionLink.vue'
 import LandingHeroMark from './LandingHeroMark.vue'
 import { useLandingScroll, type LandingSectionId } from './landing-motion'
 import { landingProgressionStages } from './landing-progression'
@@ -251,16 +250,21 @@ onUnmounted(() => {
               <code>@ghostvue/themes</code>.
             </p>
             <div class="ghost-landing__actions">
-              <LandingActionLink href="/getting-started" size="lg">
+              <GhostLink
+                :href="withBase('/getting-started')"
+                appearance="button"
+                size="lg"
+              >
                 Get started
-              </LandingActionLink>
-              <LandingActionLink
-                href="/components/"
+              </GhostLink>
+              <GhostLink
+                :href="withBase('/components/')"
+                appearance="button"
                 variant="outline"
                 size="lg"
               >
                 Browse components
-              </LandingActionLink>
+              </GhostLink>
             </div>
           </div>
 
@@ -591,9 +595,13 @@ onUnmounted(() => {
           </GhostTabs>
 
           <div class="ghost-landing__section-actions" data-reveal="rise">
-            <LandingActionLink href="/components/" variant="soft">
+            <GhostLink
+              :href="withBase('/components/')"
+              appearance="button"
+              variant="soft"
+            >
               Browse all {{ componentCount }} components
-            </LandingActionLink>
+            </GhostLink>
           </div>
         </div>
       </section>
@@ -669,12 +677,21 @@ onUnmounted(() => {
               button, dialog, or table. Keep what you like and leave the rest.
             </p>
             <div class="ghost-landing__closing-actions">
-              <LandingActionLink href="/getting-started" size="lg">
+              <GhostLink
+                :href="withBase('/getting-started')"
+                appearance="button"
+                size="lg"
+              >
                 Read the guide
-              </LandingActionLink>
-              <LandingActionLink href="/philosophy" variant="outline" size="lg">
+              </GhostLink>
+              <GhostLink
+                :href="withBase('/philosophy')"
+                appearance="button"
+                variant="outline"
+                size="lg"
+              >
                 Why GhostVue
-              </LandingActionLink>
+              </GhostLink>
             </div>
           </header>
 

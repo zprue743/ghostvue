@@ -39,19 +39,35 @@
       "deprecated": false
     },
     {
+      "name": "appearance",
+      "type": "'link' | 'button'",
+      "default": "link",
+      "required": false,
+      "description": "Visual presentation mode. Use button for GhostButton-styled navigation links.",
+      "deprecated": false
+    },
+    {
       "name": "variant",
-      "type": "'inline' | 'subtle'",
+      "type": "'inline' | 'subtle' | 'solid' | 'soft' | 'outline' | 'ghost'",
       "default": "inline",
       "required": false,
-      "description": "Underline treatment. The default omits data-variant.",
+      "description": "Visual treatment. Defaults to inline for link appearance and solid for button appearance.",
       "deprecated": false
     },
     {
       "name": "tone",
-      "type": "'accent' | 'neutral'",
+      "type": "'accent' | 'neutral' | 'danger'",
       "default": "accent",
       "required": false,
-      "description": "Link color intent. The default omits data-tone.",
+      "description": "Color intent. Danger applies when appearance is button. The default omits data-tone.",
+      "deprecated": false
+    },
+    {
+      "name": "size",
+      "type": "'sm' | 'md' | 'lg'",
+      "default": "md",
+      "required": false,
+      "description": "Control size when appearance is button. The default omits data-size.",
       "deprecated": false
     }
   ],
@@ -173,6 +189,7 @@
   "examples": [
     "link/documentation-footer",
     "link/themed",
+    "link/button",
     "link/external",
     "link/disabled"
   ]
