@@ -112,16 +112,17 @@ nested key instead.
 <GhostKbd size="sm">Esc</GhostKbd>
 ```
 
-Solid treatments paint an oklch gradient (`--ghost-gradient-action-primary`,
-`--ghost-gradient-action-neutral`, `--ghost-gradient-action-danger`), an inset
-highlight, and the elevation-2 shadow. Hover, press, selected, and dragged
-are state-layer overlays (`--ghost-state-layer-*`) on the current tone. Press
-scales to `--ghost-motion-press-scale` and drops to the elevation-1 shadow,
-then releases with the snappy spring. The keyboard focus ring is two-tone
-and eases in with `--ghost-focus-ring-duration` (instant under reduced
-motion). Soft, outline, and ghost rest fills use `--ghost-state-mix-*` instead
-of a gradient. The full combination table lives on
-[GhostButton](../components/button.md#state-matrix).
+Solid treatments paint `--ghost-gradient-action-primary`,
+`--ghost-gradient-action-neutral`, or `--ghost-gradient-action-danger`
+(restrained single-hue fills in `default`; multi-stop OKLCH gradients in
+`vibrant`), an inset hairline bevel, and the elevation-1 shadow. Hover, press,
+selected, and dragged are state-layer overlays (`--ghost-state-layer-*`) on the
+current tone. Press scales to `--ghost-motion-press-scale` and drops to the
+elevation-0 flush shadow, then releases with the snappy spring. The keyboard
+focus ring is two-tone (`2px` width, `2px` offset) and eases in with
+`--ghost-focus-ring-duration` (instant under reduced motion). Soft, outline,
+and ghost rest fills use `--ghost-state-mix-*` instead of a gradient. The full
+combination table lives on [GhostButton](../components/button.md#state-matrix).
 
 ## Light, dark, and nested modes
 

@@ -82,13 +82,14 @@ Importing the themed component loads the default stylesheet. Visual props exist
 only on this wrapper; see its [generated reference](/reference/themes/ghost-button).
 
 Themed size, padding, gap, radius, and type come from density, spacing, and
-roundness tokens. Comfortable `md` is 40px tall with an 8px radius at
-`--ghost-roundness: 1`. Compact and spacious nest through `data-ghost-density`;
-coarse pointers floor heights to 44px. See
-[density, type, and roundness](../themes/density.md).
+roundness tokens. Comfortable `md` is 36px tall with a 6px radius at
+`--ghost-roundness: 1` (compact `md` is 32px; spacious `md` is 40px). Compact
+and spacious nest through `data-ghost-density`; coarse pointers floor heights
+to 44px. See [density, type, and roundness](../themes/density.md).
 
-Solid accent (the default), neutral, and danger fills use oklch gradients
-(`--ghost-gradient-action-*`) with an inset highlight and elevation-2 shadow.
+Solid accent (the default), neutral, and danger fills use `--ghost-gradient-action-*`
+(a restrained single-hue fill in `default`, or expressive OKLCH gradients in
+`vibrant`) with an inset hairline bevel and elevation-1 shadow.
 Hover, press, selected, and dragged are **state-layer overlays**
 (`--ghost-state-layer-*`) mixed onto the current tone, so they work in every
 mode without per-tone hover colors. There are no per-component tokens.
@@ -101,11 +102,11 @@ toggle and drag controls can reuse the same overlay tokens.
 
 | State                 | How it appears        | Overlay                        | Motion                                                                        | Notes                                                                                                |
 | --------------------- | --------------------- | ------------------------------ | ----------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
-| Rest                  | Default               | none                           | —                                                                             | Solid: gradient fill, inner highlight, elevation 2.                                                  |
+| Rest                  | Default               | none                           | —                                                                             | Solid: fill, inner hairline bevel, elevation 1.                                                      |
 | Hover                 | `:hover`              | `--ghost-state-layer-hover`    | color                                                                         | Not applied while disabled or loading.                                                               |
 | Focus-visible         | `:focus-visible`      | two-tone ring                  | ring entrance (`--ghost-focus-ring-duration`)                                 | Inner `--ghost-focus-ring-contrast`, outer `--ghost-focus-ring-color`. Instant under reduced motion. |
 | Hover + focus-visible | both                  | hover overlay + ring           | ring entrance                                                                 | Overlay and ring compose.                                                                            |
-| Pressed               | `:active`             | `--ghost-state-layer-press`    | scale `--ghost-motion-press-scale` (0.98), elevation 1, snappy spring release | No scale under reduced motion; color overlay stays.                                                  |
+| Pressed               | `:active`             | `--ghost-state-layer-press`    | scale `--ghost-motion-press-scale` (0.98), elevation 0, snappy spring release | No scale under reduced motion; color overlay stays.                                                  |
 | Pressed + focus       | both                  | press overlay + ring           | press + ring                                                                  |                                                                                                      |
 | Loading               | `loading`             | none                           | spinner                                                                       | Fixed width, `aria-busy`, focusable. Focus-visible still draws the ring.                             |
 | Loading + focus       | both                  | ring                           | spinner + ring                                                                | Activation stays cancelled.                                                                          |

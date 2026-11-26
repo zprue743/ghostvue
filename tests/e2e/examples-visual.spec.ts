@@ -9,7 +9,7 @@ const modes = ['light', 'dark'] as const
  * resizes controls, and never pads the canvas from the test, so a screenshot
  * shows what the docs canvas and a consumer app render.
  *
- * - `docs`: the docs first paint (`calm`, density unset). Every example.
+ * - `docs`: the docs first paint (`default`, density unset). Every example.
  * - `default-comfortable`: the library default theme at an explicit density.
  *   Themed examples only; headless examples have no recipe to vary.
  */

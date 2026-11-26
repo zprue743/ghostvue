@@ -10,15 +10,15 @@ import {
 } from '../../apps/docs/.vitepress/theme/restore-theme'
 
 describe('docs theme host', () => {
-  it('stamps calm onto a bare html tag without a recipe scope class', () => {
+  it('stamps default onto a bare html tag without a recipe scope class', () => {
     expect(applyDocsThemeHost('<html lang="en-US">')).toBe(
-      '<html data-ghost-theme="calm" lang="en-US">',
+      '<html data-ghost-theme="default" lang="en-US">',
     )
   })
 
   it('keeps an existing dark class from the appearance script', () => {
     expect(applyDocsThemeHost('<html lang="en-US" class="dark">')).toBe(
-      '<html data-ghost-theme="calm" lang="en-US" class="dark">',
+      '<html data-ghost-theme="default" lang="en-US" class="dark">',
     )
   })
 

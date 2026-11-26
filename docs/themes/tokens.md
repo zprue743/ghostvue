@@ -84,14 +84,14 @@ tokens that alias them.
 | `action.danger.border` | `--ghost-action-danger-border` | color | `#b91c1c` | `#f87171` | Border on a solid danger action. |
 | `action.danger.fg` | `--ghost-action-danger-fg` | color | `#ffffff` | `#0f172a` | Content color on a solid danger action. |
 | `action.danger.gradient.from` | `--ghost-action-danger-gradient-from` | color | `#b91c1c` | `#f87171` | Danger action gradient start. Must meet WCAG AA with action.danger.fg. |
-| `action.danger.gradient.to` | `--ghost-action-danger-gradient-to` | color | `#900009` | `#ff908d` | Danger action gradient end. Must meet WCAG AA with action.danger.fg. |
+| `action.danger.gradient.to` | `--ghost-action-danger-gradient-to` | color | `#b91c1c` | `#f87171` | Danger action gradient end. Single-hue default; must meet WCAG AA with action.danger.fg. |
 | `action.disabled.bg` | `--ghost-action-disabled-bg` | color | `#d9dee6` | `#464b50` | Unavailable action background. Desaturated; still meets WCAG AA with action.disabled.fg. |
 | `action.disabled.border` | `--ghost-action-disabled-border` | color | `#bcc4d1` | `#60666e` | Unavailable action border. |
 | `action.disabled.fg` | `--ghost-action-disabled-fg` | color | `#334155` | `#d3dce7` | Unavailable action foreground. Reduced emphasis, still legible. |
 | `action.disabled.opacity` | `--ghost-action-disabled-opacity` | number | `0.55` | `0.55` | Shared unavailable-state opacity. GhostButton uses dedicated disabled colors instead of fading the rest tone. |
 | `action.duration` | `--ghost-action-duration` | duration | `120ms` | `120ms` | Action color and opacity transition duration. |
 | `action.gap` | `--ghost-action-gap` | dimension | `0.5rem` | `0.5rem` | Space between action label and icon content. |
-| `action.highlight` | `--ghost-action-highlight` | shadow | `inset 0px 1px 0px 0px oklch(1 0.012 258 / 0.28)` | `inset 0px 1px 0px 0px oklch(1 0.005 258 / 0.12)` | Inset top sheen on solid actions. |
+| `action.highlight` | `--ghost-action-highlight` | shadow | `inset 0px 1px 0px 0px oklch(1 0.008 258 / 0.16)` | `inset 0px 1px 0px 0px oklch(1 0.005 258 / 0.12)` | Inset hairline bevel on solid actions. |
 | `action.icon.size` | `--ghost-action-icon-size` | dimension | `1.1em` | `1.1em` | Action icon size. |
 | `action.info.bg` | `--ghost-action-info-bg` | color | `#0369a1` | `#38bdf8` | Solid info action background. |
 | `action.info.bg.active` | `--ghost-action-info-bg-active` | color | `#003454` | `#99dbff` | Solid info action background on press. |
@@ -101,25 +101,25 @@ tokens that alias them.
 | `action.label.family` | `--ghost-action-label-family` | fontFamily | `ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji"` | `ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji"` | Action label font family. |
 | `action.label.letter` | `--ghost-action-label-letter` | letterSpacing | `0em` | `0em` | Action label letter-spacing. |
 | `action.label.line` | `--ghost-action-label-line` | number | `1.2` | `1.2` | Action label line-height. |
-| `action.label.size` | `--ghost-action-label-size` | fontSize | `clamp(0.9375rem, 0.9167rem + 0.1042vw, 1rem)` | `clamp(0.9375rem, 0.9167rem + 0.1042vw, 1rem)` | Default action label size. Size variants use control.size.*.font. |
-| `action.label.weight` | `--ghost-action-label-weight` | fontWeight | `600` | `600` | Action label font weight. |
+| `action.label.size` | `--ghost-action-label-size` | fontSize | `0.875rem` | `0.875rem` | Default action label size. Size variants use control.size.*.font. |
+| `action.label.weight` | `--ghost-action-label-weight` | fontWeight | `500` | `500` | Action label font weight. |
 | `action.neutral.bg` | `--ghost-action-neutral-bg` | color | `#334155` | `#cbd5e1` | Solid neutral action background. |
 | `action.neutral.bg.active` | `--ghost-action-neutral-bg-active` | color | `#1a2330` | `#dee4eb` | Solid neutral action background on press. |
 | `action.neutral.bg.hover` | `--ghost-action-neutral-bg-hover` | color | `#263243` | `#d3dce7` | Solid neutral action background on hover. |
 | `action.neutral.border` | `--ghost-action-neutral-border` | color | `#334155` | `#cbd5e1` | Border on a solid neutral action. |
 | `action.neutral.fg` | `--ghost-action-neutral-fg` | color | `#ffffff` | `#0f172a` | Content color on a solid neutral action. |
 | `action.neutral.gradient.from` | `--ghost-action-neutral-gradient-from` | color | `#334155` | `#cbd5e1` | Neutral action gradient start. Must meet WCAG AA with action.neutral.fg. |
-| `action.neutral.gradient.to` | `--ghost-action-neutral-gradient-to` | color | `#263243` | `#d3dce7` | Neutral action gradient end. Must meet WCAG AA with action.neutral.fg. |
+| `action.neutral.gradient.to` | `--ghost-action-neutral-gradient-to` | color | `#334155` | `#cbd5e1` | Neutral action gradient end. Single-hue default; must meet WCAG AA with action.neutral.fg. |
 | `action.primary.bg` | `--ghost-action-primary-bg` | color | `#1d4ed8` | `#60a5fa` | Solid primary action background. Maps to GhostButton tone accent. |
 | `action.primary.bg.active` | `--ghost-action-primary-bg-active` | color | `#05217d` | `#a8ceff` | Solid primary action background on press. |
 | `action.primary.bg.hover` | `--ghost-action-primary-bg-hover` | color | `#0d35ae` | `#80b8ff` | Solid primary action background on hover. |
 | `action.primary.border` | `--ghost-action-primary-border` | color | `#1d4ed8` | `#60a5fa` | Border on a solid primary action. |
 | `action.primary.fg` | `--ghost-action-primary-fg` | color | `#ffffff` | `#0f172a` | Content color on a solid primary action. |
 | `action.primary.gradient.from` | `--ghost-action-primary-gradient-from` | color | `#1d4ed8` | `#60a5fa` | Primary action gradient start. Must meet WCAG AA with action.primary.fg. |
-| `action.primary.gradient.to` | `--ghost-action-primary-gradient-to` | color | `#004e7a` | `#38bdf8` | Primary action gradient end. Subtle hue shift; must meet WCAG AA with action.primary.fg. |
-| `action.radius` | `--ghost-action-radius` | dimension | `0.5rem` | `0.5rem` | Action corner radius. Follows --ghost-roundness. |
-| `action.shadow` | `--ghost-action-shadow` | shadow | `0px 2px 4px 0px oklch(0.254 0.028 257.5 / 0.08), 0px 4px 10px 0px oklch(0.254 0.028 257.5 / 0.14)` | `0px 2px 4px 0px oklch(0.08 0.02 258 / 0.3), 0px 3px 8px 0px oklch(0.08 0.02 258 / 0.18)` | Rest elevation on solid actions. |
-| `action.shadow.press` | `--ghost-action-shadow-press` | shadow | `0px 1px 2px 0px oklch(0.254 0.028 257.5 / 0.08), 0px 1px 3px 0px oklch(0.254 0.028 257.5 / 0.14)` | `0px 1px 2px 0px oklch(0.08 0.02 258 / 0.28), 0px 1px 2px 0px oklch(0.08 0.02 258 / 0.16)` | Compressed elevation on a pressed solid action. |
+| `action.primary.gradient.to` | `--ghost-action-primary-gradient-to` | color | `#1d4ed8` | `#60a5fa` | Primary action gradient end. Single-hue default; must meet WCAG AA with action.primary.fg. |
+| `action.radius` | `--ghost-action-radius` | dimension | `0.375rem` | `0.375rem` | Action corner radius. Follows --ghost-roundness. |
+| `action.shadow` | `--ghost-action-shadow` | shadow | `0px 1px 2px 0px oklch(0.254 0.028 257.5 / 0.08), 0px 1px 3px 0px oklch(0.254 0.028 257.5 / 0.14)` | `0px 1px 2px 0px oklch(0.08 0.02 258 / 0.28), 0px 1px 2px 0px oklch(0.08 0.02 258 / 0.16)` | Rest elevation on solid actions. |
+| `action.shadow.press` | `--ghost-action-shadow-press` | shadow | `0px 0px 0px 0px transparent` | `0px 0px 0px 0px transparent` | Compressed elevation on a pressed solid action. |
 | `action.spinner.duration` | `--ghost-action-spinner-duration` | duration | `700ms` | `700ms` | Default action spinner rotation period. The reduced-motion pulse uses the same period so it does not flicker. |
 | `action.spinner.opacity` | `--ghost-action-spinner-opacity` | number | `0.35` | `0.35` | Reduced-motion spinner pulse trough opacity. |
 | `action.spinner.size` | `--ghost-action-spinner-size` | dimension | `1.1em` | `1.1em` | Action loading-indicator size. |
@@ -155,45 +155,45 @@ tokens that alias them.
 
 | Token | CSS | Type | Light | Dark | Description |
 | --- | --- | --- | --- | --- | --- |
-| `control.size.lg.font` | `--ghost-control-size-lg-font` | fontSize | `clamp(1.0625rem, 1.0417rem + 0.1042vw, 1.125rem)` | `clamp(1.0625rem, 1.0417rem + 0.1042vw, 1.125rem)` | Large control font size. |
-| `control.size.lg.min` | `--ghost-control-size-lg-min` | dimension | `3rem` | `3rem` | Large control minimum block size. Comfortable and spacious 48px; compact 40. |
-| `control.size.lg.padding.block` | `--ghost-control-size-lg-padding-block` | dimension | `1rem` | `1rem` | Large control block padding. |
-| `control.size.lg.padding.inline` | `--ghost-control-size-lg-padding-inline` | dimension | `1.25rem` | `1.25rem` | Large control inline padding. |
-| `control.size.md.font` | `--ghost-control-size-md-font` | fontSize | `clamp(0.9375rem, 0.9167rem + 0.1042vw, 1rem)` | `clamp(0.9375rem, 0.9167rem + 0.1042vw, 1rem)` | Medium control font size. |
-| `control.size.md.min` | `--ghost-control-size-md-min` | dimension | `2.5rem` | `2.5rem` | Medium control minimum block size. Comfortable 40px; compact 32; spacious 48. |
-| `control.size.md.padding.block` | `--ghost-control-size-md-padding-block` | dimension | `0.75rem` | `0.75rem` | Medium control block padding. |
-| `control.size.md.padding.inline` | `--ghost-control-size-md-padding-inline` | dimension | `1rem` | `1rem` | Medium control inline padding. |
-| `control.size.sm.font` | `--ghost-control-size-sm-font` | fontSize | `clamp(0.8125rem, 0.7917rem + 0.1042vw, 0.875rem)` | `clamp(0.8125rem, 0.7917rem + 0.1042vw, 0.875rem)` | Small control font size. |
+| `control.size.lg.font` | `--ghost-control-size-lg-font` | fontSize | `0.9375rem` | `0.9375rem` | Large control font size. Comfortable 15px; compact 14px; spacious 16px. |
+| `control.size.lg.min` | `--ghost-control-size-lg-min` | dimension | `2.5rem` | `2.5rem` | Large control minimum block size. Comfortable 40px; compact 36; spacious 44. |
+| `control.size.lg.padding.block` | `--ghost-control-size-lg-padding-block` | dimension | `0.5rem` | `0.5rem` | Large control block padding. Comfortable 8px; compact 6px; spacious 10px. |
+| `control.size.lg.padding.inline` | `--ghost-control-size-lg-padding-inline` | dimension | `1rem` | `1rem` | Large control inline padding. Comfortable 16px; compact 12px; spacious 20px. |
+| `control.size.md.font` | `--ghost-control-size-md-font` | fontSize | `0.875rem` | `0.875rem` | Medium control font size. Comfortable 14px; compact 13px; spacious 15px. |
+| `control.size.md.min` | `--ghost-control-size-md-min` | dimension | `2.25rem` | `2.25rem` | Medium control minimum block size. Comfortable 36px; compact 32; spacious 40. |
+| `control.size.md.padding.block` | `--ghost-control-size-md-padding-block` | dimension | `0.375rem` | `0.375rem` | Medium control block padding. Comfortable 6px; compact 4px; spacious 8px. |
+| `control.size.md.padding.inline` | `--ghost-control-size-md-padding-inline` | dimension | `0.75rem` | `0.75rem` | Medium control inline padding. Comfortable 12px; compact 10px; spacious 16px. |
+| `control.size.sm.font` | `--ghost-control-size-sm-font` | fontSize | `0.8125rem` | `0.8125rem` | Small control font size. Comfortable 13px; compact 12px; spacious 13px. |
 | `control.size.sm.min` | `--ghost-control-size-sm-min` | dimension | `2rem` | `2rem` | Small control minimum block size. Comfortable 32px; compact 28; spacious 36. |
-| `control.size.sm.padding.block` | `--ghost-control-size-sm-padding-block` | dimension | `0.5rem` | `0.5rem` | Small control block padding. |
-| `control.size.sm.padding.inline` | `--ghost-control-size-sm-padding-inline` | dimension | `0.75rem` | `0.75rem` | Small control inline padding. |
+| `control.size.sm.padding.block` | `--ghost-control-size-sm-padding-block` | dimension | `0.25rem` | `0.25rem` | Small control block padding. Comfortable 4px; compact 2px; spacious 6px. |
+| `control.size.sm.padding.inline` | `--ghost-control-size-sm-padding-inline` | dimension | `0.625rem` | `0.625rem` | Small control inline padding. Comfortable 10px; compact 8px; spacious 12px. |
 | `control.touch.min` | `--ghost-control-touch-min` | dimension | `2.75rem` | `2.75rem` | Coarse-pointer floor applied to control heights. |
 
 ### elevation
 
 | Token | CSS | Type | Light | Dark | Description |
 | --- | --- | --- | --- | --- | --- |
-| `elevation.0.bg` | `--ghost-elevation-0-bg` | color | `#ffffff` | `#0f172a` | Level 0 surface. Flush with the canvas. |
+| `elevation.0.bg` | `--ghost-elevation-0-bg` | color | `#ffffff` | `#0d1219` | Level 0 surface. Flush with the canvas. |
 | `elevation.0.border` | `--ghost-elevation-0-border` | color | `transparent` | `transparent` | Level 0 border. Flush surfaces do not stroke. |
 | `elevation.0.highlight` | `--ghost-elevation-0-highlight` | shadow | `inset 0px 1px 0px 0px transparent` | `inset 0px 1px 0px 0px transparent` | Level 0 inset highlight. Unused in light mode. |
 | `elevation.0.shadow` | `--ghost-elevation-0-shadow` | shadow | `0px 0px 0px 0px transparent` | `0px 0px 0px 0px transparent` | Level 0 shadow. No ambient or key layer. |
-| `elevation.1.bg` | `--ghost-elevation-1-bg` | color | `#ffffff` | `#1c2533` | Level 1 surface. Resting cards and controls. |
+| `elevation.1.bg` | `--ghost-elevation-1-bg` | color | `#ffffff` | `#1b2128` | Level 1 surface. Resting cards and controls. |
 | `elevation.1.border` | `--ghost-elevation-1-border` | color | `oklch(0.254 0.028 257.5 / 0.18)` | `oklch(0.96 0.005 250 / 0.16)` | Level 1 hairline border. |
 | `elevation.1.highlight` | `--ghost-elevation-1-highlight` | shadow | `inset 0px 1px 0px 0px transparent` | `inset 0px 1px 0px 0px oklch(1 0.005 258 / 0.12)` | Level 1 inset highlight. Unused in light mode. |
 | `elevation.1.shadow` | `--ghost-elevation-1-shadow` | shadow | `0px 1px 2px 0px oklch(0.254 0.028 257.5 / 0.08), 0px 1px 3px 0px oklch(0.254 0.028 257.5 / 0.14)` | `0px 1px 2px 0px oklch(0.08 0.02 258 / 0.28), 0px 1px 2px 0px oklch(0.08 0.02 258 / 0.16)` | Level 1 layered shadow. Ambient plus key light. |
-| `elevation.2.bg` | `--ghost-elevation-2-bg` | color | `#ffffff` | `#242c3a` | Level 2 surface. Raised cards and menus. |
+| `elevation.2.bg` | `--ghost-elevation-2-bg` | color | `#ffffff` | `#23282f` | Level 2 surface. Raised cards and menus. |
 | `elevation.2.border` | `--ghost-elevation-2-border` | color | `oklch(0.254 0.028 257.5 / 0.18)` | `oklch(0.96 0.005 250 / 0.16)` | Level 2 hairline border. |
 | `elevation.2.highlight` | `--ghost-elevation-2-highlight` | shadow | `inset 0px 1px 0px 0px transparent` | `inset 0px 1px 0px 0px oklch(1 0.005 258 / 0.12)` | Level 2 inset highlight. Unused in light mode. |
 | `elevation.2.shadow` | `--ghost-elevation-2-shadow` | shadow | `0px 2px 4px 0px oklch(0.254 0.028 257.5 / 0.08), 0px 4px 10px 0px oklch(0.254 0.028 257.5 / 0.14)` | `0px 2px 4px 0px oklch(0.08 0.02 258 / 0.3), 0px 3px 8px 0px oklch(0.08 0.02 258 / 0.18)` | Level 2 layered shadow. Ambient plus key light. |
-| `elevation.3.bg` | `--ghost-elevation-3-bg` | color | `#ffffff` | `#2b3441` | Level 3 surface. Popovers and floating panels. |
+| `elevation.3.bg` | `--ghost-elevation-3-bg` | color | `#ffffff` | `#2a3038` | Level 3 surface. Popovers and floating panels. |
 | `elevation.3.border` | `--ghost-elevation-3-border` | color | `oklch(0.254 0.028 257.5 / 0.18)` | `oklch(0.96 0.005 250 / 0.16)` | Level 3 hairline border. |
 | `elevation.3.highlight` | `--ghost-elevation-3-highlight` | shadow | `inset 0px 1px 0px 0px transparent` | `inset 0px 1px 0px 0px oklch(1 0.005 258 / 0.12)` | Level 3 inset highlight. Unused in light mode. |
 | `elevation.3.shadow` | `--ghost-elevation-3-shadow` | shadow | `0px 4px 8px 0px oklch(0.254 0.028 257.5 / 0.08), 0px 8px 20px 0px oklch(0.254 0.028 257.5 / 0.14)` | `0px 4px 8px 0px oklch(0.08 0.02 258 / 0.32), 0px 6px 16px 0px oklch(0.08 0.02 258 / 0.2)` | Level 3 layered shadow. Ambient plus key light. |
-| `elevation.4.bg` | `--ghost-elevation-4-bg` | color | `#ffffff` | `#343c48` | Level 4 surface. Dialogs and sheets. |
+| `elevation.4.bg` | `--ghost-elevation-4-bg` | color | `#ffffff` | `#323840` | Level 4 surface. Dialogs and sheets. |
 | `elevation.4.border` | `--ghost-elevation-4-border` | color | `oklch(0.254 0.028 257.5 / 0.18)` | `oklch(0.96 0.005 250 / 0.16)` | Level 4 hairline border. |
 | `elevation.4.highlight` | `--ghost-elevation-4-highlight` | shadow | `inset 0px 1px 0px 0px transparent` | `inset 0px 1px 0px 0px oklch(1 0.005 258 / 0.12)` | Level 4 inset highlight. Unused in light mode. |
 | `elevation.4.shadow` | `--ghost-elevation-4-shadow` | shadow | `0px 8px 16px 0px oklch(0.254 0.028 257.5 / 0.08), 0px 16px 32px 0px oklch(0.254 0.028 257.5 / 0.14)` | `0px 6px 12px 0px oklch(0.08 0.02 258 / 0.34), 0px 10px 24px 0px oklch(0.08 0.02 258 / 0.22)` | Level 4 layered shadow. Ambient plus key light. |
-| `elevation.5.bg` | `--ghost-elevation-5-bg` | color | `#ffffff` | `#3d4550` | Level 5 surface. Highest floating layer. |
+| `elevation.5.bg` | `--ghost-elevation-5-bg` | color | `#ffffff` | `#3a4048` | Level 5 surface. Highest floating layer. |
 | `elevation.5.border` | `--ghost-elevation-5-border` | color | `oklch(0.254 0.028 257.5 / 0.18)` | `oklch(0.96 0.005 250 / 0.16)` | Level 5 hairline border. |
 | `elevation.5.highlight` | `--ghost-elevation-5-highlight` | shadow | `inset 0px 1px 0px 0px transparent` | `inset 0px 1px 0px 0px oklch(1 0.005 258 / 0.12)` | Level 5 inset highlight. Unused in light mode. |
 | `elevation.5.shadow` | `--ghost-elevation-5-shadow` | shadow | `0px 12px 24px 0px oklch(0.254 0.028 257.5 / 0.08), 0px 24px 48px 0px oklch(0.254 0.028 257.5 / 0.14)` | `0px 8px 16px 0px oklch(0.08 0.02 258 / 0.36), 0px 14px 32px 0px oklch(0.08 0.02 258 / 0.24)` | Level 5 layered shadow. Ambient plus key light. |
@@ -206,16 +206,16 @@ tokens that alias them.
 | `focus.ring.contrast` | `--ghost-focus-ring-contrast` | color | `#ffffff` | `#0f172a` | Inner color of the two-color keyboard focus indicator. |
 | `focus.ring.duration` | `--ghost-focus-ring-duration` | duration | `120ms` | `120ms` | Focus-ring entrance duration. Instant under reduced motion. |
 | `focus.ring.offset` | `--ghost-focus-ring-offset` | dimension | `2px` | `2px` | Gap between a control and its focus ring. |
-| `focus.ring.width` | `--ghost-focus-ring-width` | dimension | `3px` | `3px` | Focus outline thickness. |
+| `focus.ring.width` | `--ghost-focus-ring-width` | dimension | `2px` | `2px` | Focus outline thickness. |
 
 ### gradient
 
 | Token | CSS | Type | Light | Dark | Description |
 | --- | --- | --- | --- | --- | --- |
 | `gradient.accent` | `--ghost-gradient-accent` | gradient | `linear-gradient(135deg in oklch, #356af3 0%, #579dd1 100%)` | `linear-gradient(135deg in oklch, #60a5fa 0%, #38bdf8 100%)` | Accent gradient interpolated in oklch. |
-| `gradient.action.danger` | `--ghost-gradient-action-danger` | gradient | `linear-gradient(165deg in oklch, #b91c1c 0%, #900009 100%)` | `linear-gradient(165deg in oklch, #f87171 0%, #ff908d 100%)` | Solid danger action fill. Interpolated in oklch; both stops meet WCAG AA with action.danger.fg. |
-| `gradient.action.neutral` | `--ghost-gradient-action-neutral` | gradient | `linear-gradient(165deg in oklch, #334155 0%, #263243 100%)` | `linear-gradient(165deg in oklch, #cbd5e1 0%, #d3dce7 100%)` | Solid neutral action fill. Interpolated in oklch; both stops meet WCAG AA with action.neutral.fg. |
-| `gradient.action.primary` | `--ghost-gradient-action-primary` | gradient | `linear-gradient(165deg in oklch, #1d4ed8 0%, #004e7a 100%)` | `linear-gradient(165deg in oklch, #60a5fa 0%, #38bdf8 100%)` | Solid primary action fill. Interpolated in oklch; both stops meet WCAG AA with action.primary.fg. |
+| `gradient.action.danger` | `--ghost-gradient-action-danger` | gradient | `linear-gradient(180deg in oklch, #b91c1c 0%, #b91c1c 100%)` | `linear-gradient(180deg in oklch, #f87171 0%, #f87171 100%)` | Solid danger action fill. Restrained single-hue default; both stops meet WCAG AA with action.danger.fg. |
+| `gradient.action.neutral` | `--ghost-gradient-action-neutral` | gradient | `linear-gradient(180deg in oklch, #334155 0%, #334155 100%)` | `linear-gradient(180deg in oklch, #cbd5e1 0%, #cbd5e1 100%)` | Solid neutral action fill. Restrained single-hue default; both stops meet WCAG AA with action.neutral.fg. |
+| `gradient.action.primary` | `--ghost-gradient-action-primary` | gradient | `linear-gradient(180deg in oklch, #1d4ed8 0%, #1d4ed8 100%)` | `linear-gradient(180deg in oklch, #60a5fa 0%, #60a5fa 100%)` | Solid primary action fill. Restrained single-hue default; both stops meet WCAG AA with action.primary.fg. |
 | `gradient.aurora` | `--ghost-gradient-aurora` | gradient | `radial-gradient(in oklch at 14% 18%, #d6e3ff 0%, transparent 52%), radial-gradient(in oklch at 86% 12%, #cfe7fc 0%, transparent 48%), radial-gradient(in oklch at 62% 92%, #e8f6ea 0%, transparent 55%)` | `radial-gradient(in oklch at 14% 18%, #235187 0%, transparent 52%), radial-gradient(in oklch at 86% 12%, #005d80 0%, transparent 48%), radial-gradient(in oklch at 62% 92%, #045227 0%, transparent 55%)` | Layered radial aurora background interpolated in oklch. |
 | `gradient.border` | `--ghost-gradient-border` | gradient | `linear-gradient(135deg in oklch, #356af3 0%, #579dd1 100%)` | `linear-gradient(135deg in oklch, #60a5fa 0%, #38bdf8 100%)` | Gradient used by the gradient-border mask recipe. |
 
@@ -236,14 +236,14 @@ tokens that alias them.
 | `material.glass.bg` | `--ghost-material-glass-bg` | color | `oklch(1 0 0 / 0.64)` | `oklch(0.27 0.018 258 / 0.55)` | Translucent glass fill. Contrast is gated on the opaque fallback. |
 | `material.glass.blur` | `--ghost-material-glass-blur` | dimension | `1.25rem` | `1.25rem` | Glass backdrop blur radius. |
 | `material.glass.border` | `--ghost-material-glass-border` | color | `oklch(0.254 0.028 257.5 / 0.18)` | `oklch(0.96 0.005 250 / 0.16)` | Glass hairline border. |
-| `material.glass.fallback.bg` | `--ghost-material-glass-fallback-bg` | color | `#ffffff` | `#242c3a` | Opaque glass fallback when backdrop-filter is unavailable. |
+| `material.glass.fallback.bg` | `--ghost-material-glass-fallback-bg` | color | `#ffffff` | `#23282f` | Opaque glass fallback when backdrop-filter is unavailable. |
 | `material.glass.noise` | `--ghost-material-glass-noise` | image | `url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20160%20160%22%3E%3Cfilter%20id%3D%22n%22%3E%3CfeTurbulence%20type%3D%22fractalNoise%22%20baseFrequency%3D%220.8%22%20numOctaves%3D%224%22%20seed%3D%222%22%20stitchTiles%3D%22stitch%22%2F%3E%3C%2Ffilter%3E%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20filter%3D%22url(%23n)%22%2F%3E%3C%2Fsvg%3E")` | `url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20160%20160%22%3E%3Cfilter%20id%3D%22n%22%3E%3CfeTurbulence%20type%3D%22fractalNoise%22%20baseFrequency%3D%220.8%22%20numOctaves%3D%224%22%20seed%3D%222%22%20stitchTiles%3D%22stitch%22%2F%3E%3C%2Ffilter%3E%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20filter%3D%22url(%23n)%22%2F%3E%3C%2Fsvg%3E")` | Glass noise overlay image. |
 | `material.glass.noise.opacity` | `--ghost-material-glass-noise-opacity` | number | `0.04` | `0.04` | Glass noise overlay opacity. |
 | `material.glass.saturate` | `--ghost-material-glass-saturate` | number | `1.45` | `1.45` | Glass backdrop saturation boost. |
-| `material.grain.bg` | `--ghost-material-grain-bg` | color | `#ffffff` | `#0f172a` | Grain material fill. |
+| `material.grain.bg` | `--ghost-material-grain-bg` | color | `#ffffff` | `#0d1219` | Grain material fill. |
 | `material.grain.noise` | `--ghost-material-grain-noise` | image | `url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20160%20160%22%3E%3Cfilter%20id%3D%22n%22%3E%3CfeTurbulence%20type%3D%22fractalNoise%22%20baseFrequency%3D%220.8%22%20numOctaves%3D%224%22%20seed%3D%222%22%20stitchTiles%3D%22stitch%22%2F%3E%3C%2Ffilter%3E%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20filter%3D%22url(%23n)%22%2F%3E%3C%2Fsvg%3E")` | `url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20160%20160%22%3E%3Cfilter%20id%3D%22n%22%3E%3CfeTurbulence%20type%3D%22fractalNoise%22%20baseFrequency%3D%220.8%22%20numOctaves%3D%224%22%20seed%3D%222%22%20stitchTiles%3D%22stitch%22%2F%3E%3C%2Ffilter%3E%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20filter%3D%22url(%23n)%22%2F%3E%3C%2Fsvg%3E")` | Grain noise overlay image. |
 | `material.grain.noise.opacity` | `--ghost-material-grain-noise-opacity` | number | `0.08` | `0.08` | Grain noise overlay opacity. |
-| `material.solid.bg` | `--ghost-material-solid-bg` | color | `#ffffff` | `#0f172a` | Opaque solid material fill. |
+| `material.solid.bg` | `--ghost-material-solid-bg` | color | `#ffffff` | `#0d1219` | Opaque solid material fill. |
 
 ### motion
 
@@ -278,12 +278,12 @@ tokens that alias them.
 
 | Token | CSS | Type | Light | Dark | Description |
 | --- | --- | --- | --- | --- | --- |
-| `radius.lg` | `--ghost-radius-lg` | dimension | `0.75rem` | `0.75rem` | Large radius. 12px at comfortable density and roundness 1. |
-| `radius.md` | `--ghost-radius-md` | dimension | `0.5rem` | `0.5rem` | Medium radius. 8px at comfortable density and roundness 1. |
+| `radius.lg` | `--ghost-radius-lg` | dimension | `0.5rem` | `0.5rem` | Large radius. 8px at comfortable density and roundness 1. |
+| `radius.md` | `--ghost-radius-md` | dimension | `0.375rem` | `0.375rem` | Medium radius. 6px at comfortable density and roundness 1. |
 | `radius.none` | `--ghost-radius-none` | dimension | `0px` | `0px` | Sharp corner. Stays 0 at every roundness. |
 | `radius.pill` | `--ghost-radius-pill` | dimension | `999px` | `999px` | Pill radius. Capsule at roundness 1; sharp at 0. |
 | `radius.sm` | `--ghost-radius-sm` | dimension | `0.25rem` | `0.25rem` | Small radius. 4px at comfortable density and roundness 1. |
-| `radius.xl` | `--ghost-radius-xl` | dimension | `1rem` | `1rem` | Extra-large radius. 16px at comfortable density and roundness 1. |
+| `radius.xl` | `--ghost-radius-xl` | dimension | `0.75rem` | `0.75rem` | Extra-large radius. 12px at comfortable density and roundness 1. |
 
 ### roundness
 
@@ -345,12 +345,12 @@ tokens that alias them.
 
 | Token | CSS | Type | Light | Dark | Description |
 | --- | --- | --- | --- | --- | --- |
-| `surface.bg` | `--ghost-surface-bg` | color | `#ffffff` | `#0f172a` | Theme canvas background. |
+| `surface.bg` | `--ghost-surface-bg` | color | `#ffffff` | `#0d1219` | Theme canvas background. |
 | `surface.fg` | `--ghost-surface-fg` | color | `#0f172a` | `#f8fafc` | Theme canvas foreground. |
 | `surface.inverse.bg` | `--ghost-surface-inverse-bg` | color | `#0f172a` | `#f8fafc` | Inverted surface background. |
 | `surface.inverse.fg` | `--ghost-surface-inverse-fg` | color | `#ffffff` | `#0f172a` | Foreground on an inverted surface. |
-| `surface.muted.bg` | `--ghost-surface-muted-bg` | color | `#eceff3` | `#293240` | Muted surface fill behind grouped content. |
-| `surface.subtle.bg` | `--ghost-surface-subtle-bg` | color | `#f9fafc` | `#151d2d` | Subtle surface fill for inset regions. |
+| `surface.muted.bg` | `--ghost-surface-muted-bg` | color | `#eceff3` | `#272c34` | Muted surface fill behind grouped content. |
+| `surface.subtle.bg` | `--ghost-surface-subtle-bg` | color | `#f9fafc` | `#141920` | Subtle surface fill for inset regions. |
 
 ### text
 
@@ -393,13 +393,13 @@ tokens that alias them.
 | `type.line.tight` | `--ghost-type-line-tight` | number | `1.2` | `1.2` | Tight line-height. |
 | `type.numeric.proportional` | `--ghost-type-numeric-proportional` | fontVariant | `proportional-nums` | `proportional-nums` | Proportional numbers. Apply as font-variant-numeric. |
 | `type.numeric.tabular` | `--ghost-type-numeric-tabular` | fontVariant | `tabular-nums` | `tabular-nums` | Tabular lining numbers. Apply as font-variant-numeric. |
-| `type.size.2xl` | `--ghost-type-size-2xl` | fontSize | `clamp(1.5rem, 1.3333rem + 0.8333vw, 2rem)` | `clamp(1.5rem, 1.3333rem + 0.8333vw, 2rem)` | Fluid 2xl type. |
-| `type.size.3xl` | `--ghost-type-size-3xl` | fontSize | `clamp(1.875rem, 1.6667rem + 1.0417vw, 2.5rem)` | `clamp(1.875rem, 1.6667rem + 1.0417vw, 2.5rem)` | Fluid 3xl type. |
-| `type.size.lg` | `--ghost-type-size-lg` | fontSize | `clamp(1.0625rem, 1.0417rem + 0.1042vw, 1.125rem)` | `clamp(1.0625rem, 1.0417rem + 0.1042vw, 1.125rem)` | Fluid large type. |
-| `type.size.md` | `--ghost-type-size-md` | fontSize | `clamp(0.9375rem, 0.9167rem + 0.1042vw, 1rem)` | `clamp(0.9375rem, 0.9167rem + 0.1042vw, 1rem)` | Fluid body type. |
-| `type.size.sm` | `--ghost-type-size-sm` | fontSize | `clamp(0.8125rem, 0.7917rem + 0.1042vw, 0.875rem)` | `clamp(0.8125rem, 0.7917rem + 0.1042vw, 0.875rem)` | Fluid small type. |
-| `type.size.xl` | `--ghost-type-size-xl` | fontSize | `clamp(1.25rem, 1.1667rem + 0.4167vw, 1.5rem)` | `clamp(1.25rem, 1.1667rem + 0.4167vw, 1.5rem)` | Fluid extra-large type. |
-| `type.size.xs` | `--ghost-type-size-xs` | fontSize | `clamp(0.75rem, 0.7292rem + 0.1042vw, 0.8125rem)` | `clamp(0.75rem, 0.7292rem + 0.1042vw, 0.8125rem)` | Fluid extra-small type. |
+| `type.size.2xl` | `--ghost-type-size-2xl` | fontSize | `clamp(1.5rem, 1.3333rem + 0.8333vw, 2rem)` | `clamp(1.5rem, 1.3333rem + 0.8333vw, 2rem)` | Fluid 2xl display type. |
+| `type.size.3xl` | `--ghost-type-size-3xl` | fontSize | `clamp(1.875rem, 1.6667rem + 1.0417vw, 2.5rem)` | `clamp(1.875rem, 1.6667rem + 1.0417vw, 2.5rem)` | Fluid 3xl display type. |
+| `type.size.lg` | `--ghost-type-size-lg` | fontSize | `0.9375rem` | `0.9375rem` | Large UI subheading type. 15px. |
+| `type.size.md` | `--ghost-type-size-md` | fontSize | `0.875rem` | `0.875rem` | Medium UI body type. 14px. |
+| `type.size.sm` | `--ghost-type-size-sm` | fontSize | `0.8125rem` | `0.8125rem` | Small UI type. 13px. |
+| `type.size.xl` | `--ghost-type-size-xl` | fontSize | `clamp(1.25rem, 1.1667rem + 0.4167vw, 1.5rem)` | `clamp(1.25rem, 1.1667rem + 0.4167vw, 1.5rem)` | Fluid extra-large display type. |
+| `type.size.xs` | `--ghost-type-size-xs` | fontSize | `0.75rem` | `0.75rem` | Extra-small UI type. 12px. |
 | `type.weight.bold` | `--ghost-type-weight-bold` | fontWeight | `700` | `700` | Bold font weight. |
 | `type.weight.medium` | `--ghost-type-weight-medium` | fontWeight | `500` | `500` | Medium font weight. |
 | `type.weight.regular` | `--ghost-type-weight-regular` | fontWeight | `400` | `400` | Regular font weight. |
@@ -438,7 +438,7 @@ tokens can alias a stable OKLCH scale.
 | `color.danger.dark.900` | color | `#441919` | Danger 900 (dark-tuned). |
 | `color.danger.dark.950` | color | `#2b0f0f` | Danger 950 (dark-tuned). |
 | `color.hairline` | color | `oklch(0.254 0.028 257.5 / 0.18)` | Alpha hairline border tinted with the neutral hue. |
-| `color.highlight.inset` | color | `oklch(1 0.012 258 / 0.28)` | Inset top sheen for raised actions in light mode. |
+| `color.highlight.inset` | color | `oklch(1 0.008 258 / 0.16)` | Inset hairline top bevel for solid actions in light mode. |
 | `color.info.100` | color | `#e7f3fd` | Info 100 (light-tuned). |
 | `color.info.1000` | color | `#000c19` | Info 1000 (light-tuned). |
 | `color.info.200` | color | `#cfe7fc` | Info 200 (light-tuned). |
@@ -513,11 +513,11 @@ tokens can alias a stable OKLCH scale.
 | `color.primary.dark.800` | color | `#1c3d64` | Primary 800 (dark-tuned). |
 | `color.primary.dark.900` | color | `#132944` | Primary 900 (dark-tuned). |
 | `color.primary.dark.950` | color | `#0c1a2b` | Primary 950 (dark-tuned). |
-| `color.raised.1` | color | `#1c2533` | Dark-mode elevation 1 fill for resting cards and controls above subtle surfaces. |
-| `color.raised.2` | color | `#242c3a` | Dark-mode elevation 2 fill for raised cards, menus, and tooltips. |
-| `color.raised.3` | color | `#2b3441` | Dark-mode elevation 3 fill for popovers and floating panels. |
-| `color.raised.4` | color | `#343c48` | Dark-mode elevation 4 fill for dialogs and sheets. |
-| `color.raised.5` | color | `#3d4550` | Dark-mode elevation 5 fill for the highest floating layer. |
+| `color.raised.1` | color | `#1b2128` | Dark-mode elevation 1 fill for resting cards and controls above subtle surfaces. |
+| `color.raised.2` | color | `#23282f` | Dark-mode elevation 2 fill for raised cards, menus, and tooltips. |
+| `color.raised.3` | color | `#2a3038` | Dark-mode elevation 3 fill for popovers and floating panels. |
+| `color.raised.4` | color | `#323840` | Dark-mode elevation 4 fill for dialogs and sheets. |
+| `color.raised.5` | color | `#3a4048` | Dark-mode elevation 5 fill for the highest floating layer. |
 | `color.shadow.ambient` | color | `oklch(0.254 0.028 257.5 / 0.08)` | Neutral-hue ambient shadow tint. Alpha is the light-mode rest value. |
 | `color.shadow.highlight` | color | `oklch(1 0.005 258 / 0.12)` | Inset top highlight used by dark-mode elevation. |
 | `color.shadow.key` | color | `oklch(0.254 0.028 257.5 / 0.14)` | Neutral-hue key-light shadow tint. Alpha is the light-mode rest value. |
@@ -545,8 +545,9 @@ tokens can alias a stable OKLCH scale.
 | `color.success.dark.800` | color | `#045227` | Success 800 (dark-tuned). |
 | `color.success.dark.900` | color | `#06371a` | Success 900 (dark-tuned). |
 | `color.success.dark.950` | color | `#05220f` | Success 950 (dark-tuned). |
-| `color.surface.dark.muted` | color | `#293240` | Dark-mode muted well surface harmonized with canvas ink. |
-| `color.surface.dark.subtle` | color | `#151d2d` | Dark-mode subtle inset surface harmonized with canvas ink. |
+| `color.surface.dark.canvas` | color | `#0d1219` | Dark-mode canvas surface in the neutral-tinted OKLCH slate/ink progression. |
+| `color.surface.dark.muted` | color | `#272c34` | Dark-mode muted well surface in the neutral-tinted OKLCH slate/ink progression. |
+| `color.surface.dark.subtle` | color | `#141920` | Dark-mode subtle inset surface in the neutral-tinted OKLCH slate/ink progression. |
 | `color.warning.100` | color | `#ffeee6` | Warning 100 (light-tuned). |
 | `color.warning.1000` | color | `#180500` | Warning 1000 (light-tuned). |
 | `color.warning.200` | color | `#ffdfce` | Warning 200 (light-tuned). |
@@ -576,6 +577,7 @@ tokens can alias a stable OKLCH scale.
 | `control.height.32` | dimension | `2rem` | Control height 32px. |
 | `control.height.36` | dimension | `2.25rem` | Control height 36px. |
 | `control.height.40` | dimension | `2.5rem` | Control height 40px. |
+| `control.height.44` | dimension | `2.75rem` | Control height 44px. |
 | `control.height.48` | dimension | `3rem` | Control height 48px. |
 | `control.touch` | dimension | `2.75rem` | 44px minimum used as a coarse-pointer floor. |
 | `duration.expressive` | duration | `700ms` | Longest emphasized duration. |
@@ -600,13 +602,14 @@ tokens can alias a stable OKLCH scale.
 | `font.line.tight` | number | `1.2` | Tight line-height. Matches GhostButton. |
 | `font.numeric.proportional` | fontVariant | `proportional-nums` | Proportional numbers. font-variant-numeric. |
 | `font.numeric.tabular` | fontVariant | `tabular-nums` | Tabular lining numbers. font-variant-numeric. |
-| `font.size.2xl` | fontSize | `clamp(1.5rem, 1.3333rem + 0.8333vw, 2rem)` | Fluid 2xl type. 24–32px from 320–1280px. |
-| `font.size.3xl` | fontSize | `clamp(1.875rem, 1.6667rem + 1.0417vw, 2.5rem)` | Fluid 3xl type. 30–40px from 320–1280px. |
-| `font.size.lg` | fontSize | `clamp(1.0625rem, 1.0417rem + 0.1042vw, 1.125rem)` | Fluid large type. 17–18px from 320–1280px. |
-| `font.size.md` | fontSize | `clamp(0.9375rem, 0.9167rem + 0.1042vw, 1rem)` | Fluid body type. 15–16px from 320–1280px. |
-| `font.size.sm` | fontSize | `clamp(0.8125rem, 0.7917rem + 0.1042vw, 0.875rem)` | Fluid small type. 13–14px from 320–1280px. |
-| `font.size.xl` | fontSize | `clamp(1.25rem, 1.1667rem + 0.4167vw, 1.5rem)` | Fluid extra-large type. 20–24px from 320–1280px. |
-| `font.size.xs` | fontSize | `clamp(0.75rem, 0.7292rem + 0.1042vw, 0.8125rem)` | Fluid extra-small type. 12–13px from 320–1280px. |
+| `font.size.2xl` | fontSize | `clamp(1.5rem, 1.3333rem + 0.8333vw, 2rem)` | Fluid 2xl display type. 24–32px from 320–1280px. |
+| `font.size.3xl` | fontSize | `clamp(1.875rem, 1.6667rem + 1.0417vw, 2.5rem)` | Fluid 3xl display type. 30–40px from 320–1280px. |
+| `font.size.base` | fontSize | `1rem` | Base 16px UI type used by spacious large controls. |
+| `font.size.lg` | fontSize | `0.9375rem` | Large UI control and subheading type. 15px. |
+| `font.size.md` | fontSize | `0.875rem` | Medium UI body and control type. 14px. |
+| `font.size.sm` | fontSize | `0.8125rem` | Small UI type. 13px. |
+| `font.size.xl` | fontSize | `clamp(1.25rem, 1.1667rem + 0.4167vw, 1.5rem)` | Fluid extra-large display type. 20–24px from 320–1280px. |
+| `font.size.xs` | fontSize | `0.75rem` | Extra-small UI type. 12px. |
 | `font.weight.bold` | fontWeight | `700` | Bold font weight. |
 | `font.weight.medium` | fontWeight | `500` | Medium font weight. |
 | `font.weight.regular` | fontWeight | `400` | Regular font weight. |
@@ -621,18 +624,18 @@ tokens can alias a stable OKLCH scale.
 | `opacity.press` | number | `0.12` | Pressed state-layer overlay opacity. Applied on the current tone. |
 | `opacity.selected` | number | `0.1` | Selected state-layer overlay opacity. Applied on the current tone. |
 | `opacity.spinner` | number | `0.35` | Reduced-motion spinner pulse trough opacity. |
-| `radius.scale.lg` | dimension | `0.75rem` | Large corner radius. 12px at roundness 1. |
-| `radius.scale.md` | dimension | `0.5rem` | Medium corner radius. 8px at roundness 1. |
+| `radius.scale.lg` | dimension | `0.5rem` | Large corner radius. 8px at roundness 1. |
+| `radius.scale.md` | dimension | `0.375rem` | Medium corner radius. 6px at roundness 1. |
 | `radius.scale.none` | dimension | `0px` | Sharp corner. Roundness 0. |
 | `radius.scale.pill` | dimension | `999px` | Pill radius. Capsule at roundness 1. |
 | `radius.scale.sm` | dimension | `0.25rem` | Small corner radius. 4px at roundness 1. |
-| `radius.scale.xl` | dimension | `1rem` | Extra-large corner radius. 16px at roundness 1. |
+| `radius.scale.xl` | dimension | `0.75rem` | Extra-large corner radius. 12px at roundness 1. |
 | `saturate.glass` | number | `1.45` | Glass material backdrop saturation boost. |
 | `scale.motion` | number | `0.96` | Default enter scale. 1 means no scale motion. |
 | `scale.press` | number | `0.98` | Pressed control scale. 1 under reduced motion. |
 | `size.blur.glass` | dimension | `1.25rem` | Glass material backdrop blur. |
 | `size.focus.offset` | dimension | `2px` | Gap between a control and its focus ring. |
-| `size.focus.width` | dimension | `3px` | Focus outline thickness. |
+| `size.focus.width` | dimension | `2px` | Focus outline thickness. |
 | `size.hairline` | dimension | `1px` | Hairline border width at 1x. High-DPR screens use 0.5px via the compiler. |
 | `size.icon` | dimension | `1.1em` | Icon size relative to the label. |
 | `size.motion.translate` | dimension | `0.5rem` | Default enter/exit translation distance. |
@@ -645,11 +648,14 @@ tokens can alias a stable OKLCH scale.
 | `size.track.thumb.md` | dimension | `1rem` | Medium painted thumb diameter. 16px. |
 | `size.track.thumb.sm` | dimension | `0.75rem` | Small painted thumb diameter. 12px. |
 | `space.0` | dimension | `0px` | Space 0. 4px grid. |
+| `space.0_5` | dimension | `0.125rem` | Space 0.5. 2px. |
 | `space.1` | dimension | `0.25rem` | Space 1. 4px. |
+| `space.1_5` | dimension | `0.375rem` | Space 1.5. 6px. |
 | `space.10` | dimension | `2.5rem` | Space 10. 40px. |
 | `space.12` | dimension | `3rem` | Space 12. 48px. |
 | `space.16` | dimension | `4rem` | Space 16. 64px. |
 | `space.2` | dimension | `0.5rem` | Space 2. 8px. |
+| `space.2_5` | dimension | `0.625rem` | Space 2.5. 10px. |
 | `space.3` | dimension | `0.75rem` | Space 3. 12px. |
 | `space.4` | dimension | `1rem` | Space 4. 16px. |
 | `space.5` | dimension | `1.25rem` | Space 5. 20px. |

@@ -187,7 +187,7 @@ with `animations: 'disabled'` and a default `maxDiffPixelRatio` of `0.03`
   materials, gradients), and the frozen ambient spotlight opt-in snapshot.
 - **Public example baselines:** `tests/e2e/examples-visual.spec.ts` snapshots
   every registered example in `examples/registry.ts` in `light` and `dark` mode
-  on the docs token host (`calm`, density unset), and every themed example
+  on the docs token host (`default`, density unset), and every themed example
   again with the `default` theme at `comfortable` density (`*-default-comfortable-*`).
   The `/examples.html` route picks the token host from `?theme=`, `?density=`,
   and `?mode=`. It never adds `.ghost-theme` to `<html>`, so headless examples
@@ -208,7 +208,7 @@ with `animations: 'disabled'` and a default `maxDiffPixelRatio` of `0.03`
   `light` and `dark` mode (requires `apps/docs` build; included in `pnpm test:visual`).
 - **Docs hero showcase baselines:** `tests/e2e/docs-showcase-visual.spec.ts`
   snapshots the ten redesigned hero showcases (each component page's first
-  example) in the built docs on the first-paint host (`calm`, density unset).
+  example) in the built docs on the first-paint host (`default`, density unset).
   Every hero is captured with source closed at 390px and 1280px browser widths
   in `light` and `dark`. Overlay heroes (Dialog, Dropdown Menu, Select,
   Combobox, Popover) are also captured open from the keyboard, clipped to the

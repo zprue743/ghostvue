@@ -9,8 +9,8 @@
  *   `.ghost-theme` class, because recipes match `.ghost-theme .ghost-*` and a
  *   global class would theme every headless example. Themed examples opt in
  *   per instance through their own `.ghost-themed-scope` wrapper.
- * - With no query, the host matches the docs first paint: the `calm`
- *   flagship, unset density (the flagship's own default), light mode.
+ * - With no query, the host matches the docs first paint: the `default`
+ *   theme, unset density (comfortable), light mode.
  *
  * `?theme=`, `?density=`, and `?mode=` select another token host, for example
  * `?id=button/themed&theme=default&density=comfortable&mode=dark`. Unknown
@@ -45,7 +45,7 @@ export interface ExamplesHost {
 
 /** Docs first-paint host (`DOCS_DEFAULT_THEME`, no density attribute). */
 export const EXAMPLES_HOST_DEFAULT: ExamplesHost = {
-  theme: 'calm',
+  theme: 'default',
   density: undefined,
   mode: 'light',
 }

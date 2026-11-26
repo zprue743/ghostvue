@@ -9,14 +9,14 @@ export const DOCS_THEME_OPTIONS = [
 
 export type DocsThemeName = (typeof DOCS_THEME_OPTIONS)[number]
 
-export const DOCS_DEFAULT_THEME: DocsThemeName = 'calm'
+export const DOCS_DEFAULT_THEME: DocsThemeName = 'default'
 
 export function isDocsThemeName(value: string): value is DocsThemeName {
   return (DOCS_THEME_OPTIONS as readonly string[]).includes(value)
 }
 
 /**
- * First-paint host for the docs chrome. `calm` is the dogfood default;
+ * First-paint host for the docs chrome. `default` is the first-paint baseline;
  * the blocking script may replace `data-ghost-theme` from localStorage.
  *
  * Token values use `data-ghost-theme` on `<html>`. Recipes must not: library CSS
@@ -24,7 +24,10 @@ export function isDocsThemeName(value: string): value is DocsThemeName {
  */
 export function applyDocsThemeHost(html: string): string {
   if (html.includes('data-ghost-theme=')) return html
-  return html.replace(/<html\b/, '<html data-ghost-theme="calm"')
+  return html.replace(
+    /<html\b/,
+    `<html data-ghost-theme="${DOCS_DEFAULT_THEME}"`,
+  )
 }
 
 /**

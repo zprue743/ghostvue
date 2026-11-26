@@ -102,7 +102,7 @@ playgroundTest.describe('GhostButton', () => {
       await expect(neutral).toHaveAttribute('data-tone', 'neutral')
 
       const danger = themedGroup.getByRole('button', { name: 'Delete item' })
-      await expect(danger).toHaveCSS('min-height', '48px')
+      await expect(danger).toHaveCSS('min-height', '40px')
 
       const overridden = themedGroup.getByRole('button', {
         name: 'Product action',
@@ -207,7 +207,7 @@ playgroundTest.describe('GhostButton', () => {
         element.setAttribute('data-ghost-mode', 'dark')
       })
       await expect(themedGroup).toHaveCSS('color-scheme', 'dark')
-      await expect(themedGroup).toHaveCSS('background-color', 'rgb(15, 23, 42)')
+      await expect(themedGroup).toHaveCSS('background-color', 'rgb(13, 18, 25)')
       await expect(action).toHaveCSS('background-color', 'rgb(96, 165, 250)')
 
       for (const tone of ['accent', 'neutral', 'danger']) {
@@ -252,7 +252,7 @@ playgroundTest.describe('GhostButton', () => {
       await expect(action).toHaveCSS('background-color', 'rgb(29, 78, 216)')
 
       await page.emulateMedia({ colorScheme: 'dark' })
-      await expect(systemGroup).toHaveCSS('background-color', 'rgb(15, 23, 42)')
+      await expect(systemGroup).toHaveCSS('background-color', 'rgb(13, 18, 25)')
       await expect(action).toHaveCSS('background-color', 'rgb(96, 165, 250)')
     },
   )

@@ -424,39 +424,39 @@
         "$value": {
           "style": "linear",
           "interpolation": "oklch",
-          "angle": "165deg",
+          "angle": "180deg",
           "stops": [
             { "color": "{action.primary.gradient.from}", "position": 0 },
             { "color": "{action.primary.gradient.to}", "position": 1 }
           ]
         },
-        "$description": "Solid primary action fill. Interpolated in oklch; both stops meet WCAG AA with action.primary.fg."
+        "$description": "Solid primary action fill. Restrained single-hue default; both stops meet WCAG AA with action.primary.fg."
       },
       "neutral": {
         "$type": "gradient",
         "$value": {
           "style": "linear",
           "interpolation": "oklch",
-          "angle": "165deg",
+          "angle": "180deg",
           "stops": [
             { "color": "{action.neutral.gradient.from}", "position": 0 },
             { "color": "{action.neutral.gradient.to}", "position": 1 }
           ]
         },
-        "$description": "Solid neutral action fill. Interpolated in oklch; both stops meet WCAG AA with action.neutral.fg."
+        "$description": "Solid neutral action fill. Restrained single-hue default; both stops meet WCAG AA with action.neutral.fg."
       },
       "danger": {
         "$type": "gradient",
         "$value": {
           "style": "linear",
           "interpolation": "oklch",
-          "angle": "165deg",
+          "angle": "180deg",
           "stops": [
             { "color": "{action.danger.gradient.from}", "position": 0 },
             { "color": "{action.danger.gradient.to}", "position": 1 }
           ]
         },
-        "$description": "Solid danger action fill. Interpolated in oklch; both stops meet WCAG AA with action.danger.fg."
+        "$description": "Solid danger action fill. Restrained single-hue default; both stops meet WCAG AA with action.danger.fg."
       }
     }
   },
@@ -599,13 +599,13 @@
       "gradient": {
         "from": {
           "$type": "color",
-          "$value": "{color.primary.700}",
+          "$value": "{action.primary.bg}",
           "$description": "Primary action gradient start. Must meet WCAG AA with action.primary.fg."
         },
         "to": {
           "$type": "color",
-          "$value": "{color.info.800}",
-          "$description": "Primary action gradient end. Subtle hue shift; must meet WCAG AA with action.primary.fg."
+          "$value": "{action.primary.bg}",
+          "$description": "Primary action gradient end. Single-hue default; must meet WCAG AA with action.primary.fg."
         }
       }
     },
@@ -638,13 +638,13 @@
       "gradient": {
         "from": {
           "$type": "color",
-          "$value": "{color.neutral.700}",
+          "$value": "{action.neutral.bg}",
           "$description": "Neutral action gradient start. Must meet WCAG AA with action.neutral.fg."
         },
         "to": {
           "$type": "color",
-          "$value": "{color.neutral.800}",
-          "$description": "Neutral action gradient end. Must meet WCAG AA with action.neutral.fg."
+          "$value": "{action.neutral.bg}",
+          "$description": "Neutral action gradient end. Single-hue default; must meet WCAG AA with action.neutral.fg."
         }
       }
     },
@@ -731,13 +731,13 @@
       "gradient": {
         "from": {
           "$type": "color",
-          "$value": "{color.danger.700}",
+          "$value": "{action.danger.bg}",
           "$description": "Danger action gradient start. Must meet WCAG AA with action.danger.fg."
         },
         "to": {
           "$type": "color",
-          "$value": "{color.danger.800}",
-          "$description": "Danger action gradient end. Must meet WCAG AA with action.danger.fg."
+          "$value": "{action.danger.bg}",
+          "$description": "Danger action gradient end. Single-hue default; must meet WCAG AA with action.danger.fg."
         }
       }
     },
@@ -800,15 +800,15 @@
         "color": "{color.highlight.inset}",
         "inset": true
       },
-      "$description": "Inset top sheen on solid actions."
+      "$description": "Inset hairline bevel on solid actions."
     },
     "shadow": {
       "$type": "shadow",
-      "$value": "{elevation.2.shadow}",
+      "$value": "{elevation.1.shadow}",
       "$description": "Rest elevation on solid actions.",
       "press": {
         "$type": "shadow",
-        "$value": "{elevation.1.shadow}",
+        "$value": "{elevation.0.shadow}",
         "$description": "Compressed elevation on a pressed solid action."
       }
     },
@@ -845,7 +845,7 @@
       },
       "weight": {
         "$type": "fontWeight",
-        "$value": "{font.weight.semibold}",
+        "$value": "{font.weight.medium}",
         "$description": "Action label font weight."
       },
       "letter": {
@@ -1052,26 +1052,26 @@
         "font": {
           "$type": "fontSize",
           "$value": "{font.size.sm}",
-          "$description": "Small control font size."
+          "$description": "Small control font size. Comfortable 13px; compact 12px; spacious 13px."
         },
         "padding": {
           "block": {
             "$type": "dimension",
-            "$value": "{space.inset.xs}",
-            "$description": "Small control block padding."
+            "$value": "{space.1}",
+            "$description": "Small control block padding. Comfortable 4px; compact 2px; spacious 6px."
           },
           "inline": {
             "$type": "dimension",
-            "$value": "{space.inset.sm}",
-            "$description": "Small control inline padding."
+            "$value": "{space.2_5}",
+            "$description": "Small control inline padding. Comfortable 10px; compact 8px; spacious 12px."
           }
         }
       },
       "md": {
         "min": {
           "$type": "dimension",
-          "$value": "{control.height.40}",
-          "$description": "Medium control minimum block size. Comfortable 40px; compact 32; spacious 48.",
+          "$value": "{control.height.36}",
+          "$description": "Medium control minimum block size. Comfortable 36px; compact 32; spacious 40.",
           "$extensions": {
             "ghostvue": {
               "touchMin": "2.75rem"
@@ -1081,26 +1081,26 @@
         "font": {
           "$type": "fontSize",
           "$value": "{font.size.md}",
-          "$description": "Medium control font size."
+          "$description": "Medium control font size. Comfortable 14px; compact 13px; spacious 15px."
         },
         "padding": {
           "block": {
             "$type": "dimension",
-            "$value": "{space.inset.sm}",
-            "$description": "Medium control block padding."
+            "$value": "{space.1_5}",
+            "$description": "Medium control block padding. Comfortable 6px; compact 4px; spacious 8px."
           },
           "inline": {
             "$type": "dimension",
-            "$value": "{space.inset.md}",
-            "$description": "Medium control inline padding."
+            "$value": "{space.3}",
+            "$description": "Medium control inline padding. Comfortable 12px; compact 10px; spacious 16px."
           }
         }
       },
       "lg": {
         "min": {
           "$type": "dimension",
-          "$value": "{control.height.48}",
-          "$description": "Large control minimum block size. Comfortable and spacious 48px; compact 40.",
+          "$value": "{control.height.40}",
+          "$description": "Large control minimum block size. Comfortable 40px; compact 36; spacious 44.",
           "$extensions": {
             "ghostvue": {
               "touchMin": "2.75rem"
@@ -1110,18 +1110,18 @@
         "font": {
           "$type": "fontSize",
           "$value": "{font.size.lg}",
-          "$description": "Large control font size."
+          "$description": "Large control font size. Comfortable 15px; compact 14px; spacious 16px."
         },
         "padding": {
           "block": {
             "$type": "dimension",
-            "$value": "{space.inset.md}",
-            "$description": "Large control block padding."
+            "$value": "{space.2}",
+            "$description": "Large control block padding. Comfortable 8px; compact 6px; spacious 10px."
           },
           "inline": {
             "$type": "dimension",
-            "$value": "{space.inset.lg}",
-            "$description": "Large control inline padding."
+            "$value": "{space.4}",
+            "$description": "Large control inline padding. Comfortable 16px; compact 12px; spacious 20px."
           }
         }
       }
@@ -1456,17 +1456,17 @@
     "md": {
       "$type": "dimension",
       "$value": "{radius.scale.md}",
-      "$description": "Medium radius. 8px at comfortable density and roundness 1."
+      "$description": "Medium radius. 6px at comfortable density and roundness 1."
     },
     "lg": {
       "$type": "dimension",
       "$value": "{radius.scale.lg}",
-      "$description": "Large radius. 12px at comfortable density and roundness 1."
+      "$description": "Large radius. 8px at comfortable density and roundness 1."
     },
     "xl": {
       "$type": "dimension",
       "$value": "{radius.scale.xl}",
-      "$description": "Extra-large radius. 16px at comfortable density and roundness 1."
+      "$description": "Extra-large radius. 12px at comfortable density and roundness 1."
     },
     "pill": {
       "$type": "dimension",
@@ -1529,37 +1529,37 @@
       "xs": {
         "$type": "fontSize",
         "$value": "{font.size.xs}",
-        "$description": "Fluid extra-small type."
+        "$description": "Extra-small UI type. 12px."
       },
       "sm": {
         "$type": "fontSize",
         "$value": "{font.size.sm}",
-        "$description": "Fluid small type."
+        "$description": "Small UI type. 13px."
       },
       "md": {
         "$type": "fontSize",
         "$value": "{font.size.md}",
-        "$description": "Fluid body type."
+        "$description": "Medium UI body type. 14px."
       },
       "lg": {
         "$type": "fontSize",
         "$value": "{font.size.lg}",
-        "$description": "Fluid large type."
+        "$description": "Large UI subheading type. 15px."
       },
       "xl": {
         "$type": "fontSize",
         "$value": "{font.size.xl}",
-        "$description": "Fluid extra-large type."
+        "$description": "Fluid extra-large display type."
       },
       "2xl": {
         "$type": "fontSize",
         "$value": "{font.size.2xl}",
-        "$description": "Fluid 2xl type."
+        "$description": "Fluid 2xl display type."
       },
       "3xl": {
         "$type": "fontSize",
         "$value": "{font.size.3xl}",
-        "$description": "Fluid 3xl type."
+        "$description": "Fluid 3xl display type."
       }
     },
     "weight": {

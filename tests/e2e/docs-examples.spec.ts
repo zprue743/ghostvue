@@ -700,11 +700,11 @@ test.describe('docs example previews', () => {
         const hostStage = hostPage.getByTestId('ghost-example-stage')
         await expect(hostStage.locator(':scope > *').first()).toBeAttached()
 
-        // Same token host: calm flagship, density left unset, no global
+        // Same token host: default theme, density left unset, no global
         // recipe activation on either surface.
         for (const page of [docsPage, hostPage]) {
           const html = page.locator('html')
-          await expect(html).toHaveAttribute('data-ghost-theme', 'calm')
+          await expect(html).toHaveAttribute('data-ghost-theme', 'default')
           await expect(html).toHaveAttribute('data-ghost-mode', mode)
           await expect(html).not.toHaveAttribute('data-ghost-density')
           await expect(html).not.toHaveClass(/\bghost-theme\b/)
