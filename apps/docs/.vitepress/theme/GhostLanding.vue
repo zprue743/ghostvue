@@ -28,7 +28,7 @@ import { defineDemoPreview } from './demo-preview-async'
 import { runDocsViewTransition, switchDocsTheme } from './docs-theme-transition'
 import LandingActionLink from './LandingActionLink.vue'
 import LandingHeroMark from './LandingHeroMark.vue'
-import { useLandingScroll } from './landing-motion'
+import { useLandingScroll, type LandingSectionId } from './landing-motion'
 import { landingProgressionStages } from './landing-progression'
 import LandingSectionNumber from './LandingSectionNumber.vue'
 import LandingSectionRail from './LandingSectionRail.vue'
@@ -191,6 +191,7 @@ const tooling = [
 ] as const
 
 const { motionMode } = useLandingScroll()
+const activeId = ref<LandingSectionId>('hero')
 
 onMounted(() => {
   readDocsTheme()
@@ -222,7 +223,7 @@ onUnmounted(() => {
     data-ghost-density="compact"
     :data-landing-motion="motionMode"
   >
-    <LandingSectionRail />
+    <LandingSectionRail v-model="activeId" />
 
     <main class="ghost-landing__main">
       <!-- 1. Hero -->

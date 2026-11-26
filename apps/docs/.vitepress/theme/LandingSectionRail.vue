@@ -6,7 +6,9 @@ import {
   GhostScrollSpyList,
 } from '@ghostvue/vue'
 
-import { landingSections } from './landing-motion'
+import { landingSections, type LandingSectionId } from './landing-motion'
+
+const activeId = defineModel<LandingSectionId>({ default: 'hero' })
 
 function markerNumber(index: number): string {
   return String(index + 1).padStart(2, '0')
@@ -19,13 +21,17 @@ function markerNumber(index: number): string {
     click listener would otherwise jump to the fragment instantly and cancel
     smooth scrolling from `GhostScrollSpyLink`.
   -->
-  <GhostScrollSpy class="ghost-landing-rail vp-raw" label="Page sections">
-    <template #default="{ activeId }">
+  <GhostScrollSpy
+    v-model="activeId"
+    class="ghost-landing-rail vp-raw"
+    label="Page sections"
+  >
+    <template #default="{ activeId: currentId }">
       <span class="ghost-landing-rail__thread" aria-hidden="true">
         <span class="ghost-landing-rail__fill"></span>
         <span class="ghost-landing-rail__traveller">
           <span class="ghost-landing-rail__lean">
-            <span :key="activeId" class="ghost-landing-rail__arrival">
+            <span :key="currentId" class="ghost-landing-rail__arrival">
               <svg
                 class="ghost-landing-rail__ghost"
                 viewBox="0 0 64 64"
