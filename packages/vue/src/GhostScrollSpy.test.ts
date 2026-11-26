@@ -49,9 +49,20 @@ function mountBasicRail(overrides: Record<string, unknown> = {}) {
               ...overrides,
             },
             () =>
-              h(GhostScrollSpyList, null, () => [
-                h(GhostScrollSpyItem, { target: 'alpha' }, () =>
-                  h(GhostScrollSpyLink, { target: 'alpha' }, () => 'Alpha'),
+              h(GhostScrollSpyList, { class: 'consumer-list' }, () => [
+                h(
+                  GhostScrollSpyItem,
+                  { target: 'alpha', class: 'consumer-item' },
+                  () =>
+                    h(
+                      GhostScrollSpyLink,
+                      {
+                        target: 'alpha',
+                        class: 'consumer-link',
+                        rel: 'nofollow',
+                      },
+                      () => 'Alpha',
+                    ),
                 ),
                 h(GhostScrollSpyItem, { target: 'beta' }, () =>
                   h(GhostScrollSpyLink, { target: 'beta' }, () => 'Beta'),
@@ -83,6 +94,21 @@ describe('GhostScrollSpy', () => {
     const first = wrapper.get('a[data-part="link"][data-state="active"]')
     expect(first.attributes('aria-current')).toBe('location')
     expect(first.attributes('href')).toBe('#alpha')
+  })
+
+  it('preserves styling hooks, consumer classes, and link metadata', () => {
+    const wrapper = mountBasicRail()
+    expect(wrapper.get('ol').classes()).toEqual(
+      expect.arrayContaining(['ghost-scroll-spy-list', 'consumer-list']),
+    )
+    expect(wrapper.get('li').classes()).toEqual(
+      expect.arrayContaining(['ghost-scroll-spy-item', 'consumer-item']),
+    )
+    const link = wrapper.get('a[href="#alpha"]')
+    expect(link.classes()).toEqual(
+      expect.arrayContaining(['ghost-scroll-spy-link', 'consumer-link']),
+    )
+    expect(link.attributes('rel')).toBe('nofollow')
   })
 
   it('throws when parts are composed outside the root', () => {

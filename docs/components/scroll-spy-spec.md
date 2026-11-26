@@ -255,10 +255,9 @@ Themed exports from `@ghostvue/themes`:
 ### Async behavior
 
 Not directly async, though target sections may mount, resize, or load async
-content (images, collapsible panels, tabs). `ResizeObserver` on the scroll
-root/document body and `measure()` on item registration/unregistration schedules
-a coalesced `requestAnimationFrame` measurement so active state and progress stay
-accurate without polling.
+content (images, collapsible panels, tabs). Window resize, link registration
+changes, and `ResizeObserver` notifications for the scroll root and its
+content or targets schedule a coalesced `requestAnimationFrame` measurement.
 
 ## Consumer data
 
@@ -269,7 +268,8 @@ accurate without polling.
   conditional `v-if` toggles, and reordering (using DOM order comparison via
   `compareDocumentPosition` or ordered array reconciliation on mount/unmount).
 - Duplicate `target` values in the same `GhostScrollSpy` warn in development
-  (`GHOST*` dev warning) and resolve deterministically by first registered item.
+  (`GHOST013` dev warning). The first enabled link in DOM order owns the active
+  state, and each enabled target contributes only one progress stop.
 
 ## Accessibility contract
 
@@ -302,8 +302,8 @@ accurate without polling.
 ### Focus behavior
 
 - When a link is activated (click or `Enter`):
-  1. Target scrolls into view (`block: 'start'`, respecting CSS `scroll-margin-block-start`
-     for fixed headers).
+  1. Target scrolls to the start of the scrollport, respecting the section's
+     vertical scroll margin and the container's vertical scroll padding.
   2. Target receives focus via `target.focus({ preventScroll: true })` (when
      `focusTarget` is `true`), so the next `Tab` moves to the first interactive
      control _inside_ that section rather than continuing through the rest of
@@ -492,7 +492,7 @@ exports:
 4. **SSR output before client measurement.**
    - _Option A (Recommended):_ Render `aria-current="location"` on `modelValue`
      if controlled, else `defaultValue` if provided, else **the first registered
-     item** once registered (matching `LandingSectionRail.vue` SSR output), and
+     enabled item** once registered (matching `LandingSectionRail.vue` SSR output), and
      reconcile to actual scroll position in `onMounted` after hydration. Note:
      for compound children without `defaultValue`, `GhostScrollSpyLink` setup
      order must not mutate parent state _after_ the first link renders; either

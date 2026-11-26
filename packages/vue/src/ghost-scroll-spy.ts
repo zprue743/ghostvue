@@ -157,7 +157,7 @@ interface ScrollSpyRegistryEntry {
 export interface GhostScrollSpyContext {
   readonly orientation: ComputedRef<GhostScrollSpyOrientation>
   readonly activeId: ComputedRef<string | undefined>
-  isActive(target: string): boolean
+  isActive(target: string, registrationId?: symbol): boolean
   registerItem(
     id: symbol,
     target: string,

@@ -44,7 +44,7 @@ export interface UseGhostScrollSpyReturn {
   ): void
   unregisterItem(id: symbol): void
   setItemDisabled(id: symbol, disabled: boolean): void
-  isActive(target: string): boolean
+  isActive(target: string, registrationId?: symbol): boolean
   scrollTo(
     targetId: string,
     options?: { behavior?: ScrollBehavior; focus?: boolean },
@@ -79,12 +79,10 @@ function sortRegistryEntries(
   })
 }
 
-function firstRegisteredTarget(
-  entries: readonly ScrollSpyRegistryEntry[],
-): string | undefined {
-  const ordered = sortRegistryEntries(entries)
-  const first = ordered.find((entry) => !entry.disabled)
-  return first?.target
+function isWindowContainer(
+  container: Window | HTMLElement,
+): container is Window {
+  return container === window || container instanceof Window
 }
 
 function resolveScrollContainer(
@@ -93,13 +91,7 @@ function resolveScrollContainer(
   if (typeof window === 'undefined') {
     return null
   }
-  if (container === undefined || container === null) {
-    return window
-  }
-  if (container instanceof Window) {
-    return container
-  }
-  return container
+  return container ?? window
 }
 
 function readScrollMetrics(container: Window | HTMLElement): {
@@ -107,10 +99,10 @@ function readScrollMetrics(container: Window | HTMLElement): {
   scrollHeight: number
   viewportHeight: number
 } {
-  if (container instanceof Window) {
+  if (isWindowContainer(container)) {
     return {
       scrollTop: container.scrollY,
-      scrollHeight: document.documentElement.scrollHeight,
+      scrollHeight: container.document.documentElement.scrollHeight,
       viewportHeight: container.innerHeight,
     }
   }
@@ -126,10 +118,12 @@ function readTargetTop(
   element: HTMLElement,
 ): number {
   const targetRect = element.getBoundingClientRect()
-  if (container instanceof Window) {
+  if (isWindowContainer(container)) {
     return targetRect.top
   }
-  return targetRect.top - container.getBoundingClientRect().top
+  return (
+    targetRect.top - container.getBoundingClientRect().top - container.clientTop
+  )
 }
 
 function scrollTargetIntoContainer(
@@ -137,14 +131,24 @@ function scrollTargetIntoContainer(
   element: HTMLElement,
   behavior: ScrollBehavior,
 ): void {
-  if (container instanceof Window) {
+  if (isWindowContainer(container)) {
     element.scrollIntoView({ behavior, block: 'start' })
     return
   }
-  const containerRect = container.getBoundingClientRect()
-  const targetRect = element.getBoundingClientRect()
-  const nextTop = targetRect.top - containerRect.top + container.scrollTop
-  container.scrollTo({ top: nextTop, behavior })
+  // Match start alignment within this scrollport while keeping ancestors still.
+  const padding = window.getComputedStyle(container).scrollPaddingTop
+  const paddingValue = Number.parseFloat(padding) || 0
+  const paddingTop = padding.endsWith('%')
+    ? (paddingValue / 100) * container.clientHeight
+    : paddingValue
+  const marginTop =
+    Number.parseFloat(window.getComputedStyle(element).scrollMarginTop) || 0
+  const top =
+    readTargetTop(container, element) +
+    container.scrollTop -
+    paddingTop -
+    marginTop
+  container.scrollTo({ top, behavior })
 }
 
 function updateScrollSpyHash(
@@ -188,6 +192,7 @@ export function useGhostScrollSpy(
   let lastScrollTop = 0
   let restoredInitialScroll = false
   let resizeObserver: ResizeObserver | undefined
+  let observedElements = new Set<Element>()
   let reducedMotionQuery: MediaQueryList | undefined
   let scrollContainer: Window | HTMLElement | null = null
 
@@ -231,9 +236,16 @@ export function useGhostScrollSpy(
       toValue(options.modelValue) === undefined && !hasExplicitDefault.value,
   )
 
-  const itemCount = computed(
-    () => registry.value.filter((entry) => !entry.disabled).length,
-  )
+  const enabledEntries = computed(() => {
+    const byTarget = new Map<string, ScrollSpyRegistryEntry>()
+    for (const entry of registry.value) {
+      if (!entry.disabled && !byTarget.has(entry.target)) {
+        byTarget.set(entry.target, entry)
+      }
+    }
+    return byTarget
+  })
+  const itemCount = computed(() => enabledEntries.value.size)
 
   const activeId = computed(() => modelValue.value)
 
@@ -267,10 +279,18 @@ export function useGhostScrollSpy(
       logGhostCode('GHOST013', { target })
     }
 
-    const next = registry.value.filter((entry) => entry.id !== id)
-    next.push({ id, target, disabled, getLinkElement })
+    const next = [...registry.value]
+    const index = next.findIndex((entry) => entry.id === id)
+    next[index === -1 ? next.length : index] = {
+      id,
+      target,
+      disabled,
+      getLinkElement,
+    }
     registry.value = next
-    ensureInitialSelection(target)
+    if (!disabled) {
+      ensureInitialSelection(target)
+    }
     scheduleMeasure()
   }
 
@@ -278,13 +298,14 @@ export function useGhostScrollSpy(
     const before = registry.value.length
     registry.value = registry.value.filter((entry) => entry.id !== id)
     if (registry.value.length !== before) {
-      bumpRegistry()
       if (
         defaultUncontrolled.value &&
         modelValue.value !== undefined &&
-        !registry.value.some((entry) => entry.target === modelValue.value)
+        !enabledEntries.value.has(modelValue.value)
       ) {
-        modelValue.value = firstRegisteredTarget(registry.value)
+        modelValue.value = sortRegistryEntries(registry.value).find(
+          (entry) => !entry.disabled,
+        )?.target
       }
       scheduleMeasure()
     }
@@ -300,9 +321,13 @@ export function useGhostScrollSpy(
     scheduleMeasure()
   }
 
-  function isActive(target: string): boolean {
+  function isActive(target: string, registrationId?: symbol): boolean {
     const normalized = normalizeScrollSpyTargetId(target)
-    return activeId.value === normalized
+    return (
+      activeId.value === normalized &&
+      (registrationId === undefined ||
+        enabledEntries.value.get(normalized)?.id === registrationId)
+    )
   }
 
   function resolveEffectiveBehavior(
@@ -405,23 +430,26 @@ export function useGhostScrollSpy(
       readScrollMetrics(container)
     trackTravel(scrollTop)
 
-    const enabled = sortRegistryEntries(registry.value).filter(
-      (entry) => !entry.disabled,
+    // Keyed moves do not re-register links. Refresh duplicate ownership and
+    // measurement order together, only publishing a registry change on a move.
+    const ordered = sortRegistryEntries(registry.value)
+    if (ordered.some((entry, index) => entry !== registry.value[index])) {
+      registry.value = ordered
+    }
+    const measured = Array.from(enabledEntries.value.keys()).flatMap(
+      (target) => {
+        const element = document.getElementById(target)
+        return element
+          ? [{ target, element, top: readTargetTop(container, element) }]
+          : []
+      },
     )
-    const measured = enabled
-      .map((entry) => {
-        const element = document.getElementById(entry.target)
-        if (!element) {
-          return null
-        }
-        return {
-          target: entry.target,
-          top: readTargetTop(container, element),
-        }
-      })
-      .filter(
-        (entry): entry is { target: string; top: number } => entry !== null,
+    if (resizeObserver) {
+      syncResizeObserver(
+        container,
+        measured.map((entry) => entry.element),
       )
+    }
 
     const tops = measured.map((entry) => entry.top)
     const scrollable = isScrollSpyScrollable(scrollHeight, viewportHeight)
@@ -438,6 +466,7 @@ export function useGhostScrollSpy(
           scrollTop,
           progress,
           probeOffset.value,
+          endThreshold.value,
         )
       : 0
 
@@ -471,8 +500,33 @@ export function useGhostScrollSpy(
     }
   }
 
+  function syncResizeObserver(
+    container: Window | HTMLElement,
+    targets: HTMLElement[],
+  ): void {
+    const observer = resizeObserver
+    if (!observer) return
+
+    const next = new Set<Element>(targets)
+    if (isWindowContainer(container)) {
+      next.add(container.document.documentElement)
+      next.add(container.document.body)
+    } else {
+      next.add(container)
+      // A fixed-size scrollport can stay unchanged as its content grows.
+      for (const child of container.children) next.add(child)
+    }
+    for (const element of observedElements) {
+      if (!next.has(element)) observer.unobserve(element)
+    }
+    for (const element of next) {
+      if (!observedElements.has(element)) observer.observe(element)
+    }
+    observedElements = next
+  }
+
   function scheduleMeasure(): void {
-    if (frame !== 0 || typeof window === 'undefined') {
+    if (frame !== 0 || !scrollContainer) {
       return
     }
     frame = window.requestAnimationFrame(measure)
@@ -505,17 +559,12 @@ export function useGhostScrollSpy(
     restoredInitialScroll = false
 
     scrollContainer.addEventListener('scroll', onScroll, { passive: true })
+    window.addEventListener('resize', scheduleMeasure)
 
     if (typeof ResizeObserver === 'function') {
       resizeObserver = new ResizeObserver(() => {
         scheduleMeasure()
       })
-      if (scrollContainer instanceof Window) {
-        resizeObserver.observe(document.documentElement)
-        resizeObserver.observe(document.body)
-      } else {
-        resizeObserver.observe(scrollContainer)
-      }
     }
 
     scheduleMeasure()
@@ -531,7 +580,11 @@ export function useGhostScrollSpy(
       frame = 0
     }
     scrollContainer?.removeEventListener('scroll', onScroll)
+    if (scrollContainer) {
+      window.removeEventListener('resize', scheduleMeasure)
+    }
     resizeObserver?.disconnect()
+    observedElements.clear()
     resizeObserver = undefined
     reducedMotionQuery = undefined
     scrollContainer = null

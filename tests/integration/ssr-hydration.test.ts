@@ -456,18 +456,22 @@ describe('SSR hydration harness', () => {
     ).rejects.toThrow()
   })
 
-  it('hydrates GhostScrollSpy landmark links without mismatch', async () => {
+  it('hydrates GhostScrollSpy with the first enabled link current', async () => {
     await expectSsrHydration(
       ssrHydrationRoot(
         GhostScrollSpy,
-        { defaultValue: 'alpha' },
+        {},
         {
           default: () =>
             h(GhostScrollSpyList, null, {
               default: () => [
                 h(GhostScrollSpyItem, null, {
                   default: () =>
-                    h(GhostScrollSpyLink, { target: 'alpha' }, () => 'Alpha'),
+                    h(
+                      GhostScrollSpyLink,
+                      { target: 'alpha', disabled: true },
+                      () => 'Alpha',
+                    ),
                 }),
                 h(GhostScrollSpyItem, null, {
                   default: () =>
@@ -481,8 +485,11 @@ describe('SSR hydration harness', () => {
         assertServerHtml(html) {
           expect(html).toContain('ghost-scroll-spy')
           expect(html).toContain('aria-label="Page sections"')
-          expect(html).toContain('href="#alpha"')
-          expect(html).toContain('aria-current="location"')
+          const server = new DOMParser().parseFromString(html, 'text/html')
+          const current = server.querySelectorAll('a[aria-current="location"]')
+          expect(Array.from(current, (link) => link.textContent)).toEqual([
+            'Beta',
+          ])
         },
       },
     )

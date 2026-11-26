@@ -117,7 +117,7 @@ Related: [./components/command-palette.md](./components/command-palette.md)
 
 **Warning:** Duplicate scroll spy target
 
-Two GhostScrollSpyLink components in one GhostScrollSpy use the target "{target}". Each section id should appear once; duplicate registrations resolve to the first link in DOM order.
+Two GhostScrollSpyLink components in one GhostScrollSpy use the target "{target}". Each section id should appear once. Duplicate registrations resolve to the first enabled link in DOM order.
 
 Related: [./components/scroll-spy.md](./components/scroll-spy.md)
 

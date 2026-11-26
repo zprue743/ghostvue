@@ -120,7 +120,8 @@ const rootAttrs = computed(() => {
 provide(ghostScrollSpyContextKey, {
   orientation: scrollSpy.orientation,
   activeId: scrollSpy.activeId,
-  isActive: (target: string) => scrollSpy.isActive(target),
+  isActive: (target, registrationId) =>
+    scrollSpy.isActive(target, registrationId),
   registerItem: (
     id: symbol,
     target: string,

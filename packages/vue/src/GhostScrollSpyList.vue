@@ -40,7 +40,11 @@ defineExpose<GhostScrollSpyListExposed>({
 </script>
 
 <template>
-  <component :is="props.as" ref="host" v-bind="{ ...listAttrs, ...$attrs }">
+  <component
+    :is="props.as"
+    ref="host"
+    v-bind="{ ...listAttrs, ...$attrs, class: [listAttrs.class, $attrs.class] }"
+  >
     <slot />
   </component>
 </template>

@@ -258,6 +258,8 @@ test.describe('docs example previews', () => {
     page,
     docsUrl,
   }) => {
+    // Visiting every component page can exceed 30s on a shared CI runner.
+    test.setTimeout(60_000)
     expect(componentPages.length).toBeGreaterThan(0)
     const errors: string[] = []
     page.on('pageerror', (error) => errors.push(error.message))
@@ -267,7 +269,10 @@ test.describe('docs example previews', () => {
       const stages = page.locator('.ghost-example__stage')
       await expect(stages.first()).toBeVisible()
       for (const stage of await stages.all()) {
-        await expect(stage.locator(':scope > *').first()).toBeAttached()
+        await expect(
+          stage.locator(':scope > *').first(),
+          `Demo preview on ${link}`,
+        ).toBeAttached()
       }
     }
     expect(errors).toEqual([])

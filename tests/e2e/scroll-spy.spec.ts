@@ -30,6 +30,11 @@ test.describe('GhostScrollSpy', () => {
         .toBe('location')
 
       await intro.focus()
+      await expect(intro).toBeFocused()
+      await page.keyboard.press('Tab')
+      await expect(details).toBeFocused()
+      await page.keyboard.press('Shift+Tab')
+      await expect(intro).toBeFocused()
       await page.keyboard.press('Enter')
       await expect(page.locator('#scroll-spy-play-intro')).toBeFocused()
       await expect(intro).toHaveAttribute('aria-current', 'location')

@@ -59,12 +59,19 @@ const targetId = computed(() => normalizeScrollSpyTargetId(props.target))
 const resolvedHref = computed(() =>
   props.href.length > 0 ? props.href : `#${targetId.value}`,
 )
-const active = computed(() => scrollSpyContext.isActive(targetId.value))
+const relAttr = computed(() => {
+  const value = attrs['rel']
+  return typeof value === 'string' ? value : undefined
+})
+const active = computed(() =>
+  scrollSpyContext.isActive(targetId.value, registrationId),
+)
 
 const { isDisabled, isComponentHost, rootProps } = useGhostLink({
   as: () => props.as,
   disabled: () => props.disabled,
   href: () => resolvedHref.value,
+  rel: () => relAttr.value,
 })
 
 function getLinkElement(): HTMLElement | null {

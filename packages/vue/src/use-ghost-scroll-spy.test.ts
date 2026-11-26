@@ -10,22 +10,13 @@ import { useGhostScrollSpy } from './use-ghost-scroll-spy'
 
 const attached: ReturnType<typeof mount>[] = []
 
-vi.stubGlobal('matchMedia', (query: string) => ({
-  matches: false,
-  media: query,
-  addEventListener: vi.fn(),
-  removeEventListener: vi.fn(),
-  addListener: vi.fn(),
-  removeListener: vi.fn(),
-  dispatchEvent: vi.fn(),
-}))
-
 afterEach(() => {
   for (const wrapper of attached) {
     wrapper.unmount()
   }
   attached.length = 0
   vi.restoreAllMocks()
+  vi.unstubAllGlobals()
   document.body.innerHTML = ''
 })
 
@@ -67,6 +58,8 @@ function mountContainerHarness(
     endThreshold?: number
     extraLinks?: boolean
     showGamma?: ReturnType<typeof ref<boolean>>
+    reversed?: ReturnType<typeof ref<boolean>>
+    duplicateBeta?: boolean
     historyMode?: 'replace' | 'push' | 'none'
   } = {},
 ): ContainerHarness {
@@ -129,24 +122,26 @@ function mountContainerHarness(
         if (options.endThreshold !== undefined) {
           spyProps['endThreshold'] = options.endThreshold
         }
-        return () =>
-          h(GhostScrollSpy, spyProps, () =>
-            h(GhostScrollSpyList, null, () => [
-              h(GhostScrollSpyItem, null, () =>
-                h(GhostScrollSpyLink, { target: 'alpha' }, () => 'Alpha'),
+        return () => {
+          const links = [
+            { target: 'alpha', label: 'Alpha' },
+            { target: 'beta', label: 'Beta' },
+          ]
+          if (showGamma.value) links.push({ target: 'gamma', label: 'Gamma' })
+          if (options.duplicateBeta) {
+            links.push({ target: 'beta', label: 'Beta duplicate' })
+          }
+          if (options.reversed?.value) links.reverse()
+          return h(GhostScrollSpy, spyProps, () =>
+            h(GhostScrollSpyList, null, () =>
+              links.map(({ target, label }) =>
+                h(GhostScrollSpyItem, { key: label }, () =>
+                  h(GhostScrollSpyLink, { target }, () => label),
+                ),
               ),
-              h(GhostScrollSpyItem, null, () =>
-                h(GhostScrollSpyLink, { target: 'beta' }, () => 'Beta'),
-              ),
-              ...(showGamma.value
-                ? [
-                    h(GhostScrollSpyItem, null, () =>
-                      h(GhostScrollSpyLink, { target: 'gamma' }, () => 'Gamma'),
-                    ),
-                  ]
-                : []),
-            ]),
+            ),
           )
+        }
       },
     }),
     { attachTo: document.body },
@@ -169,72 +164,42 @@ function activeLinkText(wrapper: ReturnType<typeof mount>): string {
 }
 
 describe('useGhostScrollSpy', () => {
-  it('warns once for duplicate targets in development', async () => {
+  it('warns once and uses only the first enabled link for a duplicate target', async () => {
     const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined)
-
-    const wrapper = mount(
-      defineComponent({
-        setup() {
-          return () =>
-            h(GhostScrollSpy, null, () =>
-              h(GhostScrollSpyList, null, () => [
-                h(GhostScrollSpyItem, null, () =>
-                  h(GhostScrollSpyLink, { target: 'dupe' }, () => 'A'),
-                ),
-                h(GhostScrollSpyItem, null, () =>
-                  h(GhostScrollSpyLink, { target: 'dupe' }, () => 'B'),
-                ),
-              ]),
-            )
-        },
-      }),
-      { attachTo: document.body },
-    )
-    attached.push(wrapper)
-    await nextTick()
+    const { wrapper, setScrollTop } = mountContainerHarness({
+      duplicateBeta: true,
+    })
+    await setScrollTop(320)
 
     const duplicateWarnings = warn.mock.calls.filter((call) =>
       String(call[0]).includes('GHOST013'),
     )
     expect(duplicateWarnings).toHaveLength(1)
+    expect(
+      wrapper.findAll('a[aria-current="location"]').map((link) => link.text()),
+    ).toEqual(['Beta'])
+    expect(
+      wrapper
+        .get('nav')
+        .element.style.getPropertyValue('--ghost-scroll-spy-section-progress'),
+    ).toBe('0.5000')
+    await setScrollTop(1000)
+    expect(activeLinkText(wrapper)).toBe('Gamma')
   })
 
-  it('registers items in DOM order after reordering', async () => {
-    const ReorderDemo = defineComponent({
-      setup() {
-        const flip = ref(false)
-        return () =>
-          h(GhostScrollSpy, null, () =>
-            h(GhostScrollSpyList, null, () =>
-              flip.value
-                ? [
-                    h(GhostScrollSpyItem, null, () =>
-                      h(GhostScrollSpyLink, { target: 'b' }, () => 'B'),
-                    ),
-                    h(GhostScrollSpyItem, null, () =>
-                      h(GhostScrollSpyLink, { target: 'a' }, () => 'A'),
-                    ),
-                  ]
-                : [
-                    h(GhostScrollSpyItem, null, () =>
-                      h(GhostScrollSpyLink, { target: 'a' }, () => 'A'),
-                    ),
-                    h(GhostScrollSpyItem, null, () =>
-                      h(GhostScrollSpyLink, { target: 'b' }, () => 'B'),
-                    ),
-                  ],
-            ),
-          )
-      },
+  it('uses current DOM order when measuring reordered keyed links', async () => {
+    const reversed = ref(false)
+    const { wrapper, setScrollTop } = mountContainerHarness({
+      reversed,
+      extraLinks: false,
     })
+    await setScrollTop(450)
+    expect(activeLinkText(wrapper)).toBe('Beta')
 
-    const wrapper = mount(ReorderDemo, { attachTo: document.body })
-    attached.push(wrapper)
+    reversed.value = true
     await nextTick()
-    const firstOrder = wrapper
-      .findAll('a.ghost-scroll-spy-link')
-      .map((link) => link.text())
-    expect(firstOrder).toEqual(['A', 'B'])
+    await setScrollTop(450)
+    expect(activeLinkText(wrapper)).toBe('Alpha')
   })
 
   it('resolves the active section from container scroll position', async () => {
@@ -277,6 +242,90 @@ describe('useGhostScrollSpy', () => {
 
     await setScrollTop(520)
     expect(activeLinkText(wrapper)).toBe('Gamma')
+    expect(
+      wrapper
+        .get('nav')
+        .element.style.getPropertyValue('--ghost-scroll-spy-section-progress'),
+    ).toBe('1.0000')
+  })
+
+  it('aligns nested-container navigation to its padded scrollport and target margin', async () => {
+    const { wrapper, container } = mountContainerHarness()
+    Object.defineProperty(container, 'clientTop', { value: 5 })
+    container.style.scrollPaddingTop = '10%'
+    container
+      .querySelector<HTMLElement>('#beta')
+      ?.style.setProperty('scroll-margin-top', '15px')
+    const scrollTo = vi.spyOn(container, 'scrollTo')
+    const outerScroll = vi.spyOn(window, 'scrollTo')
+    await wrapper.get('a[href="#beta"]').trigger('click')
+    expect(scrollTo).toHaveBeenCalledWith({
+      top: 360,
+      behavior: 'smooth',
+    })
+    expect(outerScroll).not.toHaveBeenCalled()
+  })
+
+  it('remeasures on viewport resize and removes the listener on unmount', async () => {
+    const removeListener = vi.spyOn(window, 'removeEventListener')
+    const { wrapper, container, setScrollTop } = mountContainerHarness()
+    await setScrollTop(260)
+    expect(activeLinkText(wrapper)).toBe('Alpha')
+
+    Object.defineProperty(container, 'clientHeight', { value: 400 })
+    window.dispatchEvent(new Event('resize'))
+    await flushScrollSpyMeasure()
+    expect(activeLinkText(wrapper)).toBe('Beta')
+
+    wrapper.unmount()
+    attached.pop()
+    expect(removeListener).toHaveBeenCalledWith('resize', expect.any(Function))
+  })
+
+  it('remeasures when content inside a fixed scrollport resizes and releases removed targets', async () => {
+    const observer = {
+      observe: vi.fn(),
+      unobserve: vi.fn(),
+      disconnect: vi.fn(),
+    }
+    const Observer = vi.fn<
+      (callback: ResizeObserverCallback) => ResizeObserver
+    >(function () {
+      return observer
+    })
+    vi.stubGlobal('ResizeObserver', Observer)
+    const showGamma = ref(true)
+    const { wrapper, container, setScrollTop } = mountContainerHarness({
+      showGamma,
+    })
+    await setScrollTop(350)
+    const alpha = container.querySelector('#alpha')
+    const gamma = container.querySelector('#gamma')
+    expect(observer.observe).toHaveBeenCalledWith(alpha)
+    expect(observer.observe).toHaveBeenCalledWith(gamma)
+    expect(activeLinkText(wrapper)).toBe('Beta')
+
+    // An earlier section expands, moving Beta below the probe and increasing scrollHeight.
+    Object.defineProperty(container, 'scrollHeight', { value: 1400 })
+    const beta = container.querySelector('#beta')
+    if (!beta) throw new Error('Missing Beta section')
+    vi.spyOn(beta, 'getBoundingClientRect').mockReturnValue(rectForTop(250))
+    Observer.mock.calls[0]?.[0]([], observer)
+    await flushScrollSpyMeasure()
+    expect(activeLinkText(wrapper)).toBe('Alpha')
+    expect(
+      wrapper
+        .get('nav')
+        .element.style.getPropertyValue('--ghost-scroll-spy-progress'),
+    ).toBe('0.2917')
+
+    gamma?.remove()
+    showGamma.value = false
+    await flushScrollSpyMeasure()
+    expect(observer.unobserve).toHaveBeenCalledWith(gamma)
+    wrapper.unmount()
+    attached.pop()
+    expect(observer.disconnect).toHaveBeenCalledOnce()
   })
 
   it('reselects when the active registration is removed at runtime', async () => {

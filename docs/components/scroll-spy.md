@@ -14,6 +14,14 @@ The compound parts render `<nav>` → `<ol>` → `<li>` → `<a href="#...">` vi
 `--ghost-scroll-spy-section-progress` on the root without per-frame Vue
 re-renders.
 
+Disabled links are skipped when choosing the current section. If several links
+share a target, the first enabled link in DOM order owns the current state and
+the section counts once toward progress.
+
+For a nested scroll area, pass its element as `container`. Navigation scrolls
+that element and honors vertical scroll padding on the container and scroll
+margin on the section. Viewport and observed content resizes refresh tracking.
+
 ## Themed rail
 
 <GhostExample id="scroll-spy/themed" />

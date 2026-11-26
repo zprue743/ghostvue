@@ -70,6 +70,7 @@ export function resolveScrollSpySegmentProgress(
   scrollTop: number,
   progress: number,
   probeOffset = SCROLL_SPY_DEFAULT_PROBE_OFFSET,
+  endThreshold = SCROLL_SPY_DEFAULT_END_THRESHOLD,
 ): number {
   if (tops.length < 2) return progress
   const last = tops.length - 1
@@ -78,6 +79,7 @@ export function resolveScrollSpySegmentProgress(
     viewportHeight,
     progress,
     probeOffset,
+    endThreshold,
   )
   if (active >= last) return 1
   const probe = resolveScrollSpyProbeY(viewportHeight, probeOffset)
