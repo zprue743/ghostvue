@@ -327,9 +327,13 @@ The themed recipe (`packages/themes/src/ghost-color-swatch.css`, in
 - `border-radius: var(--ghost-radius-sm)`, which already scales with
   `--ghost-roundness`, so a sharp theme gets square chips and a rounded theme
   gets rounded ones;
-- `background-color: var(--ghost-color-swatch-color)` layered over a
-  checkerboard `background-image` drawn with two neutral tokens, so
-  translucent colours show their alpha (open question 5);
+- a checkerboard `background-image` on the root, drawn with two neutral
+  tokens (open question 5). The root uses `position: relative` and
+  `overflow: hidden` to clip the fill inside its rounded border. An empty
+  `::before` (`content: ""`, `position: absolute`, `inset: 0`) paints
+  `background-color: var(--ghost-color-swatch-color)` above the checkerboard.
+  An opaque fill hides the pattern, a translucent fill tints it, and a
+  transparent fill reveals it;
 - `forced-color-adjust: none` and a `CanvasText` border under
   `@media (forced-colors: active)`.
 
@@ -393,12 +397,16 @@ tables with hundreds of swatches (for example the colour ramps in
   `.ghost-themed-scope` host; props forward to the headless root.
 - **Compile-time tests:** `color` is required; `label` is optional; native
   span attributes are accepted on `GhostColorSwatchProps`.
-- **Browser tests (`tests/e2e`):** axe on every registered example; computed
-  `background-color` matches the authored colour and follows a theme switch
-  for `var()` colours; under emulated `forced-colors: active` the fill keeps
+- **Browser tests (`tests/e2e`):** axe on every registered example; the fill
+  pseudo-element's computed `background-color` matches the authored colour
+  and follows a theme switch for `var()` colours; under emulated
+  `forced-colors: active` the fill keeps
   its authored colour and the border computes to `CanvasText`; the accessibility
   tree shows an image with the given name in standalone mode and no node in
-  decorative mode. Visual baselines through `pnpm test:visual:docker` only.
+  decorative mode. Visual baselines cover an opaque swatch with a uniform
+  interior, a translucent swatch with both checker colours tinted, and a
+  transparent swatch with both checker colours visible unchanged. Generate
+  baselines through `pnpm test:visual:docker` only.
 - **Not required:** keyboard and focus suites (not a widget) and
   framework-neutral unit tests (no `core` logic).
 
