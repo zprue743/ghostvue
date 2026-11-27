@@ -13,6 +13,46 @@ import { startStaticServer } from './static-server'
 // Firefox and WebKit keep their 0px overlay scrollbars (see the helper).
 test.use({ launchOptions: classicScrollbarLaunchOptions })
 
+for (const reducedMotion of ['no-preference', 'reduce'] as const) {
+  test(`themed dialog animates its entry with reduced motion set to ${reducedMotion}`, async ({
+    page,
+  }) => {
+    const playground = await startStaticServer('apps/playground/dist')
+
+    try {
+      await page.emulateMedia({ reducedMotion })
+      await page.goto(playground.url)
+      // Keep the transitions active long enough to inspect them on a busy CI worker.
+      await page.addStyleTag({
+        content: `.ghost-dialog-content[data-themed] {
+          --ghost-motion-duration-fast: 10s;
+          --ghost-motion-fade-duration: 10s;
+        }`,
+      })
+
+      const trigger = page.getByTestId('dialog-themed-trigger')
+      const content = page.getByTestId('dialog-themed-content')
+      await trigger.press('Enter')
+      const properties = await content.evaluate((element) =>
+        element
+          .getAnimations()
+          .filter((animation) => animation instanceof CSSTransition)
+          .map((transition) => transition.transitionProperty)
+          .sort(),
+      )
+      expect(properties).toEqual(
+        reducedMotion === 'reduce' ? ['opacity'] : ['opacity', 'scale'],
+      )
+
+      await page.keyboard.press('Escape')
+      await expect(content).toHaveCount(0)
+      await expect(trigger).toBeFocused()
+    } finally {
+      await playground.close()
+    }
+  })
+}
+
 test.describe('GhostDialog', () => {
   test('traps Tab/Shift+Tab, dismisses on Escape and overlay click, restores focus, and passes Axe @cross-browser', async ({
     page,

@@ -40,7 +40,7 @@ describe('GhostTable theme CSS tokens', () => {
   it('uses semantic --ghost-* tokens with no hard-coded colors, px, or time literals', async () => {
     const css = await readFile(cssPath, 'utf8')
     expect(css).toContain('--ghost-border-default')
-    expect(css).toContain('--ghost-surface-muted-bg')
+    expect(css).toContain('--ghost-border-muted')
     expect(css).toContain('overflow-x: auto')
     expect(findHardcodedVisuals(css)).toEqual([])
   })
@@ -58,13 +58,25 @@ describe('GhostTable theme CSS tokens', () => {
     )
   })
 
-  it('keeps body and foot row headers off the column header band', async () => {
+  it('uses compact muted headers and lighter dividers on body cells', async () => {
+    const css = stripComments(await readFile(cssPath, 'utf8'))
+    const header = /\.ghost-table-header-cell\s*\)\s*\{([^}]*)\}/.exec(css)?.[1]
+    const cell = /\.ghost-table-cell\s*\)\s*\{([^}]*)\}/.exec(css)?.[1]
+    expect(header).toContain('font-size: var(--ghost-type-size-xs)')
+    expect(header).toContain('font-weight: var(--ghost-type-weight-medium)')
+    expect(header).toContain('color: var(--ghost-text-muted)')
+    expect(header).toContain('var(--ghost-border-default)')
+    expect(cell).toContain('var(--ghost-border-muted)')
+  })
+
+  it('keeps body and foot row headers at the body text size', async () => {
     const css = stripComments(await readFile(cssPath, 'utf8'))
     const rule =
       /:is\(\.ghost-table-body, \.ghost-table-foot\)\s*>\s*\.ghost-table-row\s*>\s*\.ghost-table-header-cell[^{]*\{([^}]*)\}/.exec(
         css,
       )
-    expect(rule?.[1]).toContain('background-color: transparent')
+    expect(rule?.[1]).toContain('font-size: inherit')
+    expect(rule?.[1]).toContain('color: inherit')
     expect(rule?.[1]).toContain('vertical-align: top')
   })
 })

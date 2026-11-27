@@ -293,6 +293,10 @@ easing, and springs are `--ghost-motion-*` plus `data-motion` recipes; see
 and roundness nest through `data-ghost-density` and `--ghost-roundness`; see
 [density, type, and roundness](./density.md).
 
+Menu and listbox rows use the small control size for the active density.
+Invalid Input, Textarea, and NumberInput fields use the danger border and
+focus ring with the default field colors.
+
 Authored DTCG lives in `packages/themes/tokens/` and is compiled by
 `@ghostvue/themes` ([ADR 0007](../adr/0007-token-pipeline.md)).
 

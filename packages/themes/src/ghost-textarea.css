@@ -80,10 +80,27 @@
   }
 
   :where(
-    .ghost-theme .ghost-textarea[aria-invalid='true'],
-    .ghost-themed-scope .ghost-textarea[aria-invalid='true']
+    .ghost-theme .ghost-textarea:is(:focus-visible),
+    .ghost-themed-scope .ghost-textarea:is(:focus-visible)
   ) {
+    --_ghost-textarea-border-color: var(--ghost-border-focus);
+    box-shadow: 0 0 0 var(--ghost-focus-ring-offset)
+      var(--ghost-focus-ring-contrast);
+    outline: var(--ghost-focus-ring-width) solid
+      var(--_ghost-textarea-focus-color, var(--ghost-focus-ring-color));
+    outline-offset: var(--ghost-focus-ring-offset);
+  }
+
+  :where(
+    .ghost-theme
+      .ghost-textarea:is([aria-invalid='true'], [data-state='invalid']),
+    .ghost-themed-scope
+      .ghost-textarea:is([aria-invalid='true'], [data-state='invalid'])
+  ) {
+    --_ghost-textarea-background: var(--ghost-surface-bg);
     --_ghost-textarea-border-color: var(--ghost-border-danger);
+    --_ghost-textarea-color: var(--ghost-text-default);
+    --_ghost-textarea-focus-color: var(--ghost-border-danger);
   }
 
   :where(
@@ -103,17 +120,6 @@
     .ghost-themed-scope .ghost-textarea[data-state='readonly']:not(:disabled)
   ) {
     --_ghost-textarea-background: var(--ghost-surface-subtle-bg);
-  }
-
-  :where(
-    .ghost-theme .ghost-textarea:is(:focus-visible),
-    .ghost-themed-scope .ghost-textarea:is(:focus-visible)
-  ) {
-    --_ghost-textarea-border-color: var(--ghost-border-focus);
-    box-shadow: 0 0 0 var(--ghost-focus-ring-offset)
-      var(--ghost-focus-ring-contrast);
-    outline: var(--ghost-focus-ring-width) solid var(--ghost-focus-ring-color);
-    outline-offset: var(--ghost-focus-ring-offset);
   }
 
   @media (forced-colors: active) {
