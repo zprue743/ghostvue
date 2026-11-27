@@ -1,23 +1,14 @@
 /*
- * Zero-specificity layer so consumer styles win. Two opt-in scopes leave
- * headless `.ghost-button` / `.ghost-badge` unstyled: `.ghost-theme` owns the canvas (not
- * per-instance); `.ghost-themed-scope` (`display: contents`) is a recipe
- * scope only so nested `data-ghost-theme` inherits into themed wrappers.
- * Token values come from generated CSS on `.ghost-theme` / `[data-ghost-theme]`.
+ * The all-in stylesheet that `@ghostvue/themes` imports: default tokens, the
+ * shared base (semantic recipes and wrapper scopes), and every component
+ * recipe. Apps that want a smaller payload use the opt-in path documented in
+ * docs/themes/default.md instead; it reuses `base.css` and the same
+ * per-component files, so both paths paint identically.
+ *
+ * Base precedes the component recipes. No component recipe targets
+ * `.ghost-theme` or `.ghost-themed-scope` as its subject, so their relative
+ * order does not change any declaration.
  */
 @import './generated/tokens.css';
-@import './recipes.css';
+@import './base.css';
 @import './.registries/component-imports.generated.css';
-
-@layer ghostvue-theme {
-  :where(.ghost-themed-scope) {
-    display: contents;
-  }
-
-  :where(.ghost-theme) {
-    background-color: var(--ghost-surface-bg);
-    color: var(--ghost-surface-fg);
-    font-family: var(--ghost-type-family-sans);
-    font-feature-settings: var(--ghost-type-feature-default);
-  }
-}

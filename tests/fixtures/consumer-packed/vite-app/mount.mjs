@@ -1,7 +1,13 @@
 /**
- * Mounts the production bundle from `dist/` in jsdom, drives each component
- * once, and prints what it observed as JSON for the smoke script to judge.
- * Runs inside the scratch consumer, so it only sees the installed tarballs.
+ * Mounts a production bundle in jsdom, drives each component once, and prints
+ * what it observed as JSON for the smoke script to judge. Runs inside the
+ * scratch consumer, so it only sees the installed tarballs.
+ *
+ *   node mount.mjs                              # all-in page in dist/
+ *   node mount.mjs dist-opt-in opt-in.html      # opt-in theme CSS page
+ *
+ * Components a page does not render are reported as null and judged only for
+ * the page that renders them.
  */
 import { readFileSync, readdirSync } from 'node:fs'
 import { pathToFileURL } from 'node:url'
@@ -11,7 +17,8 @@ import { JSDOM } from 'jsdom'
 // jsdom neither runs scripts nor loads subresources by default. Scripts and
 // stylesheet links are still removed from the parsed document: the bundle is
 // imported directly below, and jsdom does not apply CSS layout anyway.
-const { window } = new JSDOM(readFileSync('dist/index.html', 'utf8'), {
+const [outDir = 'dist', page = 'index.html'] = process.argv.slice(2)
+const { window } = new JSDOM(readFileSync(`${outDir}/${page}`, 'utf8'), {
   url: 'http://localhost/',
   pretendToBeVisual: true,
 })
@@ -32,8 +39,10 @@ window.addEventListener('error', (event) => {
 })
 process.on('unhandledRejection', (reason) => errors.push(String(reason)))
 
-const entry = readdirSync('dist/assets').find((file) => file.endsWith('.js'))
-await import(pathToFileURL(`dist/assets/${entry}`).href)
+const entry = readdirSync(`${outDir}/assets`).find((file) =>
+  file.endsWith('.js'),
+)
+await import(pathToFileURL(`${outDir}/assets/${entry}`).href)
 
 // Vue flushes on microtasks; transitions and focus moves may use timers.
 const settle = () => new Promise((resolve) => setTimeout(resolve, 50))
@@ -46,6 +55,7 @@ await settle()
 
 const input = smoke('input')
 const selectTrigger = smoke('select-trigger')
+const save = smoke('save')
 const result = {
   mounted: Boolean(document.querySelector('#app main')),
   input: {
@@ -55,6 +65,7 @@ const result = {
       document.querySelector(`label[for="${input?.id}"]`)?.textContent.trim() ??
       null,
   },
+  button: save ? { tag: save.tagName, text: save.textContent.trim() } : null,
   select: {
     role: selectTrigger?.getAttribute('role') ?? null,
     value: selectTrigger?.textContent.trim() ?? null,
@@ -67,9 +78,36 @@ result.select.options = [
   ...document.querySelectorAll('[role="listbox"] [role="option"]'),
 ].map((option) => option.textContent.trim())
 
+/**
+ * Where a teleported part landed and which palette host it inherits tokens
+ * from. Portaled parts leave #app, so the host must be an ancestor of the
+ * portal target (<html> in both pages) or the recipe has no tokens.
+ *
+ * @param {string} selector
+ */
+const portalPlacement = (selector) => {
+  const node = document.querySelector(selector)
+  return node
+    ? {
+        teleported: !node.closest('#app'),
+        theme:
+          node
+            .closest('[data-ghost-theme]')
+            ?.getAttribute('data-ghost-theme') ?? null,
+        themed: node.hasAttribute('data-themed'),
+      }
+    : null
+}
+
 smoke('dialog-trigger')?.click()
 await settle()
-result.dialog = { open: dialogs() }
+result.dialog = {
+  open: dialogs(),
+  portals: {
+    content: portalPlacement('.ghost-dialog-content'),
+    overlay: portalPlacement('.ghost-dialog-overlay'),
+  },
+}
 smoke('dialog-close')?.click()
 await settle()
 result.dialog.afterClose = dialogs()

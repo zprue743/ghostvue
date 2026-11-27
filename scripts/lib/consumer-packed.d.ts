@@ -11,17 +11,41 @@ export function themedBuildCssProblems(
   options: { flagship: string },
 ): string[]
 
+export function optInBuildCssProblems(
+  css: string,
+  options: { flagship: string; recipes: string[]; absentRecipes: string[] },
+): string[]
+
+export function cssTransferSize(stylesheets: string[]): {
+  files: number
+  minifiedBytes: number
+  gzipBytes: number
+}
+
+export interface PortalPlacement {
+  teleported: boolean
+  theme: string | null
+  themed: boolean
+}
+
 export interface MountObservation {
   mounted?: boolean
   input?: { tag?: string | null; value?: string | null; label?: string | null }
+  button?: { tag?: string; text?: string } | null
   select?: { role?: string | null; value?: string | null; options?: string[] }
-  dialog?: { open?: string[]; afterClose?: string[] }
+  dialog?: {
+    open?: string[]
+    afterClose?: string[]
+    portals?: Record<'content' | 'overlay', PortalPlacement | null>
+  }
   drawer?: { open?: string[] }
   toast?: { shown?: boolean }
   errors?: string[]
 }
 
 export function viteAppMountProblems(result: MountObservation): string[]
+
+export function viteOptInMountProblems(result: MountObservation): string[]
 
 export function nuxtComponentSources(declarations: string): Map<string, string>
 

@@ -1,9 +1,11 @@
-import { copyFile, mkdir, readFile, writeFile } from 'node:fs/promises'
+import { copyFile, mkdir, readdir, readFile, writeFile } from 'node:fs/promises'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const packageRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..')
-const sourcePath = resolve(packageRoot, 'src/default.css')
+const sourceDir = resolve(packageRoot, 'src')
+const sourcePath = resolve(sourceDir, 'default.css')
+const basePath = resolve(sourceDir, 'base.css')
 const tokensPath = resolve(packageRoot, 'src/generated/tokens.css')
 const manifestPath = resolve(packageRoot, 'src/generated/tokens.json')
 const defineTypesPath = resolve(
@@ -11,6 +13,8 @@ const defineTypesPath = resolve(
   'scripts/lib/define-theme-public.d.ts',
 )
 const outputCssPath = resolve(packageRoot, 'dist/default.css')
+const outputBasePath = resolve(packageRoot, 'dist/base.css')
+const outputRecipesDir = resolve(packageRoot, 'dist/recipes')
 const outputTokensPath = resolve(packageRoot, 'dist/tokens.css')
 const outputManifestPath = resolve(packageRoot, 'dist/tokens.json')
 const outputDefineTypesPath = resolve(packageRoot, 'dist/define.d.ts')
@@ -43,6 +47,25 @@ const concatenated = await inlineLocalImports(sourceCss, dirname(sourcePath))
 await mkdir(dirname(outputCssPath), { recursive: true })
 // Concatenate so the published default.css is one file; source keeps @import.
 await writeFile(outputCssPath, concatenated)
+
+// Opt-in path (#386): the shared base and one file per component recipe, so
+// an app can pair a single palette with only the recipes it renders. The
+// recipe files are the same sources `default.css` concatenates, published
+// as `@ghostvue/themes/recipes/<slug>.css` (`ghost-` prefix dropped).
+await writeFile(
+  outputBasePath,
+  await inlineLocalImports(await readFile(basePath, 'utf8'), sourceDir),
+)
+await mkdir(outputRecipesDir, { recursive: true })
+for (const file of await readdir(sourceDir)) {
+  const match = /^ghost-([\w-]+\.css)$/.exec(file)
+  if (!match) continue
+  const recipePath = resolve(sourceDir, file)
+  await writeFile(
+    resolve(outputRecipesDir, match[1]),
+    await inlineLocalImports(await readFile(recipePath, 'utf8'), sourceDir),
+  )
+}
 await copyFile(tokensPath, outputTokensPath)
 await copyFile(manifestPath, outputManifestPath)
 

@@ -28,6 +28,8 @@ function sfc(imports: string, template: string): string {
 
 const headlessButton = "import { GhostButton } from '@ghostvue/vue'"
 const themedButton = "import { GhostButton } from '@ghostvue/themes'"
+// The opt-in theme CSS entry (#386) re-exports the themed wrappers unchanged.
+const optInButton = "import { GhostButton } from '@ghostvue/themes/components'"
 const BUTTON_DOCS =
   'https://github.com/zprue743/ghostvue/blob/master/docs/components/button.md'
 
@@ -69,6 +71,14 @@ ruleTester.run('no-unknown-props', rules['no-unknown-props'], {
       code: sfc(
         headlessButton,
         '<GhostButton id="save" class="a" style="b" title="t" tabindex="0" aria-label="Save" :ariaDescribedby="d" data-test="x" role="link" name="n" key="k" ref="r" :onClick="go" @click="go" :readOnly="true">Save</GhostButton>',
+      ),
+    },
+    // The opt-in entry resolves to the same themed contracts.
+    {
+      filename,
+      code: sfc(
+        optInButton,
+        '<GhostButton variant="soft" tone="danger" icon-only aria-label="x" />',
       ),
     },
     // Themed-only visual props are valid on the themed import.
@@ -185,6 +195,25 @@ export default { components: { GhostButton } }
             docs: BUTTON_DOCS,
           },
           line: 5,
+        },
+      ],
+    },
+    // Named and namespace imports from the opt-in entry are checked against
+    // the themed contracts instead of being skipped.
+    {
+      filename,
+      code: sfc(
+        `${optInButton}\nimport * as T from '@ghostvue/themes/components'`,
+        '<GhostButton sise="lg" /><T.GhostButton varient="soft" />',
+      ),
+      errors: [
+        {
+          message:
+            /^'sise' is not a prop of GhostButton from @ghostvue\/themes and/,
+        },
+        {
+          message:
+            /^'varient' is not a prop of GhostButton from @ghostvue\/themes and/,
         },
       ],
     },
@@ -334,6 +363,16 @@ ruleTester.run('no-unknown-slots', rules['no-unknown-slots'], {
         },
       ],
     },
+    {
+      filename,
+      code: sfc(
+        "import { GhostCard } from '@ghostvue/themes/components'",
+        '<GhostCard><template #heading>H</template></GhostCard>',
+      ),
+      errors: [
+        { message: /^GhostCard from @ghostvue\/themes has no 'heading' slot/ },
+      ],
+    },
     // Implicit default content for a component without a default slot is
     // reported once, at the first content node.
     {
@@ -426,6 +465,19 @@ ruleTester.run('no-undeclared-v-model', rules['no-undeclared-v-model'], {
         {
           message:
             "GhostDialog from @ghostvue/themes does not declare v-model (model prop 'modelValue'). Declared models: open. See https://github.com/zprue743/ghostvue/blob/master/docs/components/dialog.md",
+        },
+      ],
+    },
+    {
+      filename,
+      code: sfc(
+        "import { GhostDialog } from '@ghostvue/themes/components'",
+        '<GhostDialog v-model="open" v-model:open="open" />',
+      ),
+      errors: [
+        {
+          message:
+            /^GhostDialog from @ghostvue\/themes does not declare v-model \(model prop 'modelValue'\)/,
         },
       ],
     },
