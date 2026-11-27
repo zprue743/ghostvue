@@ -1,6 +1,6 @@
 {
   "name": "@ghostvue/vue",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "private": true,
   "description": "Vue 3 integration for the headless-first GhostVue library.",
   "license": "MIT",

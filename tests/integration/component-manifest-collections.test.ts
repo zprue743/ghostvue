@@ -159,8 +159,11 @@ describe('per-package manifest collections', () => {
       expect(violations).toEqual([])
       expect(collection.schemaVersion).toBe(COLLECTION_SCHEMA_VERSION)
       expect(collection.scope).toBe('package')
+      const packageJson = await readJsonObject(
+        join(repositoryRoot, 'packages', pkg.directory, 'package.json'),
+      )
       expect(collection.packages).toEqual([
-        { name: pkg.name, version: '0.0.0' },
+        { name: pkg.name, version: packageJson.version },
       ])
 
       const names = collection.components.map((component) =>

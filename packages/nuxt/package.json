@@ -1,6 +1,6 @@
 {
   "name": "@ghostvue/nuxt",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "private": true,
   "description": "Nuxt module for GhostVue: headless auto-imports by default, opt-in themed wrappers and theme CSS.",
   "license": "MIT",
