@@ -35,16 +35,15 @@ function readJson(path: string): Record<string, unknown> {
 }
 
 /** Workflow source with full-line comments removed so prose cannot mask code. */
-function workflowCode(): string {
-  return readFileSync(`${root}/${workflowPath}`, 'utf8')
+function workflowCode(path = workflowPath): string {
+  return readFileSync(`${root}/${path}`, 'utf8')
     .split('\n')
     .filter((line) => !/^\s*#/.test(line))
     .join('\n')
 }
 
 /** Split the `jobs:` mapping into job id -> job body text. */
-function workflowJobs(): Map<string, string> {
-  const code = workflowCode()
+function workflowJobs(code = workflowCode()): Map<string, string> {
   const jobsSection = code.slice(code.indexOf('\njobs:\n') + '\njobs:\n'.length)
   const jobs = new Map<string, string>()
   let current: string | null = null
@@ -61,13 +60,14 @@ function workflowJobs(): Map<string, string> {
 }
 
 describe('release workflow', () => {
-  it('only runs on manual dispatch', () => {
+  it('runs only on manual dispatch or as a reusable rehearsal', () => {
     const code = workflowCode()
     const triggers = code.slice(
       code.indexOf('\non:\n'),
       code.indexOf('\nconcurrency:'),
     )
     expect(triggers).toContain('workflow_dispatch:')
+    expect(triggers).toContain('workflow_call:')
     expect(triggers).not.toMatch(
       /^\s{2}(push|pull_request|pull_request_target|release|schedule|workflow_run):/m,
     )
@@ -92,8 +92,7 @@ describe('release workflow', () => {
     expect(jobs.get('dry-run')).not.toMatch(/environment:/)
   })
 
-  it('grants id-token: write to no job until publication is authorized', () => {
-    // The future authorized publish PR adds it to maintainer-approval only.
+  it('grants id-token: write to no dry-run job', () => {
     const raw = readFileSync(`${root}/${workflowPath}`, 'utf8')
     expect(raw).not.toMatch(/id-token\s*:/)
     expect(raw).not.toMatch(/ACTIONS_ID_TOKEN_REQUEST/)
@@ -163,6 +162,44 @@ describe('release workflow', () => {
       expect(ref, action).toMatch(/^[0-9a-f]{40}$/)
       expect(`${ref} # ${version}`, action).toBe(ciPins.get(action))
     }
+  })
+})
+
+describe('0.1.0 publish workflow', () => {
+  const code = workflowCode('.github/workflows/release-publish.yml')
+  const jobs = workflowJobs(code)
+
+  it('only starts from a manual dispatch on the release repository and branch', () => {
+    expect(
+      code.slice(code.indexOf('\non:\n'), code.indexOf('\nconcurrency:')),
+    ).toBe('\non:\n  workflow_dispatch:\n')
+    for (const job of ['rehearse', 'publish']) {
+      expect(jobs.get(job)).toContain(
+        "if: github.repository == 'zprue743/ghostvue' && github.ref == 'refs/heads/master'",
+      )
+    }
+    expect(jobs.get('rehearse')).toContain(
+      'uses: ./.github/workflows/release-dry-run.yml',
+    )
+    expect(jobs.get('rehearse')).toContain("expected_version: '0.1.0'")
+    expect(workflowJobs().get('maintainer-approval')).toContain(
+      '&& !inputs.evidence_only',
+    )
+  })
+
+  it('limits credentials to the reviewed publishing job and verifies a public install separately', () => {
+    const publish = jobs.get('publish') ?? ''
+    const verify = jobs.get('verify') ?? ''
+    expect(code).toMatch(/^permissions: \{\}$/m)
+    expect(code.match(/\bid-token: write\b/g)).toHaveLength(1)
+    expect(code.match(/\bsecrets\.NPM_TOKEN\b/g)).toHaveLength(1)
+    expect(publish).toContain('id-token: write')
+    expect(publish).toContain('secrets.NPM_TOKEN')
+    expect(publish).toContain('environment: npm-release')
+    expect(publish).toContain('needs: rehearse')
+    expect(publish).toContain('name: release-dry-run-evidence')
+    expect(verify).toContain('needs: publish')
+    expect(verify).toContain('--verify-public-install')
   })
 })
 
@@ -293,28 +330,27 @@ describe('publishable package manifests', () => {
       publishableWorkspacePackages.map(({ name }) => name),
     ])
     expect(config.linked).toEqual([])
+    const versions = publishableWorkspacePackages.map(
+      ({ directory }) => readJson(`packages/${directory}/package.json`).version,
+    )
+    expect(new Set(versions).size).toBe(1)
   })
 
   it('include the MCP server on the release train (GHO-17 M6)', () => {
-    // Zac approved M6 on Nov 22, 2026: @ghostvue/mcp releases 0.1.0 with the
-    // other packages and stays private until GHO-57 authorizes publishing.
     const mcp = workspacePackages.find(({ name }) => name === '@ghostvue/mcp')
     expect(mcp?.directory).toBe('mcp')
     const manifest = readJson('packages/mcp/package.json')
     expect(manifest.private).toBe(true)
-    expect(manifest.version).toBe('0.0.0')
     expect(manifest.files).toEqual(['dist'])
     expect(manifest.bin).toEqual({ 'ghostvue-mcp': './dist/bin.js' })
   })
 
-  it('each have a pending minor Changeset for the first 0.1.0 release', () => {
-    // `pnpm release:dry-run --expect-version 0.1.0` fails for any package
-    // that Changesets would leave at 0.0.0.
-    const bumps = pendingChangesetBumps()
-    for (const { name } of publishableWorkspacePackages) {
-      const planned = [...(bumps.get(name) ?? [])]
-      expect(planned, name).toContain('minor')
-      expect(planned, name).not.toContain('major')
+  it('records the first 0.1.0 release in each public package changelog', () => {
+    for (const { directory, name } of publishableWorkspacePackages) {
+      expect(
+        readFileSync(`${root}/packages/${directory}/CHANGELOG.md`, 'utf8'),
+        name,
+      ).toMatch(/^## 0\.1\.0$/m)
     }
   })
 

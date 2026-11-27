@@ -19,9 +19,8 @@
  *    packed tarball drops `private` so npm validates the manifest exactly as it
  *    would for the authorized release.
  *
- * Versions come from running `changeset version` inside a scratch copy of the
- * workspace manifests, so the dry run previews the same release plan Changesets
- * would apply without touching the checkout.
+ * Versions and changelogs come from a scratch copy of the workspace. Apply
+ * pending Changesets there, or use the committed release plan after versioning.
  */
 import { createHash } from 'node:crypto'
 import { execFileSync } from 'node:child_process'
@@ -389,9 +388,8 @@ async function listWorkspaceDirectories(root) {
 }
 
 /**
- * Run `changeset version` in a scratch copy containing only the workspace
- * manifests and `.changeset/`, then read back the planned versions and
- * changelog previews. The checkout is never modified.
+ * Read a release plan from a scratch copy of the manifests, changelogs and
+ * Changesets. The checkout is never modified.
  *
  * @param {string} root
  * @param {string} scratch Empty temporary directory.
@@ -412,26 +410,48 @@ export async function planReleaseVersions(root, scratch) {
       join(root, directory, 'package.json'),
       join(scratch, directory, 'package.json'),
     )
+    const changelog = await readFile(
+      join(root, directory, 'CHANGELOG.md'),
+      'utf8',
+    ).catch((error) => {
+      if (error.code === 'ENOENT') return null
+      throw error
+    })
+    if (changelog !== null)
+      await writeFile(join(scratch, directory, 'CHANGELOG.md'), changelog)
   }
 
-  // The scratch tree has no node_modules, so point the changelog generator at
-  // the repository's installed module instead of a bare specifier.
-  const require = createRequire(join(toolingRoot, 'package.json'))
-  const configPath = join(scratch, '.changeset', 'config.json')
-  const config = JSON.parse(await readFile(configPath, 'utf8'))
-  if (config.changelog === '@changesets/cli/changelog') {
-    config.changelog = require.resolve('@changesets/cli/changelog')
-  }
-  // Committing from the scratch tree would target the enclosing repository.
-  config.commit = false
-  await writeFile(configPath, `${JSON.stringify(config, null, 2)}\n`)
-
-  const changesetBin = require.resolve('@changesets/cli/bin.js')
-  execFileSync(process.execPath, [changesetBin, 'version'], {
-    cwd: scratch,
-    stdio: 'pipe',
-    env: { ...process.env, CI: 'true' },
+  const changesetEntries = await readdir(join(scratch, '.changeset'), {
+    withFileTypes: true,
   })
+  // Changesets exits nonzero when a release PR has consumed every entry.
+  if (
+    changesetEntries.some(
+      (entry) =>
+        entry.isFile() &&
+        !entry.name.startsWith('.') &&
+        entry.name !== 'README.md' &&
+        entry.name.endsWith('.md'),
+    )
+  ) {
+    // Resolve the changelog generator from the installed workspace. Disable
+    // commits because Changesets runs inside a temporary copy.
+    const require = createRequire(join(toolingRoot, 'package.json'))
+    const configPath = join(scratch, '.changeset', 'config.json')
+    const config = JSON.parse(await readFile(configPath, 'utf8'))
+    if (config.changelog === '@changesets/cli/changelog') {
+      config.changelog = require.resolve('@changesets/cli/changelog')
+    }
+    config.commit = false
+    await writeFile(configPath, `${JSON.stringify(config, null, 2)}\n`)
+
+    const changesetBin = require.resolve('@changesets/cli/bin.js')
+    execFileSync(process.execPath, [changesetBin, 'version'], {
+      cwd: scratch,
+      stdio: 'pipe',
+      env: { ...process.env, CI: 'true' },
+    })
+  }
 
   /** @type {Map<string, { directory: string, before: string, after: string, changelog: string | null }>} */
   const plan = new Map()

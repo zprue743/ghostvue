@@ -1,11 +1,13 @@
 /** @vitest-environment node */
 
 import { spawn } from 'node:child_process'
+import { readFile } from 'node:fs/promises'
 import { createInterface } from 'node:readline'
 import { fileURLToPath } from 'node:url'
 
 import { LATEST_PROTOCOL_VERSION } from '@modelcontextprotocol/sdk/types.js'
 import { describe, expect, it } from 'vitest'
+import { z } from 'zod'
 
 /**
  * Real-process smoke tests: they run the server over a child process's
@@ -75,6 +77,10 @@ function startNode(entry: URL) {
 
 describe('ghostvue-mcp over stdio', () => {
   it('initializes, lists tools, answers a call, and exits when stdin closes', async () => {
+    const packageJson = new URL('../package.json', import.meta.url)
+    const { version } = z
+      .object({ version: z.string() })
+      .parse(JSON.parse(await readFile(packageJson, 'utf8')))
     const server = startNode(new URL('stdio-server.mjs', fixtures))
 
     await expect(
@@ -88,7 +94,7 @@ describe('ghostvue-mcp over stdio', () => {
       result: {
         protocolVersion: LATEST_PROTOCOL_VERSION,
         capabilities: { tools: {} },
-        serverInfo: { name: 'ghostvue', version: '0.0.0' },
+        serverInfo: { name: 'ghostvue', version },
       },
     })
     server.notify('notifications/initialized')
@@ -116,7 +122,7 @@ describe('ghostvue-mcp over stdio', () => {
         structuredContent: {
           schemaVersion: '1.0.0',
           ghostvue: {
-            version: '0.0.0',
+            version,
             assetBundleId: `sha256:${'0'.repeat(64)}`,
             manifestSchemaId:
               'https://ghostvue.dev/schemas/v1/manifest.schema.json',

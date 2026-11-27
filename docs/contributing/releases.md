@@ -23,23 +23,22 @@ bump `devDependencies` (without changing `dependencies`, `peerDependencies`, or
 
 ## Publication status
 
-Publication is **disabled**. The first public release is `0.1.0` of five
+The first public release is `0.1.0` of five
 packages under the `@ghostvue` npm scope: `@ghostvue/vue`, `@ghostvue/themes`,
 `@ghostvue/nuxt`, `@ghostvue/eslint-plugin`, and `@ghostvue/mcp`. These are the
 entries with `publishable: true` in `scripts/workspace-packages.mjs`
 (`publishableWorkspacePackages`), which every release script and test reads.
 `@ghostvue/core` and `@ghostvue/shared` are internal (`publishable: false`): they
 stay in the catalog for boundary and adapter checks, have no `publishConfig`,
-and no published package may depend on them (GHO-217). The maintainer
-authorized preparing a dry-run pipeline and approval gate only (GHO-57). Real publication requires a separate,
-explicit maintainer authorization. No agent may publish packages, create npm
-tokens, or create releases without that authorization.
+and no published package may depend on them (GHO-217). The maintainer approved
+the release candidate in #335. Publication requires separate, explicit
+maintainer authorization (GHO-57).
 
-Until then, these invariants hold and are enforced by
+These invariants are enforced by
 `tests/integration/release-pipeline.test.ts`:
 
 - Every package, publishable or internal, keeps `"private": true`. npm refuses
-  to publish a private package, so `publishConfig` alone cannot cause a release.
+  to publish a private package. Only the verified, staged tarballs are published.
 - Every publishable package declares `publishConfig.access: "public"` (required
   for a scoped package), `publishConfig.provenance: true`, and a `repository`
   that matches this GitHub repository (npm provenance rejects a mismatch).
@@ -52,9 +51,8 @@ Until then, these invariants hold and are enforced by
   group, so they always share a version: a minor Changeset for any one of them
   bumps all five. `tests/integration/release-dry-run.test.ts` simulates a
   `@ghostvue/vue`-only minor after 0.1.0 and expects all five at 0.2.0.
-- Neither the release workflow nor any root script contains `npm publish`, `pnpm publish`,
-  `changeset publish`, the Changesets action, or npm credentials.
-- The release workflow grants `id-token: write` to no job, and every action is
+- The dry-run workflow has no npm credentials or OIDC permissions. Only the
+  approved publish job gets `id-token: write` for provenance. Actions are
   pinned by commit SHA per the [CI policy](./ci.md).
 
 ## Release dry run
@@ -70,9 +68,8 @@ pnpm release:dry-run --expect-version 0.1.0
 only and refuses an entry marked `publishable: false`. For each package it:
 
 1. checks the source manifest invariants above;
-2. runs `changeset version` in a scratch copy of the workspace manifests and
-   `.changeset/` to get the planned version and changelog preview (the checkout
-   is never modified);
+2. uses a scratch copy to apply pending Changesets or read the committed
+   release versions and changelogs;
 3. packs the package with `pnpm pack`, which applies `files` and rewrites
    `workspace:^` to a caret range;
 4. stages the packed tree in a temporary directory, sets the planned version and
@@ -121,7 +118,7 @@ so the check needs the npm registry but no credentials.
 
 ## Release workflow
 
-`.github/workflows/release-dry-run.yml` runs only on manual dispatch, with
+`.github/workflows/release-dry-run.yml` runs on manual dispatch or as a reusable rehearsal, with
 `expected_version` (default `0.1.0`). Workflow permissions default to none.
 
 - **`dry-run`** (`contents: read`): install, build, `published-exports`,
@@ -131,9 +128,8 @@ so the check needs the npm registry but no credentials.
 - **`maintainer-approval`** (master only, `environment: npm-release`,
   `contents: read`): waits for a required reviewer, verifies the downloaded
   evidence, and records that publication is disabled. It has no publish step
-  and no `id-token: write`; no job in the workflow can request an OIDC token.
-  The future authorized publish PR adds `id-token: write` to this job only, so
-  the publish step runs behind the same approval.
+  and no `id-token: write`. This approval job is skipped when the publish
+  workflow calls the rehearsal.
 
 ## First release checklist
 
@@ -145,8 +141,8 @@ so the check needs the npm registry but no credentials.
       `scripts/workspace-packages.mjs`). `@ghostvue/core`, `@ghostvue/shared`,
       and the apps (`@ghostvue/docs`, `@ghostvue/playground`,
       `@ghostvue/nuxt-fixture`) stay private and unpublished.
-- [x] **Version plan.** The pending Changeset plans `0.0.0 → 0.1.0` for all five
-      packages; `--expect-version 0.1.0` fails the dry run otherwise.
+- [x] **Version plan.** Changesets recorded `0.1.0` in all five manifests and
+      changelogs. The release rehearsal checks the exact version.
 - [x] **Packaging metadata.** `publishConfig` (public access, provenance) and
       `repository.directory` added while packages stay private.
 - [x] **Packed exports.** publint, attw, declaration and packed smoke checks
@@ -158,59 +154,48 @@ so the check needs the npm registry but no credentials.
       `https://ghostvue.dev/schemas/v1/manifest-collection.schema.json`, served
       from byte-identical copies in `docs/public/schemas/v1/`
       ([ADR 0006](../adr/0006-component-manifest-schema.md)).
-- [ ] **Live schema URLs.** After the docs deploy, confirm both URLs return
-      the checked-in JSON from `https://ghostvue.dev`.
+- [x] **Live schema URLs.** #335 verified both responses against the
+      checked-in JSON from `https://ghostvue.dev`.
 - [x] **Dry run.** Credential-free `npm publish --dry-run` of staged tarballs
       with evidence uploaded as a workflow artifact.
 - [x] **Approval gate.** The `maintainer-approval` job uses the `npm-release`
-      environment. It gets `id-token: write` only in the authorized publish PR.
-- [ ] **Environment reviewers (repository admin).** In Settings → Environments,
-      create `npm-release`, add the maintainer as a required reviewer, and
-      restrict deployment branches to `master`. GitHub does not wait for approval until reviewers are set.
+      environment. The separate publish job also uses this environment.
+- [x] **Environment reviewers.** The `npm-release` environment has a required
+      reviewer and allows deployments from `master`.
 - [x] **Changelog policy.** Pre-release Changesets (including the slop-ui
       rename history) were consolidated into one first-release summary,
       `.changeset/initial-release-0-1-0.md`. Review the generated `0.1.0`
       changelog previews in the evidence artifact. Repeat the dry run on the
       final `0.1.0` release candidate.
-- [ ] **Support matrix.** Confirm the documented Node (`>=22`) and Vue
-      (`^3.5.0` peer) support for the first release.
+- [x] **Support matrix.** #335 ran the packed consumer checks on Node 22.
+      The Vue peer range is `^3.5.0`.
 - [ ] **Explicit publication authorization.** The maintainer records a separate
       written authorization to publish `0.1.0`. Nothing below happens before it.
 
-### Access needed for real publication (after authorization)
+### Publishing 0.1.0 (#383)
 
-Missing publication credentials do not block the dry run. A real release needs:
+After the maintainer explicitly authorizes publication, use **Publish 0.1.0**
+on `master` in GitHub Actions. The workflow rehearses the exact revision,
+runs the packed consumer checks, and uploads its tarballs. Review those
+tarballs and then approve the job in the `npm-release` environment.
 
-- **npm trusted publishing (preferred, no long-lived token).** On npmjs.com,
-  for each package, configure a trusted publisher: GitHub repository
-  `zprue743/ghostvue`, workflow `release-dry-run.yml` (or its renamed successor),
-  environment `npm-release`. Trusted publishing requires npm CLI `>= 11.5.1`
-  in the publish job (Node 22 bundles npm 10, so the job must upgrade npm).
-  A package must exist before a trusted publisher can be attached, so the very
-  first publish may need a one-time granular token held only by the maintainer,
-  stored as an `npm-release` environment secret, and revoked afterward.
-- **Provenance.** Requires `id-token: write`, which the authorized publish PR
-  adds to the gated `maintainer-approval` job only, a public repository, and
-  `repository.url` matching it (enforced by tests).
-- **2FA.** Keep 2FA required for the `ghostvue` npm account; trusted
-  publishing bypasses OTP prompts only for the configured workflow.
+For the first publish, add a short-lived npm granular token as `NPM_TOKEN`
+under **Settings → Environments → npm-release → Environment secrets**.
+Allow publishing in the `@ghostvue` scope and enable bypass 2FA on the token
+for the unattended upload. Revoke it after publication. Future automated
+releases can use Trusted Publishing after the package pages exist.
 
-### Authorized release PR (future)
+The approved job verifies the artifact revision, package names, versions,
+and hashes before uploading the five tarballs with public access and npm
+provenance. The GitHub-hosted job receives OIDC permission for provenance and
+passes the environment secret to npm only for publication. The final job
+installs all five versions into a clean directory, verifies registry signatures
+and attestations with `npm audit signatures`, and links to the new versions.
 
-A separate PR, opened only after authorization, should:
-
-1. run `pnpm changeset version` and commit the `0.1.0` versions and changelogs;
-2. remove `"private": true` from the five publishable packages only (never
-   `@ghostvue/core` or `@ghostvue/shared`) and update the invariant tests
-   accordingly;
-3. add a publish step (`pnpm publish -r --access public --provenance` or
-   `changeset publish`) to the gated `maintainer-approval` job only, keeping the
-   `npm-release` environment and adding `id-token: write` to that job alone
-   (and updating the workflow invariant tests that forbid it today);
-4. update `.changeset/config.json` `privatePackages.tag` if git tags are wanted.
-
-After publication, verify the provenance badge on npmjs.com and install each
-package from the registry in a clean project.
+If a run publishes only part of the release, use **Re-run failed jobs** on
+the same workflow run to reuse its tarballs. An existing version is skipped
+only if the registry integrity matches the tarball. Record the workflow and
+the published links in #383 after the clean install passes.
 
 ## CI policy
 
