@@ -3,14 +3,28 @@ import { createHash } from 'node:crypto'
 import { appendFile, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join, resolve } from 'node:path'
+import { setTimeout } from 'node:timers/promises'
 import { verifyReleaseEvidence } from './lib/release-dry-run.js'
 import { publishableWorkspacePackages } from './workspace-packages.mjs'
 
-const version = '0.1.0'
 const registry = 'https://registry.npmjs.org/'
 
+export function distributionTag(ref, version) {
+  const match = /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$/.exec(version ?? '')
+  if (!match) throw new Error('Supply an exact release version (X.Y.Z).')
+  if (ref === 'refs/heads/master') return 'latest'
+  if (
+    ref === 'refs/heads/release/0.1.x' &&
+    version.startsWith('0.1.') &&
+    match[3] !== '0'
+  ) {
+    return 'maintenance'
+  }
+  throw new Error('Release version does not match the selected branch.')
+}
+
 /** Resolve and verify just the five tarballs from this workflow run. */
-export async function releaseTarballs(evidenceDir, sha) {
+export async function releaseTarballs(evidenceDir, sha, version) {
   const summary = JSON.parse(
     await readFile(join(evidenceDir, 'summary.json'), 'utf8'),
   )
@@ -57,7 +71,11 @@ export async function releaseTarballs(evidenceDir, sha) {
 }
 
 /** A retry may skip a package only if the registry already has these bytes. */
-export async function alreadyPublished({ name, integrity }, request = fetch) {
+export async function alreadyPublished(
+  { name, integrity },
+  version,
+  request = fetch,
+) {
   const id = `${name}@${version}`
   const response = await request(
     `${registry}${encodeURIComponent(name)}/${version}`,
@@ -86,23 +104,24 @@ function npm(args, cwd) {
   })
 }
 
-async function publish(evidenceDir) {
+async function publish(evidenceDir, version) {
   if (
     process.env.GITHUB_ACTIONS !== 'true' ||
-    process.env.GITHUB_WORKFLOW !== 'Publish 0.1.0' ||
+    process.env.GITHUB_WORKFLOW !== 'Publish npm release' ||
     process.env.GITHUB_REPOSITORY !== 'zprue743/ghostvue' ||
-    process.env.GITHUB_REF !== 'refs/heads/master' ||
     process.env.GITHUB_EVENT_NAME !== 'workflow_dispatch'
   ) {
-    throw new Error('Use the manual Publish 0.1.0 workflow on master.')
+    throw new Error('Use the manual Publish npm release workflow.')
   }
-  if (!process.env.NODE_AUTH_TOKEN) {
-    throw new Error('Add NPM_TOKEN to the npm-release environment.')
-  }
-  const tarballs = await releaseTarballs(evidenceDir, process.env.GITHUB_SHA)
+  const tag = distributionTag(process.env.GITHUB_REF, version)
+  const tarballs = await releaseTarballs(
+    evidenceDir,
+    process.env.GITHUB_SHA,
+    version,
+  )
   // Check for conflicts across the entire train before publishing any package.
   const present = await Promise.all(
-    tarballs.map((tarball) => alreadyPublished(tarball)),
+    tarballs.map((tarball) => alreadyPublished(tarball, version)),
   )
   for (const [index, { name, path }] of tarballs.entries()) {
     if (present[index]) {
@@ -114,18 +133,59 @@ async function publish(evidenceDir) {
       path,
       '--access',
       'public',
+      '--tag',
+      tag,
       '--provenance',
       '--ignore-scripts',
     ])
   }
 }
 
-async function verifyPublicInstall(evidenceDir) {
-  const tarballs = await releaseTarballs(evidenceDir, process.env.GITHUB_SHA)
-  for (const tarball of tarballs) {
-    if (!(await alreadyPublished(tarball))) {
-      throw new Error(`${tarball.name}@${version} is missing from npm.`)
+async function installable(tarball, version) {
+  if (!(await alreadyPublished(tarball, version))) return false
+  // Exact-version metadata can appear before the npm install index.
+  const response = await fetch(
+    `${registry}${encodeURIComponent(tarball.name)}`,
+    {
+      headers: {
+        accept: 'application/vnd.npm.install-v1+json',
+        'cache-control': 'no-cache',
+      },
+      signal: AbortSignal.timeout(15000),
+    },
+  )
+  if (response.status === 404) return false
+  if (!response.ok) {
+    throw new Error(
+      `npm install index for ${tarball.name}: HTTP ${response.status}.`,
+    )
+  }
+  const index = await response.json()
+  return index.versions?.[version]?.dist?.integrity === tarball.integrity
+}
+
+async function verifyPublicInstall(evidenceDir, version) {
+  distributionTag(process.env.GITHUB_REF, version)
+  const tarballs = await releaseTarballs(
+    evidenceDir,
+    process.env.GITHUB_SHA,
+    version,
+  )
+  const deadline = Date.now() + 15 * 60 * 1000
+  for (;;) {
+    const checks = await Promise.all(
+      tarballs.map((tarball) => installable(tarball, version)),
+    )
+    const pending = tarballs
+      .filter((_, index) => !checks[index])
+      .map(({ name }) => name)
+    if (pending.length === 0) break
+    const message = `Waiting for npm to index ${version} for ${pending.join(', ')}.`
+    if (Date.now() >= deadline) {
+      throw new Error(`${message} Retry only the verification job.`)
     }
+    console.log(message)
+    await setTimeout(30000)
   }
   const prefix = await mkdtemp(join(tmpdir(), 'ghostvue-public-release-'))
   const specs = publishableWorkspacePackages.map(
@@ -162,13 +222,13 @@ if (import.meta.main) {
       evidenceDir &&
       !extra.length
     ) {
-      await verifyPublicInstall(evidenceDir)
+      await verifyPublicInstall(evidenceDir, process.env.EXPECTED_VERSION)
     } else if (
       argument &&
       argument !== '--verify-public-install' &&
       !evidenceDir
     ) {
-      await publish(argument)
+      await publish(argument, process.env.EXPECTED_VERSION)
     } else {
       throw new Error(
         'Supply an evidence directory, optionally with --verify-public-install.',

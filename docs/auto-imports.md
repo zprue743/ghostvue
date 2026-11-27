@@ -4,13 +4,10 @@ Named imports from `@ghostvue/vue` and `@ghostvue/themes` stay the primary API.
 Auto-imports are an optional convenience on top of them, and they default to
 the headless layer: nothing themed and no CSS reaches your app until you opt in.
 
-> [!WARNING]
-> **Pre-release.** `@ghostvue/nuxt` is not on npm yet, like the other
-> packages.
-
 ## Nuxt
 
-`@ghostvue/nuxt` is a Nuxt module. Install it next to the headless package:
+Install the [Nuxt module from npm](https://www.npmjs.com/package/@ghostvue/nuxt)
+alongside the headless package:
 
 ```bash
 pnpm add @ghostvue/vue @ghostvue/nuxt

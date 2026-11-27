@@ -8,14 +8,16 @@ import { afterEach, describe, expect, it } from 'vitest'
 import { planReleaseVersions } from '../../scripts/lib/release-dry-run.js'
 import {
   alreadyPublished,
+  distributionTag,
   releaseTarballs,
 } from '../../scripts/publish-release.mjs'
 import { publishableWorkspacePackages } from '../../scripts/workspace-packages.mjs'
 
 const commit = 'a'.repeat(40)
+const version = '0.1.0'
 const directories: string[] = []
 
-async function evidence() {
+async function evidence(expectedVersion = version) {
   const directory = await mkdtemp(join(tmpdir(), 'ghostvue-release-evidence-'))
   directories.push(directory)
   await mkdir(join(directory, 'tarballs'))
@@ -23,17 +25,17 @@ async function evidence() {
     commit,
     dryRun: true,
     published: false,
-    expectVersion: '0.1.0',
+    expectVersion: expectedVersion,
     packages: await Promise.all(
       publishableWorkspacePackages.map(
         async ({ name, directory: packageDir }) => {
-          const tarball = `tarballs/ghostvue-${packageDir}-0.1.0.tgz`
+          const tarball = `tarballs/ghostvue-${packageDir}-${expectedVersion}.tgz`
           await writeFile(join(directory, tarball), name)
           return {
             name,
             sourcePrivate: true,
-            sourceVersion: '0.1.0',
-            plannedVersion: '0.1.0',
+            sourceVersion: expectedVersion,
+            plannedVersion: expectedVersion,
             tarball,
             shasum: createHash('sha1').update(name).digest('hex'),
             integrity: `sha512-${createHash('sha512').update(name).digest('base64')}`,
@@ -62,6 +64,21 @@ afterEach(async () => {
 })
 
 describe('release tarballs', () => {
+  it('matches an explicit next version against the version committed in the evidence', async () => {
+    const { directory, summary, save } = await evidence('0.2.0')
+    await expect(
+      releaseTarballs(directory, commit, '0.2.0'),
+    ).resolves.toHaveLength(5)
+    await expect(releaseTarballs(directory, commit, '0.1.1')).rejects.toThrow(
+      'does not match this workflow run',
+    )
+    summary.packages[0].sourceVersion = '0.1.0'
+    await save()
+    await expect(releaseTarballs(directory, commit, '0.2.0')).rejects.toThrow(
+      'Invalid release plan',
+    )
+  })
+
   it('rehearses committed versions and changelogs after Changesets are consumed', async () => {
     const root = await mkdtemp(join(tmpdir(), 'ghostvue-versioned-release-'))
     const scratch = await mkdtemp(join(tmpdir(), 'ghostvue-release-plan-'))
@@ -96,7 +113,7 @@ describe('release tarballs', () => {
     const { directory, summary, save } = await evidence()
     summary.packages.reverse()
     await save()
-    const tarballs = await releaseTarballs(directory, commit)
+    const tarballs = await releaseTarballs(directory, commit, version)
     expect(tarballs.map(({ name }) => name)).toEqual(
       publishableWorkspacePackages.map(({ name }) => name),
     )
@@ -104,12 +121,12 @@ describe('release tarballs', () => {
 
   it('rejects stale evidence and tarballs outside the release plan', async () => {
     const { directory, firstPackage, save } = await evidence()
-    await expect(releaseTarballs(directory, 'b'.repeat(40))).rejects.toThrow(
-      'does not match this workflow run',
-    )
+    await expect(
+      releaseTarballs(directory, 'b'.repeat(40), version),
+    ).rejects.toThrow('does not match this workflow run')
     firstPackage.tarball = '../another-version.tgz'
     await save()
-    await expect(releaseTarballs(directory, commit)).rejects.toThrow(
+    await expect(releaseTarballs(directory, commit, version)).rejects.toThrow(
       'Invalid release plan',
     )
   })
@@ -118,9 +135,25 @@ describe('release tarballs', () => {
     const { directory, firstPackage, save } = await evidence()
     firstPackage.integrity = 'sha512-incorrect'
     await save()
-    await expect(releaseTarballs(directory, commit)).rejects.toThrow(
+    await expect(releaseTarballs(directory, commit, version)).rejects.toThrow(
       'Tarball integrity does not match',
     )
+  })
+})
+
+describe('release branch routing', () => {
+  it('keeps maintenance releases on a separate npm tag', () => {
+    expect(distributionTag('refs/heads/master', '0.2.0')).toBe('latest')
+    expect(distributionTag('refs/heads/release/0.1.x', '0.1.1')).toBe(
+      'maintenance',
+    )
+  })
+
+  it('rejects mismatched branches, an already cut baseline, and version ranges', () => {
+    expect(() => distributionTag('refs/heads/release/0.1.x', '0.2.0')).toThrow()
+    expect(() => distributionTag('refs/heads/release/0.1.x', '0.1.0')).toThrow()
+    expect(() => distributionTag('refs/heads/feature', '0.2.0')).toThrow()
+    expect(() => distributionTag('refs/heads/master', '0.2.x')).toThrow()
   })
 })
 
@@ -133,11 +166,16 @@ describe('publication retries', () => {
 
   it('recognizes an absent version and an identical upload', async () => {
     await expect(
-      alreadyPublished(tarball, reply(new Response(null, { status: 404 }))),
+      alreadyPublished(
+        tarball,
+        version,
+        reply(new Response(null, { status: 404 })),
+      ),
     ).resolves.toBe(false)
     await expect(
       alreadyPublished(
         tarball,
+        version,
         reply(
           Response.json({
             dist: {
@@ -156,17 +194,23 @@ describe('publication retries', () => {
     await expect(
       alreadyPublished(
         tarball,
+        version,
         reply(Response.json({ dist: { integrity: 'sha512-other' } })),
       ),
     ).rejects.toThrow('different tarball integrity')
     await expect(
       alreadyPublished(
         tarball,
+        version,
         reply(Response.json({ dist: { integrity: tarball.integrity } })),
       ),
     ).rejects.toThrow('missing npm provenance')
     await expect(
-      alreadyPublished(tarball, reply(new Response(null, { status: 503 }))),
+      alreadyPublished(
+        tarball,
+        version,
+        reply(new Response(null, { status: 503 })),
+      ),
     ).rejects.toThrow('HTTP 503')
   })
 })

@@ -15,11 +15,8 @@ This page shows how to wire each one into a consumer app and gives an
 [instruction block](#instructions-for-your-repository) to paste into your
 repository's `AGENTS.md`.
 
-> [!WARNING]
-> **Pre-release.** No `@ghostvue/*` package is on npm yet. The snippets below
-> use `0.1.0`, the planned first version
-> ([release status](../contributing/releases.md#publication-status)). Until it
-> ships, run the MCP server [from a checkout](#before-the-npm-release).
+The snippets use GhostVue's first npm release, `0.1.0`. Match the MCP server
+version to the GhostVue packages installed in your app.
 
 ## MCP server
 
@@ -166,7 +163,7 @@ Hosts look the command up on their own `PATH`, which may not include
 `node_modules/.bin`. If the server fails to start, use `npx` or the absolute
 path to the bin.
 
-### Before the npm release
+### Run from a checkout
 
 Build the server in a clone of this repository and point the host at the built
 bin with an absolute path:

@@ -23,7 +23,8 @@ bump `devDependencies` (without changing `dependencies`, `peerDependencies`, or
 
 ## Publication status
 
-The first public release is `0.1.0` of five
+The [first public release](https://github.com/zprue743/ghostvue/releases/tag/v0.1.0)
+shipped at `0.1.0` on npm with five
 packages under the `@ghostvue` npm scope: `@ghostvue/vue`, `@ghostvue/themes`,
 `@ghostvue/nuxt`, `@ghostvue/eslint-plugin`, and `@ghostvue/mcp`. These are the
 entries with `publishable: true` in `scripts/workspace-packages.mjs`
@@ -119,7 +120,7 @@ so the check needs the npm registry but no credentials.
 ## Release workflow
 
 `.github/workflows/release-dry-run.yml` runs on manual dispatch or as a reusable rehearsal, with
-`expected_version` (default `0.1.0`). Workflow permissions default to none.
+`expected_version` (required for each run). Workflow permissions default to none.
 
 - **`dry-run`** (`contents: read`): install, build, `published-exports`,
   `exports:check`, `mcp:packed`, `consumer:packed`, `release:dry-run`, confirm
@@ -169,33 +170,79 @@ so the check needs the npm registry but no credentials.
       final `0.1.0` release candidate.
 - [x] **Support matrix.** #335 ran the packed consumer checks on Node 22.
       The Vue peer range is `^3.5.0`.
-- [ ] **Explicit publication authorization.** The maintainer records a separate
-      written authorization to publish `0.1.0`. Nothing below happens before it.
+- [x] **Explicit publication authorization.** The maintainer authorized
+      `0.1.0` and approved the protected deployment. The
+      [verification evidence](https://github.com/zprue743/ghostvue/issues/383)
+      records all five npm packages.
 
-### Publishing 0.1.0 (#383)
+## Release operation
 
-After the maintainer explicitly authorizes publication, use **Publish 0.1.0**
-on `master` in GitHub Actions. The workflow rehearses the exact revision,
-runs the packed consumer checks, and uploads its tarballs. Review those
-tarballs and then approve the job in the `npm-release` environment.
+Use `master` for the active development release and `release/0.1.x` for
+approved compatibility fixes. See
+[release routing and branching](./workflow.md#release-routing-and-branching)
+for issue pickup and PR targets. The board target selects work. Package
+manifests and changelogs determine the build version.
 
-For the first publish, add a short-lived npm granular token as `NPM_TOKEN`
-under **Settings → Environments → npm-release → Environment secrets**.
-Allow publishing in the `@ghostvue` scope and enable bypass 2FA on the token
-for the unattended upload. Revoke it after publication. Future automated
-releases can use Trusted Publishing after the package pages exist.
+### First maintenance patch
 
-The approved job verifies the artifact revision, package names, versions,
-and hashes before uploading the five tarballs with public access and npm
-provenance. The GitHub-hosted job receives OIDC permission for provenance and
-passes the environment secret to npm only for publication. The final job
-installs all five versions into a clean directory, verifies registry signatures
-and attestations with `npm audit signatures`, and links to the new versions.
+1. Cut `release/0.1.x` from `v0.1.0`. Backport the commit that adds the
+   generalized publish workflow and scripts so that the workflow exists on
+   the patch branch. Carry over only the selected fixes and release tooling.
+2. In **Settings → Environments → npm-release → Deployment branches and tags**,
+   allow the exact branch `release/0.1.x` in addition to `master`. Keep the
+   required reviewers. Require PR and CI checks for the maintenance branch
+   before accepting fixes there.
+3. Use a patch Changeset for a package fix. After the backport PRs land, run
+   `pnpm changeset version` in a release PR, review all five manifests and
+   changelogs, and commit the lockfile if it changes. Repeat from
+   `release/0.1.x` for later patches.
 
-If a run publishes only part of the release, use **Re-run failed jobs** on
-the same workflow run to reuse its tarballs. An existing version is skipped
-only if the registry integrity matches the tarball. Record the workflow and
-the published links in #383 after the clean install passes.
+### Publish an approved version
+
+1. On the selected release branch, commit the exact versions and changelogs
+   and complete the credential-free **Release dry run**. Pass the expected
+   version explicitly. A patch for this line is `0.1.1` or later within
+   `0.1.x`.
+2. After explicit maintainer authorization, dispatch **Publish npm release**
+   on that branch with `expected_version` set to the version approved for
+   all five packages. Review the rehearsal evidence and approve the
+   `npm-release` deployment when it pauses.
+3. The publish job checks the commit, version, package names, and tarball
+   hashes, then publishes with npm provenance. `master` uses npm's `latest`
+   tag. `release/0.1.x` uses `maintenance` so it cannot move `latest` off
+   the main line. Install the maintained version with
+   `npm install @ghostvue/vue@0.1` or opt in to `@ghostvue/vue@maintenance`
+   after the first patch. Use matching versions for the other packages.
+4. The verification job waits for npm's install index, installs all five
+   exact versions, and checks signatures and attestations. On success, the
+   workflow creates a GitHub Release and a `vX.Y.Z` tag at the published
+   commit. The notes come from the package changelogs and link to npm and the
+   verification run. A maintenance release leaves GitHub's latest release
+   badge on the main line.
+
+### npm credentials
+
+Configure [npm Trusted Publishing](https://docs.npmjs.com/trusted-publishers/)
+for each of the five npm packages. Select GitHub Actions and enter
+`zprue743`, `ghostvue`, workflow filename `release-publish.yml`, and
+environment `npm-release`. Allow publishing and wait until the next release
+is ready to configure it. npm requires the first successful publish within
+two days of registration.
+
+The protected publish job has OIDC permission. It can also use a short-lived
+granular `NPM_TOKEN` environment secret during the transition, while npm permits
+direct publishing with tokens. Scope a temporary token to the five packages,
+enable bypass 2FA, and revoke it after use. Delete its environment secret.
+
+### Recovery
+
+- If only part of the release uploads, rerun the failed publish job in the same
+  run to reuse the exact tarballs. The job skips an existing package version
+  only when the registry integrity and provenance match the evidence.
+- If verification or GitHub release creation fails after upload, retry that
+  job in the same run. Check an existing tag or draft before retrying if it
+  conflicts with the published commit. Record the run and package links in
+  the release issue.
 
 ## CI policy
 
