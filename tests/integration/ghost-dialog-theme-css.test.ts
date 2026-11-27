@@ -37,7 +37,7 @@ function findHardcodedVisuals(css: string) {
 }
 
 describe('GhostDialog theme CSS tokens', () => {
-  it('uses semantic --ghost-* tokens and no exit animations or extra literals', async () => {
+  it('uses semantic --ghost-* tokens and limits motion to entry', async () => {
     const css = await readFile(cssPath, 'utf8')
     expect(css).toContain('background-color: var(--ghost-scrim);')
     expect(css).toContain('--ghost-elevation-4-bg')
@@ -47,7 +47,10 @@ describe('GhostDialog theme CSS tokens', () => {
     expect(css).toContain('--ghost-radius-lg')
     expect(css).toContain('--ghost-space-inset-lg')
     expect(css).toContain('--ghost-space-gap-md')
-    expect(stripComments(css)).not.toMatch(/animation|transition/i)
+    expect(css).toContain('@starting-style')
+    expect(stripComments(css)).not.toMatch(
+      /\banimation\b|\[data-state='closed'\]/,
+    )
     expect(findHardcodedVisuals(css)).toEqual([])
   })
 
