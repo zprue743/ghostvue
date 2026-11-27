@@ -33,7 +33,7 @@ import {
  * and rows onto native GhostTable parts. It reads the root's slot bindings,
  * so headers, `aria-sort`, sort buttons, and row data attributes follow the
  * same contract as a manual composition. Attributes such as `class`, `style`,
- * `contain-horizontal`, or `aria-label` fall through to GhostTable.
+ * or `aria-label` fall through to GhostTable.
  *
  * A sortable header renders a native sort button named by its visible text;
  * `aria-sort` stays on the `<th>` (getHeaderCellProps), never the button.
@@ -67,7 +67,13 @@ function renderCell(cell: DataTableRenderedCell): VNodeChild {
 </script>
 
 <template>
-  <GhostTable v-bind="rendered.tableRootProps">
+  <GhostTable
+    v-bind="{
+      ...rendered.tableRootProps,
+      ...(scrollLabel === undefined ? {} : { scrollLabel }),
+    }"
+    :contain-horizontal="containHorizontal"
+  >
     <GhostTableHead>
       <GhostTableRow>
         <GhostTableHeaderCell
@@ -77,6 +83,7 @@ function renderCell(cell: DataTableRenderedCell): VNodeChild {
         >
           <button
             v-if="header.canSort"
+            data-part="sort-button"
             v-bind="header.sortButtonProps"
             @click="header.toggleSort"
           >

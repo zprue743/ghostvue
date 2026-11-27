@@ -1,0 +1,30 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "handwritten",
+  "name": "GhostDataTableTable",
+  "package": "@ghostvue/themes",
+  "status": "experimental",
+  "description": "Themed native DataTable renderer with the headless mapper's typed column slots.",
+  "props": [],
+  "models": [],
+  "events": [],
+  "slots": [],
+  "exposed": [],
+  "styling": {
+    "parts": [
+      {
+        "name": "sort-button",
+        "description": "Native button inside a sortable heading."
+      }
+    ],
+    "states": [],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "table",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/table/",
+    "keyboard": {},
+    "requiredAriaAttributes": []
+  },
+  "examples": []
+}

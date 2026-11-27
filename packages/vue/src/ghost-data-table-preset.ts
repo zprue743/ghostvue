@@ -1,4 +1,7 @@
-import type { DataTableRowId } from './ghost-data-table'
+import type {
+  DataTablePaginationState,
+  DataTableRowId,
+} from './ghost-data-table'
 import type { GhostEmptyStateHeadingLevel } from './ghost-empty-state'
 import type {
   DataTableColumnRow,
@@ -34,30 +37,67 @@ export interface GhostDataTablePresetSearchSlotProps {
   disabled: boolean
 }
 
+/** State and command for an opted-in `bulkActions` slot with selected rows. */
+export interface GhostDataTablePresetBulkActionsSlotProps {
+  /** Includes selections on other server pages. Treat the IDs as read-only. */
+  selectedRowIds: readonly DataTableRowId[]
+  /** Count of all selected IDs. */
+  selectedCount: number
+  /** Clears all selections while selection is enabled and the table is operable. */
+  clearSelection: () => void
+}
+
+/** Pager state for an opted-in `footer` slot. */
+export interface GhostDataTablePresetFooterSlotProps {
+  /** Effective 1-based pagination. */
+  pagination: DataTablePaginationState
+  /** Effective page count, including one page for an empty result. */
+  pageCount: number
+  /** Filtered local count or server-supplied total. */
+  rowCount: number
+  /** Commits a page change through the root and emits its usual events. */
+  setPageIndex: (pageIndex: number) => void
+}
+
+interface GhostDataTablePresetLayoutSlots {
+  toolbarStart?: () => unknown
+  toolbarEnd?: () => unknown
+  bulkActions?: (props: GhostDataTablePresetBulkActionsSlotProps) => unknown
+  footer?: (props: GhostDataTablePresetFooterSlotProps) => unknown
+}
+
+/** Opt-in layout regions of {@link GhostDataTablePreset}. */
+export type GhostDataTablePresetLayoutSlotName =
+  keyof GhostDataTablePresetLayoutSlots
+
 /**
- * Slots of {@link GhostDataTablePreset}: one optional cell slot per column id
- * (typed like {@link GhostDataTableTableSlots}), plus `detail`, `toolbar`,
- * and `search`. Those three names are reserved, so avoid them as column ids.
+ * Typed cell slots plus the legacy structure slots and opted-in layout slots.
+ * A new layout name keeps its cell signature until it is enabled via `layoutSlots`.
  */
 export type GhostDataTablePresetSlots<
   TColumns extends readonly DataTableTableColumnRef[],
-> = GhostDataTableTableSlots<TColumns> & {
-  /** Content of an expanded row's detail `<tr>` (one cell spanning the row). */
-  detail?: (
-    props: GhostDataTablePresetDetailSlotProps<
-      DataTableColumnRow<TColumns[number]>
-    >,
-  ) => unknown
-  /** Rendered before the search field and the table. */
-  toolbar?: () => unknown
-  /** Replaces the default search field (for example to debounce input). */
-  search?: (props: GhostDataTablePresetSearchSlotProps) => unknown
-}
+  TLayout extends GhostDataTablePresetLayoutSlotName = never,
+> = Omit<GhostDataTableTableSlots<TColumns>, NoInfer<TLayout>> &
+  Pick<GhostDataTablePresetLayoutSlots, NoInfer<TLayout>> & {
+    /** Content of an expanded row's detail `<tr>` (one cell spanning the row). */
+    detail?: (
+      props: GhostDataTablePresetDetailSlotProps<
+        DataTableColumnRow<TColumns[number]>
+      >,
+    ) => unknown
+    /** Rendered before the search field and the table. */
+    toolbar?: () => unknown
+    /** Replaces the default search field (for example to debounce input). */
+    search?: (props: GhostDataTablePresetSearchSlotProps) => unknown
+  }
 
 /** Props for {@link GhostDataTablePreset}. */
 export interface GhostDataTablePresetProps<
   TColumns extends readonly DataTableTableColumnRef[],
+  TLayout extends GhostDataTablePresetLayoutSlotName = never,
 > extends GhostDataTableTableProps<TColumns> {
+  /** Opt into the named layout slots on this preset. Omit to keep all four names available for cells. */
+  layoutSlots?: readonly TLayout[]
   /**
    * Visible title of the `GhostEmptyState` shown when no rows render.
    * @default 'No results'

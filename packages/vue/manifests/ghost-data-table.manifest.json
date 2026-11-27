@@ -282,6 +282,6 @@
   "spec": {
     "path": "docs/components/data-table-spec.md",
     "status": "approved",
-    "evidence": "Zac approved in chat on 2026-11-23; recorded in PR #272."
+    "evidence": "Zac approved the headless spec in PR #272 and the themed addendum in PR #374 (merge 5fd3fd46)."
   }
 }

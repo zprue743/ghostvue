@@ -4,11 +4,7 @@ import { provide } from 'vue'
 import { participatesInGlobalFilter } from './data-table-processing'
 import { useDataTableSlotBindings } from './data-table-slot-bindings'
 import type {
-  DataTableColumnFilter,
-  DataTableColumnSort,
-  DataTablePaginationState,
-  DataTableRowId,
-  DataTableStateChangePayload,
+  GhostDataTableEmits,
   GhostDataTableExposed,
   GhostDataTableProps,
   GhostDataTableSlotProps,
@@ -36,15 +32,7 @@ const props = withDefaults(defineProps<GhostDataTableProps<TData>>(), {
   disabled: false,
 })
 
-const emit = defineEmits<{
-  'update:sorting': [sorting: DataTableColumnSort[]]
-  'update:columnFilters': [columnFilters: DataTableColumnFilter[]]
-  'update:globalFilter': [globalFilter: unknown]
-  'update:pagination': [pagination: DataTablePaginationState]
-  'update:selectedRowIds': [selectedRowIds: DataTableRowId[]]
-  'update:expandedRowIds': [expandedRowIds: DataTableRowId[]]
-  stateChange: [payload: DataTableStateChangePayload]
-}>()
+const emit = defineEmits<GhostDataTableEmits>()
 
 defineSlots<{
   default(props: GhostDataTableSlotProps<TData>): unknown
@@ -120,6 +108,8 @@ provide(ghostDataTableContextKey, {
   globalFilter: () => table.globalFilter.value,
   setGlobalFilter: table.setGlobalFilter,
   rowSelectionEnabled: () => table.rowSelectionEnabled.value,
+  selectedRowIds: () => table.selectedRowIds.value,
+  resetRowSelection: table.resetRowSelection,
   rowExpansionEnabled: () => table.rowExpansionEnabled.value,
   disabled: () => table.disabled.value,
   hasGlobalFilterColumns: () => props.columns.some(participatesInGlobalFilter),

@@ -7,13 +7,17 @@ components:
   - GhostDataTablePreset
 packages:
   - '@ghostvue/vue'
+  - '@ghostvue/themes'
 specStatus: approved
 approval:
-  evidence: 'Zac approved in chat on 2026-11-23; recorded in PR #272.'
+  evidence: 'Zac approved the headless spec in PR #272 and the themed addendum in PR #374 (merge 5fd3fd46).'
 manifests:
   - packages/vue/manifests/ghost-data-table.manifest.json
   - packages/vue/manifests/ghost-data-table-preset.manifest.json
   - packages/vue/manifests/ghost-data-table-table.manifest.json
+  - packages/themes/manifests/ghost-data-table.manifest.json
+  - packages/themes/manifests/ghost-data-table-preset.manifest.json
+  - packages/themes/manifests/ghost-data-table-table.manifest.json
 sections:
   purpose:
     applicable: true
@@ -60,16 +64,14 @@ implementation step ([GHO-233](https://linear.app/ghost-vue/issue/GHO-233)); Zac
 approved in chat on 2026-11-23; recorded in
 [PR #272](https://github.com/zprue743/ghostvue/pull/272).
 
-> **Themed `0.1.0` addendum (`#316` / `GHO-249`, pending review):** Following the
+> **Approved themed `0.1.0` addendum (`#316` / `GHO-249`):** Following the
 > `2026-11-25` roadmap review, the single-sort themed wrapper in
 > `@ghostvue/themes` and companion `GhostDataTablePreset` layout slots in
 > `@ghostvue/vue` are specified in the
 > [Themed `GhostDataTable` addendum](#themed-ghostdatatable-addendum) below
 > (**decoupled from multi-column sort [#317](https://github.com/zprue743/ghostvue/issues/317)**,
-> which stays deferred to `0.3.0`). Frontmatter `specStatus: approved` and
-> `packages: ['@ghostvue/vue']` reflect the shipped phase-one headless surface;
-> the themed addendum is **held for Zac's review and approval** and gates Wave 2
-> implementation ([#333](https://github.com/zprue743/ghostvue/issues/333)).
+> which stays deferred to `0.3.0`). Zac recorded approval in
+> [PR #374](https://github.com/zprue743/ghostvue/pull/374).
 
 ## Purpose and user problems
 
@@ -1298,11 +1300,8 @@ the [Themed `GhostDataTable` addendum](#themed-ghostdatatable-addendum).
 
 ## Themed GhostDataTable addendum
 
-**Status:** **Proposed (`#316` / `GHO-249`) — held for Zac's review and
-approval.** Production changes in `@ghostvue/vue` and `@ghostvue/themes` are
-tracked in Wave 2 issue
-[#333](https://github.com/zprue743/ghostvue/issues/333) and must not merge
-before Zac approves this addendum.
+**Status** Approved by Zac in [PR #374](https://github.com/zprue743/ghostvue/pull/374).
+Wave 2 implementation is tracked in [#333](https://github.com/zprue743/ghostvue/issues/333).
 
 ### Architectural decisions (`2026-11-25` roadmap review, Zac)
 

@@ -3,10 +3,19 @@
   lang="ts"
   generic="
     TColumns extends readonly DataTableTableColumnRef[] =
-      readonly DataTableColumnDef<unknown>[]
+      readonly DataTableColumnDef<unknown>[],
+    TLayout extends GhostDataTablePresetLayoutSlotName = never
   "
 >
-import { computed, inject, useAttrs, useSlots } from 'vue'
+import {
+  computed,
+  inject,
+  nextTick,
+  useAttrs,
+  useSlots,
+  useTemplateRef,
+  watch,
+} from 'vue'
 import type { VNodeChild } from 'vue'
 
 import GhostCheckbox from './GhostCheckbox.vue'
@@ -34,7 +43,11 @@ import type {
   DataTableSlotRow,
   GhostDataTableSlotProps,
 } from './ghost-data-table'
+import type { GhostCheckboxExposed } from './ghost-checkbox'
 import type {
+  GhostDataTablePresetBulkActionsSlotProps,
+  GhostDataTablePresetFooterSlotProps,
+  GhostDataTablePresetLayoutSlotName,
   GhostDataTablePresetProps,
   GhostDataTablePresetSearchSlotProps,
   GhostDataTablePresetSlots,
@@ -70,22 +83,25 @@ import {
  */
 defineOptions({ inheritAttrs: false })
 
-const props = withDefaults(defineProps<GhostDataTablePresetProps<TColumns>>(), {
-  emptyTitle: 'No results',
-  emptyHeadingLevel: 3,
-  searchLabel: 'Search',
-  selectionHeaderLabel: 'Selection',
-  expansionHeaderLabel: 'Details',
-  // Explicit `undefined` keeps an omitted boolean from casting to `false`,
-  // so the "any filterable column" default can apply.
-  showGlobalFilter: undefined,
-  selectAllLabel: 'Select all rows',
-  rowSelectionLabel: (rowId: DataTableRowId) => `Select row ${String(rowId)}`,
-  rowExpansionLabel: (rowId: DataTableRowId) =>
-    `Show details for ${String(rowId)}`,
-})
+const props = withDefaults(
+  defineProps<GhostDataTablePresetProps<TColumns, TLayout>>(),
+  {
+    emptyTitle: 'No results',
+    emptyHeadingLevel: 3,
+    searchLabel: 'Search',
+    selectionHeaderLabel: 'Selection',
+    expansionHeaderLabel: 'Details',
+    // Explicit `undefined` keeps an omitted boolean from casting to `false`,
+    // so the "any filterable column" default can apply.
+    showGlobalFilter: undefined,
+    selectAllLabel: 'Select all rows',
+    rowSelectionLabel: (rowId: DataTableRowId) => `Select row ${String(rowId)}`,
+    rowExpansionLabel: (rowId: DataTableRowId) =>
+      `Show details for ${String(rowId)}`,
+  },
+)
 
-defineSlots<GhostDataTablePresetSlots<TColumns>>()
+defineSlots<GhostDataTablePresetSlots<TColumns, NoInfer<TLayout>>>()
 
 // Cell and detail slots are looked up at runtime (their row type is the
 // root's hidden `TData`); `defineSlots` carries the consumer-facing types.
@@ -169,11 +185,66 @@ const rendered = computed(() => {
 const tableProps = computed(() => ({
   ...rendered.value.tableRootProps,
   ...attrs,
+  containHorizontal: props.containHorizontal,
+  ...(props.scrollLabel === undefined
+    ? {}
+    : { scrollLabel: props.scrollLabel }),
 }))
 
 const searchVisible = computed(
   () => props.showGlobalFilter ?? table.hasGlobalFilterColumns(),
 )
+
+const layoutSlots = computed(() => new Set<string>(props.layoutSlots))
+
+function hasLayoutSlot(name: GhostDataTablePresetLayoutSlotName): boolean {
+  return layoutSlots.value.has(name) && Boolean(slots[name])
+}
+
+function clearSelection(): void {
+  if (table.rowSelectionEnabled() && !table.disabled())
+    table.resetRowSelection()
+}
+
+const selectedCount = computed(() => table.selectedRowIds().length)
+const bulkActionsSlotProps = computed<GhostDataTablePresetBulkActionsSlotProps>(
+  () => ({
+    selectedRowIds: table.selectedRowIds(),
+    selectedCount: selectedCount.value,
+    clearSelection,
+  }),
+)
+const footerSlotProps = computed<GhostDataTablePresetFooterSlotProps>(() =>
+  table.withBindings(({ pagination, pageCount, rowCount, setPageIndex }) => ({
+    pagination,
+    pageCount,
+    rowCount,
+    setPageIndex,
+  })),
+)
+
+const bulkActions = useTemplateRef<HTMLElement>('bulkActions')
+const selectAll = useTemplateRef<GhostCheckboxExposed>('selectAll')
+watch(selectedCount, (count, previous) => {
+  const bar = bulkActions.value
+  if (
+    count !== 0 ||
+    previous === 0 ||
+    !bar?.contains(bar.ownerDocument.activeElement)
+  )
+    return
+  // Read focus before Vue removes the slot. Respect a consumer that moves it elsewhere.
+  void nextTick(() => {
+    const input = selectAll.value?.element
+    if (
+      input?.isConnected &&
+      !input.disabled &&
+      input.ownerDocument.activeElement === input.ownerDocument.body
+    ) {
+      input.focus()
+    }
+  })
+})
 
 /*
  * The field shows the root's global filter as text. A non-text filter (set by
@@ -200,6 +271,8 @@ const searchSlotProps = computed((): GhostDataTablePresetSearchSlotProps => {
 })
 
 function renderCell(cell: DataTableRenderedCell): VNodeChild {
+  // The opt-in list owns the name even while its layout region is hidden.
+  if (layoutSlots.value.has(cell.columnId)) return cell.render()
   return renderDataTableCell(slots, cell)
 }
 
@@ -210,17 +283,45 @@ function renderDetail(row: PresetRowExtra): VNodeChild {
 
 <template>
   <slot name="toolbar" />
-  <slot v-if="searchVisible" name="search" v-bind="searchSlotProps">
-    <label>
-      {{ searchSlotProps.label }}
-      <GhostInput
-        type="search"
-        :model-value="searchSlotProps.value"
-        :disabled="searchSlotProps.disabled"
-        @update:model-value="searchSlotProps.setValue"
-      />
-    </label>
-  </slot>
+  <div
+    v-if="
+      searchVisible ||
+      hasLayoutSlot('toolbarStart') ||
+      hasLayoutSlot('toolbarEnd')
+    "
+    class="ghost-data-table-header"
+    data-part="header"
+  >
+    <div v-if="hasLayoutSlot('toolbarStart')" data-part="toolbar-start">
+      <CellContent :render="() => slots['toolbarStart']?.()" />
+    </div>
+    <div v-if="searchVisible" data-part="search">
+      <slot name="search" v-bind="searchSlotProps">
+        <label>
+          <span>{{ searchSlotProps.label }}</span>
+          <GhostInput
+            type="search"
+            :model-value="searchSlotProps.value"
+            :disabled="searchSlotProps.disabled"
+            @update:model-value="searchSlotProps.setValue"
+          />
+        </label>
+      </slot>
+    </div>
+    <div v-if="hasLayoutSlot('toolbarEnd')" data-part="toolbar-end">
+      <CellContent :render="() => slots['toolbarEnd']?.()" />
+    </div>
+  </div>
+  <div
+    v-if="
+      rendered.selectAll && selectedCount > 0 && hasLayoutSlot('bulkActions')
+    "
+    ref="bulkActions"
+    class="ghost-data-table-bulk-actions"
+    data-part="bulk-actions"
+  >
+    <CellContent :render="() => slots['bulkActions']?.(bulkActionsSlotProps)" />
+  </div>
   <GhostTable v-bind="tableProps">
     <GhostTableHead>
       <GhostTableRow>
@@ -230,6 +331,7 @@ function renderDetail(row: PresetRowExtra): VNodeChild {
           :aria-label="selectionHeaderLabel"
         >
           <GhostCheckbox
+            ref="selectAll"
             v-bind="rendered.selectAll.props"
             :model-value="rendered.selectAll.state.allSelected"
             :indeterminate="rendered.selectAll.state.someSelected"
@@ -246,6 +348,7 @@ function renderDetail(row: PresetRowExtra): VNodeChild {
         >
           <button
             v-if="header.canSort"
+            data-part="sort-button"
             v-bind="header.sortButtonProps"
             @click="header.toggleSort"
           >
@@ -273,7 +376,11 @@ function renderDetail(row: PresetRowExtra): VNodeChild {
             />
           </GhostTableCell>
           <GhostTableCell v-if="row.expandProps">
-            <button v-bind="row.expandProps" @click="row.toggleExpanded">
+            <button
+              data-part="expand-button"
+              v-bind="row.expandProps"
+              @click="row.toggleExpanded"
+            >
               <span aria-hidden="true">{{ row.isExpanded ? '▾' : '▸' }}</span>
             </button>
           </GhostTableCell>
@@ -289,4 +396,11 @@ function renderDetail(row: PresetRowExtra): VNodeChild {
       </template>
     </GhostTableBody>
   </GhostTable>
+  <div
+    v-if="hasLayoutSlot('footer')"
+    class="ghost-data-table-footer"
+    data-part="footer"
+  >
+    <CellContent :render="() => slots['footer']?.(footerSlotProps)" />
+  </div>
 </template>

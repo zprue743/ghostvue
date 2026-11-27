@@ -506,6 +506,17 @@ export interface GhostDataTableProps<TData> {
   defaultExpandedRowIds?: DataTableRowId[]
 }
 
+/** Model updates and query events from a DataTable root. */
+export interface GhostDataTableEmits {
+  'update:sorting': [sorting: DataTableColumnSort[]]
+  'update:columnFilters': [columnFilters: DataTableColumnFilter[]]
+  'update:globalFilter': [globalFilter: unknown]
+  'update:pagination': [pagination: DataTablePaginationState]
+  'update:selectedRowIds': [selectedRowIds: DataTableRowId[]]
+  'update:expandedRowIds': [expandedRowIds: DataTableRowId[]]
+  stateChange: [payload: DataTableStateChangePayload]
+}
+
 /** Default slot props of {@link GhostDataTable} (spec: Renderless root slot bindings). */
 export interface GhostDataTableSlotProps<TData> {
   tableRootProps: DataTableTableRootProps

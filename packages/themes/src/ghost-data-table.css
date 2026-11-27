@@ -1,0 +1,455 @@
+/* Direct children keep nested tables out of the outer table's recipe. */
+@layer ghostvue-theme {
+  :where(.ghost-data-table[data-themed], .ghost-theme .ghost-data-table) {
+    display: grid;
+    gap: var(--ghost-space-gap-md);
+    min-inline-size: 0;
+  }
+
+  :where(
+    .ghost-data-table-table[data-themed],
+    .ghost-data-table-preset[data-themed]
+  ) {
+    display: contents;
+  }
+
+  :where(.ghost-data-table[data-themed][data-variant='card']) {
+    gap: 0;
+    background: var(--ghost-elevation-1-bg);
+    border: var(--ghost-border-hairline-width) solid
+      var(--ghost-elevation-1-border);
+    border-radius: var(--ghost-radius-lg);
+    box-shadow:
+      var(--ghost-elevation-1-shadow), var(--ghost-elevation-1-highlight);
+  }
+
+  :where(
+    .ghost-data-table[data-themed],
+    .ghost-theme .ghost-data-table,
+    .ghost-data-table-table[data-themed],
+    .ghost-data-table-preset[data-themed]
+  ) {
+    --_ghost-data-table-block: var(--ghost-space-inset-sm);
+    --_ghost-data-table-inline: var(--ghost-space-inset-md);
+    --_ghost-data-table-header-position: static;
+    --_ghost-data-table-header-bg: transparent;
+    --_ghost-data-table-header-shadow: none;
+    --_ghost-data-table-hover: var(--ghost-surface-subtle-bg);
+    --_ghost-data-table-selection-hover: var(--ghost-state-layer-hover);
+
+    :where(
+      & > .ghost-data-table-header,
+      & > .ghost-data-table-bulk-actions,
+      & > .ghost-data-table-footer
+    ) {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: var(--ghost-space-gap-sm);
+      min-inline-size: 0;
+    }
+
+    :where(& > .ghost-data-table-header > [data-part='search'] > label) {
+      display: grid;
+      gap: var(--ghost-space-gap-xs);
+      color: var(--ghost-surface-fg);
+      font-size: var(--ghost-type-size-sm);
+    }
+
+    :where(& > .ghost-data-table-header > [data-part='toolbar-end']) {
+      margin-inline-start: auto;
+    }
+
+    :where(& > .ghost-data-table-bulk-actions) {
+      background: var(--ghost-surface-muted-bg);
+      color: var(--ghost-surface-fg);
+    }
+
+    /* The themed GhostTable adds one scope wrapper around its table or scroll region. */
+    :where(
+      & > .ghost-table[data-ghost-data-table],
+      &
+        > :is(.ghost-table-scroll-container, .ghost-themed-scope)
+        > .ghost-table[data-ghost-data-table],
+      &
+        > .ghost-themed-scope
+        > .ghost-table-scroll-container
+        > .ghost-table[data-ghost-data-table]
+    ) {
+      :where(
+        & > .ghost-table-head > .ghost-table-row > .ghost-table-header-cell
+      ) {
+        position: var(--_ghost-data-table-header-position);
+        inset-block-start: 0;
+        z-index: 1;
+        background: var(--_ghost-data-table-header-bg);
+        box-shadow: var(--_ghost-data-table-header-shadow);
+        padding-block: var(--_ghost-data-table-block);
+        padding-inline: var(--_ghost-data-table-inline);
+
+        :where(& > button) {
+          appearance: none;
+          display: inline-flex;
+          gap: var(--ghost-space-gap-xs);
+          align-items: center;
+          justify-content: space-between;
+          inline-size: 100%;
+          min-block-size: var(--ghost-control-size-sm-min);
+          padding: var(--ghost-space-inset-xs);
+          border: 0;
+          border-radius: var(--ghost-radius-sm);
+          background: transparent;
+          color: inherit;
+          font: inherit;
+          text-align: start;
+        }
+
+        :where(& > button:hover:not(:disabled)) {
+          background: color-mix(
+            in oklch,
+            var(--ghost-surface-fg) calc(100% * var(--ghost-state-layer-hover)),
+            transparent
+          );
+        }
+
+        :where(& > button:focus-visible) {
+          outline: var(--ghost-focus-ring-width) solid
+            var(--ghost-focus-ring-color);
+          outline-offset: calc(-1 * var(--ghost-focus-ring-width));
+        }
+
+        :where(& > button:disabled) {
+          color: var(--ghost-action-disabled-fg);
+        }
+
+        /* A CSS-painted mark adds no text and yields to consumer artwork. */
+        :where(
+          &
+            > button[data-part='sort-button']:not(
+              :has(> [data-part='sort-indicator'])
+            )
+        )::after {
+          content: '';
+          flex: none;
+          inline-size: var(--ghost-action-icon-size);
+          block-size: var(--ghost-action-icon-size);
+          background: currentColor;
+          color: var(--_ghost-data-table-mark, var(--ghost-text-subtle));
+          clip-path: var(
+            --_ghost-data-table-chevron,
+            polygon(
+              50% 4%,
+              77% 31%,
+              70% 38%,
+              50% 18%,
+              30% 38%,
+              23% 31%,
+              50% 4%,
+              50% 96%,
+              23% 69%,
+              30% 62%,
+              50% 82%,
+              70% 62%,
+              77% 69%,
+              50% 96%,
+              50% 4%
+            )
+          );
+        }
+
+        :where(&:not([data-sort]) > button:is(:hover, :focus-visible)) {
+          --_ghost-data-table-mark: var(--ghost-text-muted);
+        }
+
+        :where(&[data-sort]) {
+          --_ghost-data-table-mark: var(--ghost-text-primary);
+          color: var(--ghost-surface-fg);
+          border-block-end-color: var(--ghost-border-strong);
+        }
+
+        :where(&[data-sort='asc']) {
+          --_ghost-data-table-chevron: polygon(
+            50% 22%,
+            88% 61%,
+            79% 70%,
+            50% 41%,
+            21% 70%,
+            12% 61%
+          );
+        }
+
+        :where(&[data-sort='desc']) {
+          --_ghost-data-table-chevron: polygon(
+            50% 78%,
+            12% 39%,
+            21% 30%,
+            50% 59%,
+            79% 30%,
+            88% 39%
+          );
+        }
+      }
+
+      /* A static header cue leaves body contrast and row geometry intact. */
+      :where(
+        &[aria-busy='true']
+          > .ghost-table-head
+          > .ghost-table-row
+          > .ghost-table-header-cell
+      ) {
+        border-block-end-color: var(--ghost-border-primary);
+        box-shadow: inset 0 calc(-1 * var(--ghost-border-hairline-width))
+          var(--ghost-border-primary);
+      }
+
+      :where(
+        &
+          > .ghost-table-body
+          > .ghost-table-row
+          > :is(.ghost-table-cell, .ghost-table-header-cell)
+      ) {
+        padding-block: var(--_ghost-data-table-block);
+        padding-inline: var(--_ghost-data-table-inline);
+      }
+
+      :where(
+        &
+          > .ghost-table-body
+          > .ghost-table-row:not(
+            [data-selected='true'],
+            [data-detail-row]
+          ):hover
+          > :is(.ghost-table-cell, .ghost-table-header-cell)
+      ) {
+        background: var(--_ghost-data-table-hover);
+      }
+
+      :where(
+        &
+          > .ghost-table-body
+          > .ghost-table-row[data-detail-row='true']
+          > .ghost-table-cell
+      ) {
+        background: var(--ghost-surface-subtle-bg);
+      }
+
+      :where(
+        &
+          > .ghost-table-body
+          > .ghost-table-row
+          > :is(.ghost-table-cell, .ghost-table-header-cell):first-child
+      ) {
+        border-inline-start: var(--ghost-focus-ring-width) solid transparent;
+      }
+
+      :where(& > .ghost-table-body > .ghost-table-row[data-selected='true']) {
+        --_ghost-data-table-wash: var(--ghost-state-mix-soft);
+
+        :where(&:hover) {
+          --_ghost-data-table-wash: calc(
+            var(--ghost-state-mix-soft) +
+              var(--_ghost-data-table-selection-hover)
+          );
+        }
+
+        :where(& > :is(.ghost-table-cell, .ghost-table-header-cell)) {
+          background: color-mix(
+            in oklch,
+            var(--ghost-action-primary-bg)
+              calc(100% * var(--_ghost-data-table-wash)),
+            var(--ghost-surface-bg)
+          );
+          color: var(--ghost-surface-fg);
+        }
+
+        :where(
+          & > :is(.ghost-table-cell, .ghost-table-header-cell):first-child
+        ) {
+          border-inline-start-color: var(--ghost-border-primary);
+        }
+
+        @media (forced-colors: active) {
+          :where(& > :is(.ghost-table-cell, .ghost-table-header-cell)) {
+            forced-color-adjust: none;
+            background: SelectedItem;
+            color: SelectedItemText;
+            border-block-end-color: CanvasText;
+
+            :where(
+              & :is(button, input, select, textarea, a[href], [tabindex])
+            ) {
+              forced-color-adjust: auto;
+            }
+
+            :where(
+              &
+                :is(
+                  button,
+                  input,
+                  select,
+                  textarea,
+                  a[href],
+                  [tabindex]
+                ):focus-visible
+            ) {
+              outline: var(--ghost-focus-ring-width) solid SelectedItemText;
+              outline-offset: var(--ghost-border-hairline-width);
+            }
+          }
+        }
+      }
+
+      :where(
+        &
+          > .ghost-table-body
+          > .ghost-table-row
+          > .ghost-table-cell
+          > [data-part='expand-button']
+      ) {
+        min-block-size: var(--ghost-control-size-sm-min);
+        min-inline-size: var(--ghost-control-size-sm-min);
+      }
+
+      @media (pointer: coarse) {
+        :where(
+          &
+            > .ghost-table-head
+            > .ghost-table-row
+            > .ghost-table-header-cell
+            > :is(button, input[type='checkbox']),
+          &
+            > .ghost-table-body
+            > .ghost-table-row
+            > .ghost-table-cell
+            > :is([data-part='expand-button'], input[type='checkbox'])
+        ) {
+          min-block-size: var(--ghost-control-touch-min);
+          min-inline-size: var(--ghost-control-touch-min);
+        }
+      }
+
+      @media (forced-colors: active) {
+        :where(
+          &
+            > .ghost-table-head
+            > .ghost-table-row
+            > .ghost-table-header-cell
+            > button
+        ) {
+          background: ButtonFace;
+          color: ButtonText;
+          --_ghost-data-table-mark: ButtonText;
+        }
+
+        :where(
+          &
+            > .ghost-table-head
+            > .ghost-table-row
+            > .ghost-table-header-cell
+            > button:disabled
+        ) {
+          color: GrayText;
+          --_ghost-data-table-mark: GrayText;
+        }
+
+        :where(
+          &
+            > .ghost-table-head
+            > .ghost-table-row
+            > .ghost-table-header-cell
+            > button:focus-visible
+        ) {
+          outline-color: Highlight;
+        }
+
+        :where(
+          &
+            > .ghost-table-head
+            > .ghost-table-row
+            > .ghost-table-header-cell
+            > button[data-part='sort-button']
+        )::after {
+          forced-color-adjust: none;
+        }
+
+        :where(
+          &[aria-busy='true']
+            > .ghost-table-head
+            > .ghost-table-row
+            > .ghost-table-header-cell
+        ) {
+          border-block-end-color: Highlight;
+        }
+      }
+    }
+  }
+
+  :where(
+    .ghost-data-table[data-themed][data-variant='card'],
+    .ghost-data-table[data-themed][data-variant='card']
+      > .ghost-data-table-preset[data-themed]
+  ) {
+    :where(
+      & > .ghost-data-table-header,
+      & > .ghost-data-table-bulk-actions,
+      & > .ghost-data-table-footer
+    ) {
+      padding-block: var(--ghost-space-inset-sm);
+      padding-inline: var(--ghost-space-inset-md);
+    }
+
+    :where(& > .ghost-data-table-header, & > .ghost-data-table-bulk-actions) {
+      border-block-end: var(--ghost-border-hairline-width) solid
+        var(--ghost-border-default);
+    }
+
+    :where(& > .ghost-data-table-footer) {
+      border-block-start: var(--ghost-border-hairline-width) solid
+        var(--ghost-border-default);
+    }
+  }
+
+  :where(
+    .ghost-data-table[data-themed][data-size='sm'],
+    .ghost-data-table[data-themed][data-size='sm']
+      > :is(.ghost-data-table-table, .ghost-data-table-preset)[data-themed]
+  ) {
+    --_ghost-data-table-block: var(--ghost-space-inset-xs);
+    --_ghost-data-table-inline: var(--ghost-space-inset-sm);
+
+    :where(
+      & > .ghost-data-table-header > [data-part='search'] > label > .ghost-input
+    ) {
+      --_ghost-input-min-size: var(--ghost-control-size-sm-min);
+      --_ghost-input-padding-block: var(--ghost-control-size-sm-padding-block);
+      --_ghost-input-padding-inline: var(
+        --ghost-control-size-sm-padding-inline
+      );
+      --_ghost-input-font-size: var(--ghost-control-size-sm-font);
+    }
+  }
+
+  :where(
+    .ghost-data-table[data-themed][data-sticky-header],
+    .ghost-data-table[data-themed][data-sticky-header]
+      > :is(.ghost-data-table-table, .ghost-data-table-preset)[data-themed]
+  ) {
+    --_ghost-data-table-header-position: sticky;
+    --_ghost-data-table-header-bg: var(--ghost-surface-muted-bg);
+    --_ghost-data-table-header-shadow: inset 0
+      calc(-1 * var(--ghost-border-hairline-width)) var(--ghost-border-default);
+
+    @media (forced-colors: active) {
+      --_ghost-data-table-header-bg: Canvas;
+    }
+  }
+
+  :where(
+    .ghost-data-table[data-themed][data-state='disabled'],
+    .ghost-data-table[data-themed][data-state='disabled']
+      > :is(.ghost-data-table-table, .ghost-data-table-preset)[data-themed]
+  ) {
+    --_ghost-data-table-hover: transparent;
+    --_ghost-data-table-selection-hover: 0;
+  }
+}
