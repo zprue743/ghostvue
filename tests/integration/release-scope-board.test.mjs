@@ -1,7 +1,7 @@
 /** @vitest-environment node */
 import { execFileSync } from 'node:child_process'
 import { afterEach, beforeEach, expect, it, vi } from 'vitest'
-import { board } from '../../scripts/lib/release-scope-github.mjs'
+import { board, closingPulls } from '../../scripts/lib/release-scope-github.mjs'
 import { repository } from '../../scripts/lib/release-scope.mjs'
 
 vi.mock('node:child_process', () => ({ execFileSync: vi.fn() }))
@@ -62,4 +62,42 @@ it.each([
 ])('refuses a partial board: %s', (_reason, response) => {
   execFileSync.mockReturnValueOnce(response)
   expect(() => board('0.1.0')).toThrow()
+})
+
+it('requires a completed spec issue and a closing PR merged into this repository on master', () => {
+  execFileSync.mockReset()
+  const pr = {
+    number: 90,
+    merged: true,
+    baseRefName: 'master',
+    mergeCommit: { oid: 'sha' },
+    repository: { nameWithOwner: repository },
+  }
+  const candidates = [
+    pr,
+    { ...pr, merged: false },
+    { ...pr, baseRefName: 'release/0.1.x' },
+    { ...pr, repository: { nameWithOwner: 'other/repo' } },
+  ]
+  const issueData = {
+    id: 'ID',
+    state: 'CLOSED',
+    stateReason: 'COMPLETED',
+    closedByPullRequestsReferences: {
+      totalCount: candidates.length,
+      nodes: candidates,
+    },
+  }
+  for (const overrides of [
+    { state: 'OPEN' },
+    { stateReason: 'NOT_PLANNED' },
+    {},
+  ]) {
+    execFileSync.mockReturnValueOnce(
+      JSON.stringify({
+        data: { repository: { issue: { ...issueData, ...overrides } } },
+      }),
+    )
+    expect(closingPulls(42)).toEqual(Object.keys(overrides).length ? [] : [pr])
+  }
 })

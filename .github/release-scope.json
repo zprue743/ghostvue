@@ -1,4 +1,34 @@
 {
   "activeRelease": "0.2.0",
-  "mode": "report"
+  "mode": "report",
+  "implementationGates": {
+    "417": {
+      "412": ["presence"]
+    },
+    "418": {
+      "413": ["submenu", "dropdown-menu"]
+    },
+    "419": {
+      "413": ["submenu", "dropdown-menu"],
+      "418": []
+    },
+    "420": {
+      "414": ["form"]
+    },
+    "421": {
+      "415": ["select"]
+    },
+    "422": {
+      "416": ["tags-input"]
+    },
+    "467": {
+      "463": ["checkbox-group"]
+    },
+    "468": {
+      "464": ["fieldset"]
+    },
+    "469": {
+      "465": ["input-group"]
+    }
+  }
 }
