@@ -547,6 +547,8 @@ jobs:
           cp -a .artifacts/e2e-prebuilt/docs/. apps/docs/.vitepress/dist/
       - name: Assert prebuilt dist
         run: test -f apps/playground/dist/index.html && test -f apps/docs/.vitepress/dist/index.html
+      # The 1.65.1 image predates the upstream Firefox accessibility fix.
+      - run: pnpm exec playwright install firefox
       - run: pnpm test:e2e:prebuilt --project=firefox-e2e --project=webkit-e2e
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: always()

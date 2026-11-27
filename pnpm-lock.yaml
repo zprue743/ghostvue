@@ -4,6 +4,9 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+patchedDependencies:
+  playwright-core@1.65.1: 352d8d237bd8b41257a2e5d995a4ff712c410bab1b4f68de05a58f24faed2e18
+
 importers:
 
   .:
@@ -13,7 +16,7 @@ importers:
         version: 0.18.5
       '@axe-core/playwright':
         specifier: 4.13.0
-        version: 4.13.0(playwright-core@1.65.1)
+        version: 4.13.0(playwright-core@1.65.1(patch_hash=352d8d237bd8b41257a2e5d995a4ff712c410bab1b4f68de05a58f24faed2e18))
       '@changesets/cli':
         specifier: 3.0.3
         version: 3.0.3
@@ -5628,10 +5631,10 @@ snapshots:
       is-potential-custom-element-name: 1.0.1
       lru-cache: 11.5.2
 
-  '@axe-core/playwright@4.13.0(playwright-core@1.65.1)':
+  '@axe-core/playwright@4.13.0(playwright-core@1.65.1(patch_hash=352d8d237bd8b41257a2e5d995a4ff712c410bab1b4f68de05a58f24faed2e18))':
     dependencies:
       axe-core: 4.13.0
-      playwright-core: 1.65.1
+      playwright-core: 1.65.1(patch_hash=352d8d237bd8b41257a2e5d995a4ff712c410bab1b4f68de05a58f24faed2e18)
 
   '@babel/code-frame@7.29.7':
     dependencies:
@@ -9849,11 +9852,11 @@ snapshots:
       exsolve: 1.2.0
       pathe: 2.0.3
 
-  playwright-core@1.65.1: {}
+  playwright-core@1.65.1(patch_hash=352d8d237bd8b41257a2e5d995a4ff712c410bab1b4f68de05a58f24faed2e18): {}
 
   playwright@1.65.1:
     dependencies:
-      playwright-core: 1.65.1
+      playwright-core: 1.65.1(patch_hash=352d8d237bd8b41257a2e5d995a4ff712c410bab1b4f68de05a58f24faed2e18)
 
   postcss-calc@11.3.0(postcss@8.5.33):
     dependencies:

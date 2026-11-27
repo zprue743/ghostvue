@@ -240,7 +240,11 @@ describe('CI workflow', () => {
       expect(jobBlock(workflow, jobId), jobId).toContain(`image: ${image}`)
     }
     expect(readRepoFile('scripts/lib/test-visual-docker.js')).toContain(image)
-    expect(workflow).not.toMatch(/run:.*playwright install/)
+    const firefoxInstall = 'run: pnpm exec playwright install firefox'
+    expect(jobBlock(workflow, 'browser-cross')).toContain(firefoxInstall)
+    expect(workflow.match(/run:.*playwright install[^\r\n]*/g)).toEqual([
+      firefoxInstall,
+    ])
   })
 
   it('gates the aggregate verify check on the Nuxt SSR fixture', () => {
