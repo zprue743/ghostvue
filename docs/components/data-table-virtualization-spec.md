@@ -134,7 +134,14 @@ Virtualization turns on when the table body is rendered inside a
 viewport is the vertical scroll container. It registers itself with the
 parent root through the existing `ghostDataTableContextKey` provide/inject
 channel, and the root's slot bindings switch to windowed output while a
-viewport is registered.
+viewport is registered. Registration happens in the viewport's `setup`, which
+runs after the root has already evaluated its own slot, so on the server
+(which never re-renders the root) and in the first client render the root's
+bindings still hold their no-viewport values. Anything rendered inside the
+viewport therefore reads the windowed bindings from the
+[viewport's own scoped slot](#ghostdatatableviewport-slots-and-exposed-members),
+which is evaluated after registration; the root's copies are for content
+outside the viewport, such as a row-range summary, and update after mount.
 
 Why a child component rather than a prop on the root:
 
@@ -190,6 +197,19 @@ the failure is visible rather than silently slow.
   composition, or the preset's table). Only the table belongs inside. Search
   fields, toolbars, live regions, and pagers go outside the viewport so they
   do not scroll away.
+- **Default slot props** (`GhostDataTableViewportSlotProps<TData>`):
+  `virtualItems`, `virtualRange`, `headerRowProps`, `tableRootProps`,
+  `getRowProps`, `getFooterRowProps`, and `isVirtualized` (always `true`),
+  with the contracts in [Root slot binding additions](#root-slot-binding-additions).
+  The viewport computes them after it has registered, so they are windowed
+  from the first render on the server and on the client: rows
+  `[0, min(initialRowCount, count))` plus the `'after'` spacer, and
+  `tableRootProps` with `aria-rowcount` (see
+  [SSR and hydration](#ssr-and-hydration)). This is the SSR-safe source for
+  manual compositions; the root's copies are not (see
+  [Opt-in surface](#opt-in-surface-proposed-see-v1)). `GhostDataTableTable`
+  and the preset read the same values through the injected context, which
+  they also evaluate inside the viewport, so they need no slot props.
 - **Exposed** (template ref):
 
 | Member                             | Signature                                                                                                                         | Contract                                                                                                                                                                                                                                                                                                                                                                                                                                           |
@@ -243,6 +263,17 @@ interface DataTableVirtualSpacerProps {
   'data-virtual-spacer': 'true'
   style: { blockSize: string }
 }
+
+/** Default slot props of `GhostDataTableViewport`, computed after registration. */
+type GhostDataTableViewportSlotProps<TData> = Pick<
+  GhostDataTableSlotProps<TData>,
+  | 'virtualItems'
+  | 'virtualRange'
+  | 'headerRowProps'
+  | 'tableRootProps'
+  | 'getRowProps'
+  | 'getFooterRowProps'
+> & { isVirtualized: true }
 ```
 
 `displayIndex` exists because phase-one `DataTableRow.rowIndex` is the index
@@ -266,6 +297,19 @@ and renderers keep working without change.
 | `getRowProps(rowId)`   | existing; adds two attributes                 | Adds `aria-rowindex` and `data-virtual-index` (the `displayIndex`).                                                                                                 | unchanged                        |
 | `row.detailRowProps`   | existing; adds two attributes                 | Adds `aria-rowindex` and `data-virtual-index` (parent row's `displayIndex`).                                                                                        | unchanged                        |
 | `getFooterRowProps(k)` | `(k: number) => { 'aria-rowindex'?: number }` | `aria-rowindex` of the _k_-th footer row (0-based), after the last logical body row. `{}` when _k_ is outside `[0, footerRowCount)`. Bind it on each `<tfoot>` row. | `{}`                             |
+
+**Root versus viewport bindings:** on the client, the root's bindings switch
+to the values in the middle column once the viewport has registered and the
+root re-renders. On the server and in the first client render they still have
+the no-viewport values, because the root's slot runs before the viewport's
+`setup`. Inside a viewport, bind the viewport's slot props instead (same names
+and contracts); a manual composition that destructures `virtualItems` or
+`tableRootProps` from the root's slot would render every row, without
+`aria-rowcount`, on the server (on the client, the existing dev warning for
+mounted rows beyond the window fires). Root bindings outside the viewport (for example
+`virtualRange` in a "Rows 41–60 of 10,000" summary) are server-rendered with
+the no-viewport values and update after mount; they cause no hydration
+mismatch because the first client render matches the server.
 
 `rows` keeps its phase-one meaning (every row of `getRowModel()`), so counts,
 select-all, and consumer summaries are unchanged. Rendering `rows` instead of
@@ -294,22 +338,32 @@ because a 10k-row local virtual list is the first concrete consumer.
   `headerRowProps` is empty). It renders no `<tfoot>`, so it needs no
   `footerRowCount`; tables with a footer use a manual composition.
 - **`GhostDataTablePreset`** gains `virtualization?: GhostDataTablePresetVirtualization`
-  (`{ rowHeight; rowHeightMode?; overscan?; initialRowCount?; label?; rowHasTabbable?; tabSearchLimit? }`;
+  (`{ rowHeight; rowHeightMode?; overscan?; initialRowCount?; label?; rowHasTabbable?; tabSearchLimit?; viewportAttrs? }`,
+  where `viewportAttrs?: Pick<HTMLAttributes, 'class' | 'style'>` (Vue's `HTMLAttributes`);
   no `footerRowCount`, because the preset renders no `<tfoot>`). When
   set, the preset wraps only its `GhostTable` in a `GhostDataTableViewport`,
   which renders the focus catcher itself (toolbar and search stay outside).
   The preset forwards the viewport's `invalidateTabbableCache` on its own
   template ref.
-  Consumer `class`/`style` for the viewport go through
-  `virtualization.viewportAttrs` so the block size can be set
-  without a manual composition.
+  Consumer `class`/`style` for the viewport go through the typed
+  `virtualization.viewportAttrs` field, so the block size the viewport
+  requires can be set without a manual composition and without an
+  excess-property error. The preset merges them with the viewport's own
+  `class` and functional inline styles (it never overwrites them). It accepts
+  only `class` and `style`; the viewport's role, name, `tabindex`, and
+  listeners are not consumer-overridable through it.
 - **Manual composition** wraps its own `GhostTable` in the viewport and renders
-  `virtualItems` (example below). A composition that renders a
-  `GhostTableFoot` passes `footerRowCount` to the viewport and binds
-  `getFooterRowProps(k)` on each footer row.
+  `virtualItems` from the viewport's scoped slot (example below), not from the
+  root's slot. A composition that renders a `GhostTableFoot` passes
+  `footerRowCount` to the viewport and binds `getFooterRowProps(k)` from the
+  same slot on each footer row.
 
 ```vue
-<GhostDataTableViewport :row-height="40" style="block-size: 30rem">
+<GhostDataTableViewport
+  v-slot="{ virtualItems, headerRowProps, tableRootProps, getRowProps }"
+  :row-height="40"
+  style="block-size: 30rem"
+>
   <GhostTable v-bind="tableRootProps">
     <GhostTableHead>
       <GhostTableRow v-bind="headerRowProps"><!-- headers --></GhostTableRow>
@@ -664,11 +718,18 @@ the viewport's DOM, which, while the viewport is scrolled away from the end, is
 a control in a mounted row in the middle of the table. The **trailing focus
 catcher** makes this entry follow display order:
 
-- **Element:** `<span data-part="focus-catcher" aria-hidden="true">`, rendered
-  as the viewport element's last child, after the `<table>` (outside the
-  table, so it is not a row, has no `aria-rowindex`, and is not in
-  `aria-rowcount`). It has no content, role, or name. Functional inline styles:
-  zero inline and block size, `overflow: hidden`, `pointer-events: none`.
+- **Element:** `<span data-part="focus-catcher">`, rendered as the viewport
+  element's last child, after the `<table>` (outside the table, so it is not a
+  row, has no `aria-rowindex`, and is not in `aria-rowcount`). It has no
+  content, role, or name, and it is **not** `aria-hidden`: it is tabbable
+  while focus is outside the viewport, and a tabbable element hidden from the
+  accessibility tree fails `axe-core`'s `aria-hidden-focus` rule and would make
+  a reverse entry briefly focus an element that assistive technology cannot
+  see. An empty generic element with no name is skipped by browse mode, so
+  leaving it exposed adds nothing to the reading order. It also gets no
+  `role="none"` or `role="presentation"`, which a focusable element ignores
+  (`presentation-role-conflict`). Functional inline styles: zero inline and
+  block size, `overflow: hidden`, `pointer-events: none`.
 - **Tab index:** `0` only while focus is outside the viewport; `-1` while
   focus is anywhere inside it. The existing viewport `focusin` listener sets
   `-1`; the `focusout` listener sets `0` when the new focus target
@@ -1159,13 +1220,14 @@ outside `<table>`, so they are never scrolled or clipped.
 - **Spacer rows:** `<tr aria-hidden="true" data-virtual-spacer="true">` with one
   empty `<td colspan>`. They are hidden from the accessibility tree, carry no
   `aria-rowindex`, and are excluded from `aria-rowcount`.
-- **Focus catcher:** one `<span aria-hidden="true" data-part="focus-catcher">`
-  after the `<table>`, as the viewport's last child. It is never a resting
-  focus stop: it is tabbable only while focus is outside the viewport and
-  redirects any focus it receives to the last stop in display order (see
-  [Reverse entry](#reverse-entry-from-after-the-table)). Zero size with
-  `pointer-events: none`, which `axe-core`'s `aria-hidden-focus` rule reports
-  as "needs review" rather than a violation.
+- **Focus catcher:** one `<span data-part="focus-catcher">` after the
+  `<table>`, as the viewport's last child. It is never a resting focus stop:
+  it is tabbable only while focus is outside the viewport and redirects any
+  focus it receives to the last stop in display order (see
+  [Reverse entry](#reverse-entry-from-after-the-table)). It has no content,
+  role, or name and is not `aria-hidden`, because it is tabbable at times and
+  a focusable `aria-hidden` element is an `axe-core` `aria-hidden-focus`
+  violation. Zero size with `pointer-events: none`.
 
 ### Row count and row index
 
@@ -1258,9 +1320,11 @@ The viewport does not change `scroll-padding` itself.
   `tabindex="0"` and DOM order; dev builds warn
   ([Positive `tabindex`](#positive-tabindex)).
 - **`Shift+Tab` into the table from after it** is expected to announce only
-  the redirect target. The catcher is `aria-hidden`, has no name, and holds
-  focus at most until the next render; the AT review records whether any
-  pairing announces the transient focus.
+  the redirect target. The catcher has no role, name, or content (and is not
+  `aria-hidden`, so focus never lands on an element missing from the
+  accessibility tree), and holds focus at most until the next render; the AT
+  review records whether any pairing announces the transient focus, for
+  example as "blank".
 - `aria-busy` on the table while `loading` is unchanged.
 
 ### Reduced motion
@@ -1301,9 +1365,22 @@ The viewport does not change `scroll-padding` itself.
 
 - The server has no viewport size and no measurements. It renders rows
   `[0, min(initialRowCount, count))` plus one `'after'` spacer sized
-  `(count - rendered) × rowHeight` (detail rows of expanded rows in the
-  rendered range use `rowHeight` as their estimate). The scrollbar therefore
-  has the right order of magnitude from first paint.
+  `(count - rendered + unrenderedOpenDetailRows) × rowHeight`, where
+  `unrenderedOpenDetailRows` is the number of expanded rows in the set at
+  display index `rendered` or later (for example from `defaultExpandedRowIds`).
+  Each of those unrendered detail rows uses `rowHeight` as its
+  pre-measurement estimate, the same estimate the first real window uses, so
+  the scrollbar does not change size when that window is computed unless a
+  measurement differs. Detail rows of expanded rows in the rendered range are
+  rendered with their data rows (row groups) and also use `rowHeight` as their
+  estimate until measured.
+- The rendered window, the spacer, `aria-rowcount`, and `aria-rowindex` come
+  from the viewport (its injected context for `GhostDataTableTable` and the
+  preset, its scoped slot for manual compositions), which has registered
+  before it renders. They do not depend on the root re-rendering, so a manual
+  composition and an injected renderer produce the same server output. The
+  root's own slot bindings keep their no-viewport values on the server (see
+  [Root slot binding additions](#root-slot-binding-additions)).
 - The first client render produces the same output, so hydration has zero
   mismatches. Measurement, `ResizeObserver`, and the scroll listener start in
   `onMounted`; the first real window is applied in the next frame.
@@ -1490,7 +1567,8 @@ Anything about roving `tabindex`, cell focus, or `role` changes belongs in
   window mounts such a row and when the leading region re-renders with one; at
   most one warning per viewport; no warning for `tabindex="0"` or `"-1"`; no
   warning in production builds; the viewport never changes the attribute.
-- **Unit (focus catcher):** `tabindex` is `-1` after `focusin` anywhere in the
+- **Unit (focus catcher):** the catcher renders with no `aria-hidden` and no
+  `role`; `tabindex` is `-1` after `focusin` anywhere in the
   viewport and `0` after `focusout` to outside or to `null`; reverse entry
   target order (last trailing control, else last row with a control, else last
   leading control, else the viewport element); with the hint, a mounted target
@@ -1519,14 +1597,31 @@ Anything about roving `tabindex`, cell focus, or `role` changes belongs in
 - **Vue:** `GhostDataTableTable` and the preset render byte-identical output
   outside a viewport; inside one they render spacer rows with
   `aria-hidden="true"`; SSR render plus hydration with `initialRowCount` and
-  `defaultExpandedRowIds` produce zero hydration mismatches; dev warnings for
+  `defaultExpandedRowIds` produce zero hydration mismatches; a manual
+  composition that reads `virtualItems` and `tableRootProps` from the
+  viewport's scoped slot server-renders `initialRowCount` rows, the `'after'`
+  spacer, and `aria-rowcount`, the same body and attributes as
+  `GhostDataTableTable` for the same data, and the root's own slot bindings in
+  that SSR output still have their no-viewport values; with
+  `initialRowCount: 20`, 100 rows, and `defaultExpandedRowIds` holding rows 5,
+  40, and 90, the SSR `'after'` spacer is `(100 - 20 + 2) × rowHeight` (the
+  two expanded rows beyond the rendered range add one estimated detail row
+  each), and in fixed mode with detail rows exactly `rowHeight` tall the
+  viewport's `scrollHeight` is unchanged after the first real window; dev
+  warnings for
   unbounded viewport, missing name, nested `containHorizontal`, `rows`
   rendered instead of `virtualItems`, and a standalone layout without the
   focus catcher as the viewport's last child; the catcher is `tabindex="-1"`
   in SSR output and the first client render; listener and observer cleanup
   on unmount.
 - **Type:** `DataTableVirtualItem` narrows on `type`; `GhostDataTableTable`
-  slot `value` typing is unchanged inside a viewport.
+  slot `value` typing is unchanged inside a viewport;
+  `GhostDataTablePresetVirtualization` accepts
+  `viewportAttrs: { class: 'ledger', style: { blockSize: '32rem' } }` with no
+  excess-property error and rejects other keys inside `viewportAttrs`. A Vue
+  test renders the preset with that value and asserts the viewport element
+  carries the consumer class and block size alongside its own class and
+  functional styles.
 - **Playwright (`tests/e2e/ghost-data-table-virtual.spec.ts`), 10k-row
   example:**
   - `Tab` from the first row checkbox through 60 rows: each checkbox is
@@ -1885,8 +1980,10 @@ Anything about roving `tabindex`, cell focus, or `role` changes belongs in
     top, middle, and bottom, with a detail row open, with the `<tfoot>`
     fixture, and with the empty state,
     run both with focus outside the viewport (catcher `tabindex="0"`) and
-    inside it. The catcher's only allowed result is an `aria-hidden-focus`
-    "incomplete" entry, which the test asserts by selector.
+    inside it, with no exceptions for the catcher. The test also asserts
+    that the catcher has no `aria-hidden` attribute and that axe reports no
+    `aria-hidden-focus` or `presentation-role-conflict` result (violation or
+    incomplete) for it while its `tabindex` is `0`.
 - **Manual AT (before `stable`):** NVDA + Firefox and VoiceOver + Safari per
   [assistive-technology-review.md](../standards/assistive-technology-review.md):
   table navigation announces `aria-rowindex` of `aria-rowcount`; browse mode
@@ -2025,8 +2122,9 @@ Implementation must not begin until Zac approves this spec and resolves:
      `tabSearchLimit` rows.
 10. **Reverse entry mechanism (V10).**
     - **Recommended:** the trailing focus catcher
-      ([Reverse entry](#reverse-entry-from-after-the-table)): one `aria-hidden`
-      zero-size element, tabbable only while focus is outside the viewport,
+      ([Reverse entry](#reverse-entry-from-after-the-table)): one unnamed,
+      zero-size element (not `aria-hidden`, because it is tabbable), tabbable
+      only while focus is outside the viewport,
       that redirects to the last stop in display order. Focus on it can only
       mean backward sequential entry, so no input-modality tracking is needed.
     - **Alternative:** no extra element; the viewport's `focusin` listener
