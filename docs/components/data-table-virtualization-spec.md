@@ -1765,10 +1765,16 @@ Anything about roving `tabindex`, cell focus, or `role` changes belongs in
       emitted.
   - **Gap fixture without a hint:** with the default `tabSearchLimit`, `Tab`
     from row 99 focuses row 140 in one press and `Shift+Tab` returns to row 99
-    in one press. With `tabSearchLimit: 10`, `Tab` from row 99 keeps focus on
-    row 99 (viewport scrolled back to it, focus never leaves the viewport)
-    until the press that focuses row 140, after `ceil(40 / 10) + 1` presses in
-    total; same for `Shift+Tab` from row 140 back to row 99. Trailing gap
+    in one press. With `tabSearchLimit: 10` and the probe-count setup (below),
+    `Tab` from row 99 keeps focus on row 99 (viewport scrolled back to it,
+    focus never leaves the viewport) for 3 presses and focuses row 140 on the
+    fourth: row 100 is mounted at press start and read before the first probe
+    window, so it never counts; presses 1 to 3 each stop after 10 probed rows
+    (101–110, 111–120, 121–130), and press 4 probes rows 131–139 (counter 9)
+    and focuses row 140 in the same press. In general the press count is
+    `floor(E / tabSearchLimit) + 1`, where _E_ is the number of empty rows not
+    mounted at press start. Same for `Shift+Tab` from row 140 back to row 99
+    (row 139 is the uncounted mounted row; 4 presses). Trailing gap
     without a hint: the first `Tab` from the last row control keeps focus
     there, the next one leaves the table.
   - **Fully probed gaps with an unsure hint** (`rowHasTabbable: () => true`,
