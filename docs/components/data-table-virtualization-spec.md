@@ -782,8 +782,13 @@ catcher** makes this entry follow display order:
   see. An empty generic element with no name is skipped by browse mode, so
   leaving it exposed adds nothing to the reading order. It also gets no
   `role="none"` or `role="presentation"`, which a focusable element ignores
-  (`presentation-role-conflict`). Functional inline styles: zero inline and
-  block size, `overflow: hidden`, `pointer-events: none`.
+  (`presentation-role-conflict`). Functional inline styles: `display: block`,
+  zero inline and block size, `overflow: hidden`, `pointer-events: none`.
+  `display: block` matters: a bare `<span>` is a non-replaced inline box that
+  ignores `inline-size`/`block-size` and would sit in an anonymous line box
+  one line-height tall after the table, adding phantom space to the
+  viewport's `scrollHeight`. As an empty zero-height block it adds nothing,
+  so the [spacer extents](#window-computation) and the true end stay exact.
 - **Tab index:** `0` only while focus is outside the viewport; `-1` while
   focus is anywhere inside it. The existing viewport `focusin` listener sets
   `-1`; the `focusout` listener sets `0` when the new focus target
@@ -1237,9 +1242,14 @@ outside `<table>`, so they are never scrolled or clipped.
   measurement cache, pinned row, and `key`s of mounted rows are all keyed by
   `rowId`. An id that changes on refresh drops the row's measured height and
   the focus pin.
-- The viewport never reads row objects. It reads `rowId` and `displayIndex`
-  only, so consumer data stays unwatched and unmutated. The one exception is
-  passing slot rows to the consumer's own `rowHasTabbable` hint during
+- The viewport never reads the contents of row objects. It reads `rowId` and
+  `displayIndex`, and holds `row.row` only as a reference for the
+  [cache lifetime](#row-height-model) identity check (`!==` against the
+  reference stored with a cached height). It never reads a property of the
+  row object, never mutates it, and never observes it deeply (the stored
+  reference is held raw, outside Vue reactivity), so consumer data stays
+  unwatched and unmutated. The one other exception is passing slot rows to
+  the consumer's own `rowHasTabbable` hint during
   [Tab traversal](#tab-traversal-across-unmounted-rows).
 - Tables where some rows have no tabbable control (no selection column, links
   only in some rows) should pass `rowHasTabbable`, derived from the same data
@@ -1281,7 +1291,8 @@ outside `<table>`, so they are never scrolled or clipped.
   [Reverse entry](#reverse-entry-from-after-the-table)). It has no content,
   role, or name and is not `aria-hidden`, because it is tabbable at times and
   a focusable `aria-hidden` element is an `axe-core` `aria-hidden-focus`
-  violation. Zero size with `pointer-events: none`.
+  violation. `display: block` with zero size and `pointer-events: none`, so
+  it adds no line box and no height after the table.
 
 ### Row count and row index
 
@@ -1400,8 +1411,8 @@ The viewport does not change `scroll-padding` itself.
   for real rows should exclude `[data-virtual-spacer]` (for example zebra
   striping must not count spacers; use `:nth-child` only with care).
 - Focus catcher: `data-part="focus-catcher"` on a `<span>` after the table,
-  with functional inline styles only (zero size, `overflow: hidden`,
-  `pointer-events: none`). It must stay the viewport's last child; themes must
+  with functional inline styles only (`display: block`, zero size,
+  `overflow: hidden`, `pointer-events: none`). It must stay the viewport's last child; themes must
   not give it size or visible focus styles.
 - Footer rows (`<tfoot>`) carry `aria-rowindex` from `getFooterRowProps(k)`
   and no `data-virtual-index`; they are never spacers and never unmounted.
@@ -1640,7 +1651,7 @@ Anything about roving `tabindex`, cell focus, or `role` changes belongs in
   most one warning per viewport; no warning for `tabindex="0"` or `"-1"`; no
   warning in production builds; the viewport never changes the attribute.
 - **Unit (focus catcher):** the catcher renders with no `aria-hidden` and no
-  `role`; `tabindex` is `-1` after `focusin` anywhere in the
+  `role`, and with inline `display: block` and zero inline and block size; `tabindex` is `-1` after `focusin` anywhere in the
   viewport and `0` after `focusout` to outside or to `null`; reverse entry
   target order (last trailing control, else last row with a control, else last
   leading control, else the viewport element); with the hint, a mounted target
@@ -1708,6 +1719,11 @@ Anything about roving `tabindex`, cell focus, or `role` changes belongs in
   - `Tab` from the first row checkbox through 60 rows: each checkbox is
     `toBeFocused()`, the viewport scrolls, and the mounted row count stays
     within budget. Same with `Shift+Tab` upward.
+  - **Catcher adds no height:** at the top, the middle, and the end of the
+    set, in both modes, the viewport's `scrollHeight` equals the `<table>`'s
+    block size plus the viewport's own padding, the catcher's bounding box
+    has zero height, and scrolling to the end puts row 9,999's bottom edge at
+    the viewport's bottom edge (no blank band below the last row).
   - **Gap fixture** (`overscan: 5`, about 10 visible rows): rows 100–139 render
     no control (a 40-row gap, longer than `overscan` and than the mounted
     window); every other row has one link. A `focusin` recorder on `document`
