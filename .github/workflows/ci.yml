@@ -170,24 +170,19 @@ jobs:
         with:
           node-version: 22
           cache: pnpm
-      - name: Restore VitePress cache
-        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
-        with:
-          path: apps/docs/.vitepress/cache
-          key: vitepress-cache-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}-${{ hashFiles('apps/docs/**', 'docs/**', 'examples/**') }}
-          restore-keys: |
-            vitepress-cache-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}-
-            vitepress-cache-${{ runner.os }}-
       - run: pnpm install --frozen-lockfile
-      - run: pnpm verify:build
+      - run: pnpm build:packages
         env:
-          # `pnpm size` (inside verify:build) writes the Markdown report here; it
+          GHOSTVUE_REGISTRIES_READY: '1'
+      - run: pnpm verify:packages
+        env:
+          # `pnpm size` (inside verify:packages) writes the Markdown report here; it
           # is written before the budget check exits, so failures are reported.
           BUNDLE_SIZE_REPORT: .artifacts/bundle-size/report.md
           GHOSTVUE_REGISTRIES_READY: '1'
       # GHO-17 plan §4 / M1: there is no committed MCP asset lock hash. Rebuild
       # the bundle from sources and compare its assetBundleId with the
-      # dist/assets that `pnpm build` produced, so stale assets cannot ship.
+      # dist/assets that the package build produced, so stale assets cannot ship.
       - name: Check MCP asset bundle freshness
         run: pnpm --filter @ghostvue/mcp assets:check
       - name: Summarize bundle size
@@ -200,8 +195,37 @@ jobs:
           path: .artifacts/bundle-size/report.md
           retention-days: 3
           if-no-files-found: ignore
-      # Share the playground and docs builds produced by verify:build with
-      # browser-shard so docs/playground are built once per workflow run.
+
+  build-browser-hosts:
+    needs: changes
+    if: success() && needs.changes.outputs.skip_heavy != 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
+        with:
+          run_install: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
+          cache: pnpm
+      - name: Restore VitePress cache
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: apps/docs/.vitepress/cache
+          key: vitepress-cache-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}-${{ hashFiles('apps/docs/**', 'docs/**', 'examples/**') }}
+          restore-keys: |
+            vitepress-cache-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}-
+            vitepress-cache-${{ runner.os }}-
+      - run: pnpm install --frozen-lockfile
+      # Both hosts resolve theme CSS from source. Refresh the generated tokens
+      # here as the themes package build runs on a separate runner.
+      - run: node packages/themes/scripts/compile-tokens.mjs
+      - run: pnpm --filter @ghostvue/playground --filter @ghostvue/docs --parallel run build
+        env:
+          GHOSTVUE_REGISTRIES_READY: '1'
+      - run: pnpm docs:links
       - name: Assert e2e dist outputs exist
         run: test -f apps/playground/dist/index.html && test -f apps/docs/.vitepress/dist/index.html
       - name: Stage e2e dist for artifact upload
@@ -330,6 +354,7 @@ jobs:
         verify-unit-node24,
         verify-integration,
         verify-build,
+        build-browser-hosts,
         nuxt-fixture,
       ]
     if: always() && !cancelled()
@@ -352,8 +377,9 @@ jobs:
             "${{ needs.verify-unit.result }}"
             "${{ needs.verify-integration.result }}"
             "${{ needs.verify-build.result }}"
+            "${{ needs.build-browser-hosts.result }}"
           )
-          names=(verify-static verify-unit verify-integration verify-build)
+          names=(verify-static verify-unit verify-integration verify-build build-browser-hosts)
           for i in "${!results[@]}"; do
             if [[ "${results[$i]}" != "success" ]]; then
               echo "Required partition ${names[$i]} finished as: ${results[$i]}"
@@ -416,7 +442,7 @@ jobs:
         run: pnpm verify:contrast
 
   browser-shard:
-    needs: [changes, verify-build]
+    needs: [changes, build-browser-hosts]
     if: success() && needs.changes.outputs.skip_heavy != 'true'
     runs-on: ubuntu-latest
     # Keep the image tag aligned with @playwright/test in package.json so Chromium and system fonts stay pinned.
@@ -489,7 +515,7 @@ jobs:
   # the `firefox-e2e` / `webkit-e2e` projects in one container job to avoid a
   # second container pull/install; everything else stays Chromium-only.
   browser-cross:
-    needs: [changes, verify-build]
+    needs: [changes, build-browser-hosts]
     if: success() && needs.changes.outputs.skip_heavy != 'true' && needs.changes.outputs.run_cross_browser == 'true'
     runs-on: ubuntu-latest
     container:
@@ -531,7 +557,7 @@ jobs:
           if-no-files-found: error
 
   browser:
-    needs: [changes, verify-build, browser-shard, browser-cross]
+    needs: [changes, build-browser-hosts, browser-shard, browser-cross]
     if: always() && !cancelled()
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -547,8 +573,8 @@ jobs:
       - name: Require successful build, shards, and cross-browser jobs
         if: needs.changes.outputs.skip_heavy != 'true'
         run: |
-          if [[ "${{ needs.verify-build.result }}" != "success" ]]; then
-            echo "verify-build finished as: ${{ needs.verify-build.result }}"
+          if [[ "${{ needs.build-browser-hosts.result }}" != "success" ]]; then
+            echo "build-browser-hosts finished as: ${{ needs.build-browser-hosts.result }}"
             exit 1
           fi
           # Matrix job aggregate result is exposed on browser-shard.
