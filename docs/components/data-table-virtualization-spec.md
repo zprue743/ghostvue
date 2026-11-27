@@ -372,15 +372,51 @@ because a 10k-row local virtual list is the first concrete consumer.
   no `footerRowCount`, because the preset renders no `<tfoot>`). When
   set, the preset wraps only its `GhostTable` in a `GhostDataTableViewport`,
   which renders the focus catcher itself (toolbar and search stay outside).
-  The preset forwards the viewport's `invalidateTabbableCache` on its own
-  template ref.
-  Consumer `class`/`style` for the viewport go through the typed
-  `virtualization.viewportAttrs` field, so the block size the viewport
-  requires can be set without a manual composition and without an
-  excess-property error. The preset merges them with the viewport's own
-  `class` and functional inline styles (it never overwrites them). It accepts
-  only `class` and `style`; the viewport's role, name, `tabindex`, and
-  listeners are not consumer-overridable through it.
+  The preset forwards four of the viewport's exposed members on its own
+  template ref, with the same signatures:
+  `scrollToRow(rowId, opts?)`, `scrollToOffset(px, opts?)`,
+  `getScrollOffset()`, and `invalidateTabbableCache(rowIds?)`. With
+  `virtualization` set and the viewport mounted, each call delegates to the
+  viewport, so the result is the same as calling the viewport's own
+  member. That includes clamping, `align`, the reduced-motion downgrade,
+  and the `false` return for an id outside the windowed set. This lets preset
+  consumers do the scroll restoration on Back that is consumer-owned
+  under [Non-goals](#non-goals). Save `getScrollOffset()` before leaving,
+  then call `scrollToOffset(saved)` after the preset mounts. The `'after'`
+  spacer exists from the first render, so the full scroll range exists
+  before any row is measured. Restoring by offset is exact in fixed mode
+  only. In measured mode the remounted viewport has no cached heights, so
+  the saved offset is applied to estimated positions. The view can come
+  back near the saved row rather than exactly on it. Anchoring then keeps
+  whichever row is in view steady while rows above it are measured. For
+  exact restoration in measured mode, save a row id and call
+  `scrollToRow(id, { align: 'start' })`. The preset doesn't forward
+  `element` or `range`.
+  The scroll element stays internal to the preset. Consumers who need
+  either use a manual composition.
+  - **Virtualization off** (`virtualization` unset, or the viewport not yet
+    mounted): the preset has no scroll container of its own, because the page
+    or an ancestor scrolls it. The members still exist, so the ref type
+    doesn't depend on the prop. `getScrollOffset()` returns `0`,
+    `scrollToOffset()` does nothing, `scrollToRow()` returns `false`
+    without scrolling, and `invalidateTabbableCache()` does nothing.
+    None of them scrolls an ancestor or the document. When virtualization is
+    unset, dev builds warn once per preset instance on the first call to
+    `scrollToRow`, `scrollToOffset`, or `getScrollOffset`, so a restoration
+    path that silently does nothing is caught. Calls made before the
+    viewport mounts don't warn.
+  - **Toggling at runtime:** the members always use the current viewport.
+    Setting `virtualization` mounts a new viewport, which starts at offset
+    `0`. Unsetting it unmounts the viewport, and the members switch to the
+    behavior described above. The preset never carries an offset across a
+    toggle.
+    Consumer `class`/`style` for the viewport go through the typed
+    `virtualization.viewportAttrs` field, so the block size the viewport
+    requires can be set without a manual composition and without an
+    excess-property error. The preset merges them with the viewport's own
+    `class` and functional inline styles (it never overwrites them). It accepts
+    only `class` and `style`; the viewport's role, name, `tabindex`, and
+    listeners are not consumer-overridable through it.
 - **Manual composition** wraps its own `GhostTable` in the viewport and renders
   `virtualItems` from the viewport's scoped slot (example below), not from the
   root's slot. A composition that renders a `GhostTableFoot` passes
@@ -1744,7 +1780,20 @@ Anything about roving `tabindex`, cell focus, or `role` changes belongs in
   excess-property error and rejects other keys inside `viewportAttrs`. A Vue
   test renders the preset with that value and asserts the viewport element
   carries the consumer class and block size alongside its own class and
-  functional styles.
+  functional styles. The preset's template ref type includes `scrollToRow`,
+  `scrollToOffset`, `getScrollOffset`, and `invalidateTabbableCache` with the
+  viewport's signatures, whether or not `virtualization` is set, and doesn't
+  include `element` or `range`.
+- **Vue (preset ref forwarding):** with `virtualization` set, each forwarded
+  member calls the viewport's member with the same arguments and returns its
+  result (spy on the viewport). With `virtualization` unset,
+  `getScrollOffset()` is `0`, `scrollToOffset(500)` and
+  `invalidateTabbableCache()` change nothing, `scrollToRow(id)` returns
+  `false`, and neither `window.scrollTo` nor any ancestor's `scrollTop` is
+  touched. One dev warning appears on the first scroll-member call and none
+  on later calls, none in production, and none for calls made before the
+  viewport mounts. Toggling `virtualization` off and on gives a new viewport
+  at offset `0`, and the members act on it.
 - **Playwright (`tests/e2e/ghost-data-table-virtual.spec.ts`), 10k-row
   example:**
   - `Tab` from the first row checkbox through 60 rows: each checkbox is
@@ -1757,6 +1806,26 @@ Anything about roving `tabindex`, cell focus, or `role` changes belongs in
     then puts row 6,000's top edge at the viewport's top edge (below a sticky
     header when the recipe is used). The same with a header row that gains a
     second line, and with the caption removed.
+  - **Preset scroll restoration:** a two-route example. One route renders
+    `GhostDataTablePreset` with
+    `virtualization: { rowHeight: 40, viewportAttrs: { style: { blockSize: '30rem' } } }`
+    and 10k rows. Call `scrollToRow(row5000Id, { align: 'start' })` on the
+    preset ref (it returns `true`), and save `getScrollOffset()` into
+    `history.state` before navigating to the other route. `page.goBack()`
+    remounts the preset, and `onMounted` calls `scrollToOffset(saved)`. Then
+    `getScrollOffset()` equals the saved value, row 5,000 is the first
+    visible row (`aria-rowindex="5002"`, and `visibleStart` reads 5000 through
+    the dev hook), and no row before the window is mounted. Then repeat in
+    measured mode with rows of mixed height. First, the offset path: the
+    first visible row after restore is the row at the saved offset under
+    estimated heights, and it stays the first visible row while the rows
+    above it are measured (no jump). Second, a saved row id restored with
+    `scrollToRow(row5000Id, { align: 'start' })`: row 5,000 is the first
+    visible row. Also check that `scrollToRow` with
+    an id outside the set returns `false` and doesn't move the offset. A
+    variant with `virtualization` unset in a page-scrolled layout checks
+    that `scrollToOffset(saved)` leaves `window.scrollY` unchanged and that
+    the dev warning is logged once.
   - **Catcher adds no height:** at the top, the middle, and the end of the
     set, in both modes, the viewport's `scrollHeight` equals the `<table>`'s
     block size plus the viewport's own padding, the catcher's bounding box
@@ -2156,7 +2225,9 @@ Anything about roving `tabindex`, cell focus, or `role` changes belongs in
 - New section "Large data sets" in `docs/components/data-table.md`: when to
   prefer pagination, the virtual example, the `table-layout: fixed` and
   zero row spacing (`border-collapse: collapse`) requirements, fixed versus measured rows, the sticky-header recipe with
-  `scroll-padding-block-start`, and the screen-reader browse-mode limitation.
+  `scroll-padding-block-start`, the screen-reader browse-mode limitation, and
+  a scroll-restoration recipe for the preset ref (offset in fixed mode, row
+  id in measured mode, and what the members do with virtualization off).
 - Executable examples: `examples/data-table/virtual-ledger.vue` (10k local
   rows, `enablePagination: false`, fixed rows, selection) and
   `examples/data-table/virtual-server-page.vue` (server page of 1,000 rows,
