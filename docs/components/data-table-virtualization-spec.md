@@ -229,10 +229,18 @@ the failure is visible rather than silently slow.
 ```ts
 /** Mounted window over the windowed row set, in display positions. */
 interface DataTableVirtualRange {
-  /** First mounted display index (0-based, inclusive). */
+  /**
+   * First display index of the contiguous scrolling window (0-based,
+   * inclusive), overscan included and pinned rows excluded.
+   */
   start: number
-  /** Last mounted display index plus one (exclusive). */
+  /** Last display index of that window plus one (exclusive). */
   end: number
+  /**
+   * Display indices of pinned rows mounted outside `[start, end)`, ascending.
+   * Usually empty; at most one entry while one row holds focus.
+   */
+  pinned: readonly number[]
   /** First and last display index intersecting the visible area. */
   visibleStart: number
   visibleEnd: number
@@ -287,16 +295,16 @@ Additions to `GhostDataTableSlotProps<TData>`. When no viewport is registered
 they have the values shown in the last column, so existing manual compositions
 and renderers keep working without change.
 
-| Binding                | Type                                          | Contract (viewport registered)                                                                                                                                      | No viewport                      |
-| ---------------------- | --------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------- |
-| `virtualItems`         | `DataTableVirtualItem<TData>[]`               | Mounted rows and spacer rows in DOM order. Render this instead of `rows` in the body.                                                                               | Every row of `rows`, no spacers  |
-| `virtualRange`         | `DataTableVirtualRange`                       | Same as the viewport's `range`. Use it for consumer text such as "Rows 41–60 of 10,000".                                                                            | Whole set (`start: 0`, `end: n`) |
-| `headerRowProps`       | `{ 'aria-rowindex'?: number }`                | `aria-rowindex: 1` for the single header row. Bind it on the `<thead>` row.                                                                                         | `{}`                             |
-| `isVirtualized`        | `boolean`                                     | `true`.                                                                                                                                                             | `false`                          |
-| `tableRootProps`       | existing; adds `'aria-rowcount'?: number`     | Adds `aria-rowcount` (see [Row count and row index](#row-count-and-row-index)).                                                                                     | unchanged                        |
-| `getRowProps(rowId)`   | existing; adds two attributes                 | Adds `aria-rowindex` and `data-virtual-index` (the `displayIndex`).                                                                                                 | unchanged                        |
-| `row.detailRowProps`   | existing; adds two attributes                 | Adds `aria-rowindex` and `data-virtual-index` (parent row's `displayIndex`).                                                                                        | unchanged                        |
-| `getFooterRowProps(k)` | `(k: number) => { 'aria-rowindex'?: number }` | `aria-rowindex` of the _k_-th footer row (0-based), after the last logical body row. `{}` when _k_ is outside `[0, footerRowCount)`. Bind it on each `<tfoot>` row. | `{}`                             |
+| Binding                | Type                                          | Contract (viewport registered)                                                                                                                                      | No viewport                                    |
+| ---------------------- | --------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------- |
+| `virtualItems`         | `DataTableVirtualItem<TData>[]`               | Mounted rows and spacer rows in DOM order. Render this instead of `rows` in the body.                                                                               | Every row of `rows`, no spacers                |
+| `virtualRange`         | `DataTableVirtualRange`                       | Same as the viewport's `range`. Use `visibleStart`/`visibleEnd` for consumer text such as "Rows 41–60 of 10,000"; `start`/`end` never include a pinned row.         | Whole set (`start: 0`, `end: n`, `pinned: []`) |
+| `headerRowProps`       | `{ 'aria-rowindex'?: number }`                | `aria-rowindex: 1` for the single header row. Bind it on the `<thead>` row.                                                                                         | `{}`                                           |
+| `isVirtualized`        | `boolean`                                     | `true`.                                                                                                                                                             | `false`                                        |
+| `tableRootProps`       | existing; adds `'aria-rowcount'?: number`     | Adds `aria-rowcount` (see [Row count and row index](#row-count-and-row-index)).                                                                                     | unchanged                                      |
+| `getRowProps(rowId)`   | existing; adds two attributes                 | Adds `aria-rowindex` and `data-virtual-index` (the `displayIndex`).                                                                                                 | unchanged                                      |
+| `row.detailRowProps`   | existing; adds two attributes                 | Adds `aria-rowindex` and `data-virtual-index` (parent row's `displayIndex`).                                                                                        | unchanged                                      |
+| `getFooterRowProps(k)` | `(k: number) => { 'aria-rowindex'?: number }` | `aria-rowindex` of the _k_-th footer row (0-based), after the last logical body row. `{}` when _k_ is outside `[0, footerRowCount)`. Bind it on each `<tfoot>` row. | `{}`                                           |
 
 **Root versus viewport bindings:** on the client, the root's bindings switch
 to the values in the middle column once the viewport has registered and the
@@ -431,14 +439,32 @@ order, or any v-model. It only changes which members of the set are mounted.
   `scrollTop` by the delta in the same frame so the first visible row does not
   move. The viewport sets `overflow-anchor: none` so browser scroll anchoring
   does not apply a second correction.
-- **Cache lifetime:** cached heights for ids no longer in the source `data`
-  are dropped on a `data` reference change. A column-set change or viewport
+- **Cache lifetime:** each cached height is stored with the row object it
+  was measured from. On a `data` reference change, entries for ids no longer
+  in `data` are dropped, and so are entries for retained ids whose row object
+  is not the same reference (`!==`) as before; those rows fall back to the
+  `rowHeight` estimate until they mount and are measured again, so a refreshed
+  row's old height never stays in the prefix sums. Entries whose row object
+  is unchanged are kept. Mutating a row object in place, without a new `data`
+  reference, is not detected while the row is unmounted; its height is
+  corrected (with anchoring) when it next mounts, and the docs recommend
+  immutable updates for measured mode. A column-set change or viewport
   inline-size change clears the cache (wrapping may change).
 - **Table layout:** different rows mounting under `table-layout: auto` would
   change column widths while scrolling. Virtualized tables must use
   `table-layout: fixed` with explicit column widths. `GhostDataTableTable` and
   the preset do not impose it (headless); the docs and the dev mismatch
   warning say so.
+- **Row spacing:** spacer sizes, the visible-range lookup, and `scrollToRow`
+  offsets are sums of row heights only, so the table must have no space
+  between rows: `border-collapse: collapse`, or `border-spacing` with a block
+  component of `0`. Under the browser default (`separate` with `2px`
+  spacing), each spacer would drop the spacing of every row it replaces and
+  the error would grow with the number of skipped rows. Like `table-layout`,
+  this is consumer CSS that the headless table does not impose; the docs say
+  so, and dev builds read the `<table>`'s computed `border-collapse` and
+  `border-spacing` once per layout change and warn once per viewport when the
+  table is `separate` with a non-zero block spacing.
 
 ### Window computation
 
@@ -1426,16 +1452,16 @@ vertical).
 **Budgets (proposed; gates follow the parent spec's policy of informational
 until CI variance is known, except the deterministic checks):**
 
-| Scenario                                                          | Budget                                                                                                                                | Kind          |
-| ----------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- | ------------- |
-| Mounted data rows, 400px viewport, `rowHeight: 40`, `overscan: 5` | `≤ 10 + 2 × 5 + 1` (visible + overscan + one pinned row), independent of row count                                                    | Deterministic |
-| One `Tab` / `Shift+Tab` press or reverse entry                    | `≤ tabSearchLimit` probed rows and probe windows, `≤ 1` settle scroll, `≤ (tabSearchLimit + 1) × (visible + 2 × overscan)` row mounts | Deterministic |
-| Scroll frame                                                      | Zero sort, filter, `sortFn`, `filterFn`, or accessor calls                                                                            | Deterministic |
-| Scroll frame                                                      | At most one window recompute per animation frame                                                                                      | Deterministic |
-| Cell contexts                                                     | Built only for mounted rows (see below)                                                                                               | Deterministic |
-| Window recompute, 100k rows, measured mode                        | p95 < 1ms                                                                                                                             | Informational |
-| Scroll-to-paint, 10k rows × 8 columns, mid-range CI runner        | p95 < 16ms                                                                                                                            | Informational |
-| First render, 10k local rows, `enablePagination: false`           | Within 2× the phase-one 25-row page render                                                                                            | Informational |
+| Scenario                                                          | Budget                                                                                                                                          | Kind          |
+| ----------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- | ------------- |
+| Mounted data rows, 400px viewport, `rowHeight: 40`, `overscan: 5` | `≤ 11 + 2 × 5 + 1` (`ceil(400 / 40) + 1` intersecting rows at a non-aligned offset, plus overscan and one pinned row), independent of row count | Deterministic |
+| One `Tab` / `Shift+Tab` press or reverse entry                    | `≤ tabSearchLimit` probed rows and probe windows, `≤ 1` settle scroll, `≤ (tabSearchLimit + 1) × (visible + 2 × overscan)` row mounts           | Deterministic |
+| Scroll frame                                                      | Zero sort, filter, `sortFn`, `filterFn`, or accessor calls                                                                                      | Deterministic |
+| Scroll frame                                                      | At most one window recompute per animation frame                                                                                                | Deterministic |
+| Cell contexts                                                     | Built only for mounted rows (see below)                                                                                                         | Deterministic |
+| Window recompute, 100k rows, measured mode                        | p95 < 1ms                                                                                                                                       | Informational |
+| Scroll-to-paint, 10k rows × 8 columns, mid-range CI runner        | p95 < 16ms                                                                                                                                      | Informational |
+| First render, 10k local rows, `enablePagination: false`           | Within 2× the phase-one 25-row page render                                                                                                      | Informational |
 
 **Implementation requirement on phase-one code:** `useDataTableSlotBindings`
 builds `cellsByRowId` for every row of `getRowModel()` (O(rows × columns)
@@ -1499,8 +1525,16 @@ Anything about roving `tabindex`, cell focus, or `role` changes belongs in
   past the end; overscan normalization (`0`, `-3`, `2.7`, `NaN`); measured-mode
   prefix sums with mixed measured and estimated rows; anchoring delta when a
   row above the viewport grows and shrinks; cache keyed by `rowId` survives a
-  sort; cache pruning on `data` change; pinned row splits spacers into
-  `before` / `between` / `after` with sizes summing to the total.
+  sort; cache pruning on `data` change, including a retained id whose row
+  object was replaced (its height falls back to the estimate and the spacer
+  and `scrollToRow` offset change accordingly) while an id with the same row
+  object keeps its height; pinned row splits spacers into
+  `before` / `between` / `after` with sizes summing to the total, and
+  `virtualRange` reports the pinned row only in `pinned`, with `start`/`end`
+  covering the scrolling window alone (focus row 5, scroll to row 100:
+  `pinned` is `[5]` and `start` is `95`); with `border-collapse: separate` and
+  a 2px spacing, the dev warning fires once and no warning fires for
+  `collapse` or a zero block spacing.
 - **Unit (Tab traversal search):** target search forward and backward from a
   row, the header, and the viewport element; mounted rows read from the DOM,
   unmounted rows from a fresh hint call (never the known-empty set when a hint
@@ -1995,8 +2029,8 @@ Anything about roving `tabindex`, cell focus, or `role` changes belongs in
 ## Documentation plan
 
 - New section "Large data sets" in `docs/components/data-table.md`: when to
-  prefer pagination, the virtual example, the `table-layout: fixed`
-  requirement, fixed versus measured rows, the sticky-header recipe with
+  prefer pagination, the virtual example, the `table-layout: fixed` and
+  zero row spacing (`border-collapse: collapse`) requirements, fixed versus measured rows, the sticky-header recipe with
   `scroll-padding-block-start`, and the screen-reader browse-mode limitation.
 - Executable examples: `examples/data-table/virtual-ledger.vue` (10k local
   rows, `enablePagination: false`, fixed rows, selection) and
