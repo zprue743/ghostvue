@@ -145,7 +145,7 @@ async function installable(tarball, version) {
   if (!(await alreadyPublished(tarball, version))) return false
   // Exact-version metadata can appear before the npm install index.
   const response = await fetch(
-    `${registry}${tarball.name.replace('/', '%2f')}`,
+    `${registry}${encodeURIComponent(tarball.name)}`,
     {
       headers: {
         accept: 'application/vnd.npm.install-v1+json',
