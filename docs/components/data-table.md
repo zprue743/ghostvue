@@ -1,10 +1,10 @@
 # GhostDataTable
 
 `GhostDataTable` adds sorting, filtering, pagination, row selection, and
-expandable detail rows to a native [`GhostTable`](./table.md). It is headless:
-import it from `@ghostvue/vue`. There is no themed DataTable in
-`@ghostvue/themes` yet. You own the row data, fetching, and layout; the table
-owns the interaction state and its accessible markup.
+expandable detail rows to a native [`GhostTable`](./table.md). Import the
+headless components from `@ghostvue/vue` or use the themed wrappers from
+`@ghostvue/themes`. You own the row data and fetching. The table owns the
+interaction state and accessible markup.
 
 Start with one of two paths. Both use the same invoice rows and typed columns.
 
@@ -70,6 +70,55 @@ and a `GhostEmptyState` row when nothing matches. Use it instead of a manual
 - Slots: typed `#<columnId>` cells, `#detail="{ row, rowId, rowIndex }"`,
   `#toolbar`, and `#search` to replace the default search field.
 - `disabled` and `loading` come from the parent `GhostDataTable`.
+
+### Preset layout slots
+
+Use `layoutSlots` to opt in to individual regions on either preset. For
+example, `:layout-slots="['bulkActions', 'footer']"` reserves those two names
+for layout on that preset. Column slots keep their existing names and cell
+props by default. When a column shares an enabled name, customize its cells
+with the column's `cell` renderer.
+
+- `#toolbarStart` and `#toolbarEnd` put controls on either side of the search
+  field. The field remains its own keyboard stop.
+- `#bulkActions="{ selectedRowIds, selectedCount, clearSelection }"` appears
+  while rows are selected. The count includes selections on other manual
+  pages. Clearing the selection from inside the bar returns focus to the
+  select-all checkbox when available.
+- `#footer="{ pagination, pageCount, rowCount, setPageIndex }"` can host a
+  pager or query-wide row count. `setPageIndex` uses the root's normal
+  pagination write and emits one request in manual pagination.
+
+## Themed preset
+
+<GhostExample id="data-table/themed-invoices" />
+
+Import `GhostDataTable` and either renderer from `@ghostvue/themes` for the
+default recipe. Use `size="sm"` for compact cells, `variant="card"` for a
+bordered surface, and `sticky-header` to pin headings to the nearest scroll
+container. The wrappers share the headless behavior and typed slots.
+Both renderers accept `contain-horizontal` and `scroll-label` to give the
+horizontal scroll region its own accessible name.
+
+The themed sort mark follows the active column's `aria-sort` and `data-sort`
+state. For manual composition, add `data-part="sort-button"` to opt in. A
+decorative child with `data-part="sort-indicator"` replaces the mark. During
+loading the header signals progress while body text and enabled controls
+remain at full contrast.
+
+<!-- @generated docs-api:themes/ghost-data-table begin -->
+
+<!-- Source: packages/themes/manifests/ghost-data-table.manifest.json. Run pnpm docs:api:write after it changes. -->
+
+`@ghostvue/themes` adds these to the headless `GhostDataTable` API, which it forwards:
+
+| Prop           | Type                | Default   | Description                                                              |
+| -------------- | ------------------- | --------- | ------------------------------------------------------------------------ |
+| `size`         | `'sm' \| 'md'`      | `"md"`    | Cell and control density.                                                |
+| `variant`      | `'plain' \| 'card'` | `"plain"` | Container surface.                                                       |
+| `stickyHeader` | `boolean`           | `false`   | Pins column headings to the block start of the nearest scroll container. |
+
+<!-- @generated docs-api:themes/ghost-data-table end -->
 
 ## Full composition (b)
 

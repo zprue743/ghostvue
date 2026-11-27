@@ -1,0 +1,64 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "handwritten",
+  "name": "GhostDataTable",
+  "package": "@ghostvue/themes",
+  "status": "experimental",
+  "description": "Theme shell for GhostDataTable with native table semantics and the headless interaction contract.",
+  "props": [
+    {
+      "name": "size",
+      "type": "'sm' | 'md'",
+      "default": "md",
+      "required": false,
+      "description": "Cell and control density.",
+      "deprecated": false
+    },
+    {
+      "name": "variant",
+      "type": "'plain' | 'card'",
+      "default": "plain",
+      "required": false,
+      "description": "Container surface.",
+      "deprecated": false
+    },
+    {
+      "name": "stickyHeader",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "Pins column headings to the block start of the nearest scroll container.",
+      "deprecated": false
+    }
+  ],
+  "models": [],
+  "events": [],
+  "slots": [],
+  "exposed": [
+    {
+      "name": "element",
+      "kind": "property",
+      "type": "HTMLElement | null",
+      "description": "The themed container after mount."
+    }
+  ],
+  "styling": {
+    "parts": [
+      {
+        "name": "root",
+        "description": "The container that scopes DataTable recipes."
+      }
+    ],
+    "states": [],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "table",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/table/",
+    "keyboard": {},
+    "requiredAriaAttributes": []
+  },
+  "examples": [
+    "data-table/themed-invoices"
+  ]
+}

@@ -1,0 +1,58 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "handwritten",
+  "name": "GhostDataTablePreset",
+  "package": "@ghostvue/themes",
+  "status": "experimental",
+  "description": "Themed DataTable preset with native table interactions and the same cell and layout slots as the headless preset.",
+  "props": [],
+  "models": [],
+  "events": [],
+  "slots": [],
+  "exposed": [],
+  "styling": {
+    "parts": [
+      {
+        "name": "header",
+        "description": "Bar that holds optional toolbar content and search."
+      },
+      {
+        "name": "toolbar-start",
+        "description": "Leading opted-in toolbar content."
+      },
+      {
+        "name": "search",
+        "description": "Search field or search slot."
+      },
+      {
+        "name": "toolbar-end",
+        "description": "Trailing opted-in toolbar content."
+      },
+      {
+        "name": "bulk-actions",
+        "description": "Actions for the current selection."
+      },
+      {
+        "name": "footer",
+        "description": "Opted-in footer such as pagination."
+      },
+      {
+        "name": "sort-button",
+        "description": "Native button inside a sortable heading."
+      },
+      {
+        "name": "expand-button",
+        "description": "Button that toggles detail content."
+      }
+    ],
+    "states": [],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "table",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/patterns/table/",
+    "keyboard": {},
+    "requiredAriaAttributes": []
+  },
+  "examples": []
+}
