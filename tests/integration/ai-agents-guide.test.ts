@@ -54,7 +54,7 @@ describe('AI agents guide MCP snippets', () => {
         'Codex CLI',
         'Claude Desktop',
         'Faster start without `npx`',
-        'Before the npm release',
+        'Run from a checkout',
       ]),
     )
     expect(new Set(snippets.map((snippet) => snippet.format))).toEqual(
