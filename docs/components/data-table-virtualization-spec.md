@@ -454,8 +454,9 @@ once. Whenever the viewport cancels a press, it moves focus itself, including
 to a target that a probe mounted as an overscan neighbour, so a cancelled
 press never strands focus while a target is reachable. Without one, crossing a long run can take extra key presses (see
 [Probe without a hint](#probe-without-a-hint)), and leaving the table forward
-after a probe that reached the end of the rows takes exactly one more press,
-never more ([End of search](#end-of-search)). The order guarantee still holds,
+after a probe that reached the end of the rows takes one more press when that
+press's rescan finds no new candidate, and otherwise a bounded number of
+further presses ([End of search](#end-of-search)). The order guarantee still holds,
 with three exceptions, each needing a change the viewport cannot observe or
 an entry with nowhere to return to:
 
@@ -764,8 +765,12 @@ from its start position without re-mounting covered rows: an O(1) set lookup
 per covered row, one hint call per other unmounted row (no mount, and not
 counted toward `tabSearchLimit`), and a DOM read for mounted rows, so the scan
 stays O(`count`) like steps 1–5. An exhausted continuation mounts nothing and
-calls `focus()` on nothing unless an uncovered row's hint now answers `true`:
-the press falls through to native order. Reaching the end of the rows
+calls `focus()` on nothing unless an uncovered unmounted row is a candidate
+again (its hint now answers `true`, or, without a hint, it is neither covered
+nor known-empty), which includes a retained or other
+[DOM-read row](#end-of-search) of the earlier probe: the press then probes it
+as a fresh search would.
+Otherwise the press falls through to native order. Reaching the end of the rows
 adds at most one `focus()` call (on a trailing or leading control, or the
 viewport element) and one scroll back.
 No sort, filter, or accessor calls in any case.
@@ -782,7 +787,8 @@ reverse entry and drops any continuation, exhausted or not, so the first press
 after a new page arrives searches that page fresh. The end of the loaded page
 is the end of the set for [End of search](#end-of-search): a probe that reaches
 it records an exhausted continuation, and the next `Tab` reaches the pager
-natively.
+natively when its rescan finds no new candidate (otherwise it probes that
+candidate first, with the same bound).
 
 #### Probe without a hint
 
@@ -805,13 +811,19 @@ separate quantities are bounded per key press (or reverse entry):
   read from the DOM without a hint call. The answer never changes the count
   or overrides the DOM (a row read with a control is the target, and a
   `false` answer for it logs the wrong-`false` dev warning); it only decides
-  whether the row is [covered](#probe-results-and-freshness).
+  whether the row is [covered](#probe-results-and-freshness). A `false`
+  answer exempts only a row the search skips while it is unmounted: that row
+  is never mounted or read, so it does not count. A row that a probe window
+  mounts incidentally (an overscan neighbour) or that stayed mounted is read
+  from the DOM, and if it reads empty it counts whatever the hint answers
+  for it.
   Only the rows the search reads before its first probe window are exempt:
   they were mounted when the key was pressed, nothing has moved the window
   yet, and reading them is the constant-cost DOM work of steps 1–5. The
   search stops as soon as the counter equals `tabSearchLimit`, without reading
-  further mounted rows. Rows the hint answered `false`, mounted rows the
-  search never read, and the target do not count. So a probe window can never
+  further mounted rows. Unmounted rows the hint answered `false` (skipped
+  without mounting), mounted rows the search never read, and the target do
+  not count. So a probe window can never
   open for a candidate the search has already passed, and a candidate that
   was mounted at press start but must be remounted always counts: the
   exemption ends with the first window, before any window can unmount it.
@@ -868,14 +880,48 @@ viewport) names `rowHasTabbable` as the fix, or an accurate answer instead of
   - **Forward, no trailing-region control:** the next stop is after the
     viewport, which the viewport does not look for (no document query). Focus
     stays on the origin and the viewport scrolls back to it, as at the limit,
-    and the continuation is recorded as **exhausted** (every row from the
-    start position to the end is covered or was answered `false`). The next
+    and the continuation is recorded as **exhausted**. Every row from the
+    start position to the end is then in one of three groups: covered,
+    answered `false` while unmounted, or read empty from the DOM without
+    being covered. The third group are the probe's **DOM-read rows**: with a
+    hint, its **retained rows** (probed rows that stayed mounted throughout
+    the press, read empty, hint never called), and in both modes, rows read
+    before the first probe window. They keep a fresh hint (no probe result
+    suppresses a later hint call for them, see
+    [Probe results and freshness](#probe-results-and-freshness)), so a
+    settle scroll that unmounts one makes it a candidate again when its hint
+    answers `true` (without a hint, when it is not known-empty). The next
     `Tab` from the same origin rescans the span without mounting a covered
-    row. If no uncovered row's hint now answers `true`, it finds no target
-    (step 4) and native order leaves the table. That press never re-probes
-    and does not depend on the known-empty set, so it exits with an unsure
-    hint, a wrong hint, or no hint. If an uncovered row now answers `true`,
-    that row is the target (step 6), as in a fresh search.
+    row:
+    - **Exit.** If the rescan finds no candidate (no uncovered unmounted
+      row's hint now answers `true`, and, without a hint, every uncovered
+      unmounted row is known-empty), in particular no retained or other
+      DOM-read row that is now unmounted and answers `true`, it finds no
+      target (step 4) and native order leaves the table, with zero probe
+      windows. That press never
+      re-probes, so it exits with an unsure hint, a wrong hint, or no hint.
+    - **Retry.** Otherwise the first such candidate is evaluated as in a
+      fresh search (step 6): if it has a control, it is the target. If it is
+      still empty (with no change between presses it is always a DOM-read
+      row), the press probes it (counted toward `tabSearchLimit`), covers
+      it, keeps focus on the origin, and records a new continuation whose
+      covered set is the union, exactly as a resumed capped press does.
+
+    The retries are bounded. With no change to `data`, permissions, or other
+    row state and no user scroll between presses, every hint answer stays
+    the same, so a retry's candidate is always a DOM-read row of the
+    exhausted probe (with a hint, one whose hint answers `true`): every other
+    row of the span is covered or answers `false` again (without a hint, is
+    known-empty). Each retry opens a window for at least one of them and
+    covers it, covered rows accumulate, and a covered row is never a
+    candidate again. A DOM-read row was mounted when that probe's key was
+    pressed (every empty row the search mounts or remounts is covered,
+    or, with a hint, answered `false`), so there are at most
+    `visible rows + 2 × overscan` of them, and the forward exit takes at most
+    that many retries plus the exit press. A change between presses that
+    turns a row into a target makes the retry focus it, as a fresh search
+    would.
+
   - **Backward** (in-table `Shift+Tab`, or a reverse entry): focus moves in the
     same press to the last leading-region control, else the viewport element.
     Both are mounted, so backward traversal never needs an extra press to
@@ -886,8 +932,12 @@ So without an accurate hint, crossing a run of control-less rows longer than
 the mounted window costs one extra press per `tabSearchLimit` empty rows
 inspected, and
 leaving the table forward past a fully probed trailing run with no
-trailing-region control costs exactly one extra press. No press ever repeats a
-probe that already reached the end. Apart from the three exceptions in the
+trailing-region control costs one extra press when no DOM-read row of that
+probe (a retained row or a row read before its first window) becomes a
+candidate again, and, with no change between presses, at most one more press
+per such row otherwise. A press after an exhausted probe never re-probes a
+covered row; with no change between presses, it probes only DOM-read rows that
+a settle scroll unmounted. Apart from the three exceptions in the
 [guarantee](#tab-traversal-across-unmounted-rows), focus order is never
 wrong.
 
@@ -930,7 +980,11 @@ consumer state. The rules below say which source wins.
   flipped from `false` to `true` is read on that press. Because covered rows
   are never re-probed, each capped press probes new rows, which is what lets a
   run of wrong or unsure `true` answers longer than the limit be crossed, and
-  what makes the press after a fully probed trailing run leave the table. The
+  what makes the press after a fully probed trailing run leave the table once
+  its rescan finds no new candidate (a retained or other DOM-read row that a
+  settle scroll unmounted and whose hint answers `true` is probed and covered
+  first, within
+  the bound in [End of search](#end-of-search)). The
   continuation is used at most once. A resumed search that stops again records
   a new one with the same origin, direction, and start position, whose covered
   set is the old covered set plus its own covered rows, so progress accumulates
@@ -1140,15 +1194,15 @@ When a viewport is registered and the windowed set is not empty:
 
 ### Keyboard interaction
 
-| Key                                   | Context                        | Behavior                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
-| ------------------------------------- | ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `Tab` / `Shift+Tab`                   | Viewport, header, row controls | Display order through every row's controls, as if all rows were mounted. Native when the next control is mounted; otherwise the viewport mounts the target row and focuses it ([Tab traversal](#tab-traversal-across-unmounted-rows)). Once the viewport has cancelled a press it always focuses the target itself, even one a probe window already mounted. After a probe reaches the last row with no target and no footer control, focus stays and the next `Tab` leaves the table; `Shift+Tab` past row 0 reaches the header or viewport in the same press ([End of search](#end-of-search)). |
-| `Tab`                                 | Viewport element               | The viewport is one tab stop before the table's first control, so keyboard users can scroll a table that has no focusable cells.                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-| `Tab`                                 | Control before the table       | Native: lands on the viewport element at any scroll position. The next `Tab` reaches the first header control, or row 0's first control when the header has none ([forward entry](#forward-entry-from-before-the-table)).                                                                                                                                                                                                                                                                                                                                                                         |
-| `Shift+Tab`                           | Control after the table        | Lands on the last control in display order (footer, else the last row with a control, mounted if needed, else the last header control, else the viewport), never a mid-table row ([reverse entry](#reverse-entry-from-after-the-table)).                                                                                                                                                                                                                                                                                                                                                          |
-| `ArrowUp` / `ArrowDown`               | Viewport or a control in it    | Native scrolling of the nearest scroll container (the viewport). Not intercepted. Arrow keys inside text inputs and other widgets keep their own meaning.                                                                                                                                                                                                                                                                                                                                                                                                                                         |
-| `PageUp` / `PageDown`, `Home` / `End` | Viewport element               | Native scrolling. `End` reaches the true end because the spacer after the window has the remaining height.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
-| `Space` / `Enter`                     | Sort, checkbox, expand         | Phase-one behavior, unchanged.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| Key                                   | Context                        | Behavior                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| ------------------------------------- | ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `Tab` / `Shift+Tab`                   | Viewport, header, row controls | Display order through every row's controls, as if all rows were mounted. Native when the next control is mounted; otherwise the viewport mounts the target row and focuses it ([Tab traversal](#tab-traversal-across-unmounted-rows)). Once the viewport has cancelled a press it always focuses the target itself, even one a probe window already mounted. After a probe reaches the last row with no target and no footer control, focus stays and the next `Tab` leaves the table unless its rescan finds an unmounted retained row to probe first (a bounded number of retries); `Shift+Tab` past row 0 reaches the header or viewport in the same press ([End of search](#end-of-search)). |
+| `Tab`                                 | Viewport element               | The viewport is one tab stop before the table's first control, so keyboard users can scroll a table that has no focusable cells.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| `Tab`                                 | Control before the table       | Native: lands on the viewport element at any scroll position. The next `Tab` reaches the first header control, or row 0's first control when the header has none ([forward entry](#forward-entry-from-before-the-table)).                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| `Shift+Tab`                           | Control after the table        | Lands on the last control in display order (footer, else the last row with a control, mounted if needed, else the last header control, else the viewport), never a mid-table row ([reverse entry](#reverse-entry-from-after-the-table)).                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| `ArrowUp` / `ArrowDown`               | Viewport or a control in it    | Native scrolling of the nearest scroll container (the viewport). Not intercepted. Arrow keys inside text inputs and other widgets keep their own meaning.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| `PageUp` / `PageDown`, `Home` / `End` | Viewport element               | Native scrolling. `End` reaches the true end because the spacer after the window has the remaining height.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| `Space` / `Enter`                     | Sort, checkbox, expand         | Phase-one behavior, unchanged.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
 
 The only key the library handles for virtualization is `Tab` / `Shift+Tab`,
 and only when the next control in display order is in an unmounted row (step 6
@@ -1382,8 +1436,14 @@ Anything about roving `tabindex`, cell focus, or `role` changes belongs in
   row-model, expansion, column, or `data` change, a covered row mounting with
   a control, `invalidateTabbableCache` with and without ids, a new
   `rowHasTabbable` function or `tabSearchLimit`, and unmount; an exhausted
-  continuation resolves to step 4 with zero mounts, and hint calls only for
-  uncovered rows;
+  continuation whose rescan finds no candidate resolves to step 4 with zero
+  mounts, and hint calls only for uncovered rows; an exhausted continuation
+  whose rescan finds an unmounted retained row (or row read before the first
+  window) with a `true` hint probes it, covers it, records the union covered
+  set, and the press after that resolves to step 4 when no such row remains a
+  candidate; a hint
+  `false` exempts an unmounted skipped row from the count, but a row a probe
+  window mounts and reads empty counts whatever the hint answers;
   forward end with a trailing-region control focuses it in the same press;
   backward end focuses the last leading control, else the viewport element,
   in the same press;
@@ -1612,6 +1672,44 @@ Anything about roving `tabindex`, cell focus, or `role` changes belongs in
         `align: 'end'`), the same fixture needs 3 presses, each with probe
         windows 1 and counter 2 except the last (counter 1, focus on row
         106). Repeated without a hint, with the same counts.
+      - **Retained rows in an exhausted trailing gap** (regression for the
+        exhausted-probe rescan): same viewport as above (2 visible rows,
+        `overscan` 1), default `tabSearchLimit`, a 106-row table whose rows
+        0–99 have their link and rows 100–105 have no control, no `<tfoot>`,
+        and an "After" button directly after the table. The hint returns
+        `true` (unsure) for rows 100–102 and `false` for rows 103–105. Focus
+        row 99's link and `scrollToOffset` so rows 102–103 are visible (rows
+        101–104 mounted, row 99 pinned, row 100 unmounted) before press 1
+        only; nothing changes `data`, the hint's answers, or the scroll offset
+        afterwards.
+        - Press 1: the hint is asked about row 100 (`true`), the first probe
+          window opens around it (rows 99–102 mounted), row 100 reads empty
+          (counter 1, covered), rows 101 and 102 stay mounted and read empty
+          (counter 3, retained, hint never called), and rows 103–105 are
+          skipped on their `false` without mounting. The end is reached:
+          focus stays on row 99's link, and the settle scroll back to row 99
+          mounts rows 98–101, unmounting row 102. Counter 3, probe windows 1,
+          one settle scroll, row mounts 2 (row 100, then row 98), covered set
+          row 100 only.
+        - Press 2 (the retry): row 100 is covered and row 101 is mounted and
+          read before any window (exempt); row 102 is unmounted, so its hint
+          is called, answers `true`, and a probe window opens around it (rows
+          100–103 mounted). Row 102 reads empty (counter 1, covered) and row
+          103, mounted by that window, reads empty and counts although its
+          hint answers `false` (counter 2, not covered). Rows 104–105 are
+          skipped on `false`. Focus stays on row 99's link (not "After"), one
+          settle scroll back to row 99 unmounts rows 102–103: counter 2,
+          probe windows 1, row mounts 3 (rows 102, 103, 98), covered set rows
+          100 and 102.
+        - Press 3 (the exit): the rescan finds no candidate (rows 100 and 102
+          covered, row 101 read from the DOM, rows 103–105 `false`), so native
+          order focuses "After": counter 0, probe windows 0, no settle
+          scroll, row mounts 0, and the hint is never called for row 100 or 102.
+        - Exactly 3 presses, and a fourth is never needed: the retries stay
+          within the two rows press 1 read from the DOM (rows 101 and 102).
+          A `focusin` recorder on `document` shows focus only on row 99's
+          link until "After". Variant with `rowHasTabbable` returning `false` for row 102
+          too: press 2 is the exit (counter 0, probe windows 0).
     - Forward, entry fixture's trailing gap (rows 9,960–9,999 without
       controls), no `<tfoot>`: `Tab` from row 9,959's link keeps focus there
       (viewport back on row 9,959, probe counter 39: rows 9,961–9,999; probe
@@ -1879,7 +1977,8 @@ Implementation must not begin until Zac approves this spec and resolves:
    - **Continuation freshness across a capped probe (part of V9,
      non-blocking).** Recommended: the continuation (including the exhausted
      form that makes the press after a fully probed trailing run leave the
-     table), whose covered set holds only probed-and-empty rows (with a hint, only
+     table once no retained or other DOM-read row is a candidate again),
+     whose covered set holds only probed-and-empty rows (with a hint, only
      those the covering search asked the hint about and got `true`) and whose
      resumed search asks the hint again about every other row, dropped by the
      documented triggers, with the guarantee narrowed so focus can pass a
