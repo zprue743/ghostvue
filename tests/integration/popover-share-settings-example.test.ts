@@ -86,8 +86,8 @@ describe('popover/share-settings example', () => {
     expect(document.getElementById(headingId)?.textContent.trim()).toBe(
       'Share “Q3 launch plan”',
     )
-    // The panel is portaled out of the card to <body>.
-    expect(content?.parentElement).toBe(document.body)
+    // The panel follows Share in the card's DOM so Tab uses page order.
+    expect(trigger.closest('.share')?.contains(content)).toBe(true)
     expect(radio('restricted').checked).toBe(true)
     expect(document.activeElement).toBe(radio('restricted'))
   })

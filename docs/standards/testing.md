@@ -212,7 +212,7 @@ with `animations: 'disabled'` and a default `maxDiffPixelRatio` of `0.03`
   Every hero is captured with source closed at 390px and 1280px browser widths
   in `light` and `dark`. Overlay heroes (Dialog, Dropdown Menu, Select,
   Combobox, Popover) are also captured open from the keyboard, clipped to the
-  trigger plus its body-portaled panel, at the same widths and modes. A source-open
+  trigger and panel, at the same widths and modes. A source-open
   capture at 320px (Button) and 768px (Tabs) covers the toolbar and fence, and a
   480px preview-width capture of Table at a 1280px browser width covers container
   resizing separately from browser widths. Every capture first asserts no
@@ -256,6 +256,28 @@ pnpm test:visual --repeat-each=5 --retries=0
 Commit regenerated baseline PNGs in a dedicated commit when updating existing
 snapshots so pixel churn is easy to review. Use `pnpm test:visual:update` only
 when already running inside the pinned Linux environment.
+
+### Visual review evidence
+
+For a showcase change, include before and after captures at matched widths,
+appearance, and interaction state. Record the commit and theme for each
+capture. If the approved change replaces a palette or default, name that
+change in the comparison. Link to the clean consumer rendering and the
+canonical source. For overlays, include open and closed states and test keyboard
+entry, focus movement, dismissal, and return where the component supports them.
+
+Review light and dark at narrow and wide widths. Check the resized preview,
+larger text, reduced motion, and forced colors when the change can affect
+them. Include composed contrast and focus evidence with the focused
+Playwright results, the Linux snapshot diff or comparison, and the repository
+verification results. If a gate reproduces a baseline failure, record the
+matching test and baseline revision. Keep gate thresholds and assertions in
+place.
+
+Use the [showcase criteria](../contributing/examples.md#review-a-showcase)
+to record the review decision. A passing screenshot comparison establishes
+repeatability. The reviewer still checks design intent and accessibility in
+the rendered example.
 
 ### Regenerating baselines in CI
 
