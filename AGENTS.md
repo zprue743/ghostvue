@@ -39,6 +39,18 @@ run `pnpm adapters:write` rather than hand-editing them.
 6. Review the final diff as if reviewing another engineer's contribution.
 7. Report exactly what changed and which checks ran.
 
+## Code Review Rules
+
+- **First review.** Review the full PR before posting. Report all substantiated
+  high-priority findings together. For each, give a concrete failing case and
+  the outcome that would close it. For specs, include the smallest acceptable
+  change to the guarantee when narrowing it would satisfy the requirements.
+- **Follow-up reviews.** Compare the current head with the last reviewed commit.
+  Verify open findings and review any behavior the fixes add or affect. Tie each
+  new blocker to an intervening change and a failing case. If a critical defect
+  was missed earlier, identify the miss and its impact. Other newly noticed
+  issues in unchanged behavior are non-blocking.
+
 ## Agent workflow
 
 - Run `pnpm verify` before every push. Never push known format, lint, or type
