@@ -430,7 +430,15 @@ the `focusin`/`focusout` listeners and the `keydown` listener for
 `<span v-bind="focusCatcherProps" />` as the scroll element's last child, after
 the table ([reverse entry](#reverse-entry-from-after-the-table)). Dev builds
 warn when the catcher is missing or is not the last child. The composable
-options accept `rowHasTabbable`, `tabSearchLimit`, and `footerRowCount`.
+options accept `rowHasTabbable`, `tabSearchLimit`, `footerRowCount`, and a
+required `columns: MaybeRefOrGetter<readonly DataTableColumn<TData>[]>`, the
+same columns passed to `useGhostDataTable`. `UseGhostDataTableReturn` does not
+expose the column definitions, so this input is how the standalone path sees
+a **column-set change**: a new `columns` array reference. On one, the
+composable does what the root does on a change to its `columns` prop: it
+clears the measurement cache and the known-empty set, drops any continuation,
+and cancels a pending search or reverse entry. Consumers that edit a columns
+array in place must replace it instead, as for `data`.
 
 ## State model
 
@@ -1705,8 +1713,14 @@ Anything about roving `tabindex`, cell focus, or `role` changes belongs in
   rendered instead of `virtualItems`, and a standalone layout without the
   focus catcher as the viewport's last child; the catcher is `tabindex="-1"`
   in SSR output and the first client render; listener and observer cleanup
-  on unmount.
-- **Type:** `DataTableVirtualItem` narrows on `type`; `GhostDataTableTable`
+  on unmount; standalone `useGhostDataTableVirtualizer` with a `ref` of
+  columns: replacing the array (adding, removing, or swapping a wrapping
+  column) clears measured heights so prefix sums fall back to estimates,
+  clears the known-empty set, drops a continuation, and cancels a pending
+  search held on a stub render, matching the root's behaviour on a `columns`
+  prop change; an unchanged array reference does none of these.
+- **Type:** `DataTableVirtualItem` narrows on `type`;
+  `useGhostDataTableVirtualizer` options without `columns` are a type error; `GhostDataTableTable`
   slot `value` typing is unchanged inside a viewport;
   `GhostDataTablePresetVirtualization` accepts
   `viewportAttrs: { class: 'ledger', style: { blockSize: '32rem' } }` with no
