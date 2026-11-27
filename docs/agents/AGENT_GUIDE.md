@@ -8,7 +8,9 @@ links here for canonical detail.
 
 1. Read the root `AGENTS.md` and relevant canonical documentation.
    When filing or triaging a GitHub issue, apply the
-   [agent readiness rules](../contributing/workflow.md#agent-readiness).
+   [agent readiness and claim rules](../contributing/workflow.md#agent-readiness).
+   In enforcement mode every automated pickup must successfully run
+   `node scripts/release-scope.mjs claim <issue>` before starting a branch or spec.
 2. Inspect existing related code, tests, exports, and docs before proposing a
    pattern.
 3. Confirm the package boundary and public API impact.

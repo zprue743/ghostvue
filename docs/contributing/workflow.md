@@ -33,8 +33,8 @@ commits.
 
 ### Agent readiness
 
-When you create or triage an open issue, apply `agent:ready` if it meets all
-three conditions below.
+Apply `agent:triaged` when an issue meets these criteria, including work planned
+for a future release.
 
 - The issue describes the problem, intended outcome, and scope clearly enough to
   start work.
@@ -42,14 +42,59 @@ three conditions below.
 - Any decisions, approvals, and prerequisites required for the scoped work are
   in place, and the work can start now.
 
-If an issue is ineligible, remove `agent:ready` if present and record what needs
-to change. For open issue dependencies, add `blocked` and list them in the body
-as `Blocked by: #123, #456`. Reassess readiness when blockers clear and remove
-`blocked` when the issue becomes eligible. Before handing off, confirm the labels
-on the GitHub issue.
+Remove `agent:triaged` when the scope or approvals need review. For open
+dependencies add `blocked` and record `Blocked by: #123, #456` in the issue.
+Reassess the issue when a blocker closes. Keep its planned release.
 
-`agent:ready` clears the scoped work for automatic pickup. The usual review,
-merge, and publication approval rules still apply.
+The [release-scope policy](https://github.com/zprue743/ghostvue/blob/master/.github/release-scope.json)
+selects one exact board option. In enforcement mode the repository owns
+`agent:ready`. It adds the label to triaged Todo issues in the active release
+and withdraws it for open dependencies, holds, assignees, or work already
+underway. All pickup paths, including dependency closure and spec drafting
+under a human account, must claim before starting:
+
+```sh
+node scripts/release-scope.mjs claim 123
+```
+
+The command dispatches to `master` and waits for that specific workflow run.
+Only a successful claim authorizes starting work. A dispatch timeout, cancellation,
+or denied claim requires checking the run and issue timeline. The workflow
+sets `in-progress` and records the claimant and run URL on the issue. To release
+abandoned or interrupted work, clear `in-progress`, any assignee and the board's
+In Progress status after confirming the worker has stopped.
+
+PRs targeting `master` require an active-release issue. Use GitHub closing links
+or put `Work item #123` on its own line for each partial work item. Include the
+branch's issue if using an `issue-<n>-` branch. Verified Dependabot updates on
+the repository's Dependabot branches follow their own review path.
+
+#### Rollout and operation
+
+1. Configure an Actions secret named `RELEASE_PROJECT_TOKEN` with read access
+   to the user-owned project and its issue content. The repository workflow
+   token handles issue and commit-status writes. Create the `agent:triaged`
+   label and review existing candidates against the criteria above.
+2. While the policy is in `report` mode, run `node scripts/release-scope.mjs report`
+   with an authenticated, project-readable GitHub CLI, or dispatch the
+   **Release scope** workflow with the claim field empty. Review the queue
+   changes and each open PR with the maintainers. Report mode preserves labels,
+   assignees and commit statuses and denies claims.
+3. Connect every runner to the claim command and confirm it waits for success.
+   Coordinate the switch with pickup paused. Merge a policy PR selecting
+   `enforce`, confirm the first sweep and claim behavior, require the
+   `release-scope` commit status from GitHub Actions in the `master` ruleset,
+   then resume pickup. Issue/PR events and policy changes run a full sweep.
+   A scheduled sweep every 15 minutes catches board-only edits. Claims always
+   read the live board. An unreadable board stops pickup, preserves labels, and
+   marks open PR heads with an error. Restore access and dispatch a fresh sweep.
+4. After the [release gate](./releases.md) and approval of the next board option,
+   the release-planning agent runs `node scripts/release-scope.mjs report 0.2.0`
+   (substitute the approved option). Open a PR changing only `activeRelease`,
+   link the current-release rollover issue, and paste the before/after report
+   and unfinished issue list. Maintainer merge activates the next queue.
+   Retarget carryovers only after an explicit decision. Publication requires its
+   own authorization.
 
 ### Release planning
 

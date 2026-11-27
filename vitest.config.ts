@@ -36,7 +36,7 @@ export default defineConfig({
   },
   test: {
     environment: 'jsdom',
-    include: ['packages/**/*.test.ts', 'tests/integration/**/*.test.ts'],
+    include: ['packages/**/*.test.ts', 'tests/integration/**/*.test.{ts,mjs}'],
     exclude: [...configDefaults.exclude, '**/fixtures/**'],
     coverage: {
       provider: 'v8',

@@ -1,0 +1,66 @@
+name: Release scope
+on:
+  issues:
+    types:
+      [
+        opened,
+        edited,
+        reopened,
+        closed,
+        assigned,
+        unassigned,
+        labeled,
+        unlabeled,
+        transferred,
+      ]
+  pull_request_target:
+    branches: [master]
+    types: [opened, edited, synchronize, reopened, closed]
+  push:
+    branches: [master]
+    paths:
+      [
+        '.github/release-scope.json',
+        '.github/workflows/release-scope.yml',
+        'scripts/**release-scope*.mjs',
+        'scripts/lib/release-scope*.mjs',
+      ]
+  schedule:
+    - cron: '7,22,37,52 * * * *'
+  workflow_dispatch:
+    inputs:
+      claim:
+        description: 'Issue number to claim (leave empty for a full sweep)'
+        required: false
+        type: string
+
+# Claims and reconciliation read fresh state after acquiring the same lock.
+concurrency:
+  group: release-scope-master
+  queue: max
+
+permissions: {}
+jobs:
+  reconcile:
+    if: github.repository == 'zprue743/ghostvue' && github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      pull-requests: read
+      # Record claims and maintain agent:ready when enforcement is enabled.
+      issues: write
+      # Refresh release-scope on each PR head after project-only edits.
+      statuses: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          # All executable code and policy come from the protected default branch.
+          ref: refs/heads/master
+          persist-credentials: false
+      - name: Evaluate execution board
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_PROJECT_TOKEN: ${{ secrets.RELEASE_PROJECT_TOKEN }}
+          CLAIM_ISSUE: ${{ inputs.claim }}
+        run: node scripts/release-scope.mjs workflow
