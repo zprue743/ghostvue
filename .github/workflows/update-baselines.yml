@@ -104,7 +104,7 @@ jobs:
     # Same pinned image as CI's browser-shard job and `pnpm test:visual:docker`,
     # so regenerated baselines match the render CI compares against.
     container:
-      image: mcr.microsoft.com/playwright:v1.62.1-noble
+      image: mcr.microsoft.com/playwright:v1.65.1-noble
     env:
       HOME: /root
     timeout-minutes: 45

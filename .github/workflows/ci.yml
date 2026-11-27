@@ -225,7 +225,7 @@ jobs:
     runs-on: ubuntu-latest
     # Same pinned Playwright image as browser-shard (Chromium preinstalled).
     container:
-      image: mcr.microsoft.com/playwright:v1.62.1-noble
+      image: mcr.microsoft.com/playwright:v1.65.1-noble
     env:
       HOME: /root
     timeout-minutes: 15
@@ -424,7 +424,7 @@ jobs:
     # an actions/cache entry instead would change the fonts the committed visual
     # baselines were rendered with (see `pnpm test:visual:docker`).
     container:
-      image: mcr.microsoft.com/playwright:v1.62.1-noble
+      image: mcr.microsoft.com/playwright:v1.65.1-noble
     env:
       HOME: /root
       PLAYWRIGHT_BLOB_REPORT: '1'
@@ -491,7 +491,7 @@ jobs:
     if: success() && needs.changes.outputs.skip_heavy != 'true' && needs.changes.outputs.run_cross_browser == 'true'
     runs-on: ubuntu-latest
     container:
-      image: mcr.microsoft.com/playwright:v1.62.1-noble
+      image: mcr.microsoft.com/playwright:v1.65.1-noble
     env:
       HOME: /root
       PLAYWRIGHT_BLOB_REPORT: '1'
