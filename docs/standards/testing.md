@@ -212,7 +212,7 @@ with `animations: 'disabled'` and a default `maxDiffPixelRatio` of `0.03`
   Every hero is captured with source closed at 390px and 1280px browser widths
   in `light` and `dark`. Overlay heroes (Dialog, Dropdown Menu, Select,
   Combobox, Popover) are also captured open from the keyboard, clipped to the
-  trigger plus its body-portaled panel, at the same widths and modes. A source-open
+  trigger and panel, at the same widths and modes. A source-open
   capture at 320px (Button) and 768px (Tabs) covers the toolbar and fence, and a
   480px preview-width capture of Table at a 1280px browser width covers container
   resizing separately from browser widths. Every capture first asserts no

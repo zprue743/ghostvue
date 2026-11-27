@@ -17,13 +17,16 @@ right away. The summary on the card is a polite `role="status"` region, so each
 change is announced as its outcome: who can open the plan and what they can do.
 **Link permission** is disabled while access is **Restricted**, since only
 invited people can open the plan. **Done** and `Escape` close the panel and
-return focus to **Share**. A click outside the panel also closes it; clicking
-another control leaves focus on that control. The panel opens `bottom-end`,
+return focus to **Share**. This example renders the panel inline after the
+trigger. `Tab` from **Done** continues to the next control in the page, and
+`Shift+Tab` from the first option returns to **Share**. A click outside the
+panel closes it and leaves focus on the clicked control when it can take focus.
+The panel opens `bottom-end`,
 flips above the trigger near the bottom of the viewport, and shifts to stay
 inside narrow screens, keeping an 8px gap from the viewport edges through the
 `flip` and `shift` padding options. Its width is the smaller of 20rem and the
-viewport minus 4rem. It renders in a `<body>` portal, so it keeps the theme
-surface in light and dark mode and none of the docs prose styles.
+viewport minus 4rem. The themed surface follows the page's light and dark
+appearance.
 
 ## Basic use
 

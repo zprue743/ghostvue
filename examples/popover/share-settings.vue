@@ -156,12 +156,17 @@ function setLinkRole(value: unknown): void {
           <!--
             The panel names itself after its heading rather than the one-word
             trigger, so assistive tech announces what the settings belong to.
+            Keep it next to Share in the DOM so Tab continues through the page
+            in reading order when it leaves the non-modal panel. Position the
+            panel against the viewport so the card cannot clip it.
           -->
           <GhostPopoverContent
+            :portal="false"
             :offset="8"
             :shift="{ padding: 8 }"
             :flip="{ padding: 8 }"
             placement="bottom-end"
+            strategy="fixed"
             :aria-labelledby="headingId"
           >
             <div class="share-panel">
@@ -354,10 +359,9 @@ function setLinkRole(value: unknown): void {
 }
 
 /*
- * The panel is portaled to <body>, outside the docs prose, but it still sets
- * its own type so it reads the same in any host. Its width is bounded by both
- * a readable measure and the viewport, leaving room for the surface padding
- * and the shift middleware's edge gap on 320px phones.
+ * Set the panel type locally so it reads the same inside the docs and in the
+ * playground. Bound the width to leave room for the surface padding and the
+ * shift middleware's edge gap on 320px phones.
  */
 .share-panel {
   color: var(--ghost-text-default);
