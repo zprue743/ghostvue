@@ -259,12 +259,28 @@ type DataTableVirtualItem<TData> =
     }
   | {
       type: 'spacer'
-      /** Stable within one window: `'before'`, `'between'`, or `'after'`. */
-      key: string
+      /**
+       * One of the three `dataTableSpacerKeys` symbols, stable within one
+       * window. A symbol never equals a consumer `DataTableRowId` (a string or
+       * number), so a row whose id is `'before'` cannot share a Vue key with
+       * a spacer.
+       */
+      key: DataTableSpacerKey
+      /** Which gap the spacer fills. */
+      position: 'before' | 'between' | 'after'
       /** Block size in CSS pixels. */
       size: number
       spacerProps: DataTableVirtualSpacerProps
     }
+
+/** Exported from `@ghostvue/vue`; one frozen object, created once per module. */
+declare const dataTableSpacerKeys: {
+  readonly before: unique symbol
+  readonly between: unique symbol
+  readonly after: unique symbol
+}
+type DataTableSpacerKey =
+  (typeof dataTableSpacerKeys)[keyof typeof dataTableSpacerKeys]
 
 interface DataTableVirtualSpacerProps {
   'aria-hidden': 'true'
@@ -1525,7 +1541,10 @@ Anything about roving `tabindex`, cell focus, or `role` changes belongs in
   past the end; overscan normalization (`0`, `-3`, `2.7`, `NaN`); measured-mode
   prefix sums with mixed measured and estimated rows; anchoring delta when a
   row above the viewport grows and shrinks; cache keyed by `rowId` survives a
-  sort; cache pruning on `data` change, including a retained id whose row
+  sort; spacer keys are the `dataTableSpacerKeys` symbols and a mounted row
+  whose id is the string `'before'`, `'between'`, or `'after'` renders next to
+  each spacer with no duplicate-key warning and keeps its `<tr>` element across
+  window changes; cache pruning on `data` change, including a retained id whose row
   object was replaced (its height falls back to the estimate and the spacer
   and `scrollToRow` offset change accordingly) while an id with the same row
   object keeps its height; pinned row splits spacers into
