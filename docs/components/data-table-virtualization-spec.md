@@ -500,9 +500,17 @@ order, or any v-model. It only changes which members of the set are mounted.
 On each scroll frame (coalesced with `requestAnimationFrame`, one recompute
 per frame at most) and on viewport resize:
 
-1. `bodyOffset` = the scroll offset minus the block size of the content above
-   the first body row (the header and caption), measured once per layout
-   change.
+1. `bodyOffset` = the scroll offset minus the **pre-body size**, the block
+   size of the content above the first body row (the `<caption>` and
+   `<thead>`). The pre-body size is cached and re-measured whenever it can
+   change: the viewport's `ResizeObserver` also observes the `<caption>` and
+   `<thead>` elements when present (re-attached if either is added, removed,
+   or replaced), so a caption that wraps or a header that grows without the
+   viewport resizing still updates it. On a change of _d_ while the scroll
+   offset is past the pre-body content, the viewport adjusts `scrollTop` by
+   _d_ in the same frame, as [scroll anchoring](#row-height-model) does for a
+   row above the first visible row, and recomputes the window; range values
+   and `scrollToRow` offsets always use the current pre-body size.
 2. `[visibleStart, visibleEnd)` = the data rows intersecting
    `[bodyOffset, bodyOffset + viewport block size)`, half-open like
    `[start, end)` (`visibleEnd` is one past the last intersecting row); a
@@ -790,7 +798,15 @@ catcher** makes this entry follow display order:
   see. An empty generic element with no name is skipped by browse mode, so
   leaving it exposed adds nothing to the reading order. It also gets no
   `role="none"` or `role="presentation"`, which a focusable element ignores
-  (`presentation-role-conflict`). Functional inline styles: `display: block`,
+  (`presentation-role-conflict`). It has no interactive role either: it is a
+  redirect, not a control, and focus never rests on it (a reverse entry moves
+  focus in the same `focus` event when the target is mounted, after one
+  render otherwise). `axe-core`'s `focus-order-semantics` rule, which flags
+  focusable generic elements, is `experimental` and off by default in
+  `axe-core` 4.13; the zero-violation scans use the default rule set. Manual
+  AT review records what each pairing announces during a reverse entry; if
+  one announces the catcher (for example as "blank") before the target, that
+  is a V10 finding for Zac. Functional inline styles: `display: block`,
   zero inline and block size, `overflow: hidden`, `pointer-events: none`.
   `display: block` matters: a bare `<span>` is a non-replaced inline box that
   ignores `inline-size`/`block-size` and would sit in an anonymous line box
@@ -1475,7 +1491,8 @@ The viewport does not change `scroll-padding` itself.
   `focusout` listeners (focus pinning, catcher `tabindex`, reverse entry), and
   one `keydown` listener (Tab traversal only). The focus catcher has no
   listener of its own. One
-  `ResizeObserver` for the viewport, and (measured mode or open detail rows)
+  `ResizeObserver` for the viewport and its `<caption>` and `<thead>`
+  ([pre-body size](#window-computation)), and (measured mode or open detail rows)
   one `ResizeObserver` for mounted rows. All are removed on unmount. No
   `window` or `document` listeners.
 - Environments without `ResizeObserver` fall back to measuring on scroll and
@@ -1733,6 +1750,13 @@ Anything about roving `tabindex`, cell focus, or `role` changes belongs in
   - `Tab` from the first row checkbox through 60 rows: each checkbox is
     `toBeFocused()`, the viewport scrolls, and the mounted row count stays
     within budget. Same with `Shift+Tab` upward.
+  - **Pre-body size change:** scrolled to row 5,000 with a caption, the
+    caption's text grows from one line to three without the viewport
+    resizing: within one frame the first visible row is unchanged,
+    `virtualRange` is unchanged, and `scrollToRow(6000, { align: 'start' })`
+    then puts row 6,000's top edge at the viewport's top edge (below a sticky
+    header when the recipe is used). The same with a header row that gains a
+    second line, and with the caption removed.
   - **Catcher adds no height:** at the top, the middle, and the end of the
     set, in both modes, the viewport's `scrollHeight` equals the `<table>`'s
     block size plus the viewport's own padding, the catcher's bounding box
@@ -2110,7 +2134,9 @@ Anything about roving `tabindex`, cell focus, or `role` changes belongs in
     navigation announces `aria-rowindex` of `aria-rowcount`; browse mode
     behavior at the window edge is recorded as observed; no announcements
     while scrolling; `Tab` across a gap and a reverse entry from after the
-    table land on the documented control.
+    table land on the documented control, and what is announced during the
+    reverse entry is recorded (the target only is expected; any announcement
+    of the focus catcher is a V10 finding).
   - **JAWS + Chrome (conditional, required here: virtual cursor and forms
     mode):** the desktop scenarios, plus moving between browse and forms mode
     on a row control near the window edge.
@@ -2260,6 +2286,10 @@ Implementation must not begin until Zac approves this spec and resolves:
       only while focus is outside the viewport,
       that redirects to the last stop in display order. Focus on it can only
       mean backward sequential entry, so no input-modality tracking is needed.
+      Trade-off: it is a focusable element with no interactive role, which
+      `axe-core`'s experimental, off-by-default `focus-order-semantics` rule
+      would flag, and a screen reader may announce it if the redirect waits
+      for a render; manual AT review records this.
     - **Alternative:** no extra element; the viewport's `focusin` listener
       detects focus arriving from an element after the viewport
       (`relatedTarget` and `compareDocumentPosition`) and redirects. It cannot
