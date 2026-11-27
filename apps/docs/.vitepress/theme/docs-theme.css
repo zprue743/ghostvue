@@ -400,6 +400,17 @@ html[data-ghost-theme='mono'] {
   padding: 0;
 }
 
+/*
+ * VitePress prose spacing (`.vp-doc li + li { margin-top: 8px }` in
+ * `vp-doc.css`) also hits these grid items, pushing every card but the first
+ * 8px down: the first two cards in a row stop lining up and stacked rows get
+ * 8px more than the grid gap. The grid `gap` owns card spacing here, so only
+ * that list-item margin is reset.
+ */
+.ghost-component-catalog__cards > li {
+  margin-block-start: 0;
+}
+
 .ghost-component-catalog__card {
   box-sizing: border-box;
   display: flex;
