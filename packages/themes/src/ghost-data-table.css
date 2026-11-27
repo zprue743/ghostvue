@@ -65,9 +65,16 @@
       color: var(--ghost-surface-fg);
     }
 
+    /* The themed GhostTable adds one scope wrapper around its table or scroll region. */
     :where(
       & > .ghost-table[data-ghost-data-table],
-      & > .ghost-table-scroll-container > .ghost-table[data-ghost-data-table]
+      &
+        > :is(.ghost-table-scroll-container, .ghost-themed-scope)
+        > .ghost-table[data-ghost-data-table],
+      &
+        > .ghost-themed-scope
+        > .ghost-table-scroll-container
+        > .ghost-table[data-ghost-data-table]
     ) {
       :where(
         & > .ghost-table-head > .ghost-table-row > .ghost-table-header-cell

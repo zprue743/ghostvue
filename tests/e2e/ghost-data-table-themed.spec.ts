@@ -269,6 +269,66 @@ test.describe('Themed GhostDataTablePreset @component:GhostDataTablePreset', () 
     ).toBe('none')
   })
 
+  test('styles a manually composed themed table and isolates a nested table', async ({
+    page,
+    playgroundUrl,
+  }) => {
+    const table = await openInvoices(page, playgroundUrl)
+    // Reuse the preset bindings in the direct-child structure of a themed GhostTable.
+    await table.evaluate((node) => {
+      const host = node.closest('.ghost-data-table[data-themed]')
+      const region = node.closest('.ghost-table-scroll-container')
+      const head = node.querySelector(':scope > thead')
+      const cell = node.querySelector(':scope > tbody > tr > td')
+      if (!host || !region || !head || !cell) {
+        throw new Error('Expected the invoice table and its scroll region')
+      }
+      const wrapper = document.createElement('div')
+      wrapper.className = 'ghost-themed-scope'
+      host.append(wrapper)
+      wrapper.append(region)
+
+      const nested = node.cloneNode(false)
+      if (!(nested instanceof HTMLTableElement)) {
+        throw new Error('Expected a native table')
+      }
+      nested.setAttribute('aria-label', 'Nested table')
+      nested.append(head.cloneNode(true))
+      cell.append(nested)
+    })
+
+    const heading = table
+      .getByRole('columnheader', { name: 'Amount', exact: true })
+      .first()
+    const button = heading.getByRole('button')
+    await expect(heading).toHaveCSS('position', 'sticky')
+    expect(
+      await button.evaluate(
+        (node) => getComputedStyle(node, '::after').content,
+      ),
+    ).toBe('""')
+
+    const nested = page.getByRole('table', { name: 'Nested table' })
+    await expect(
+      nested.getByRole('columnheader', { name: 'Amount' }),
+    ).toHaveCSS('position', 'static')
+    expect(
+      await nested
+        .getByRole('button', { name: 'Amount' })
+        .evaluate((node) => getComputedStyle(node, '::after').content),
+    ).toBe('none')
+
+    await table.evaluate((node) => {
+      node.parentElement?.replaceWith(node)
+    })
+    await expect(heading).toHaveCSS('position', 'sticky')
+    expect(
+      await button.evaluate(
+        (node) => getComputedStyle(node, '::after').content,
+      ),
+    ).toBe('""')
+  })
+
   test('captures a themed card with selection and a detail row @visual', async ({
     page,
     playgroundUrl,

@@ -101,8 +101,10 @@ Both renderers accept `contain-horizontal` and `scroll-label` to give the
 horizontal scroll region its own accessible name.
 
 The themed sort mark follows the active column's `aria-sort` and `data-sort`
-state. For manual composition, add `data-part="sort-button"` to opt in. A
-decorative child with `data-part="sort-indicator"` replaces the mark. During
+state. With a manually composed `GhostTable` inside the themed root, add
+`data-part="sort-button"` to opt in. The recipe supports the table's optional
+horizontal scroll region. A decorative child with
+`data-part="sort-indicator"` replaces the mark. During
 loading the header signals progress while body text and enabled controls
 remain at full contrast.
 
