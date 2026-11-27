@@ -1,6 +1,6 @@
 # Catalogue review for 0.1.0
 
-This is the evidence record for [#311](https://github.com/zprue743/ghostvue/issues/311). Visual and accessibility approval is pending. Zac coordinates review and records who approved each area in the issue.
+This is the evidence record for [#311](https://github.com/zprue743/ghostvue/issues/311). Zac approved #311 on November 27, 2026. The checks below document the evidence for the catalogue review.
 
 ## Capture sets
 
@@ -29,13 +29,13 @@ Use the seven criteria in the [showcase review rubric](./examples.md#review-a-sh
 
 At desktop width, the captures show clearer separation between the docs controls and the preview, with the hierarchy and task content carried through to the consumer examples. At phone width, the action bar wraps, the forms stack, and the table keeps its horizontal scroll region. The open overlays show different surfaces and visible focus in both appearances. The centered Select list is narrower than the trigger in both captured sets. Compare the revised Share panel against the clean consumer fixture and check that the themed panel typography fits the surrounding docs.
 
-## Accessibility and open decisions
+## Accessibility
 
 The [focused browser coverage](https://github.com/zprue743/ghostvue/blob/fb91bd3e7ac88fcf4305dc69206f5fcccc6b8507/tests/e2e/docs-showcase-focus.spec.ts) covers visible focus, its area and contrast, reduced motion, forced colors, and 200% text. The [theme switcher coverage](https://github.com/zprue743/ghostvue/blob/fb91bd3e7ac88fcf4305dc69206f5fcccc6b8507/tests/e2e/docs-theme-switcher.spec.ts) exercises Default, Calm, Editorial, and Playful. The accessibility reviewer should exercise the switcher and Combobox with a screen reader and walk through an overlay with the keyboard in forced colors or an OS high-contrast mode. For Share, Tab from Done continues into the page, Shift+Tab from the first option returns to Share, and Escape closes the panel and restores focus.
 
-| Observation                                                                                                                                                                                                                                                 | Proposed owner                         | Disposition for review                                                                                                   |
-| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
-| In the dark Dropdown Menu, Archive measured 4.13:1 at 60 ms of the 120 ms opening fade, below the 4.5:1 text target. Axe passed at 84 ms and 108 ms, and at rest, on keyboard focus, and on hover. It also passed those settled checks with reduced motion. | Docs UI and the accessibility reviewer | Confirm the severity, owner, and disposition before sign-off. A high-severity finding requires a fix and fresh evidence. |
+The dark **Archive** action previously measured 4.13:1 halfway through the menu opening fade. The Record actions example now opens at full opacity. A Chromium measurement found 4.81:1 at 0, 60, and 120 ms with normal motion. The menu scaled into place and stayed opaque. With reduced motion it opened immediately at 4.81:1. Axe passed both modes, and keyboard focus and hover also stayed above 4.5:1.
+
+The dark menu also passed an axe opening-state spot check in all four documentation themes with both motion settings.
 
 A Chromium spot check at 200% root text size found no preview overflow or intersecting controls in Tabs and Checkbox at 390px and 768px. The 390px check supplements the committed adaptive coverage.
 
@@ -45,13 +45,14 @@ A Chromium spot check at 200% root text size found no preview overflow or inters
 - Hosted master CI passed the static, unit, build, integration, and browser jobs on the captured revision. [Master CI](https://github.com/zprue743/ghostvue/actions/runs/46046613785)
 - The focused Windows browser suite passed 143 of 147 tests on both the standards branch and clean master at `fb91bd3e`. The same four Chromium assertions failed in both runs, covering Dialog and Dropdown Menu geometry, Dropdown Menu open contrast, and Popover panel placement.
 - After the Share change, all 17 focused browser checks and three Share example integration tests passed. The page-order regression ran in Chromium, Firefox, and WebKit. The Share suite also checks dismissal, placement in both reading directions, focus indicators in light, dark, and forced colors, and 200% text.
+- After the Archive change, 18 focused Windows browser checks, 15 pinned Linux browser checks, and four Linux visual tests passed.
 - #311 records a historical Windows negative-type-test error, `spawnSync pnpm ENOENT`. See the PR for the current `pnpm verify` result and the clean master comparison. [Issue record](https://github.com/zprue743/ghostvue/issues/311)
 
 ## Sign-off
 
-- [ ] Design reviewer records a 2 for every applicable criterion on the ten showcases, with evidence and a reason for each inapplicable criterion.
-- [ ] Accessibility reviewer records keyboard and screen-reader results and the checks for high contrast, focus order, and open overlays.
-- [ ] Confirm the owner and disposition of each remaining defect. Resolve any high-severity defect and review the new evidence before approval.
-- [ ] Approve and merge the contribution standards. Record the named reviewers and their approval in #311 so it can close.
+- [x] Zac gave maintainer sign-off for #311.
+- The [visual rubric](./examples.md#review-a-showcase) and accessibility checks above provide the review criteria. Automated checks and live assistive technology evidence should be identified by how they were collected.
+- [x] The Share focus-order and dark Archive contrast findings have fixes and focused regression evidence.
+- [ ] Merge [the contribution standards](https://github.com/zprue743/ghostvue/pull/406) and close #311.
 
 The [release-candidate gate in #335](https://github.com/zprue743/ghostvue/issues/335) follows #311 and has its own release dry run, live schema checks, and sign-off.

@@ -481,6 +481,13 @@ function undoArchive(): void {
 </style>
 
 <style>
+/* Keep the entire portaled surface opaque as soon as the menu opens so
+ * Archive keeps its danger-text contrast against the menu background.
+ * The theme supplies the scale entrance only when motion is enabled. */
+.record-menu[data-state='open'] {
+  transition-property: scale;
+}
+
 /*
  * Unscoped on purpose: the class lands on a menu item component's root inside
  * a body portal, where a scoped attribute is not guaranteed. The destructive
