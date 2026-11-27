@@ -900,12 +900,20 @@ viewport) names `rowHasTabbable` as the fix, or an accurate answer instead of
       target (step 4) and native order leaves the table, with zero probe
       windows. That press never
       re-probes, so it exits with an unsure hint, a wrong hint, or no hint.
-    - **Retry.** Otherwise the first such candidate is evaluated as in a
-      fresh search (step 6): if it has a control, it is the target. If it is
-      still empty (with no change between presses it is always a DOM-read
-      row), the press probes it (counted toward `tabSearchLimit`), covers
-      it, keeps focus on the origin, and records a new continuation whose
-      covered set is the union, exactly as a resumed capped press does.
+    - **Retry.** Otherwise the first such candidate is evaluated under
+      step 6, as in a fresh or resumed search: the press is cancelled and a
+      probe window mounts it. If it has a control, it is the target. If it
+      reads empty (with no change between presses it is always a DOM-read
+      row), it is probed (counted toward `tabSearchLimit`) and covered, and
+      the same search continues from it in the same direction: a row the
+      window mounted (focused by the
+      [cancelled-press rule](#tab-traversal-across-unmounted-rows)) or any
+      later row with a control is the target and is focused in the same
+      press. Only when that search hits `tabSearchLimit`, or reaches the end
+      without a target and without a trailing-region control, does focus
+      stay on the origin with a new continuation whose covered set is the
+      union, exactly as a resumed capped press does; at the end with a
+      trailing-region control, focus moves to it in the same press.
 
     The retries are bounded. With no change to `data`, permissions, or other
     row state and no user scroll between presses, every hint answer stays
@@ -918,9 +926,12 @@ viewport) names `rowHasTabbable` as the fix, or an accurate answer instead of
     pressed (every empty row the search mounts or remounts is covered,
     or, with a hint, answered `false`), so there are at most
     `visible rows + 2 × overscan` of them, and the forward exit takes at most
-    that many retries plus the exit press. A change between presses that
-    turns a row into a target makes the retry focus it, as a fresh search
-    would.
+    that many retries plus the exit press. Every retry that keeps focus on the
+    origin is such a press: a retry whose continued search finds a target
+    moves focus and ends the chain, which is only possible after a change. A
+    change between presses that turns a row into a target, whether the retry
+    candidate itself, a row its probe window mounts, or a later row, makes
+    that retry focus it, as a fresh search would.
 
   - **Backward** (in-table `Shift+Tab`, or a reverse entry): focus moves in the
     same press to the last leading-region control, else the viewport element.
@@ -1439,9 +1450,11 @@ Anything about roving `tabindex`, cell focus, or `role` changes belongs in
   continuation whose rescan finds no candidate resolves to step 4 with zero
   mounts, and hint calls only for uncovered rows; an exhausted continuation
   whose rescan finds an unmounted retained row (or row read before the first
-  window) with a `true` hint probes it, covers it, records the union covered
-  set, and the press after that resolves to step 4 when no such row remains a
-  candidate; a hint
+  window) with a `true` hint probes it, covers it if empty, and continues the
+  same search, focusing a later target (including one its probe window
+  mounted) in the same press and recording the union covered set only at the
+  limit or at the end without a trailing-region control, and the press after
+  that resolves to step 4 when no such row remains a candidate; a hint
   `false` exempts an unmounted skipped row from the count, but a row a probe
   window mounts and reads empty counts whatever the hint answers;
   forward end with a trailing-region control focuses it in the same press;
@@ -1710,6 +1723,25 @@ Anything about roving `tabindex`, cell focus, or `role` changes belongs in
           A `focusin` recorder on `document` shows focus only on row 99's
           link until "After". Variant with `rowHasTabbable` returning `false` for row 102
           too: press 2 is the exit (counter 0, probe windows 0).
+        - **Retry reaches a newly mounted target** (regression for continuing
+          the search after an empty retry candidate): same fixture, but row
+          103 renders an Edit button when a reactive `permissions` set
+          outside `data` contains its id, and the same hint function returns
+          `permissions.has(row103Id)` for row 103 (initially `false`). Press
+          1 as above. Grant the permission without any invalidation, keeping
+          `data` and the hint function. Press 2: rows 100 and 101 as above;
+          row 102 is unmounted with a `true` hint, so the press is cancelled
+          and a probe window opens around it (rows 100–103 mounted). Row 102
+          reads empty (counter 1, covered), and the search continues: row
+          103, mounted by that window, gets a hint call (`true`) and shows its
+          Edit button, so it is the target. Press 2 focuses row 103's Edit
+          button (`toBeFocused()` on the real element, in view,
+          `aria-rowindex` of display index 103), not row 99's link: counter
+          1, probe windows 1, one settle scroll (the reveal of row 103, which
+          mounts row 104), row mounts 3 (rows 102, 103, 104), and no
+          continuation is recorded. Press 3 from row 103's Edit button skips
+          rows 104–105 on `false` and focuses "After" natively (counter 0,
+          probe windows 0).
     - Forward, entry fixture's trailing gap (rows 9,960–9,999 without
       controls), no `<tfoot>`: `Tab` from row 9,959's link keeps focus there
       (viewport back on row 9,959, probe counter 39: rows 9,961–9,999; probe
