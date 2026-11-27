@@ -255,17 +255,34 @@ describe('CI workflow', () => {
     expect(verify).toContain('${{ needs.nuxt-fixture.result }}')
   })
 
-  it('builds docs and playground once in verify-build and shares the dist with browser-shard', () => {
-    expect(workflow).not.toMatch(/^ {2}browser-prebuild:/m)
-    expect(jobBlock(workflow, 'verify-build')).toContain(
-      'name: e2e-prebuilt-dist',
+  it('starts both browser jobs from the shared host artifact while package checks run independently', () => {
+    const hosts = jobBlock(workflow, 'build-browser-hosts')
+    const packages = jobBlock(workflow, 'verify-build')
+    for (const producer of [hosts, packages]) {
+      expect(producer).toMatch(/^ {4}needs: changes$/m)
+      expect(producer).toContain("needs.changes.outputs.skip_heavy != 'true'")
+    }
+    expect(hosts).toContain('name: e2e-prebuilt-dist')
+    expect(hosts).toContain('run: pnpm docs:links')
+    expect(packages).toContain('run: pnpm verify:packages')
+    for (const jobId of ['browser-shard', 'browser-cross']) {
+      const consumer = jobBlock(workflow, jobId)
+      expect(consumer).toMatch(/needs:\s*\[changes,\s*build-browser-hosts\]/)
+      expect(consumer).toContain('name: e2e-prebuilt-dist')
+    }
+    const verify = jobBlock(workflow, 'verify')
+    const needs = /needs:\s*\[([^\]]+)\]/.exec(verify)
+    expect(needs?.[1].split(',').map((need) => need.trim())).toEqual(
+      expect.arrayContaining(['verify-build', 'build-browser-hosts']),
     )
-    expect(jobBlock(workflow, 'browser-shard')).toMatch(
-      /needs:\s*\[changes,\s*verify-build\]/,
+    for (const jobId of ['verify-build', 'build-browser-hosts']) {
+      expect(verify).toContain('${{ needs.' + jobId + '.result }}')
+    }
+    const browser = jobBlock(workflow, 'browser')
+    expect(browser).toMatch(
+      /needs:\s*\[changes,\s*build-browser-hosts,\s*browser-shard,\s*browser-cross\]/,
     )
-    expect(jobBlock(workflow, 'browser')).toMatch(
-      /needs:\s*\[changes,\s*verify-build,\s*browser-shard,\s*browser-cross\]/,
-    )
+    expect(browser).toContain('needs.build-browser-hosts.result')
   })
 
   it('runs Chromium shards and consolidated Firefox/WebKit checks behind the browser check', () => {
@@ -275,7 +292,6 @@ describe('CI workflow', () => {
     )
 
     const cross = jobBlock(workflow, 'browser-cross')
-    expect(cross).toMatch(/needs:\s*\[changes,\s*verify-build\]/)
     expect(cross).not.toMatch(/\bmatrix:/)
     expect(cross).toContain(
       'run: pnpm test:e2e:prebuilt --project=firefox-e2e --project=webkit-e2e',

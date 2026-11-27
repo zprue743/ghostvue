@@ -55,7 +55,7 @@ needs the review described in the [dependency policy](../standards/dependencies.
 ## Node versions
 
 `engines.node` is `>=22`. The `verify-static`, `verify-unit` (with coverage),
-`verify-integration`, `verify-build`, `nuxt-fixture`, `browser-shard`, and
+`verify-integration`, `verify-build`, `build-browser-hosts`, `nuxt-fixture`, `browser-shard`, and
 `browser-cross` jobs run on Node 22. Node 24 compatibility is exercised without
 duplicate coverage instrumentation by `verify-unit-node24` on pushes to `master`,
 merge groups, weekly scheduled runs, and pull requests that change Node/tooling
@@ -82,10 +82,17 @@ The `changes` job classifies pull request diffs via
   scaffolding changes and the weekly `CI` schedule) runs full nested
   `pnpm verify`.
 - `verify-static` caches `.prettiercache` (`static-prettier-cache`) and
-  `verify-build` caches `apps/docs/.vitepress/cache` (`vitepress-cache`). Both
+  `build-browser-hosts` caches `apps/docs/.vitepress/cache` (`vitepress-cache`). Both
   set `GHOSTVUE_REGISTRIES_READY=1` after `pnpm install` (`prepare`) runs
   `registries:write` so `pretypecheck` and `prebuild` hooks skip redundant
   rewrites while `pnpm registries` verification still executes.
+
+The `build-browser-hosts` job builds the playground and docs, checks the built
+site links, and uploads one artifact for every browser runner. It starts alongside
+`verify-build`, which builds the packages and runs the export, packed-consumer,
+agent guide, bundle-size, and MCP asset checks. Both jobs must pass for `verify` to succeed
+on heavy runs. The `browser` check waits for the hosts and
+the selected browser jobs.
 
 ## Browser shard balancing
 
