@@ -29,6 +29,12 @@ test.describe('getting started and docs navigation', () => {
     const docs = await startStaticServer('apps/docs/.vitepress/dist')
     try {
       await page.goto(`${docs.url}/index.html`)
+      await expect(page.getByText('Pre-1.0 · on npm')).toBeVisible()
+      await expect(
+        page.getByText(
+          'GhostVue is published on npm. Minor releases may include breaking API changes.',
+        ),
+      ).toBeAttached()
       const cta = page
         .locator('.ghost-landing__actions')
         .getByRole('link', { name: 'Get started' })
