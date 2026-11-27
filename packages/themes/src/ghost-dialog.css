@@ -107,11 +107,12 @@
       transition:
         opacity var(--ghost-motion-duration-fast)
           var(--ghost-motion-enter-easing),
-        scale var(--ghost-motion-duration-fast) var(--ghost-motion-enter-easing);
+        translate var(--ghost-motion-duration-fast)
+          var(--ghost-motion-enter-easing);
 
-      /* Individual scale preserves the centering transform. */
+      /* Keep DatePicker's dialog targets full-size during entry. */
       @starting-style {
-        scale: 0.98;
+        translate: 0 calc(var(--ghost-motion-translate) / 2);
       }
     }
   }

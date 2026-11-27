@@ -349,6 +349,13 @@ test.describe('docs Combobox assignee search showcase', () => {
       // Pointer and keyboard highlight only recolor options.
       await page.keyboard.press('ArrowDown')
       const marcus = option('Marcus Reed')
+      await marcus.evaluate(async (element) => {
+        // The opening surface scales independently of option highlight.
+        const surface = element.closest('.assignee-results')
+        await Promise.all(
+          surface?.getAnimations().map((animation) => animation.finished) ?? [],
+        )
+      })
       const before = await marcus.boundingBox()
       await marcus.hover()
       await expect(marcus).toHaveAttribute('data-highlighted', '')

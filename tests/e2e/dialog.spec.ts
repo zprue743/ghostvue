@@ -41,7 +41,7 @@ for (const reducedMotion of ['no-preference', 'reduce'] as const) {
           .sort(),
       )
       expect(properties).toEqual(
-        reducedMotion === 'reduce' ? ['opacity'] : ['opacity', 'scale'],
+        reducedMotion === 'reduce' ? ['opacity'] : ['opacity', 'translate'],
       )
 
       await page.keyboard.press('Escape')
