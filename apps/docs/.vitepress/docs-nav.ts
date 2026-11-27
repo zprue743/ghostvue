@@ -190,6 +190,7 @@ export const docsSidebars: Record<string, LlmsSidebarGroup[] | undefined> = {
   '/': [{ text: 'Docs', items: docsMainSidebar }],
   '/components/': [{ text: 'Components', items: generatedComponentSidebar }],
   '/themes/': [{ text: 'Theming', items: themingSidebar }],
+  '/examples/': [],
   '/contributing/': contributeSidebar,
   '/architecture/': contributeSidebar,
   '/standards/': contributeSidebar,
@@ -200,12 +201,16 @@ export const docsSidebars: Record<string, LlmsSidebarGroup[] | undefined> = {
 
 /**
  * Flattened sidebar catalog for llms.txt, integration tests, and link crawlers.
- * Top-level groups match published nav order: Docs, Components, Theming, Contribute.
+ * Top-level groups match the published nav order.
  */
 export const docsSidebar: LlmsSidebarGroup[] = [
   { text: 'Docs', items: docsMainSidebar },
   { text: 'Components', items: generatedComponentSidebar },
   { text: 'Theming', items: themingSidebar },
+  {
+    text: 'Examples',
+    items: [{ text: 'Billing & Invoices', link: '/examples' }],
+  },
   {
     text: 'Contribute',
     items: contributeSidebar.map((group) => ({

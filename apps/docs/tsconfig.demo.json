@@ -22,6 +22,8 @@
     ".vitepress/theme/DemoPreview*.vue",
     ".vitepress/theme/DemoPlayground*.vue",
     ".vitepress/theme/GhostExample.vue",
+    "showcases/**/*.ts",
+    "showcases/**/*.vue",
     "../../examples/**/*.ts",
     "../../examples/**/*.vue",
     "../../examples/**/*.d.ts",

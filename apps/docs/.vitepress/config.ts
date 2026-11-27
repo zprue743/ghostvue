@@ -138,6 +138,11 @@ export default defineConfig({
         activeMatch: '^/themes/',
       },
       {
+        text: 'Examples',
+        link: '/examples',
+        activeMatch: '^/examples(?:/|$)',
+      },
+      {
         text: 'Contribute',
         link: '/contributing/workflow',
         activeMatch:

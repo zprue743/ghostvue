@@ -2,7 +2,13 @@ import { expect, test } from '@playwright/test'
 
 import { startStaticServer } from './static-server'
 
-const navLabels = ['Docs', 'Components', 'Theming', 'Contribute'] as const
+const navLabels = [
+  'Docs',
+  'Components',
+  'Theming',
+  'Examples',
+  'Contribute',
+] as const
 
 test.describe('getting started and docs navigation', () => {
   test('getting-started page renders its title', async ({ page }) => {
@@ -37,7 +43,7 @@ test.describe('getting started and docs navigation', () => {
     }
   })
 
-  test('top nav shows four primary items at 1440px', async ({ page }) => {
+  test('top nav shows the primary items at 1440px', async ({ page }) => {
     const docs = await startStaticServer('apps/docs/.vitepress/dist')
     try {
       await page.setViewportSize({ width: 1440, height: 900 })
@@ -53,9 +59,7 @@ test.describe('getting started and docs navigation', () => {
     }
   })
 
-  test('mobile menu lists the four primary items at 390px', async ({
-    page,
-  }) => {
+  test('mobile menu lists the primary items at 390px', async ({ page }) => {
     const docs = await startStaticServer('apps/docs/.vitepress/dist')
     try {
       await page.setViewportSize({ width: 390, height: 800 })
