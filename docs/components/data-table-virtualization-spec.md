@@ -166,17 +166,17 @@ Why a child component rather than a prop on the root:
 
 ### `GhostDataTableViewport` props
 
-| Prop              | Type                                        | Default             | Contract                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
-| ----------------- | ------------------------------------------- | ------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `rowHeight`       | `number`                                    | required            | Data-row block size in CSS pixels. In `'fixed'` mode it is exact; in `'measured'` mode it is the estimate for rows not yet measured. Non-finite or `< 1` values fall back to `1` (dev warning).                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
-| `rowHeightMode`   | `'fixed' \| 'measured'`                     | `'fixed'`           | See [Row-height model](#row-height-model). Detail rows are always measured.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
-| `overscan`        | `number`                                    | `5`                 | Extra data rows mounted on **each** side of the visible range. Normalized like `maxMultiSortColCount`: `Math.floor`, then minimum `1` (focus continuity needs at least one row).                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
-| `initialRowCount` | `number`                                    | `20`                | Rows rendered before the viewport is measured: on the server and in the first client render. Same normalization, minimum `1`. See [SSR and hydration](#ssr-and-hydration).                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
-| `label`           | `string`                                    | inherits table name | Accessible name of the scroll region. Falls back to the root's `ariaLabelledby` (as `aria-labelledby`), then `ariaLabel`. Dev warning when no name resolves.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
-| `labelledby`      | `string`                                    | —                   | Id of a visible label for the region; wins over `label`.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
-| `rowHasTabbable`  | `(row: DataTableSlotRow<TData>) => boolean` | —                   | Hint for [Tab traversal](#tab-traversal-across-unmounted-rows): whether the row group (data row plus open detail row) renders at least one tabbable control (`tabindex` `0`, see [Terms](#tab-traversal-across-unmounted-rows)) **now**. Called only for unmounted rows, fresh at every search; may read reactive state outside `data` (permissions, flags); must be pure and cheap. When provided it is authoritative for unmounted rows and no probe results are cached beyond the [continuation](#probe-results-and-freshness), which covers only rows the hint answered `true` and a probe found empty. When omitted, unmounted rows are probed by mounting them and empty results are cached (see [Probe results and freshness](#probe-results-and-freshness)).                                                  |
-| `tabSearchLimit`  | `number`                                    | `200`               | Most **empty rows one `Tab` / `Shift+Tab` press (or one reverse entry) may inspect by probing**. Same normalization as `overscan`, minimum `1`. A row counts once when a probe window of this press mounted it (the candidate or an overscan neighbour) and the search then read it with no tabbable control, whether the hint said `true` or there was no hint. Rows the hint answers `false` (never mounted), rows already mounted when the press started (read from the DOM), mounted rows the search never reads, and the target row do not count. It is not a cap on mounted rows; the separate [per-press mount bound](#probe-without-a-hint) is at most `tabSearchLimit` probe windows plus one settle scroll, so at most `(tabSearchLimit + 1) × (visible rows + 2 × overscan)` newly mounted rows per press. |
-| `footerRowCount`  | `number`                                    | `0`                 | Number of `<tr>` rows the consumer renders in `<tfoot>`. Used for `aria-rowcount` and the footer rows' `aria-rowindex` (see [Row count and row index](#row-count-and-row-index)), so it must be known before mount (SSR). Normalized with `Math.floor`, minimum `0`. Dev builds count the rendered `<tfoot>` rows after mount and warn on a mismatch.                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| Prop              | Type                                        | Default             | Contract                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| ----------------- | ------------------------------------------- | ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `rowHeight`       | `number`                                    | required            | Data-row block size in CSS pixels. In `'fixed'` mode it is exact; in `'measured'` mode it is the estimate for rows not yet measured. Non-finite or `< 1` values fall back to `1` (dev warning).                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| `rowHeightMode`   | `'fixed' \| 'measured'`                     | `'fixed'`           | See [Row-height model](#row-height-model). Detail rows are always measured.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| `overscan`        | `number`                                    | `5`                 | Extra data rows mounted on **each** side of the visible range. Normalized like `maxMultiSortColCount`: `Math.floor`, then minimum `1` (focus continuity needs at least one row).                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| `initialRowCount` | `number`                                    | `20`                | Rows rendered before the viewport is measured: on the server and in the first client render. Same normalization, minimum `1`. See [SSR and hydration](#ssr-and-hydration).                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| `label`           | `string`                                    | inherits table name | Accessible name of the scroll region. Falls back to the root's `ariaLabelledby` (as `aria-labelledby`), then `ariaLabel`. Dev warning when no name resolves.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| `labelledby`      | `string`                                    | —                   | Id of a visible label for the region; wins over `label`.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| `rowHasTabbable`  | `(row: DataTableSlotRow<TData>) => boolean` | —                   | Hint for [Tab traversal](#tab-traversal-across-unmounted-rows): whether the row group (data row plus open detail row) renders at least one tabbable control (`tabindex` `0`, see [Terms](#tab-traversal-across-unmounted-rows)) **now**. Called only for unmounted rows, fresh at every search; may read reactive state outside `data` (permissions, flags); must be pure and cheap. When provided it is authoritative for unmounted rows and no probe results are cached beyond the [continuation](#probe-results-and-freshness), which covers only rows the hint answered `true` that a search then probed and read empty ([probed rows](#probe-without-a-hint)). When omitted, unmounted rows are probed by mounting them and empty results are cached (see [Probe results and freshness](#probe-results-and-freshness)).                                                                                                                                        |
+| `tabSearchLimit`  | `number`                                    | `200`               | Most **empty rows one `Tab` / `Shift+Tab` press (or one reverse entry) may inspect by probing**. Same normalization as `overscan`, minimum `1`. Every row the search reads with no tabbable control after the press opened its first probe window counts once (a **probed row**: the candidate, an overscan neighbour, or a row that was mounted when the key was pressed, whether a window kept or remounted it), whether the hint said `true` or there was no hint. Only rows read before the first probe window (still mounted from press start, read straight from the DOM) are exempt; rows the hint answers `false` (never mounted), mounted rows the search never reads, and the target do not count. It is not a cap on mounted rows; the separate [per-press mount bound](#probe-without-a-hint) is at most `tabSearchLimit` probe windows plus one settle scroll, so at most `(tabSearchLimit + 1) × (visible rows + 2 × overscan)` row mounts per press. |
+| `footerRowCount`  | `number`                                    | `0`                 | Number of `<tr>` rows the consumer renders in `<tfoot>`. Used for `aria-rowcount` and the footer rows' `aria-rowindex` (see [Row count and row index](#row-count-and-row-index)), so it must be known before mount (SSR). Normalized with `Math.floor`, minimum `0`. Dev builds count the rendered `<tfoot>` rows after mount and warn on a mismatch.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
 
 Consumer `class` and `style` merge onto the viewport element and are never
 overwritten (`mergeGhostTablePartAttrs` rules). The consumer must give the
@@ -463,8 +463,9 @@ an entry with nowhere to return to:
   [Reverse entry](#reverse-entry-from-after-the-table);
 - without a hint, a row whose controls changed for a reason the viewport
   cannot see while its cached empty result was not invalidated;
-- with an unsure or wrong hint, or without one, a row that a probe mounted and
-  found empty, that is covered by a pending
+- with an unsure or wrong hint, or without one, a
+  [probed row](#probe-without-a-hint) (read empty after a probe window
+  opened), that is covered by a pending
   [continuation](#probe-results-and-freshness), and that gains a control
   before the next press of that chain without any invalidation trigger
   firing. Focus can pass it at most once: the press that ends the chain moves
@@ -513,7 +514,7 @@ row group _r_ is tabbable is decided as follows:
 
 A search resumed from a [continuation](#probe-results-and-freshness) uses one
 more source, checked before the hint: an unmounted row in the continuation's
-**covered set** (rows a probe mounted and found empty) is not tabbable. Only
+**covered set** (the [probed rows](#probe-without-a-hint) of the chain) is not tabbable. Only
 probed rows are covered. Every other unmounted row in the span, including rows
 the hint answered `false`, is decided by the list above again, and a covered
 row that is mounted is read from the DOM like any other mounted row.
@@ -711,8 +712,9 @@ catcher** makes this entry follow display order:
   accurate hint, a trailing run longer than `tabSearchLimit`, and an entry
   that has no previous control to return to. The dev warning below covers it.
 
-**Known-empty set.** Without a hint, row ids that a probe mounted and found
-without a tabbable control, so later searches skip them. Its lifetime and
+**Known-empty set.** Without a hint, the ids of
+[probed rows](#probe-without-a-hint) (read without a tabbable control after a
+probe window opened), so later searches skip them. Its lifetime and
 invalidation are defined in
 [Probe results and freshness](#probe-results-and-freshness).
 
@@ -748,7 +750,7 @@ entry with an accurate hint: one probe window (the target's) and one `focus()`
 call, no settle scroll. Without an accurate hint, or with wrong `true` answers:
 at most `tabSearchLimit` empty rows inspected, at most `tabSearchLimit` probe
 windows, and at most one settle scroll, so at most
-`(tabSearchLimit + 1) × (visible rows + 2 × overscan)` newly mounted rows (see
+`(tabSearchLimit + 1) × (visible rows + 2 × overscan)` row mounts (see
 [Probe without a hint](#probe-without-a-hint)). A resumed search rescans the span
 from its start position without re-mounting covered rows: an O(1) set lookup
 per covered row, one hint call per other unmounted row (no mount, and not
@@ -782,13 +784,21 @@ window** around an unmounted candidate row, as
 `scrollToRow(candidate, { align: 'nearest' })` would, and reads the DOM. Two
 separate quantities are bounded per key press (or reverse entry):
 
-- **Empty rows inspected (`tabSearchLimit`).** The counter advances once for
-  each row that a probe window of this press mounted and the search then read
-  with no tabbable control: the candidate, and any overscan neighbour the
-  search reaches before it stops. The search stops as soon as the counter
-  equals `tabSearchLimit`, without reading further mounted neighbours. Rows the
-  hint answered `false`, rows already mounted when the press started, mounted
-  rows the search never read, and the target do not count.
+- **Empty rows inspected (`tabSearchLimit`).** Once the press has opened its
+  first probe window, the counter advances once for every row the search then
+  reads with no tabbable control, whatever mounted it: the window's candidate,
+  an overscan neighbour, a row that was mounted when the key was pressed and
+  that the window kept, or such a row that an earlier window of the press
+  unmounted and a later one remounted. These are the press's **probed rows**.
+  Only the rows the search reads before its first probe window are exempt:
+  they were mounted when the key was pressed, nothing has moved the window
+  yet, and reading them is the constant-cost DOM work of steps 1–5. The
+  search stops as soon as the counter equals `tabSearchLimit`, without reading
+  further mounted rows. Rows the hint answered `false`, mounted rows the
+  search never read, and the target do not count. So a probe window can never
+  open for a candidate the search has already passed, and a candidate that
+  was mounted at press start but must be remounted always counts: the
+  exemption ends with the first window, before any window can unmount it.
 - **Window mounts.** At most `tabSearchLimit` probe windows, then at most one
   **settle scroll**: revealing a target that is already mounted (the
   cancelled-press rule), scrolling back to the origin
@@ -796,14 +806,16 @@ separate quantities are bounded per key press (or reverse entry):
   control), or restoring the scroll offset after a capped reverse entry. A
   target that was the last probe window's candidate is already revealed by
   that window and needs no settle scroll. The window bound follows from the
-  counter: every probe window except the last has an empty candidate, which
-  counts, and the search stops when the count reaches `tabSearchLimit`.
+  counter: every probe window except the last has an empty candidate, read
+  after the first window opened, so it counts, and the search stops when the
+  count reaches `tabSearchLimit`.
 - **Total mounting.** Each window holds at most `visible rows + 2 × overscan`
   rows (the rows intersecting the viewport at that offset plus overscan on
   each side, the mounted-row budget in [Performance](#performance) without the
   pinned row). Each window replaces the previous one (only the origin stays
   pinned), so at any moment the mounted rows stay within that budget, and the
-  rows newly mounted during one press are at most
+  row mounts during one press (a row that unmounts and mounts again counts
+  each time) are at most
   `(tabSearchLimit + 1) × (visible rows + 2 × overscan)`. With
   `tabSearchLimit: 1`, a press can mount one whole window and one settle
   scroll's worth of rows while inspecting a single empty row; that is
@@ -825,7 +837,7 @@ viewport) names `rowHasTabbable` as the fix, or an accurate answer instead of
 - **Limit reached** (the press inspected `tabSearchLimit` empty rows): focus
   stays on the origin (it never leaves the table early and never drops to
   `<body>`), and the viewport scrolls back to it with `align: 'nearest'`. The
-  continuation covers the rows this probe found empty. The next press of the
+  continuation covers this press's probed rows. The next press of the
   same key from the same origin rescans from the same start position: it
   passes covered rows without mounting them, asks the hint again about every
   other row, and probes only rows that are neither covered nor answered
@@ -877,12 +889,13 @@ consumer state. The rules below say which source wins.
   that gains a control while unmounted is reached as soon as the hint returns
   `true` for it, with no invalidation. The one probe result that outlives a
   search is the continuation below, which covers only rows the hint
-  answered `true` and a probe found empty. (When the `rowHasTabbable` prop
+  answered `true` and a search probed and read empty. (When the `rowHasTabbable` prop
   changes from absent to provided, the set is cleared and stops being used.)
 - **Continuation (both modes).** When a probe stops without a target
   ([End of search](#end-of-search)), it records a continuation: the focus
   origin, the key direction, the start position, and the **covered set**: the
-  ids of the rows this search mounted and found empty. Rows the hint answered
+  ids of this search's [probed rows](#probe-without-a-hint) (rows it read
+  empty after its first probe window). Rows the hint answered
   `false` and rows the search never reached are not in it. The continuation
   is **exhausted** when the probe reached the end of the set. The next press
   of the same key from the same origin rescans from the same start position
@@ -932,8 +945,10 @@ consumer state. The rules below say which source wins.
   changes, which drops the continuation. Re-probing covered rows on every
   resume would keep the guarantee exact but makes work per press grow with the
   run; see [V9](#open-architectural-decisions-for-zac-0-3-0-sign-off).
-- **Without a hint: the known-empty set.** It holds the ids a probe mounted and
-  read with no tabbable control, and it is consulted only for unmounted rows.
+- **Without a hint: the known-empty set.** It holds the ids of
+  [probed rows](#probe-without-a-hint) (rows a search read with no tabbable
+  control after its first probe window), and it is consulted only for
+  unmounted rows.
   It persists across presses and entries on purpose: clearing it per press
   would make every press re-probe the same rows, so a run longer than
   `tabSearchLimit` could never be crossed. An id is removed when:
@@ -1243,16 +1258,16 @@ vertical).
 **Budgets (proposed; gates follow the parent spec's policy of informational
 until CI variance is known, except the deterministic checks):**
 
-| Scenario                                                          | Budget                                                                                                                                                 | Kind          |
-| ----------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------- |
-| Mounted data rows, 400px viewport, `rowHeight: 40`, `overscan: 5` | `≤ 10 + 2 × 5 + 1` (visible + overscan + one pinned row), independent of row count                                                                     | Deterministic |
-| One `Tab` / `Shift+Tab` press or reverse entry                    | `≤ tabSearchLimit` empty rows inspected and probe windows, `≤ 1` settle scroll, `≤ (tabSearchLimit + 1) × (visible + 2 × overscan)` newly mounted rows | Deterministic |
-| Scroll frame                                                      | Zero sort, filter, `sortFn`, `filterFn`, or accessor calls                                                                                             | Deterministic |
-| Scroll frame                                                      | At most one window recompute per animation frame                                                                                                       | Deterministic |
-| Cell contexts                                                     | Built only for mounted rows (see below)                                                                                                                | Deterministic |
-| Window recompute, 100k rows, measured mode                        | p95 < 1ms                                                                                                                                              | Informational |
-| Scroll-to-paint, 10k rows × 8 columns, mid-range CI runner        | p95 < 16ms                                                                                                                                             | Informational |
-| First render, 10k local rows, `enablePagination: false`           | Within 2× the phase-one 25-row page render                                                                                                             | Informational |
+| Scenario                                                          | Budget                                                                                                                                | Kind          |
+| ----------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- | ------------- |
+| Mounted data rows, 400px viewport, `rowHeight: 40`, `overscan: 5` | `≤ 10 + 2 × 5 + 1` (visible + overscan + one pinned row), independent of row count                                                    | Deterministic |
+| One `Tab` / `Shift+Tab` press or reverse entry                    | `≤ tabSearchLimit` probed rows and probe windows, `≤ 1` settle scroll, `≤ (tabSearchLimit + 1) × (visible + 2 × overscan)` row mounts | Deterministic |
+| Scroll frame                                                      | Zero sort, filter, `sortFn`, `filterFn`, or accessor calls                                                                            | Deterministic |
+| Scroll frame                                                      | At most one window recompute per animation frame                                                                                      | Deterministic |
+| Cell contexts                                                     | Built only for mounted rows (see below)                                                                                               | Deterministic |
+| Window recompute, 100k rows, measured mode                        | p95 < 1ms                                                                                                                             | Informational |
+| Scroll-to-paint, 10k rows × 8 columns, mid-range CI runner        | p95 < 16ms                                                                                                                            | Informational |
+| First render, 10k local rows, `enablePagination: false`           | Within 2× the phase-one 25-row page render                                                                                            | Informational |
 
 **Implementation requirement on phase-one code:** `useDataTableSlotBindings`
 builds `cellsByRowId` for every row of `getRowModel()` (O(rows × columns)
@@ -1343,16 +1358,21 @@ Anything about roving `tabindex`, cell focus, or `role` changes belongs in
   known-empty removal on remount with a control, on expansion, and through
   `invalidateTabbableCache(ids)`, and clearing on `data`, column, hint-added,
   and `invalidateTabbableCache()`; probe stops at `tabSearchLimit` (normalized like `overscan`)
-  and at the end of the set; per-press bounds: the counter advances only for
-  rows a probe window of the press mounted and the search read empty (not for
-  rows mounted at press start, hint-`false` rows, unread neighbours, or the
-  target), the search stops the moment it equals `tabSearchLimit`, probe
-  windows never exceed `tabSearchLimit`, at most one settle scroll runs, and
-  newly mounted rows never exceed
+  and at the end of the set; per-press bounds: the counter advances for every
+  row read empty after the first probe window, including rows mounted at
+  press start that a window kept or remounted (not for rows read before the
+  first window, hint-`false` rows, unread rows, or the target), the search
+  stops the moment it equals `tabSearchLimit`, probe windows never exceed
+  `tabSearchLimit`, at most one settle scroll runs, and row mounts (remounts
+  counted each time) never exceed
   `(tabSearchLimit + 1) × (visible rows + 2 × overscan)`, checked for
   `tabSearchLimit` `1`, `2`, and `200` with `overscan` `1` and `5`; with
   `tabSearchLimit: 1` a press mounts one window, inspects one empty row, and
-  scrolls back; no sort, filter, or accessor calls. Tabbable: a control with
+  scrolls back; a press that starts scrolled away from the pinned origin,
+  with empty rows mounted ahead of the first unmounted candidate, counts
+  those rows once a window has opened and opens no window beyond
+  `tabSearchLimit` (the reviewer's scenario below, as a unit case on the
+  search with a stub window); no sort, filter, or accessor calls. Tabbable: a control with
   `tabindex="0"` (explicit or native default) is a stop, `tabindex="-1"` and
   any positive value are not, so a row group whose only control has
   `tabindex="1"` is not a target and the search continues past it. Start
@@ -1471,22 +1491,23 @@ Anything about roving `tabindex`, cell focus, or `role` changes belongs in
     without a hint: the first `Tab` from the last row control keeps focus
     there, the next one leaves the table.
   - **Fully probed gaps with an unsure hint** (`rowHasTabbable: () => true`,
-    default `tabSearchLimit`). A dev-only probe counter (rows a search mounted
-    and found empty, the unit `tabSearchLimit` counts) is read after every
+    default `tabSearchLimit`). A dev-only probe counter (probed rows: rows a
+    search read empty after its first probe window, the unit `tabSearchLimit`
+    counts) is read after every
     press; the permission fixture's cross-cap cases below read it too.
     Two more dev-only counters are read with it: **probe windows** (window
-    mounts around an unmounted candidate) and **newly mounted rows** (rows
-    that were not mounted before the press, including the settle scroll's).
+    mounts around an unmounted candidate) and **row mounts** (each time a row
+    mounts during the press, remounts included, settle scroll included).
     Every press whose counters are asserted also asserts probe windows
-    `≤ tabSearchLimit`, at most one settle scroll, and newly mounted rows
+    `≤ tabSearchLimit`, at most one settle scroll, and row mounts
     `≤ (tabSearchLimit + 1) × 4` (2 visible rows plus `2 × overscan`).
     **Probe-count setup:** every press whose counter is asserted runs with a
     viewport that shows 2 rows, `overscan: 1`, and a
     `scrollToRow(originRowId, { align: 'end' })` call (forward) or
     `{ align: 'start' }` call (backward) just before the press, so exactly
     one row after (or before) the origin is mounted when the press starts.
-    That row is read from the DOM and not counted, so probing starts one row
-    later. A probe window around candidate _c_ then mounts _c_ and its
+    That row is read from the DOM before any probe window and not counted,
+    so probing starts one row later. A probe window around candidate _c_ then mounts _c_ and its
     overscan neighbour beyond it; a neighbour the search reads empty counts
     too, and a neighbour that is the target does not. Presses from other
     origins assert focus only.
@@ -1499,7 +1520,7 @@ Anything about roving `tabindex`, cell focus, or `role` changes belongs in
       mounted by that window, so it is not counted. Exactly one press focuses
       row 102's link (`toBeFocused()`, in view, `aria-rowindex` of display
       index 102), counter 1, probe windows 1, one settle scroll (the reveal of
-      row 102, which mounts row 103), newly mounted rows 3, and focus never
+      row 102, which mounts row 103), row mounts 3, and focus never
       stays on row 99. Backward: `Shift+Tab` from row 102's link (`align:
 'start'` setup, row 101 mounted and read empty, row 100 probed, row 99
       mounted by the same window, reveal mounts row 98) focuses row 99's link
@@ -1508,15 +1529,39 @@ Anything about roving `tabindex`, cell focus, or `role` changes belongs in
       accurate hint (`false` for rows 100–101): `Tab` from row 99 asks the
       hint about row 101 only (row 100 is mounted and read from the DOM),
       mounts one probe window around row 102 (rows 101–103) and focuses row
-      102's link: counter 0, probe windows 1, no settle scroll, newly mounted
-      rows 3.
+      102's link: counter 0, probe windows 1, no settle scroll, row mounts 3.
     - **`tabSearchLimit: 1`** (gap fixture, rows 100–139 without controls, no
       hint, probe-count setup): each of the first 39 `Tab` presses from row
       99's link mounts one probe window, inspects exactly one empty row (rows
       101, 102, …, 139 in turn), stops without reading the mounted overscan
       neighbour, and scrolls back to row 99 (counter 1, probe windows 1, one
-      settle scroll, newly mounted rows `≤ 8`), keeping focus on row 99. The
+      settle scroll, row mounts `≤ 8`), keeping focus on row 99. The
       40th press focuses row 140's link. Same with an unsure hint.
+    - **Scrolled away from the pinned origin** (regression for counting
+      mounted candidates): `tabSearchLimit: 2`, `overscan: 1`, a viewport
+      that shows 2 rows, rows 100–105 without controls, row 106 with its
+      link, unsure hint. Focus row 99's link, then `scrollToOffset` so rows
+      102–103 are visible (rows 101–104 mounted, row 99 pinned, row 100
+      unmounted) before each press; no `scrollToRow` setup.
+      - Press 1: row 100 is unmounted, so the first probe window opens
+        around it (rows 99–102 mounted, rows 103–104 unmounted). Row 100
+        reads empty (counter 1) and row 101, mounted since press start, reads
+        empty after that window opened (counter 2), so the search stops at
+        the limit before row 102. Probe windows 1 (no window ever opens for
+        row 103 or row 105), one settle scroll back to row 99 (row mounts 2:
+        row 100 by the window, row 98 by the settle), focus stays on row 99,
+        covered set rows 100–101.
+      - Press 2, after the same scroll-away: row 100 is covered and skipped;
+        rows 101–104 are mounted and read before any probe window (exempt);
+        row 105 is unmounted and opens the first probe window (rows 103–106
+        mounted), reads empty (counter 1), and row 106, mounted by that
+        window, is the target. One press focuses row 106's link: counter 1,
+        probe windows 1, one settle scroll (revealing row 106, which mounts
+        row 107), row mounts 3.
+      - Without the scroll-away (focus row 99, probe-count setup with
+        `align: 'end'`), the same fixture needs 3 presses, each with probe
+        windows 1 and counter 2 except the last (counter 1, focus on row
+        106). Repeated without a hint, with the same counts.
     - Forward, entry fixture's trailing gap (rows 9,960–9,999 without
       controls), no `<tfoot>`: `Tab` from row 9,959's link keeps focus there
       (viewport back on row 9,959, probe counter 39: rows 9,961–9,999; probe
