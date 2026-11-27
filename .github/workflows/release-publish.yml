@@ -1,7 +1,12 @@
-name: Publish 0.1.0
+name: Publish npm release
 
 on:
   workflow_dispatch:
+    inputs:
+      expected_version:
+        description: Exact version committed in all five package manifests (X.Y.Z).
+        required: true
+        type: string
 
 concurrency:
   group: npm-publish
@@ -10,18 +15,39 @@ concurrency:
 permissions: {}
 
 jobs:
+  validate:
+    if: github.repository == 'zprue743/ghostvue' && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/release/0.1.x')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+          package-manager-cache: false
+      - name: Validate version and release branch
+        env:
+          EXPECTED_VERSION: ${{ inputs.expected_version }}
+        run: |
+          node --input-type=module -e '
+            import { distributionTag } from "./scripts/publish-release.mjs"
+            distributionTag(process.env.GITHUB_REF, process.env.EXPECTED_VERSION)
+          '
+
   rehearse:
-    if: github.repository == 'zprue743/ghostvue' && github.ref == 'refs/heads/master'
+    needs: validate
     permissions:
       contents: read
     uses: ./.github/workflows/release-dry-run.yml
     with:
-      expected_version: '0.1.0'
+      expected_version: ${{ inputs.expected_version }}
       evidence_only: true
 
   publish:
     needs: rehearse
-    if: github.repository == 'zprue743/ghostvue' && github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
     timeout-minutes: 10
     environment: npm-release
@@ -43,13 +69,14 @@ jobs:
           path: reports/release-dry-run
       - name: Publish the verified release tarballs
         env:
+          EXPECTED_VERSION: ${{ inputs.expected_version }}
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: node scripts/publish-release.mjs reports/release-dry-run
 
   verify:
     needs: publish
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 25
     permissions:
       contents: read
     steps:
@@ -65,4 +92,26 @@ jobs:
           name: release-dry-run-evidence
           path: reports/release-dry-run
       - name: Verify a clean public install and signature attestations
+        env:
+          EXPECTED_VERSION: ${{ inputs.expected_version }}
         run: node scripts/publish-release.mjs --verify-public-install reports/release-dry-run
+
+  github-release:
+    needs: verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+          package-manager-cache: false
+      - name: Publish GitHub Release for the verified commit
+        env:
+          EXPECTED_VERSION: ${{ inputs.expected_version }}
+          GH_TOKEN: ${{ github.token }}
+        run: node scripts/github-release.mjs

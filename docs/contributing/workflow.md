@@ -96,6 +96,30 @@ the repository's Dependabot branches follow their own review path.
    Retarget carryovers only after an explicit decision. Publication requires its
    own authorization.
 
+### Release routing and branching
+
+- **Next release.** Develop on short-lived issue branches from `master` and
+  target PRs at `master`. Read `activeRelease` from
+  [the policy on master](https://github.com/zprue743/ghostvue/blob/master/.github/release-scope.json)
+  and check the issue's **Target release** on the execution board before
+  picking it up. Future-release, unassigned, and patch issues stay out of
+  automatic pickup, even if they still carry an old `agent:ready` label.
+- **Report mode.** Legacy runners use `agent:ready` as a signal. Recheck the
+  target, status, holds, and ownership before acting on that label. Use the
+  release-scope report to preview the queue. In enforcement mode follow the
+  claim command above.
+- **Maintenance.** Keep `0.1.x` on the board for compatible fixes. Start work
+  only when a maintainer selects the issue for a patch. Cut `release/0.1.x`
+  from `v0.1.0` when the first patch is needed. Target a separate patch issue
+  branch and PR at `release/0.1.x`. Backport a focused fix from `master` when
+  it already exists. Otherwise carry the fix forward to `master` in a
+  separate PR. Keep branch-specific version and changelog commits on their
+  original branch.
+
+Keep one active development target throughout a maintenance release. See
+[the release runbook](./releases.md#release-operation) for the maintenance
+branch setup and publication steps.
+
 ### Release planning
 
 The [release roadmap](https://github.com/users/zprue743/projects/5/views/2) shows major

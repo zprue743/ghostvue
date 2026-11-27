@@ -1,15 +1,28 @@
 # Getting started
 
-GhostVue is two packages: `@ghostvue/vue` is the headless primitive library
-(behavior, accessibility, no CSS), and `@ghostvue/themes` is an optional themed
-layer: wrappers with visual props plus contrast-tested OKLCH stylesheets.
+`@ghostvue/vue` provides headless primitives with accessible behavior and no
+CSS. Add `@ghostvue/themes` for themed wrappers with visual props and
+contrast-tested OKLCH stylesheets.
 
 > [!WARNING]
-> **Pre-release.** The packages are not on npm yet; the APIs can still change.
-> Try GhostVue in the repository playground today. Requires Node.js 22+ and
-> pnpm 11+.
+> GhostVue is published on npm and is in active pre-1.0 development. Minor
+> releases may include breaking API changes. Check the
+> [release notes](https://github.com/zprue743/ghostvue/releases) before upgrading.
 
-## Try it locally
+## Install
+
+Add the headless package and include the themes package if you want the
+default look. Vue 3.5 or newer is a peer dependency, and `@ghostvue/themes`
+peers on `@ghostvue/vue` so both share one copy. The GhostVue packages share one
+version; keep them on the same release.
+
+```bash
+pnpm add @ghostvue/vue @ghostvue/themes
+```
+
+## Try it from a checkout
+
+Contributors can run the local playground and docs with Node.js 22+ and pnpm 11+.
 
 ```bash
 git clone https://github.com/zprue743/ghostvue.git
@@ -17,17 +30,6 @@ cd ghostvue
 pnpm install
 pnpm dev        # playground with every component and theme
 pnpm docs:dev   # this site, with live examples
-```
-
-## Install
-
-Once published, add the headless package, and the themes package if you want the
-default look. Vue 3.5 or newer is a peer dependency, and `@ghostvue/themes`
-peers on `@ghostvue/vue` so both share one copy. The GhostVue packages share one
-version; keep them on the same release.
-
-```bash
-pnpm add @ghostvue/vue @ghostvue/themes
 ```
 
 ## Choose headless or themed

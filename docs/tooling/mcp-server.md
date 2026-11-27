@@ -2,7 +2,10 @@
 
 GhostVue exposes a **local, read-only** [Model Context Protocol](https://modelcontextprotocol.io/) server so agents can discover components, manifests, executable examples, docs, and design tokens without the Vue runtime.
 
-**Status:** Implemented, not yet on npm. `@ghostvue/mcp` serves all five v1 tools over stdio from the offline asset bundle its build produces. It joins the first `0.1.0` release with the other `@ghostvue/*` packages and stays `"private": true` until publishing is authorized ([GHO-57](https://github.com/zprue743/ghostvue/issues?q=is%3Aissue+GHO-57+in%3Atitle)). Until then, build it from this repository (see [Try it from a checkout](#try-it-from-a-checkout)). Contract: [GHO-17](../plans/gho-17-mcp-first-release.md), [ADR 0015](../adr/0015-mcp-server-first-release.md).
+`@ghostvue/mcp` is [available on npm](https://www.npmjs.com/package/@ghostvue/mcp).
+It serves all five v1 tools over stdio from its bundled offline assets.
+See [GHO-17](../plans/gho-17-mcp-first-release.md) and
+[ADR 0015](../adr/0015-mcp-server-first-release.md) for the contract.
 
 ## What ships in v1
 
@@ -107,7 +110,7 @@ Add to `.vscode/mcp.json` in the workspace. VS Code uses `servers`, not
 
 ### Try it from a checkout
 
-Before the npm release, build the package in this repository and point the
+To test local changes, build the package in this repository and point the
 host at the built bin with an absolute path:
 
 ```bash

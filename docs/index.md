@@ -49,7 +49,7 @@ For upcoming components and composable exports, see the
   headless layer; themed components and CSS are opt-in.
 
 > [!WARNING]
-> **Pre-release:** GhostVue is under active development and packages are not on
-> npm yet. Try it in the repository playground via
-> [Getting started](/getting-started), or see
-> [Contributing](/contributing/workflow) if you want to help build components.
+> GhostVue is published on npm and is in active pre-1.0 development. Minor
+> releases may include breaking API changes. See [Getting started](/getting-started)
+> to install it or read the [release notes](https://github.com/zprue743/ghostvue/releases)
+> before upgrading.

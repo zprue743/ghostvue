@@ -165,23 +165,26 @@ describe('release workflow', () => {
   })
 })
 
-describe('0.1.0 publish workflow', () => {
+describe('npm publish workflow', () => {
   const code = workflowCode('.github/workflows/release-publish.yml')
   const jobs = workflowJobs(code)
 
   it('only starts from a manual dispatch on the release repository and branch', () => {
     expect(
       code.slice(code.indexOf('\non:\n'), code.indexOf('\nconcurrency:')),
-    ).toBe('\non:\n  workflow_dispatch:\n')
-    for (const job of ['rehearse', 'publish']) {
-      expect(jobs.get(job)).toContain(
-        "if: github.repository == 'zprue743/ghostvue' && github.ref == 'refs/heads/master'",
-      )
-    }
+    ).toContain(
+      '\non:\n  workflow_dispatch:\n    inputs:\n      expected_version:',
+    )
+    expect(jobs.get('validate')).toContain(
+      "if: github.repository == 'zprue743/ghostvue' && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/release/0.1.x')",
+    )
+    expect(jobs.get('rehearse')).toContain('needs: validate')
     expect(jobs.get('rehearse')).toContain(
       'uses: ./.github/workflows/release-dry-run.yml',
     )
-    expect(jobs.get('rehearse')).toContain("expected_version: '0.1.0'")
+    expect(jobs.get('rehearse')).toContain(
+      'expected_version: ${{ inputs.expected_version }}',
+    )
     expect(workflowJobs().get('maintainer-approval')).toContain(
       '&& !inputs.evidence_only',
     )
@@ -200,6 +203,12 @@ describe('0.1.0 publish workflow', () => {
     expect(publish).toContain('name: release-dry-run-evidence')
     expect(verify).toContain('needs: publish')
     expect(verify).toContain('--verify-public-install')
+    const release = jobs.get('github-release') ?? ''
+    expect(code.match(/\bcontents: write\b/g)).toHaveLength(1)
+    expect(release).toContain('contents: write')
+    expect(release).toContain('needs: verify')
+    expect(release).toContain('run: node scripts/github-release.mjs')
+    expect(release).not.toContain('NPM_TOKEN')
   })
 })
 
@@ -220,7 +229,7 @@ function pendingChangesetBumps(): Map<string, Set<string>> {
 }
 
 describe('release train', () => {
-  it('is the five 0.1.0 packages; core and shared stay internal (GHO-217)', () => {
+  it('is the five public packages; core and shared stay internal (GHO-217)', () => {
     expect(publishableWorkspacePackages.map(({ name }) => name)).toEqual([
       '@ghostvue/vue',
       '@ghostvue/themes',
