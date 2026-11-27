@@ -2087,11 +2087,27 @@ Anything about roving `tabindex`, cell focus, or `role` changes belongs in
     that the catcher has no `aria-hidden` attribute and that axe reports no
     `aria-hidden-focus` or `presentation-role-conflict` result (violation or
     incomplete) for it while its `tabindex` is `0`.
-- **Manual AT (before `stable`):** NVDA + Firefox and VoiceOver + Safari per
-  [assistive-technology-review.md](../standards/assistive-technology-review.md):
-  table navigation announces `aria-rowindex` of `aria-rowcount`; browse mode
-  behavior at the window edge is recorded as observed; no announcements while
-  scrolling. JAWS + Chrome is recorded when available.
+- **Manual AT (before `stable`),** per
+  [assistive-technology-review.md](../standards/assistive-technology-review.md).
+  The virtual table relies on virtual-cursor (browse mode) behavior at the
+  window edge and on touch scrolling of a scroll container, so all three
+  conditional pairings apply and are planned, not optional:
+  - **Desktop baseline (NVDA + Firefox, VoiceOver + Safari on macOS):** table
+    navigation announces `aria-rowindex` of `aria-rowcount`; browse mode
+    behavior at the window edge is recorded as observed; no announcements
+    while scrolling; `Tab` across a gap and a reverse entry from after the
+    table land on the documented control.
+  - **JAWS + Chrome (conditional, required here: virtual cursor and forms
+    mode):** the desktop scenarios, plus moving between browse and forms mode
+    on a row control near the window edge.
+  - **VoiceOver + Safari on iOS and TalkBack + Chrome on Android
+    (conditional, required here: touch exploration and swipe navigation):**
+    swiping past the last mounted row (outcome recorded, including whether
+    the next window mounts), row index announcements after a scroll, no
+    announcements during momentum scrolling, and the virtual keyboard opening
+    on a row's input without the row unmounting.
+  - A pairing that cannot be run before `stable` is recorded as excluded with
+    its reason in the review record, as the standard requires; Zac signs off.
 - **Bench:** window recompute at 10k and 100k rows, both modes
   (informational).
 
