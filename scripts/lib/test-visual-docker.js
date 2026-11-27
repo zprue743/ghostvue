@@ -1,4 +1,4 @@
-const PLAYWRIGHT_IMAGE = 'mcr.microsoft.com/playwright:v1.62.1-noble'
+const PLAYWRIGHT_IMAGE = 'mcr.microsoft.com/playwright:v1.65.1-noble'
 
 const ANONYMOUS_NODE_MODULES = [
   '/work/node_modules',
@@ -6,6 +6,8 @@ const ANONYMOUS_NODE_MODULES = [
   '/work/apps/nuxt-fixture/node_modules',
   '/work/apps/playground/node_modules',
   '/work/packages/core/node_modules',
+  '/work/packages/eslint-plugin/node_modules',
+  '/work/packages/mcp/node_modules',
   '/work/packages/nuxt/node_modules',
   '/work/packages/shared/node_modules',
   '/work/packages/themes/node_modules',
@@ -76,8 +78,12 @@ export function buildVisualDockerArgs(options = {}) {
     args.push('-e', `HOST_UID=${uid}`, '-e', `HOST_GID=${gid}`)
   }
 
+  // Playwright v1.65.1-noble ships Node 26 without bundled Corepack, so fall
+  // back to installing the repo's pinned pnpm via npm when corepack is absent.
+  const ensurePnpm =
+    'command -v pnpm >/dev/null 2>&1 || (command -v corepack >/dev/null 2>&1 && corepack enable) || npm install -g --no-fund --no-audit "$(node -e \'console.log(require("./package.json").packageManager.split("+")[0])\')"'
   const innerSteps = [
-    'corepack enable && pnpm install --frozen-lockfile && pnpm test:visual:update; rc=$?;',
+    `(${ensurePnpm}) && pnpm install --frozen-lockfile && pnpm test:visual:update; rc=$?;`,
   ]
   if (hasHostIds) {
     innerSteps.push(
