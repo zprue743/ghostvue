@@ -61,6 +61,7 @@ const selectedRowIds = ref<DataTableRowId[]>([])
 const pagination = ref({ pageIndex: 1, pageSize: 4 })
 const inspectedId = ref<string>()
 const inspectorOpen = ref(false)
+let inspectorOpener: HTMLElement | null = null
 const prefix = useId()
 const calendarToday = new CalendarDate(2026, 11, 18)
 
@@ -147,13 +148,31 @@ async function inspect(
 ): Promise<void> {
   // Wait for a row menu to finish closing so the drawer records its trigger.
   await nextTick()
-  if (trigger instanceof HTMLElement) trigger.focus({ preventScroll: true })
+  inspectorOpener = trigger instanceof HTMLElement ? trigger : null
+  inspectorOpener?.focus({ preventScroll: true })
   inspectedId.value = invoice.id
   inspectorOpen.value = true
 }
 
 function inspectFromMenu(invoice: Invoice): void {
   void inspect(invoice, document.getElementById(`${prefix}-menu-${invoice.id}`))
+}
+
+async function setInspectorOpen(open: boolean): Promise<void> {
+  inspectorOpen.value = open
+  if (open) return
+  const opener = inspectorOpener
+  inspectorOpener = null
+  await nextTick()
+  // A refund can remove the opener from the filtered table while the drawer
+  // still owns focus. Wait for the drawer to release the workspace first.
+  if (
+    !inspectorOpen.value &&
+    !opener?.isConnected &&
+    document.activeElement === document.body
+  ) {
+    searchField.value?.focus()
+  }
 }
 
 function markPaid(): void {
@@ -384,7 +403,7 @@ function exportInvoices(): void {
       </GhostDataTablePreset>
     </GhostDataTable>
 
-    <GhostDrawer v-model:open="inspectorOpen">
+    <GhostDrawer :open="inspectorOpen" @update:open="setInspectorOpen">
       <InvoiceInspector
         v-if="inspected"
         :invoice="inspected"

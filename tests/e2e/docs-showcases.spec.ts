@@ -181,6 +181,35 @@ test.describe('Billing & Invoices showcase', () => {
     ).toBeVisible()
   })
 
+  test('returns focus to search when a refund removes the drawer opener', async ({
+    page,
+    docsUrl,
+  }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' })
+    const table = await openBilling(page, docsUrl)
+    await page
+      .getByRole('group', { name: 'Invoice status' })
+      .getByRole('button', { name: 'Paid', exact: true })
+      .press('Enter')
+    const opener = table.getByRole('button', { name: 'INV-1048', exact: true })
+    await opener.press('Enter')
+    const drawer = page.getByRole('dialog', { name: 'Invoice INV-1048' })
+    await drawer.getByRole('button', { name: 'Issue refund' }).press('Enter')
+    const dialog = page.getByRole('dialog', { name: 'Refund INV-1048?' })
+    await dialog
+      .getByRole('textbox', { name: 'Refund reason' })
+      .fill('Duplicate payment')
+    await dialog.getByRole('button', { name: 'Confirm refund' }).press('Enter')
+    await expect(dialog).toBeHidden()
+    await expect(drawer.getByText('Refunded', { exact: true })).toBeVisible()
+    await expect(opener).toHaveCount(0)
+    await page.keyboard.press('Escape')
+    await expect(drawer).toBeHidden()
+    await expect(
+      page.getByRole('searchbox', { name: 'Search invoices' }),
+    ).toBeFocused()
+  })
+
   test('navigates from docs and switches themes and source files', async ({
     page,
     docsUrl,
