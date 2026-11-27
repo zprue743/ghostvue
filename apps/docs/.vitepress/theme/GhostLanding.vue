@@ -239,7 +239,7 @@ onUnmounted(() => {
               :motion-mode="motionMode"
             />
             <GhostBadge variant="outline" tone="accent" size="md">
-              Pre-release · not on npm yet
+              Pre-1.0 · on npm
             </GhostBadge>
             <h1 id="ghost-landing-title" class="ghost-landing__title">
               Vue-first, headless-first UI.
@@ -701,14 +701,16 @@ onUnmounted(() => {
             data-reveal-step="1"
           >
             <GhostInlineAlert tone="accent" variant="soft" :heading-level="3">
-              <template #title>Pre-release</template>
+              <template #title>Pre-1.0 development</template>
               <template #message>
-                GhostVue is under active development and its packages are not on
-                npm yet. Try it from the repository, or help build it.
+                GhostVue is published on npm. Minor releases may include
+                breaking API changes.
               </template>
               <template #actions>
                 <div class="ghost-landing__notice-actions">
-                  <GhostLink href="/getting-started">Try it locally</GhostLink>
+                  <GhostLink href="/getting-started"
+                    >Install GhostVue</GhostLink
+                  >
                   <GhostLink href="/contributing/workflow">
                     Contribute
                   </GhostLink>
