@@ -188,6 +188,30 @@ These constraints apply to every example the docs frame renders:
   headless calendar example carries the same block, kept identical by
   `tests/integration/calendar-examples-styles.test.ts`.
 
+### Review a showcase
+
+Review the built docs, a clean playground preview of the same SFC, and the
+copied source together. The preview and source should teach the same
+composition. Themed examples use the shipped recipes and semantic tokens.
+Headless examples own their consumer CSS and remain usable without a theme.
+
+| Criterion      | What to check                                                                                                                                             |
+| -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Hierarchy      | The heading, main control, and next action are easy to find.                                                                                              |
+| Spacing        | Related controls are grouped. Hover and focus keep their geometry, and focus outlines have room to paint.                                                 |
+| Typography     | Labels and values are legible and intentional in both hosts. Any VitePress reset correction is scoped to the affected example part.                       |
+| Surfaces       | Text, controls, and overlays stay readable in light, dark, and applicable forced colors. Portals inherit the intended theme.                              |
+| Responsiveness | Narrow layouts, zoom, and a resized preview preserve labels and controls. Any necessary scrolling stays inside an accessible region.                      |
+| Feedback       | Keyboard and pointer use reveal focus, selection, progress, errors, and results where applicable. Escape and focus return follow the documented contract. |
+| Realism        | Sample data, defaults, controls, and source show a plausible use of the component.                                                                        |
+
+For the core catalogue review, every applicable criterion needs a score of
+**2**. Record the evidence for each score and explain any criterion marked
+inapplicable. A high-severity defect requires resolution and fresh evidence
+before sign-off. Record each remaining defect with its owner and agreed
+disposition. Follow the [visual review evidence checklist](../standards/testing.md#visual-review-evidence)
+when submitting a change for review.
+
 ## Manifests
 
 Each component manifest's `examples` array lists the ids that belong to
