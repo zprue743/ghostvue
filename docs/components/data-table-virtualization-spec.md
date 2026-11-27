@@ -35,7 +35,7 @@ sections:
   compatibility:
     applicable: true
 unresolvedQuestions:
-  - question: 'GHO-251 (0.3.0 DataTable virtualization): Zac sign-off required on V1–V11 (opt-in surface, pagination opt-out, aria-rowcount scope, scroll reset policy, measured mode in 0.3.0, in-house windowing vs adapter, document scrolling, viewport tab stop, Tab traversal hint, probe limit and per-press mount bound, probe-result invalidation, and continuation freshness across a capped probe, reverse entry mechanism, positive tabindex inside the viewport) before any implementation.'
+  - question: 'GHO-251 (0.2.0 DataTable virtualization): Zac sign-off required on V1–V11 (opt-in surface, pagination opt-out, aria-rowcount scope, scroll reset policy, measured mode in 0.2.0, in-house windowing vs adapter, document scrolling, viewport tab stop, Tab traversal hint, probe limit and per-press mount bound, probe-result invalidation, and continuation freshness across a capped probe, reverse entry mechanism, positive tabindex inside the viewport) before any implementation.'
     blocking: false
     reviewer: Zac
 ---
@@ -46,7 +46,7 @@ unresolvedQuestions:
 > **Status:** Proposed ([GHO-251](https://linear.app/ghost-vue/issue/GHO-251),
 > [#318](https://github.com/zprue743/ghostvue/issues/318)). This is a draft
 > specification only. It is **held for Zac's approval before any
-> implementation**. Targeted for `0.3.0`, after the
+> implementation**. Targeted for `0.2.0`, after the
 > [multi-column sort addendum](/specs/data-table#multi-column-sort-specification-gho-250-proposed-for-0-3-0)
 > ([#317](https://github.com/zprue743/ghostvue/issues/317)) and before the
 > treegrid / grid keyboard navigation spec
@@ -103,7 +103,7 @@ order stays the same as in a fully rendered table at any scroll position.
   than the loaded rows inside one virtual list. Server mode windows the rows
   in `data` only.
 - **Document (window) scrolling.** Only an element scroll container is
-  supported in `0.3.0` (see [V7](#open-architectural-decisions-for-zac-0-3-0-sign-off)).
+  supported in `0.2.0` (see [V7](#open-architectural-decisions-for-zac-0-2-0-sign-off)).
 - **Sticky headers, frozen columns, and scroll-synced footers** as a shipped
   feature. They remain a separate deferred spec. This spec states only what
   virtualization requires of them.
@@ -112,10 +112,10 @@ order stays the same as in a fully rendered table at any scroll position.
   non-virtualized until a follow-up).
 - **A public, general-purpose virtualizer export** shared by Tree, Combobox,
   and Command Palette. The windowing math is written so it can be extracted
-  later ([performance standard](../standards/performance.md)), but `0.3.0`
+  later ([performance standard](../standards/performance.md)), but `0.2.0`
   exports DataTable-specific API only.
 - **New runtime dependencies.** No bundled third-party virtualizer (see
-  [V6](#open-architectural-decisions-for-zac-0-3-0-sign-off)).
+  [V6](#open-architectural-decisions-for-zac-0-2-0-sign-off)).
 - **Smooth-scroll animation, scroll snapping, and scroll-position persistence**
   (URL or `history.state`). Restoring scroll on Back is consumer-owned through
   the exposed methods.
@@ -714,7 +714,7 @@ viewport (leading region, row groups, trailing region):
   `tabindex="0"` stop in DOM order.
 
 The alternative of supporting positive values is
-[V11](#open-architectural-decisions-for-zac-0-3-0-sign-off).
+[V11](#open-architectural-decisions-for-zac-0-2-0-sign-off).
 
 **Mechanism inside the viewport.** The viewport has one `keydown` listener on
 its element (no document listener). It reacts only to `Tab` and `Shift+Tab`
@@ -1215,7 +1215,7 @@ consumer state. The rules below say which source wins.
   answers `true` after), or a call to `invalidateTabbableCache` when the state
   changes, which drops the continuation. Re-probing covered rows on every
   resume would keep the guarantee exact but makes work per press grow with the
-  run; see [V9](#open-architectural-decisions-for-zac-0-3-0-sign-off).
+  run; see [V9](#open-architectural-decisions-for-zac-0-2-0-sign-off).
 - **Without a hint: the known-empty set.** It holds the ids of
   [probed rows](#probe-without-a-hint) (rows a search read with no tabbable
   control after its first probe window), and it is consulted only for
@@ -2250,7 +2250,7 @@ Anything about roving `tabindex`, cell focus, or `role` changes belongs in
 - Changeset (minor, `@ghostvue/vue`) when implementation ships. This
   specification is docs-only and needs none.
 
-## Open architectural decisions for Zac (`0.3.0` sign-off)
+## Open architectural decisions for Zac (`0.2.0` sign-off)
 
 Implementation must not begin until Zac approves this spec and resolves:
 
@@ -2277,7 +2277,7 @@ Implementation must not begin until Zac approves this spec and resolves:
      on refresh, selection, and expansion.
    - **Alternative:** keep the offset on sort and filter, or keep the first
      visible row id anchored when it survives the change.
-5. **Measured mode in `0.3.0` (V5).**
+5. **Measured mode in `0.2.0` (V5).**
    - **Recommended:** ship both modes; `'fixed'` stays the default.
    - **Alternative:** ship `'fixed'` only and add `'measured'` after AT and
      performance evidence.
@@ -2286,7 +2286,7 @@ Implementation must not begin until Zac approves this spec and resolves:
    - **Alternative:** an optional peer adapter for a third-party virtual core,
      which needs a dependency-policy review.
 7. **Document scrolling (V7).**
-   - **Recommended:** element viewport only in `0.3.0`.
+   - **Recommended:** element viewport only in `0.2.0`.
    - **Alternative:** add a `scrollElement: 'window'` mode, which needs a
      different focus and anchoring model.
 8. **Viewport tab stop (V8).**
