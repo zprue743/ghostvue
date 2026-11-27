@@ -1,4 +1,4 @@
-import { execFileSync } from 'node:child_process'
+import { setTimeout as wait } from 'node:timers/promises'
 import { pathToFileURL } from 'node:url'
 import { readFileSync, appendFileSync } from 'node:fs'
 import { claimable, evaluate, repository } from './lib/release-scope.mjs'
@@ -62,32 +62,35 @@ function openHeads() {
   }
 }
 
-function dispatchClaim(number) {
+export async function dispatchClaim(number) {
   if (!/^[1-9]\d*$/.test(number ?? ''))
     throw new Error('Supply an issue number')
-  const gh = (...args) => execFileSync('gh', args, { encoding: 'utf8' }).trim()
-  const output = gh(
-    'workflow',
-    'run',
-    workflow,
-    '-R',
-    repository,
-    '--ref',
-    'master',
-    '-f',
-    `claim=${number}`,
-  )
-  const run = /\/actions\/runs\/(\d+)\b/.exec(output)
-  if (!run)
+  const dispatch = api(`${endpoint}/actions/workflows/${workflow}/dispatches`, {
+    ref: 'master',
+    inputs: { claim: number },
+    return_run_details: true,
+  })
+  if (!Number.isSafeInteger(dispatch?.workflow_run_id))
     throw new Error(
       'Could not identify dispatched claim run. Inspect Actions before retrying.',
     )
-  console.log(output)
-  execFileSync(
-    'gh',
-    ['run', 'watch', run[1], '-R', repository, '--exit-status'],
-    { stdio: 'inherit' },
-  )
+  console.log(dispatch.html_url)
+  const path = `${endpoint}/actions/runs/${dispatch.workflow_run_id}`
+  // Reading the Actions run directly also works for fine-grained runner tokens.
+  for (;;) {
+    const run = api(path)
+    if (run.status === 'completed') {
+      if (
+        run.conclusion !== 'success' ||
+        !api(`${path}/jobs`).jobs.some(
+          (job) => job.name === 'reconcile' && job.conclusion === 'success',
+        )
+      )
+        throw new Error(`Claim denied for #${number}. See ${dispatch.html_url}`)
+      return
+    }
+    await wait(5000)
+  }
 }
 
 export function sweep(command, argument, policy) {
@@ -196,7 +199,7 @@ if (
       )
     if (!['report', 'enforce'].includes(policy.mode))
       throw new Error('Unknown release-scope mode')
-    if (command === 'claim') dispatchClaim(argument)
+    if (command === 'claim') await dispatchClaim(argument)
     else sweep(command, argument, policy)
   } catch (error) {
     console.error(error.message)

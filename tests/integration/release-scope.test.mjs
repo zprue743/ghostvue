@@ -1,7 +1,7 @@
 /** @vitest-environment node */
 import { readFileSync } from 'node:fs'
 import { afterEach, beforeEach, expect, it, vi } from 'vitest'
-import { sweep } from '../../scripts/release-scope.mjs'
+import { dispatchClaim, sweep } from '../../scripts/release-scope.mjs'
 import {
   api,
   board,
@@ -123,6 +123,27 @@ it('removes stale labels, respects holds and performs no writes on a second swee
   sweep('workflow', undefined, policy)
   expect(api).not.toHaveBeenCalled()
 })
+
+it.each(['cancelled', 'failure', 'skipped', 'success'])(
+  'authorizes pickup only after the dispatched claim job succeeds: %s',
+  async (conclusion) => {
+    api
+      .mockReturnValueOnce({ workflow_run_id: 42, html_url: 'claim-run' })
+      .mockReturnValueOnce({
+        status: 'completed',
+        conclusion: conclusion === 'skipped' ? 'success' : conclusion,
+      })
+      .mockReturnValueOnce({ jobs: [{ name: 'reconcile', conclusion }] })
+    const claim = dispatchClaim('1')
+    if (conclusion === 'success') await expect(claim).resolves.toBeUndefined()
+    else await expect(claim).rejects.toThrow('Claim denied')
+    expect(api.mock.calls[0][1]).toMatchObject({
+      ref: 'master',
+      inputs: { claim: '1' },
+    })
+    expect(api.mock.calls[1][0]).toMatch(/\/runs\/42$/)
+  },
+)
 
 it('serializes claims, gives one worker ownership and denies a second worker using the same account', () => {
   const workflow = readFileSync('.github/workflows/release-scope.yml', 'utf8')
