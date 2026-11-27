@@ -93,6 +93,31 @@ export function openIssues() {
   }))
 }
 
+// A completed issue alone is insufficient: require a linked PR actually merged into master.
+export function closingPulls(number) {
+  const fields =
+    'number merged baseRefName repository{nameWithOwner} mergeCommit{oid}'
+  const response = api('graphql', {
+    query: `query($number:Int!){${repoQuery}{issue(number:$number){id state stateReason closedByPullRequestsReferences(first:100){totalCount nodes{${fields}}}}}}`,
+    variables: { number },
+  })
+  const issue = response.data.repository.issue
+  if (!issue || issue.state !== 'CLOSED' || issue.stateReason !== 'COMPLETED')
+    return []
+  return complete(
+    issue,
+    'Issue',
+    'closedByPullRequestsReferences',
+    fields,
+  ).filter(
+    (pr) =>
+      pr.merged &&
+      pr.baseRefName === 'master' &&
+      pr.repository.nameWithOwner === repository &&
+      pr.mergeCommit?.oid,
+  )
+}
+
 export function board(active) {
   const projectQuery = 'user(login:"zprue743"){projectV2(number:5)'
   const field = '...on ProjectV2SingleSelectField {options{name}}'

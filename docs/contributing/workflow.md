@@ -69,6 +69,32 @@ or put `Work item #123` on its own line for each partial work item. Include the
 branch's issue if using an `issue-<n>-` branch. Verified Dependabot updates on
 the repository's Dependabot branches follow their own review path.
 
+#### Dependency-gated implementations
+
+The `implementationGates` entries in `.github/release-scope.json` authorize
+automatic triage for specific implementation issues. Under an implementation
+number, map each prerequisite issue to acceptable spec filenames (slugs under
+`docs/components/*-spec.md`). An empty list means the prerequisite is an
+implementation PR that must land on master. For example, #419 requires both
+the approved submenu spec from #413 and the first host from #418. Update the
+entry in the spec PR if the approved design uses a different filename.
+
+The sweep checks native GitHub dependencies and every local `Blocked by:`
+reference. For a configured prerequisite it verifies a completed issue and a
+linked PR merged into this repository's master branch. For specs, the PR must
+change an approved spec with approval evidence, and that file must still be
+approved on master with its blocking questions resolved.
+
+Issue close/reopen, spec merges and the scheduled sweep reconcile the labels.
+Reopening a prerequisite restores `blocked` and withdraws `agent:ready`,
+including on already assigned work. Clearing the last hold allows automatic
+triage and readiness for unowned Todo implementations in the active release.
+Human, design and deferred holds still prevent pickup. The protected policy
+entry delegates this decision for the listed issues; use `human-required` for
+a separate maintainer hold. Both workflow modes reconcile these designated
+issues. The local report is always read-only, and claims and PR commit-status
+writes still require enforcement mode.
+
 #### Rollout and operation
 
 1. Configure an Actions secret named `RELEASE_PROJECT_TOKEN` with read access
@@ -78,8 +104,8 @@ the repository's Dependabot branches follow their own review path.
 2. While the policy is in `report` mode, run `node scripts/release-scope.mjs report`
    with an authenticated, project-readable GitHub CLI, or dispatch the
    **Release scope** workflow with the claim field empty. Review the queue
-   changes and each open PR with the maintainers. Report mode preserves labels,
-   assignees and commit statuses and denies claims.
+   changes and each open PR with the maintainers. In report mode only the designated implementation gates reconcile labels.
+   Assignees and commit statuses are preserved, and claims are disabled.
 3. Connect every runner to the claim command and confirm it waits for success.
    Coordinate the switch with pickup paused. Merge a policy PR selecting
    `enforce`, confirm the first sweep and claim behavior, require the

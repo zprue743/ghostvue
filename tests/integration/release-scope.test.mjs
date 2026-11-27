@@ -5,6 +5,7 @@ import { dispatchClaim, sweep } from '../../scripts/release-scope.mjs'
 import {
   api,
   board,
+  closingPulls,
   openIssues,
   pullRequests,
 } from '../../scripts/lib/release-scope-github.mjs'
@@ -13,6 +14,7 @@ import { evaluate, repository } from '../../scripts/lib/release-scope.mjs'
 vi.mock('../../scripts/lib/release-scope-github.mjs', () => ({
   api: vi.fn(),
   board: vi.fn(),
+  closingPulls: vi.fn(),
   openIssues: vi.fn(),
   pullRequests: vi.fn(),
 }))
@@ -212,4 +214,167 @@ it('reevaluates an unchanged PR head after a board move and leaves current statu
   expect(
     api.mock.calls.filter(([path]) => path.includes('/statuses/')),
   ).toHaveLength(0)
+})
+
+it.each(['report', 'enforce'])(
+  'reconciles a managed implementation across close, reopen and retry in %s mode',
+  (mode) => {
+    const implementation = issue(419, ['blocked', 'Feature'])
+    implementation.body = 'Blocked by: #413, #418'
+    issues = [implementation, issue(413), issue(418)]
+    cards = new Map([[419, card('0.1.0')]])
+    const config = {
+      ...policy,
+      mode,
+      implementationGates: { 419: { 413: ['data-table'], 418: [] } },
+    }
+    const markdown = readFileSync('docs/components/data-table-spec.md', 'utf8')
+    closingPulls.mockImplementation((number) => [
+      { number, mergeCommit: { oid: 'merged' } },
+    ])
+    const writes = []
+    api.mockImplementation((path, body, options) => {
+      if (path.includes('/files?'))
+        return [
+          {
+            filename: 'docs/components/data-table-spec.md',
+            status: 'modified',
+          },
+        ]
+      if (path.includes('/contents/'))
+        return {
+          encoding: 'base64',
+          content: Buffer.from(markdown).toString('base64'),
+        }
+      writes.push(path)
+      if (options?.method === 'DELETE') {
+        const label = decodeURIComponent(path.split('/').at(-1))
+        implementation.labels = implementation.labels.filter(
+          (existing) => existing !== label,
+        )
+      } else if (body?.labels) implementation.labels.push(...body.labels)
+    })
+    const run = () => sweep('workflow', undefined, config)
+    run()
+    issues = [implementation, issue(418)]
+    run()
+    expect(writes).toEqual([])
+    issues = [implementation]
+    implementation.issueDependenciesSummary.blockedBy = 1
+    run()
+    expect(writes).toEqual([]) // A native-only dependency can still be open.
+    implementation.issueDependenciesSummary.blockedBy = 0
+    sweep('report', undefined, config)
+    expect(writes).toEqual([])
+    run()
+    expect(implementation.labels.sort()).toEqual([
+      'Feature',
+      'agent:ready',
+      'agent:triaged',
+    ])
+    writes.length = 0
+    run()
+    expect(writes).toEqual([])
+
+    implementation.assignees.totalCount = 1
+    issues.push(issue(413))
+    run()
+    expect(implementation.labels).toContain('blocked')
+    expect(implementation.labels).not.toContain('agent:ready')
+    issues.pop()
+    run()
+    expect(implementation.labels).not.toContain('agent:ready')
+    expect(implementation.assignees.totalCount).toBe(1)
+    implementation.assignees.totalCount = 0
+    run()
+    expect(implementation.labels).toContain('agent:ready')
+  },
+)
+
+it.each([
+  'manual close',
+  'wrong spec',
+  'draft',
+  'missing evidence',
+  'unresolved question',
+  'read failure',
+])(
+  'keeps implementation blocked when approval cannot be proved: %s',
+  (scenario) => {
+    const implementation = issue(419, ['blocked'])
+    issues = [implementation]
+    cards = new Map([[419, card('0.1.0')]])
+    closingPulls.mockReturnValue(
+      scenario === 'manual close'
+        ? []
+        : [{ number: 20, mergeCommit: { oid: 'merged' } }],
+    )
+    const spec = `---\nspecStatus: ${scenario === 'draft' ? 'draft' : 'approved'}\napproval:\n  evidence: '${scenario === 'missing evidence' ? '' : 'Reviewed'}'\nunresolvedQuestions: ${scenario === 'unresolved question' ? "['pending']" : '[]'}\n---\n`
+    api.mockImplementation((path) => {
+      if (scenario === 'read failure') throw new Error('API unavailable')
+      if (path.includes('/files?'))
+        return [
+          {
+            filename:
+              scenario === 'wrong spec'
+                ? 'docs/components/dialog-spec.md'
+                : 'docs/components/data-table-spec.md',
+          },
+        ]
+      if (path.includes('/contents/'))
+        return {
+          encoding: 'base64',
+          content: Buffer.from(spec).toString('base64'),
+        }
+      throw new Error('unexpected write')
+    })
+    sweep('workflow', undefined, {
+      ...policy,
+      mode: 'report',
+      implementationGates: { 419: { 413: ['data-table'] } },
+    })
+    expect(api.mock.calls.every(([path]) => !path.includes('/labels'))).toBe(
+      true,
+    )
+  },
+)
+
+it.each(['human-required', 'deferred', '4-design', 'in-progress'])(
+  'retains the %s pickup hold after dependency clearance',
+  (hold) => {
+    const item = issue(419, ['blocked', hold])
+    const snapshot = {
+      issues: [item],
+      cards: new Map([[419, card('0.1.0')]]),
+      prs: [],
+      holds: new Map([[419, '']]),
+    }
+    expect(evaluate(snapshot, '0.1.0').queue[0]).toMatchObject({
+      eligible: false,
+      shouldBlock: false,
+    })
+    item.labels = ['blocked']
+    expect(evaluate(snapshot, '0.2.0').queue[0].eligible).toBe(false)
+  },
+)
+
+it('restores a native-only hold and preserves unrelated labels and ownership', () => {
+  const item = issue(419, ['agent:ready', 'agent:triaged', 'Feature'])
+  item.assignees.totalCount = 1
+  item.issueDependenciesSummary.blockedBy = 1
+  issues = [item]
+  cards = new Map([[419, card('0.1.0')]])
+  sweep('workflow', undefined, {
+    ...policy,
+    mode: 'report',
+    implementationGates: { 419: { 413: ['submenu'] } },
+  })
+  expect(api.mock.calls).toEqual([
+    [
+      expect.stringContaining('/issues/419/labels/agent%3Aready'),
+      null,
+      { method: 'DELETE' },
+    ],
+    [expect.stringContaining('/issues/419/labels'), { labels: ['blocked'] }],
+  ])
 })
