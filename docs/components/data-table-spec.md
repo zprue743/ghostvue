@@ -1289,8 +1289,8 @@ the [Themed `GhostDataTable` addendum](#themed-ghostdatatable-addendum).
 
 - Phase one exported from `@ghostvue/vue` only; the `0.1.0` themed addendum
   ([#316](https://github.com/zprue743/ghostvue/issues/316) →
-  [#333](https://github.com/zprue743/ghostvue/issues/333)) adds additive
-  layout slots to `@ghostvue/vue` `GhostDataTablePreset` and additive themed
+  [#333](https://github.com/zprue743/ghostvue/issues/333)) adds
+  opt-in layout slots to `@ghostvue/vue` `GhostDataTablePreset` and themed
   exports in `@ghostvue/themes` without breaking phase-one consumers.
 - Changesets for `@ghostvue/vue` and `@ghostvue/themes` ship with Wave 2
   implementation (`#333`); docs-only spec revisions (`#316`) have no runtime
@@ -1322,7 +1322,7 @@ before Zac approves this addendum.
    - **Headless preset layout slots (`@ghostvue/vue`):** `GhostDataTablePreset`
      gains camelCase layout slots `#toolbarStart`, `#toolbarEnd`,
      `#bulkActions`, and `#footer` alongside `#search`, `#toolbar`,
-     `#<columnId>`, and `#detail`, with updated reserved column-slot exclusions
+     `#<columnId>`, and `#detail`, with per-preset opt-in via `layoutSlots`
      in `packages/vue/src/ghost-data-table-preset.ts`. `@ghostvue/vue` owns all
      layout structure, state wiring, and focus restoration; it never imports
      `@ghostvue/themes`.
@@ -1378,50 +1378,38 @@ export interface GhostDataTablePresetFooterSlotProps {
   setPageIndex: (pageIndex: number) => void
 }
 
-/**
- * Named structural slots owned by `GhostDataTablePreset`. Excluded from dynamic
- * `#<columnId>` cell-slot lookup at both the type level and runtime.
- */
-export type GhostDataTablePresetReservedSlotName =
-  | 'detail'
-  | 'toolbar'
-  | 'toolbarStart'
-  | 'toolbarEnd'
-  | 'bulkActions'
-  | 'footer'
-  | 'search'
+/** Select the new regions that this preset owns on this instance. */
+interface GhostDataTablePresetLayoutSlots {
+  toolbarStart?: () => unknown
+  toolbarEnd?: () => unknown
+  bulkActions?: (props: GhostDataTablePresetBulkActionsSlotProps) => unknown
+  footer?: (props: GhostDataTablePresetFooterSlotProps) => unknown
+}
 
+type LayoutSlotName = keyof GhostDataTablePresetLayoutSlots
+
+// Addition to GhostDataTablePresetProps<TColumns, TLayout = never>:
+// layoutSlots?: readonly TLayout[]
+// Infer TLayout from this prop alone. Omission and [] opt into no regions.
 export type GhostDataTablePresetSlots<
   TColumns extends readonly DataTableTableColumnRef[],
-> = Omit<
-  GhostDataTableTableSlots<TColumns>,
-  GhostDataTablePresetReservedSlotName
-> & {
-  /** Content of an expanded row's detail `<tr>` (one cell spanning the row). */
-  detail?: (
-    props: GhostDataTablePresetDetailSlotProps<
-      DataTableColumnRow<TColumns[number]>
-    >,
-  ) => unknown
-  /** Unopinionated region rendered before the header bar and table. */
-  toolbar?: () => unknown
-  /** Leading controls inside the preset header bar (for example status filters). */
-  toolbarStart?: () => unknown
-  /** Trailing actions inside the preset header bar (for example export or refresh). */
-  toolbarEnd?: () => unknown
-  /**
-   * Contextual selection bar rendered between the header bar and `GhostTable`
-   * only while `enableRowSelection` is `true` and `selectedCount > 0`.
-   */
-  bulkActions?: (props: GhostDataTablePresetBulkActionsSlotProps) => unknown
-  /** Footer region rendered after `GhostTable` (for example `GhostPagination`). */
-  footer?: (props: GhostDataTablePresetFooterSlotProps) => unknown
-  /** Replaces the default search field (for example to debounce input). */
-  search?: (props: GhostDataTablePresetSearchSlotProps) => unknown
-}
+  TLayout extends LayoutSlotName = never,
+> = Omit<GhostDataTableTableSlots<TColumns>, NoInfer<TLayout>> &
+  Pick<GhostDataTablePresetLayoutSlots, NoInfer<TLayout>> & {
+    /** Content of an expanded row's detail `<tr>` (one cell spanning the row). */
+    detail?: (
+      props: GhostDataTablePresetDetailSlotProps<
+        DataTableColumnRow<TColumns[number]>
+      >,
+    ) => unknown
+    /** Unopinionated region rendered before the header bar and table. */
+    toolbar?: () => unknown
+    /** Replaces the default search field (for example to debounce input). */
+    search?: (props: GhostDataTablePresetSearchSlotProps) => unknown
+  }
 ```
 
-**Root context & reserved-slot invariants:**
+**Root context and slot ownership**
 
 - `GhostDataTableContext` (`packages/vue/src/ghost-data-table-table.ts`) adds
   `selectedRowIds: () => readonly DataTableRowId[]` and
@@ -1429,26 +1417,33 @@ export type GhostDataTablePresetSlots<
   `#footer` reads `pagination`, `pageCount`, `rowCount`, and `setPageIndex`
   through the existing `withBindings` bridge so manual `#default` and preset
   `#footer` can never drift.
-- Runtime cell rendering in `GhostDataTablePreset.vue` skips every name in
-  `GhostDataTablePresetReservedSlotName` before delegating to
-  `renderDataTableCell`, ensuring a layout slot is never invoked as a column
-  cell renderer even if a consumer defines a colliding column `id`. Do not use
-  reserved slot names (`detail`, `toolbar`, `toolbarStart`, `toolbarEnd`,
-  `bulkActions`, `footer`, `search`) as column ids when customizing cells via
-  slots; use column `cell` render hooks if a column id must match one of those
-  strings.
+- By default the preset owns only `detail`, `toolbar`, and `search`. Each
+  of the four new names remains available to the existing cell renderer. For
+  example, a column named `footer` calls `#footer="{ value }"` once per row,
+  including after a reorder, an empty result, or an asynchronous column insert.
+- To supply layout content, opt into its names on the preset, e.g.
+  `:layout-slots="['toolbarEnd', 'bulkActions']"`. These two names belong
+  to layout on this instance, leaving `#footer` available for cells. An
+  enabled name is reserved even while its region is hidden or its slot is
+  absent. For a column with that same id, use its `cell` hook or ordinary
+  value fallback. A slot function is invoked in exactly one role.
+- Resolve ownership from the opt-in list before testing slot presence for
+  chrome and before cell lookup. Row count, column visibility, order, and
+  selection never change that decision. Both presets expose the same prop
+  and slot types.
 
 #### Preset DOM order and conditional regions
 
 `GhostDataTablePreset` renders only the chrome regions that have active content,
-in strict top-to-bottom DOM order:
+in strict top-to-bottom DOM order. Below, `layout` contains only the slots
+selected by `layoutSlots` and supplied by the consumer:
 
 1. **Legacy pre-header slot (`#toolbar`):** rendered as-is before the header bar
    when `$slots.toolbar` is present, preserving exact phase-one markup order for
    existing consumers.
 2. **Header bar (`<div data-part="header" class="ghost-data-table-header">`):**
-   rendered iff `searchVisible || $slots.toolbarStart || $slots.toolbarEnd`.
-   - `<div v-if="$slots.toolbarStart" data-part="toolbar-start">` wrapping
+   rendered iff `searchVisible || layout.toolbarStart || layout.toolbarEnd`.
+   - `<div v-if="layout.toolbarStart" data-part="toolbar-start">` wrapping
      `<slot name="toolbarStart" />`.
    - `<div v-if="searchVisible" data-part="search">` wrapping
      `<slot name="search" v-bind="searchSlotProps">` (default labelled
@@ -1456,10 +1451,10 @@ in strict top-to-bottom DOM order:
      `[data-part="toolbar-start"]` and `[data-part="toolbar-end"]` preserves the
      phase-one accessibility invariant: the search input remains its own `Tab`
      stop outside any consumer `GhostToolbar` (`role="toolbar"`).
-   - `<div v-if="$slots.toolbarEnd" data-part="toolbar-end">` wrapping
+   - `<div v-if="layout.toolbarEnd" data-part="toolbar-end">` wrapping
      `<slot name="toolbarEnd" />`.
 3. **Bulk-actions bar (`<div data-part="bulk-actions" class="ghost-data-table-bulk-actions">`):**
-   rendered iff `rowSelectionEnabled && selectedCount > 0 && $slots.bulkActions`,
+   rendered iff `rowSelectionEnabled && selectedCount > 0 && layout.bulkActions`,
    wrapping `<slot name="bulkActions" v-bind="bulkActionsSlotProps" />`. No
    `role="alert"` or `aria-live` is placed on this container (row and header
    checkboxes already announce checked state changes).
@@ -1467,12 +1462,12 @@ in strict top-to-bottom DOM order:
    (`class`, `style`, `contain-horizontal`, `scroll-label`, `aria-label`) on
    `GhostDataTablePreset` continue to forward onto `GhostTable` exactly as in
    phase one. Sortable headers in both `GhostDataTableTable` and
-   `GhostDataTablePreset` add `data-part="sort-button"` on `<button>` plus a
-   decorative inline `<svg data-part="sort-indicator" aria-hidden="true">` (no
-   text nodes, preserving `th` text content and button accessible names);
-   row expand buttons in `GhostDataTablePreset` add `data-part="expand-button"`.
+   `GhostDataTablePreset` expose the native button via `data-part="sort-button"`.
+   The headless button renders its header label and retains its focus and
+   interaction bindings. Its accessible name is the same in either package.
+   Row expand buttons in `GhostDataTablePreset` add `data-part="expand-button"`.
 5. **Footer bar (`<div data-part="footer" class="ghost-data-table-footer">`):**
-   rendered iff `$slots.footer` is present, wrapping
+   rendered iff `layout.footer` is present, wrapping
    `<slot name="footer" v-bind="footerSlotProps" />`.
 
 ### Themed wrappers and exports (`@ghostvue/themes`)
@@ -1611,6 +1606,7 @@ const pagination = ref({ pageIndex: 1, pageSize: 10 })
   >
     <GhostDataTablePreset
       :columns="columns"
+      :layout-slots="['toolbarEnd', 'bulkActions', 'footer']"
       empty-title="No matching invoices"
       search-label="Search invoices"
     >
@@ -1653,25 +1649,25 @@ const pagination = ref({ pageIndex: 1, pageSize: 10 })
 
 #### Complete `data-*` and ARIA styling-hook map
 
-| Surface                 | Selector / attribute                                           | Condition / values                                                        |
-| ----------------------- | -------------------------------------------------------------- | ------------------------------------------------------------------------- |
-| Themed root container   | `.ghost-data-table[data-themed]`, `data-part="root"`           | Always on themed `GhostDataTable`; carries `.ghost-themed-scope`          |
-| Root density            | `data-size="sm"`                                               | Set when `size === 'sm'`; omitted for default `'md'`                      |
-| Root surface variant    | `data-variant="card"`                                          | Set when `variant === 'card'`; omitted for default `'plain'`              |
-| Root sticky header      | `data-sticky-header=""`                                        | Set when `stickyHeader === true`; omitted when `false`                    |
-| Root disabled state     | `data-state="disabled"`                                        | Set on themed root when `disabled === true`; omitted otherwise            |
-| Preset header bar       | `.ghost-data-table-header`, `data-part="header"`               | Rendered when `searchVisible` or `#toolbarStart` or `#toolbarEnd` active  |
-| Preset header slots     | `data-part="toolbar-start"`, `"search"`, `"toolbar-end"`       | Direct children of `[data-part="header"]` when respective slot/search on  |
-| Preset bulk-actions bar | `.ghost-data-table-bulk-actions`, `data-part="bulk-actions"`   | Rendered when `enableRowSelection && selectedCount > 0` and slot provided |
-| Preset footer bar       | `.ghost-data-table-footer`, `data-part="footer"`               | Rendered when `#footer` slot provided                                     |
-| Table root              | `table.ghost-table[data-ghost-data-table]`, `data-part="root"` | Native `<table>` (`aria-busy="true"` while `loading`, omitted otherwise)  |
-| Column header cell      | `th.ghost-table-header-cell`, `data-part="header-cell"`        | `scope="col"`; `aria-sort` + `data-sort="asc" \| "desc"` on sorted column |
-| Sort button             | `button[data-part="sort-button"]`                              | Sortable `<th>` control in `GhostDataTableTable` / `GhostDataTablePreset` |
-| Sort indicator          | `svg[data-part="sort-indicator"][aria-hidden="true"]`          | Decorative single-sort glyph inside `[data-part="sort-button"]`           |
-| Expand button           | `button[data-part="expand-button"]`                            | Row disclosure toggle (`aria-expanded="true" \| "false"`)                 |
-| Selected data row       | `tr.ghost-table-row[data-selected="true"]`                     | Boolean hook on selected body row (omitted when unselected)               |
-| Expanded data row       | `tr.ghost-table-row[data-expanded="true"]`                     | Boolean hook on expanded body row (independent of `data-selected`)        |
-| Detail row              | `tr.ghost-table-row[data-detail-row="true"]`                   | Expansion detail `<tr>` (`data-part="row"` retained)                      |
+| Surface                 | Selector / attribute                                           | Condition / values                                                              |
+| ----------------------- | -------------------------------------------------------------- | ------------------------------------------------------------------------------- |
+| Themed root container   | `.ghost-data-table[data-themed]`, `data-part="root"`           | Always on themed `GhostDataTable`; carries `.ghost-themed-scope`                |
+| Root density            | `data-size="sm"`                                               | Set when `size === 'sm'`; omitted for default `'md'`                            |
+| Root surface variant    | `data-variant="card"`                                          | Set when `variant === 'card'`; omitted for default `'plain'`                    |
+| Root sticky header      | `data-sticky-header=""`                                        | Set when `stickyHeader === true`; omitted when `false`                          |
+| Root disabled state     | `data-state="disabled"`                                        | Set on themed root when `disabled === true`; omitted otherwise                  |
+| Preset header bar       | `.ghost-data-table-header`, `data-part="header"`               | Rendered for visible search or a supplied, enabled toolbar slot                 |
+| Preset header slots     | `data-part="toolbar-start"`, `"search"`, `"toolbar-end"`       | Direct children of `[data-part="header"]` when respective slot/search on        |
+| Preset bulk-actions bar | `.ghost-data-table-bulk-actions`, `data-part="bulk-actions"`   | Rendered for enabled `bulkActions` with a slot and a nonempty enabled selection |
+| Preset footer bar       | `.ghost-data-table-footer`, `data-part="footer"`               | Rendered when `footer` is enabled and supplied                                  |
+| Table root              | `table.ghost-table[data-ghost-data-table]`, `data-part="root"` | Native `<table>` (`aria-busy="true"` while `loading`, omitted otherwise)        |
+| Column header cell      | `th.ghost-table-header-cell`, `data-part="header-cell"`        | `scope="col"`; `aria-sort` + `data-sort="asc" \| "desc"` on sorted column       |
+| Sort button             | `button[data-part="sort-button"]`                              | Sortable `<th>` control in `GhostDataTableTable` / `GhostDataTablePreset`       |
+| Default sort indicator  | Themed sort button `::after`                                   | Decorative CSS mark painted by `@ghostvue/themes`                               |
+| Expand button           | `button[data-part="expand-button"]`                            | Row disclosure toggle (`aria-expanded="true" \| "false"`)                       |
+| Selected data row       | `tr.ghost-table-row[data-selected="true"]`                     | Boolean hook on selected body row (omitted when unselected)                     |
+| Expanded data row       | `tr.ghost-table-row[data-expanded="true"]`                     | Boolean hook on expanded body row (independent of `data-selected`)              |
+| Detail row              | `tr.ghost-table-row[data-detail-row="true"]`                   | Expansion detail `<tr>` (`data-part="row"` retained)                            |
 
 #### Cascade layer, opt-in scoping, and child-combinator isolation
 
@@ -1735,25 +1731,22 @@ calc(100% * var(--ghost-state-layer-hover)), transparent)`) when
   with `outline-offset: calc(-1 * var(--ghost-focus-ring-width))` inside the
   button box so adjacent `<th>` borders, `overflow-x: auto` scroll containers,
   and `stickyHeader: true` never clip the indicator.
-- **Single-sort directional states (keyed off parent `th[data-sort]`):**
-  - **Unsorted (`th:not([data-sort])`):** `[data-part="sort-indicator"]` renders
-    a neutral bidirectional chevron in `--ghost-text-subtle` (strengthening to
-    `--ghost-text-muted` on `:hover` / `:focus-visible`), distinguishing
-    sortable columns (`canSort: true`) from non-sortable plain-text headers
-    without relying on hover discovery alone.
-  - **Ascending (`th[data-sort='asc']`):** header text uses
-    `--ghost-surface-fg`, active upward indicator path uses
-    `--ghost-text-primary` (opposing chevron muted or hidden), and header bottom
-    border accents with `--ghost-border-strong` / `--ghost-border-primary`.
-  - **Descending (`th[data-sort='desc']`):** active downward indicator path uses
-    `--ghost-text-primary` with matching sorted-header emphasis.
-  - **Decorative SVG rule ([ADR 0013](../adr/0013-icon-strategy.md)):**
-    `[data-part="sort-indicator"]` is an inline `<svg aria-hidden="true"
-focusable="false">` painted with `currentColor` strokes and zero text nodes.
-    In `@media (forced-colors: active)`, sort buttons use `ButtonFace` /
-    `ButtonText` (`GrayText` when `:disabled`), `focus-visible` uses
-    `outline-color: Highlight`, and sorted headers retain `aria-sort` plus the
-    geometric directional stroke in `ButtonText`.
+- **Default artwork belongs to `@ghostvue/themes`** ([ADR 0013](../adr/0013-icon-strategy.md)).
+  In the themed table scope, paint a decorative mark on the sort button's
+  `::after` with empty CSS content and `currentColor`. Use the parent
+  `th[data-sort]` to distinguish the unsorted bidirectional mark from the
+  ascending and descending chevrons. Size it with `--ghost-action-icon-size`.
+  The unsorted mark uses `--ghost-text-subtle` and strengthens on hover or
+  focus. Sorted headers use `--ghost-surface-fg` text, a `--ghost-text-primary`
+  mark, and an accent bottom border. In forced colors keep the direction
+  visible in `ButtonText` (`GrayText` when disabled) and draw the focus outline
+  in `Highlight`. The header's `aria-sort` communicates direction to assistive
+  technology. The CSS adds no text to the button's accessible name.
+- Apply the default only to a sort control with the `data-part="sort-button"`
+  hook. Manual compositions can opt in on their button. A consumer-supplied
+  decorative child marked `data-part="sort-indicator"` suppresses the default
+  on that button. Bare headless renderers supply the hook and label only.
+  Loading the stylesheet outside a themed scope leaves them unadorned.
 
 #### Row selection wash and `forced-colors` `SelectedItem` mapping
 
@@ -1814,17 +1807,11 @@ var(--ghost-border-primary)` in LTR; mirrored in RTL via logical
   - While `table[data-ghost-data-table][aria-busy='true']` is present, mounted
     `<thead>` and `<tbody>` rows stay in the DOM at their current geometry (zero
     height collapse or column reflow).
-  - Direct `> .ghost-table-body` transitions to subdued busy emphasis
-    (`opacity: var(--ghost-action-disabled-opacity)` with
-    `transition: opacity var(--ghost-motion-fade-duration)
-var(--ghost-motion-easing-standard)`), while `> .ghost-table-head` remains
-    at full opacity and displays a block-end accent progress hairline
-    (`--ghost-border-primary`; subtle indeterminate shimmer only under
-    `@media (prefers-reduced-motion: no-preference)`, static accent border under
-    `prefers-reduced-motion: reduce`).
-  - In `@media (forced-colors: active)`, `> .ghost-table-body` keeps
-    `opacity: 1` (so `CanvasText` / `SelectedItemText` never washes out) and the
-    busy header hairline uses `Highlight`.
+  - Keep body text, backgrounds, and enabled controls at their resting contrast
+    throughout loading. Keep the body at full opacity in every theme and mode.
+    Show progress with a block-end accent hairline on the header. It may animate
+    under `prefers-reduced-motion: no-preference`. Keep it static under
+    `prefers-reduced-motion: reduce` and use `Highlight` in forced colors.
 - **Interaction invariant during `loading`:** `aria-busy="true"` **must not**
   set `disabled`, `inert`, or `pointer-events: none` on sort buttons, search
   inputs, checkboxes, expand buttons, or pagination controls unless `:disabled="true"`
@@ -1881,7 +1868,8 @@ Wave 2 implementation ([#333](https://github.com/zprue743/ghostvue/issues/333))
 must satisfy every check below alongside existing phase-one tests:
 
 1. **Headless `GhostDataTablePreset` unit & type tests (`@ghostvue/vue`):**
-   - `#toolbarStart` and `#toolbarEnd` render inside `[data-part="header"]`
+   - Enable each layout slot being exercised through `layoutSlots`.
+     `#toolbarStart` and `#toolbarEnd` render inside `[data-part="header"]`
      before and after `[data-part="search"]`; `[data-part="header"]` omits when
      search is hidden and both toolbar slots are absent; default search stays
      outside any `role="toolbar"`.
@@ -1895,10 +1883,17 @@ must satisfy every check below alongside existing phase-one tests:
    - `#footer` receives `{ pagination, pageCount, rowCount, setPageIndex }` and
      `setPageIndex` commits through the root (`v-model:pagination` + single
      `stateChange` when `manualPagination: true`).
-   - Reserved slot names (`detail`, `toolbar`, `toolbarStart`, `toolbarEnd`,
-     `bulkActions`, `footer`, `search`) are excluded from dynamic `#<columnId>`
-     slot types in `GhostDataTablePresetSlots` and skipped by runtime cell-slot
-     lookup.
+   - In both presets, parameterize compatibility cases over `toolbarStart`,
+     `toolbarEnd`, `bulkActions`, and `footer`. With the prop omitted, a slot
+     matching a column id receives only its original typed cell context.
+     Verify a legacy numeric `#footer="{ value }"` can call `value.toFixed(2)`
+     and renders once per row. Start with no columns, insert the column,
+     reorder it, then remove it. No layout region mounts or invokes that slot.
+   - With only `bulkActions` enabled, keep the colliding `footer` cell slot
+     while showing and dismissing the selection bar. With `footer` explicitly
+     enabled, check its typed pagination props and one footer invocation per
+     render. A column named `footer` uses its `cell` hook or value fallback.
+     Use positive and negative `vue-tsc` fixtures for the two slot signatures.
 2. **Themed wrapper unit, SSR, export, and generic type tests
    (`@ghostvue/themes`):**
    - `GhostDataTable` renders `.ghost-data-table.ghost-themed-scope[data-part="root"][data-themed]`;
@@ -1925,7 +1920,11 @@ must satisfy every check below alongside existing phase-one tests:
      `#toolbarEnd`, `#bulkActions`, and `#footer`.
    - Headless isolation check: mounting `@ghostvue/vue` `GhostDataTable` on a
      page where `@ghostvue/themes` CSS is loaded applies no `[data-themed]`
-     hook or themed wrapper element.
+     hook or themed wrapper element. For both headless renderers verify a
+     sortable header has the button hook and accessible label with no default
+     artwork. In the themed equivalents check all three visual sort states,
+     identical accessible names, and suppression of the CSS mark when a manual
+     sort button supplies its own decorative indicator.
 3. **Browser (`Playwright`), accessibility (`@axe-core/playwright`), and
    `forced-colors` tests:**
    - Keyboard and real focus (`toBeFocused()`): full `Tab` traversal across
@@ -1940,7 +1939,12 @@ desc → none`) while focus stays on the sort `<button>` and `aria-sort` /
    - `[aria-busy="true"]` loading parity: toggling `:loading="true"` sets
      `aria-busy="true"` on `<table>`, keeps rows and headers mounted without
      dropping `toBeFocused()` from an active sort button or search input, and
-     still permits superseding query actions.
+     still permits superseding query actions. In each preset theme, light and
+     dark, measure busy-state body text and enabled control text against their
+     composited backgrounds (at least 4.5:1 for normal text). Include a selected
+     row and a focused control. Require at least 3:1 against adjacent colors
+     for the visual cues identifying enabled controls and their focus. Verify
+     the body stays at full opacity and the header cue respects reduced motion.
    - Forced-colors verification (`page.emulateMedia({ forcedColors: 'active' })`):
      selected row cells (`tr[data-selected="true"] > td`) resolve computed
      `backgroundColor` and `color` to `SelectedItem` and `SelectedItemText`
