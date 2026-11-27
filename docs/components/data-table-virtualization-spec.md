@@ -241,8 +241,13 @@ interface DataTableVirtualRange {
    * Usually empty; at most one entry while one row holds focus.
    */
   pinned: readonly number[]
-  /** First and last display index intersecting the visible area. */
+  /** First display index intersecting the visible area (inclusive). */
   visibleStart: number
+  /**
+   * One past the last display index intersecting the visible area
+   * (exclusive, like `end`). Show `visibleStart + 1` to `visibleEnd` in
+   * one-based text: rows 40 to 59 visible give "Rows 41–60".
+   */
   visibleEnd: number
   /** Rows in the windowed set (`getRowModel().length`). */
   count: number
@@ -490,9 +495,10 @@ per frame at most) and on viewport resize:
 1. `bodyOffset` = the scroll offset minus the block size of the content above
    the first body row (the header and caption), measured once per layout
    change.
-2. `visibleStart`/`visibleEnd` = the data rows intersecting
-   `[bodyOffset, bodyOffset + viewport block size)`; a detail row counts as part
-   of its data row.
+2. `[visibleStart, visibleEnd)` = the data rows intersecting
+   `[bodyOffset, bodyOffset + viewport block size)`, half-open like
+   `[start, end)` (`visibleEnd` is one past the last intersecting row); a
+   detail row counts as part of its data row.
 3. `start = max(0, visibleStart - overscan)`, `end = min(count, visibleEnd + overscan)`.
 4. Pinned rows (below) are added outside `[start, end)`.
 5. Spacers are emitted for every gap: `'before'`, `'between'` (only around a
@@ -733,8 +739,14 @@ focuses explicitly, so this rule already holds there.
 
 `Tab` / `Shift+Tab` presses that arrive while a step 6 search or a reverse
 entry is pending are prevented and dropped, so one press moves focus at most
-once. A pending search is cancelled when focus moves by other means (pointer,
-script), the row model changes, or the viewport unmounts. A cancelled search
+once. A pending search or reverse entry is cancelled on every trigger that
+drops a [continuation](#probe-results-and-freshness), except a direction
+change: focus moves by other means (pointer, script), the row model or `data`
+changes, a row expands or collapses, the column set changes,
+`invalidateTabbableCache` is called, a new `rowHasTabbable` function or
+`tabSearchLimit` is passed, or the viewport unmounts. A pending operation
+never resumes over a row set, row heights, or tabbable layout it did not start
+with. A cancelled search
 leaves focus where it is, except that focus is never left on the focus
 catcher: a cancelled reverse entry moves it to the viewport element.
 
@@ -1541,7 +1553,14 @@ Anything about roving `tabindex`, cell focus, or `role` changes belongs in
   past the end; overscan normalization (`0`, `-3`, `2.7`, `NaN`); measured-mode
   prefix sums with mixed measured and estimated rows; anchoring delta when a
   row above the viewport grows and shrinks; cache keyed by `rowId` survives a
-  sort; spacer keys are the `dataTableSpacerKeys` symbols and a mounted row
+  sort; inserting one row at display index 0 and, separately, between two
+  measured rows above the viewport (fixed and measured modes, the inserted
+  row unmeasured): prefix sums shift by the inserted row's estimate from the
+  insertion point on, the `'before'` and `'after'` spacer sizes, `start`,
+  `end`, `visibleStart`, and `visibleEnd` match a fresh computation over the
+  new set, measured heights stay attached to their ids, and
+  `scrollToRow(i)` offsets for rows below the insertion grow by the estimate
+  while offsets above it are unchanged; spacer keys are the `dataTableSpacerKeys` symbols and a mounted row
   whose id is the string `'before'`, `'between'`, or `'after'` renders next to
   each spacer with no duplicate-key warning and keeps its `<tr>` element across
   window changes; cache pruning on `data` change, including a retained id whose row
@@ -1630,6 +1649,15 @@ Anything about roving `tabindex`, cell focus, or `role` changes belongs in
   the viewport element when `relatedTarget` is `null` or detached; a row-model
   change during a pending entry moves focus to the viewport element, never
   leaving it on the catcher.
+- **Unit (pending-search cancellation):** for each trigger (expanding a row,
+  collapsing a row, adding a column, removing a column, a `data` change,
+  `invalidateTabbableCache`, a new `rowHasTabbable`, a new `tabSearchLimit`),
+  start a step 6 search and, separately, a reverse entry with a stub window
+  that holds the probe's render, fire the trigger before the render resolves,
+  then resolve it: no focus move lands on the target computed before the
+  trigger, no later probe window opens, focus stays on the origin (search)
+  or moves to the viewport element (reverse entry), and the next `Tab` starts
+  a fresh search over the new row set.
 - **Unit (bindings):** `aria-rowcount` and `aria-rowindex` values with zero,
   one, and several expanded rows before the window; `footerRowCount` `0`, `1`,
   and `2` (`aria-rowcount` grows by it; footer indices follow the last data
