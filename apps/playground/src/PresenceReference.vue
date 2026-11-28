@@ -37,7 +37,7 @@ import {
 // resolved while this section is still detached during the initial mount.
 // The fixture shares the playground home, so its counters are plain spans:
 // `<output>` would add implicit `status` roles that other sections' specs
-// count, and the oversized under-control is capped to the viewport so the
+// count, and the oversized under-control is capped to its container so the
 // page keeps its no-horizontal-overflow contract at 320px.
 const portalLayer = useTemplateRef<HTMLElement>('portal-layer')
 const mounted = ref(true)
@@ -313,7 +313,7 @@ const panelExits = ref(0)
 
 .presence-reference__under {
   block-size: 12rem;
-  inline-size: min(calc(100vw - 2rem), 24rem);
+  inline-size: min(100%, 24rem);
 }
 
 .presence-reference__scrim {
