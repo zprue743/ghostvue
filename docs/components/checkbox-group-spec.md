@@ -6,7 +6,9 @@ components:
 packages:
   - '@ghostvue/vue'
   - '@ghostvue/themes'
-specStatus: draft
+specStatus: approved
+approval:
+  evidence: 'Design sign-off on the recommended CG1–CG7 decisions at commit 28ae0b6 (28ae0b6efc75f3ad698c84f07fdb3b1180939aa4), recorded by repo admin zprue743 on behalf of Zac on 2026-11-28 in PR #504: https://github.com/zprue743/ghostvue/pull/504#issuecomment-7240055885. Design approval only; not merge approval or release inclusion.'
 manifests: []
 sections:
   purpose:
@@ -35,40 +37,23 @@ sections:
     applicable: true
   compatibility:
     applicable: true
-unresolvedQuestions:
-  - question: 'Issue #463 (0.2.0 GhostCheckboxGroup): maintainer decision CG1 — group members are existing GhostCheckbox instances with a string value vs a new GhostCheckboxGroupItem part — before #467 implementation.'
-    blocking: false
-    reviewer: Zac
-  - question: 'Issue #463: maintainer decision CG2 — emitted array order (stable consumer order with appends, matching Vue native and GhostCombobox multiple) vs canonical option (DOM) order — before #467.'
-    blocking: false
-    reviewer: Zac
-  - question: 'Issue #463: maintainer decision CG3 — values without a mounted option are retained and never pruned (matching GhostCombobox) vs pruned on unregister (closer to GhostRadioGroup) — before #467.'
-    blocking: false
-    reviewer: Zac
-  - question: 'Issue #463: maintainer decision CG4 — select-all derivation stays a documented consumer recipe vs group slot props (allSelected, someSelected, setAll) — before #467.'
-    blocking: false
-    reviewer: Zac
-  - question: 'Issue #463: maintainer decision CG5 — focus moves to the nearest enabled option when the focused option unmounts vs native behavior (focus falls to body) — before #467.'
-    blocking: false
-    reviewer: Zac
-  - question: 'Issue #463: maintainer decision CG6 — invalid/required/Field mapping (aria-invalid on member inputs, no group required prop, legend or aria-labelledby for the group name) — before #467.'
-    blocking: false
-    reviewer: Zac
-  - question: 'Issue #463: maintainer decision CG7 — package surface (headless group plus useGhostCheckboxGroup in @ghostvue/vue and a thin themed GhostCheckboxGroup in @ghostvue/themes) vs headless-only — before #467.'
-    blocking: false
-    reviewer: Zac
+unresolvedQuestions: []
 ---
 
 # Component specification: `GhostCheckboxGroup`
 
 > [!IMPORTANT]
-> **Status:** Draft ([#463](https://github.com/zprue743/ghostvue/issues/463)).
+> **Status:** Design approved for
+> [#463](https://github.com/zprue743/ghostvue/issues/463). Zac signed off on the
+> recommended [CG1–CG7 decisions](#resolved-decisions) at commit `28ae0b6`. The
+> repo admin `zprue743` recorded the sign-off on his behalf on 2026-11-28 in
+> [PR #504](https://github.com/zprue743/ghostvue/pull/504#issuecomment-7240055885).
+> This is design approval only, not merge approval or release inclusion.
+>
 > This is a docs-only specification. No runtime code, manifest, or export exists
 > yet. Implementation ([#467](https://github.com/zprue743/ghostvue/issues/467))
-> waits until a maintainer resolves
-> [open architectural questions](#open-architectural-questions) CG1–CG7 and
-> records `specStatus: approved` with `approval.evidence`. Release inclusion is a
-> separate decision.
+> stays blocked until this approved spec is merged into `master` and the #467
+> implementation criteria are reconciled with it.
 
 ## Purpose and user problems
 
@@ -156,7 +141,7 @@ without changing its data:
 
 ### Package boundary and exports
 
-Recommended surface ([CG7](#open-architectural-questions)):
+Approved surface ([CG7](#resolved-decisions)):
 
 `@ghostvue/vue`:
 
@@ -365,14 +350,14 @@ yields one combined list in DOM order, exactly as the page does today.
 
 #### `GhostCheckboxGroup<TValue extends string = string>`
 
-| Prop           | Type                             | Default      | Contract                                                                                                                                                                              |
-| -------------- | -------------------------------- | ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `modelValue`   | `readonly TValue[] \| undefined` | `undefined`  | Controlled selection. `undefined` is uncontrolled. `[]` is a defined empty selection. Accepts readonly and frozen arrays; never mutated.                                              |
-| `defaultValue` | `readonly TValue[]`              | `[]`         | Uncontrolled seed and form-reset baseline. Shallow-copied once at setup; later prop changes and later mutation of the passed array are ignored.                                       |
-| `name`         | `string \| undefined`            | `undefined`  | Native `name` applied to every member input. No generated name: checkboxes need no shared name to behave as a group, and an unnamed group submits nothing (native parity).            |
-| `disabled`     | `boolean`                        | `false`      | Disables every member input natively. On a `fieldset` root it also sets the native `disabled` attribute (see [Disabled](#loading-empty-disabled-read-only-and-error-states)).         |
-| `invalid`      | `boolean`                        | `false`      | Error presentation hook for Field or form integration. Sets `data-state="invalid"` on the root and `aria-invalid="true"` on each member input ([CG6](#open-architectural-questions)). |
-| `as`           | `string \| Component`            | `'fieldset'` | Root host. A `fieldset` needs no role. Any other host gets `role="group"`.                                                                                                            |
+| Prop           | Type                             | Default      | Contract                                                                                                                                                                      |
+| -------------- | -------------------------------- | ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `modelValue`   | `readonly TValue[] \| undefined` | `undefined`  | Controlled selection. `undefined` is uncontrolled. `[]` is a defined empty selection. Accepts readonly and frozen arrays; never mutated.                                      |
+| `defaultValue` | `readonly TValue[]`              | `[]`         | Uncontrolled seed and form-reset baseline. Shallow-copied once at setup; later prop changes and later mutation of the passed array are ignored.                               |
+| `name`         | `string \| undefined`            | `undefined`  | Native `name` applied to every member input. No generated name: checkboxes need no shared name to behave as a group, and an unnamed group submits nothing (native parity).    |
+| `disabled`     | `boolean`                        | `false`      | Disables every member input natively. On a `fieldset` root it also sets the native `disabled` attribute (see [Disabled](#loading-empty-disabled-read-only-and-error-states)). |
+| `invalid`      | `boolean`                        | `false`      | Error presentation hook for Field or form integration. Sets `data-state="invalid"` on the root and `aria-invalid="true"` on each member input ([CG6](#resolved-decisions)).   |
+| `as`           | `string \| Component`            | `'fieldset'` | Root host. A `fieldset` needs no role. Any other host gets `role="group"`.                                                                                                    |
 
 There is intentionally no `required`, `orientation`, `min`, `max`, or `options`
 prop.
@@ -394,7 +379,7 @@ on `group`, so it moves to member inputs as described above.
 
 #### Member checkboxes: which `GhostCheckbox` props stay authoritative
 
-Recommended ([CG1](#open-architectural-questions)): a `GhostCheckbox` becomes a
+Approved ([CG1](#resolved-decisions)): a `GhostCheckbox` becomes a
 member when it has a group ancestor **and** a string `value` attribute. Without
 a `value` it stays a standalone boolean checkbox, even inside the group. That is
 how the select-all lives inside the same `fieldset`.
@@ -415,9 +400,9 @@ how the select-all lives inside the same `fieldset`.
 Because `value` is not a declared prop, the group's `TValue` cannot be checked
 against each member's `value` at compile time. Vue does not infer generics
 across parent and slot children. This is the main type cost of CG1. The
-alternative `GhostCheckboxGroupItem` part (required `value: string`) removes the
-implicit membership rule but adds a second checkbox component and its themed
-twin.
+rejected `GhostCheckboxGroupItem` part (required `value: string`) would have
+removed the implicit membership rule but added a second checkbox component and
+its themed twin.
 
 ### v-model contracts
 
@@ -441,7 +426,8 @@ twin.
 - **New array every time.** The emitted array is never the `modelValue` or
   `defaultValue` instance, and the group never calls a mutating method on
   either. `Object.isFrozen(modelValue)` arrays work.
-- **Next-value rule** (CG2 recommended, stable consumer order):
+- **Next-value rule** (CG2, stable consumer order in the model; `FormData`
+  stays in DOM order):
   - Check `v` when absent: `next = [...current, v]`.
   - Uncheck `v`: `next = current.filter((x) => x !== v)` (removes every
     occurrence).
@@ -454,8 +440,8 @@ twin.
 
 - `update:modelValue: [value: TValue[]]`, emitted as defined above.
 - Default slot: member checkboxes, labels, legend, descriptions, and any
-  non-member content. Recommended: no slot props in `0.2.0`
-  ([CG4](#open-architectural-questions)).
+  non-member content. No slot props in this version
+  ([CG4](#resolved-decisions)).
 - No other component events. Native `change` events from member inputs bubble
   to the root as usual, so `<form @change>` keeps working, as it does in today's
   example.
@@ -541,7 +527,7 @@ interaction only:
 
 ### Select-all derivation
 
-Recommended ([CG4](#open-architectural-questions)): a documented recipe, not a
+Approved ([CG4](#resolved-decisions)): a documented recipe, not a
 group API. The mixed parent is a plain `GhostCheckbox` without a `value`, so it
 keeps its boolean contract and `indeterminate` prop.
 
@@ -639,8 +625,8 @@ last emit sees the last activation win. This matches `GhostCheckbox` and
   or mutates it, and never stores the consumer instance as internal state.
 - `defaultValue` is shallow-copied at setup so later mutation of the
   consumer's seed array cannot change the reset baseline.
-- **Unknown values** (in the model with no mounted member) are retained (CG3
-  recommended). They are not submitted (there is no input) and select-all
+- **Unknown values** (in the model with no mounted member) are retained
+  (CG3). They are not submitted (there is no input) and select-all
   ignores them. Hiding, filtering, or lazy-loading options never erases saved
   preferences, and nothing is emitted. This deliberately differs from
   `GhostRadioGroup`, which clears its selection when the selected item
@@ -698,7 +684,7 @@ composite widget, so there is **no roving tabindex** and no single tab stop.
   model changes, or on `disabled`.
 - Visible focus is the member's own `:focus-visible` styling (themed
   `GhostCheckbox` already paints it).
-- **Focused option disappears** (CG5 recommended). When the member that holds
+- **Focused option disappears** (CG5). When the member that holds
   `document.activeElement` unmounts while the group stays mounted, the group
   focuses, after flush, the next enabled member in DOM order. If there is
   none, it focuses the previous enabled member. If no enabled member remains,
@@ -709,9 +695,9 @@ composite widget, so there is **no roving tabindex** and no single tab stop.
     on `assignments`, removing `assignments` leaves `digest` focused
     (`toBeFocused()`). Removing `digest` while it is focused and last leaves
     `assignments` focused.
-  - Native alternative (CG5 alt): the library does nothing, and in Chromium,
-    Firefox, and WebKit `document.activeElement` becomes `document.body`. The
-    consumer restores focus through the exposed `focus()`.
+  - Rejected alternative: leaving native behavior, where in Chromium,
+    Firefox, and WebKit `document.activeElement` becomes `document.body` and
+    the consumer restores focus through the exposed `focus()`.
 - A member becoming `disabled` while focused keeps native behavior (the
   element blurs in most engines). The group does not intervene.
 
@@ -873,9 +859,10 @@ outcome.
   browser can drive (2–4, 8–13, 16), including DOM order after reorder (row 13) and locked exclusion.
 - Select-all: the four-row fixture above. Mixed via `indeterminate` DOM
   property and accessible state.
-- Removing the focused member: focus moves to the next member, or to the
-  previous one when it was last, asserted with `toBeFocused()` (CG5), or
-  `document.body` under the native alternative.
+- Removing the focused member: focus moves to the next enabled member, or to
+  the previous enabled one when it was last, asserted with `toBeFocused()`
+  (CG5). Focus stays on `document.body` when no enabled member remains, and the
+  group does not move focus the consumer already moved.
 - Native reset button: model, `checked` boxes, and `getAll` return to the
   baseline. A `preventDefault()` reset changes nothing.
 - Pre-hydration click is reconciled to the model (Nuxt fixture).
@@ -944,61 +931,62 @@ Themed first, following the component-guide publishing standard:
   pruning unknown values (CG3), adding slot props (CG4, additive), changing
   focus restoration (CG5), and adding `required`, `min`, or `max`.
 - Implementation gate: `.github/release-scope.json` maps implementation #467 to
-  this spec (`checkbox-group`). Implementation and inclusion in `0.2.0` are
-  separate decisions from this draft.
+  this spec (`checkbox-group`). The design approval recorded here is not
+  release inclusion: #467 stays blocked until this approved spec is merged into
+  `master` and the #467 implementation criteria are reconciled with it.
+  Inclusion in `0.2.0` remains a separate decision.
 
-## Open architectural questions
+## Resolved decisions
 
-None of these block this docs-only draft. All of them block implementation
-(#467) until a maintainer resolves them and records approval evidence.
+Zac signed off on the recommended choice for each of CG1–CG7 at commit
+`28ae0b6` (`28ae0b6efc75f3ad698c84f07fdb3b1180939aa4`). The repo admin
+`zprue743` recorded the sign-off on his behalf on 2026-11-28 in
+[PR #504](https://github.com/zprue743/ghostvue/pull/504#issuecomment-7240055885).
+This is design sign-off only. It is not merge approval or release inclusion.
+Implementation (#467) stays blocked until this approved spec is merged into
+`master` and the #467 implementation criteria are reconciled with it.
 
-1. **CG1: member part (reviewer: Zac).**
-   - **Recommended:** reuse `GhostCheckbox`. A checkbox is a member when it has
-     a group ancestor and a `value`. Without a `value` it stays standalone (the
-     select-all case). Themed CSS, refs, and Field wiring are reused as is. The
-     cost is that `value` is not compile-time linked to `TValue`.
-   - **Alternative:** a new `GhostCheckboxGroupItem` (plus a themed twin) with a
-     required `value: string`. Membership is explicit, at the cost of a second
-     checkbox component and duplicated themed recipe.
-2. **CG2: emitted order (reviewer: Zac).**
-   - **Recommended:** stable consumer order: appends on check, filter on
-     uncheck, and untouched entries keep their position. This matches Vue's
-     native array `v-model`, `GhostCombobox` `multiple`, and `GhostDataTable`
-     row selection. `getAll` is always DOM order.
-   - **Alternative:** canonical option order. The emitted array is re-sorted by
-     mounted DOM order with unknown values appended. Model and `getAll` then
-     agree, but order depends on mount state, and a reorder silently
-     disagrees until the next click. Note that the `GhostToggleGroup` spec says
-     "registration order" while `useGhostToggleGroup` appends on toggle. Either
-     choice here should state which precedent it follows.
-3. **CG3: unknown and unmounted values (reviewer: Zac).**
-   - **Recommended:** retain them and never emit on unregister (as in
-     `GhostCombobox`).
-   - **Alternative:** prune on unregister like `GhostRadioGroup` (uncontrolled
-     internal state only, no controlled emit). This risks erasing saved
-     preferences when options are filtered or load late.
-4. **CG4: select-all helper (reviewer: Zac).**
-   - **Recommended:** a documented recipe only, so `0.2.0` has the smallest
-     surface. The consumer already owns the enabled option list.
-   - **Alternative:** default-slot props
-     `{ allSelected, someSelected, setAll(checked) }`, computed from enabled
-     mounted members. This is additive and could follow later.
-5. **CG5: focus after a focused option unmounts (reviewer: Zac).**
-   - **Recommended:** move focus to the next enabled member, else the previous
-     one, only while the group is mounted and focus is on `body`.
-   - **Alternative:** native behavior (focus falls to `body`) plus a documented
-     `focus()` recipe.
-6. **CG6: Field, invalid, and required mapping (reviewer: Zac).**
-   - **Recommended:** name the group with `legend` or `aria-labelledby`, not a
-     `GhostFieldLabel` `for`. `invalid` sets root `data-state` and member
-     `aria-invalid`. There is no group `required`. Descriptions and errors use
-     root `aria-describedby`.
-   - **Alternative:** teach `GhostField` to emit `aria-labelledby` for group
-     controls (shared with `GhostRadioGroup` and #464). That change belongs to
-     the Field and Fieldset specs.
-7. **CG7: package surface (reviewer: Zac).**
-   - **Recommended:** headless `GhostCheckboxGroup` and `useGhostCheckboxGroup`
-     in `@ghostvue/vue`, and a thin themed `GhostCheckboxGroup` in
-     `@ghostvue/themes` (stack gap and fieldset reset only).
-   - **Alternative:** headless-only, with themed layout left to consumer CSS. The
-     themed-first docs example would then carry its own fieldset reset.
+1. **CG1: member part.** Reuse `GhostCheckbox`. A checkbox is a member when it
+   has a group ancestor and a `value`. Without a `value` it stays standalone
+   (the select-all case). Themed CSS, refs, and Field wiring are reused as is.
+   **Accepted cost:** `value` is not compile-time linked to `TValue`.
+   **Rejected:** a new `GhostCheckboxGroupItem` (plus a themed twin) with a
+   required `value: string`, which would add a second checkbox component and a
+   duplicated themed recipe. _Approved by Zac, 2026-11-28._
+2. **CG2: order.** The model keeps stable consumer order: check appends, uncheck
+   filters, and untouched entries keep their position. This follows Vue's
+   native array `v-model`, `GhostCombobox` `multiple`, and `GhostDataTable` row
+   selection, and also matches `useGhostToggleGroup`'s append-on-toggle
+   behavior. `FormData.getAll(name)` is always DOM order, because it comes from
+   the real checkboxes. The model and `getAll` can therefore differ in order
+   (transition rows 4, 7, and 13). **Rejected:** re-sorting the emitted array
+   into mounted DOM order, which would make the model depend on mount state.
+   _Approved by Zac, 2026-11-28._
+3. **CG3: unknown and unmounted values.** Retain them and never emit on
+   unregister (as in `GhostCombobox`). **Rejected:** pruning on unregister like
+   `GhostRadioGroup`, which risks erasing saved preferences when options are
+   filtered or load late. _Approved by Zac, 2026-11-28._
+4. **CG4: select-all.** A documented consumer recipe only. The group adds no
+   slot props, so the first release has the smallest surface and the consumer
+   keeps owning the enabled option list. **Deferred:** default-slot props
+   `{ allSelected, someSelected, setAll(checked) }` are additive and can follow
+   later. _Approved by Zac, 2026-11-28._
+5. **CG5: focus after a focused option unmounts.** Move focus to the next
+   enabled member in DOM order, else the previous enabled member. This happens
+   only while the group stays mounted and focus is still on `body` after the
+   flush (see [Focus behavior](#focus-behavior)). **Rejected:** native behavior
+   (focus falls to `body`) plus a documented `focus()` recipe. _Approved by
+   Zac, 2026-11-28._
+6. **CG6: naming, invalid, and required mapping.** Name the group with a
+   `legend` or `aria-labelledby`, not a `GhostFieldLabel` `for`. `invalid` sets
+   root `data-state="invalid"` and `aria-invalid="true"` on member inputs.
+   There is no group `required`. Descriptions and errors use root
+   `aria-describedby`. **Rejected here:** teaching `GhostField` to emit
+   `aria-labelledby` for group controls. That belongs to the Field and Fieldset
+   specs (shared with `GhostRadioGroup` and #464). _Approved by Zac,
+   2026-11-28._
+7. **CG7: package surface.** Ship headless `GhostCheckboxGroup` and
+   `useGhostCheckboxGroup` in `@ghostvue/vue`, and a thin themed
+   `GhostCheckboxGroup` in `@ghostvue/themes` (stack gap and fieldset reset
+   only). **Rejected:** headless-only, with themed layout left to consumer CSS.
+   _Approved by Zac, 2026-11-28._
