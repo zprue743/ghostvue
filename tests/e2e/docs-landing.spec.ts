@@ -1004,6 +1004,11 @@ test.describe('docs landing page', () => {
       await expect(
         page.locator('#hero [data-landing-example]').first(),
       ).toContainText('Release channels')
+      await expect(
+        page
+          .locator('[data-landing-example="badge/release-channels"]')
+          .getByText('Sample data', { exact: true }),
+      ).toBeVisible()
 
       await railLink(page, 'tooling').click()
       await expect(page).toHaveURL(/#tooling$/)

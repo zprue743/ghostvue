@@ -212,6 +212,9 @@ test.describe('themed GhostToast @component:GhostToast', () => {
     await expect(page.locator('[data-part="announcer-polite"]')).toHaveText(
       'Sync failed Three files could not be uploaded.',
     )
+    // Measure text contrast after both entrance fades reach full opacity.
+    await expect(toasts(page).first()).toHaveCSS('opacity', '1')
+    await expect(toasts(page).last()).toHaveCSS('opacity', '1')
     await expectNoAxeViolations(page)
 
     // Tab order: the page controls, then the stack, oldest toast first.

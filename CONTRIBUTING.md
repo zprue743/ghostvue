@@ -3,11 +3,16 @@
 Thank you for helping build GhostVue. The project accepts human-authored and
 AI-assisted contributions under the same engineering standards.
 
-Start with the [contribution workflow](./docs/contributing/workflow.md) (including
-[issue tracking](./docs/contributing/workflow.md#issue-tracking)), then read
-the architecture and standards relevant to your change. Component work requires
-an approved specification based on the
-[component template](./docs/components/spec-template.md).
+## Start here
+
+Browse the [open issues](https://github.com/zprue743/ghostvue/issues) or
+[report a bug or request a feature](https://github.com/zprue743/ghostvue/issues/new/choose).
+If you want to work on an issue, comment with what you would change so a
+maintainer can confirm the scope and release.
+
+Read the [first contribution guide](./docs/contributing/workflow.md#first-contribution)
+for setup, checks, and what to include in a pull request. Component work requires
+an approved specification based on the [component template](./docs/components/spec-template.md).
 
 ## Local checks
 
@@ -16,9 +21,9 @@ pnpm install
 pnpm verify
 ```
 
-Run `pnpm test:e2e` when behavior is visible in a browser. A pull request should
-explain its intent, public API impact, accessibility impact, test coverage, and
-validation results.
+Run the relevant Playwright specs when behavior is visible in a browser. In
+your pull request, describe the change, link the issue, and report the validation
+results and any public API or accessibility impact.
 
 Contributors are responsible for ensuring they have the right to submit their
 work. Do not contribute proprietary employer code, confidential material,
