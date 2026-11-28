@@ -288,7 +288,7 @@ test.describe('docs Dialog edit profile showcase', () => {
     const docs = await startStaticServer('apps/docs/.vitepress/dist')
     try {
       const frame = await openDialogPage(page, docs.url)
-      const { trigger, dialog, fullName, name, preview } = partsOf(page, frame)
+      const { trigger, dialog, email, name, preview } = partsOf(page, frame)
 
       const idle = await trigger.boundingBox()
       await trigger.hover()
@@ -326,14 +326,20 @@ test.describe('docs Dialog edit profile showcase', () => {
       expect(detail.margin).toBe('0px')
       expect(detail.size).toBeLessThan(heading.size)
 
-      // Inside the dialog, focusing a field never moves it.
       await openEditor(trigger, dialog)
-      const email = partsOf(page, frame).email
+      // The dialog translates on entry. Measure the field at rest so only
+      // movement caused by hover or focus can fail the geometry comparison.
+      await dialog.evaluate(async (element) => {
+        await Promise.all(
+          element.getAnimations().map((entry) => entry.finished),
+        )
+      })
       const before = await email.boundingBox()
       await email.hover()
-      await email.focus()
       expect(await email.boundingBox()).toEqual(before)
-      await expect(fullName).not.toBeFocused()
+      await email.focus()
+      await expect(email).toBeFocused()
+      expect(await email.boundingBox()).toEqual(before)
     } finally {
       await docs.close()
     }
