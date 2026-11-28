@@ -3,8 +3,8 @@
 `GhostDatePicker` combines ordinary text entry with an anchored **modal**
 calendar for a single date or an inclusive date range. It follows the
 WAI-ARIA APG [Date Picker Dialog](https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/examples/datepicker-dialog/)
-pattern. Import the parts from `@ghostvue/vue` for headless use, or from
-`@ghostvue/themes` for the default surfaces.
+pattern. Import the parts from `@ghostvue/themes` to use the default styles,
+including the calendar recipe and 44px touch targets.
 
 Values are date-only [`CalendarDate`](https://react-spectrum.adobe.com/internationalized/date/CalendarDate.html)
 objects (years 0001–9999), the same type `GhostCalendar` uses. JavaScript
@@ -18,9 +18,14 @@ objects (years 0001–9999), the same type `GhostCalendar` uses. JavaScript
 | `GhostDatePickerContent`  | `role="dialog"` with `aria-modal="true"` | Positioned modal surface with a Close control             |
 | `GhostDatePickerCalendar` | `GhostCalendar` header, navigation, grid | Calendar bound to the picker; default content of the slot |
 
-## Basic use
+## Book a trip {#themed-use}
 
-<GhostExample id="date-picker/basic" />
+Type a departure and return date, or open **Choose trip dates** and select both
+in the calendar. The example starts with a December itinerary you can revise.
+
+<GhostExample id="date-picker/themed" />
+
+## Basic use
 
 Typing never changes the value until the text is committed with `Enter`
 or by leaving the input. Text that is invalid or incomplete stays visible
@@ -30,14 +35,6 @@ input restores the committed text.
 By default the input accepts strict ISO `YYYY-MM-DD`: no whitespace, zero
 padding required, and impossible dates such as `2023-02-29` are rejected
 rather than adjusted.
-
-The headless layer positions the calendar surface but paints nothing. The
-headless examples share one consumer stylesheet on the `date-picker-demo__*`
-classes: an opaque, layered surface, a 7-column month grid whose weekday
-header lines up with the weeks, and today, selected, range, outside-month and
-unavailable day states read from `data-today`, `data-state`,
-`data-outside-month` and `aria-disabled`. Copy it once per app, or use the
-themed parts.
 
 ### `today` and SSR
 
@@ -59,7 +56,7 @@ const today = new CalendarDate(
 
 ## Range selection
 
-<GhostExample id="date-picker/range" />
+The [trip booking example](#themed-use) shows a themed date range.
 
 Set `selection-mode="range"` and render one `part="start"` and one
 `part="end"` input. Moving focus between the two inputs keeps both drafts;
@@ -206,14 +203,6 @@ The calendar is its own modal layer: `Escape` closes only the top layer and
 returns focus to the trigger inside the outer dialog. `Escape` in an edited
 input reverts the text without closing the outer dialog.
 
-## Themed use
-
-<GhostExample id="date-picker/themed" />
-
-The themed parts style inputs, the trigger, and the portaled surface with
-`--ghost-*` tokens and 44px touch targets. The calendar inside the surface
-uses the calendar recipe.
-
 ## Content placement
 
 `GhostDatePickerContent` anchors to the single or start input (or the
@@ -248,6 +237,28 @@ slot to add help text, or pass `GhostCalendar*` parts to
 Automated axe checks run with the dialog open and closed. Manual
 screen-reader review is still required before this component is marked
 stable.
+
+## Advanced: headless customization
+
+Import from `@ghostvue/vue` when you supply the input, trigger, and calendar
+styles. The examples below show the same positioning and keyboard behavior
+with custom CSS.
+
+The headless layer positions the calendar surface but paints nothing. The
+headless examples share one consumer stylesheet on the `date-picker-demo__*`
+classes: an opaque, layered surface, a 7-column month grid whose weekday
+header lines up with the weeks, and today, selected, range, outside-month and
+unavailable day states read from `data-today`, `data-state`,
+`data-outside-month` and `aria-disabled`. Copy it once per app, or use the
+themed parts.
+
+### Single date with custom styles
+
+<GhostExample id="date-picker/basic" />
+
+### Date range with custom styles
+
+<GhostExample id="date-picker/range" />
 
 ## API
 

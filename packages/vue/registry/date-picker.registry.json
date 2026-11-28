@@ -42,36 +42,36 @@
       "id": "date-picker/controlled",
       "title": "Controlled",
       "description": "Controlled value and open state with an explicit clear action.",
-      "layer": "headless"
+      "layer": "themed"
     },
     {
       "id": "date-picker/validation",
       "title": "Validation and form reset",
       "description": "Required range with bounds, validateRange rejecting interior unavailable dates, native submit and reset.",
-      "layer": "headless"
+      "layer": "themed"
     },
     {
       "id": "date-picker/custom-format",
       "title": "Custom format and locale",
       "description": "Consumer parse and format callbacks with a German calendar.",
-      "layer": "headless"
+      "layer": "themed"
     },
     {
       "id": "date-picker/rtl",
       "title": "Right-to-left",
-      "description": "Arabic locale in an RTL container; arrow keys follow reading direction.",
-      "layer": "headless"
+      "description": "Hebrew locale in an RTL container; arrow keys follow reading direction.",
+      "layer": "themed"
     },
     {
       "id": "date-picker/nested-dialog",
       "title": "Inside a dialog",
       "description": "Date picker in a modal dialog; Escape closes only the top layer.",
-      "layer": "headless"
+      "layer": "themed"
     },
     {
       "id": "date-picker/themed",
-      "title": "Themed",
-      "description": "Styled date range picker from @ghostvue/themes inside GhostField.",
+      "title": "Book a trip",
+      "description": "Choose departure and return dates with a themed range picker and a labeled field for each endpoint.",
       "layer": "themed"
     }
   ]
