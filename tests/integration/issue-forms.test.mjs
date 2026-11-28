@@ -9,7 +9,10 @@
  * guard needs no extra development dependency (the same tradeoff as
  * ci-workflow-policy.test.ts). The reader relies on the Prettier-formatted
  * layout and throws on any line it does not recognize, so a layout change
- * fails loudly instead of skipping checks.
+ * fails loudly instead of skipping checks. It also throws on any scalar it
+ * cannot read the way a YAML parser would (for example an unquoted value
+ * containing `: `, which GitHub rejects), so the text reader never accepts a
+ * form that real YAML would refuse or read differently.
  */
 
 import { readdirSync, readFileSync } from 'node:fs'
@@ -28,17 +31,44 @@ const triageLabels = ['agent:triaged', 'agent:ready', 'in-progress', 'blocked']
 // The element types GitHub issue forms accept.
 const elementTypes = ['markdown', 'textarea', 'input', 'dropdown', 'checkboxes']
 
-/** Removes one pair of matching YAML quotes from a plain scalar. */
-function unquote(value) {
-  const match = /^(['"])(.*)\1$/.exec(value)
-  return match ? match[2].replaceAll("''", "'") : value
+// Characters that cannot start a YAML plain scalar, or that start a
+// construct (anchor, tag, alias, flow collection, block scalar) the reader
+// does not interpret. `-`, `?` and `:` are only indicators before a space.
+const plainScalarStart = /^(?:[[\]{}#&*!|>'"%@`,]|[-?:](?: |$))/
+
+/**
+ * Reads one scalar the way YAML would, or throws when the value uses syntax
+ * this reader does not support. Quoted scalars must be a single well-formed
+ * pair: single quotes may only contain doubled `''`, and double quotes may not
+ * contain escapes or a bare `"`. A plain scalar may not contain `: ` or ` #`
+ * (YAML reads those as a nested mapping or a comment) or end in `:`.
+ */
+function scalar(value, where) {
+  const fail = (reason) => {
+    throw new Error(`${where}: ${reason} in "${value}"; quote the value`)
+  }
+  if (value.startsWith("'")) {
+    const match = /^'(.*)'$/.exec(value)
+    if (!match || match[1].replaceAll("''", '').includes("'"))
+      fail('malformed single-quoted scalar')
+    return match[1].replaceAll("''", "'")
+  }
+  if (value.startsWith('"')) {
+    const match = /^"([^"\\]*)"$/.exec(value)
+    if (!match) fail('unsupported double-quoted scalar')
+    return match[1]
+  }
+  if (plainScalarStart.test(value)) fail('unsupported plain scalar indicator')
+  if (/: |:$/.test(value)) fail('plain scalar containing ": "')
+  if (/ #/.test(value)) fail('plain scalar containing " #"')
+  return value
 }
 
 /**
  * Reads a nested `key: value` map at `indent`, collecting `|` block scalars
  * from the deeper-indented lines that follow.
  */
-function readMap(lines, start, indent) {
+function readMap(lines, start, indent, file) {
   const map = {}
   let index = start
   const pattern = new RegExp(`^ {${indent}}([a-z_-]+): ?(.*)$`)
@@ -59,17 +89,15 @@ function readMap(lines, start, indent) {
       }
       map[key] = block.join('\n').trimEnd()
     } else {
-      map[key] = unquote(raw)
+      map[key] = scalar(raw, `${file}: ${key}`)
     }
   }
   return { map, next: index }
 }
 
-/** Reads one issue form into its top-level keys and body elements. */
-function readForm(file) {
-  const lines = readFileSync(resolve(templatesDir, file), 'utf8')
-    .split('\n')
-    .filter((line) => !line.startsWith('#'))
+/** Parses issue-form text into its top-level keys and body elements. */
+function parseForm(text, file) {
+  const lines = text.split('\n').filter((line) => !line.startsWith('#'))
   const form = { body: [] }
   let index = 0
   while (index < lines.length) {
@@ -90,7 +118,7 @@ function readForm(file) {
             element.id = id[1]
             index += 1
           } else if (section) {
-            const { map, next } = readMap(lines, index + 1, 6)
+            const { map, next } = readMap(lines, index + 1, 6, file)
             element[section[1]] = map
             index = next
           } else {
@@ -108,12 +136,17 @@ function readForm(file) {
     form[key] = list
       ? list[1]
           .split(',')
-          .map((item) => unquote(item.trim()))
+          .map((item) => scalar(item.trim(), `${file}: ${key}`))
           .filter(Boolean)
-      : unquote(raw)
+      : scalar(raw, `${file}: ${key}`)
     index += 1
   }
   return form
+}
+
+/** Reads one issue form from .github/ISSUE_TEMPLATE. */
+function readForm(file) {
+  return parseForm(readFileSync(resolve(templatesDir, file), 'utf8'), file)
 }
 
 /**
@@ -194,6 +227,71 @@ describe('issue forms', () => {
       'simple-api',
       'accessibility',
     ])
+  })
+})
+
+describe('issue-form reader', () => {
+  /** Builds a minimal form whose textarea description is `description`. */
+  const formWith = (description) =>
+    [
+      'name: Example',
+      'description: Example form.',
+      'body:',
+      '  - type: textarea',
+      '    id: example',
+      '    attributes:',
+      '      label: Example',
+      `      description: ${description}`,
+    ].join('\n')
+  const describeField = (text) =>
+    parseForm(text, 'example.yml').body[0].attributes.description
+
+  it('rejects an unquoted scalar that YAML would read as a mapping', () => {
+    // GitHub's YAML parser rejects this line ("mapping values are not
+    // allowed here"), so the guard must refuse it rather than read the text.
+    expect(() => describeField(formWith('Migration: phase two'))).toThrow(
+      /example\.yml: description: plain scalar containing ": "/,
+    )
+    expect(() =>
+      parseForm('description: Migration: phase two\n', 'top.yml'),
+    ).toThrow(/top\.yml: description: plain scalar containing ": "/)
+    expect(() =>
+      parseForm('labels: [Migration: phase two]\n', 'list.yml'),
+    ).toThrow(/plain scalar containing ": "/)
+  })
+
+  it('rejects other scalar syntax the reader cannot interpret', () => {
+    for (const value of [
+      'Ends with:',
+      'Text # trailing comment',
+      '>',
+      '|-',
+      '&anchor value',
+      "'unterminated",
+      "'stray ' quote'",
+      '"escaped \\" quote"',
+      '- item',
+    ])
+      expect(() => describeField(formWith(value)), value).toThrow(
+        /quote the value/,
+      )
+  })
+
+  it('keeps valid quoted and block scalars', () => {
+    expect(describeField(formWith("'Migration: phase two'"))).toBe(
+      'Migration: phase two',
+    )
+    expect(describeField(formWith("'It''s: quoted'"))).toBe("It's: quoted")
+    expect(describeField(formWith('"Migration: phase two"'))).toBe(
+      'Migration: phase two',
+    )
+    expect(describeField(formWith('Plain text, with commas.'))).toBe(
+      'Plain text, with commas.',
+    )
+    const block = formWith(
+      '|\n        Migration: phase two\n        # not a comment',
+    )
+    expect(describeField(block)).toBe('Migration: phase two\n# not a comment')
   })
 })
 
