@@ -47,8 +47,9 @@ detail row. Try it:
   to cycle ascending, descending, and unsorted. Amounts sort as numbers and due
   dates as ISO dates, while cells show formatted currency and dates.
 - **Act on a selection.** **Mark paid** updates the selected unpaid invoices,
-  marks the table busy with `loading` while the save runs, then clears the
-  selection. The footer's polite status reports the result.
+  marks the table busy with `loading` while the save runs, then deselects the
+  invoices it saved. Rows you select during the save stay selected. The
+  footer's polite status reports the result.
 - **Open a detail.** Each row's expand button shows a detail row with its own
   actions.
 

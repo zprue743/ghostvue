@@ -136,7 +136,7 @@ function tone(status: InvoiceStatus) {
 }
 
 async function markPaid(): Promise<void> {
-  const ids = new Set(payableIds.value)
+  const ids = new Set<DataTableRowId>(payableIds.value)
   if (!ids.size || saving.value) return
   saving.value = true
   // Stands in for a request to your billing API; `loading` marks the table busy.
@@ -144,8 +144,10 @@ async function markPaid(): Promise<void> {
   invoices.value = invoices.value.map((invoice) =>
     ids.has(invoice.id) ? { ...invoice, status: 'Paid' } : invoice,
   )
-  // The preset returns focus to "Select all rows" when the bar closes.
-  selectedRowIds.value = []
+  // Rows stay selectable while the save runs, so drop only the ids this save
+  // captured and keep anything picked meanwhile. When nothing remains, the
+  // preset returns focus to "Select all rows" as the bar closes.
+  selectedRowIds.value = selectedRowIds.value.filter((id) => !ids.has(id))
   saving.value = false
   notice.value =
     ids.size === 1

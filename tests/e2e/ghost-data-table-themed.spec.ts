@@ -220,6 +220,46 @@ test.describe('Themed GhostDataTablePreset @component:GhostDataTablePreset', () 
     ).toBeInViewport()
   })
 
+  test('keeps a selection made during a pending save', async ({
+    page,
+    playgroundUrl,
+  }) => {
+    await page.clock.install()
+    const table = await openInvoices(page, playgroundUrl)
+    const markPaid = page.getByRole('button', { name: 'Mark paid' })
+    const pending = table.getByRole('checkbox', { name: 'Select row INV-1048' })
+    await page.clock.pauseAt(Date.now() + 60_000)
+    await markPaid.press('Enter')
+    await expect(table).toHaveAttribute('aria-busy', 'true')
+
+    // Rows stay operable while busy; pick another invoice mid-save.
+    await pending.focus()
+    await page.keyboard.press('Space')
+    await expect(pending).toBeChecked()
+    await expect(page.getByText('3 selected', { exact: true })).toBeVisible()
+
+    await page.clock.runFor(600)
+    await page.clock.resume()
+    await expect(table).not.toHaveAttribute('aria-busy', /./)
+    await expect(page.getByRole('status')).toHaveText(
+      '8 invoices · 2 invoices marked paid',
+    )
+    // Only the saved invoices leave the selection; the new pick survives
+    // with focus where the user left it, and it is still payable.
+    for (const id of ['INV-1047', 'INV-1045']) {
+      await expect(
+        table.getByRole('checkbox', { name: `Select row ${id}` }),
+      ).not.toBeChecked()
+    }
+    await expect(pending).toBeChecked()
+    await expect(pending).toBeFocused()
+    await expect(page.getByText('1 selected', { exact: true })).toBeVisible()
+    await expect(
+      table.locator('tbody > tr', { hasText: 'INV-1048' }).first(),
+    ).toContainText('Open')
+    await expect(markPaid).toBeEnabled()
+  })
+
   test('keeps busy rows opaque and readable across themes and modes', async ({
     page,
     playgroundUrl,
