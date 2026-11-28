@@ -64,8 +64,7 @@ unresolvedQuestions: []
 
 **Status:** Approved pending review.
 
-**Follow-up (out of scope):** nested submenus inside menu content (no submenu primitive
-exists yet; tracked with [GHO-92](https://linear.app/ghost-vue/issue/GHO-92)).
+**Follow-up (out of scope):** see the proposed [nested-menu contract](/specs/submenu).
 
 ## Purpose and user problems
 

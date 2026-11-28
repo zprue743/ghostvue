@@ -64,8 +64,7 @@ unresolvedQuestions: []
 
 **Status:** Approved pending review.
 
-**Follow-up (out of scope):** nested submenus ([GHO-107](https://linear.app/ghost-vue/issue/GHO-107))
-and menubar-hosted submenus.
+**Follow-up (out of scope):** see the proposed [nested-menu contract](/specs/submenu).
 
 ## Purpose and user problems
 
