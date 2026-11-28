@@ -65,7 +65,8 @@ Consumers get equal-width segments, a theme token–driven sliding thumb, and
 - Multiple independent selections (`type="multiple"`). Use `GhostToggleGroup`.
 - Radio / form submission semantics (`GhostRadioGroup`).
 - Per-segment unequal widths driven by `getBoundingClientRect` or other
-  post-layout reads (equal flex segments only).
+  post-layout reads (equal `1/n` segments only; see
+  [Sizing](#sizing)).
 - Overflow menus, drag reorder, or icons-only segments without visible labels.
 - Changing `GhostToggleGroup` public props or behavior.
 
@@ -180,6 +181,33 @@ Toggle buttons with pressed state—not radios.
   `--ghost-motion-*` with `@media (prefers-reduced-motion: reduce)` snapping
   position without transition.
 
+### Sizing
+
+The indicator is positioned as an equal `1/n` fraction of the padded track, so
+the themed layout must give every segment exactly `1/n` of the track width (or
+height when vertical). The supported sizing contract:
+
+- **Default:** the root is an `inline-grid` of `minmax(0, 1fr)` columns. It
+  sizes to content, and every column takes the widest label's width.
+- **Full width:** set `display: grid` (or a definite `width`) on the root; the
+  columns stay equal across the container.
+- **Constrained width:** label text wraps inside each segment so the indicator
+  covers the text while the tracks stay equal.
+- **Flex override (compatibility):** a root overridden to block-level `display: flex`
+  (which fills its container) or given an explicit width keeps equal segments
+  through the items' `flex: 1 1 0` and `min-width: 0` fallback. A shrink-to-fit
+  `inline-flex` root can make long labels wrap even when the container has
+  space for a wider control.
+- **Vertical:** controls stack equal `minmax(0, 1fr)` rows at `max-content`
+  width. Every row takes the tallest label's height, so rows stay equal when a
+  constrained width makes one label wrap. A vertical root overridden to
+  `display: flex` uses `flex-direction: column`, and its rows stay equal only
+  while every label has the same height (for example, single-line labels). A
+  column flex root has no definite height to split, so each row takes its own
+  label's height. A `min-height: 0` reset would collapse auto-height roots
+  instead, so it is not applied. Keep the default grid when vertical labels can
+  wrap.
+
 ## Environment behavior
 
 ### SSR and hydration
@@ -191,7 +219,7 @@ Toggle buttons with pressed state—not radios.
 
 ### Mobile and touch
 
-Pointer toggles segments; equal-width flex targets.
+Pointer toggles segments; equal-width `1/n` targets per [Sizing](#sizing).
 
 ## Performance
 
@@ -211,7 +239,14 @@ One passive indicator element; roving listeners on the group root while mounted.
   `aria-pressed`, SSR HTML includes indicator variables.
 - **SSR hydration:** `expectSsrHydration` with default selection and ids.
 - **Browser (`ghost-segmented-control.spec.ts`):** pointer/keyboard, Axe,
-  `@component:GhostSegmentedControl`. The RTL indicator alignment and mirrored
+  `@component:GhostSegmentedControl`. Geometry checks assert the indicator
+  matches the selected segment for unequal labels (docs home) and that a
+  full-width `display: flex` override (`popover/share-settings`, in
+  `docs-popover-showcase.spec.ts`) keeps every segment at `1/n` of the track.
+  A vertical sizing check keeps rows equal under the indicator for a
+  narrow-width grid with one wrapping label, and for a `display: flex`
+  override with single-line labels.
+  The RTL indicator alignment and mirrored
   roving case is tagged `@cross-browser` and also runs in Firefox and WebKit.
 - **Themed integration:** themed wrapper ref reaches root.
 - **Visual:** `segmented-control/themed` in `examples-visual` via

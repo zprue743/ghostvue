@@ -1,6 +1,11 @@
 import AxeBuilder from '@axe-core/playwright'
-import { expect, test } from '@playwright/test'
 
+import { docsTest as test, expect } from '../support/docs'
+import {
+  expectAlignedSelection,
+  expectEqualSegments,
+  selectedSegmentGeometry,
+} from './segmented-control-geometry'
 import { startStaticServer } from './static-server'
 
 const tag = '@component:GhostSegmentedControl'
@@ -109,6 +114,161 @@ test.describe('GhostSegmentedControl', { tag }, () => {
         .toBeLessThan(6)
     } finally {
       await playground.close()
+    }
+  })
+
+  test('vertical controls keep equal rows under the indicator (#392)', async ({
+    page,
+  }) => {
+    // Reduced motion snaps the indicator, so measurements read settled boxes.
+    await page.emulateMedia({ reducedMotion: 'reduce' })
+    const playground = await startStaticServer('apps/playground/dist')
+    try {
+      await page.goto(
+        `${playground.url}/examples.html?id=segmented-control/themed`,
+      )
+      const control = page.getByRole('group', { name: 'Time range' })
+      await expect(control).toBeVisible()
+      // Only the themed CSS reads `aria-orientation` for layout, so setting
+      // it (with a narrow width and one long label) exercises the vertical
+      // sizing rules without a dedicated example.
+      await control.evaluate((root) => {
+        root.setAttribute('aria-orientation', 'vertical')
+        root.style.width = '96px'
+        const label = [...root.querySelectorAll('button')]
+          .flatMap((button) => [...button.childNodes])
+          .find((node) => node.textContent?.trim() === 'Month')
+        if (!label) throw new Error('missing Month label')
+        label.textContent = 'Month to date'
+      })
+      await page.evaluate(() => document.fonts.ready.then(() => undefined))
+
+      // Default grid: the wrapping label sets every row's height.
+      const long = control.getByRole('button', { name: 'Month to date' })
+      await long.click()
+      const wrapped = await selectedSegmentGeometry(control)
+      expect(wrapped.labelLines.length).toBeGreaterThan(1)
+      for (const name of ['Day', 'Week', 'Month to date']) {
+        await control.getByRole('button', { name }).click()
+        await expectEqualSegments(control, `grid ${name}`)
+        expectAlignedSelection(
+          await selectedSegmentGeometry(control),
+          `grid ${name}`,
+        )
+      }
+
+      // Flex override: equal rows are retained only while labels share one
+      // line height (see the Sizing section of the spec); a column flex root
+      // has no definite height to split, so rows follow label heights.
+      await control.evaluate((root) => {
+        root.style.display = 'flex'
+        root.style.removeProperty('width')
+        const label = [...root.querySelectorAll('button')]
+          .flatMap((button) => [...button.childNodes])
+          .find((node) => node.textContent?.trim() === 'Month to date')
+        if (!label) throw new Error('missing Month to date label')
+        label.textContent = 'Month'
+      })
+      await expect(control).toHaveCSS('display', 'flex')
+      await expect(control).toHaveCSS('flex-direction', 'column')
+      for (const name of ['Day', 'Week', 'Month']) {
+        await control.getByRole('button', { name }).click()
+        await expectEqualSegments(control, `flex ${name}`)
+        expectAlignedSelection(
+          await selectedSegmentGeometry(control),
+          `flex ${name}`,
+        )
+      }
+    } finally {
+      await playground.close()
+    }
+  })
+
+  for (const width of [375, 1440]) {
+    for (const colorScheme of ['light', 'dark'] as const) {
+      test(`Billing and Kbd docs keep selected labels inside their segments at ${String(width)}px in ${colorScheme} mode (#392)`, async ({
+        page,
+        docsUrl,
+      }) => {
+        await page.setViewportSize({ width, height: 900 })
+        await page.emulateMedia({ colorScheme, reducedMotion: 'reduce' })
+
+        await page.goto(`${docsUrl}/examples`)
+        const status = page.getByRole('group', { name: 'Invoice status' })
+        const pastDue = status.getByRole('button', { name: 'Past due' })
+        await pastDue.click()
+        await expect(pastDue).toHaveAttribute('aria-pressed', 'true')
+        await page.evaluate(() => document.fonts.ready.then(() => undefined))
+        expectAlignedSelection(
+          await selectedSegmentGeometry(status),
+          'Past due',
+        )
+
+        await page.goto(`${docsUrl}/components/kbd#command-shortcut-sheet`)
+        const platform = page.getByRole('group', { name: 'Keycap platform' })
+        await platform.getByRole('button', { name: 'PC' }).click()
+        const apple = platform.getByRole('button', { name: 'Apple' })
+        await apple.click()
+        await expect(apple).toHaveAttribute('aria-pressed', 'true')
+        await page.evaluate(() => document.fonts.ready.then(() => undefined))
+        expectAlignedSelection(await selectedSegmentGeometry(platform), 'Apple')
+      })
+    }
+  }
+
+  test('docs home controls keep the indicator on the selected label (#392)', async ({
+    page,
+  }) => {
+    // Reduced motion removes the indicator slide, so each measurement reads
+    // the settled position instead of a mid-transition frame.
+    await page.emulateMedia({ colorScheme: 'dark', reducedMotion: 'reduce' })
+    await page.setViewportSize({ width: 1440, height: 900 })
+    const docs = await startStaticServer('apps/docs/.vitepress/dist')
+    try {
+      await page.goto(`${docs.url}/index.html`)
+
+      // Unequal labels ("Apple" vs "PC") used to split a content-sized track
+      // evenly, pushing the long label past its segment and the indicator.
+      const platform = page.getByRole('group', { name: 'Keycap platform' })
+      await platform.scrollIntoViewIfNeeded()
+      for (const name of ['PC', 'Apple']) {
+        await platform.getByRole('button', { name }).click()
+        expectAlignedSelection(await selectedSegmentGeometry(platform), name)
+      }
+      // Keyboard focus shows a ring that stays inside the control.
+      await page.keyboard.press('ArrowRight')
+      await page.keyboard.press('ArrowLeft')
+      const apple = platform.getByRole('button', { name: 'Apple' })
+      await expect(apple).toBeFocused()
+      await expect(apple).toHaveCSS('outline-style', 'solid')
+      expectAlignedSelection(await selectedSegmentGeometry(platform), 'focus')
+
+      // Each flagship swaps fonts and spacing, so measure after every switch.
+      const themes = page.getByRole('group', { name: 'Flagship theme' })
+      await themes.scrollIntoViewIfNeeded()
+      for (const name of ['Vibrant', 'Calm', 'Mono', 'Default']) {
+        await themes.getByRole('button', { name }).click()
+        await expect(themes.getByRole('button', { name })).toHaveAttribute(
+          'aria-pressed',
+          'true',
+        )
+        await expect
+          .poll(async () => {
+            try {
+              expectAlignedSelection(
+                await selectedSegmentGeometry(themes),
+                name,
+              )
+              return true
+            } catch {
+              return false
+            }
+          })
+          .toBe(true)
+        expectAlignedSelection(await selectedSegmentGeometry(themes), name)
+      }
+    } finally {
+      await docs.close()
     }
   })
 })
