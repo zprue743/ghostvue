@@ -12,7 +12,10 @@
  * fails loudly instead of skipping checks. It also throws on any scalar it
  * cannot read the way a YAML parser would (for example an unquoted value
  * containing `: `, which GitHub rejects), so the text reader never accepts a
- * form that real YAML would refuse or read differently.
+ * form that real YAML would refuse or read differently. Scalars keep their
+ * YAML type: a plain `true` or `false` is read as a Boolean and a quoted one
+ * stays a string, because GitHub requires real Booleans where the schema
+ * says Boolean (for example `validations.required`).
  */
 
 import { readdirSync, readFileSync } from 'node:fs'
@@ -36,12 +39,25 @@ const elementTypes = ['markdown', 'textarea', 'input', 'dropdown', 'checkboxes']
 // does not interpret. `-`, `?` and `:` are only indicators before a space.
 const plainScalarStart = /^(?:[[\]{}#&*!|>'"%@`,]|[-?:](?: |$))/
 
+// Plain scalars that the YAML core schema resolves to Booleans. Anything
+// quoted, including `'true'`, is a string.
+const plainBooleans = {
+  true: true,
+  True: true,
+  TRUE: true,
+  false: false,
+  False: false,
+  FALSE: false,
+}
+
 /**
  * Reads one scalar the way YAML would, or throws when the value uses syntax
  * this reader does not support. Quoted scalars must be a single well-formed
  * pair: single quotes may only contain doubled `''`, and double quotes may not
  * contain escapes or a bare `"`. A plain scalar may not contain `: ` or ` #`
- * (YAML reads those as a nested mapping or a comment) or end in `:`.
+ * (YAML reads those as a nested mapping or a comment) or end in `:`. A plain
+ * Boolean is returned as a Boolean; every other scalar is returned as a
+ * string.
  */
 function scalar(value, where) {
   const fail = (reason) => {
@@ -61,6 +77,7 @@ function scalar(value, where) {
   if (plainScalarStart.test(value)) fail('unsupported plain scalar indicator')
   if (/: |:$/.test(value)) fail('plain scalar containing ": "')
   if (/ #/.test(value)) fail('plain scalar containing " #"')
+  if (Object.hasOwn(plainBooleans, value)) return plainBooleans[value]
   return value
 }
 
@@ -150,6 +167,38 @@ function readForm(file) {
 }
 
 /**
+ * Asserts the issue-form schema subset these forms use. GitHub drops a form
+ * that breaks it only after merge, so it is checked here.
+ */
+function expectIssueFormSchema(form) {
+  expect(form.name).toBeTruthy()
+  expect(form.description).toBeTruthy()
+  expect(form.body.length).toBeGreaterThan(0)
+
+  const fields = form.body.filter((element) => element.type !== 'markdown')
+  expect(fields.length).toBeGreaterThan(0)
+  for (const element of form.body) {
+    expect(elementTypes).toContain(element.type)
+    if (element.type === 'markdown') {
+      expect(element.attributes?.value).toBeTruthy()
+      expect(element.validations).toBeUndefined()
+    } else {
+      expect(element.id).toMatch(/^[a-z0-9_-]+$/)
+      expect(element.attributes?.label).toBeTruthy()
+      // GitHub requires a Boolean here; a quoted 'true' is a string and
+      // the form would be rejected after merge.
+      if (element.validations)
+        expect(typeof element.validations.required).toBe('boolean')
+    }
+  }
+  // GitHub rejects a form whose ids or labels repeat.
+  const ids = fields.map((element) => element.id)
+  const labels = fields.map((element) => element.attributes.label)
+  expect(new Set(ids).size).toBe(ids.length)
+  expect(new Set(labels).size).toBe(labels.length)
+}
+
+/**
  * Renders a submission the way GitHub writes an issue-form body: each field
  * becomes `### <label>` followed by the answer, or `_No response_` when an
  * optional field is left blank.
@@ -181,30 +230,7 @@ describe('issue forms', () => {
   })
 
   it.each(formFiles)('%s follows the issue-form schema', (file) => {
-    const form = readForm(file)
-    expect(form.name).toBeTruthy()
-    expect(form.description).toBeTruthy()
-    expect(form.body.length).toBeGreaterThan(0)
-
-    const fields = form.body.filter((element) => element.type !== 'markdown')
-    expect(fields.length).toBeGreaterThan(0)
-    for (const element of form.body) {
-      expect(elementTypes).toContain(element.type)
-      if (element.type === 'markdown') {
-        expect(element.attributes?.value).toBeTruthy()
-        expect(element.validations).toBeUndefined()
-      } else {
-        expect(element.id).toMatch(/^[a-z0-9_-]+$/)
-        expect(element.attributes?.label).toBeTruthy()
-        if (element.validations)
-          expect(element.validations.required).toMatch(/^(true|false)$/)
-      }
-    }
-    // GitHub rejects a form whose ids or labels repeat.
-    const ids = fields.map((element) => element.id)
-    const labels = fields.map((element) => element.attributes.label)
-    expect(new Set(ids).size).toBe(ids.length)
-    expect(new Set(labels).size).toBe(labels.length)
+    expectIssueFormSchema(readForm(file))
   })
 
   it.each(formFiles)('%s applies no triage or readiness labels', (file) => {
@@ -215,7 +241,7 @@ describe('issue forms', () => {
   it('keeps existing bug and feature fields', () => {
     const required = (file) =>
       readForm(file)
-        .body.filter((element) => element.validations?.required === 'true')
+        .body.filter((element) => element.validations?.required === true)
         .map((element) => element.id)
     expect(required('bug.yml')).toEqual([
       'description',
@@ -293,6 +319,41 @@ describe('issue-form reader', () => {
     )
     expect(describeField(block)).toBe('Migration: phase two\n# not a comment')
   })
+
+  /** Builds a minimal form whose textarea has `required: <required>`. */
+  const formRequiring = (required) =>
+    [
+      'name: Example',
+      'description: Example form.',
+      'body:',
+      '  - type: textarea',
+      '    id: example',
+      '    attributes:',
+      '      label: Example',
+      '    validations:',
+      `      required: ${required}`,
+    ].join('\n')
+
+  it('reads plain true and false as Booleans that pass the schema', () => {
+    for (const [raw, value] of [
+      ['true', true],
+      ['false', false],
+    ]) {
+      const form = parseForm(formRequiring(raw), 'example.yml')
+      expect(form.body[0].validations.required).toBe(value)
+      expectIssueFormSchema(form)
+    }
+  })
+
+  it('rejects quoted required values, which YAML reads as strings', () => {
+    // GitHub's schema requires a Boolean for validations.required, so a
+    // quoted value would be rejected after merge even though the YAML parses.
+    for (const raw of ["'true'", '"true"', "'false'", '"false"']) {
+      const form = parseForm(formRequiring(raw), 'example.yml')
+      expect(typeof form.body[0].validations.required, raw).toBe('string')
+      expect(() => expectIssueFormSchema(form), raw).toThrow()
+    }
+  })
 })
 
 describe('engineering task form', () => {
@@ -301,7 +362,7 @@ describe('engineering task form', () => {
 
   it('requires only the fields needed to pick the task up independently', () => {
     const required = form.body
-      .filter((element) => element.validations?.required === 'true')
+      .filter((element) => element.validations?.required === true)
       .map((element) => element.id)
     expect(required).toEqual([
       'outcome',
@@ -315,7 +376,7 @@ describe('engineering task form', () => {
       'target-release',
       'context',
     ])
-      expect(field(id)?.validations?.required).not.toBe('true')
+      expect(field(id)?.validations?.required).not.toBe(true)
   })
 
   it('applies no labels, so triage decides readiness after filing', () => {
