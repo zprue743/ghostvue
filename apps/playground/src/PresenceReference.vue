@@ -35,6 +35,10 @@ import {
 // lengthen durations with injected styles.
 // The layer is passed as an element, not a selector: a selector would be
 // resolved while this section is still detached during the initial mount.
+// The fixture shares the playground home, so its counters are plain spans:
+// `<output>` would add implicit `status` roles that other sections' specs
+// count, and the oversized under-control is capped to the viewport so the
+// page keeps its no-horizontal-overflow contract at 320px.
 const portalLayer = useTemplateRef<HTMLElement>('portal-layer')
 const mounted = ref(true)
 const pageClicks = ref(0)
@@ -66,7 +70,7 @@ const panelExits = ref(0)
       >
         Page action
       </button>
-      <output data-testid="presence-page-count">{{ pageClicks }}</output>
+      <span data-testid="presence-page-count">{{ pageClicks }}</span>
       <label>
         <input
           v-model="mounted"
@@ -174,9 +178,9 @@ const panelExits = ref(0)
           @click="underClicks += 1"
         >
           Underlying control
-          <output data-testid="presence-popover-under-count">{{
+          <span data-testid="presence-popover-under-count">{{
             underClicks
-          }}</output>
+          }}</span>
         </button>
       </div>
 
@@ -276,7 +280,7 @@ const panelExits = ref(0)
           <button type="button">Panel action</button>
         </aside>
       </GhostPresence>
-      <output data-testid="presence-panel-exits">{{ panelExits }}</output>
+      <span data-testid="presence-panel-exits">{{ panelExits }}</span>
     </div>
   </section>
 </template>
@@ -309,7 +313,7 @@ const panelExits = ref(0)
 
 .presence-reference__under {
   block-size: 12rem;
-  inline-size: 24rem;
+  inline-size: min(calc(100vw - 2rem), 24rem);
 }
 
 .presence-reference__scrim {
