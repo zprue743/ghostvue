@@ -80,11 +80,8 @@ const resolvedDir = shallowRef<GhostDrawerDirection>(explicitDir.value ?? 'ltr')
 
 // Focus scope, dismissable layer, scroll lock, inert isolation, ARIA linking,
 // and GHOST002/GHOST003 diagnostics are shared with GhostDialogContent.
-const { attrs, contentElement, contentAttrs, exposed } = useDialogContentPart(
-  context,
-  props,
-  hostRef,
-  {
+const { attrs, presentElement, isPresent, contentAttrs, exposed } =
+  useDialogContentPart(context, props, hostRef, {
     extraAttrs: () => {
       const hooks: Record<string, unknown> = {
         'data-side': context.side.value,
@@ -100,8 +97,7 @@ const { attrs, contentElement, contentAttrs, exposed } = useDialogContentPart(
       }
       return hooks
     },
-  },
-)
+  })
 
 let active = true
 onUnmounted(() => {
@@ -109,10 +105,12 @@ onUnmounted(() => {
   context.setContentSide(null)
 })
 
+// Resolve against the mounted surface (live through the exit) so the exit
+// slide never flips edge when the open-gated element clears at close.
 function refreshDir(): void {
   resolvedDir.value = resolveDrawerDir({
     dir: explicitDir.value,
-    contentElement: contentElement.value,
+    contentElement: presentElement.value,
     triggerElement: context.triggerElement.value,
   })
 }
@@ -120,7 +118,7 @@ function refreshDir(): void {
 watch(
   [
     explicitDir,
-    contentElement,
+    presentElement,
     () => context.triggerElement.value,
     () => props.portal,
     () => props.portalTo,
@@ -145,7 +143,7 @@ defineExpose<GhostDrawerContentExposed>(exposed)
   <GhostPortal :to="portalTo" :disabled="!portal">
     <component
       :is="as"
-      v-if="context.isOpen.value"
+      v-if="isPresent"
       ref="host"
       :class="['ghost-drawer-content', attrs['class']]"
       v-bind="contentAttrs"

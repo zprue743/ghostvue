@@ -70,6 +70,7 @@ describe('ghost diagnostic codes', () => {
       | 'GHOST011'
       | 'GHOST012'
       | 'GHOST013'
+      | 'GHOST014'
     >()
   })
 

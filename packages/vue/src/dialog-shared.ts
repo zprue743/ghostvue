@@ -40,6 +40,7 @@ import { useControllableState } from './use-controllable-state'
 import { useDismissableLayer } from './use-dismissable-layer'
 import { useFocusScope } from './use-focus-scope'
 import { useGhostId } from './use-ghost-id'
+import { useGhostPresence } from './use-ghost-presence'
 import { useInertOthers } from './use-inert-others'
 import { useScrollLock } from './use-scroll-lock'
 
@@ -50,6 +51,12 @@ import { useScrollLock } from './use-scroll-lock'
  */
 export type DialogPartsContext = GhostDialogContext & {
   openedAtMount: Ref<boolean>
+  /**
+   * Internal: skips exit retention for the content surface. Set by
+   * `GhostDatePickerContent` so an anchored picker closed before its first
+   * positioning (still `visibility: hidden`) unmounts immediately.
+   */
+  skipExitPresence?: () => boolean
 }
 
 /** Ref contract every part exposes through `defineExpose`. */
@@ -499,8 +506,18 @@ export function useDialogOverlayPart(
 ) {
   const attrs = useAttrs()
   const visible = computed(() => context.isOpen.value && context.isModal.value)
+  // The backdrop stays mounted while its own exit fade runs; `visible` (logical
+  // state) still drives background inert registration so isolation releases
+  // immediately on close.
+  const presence = useGhostPresence({
+    present: visible,
+    element: () => resolveDialogHtmlElement(hostRef.value),
+  })
   const overlayElement = computed(() =>
     visible.value ? resolveDialogHtmlElement(hostRef.value) : null,
+  )
+  const presentElement = computed(() =>
+    presence.isPresent.value ? resolveDialogHtmlElement(hostRef.value) : null,
   )
 
   watch(
@@ -522,20 +539,29 @@ export function useDialogOverlayPart(
         rest[key] = value
       }
     }
-    return {
+    // Declared `style` key: written below while exiting.
+    const result: Record<string, unknown> & { style?: unknown } = {
       ...rest,
       'aria-hidden': 'true',
       'data-part': 'overlay',
-      'data-state': 'open',
+      'data-state': presence.dataState.value,
       ...options.extraAttrs?.(),
     }
+    if (presence.isExiting.value) {
+      // A fading scrim must let clicks and touch scrolling reach the page the
+      // moment the dialog logically closes. Applied after consumer `style` so
+      // a consumer `pointer-events` cannot keep a departing scrim clickable.
+      const { style: consumerStyle } = attrs
+      result.style = [consumerStyle, { pointerEvents: 'none' }]
+    }
+    return result
   })
 
   return {
     attrs,
-    visible,
+    isPresent: presence.isPresent,
     overlayAttrs,
-    exposed: createDialogPartExposed(() => overlayElement.value),
+    exposed: createDialogPartExposed(() => presentElement.value),
   }
 }
 
@@ -666,8 +692,22 @@ export function useDialogContentPart(
 ) {
   const attrs = useAttrs()
 
+  // Logical `isOpen` drives focus, dismissal, scroll lock and background inert
+  // (all released immediately on close); presence only retains the DOM node
+  // while the surface's own exit motion runs (presence spec, Composition).
+  const presence = useGhostPresence({
+    present: () => context.isOpen.value,
+    element: () => resolveDialogHtmlElement(hostRef.value),
+    disabled: () => context.skipExitPresence?.() ?? false,
+  })
+
+  /** Mounted surface, live while `'open'` or `'exiting'`. */
+  const presentElement = computed(() =>
+    presence.isPresent.value ? resolveDialogHtmlElement(hostRef.value) : null,
+  )
+  /** Open-gated surface used by every interactive subsystem. */
   const contentElement = computed(() =>
-    context.isOpen.value ? resolveDialogHtmlElement(hostRef.value) : null,
+    context.isOpen.value ? presentElement.value : null,
   )
 
   const contentId = computed(() => {
@@ -978,14 +1018,27 @@ export function useDialogContentPart(
       }
     }
 
-    const result: Record<string, unknown> = {
+    // Declared `inert` / `style` keys: written below while exiting.
+    const result: Record<string, unknown> & {
+      inert?: boolean
+      style?: unknown
+    } = {
       ...rest,
       id: contentId.value,
       role: props.role,
       tabindex: attrs['tabindex'] ?? -1,
       'data-part': 'content',
-      'data-state': 'open',
+      'data-state': presence.dataState.value,
       ...options.extraAttrs?.(),
+    }
+
+    if (presence.isExiting.value) {
+      // Focus has already been restored by the time this render commits; the
+      // departing surface leaves the accessibility tree and hit-testing. A
+      // consumer `inert` is passed through above and returns on reopen.
+      result.inert = true
+      const { style: consumerStyle } = attrs
+      result.style = [consumerStyle, { pointerEvents: 'none' }]
     }
 
     if (context.isModal.value) {
@@ -1008,7 +1061,9 @@ export function useDialogContentPart(
   return {
     attrs,
     contentElement,
+    presentElement,
+    isPresent: presence.isPresent,
     contentAttrs,
-    exposed: createDialogPartExposed(() => contentElement.value),
+    exposed: createDialogPartExposed(() => presentElement.value),
   }
 }

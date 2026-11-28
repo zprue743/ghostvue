@@ -4,7 +4,7 @@
   "name": "GhostDatePickerContent",
   "package": "@ghostvue/vue",
   "status": "experimental",
-  "description": "Anchored modal dialog positioned next to the input, with a Close control, error summary, polite status, and the calendar by default.",
+  "description": "Anchored modal dialog positioned next to the input, with a Close control, error summary, polite status, and the calendar by default. After logical close it stays mounted with data-state=\"closed\", inert, and pointer-events: none only while its own CSS exit transition or animation runs (useGhostPresence), then unmounts; focus, dismissal, scroll lock, and background inert release immediately.",
   "props": [
     {
       "name": "closeLabel",
@@ -99,7 +99,7 @@
       "name": "element",
       "kind": "property",
       "type": "HTMLElement | null",
-      "description": "Exposed property `element`."
+      "description": "Mounted picker surface element while open or exiting; null once unmounted."
     },
     {
       "name": "focus",
@@ -110,7 +110,16 @@
   ],
   "styling": {
     "parts": [],
-    "states": [],
+    "states": [
+      {
+        "name": "open",
+        "description": "Applied on data-state while mounted and open."
+      },
+      {
+        "name": "closed",
+        "description": "Applied on data-state while the surface plays its exit motion after logical close; the surface is also inert with inline pointer-events: none until it unmounts."
+      }
+    ],
     "cssProperties": []
   },
   "accessibility": {

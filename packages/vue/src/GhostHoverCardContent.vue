@@ -23,6 +23,7 @@ import {
 } from './ghost-hover-card'
 import { useDismissableLayer } from './use-dismissable-layer'
 import { useFloating } from './use-floating'
+import { useGhostPresence } from './use-ghost-presence'
 
 defineOptions({
   inheritAttrs: false,
@@ -68,8 +69,23 @@ const context = injected
 const attrs = useAttrs()
 const hostRef = useTemplateRef('host')
 
+// Logical `isOpen` drives dismissal, released immediately on
+// close; presence only keeps the node mounted while its own exit motion runs.
+// Closing before the first position resolved skips retention: the surface was
+// still `visibility: hidden`, so there is nothing to animate out.
+const presence = useGhostPresence({
+  present: () => context.isOpen.value,
+  element: () => resolveHoverCardHtmlElement(hostRef.value),
+  disabled: () => !isPositioned.value,
+})
+
+/** Mounted surface, live while `'open'` or `'exiting'`. */
+const presentElement = computed(() =>
+  presence.isPresent.value ? resolveHoverCardHtmlElement(hostRef.value) : null,
+)
+/** Open-gated surface used by the interactive subsystems. */
 const contentElement = computed(() =>
-  context.isOpen.value ? resolveHoverCardHtmlElement(hostRef.value) : null,
+  context.isOpen.value ? presentElement.value : null,
 )
 
 const contentId = computed(() => {
@@ -104,9 +120,11 @@ onUnmounted(() => {
   context.setContentElement(null)
 })
 
+// Bound to the mounted surface so coordinates, `data-placement` and scroll
+// tracking persist through the exit instead of snapping to (0, 0).
 const floating = useFloating(
   () => context.triggerElement.value,
-  contentElement,
+  presentElement,
   {
     placement: () => props.placement,
     offset: () => props.offset,
@@ -157,12 +175,18 @@ const contentAttrs = computed(() => {
     role: attrs['role'] ?? 'dialog',
     tabindex: attrs['tabindex'] ?? -1,
     'data-part': 'content',
-    'data-state': context.isOpen.value ? 'open' : 'closed',
+    'data-state': presence.dataState.value,
     'data-hoverable': '',
   }
 
   if (!hasExplicitLabel.value && context.triggerRegistered.value) {
     result['aria-labelledby'] = context.triggerId.value
+  }
+
+  if (presence.isExiting.value) {
+    // Out of the accessibility tree and unfocusable while it fades; a
+    // consumer `inert` is passed through above and returns on reopen.
+    result['inert'] = true
   }
 
   return result
@@ -227,17 +251,20 @@ const contentStyle = computed(() => [
     pointerEvents: 'auto' as const,
   },
   attrs.style,
+  // After consumer style: a departing surface never intercepts clicks meant
+  // for the controls it still covers mid-fade.
+  presence.isExiting.value ? { pointerEvents: 'none' as const } : undefined,
 ])
 
 defineExpose<GhostHoverCardContentExposed>({
   get element() {
-    return contentElement.value
+    return presentElement.value
   },
   focus(options?: FocusOptions) {
-    contentElement.value?.focus(options)
+    presentElement.value?.focus(options)
   },
   blur() {
-    contentElement.value?.blur()
+    presentElement.value?.blur()
   },
 })
 </script>
@@ -246,7 +273,7 @@ defineExpose<GhostHoverCardContentExposed>({
   <GhostPortal :to="portalTo" :disabled="!portal">
     <component
       :is="as"
-      v-if="context.isOpen.value"
+      v-if="presence.isPresent.value"
       ref="host"
       :class="['ghost-hover-card-content', attrs.class]"
       :style="contentStyle"

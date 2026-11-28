@@ -393,8 +393,10 @@ when the palette actually closes. Escape and explicit `close()` still dismiss.
 | Item    | `item`      | `data-state="disabled"` when disabled; highlight via combobox |
 | Empty   | `empty`     | visible per empty contract                                    |
 
-- Dialog states: `'closed'` and `'open'` (`v-if` unmount on close, matching
-  `GhostDialog`).
+- Dialog states: `'closed'` and `'open'`, matching `GhostDialog`: logical close
+  releases focus, scroll lock, and background `inert` at once, and content and
+  overlay unmount after their CSS exit motion
+  ([presence spec](/specs/presence#state-model)).
 - While the dialog is **open**, the internal combobox list is **held open**
   (`open === true` on the composed combobox). Closing the dialog tears down the
   list.

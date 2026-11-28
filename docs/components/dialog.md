@@ -24,7 +24,8 @@ and on short screens the whole dialog scrolls so the actions stay reachable.
 
 `GhostDialog` owns `open` via `useControllableState`, generates deterministic
 IDs via `useGhostId`, teleports the overlay and surface through `GhostPortal` by
-default, unmounts closed layers with `v-if`, locks body scroll with
+default, unmounts closed layers once their CSS exit motion ends (see
+[GhostPresence](./presence.md)), locks body scroll with
 scrollbar-width compensation, marks background siblings `inert` (while skipping
 `[data-ghost-live]`), handles `Escape` and outside `pointerdown` via
 `useDismissableLayer`, and traps `Tab` navigation via `useFocusScope`.

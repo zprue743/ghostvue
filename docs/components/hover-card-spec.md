@@ -158,11 +158,14 @@ Native attributes and listeners fall through to the floating content element.
 ## State model
 
 - Two binary states: `'closed'` and `'open'`.
-- `GhostHoverCardContent` renders with `v-if="open"`, not `v-show`, so closed
-  cards unmount cleanly from the DOM, `useDismissableLayer`'s layer stack, and
-  `useFloating`'s `autoUpdate`.
-- `data-state="open" | "closed"` is set on `GhostHoverCardTrigger`; open content
-  uses `data-state="open"`.
+- `GhostHoverCardContent` renders with `v-if` on `useGhostPresence`, not
+  `v-show`. Logical close leaves `useDismissableLayer`'s layer stack at once;
+  the card stays mounted with `data-state="closed"`, `inert`, and
+  `pointer-events: none` (overriding its `auto` default) only while its CSS exit
+  motion runs, then unmounts and stops `autoUpdate`
+  ([presence spec](/specs/presence#state-model)).
+- `data-state="open" | "closed"` is set on `GhostHoverCardTrigger` and
+  `GhostHoverCardContent`.
 - `data-placement` is written on `GhostHoverCardContent` by `useFloating` once the
   resolved placement is computed.
 - `GhostHoverCardContent` keeps `visibility: hidden` inline until

@@ -19,6 +19,39 @@
   }
 
   :where(
+    .ghost-theme .ghost-command-palette-overlay[data-state='open'],
+    .ghost-themed-scope .ghost-command-palette-overlay[data-state='open'],
+    .ghost-command-palette-overlay[data-themed][data-state='open']
+  ) {
+    transition: opacity var(--ghost-motion-fade-duration)
+      var(--ghost-motion-easing-standard);
+
+    @starting-style {
+      opacity: 0;
+    }
+
+    @media (prefers-reduced-motion: no-preference) {
+      transition: opacity var(--ghost-motion-duration-fast)
+        var(--ghost-motion-enter-easing);
+    }
+  }
+
+  :where(
+    .ghost-theme .ghost-command-palette-overlay[data-state='closed'],
+    .ghost-themed-scope .ghost-command-palette-overlay[data-state='closed'],
+    .ghost-command-palette-overlay[data-themed][data-state='closed']
+  ) {
+    opacity: 0;
+    transition: opacity var(--ghost-motion-fade-duration)
+      var(--ghost-motion-easing-standard);
+
+    @media (prefers-reduced-motion: no-preference) {
+      transition: opacity var(--ghost-motion-exit-duration)
+        var(--ghost-motion-exit-easing);
+    }
+  }
+
+  :where(
     .ghost-theme .ghost-command-palette-content,
     .ghost-themed-scope .ghost-command-palette-content,
     .ghost-command-palette-content[data-themed]
@@ -208,6 +241,25 @@
       @starting-style {
         scale: 0.98;
       }
+    }
+  }
+
+  /* Exit: reduced motion keeps scale at 1 and only fades. */
+  :where(
+    .ghost-theme .ghost-command-palette-content[data-state='closed'],
+    .ghost-themed-scope .ghost-command-palette-content[data-state='closed'],
+    .ghost-command-palette-content[data-themed][data-state='closed']
+  ) {
+    opacity: 0;
+    transition: opacity var(--ghost-motion-fade-duration)
+      var(--ghost-motion-easing-standard);
+
+    @media (prefers-reduced-motion: no-preference) {
+      scale: 0.98;
+      transition:
+        opacity var(--ghost-motion-exit-duration)
+          var(--ghost-motion-exit-easing),
+        scale var(--ghost-motion-exit-duration) var(--ghost-motion-exit-easing);
     }
   }
 

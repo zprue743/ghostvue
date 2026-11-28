@@ -82,7 +82,7 @@ const partProps = {
 
 // Focus scope, dismissable layer, scroll lock, inert isolation, title
 // linking, and GHOST002 come from the shared dialog part mechanics.
-const { attrs, contentAttrs, exposed } = useDialogContentPart(
+const { attrs, isPresent, contentAttrs, exposed } = useDialogContentPart(
   context.dialog,
   partProps,
   hostRef,
@@ -105,7 +105,7 @@ defineExpose<GhostCommandPaletteContentExposed>(exposed)
   <GhostPortal :to="portalTo" :disabled="!portal">
     <component
       :is="as"
-      v-if="context.isOpen.value"
+      v-if="isPresent"
       ref="host"
       :class="['ghost-command-palette-content', attrs['class']]"
       v-bind="contentAttrs"

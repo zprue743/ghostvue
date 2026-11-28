@@ -24,7 +24,7 @@ focus-ring tokens. Panels slide and fade in with `@starting-style`.
 
 `GhostDrawer` defaults to `side="end"` and `modal`. It shares its behavior with
 `GhostDialog`: controllable `open`, deterministic IDs, `GhostPortal` teleport,
-`v-if` unmounting, scroll lock, `inert` background siblings (skipping
+unmounting after the exit motion, scroll lock, `inert` background siblings (skipping
 `[data-ghost-live]`), `Escape` and outside `pointerdown` dismissal, and a looped
 `Tab` trap.
 
@@ -63,8 +63,11 @@ key, so `GhostDialog` parts inside a drawer always bind to their own dialog.
 With `prefers-reduced-motion: no-preference`, panels slide in from their edge
 and fade in using `--ghost-motion-enter-duration` and
 `--ghost-motion-enter-easing`. With `prefers-reduced-motion: reduce`, the theme
-sets `translate: none` and keeps only a short opacity fade. There is no exit
-animation: closing unmounts the panel immediately.
+sets `translate: none` and keeps only a short opacity fade. Closing slides the
+panel back to its edge over the faster `--ghost-motion-exit-duration` (a fade
+only under reduced motion). Focus, scroll lock, and background `inert` release
+as soon as it closes, and the panel unmounts when the slide ends (see
+[GhostPresence](./presence.md)).
 
 ## API
 

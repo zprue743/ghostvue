@@ -73,8 +73,9 @@ coordination without relying on native `<dialog>.showModal()`.
 
 ## Non-goals
 
-- Exit animations or async unmount transitions (`v-if` unmounts immediately on
-  close).
+- Exit motion is CSS-only and owned by the
+  [presence lifecycle](/specs/presence): no JavaScript leave hooks, keyframe
+  orchestration, or `forceMount` prop.
 - Anchored floating positioning (`GhostPopover` and `useFloating` handle that).
 - Pre-built confirmation state machines or async action spinners.
 - Drawers, sheets, or command palettes (those will build on `GhostDialog` in
@@ -198,12 +199,15 @@ Renders only when both `open` and `modal` are `true`.
 ## State model
 
 - Two binary open states: `'closed'` and `'open'`.
-- `GhostDialogOverlay` and `GhostDialogContent` render via `v-if`, so closed
-  dialogs release scroll lock, inert attributes, `layerStack` entries, and
-  `trappedStack` entries immediately on close.
-- `data-state="open" | "closed"` is set on `GhostDialogTrigger` and
-  `data-state="open"` on `GhostDialogOverlay` and `GhostDialogContent` while
-  mounted.
+- Closed dialogs release scroll lock, inert attributes, `layerStack` entries,
+  and `trappedStack` entries immediately on logical close.
+  `GhostDialogOverlay` and `GhostDialogContent` render via `v-if` on
+  `useGhostPresence`: they stay mounted with `data-state="closed"` only while
+  their own CSS exit motion runs (content also `inert` and both
+  `pointer-events: none`), then unmount
+  ([presence spec](/specs/presence#state-model)).
+- `data-state="open" | "closed"` is set on `GhostDialogTrigger`,
+  `GhostDialogOverlay`, and `GhostDialogContent`.
 
 ### Loading, empty, disabled, read-only, and error states
 
@@ -308,7 +312,9 @@ autoFocus: true, restoreFocus: true }`. Even when open at mount (`defaultOpen`
   and `.ghost-dialog-content` with `--ghost-elevation-4-*`, `--ghost-radius-lg`,
   `--ghost-border-hairline-width`, `--ghost-surface-fg`, `--ghost-space-inset-lg`,
   `--ghost-space-gap-*`, focus-ring tokens, typography tokens, and
-  `@media (forced-colors: active)`. No exit animations.
+  `@media (forced-colors: active)`. Exit recipes on `[data-state='closed']`
+  use `--ghost-motion-exit-*` (fade-only under reduced motion); geometry and
+  forced-colors rules do not depend on `[data-state='open']`.
 
 ## Environment behavior
 
@@ -351,7 +357,7 @@ autoFocus: true, restoreFocus: true }`. Even when open at mount (`defaultOpen`
 - **Theme integration (`tests/integration/ghost-dialog-themed.test.ts`,
   `ghost-dialog-theme-css.test.ts`):** all themed wrappers preserving >= 80%
   line coverage in `packages/themes/src`, CSS tokens (`--ghost-scrim`)
-  with no exit animations or unexpected literals.
+  with token-only exit recipes and no unexpected literals.
 - **Browser E2E (`tests/e2e/dialog.spec.ts`):** Tab/Shift+Tab wrap, Escape,
   overlay click, `closeOnEscape`/`closeOnOutsideClick=false`, scroll lock with
   no layout shift, inert background (skipping `[data-ghost-live]`), focus

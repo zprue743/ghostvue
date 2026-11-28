@@ -79,8 +79,8 @@ mechanics as `GhostDialog` through an internal shared module.
 
 - Touch swipe / drag-to-dismiss gestures or multi-stop snap points (deferred by
   the approved Option A direction).
-- Exit animations or delayed unmount lifecycles (`v-if` unmounts immediately on
-  close, matching `GhostDialog`).
+- JavaScript exit orchestration. Exit motion is CSS-only and owned by the
+  [presence lifecycle](/specs/presence), matching `GhostDialog`.
 - Anchored floating callouts positioned relative to a trigger (`GhostPopover`
   and `useFloating` own anchored positioning).
 - Persistent in-flow split-pane sidebars that are not dialogs.
@@ -201,11 +201,13 @@ Renders only when both `open` and `modal` are `true`.
 ## State model
 
 - Two binary open states: `'closed'` and `'open'`.
-- `GhostDrawerOverlay` and `GhostDrawerContent` render with `v-if`, so closed
-  drawers release scroll lock, `inert` attributes, dismissable-layer entries,
-  and trapped focus scopes immediately on close.
-- `data-state="open" | "closed"` on the trigger; `data-state="open"` on overlay
-  and content while mounted.
+- Closed drawers release scroll lock, `inert` attributes, dismissable-layer
+  entries, and trapped focus scopes immediately on logical close.
+  `GhostDrawerOverlay` and `GhostDrawerContent` render with `v-if` on
+  `useGhostPresence` and stay mounted with `data-state="closed"` (keeping
+  `data-side` / `data-dir`) only while their CSS exit slide runs
+  ([presence spec](/specs/presence#state-model)).
+- `data-state="open" | "closed"` on the trigger, overlay, and content.
 
 ### Loading, empty, disabled, read-only, and error states
 

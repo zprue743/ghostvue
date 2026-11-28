@@ -23,8 +23,9 @@ for (const reducedMotion of ['no-preference', 'reduce'] as const) {
       await page.emulateMedia({ reducedMotion })
       await page.goto(playground.url)
       // Keep the transitions active long enough to inspect them on a busy CI worker.
+      // Scoped to the open state so the exit keeps its token durations.
       await page.addStyleTag({
-        content: `.ghost-dialog-content[data-themed] {
+        content: `.ghost-dialog-content[data-themed][data-state='open'] {
           --ghost-motion-duration-fast: 10s;
           --ghost-motion-fade-duration: 10s;
         }`,

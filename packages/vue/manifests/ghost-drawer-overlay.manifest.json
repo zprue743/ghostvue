@@ -4,7 +4,7 @@
   "name": "GhostDrawerOverlay",
   "package": "@ghostvue/vue",
   "status": "experimental",
-  "description": "Headless modal backdrop for GhostDrawer. Renders only when the drawer is open and modal is true; marked aria-hidden=\"true\", carries data-side, and is excluded from inert isolation.",
+  "description": "Headless modal backdrop for GhostDrawer. Renders only when the drawer is open and modal is true; marked aria-hidden=\"true\", carries data-side, and is excluded from inert isolation. After logical close it stays mounted with data-state=\"closed\" and pointer-events: none only while its own CSS exit fade runs, then unmounts.",
   "props": [
     {
       "name": "as",
@@ -51,7 +51,7 @@
       "name": "element",
       "kind": "property",
       "type": "HTMLElement | null",
-      "description": "Resolved DOM overlay element while open and modal; null otherwise."
+      "description": "Mounted overlay element while open and modal or exiting; null otherwise."
     },
     {
       "name": "focus",
@@ -71,6 +71,10 @@
       {
         "name": "open",
         "description": "Applied on data-state while open and modal."
+      },
+      {
+        "name": "closed",
+        "description": "Applied on data-state while the backdrop plays its exit fade after logical close; inline pointer-events: none lets clicks reach the page."
       }
     ],
     "cssProperties": []

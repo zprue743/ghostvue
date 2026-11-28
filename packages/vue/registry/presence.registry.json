@@ -1,0 +1,31 @@
+{
+  "schemaVersion": "1.0.0",
+  "slug": "presence",
+  "docs": {
+    "title": "GhostPresence",
+    "specStatus": "approved",
+    "link": "/components/presence",
+    "specLink": "/specs/presence",
+    "category": "utilities",
+    "sidebarLabel": "Presence"
+  },
+  "vueBarrel": [
+    "export { default as GhostPresence } from './GhostPresence.vue'",
+    "export { useGhostPresence } from './use-ghost-presence'",
+    "export type {\n  GhostPresenceDataState,\n  GhostPresencePhase,\n  GhostPresenceProps,\n  GhostPresenceSlotProps,\n  UseGhostPresenceOptions,\n  UseGhostPresenceReturn,\n} from './ghost-presence'"
+  ],
+  "examples": [
+    {
+      "id": "presence/basic",
+      "title": "Inspector panel",
+      "description": "A toggled panel that fades out before it unmounts, with focus and state released at once.",
+      "layer": "headless"
+    },
+    {
+      "id": "presence/portal",
+      "title": "Portaled surface",
+      "description": "GhostPresence inside GhostPortal, with the slot binding setElement on a multi-root surface.",
+      "layer": "headless"
+    }
+  ]
+}

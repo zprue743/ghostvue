@@ -120,6 +120,13 @@ export const ghostCodes = {
       'Two GhostScrollSpyLink components in one GhostScrollSpy use the target "{target}". Each section id should appear once. Duplicate registrations resolve to the first enabled link in DOM order.',
     relatedDocs: './components/scroll-spy.md',
   },
+  GHOST014: {
+    level: 'warn',
+    title: 'GhostPresence surface not resolved',
+    message:
+      'GhostPresence closed without a resolved surface element, so it unmounted immediately without an exit animation. When the default slot renders a fragment, several roots, or a GhostPortal/Teleport wrapper, bind :ref="setElement" (plus data-state and inert) on the animated element.',
+    relatedDocs: './components/presence.md',
+  },
 } as const satisfies Record<string, GhostCodeEntry>
 
 /**

@@ -1,0 +1,96 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "generated",
+  "name": "GhostPresence",
+  "package": "@ghostvue/vue",
+  "status": "experimental",
+  "description": "Renderless presence primitive that decouples logical open state from DOM presence. While present the default slot mounts; when present turns false the slot stays mounted with data-state=\"closed\", inert, and pointer-events: none only while the surface's own finite CSS transitions or animations run, then unmounts. Reopening mid-exit reuses the same node, and stale completions are ignored. Absent motion unmounts in the close flush.",
+  "props": [
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "description": "When `true`, bypasses exit waiting and unmounts immediately when `present` turns `false`.",
+      "deprecated": false
+    },
+    {
+      "name": "present",
+      "type": "boolean",
+      "required": true,
+      "description": "Logical open/mounted state. When `true`, mounts the default slot; when `false`, transitions through `exiting` before unmount.",
+      "deprecated": false
+    }
+  ],
+  "models": [],
+  "events": [
+    {
+      "name": "exitComplete",
+      "payloadType": "void",
+      "description": "Emitted once when an exit finishes and the slot unmounts. Not emitted when a reopen interrupts the exit, when disabled skips it, or when the owner unmounts."
+    }
+  ],
+  "slots": [
+    {
+      "name": "default",
+      "props": [
+        {
+          "name": "exiting",
+          "type": "boolean",
+          "description": "`true` while the exit motion runs; bind `:inert=\"exiting || undefined\"` when binding manually."
+        },
+        {
+          "name": "phase",
+          "type": "GhostPresencePhase",
+          "description": "Current lifecycle phase."
+        },
+        {
+          "name": "present",
+          "type": "boolean",
+          "description": "Logical `present` value passed to the component."
+        },
+        {
+          "name": "setElement",
+          "type": "(target: unknown) => void",
+          "description": "Template-ref setter for the animated surface when the slot is not a single element."
+        },
+        {
+          "name": "state",
+          "type": "GhostPresenceDataState",
+          "description": "Value to bind as `data-state` on a surface that binds `setElement` manually."
+        }
+      ],
+      "description": "Content mounted while present. A single element or component root is decorated automatically; otherwise bind `setElement`, `state`, and `exiting` on the animated surface."
+    }
+  ],
+  "exposed": [],
+  "styling": {
+    "parts": [],
+    "states": [
+      {
+        "name": "open",
+        "description": "data-state=\"open\" injected on a single slot root (unless it sets its own data-state) while present."
+      },
+      {
+        "name": "closed",
+        "description": "data-state=\"closed\" plus inert and inline pointer-events: none on a single slot root while the exit motion runs."
+      }
+    ],
+    "cssProperties": []
+  },
+  "accessibility": {
+    "role": "generic",
+    "apgPattern": "https://www.w3.org/WAI/ARIA/apg/",
+    "keyboard": {},
+    "requiredAriaAttributes": []
+  },
+  "examples": [
+    "presence/basic",
+    "presence/portal"
+  ],
+  "spec": {
+    "path": "docs/components/presence-spec.md",
+    "status": "approved",
+    "evidence": "Zac approved P1-P6 at 225f9fe09b1bbab8c03d88138c80ebdb171b6e01 and approved the positive transition delay correction and merge after CI in https://github.com/zprue743/ghostvue/pull/488#issuecomment-7241284458."
+  }
+}

@@ -8,7 +8,8 @@ packages:
 specStatus: approved
 approval:
   evidence: 'Zac approved P1-P6 at 225f9fe09b1bbab8c03d88138c80ebdb171b6e01 and approved the positive transition delay correction and merge after CI in https://github.com/zprue743/ghostvue/pull/488#issuecomment-7241284458.'
-manifests: []
+manifests:
+  - packages/vue/manifests/ghost-presence.manifest.json
 sections:
   purpose:
     applicable: true
@@ -44,9 +45,10 @@ unresolvedQuestions: []
 > [!IMPORTANT]
 > **Status:** Design sign-off recorded for [#412](https://github.com/zprue743/ghostvue/issues/412)
 > (P1–P6 approved as proposed by Zac at `225f9fe09b1bbab8c03d88138c80ebdb171b6e01`,
-> recorded in PR #488 on 2026-11-28). This is a docs-only specification for
-> `0.2.0` ("Motion and nested menus"); [#417](https://github.com/zprue743/ghostvue/issues/417)
-> remains blocked until the revised PR #488 merges to `master`.
+> recorded in PR #488 on 2026-11-28). Specification for `0.2.0` ("Motion and
+> nested menus"), implemented for the first-release hosts by
+> [#417](https://github.com/zprue743/ghostvue/issues/417). Usage guide:
+> [GhostPresence](./presence.md).
 
 **Predecessors:** [ADR 0003: Public component API conventions](../adr/0003-public-component-api-conventions.md),
 [ADR 0004: Headless and styled layering](../adr/0004-headless-styled-layering.md),
@@ -212,7 +214,10 @@ emits synchronously at logical close, never delayed until exit completion.
 
 - **Emits:** `exitComplete: []` — emitted when an exit finishes and the slot
   unmounts (`onExitComplete` equivalent). Not emitted on reopen interruption or
-  parent unmount.
+  parent unmount. The component emits it after the DOM update that removes the
+  slot, so a synchronous listener already sees the departing node
+  disconnected. The composable's `onExitComplete` callback keeps its timing: it
+  runs when `phase` becomes `'closed'`, before that render.
 - **Default slot (`GhostPresenceSlotProps`):**
   `{ present: boolean, phase: GhostPresencePhase, state: GhostPresenceDataState, exiting: boolean, setElement: (target: unknown) => void }`.
   - When `!isPresent`, `GhostPresence` returns `null` without invoking the
@@ -447,7 +452,8 @@ After Vue flushes the close render (`data-state="closed"`, `flush: 'post'`):
    as jsdom):**
    - Read `getComputedStyle(element)` for `transitionProperty`,
      `transitionDuration`, `transitionDelay`, `animationName`,
-     `animationDuration`, `animationDelay`, and `animationIterationCount`.
+     `animationDuration`, `animationDelay`, `animationIterationCount`, and
+     `animationPlayState`.
    - Parse comma-separated CSS time lists (`ms` and `s`) and cycle shorter lists
      modulo their length per CSS Transitions and CSS Animations list-matching
      rules:
@@ -460,7 +466,11 @@ After Vue flushes the close render (`data-state="closed"`, `flush: 'post'`):
        `''`. Apply an explicit exclusion policy for infinite counts: any
        animation whose matched `animationIterationCount` is `'infinite'`
        (case-insensitive) is **excluded** from exit completion waiting (`0ms`
-       contribution, consistent with the primary Web Animations path). For finite
+       contribution, consistent with the primary Web Animations path). Entries
+       whose matched `animationPlayState` is `'paused'` (case-insensitive) are
+       excluded the same way: a paused animation never dispatches
+       `animationend`, so it must not hold the surface until the safety timer.
+       For finite
        numeric iteration counts (`Number.isFinite(count) && count > 0`) and
        `durationMs > 0`, compute the active duration as `durationMs * count` and
        total completion time as `Math.max(0, delayMs + durationMs * count)` (for
@@ -474,7 +484,13 @@ After Vue flushes the close render (`data-state="closed"`, `flush: 'post'`):
    - Otherwise, listen for `transitionend`, `transitioncancel`, `animationend`,
      and `animationcancel` filtered strictly to `event.target === element`
      (ignoring `animationend` / `animationcancel` whose `event.animationName`
-     matches only an excluded `infinite` animation), plus a safety timer of
+     matches only an excluded `infinite` animation). Each included transition
+     property and finite animation entry is outstanding until its own end or
+     cancel event (matched by `event.propertyName` / `event.animationName`; a
+     `transition-property: all` entry is settled by an event for any
+     undeclared property), and the exit completes only when none remain, so
+     `transition: opacity 100ms, transform 300ms` stays mounted through the
+     transform. Add a safety timer of
      `Math.ceil(maxTotalMs) + 34` ms (for example `334ms` for a `100ms` × `3`
      exit animation) so synthetic DOM hosts that do not dispatch events
      automatically still converge without cutting off finite multi-iteration
@@ -826,7 +842,10 @@ Required observable result at `t = 420ms`:
   and completion events). With `getAnimations` unavailable, test
   `transition: opacity 0ms 100ms`: the surface is still mounted just before
   100ms and unmounts on the matching end event at 100ms, or at the 134ms
-  safety deadline if no event arrives. With a zero delay and zero duration,
+  safety deadline if no event arrives. With
+  `transition: opacity 100ms, transform 300ms`, the opacity end event leaves
+  the surface mounted and the later transform end event completes the exit.
+  With a zero delay and zero duration,
   assert unmount in the post-close flush. Also cover `disabled: true`;
   `attemptId` guard across `open -> close -> reopen` and
   `open -> close -> reopen -> close`; owner unmount mid-exit suppressing
