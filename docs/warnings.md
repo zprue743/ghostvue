@@ -121,3 +121,11 @@ Two GhostScrollSpyLink components in one GhostScrollSpy use the target "{target}
 
 Related: [./components/scroll-spy.md](./components/scroll-spy.md)
 
+## GHOST014
+
+**Warning:** GhostPresence surface not resolved
+
+GhostPresence closed without a resolved surface element, so it unmounted immediately without an exit animation. When the default slot renders a fragment, several roots, or a GhostPortal/Teleport wrapper, bind :ref="setElement" (plus data-state and inert) on the animated element.
+
+Related: [./components/presence.md](./components/presence.md)
+

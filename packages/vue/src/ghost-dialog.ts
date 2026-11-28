@@ -282,6 +282,8 @@ export interface GhostDialogContext {
 
 export interface GhostDialogInternalContext extends GhostDialogContext {
   openedAtMount: Ref<boolean>
+  /** Internal: skips content exit retention (see `DialogPartsContext`). */
+  skipExitPresence?: () => boolean
 }
 
 export const ghostDialogContextKey: InjectionKey<GhostDialogInternalContext> =

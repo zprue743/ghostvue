@@ -45,6 +45,7 @@ import OverlayReference from './OverlayReference.vue'
 import CollapsibleReference from './CollapsibleReference.vue'
 import AccordionReference from './AccordionReference.vue'
 import PopoverReference from './PopoverReference.vue'
+import PresenceReference from './PresenceReference.vue'
 import DropdownMenuReference from './DropdownMenuReference.vue'
 import ComboboxReference from './ComboboxReference.vue'
 import CommandPaletteReference from './CommandPaletteReference.vue'
@@ -385,6 +386,7 @@ function submitPlaygroundComment(event: Event): void {
     <HoverCardReference />
     <DialogReference />
     <DrawerReference />
+    <PresenceReference />
     <TreeReference />
     <TabsReference />
     <SegmentedControlReference />

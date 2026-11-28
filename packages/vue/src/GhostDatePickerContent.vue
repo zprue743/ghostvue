@@ -90,13 +90,13 @@ const dialogState = useDialogState(
   },
   'ghost-date-picker',
 )
-provide(ghostDialogContextKey, createDialogPartsContext(dialogState))
 
 const dialogRef = useTemplateRef('dialog')
 const closeRef = useTemplateRef<HTMLButtonElement>('closeButton')
-const contentElement = computed(() =>
-  context.isOpen.value ? resolveDialogHtmlElement(dialogRef.value) : null,
-)
+// The inner GhostDialogContent exposes its mounted surface, which stays live
+// while the exit fade runs, so useFloating keeps the anchored coordinates and
+// `data-placement` until physical removal (presence spec P5).
+const contentElement = computed(() => resolveDialogHtmlElement(dialogRef.value))
 
 const anchor = computed<HTMLElement | null>(
   () =>
@@ -116,6 +116,13 @@ const floating = useFloating(anchor, contentElement, {
 const positioned = computed(
   () => anchor.value === null || floating.isPositioned.value,
 )
+
+provide(ghostDialogContextKey, {
+  ...createDialogPartsContext(dialogState),
+  // Closed before the first position resolved: the surface never became
+  // visible, so there is nothing to animate out.
+  skipExitPresence: () => !positioned.value,
+})
 
 // Focus enters only after positioning and the calendar grid have rendered,
 // so the first focus lands on the visible roving date cell.

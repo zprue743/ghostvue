@@ -1,12 +1,17 @@
 /*
  * Themed GhostDialog overlay and surface. Visual values come from semantic
- * --ghost-* tokens with no component-specific tokens or exit animations.
+ * --ghost-* tokens with no component-specific tokens.
+ *
+ * Geometry and forced-colors paint match the part classes without
+ * [data-state='open'], so the exiting surface (data-state="closed", kept
+ * mounted by useGhostPresence) never loses position, centering, or system
+ * colors mid-fade. Exits run faster than entries (motion.md).
  */
 @layer ghostvue-theme {
   :where(
-    .ghost-theme .ghost-dialog-overlay[data-state='open'],
-    .ghost-themed-scope .ghost-dialog-overlay[data-state='open'],
-    .ghost-dialog-overlay[data-themed][data-state='open']
+    .ghost-theme .ghost-dialog-overlay,
+    .ghost-themed-scope .ghost-dialog-overlay,
+    .ghost-dialog-overlay[data-themed]
   ) {
     background-color: var(--ghost-scrim);
     inset: 0;
@@ -15,9 +20,9 @@
   }
 
   :where(
-    .ghost-theme .ghost-dialog-content[data-state='open'],
-    .ghost-themed-scope .ghost-dialog-content[data-state='open'],
-    .ghost-dialog-content[data-themed][data-state='open']
+    .ghost-theme .ghost-dialog-content,
+    .ghost-themed-scope .ghost-dialog-content,
+    .ghost-dialog-content[data-themed]
   ) {
     background-color: var(--ghost-elevation-4-bg);
     border: var(--ghost-border-hairline-width) solid
@@ -117,11 +122,64 @@
     }
   }
 
+  /* Exit: reduced motion keeps only a short opacity fade (no travel). */
+  :where(
+    .ghost-theme .ghost-dialog-content[data-state='closed'],
+    .ghost-themed-scope .ghost-dialog-content[data-state='closed'],
+    .ghost-dialog-content[data-themed][data-state='closed']
+  ) {
+    opacity: 0;
+    transition: opacity var(--ghost-motion-fade-duration)
+      var(--ghost-motion-easing-standard);
+
+    @media (prefers-reduced-motion: no-preference) {
+      transition:
+        opacity var(--ghost-motion-exit-duration)
+          var(--ghost-motion-exit-easing),
+        translate var(--ghost-motion-exit-duration)
+          var(--ghost-motion-exit-easing);
+      translate: 0 calc(var(--ghost-motion-translate) / 2);
+    }
+  }
+
+  :where(
+    .ghost-theme .ghost-dialog-overlay[data-state='open'],
+    .ghost-themed-scope .ghost-dialog-overlay[data-state='open'],
+    .ghost-dialog-overlay[data-themed][data-state='open']
+  ) {
+    transition: opacity var(--ghost-motion-fade-duration)
+      var(--ghost-motion-easing-standard);
+
+    @starting-style {
+      opacity: 0;
+    }
+
+    @media (prefers-reduced-motion: no-preference) {
+      transition: opacity var(--ghost-motion-duration-fast)
+        var(--ghost-motion-enter-easing);
+    }
+  }
+
+  :where(
+    .ghost-theme .ghost-dialog-overlay[data-state='closed'],
+    .ghost-themed-scope .ghost-dialog-overlay[data-state='closed'],
+    .ghost-dialog-overlay[data-themed][data-state='closed']
+  ) {
+    opacity: 0;
+    transition: opacity var(--ghost-motion-fade-duration)
+      var(--ghost-motion-easing-standard);
+
+    @media (prefers-reduced-motion: no-preference) {
+      transition: opacity var(--ghost-motion-exit-duration)
+        var(--ghost-motion-exit-easing);
+    }
+  }
+
   @media (forced-colors: active) {
     :where(
-      .ghost-theme .ghost-dialog-content[data-state='open'],
-      .ghost-themed-scope .ghost-dialog-content[data-state='open'],
-      .ghost-dialog-content[data-themed][data-state='open']
+      .ghost-theme .ghost-dialog-content,
+      .ghost-themed-scope .ghost-dialog-content,
+      .ghost-dialog-content[data-themed]
     ) {
       background-color: Canvas;
       border-color: CanvasText;

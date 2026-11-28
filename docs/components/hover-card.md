@@ -13,8 +13,8 @@ Hovering or focusing `@ghostvue/themes` opens a portaled preview card with
 `open` via `useControllableState`, assigns deterministic IDs via `useGhostId`,
 applies open/close delays for WCAG 1.4.13, positions the floating panel with
 `useFloating`, renders it through `GhostPortal` by default, dismisses on
-`Escape` and outside pointerdown via `useDismissableLayer`, and unmounts with
-`v-if` when closed.
+`Escape` and outside pointerdown via `useDismissableLayer`, and unmounts after
+its CSS exit motion when closed ([GhostPresence](./presence.md)).
 
 ## Basic use
 

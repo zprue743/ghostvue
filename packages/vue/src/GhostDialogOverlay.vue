@@ -37,7 +37,7 @@ const context = injectDialogPartsContext(
 )
 const hostRef = useTemplateRef('host')
 
-const { attrs, visible, overlayAttrs, exposed } = useDialogOverlayPart(
+const { attrs, isPresent, overlayAttrs, exposed } = useDialogOverlayPart(
   context,
   hostRef,
 )
@@ -49,7 +49,7 @@ defineExpose<GhostDialogOverlayExposed>(exposed)
   <GhostPortal :to="portalTo" :disabled="!portal">
     <component
       :is="as"
-      v-if="visible"
+      v-if="isPresent"
       ref="host"
       :class="['ghost-dialog-overlay', attrs['class']]"
       v-bind="overlayAttrs"

@@ -4,7 +4,7 @@
   "name": "GhostHoverCardContent",
   "package": "@ghostvue/vue",
   "status": "experimental",
-  "description": "Positioned floating hover-card surface with role=\"dialog\".",
+  "description": "Positioned floating hover-card surface with role=\"dialog\". After logical close it stays mounted with data-state=\"closed\", inert, and pointer-events: none only while its own CSS exit transition or animation runs (useGhostPresence), then unmounts; focus, dismissal, release immediately.",
   "props": [
     {
       "name": "as",
@@ -90,7 +90,7 @@
       "name": "element",
       "kind": "property",
       "type": "HTMLElement | null",
-      "description": "Exposed property `element`."
+      "description": "Mounted card element while open or exiting; null once unmounted."
     },
     {
       "name": "focus",
@@ -101,7 +101,16 @@
   ],
   "styling": {
     "parts": [],
-    "states": [],
+    "states": [
+      {
+        "name": "open",
+        "description": "Applied on data-state while mounted and open."
+      },
+      {
+        "name": "closed",
+        "description": "Applied on data-state while the surface plays its exit motion after logical close; the surface is also inert with inline pointer-events: none until it unmounts."
+      }
+    ],
     "cssProperties": []
   },
   "accessibility": {

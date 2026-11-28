@@ -34,7 +34,7 @@ const context = injectCommandPaletteContext('GhostCommandPaletteOverlay')
 const hostRef = useTemplateRef('host')
 
 // Rendered only while open and modal, exactly like GhostDialogOverlay.
-const { attrs, visible, overlayAttrs, exposed } = useDialogOverlayPart(
+const { attrs, isPresent, overlayAttrs, exposed } = useDialogOverlayPart(
   context.dialog,
   hostRef,
 )
@@ -46,7 +46,7 @@ defineExpose<GhostCommandPaletteOverlayExposed>(exposed)
   <GhostPortal :to="portalTo" :disabled="!portal">
     <component
       :is="as"
-      v-if="visible"
+      v-if="isPresent"
       ref="host"
       :class="['ghost-command-palette-overlay', attrs['class']]"
       v-bind="overlayAttrs"

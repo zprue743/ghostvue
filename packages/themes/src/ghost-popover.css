@@ -59,6 +59,25 @@
     }
   }
 
+  /* Exit: reduced motion keeps scale at 1 and only fades. */
+  :where(
+    .ghost-theme .ghost-popover-content[data-state='closed'],
+    .ghost-themed-scope .ghost-popover-content[data-state='closed'],
+    .ghost-popover-content[data-themed][data-state='closed']
+  ) {
+    opacity: 0;
+    transition: opacity var(--ghost-motion-fade-duration)
+      var(--ghost-motion-easing-standard);
+
+    @media (prefers-reduced-motion: no-preference) {
+      scale: 0.98;
+      transition:
+        opacity var(--ghost-motion-exit-duration)
+          var(--ghost-motion-exit-easing),
+        scale var(--ghost-motion-exit-duration) var(--ghost-motion-exit-easing);
+    }
+  }
+
   @media (forced-colors: active) {
     :where(
       .ghost-theme .ghost-popover-content,

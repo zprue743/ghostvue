@@ -8,7 +8,8 @@ packages:
 specStatus: approved
 approval:
   evidence: 'Zac approved P1-P6 at 225f9fe09b1bbab8c03d88138c80ebdb171b6e01 and approved the positive transition delay correction and merge after CI in https://github.com/zprue743/ghostvue/pull/488#issuecomment-7241284458.'
-manifests: []
+manifests:
+  - packages/vue/manifests/ghost-presence.manifest.json
 sections:
   purpose:
     applicable: true
@@ -44,9 +45,10 @@ unresolvedQuestions: []
 > [!IMPORTANT]
 > **Status:** Design sign-off recorded for [#412](https://github.com/zprue743/ghostvue/issues/412)
 > (P1–P6 approved as proposed by Zac at `225f9fe09b1bbab8c03d88138c80ebdb171b6e01`,
-> recorded in PR #488 on 2026-11-28). This is a docs-only specification for
-> `0.2.0` ("Motion and nested menus"); [#417](https://github.com/zprue743/ghostvue/issues/417)
-> remains blocked until the revised PR #488 merges to `master`.
+> recorded in PR #488 on 2026-11-28). Specification for `0.2.0` ("Motion and
+> nested menus"), implemented for the first-release hosts by
+> [#417](https://github.com/zprue743/ghostvue/issues/417). Usage guide:
+> [GhostPresence](./presence.md).
 
 **Predecessors:** [ADR 0003: Public component API conventions](../adr/0003-public-component-api-conventions.md),
 [ADR 0004: Headless and styled layering](../adr/0004-headless-styled-layering.md),

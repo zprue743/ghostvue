@@ -37,7 +37,7 @@ function findHardcodedVisuals(css: string) {
 }
 
 describe('GhostDialog theme CSS tokens', () => {
-  it('uses semantic --ghost-* tokens and limits motion to entry', async () => {
+  it('uses semantic --ghost-* tokens and CSS transitions only', async () => {
     const css = await readFile(cssPath, 'utf8')
     expect(css).toContain('background-color: var(--ghost-scrim);')
     expect(css).toContain('--ghost-elevation-4-bg')
@@ -48,9 +48,9 @@ describe('GhostDialog theme CSS tokens', () => {
     expect(css).toContain('--ghost-space-inset-lg')
     expect(css).toContain('--ghost-space-gap-md')
     expect(css).toContain('@starting-style')
-    expect(stripComments(css)).not.toMatch(
-      /\banimation\b|\[data-state='closed'\]/,
-    )
+    // Exit motion is a transition on [data-state='closed'] (see
+    // overlay-exit-theme-css.test.ts); keyframe animations stay out.
+    expect(stripComments(css)).not.toMatch(/\banimation\b/)
     expect(findHardcodedVisuals(css)).toEqual([])
   })
 

@@ -7,14 +7,17 @@
  * localized `[dir]` subtree around its trigger, so the headless part resolves
  * the direction and these rules map it to left/right explicitly.
  *
- * Entry is a slide + fade via @starting-style (no exit animation: closed
- * drawers unmount immediately). Reduced motion keeps only an opacity fade.
+ * Entry is a slide + fade via @starting-style; exit slides back to the same
+ * edge (faster, accelerate easing) while useGhostPresence keeps the closed
+ * surface mounted. Geometry and forced-colors rules match the part classes
+ * without [data-state='open'] so the exiting surface keeps its edge offsets.
+ * Reduced motion keeps only an opacity fade.
  */
 @layer ghostvue-theme {
   :where(
-    .ghost-theme .ghost-drawer-overlay[data-state='open'],
-    .ghost-themed-scope .ghost-drawer-overlay[data-state='open'],
-    .ghost-drawer-overlay[data-themed][data-state='open']
+    .ghost-theme .ghost-drawer-overlay,
+    .ghost-themed-scope .ghost-drawer-overlay,
+    .ghost-drawer-overlay[data-themed]
   ) {
     background-color: var(--ghost-scrim);
     inset: 0;
@@ -23,9 +26,9 @@
   }
 
   :where(
-    .ghost-theme .ghost-drawer-content[data-state='open'],
-    .ghost-themed-scope .ghost-drawer-content[data-state='open'],
-    .ghost-drawer-content[data-themed][data-state='open']
+    .ghost-theme .ghost-drawer-content,
+    .ghost-themed-scope .ghost-drawer-content,
+    .ghost-drawer-content[data-themed]
   ) {
     align-content: start;
     background-color: var(--ghost-elevation-4-bg);
@@ -281,6 +284,87 @@
         translate: 0 100%;
       }
     }
+
+    /* Exit: fade and slide back toward the anchored edge. */
+    :where(
+      .ghost-theme .ghost-drawer-overlay[data-state='closed'],
+      .ghost-themed-scope .ghost-drawer-overlay[data-state='closed'],
+      .ghost-drawer-overlay[data-themed][data-state='closed']
+    ) {
+      opacity: 0;
+      transition: opacity var(--ghost-motion-exit-duration)
+        var(--ghost-motion-exit-easing);
+    }
+
+    :where(
+      .ghost-theme .ghost-drawer-content[data-state='closed'],
+      .ghost-themed-scope .ghost-drawer-content[data-state='closed'],
+      .ghost-drawer-content[data-themed][data-state='closed']
+    ) {
+      opacity: 0;
+      transition:
+        opacity var(--ghost-motion-exit-duration)
+          var(--ghost-motion-exit-easing),
+        translate var(--ghost-motion-exit-duration)
+          var(--ghost-motion-exit-easing);
+    }
+
+    :where(
+      .ghost-theme
+        .ghost-drawer-content[data-state='closed']:is(
+          [data-side='start'][data-dir='ltr'],
+          [data-side='end'][data-dir='rtl']
+        ),
+      .ghost-themed-scope
+        .ghost-drawer-content[data-state='closed']:is(
+          [data-side='start'][data-dir='ltr'],
+          [data-side='end'][data-dir='rtl']
+        ),
+      .ghost-drawer-content[data-themed][data-state='closed']:is(
+          [data-side='start'][data-dir='ltr'],
+          [data-side='end'][data-dir='rtl']
+        )
+    ) {
+      translate: -100% 0;
+    }
+
+    :where(
+      .ghost-theme
+        .ghost-drawer-content[data-state='closed']:is(
+          [data-side='end'][data-dir='ltr'],
+          [data-side='start'][data-dir='rtl']
+        ),
+      .ghost-themed-scope
+        .ghost-drawer-content[data-state='closed']:is(
+          [data-side='end'][data-dir='ltr'],
+          [data-side='start'][data-dir='rtl']
+        ),
+      .ghost-drawer-content[data-themed][data-state='closed']:is(
+          [data-side='end'][data-dir='ltr'],
+          [data-side='start'][data-dir='rtl']
+        )
+    ) {
+      translate: 100% 0;
+    }
+
+    :where(
+      .ghost-theme .ghost-drawer-content[data-state='closed'][data-side='top'],
+      .ghost-themed-scope
+        .ghost-drawer-content[data-state='closed'][data-side='top'],
+      .ghost-drawer-content[data-themed][data-state='closed'][data-side='top']
+    ) {
+      translate: 0 -100%;
+    }
+
+    :where(
+      .ghost-theme
+        .ghost-drawer-content[data-state='closed'][data-side='bottom'],
+      .ghost-themed-scope
+        .ghost-drawer-content[data-state='closed'][data-side='bottom'],
+      .ghost-drawer-content[data-themed][data-state='closed'][data-side='bottom']
+    ) {
+      translate: 0 100%;
+    }
   }
 
   /* Reduced motion: no spatial movement in resting or starting state; a short
@@ -294,6 +378,20 @@
       .ghost-themed-scope .ghost-drawer-content[data-state='open'],
       .ghost-drawer-content[data-themed][data-state='open']
     ) {
+      transition: opacity var(--ghost-motion-fade-duration)
+        var(--ghost-motion-easing-standard);
+      translate: none;
+    }
+
+    :where(
+      .ghost-theme .ghost-drawer-overlay[data-state='closed'],
+      .ghost-themed-scope .ghost-drawer-overlay[data-state='closed'],
+      .ghost-drawer-overlay[data-themed][data-state='closed'],
+      .ghost-theme .ghost-drawer-content[data-state='closed'],
+      .ghost-themed-scope .ghost-drawer-content[data-state='closed'],
+      .ghost-drawer-content[data-themed][data-state='closed']
+    ) {
+      opacity: 0;
       transition: opacity var(--ghost-motion-fade-duration)
         var(--ghost-motion-easing-standard);
       translate: none;
@@ -316,9 +414,9 @@
 
   @media (forced-colors: active) {
     :where(
-      .ghost-theme .ghost-drawer-content[data-state='open'],
-      .ghost-themed-scope .ghost-drawer-content[data-state='open'],
-      .ghost-drawer-content[data-themed][data-state='open']
+      .ghost-theme .ghost-drawer-content,
+      .ghost-themed-scope .ghost-drawer-content,
+      .ghost-drawer-content[data-themed]
     ) {
       background-color: Canvas;
       border-color: CanvasText;

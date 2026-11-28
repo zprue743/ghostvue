@@ -76,13 +76,34 @@ Under `prefers-reduced-motion: reduce`, translate becomes `0px` and scale
 becomes `1`, so the same rule fades without moving. Fade duration stays 80ms
 so the state change is still visible.
 
-## Overlay entry
+## Overlay entry and exit
 
 The default theme fades in Dialog, Popover, HoverCard, Select, Combobox,
 DropdownMenu, ContextMenu, Menubar, and CommandPalette surfaces. With motion
 enabled, they also scale from 98% over the fast duration (120ms by default).
 Dialog slides 4px instead so controls such as date cells keep their full size.
-Reduced motion keeps an opacity-only fade. These transitions run only on entry.
+Reduced motion keeps an opacity-only fade.
+
+Dialog, Drawer, Popover, HoverCard, CommandPalette, and DatePicker surfaces
+(and the Dialog, Drawer, and CommandPalette backdrops) also animate out. On
+close, the headless part switches the surface to `data-state="closed"` and
+[`GhostPresence`](../components/presence.md) keeps it mounted only while its
+own CSS transition runs. The theme's `[data-state='closed']` rules mirror the
+entry and are never slower than it, over `--ghost-motion-exit-duration` with
+`--ghost-motion-exit-easing`:
+
+| Surface                              | Exit                                    |
+| ------------------------------------ | --------------------------------------- |
+| Dialog, DatePicker                   | Fade out and slide back 4px             |
+| Drawer                               | Fade out and slide to its anchored edge |
+| Popover, HoverCard, CommandPalette   | Fade out and scale to 98%               |
+| Dialog, Drawer, CommandPalette scrim | Fade out                                |
+
+Under reduced motion, exits fade over `--ghost-motion-fade-duration` with no
+travel or scale. Focus, `Escape`, scroll lock, and background `inert` release
+the moment an overlay closes; the departing surface is `inert` and ignores the
+pointer while it fades. With `--ghost-motion-intensity: 0` (or no theme), the
+exit has no duration and the surface unmounts in the same frame.
 
 ## Intensity
 

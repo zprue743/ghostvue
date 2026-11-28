@@ -4,7 +4,7 @@
   "name": "GhostCommandPaletteOverlay",
   "package": "@ghostvue/vue",
   "status": "experimental",
-  "description": "Modal backdrop rendered only while the palette is open and modal. Pressing it dismisses the palette.",
+  "description": "Modal backdrop rendered only while the palette is open and modal. Pressing it dismisses the palette. After logical close it stays mounted with data-state=\"closed\" and pointer-events: none only while its own CSS exit fade runs, then unmounts.",
   "props": [
     {
       "name": "as",
@@ -51,7 +51,7 @@
       "name": "element",
       "kind": "property",
       "type": "HTMLElement | null",
-      "description": "Exposed property `element`."
+      "description": "Mounted overlay element while open and modal or exiting; null otherwise."
     },
     {
       "name": "focus",
@@ -71,6 +71,10 @@
       {
         "name": "open",
         "description": "data-state=\"open\" while mounted."
+      },
+      {
+        "name": "closed",
+        "description": "Applied on data-state while the backdrop plays its exit fade after logical close; inline pointer-events: none lets clicks reach the page."
       }
     ],
     "cssProperties": []

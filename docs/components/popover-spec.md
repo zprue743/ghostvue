@@ -161,11 +161,14 @@ Native attributes and listeners fall through to the floating content element.
 ## State model
 
 - Two binary states: `'closed'` and `'open'`.
-- `GhostPopoverContent` renders with `v-if="open"`, not `v-show`, so closed
-  layers unmount cleanly from the DOM, `useDismissableLayer`'s `layerStack`,
-  `useFloating`'s `autoUpdate`, and `useFocusScope`.
+- `GhostPopoverContent` renders with `v-if` on `useGhostPresence`, not
+  `v-show`. Logical close removes it from `useDismissableLayer`'s `layerStack`
+  and `useFocusScope` immediately; the node stays mounted with
+  `data-state="closed"`, `inert`, `pointer-events: none`, and its
+  `useFloating` coordinates only while its CSS exit motion runs, then unmounts
+  and stops `autoUpdate` ([presence spec](/specs/presence#state-model)).
 - `data-state="open" | "closed"` is set on `GhostPopoverTrigger` and
-  `data-state="open"` on `GhostPopoverContent` while mounted.
+  `GhostPopoverContent`.
 - `data-placement` is written on `GhostPopoverContent` by `useFloating` once the
   resolved placement is computed.
 - `GhostPopoverContent` keeps `visibility: hidden` inline until

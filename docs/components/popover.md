@@ -34,7 +34,8 @@ appearance.
 
 `GhostPopover` owns `open` via `useControllableState`, assigns deterministic IDs
 via `useGhostId`, positions the floating panel with `useFloating`, renders it
-through `GhostPortal` by default, unmounts it with `v-if` when closed, handles
+through `GhostPortal` by default, unmounts it after its CSS exit motion when
+closed ([GhostPresence](./presence.md)), handles
 `Escape` and outside `pointerdown` through `useDismissableLayer`, and manages
 non-modal entry/return focus through `useFocusScope`.
 
