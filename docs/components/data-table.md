@@ -1,21 +1,15 @@
 # GhostDataTable
 
 `GhostDataTable` adds sorting, filtering, pagination, row selection, and
-expandable detail rows to a native [`GhostTable`](./table.md). Import the
-headless components from `@ghostvue/vue` or use the themed wrappers from
-`@ghostvue/themes`. You own the row data and fetching. The table owns the
-interaction state and accessible markup.
+expandable detail rows to a native [`GhostTable`](./table.md). Import
+`GhostDataTable` and its `GhostDataTablePreset` renderer from
+`@ghostvue/themes` for a styled table. You own the row data and fetching. The
+table owns the interaction state and accessible markup.
 
-Start with one of two paths. Both use the same invoice rows and typed columns.
-
-- **(a) Basic.** Put `GhostDataTableTable` inside the root to
-  render headers, sort buttons, and rows from your columns. Reach for
-  `GhostDataTablePreset` when you also want search, selection,
-  expansion, and an empty state without writing markup.
-- **(b) Full.** Compose `GhostTable` parts yourself in the root's
-  default slot. Every control gets its labels and ARIA
-  state from slot bindings, so you choose the markup without losing
-  accessibility.
+Teams that bring their own design system can compose the same behavior from
+`@ghostvue/vue`; see [Advanced: headless composition](#advanced-headless-composition).
+For a complete billing workflow with filters, a drawer, and toasts, open the
+[Billing & Invoices showcase](../examples/index.md).
 
 The phase-one architecture is recorded in
 [ADR 0014](../adr/0014-datatable-phase-one-architecture.md). The full contract
@@ -37,39 +31,67 @@ Every table needs `data`, `columns`, and `getRowId`. `getRowId` is required: it
 keys selection, expansion, and stable rendering. The library never clones,
 deep-watches, or mutates your `data`.
 
-## Basic (a)
+## Review invoices
 
-<GhostExample id="data-table/basic-invoices" />
+<GhostExample id="data-table/themed-invoices" />
 
-`defineDataTableColumns<Invoice>()` builds typed columns. `accessorKey`
-checks the key against `Invoice` and infers each column's value type, so
-renaming a row field breaks the column at compile time. Pass the same
-`columns` array to `GhostDataTableTable` and each `#<columnId>` slot gets a
-typed `value`: in the example `value.toFixed(2)` type-checks because `amount`
-is a number.
+The example imports every component from `@ghostvue/themes`. It opens on
+page 1 with the two overdue invoices selected, so the bulk action bar offers
+**Mark paid** straight away, and the first overdue invoice expanded to show its
+detail row. Try it:
 
-`GhostDataTableTable` renders one header row, a sort button in each sortable
-header, and one body row per rendered row. A cell slot wins over the column's
-`cell` hook, which wins over the plain value. Its `columns` prop also picks and
-orders the rendered columns.
+- **Search.** Type a customer, invoice number, or status. When nothing
+  matches, the empty state keeps the header row and the footer offers **Clear
+  search**, which restores the rows and returns focus to the field.
+- **Sort.** Focus a column heading's sort button and press `Enter` or `Space`
+  to cycle ascending, descending, and unsorted. Amounts sort as numbers and due
+  dates as ISO dates, while cells show formatted currency and dates.
+- **Act on a selection.** **Mark paid** updates the selected unpaid invoices,
+  marks the table busy with `loading` while the save runs, then clears the
+  selection. The footer's polite status reports the result.
+- **Open a detail.** Each row's expand button shows a detail row with its own
+  actions.
 
-### Preset (a′)
+`defineDataTableColumns<Invoice>()` builds typed columns. `accessorKey` checks
+the key against `Invoice` and infers each column's value type, so renaming a
+row field breaks the column at compile time. Pass the same `columns` array to
+the renderer and each `#<columnId>` slot gets a typed `value`: in the example
+`currency.format(value)` type-checks because `amount` is a number. A cell slot
+wins over the column's `cell` hook, which wins over the plain value.
 
-<GhostExample id="data-table/preset-invoices" />
+Use `size="sm"` for compact cells, `variant="card"` for a bordered surface, and
+`sticky-header` to pin headings to the nearest scroll container. Both
+renderers accept `contain-horizontal` and `scroll-label`. The example names its
+horizontal scroll region "Invoice table", so on a phone the wide table scrolls
+inside that region instead of the page.
 
-`GhostDataTablePreset` is the batteries-included child. It renders a labelled
-global search field, a selection column with a select-all checkbox, an
-expansion column with labelled expand buttons and detail rows, sort buttons,
-and a `GhostEmptyState` row when nothing matches. Use it instead of a manual
-`#default` composition, not next to one.
+`GhostDataTablePreset` renders a labelled global search field, a selection
+column with a select-all checkbox, an expansion column with labelled expand
+buttons and detail rows, sort buttons, and a `GhostEmptyState` row when nothing
+matches.
 
 - Props: `emptyTitle`, `emptyHeadingLevel`, `searchLabel`,
   `selectionHeaderLabel`, `expansionHeaderLabel`, `showGlobalFilter`, and the
   localized control names `selectAllLabel`, `rowSelectionLabel`, and
   `rowExpansionLabel`.
 - Slots: typed `#<columnId>` cells, `#detail="{ row, rowId, rowIndex }"`,
-  `#toolbar`, and `#search` to replace the default search field.
+  `#toolbar`, and `#search` to replace the default search field. The example
+  uses `#search` to keep a ref to the field, so **Clear search** can focus it.
 - `disabled` and `loading` come from the parent `GhostDataTable`.
+
+<!-- @generated docs-api:themes/ghost-data-table begin -->
+
+<!-- Source: packages/themes/manifests/ghost-data-table.manifest.json. Run pnpm docs:api:write after it changes. -->
+
+`@ghostvue/themes` adds these to the headless `GhostDataTable` API, which it forwards:
+
+| Prop           | Type                | Default   | Description                                                              |
+| -------------- | ------------------- | --------- | ------------------------------------------------------------------------ |
+| `size`         | `'sm' \| 'md'`      | `"md"`    | Cell and control density.                                                |
+| `variant`      | `'plain' \| 'card'` | `"plain"` | Container surface.                                                       |
+| `stickyHeader` | `boolean`           | `false`   | Pins column headings to the block start of the nearest scroll container. |
+
+<!-- @generated docs-api:themes/ghost-data-table end -->
 
 ### Preset layout slots
 
@@ -89,86 +111,20 @@ with the column's `cell` renderer.
   pager or query-wide row count. `setPageIndex` uses the root's normal
   pagination write and emits one request in manual pagination.
 
-## Themed preset
+## Paginate long lists {#pagination}
 
-<GhostExample id="data-table/themed-invoices" />
-
-Import `GhostDataTable` and either renderer from `@ghostvue/themes` for the
-default recipe. Use `size="sm"` for compact cells, `variant="card"` for a
-bordered surface, and `sticky-header` to pin headings to the nearest scroll
-container. The wrappers share the headless behavior and typed slots.
-Both renderers accept `contain-horizontal` and `scroll-label` to give the
-horizontal scroll region its own accessible name.
-
-The themed sort mark follows the active column's `aria-sort` and `data-sort`
-state. With a manually composed `GhostTable` inside the themed root, add
-`data-part="sort-button"` to opt in. The recipe supports the table's optional
-horizontal scroll region. A decorative child with
-`data-part="sort-indicator"` replaces the mark. During
-loading the header signals progress while body text and enabled controls
-remain at full contrast.
-
-<!-- @generated docs-api:themes/ghost-data-table begin -->
-
-<!-- Source: packages/themes/manifests/ghost-data-table.manifest.json. Run pnpm docs:api:write after it changes. -->
-
-`@ghostvue/themes` adds these to the headless `GhostDataTable` API, which it forwards:
-
-| Prop           | Type                | Default   | Description                                                              |
-| -------------- | ------------------- | --------- | ------------------------------------------------------------------------ |
-| `size`         | `'sm' \| 'md'`      | `"md"`    | Cell and control density.                                                |
-| `variant`      | `'plain' \| 'card'` | `"plain"` | Container surface.                                                       |
-| `stickyHeader` | `boolean`           | `false`   | Pins column headings to the block start of the nearest scroll container. |
-
-<!-- @generated docs-api:themes/ghost-data-table end -->
-
-## Full composition (b)
-
-<GhostExample id="data-table/full-invoices" />
-
-Without a renderer child, the root renders no element. Its default slot hands
-you `tableRootProps`, `headers`, `rows`, and getters for every part. Spread
-each getter on the matching element:
-
-| Binding                                         | Spread on                                  |
-| ----------------------------------------------- | ------------------------------------------ |
-| `tableRootProps`                                | `GhostTable`                               |
-| `getHeaderCellProps(columnId)`                  | `GhostTableHeaderCell` (`aria-sort`)       |
-| `getSortButtonProps(columnId)`                  | the sort `<button>` inside the header cell |
-| `getRowProps(rowId)`                            | the data `GhostTableRow`                   |
-| `getBodyCellContext(rowId, columnId)`           | the cell value and `getValue()`            |
-| `getHeaderSelectionCheckboxProps()`             | the select-all `GhostCheckbox`             |
-| `getRowSelectionCheckboxProps(rowId)`           | each row `GhostCheckbox`                   |
-| `getRowExpandButtonProps(rowId)`                | each expand `<button>`                     |
-| `detailRowProps`                                | the detail `GhostTableRow`                 |
-| `pagination`, `pageCount`, `setPageIndex`       | a co-located `GhostPagination`             |
-| `headerSelectionState`, `toggleAllRowsSelected` | the select-all checkbox state              |
-
-Keep the `id` from `getRowExpandButtonProps`. When a detail row collapses
-while focus is inside it, the root moves focus back to that button.
-
-For layouts without the root, the same attributes come from the exported
-helpers `getDataTableHeaderCellProps`, `getDataTableSortButtonProps`,
-`getDataTableRowSelectionCheckboxProps`,
-`getDataTableHeaderSelectionCheckboxProps`, and
-`getDataTableRowExpandButtonProps`. Each takes a `useGhostDataTable` return as
-its first argument.
-
-## Pagination
-
-<GhostExample id="data-table/paginated-invoices" />
-
+The first example already pages through its `#footer` slot.
 `pagination.pageIndex` is 1-based, like `GhostPagination`. Bind the pager to
-the root's `pagination`, `pageCount`, and `setPageIndex` slot bindings, not to
+the footer's `pagination`, `pageCount`, and `setPageIndex` bindings, not to
 your own `data.length`. The pager then follows the filtered count (or the
 server `rowCount`) and shows page 1 of 1 when nothing matches.
 
 When the page count shrinks, the root clamps `pageIndex` to the last page. A
 local filter keeps the current page and clamps; it does not jump to page 1.
+For a pager outside a renderer, see
+[Pagination in a manual composition](#manual-pagination).
 
-## Server data
-
-<GhostExample id="data-table/server-invoices-router" />
+## Load rows from a server {#server-data}
 
 Set `manualSorting`, `manualFiltering`, and `manualPagination` when the server
 sorts, filters, and pages. Pass one page as `data` and the query-wide total as
@@ -200,7 +156,8 @@ async function onStateChange({
 
 A stale response, or a stale `finally`, then cannot overwrite a newer one.
 `retry()` on the template ref re-emits the current query with a fresh
-`requestId`. The example also syncs the query to the URL: it reads the query
+`requestId`. The headless [server example](#server-data-with-url-state)
+also syncs the query to the URL: it reads the query
 string on load, pushes one history entry per committed query, and refetches
 after Back without letting the pending response apply. It uses
 `window.history` so it needs no router; with Vue Router, swap the small URL
@@ -223,6 +180,111 @@ adapter for `route.query` and `router.push`.
   `disabled` disables sort, selection, and expansion controls.
 - **Empty.** Render a `GhostEmptyState` in a full-width row when `rows` is
   empty. Keep the header row mounted.
+
+## Accessibility
+
+The table is a native `<table>`, not a `grid`. `Tab` moves between the
+focusable controls; there is no arrow-key cell navigation.
+
+| Key               | Control            | Behavior                     |
+| ----------------- | ------------------ | ---------------------------- |
+| `Enter` / `Space` | Sort button        | Cycles the column sort.      |
+| `Space`           | Selection checkbox | Toggles the row or all rows. |
+| `Enter` / `Space` | Expand button      | Opens or closes the detail.  |
+
+- Labels and ARIA state land on the focusable control (the checkbox input or
+  the button), not on a wrapper. Icon-only header cells get a column name.
+- The select-all checkbox shows a mixed state when some rows are selected.
+- Give the table a name with `aria-label` or `aria-labelledby` on the root.
+- Announcing async results is yours; add a polite live region if needed.
+
+## Advanced: headless composition
+
+This section is for teams that bring their own design system and write their
+own CSS. Import the same components from `@ghostvue/vue`: they keep the
+behavior, labels, and ARIA state, and paint nothing. The examples below are
+also listed on the generated [reference page](/reference/).
+
+### Renderer child {#basic-a}
+
+<GhostExample id="data-table/basic-invoices" />
+
+Put `GhostDataTableTable` inside the root to render headers, sort buttons, and
+rows from your columns. It renders one header row, a sort button in each
+sortable header, and one body row per rendered row. Its `columns` prop also
+picks and orders the rendered columns.
+
+### Preset {#preset-a}
+
+<GhostExample id="data-table/preset-invoices" />
+
+The headless `GhostDataTablePreset` renders the same search, selection,
+expansion, and empty row as the themed first example, without a theme. Use it
+instead of a manual `#default` composition, not next to one.
+
+### Full composition {#full-composition-b}
+
+<GhostExample id="data-table/full-invoices" />
+
+Without a renderer child, the root renders no element. Its default slot hands
+you `tableRootProps`, `headers`, `rows`, and getters for every part. Spread
+each getter on the matching element:
+
+| Binding                                         | Spread on                                  |
+| ----------------------------------------------- | ------------------------------------------ |
+| `tableRootProps`                                | `GhostTable`                               |
+| `getHeaderCellProps(columnId)`                  | `GhostTableHeaderCell` (`aria-sort`)       |
+| `getSortButtonProps(columnId)`                  | the sort `<button>` inside the header cell |
+| `getRowProps(rowId)`                            | the data `GhostTableRow`                   |
+| `getBodyCellContext(rowId, columnId)`           | the cell value and `getValue()`            |
+| `getHeaderSelectionCheckboxProps()`             | the select-all `GhostCheckbox`             |
+| `getRowSelectionCheckboxProps(rowId)`           | each row `GhostCheckbox`                   |
+| `getRowExpandButtonProps(rowId)`                | each expand `<button>`                     |
+| `detailRowProps`                                | the detail `GhostTableRow`                 |
+| `pagination`, `pageCount`, `setPageIndex`       | a co-located `GhostPagination`             |
+| `headerSelectionState`, `toggleAllRowsSelected` | the select-all checkbox state              |
+
+Keep the `id` from `getRowExpandButtonProps`. When a detail row collapses
+while focus is inside it, the root moves focus back to that button.
+
+For layouts without the root, the same attributes come from the exported
+helpers `getDataTableHeaderCellProps`, `getDataTableSortButtonProps`,
+`getDataTableRowSelectionCheckboxProps`,
+`getDataTableHeaderSelectionCheckboxProps`, and
+`getDataTableRowExpandButtonProps`. Each takes a `useGhostDataTable` return as
+its first argument.
+
+### Pagination in a manual composition {#manual-pagination}
+
+<GhostExample id="data-table/paginated-invoices" />
+
+Without a renderer, bind a co-located `GhostPagination` to the root's
+`pagination`, `pageCount`, and `setPageIndex` default-slot bindings. Searching
+clamps the page as described in [Paginate long lists](#pagination).
+
+### Server data with URL state
+
+<GhostExample id="data-table/server-invoices-router" />
+
+This example applies the [server data](#server-data) contract to a manual
+composition and syncs the query to the URL.
+
+### Styling hooks {#styling}
+
+The headless parts paint nothing. Style with the `GhostTable` `data-part`
+hooks plus these attributes:
+
+- `data-sort="asc" | "desc"` on the sorted header cell.
+- `data-selected="true"` and `data-expanded="true"` on data rows.
+- `data-detail-row="true"` on detail rows, which keep `data-part="row"`.
+- `data-ghost-data-table` on the table root.
+
+The themed sort mark follows the active column's `aria-sort` and `data-sort`
+state. With a manually composed `GhostTable` inside the themed root, add
+`data-part="sort-button"` to opt in. The recipe supports the table's optional
+horizontal scroll region. A decorative child with
+`data-part="sort-indicator"` replaces the mark. During loading the header
+signals progress while body text and enabled controls remain at full contrast.
 
 ## API
 
@@ -283,8 +345,8 @@ pagination actions, including `toggleAllRowsSelected`, `toggleRowSelected`,
 
 ### Other exports
 
-- `GhostDataTableTable`: the default renderer for path (a).
-- `GhostDataTablePreset`: the batteries-included renderer for path (a′).
+- `GhostDataTableTable`: the renderer child that draws headers and rows only.
+- `GhostDataTablePreset`: the batteries-included renderer used by the first example.
 - `useGhostDataTable`: the state and row models without the root, for layouts
   that are not tables.
 - `useGhostDataTableServerRequest`: the stale-response guard.
@@ -295,36 +357,8 @@ pagination actions, including `toggleAllRowsSelected`, `toggleRowSelected`,
 Prop, slot, and event details for each component are in the
 [API reference](/reference/) and the generated manifests.
 
-## Accessibility
-
-The table is a native `<table>`, not a `grid`. `Tab` moves between the
-focusable controls; there is no arrow-key cell navigation.
-
-| Key               | Control            | Behavior                     |
-| ----------------- | ------------------ | ---------------------------- |
-| `Enter` / `Space` | Sort button        | Cycles the column sort.      |
-| `Space`           | Selection checkbox | Toggles the row or all rows. |
-| `Enter` / `Space` | Expand button      | Opens or closes the detail.  |
-
-- Labels and ARIA state land on the focusable control (the checkbox input or
-  the button), not on a wrapper. Icon-only header cells get a column name.
-- The select-all checkbox shows a mixed state when some rows are selected.
-- Give the table a name with `aria-label` or `aria-labelledby` on the root.
-- Announcing async results is yours; add a polite live region if needed.
-
-## Styling
-
-The headless parts paint nothing. Style with the `GhostTable` `data-part`
-hooks plus these attributes:
-
-- `data-sort="asc" | "desc"` on the sorted header cell.
-- `data-selected="true"` and `data-expanded="true"` on data rows.
-- `data-detail-row="true"` on detail rows, which keep `data-part="row"`.
-- `data-ghost-data-table` on the table root.
-
 ## Not in phase one
 
-Multi-column sort, virtualization, sticky headers, frozen columns, column
-resize and reorder, grouping, server-wide "select all matching", and a themed
-wrapper are out of scope. See the
+Multi-column sort, virtualization, frozen columns, column resize and reorder,
+grouping, and server-wide "select all matching" are out of scope. See the
 [specification's non-goals](/specs/data-table#non-goals).
