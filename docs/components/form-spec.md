@@ -5,7 +5,9 @@ components:
   - GhostForm
 packages:
   - '@ghostvue/vue'
-specStatus: proposed
+specStatus: approved
+approval:
+  evidence: 'Zac signed off on the GhostForm proposal (F1-F5 as proposed) at eda553c2c6b6a0a098db1c5aafff8a9893848719, recorded by zprue743 on PR #487 (2026-11-28), with follow-up spec revisions for submit-lock preservation and native-reset suppression.'
 manifests: []
 sections:
   purpose:
@@ -34,33 +36,18 @@ sections:
     applicable: true
   compatibility:
     applicable: true
-unresolvedQuestions:
-  - question: 'Issue #414 (0.2.0 GhostForm): Zac sign-off required on F1 (local structural StandardSchemaV1 declaration vs @standard-schema/spec dependency) before #420 implementation.'
-    blocking: false
-    reviewer: Zac
-  - question: 'Issue #414 (0.2.0 GhostForm): Zac sign-off required on F2 (GhostForm async submission tracking via @submit payload.waitUntil vs onSubmit callback prop) before #420 implementation.'
-    blocking: false
-    reviewer: Zac
-  - question: 'Issue #414 (0.2.0 GhostForm): Zac sign-off required on F3 (default validateOn="submit" and revalidateOn="change" trigger pairing and duplicate-submit ignore policy) before #420 implementation.'
-    blocking: false
-    reviewer: Zac
-  - question: 'Issue #414 (0.2.0 GhostForm): Zac sign-off required on F4 (canonical dot-path normalization for nested object and array Standard Schema paths and unmatched-path partitioning) before #420 implementation.'
-    blocking: false
-    reviewer: Zac
-  - question: 'Issue #414 (0.2.0 GhostForm): Zac sign-off required on F5 (@ghostvue/vue-only export vs @ghostvue/themes pass-through re-export for GhostForm) before #420 implementation.'
-    blocking: false
-    reviewer: Zac
+unresolvedQuestions: []
 ---
 
 # Component specification: `GhostForm`
 
 > [!IMPORTANT]
-> **Status:** Proposed ([#414](https://github.com/zprue743/ghostvue/issues/414)).
-> This is a docs-only specification PR. Implementation
-> ([#420](https://github.com/zprue743/ghostvue/issues/420)) is **held for Zac's
-> review and approval** (`specStatus: approved` with recorded
-> `approval.evidence`) and resolution of
-> [open architectural questions](#open-architectural-questions) F1–F5.
+> **Status:** Approved design ([#414](https://github.com/zprue743/ghostvue/issues/414)).
+> Zac signed off on F1–F5 as proposed at `eda553c2c6b6a0a098db1c5aafff8a9893848719`
+> (recorded by `zprue743` on PR #487, 2026-11-28). This is a docs-only
+> specification PR; implementation
+> ([#420](https://github.com/zprue743/ghostvue/issues/420)) remains **blocked
+> until this revised specification PR merges** into `master`.
 
 ## Purpose and user problems
 
@@ -131,9 +118,8 @@ contract built on the
 
 ### Package boundary and exports
 
-All exports live in `@ghostvue/vue` (see [F5](#open-architectural-questions) for
-whether `@ghostvue/themes` also re-exports `GhostForm` for single-import
-convenience):
+All exports live in `@ghostvue/vue` (see [F5](#open-architectural-questions),
+resolved as `@ghostvue/vue`-only in `0.2.0`):
 
 - Component: `GhostForm`
 - Composable: `useGhostForm`
@@ -237,7 +223,7 @@ Evaluated against the [repository dependency policy](../standards/dependencies.m
 | Drift protection ([TypeScript standard](../standards/typescript.md)) | Exact dev pin `@standard-schema/spec` (`1.1.0`, MIT, 0 transitive deps, no install scripts) checked for bidirectional type equality in `packages/vue/type-tests/` | Imported directly from `@standard-schema/spec`                                            | Imported from peer                                                              |
 | License, audit, `allowBuilds`                                        | MIT (dev only); `pnpm audit --prod` unchanged; `allowBuilds` unchanged                                                                                            | MIT; zero transitive dependencies; `allowBuilds` unchanged                                | N/A                                                                             |
 
-**Recommendation ([F1](#open-architectural-questions)):** Adopt **Option A**.
+**Decision ([F1](#open-architectural-questions)):** Adopt **Option A**.
 Standard Schema v1 was explicitly designed around structural `~standard`
 compatibility so UI libraries do not force an extra production dependency edge,
 mirroring `@ghostvue/vue/resolver` matching `unplugin-vue-components`
@@ -857,29 +843,48 @@ check (`result !== null && (typeof result === 'object' || typeof result === 'fun
 
 1. Starting any validation (`validate`, `validateField`, background trigger, or
    `submit`) increments `validationEpoch` (`const runId = ++validationEpoch`).
+   Only `submit()` acquires `submitEpoch` (`const currentSubmitId = ++submitEpoch`)
+   and sets `isSubmitting = true`; background `change`/`blur` triggers and
+   imperative `validate()`/`validateField()` calls never own `submitEpoch`.
 2. When an async `validate()` Promise settles:
    - If `runId !== validationEpoch`, the outcome is **stale and discarded
      immediately**: it must not write `fieldErrors`, `formErrors`, or `issues`,
      must not change `isValidating` (which now belongs to the newer `validationEpoch`),
      must not focus an element, and must not emit `submit` or `invalid`. A
-     superseded `submit()` call resolves to `{ status: 'aborted' }`.
+     superseded `submit()` call resolves to `{ status: 'aborted' }` (and clears
+     `isSubmitting` only if `currentSubmitId === submitEpoch`).
    - Only when `runId === validationEpoch` does the outcome commit errors or
      proceed to `onSubmit`, and clear `isValidating = false`.
-3. Accepted `submit()` calls also capture `const currentSubmitId = ++submitEpoch`.
-   Once validation passes and `onSubmit` / `waitUntil` awaits an async mutation:
-   - Background `change`/`blur` validations may advance `validationEpoch`
-     without clearing `isSubmitting`.
+3. Accepted `submit()` calls keep `currentSubmitId === submitEpoch` active while
+   `onSubmit` / `waitUntil` awaits an async mutation:
+   - Background `change`/`blur` validations (or `validate()`/`validateField()`)
+     may advance `validationEpoch` without clearing `isSubmitting`.
    - `isSubmitting` clears to `false` only when `currentSubmitId === submitEpoch`
-     settles or `reset()` / unmount advances `submitEpoch`.
+     finishes (its validation fails/aborts/throws, or its `onSubmit` / `waitUntil`
+     settles—resolves or rejects) or when `reset()` / unmount advances `submitEpoch`.
 4. **Unexpected validator exceptions:** compliant Standard Schema v1 validators
-   return `{ issues }` rather than throwing. If `validate()` throws
-   synchronously or rejects for the **active** epoch, `isValidating` and
-   `isSubmitting` reset to `false` so the form never wedges in a permanent
-   pending state, `onSubmit` is not called, and imperative `submit()` /
-   `validate()` rejects with the thrown error (for native DOM `@submit`
-   dispatch, the rejection is forwarded to Vue's `handleError` / `onErrorCaptured`
-   chain after resetting pending flags). Stale epoch rejections are swallowed
-   silently so a cancelled check cannot surface an unhandled rejection.
+   return `{ issues }` rather than throwing.
+   - If `validate()` throws synchronously or rejects for the **active
+     validation epoch** (`runId === validationEpoch`):
+     - `isValidating` resets to `false` so validation never wedges.
+     - `isSubmitting` resets to `false` **only when that validation belongs to
+       the active pending submit** (`currentSubmitId === submitEpoch`). Failures
+       from background `change`/`blur` validations (or `validate()` /
+       `validateField()`) **must preserve `isSubmitting`** so an active async
+       `onSubmit` / `waitUntil` mutation retains its `submitEpoch` duplicate-submit
+       lock until that save settles or `reset()` / unmount advances `submitEpoch`.
+     - When a submit validation throws/rejects, `onSubmit` is not called and
+       imperative `submit()` rejects with the thrown error (for native DOM
+       `@submit` dispatch, forwarded to Vue's `handleError` / `onErrorCaptured`
+       chain after resetting pending flags). Active background/imperative
+       validation failures likewise reject `validate()` / `validateField()` or
+       forward DOM-triggered errors to Vue's `handleError` / `onErrorCaptured`
+       chain without disturbing `isSubmitting`.
+   - Stale validation epoch rejections (`runId !== validationEpoch`) are
+     swallowed silently so a cancelled check cannot surface an unhandled
+     rejection (if a superseded `submit()`'s own `validate()` rejects after
+     `validationEpoch` moved, it resolves to `{ status: 'aborted' }` and clears
+     `isSubmitting` only if `currentSubmitId === submitEpoch`).
 
 #### Reset during validation and native form events
 
@@ -887,14 +892,15 @@ check (`result !== null && (typeof result === 'object' || typeof result === 'fun
 with [`packages/vue/src/form-reset.ts`](../architecture/component-state.md):
 
 1. **Imperative `form.reset()`:**
-   - Synchronously increments both `validationEpoch` and `submitEpoch`
-     (immediately invalidating any in-flight `validate()` or `onSubmit` /
-     `waitUntil` Promise), sets `isValidating = false` and `isSubmitting = false`,
-     clears `fieldErrors`, `formErrors`, `issues`, `touchedPaths`, `dirtyPaths`,
-     `revealedPaths`, `hasSubmitted` (`false`), and `submitCount` (`0`), and
-     arms a temporary `isResetting` suppression flag through `nextTick` so
-     consumer baseline writes inside `onReset` / `@reset` do not trigger
-     `validateOn: 'change'` or mark fields dirty.
+   - Synchronously increments `validationEpoch`, `submitEpoch`, and a monotonic
+     `resetSuppressionEpoch` (immediately invalidating any in-flight `validate()`,
+     `onSubmit` / `waitUntil` Promise, or pending native-reset suppression), sets
+     `isValidating = false` and `isSubmitting = false`, clears `fieldErrors`,
+     `formErrors`, `issues`, `touchedPaths`, `dirtyPaths`, `revealedPaths`,
+     `hasSubmitted` (`false`), and `submitCount` (`0`), and arms a temporary
+     `isResetting` suppression flag (guarded by `resetSuppressionEpoch`) through
+     `nextTick` so consumer baseline writes inside `onReset` / `@reset` do not
+     trigger `validateOn: 'change'` or mark fields dirty.
    - Invokes `onReset?.(null)` / emits `reset(null)`.
 2. **Native `<form>` `reset` event** (clicking `<GhostButton type="reset">` or
    calling `formElement.reset()`):
@@ -902,16 +908,38 @@ with [`packages/vue/src/form-reset.ts`](../architecture/component-state.md):
      reset delivery to uncontrolled child controls (`GhostInput`,
      `GhostCheckbox`, `GhostSelect`, `GhostRadioGroup`) that listen with
      `useNativeFormReset`.
-   - `GhostForm` schedules its reset reconciliation with `afterNativeFormReset(event, apply)`
-     (`setTimeout(0)` macrotask), matching every GhostVue form control:
+   - Because `GhostForm` listens directly on `<form>` (target phase) while
+     child controls listen on `document` (bubble phase) via `useNativeFormReset`,
+     `GhostForm`'s `afterNativeFormReset` macrotask runs **before** child
+     controls' `afterNativeFormReset` macrotasks. Holding `isResetting` across a
+     single `nextTick()` inside `GhostForm`'s macrotask would therefore expire
+     before later child macrotasks execute and emit `update:modelValue` to
+     restore seeds on controlled controls whose current value differs from their
+     reset seed.
+   - To prevent premature expiry, `packages/vue/src/form-reset.ts` maintains a
+     `WeakMap<Event, ...>` batch tracker across all `afterNativeFormReset`
+     callbacks scheduled for the same `reset` `Event` (decrementing as each
+     macrotask completes or is cancelled on unmount) and exposes a settlement
+     hook (`afterNativeFormResetSettled(event, onSettled)` /
+     `whenNativeFormResetSettled(event)`).
+   - `GhostForm` schedules its reset reconciliation with `afterNativeFormReset(event, apply)`:
      - If any listener on the form, `document`, or `window` calls
        `event.preventDefault()` during dispatch, `afterNativeFormReset` skips
-       `apply`: errors, pending state, and `submitCount` remain intact.
-     - Otherwise, `apply` runs the exact reset sequence above (bumping epochs,
-       clearing errors and tracking sets, arming `isResetting` across `nextTick`
-       so child `update:modelValue` baseline restores do not count as user edits,
-       and emitting `reset(event)`).
-   - Pending `afterNativeFormReset` timers are cancelled in `onBeforeUnmount`.
+       `apply`: errors, pending state, and `submitCount` remain intact and
+       `isResetting` is never armed.
+     - Otherwise, `apply` synchronously runs the reset sequence above (bumping
+       `validationEpoch`, `submitEpoch`, and `const suppressionId = ++resetSuppressionEpoch`,
+       clearing errors and tracking sets, setting `isResetting = true`, and
+       emitting `reset(event)` / invoking `onReset?.(event)`), and keeps
+       `isResetting = true` until **both** every `afterNativeFormReset`
+       macrotask registered for `event` has finished (or been cancelled on
+       unmount) **and** a subsequent `nextTick()` reactive flush completes—only
+       then clearing `isResetting = false` if `suppressionId === resetSuppressionEpoch`.
+       Reactive path watchers triggered by consumer `@reset` writes and child
+       `update:modelValue` seed restorations thus flush entirely inside
+       suppression without marking fields dirty or triggering `validateOn: 'change'`.
+   - Pending `afterNativeFormReset` timers are cancelled, `resetSuppressionEpoch`
+     is incremented, and `isResetting` is cleared in `onBeforeUnmount`.
 
 ## Consumer data
 
@@ -1161,10 +1189,12 @@ Reused `@ghostvue/vue` primitives and conventions:
   `GhostFieldControl`, `ghostFieldContextKey`, and `useGhostFieldPartContent` —
   existing label, hint, `role="alert"`, and `aria-describedby` machinery,
   extended with optional `ghostFormContextKey` injection when `name` is set.
-- `afterNativeFormReset` (`packages/vue/src/form-reset.ts`) — macrotask reset
-  reconciliation after full `reset` event dispatch so `event.defaultPrevented`
-  is honored identically to `GhostInput`, `GhostCheckbox`, `GhostSelect`, and
-  `GhostRadioGroup`.
+- `afterNativeFormReset` and per-`Event` batch settlement (`packages/vue/src/form-reset.ts`) —
+  macrotask reset reconciliation after full `reset` event dispatch so
+  `event.defaultPrevented` is honored identically to `GhostInput`, `GhostCheckbox`,
+  `GhostSelect`, and `GhostRadioGroup`, and `GhostForm` keeps `isResetting`
+  active until all descendant `useNativeFormReset` macrotasks for the same
+  `Event` and their reactive flushes complete.
 - `getTabbableElements` (`packages/vue/src/get-tabbable-elements.ts`) — resolves
   the first enabled tabbable target inside composite/group controls such as
   `GhostRadioGroup` when focusing the first invalid field on submit.
@@ -1247,9 +1277,19 @@ Reused `@ghostvue/vue` primitives and conventions:
   `fieldErrors` stays `{}`, `formErrors` stays `[]`, `isValidating` stays
   `false`, and `onSubmit` is never called. Repeat with `reset()` called after
   validation succeeded while async `onSubmit` (`d2`) is in flight.
-- **Validator rejection recovery:** when active async `validate()` rejects with
-  `new Error('RPC timeout')`, `isValidating` and `isSubmitting` return to `false`
-  and `onSubmit` does not run.
+- **Validator rejection recovery & submit-lock preservation:**
+  - When an active async `submit()` validation rejects with
+    `new Error('RPC timeout')`, `isValidating` and `isSubmitting` return to
+    `false` and `onSubmit` does not run.
+  - **Regression — deferred save + rejecting background validation + second submit:**
+    start an async `submit()` whose validation passes and whose `onSubmit` /
+    `waitUntil` awaits a deferred save Promise `dSave` (`isSubmitting === true`);
+    while `dSave` is pending, trigger a background `change` (or `blur`)
+    validation whose `validate()` rejects with `new Error('Background check failed')`;
+    assert `isValidating` resets to `false`, `isSubmitting` stays `true`, a
+    second `submit()` attempt resolves to `{ status: 'ignored' }` without
+    incrementing `submitCount` or starting a second `onSubmit` call, and
+    `isSubmitting` clears to `false` only when `dSave` settles (or `reset()` runs).
 
 ### Vue component and SSR tests (`packages/vue/src/GhostForm.test.ts`, `tests/integration/ghost-form-ssr.test.ts`)
 
@@ -1264,11 +1304,23 @@ Reused `@ghostvue/vue` primitives and conventions:
   `<GhostForm>`, `<GhostField>` without `name` inside `<GhostForm>`, and
   `<GhostField name="supportEmail" :invalid="false">` inside `<GhostForm>`
   preserve prop-driven validity without errors or console warnings.
-- **Native `<form>` `reset` cooperation:** clicking `<button type="reset">`
-  restores uncontrolled `GhostInput` `defaultValue` and, after
-  `await waitForFormResetDeferral()`, clears `GhostForm` errors without
-  re-triggering `validateOn: 'change'`; a listener calling `event.preventDefault()`
-  on `reset` cancels both control and `GhostForm` reset.
+- **Native `<form>` `reset` cooperation (uncontrolled & controlled):**
+  - Clicking `<button type="reset">` restores uncontrolled `GhostInput`
+    `defaultValue` and, after `await waitForFormResetDeferral()`, clears
+    `GhostForm` errors without re-triggering `validateOn: 'change'`; a listener
+    calling `event.preventDefault()` on `reset` cancels both control and
+    `GhostForm` reset.
+  - **Regression — controlled `GhostInput` whose value differs from reset seed:**
+    mount `<GhostForm validate-on="change">` with a controlled
+    `<GhostInput v-model="values.displayName" default-value="Ada" />`, change
+    `values.displayName` to `'Bob'` (differing from the `'Ada'` seed, marking
+    `'displayName'` dirty), trigger a native `<form>` `reset` (via
+    `<button type="reset">` or `formElement.reset()`), and
+    `await waitForFormResetDeferral()` + `await nextTick()`; assert
+    `values.displayName` restores to `'Ada'`, `isDirty === false`,
+    `isFieldDirty('displayName') === false`, `fieldErrors` stays empty, and
+    `validateOn: 'change'` does not run for the child's `update:modelValue`
+    restoration.
 - **Popup blur exclusion:** moving `focusout` from `GhostSelectTrigger` to the
   portaled `GhostSelectContent` referenced by `aria-controls` does not trigger
   premature `validateOn: 'blur'` validation while selecting an option.
@@ -1355,53 +1407,55 @@ When `#420` implements the approved contract:
   preserves identical `false` defaults for all existing callers and identical
   `packages/vue/manifests/ghost-field.manifest.json` consumer behavior.
 - **Changeset impact:** None on this docs-only specification PR. Implementation
-  in `#420` requires a `minor` Changeset for `@ghostvue/vue` (and
-  `@ghostvue/themes` only if F5 selects a themed re-export).
+  in `#420` requires a `minor` Changeset for `@ghostvue/vue` (F5 resolved
+  against a `@ghostvue/themes` re-export in `0.2.0`).
 
 ## Open architectural questions
 
-Implementation ([#420](https://github.com/zprue743/ghostvue/issues/420)) must
-not begin until **Zac** reviews this specification, resolves F1–F5, and updates
-frontmatter to `specStatus: approved` with `approval.evidence`:
+None blocking. Zac approved F1–F5 as proposed at
+`eda553c2c6b6a0a098db1c5aafff8a9893848719` (recorded by `zprue743` on PR #487,
+2026-11-28); implementation ([#420](https://github.com/zprue743/ghostvue/issues/420))
+remains held until this revised specification PR merges into `master`. Recorded
+decisions for `#420`:
 
-1. **Standard Schema v1 type source (F1, reviewer: Zac).**
-   - **Recommended:** Export a local, spec-exact `StandardSchemaV1` TypeScript
+1. **Standard Schema v1 type source (F1, approved: Option A).**
+   - **Adopted:** Export a local, spec-exact `StandardSchemaV1` TypeScript
      interface/namespace from `@ghostvue/vue` (`0` production dependencies) and
      pin `@standard-schema/spec` as a `devDependency` in compile-time type tests
      to enforce bidirectional type equality.
-   - **Alternative:** Add `@standard-schema/spec` (`^1.1.0`, MIT, types-only) to
+   - **Alternative (rejected):** Add `@standard-schema/spec` (`^1.1.0`, MIT, types-only) to
      `@ghostvue/vue` `dependencies` and re-export its `StandardSchemaV1` type
      directly.
-2. **Async submit handler tracking on `<GhostForm>` (F2, reviewer: Zac).**
-   - **Recommended:** Keep `submit`, `invalid`, and `reset` in `defineEmits` so
+2. **Async submit handler tracking on `<GhostForm>` (F2, approved: Option A).**
+   - **Adopted:** Keep `submit`, `invalid`, and `reset` in `defineEmits` so
      they appear as standard events in `ghost-form.manifest.json` and generated
      API docs, and provide `payload.waitUntil(promise)` on
      `GhostFormSubmitPayload` for async `<GhostForm @submit>` handlers (while
      `useGhostForm({ onSubmit })` awaits a returned `Promise` directly).
-   - **Alternative:** Declare `onSubmit?: (payload: ...) => unknown | Promise<unknown>`
+   - **Alternative (rejected):** Declare `onSubmit?: (payload: ...) => unknown | Promise<unknown>`
      in `defineProps` instead of `defineEmits` so `<GhostForm @submit="asyncSave">`
      returns its `Promise` directly without `waitUntil(...)`, accepting that
      `vue-component-meta` records `onSubmit` in `props` rather than `events`.
-3. **Default trigger pair and duplicate-submit policy (F3, reviewer: Zac).**
-   - **Recommended:** Default `validateOn: 'submit'` and `revalidateOn: 'change'`,
+3. **Default trigger pair and duplicate-submit policy (F3, approved: Option A).**
+   - **Adopted:** Default `validateOn: 'submit'` and `revalidateOn: 'change'`,
      ignore duplicate submits while `isSubmitting === true` (`{ status: 'ignored' }`),
      and let `submit()` supersede background `blur`/`change` validations when
      `isSubmitting === false`.
-   - **Alternative:** Default `validateOn: 'blur'`, or queue/abort-and-restart
+   - **Alternative (rejected):** Default `validateOn: 'blur'`, or queue/abort-and-restart
      in-flight submissions on a second submit click.
-4. **Canonical nested path encoding and unmatched paths (F4, reviewer: Zac).**
-   - **Recommended:** Join `string | number` path segments with `.`
+4. **Canonical nested path encoding and unmatched paths (F4, approved: Option A).**
+   - **Adopted:** Join `string | number` path segments with `.`
      (`billing.postalCode`, `webhooks.0.url`), keep non-empty unmatched paths in
      `fieldErrors[path]` without duplicating them into `formErrors`, and route
      only empty/missing or `symbol`-containing paths into `formErrors`.
-   - **Alternative:** Support JSON-Pointer/bracket syntax (`webhooks[0].url`) or
+   - **Alternative (rejected):** Support JSON-Pointer/bracket syntax (`webhooks[0].url`) or
      also mirror unmatched field paths (no mounted `<GhostField name="...">`)
      into `formErrors`.
-5. **Package surface in `@ghostvue/themes` (F5, reviewer: Zac).**
-   - **Recommended:** Export `GhostForm` and `useGhostForm` from `@ghostvue/vue`
+5. **Package surface in `@ghostvue/themes` (F5, approved: `@ghostvue/vue`-only).**
+   - **Adopted:** Export `GhostForm` and `useGhostForm` from `@ghostvue/vue`
      only in `0.2.0`, because `GhostForm` owns no visual tokens or layout chrome
      (consumers compose `GhostCard`, `GhostField`, `GhostFieldset`, or CSS grid).
-   - **Alternative:** Re-export `GhostForm` from `@ghostvue/themes` (either as a
+   - **Alternative (rejected):** Re-export `GhostForm` from `@ghostvue/themes` (either as a
      pass-through or with an optional default vertical field-stack gap) so
      themed consumers can import `GhostForm` from `@ghostvue/themes` alongside
      `GhostField` and `GhostInput`.
