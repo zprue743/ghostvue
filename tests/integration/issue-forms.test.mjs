@@ -50,14 +50,23 @@ const plainBooleans = {
   FALSE: false,
 }
 
+// Plain scalars that the YAML core schema resolves to null.
+const plainNulls = ['null', 'Null', 'NULL', '~']
+
+// Plain scalars that the YAML core schema resolves to an integer or float.
+// The reader has no use for numbers, so it refuses them rather than return a
+// string that YAML would not produce.
+const plainNumber =
+  /^(?:[-+]?(?:[0-9]+|0o[0-7]+|0x[0-9a-fA-F]+|(?:\.[0-9]+|[0-9]+(?:\.[0-9]*)?)(?:[eE][-+]?[0-9]+)?)|[-+]?\.(?:inf|Inf|INF)|\.(?:nan|NaN|NAN))$/
+
 /**
  * Reads one scalar the way YAML would, or throws when the value uses syntax
  * this reader does not support. Quoted scalars must be a single well-formed
  * pair: single quotes may only contain doubled `''`, and double quotes may not
  * contain escapes or a bare `"`. A plain scalar may not contain `: ` or ` #`
  * (YAML reads those as a nested mapping or a comment) or end in `:`. A plain
- * Boolean is returned as a Boolean; every other scalar is returned as a
- * string.
+ * Boolean is returned as a Boolean and a plain null as `null`, a plain number
+ * throws, and every other scalar is returned as a string.
  */
 function scalar(value, where) {
   const fail = (reason) => {
@@ -78,6 +87,8 @@ function scalar(value, where) {
   if (/: |:$/.test(value)) fail('plain scalar containing ": "')
   if (/ #/.test(value)) fail('plain scalar containing " #"')
   if (Object.hasOwn(plainBooleans, value)) return plainBooleans[value]
+  if (plainNulls.includes(value)) return null
+  if (plainNumber.test(value)) fail('plain scalar YAML reads as a number')
   return value
 }
 
@@ -171,8 +182,13 @@ function readForm(file) {
  * that breaks it only after merge, so it is checked here.
  */
 function expectIssueFormSchema(form) {
-  expect(form.name).toBeTruthy()
-  expect(form.description).toBeTruthy()
+  // GitHub requires both to be strings, so a plain `name: true` or
+  // `description: null` is rejected after merge even though it is truthy or
+  // present.
+  for (const key of ['name', 'description']) {
+    expect(typeof form[key], key).toBe('string')
+    expect(form[key], key).not.toBe('')
+  }
   expect(form.body.length).toBeGreaterThan(0)
 
   const fields = form.body.filter((element) => element.type !== 'markdown')
@@ -352,6 +368,65 @@ describe('issue-form reader', () => {
       const form = parseForm(formRequiring(raw), 'example.yml')
       expect(typeof form.body[0].validations.required, raw).toBe('string')
       expect(() => expectIssueFormSchema(form), raw).toThrow()
+    }
+  })
+
+  /** Builds a minimal valid form with the given top-level name/description. */
+  const formTitled = ({ name = 'Example', description = 'Example form.' }) =>
+    [
+      `name: ${name}`,
+      `description: ${description}`,
+      'body:',
+      '  - type: textarea',
+      '    id: example',
+      '    attributes:',
+      '      label: Example',
+    ].join('\n')
+
+  it('rejects a name or description that YAML reads as a non-string', () => {
+    for (const fields of [
+      { name: 'true' },
+      { name: 'False' },
+      { name: 'null' },
+      { name: '~' },
+      { description: 'null' },
+      { description: 'true' },
+      { description: 'NULL' },
+    ]) {
+      const form = parseForm(formTitled(fields), 'example.yml')
+      expect(() => expectIssueFormSchema(form), JSON.stringify(fields)).toThrow(
+        /(name|description): expected '(boolean|object)' to be 'string'/,
+      )
+    }
+  })
+
+  it('refuses plain numbers, which YAML does not read as strings', () => {
+    for (const value of ['1', '-2', '0.5', '1e3', '0x1F', '.inf', '.NaN'])
+      expect(
+        () => parseForm(formTitled({ name: value }), 'example.yml'),
+        value,
+      ).toThrow(/reads as a number.*quote the value/)
+  })
+
+  it('accepts plain and quoted string names and descriptions', () => {
+    for (const [fields, expected] of [
+      [{}, { name: 'Example', description: 'Example form.' }],
+      [
+        { name: "'true'", description: '"null"' },
+        { name: 'true', description: 'null' },
+      ],
+      [
+        { name: "'Bug: report'", description: "'Version 1.0'" },
+        { name: 'Bug: report', description: 'Version 1.0' },
+      ],
+      [
+        { name: 'Version 1.0', description: '0.2.0 release' },
+        { name: 'Version 1.0', description: '0.2.0 release' },
+      ],
+    ]) {
+      const form = parseForm(formTitled(fields), 'example.yml')
+      expect(form, JSON.stringify(fields)).toMatchObject(expected)
+      expectIssueFormSchema(form)
     }
   })
 })
