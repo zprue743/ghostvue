@@ -7,7 +7,9 @@ components:
   - GhostSubmenuContent
 packages:
   - '@ghostvue/vue'
-specStatus: pending-review
+specStatus: approved
+approval:
+  evidence: 'Maintainer design approval on 2026-11-28: https://github.com/zprue743/ghostvue/pull/511#issuecomment-7242865701'
 manifests: []
 sections:
   purpose:
@@ -42,10 +44,8 @@ unresolvedQuestions: []
 
 # Component specification for nested menus
 
-This is the proposed contract for [#413](https://github.com/zprue743/ghostvue/issues/413).
-Maintainer approval of the public parts and accessibility behavior is required
-before implementation. Record the approval link in frontmatter when the
-contract is approved.
+This specification records the shared interaction contract for
+[#413](https://github.com/zprue743/ghostvue/issues/413).
 
 ## Purpose and user problems
 
