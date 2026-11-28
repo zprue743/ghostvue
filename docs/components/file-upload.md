@@ -34,7 +34,8 @@ and the field allows three PDF, PNG, or SVG files of up to 5 MB. Try each step:
 - **Submit.** **Submit packet** reads `new FormData(form)` and lists the files
   the `assets` field carries, which is exactly the visible list. Remove every
   file and submit to see the empty-form error and focus move to
-  **Choose files**.
+  **Choose files**. Picking only rejected files next replaces that error with
+  their file-specific sentences, which stay until the list changes.
 
 The error is `GhostFieldError`, so its text is part of the trigger's
 accessible description, next to "Up to 3 PDF, PNG, or SVG files, 5 MB each.",

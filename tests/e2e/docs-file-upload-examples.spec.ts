@@ -47,7 +47,10 @@ async function openGuide(page: Page, url: string, mode: 'light' | 'dark') {
   await expect(page.locator('html')).toHaveAttribute('data-ghost-mode', mode)
 }
 
-/** Walks the journey the guide describes and returns at the empty submit. */
+/**
+ * Walks the journey the guide describes and returns after an invalid-only
+ * selection that follows the empty submit.
+ */
 async function walkJourney(page: Page, lead: Locator) {
   const trigger = lead.locator('[data-part="trigger"]')
   const items = lead.getByRole('list', { name: 'Attached assets' })
@@ -136,6 +139,26 @@ async function walkJourney(page: Page, lead: Locator) {
   await expect(error).toHaveText('Attach at least one asset before submitting.')
   await expect(trigger).toBeFocused()
   await expect(trigger).toHaveAttribute('aria-invalid', 'true')
+  await expect(result).toHaveText('Not submitted yet.')
+
+  // An invalid-only selection after the empty submit replaces the stale
+  // required message with its own rejection, which persists until the list
+  // changes (blurring the trigger does not clear it).
+  await chooseFiles(page, trigger, [
+    { name: 'notes.txt', mimeType: 'text/plain' },
+  ])
+  await expect(error).toHaveText(
+    'notes.txt was not added: this file type is not accepted.',
+  )
+  await expect(trigger).toHaveAttribute('aria-invalid', 'true')
+  await expect(trigger).toHaveAccessibleDescription(
+    /5 MB each\. ?notes\.txt was not added: this file type is not accepted\.$/,
+  )
+  await submit.focus()
+  await expect(error).toHaveText(
+    'notes.txt was not added: this file type is not accepted.',
+  )
+  await expect(items).toHaveCount(0)
   await expect(result).toHaveText('Not submitted yet.')
 }
 

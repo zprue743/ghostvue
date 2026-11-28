@@ -64,8 +64,12 @@ function onFilesChange(next: File[]): void {
   submitted.value = null
 }
 
+// An invalid-only selection emits reject without update:modelValue, so this
+// also clears the empty-submit error: the file-specific rejections replace it
+// and stay visible until the list changes.
 function onReject(next: GhostFileUploadRejection[]): void {
   rejections.value = next
+  submitError.value = ''
   submitted.value = null
 }
 
