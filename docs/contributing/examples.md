@@ -74,6 +74,155 @@ against the canvas.
 Keep API tables, CSS snippets, and non-runnable illustrations as fenced
 blocks.
 
+## Choose a guide's examples
+
+A component guide has an ordinary reading path: the first preview and the
+workflow sections most readers follow before they reach the API. These rules
+decide which examples sit on that path. They govern editorial order and
+selection. The [showcase standards](#showcase-authoring-standards) still govern
+how each preview looks.
+
+### Pick the page's track
+
+Check whether `@ghostvue/themes` ships a recipe for the component: a
+`packages/themes/src/ghost-<name>.ts` wrapper exported from
+`@ghostvue/themes`, with a manifest under `packages/themes/manifests/`. An
+example's layer is the `layer` recorded for its id in
+`packages/vue/registry/<name>.registry.json`, which `pnpm registries:write`
+copies into `examples/registry.ts`.
+
+- **Recipe pages** follow the themed-first standard below. Most components with
+  a published surface are recipe pages, including `GhostDataTable` and
+  `GhostDatePicker`.
+- **Headless-only pages** cover utilities that `@ghostvue/themes` deliberately
+  does not export, such as `GhostVisuallyHidden` and `GhostPortal`. There is
+  nothing to theme, so they follow the
+  [headless-only rules](#headless-only-utilities).
+
+### Themed-first standard for recipe pages
+
+- **First preview.** The first example on the page is `themed` and shows a
+  task a reader would recognize, such as reviewing invoices or booking trip
+  dates. Do not open with a headless example or a bare "Basic" control with no
+  context, and do not hold the themed example back until after the headless
+  ones.
+- **Ordinary workflows.** Sections for things most apps need, such as
+  selection, ranges, controlled state, validation and forms, pagination, server
+  data, locale and placement inside a dialog, use `themed` examples. A reader
+  following the page from the top should never need consumer CSS to get a
+  usable result.
+- **Advanced section.** Headless composition, custom styling, `data-part` CSS,
+  and composables go in one clearly signposted section after the ordinary
+  workflows and before the API, or behind a link to the generated reference.
+  Start its heading with "Advanced:" (for example "Advanced: headless
+  composition") and open it with one sentence that says who needs it, such as
+  teams that bring their own design system. Move consumer stylesheet guidance,
+  such as a shared `*-demo__*` class block, into this section with the headless
+  examples it styles.
+- **Prose.** Name the themed import (`@ghostvue/themes`) in the intro and in the
+  first preview's prose. Introduce `@ghostvue/vue` in the advanced section, and
+  link to that section from the intro.
+
+When an ordinary workflow has only a headless example today, add a `themed`
+counterpart or move the headless one into the advanced section. Do not leave it
+on the reading path.
+
+### Headless-only utilities
+
+A headless-only page has no themed layer to put first, so its examples stay
+`headless`. Apply the same editorial order anyway:
+
+- The first preview shows a realistic task, not the bare component. For
+  `GhostVisuallyHidden`, that is an icon-only action bar with a status message,
+  not one hidden word.
+- One section per distinct task or contract, such as naming icon-only
+  controls, `as` for table headers, `focusable` for skip links, and keeping a
+  live region mounted.
+- Composable or bring-your-own-element use still goes in an "Advanced:"
+  section or behind a reference link.
+- Keep surrounding controls minimal and use semantic tokens with system-color
+  fallbacks, so the copied source works without a theme. Do not add a themed
+  wrapper just to satisfy the themed-first standard; a recipe needs its own
+  approved spec.
+
+### Promote, combine, or link
+
+Every manifest-listed example stays in the registry and on the component's
+generated [reference page](/reference/), which renders it and links to its
+source. The guide decides only which ones appear on the page.
+
+- **Promote** an example to its own section when it shows a distinct user task
+  or a contract that ordinary consumers hit, and the behavior is easier to
+  understand by using it than by reading about it. On a recipe page, the
+  promoted example must be `themed`.
+- **Combine** examples that differ only in layer, or in one or two prop values.
+  Keep the themed one on a recipe page. Show the variation with a
+  [props playground](#props-playgrounds) or a sentence of prose, not a second
+  preview of the same task.
+- **Link** to the reference page instead of rendering an example when it is a
+  headless twin of a themed example, a regression or edge-case fixture, or a
+  variant whose only difference is covered in prose (for example a keyboard
+  direction difference described in the accessibility section).
+
+Removing an example from a guide does not remove it from its manifest. Delete
+the file only when no manifest, test, or reference still needs it.
+
+### Example: DataTable outline
+
+`GhostDataTable` ships a themed recipe, so its guide is a recipe page. The
+outline below shows the target order. Ids marked "to add" do not exist yet.
+
+```text
+# GhostDataTable
+  Intro: the table owns interaction state and markup; you own data and
+  fetching. Import from @ghostvue/themes; link to the advanced section.
+
+## Review invoices                     data-table/themed-invoices   themed
+  First preview: themed root and preset with search, selection, bulk
+  actions and a paginated footer. Prose covers size, variant and
+  sticky-header.
+
+## Paginate long lists                 data-table/themed-invoices   themed
+  Combine: the first preview already pages through #footer, so this
+  section explains it in prose instead of a second preview.
+## Load rows from a server             themed server example        themed, to add
+  Ordinary workflow. The headless paginated-invoices and
+  server-invoices-router examples move to the advanced section or a
+  reference link until a themed server example exists.
+
+## Behavior                            prose
+## Accessibility                       prose and keyboard table
+
+## Advanced: headless composition      for teams writing their own CSS
+### Renderer child                     data-table/basic-invoices    headless
+### Preset                             data-table/preset-invoices   headless
+  Combine with the themed first preview, or link to the reference page:
+  it shows the same task without a theme.
+### Full composition                   data-table/full-invoices     headless
+### Styling hooks                      data-part and data-* attributes
+
+## API                                 generated tables, link to /reference/
+```
+
+### Counterexample: a headless-only recipe page
+
+This order looks complete but fails the standard, because a recipe ships but a
+reader meets it late:
+
+```text
+# GhostDataTable
+## Basic                       data-table/basic-invoices      headless  ✗ first preview is headless
+### Preset                     data-table/preset-invoices     headless  ✗ ordinary task without the recipe
+## Themed preset               data-table/themed-invoices     themed    ✗ recipe appears third
+## Full composition            data-table/full-invoices       headless  ✗ composition on the reading path
+## Pagination                  data-table/paginated-invoices  headless  ✗ ordinary workflow, headless
+## Server data                 data-table/server-invoices-…   headless  ✗ ordinary workflow, headless
+## Styling                     data-part hooks                          ✗ no "Advanced:" signpost
+```
+
+A reader who copies the first preview gets an unstyled table, and the themed
+import is easy to miss. Reorder it as in the outline above.
+
 ## Props playgrounds
 
 A few examples opt into a typed props playground: a row of controls above
