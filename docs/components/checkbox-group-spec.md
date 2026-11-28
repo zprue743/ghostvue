@@ -399,8 +399,10 @@ Native attributes and listeners on the group fall through to the root
   selection while the group still reacted to that form's reset. The group
   therefore consumes a root `form` attribute, does not render it, and gives a
   development warning (new `GHOST0xx` code, registered in `docs/warnings.md` at
-  implementation). Members with their own `form` attribute are unsupported
-  too (see the member table). **Why drop instead of propagate:** supporting it
+  implementation). Members consume their own `form` attribute the same way
+  (see the member table): it is never rendered on the native input, so a
+  member always submits and resets with the group's ancestor form.
+  **Why drop instead of propagate:** supporting it
   needs a declared `form` prop copied onto every member (overriding each
   member's own attribute), reset listening on a form outside the group's
   subtree, and browser coverage for both. No example, issue, or sibling
@@ -415,19 +417,19 @@ member when it has a group ancestor **and** a string `value` attribute. Without
 a `value` it stays a standalone boolean checkbox, even inside the group. That is
 how the select-all lives inside the same `fieldset`.
 
-| `GhostCheckbox` input            | Standalone (today, unchanged) | Member of a group                                                                                                                                           |
-| -------------------------------- | ----------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `value` (native attribute)       | Native `value` only           | Membership key **and** native `value`. Compared as a string.                                                                                                |
-| `modelValue` / `v-model`         | Boolean checked state         | Ignored. Checked state is `group.includes(value)`. Development warning (new `GHOST0xx` code, registered in `docs/warnings.md` at implementation).           |
-| `defaultValue`                   | Seed and reset baseline       | Ignored, with the same development warning. The group's `defaultValue` is the baseline.                                                                     |
-| `indeterminate`                  | Mixed display                 | Still authoritative and display-only. It never adds or removes the value.                                                                                   |
-| `disabled`                       | Native disabled               | Authoritative. Effective disabled is `item.disabled \|\| group.disabled`.                                                                                   |
-| `name` (native attribute)        | Native `name`                 | When the group has a `name`, the group's `name` wins. A different item `name` gives a development warning. Without a group `name`, the item `name` is kept. |
-| `id`, `aria-*`, listeners        | Fall through                  | Fall through unchanged. `GhostFieldControl` slot props per option keep working, including a per-option `aria-invalid`.                                      |
-| `form` (native attribute)        | Native form owner             | Unsupported. Falls through, but a development warning names it: the member must submit to and reset with the group's ancestor form.                         |
-| `required` (native attribute)    | Native required               | Falls through unchanged (for example a consent box). It never means "at least one".                                                                         |
-| `update:modelValue` emit         | Emitted after activation      | **Not emitted.** The group emits once. Native `@change` and `@click` listeners still fire.                                                                  |
-| Exposed `element`/`focus`/`blur` | Unchanged                     | Unchanged.                                                                                                                                                  |
+| `GhostCheckbox` input            | Standalone (today, unchanged) | Member of a group                                                                                                                                              |
+| -------------------------------- | ----------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `value` (native attribute)       | Native `value` only           | Membership key **and** native `value`. Compared as a string.                                                                                                   |
+| `modelValue` / `v-model`         | Boolean checked state         | Ignored. Checked state is `group.includes(value)`. Development warning (new `GHOST0xx` code, registered in `docs/warnings.md` at implementation).              |
+| `defaultValue`                   | Seed and reset baseline       | Ignored, with the same development warning. The group's `defaultValue` is the baseline.                                                                        |
+| `indeterminate`                  | Mixed display                 | Still authoritative and display-only. It never adds or removes the value.                                                                                      |
+| `disabled`                       | Native disabled               | Authoritative. Effective disabled is `item.disabled \|\| group.disabled`.                                                                                      |
+| `name` (native attribute)        | Native `name`                 | When the group has a `name`, the group's `name` wins. A different item `name` gives a development warning. Without a group `name`, the item `name` is kept.    |
+| `id`, `aria-*`, listeners        | Fall through                  | Fall through unchanged. `GhostFieldControl` slot props per option keep working, including a per-option `aria-invalid`.                                         |
+| `form` (native attribute)        | Native form owner             | **Consumed.** Never rendered on the native input, in development and production, so the member's form owner is the group's ancestor form. Development warning. |
+| `required` (native attribute)    | Native required               | Falls through unchanged (for example a consent box). It never means "at least one".                                                                            |
+| `update:modelValue` emit         | Emitted after activation      | **Not emitted.** The group emits once. Native `@change` and `@click` listeners still fire.                                                                     |
+| Exposed `element`/`focus`/`blur` | Unchanged                     | Unchanged.                                                                                                                                                     |
 
 Because `value` is not a declared prop, the group's `TValue` cannot be checked
 against each member's `value` at compile time. Vue does not infer generics
@@ -611,9 +613,9 @@ state, and the consumer chooses it.
   nothing. Each member reconciles `input.checked` (and `indeterminate`) as
   `GhostCheckbox` already does.
 - The reset listener is the group root's ancestor form (`closest('form')`).
-  External form owners (a `form` attribute on the root or on a member) are
-  unsupported (see [Props](#props-and-configuration)), so submission and reset
-  always use the same form. A group outside any form has no native reset.
+  A `form` attribute on the root or on a member is consumed and never rendered
+  (see [Props](#props-and-configuration)), so every member's native form owner
+  is that same ancestor form and submission and reset always agree. A group outside any form has no native reset.
 - Fixture: uncontrolled, `defaultValue: ['mentions', 'assignments']`. The user
   checks `digest` (state `['mentions', 'assignments', 'digest']`), then the form
   resets. One emit: `['mentions', 'assignments']` (a new array, not the
@@ -911,8 +913,10 @@ outcome.
   `invalid` is `false`). A per-option `aria-invalid` on one `GhostCheckbox`
   stays on that input only.
 - External form owner: a `form` attribute on the root is not rendered and gives
-  the development warning. A member `form` attribute gives the member warning.
-  Reset listens on the ancestor form only.
+  the development warning. A member `form="B"` is not rendered on its input
+  (`input.hasAttribute('form')` is `false`, also in a production build) and
+  gives the member warning. A non-member `GhostCheckbox` (no `value`) keeps its
+  `form` attribute. Reset listens on the ancestor form only.
 - Exposed `focus()` targets the first enabled checked member, else the first
   enabled member.
 - Themed wrapper forwards the model, emits, and the exposed ref, and keeps the
@@ -949,6 +953,17 @@ outcome.
   renders no `form` attribute, `new FormData(prefs)` contains no member
   values, and resetting `prefs` does not change the model, so submission and
   reset never disagree.
+- Two-form fixture: forms `A` and `B` on one page. The group
+  (`name="notifications"`, uncontrolled, `defaultValue: ['mentions']`) sits
+  inside `A`, and its `digest` member is given `form="B"`. Assertions:
+  - The `digest` input has no `form` attribute, and `input.form` is `A`.
+  - After checking `digest`, `new FormData(A).getAll('notifications')` is
+    `['mentions', 'digest']` and `new FormData(B).getAll('notifications')` is
+    `[]`.
+  - `B.reset()` leaves the model at `['mentions', 'digest']` and `digest`
+    checked.
+  - `A.reset()` restores the model to `['mentions']` with `digest` unchecked,
+    and `getAll` on `A` is `['mentions']`.
 - Two sequential user clicks (`page.click` on `a`, then `b`) on a controlled
   group accumulate to `['a', 'b']` in the model readout and in `getAll`.
 - Pre-hydration click is reconciled to the model (Nuxt fixture).
@@ -1094,7 +1109,8 @@ not change any other approved decision. They are not a new approval.
   This supersedes the member mapping originally recorded in CG6.
 - **External form owner** (`504-external-form-owner`). Dropped from the
   contract: the group must be inside its form. A `form` attribute on the root
-  or on a member is unsupported and warns in development (see
+  or on a member is consumed, never rendered, and warns in development, so a
+  member always submits and resets with the group's form (see
   [Props](#props-and-configuration)).
 - **Controlled activation race** (`504-controlled-activation-race`). The
   controlled contract requires the updated `modelValue` to render between
