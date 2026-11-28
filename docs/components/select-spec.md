@@ -812,12 +812,16 @@ new FormData(filters).getAll('tags') // ['bug']
 
 ### Environment behavior (multiple)
 
-SSR renders the trigger with the value text for the members whose options are
-registered during render, `aria-multiselectable` on the closed listbox, and
-one mirror per member (or the unnamed reset anchor when empty) when `name` is
-set, so the server markup submits the
-same entries as the hydrated control. Hydration must not emit. Touch uses the
-same pointer path as click; options keep the themed minimum block size.
+A closed SSR render outputs the trigger with the value text for the members
+whose options are registered during render, and one mirror per member (or the
+unnamed reset anchor when empty) when `name` is set, so the server markup
+submits the same entries as the hydrated control. Listbox content mounts only
+while open (`v-if="open"`, see [State model](#state-model)), so the closed
+render has no listbox and makes no listbox guarantee. An open SSR render
+(`defaultOpen: true`) also outputs the listbox with `aria-multiselectable="true"`
+and `aria-selected` on every option (`"true"` on members, `"false"` on the
+rest). Hydration must not emit in either case. Touch uses the same pointer
+path as click; options keep the themed minimum block size.
 
 ### Performance
 
@@ -877,9 +881,14 @@ No new package, dependency, or shared primitive.
   `default-value="…"`, `update:modelValue` payload `string | undefined`) are
   the regression fixture for existing consumers. Same cases against the
   `@ghostvue/themes` wrapper.
-- **SSR:** closed multiple select renders value text, `aria-multiselectable`,
-  and one mirror per member, or the unnamed anchor when empty; hydration
-  emits nothing.
+- **SSR, closed:** a default-closed multiple select renders the trigger value
+  text and one mirror per member, or the unnamed reset anchor when empty. No
+  listbox assertion (content is not mounted while closed). Hydration emits
+  nothing.
+- **SSR, open:** with `defaultOpen: true`, the rendered listbox has
+  `aria-multiselectable="true"`, members have `aria-selected="true"`, and
+  other options have `aria-selected="false"`; the mirrors match the closed
+  case. Hydration emits nothing.
 - **Browser (Playwright):** in a multiple playground section, press every
   documented key and assert real focus (`toBeFocused()`), `aria-selected`,
   `aria-expanded`, and that the list stays open after toggles; pointer
@@ -945,12 +954,19 @@ The table keeps each rejected alternative for the record.
 
 ### Post-sign-off amendments
 
-After the S1–S7 sign-off, the maintainer `zprue743` asked for one review
-finding to be applied in
-[PR #512](https://github.com/zprue743/ghostvue/pull/512#discussion_r4727892464).
-It was applied at that request. It narrows the form contract and does not
-change any signed-off decision. It is not a new approval.
+After the S1–S7 sign-off, the maintainer `zprue743` asked for review
+findings to be applied in
+[PR #512](https://github.com/zprue743/ghostvue/pull/512#discussion_r4727892464)
+(follow-ups linked below). They were applied at those requests. They narrow
+the form and SSR contracts and do not change any signed-off decision. They are
+not a new approval.
 
+- **Closed SSR listbox** (`512-closed-ssr-listbox`, review comment
+  [4728404849](https://github.com/zprue743/ghostvue/pull/512#discussion_r4728404849)).
+  The SSR `aria-multiselectable` guarantee is limited to an open, rendered
+  listbox, matching the existing `v-if="open"` mount contract. A closed SSR
+  render guarantees the trigger value text and the form mirrors or anchor (see
+  [Environment behavior (multiple)](#environment-behavior-multiple)).
 - **External-form reset** (`512-external-form-reset`). With `name` set, an
   empty multiple select keeps one unnamed mirror (the reset anchor) whether or
   not it is `required`, so the root `form` prop keeps the reset association
