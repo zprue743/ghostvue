@@ -351,6 +351,21 @@ describe('CI workflow', () => {
     expect(check).toBeGreaterThan(merge)
   })
 
+  it('reports retry passes from the merged results without gating browser CI', () => {
+    const aggregate = jobBlock(workflow, 'browser')
+    const summary = aggregate.indexOf('id: playwright-retries')
+    expect(summary).toBeGreaterThan(aggregate.indexOf('merge-reports'))
+    expect(
+      aggregate.slice(summary, aggregate.indexOf('\n      #', summary)),
+    ).toContain('continue-on-error: true')
+    expect(aggregate).toContain(
+      'scripts/summarize-playwright-retries.mjs .artifacts/playwright/results.json >> "$GITHUB_STEP_SUMMARY"',
+    )
+    expect(aggregate).toContain(
+      "failure() || steps.playwright-retries.outputs.has_flakes == 'true'",
+    )
+  })
+
   it('limits Firefox and WebKit projects to functional @cross-browser specs', () => {
     const config = readRepoFile('playwright.config.ts')
     for (const project of ['firefox-e2e', 'webkit-e2e']) {
