@@ -17,10 +17,13 @@ GHO-65 recipes on top of the [token catalog](./tokens.md). Components consume
 semantic `--ghost-*` variables. `data-motion` attributes are documented utilities
 in `@ghostvue/themes` default CSS. They are not per-component tokens.
 
-Duration CSS values are `calc(<ms> * var(--ghost-motion-intensity, 1))`. Set
-`--ghost-motion-intensity` (0–1, default 1) on any subtree to scale every
+Set `--ghost-motion-intensity` (0–1, default 1) on any subtree to scale every
 duration without rewriting each property. Modes still nest through
 `data-ghost-mode`.
+
+Progress indicators use the same pace across bundled presets. Determinate
+progress updates and the shared spinner period scale relative to each preset's
+default intensity. For example, changing Calm from 0.6 to 0.3 halves both.
 
 ## Durations and easing
 

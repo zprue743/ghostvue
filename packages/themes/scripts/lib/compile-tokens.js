@@ -471,7 +471,7 @@ export function compileTokenDocuments(documents, options = {}) {
 
   return {
     tokens,
-    css: renderTokenCss(tokens, { themeName, defaultDensity }),
+    css: renderTokenCss(tokens, options),
     typescript: renderTokenTypescript(tokens),
     manifest: renderTokenManifest(tokens, { themeName, defaultDensity }),
     docsMarkdown: renderTokenDocs(tokens),
@@ -521,7 +521,16 @@ function cssRuntimeValue(token, value) {
   if (token.type === 'duration') {
     // Intensity is unitless 0–1 so consumers can scale every duration from any
     // subtree without rewriting each --ghost-motion-duration-* property.
-    return `calc(${value} * var(${MOTION_INTENSITY_VAR}, 1))`
+    const scaled = `${value} * var(${MOTION_INTENSITY_VAR}, 1)`
+    // Normalize built-in progress timing here so a consumer's replacement
+    // duration still wins verbatim. Other fast transitions keep the preset scale.
+    if (token.name === 'action.spinner.duration') {
+      return `calc(${scaled} / var(--_ghost-progress-intensity-baseline, 1))`
+    }
+    if (token.name === 'motion.duration.fast') {
+      return `calc(${scaled} / var(--_ghost-progress-update-baseline, 1))`
+    }
+    return `calc(${scaled})`
   }
   if (usesRoundness(token)) {
     // Roundness is unitless 0–1 so a nested --ghost-roundness re-evaluates every
@@ -911,6 +920,10 @@ ${inheritedForcedVars}
  * flash the opposite palette.
  */
 @layer ghostvue-theme {
+  ${cssHost} {
+    --_ghost-progress-intensity-baseline: ${options.progressIntensityBaseline ?? 1};
+  }
+
   ${systemHost} {
 ${lightVars}
   }

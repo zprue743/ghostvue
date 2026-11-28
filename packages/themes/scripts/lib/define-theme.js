@@ -942,7 +942,16 @@ export function defineTheme(input) {
     },
   ]
 
-  const compileOptions = { themeName: input.name, defaultDensity: density }
+  // Bundled presets shorten interaction feedback. Use their design-time
+  // intensity as the reference for progress so explicit overrides still scale it.
+  const preset = FLAGSHIP_THEME_INPUTS.find(
+    (theme) => theme.name === input.name,
+  )
+  const compileOptions = {
+    themeName: input.name,
+    defaultDensity: density,
+    progressIntensityBaseline: preset?.motionIntensity ?? 1,
+  }
   let compiled = compileTokenDocuments(documents, compileOptions)
 
   const beforeFill = snapshotTokenValues(compiled.tokens)

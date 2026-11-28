@@ -1,9 +1,64 @@
 import AxeBuilder from '@axe-core/playwright'
-import { expect, test } from '@playwright/test'
 
+import { waitForExamplePreview } from '../support/examples'
+import { expect, playgroundTest as test } from '../support/playground'
 import { startStaticServer } from './static-server'
 
 test.describe('GhostProgress', () => {
+  test('keeps the upload queue at the same pace across bundled themes', async ({
+    page,
+    playgroundUrl,
+  }) => {
+    for (const theme of ['default', 'calm', 'mono', 'vibrant'] as const) {
+      await page.emulateMedia({ reducedMotion: 'no-preference' })
+      const queue = await waitForExamplePreview(
+        page,
+        playgroundUrl,
+        'progress/upload-queue',
+        { theme },
+      )
+      const upload = queue.getByRole('progressbar', {
+        name: 'Uploading tokens-bundle.tar.gz',
+      })
+      const fill = upload.locator('[data-part="indicator"]')
+      const verifying = queue
+        .getByRole('progressbar', {
+          name: 'Verifying manifest-signatures.json',
+        })
+        .locator('[data-part="indicator"]')
+
+      await expect(page.locator('html')).toHaveAttribute(
+        'data-ghost-theme',
+        theme,
+      )
+      await expect(verifying).toHaveCSS(
+        'animation-name',
+        'ghost-progress-indeterminate',
+      )
+      await expect(verifying).toHaveCSS('animation-duration', '0.7s')
+      await queue.getByRole('button', { name: 'Advance +15%' }).click()
+      await expect(upload).toHaveAttribute('aria-valuenow', '80')
+      await expect(fill).toHaveCSS('transition-property', 'inline-size')
+      await expect(fill).toHaveCSS('transition-duration', '0.12s')
+      await queue.getByRole('button', { name: 'Reset' }).click()
+      await expect(upload).toHaveAttribute('aria-valuenow', '65')
+
+      await page.emulateMedia({ reducedMotion: 'reduce' })
+      await expect(verifying).toHaveCSS(
+        'animation-name',
+        'ghost-progress-pulse',
+      )
+      await expect(verifying).toHaveCSS('animation-duration', '0.7s')
+      await expect(fill).toHaveCSS('transition-duration', '0.08s')
+
+      await queue.evaluate((element) => {
+        element.style.setProperty('--ghost-motion-intensity', '0')
+      })
+      await expect(verifying).toHaveCSS('animation-duration', '0s')
+      await expect(fill).toHaveCSS('transition-duration', '0s')
+    }
+  })
+
   test('exposes determinate and indeterminate progressbars and has no axe violations', async ({
     page,
   }) => {

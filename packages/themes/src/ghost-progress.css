@@ -24,9 +24,14 @@
   }
 
   :where(
-    .ghost-theme .ghost-progress [data-part='indicator'],
-    .ghost-themed-scope .ghost-progress [data-part='indicator']
+    .ghost-theme .ghost-progress > [data-part='indicator'],
+    .ghost-themed-scope .ghost-progress > [data-part='indicator']
   ) {
+    --_ghost-progress-update-baseline: var(
+      --_ghost-progress-intensity-baseline,
+      1
+    );
+
     background-color: var(--_ghost-progress-fill);
     block-size: 100%;
     border-radius: inherit;
