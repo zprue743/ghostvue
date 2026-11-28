@@ -4,8 +4,9 @@
  * Each id is the path under `examples/` without the extension
  * (`button/icon-only` → `examples/button/icon-only.vue`). Docs, the
  * playground gallery, e2e, and `pnpm manifests` all share this path
- * convention. A future MCP `get_examples` tool should consume this
- * module rather than inventing a second catalog.
+ * convention. Edit example metadata in `packages/vue/registry/*.registry.json`
+ * and regenerate the catalog with `pnpm registries:write`. The MCP build
+ * bundles the same catalog and SFC sources for `get_examples`.
  */
 export type GhostExampleLayer = 'headless' | 'themed'
 

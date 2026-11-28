@@ -14,7 +14,10 @@ function buttonNamed(wrapper: ReturnType<typeof mount>, name: string) {
 
 describe('button/action-bar example', () => {
   beforeEach(() => {
-    vi.useFakeTimers()
+    // Only fake setTimeout/clearTimeout so jsdom's internal setImmediate task
+    // queue (used during focus and DOM updates in jsdom 31+) does not inflate
+    // getTimerCount().
+    vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] })
   })
 
   afterEach(() => {
@@ -68,6 +71,7 @@ describe('button/action-bar example', () => {
 
     // A second click while pending must not schedule another publish.
     await publish.trigger('click')
+    expect(vi.getTimerCount()).toBe(1)
     vi.advanceTimersByTime(1500)
     await nextTick()
     expect(publish.attributes('aria-busy')).toBeUndefined()

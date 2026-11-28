@@ -57,10 +57,10 @@ describe('useGhostScrollArea', () => {
       props: { orientation: 'horizontal' },
     })
 
-    const style = wrapper.get('div').attributes('style') ?? ''
-    expect(style).toContain('overflow-x: auto')
-    expect(style).toContain('overflow-y: hidden')
-    expect(wrapper.get('div').attributes('data-orientation')).toBe('horizontal')
+    const root = wrapper.get('div')
+    expect(root.element.style.overflowX).toBe('auto')
+    expect(root.element.style.overflowY).toBe('hidden')
+    expect(root.attributes('data-orientation')).toBe('horizontal')
   })
 
   it('adds root tabindex when the sole button becomes disabled and removes it when re-enabled', async () => {

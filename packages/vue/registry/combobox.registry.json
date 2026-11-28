@@ -66,6 +66,12 @@
       "layer": "themed"
     },
     {
+      "id": "combobox/review-request-form",
+      "title": "Review request form",
+      "description": "Themed native form: a required single-value reviewer and a multiple labels combobox with client-side filtering, empty states, Reset, and the submitted form data (one entry per selected label).",
+      "layer": "themed"
+    },
+    {
       "id": "combobox/themed",
       "title": "Themed",
       "description": "Input and list surface tokens from @ghostvue/themes.",
