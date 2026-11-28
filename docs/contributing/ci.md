@@ -29,8 +29,12 @@ against upstream.
 
 Container images are pinned by exact tag. The Playwright image tag must match
 `@playwright/test` in `package.json`; it also provides the browsers (Chromium,
-Firefox, and WebKit with their system libraries), so CI never runs
-`playwright install`. The `browser-shard` matrix (3 Chromium shards) runs the
+Firefox, and WebKit with their system libraries). On Playwright 1.65.1,
+`browser-cross` installs Firefox revision 1575 for the
+[upstream accessibility fix](https://github.com/microsoft/playwright/pull/43982).
+The version-specific pnpm patch selects the same browser for local
+`pnpm exec playwright install firefox`. Remove the patch and CI install step
+when the pinned image includes the fix. The `browser-shard` matrix (3 Chromium shards) runs the
 Chromium projects and the consolidated `browser-cross` job runs both
 `firefox-e2e` and `webkit-e2e` from the same image; see the
 [cross-browser matrix](../standards/testing.md#cross-browser-functional-matrix).
