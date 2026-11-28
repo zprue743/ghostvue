@@ -171,8 +171,13 @@ under the repository's code scanning alerts.
 - Major updates for `node`, `@types/node`, and `pnpm` are ignored in
   `.github/dependabot.yml` so runtime floor bumps remain explicit human pull
   requests.
-- Every update pull request runs the normal CI gate and needs a human review
-  before merge.
+- The hourly PR sweep may merge routine upgrades to existing dependencies
+  after reviewing the upstream changes and verifying the required checks.
+  Major-version upgrades and updates with severe breaking changes require
+  explicit admin approval. The sweep reports the affected version and the
+  concrete impact, such as a raised runtime floor or a removed API GhostVue
+  uses. Mechanical updates to matching version pins follow the same dependency
+  rule. Changes to workflow behavior or permissions require admin approval.
 
 Security advisories are triaged as described in the
 [dependency policy](../standards/dependencies.md#security-audit-triage).

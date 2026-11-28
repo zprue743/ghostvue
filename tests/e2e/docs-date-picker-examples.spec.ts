@@ -1,5 +1,9 @@
+import { readFileSync } from 'node:fs'
+
+import AxeBuilder from '@axe-core/playwright'
 import { expect, test, type Locator, type Page } from '@playwright/test'
 
+import { exampleSourceBlock, openExampleSource } from './docs-example-source'
 import { startStaticServer } from './static-server'
 
 /*
@@ -28,13 +32,13 @@ interface PickerCase {
 const cases: readonly PickerCase[] = [
   { id: 'date-picker/basic', layer: 'headless' },
   { id: 'date-picker/range', layer: 'headless' },
-  { id: 'date-picker/controlled', layer: 'headless' },
-  { id: 'date-picker/validation', layer: 'headless' },
-  { id: 'date-picker/custom-format', layer: 'headless' },
-  { id: 'date-picker/rtl', layer: 'headless' },
+  { id: 'date-picker/controlled', layer: 'themed' },
+  { id: 'date-picker/validation', layer: 'themed' },
+  { id: 'date-picker/custom-format', layer: 'themed' },
+  { id: 'date-picker/rtl', layer: 'themed' },
   {
     id: 'date-picker/nested-dialog',
-    layer: 'headless',
+    layer: 'themed',
     prepare: async (page, preview) => {
       const open = preview.getByRole('button', { name: 'Schedule reminder' })
       await expect(async () => {
@@ -210,6 +214,94 @@ test.describe('docs DatePicker examples', () => {
     })
   }
 
+  test('the lead trip picker commits a range by keyboard and returns focus', async ({
+    page,
+  }) => {
+    const docs = await startStaticServer('apps/docs/.vitepress/dist')
+    try {
+      await page.goto(docs.url + '/components/date-picker.html#themed-use')
+      await expect(
+        page.getByRole('heading', { name: 'Book a trip' }),
+      ).toHaveAttribute('id', 'themed-use')
+      const lead = page.locator('.vp-doc [data-example-id]').first()
+      await expect(lead).toHaveAttribute(
+        'data-example-id',
+        'date-picker/themed',
+      )
+      await expect(lead).toHaveAttribute('data-example-layer', 'themed')
+      const trigger = lead.getByRole('button', { name: 'Choose trip dates' })
+      const dialog = page.getByRole('dialog', { name: 'Choose dates' })
+      const departure = lead.getByRole('textbox', { name: 'Departure' })
+      const returnDate = lead.getByRole('textbox', { name: 'Return' })
+      const closed = await new AxeBuilder({ page })
+        .include('[data-example-id="date-picker/themed"]')
+        .analyze()
+      expect(closed.violations).toEqual([])
+      await expect(async () => {
+        if (!(await dialog.isVisible())) await trigger.press('Enter')
+        await expect(dialog).toBeVisible({ timeout: 500 })
+      }).toPass()
+      await expect(trigger).toHaveAttribute('aria-expanded', 'true')
+      const opened = await new AxeBuilder({ page })
+        .include('[role="dialog"]')
+        .analyze()
+      expect(opened.violations).toEqual([])
+      await expect(
+        dialog.locator('[data-ghost-calendar-date="2026-12-04"]'),
+      ).toBeFocused()
+      await page.keyboard.press('ArrowRight')
+      await expect(
+        dialog.locator('[data-ghost-calendar-date="2026-12-05"]'),
+      ).toBeFocused()
+      await page.keyboard.press('Enter')
+      await expect(dialog.getByRole('status')).toHaveText('Choose an end date')
+      await expect(departure).toHaveValue('2026-12-04')
+      await page.keyboard.press('ArrowRight')
+      await expect(
+        dialog.locator('[data-ghost-calendar-date="2026-12-06"]'),
+      ).toBeFocused()
+      await page.keyboard.press('Enter')
+      await expect(dialog).toBeHidden()
+      await expect(trigger).toHaveAttribute('aria-expanded', 'false')
+      await expect(trigger).toBeFocused()
+      await expect(departure).toHaveValue('2026-12-05')
+      await expect(returnDate).toHaveValue('2026-12-06')
+    } finally {
+      await docs.close()
+    }
+  })
+
+  test('the trip booking source disclosure and Copy deliver the themed SFC', async ({
+    context,
+    page,
+  }) => {
+    const docs = await startStaticServer('apps/docs/.vitepress/dist')
+    try {
+      await context.grantPermissions(['clipboard-read', 'clipboard-write'], {
+        origin: docs.url,
+      })
+      await page.goto(docs.url + '/components/date-picker.html')
+      await openExampleSource(page, 'date-picker/themed')
+      const source = exampleSourceBlock(page, 'date-picker/themed')
+      await expect(source).toContainText('@ghostvue/themes')
+      await expect(source).toContainText('Choose trip dates')
+      const copy = page
+        .locator('[data-example-id="date-picker/themed"]')
+        .getByRole('button', { name: 'Copy Book a trip source' })
+      await copy.click()
+      await expect(copy).toHaveAttribute('data-state', 'copied')
+      const expected = readFileSync('examples/date-picker/themed.vue', 'utf8')
+      const clipboard = await page.evaluate(() =>
+        navigator.clipboard.readText(),
+      )
+      expect(clipboard.replaceAll('\r\n', '\n').trim()).toBe(
+        expected.replaceAll('\r\n', '\n').trim(),
+      )
+    } finally {
+      await docs.close()
+    }
+  })
+
   test('date-picker/basic closes on an outside click', async ({ page }) => {
     const docs = await startStaticServer('apps/docs/.vitepress/dist')
     try {
@@ -313,7 +405,9 @@ test.describe(
     })
 
     for (const picker of cases.filter((item) =>
-      ['date-picker/basic', 'date-picker/range'].includes(item.id),
+      ['date-picker/basic', 'date-picker/range', 'date-picker/themed'].includes(
+        item.id,
+      ),
     )) {
       const slug = picker.id.replaceAll('/', '-')
       test(`${picker.id} open at 390 and 1280px in light and dark`, async ({
