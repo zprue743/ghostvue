@@ -73,6 +73,7 @@ export function dimensionToPx(value: string): number | null
 export function maxCssDimension(value: string, floor: string): string
 export interface CompileTokenOptions {
   themeName?: string
+  progressIntensityBaseline?: number
   defaultDensity?: 'compact' | 'comfortable' | 'spacious'
 }
 

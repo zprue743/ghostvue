@@ -149,9 +149,10 @@ tokens. See [elevation, materials, and gradients](../themes/elevation.md).
 
 Motion durations, cubic-bezier easing, and spring presets are GHO-65.
 Springs are authored as stiffness / damping / mass and compile to CSS
-`linear()` plus a settle duration. Every duration CSS value is
-`calc(<ms> * var(--ghost-motion-intensity, 1))`, redeclared on descendants so a
-nested `--ghost-motion-intensity` re-evaluates. Under
+`linear()` plus a settle duration. Duration tokens scale with
+`--ghost-motion-intensity` and are redeclared on descendants so subtree overrides
+re-evaluate. Progress updates and the shared spinner period use each bundled
+preset's default intensity as their reference. Under
 `prefers-reduced-motion: reduce`, movement tokens collapse to opacity-only
 or 80ms feedback so state changes stay visible. See
 [motion](../themes/motion.md).

@@ -10,6 +10,10 @@
  * flash the opposite palette.
  */
 @layer ghostvue-theme {
+  :where([data-ghost-theme='calm']) {
+    --_ghost-progress-intensity-baseline: 0.6;
+  }
+
   :where(:where([data-ghost-theme='calm']):not([data-ghost-mode]):not(:where([data-ghost-mode] *))) {
     --ghost-action-danger-bg: #b91c1c;
     --ghost-action-danger-bg-active: #640004;
@@ -229,11 +233,11 @@
 
   :where(:where([data-ghost-theme='calm']):not([data-ghost-mode]):not(:where([data-ghost-mode] *))), :where(:where([data-ghost-theme='calm']):not([data-ghost-mode]):not(:where([data-ghost-mode] *))) :where(*) {
     --ghost-action-duration: calc(120ms * var(--ghost-motion-intensity, 1));
-    --ghost-action-spinner-duration: calc(700ms * var(--ghost-motion-intensity, 1));
+    --ghost-action-spinner-duration: calc(700ms * var(--ghost-motion-intensity, 1) / var(--_ghost-progress-intensity-baseline, 1));
     --ghost-focus-ring-duration: calc(120ms * var(--ghost-motion-intensity, 1));
     --ghost-interactive-leave-spring-duration: calc(504ms * var(--ghost-motion-intensity, 1));
     --ghost-motion-duration-expressive: calc(700ms * var(--ghost-motion-intensity, 1));
-    --ghost-motion-duration-fast: calc(120ms * var(--ghost-motion-intensity, 1));
+    --ghost-motion-duration-fast: calc(120ms * var(--ghost-motion-intensity, 1) / var(--_ghost-progress-update-baseline, 1));
     --ghost-motion-duration-instant: calc(0ms * var(--ghost-motion-intensity, 1));
     --ghost-motion-duration-moderate: calc(250ms * var(--ghost-motion-intensity, 1));
     --ghost-motion-duration-slow: calc(400ms * var(--ghost-motion-intensity, 1));
@@ -473,11 +477,11 @@
 
     :where(:where([data-ghost-theme='calm']):not([data-ghost-mode]):not(:where([data-ghost-mode] *))), :where(:where([data-ghost-theme='calm']):not([data-ghost-mode]):not(:where([data-ghost-mode] *))) :where(*) {
       --ghost-action-duration: calc(120ms * var(--ghost-motion-intensity, 1));
-      --ghost-action-spinner-duration: calc(700ms * var(--ghost-motion-intensity, 1));
+      --ghost-action-spinner-duration: calc(700ms * var(--ghost-motion-intensity, 1) / var(--_ghost-progress-intensity-baseline, 1));
       --ghost-focus-ring-duration: calc(120ms * var(--ghost-motion-intensity, 1));
       --ghost-interactive-leave-spring-duration: calc(504ms * var(--ghost-motion-intensity, 1));
       --ghost-motion-duration-expressive: calc(700ms * var(--ghost-motion-intensity, 1));
-      --ghost-motion-duration-fast: calc(120ms * var(--ghost-motion-intensity, 1));
+      --ghost-motion-duration-fast: calc(120ms * var(--ghost-motion-intensity, 1) / var(--_ghost-progress-update-baseline, 1));
       --ghost-motion-duration-instant: calc(0ms * var(--ghost-motion-intensity, 1));
       --ghost-motion-duration-moderate: calc(250ms * var(--ghost-motion-intensity, 1));
       --ghost-motion-duration-slow: calc(400ms * var(--ghost-motion-intensity, 1));
@@ -718,11 +722,11 @@
 
   :where(:where([data-ghost-theme='calm']):where([data-ghost-mode='light']), :where([data-ghost-theme='calm']) :where([data-ghost-mode='light'])), :where(:where([data-ghost-theme='calm']):where([data-ghost-mode='light']), :where([data-ghost-theme='calm']) :where([data-ghost-mode='light'])) :where(*) {
     --ghost-action-duration: calc(120ms * var(--ghost-motion-intensity, 1));
-    --ghost-action-spinner-duration: calc(700ms * var(--ghost-motion-intensity, 1));
+    --ghost-action-spinner-duration: calc(700ms * var(--ghost-motion-intensity, 1) / var(--_ghost-progress-intensity-baseline, 1));
     --ghost-focus-ring-duration: calc(120ms * var(--ghost-motion-intensity, 1));
     --ghost-interactive-leave-spring-duration: calc(504ms * var(--ghost-motion-intensity, 1));
     --ghost-motion-duration-expressive: calc(700ms * var(--ghost-motion-intensity, 1));
-    --ghost-motion-duration-fast: calc(120ms * var(--ghost-motion-intensity, 1));
+    --ghost-motion-duration-fast: calc(120ms * var(--ghost-motion-intensity, 1) / var(--_ghost-progress-update-baseline, 1));
     --ghost-motion-duration-instant: calc(0ms * var(--ghost-motion-intensity, 1));
     --ghost-motion-duration-moderate: calc(250ms * var(--ghost-motion-intensity, 1));
     --ghost-motion-duration-slow: calc(400ms * var(--ghost-motion-intensity, 1));
@@ -962,11 +966,11 @@
 
   :where(:where([data-ghost-theme='calm']):where([data-ghost-mode='dark']), :where([data-ghost-theme='calm']) :where([data-ghost-mode='dark'])), :where(:where([data-ghost-theme='calm']):where([data-ghost-mode='dark']), :where([data-ghost-theme='calm']) :where([data-ghost-mode='dark'])) :where(*) {
     --ghost-action-duration: calc(120ms * var(--ghost-motion-intensity, 1));
-    --ghost-action-spinner-duration: calc(700ms * var(--ghost-motion-intensity, 1));
+    --ghost-action-spinner-duration: calc(700ms * var(--ghost-motion-intensity, 1) / var(--_ghost-progress-intensity-baseline, 1));
     --ghost-focus-ring-duration: calc(120ms * var(--ghost-motion-intensity, 1));
     --ghost-interactive-leave-spring-duration: calc(504ms * var(--ghost-motion-intensity, 1));
     --ghost-motion-duration-expressive: calc(700ms * var(--ghost-motion-intensity, 1));
-    --ghost-motion-duration-fast: calc(120ms * var(--ghost-motion-intensity, 1));
+    --ghost-motion-duration-fast: calc(120ms * var(--ghost-motion-intensity, 1) / var(--_ghost-progress-update-baseline, 1));
     --ghost-motion-duration-instant: calc(0ms * var(--ghost-motion-intensity, 1));
     --ghost-motion-duration-moderate: calc(250ms * var(--ghost-motion-intensity, 1));
     --ghost-motion-duration-slow: calc(400ms * var(--ghost-motion-intensity, 1));
@@ -1207,11 +1211,11 @@
 
     :where(:where([data-ghost-theme='calm']):not([data-ghost-mode])), :where(:where([data-ghost-theme='calm']):not([data-ghost-mode])) :where(*) {
       --ghost-action-duration: calc(120ms * var(--ghost-motion-intensity, 1));
-      --ghost-action-spinner-duration: calc(700ms * var(--ghost-motion-intensity, 1));
+      --ghost-action-spinner-duration: calc(700ms * var(--ghost-motion-intensity, 1) / var(--_ghost-progress-intensity-baseline, 1));
       --ghost-focus-ring-duration: calc(120ms * var(--ghost-motion-intensity, 1));
       --ghost-interactive-leave-spring-duration: calc(504ms * var(--ghost-motion-intensity, 1));
       --ghost-motion-duration-expressive: calc(700ms * var(--ghost-motion-intensity, 1));
-      --ghost-motion-duration-fast: calc(120ms * var(--ghost-motion-intensity, 1));
+      --ghost-motion-duration-fast: calc(120ms * var(--ghost-motion-intensity, 1) / var(--_ghost-progress-update-baseline, 1));
       --ghost-motion-duration-instant: calc(0ms * var(--ghost-motion-intensity, 1));
       --ghost-motion-duration-moderate: calc(250ms * var(--ghost-motion-intensity, 1));
       --ghost-motion-duration-slow: calc(400ms * var(--ghost-motion-intensity, 1));
@@ -1453,11 +1457,11 @@
 
     :where(:where([data-ghost-theme='calm']):not([data-ghost-mode])), :where(:where([data-ghost-theme='calm']):not([data-ghost-mode])) :where(*) {
       --ghost-action-duration: calc(120ms * var(--ghost-motion-intensity, 1));
-      --ghost-action-spinner-duration: calc(700ms * var(--ghost-motion-intensity, 1));
+      --ghost-action-spinner-duration: calc(700ms * var(--ghost-motion-intensity, 1) / var(--_ghost-progress-intensity-baseline, 1));
       --ghost-focus-ring-duration: calc(120ms * var(--ghost-motion-intensity, 1));
       --ghost-interactive-leave-spring-duration: calc(504ms * var(--ghost-motion-intensity, 1));
       --ghost-motion-duration-expressive: calc(700ms * var(--ghost-motion-intensity, 1));
-      --ghost-motion-duration-fast: calc(120ms * var(--ghost-motion-intensity, 1));
+      --ghost-motion-duration-fast: calc(120ms * var(--ghost-motion-intensity, 1) / var(--_ghost-progress-update-baseline, 1));
       --ghost-motion-duration-instant: calc(0ms * var(--ghost-motion-intensity, 1));
       --ghost-motion-duration-moderate: calc(250ms * var(--ghost-motion-intensity, 1));
       --ghost-motion-duration-slow: calc(400ms * var(--ghost-motion-intensity, 1));
@@ -1666,7 +1670,7 @@
       --ghost-focus-ring-duration: calc(0ms * var(--ghost-motion-intensity, 1));
       --ghost-interactive-leave-spring-duration: calc(80ms * var(--ghost-motion-intensity, 1));
       --ghost-motion-duration-expressive: calc(80ms * var(--ghost-motion-intensity, 1));
-      --ghost-motion-duration-fast: calc(80ms * var(--ghost-motion-intensity, 1));
+      --ghost-motion-duration-fast: calc(80ms * var(--ghost-motion-intensity, 1) / var(--_ghost-progress-update-baseline, 1));
       --ghost-motion-duration-instant: calc(0ms * var(--ghost-motion-intensity, 1));
       --ghost-motion-duration-moderate: calc(80ms * var(--ghost-motion-intensity, 1));
       --ghost-motion-duration-slow: calc(80ms * var(--ghost-motion-intensity, 1));
@@ -1690,7 +1694,7 @@
         --ghost-focus-ring-duration: calc(0ms * var(--ghost-motion-intensity, 1));
         --ghost-interactive-leave-spring-duration: calc(80ms * var(--ghost-motion-intensity, 1));
         --ghost-motion-duration-expressive: calc(80ms * var(--ghost-motion-intensity, 1));
-        --ghost-motion-duration-fast: calc(80ms * var(--ghost-motion-intensity, 1));
+        --ghost-motion-duration-fast: calc(80ms * var(--ghost-motion-intensity, 1) / var(--_ghost-progress-update-baseline, 1));
         --ghost-motion-duration-instant: calc(0ms * var(--ghost-motion-intensity, 1));
         --ghost-motion-duration-moderate: calc(80ms * var(--ghost-motion-intensity, 1));
         --ghost-motion-duration-slow: calc(80ms * var(--ghost-motion-intensity, 1));

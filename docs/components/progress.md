@@ -89,9 +89,10 @@ Defaults omit `data-size` / `data-tone` so CSS can treat a missing hook as `md`
 8px at every density and theme, so `sm` stays visible under compact Calm). Fill uses
 `--ghost-action-*-bg`. The track is `--ghost-border-default`.
 
-Under `prefers-reduced-motion: reduce`, indeterminate translation becomes an
-opacity pulse at `--ghost-action-spinner-duration` so the bar does not slide
-and does not flicker faster than `GhostSpinner`.
+Across the bundled themes, a value update takes 120 ms and an indeterminate
+sweep takes 700 ms. Under `prefers-reduced-motion: reduce`, the update takes
+80 ms and the sweep becomes an opacity pulse with the same 700 ms period as
+`GhostSpinner`.
 
 You can also import the stylesheet and wrap unstyled progress bars in
 `.ghost-theme` when you want a region of headless components to pick up the

@@ -297,6 +297,10 @@ no per-component progress tokens:
 - indeterminate motion `--ghost-action-spinner-duration` so the bar does not
   loop at a different rate from `GhostSpinner` / `GhostButton`
 
+Bundled presets keep the default 120 ms update and 700 ms loop even when
+their interaction feedback is faster. A subtree override of
+`--ghost-motion-intensity` scales progress relative to the preset's intensity.
+
 Under `prefers-reduced-motion: reduce`, the determinate width transition uses
 the token's reduced duration (already ~80ms). Indeterminate translation is
 replaced by an opacity pulse at `--ghost-action-spinner-duration` and

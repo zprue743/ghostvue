@@ -108,7 +108,7 @@ describe('token pipeline', () => {
     expect(compiled.css).toContain('--ghost-border-hairline-width: 0.5px;')
     expect(compiled.css).toContain('--ghost-elevation-5-bg: Canvas;')
     expect(compiled.css).toContain(
-      '--ghost-motion-duration-fast: calc(120ms * var(--ghost-motion-intensity, 1));',
+      '--ghost-motion-duration-fast: calc(120ms * var(--ghost-motion-intensity, 1) / var(--_ghost-progress-update-baseline, 1));',
     )
     expect(compiled.css).toContain(
       '--ghost-motion-easing-standard: cubic-bezier(',
@@ -116,7 +116,7 @@ describe('token pipeline', () => {
     expect(compiled.css).toContain('--ghost-motion-spring-gentle: linear(')
     expect(compiled.css).toContain('prefers-reduced-motion: reduce')
     expect(compiled.css).toContain(
-      '--ghost-motion-duration-fast: calc(80ms * var(--ghost-motion-intensity, 1));',
+      '--ghost-motion-duration-fast: calc(80ms * var(--ghost-motion-intensity, 1) / var(--_ghost-progress-update-baseline, 1));',
     )
     expect(compiled.css).toContain('--ghost-motion-translate: 0px;')
     expect(compiled.css).toContain(' :where(*)')
