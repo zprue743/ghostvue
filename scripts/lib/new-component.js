@@ -80,7 +80,7 @@ function manifest(name, packageName, slug) {
       keyboard: {},
       requiredAriaAttributes: [],
     },
-    examples: [`${slug}/basic`],
+    examples: packageName === '@ghostvue/themes' ? [`${slug}/basic`] : [],
   }
 }
 
@@ -352,7 +352,7 @@ Approve the \`${name}\` specification before implementing production behavior.
     [
       `examples/${slug}/basic.vue`,
       `<script setup lang="ts">
-import { ${name} } from '@ghostvue/vue'
+import { ${name} } from '@ghostvue/themes'
 </script>
 
 <template><${name}>${suffix} scaffold content</${name}></template>
@@ -473,7 +473,7 @@ test('${name} scaffold renders accessible content', async ({ page }) => {
         id: `${slug}/basic`,
         title: `${suffix} scaffold`,
         description: 'Neutral scaffold; specification approval required.',
-        layer: 'headless',
+        layer: 'themed',
       },
     ],
   }

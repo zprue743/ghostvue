@@ -14,11 +14,13 @@ The scaffold creates:
   `--ghost-*` tokens, plus a themed ref test. Both exports expose the content
   root as `element`; the themed wrapper forwards the headless ref contract.
   The root exposes `data-part="root"` and `data-ghost-switch` hooks.
-- Vue and themed manifests, a docs page and draft specification, and
-  `examples/switch/basic.vue` registered in `examples/registry.ts`.
+- Vue and themed manifests, a docs page and draft specification, and a lead
+  example at `examples/switch/basic.vue`. The sample imports
+  `@ghostvue/themes`, belongs to the themed manifest, and appears in the
+  generated docs page and playground as a themed example.
 - A runnable Playwright/Axe smoke test at `tests/e2e/ghost-switch.spec.ts`.
 
-It adds `packages/vue/registry/<slug>.registry.json`, updates
+It registers the example in `packages/vue/registry/<slug>.registry.json`, updates
 `registry/primitives.registry.json`, and runs `pnpm registries:write` so public
 barrels, examples, and docs sidebar slices regenerate locally (gitignored
 `.registries/` output). It also seeds provisional 2 kB gzip budgets for the
