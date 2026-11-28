@@ -112,6 +112,58 @@ describe('collectGuideEmbeds', () => {
     ])
   })
 
+  it('skips quoted tags in fences indented by one to three spaces', () => {
+    // CommonMark lets a fence marker sit up to three spaces in; markdown-it
+    // renders the content as code, so the quoted tag must not count.
+    for (const indent of [' ', '  ', '   ']) {
+      const embeds = collectGuideEmbeds(
+        [
+          '## Real',
+          '',
+          `${indent}\`\`\`md`,
+          '<GhostExample id="widget/themed" />',
+          `${indent}\`\`\``,
+          '',
+          `${indent}~~~`,
+          '<GhostExample id="widget/advanced" />',
+          '~~~',
+          '',
+          '<GhostExample id="widget/basic" />',
+          '',
+        ].join('\n'),
+        parsing,
+      )
+
+      expect(
+        embeds.map(({ id }) => id),
+        JSON.stringify(indent),
+      ).toEqual(['widget/basic'])
+    }
+  })
+
+  it('does not treat four-space or inline-backtick lines as fences', () => {
+    // Four spaces make an indented code block, not a fence, and a backtick in
+    // the info string makes the line inline code; neither hides what follows.
+    const embeds = collectGuideEmbeds(
+      [
+        '    ```md',
+        '',
+        '<GhostExample id="widget/basic" />',
+        '',
+        '```md `inline`',
+        '',
+        '<GhostExample id="widget/advanced" />',
+        '',
+      ].join('\n'),
+      parsing,
+    )
+
+    expect(embeds.map(({ id }) => id)).toEqual([
+      'widget/basic',
+      'widget/advanced',
+    ])
+  })
+
   it('counts a legacy sibling snippet or an expanded host once', () => {
     const embeds = collectGuideEmbeds(
       [
@@ -422,6 +474,46 @@ describe('buildExampleInventory', () => {
     ]).pages
 
     expect(page).toEqual(withoutComments)
+    expect(page).toMatchObject({
+      kind: 'headless-only',
+      themedFirst: false,
+      lead: { id: 'widget/basic', layer: 'headless' },
+      counts: { embeds: 2, headless: 2, themed: 0, unresolved: 0 },
+    })
+  })
+
+  it('does not let a tag quoted in an indented fence change the count, lead, or classification', () => {
+    const live = [
+      '# GhostWidget',
+      '',
+      '<GhostExample id="widget/basic" />',
+      '',
+      '<GhostExample id="widget/advanced" />',
+      '',
+    ].join('\n')
+    // Counted, the quoted themed tag would become the lead and make the page
+    // themed-first. The live embed after the closing fence must still count.
+    const quoted = [
+      '# GhostWidget',
+      '',
+      '  ```md',
+      '  <GhostExample id="widget/themed" />',
+      '  ```',
+      '',
+      '<GhostExample id="widget/basic" />',
+      '',
+      '<GhostExample id="widget/advanced" />',
+      '',
+    ].join('\n')
+
+    const [withoutQuote] = inventoryOf([
+      { page: 'docs/components/widget.md', markdown: live },
+    ]).pages
+    const [page] = inventoryOf([
+      { page: 'docs/components/widget.md', markdown: quoted },
+    ]).pages
+
+    expect(page).toEqual(withoutQuote)
     expect(page).toMatchObject({
       kind: 'headless-only',
       themedFirst: false,
