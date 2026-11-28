@@ -200,7 +200,10 @@ function expectIssueFormSchema(form) {
       expect(element.validations).toBeUndefined()
     } else {
       expect(element.id).toMatch(/^[a-z0-9_-]+$/)
-      expect(element.attributes?.label).toBeTruthy()
+      // GitHub rejects a field whose label is not a string ("label must be
+      // a string"), so a plain `label: true` must fail here, not only be truthy.
+      expect(typeof element.attributes?.label, element.id).toBe('string')
+      expect(element.attributes.label, element.id).not.toBe('')
       // GitHub requires a Boolean here; a quoted 'true' is a string and
       // the form would be rejected after merge.
       if (element.validations)
@@ -229,6 +232,19 @@ function renderIssueBody(form, answers) {
     .join('\n\n')
 }
 
+/**
+ * Asserts that a form applies none of the triage or readiness labels.
+ * GitHub matches label names case-insensitively, so `Agent:Ready` would apply
+ * the existing `agent:ready` label; both sides are compared lowercased.
+ */
+function expectNoTriageLabels(form) {
+  const reserved = triageLabels.map((label) => label.toLowerCase())
+  for (const label of form.labels ?? []) {
+    expect(typeof label, String(label)).toBe('string')
+    expect(reserved, label).not.toContain(label.toLowerCase())
+  }
+}
+
 const formFiles = readdirSync(templatesDir)
   .filter((file) => /\.ya?ml$/.test(file) && file !== 'config.yml')
   .sort()
@@ -250,8 +266,7 @@ describe('issue forms', () => {
   })
 
   it.each(formFiles)('%s applies no triage or readiness labels', (file) => {
-    const labels = readForm(file).labels ?? []
-    for (const label of triageLabels) expect(labels).not.toContain(label)
+    expectNoTriageLabels(readForm(file))
   })
 
   it('keeps existing bug and feature fields', () => {
@@ -426,6 +441,54 @@ describe('issue-form reader', () => {
     ]) {
       const form = parseForm(formTitled(fields), 'example.yml')
       expect(form, JSON.stringify(fields)).toMatchObject(expected)
+      expectIssueFormSchema(form)
+    }
+  })
+})
+
+describe('issue-form labels', () => {
+  /** Builds a minimal valid form; `top` lines follow name and description. */
+  const formWithLines = ({ top = [], label = 'Example' } = {}) =>
+    [
+      'name: Example',
+      'description: Example form.',
+      ...top,
+      'body:',
+      '  - type: textarea',
+      '    id: example',
+      '    attributes:',
+      `      label: ${label}`,
+    ].join('\n')
+  const parse = (options) => parseForm(formWithLines(options), 'example.yml')
+
+  it('rejects a reserved workflow label in any letter case', () => {
+    for (const label of [
+      'agent:ready',
+      'Agent:Ready',
+      'AGENT:TRIAGED',
+      'In-Progress',
+      'Blocked',
+    ])
+      expect(
+        () => expectNoTriageLabels(parse({ top: [`labels: [bug, ${label}]`] })),
+        label,
+      ).toThrow()
+    expectNoTriageLabels(parse({ top: ['labels: [bug, Agent-Ready-ish]'] }))
+  })
+
+  it('rejects a field label that is not a nonempty string', () => {
+    for (const label of ['true', 'false', "''", '""'])
+      expect(() => expectIssueFormSchema(parse({ label })), label).toThrow()
+  })
+
+  it('accepts plain and quoted string field labels', () => {
+    for (const [label, expected] of [
+      ['Example', 'Example'],
+      ["'true'", 'true'],
+      ['"Migration: phase two"', 'Migration: phase two'],
+    ]) {
+      const form = parse({ label })
+      expect(form.body[0].attributes.label).toBe(expected)
       expectIssueFormSchema(form)
     }
   })
