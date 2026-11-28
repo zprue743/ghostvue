@@ -144,7 +144,7 @@ export interface ComputedExitMotion {
   /**
    * Finite animation names with positive active time, counted per entry:
    * `animation: fade 100ms, fade 200ms` runs two animations that each end.
-   * Infinite animations are excluded and never gate removal.
+   * Infinite and paused animations are excluded and never gate removal.
    */
   animations: ReadonlyMap<string, number>
 }
@@ -158,14 +158,15 @@ type ComputedMotionStyle = Pick<
   | 'animationDuration'
   | 'animationDelay'
   | 'animationIterationCount'
+  | 'animationPlayState'
 >
 
 /**
  * Applies CSS list-matching rules: the property/name list sets the entry
  * count and shorter time lists cycle. Transitions contribute
  * `delay + duration` (a positive delay alone keeps the surface mounted);
- * finite animations contribute `delay + duration * count`; infinite
- * animations are excluded. Entries with positive time are also returned
+ * finite running animations contribute `delay + duration * count`; infinite
+ * and paused animations are excluded. Entries with positive time are also returned
  * individually so the event fallback can wait for each of them.
  */
 export function measureComputedExitMotion(
@@ -195,8 +196,15 @@ export function measureComputedExitMotion(
   const animationDurations = parseCssList(style.animationDuration || '0s')
   const animationDelays = parseCssList(style.animationDelay || '0s')
   const iterationCounts = parseCssList(style.animationIterationCount || '1')
+  const playStates = parseCssList(style.animationPlayState || 'running')
   names.forEach((name, index) => {
     if (name === 'none' || name === '') {
+      return
+    }
+    // A paused animation never dispatches `animationend`, so counting it
+    // would hold the surface until the safety timer (matching the primary
+    // path, which also ignores paused animations).
+    if ((cycled(playStates, index) ?? 'running').toLowerCase() === 'paused') {
       return
     }
     const countText = (cycled(iterationCounts, index) ?? '1').toLowerCase()

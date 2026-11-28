@@ -214,7 +214,10 @@ emits synchronously at logical close, never delayed until exit completion.
 
 - **Emits:** `exitComplete: []` — emitted when an exit finishes and the slot
   unmounts (`onExitComplete` equivalent). Not emitted on reopen interruption or
-  parent unmount.
+  parent unmount. The component emits it after the DOM update that removes the
+  slot, so a synchronous listener already sees the departing node
+  disconnected. The composable's `onExitComplete` callback keeps its timing: it
+  runs when `phase` becomes `'closed'`, before that render.
 - **Default slot (`GhostPresenceSlotProps`):**
   `{ present: boolean, phase: GhostPresencePhase, state: GhostPresenceDataState, exiting: boolean, setElement: (target: unknown) => void }`.
   - When `!isPresent`, `GhostPresence` returns `null` without invoking the
@@ -449,7 +452,8 @@ After Vue flushes the close render (`data-state="closed"`, `flush: 'post'`):
    as jsdom):**
    - Read `getComputedStyle(element)` for `transitionProperty`,
      `transitionDuration`, `transitionDelay`, `animationName`,
-     `animationDuration`, `animationDelay`, and `animationIterationCount`.
+     `animationDuration`, `animationDelay`, `animationIterationCount`, and
+     `animationPlayState`.
    - Parse comma-separated CSS time lists (`ms` and `s`) and cycle shorter lists
      modulo their length per CSS Transitions and CSS Animations list-matching
      rules:
@@ -462,7 +466,11 @@ After Vue flushes the close render (`data-state="closed"`, `flush: 'post'`):
        `''`. Apply an explicit exclusion policy for infinite counts: any
        animation whose matched `animationIterationCount` is `'infinite'`
        (case-insensitive) is **excluded** from exit completion waiting (`0ms`
-       contribution, consistent with the primary Web Animations path). For finite
+       contribution, consistent with the primary Web Animations path). Entries
+       whose matched `animationPlayState` is `'paused'` (case-insensitive) are
+       excluded the same way: a paused animation never dispatches
+       `animationend`, so it must not hold the surface until the safety timer.
+       For finite
        numeric iteration counts (`Number.isFinite(count) && count > 0`) and
        `durationMs > 0`, compute the active duration as `durationMs * count` and
        total completion time as `Math.max(0, delayMs + durationMs * count)` (for

@@ -242,6 +242,73 @@ describe('GhostPresence', () => {
     wrapper.unmount()
   })
 
+  it('emits exitComplete only after the departing node is disconnected', async () => {
+    const present = ref(true)
+    const observed: { connected: boolean; inDocument: boolean }[] = []
+    let surface: Element | null = null
+    const wrapper = mount(
+      defineComponent({
+        setup() {
+          return () =>
+            h(
+              GhostPresence,
+              {
+                present: present.value,
+                // A synchronous listener, as a consumer would write it.
+                onExitComplete: () => {
+                  observed.push({
+                    connected: surface?.isConnected ?? false,
+                    inDocument: document.querySelector('.surface') !== null,
+                  })
+                },
+              },
+              { default: () => h('div', { class: 'surface' }) },
+            )
+        },
+      }),
+      { attachTo: document.body },
+    )
+    await nextTick()
+    surface = wrapper.get('.surface').element
+    present.value = false
+    await nextTick()
+    expect(surface.isConnected).toBe(true)
+
+    await finishExits()
+    expect(observed).toEqual([{ connected: false, inDocument: false }])
+    wrapper.unmount()
+  })
+
+  it('does not emit exitComplete when a reopen interrupts the exit', async () => {
+    const present = ref(true)
+    const onExitComplete = vi.fn()
+    const wrapper = mount(
+      defineComponent({
+        setup() {
+          return () =>
+            h(
+              GhostPresence,
+              { present: present.value, onExitComplete },
+              { default: () => h('div', { class: 'surface' }) },
+            )
+        },
+      }),
+      { attachTo: document.body },
+    )
+    await nextTick()
+    const surface = wrapper.get('.surface').element
+    present.value = false
+    await nextTick()
+    present.value = true
+    await nextTick()
+    // The stale exit settles after the reopen; it must stay silent.
+    await finishExits()
+    expect(onExitComplete).not.toHaveBeenCalled()
+    expect(wrapper.get('.surface').element).toBe(surface)
+    expect(surface.getAttribute('data-state')).toBe('open')
+    wrapper.unmount()
+  })
+
   it('unmounts at once when disabled and on owner unmount without emitting', async () => {
     const present = ref(true)
     const disabled = ref(true)

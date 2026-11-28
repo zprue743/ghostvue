@@ -548,6 +548,62 @@ describe('useGhostPresence computed-style fallback', () => {
     expect(harness.onExitComplete).toHaveBeenCalledTimes(1)
   })
 
+  it('never lets a long paused animation extend the exit', async () => {
+    vi.useFakeTimers()
+    stubComputedStyle({
+      transitionProperty: 'opacity',
+      transitionDuration: '100ms',
+      transitionDelay: '0s',
+      animationName: 'hold, exit-fade',
+      animationDuration: '30s, 50ms',
+      animationDelay: '0s',
+      animationIterationCount: '1',
+      animationPlayState: 'paused, running',
+    })
+    const harness = mountHarness(true)
+    await nextTick()
+    harness.present.value = false
+    await nextTick()
+    const node = required(harness.surface())
+
+    vi.advanceTimersByTime(50)
+    node.dispatchEvent(animationEnd('exit-fade'))
+    await nextTick()
+    expect(harness.api.phase.value).toBe('exiting')
+
+    vi.advanceTimersByTime(50)
+    node.dispatchEvent(
+      new TransitionEvent('transitionend', { propertyName: 'opacity' }),
+    )
+    await nextTick()
+    // The running motions settled; the paused 30s `hold` never gated removal.
+    expect(harness.api.phase.value).toBe('closed')
+    expect(harness.surface()).toBeNull()
+    expect(harness.onExitComplete).toHaveBeenCalledTimes(1)
+  })
+
+  it('bounds the safety deadline by running motion only when a paused animation is present', async () => {
+    vi.useFakeTimers()
+    stubComputedStyle({
+      transitionProperty: 'opacity',
+      transitionDuration: '100ms',
+      transitionDelay: '0s',
+      animationName: 'hold',
+      animationDuration: '30s',
+      animationDelay: '0s',
+      animationIterationCount: '1',
+      animationPlayState: 'paused',
+    })
+    const harness = mountHarness(true)
+    await nextTick()
+    harness.present.value = false
+    await nextTick()
+    vi.advanceTimersByTime(133)
+    expect(harness.api.phase.value).toBe('exiting')
+    vi.advanceTimersByTime(1)
+    expect(harness.api.phase.value).toBe('closed')
+  })
+
   it('counts a cancelled motion as settled and keeps waiting for the rest', async () => {
     vi.useFakeTimers()
     stubComputedStyle({
@@ -656,6 +712,7 @@ describe('measureComputedExitMotion', () => {
     animationDuration: '0s',
     animationDelay: '0s',
     animationIterationCount: '1',
+    animationPlayState: 'running',
   }
 
   it('reports zero for absent motion', () => {
@@ -720,6 +777,20 @@ describe('measureComputedExitMotion', () => {
       animationIterationCount: 'INFINITE, 3',
     })
     expect(result.totalMs).toBe(320)
+    expect([...result.animations]).toEqual([['exit-fade', 1]])
+  })
+
+  it('excludes paused animations, cycling the play-state list', () => {
+    const result = measureComputedExitMotion({
+      ...none,
+      animationName: 'hold, exit-fade, settle',
+      animationDuration: '30s, 100ms, 200ms',
+      animationDelay: '0s',
+      animationIterationCount: '1',
+      animationPlayState: 'PAUSED, running',
+    })
+    // `settle` cycles back to the first play state, so it is paused too.
+    expect(result.totalMs).toBe(100)
     expect([...result.animations]).toEqual([['exit-fade', 1]])
   })
 })

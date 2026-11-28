@@ -5,6 +5,8 @@ import {
   cloneVNode,
   computed,
   h,
+  nextTick,
+  onBeforeUnmount,
   shallowRef,
   watch,
   type VNode,
@@ -47,12 +49,25 @@ const slots = defineSlots<{
 const manualElement = shallowRef<HTMLElement | null>(null)
 const childElement = shallowRef<HTMLElement | null>(null)
 
+let isUnmounting = false
+onBeforeUnmount(() => {
+  isUnmounting = true
+})
+
 const presence = useGhostPresence({
   present: () => props.present,
   element: () => manualElement.value ?? childElement.value,
   disabled: () => props.disabled,
+  // The composable reports completion when `phase` flips to `'closed'`,
+  // before Vue re-renders this component. The public event promises the slot
+  // has already unmounted, so it waits for that render. A reopen or owner
+  // unmount in between still suppresses it, like an interrupted exit.
   onExitComplete: () => {
-    emit('exitComplete')
+    void nextTick(() => {
+      if (!isUnmounting && presence.phase.value === 'closed') {
+        emit('exitComplete')
+      }
+    })
   },
 })
 
