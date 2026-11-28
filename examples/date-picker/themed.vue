@@ -28,7 +28,7 @@ const today = new CalendarDate(2026, 11, 17)
       aria-labelledby="date-picker-themed-legend"
     >
       <span id="date-picker-themed-legend" class="date-picker-themed__legend">
-        Trip dates
+        Trip booking
       </span>
       <GhostDatePicker
         v-model="trip"
@@ -48,7 +48,7 @@ const today = new CalendarDate(2026, 11, 17)
             <GhostDatePickerInput v-bind="field" part="end" />
           </GhostFieldControl>
         </GhostField>
-        <GhostDatePickerTrigger class="date-picker-themed__trigger" />
+        <GhostDatePickerTrigger aria-label="Choose trip dates" />
         <GhostDatePickerContent />
       </GhostDatePicker>
     </div>

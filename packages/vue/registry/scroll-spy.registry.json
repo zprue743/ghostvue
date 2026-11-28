@@ -26,14 +26,14 @@
   "examples": [
     {
       "id": "scroll-spy/basic",
-      "title": "Basic",
+      "title": "Headless list markup",
       "description": "Headless section navigation with CSS progress variables.",
       "layer": "headless"
     },
     {
       "id": "scroll-spy/themed",
-      "title": "Themed rail",
-      "description": "Vertical TOC rail styled with @ghostvue/themes.",
+      "title": "Themed article rail",
+      "description": "Themed section rail that tracks a short article scrolling in its own panel.",
       "layer": "themed"
     },
     {
