@@ -49,8 +49,8 @@ unresolvedQuestions: []
 > repo admin `zprue743` recorded the sign-off on his behalf on 2026-11-28 in
 > [PR #504](https://github.com/zprue743/ghostvue/pull/504#issuecomment-7240055885).
 > This is design approval only, not merge approval or release inclusion.
-> Three later review findings (group-level invalid state, external form owner,
-> and same-tick controlled activations) were applied at the maintainer's
+> Later review findings (group-level invalid state, external form owner,
+> same-tick controlled activations, and the headless custom root) were applied at the maintainer's
 > request; see [Post-approval amendments](#post-approval-amendments).
 >
 > This is a docs-only specification. No runtime code, manifest, or export exists
@@ -114,6 +114,12 @@ option, a shared `name`, `FormData.getAll(name)`, native `Tab`/`Space`,
 - **No `true-value` / `false-value`, no `Set` model, no object values.** Values
   are opaque strings, matching `GhostRadioGroup`, `GhostToggleGroup`, and
   `GhostCombobox`.
+- **No custom group root in v1.** Connecting `GhostCheckbox` members to a
+  consumer-built root (for example a table of checkboxes) would need a public
+  provider or injection key, which the approved export surface does not
+  include. Use `GhostCheckboxGroup` with `as` instead. A provider can be added
+  later as an additive export (see
+  [Post-approval amendments](#post-approval-amendments)).
 - **No change to standalone `GhostCheckbox`.** Its props, boolean v-model,
   `indeterminate`, form reset, and exposed ref are unchanged outside a group.
 - **No visual styling in `@ghostvue/vue`.** Spacing and option layout live in
@@ -150,10 +156,14 @@ Approved surface ([CG7](#resolved-decisions)):
 
 - `GhostCheckboxGroup`: root component (`generic="TValue extends string"`).
 - `useGhostCheckboxGroup`: composable that owns selection state, membership,
-  and reset for advanced composition, mirroring `useGhostRadioGroup`.
+  and reset, mirroring `useGhostRadioGroup`. It returns state and handlers
+  only. It does not install a context, so it cannot connect `GhostCheckbox`
+  members to a root other than `GhostCheckboxGroup`.
 - Types: `GhostCheckboxGroupProps<TValue>`, `GhostCheckboxGroupEmits<TValue>`,
   `GhostCheckboxGroupExposed`, `UseGhostCheckboxGroupOptions<TValue>`,
-  `GhostCheckboxGroupContext`.
+  `GhostCheckboxGroupContext` (the composable's return type).
+- No provider component, `provide` helper, or injection key is exported. The
+  group context is installed only by `GhostCheckboxGroup`.
 - Additive internal change to `GhostCheckbox`: it injects the nearest group
   context. No new `GhostCheckbox` prop, emit, or type.
 
@@ -791,8 +801,10 @@ covering group entry, mixed parent, locked option, and invalid with error text.
   `--ghost-space-stack-sm`. Legend typography uses existing type tokens. The
   recipe targets only the group's own root and its direct `legend` child, never
   nested parts. No new tokens.
-- Escape hatch: `useGhostCheckboxGroup` plus `provide` lets a consumer build
-  a custom root (for example a table of checkboxes) without the component.
+- Custom root: out of scope for v1. The context that links members is
+  installed only by `GhostCheckboxGroup`, and no injection key is public.
+  Change the root host with `as`. A public provider for custom roots could be
+  added later as an additive export.
 
 ## Environment behavior
 
@@ -838,8 +850,8 @@ belong in a multiple Select or Combobox.
 - `useGhostCheckbox` unchanged for each member's DOM reconciliation
   (`restoreCheckboxDom`). The group supplies the checked state and the change
   handler through injection instead of the member's own `modelValue`.
-- `provide`/`inject` with a group context, the same pattern as
-  `GhostRadioGroup` items.
+- `provide`/`inject` with a private group context key, the same pattern as
+  `GhostRadioGroup` items. The key is not exported.
 - Not used: `useRovingFocus`, `useFocusScope`, `useGhostId` (no ids or names
   are generated).
 
@@ -919,6 +931,11 @@ outcome.
   `form` attribute. Reset listens on the ancestor form only.
 - Exposed `focus()` targets the first enabled checked member, else the first
   enabled member.
+- Public entry: `@ghostvue/vue` exports `GhostCheckboxGroup`,
+  `useGhostCheckboxGroup`, and the listed types only, with no group provider
+  or injection key (`pnpm published-exports`). A `GhostCheckbox` with a
+  `value` under a plain element that calls `useGhostCheckboxGroup` stays
+  standalone (no membership).
 - Themed wrapper forwards the model, emits, and the exposed ref, and keeps the
   `.ghost-themed-scope` root.
 
@@ -1006,7 +1023,8 @@ Themed first, following the component-guide publishing standard:
   `checkbox-group/form` (native submit and reset with `getAll`),
   `checkbox-group/field` (error text with `invalid` and `aria-describedby`),
   and an "Advanced: headless composition" section with `checkbox-group/headless`
-  and the composable.
+  (the unstyled `GhostCheckboxGroup` and `GhostCheckbox` from `@ghostvue/vue`;
+  no custom root).
 - Sections on the array model and ordering (with the transition table
   condensed), unknown and removed values, locked options and submission, the
   select-all recipe and why disabled options do not count, labeling with
@@ -1097,10 +1115,11 @@ Implementation (#467) stays blocked until this approved spec is merged into
 
 ### Post-approval amendments
 
-After the CG1–CG7 sign-off, the maintainer `zprue743` asked for three review
-findings to be applied in
-[PR #504](https://github.com/zprue743/ghostvue/pull/504#discussion_r4727911224).
-They were applied at that request. They narrow or correct the contract and do
+After the CG1–CG7 sign-off, the maintainer `zprue743` asked for later review
+findings to be applied in PR #504
+([first request](https://github.com/zprue743/ghostvue/pull/504#discussion_r4727911224),
+with follow-ups in the comments linked below).
+They were applied at those requests. They narrow or correct the contract and do
 not change any other approved decision. They are not a new approval.
 
 - **Group invalid state** (`504-group-invalid-state`). `aria-invalid="true"`
@@ -1111,8 +1130,15 @@ not change any other approved decision. They are not a new approval.
   contract: the group must be inside its form. A `form` attribute on the root
   or on a member is consumed, never rendered, and warns in development, so a
   member always submits and resets with the group's form (see
-  [Props](#props-and-configuration)).
+  [Props](#props-and-configuration); member case from
+  [4728111966](https://github.com/zprue743/ghostvue/pull/504#discussion_r4728111966)).
 - **Controlled activation race** (`504-controlled-activation-race`). The
   controlled contract requires the updated `modelValue` to render between
   activations. Two activations before that render each build on the stale
   prop (last write wins); see [Async behavior](#async-behavior).
+- **Headless provider gap** (review comment
+  [4728198254](https://github.com/zprue743/ghostvue/pull/504#discussion_r4728198254)).
+  The custom-root recipe (`useGhostCheckboxGroup` plus `provide`) is removed.
+  A custom root is out of scope for v1 because a public provider or key would
+  widen the approved CG7 export surface. It can be added later as an
+  additive export with maintainer approval.
