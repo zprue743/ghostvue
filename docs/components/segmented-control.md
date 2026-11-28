@@ -111,6 +111,25 @@ selection like `GhostToggleGroup` single mode.
 Themed styles ship from `@ghostvue/themes` (`GhostSegmentedControl`,
 `GhostSegmentedControlItem`).
 
+### Sizing
+
+Themed segments always share the control equally, because the sliding indicator
+is positioned as an equal fraction of the track. By default the control is an
+inline grid that sizes to its widest label. To stretch it across a container,
+set `display: grid` (or a width) on the root:
+
+```css
+.view-switcher {
+  display: grid;
+}
+```
+
+Existing block-level `display: flex` overrides that fill their container (as
+in the Popover sharing example), or flex roots with an explicit width, keep equal segments
+through a `flex: 1 1 0` fallback. Avoid `display: inline-flex`: a
+shrink-to-fit flex root splits the total label width evenly, so long labels
+overflow their segment and the indicator.
+
 ## Accessibility
 
 - Root: `role="group"` with an accessible name.

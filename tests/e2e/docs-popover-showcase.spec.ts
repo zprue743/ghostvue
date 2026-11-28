@@ -1,6 +1,11 @@
 import AxeBuilder from '@axe-core/playwright'
 import { expect, test, type Locator, type Page } from '@playwright/test'
 
+import {
+  expectAlignedSelection,
+  expectEqualSegments,
+  selectedSegmentGeometry,
+} from './segmented-control-geometry'
 import { startStaticServer } from './static-server'
 
 /*
@@ -85,6 +90,43 @@ test.describe('docs Popover sharing settings showcase', () => {
         expect(open.violations).toEqual([])
         await page.keyboard.press('Escape')
         await expect(panel).toHaveCount(0)
+      }
+    } finally {
+      await docs.close()
+    }
+  })
+
+  test('link permission segments fill the panel and track the indicator (#392)', async ({
+    page,
+  }) => {
+    // The example overrides the theme's inline grid with `display: flex` so
+    // the segments span the panel. Settled (reduced-motion) measurements
+    // prove the flex fallback still gives each segment 1/n of the full width.
+    await page.emulateMedia({ reducedMotion: 'reduce' })
+    const docs = await startStaticServer('apps/docs/.vitepress/dist')
+    try {
+      const frame = await openPage(page, docs.url)
+      const { trigger, panel, access, role } = partsOf(page, frame)
+      await openPanel(trigger, panel)
+      await access('Anyone with the link').check()
+      const roles = panel.getByRole('group', { name: 'Link permission' })
+      await expect(roles).toHaveCSS('display', 'flex')
+
+      const span = await roles.evaluate((control) => {
+        const parent = control.parentElement
+        if (!parent) throw new Error('missing link permission container')
+        return {
+          control: control.getBoundingClientRect().width,
+          parent: parent.getBoundingClientRect().width,
+        }
+      })
+      expect(Math.abs(span.control - span.parent)).toBeLessThanOrEqual(0.5)
+
+      for (const name of ['Commenter', 'Editor', 'Viewer']) {
+        await role(name).click()
+        await expect(role(name)).toHaveAttribute('aria-pressed', 'true')
+        await expectEqualSegments(roles, name)
+        expectAlignedSelection(await selectedSegmentGeometry(roles), name)
       }
     } finally {
       await docs.close()

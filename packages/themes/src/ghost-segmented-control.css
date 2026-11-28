@@ -9,6 +9,13 @@
  * their segment (and the indicator) while short ones get extra room. Grid
  * resolves `1fr` from the widest label when the control sizes to content, so
  * every segment fits its label and still matches the indicator's fraction.
+ *
+ * Supported sizing: the default inline grid sizes to the widest label. To span
+ * a container, set `display: grid` (or a width) on the root. Consumers that
+ * override the root to `display: flex` keep equal segments through the items'
+ * `flex: 1 1 0` fallback, which grid layout ignores; that only holds when the
+ * flex root fills its container or has an explicit width, since a shrink-to-fit `inline-flex` root
+ * reintroduces the overflow described above.
  */
 @layer ghostvue-theme {
   :where(
@@ -44,6 +51,8 @@
   ) {
     grid-auto-flow: row;
     grid-auto-columns: auto;
+    /* Flex fallback axis for roots overridden to `display: flex`. */
+    flex-direction: column;
     grid-auto-rows: minmax(0, 1fr);
     width: max-content;
   }
@@ -130,6 +139,12 @@
   ) {
     position: relative;
     z-index: 1;
+    /*
+     * Ignored in the default grid track. Kept as the equal-width fallback for
+     * roots overridden to `display: flex`; `min-width: 0` stops a long label's
+     * min-content size from widening one segment past its 1/n share.
+     */
+    flex: 1 1 0;
     min-width: 0;
     background: transparent;
     border: var(--ghost-border-hairline-width) solid transparent;

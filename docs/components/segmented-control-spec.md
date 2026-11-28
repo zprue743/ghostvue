@@ -65,7 +65,8 @@ Consumers get equal-width segments, a theme token–driven sliding thumb, and
 - Multiple independent selections (`type="multiple"`). Use `GhostToggleGroup`.
 - Radio / form submission semantics (`GhostRadioGroup`).
 - Per-segment unequal widths driven by `getBoundingClientRect` or other
-  post-layout reads (equal flex segments only).
+  post-layout reads (equal `1/n` segments only; see
+  [Sizing](#sizing)).
 - Overflow menus, drag reorder, or icons-only segments without visible labels.
 - Changing `GhostToggleGroup` public props or behavior.
 
@@ -180,6 +181,24 @@ Toggle buttons with pressed state—not radios.
   `--ghost-motion-*` with `@media (prefers-reduced-motion: reduce)` snapping
   position without transition.
 
+### Sizing
+
+The indicator is positioned as an equal `1/n` fraction of the padded track, so
+the themed layout must give every segment exactly `1/n` of the track width (or
+height when vertical). The supported sizing contract:
+
+- **Default:** the root is an `inline-grid` of `minmax(0, 1fr)` columns. It
+  sizes to content, and every column takes the widest label's width.
+- **Full width:** set `display: grid` (or a definite `width`) on the root; the
+  columns stay equal across the container.
+- **Flex override (compatibility):** a root overridden to block-level `display: flex`
+  (which fills its container) or given an explicit width keeps equal segments through the items' `flex: 1 1 0` and
+  `min-width: 0` fallback. A shrink-to-fit `inline-flex` root is not supported:
+  it splits the sum of the labels evenly, so long labels overflow their segment
+  and the indicator.
+- Vertical controls stack equal `minmax(0, 1fr)` rows at `max-content` width;
+  the flex fallback uses `flex-direction: column`.
+
 ## Environment behavior
 
 ### SSR and hydration
@@ -191,7 +210,7 @@ Toggle buttons with pressed state—not radios.
 
 ### Mobile and touch
 
-Pointer toggles segments; equal-width flex targets.
+Pointer toggles segments; equal-width `1/n` targets per [Sizing](#sizing).
 
 ## Performance
 
@@ -211,7 +230,11 @@ One passive indicator element; roving listeners on the group root while mounted.
   `aria-pressed`, SSR HTML includes indicator variables.
 - **SSR hydration:** `expectSsrHydration` with default selection and ids.
 - **Browser (`ghost-segmented-control.spec.ts`):** pointer/keyboard, Axe,
-  `@component:GhostSegmentedControl`. The RTL indicator alignment and mirrored
+  `@component:GhostSegmentedControl`. Geometry checks assert the indicator
+  matches the selected segment for unequal labels (docs home) and that a
+  full-width `display: flex` override (`popover/share-settings`, in
+  `docs-popover-showcase.spec.ts`) keeps every segment at `1/n` of the track.
+  The RTL indicator alignment and mirrored
   roving case is tagged `@cross-browser` and also runs in Firefox and WebKit.
 - **Themed integration:** themed wrapper ref reaches root.
 - **Visual:** `segmented-control/themed` in `examples-visual` via

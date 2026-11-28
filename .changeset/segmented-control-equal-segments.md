@@ -5,6 +5,8 @@
 Fix themed `GhostSegmentedControl` segment sizing so the sliding indicator lines
 up with the selected label. Segments now share an equal grid track sized from
 the widest label, instead of splitting the sum of all labels evenly, which let
-long labels overflow their segment. The keyboard focus ring is now drawn inside
-the segment so it no longer stacks on the indicator border or spills past the
-control's edge.
+long labels overflow their segment. Set `display: grid` on the root to span a
+container; roots already overridden to a full-width `display: flex` keep equal
+segments through a `flex: 1 1 0` fallback. The keyboard focus ring is now drawn
+inside the segment so it no longer stacks on the indicator border or spills past
+the control's edge.
