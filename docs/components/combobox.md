@@ -1,68 +1,96 @@
 # GhostCombobox
 
 `GhostCombobox` is an editable list-autocomplete combobox for filters, async
-lookups, and form fields. Import headless parts from `@ghostvue/vue` or themed
-wrappers from `@ghostvue/themes`. Filtering and fetching are consumer-owned: the
+lookups, and form fields. The examples on this page import the styled parts
+from `@ghostvue/themes`. Filtering and fetching are consumer-owned: the
 component renders whatever options you mount and emits the current query.
+Teams that bring their own design system can start from
+[Advanced: headless composition](#advanced-headless-composition).
 
 <GhostExample id="combobox/assignee-search" />
 
-The **Assignee** field searches a local people directory that answers
-asynchronously. Before you type it suggests the issue's team; each query then
-shows a visual **Searching…** row while the listbox is `aria-busy`, followed by
-matching people, a "No one matches" message, or, with **Simulate offline** on,
-an error. Shorter queries answer more slowly, so typing quickly makes an older
-request finish last; `useGhostComboboxAsyncSearch` drops that stale response so
-the list always matches the input. Focus stays on the input the whole time:
-`ArrowDown` / `ArrowUp` move the highlight through `aria-activedescendant`,
-`Home` / `End` jump to the ends, `Enter` assigns, and `Escape` closes. The
-choice shows in the **Current assignee** panel and the polite status line;
-**Unassign** clears it and returns focus to the search. A `messages` object
-words the combobox's own announcements ("3 people found", "Could not load
-people"). The search and the assignee panel stack in narrow previews and sit
-side by side from about 32rem.
-
-## Basic use
-
-<GhostExample id="combobox/basic" />
-
-The input is `role="combobox"`; suggestions live in a portaled listbox, and the
-input's `aria-controls` names that `role="listbox"` element.
+The **Assignee** field imports every part from `@ghostvue/themes` and searches
+a local people directory that answers asynchronously. Before you type it
+suggests the issue's team; each query then shows a visual **Searching…** row
+while the listbox is `aria-busy`, followed by matching people, a "No one
+matches" message, or, with **Simulate offline** on, an error. Shorter queries
+answer more slowly, so typing quickly makes an older request finish last;
+`useGhostComboboxAsyncSearch` drops that stale response so the list always
+matches the input. Focus stays on the input the whole time: `ArrowDown` /
+`ArrowUp` move the highlight through `aria-activedescendant`, `Home` / `End`
+jump to the ends, `Enter` assigns, and `Escape` closes. The choice shows in the
+**Current assignee** panel and the polite status line; **Unassign** clears it
+and returns focus to the search. A `messages` object words the combobox's own
+announcements ("3 people found", "Could not load people"). The search and the
+assignee panel stack in narrow previews and sit side by side from about 32rem.
 
 ## Async search
 
-<GhostExample id="combobox/async" />
+The assignee search above is the async recipe. Listen for `search` (with
+`requestId`), call `begin(payload.requestId)` at fetch start, and use
+`isLatest(payload.requestId)` before applying results so stale responses do
+not overwrite newer results. Clear `loading` only for the latest request, too;
+otherwise a stale response ends the loading state while a newer search is
+still running.
 
-Listen for `search` (with `requestId`), call `begin(payload.requestId)` at fetch
-start, and use `isLatest(payload.requestId)` before applying results so
-stale responses do not overwrite newer results.
-Clear `loading` only for the latest request, too; otherwise a stale response
-ends the loading state while a newer search is still running.
+```ts
+const { begin, isLatest } = useGhostComboboxAsyncSearch()
+
+async function onSearch({ query, requestId }: GhostComboboxSearchPayload) {
+  begin(requestId)
+  loading.value = true
+  const people = await searchPeople(query)
+  // A newer query owns the list and the loading state.
+  if (!isLatest(requestId)) return
+  loading.value = false
+  results.value = people
+}
+```
+
+While `loading` is `true`, `GhostComboboxEmpty` stays hidden and the listbox
+is `aria-busy`, so render your own visual loading row (the example uses
+`GhostSpinner`). Once the latest request answers with nothing,
+`GhostComboboxEmpty` shows your no-results message and the combobox announces
+`messages.empty`.
 
 Filtering or replacing results never clears the selection. A selected value whose
 option is no longer rendered stays selected, keeps submitting with the form, and
 keeps its last known label; no `update:modelValue` is emitted.
 
-## Multiple selection
-
-<GhostExample id="combobox/multi" />
-
-Set `multiple` to toggle string values without closing the listbox.
-
-## Field integration
-
-<GhostExample id="combobox/field" />
-
-Spread `GhostFieldControl` slot props onto `GhostComboboxInput`. The field's
-`invalid` and `required` state combine with the root's own `invalid` and
-`required` props into `aria-invalid` and `aria-required` on the input.
-
 ## Forms and reset
 
-<GhostExample id="combobox/form" />
+<GhostExample id="combobox/review-request-form" />
 
-`defaultValue` is the form-reset seed. Set `name` on the root so a visually hidden
-input submits the selection and participates in native `required` validation.
+Set `name` on the root and visually hidden inputs submit the selection with
+the surrounding `<form>`. **Request review** reads `new FormData(form)` and
+lists what a server would receive under **Submitted form data**.
+`defaultValue` (`default-value`) is the form-reset seed: toggle some labels,
+then press **Reset** and the labels return to **Bug**, the reviewer clears,
+and both queries empty.
+
+**Reviewer** sets `required` on the root. The form uses `novalidate` to skip
+the browser's bubbles but still calls `form.checkValidity()`. The empty
+combobox fails native validation, its input gets `aria-invalid` without extra
+wiring, and the example shows a field error and moves focus to the input.
+Both lists filter on the client and show a `GhostComboboxEmpty` message when
+nothing matches.
+
+### Field integration
+
+Spread `GhostFieldControl` slot props onto `GhostComboboxInput`, as both fields
+above do. The field's `invalid` and `required` state combine with the root's
+own `invalid` and `required` props into `aria-invalid` and `aria-required` on
+the input.
+
+### Multiple selection
+
+**Labels** sets `multiple`. The value is a `string[]`; choosing an option with
+`Enter` or a click toggles it without closing the list or clearing the query,
+and the form submits one `labels` entry per selected value. With no labels, the
+form still submits one empty `labels` entry. The example shows the selection
+as badges outside the input, because in multiple mode the input holds only the
+query. [`GhostSelect`](./select.md) stays single-value; reach for a multiple
+combobox when people pick several values.
 
 ## Themed use
 
@@ -73,6 +101,29 @@ token focus ring for keyboard focus and while the list is open, a danger
 border with `aria-invalid`, and the disabled action tokens. None of these
 states change the control's size. The list is capped to the viewport width and
 long option text wraps.
+
+## Advanced: headless composition {#advanced-headless-composition}
+
+This section is for teams that bring their own design system and style the
+parts themselves. Import the same parts from `@ghostvue/vue`; behavior, ARIA,
+and form participation are identical, but nothing is painted, so each sample
+brings its own consumer CSS for the list surface and option states.
+
+### Headless combobox {#basic-use}
+
+<GhostExample id="combobox/basic" />
+
+The input is `role="combobox"`; suggestions live in a portaled listbox, and the
+input's `aria-controls` names that `role="listbox"` element.
+
+### Headless async search {#headless-async-search}
+
+<GhostExample id="combobox/async" />
+
+The smallest `useGhostComboboxAsyncSearch` wiring: the `loading` prop, an
+empty state, and the stale-response guard, with no visual loading row. The headless `combobox/multi`,
+`combobox/field`, and `combobox/form` fixtures are on the
+[GhostCombobox reference page](/reference/vue/ghost-combobox).
 
 ## API
 

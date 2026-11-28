@@ -75,6 +75,7 @@
   },
   "examples": [
     "combobox/assignee-search",
+    "combobox/review-request-form",
     "combobox/themed"
   ]
 }
