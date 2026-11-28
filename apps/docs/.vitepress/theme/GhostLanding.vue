@@ -673,8 +673,8 @@ onUnmounted(() => {
           <header class="ghost-landing__header" data-reveal="zoom">
             <h2 id="landing-closing-title">Start with one component.</h2>
             <p>
-              Clone the repository, run the playground, and replace a single
-              button, dialog, or table. Keep what you like and leave the rest.
+              Install GhostVue from npm and try a button, dialog, or table in
+              your Vue app.
             </p>
             <div class="ghost-landing__closing-actions">
               <GhostLink

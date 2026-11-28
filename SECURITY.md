@@ -1,12 +1,16 @@
 # Security policy
 
-The project is pre-release. No version is currently supported for production
-use.
+GhostVue publishes pre-1.0 releases on npm. Maintainers triage security reports
+against the latest published release and consider fixes for older release lines
+case by case. See the [release notes](https://github.com/zprue743/ghostvue/releases)
+for release information.
 
-Please do not disclose suspected vulnerabilities in a public issue. Use GitHub's
-private vulnerability reporting feature when it is enabled. If that channel is
-not available, contact the repository owner privately and include reproduction
-steps, affected code, impact, and any known mitigations.
+## Report a vulnerability
+
+Use [GitHub's private vulnerability reporting form](https://github.com/zprue743/ghostvue/security/advisories/new).
+If the form is unavailable, contact the repository owner privately. Include the
+affected packages and versions, reproduction steps, impact, and any known
+mitigations.
 
 Maintainers will acknowledge a report when practical, validate it, coordinate a
 fix and disclosure timeline, and credit reporters who want attribution. Never

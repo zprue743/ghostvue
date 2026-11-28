@@ -241,11 +241,21 @@ export async function createMcpToolEnvironment(options) {
     ensureWorkspaceBuilt({
       root: repositoryRoot,
       isBuilt: () => existsSync(binPath) && existsSync(bundlePath),
-      build: () =>
-        execPackageManagerSync('pnpm', ['build'], {
+      build: () => {
+        // The MCP bundle reads tokens emitted by the themes build.
+        execPackageManagerSync(
+          'pnpm',
+          ['--filter', '@ghostvue/themes...', 'build'],
+          {
+            cwd: repositoryRoot,
+            stdio: 'pipe',
+          },
+        )
+        execPackageManagerSync('pnpm', ['--filter', '@ghostvue/mcp', 'build'], {
           cwd: repositoryRoot,
           stdio: 'pipe',
-        }),
+        })
+      },
     })
   }
 

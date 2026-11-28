@@ -1,8 +1,34 @@
+---
+outline: false
+---
+
 # Component roadmap
 
-See the [release roadmap](https://github.com/users/zprue743/projects/5/views/2) for planned
-deliverables and launch gates, or the
-[execution board](https://github.com/users/zprue743/projects/5/views/3) for issue status by release. Both views require access to the private GitHub Project.
+## Available today
+
+GhostVue is published on npm. Browse the [component catalog](./components/index.md) for
+forms, overlays, navigation, feedback, and tables, or try them together in the
+[billing demo](./examples/index.md). The [release notes](https://github.com/zprue743/ghostvue/releases)
+list what shipped in each version.
+
+## In development
+
+The focus for 0.2.0 is richer form controls and overlays. Follow the public
+issues for progress:
+
+- **Forms** include [related field groups](https://github.com/zprue743/ghostvue/issues/468)
+  and [a tags input](https://github.com/zprue743/ghostvue/issues/422).
+- **Overlays** include [exit transitions](https://github.com/zprue743/ghostvue/issues/417)
+  and [submenus](https://github.com/zprue743/ghostvue/issues/419).
+
+See the [0.2.0 release checklist](https://github.com/zprue743/ghostvue/issues/423)
+or [browse open issues](https://github.com/zprue743/ghostvue/issues) for the
+current work.
+
+## Component implementation history
+
+<details>
+<summary>Historical build order, issue references, and export inventory</summary>
 
 Sequencing of [GitHub Issues](https://github.com/zprue743/ghostvue/issues)
 toward DataTable ([GHO-35](https://linear.app/ghost-vue/issue/GHO-35)). The
@@ -117,3 +143,5 @@ DataTable ([GHO-35](https://linear.app/ghost-vue/issue/GHO-35)) is the north sta
 
 Phase one ships headless `GhostDataTable`, `GhostDataTableTable`, and `GhostDataTablePreset` from `@ghostvue/vue` ([ADR 0014](./adr/0014-datatable-phase-one-architecture.md), [docs](./components/data-table.md)). Themed wrappers ship from `@ghostvue/themes` for 0.1.0. Multi-column sort and virtualization are deferred.
 <!-- @generated registries:roadmap-tables end -->
+
+</details>
