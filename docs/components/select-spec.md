@@ -13,6 +13,8 @@ packages:
   - '@ghostvue/vue'
   - '@ghostvue/themes'
 specStatus: proposed
+approval:
+  evidence: "Design sign-off on the proposed S1–S7 choices of the Multiple selection proposal (#415) at commit 6e84b32 (6e84b3241edb0b4a0e096537950c295c266c8b81), recorded by repo admin zprue743 on 2026-11-28 in PR #512: https://github.com/zprue743/ghostvue/pull/512#issuecomment-7242866297. Design sign-off only; not merge approval or release inclusion. The external-form reset anchor (512-external-form-reset) was applied afterward at the maintainer's request and is not covered by this sign-off. specStatus stays proposed because the sign-off covers the multiple-selection design only, not the whole published GhostSelect contract that approval would stamp into its manifests."
 manifests:
   - packages/vue/manifests/ghost-select.manifest.json
   - packages/vue/manifests/ghost-select-trigger.manifest.json
@@ -49,28 +51,7 @@ sections:
     applicable: true
   compatibility:
     applicable: true
-unresolvedQuestions:
-  - question: 'Issue #415 (0.2.0 multiple GhostSelect): maintainer decision S1 — a `multiple` boolean prop on the existing GhostSelect root with generic `Multiple` typing vs a separate GhostMultiSelect root — before implementation.'
-    blocking: false
-    reviewer: Zac
-  - question: 'Issue #415: maintainer decision S2 — model and FormData order follows selection order (append on select, matching GhostCombobox multiple) vs rendered option order (native select multiple and Vue vModelSelect) — before implementation.'
-    blocking: false
-    reviewer: Zac
-  - question: 'Issue #415: maintainer decision S3 — Enter and Space both toggle and keep the listbox open, APG range and select-all keys (Shift+Arrow, Shift+Space, Ctrl+A) are out of scope, and focus moves to the nearest enabled option when the focused option unmounts — before implementation.'
-    blocking: false
-    reviewer: Zac
-  - question: 'Issue #415: maintainer decision S4 — GhostSelectValue default rendering (labels joined in model order with a messages.listSeparator override) and its new scoped slot props { values, labels } vs a count summary — before implementation.'
-    blocking: false
-    reviewer: Zac
-  - question: 'Issue #415: maintainer decision S5 — a selected option that is disabled stays submitted (current GhostSelect and GhostCombobox behavior) vs excluded from FormData like a disabled native option — before implementation.'
-    blocking: false
-    reviewer: Zac
-  - question: 'Issue #415: maintainer decision S6 — exported type surface: generic useGhostSelect and GhostSelect props, widened GhostSelectContext.selectedValue plus selectedValues, and a generic setup overload for the themed wrapper — before implementation.'
-    blocking: false
-    reviewer: Zac
-  - question: 'Issue #415: maintainer decision S7 — `multiple` is fixed for the lifetime of an instance with a new development warning on change vs reactive switching that converts the value — before implementation.'
-    blocking: false
-    reviewer: Zac
+unresolvedQuestions: []
 ---
 
 # GhostSelect specification
@@ -79,14 +60,17 @@ unresolvedQuestions:
 approves both in PR review.
 
 > [!IMPORTANT]
-> **Multiple selection is a draft.** [Multiple selection proposal](#multiple-selection-proposal)
+> **Multiple selection: design signed off.** [Multiple selection proposal](#multiple-selection-proposal)
 > extends this spec for [#415](https://github.com/zprue743/ghostvue/issues/415)
-> (target `0.2.0`, "Schema forms and multi-value inputs"). It is docs-only: no
-> runtime code, manifest change, or export exists for it yet. Implementation
-> waits until a maintainer resolves S1–S7 in
-> [Open architectural questions](#open-architectural-questions) and records the
-> approval link here. Every other section describes the published single-value
-> contract, which does not change.
+> (target `0.2.0`, "Schema forms and multi-value inputs"). The maintainer
+> signed off on the proposed [S1–S7 decisions](#resolved-decisions) at commit
+> `6e84b32` on 2026-11-28 in
+> [PR #512](https://github.com/zprue743/ghostvue/pull/512#issuecomment-7242866297).
+> This is design sign-off only, not merge approval or release inclusion. It is
+> docs-only: no runtime code, manifest change, or export exists for it yet.
+> Implementation waits until this spec is merged into `master`. Every other
+> section describes the published single-value contract, which does not
+> change.
 
 ## Purpose and user problems
 
@@ -105,8 +89,8 @@ forms via a visually hidden submit input and `useNativeFormReset`, consistent wi
 ## Non-goals
 
 - Tag chips, toggle-all, or range selection. Multiple selection itself is the
-  draft [Multiple selection proposal](#multiple-selection-proposal); until it is
-  approved and implemented, `GhostSelect` selects one value.
+  [Multiple selection proposal](#multiple-selection-proposal); until it is
+  merged and implemented, `GhostSelect` selects one value.
 - Combobox with free text entry, filtering, or async search. Use `GhostInput` or
   a future searchable combobox.
 - `GhostDropdownMenu` action-menu semantics (`menu` / `menuitem`).
@@ -238,7 +222,7 @@ Single-value mode takes no consumer collections. Options are compound
 `GhostSelectOption` children identified by a stable string `value`, and the
 model is one string the component replaces, never mutates.
 
-The draft multiple mode adds one consumer-owned collection: the `string[]`
+The proposed multiple mode adds one consumer-owned collection: the `string[]`
 model. [Collection ownership](#collection-ownership-empty-values-and-duplicates)
 defines who owns that array, how it is copied, and how duplicates and empty
 values are read. Options still are not data-driven: there are no item
@@ -376,21 +360,21 @@ of `pnpm verify`).
   behave normally.
 - **Visual:** `examples/select/themed` baselines via `pnpm test:visual:docker`
 - **Type:** consumer compile fixture
-- **Multiple (draft):** the additional cases, including single-select type and
+- **Multiple (proposed):** the additional cases, including single-select type and
   keyboard regressions, are listed in [Multiple selection test plan](#multiple-selection-test-plan).
 
 ## Documentation plan
 
 `docs/components/select.md`, examples `basic`, `field`, `form`, `themed`,
 playground section, sidebar + roadmap status, manifests via `pnpm manifests:write`.
-The draft multiple mode adds the pages and examples in
+The proposed multiple mode adds the pages and examples in
 [Multiple selection documentation plan](#multiple-selection-documentation-plan).
 
 ## Compatibility and release impact
 
 Additive minor Changesets for `@ghostvue/vue` and `@ghostvue/themes`.
 
-The draft multiple mode is additive: `multiple` defaults to `false`, and the
+The proposed multiple mode is additive: `multiple` defaults to `false`, and the
 single-value props, emits, keyboard map, and FormData shape stay as published.
 [Multiple selection compatibility](#multiple-selection-compatibility) lists the
 exported types it touches.
@@ -398,12 +382,12 @@ exported types it touches.
 ## Multiple selection proposal
 
 > [!NOTE]
-> Draft for [#415](https://github.com/zprue743/ghostvue/issues/415). Nothing in
-> this section is implemented or approved. Each decision that needs a
-> maintainer is tagged with its question ID (S1–S7, see
-> [Open architectural questions](#open-architectural-questions)). Where a rule
-> is not tagged, this spec proposes it as the natural extension of the
-> published single-value contract or of `GhostCombobox` `multiple`.
+> Proposal for [#415](https://github.com/zprue743/ghostvue/issues/415). Nothing
+> in this section is implemented. Each maintainer decision is tagged with its
+> ID (S1–S7, signed off as proposed; see
+> [Resolved decisions](#resolved-decisions)). Where a rule is not tagged, this
+> spec proposes it as the natural extension of the published single-value
+> contract or of `GhostCombobox` `multiple`.
 
 ### Purpose and non-goals
 
@@ -578,7 +562,8 @@ before.
   `GhostCombobox`'s `select`.
 - `formInputProps` stays the single-mode object. A new
   `formInputs: ComputedRef<GhostSelectFormInputProps[]>` lists one mirror per
-  value in multiple mode (see [Native forms](#native-forms-reset-and-disabled)).
+  value in multiple mode, or one unnamed reset anchor when `name` is set and
+  the selection is empty (see [Native forms](#native-forms-reset-and-disabled)).
 
 ### Collection ownership, empty values, and duplicates
 
@@ -669,7 +654,8 @@ The single-value rule extends to every member:
   it is already selected it stays selected, keeps `aria-selected="true"`, and
   keeps submitting (S5).
 - Root `disabled` disables the trigger and every option. The value text still
-  renders. All form mirrors are `disabled`, so nothing submits.
+  renders. All form mirrors, including the empty reset anchor, are
+  `disabled`, so nothing submits.
 
 ### Accessibility contract (multiple)
 
@@ -744,7 +730,11 @@ of scope because the trigger is a `button`.
 With `name` set, multiple mode renders one visually hidden
 `input[type="text"]` per distinct member, in model order, all sharing `name`
 and `form`. Values containing commas therefore need no encoding (the same rule
-as `GhostCombobox` `multiple`).
+as `GhostCombobox` `multiple`). When the selection is empty, exactly one
+mirror stays rendered without `name`: the **reset anchor**. It keeps `form`,
+`disabled`, and (when `required`) the validity attributes, so it holds the
+control's form association without adding a FormData entry. With `name` set
+there is therefore always at least one mirror.
 
 ```vue
 <form ref="form">
@@ -768,11 +758,29 @@ new FormData(form).getAll('labels') // ['bug', 'docs']
 new FormData(form).getAll('region') // ['us-east']; [''] when nothing is selected
 ```
 
+The root `form` prop associates the control with a form it is not inside:
+
+```vue
+<form id="filters" ref="filters"></form>
+<!-- Elsewhere in the page, outside <form id="filters"> -->
+<GhostSelect multiple name="tags" form="filters" :default-value="['bug']">
+  …options: bug, docs…
+</GhostSelect>
+```
+
+```ts
+// User toggles "Bug" off; only the unnamed reset anchor remains.
+new FormData(filters).getAll('tags') // []
+filters.reset() // update:modelValue(['bug'])
+new FormData(filters).getAll('tags') // ['bug']
+```
+
 - **Empty.** An empty multiple select submits nothing, so `getAll(name)` is
-  `[]`, as with native `<select multiple>`. This differs from
-  `GhostCombobox` `multiple`, which submits one empty mirror (`['']`); the
-  combobox is not changed by this proposal.
-- **Required.** When `required` and empty, one mirror without `name` carries
+  `[]`, as with native `<select multiple>`: the only rendered mirror is the
+  unnamed reset anchor, and unnamed controls are not submitted. This differs
+  from `GhostCombobox` `multiple`, which submits one empty mirror (`['']`);
+  the combobox is not changed by this proposal.
+- **Required.** When `required` and empty, the reset anchor also carries
   `required` and the custom validity message, so it blocks submit and focuses
   the trigger without adding a FormData entry. With members, the first mirror
   carries `required`. `messages.required` applies in both cases.
@@ -780,6 +788,22 @@ new FormData(form).getAll('region') // ['us-east']; [''] when nothing is selecte
   (or `[]`) and emits `update:modelValue` only when membership or order
   differs from the current value, matching single mode's no-op on an equal
   value.
+- **Reset with an external `form`.** `useNativeFormReset` matches a `reset`
+  event against the owner form of the element it is given, reading
+  `element.form`. Single mode passes the mirror and falls back to the trigger
+  only when no mirror renders (`GhostSelect.vue`). The trigger does not carry
+  the root `form` prop, so its owner is only its ancestor `<form>`. Multiple
+  mode passes the first mirror, which with `name` set is always present (a
+  member mirror or the reset anchor). Its `form` attribute therefore keeps
+  the association after the user clears every value, and an external
+  `form.reset()` restores a nonempty `defaultValue`. When the anchor is
+  replaced by a member mirror or the reverse, the listener reads the current
+  first mirror at event time, so no reset is lost across the swap. The anchor
+  is still `disabled` under root `disabled`; a disabled input keeps its
+  `form` owner, so reset still applies.
+- **Without `name`.** No mirror renders and the trigger is the reset target,
+  as in single mode today: reset follows the trigger's ancestor `<form>`, and
+  the root `form` prop has no effect.
 - **Root `disabled`.** Every mirror is disabled: `getAll(name)` is `[]`, the
   value text still renders.
 - **`<fieldset disabled>` ancestor.** Native rules exclude the mirrors from
@@ -790,7 +814,8 @@ new FormData(form).getAll('region') // ['us-east']; [''] when nothing is selecte
 
 SSR renders the trigger with the value text for the members whose options are
 registered during render, `aria-multiselectable` on the closed listbox, and
-one mirror per member when `name` is set, so the server markup submits the
+one mirror per member (or the unnamed reset anchor when empty) when `name` is
+set, so the server markup submits the
 same entries as the hydrated control. Hydration must not emit. Touch uses the
 same pointer path as click; options keep the themed minimum block size.
 
@@ -809,7 +834,8 @@ Reuses everything single mode uses (`useControllableState`, `useGhostId`,
 `useFocusScope`, `useRovingFocus`, the typeahead helper) plus:
 
 - The multiple-mirror pattern from `useGhostCombobox`, changed so the empty
-  required mirror has no `name`.
+  mirror has no `name` and is kept whether or not the select is `required`
+  (the reset anchor).
 - The generic setup overload pattern from the themed `GhostDataTable`
   wrapper for the themed `GhostSelect` (S6). Its runtime `update:modelValue`
   validator must also accept `string[]`.
@@ -828,7 +854,15 @@ No new package, dependency, or shared primitive.
   options unmounting, reordering, inserting, and remounting keep model, value
   text, and FormData without emits; focused option unmount moves focus (S3);
   disabled selected option stays selected and submits (S5); root `disabled`;
-  `required` with the unnamed empty mirror; IME keys ignored for toggles;
+  `required` with the unnamed empty mirror; optional empty select with `name`
+  renders exactly one unnamed reset anchor carrying `form`; external-form
+  reset: with the root `form` prop pointing at a form the select is not
+  inside and a nonempty `defaultValue`, clear every option, assert
+  `getAll(name)` is `[]` and the anchor has no `name`, call that form's
+  `reset()`, await the reset deferral, and assert the default is restored
+  (one emit, new array) and `getAll(name)` equals it; a `reset` on the
+  ancestor form of the trigger does not reset an externally associated
+  select; IME keys ignored for toggles;
   `GhostSelectValue` slot props and `listSeparator`.
 - **Single-select regressions (must pass unchanged):** every existing
   `GhostSelect.test.ts`, `select-combobox-*.test.ts`, and `ghost-select*.test.ts`
@@ -844,12 +878,16 @@ No new package, dependency, or shared primitive.
   the regression fixture for existing consumers. Same cases against the
   `@ghostvue/themes` wrapper.
 - **SSR:** closed multiple select renders value text, `aria-multiselectable`,
-  and one mirror per member; hydration emits nothing.
+  and one mirror per member, or the unnamed anchor when empty; hydration
+  emits nothing.
 - **Browser (Playwright):** in a multiple playground section, press every
   documented key and assert real focus (`toBeFocused()`), `aria-selected`,
   `aria-expanded`, and that the list stays open after toggles; pointer
   toggles; `FormData.getAll(name)` after toggles, after clearing, and after
-  `form.reset()`; axe with the list open and closed. The existing
+  `form.reset()`; the same sequence for a select associated through the root
+  `form` prop with a form it is not inside (clear every option by pointer,
+  `getAll(name)` is `[]`, call that form's `reset()`, the nonempty default is
+  restored in the trigger text and `getAll(name)`); axe with the list open and closed. The existing
   `tests/e2e/select.spec.ts` single-select tests run unchanged as the keyboard
   regression suite.
 - **Visual:** themed multiple trigger with zero, one, and many values (long
@@ -885,16 +923,17 @@ No new package, dependency, or shared primitive.
 - **Changesets.** Minor for `@ghostvue/vue` and `@ghostvue/themes` in the
   implementation PR. This docs-only spec PR needs none.
 
-## Open architectural questions
+## Resolved decisions
 
-The single-value contract has no blocking questions. The draft multiple mode
-needs a maintainer decision on each item below before implementation starts.
-Each entry gives the proposal this spec is written against and the alternative.
-They are recorded with `blocking: false` in frontmatter so `pnpm specs:check`
-keeps validating the published single-value contract; they still block the
-multiple-mode implementation.
+The single-value contract has no open questions. For the multiple mode, the
+maintainer signed off on the proposed choice for each of S1–S7 at commit
+`6e84b32` (`6e84b3241edb0b4a0e096537950c295c266c8b81`). The repo admin
+`zprue743` recorded the sign-off on 2026-11-28 in
+[PR #512](https://github.com/zprue743/ghostvue/pull/512#issuecomment-7242866297).
+This is design sign-off only. It is not merge approval or release inclusion.
+The table keeps each rejected alternative for the record.
 
-| ID  | Question                        | Proposal in this spec                                                                                                                                                                                                                               | Alternative                                                                                                                   |
+| ID  | Decision                        | Approved choice                                                                                                                                                                                                                                     | Rejected alternative                                                                                                          |
 | --- | ------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
 | S1  | API shape                       | `multiple` boolean on the existing `GhostSelect` root. The root becomes generic over `Multiple extends boolean = false`, so the flag selects the model type.                                                                                        | A separate `GhostMultiSelect` root that shares the parts. Simpler types, but a second root to document and theme.             |
 | S2  | Value order                     | Selection order. Selecting appends; deselecting removes in place. FormData uses the same order. Matches `GhostCombobox` `multiple` and Vue's checkbox array `v-model`.                                                                              | Rendered option order, like native `<select multiple>` and Vue's `vModelSelect`. Order then changes when options reorder.     |
@@ -903,3 +942,17 @@ multiple-mode implementation.
 | S5  | Disabled selected options       | A selected option that is `disabled` stays selected and keeps submitting. `disabled` blocks user toggling only, as it already does in single mode and in `GhostCombobox`.                                                                           | Exclude it from FormData, like a disabled native `<option>`. The model and the submitted values would then differ.            |
 | S6  | Exported type surface           | Generic `useGhostSelect<Multiple>` and `GhostSelect` props. `GhostSelectContext` widens `selectedValue` to `string \| string[] \| undefined` and adds `multiple` and `selectedValues`. The themed root gets a generic setup overload.               | Keep `GhostSelectContext.selectedValue` single-only and add a separate `selectedValues` field, at the cost of two value refs. |
 | S7  | Changing `multiple` after mount | Unsupported. The value keeps its original shape, and development builds log a new `GHOST0xx` warning (code assigned at implementation).                                                                                                             | Reactive switching that converts `'a'` to `['a']` and keeps the first member on the way back, with an emit.                   |
+
+### Post-sign-off amendments
+
+After the S1–S7 sign-off, the maintainer `zprue743` asked for one review
+finding to be applied in
+[PR #512](https://github.com/zprue743/ghostvue/pull/512#discussion_r4727892464).
+It was applied at that request. It narrows the form contract and does not
+change any signed-off decision. It is not a new approval.
+
+- **External-form reset** (`512-external-form-reset`). With `name` set, an
+  empty multiple select keeps one unnamed mirror (the reset anchor) whether or
+  not it is `required`, so the root `form` prop keeps the reset association
+  after the user clears every value (see
+  [Native forms](#native-forms-reset-and-disabled)).
