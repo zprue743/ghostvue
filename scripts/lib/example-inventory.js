@@ -7,7 +7,8 @@
  * Embeds are found with the docs app's own markdown transforms
  * (`expandExampleSnippets`, `mapOutsideFences`) so the inventory counts
  * exactly the hosts the VitePress build turns into live previews: quoted tags
- * inside fences are illustrations and are skipped. Layers come from
+ * inside fences are illustrations and are skipped, and so is anything inside
+ * an HTML comment, which never reaches the rendered page. Layers come from
  * `examples/registry.ts`, the catalog docs and the playground already share.
  * Spec pages (`*-spec.md`, `spec-template.md`) and the generated
  * `docs/reference/` pages are not guides and are never scanned.
@@ -53,6 +54,31 @@ function stripFrontMatter(markdown) {
 const ATX_HEADING = /^(#{1,6})[ \t]+(.+?)[ \t]*$/gm
 
 /**
+ * An HTML comment, or an unterminated one running to the end of the chunk
+ * (markdown-it keeps an open `<!--` block going to the end of the document).
+ */
+const HTML_COMMENT = /<!--[\s\S]*?(?:-->|$)/g
+
+/**
+ * Commented-out markup is dropped by the Vue template compiler, so a
+ * `<!-- <GhostExample … /> -->` (or a heading inside a comment) must not count
+ * as a live embed or move the heading context. The region is blanked with
+ * spaces rather than deleted so text after `-->` on the same line cannot slide
+ * to column 0 and read as an ATX heading; newlines are kept.
+ *
+ * Applied per chunk outside fences, so `<!--` quoted inside a code fence stays
+ * an illustration. A comment that opens before a fence and closes after it is
+ * not modelled: guides do not comment out fenced blocks.
+ *
+ * @param {string} chunk
+ */
+function blankHtmlComments(chunk) {
+  return chunk.replace(HTML_COMMENT, (comment) =>
+    comment.replace(/[^\n]/g, ' '),
+  )
+}
+
+/**
  * Plain heading text: drops a closing `#` run, a `{#custom-id}` anchor, and
  * inline code ticks, which are presentation rather than wording.
  *
@@ -87,9 +113,10 @@ export function collectGuideEmbeds(markdown, parsing) {
   let heading
 
   parsing.mapOutsideFences(normalized, (chunk) => {
+    const live = blankHtmlComments(chunk)
     /** @type {{ index: number; apply: () => void }[]} */
     const events = []
-    for (const match of chunk.matchAll(ATX_HEADING)) {
+    for (const match of live.matchAll(ATX_HEADING)) {
       const depth = match[1]?.length ?? 1
       const text = headingText(match[2] ?? '')
       events.push({
@@ -100,7 +127,7 @@ export function collectGuideEmbeds(markdown, parsing) {
       })
     }
     for (const pattern of [parsing.EXAMPLE_SOURCE_BLOCK, parsing.EXAMPLE_TAG]) {
-      for (const match of chunk.matchAll(pattern)) {
+      for (const match of live.matchAll(pattern)) {
         const id = match[1] ?? ''
         events.push({
           index: match.index,

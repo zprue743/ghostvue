@@ -419,9 +419,9 @@ pnpm examples:inventory --json                   # machine-readable
 ```
 
 - It counts the `<GhostExample>` hosts the docs build renders as live
-  previews, found with the same markdown transforms. Tags in fenced code,
-  spec pages (`*-spec.md`) and the generated `docs/reference/` pages are not
-  counted.
+  previews, found with the same markdown transforms. Tags in fenced code or
+  inside HTML comments (`<!-- … -->`), spec pages (`*-spec.md`) and the
+  generated `docs/reference/` pages are not counted.
 - Layers come from `examples/registry.ts`. A guide with any themed demo is
   **themed-capable** (and **themed-first** when its lead demo is themed);
   one whose demos are all headless is a **headless-only utility**.

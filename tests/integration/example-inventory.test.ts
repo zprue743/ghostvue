@@ -135,6 +135,47 @@ describe('collectGuideEmbeds', () => {
     ])
   })
 
+  it('skips embeds and headings inside HTML comments but keeps quoted comments in fences', () => {
+    const embeds = collectGuideEmbeds(
+      [
+        '## Live',
+        '',
+        '<!-- <GhostExample id="widget/themed" /> -->',
+        '',
+        '<!--',
+        '## Hidden heading',
+        '',
+        '<GhostExample id="widget/advanced">',
+        '',
+        '<<< @/../examples/widget/advanced.vue',
+        '',
+        '</GhostExample>',
+        '-->',
+        '',
+        '<!-- note --> ## Not a heading after a comment',
+        '',
+        '<GhostExample id="widget/basic" />',
+        '',
+        '```md',
+        '<!-- quoted, not a comment the page hides -->',
+        '```',
+        '',
+        '<!-- unterminated, runs to the end <GhostExample id="helper/basic" />',
+        '',
+      ].join('\n'),
+      parsing,
+    )
+
+    expect(embeds).toEqual([
+      {
+        id: 'widget/basic',
+        heading: 'Live',
+        headingDepth: 2,
+        wellFormed: true,
+      },
+    ])
+  })
+
   it('ignores front matter comments and reports malformed ids', () => {
     const embeds = collectGuideEmbeds(
       [
@@ -212,6 +253,60 @@ describe('buildExampleInventory', () => {
       headless: 3,
       themed: 2,
       unresolved: 0,
+    })
+  })
+
+  it('does not let a commented-out example change the count, lead, or classification', () => {
+    const live = [
+      '# GhostWidget',
+      '',
+      '<GhostExample id="widget/basic" />',
+      '',
+      '## More',
+      '',
+      '<GhostExample id="widget/advanced" />',
+      '',
+    ].join('\n')
+    // A themed embed commented out ahead of the lead would, if counted, make
+    // the page themed-capable and themed-first with one extra embed.
+    const commented = [
+      '# GhostWidget',
+      '',
+      '<!-- <GhostExample id="widget/themed" /> -->',
+      '',
+      '<GhostExample id="widget/basic" />',
+      '',
+      '## More',
+      '',
+      '<!--',
+      '<GhostExample id="widget/themed" />',
+      '-->',
+      '',
+      '<GhostExample id="widget/advanced" />',
+      '',
+    ].join('\n')
+
+    const [withoutComments] = inventoryOf([
+      { page: 'docs/components/widget.md', markdown: live },
+    ]).pages
+    const inventory = inventoryOf([
+      { page: 'docs/components/widget.md', markdown: commented },
+    ])
+
+    expect(inventory.pages[0]).toEqual(withoutComments)
+    expect(inventory.pages[0]).toMatchObject({
+      kind: 'headless-only',
+      themedFirst: false,
+      lead: { id: 'widget/basic', layer: 'headless' },
+      counts: { embeds: 2, headless: 2, themed: 0, unresolved: 0 },
+      duplicates: [],
+    })
+    expect(inventory.totals).toMatchObject({
+      themedCapable: 0,
+      themedFirst: 0,
+      headlessOnly: 1,
+      embeds: 2,
+      themed: 0,
     })
   })
 
