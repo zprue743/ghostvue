@@ -46,8 +46,8 @@
     },
     {
       "id": "toast/themed",
-      "title": "Themed",
-      "description": "Themed stack from @ghostvue/themes: a bottom-end corner stack, an informational toast, and a danger error whose retry updates it in place without replaying the enter animation.",
+      "title": "Save and retry",
+      "description": "Themed stack from @ghostvue/themes: Save draft shows an informational toast that dismisses itself, and Sync files shows a persistent danger error whose Retry updates the same toast in place and announces the new text.",
       "layer": "themed"
     }
   ]

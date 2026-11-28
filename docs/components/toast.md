@@ -6,15 +6,41 @@ dialog. Sighted users see a small stack near an edge of the screen. Screen
 reader users hear each notification once, when it appears, and focus never
 moves to the stack.
 
-Import it from `@ghostvue/vue`. It is headless: the parts render plain elements
-with `data-part` hooks and no styles, and the headless layer has no animation.
-Stack position, gaps, and stacking order are yours (or a theme's) to set. For a
-styled stack, import the same names from `@ghostvue/themes` (see
-[Themed use](#themed-use)).
+Import the provider, viewport, and `useGhostToast` from `@ghostvue/themes` for a
+styled corner stack. The themed wrappers add styling only: the store, timers,
+announcements, and keyboard behavior are the headless ones from
+`@ghostvue/vue`. Teams that bring their own design system or need custom toast
+markup can start from
+[Advanced: custom rendering and headless composition](#advanced-headless-composition).
 
-## Basic use
+## Save and retry {#themed-use}
 
-<GhostExample id="toast/basic" />
+<GhostExample id="toast/themed" />
+
+The example imports every component from `@ghostvue/themes`. Try both buttons:
+
+- **Success.** **Save draft** shows an informational "Draft saved" toast. It is
+  announced politely and dismisses itself after 8 seconds. Hovering it or
+  moving focus into it pauses the countdown.
+- **Persistent error.** **Sync files** shows "Sync failed" with a **Retry**
+  action. `type: 'error'` keeps it on screen until someone dismisses it, and
+  the themed toast picks the danger tone.
+- **Retry.** **Retry** calls `update()` on the same `id`. The toast changes to
+  "Still failing" and counts the attempt, but it keeps its place in the stack,
+  focus stays on **Retry**, and the enter animation does not play again.
+  `announceUpdate: true` reads the new text once. Pressing **Sync files** again
+  also reuses the id, so the stack never fills with duplicate errors.
+- **Dismiss.** The portaled stack comes last in the page's tab order, oldest
+  toast first. Press `Enter` or `Space` on a **Dismiss** button, or `Escape`
+  anywhere in a toast, to remove only that toast. Focus returns to the control
+  you used before entering the stack.
+
+The source keeps one function per outcome (`saveDraft`, `syncFiles`,
+`retrySync`) so each `toast()` and `update()` call reads on its own. The
+sample stays offline on purpose. In an app, call `update()` with a success
+message when the retry succeeds.
+
+## Set up the provider {#basic-use}
 
 Render one `GhostToastProvider` near the root of your app, with one
 `GhostToastViewport` inside it. Any descendant component publishes with
@@ -22,6 +48,10 @@ Render one `GhostToastProvider` near the root of your app, with one
 
 ```vue
 <!-- App.vue -->
+<script setup lang="ts">
+import { GhostToastProvider, GhostToastViewport } from '@ghostvue/themes'
+</script>
+
 <template>
   <GhostToastProvider>
     <RouterView />
@@ -32,7 +62,7 @@ Render one `GhostToastProvider` near the root of your app, with one
 
 ```ts
 // Any component under the provider
-import { useGhostToast } from '@ghostvue/vue'
+import { useGhostToast } from '@ghostvue/themes'
 
 const { toast } = useGhostToast()
 
@@ -48,6 +78,10 @@ throws.
 
 State belongs to the provider. There is no module-global queue, so two
 providers never share toasts and each server request renders its own provider.
+
+`@ghostvue/themes` exports a themed `GhostToastViewport` and `GhostToast`, and
+re-exports the other parts and `useGhostToast` from `@ghostvue/vue`. Importing
+from `@ghostvue/themes` loads `default.css`.
 
 | Part                    | Element              | Role                                                                  |
 | ----------------------- | -------------------- | --------------------------------------------------------------------- |
@@ -89,12 +123,11 @@ example `useGhostToast({ type: 'error' })` in an error boundary.
 
 ### Stable ids and updates
 
-<GhostExample id="toast/persist-error" />
-
 Pass an explicit `id` when one toast should represent one piece of state, such
-as a save or upload status. Calling `toast({ id })` again, or `update(id, patch)`,
-changes the toast in place: it keeps its position, its visible slot, and its
-key, so nothing re-mounts. A dismissed id can be used again for a new toast.
+as a save or upload status. The [first example](#themed-use) does this for its
+sync status. Calling `toast({ id })` again, or `update(id, patch)`, changes the
+toast in place: it keeps its position, its visible slot, and its key, so
+nothing re-mounts. A dismissed id can be used again for a new toast.
 
 `update()` does not re-announce by default, so routine progress changes stay
 quiet. Pass `announceUpdate: true` to announce the merged title and description
@@ -137,23 +170,125 @@ the elapsed time for a shorter one.
 
 ## Queue and limit
 
-<GhostExample id="toast/queue-overflow" />
-
 At most `limit` toasts (default 3) are visible. Later toasts wait in creation
 order and appear as visible toasts leave. The waiting queue has no cap; more
 than 20 waiting toasts logs a development warning (`GHOST010`), which usually
 means a loop is calling `toast()`. Reuse an id to update one toast instead.
+The [headless stack example](#headless-stack) sends five toasts to a provider
+with `:limit="3"`.
 
-## Custom rendering
+## Themed stack
+
+- **Stack:** the themed viewport sets `data-themed`, so the portaled region is a
+  fixed stack in the bottom-end corner (logical insets, so it flips in RTL),
+  above modal layers. The empty region ignores pointer events. With
+  `:portal="false"` it also sets `data-inline` and stays in normal flow, so
+  your layout places it.
+- **Default content:** without slots, each toast renders as a themed
+  `GhostToast` with title, description, an outlined action, and an icon-only
+  close button named "Dismiss". A `toast` or `default` slot replaces that
+  content; see [Custom rendering](#custom-rendering).
+- **Variant and tone:** the themed `GhostToast` takes `variant`
+  (`'surface'` default, or `'solid'`) and `tone` (`'neutral'`, `'accent'`,
+  `'danger'`). Without `tone`, `type: 'error'` toasts use `danger` and others
+  `neutral`. Defaults omit `data-variant` and `data-tone`, as on
+  `GhostInlineAlert`.
+- **Appearance:** portaled toasts get token values from the nearest
+  `data-ghost-theme` (or `.ghost-theme`) ancestor, usually `<html>`, as other
+  portaled themed surfaces do. On this site the stack follows the light or dark
+  appearance you pick.
+
+### Motion
+
+The themed toast plays a short enter animation (fade and rise by
+`--ghost-motion-translate` over `--ghost-motion-enter-duration` with
+`--ghost-motion-enter-easing`) once, when its element is inserted. There is no
+exit animation: dismissed toasts unmount immediately. With
+`prefers-reduced-motion: reduce` there is no animation at all.
+
+The viewport keys each toast by id, so `update()` and a repeated `toast()` with
+the same `id` patch the existing element and the animation does not replay,
+even when the update changes the type or tone. A new id is a new toast and
+animates in.
+
+## Server rendering
+
+The provider starts no timers and adds no listeners on the server. The viewport
+renders an empty region and two empty announcers, so hydration is stable.
+
+- During server rendering, `toast()` does nothing and warns in development
+  (`GHOST006`). Server-rendered pages never carry toasts from another request.
+- On the client, toasts created before the viewport mounts wait silently. When
+  the viewport mounts they are shown, announced, and their timers start.
+
+## Modals and live regions
+
+The viewport and both announcers carry `data-ghost-live`. While a modal
+`GhostDialog` or `GhostDrawer` is open, they stay outside the inert background
+([ADR 0012](../adr/0012-modal-overlays.md)), so announcements are still heard
+and toasts stay operable. Pressing a toast does not count as an outside press
+that closes the dialog, and the dialog's focus trap does not pull focus back
+out of the stack. Tab from a toast returns to the dialog.
+
+Keep the default `portal` so the stack is a sibling of the dialog under
+`<body>`. A viewport rendered inside your app root becomes inert with it. The
+headless `toast/persist-error` example on the
+[GhostToast reference page](/reference/vue/ghost-toast) shows an urgent error
+above an open dialog.
+
+## Urgency
+
+Ordinary toasts announce through a polite `role="status"` region, which waits
+for the screen reader to finish speaking. Use `urgency: 'urgent'` only for a
+message that needs immediate attention, such as a failed payment or lost
+connection. It announces through an assertive `role="alert"` region and
+interrupts. `type: 'error'` alone does not make a toast urgent, so the first
+example's sync error is announced politely.
+
+## Accessibility
+
+- **Region:** the viewport is `role="region"` named by the provider `label`.
+  Pass `aria-labelledby` (or `aria-label`) to the viewport to name it yourself;
+  the default `aria-label` is then dropped.
+- **Announcements:** two visually hidden live regions sit next to the region:
+  polite (`role="status"`, `aria-live="polite"`, `aria-atomic="true"`) and
+  assertive (`role="alert"`). Each show writes the title and description to
+  exactly one of them, in a new keyed node so identical messages are announced
+  again. Toasts shown in the same tick are joined into one announcement.
+  Waiting toasts are announced only when they are shown; dismissal is silent.
+- **Toast roots** have no role, so the message is not announced twice.
+- **Focus:** creating, updating, promoting, and expiring toasts never moves
+  focus. Each toast's buttons are in the normal tab order, oldest first; there
+  is no roving focus.
+- **Keyboard:** `Enter` and `Space` activate the focused action or close button.
+  `Escape` with focus inside a toast dismisses only that toast and stops the
+  event, so a dialog behind the stack stays open.
+- **Focus return:** when a toast that holds focus is removed (Escape, Close, or
+  an action that dismisses), focus returns to the element that had it before
+  focus entered the region.
+- **Time:** errors and toasts with actions persist. Informational toasts
+  auto-dismiss after 8 seconds by default and pause on hover, focus, and a
+  hidden page. Do not put the only path to an action in an auto-dismissing
+  toast.
+- **Close names:** give `GhostToastClose` visible text or an `aria-label`.
+
+## Advanced: custom rendering and headless composition {#advanced-headless-composition}
+
+This section is for teams that bring their own design system, or that need
+markup the default toast content does not render.
+
+### Custom rendering
 
 Without slots, the viewport renders each toast as title, description, action,
 and a **Dismiss** button. Use the `toast` slot to render your own content per
-visible toast; the viewport keeps the list keyed by id:
+visible toast; the viewport keeps the list keyed by id. With the themed
+viewport, render the themed `GhostToast` from `@ghostvue/themes` to keep the
+recipe and pick a variant or tone:
 
 ```vue
 <GhostToastViewport>
   <template #toast="{ toast }">
-    <GhostToast :toast="toast">
+    <GhostToast :toast="toast" variant="solid" tone="accent">
       <GhostToastTitle>{{ toast.title }}</GhostToastTitle>
       <GhostToastDescription v-if="toast.description">
         {{ toast.description }}
@@ -174,6 +309,39 @@ Render one `GhostToast` per record with `:key="toast.id"`. The `toasts` ref from
 Each record has `id`, `type`, `urgency`, `title`, `description`, `action`, the
 resolved `duration` (`null` when it persists), `remainingMs`, `pauseReasons`,
 and `state`.
+
+### Headless stack
+
+<GhostExample id="toast/queue-overflow" />
+
+The same names imported from `@ghostvue/vue` are headless: the parts render
+plain elements with `data-part` hooks and no styles, and the headless layer has
+no animation. Stack position, gaps, and stacking order are yours to set. The
+example renders its own toast content through the `toast` slot, keeps the
+viewport in place with `:portal="false"`, and styles the stack with a scoped
+class. A portaled headless viewport needs an unscoped stylesheet, because the
+teleported region does not carry the component's scoped attribute.
+
+The [GhostToast reference page](/reference/vue/ghost-toast) also renders the
+headless `toast/basic` (one informational toast) and `toast/persist-error`
+(an urgent error above a dialog) examples.
+
+### Styling hooks
+
+| Part                | Class                     | `data-part`           | Other hooks                              |
+| ------------------- | ------------------------- | --------------------- | ---------------------------------------- |
+| Viewport            | `ghost-toast-viewport`    | `viewport`            | `data-ghost-live`                        |
+| Toast               | `ghost-toast`             | `root`                | `data-ghost-toast`, `data-type="error"`  |
+| Title               | `ghost-toast-title`       | `title`               | none                                     |
+| Description         | `ghost-toast-description` | `description`         | none                                     |
+| Action              | `ghost-toast-action`      | `action`              | none                                     |
+| Close               | `ghost-toast-close`       | `close`               | none                                     |
+| Polite announcer    | none                      | `announcer-polite`    | visually hidden, not for visible styling |
+| Assertive announcer | none                      | `announcer-assertive` | visually hidden, not for visible styling |
+
+`data-type` is omitted for default toasts. The themed toast adds
+`data-themed`, and `data-variant` and `data-tone` when they are not the
+defaults.
 
 ## API
 
@@ -221,144 +389,8 @@ Every part merges your `class` and `style` and exposes `element`. Action and
 Close also expose `focus()` and `blur()`. Close and Action emit `click` after
 they dismiss or run the action.
 
-## Server rendering
-
-The provider starts no timers and adds no listeners on the server. The viewport
-renders an empty region and two empty announcers, so hydration is stable.
-
-- During server rendering, `toast()` does nothing and warns in development
-  (`GHOST006`). Server-rendered pages never carry toasts from another request.
-- On the client, toasts created before the viewport mounts wait silently. When
-  the viewport mounts they are shown, announced, and their timers start.
-
-## Modals and live regions
-
-The viewport and both announcers carry `data-ghost-live`. While a modal
-`GhostDialog` or `GhostDrawer` is open, they stay outside the inert background
-([ADR 0012](../adr/0012-modal-overlays.md)), so announcements are still heard
-and toasts stay operable. Pressing a toast does not count as an outside press
-that closes the dialog, and the dialog's focus trap does not pull focus back
-out of the stack. Tab from a toast returns to the dialog.
-
-Keep the default `portal` so the stack is a sibling of the dialog under
-`<body>`. A viewport rendered inside your app root becomes inert with it.
-
-## Urgency
-
-Ordinary toasts announce through a polite `role="status"` region, which waits
-for the screen reader to finish speaking. Use `urgency: 'urgent'` only for a
-message that needs immediate attention, such as a failed payment or lost
-connection. It announces through an assertive `role="alert"` region and
-interrupts. `type: 'error'` alone does not make a toast urgent.
-
-## Accessibility
-
-- **Region:** the viewport is `role="region"` named by the provider `label`.
-  Pass `aria-labelledby` (or `aria-label`) to the viewport to name it yourself;
-  the default `aria-label` is then dropped.
-- **Announcements:** two visually hidden live regions sit next to the region:
-  polite (`role="status"`, `aria-live="polite"`, `aria-atomic="true"`) and
-  assertive (`role="alert"`). Each show writes the title and description to
-  exactly one of them, in a new keyed node so identical messages are announced
-  again. Toasts shown in the same tick are joined into one announcement.
-  Waiting toasts are announced only when they are shown; dismissal is silent.
-- **Toast roots** have no role, so the message is not announced twice.
-- **Focus:** creating, updating, promoting, and expiring toasts never moves
-  focus. Each toast's buttons are in the normal tab order, oldest first; there
-  is no roving focus.
-- **Keyboard:** `Enter` and `Space` activate the focused action or close button.
-  `Escape` with focus inside a toast dismisses only that toast and stops the
-  event, so a dialog behind the stack stays open.
-- **Focus return:** when a toast that holds focus is removed (Escape, Close, or
-  an action that dismisses), focus returns to the element that had it before
-  focus entered the region.
-- **Time:** errors and toasts with actions persist. Informational toasts
-  auto-dismiss after 8 seconds by default and pause on hover, focus, and a
-  hidden page. Do not put the only path to an action in an auto-dismissing
-  toast.
-- **Close names:** give `GhostToastClose` visible text or an `aria-label`.
-
-## Styling hooks
-
-| Part                | Class                     | `data-part`           | Other hooks                              |
-| ------------------- | ------------------------- | --------------------- | ---------------------------------------- |
-| Viewport            | `ghost-toast-viewport`    | `viewport`            | `data-ghost-live`                        |
-| Toast               | `ghost-toast`             | `root`                | `data-ghost-toast`, `data-type="error"`  |
-| Title               | `ghost-toast-title`       | `title`               | none                                     |
-| Description         | `ghost-toast-description` | `description`         | none                                     |
-| Action              | `ghost-toast-action`      | `action`              | none                                     |
-| Close               | `ghost-toast-close`       | `close`               | none                                     |
-| Polite announcer    | none                      | `announcer-polite`    | visually hidden, not for visible styling |
-| Assertive announcer | none                      | `announcer-assertive` | visually hidden, not for visible styling |
-
-`data-type` is omitted for default toasts.
-
-## Themed use
-
-<GhostExample id="toast/themed" />
-
-`@ghostvue/themes` exports a themed `GhostToastViewport` and `GhostToast`, and
-re-exports `GhostToastProvider`, `GhostToastTitle`, `GhostToastDescription`,
-`GhostToastAction`, `GhostToastClose`, and `useGhostToast` from
-`@ghostvue/vue`. Importing from `@ghostvue/themes` loads `default.css`. The
-wrappers only add styling hooks: the store, timers, pauses, announcements,
-`Escape`, and focus return are the headless ones, unchanged.
-
-```vue
-<script setup lang="ts">
-import { GhostToastProvider, GhostToastViewport } from '@ghostvue/themes'
-</script>
-
-<template>
-  <GhostToastProvider>
-    <RouterView />
-    <GhostToastViewport />
-  </GhostToastProvider>
-</template>
-```
-
-- **Stack:** the themed viewport sets `data-themed`, so the portaled region is a
-  fixed stack in the bottom-end corner (logical insets, so it flips in RTL),
-  above modal layers. The empty region ignores pointer events. With
-  `:portal="false"` it also sets `data-inline` and stays in normal flow, so
-  your layout places it.
-- **Default content:** without slots, each toast renders as a themed
-  `GhostToast` with title, description, an outlined action, and an icon-only
-  close button named "Dismiss". A `toast` or `default` slot replaces that
-  content exactly as on the headless viewport.
-- **Variant and tone:** the themed `GhostToast` takes `variant`
-  (`'surface'` default, or `'solid'`) and `tone` (`'neutral'`, `'accent'`,
-  `'danger'`). Without `tone`, `type: 'error'` toasts use `danger` and others
-  `neutral`. Defaults omit `data-variant` and `data-tone`, as on
-  `GhostInlineAlert`.
-
-```vue
-<GhostToastViewport>
-  <template #toast="{ toast }">
-    <GhostToast :toast="toast" variant="solid" tone="accent">
-      <GhostToastTitle>{{ toast.title }}</GhostToastTitle>
-      <GhostToastClose aria-label="Dismiss notification">×</GhostToastClose>
-    </GhostToast>
-  </template>
-</GhostToastViewport>
-```
-
-### Motion
-
-The themed toast plays a short enter animation (fade and rise by
-`--ghost-motion-translate` over `--ghost-motion-enter-duration` with
-`--ghost-motion-enter-easing`) once, when its element is inserted. There is no
-exit animation: dismissed toasts unmount immediately. With
-`prefers-reduced-motion: reduce` there is no animation at all.
-
-The viewport keys each toast by id, so `update()` and a repeated `toast()` with
-the same `id` patch the existing element and the animation does not replay,
-even when the update changes the type or tone. A new id is a new toast and
-animates in.
-
-Portaled toasts get token values from the nearest `data-ghost-theme` (or
-`.ghost-theme`) ancestor, usually `<html>`, as other portaled themed surfaces
-do.
+See the [generated component references](/reference/) for every part's props,
+slots, and examples.
 
 ## Specification
 
