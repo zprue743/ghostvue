@@ -18,12 +18,16 @@ import { runnerImport } from 'vite'
 import { writeComponentReferences } from './component-reference.js'
 
 /**
+ * Imports one repository TypeScript module through Vite's module runner.
+ * Shared with other read-only reports (`pnpm examples:inventory`) that must
+ * reuse docs transforms rather than re-implement them in JavaScript.
+ *
  * @template T
  * @param {string} repositoryRoot
  * @param {string} relativePath
  * @returns {Promise<T>}
  */
-async function importTypeScriptModule(repositoryRoot, relativePath) {
+export async function importTypeScriptModule(repositoryRoot, relativePath) {
   const { module } = await runnerImport(join(repositoryRoot, relativePath), {
     root: repositoryRoot,
     // Only TypeScript stripping and resolution are needed; loading a project

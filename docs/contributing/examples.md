@@ -212,6 +212,31 @@ before sign-off. Record each remaining defect with its owner and agreed
 disposition. Follow the [visual review evidence checklist](../standards/testing.md#visual-review-evidence)
 when submitting a change for review.
 
+## Example inventory
+
+`pnpm examples:inventory` prints, for every component guide, the embedded
+example ids in display order with each one's layer and the heading above it,
+plus per-page and overall counts. Release reviewers use it to see which lead
+and secondary demos are headless without opening each page.
+
+```bash
+pnpm examples:inventory                          # every guide
+pnpm examples:inventory data-table date-picker   # selected guides
+pnpm examples:inventory --json                   # machine-readable
+```
+
+- It counts the `<GhostExample>` hosts the docs build renders as live
+  previews, found with the same markdown transforms. Tags in fenced code,
+  spec pages (`*-spec.md`) and the generated `docs/reference/` pages are not
+  counted.
+- Layers come from `examples/registry.ts`. A guide with any themed demo is
+  **themed-capable** (and **themed-first** when its lead demo is themed);
+  one whose demos are all headless is a **headless-only utility**.
+- An id with no registry entry is listed as unresolved with its page and
+  position, and the command exits 1.
+- The report only reads the checkout, and its output is identical between
+  runs on an unchanged tree.
+
 ## Manifests
 
 Each component manifest's `examples` array lists the ids that belong to

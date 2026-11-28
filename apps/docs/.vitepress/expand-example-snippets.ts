@@ -2,8 +2,12 @@ import type { MarkdownRenderer } from 'vitepress'
 
 import { mapOutsideFences } from './markdown-fences'
 
-/** Self-closing live tag that authors (and generated references) write. */
-const EXAMPLE_TAG = /<GhostExample\s+id=["']([^"']+)["']\s*\/>/g
+/**
+ * Self-closing live tag that authors (and generated references) write.
+ * Exported for `pnpm examples:inventory`, which must count embeds exactly as
+ * this rewrite sees them.
+ */
+export const EXAMPLE_TAG = /<GhostExample\s+id=["']([^"']+)["']\s*\/>/g
 
 /** Path-derived example id (`button/icon-only`). */
 export const EXAMPLE_ID = /^[a-z][a-z0-9-]+\/[a-z][a-z0-9-]+$/

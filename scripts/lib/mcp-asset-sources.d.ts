@@ -28,3 +28,8 @@ export function generateDocsCorpusPages(
 export function loadExampleCatalog(
   repositoryRoot: string,
 ): Promise<ExampleCatalogEntry[]>
+
+export function importTypeScriptModule<T>(
+  repositoryRoot: string,
+  relativePath: string,
+): Promise<T>
