@@ -60,8 +60,8 @@
     },
     {
       "id": "data-table/themed-invoices",
-      "title": "Themed invoices",
-      "description": "A card preset with searchable invoices, contextual selection actions, detail rows, and a pagination footer.",
+      "title": "Review invoices",
+      "description": "A themed card preset with search, sortable columns, currency amounts, overdue invoices selected for a Mark paid action, a detail row, a Clear search recovery for no results, and a pagination footer.",
       "layer": "themed"
     },
     {

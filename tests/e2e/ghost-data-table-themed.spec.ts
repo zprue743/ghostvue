@@ -13,48 +13,87 @@ async function openInvoices(page: Page, playgroundUrl: string) {
 }
 
 test.describe('Themed GhostDataTablePreset @component:GhostDataTablePreset', () => {
-  test('navigates and operates the themed preset with native table focus @cross-browser', async ({
+  test('opens on page 1 with the selected overdue invoices visible', async ({
     page,
     playgroundUrl,
   }) => {
     const table = await openInvoices(page, playgroundUrl)
+    const bodyRows = table.locator('tbody > tr:not([data-detail-row])')
+    await expect(bodyRows).toHaveCount(4)
+    await expect(
+      page
+        .getByRole('navigation', { name: 'Invoice pages' })
+        .getByRole('button', { name: 'Page 1' }),
+    ).toHaveAttribute('aria-current', 'page')
+    // Every checked row on page 1 is an overdue invoice, and the bar agrees.
+    const selected = table.locator('tbody > tr[data-selected="true"]')
+    await expect(selected).toHaveCount(2)
+    await expect(selected.nth(0)).toContainText('INV-1047')
+    await expect(selected.nth(0)).toContainText('Overdue')
+    await expect(selected.nth(0)).toContainText('$3,725.00')
+    await expect(selected.nth(1)).toContainText('INV-1045')
+    await expect(selected.nth(1)).toContainText('$980.50')
+    for (const id of ['INV-1047', 'INV-1045']) {
+      await expect(
+        table.getByRole('checkbox', { name: `Select row ${id}` }),
+      ).toBeChecked()
+    }
+    await expect(page.getByText('2 selected')).toBeVisible()
+    await expect(
+      table.getByRole('button', { name: 'Show details for INV-1047' }),
+    ).toHaveAttribute('aria-expanded', 'true')
+    await expect(page.getByRole('status')).toHaveText('8 invoices')
+  })
+
+  test('navigates and operates the themed preset with native table focus @cross-browser', async ({
+    page,
+    playgroundUrl,
+  }) => {
+    await page.clock.install()
+    const table = await openInvoices(page, playgroundUrl)
     const scope = { include: '.ghost-data-table[data-themed]' }
     const search = page.getByRole('searchbox', { name: 'Search invoices' })
-    const refresh = page.getByRole('button', { name: 'Simulate refresh' })
+    const markPaid = page.getByRole('button', { name: 'Mark paid' })
     const clear = page.getByRole('button', { name: 'Clear selection' })
     const selectAll = table.getByRole('checkbox', { name: 'Select all rows' })
+    const invoice = table.getByRole('button', { name: 'Invoice' })
     const customer = table.getByRole('button', { name: 'Customer' })
     const amount = table.getByRole('button', { name: 'Amount' })
     const amountHeader = table.getByRole('columnheader', { name: 'Amount' })
+    const firstAmount = table.locator(
+      'tbody > tr:not([data-detail-row]) > td:last-child',
+    )
     await expectNoAxeViolations(page, scope)
 
-    await page.getByRole('button', { name: 'Clear search' }).focus()
+    await search.focus()
     for (const target of [
-      search,
-      refresh,
+      markPaid,
       clear,
       page.getByRole('region', { name: 'Invoice table' }),
       selectAll,
+      invoice,
       customer,
-      amount,
     ]) {
       await page.keyboard.press('Tab')
       await expect(target).toBeFocused()
     }
     await page.keyboard.press('Shift+Tab')
-    await expect(customer).toBeFocused()
-    await page.keyboard.press('Tab')
-    await expect(amount).toBeFocused()
+    await expect(invoice).toBeFocused()
+
+    // A keyboard sort reorders the visible rows by the numeric amount.
+    await amount.focus()
+    await expect(firstAmount.first()).toHaveText('$2,480.00')
     const unsorted = await amount.evaluate(
       (node) => getComputedStyle(node, '::after').clipPath,
     )
-    for (const [key, sort] of [
-      ['Enter', 'ascending'],
-      ['Space', 'descending'],
-      ['Enter', null],
+    for (const [key, sort, first] of [
+      ['Enter', 'ascending', '$645.75'],
+      ['Space', 'descending', '$4,200.00'],
+      ['Enter', null, '$2,480.00'],
     ] as const) {
       await page.keyboard.press(key)
       await expect(amount).toBeFocused()
+      await expect(firstAmount.first()).toHaveText(first)
       if (sort) {
         await expect(amountHeader).toHaveAttribute('aria-sort', sort)
         expect(
@@ -67,40 +106,45 @@ test.describe('Themed GhostDataTablePreset @component:GhostDataTablePreset', () 
       }
     }
 
-    await refresh.evaluate((button) => {
-      if (button instanceof HTMLButtonElement) button.click()
-    })
+    // Mark paid holds the table busy until the stand-in save resolves. Axe
+    // needs timers, so it runs before the clock pauses.
+    await page.clock.pauseAt(Date.now() + 60_000)
+    await markPaid.focus()
+    await page.keyboard.press('Enter')
     await expect(table).toHaveAttribute('aria-busy', 'true')
-    await expect(amount).toBeFocused()
-    await page.keyboard.press('Space')
-    await expect(amountHeader).toHaveAttribute('aria-sort', 'ascending')
-    await expect(amount).toBeFocused()
-    await expectNoAxeViolations(page, scope)
-    await amount.press('Space')
-    await amount.press('Space')
-    await expect(amountHeader).not.toHaveAttribute('aria-sort', /./)
+    await expect(markPaid).toBeFocused()
+    await page.clock.runFor(600)
+    await page.clock.resume()
+    await expect(table).not.toHaveAttribute('aria-busy', /./)
+    await expect(markPaid).toHaveCount(0)
+    await expect(selectAll).toBeFocused()
+    await expect(page.getByRole('status')).toHaveText(
+      '8 invoices · 2 invoices marked paid',
+    )
+    await expect(
+      table.locator('tbody > tr', { hasText: 'INV-1047' }).first(),
+    ).toContainText('Paid')
 
+    const row = table.getByRole('checkbox', { name: 'Select row INV-1048' })
+    await row.focus()
+    await page.keyboard.press('Space')
+    await expect(row).toBeChecked()
+    await expect(row).toBeFocused()
     await clear.focus()
     await page.keyboard.press('Enter')
     await expect(clear).toHaveCount(0)
     await expect(selectAll).toBeFocused()
-    const row = table.getByRole('checkbox', { name: 'Select row inv-2' })
-    await row.focus()
-    await page.keyboard.press('Enter')
-    await expect(row).not.toBeChecked()
-    await page.keyboard.press('Space')
-    await expect(row).toBeChecked()
-    await expect(row).toBeFocused()
-    const expand = table.getByRole('button', { name: 'Show details for inv-2' })
-    await table.getByRole('button', { name: 'Hide invoice details' }).focus()
+
+    const expand = table.getByRole('button', {
+      name: 'Show details for INV-1047',
+    })
+    await table.getByRole('button', { name: 'Hide details' }).focus()
     await page.keyboard.press('Enter')
     await expect(expand).toBeFocused()
     await expect(expand).toHaveAttribute('aria-expanded', 'false')
     await page.keyboard.press('Space')
     await expect(expand).toHaveAttribute('aria-expanded', 'true')
     await expect(expand).toBeFocused()
-    await page.keyboard.press('Enter')
-    await expect(expand).toHaveAttribute('aria-expanded', 'false')
 
     const next = page
       .getByRole('navigation', { name: 'Invoice pages' })
@@ -109,21 +153,126 @@ test.describe('Themed GhostDataTablePreset @component:GhostDataTablePreset', () 
     await page.keyboard.press('Enter')
     await expect(next).toBeFocused()
     await expect(next).toHaveAttribute('aria-current', 'page')
+  })
+
+  test('recovers from a search with no results', async ({
+    page,
+    playgroundUrl,
+  }) => {
+    const table = await openInvoices(page, playgroundUrl)
+    const search = page.getByRole('searchbox', { name: 'Search invoices' })
+    await search.fill('harbor')
+    await expect(table.locator('tbody > tr[data-selected]')).toHaveCount(1)
+    await expect(page.getByRole('status')).toHaveText('1 invoice')
+
     await search.fill('missing invoice')
-    await expect(table.getByText('No matching invoices')).toBeVisible()
-    await expectNoAxeViolations(page, scope)
+    await expect(
+      table.getByRole('heading', { name: 'No matching invoices', level: 2 }),
+    ).toBeVisible()
+    await expect(page.getByRole('status')).toHaveText('0 invoices')
+    await expect(
+      table.getByRole('columnheader', { name: 'Amount' }),
+    ).toBeVisible()
+    await expectNoAxeViolations(page, {
+      include: '.ghost-data-table[data-themed]',
+    })
+
+    const recover = page.getByRole('button', { name: 'Clear search' })
+    await recover.focus()
+    await page.keyboard.press('Enter')
+    await expect(search).toHaveValue('')
+    await expect(search).toBeFocused()
+    await expect(table.getByText('No matching invoices')).toHaveCount(0)
+    await expect(
+      table.locator('tbody > tr:not([data-detail-row])'),
+    ).toHaveCount(4)
+    await expect(page.getByRole('status')).toHaveText('8 invoices')
+  })
+
+  test('keeps the wide table inside its named scroll region at phone width', async ({
+    page,
+    playgroundUrl,
+  }) => {
+    await page.setViewportSize({ width: 375, height: 812 })
+    const table = await openInvoices(page, playgroundUrl)
+    const region = page.getByRole('region', { name: 'Invoice table' })
+    await expect(region).toBeVisible()
+    const metrics = await region.evaluate((node) => ({
+      client: node.clientWidth,
+      scroll: node.scrollWidth,
+    }))
+    expect(metrics.scroll).toBeGreaterThan(metrics.client)
+    expect(
+      await page.evaluate(() => document.documentElement.scrollWidth),
+    ).toBeLessThanOrEqual(375)
+
+    // Keyboard users can focus the region and scroll it to the Amount column.
+    await region.focus()
+    await expect(region).toBeFocused()
+    for (let step = 0; step < 8; step += 1) {
+      await page.keyboard.press('ArrowRight')
+    }
+    await expect
+      .poll(() => region.evaluate((node) => node.scrollLeft))
+      .toBeGreaterThan(0)
+    await expect(
+      table.locator('tbody > tr[data-selected="true"] > td:last-child').first(),
+    ).toBeInViewport()
+  })
+
+  test('keeps a selection made during a pending save', async ({
+    page,
+    playgroundUrl,
+  }) => {
+    await page.clock.install()
+    const table = await openInvoices(page, playgroundUrl)
+    const markPaid = page.getByRole('button', { name: 'Mark paid' })
+    const pending = table.getByRole('checkbox', { name: 'Select row INV-1048' })
+    await page.clock.pauseAt(Date.now() + 60_000)
+    await markPaid.press('Enter')
+    await expect(table).toHaveAttribute('aria-busy', 'true')
+
+    // Rows stay operable while busy; pick another invoice mid-save.
+    await pending.focus()
+    await page.keyboard.press('Space')
+    await expect(pending).toBeChecked()
+    await expect(page.getByText('3 selected', { exact: true })).toBeVisible()
+
+    await page.clock.runFor(600)
+    await page.clock.resume()
+    await expect(table).not.toHaveAttribute('aria-busy', /./)
+    await expect(page.getByRole('status')).toHaveText(
+      '8 invoices · 2 invoices marked paid',
+    )
+    // Only the saved invoices leave the selection; the new pick survives
+    // with focus where the user left it, and it is still payable.
+    for (const id of ['INV-1047', 'INV-1045']) {
+      await expect(
+        table.getByRole('checkbox', { name: `Select row ${id}` }),
+      ).not.toBeChecked()
+    }
+    await expect(pending).toBeChecked()
+    await expect(pending).toBeFocused()
+    await expect(page.getByText('1 selected', { exact: true })).toBeVisible()
+    await expect(
+      table.locator('tbody > tr', { hasText: 'INV-1048' }).first(),
+    ).toContainText('Open')
+    await expect(markPaid).toBeEnabled()
   })
 
   test('keeps busy rows opaque and readable across themes and modes', async ({
     page,
     playgroundUrl,
   }) => {
+    // Freeze the stand-in save so the table stays busy for the whole check.
+    await page.clock.install()
     const table = await openInvoices(page, playgroundUrl)
+    await page.clock.pauseAt(Date.now() + 60_000)
     const tbody = table.locator('tbody')
     await page.emulateMedia({ reducedMotion: 'reduce' })
-    await page.getByRole('button', { name: 'Simulate refresh' }).press('Enter')
+    await page.getByRole('button', { name: 'Mark paid' }).press('Enter')
     await expect(table).toHaveAttribute('aria-busy', 'true')
-    const target = table.getByRole('checkbox', { name: 'Select row inv-2' })
+    const target = table.getByRole('checkbox', { name: 'Select row INV-1047' })
     await target.focus()
     for (const theme of ['default', 'calm', 'vibrant', 'mono']) {
       for (const mode of ['light', 'dark']) {
@@ -230,7 +379,9 @@ test.describe('Themed GhostDataTablePreset @component:GhostDataTablePreset', () 
       expected.backgroundColor,
     )
     await expect(selected).toHaveCSS('color', expected.color)
-    const checkbox = table.getByRole('checkbox', { name: 'Select row inv-2' })
+    const checkbox = table.getByRole('checkbox', {
+      name: 'Select row INV-1047',
+    })
     await table.getByRole('checkbox', { name: 'Select all rows' }).focus()
     await page.keyboard.press('Tab')
     await checkbox.focus()
