@@ -1,10 +1,12 @@
 /**
  * Walk markdown, transforming only the text that sits outside fenced code.
  * Docs processors that rewrite `<GhostExample>` must skip quoted illustrations.
+ * `start` is the chunk's offset in `markdown`, for callers that must relate
+ * chunks to the whole page (for example an HTML comment that spans a fence).
  */
 export function mapOutsideFences(
   markdown: string,
-  transform: (chunk: string) => string,
+  transform: (chunk: string, start: number) => string,
 ): string {
   let result = ''
   let index = 0
@@ -14,7 +16,7 @@ export function mapOutsideFences(
     if (!fence) {
       const nextFence = findNextFence(markdown, index + 1)
       const end = nextFence ?? markdown.length
-      result += transform(markdown.slice(index, end))
+      result += transform(markdown.slice(index, end), index)
       index = end
       continue
     }

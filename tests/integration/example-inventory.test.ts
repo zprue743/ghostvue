@@ -176,6 +176,82 @@ describe('collectGuideEmbeds', () => {
     ])
   })
 
+  it('keeps a comment open across a fenced block it wraps', () => {
+    const embeds = collectGuideEmbeds(
+      [
+        '## Live',
+        '',
+        '<!--',
+        '```md',
+        'A fence inside the comment is hidden with it.',
+        '```',
+        '',
+        '## Hidden heading',
+        '',
+        '<GhostExample id="widget/themed" />',
+        '-->',
+        '',
+        '<GhostExample id="widget/basic" />',
+        '',
+      ].join('\n'),
+      parsing,
+    )
+
+    expect(embeds).toEqual([
+      {
+        id: 'widget/basic',
+        heading: 'Live',
+        headingDepth: 2,
+        wellFormed: true,
+      },
+    ])
+  })
+
+  it('closes a comment at the first --> even when it sits on a fence-like line', () => {
+    // markdown-it ends a comment block on the first line holding `-->`; fence
+    // markers inside the comment do not open a fence that could swallow it.
+    const embeds = collectGuideEmbeds(
+      [
+        '<!--',
+        '```md',
+        '-->',
+        '',
+        '<GhostExample id="widget/basic" />',
+        '',
+      ].join('\n'),
+      parsing,
+    )
+
+    expect(embeds.map((embed) => embed.id)).toEqual(['widget/basic'])
+  })
+
+  it('does not open a comment from <!-- quoted inside a visible fence', () => {
+    const embeds = collectGuideEmbeds(
+      [
+        '## Live',
+        '',
+        '```md',
+        '<!-- a quoted opener with no close in this fence',
+        '```',
+        '',
+        '<GhostExample id="widget/basic" />',
+        '',
+        '```md',
+        '-->',
+        '```',
+        '',
+        '<GhostExample id="widget/advanced" />',
+        '',
+      ].join('\n'),
+      parsing,
+    )
+
+    expect(embeds.map(({ id, heading }) => ({ id, heading }))).toEqual([
+      { id: 'widget/basic', heading: 'Live' },
+      { id: 'widget/advanced', heading: 'Live' },
+    ])
+  })
+
   it('ignores front matter comments and reports malformed ids', () => {
     const embeds = collectGuideEmbeds(
       [
@@ -307,6 +383,50 @@ describe('buildExampleInventory', () => {
       headlessOnly: 1,
       embeds: 2,
       themed: 0,
+    })
+  })
+
+  it('does not let an embed hidden after a commented-out fence change the count, lead, or classification', () => {
+    const live = [
+      '# GhostWidget',
+      '',
+      '<GhostExample id="widget/basic" />',
+      '',
+      '<GhostExample id="widget/advanced" />',
+      '',
+    ].join('\n')
+    // The themed embed sits after a fence but before `-->`, so it is hidden;
+    // counted, it would become the lead and make the page themed-first.
+    const commented = [
+      '# GhostWidget',
+      '',
+      '<!--',
+      '```vue',
+      '<GhostWidget />',
+      '```',
+      '',
+      '<GhostExample id="widget/themed" />',
+      '-->',
+      '',
+      '<GhostExample id="widget/basic" />',
+      '',
+      '<GhostExample id="widget/advanced" />',
+      '',
+    ].join('\n')
+
+    const [withoutComments] = inventoryOf([
+      { page: 'docs/components/widget.md', markdown: live },
+    ]).pages
+    const [page] = inventoryOf([
+      { page: 'docs/components/widget.md', markdown: commented },
+    ]).pages
+
+    expect(page).toEqual(withoutComments)
+    expect(page).toMatchObject({
+      kind: 'headless-only',
+      themedFirst: false,
+      lead: { id: 'widget/basic', layer: 'headless' },
+      counts: { embeds: 2, headless: 2, themed: 0, unresolved: 0 },
     })
   })
 

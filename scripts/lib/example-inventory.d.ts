@@ -5,7 +5,7 @@ export interface DocsExampleParsing {
   expandExampleSnippets: (source: string) => string
   mapOutsideFences: (
     markdown: string,
-    transform: (chunk: string) => string,
+    transform: (chunk: string, start: number) => string,
   ) => string
   EXAMPLE_TAG: RegExp
   EXAMPLE_SOURCE_BLOCK: RegExp

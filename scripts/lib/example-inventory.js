@@ -54,28 +54,50 @@ function stripFrontMatter(markdown) {
 const ATX_HEADING = /^(#{1,6})[ \t]+(.+?)[ \t]*$/gm
 
 /**
- * An HTML comment, or an unterminated one running to the end of the chunk
- * (markdown-it keeps an open `<!--` block going to the end of the document).
+ * Commented-out markup never reaches the rendered page: markdown-it passes a
+ * `<!--` block through raw until the first line holding `-->` (or to the end
+ * of the document when none follows), fence markers included, and the Vue
+ * template compiler then drops the comment. So a
+ * `<!-- <GhostExample … /> -->`, a heading inside a comment, and anything a
+ * comment wraps together with a fenced block must not count as a live embed
+ * or move the heading context.
+ *
+ * Comments are found on the whole page, not per chunk, because one can open
+ * before a fence and close after it. Only a `<!--` outside every visible fence
+ * opens a comment (`<!--` quoted in a code sample stays an illustration), and
+ * whether a fence is visible depends on the comments before it, so the page is
+ * rescanned after each comment is blanked: fence markers inside that comment
+ * are gone and can no longer pair with a later fence and hide live text. The
+ * close is the first `-->` wherever it sits, even on a fence-like line inside
+ * the comment. Guides hold few comments, so a rescan per comment is cheap.
+ *
+ * A comment is blanked with spaces rather than deleted, so offsets stay put and
+ * text after `-->` on the same line cannot slide to column 0 and read as an
+ * ATX heading; newlines are kept.
+ *
+ * @param {string} markdown
+ * @param {import('./example-inventory.js').DocsExampleParsing['mapOutsideFences']} mapOutsideFences
  */
-const HTML_COMMENT = /<!--[\s\S]*?(?:-->|$)/g
+function blankHtmlComments(markdown, mapOutsideFences) {
+  let text = markdown
+  for (;;) {
+    let open = -1
+    mapOutsideFences(text, (chunk, start) => {
+      if (open === -1) {
+        const at = chunk.indexOf('<!--')
+        if (at !== -1) open = start + at
+      }
+      return chunk
+    })
+    if (open === -1) return text
 
-/**
- * Commented-out markup is dropped by the Vue template compiler, so a
- * `<!-- <GhostExample … /> -->` (or a heading inside a comment) must not count
- * as a live embed or move the heading context. The region is blanked with
- * spaces rather than deleted so text after `-->` on the same line cannot slide
- * to column 0 and read as an ATX heading; newlines are kept.
- *
- * Applied per chunk outside fences, so `<!--` quoted inside a code fence stays
- * an illustration. A comment that opens before a fence and closes after it is
- * not modelled: guides do not comment out fenced blocks.
- *
- * @param {string} chunk
- */
-function blankHtmlComments(chunk) {
-  return chunk.replace(HTML_COMMENT, (comment) =>
-    comment.replace(/[^\n]/g, ' '),
-  )
+    const close = text.indexOf('-->', open + '<!--'.length)
+    const end = close === -1 ? text.length : close + '-->'.length
+    text =
+      text.slice(0, open) +
+      text.slice(open, end).replace(/[^\n]/g, ' ') +
+      text.slice(end)
+  }
 }
 
 /**
@@ -107,16 +129,16 @@ function headingText(raw) {
  */
 export function collectGuideEmbeds(markdown, parsing) {
   const normalized = parsing.expandExampleSnippets(stripFrontMatter(markdown))
+  const live = blankHtmlComments(normalized, parsing.mapOutsideFences)
   /** @type {import('./example-inventory.js').GuideEmbed[]} */
   const embeds = []
   /** @type {{ text: string; depth: number } | undefined} */
   let heading
 
-  parsing.mapOutsideFences(normalized, (chunk) => {
-    const live = blankHtmlComments(chunk)
+  parsing.mapOutsideFences(live, (chunk) => {
     /** @type {{ index: number; apply: () => void }[]} */
     const events = []
-    for (const match of live.matchAll(ATX_HEADING)) {
+    for (const match of chunk.matchAll(ATX_HEADING)) {
       const depth = match[1]?.length ?? 1
       const text = headingText(match[2] ?? '')
       events.push({
@@ -127,7 +149,7 @@ export function collectGuideEmbeds(markdown, parsing) {
       })
     }
     for (const pattern of [parsing.EXAMPLE_SOURCE_BLOCK, parsing.EXAMPLE_TAG]) {
-      for (const match of live.matchAll(pattern)) {
+      for (const match of chunk.matchAll(pattern)) {
         const id = match[1] ?? ''
         events.push({
           index: match.index,
