@@ -476,7 +476,13 @@ After Vue flushes the close render (`data-state="closed"`, `flush: 'post'`):
    - Otherwise, listen for `transitionend`, `transitioncancel`, `animationend`,
      and `animationcancel` filtered strictly to `event.target === element`
      (ignoring `animationend` / `animationcancel` whose `event.animationName`
-     matches only an excluded `infinite` animation), plus a safety timer of
+     matches only an excluded `infinite` animation). Each included transition
+     property and finite animation entry is outstanding until its own end or
+     cancel event (matched by `event.propertyName` / `event.animationName`; a
+     `transition-property: all` entry is settled by an event for any
+     undeclared property), and the exit completes only when none remain, so
+     `transition: opacity 100ms, transform 300ms` stays mounted through the
+     transform. Add a safety timer of
      `Math.ceil(maxTotalMs) + 34` ms (for example `334ms` for a `100ms` × `3`
      exit animation) so synthetic DOM hosts that do not dispatch events
      automatically still converge without cutting off finite multi-iteration
@@ -828,7 +834,10 @@ Required observable result at `t = 420ms`:
   and completion events). With `getAnimations` unavailable, test
   `transition: opacity 0ms 100ms`: the surface is still mounted just before
   100ms and unmounts on the matching end event at 100ms, or at the 134ms
-  safety deadline if no event arrives. With a zero delay and zero duration,
+  safety deadline if no event arrives. With
+  `transition: opacity 100ms, transform 300ms`, the opacity end event leaves
+  the surface mounted and the later transform end event completes the exit.
+  With a zero delay and zero duration,
   assert unmount in the post-close flush. Also cover `disabled: true`;
   `attemptId` guard across `open -> close -> reopen` and
   `open -> close -> reopen -> close`; owner unmount mid-exit suppressing

@@ -124,6 +124,11 @@ function required<T>(value: T | null | undefined): T {
   return value
 }
 
+/** jsdom has no `AnimationEvent`; the fallback reads only `animationName`. */
+function animationEnd(animationName: string): Event {
+  return Object.assign(new Event('animationend'), { animationName })
+}
+
 function flushPromises(): Promise<void> {
   return new Promise((resolve) => {
     setTimeout(resolve, 0)
@@ -438,11 +443,16 @@ describe('useGhostPresence computed-style fallback', () => {
 
     // A bubbled descendant event never ends the surface's own exit.
     required(node.querySelector('button')).dispatchEvent(
-      new Event('transitionend', { bubbles: true }),
+      new TransitionEvent('transitionend', {
+        propertyName: 'opacity',
+        bubbles: true,
+      }),
     )
     expect(harness.api.phase.value).toBe('exiting')
 
-    node.dispatchEvent(new Event('transitionend'))
+    node.dispatchEvent(
+      new TransitionEvent('transitionend', { propertyName: 'opacity' }),
+    )
     await nextTick()
     expect(harness.api.phase.value).toBe('closed')
     expect(harness.surface()).toBeNull()
@@ -481,14 +491,140 @@ describe('useGhostPresence computed-style fallback', () => {
     harness.present.value = false
     await nextTick()
     const node = required(harness.surface())
-    const pulseEnd = Object.assign(new Event('animationend'), {
-      animationName: 'pulse',
-    })
-    node.dispatchEvent(pulseEnd)
+    node.dispatchEvent(animationEnd('pulse'))
     expect(harness.api.phase.value).toBe('exiting')
     vi.advanceTimersByTime(333)
     expect(harness.api.phase.value).toBe('exiting')
     vi.advanceTimersByTime(1)
+    expect(harness.api.phase.value).toBe('closed')
+  })
+
+  it('stays mounted until the last of several finite motions ends', async () => {
+    vi.useFakeTimers()
+    stubComputedStyle({
+      transitionProperty: 'opacity, transform',
+      transitionDuration: '100ms, 300ms',
+      transitionDelay: '0s',
+      animationName: 'exit-fade',
+      animationDuration: '200ms',
+      animationDelay: '0s',
+      animationIterationCount: '1',
+    })
+    const harness = mountHarness(true)
+    await nextTick()
+    harness.present.value = false
+    await nextTick()
+    const node = required(harness.surface())
+
+    vi.advanceTimersByTime(100)
+    node.dispatchEvent(
+      new TransitionEvent('transitionend', { propertyName: 'opacity' }),
+    )
+    // A repeated end for an already settled property settles nothing new.
+    node.dispatchEvent(
+      new TransitionEvent('transitionend', { propertyName: 'opacity' }),
+    )
+    await nextTick()
+    expect(harness.api.phase.value).toBe('exiting')
+    expect(node.isConnected).toBe(true)
+
+    vi.advanceTimersByTime(100)
+    node.dispatchEvent(animationEnd('exit-fade'))
+    await nextTick()
+    expect(harness.api.phase.value).toBe('exiting')
+    expect(node.isConnected).toBe(true)
+
+    vi.advanceTimersByTime(100)
+    node.dispatchEvent(
+      new TransitionEvent('transitionend', { propertyName: 'transform' }),
+    )
+    await nextTick()
+    expect(harness.api.phase.value).toBe('closed')
+    expect(harness.onExitComplete).toHaveBeenCalledTimes(1)
+    expect(harness.surface()).toBeNull()
+
+    // The safety timer was cleared with the listeners.
+    vi.advanceTimersByTime(1000)
+    expect(harness.onExitComplete).toHaveBeenCalledTimes(1)
+  })
+
+  it('counts a cancelled motion as settled and keeps waiting for the rest', async () => {
+    vi.useFakeTimers()
+    stubComputedStyle({
+      transitionProperty: 'opacity, transform',
+      transitionDuration: '100ms, 300ms',
+      transitionDelay: '0s',
+    })
+    const harness = mountHarness(true)
+    await nextTick()
+    harness.present.value = false
+    await nextTick()
+    const node = required(harness.surface())
+
+    node.dispatchEvent(
+      new TransitionEvent('transitioncancel', { propertyName: 'transform' }),
+    )
+    await nextTick()
+    expect(harness.api.phase.value).toBe('exiting')
+
+    node.dispatchEvent(
+      new TransitionEvent('transitioncancel', { propertyName: 'opacity' }),
+    )
+    await nextTick()
+    expect(harness.api.phase.value).toBe('closed')
+  })
+
+  it('falls back to the safety deadline when a declared motion never ends', async () => {
+    vi.useFakeTimers()
+    stubComputedStyle({
+      transitionProperty: 'opacity, transform',
+      transitionDuration: '100ms, 300ms',
+      transitionDelay: '0s',
+    })
+    const harness = mountHarness(true)
+    await nextTick()
+    harness.present.value = false
+    await nextTick()
+    const node = required(harness.surface())
+
+    vi.advanceTimersByTime(100)
+    node.dispatchEvent(
+      new TransitionEvent('transitionend', { propertyName: 'opacity' }),
+    )
+    // An undeclared property and an untyped event settle nothing.
+    node.dispatchEvent(
+      new TransitionEvent('transitionend', { propertyName: 'color' }),
+    )
+    node.dispatchEvent(new Event('transitionend'))
+    vi.advanceTimersByTime(233)
+    expect(harness.api.phase.value).toBe('exiting')
+    vi.advanceTimersByTime(1)
+    expect(harness.api.phase.value).toBe('closed')
+  })
+
+  it('settles a transition-property: all entry on any undeclared property', async () => {
+    vi.useFakeTimers()
+    stubComputedStyle({
+      transitionProperty: 'all, opacity',
+      transitionDuration: '300ms, 100ms',
+      transitionDelay: '0s',
+    })
+    const harness = mountHarness(true)
+    await nextTick()
+    harness.present.value = false
+    await nextTick()
+    const node = required(harness.surface())
+
+    node.dispatchEvent(
+      new TransitionEvent('transitionend', { propertyName: 'opacity' }),
+    )
+    await nextTick()
+    expect(harness.api.phase.value).toBe('exiting')
+
+    node.dispatchEvent(
+      new TransitionEvent('transitionend', { propertyName: 'translate' }),
+    )
+    await nextTick()
     expect(harness.api.phase.value).toBe('closed')
   })
 
@@ -523,7 +659,24 @@ describe('measureComputedExitMotion', () => {
   }
 
   it('reports zero for absent motion', () => {
-    expect(measureComputedExitMotion(none).totalMs).toBe(0)
+    const result = measureComputedExitMotion(none)
+    expect(result.totalMs).toBe(0)
+    expect(result.transitions.size).toBe(0)
+    expect(result.animations.size).toBe(0)
+  })
+
+  it('lists each motion with positive time so every one can be awaited', () => {
+    const result = measureComputedExitMotion({
+      ...none,
+      transitionProperty: 'opacity, transform, color, opacity',
+      transitionDuration: '100ms, 300ms, 0s, 200ms',
+      animationName: 'fade, fade, late',
+      animationDuration: '100ms, 200ms, 100ms',
+      animationDelay: '0s, 0s, -200ms',
+    })
+    expect(result.totalMs).toBe(300)
+    expect([...result.transitions]).toEqual(['opacity', 'transform'])
+    expect([...result.animations]).toEqual([['fade', 2]])
   })
 
   it('cycles shorter time lists against the property list', () => {
@@ -567,6 +720,6 @@ describe('measureComputedExitMotion', () => {
       animationIterationCount: 'INFINITE, 3',
     })
     expect(result.totalMs).toBe(320)
-    expect([...result.infiniteAnimationNames]).toEqual(['pulse'])
+    expect([...result.animations]).toEqual([['exit-fade', 1]])
   })
 })

@@ -125,12 +125,28 @@ function cycled(list: readonly string[], index: number): string | undefined {
   return list.length === 0 ? undefined : list[index % list.length]
 }
 
+/**
+ * Wildcard key in {@link ComputedExitMotion.transitions} for a
+ * `transition-property: all` entry. Every property it animates shares one
+ * delay and duration, so the first end event it produces settles the entry.
+ */
+const ALL_TRANSITION_PROPERTIES = 'all'
+
 /** Exit motion measured from computed styles when `getAnimations` is missing. */
 export interface ComputedExitMotion {
   /** Longest included transition or finite animation, in milliseconds. */
   totalMs: number
-  /** Animation names excluded because their iteration count is `infinite`. */
-  infiniteAnimationNames: ReadonlySet<string>
+  /**
+   * Transition properties with positive `delay + duration`. A property listed
+   * twice runs one transition (the last declaration wins), so this is a set.
+   */
+  transitions: ReadonlySet<string>
+  /**
+   * Finite animation names with positive active time, counted per entry:
+   * `animation: fade 100ms, fade 200ms` runs two animations that each end.
+   * Infinite animations are excluded and never gate removal.
+   */
+  animations: ReadonlyMap<string, number>
 }
 
 type ComputedMotionStyle = Pick<
@@ -149,13 +165,15 @@ type ComputedMotionStyle = Pick<
  * count and shorter time lists cycle. Transitions contribute
  * `delay + duration` (a positive delay alone keeps the surface mounted);
  * finite animations contribute `delay + duration * count`; infinite
- * animations are excluded.
+ * animations are excluded. Entries with positive time are also returned
+ * individually so the event fallback can wait for each of them.
  */
 export function measureComputedExitMotion(
   style: ComputedMotionStyle,
 ): ComputedExitMotion {
   let totalMs = 0
-  const infiniteAnimationNames = new Set<string>()
+  const transitions = new Set<string>()
+  const animations = new Map<string, number>()
 
   const properties = parseCssList(style.transitionProperty || 'all')
   const transitionDurations = parseCssList(style.transitionDuration || '0s')
@@ -167,6 +185,9 @@ export function measureComputedExitMotion(
     const entry =
       parseCssTime(cycled(transitionDelays, index)) +
       parseCssTime(cycled(transitionDurations, index))
+    if (entry > 0) {
+      transitions.add(property.toLowerCase())
+    }
     totalMs = Math.max(totalMs, entry)
   })
 
@@ -180,7 +201,6 @@ export function measureComputedExitMotion(
     }
     const countText = (cycled(iterationCounts, index) ?? '1').toLowerCase()
     if (countText === 'infinite') {
-      infiniteAnimationNames.add(name)
       return
     }
     const count = Number.parseFloat(countText)
@@ -190,10 +210,13 @@ export function measureComputedExitMotion(
     }
     const entry =
       parseCssTime(cycled(animationDelays, index)) + duration * count
+    if (entry > 0) {
+      animations.set(name, (animations.get(name) ?? 0) + 1)
+    }
     totalMs = Math.max(totalMs, entry)
   })
 
-  return { totalMs, infiniteAnimationNames }
+  return { totalMs, transitions, animations }
 }
 
 /**
@@ -261,27 +284,54 @@ export function useGhostPresence(
   }
 
   function waitForComputedMotion(element: HTMLElement, id: number): void {
-    const { totalMs, infiniteAnimationNames } = measureComputedExitMotion(
-      getComputedStyle(element),
-    )
-    if (totalMs <= 0) {
+    const motion = measureComputedExitMotion(getComputedStyle(element))
+    if (motion.totalMs <= 0) {
       completeExit(id)
       return
     }
+    // Every included motion must end (or cancel) before removal, so a short
+    // opacity fade never cuts off a longer transform beside it. A declared
+    // motion that never starts (its property did not change, or a shorthand
+    // reports longhand names) stays outstanding and the safety timer, set
+    // past the longest one, completes the exit instead.
+    const pendingTransitions = new Set(motion.transitions)
+    const pendingAnimations = new Map(motion.animations)
     const onEnd = (event: Event): void => {
       // Bubbled events from descendants (button hovers, spinners) never end
       // the surface's own exit.
       if (event.target !== element) {
         return
       }
-      if (
-        'animationName' in event &&
-        typeof event.animationName === 'string' &&
-        infiniteAnimationNames.has(event.animationName)
-      ) {
-        return
+      if (event.type.startsWith('transition')) {
+        const property =
+          'propertyName' in event && typeof event.propertyName === 'string'
+            ? event.propertyName.toLowerCase()
+            : ''
+        if (pendingTransitions.has(property)) {
+          pendingTransitions.delete(property)
+        } else if (property !== '' && !motion.transitions.has(property)) {
+          // An undeclared property can only come from an `all` entry.
+          pendingTransitions.delete(ALL_TRANSITION_PROPERTIES)
+        }
+      } else {
+        // Unknown names include infinite and zero-length animations, which
+        // never gate removal.
+        const name =
+          'animationName' in event && typeof event.animationName === 'string'
+            ? event.animationName
+            : ''
+        const remaining = pendingAnimations.get(name)
+        if (remaining !== undefined) {
+          if (remaining > 1) {
+            pendingAnimations.set(name, remaining - 1)
+          } else {
+            pendingAnimations.delete(name)
+          }
+        }
       }
-      completeExit(id)
+      if (pendingTransitions.size === 0 && pendingAnimations.size === 0) {
+        completeExit(id)
+      }
     }
     for (const type of EXIT_EVENTS) {
       element.addEventListener(type, onEnd)
@@ -290,7 +340,7 @@ export function useGhostPresence(
       () => {
         completeExit(id)
       },
-      Math.ceil(totalMs) + FALLBACK_SAFETY_MARGIN_MS,
+      Math.ceil(motion.totalMs) + FALLBACK_SAFETY_MARGIN_MS,
     )
     disposeExit = () => {
       clearTimeout(timer)
