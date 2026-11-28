@@ -196,23 +196,37 @@ test.describe('themed GhostToast @component:GhostToast', () => {
   }) => {
     await openExample(page, playgroundUrl, 'toast/themed')
     const region = page.getByRole('region', { name: 'Notifications' })
+    const polite = page.locator('[data-part="announcer-polite"]')
     await expect(region).toHaveAttribute('data-themed', '')
     await expect(region).toHaveCSS('position', 'fixed')
     await expectNoAxeViolations(page)
 
+    // Ordinary success: one informational toast, announced politely.
     const save = page.getByRole('button', { name: 'Save draft' })
     const sync = page.getByRole('button', { name: 'Sync files' })
     await save.focus()
     await page.keyboard.press('Enter')
+    await expect(toasts(page)).toHaveCount(1)
+    await expect(region).toContainText('Draft saved')
+    await expect(polite).toHaveText(
+      'Draft saved Your changes are stored in this workspace.',
+    )
+    await expect(save).toBeFocused()
+
+    // Persistent error: danger tone, polite (not urgent) announcement.
     await sync.focus()
     await page.keyboard.press('Space')
     await expect(toasts(page)).toHaveCount(2)
     await expect(sync).toBeFocused()
     await expect(toasts(page).last()).toHaveAttribute('data-tone', 'danger')
-    await expect(page.locator('[data-part="announcer-polite"]')).toHaveText(
+    await expect(polite).toHaveText(
       'Sync failed Three files could not be uploaded.',
     )
-    // Measure text contrast after both entrance fades reach full opacity.
+    await expect(page.locator('[data-part="announcer-assertive"]')).toHaveText(
+      '',
+    )
+    // axe samples rendered colors, so measure text contrast only after both
+    // entrance fades reach full opacity.
     await expect(toasts(page).first()).toHaveCSS('opacity', '1')
     await expect(toasts(page).last()).toHaveCSS('opacity', '1')
     await expectNoAxeViolations(page)
@@ -224,7 +238,33 @@ test.describe('themed GhostToast @component:GhostToast', () => {
       .getByRole('button', { name: 'Dismiss' })
     await expect(firstClose).toBeFocused()
     await page.keyboard.press('Tab')
-    await expect(region.getByRole('button', { name: 'Retry' })).toBeFocused()
+    const retry = region.getByRole('button', { name: 'Retry' })
+    await expect(retry).toBeFocused()
+
+    // Retry by keyboard updates the same toast: no new toast, focus stays on
+    // Retry, and announceUpdate reads the new text.
+    const errorToast = toasts(page).last()
+    await page.keyboard.press('Enter')
+    await expect(toasts(page)).toHaveCount(2)
+    await expect(errorToast).toContainText('Still failing')
+    await expect(errorToast).toContainText('Attempt 2 failed.')
+    await expect(polite).toHaveText(
+      'Still failing Attempt 2 failed. Check your connection and try again.',
+    )
+    await expect(retry).toBeFocused()
+    await page.keyboard.press('Space')
+    await expect(errorToast).toContainText('Attempt 3 failed.')
+    await expect(toasts(page)).toHaveCount(2)
+
+    // Sync files while the retry toast is visible resets it in place and
+    // announces the reverted failure text instead of patching it silently.
+    await sync.click()
+    await expect(toasts(page)).toHaveCount(2)
+    await expect(errorToast).toContainText('Sync failed')
+    await expect(polite).toHaveText(
+      'Sync failed Three files could not be uploaded.',
+    )
+    await retry.focus()
 
     // Escape dismisses only the focused toast and returns focus.
     await page.keyboard.press('Escape')
@@ -237,6 +277,11 @@ test.describe('themed GhostToast @component:GhostToast', () => {
     await page.keyboard.press('Enter')
     await expect(toasts(page)).toHaveCount(0)
     await expect(sync).toBeFocused()
+
+    // A new sync starts counting again from the first attempt.
+    await sync.click()
+    await region.getByRole('button', { name: 'Retry' }).click()
+    await expect(toasts(page).first()).toContainText('Attempt 2 failed.')
   })
 
   test('plays the enter animation once and not again on an in-place update (T7)', async ({
@@ -258,7 +303,7 @@ test.describe('themed GhostToast @component:GhostToast', () => {
     })
 
     await toast.getByRole('button', { name: 'Retry' }).click()
-    await expect(toast).toContainText('Still failing')
+    await expect(toast).toContainText('Attempt 2 failed.')
     await expect(toast).toHaveAttribute('data-tone', 'danger')
 
     const replay = await toast.evaluate((element) => {
