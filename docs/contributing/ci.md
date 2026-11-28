@@ -128,6 +128,14 @@ any test mapped in a manifest's `accessibility.verification.automatedKeyboard`
 did not execute in `chromium-e2e` or did not pass. See
 [accessibility verification](../architecture/component-manifest.md#accessibility-verification).
 
+### Playwright retry summary
+
+The `browser` job uses the merged Playwright results to list tests that passed on
+retry in the Actions run summary, including the project, spec location, full
+test title, and successful retry number. When the summary lists a retry pass,
+download the `playwright-report` artifact, open its HTML report, and select
+the retry to view its trace when available.
+
 ## Nuxt SSR fixture
 
 The `nuxt-fixture` job builds `apps/nuxt-fixture` (the `@ghostvue/nuxt`

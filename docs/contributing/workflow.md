@@ -27,6 +27,11 @@
 - Comment non-obvious decisions and review the diff for API, accessibility,
   reactivity, SSR, cleanup, security, dependency, and licensing concerns.
 
+The hourly PR sweep checks for overlapping edits in shared files on PRs that
+target the same branch. An overlap advisory in the run report names the affected
+PRs, file, and change, and suggests a merge order. After the first PR lands,
+check whether the second needs to reconcile the shared edit.
+
 ## Issue tracking
 
 GhostVue tracks engineering work in
