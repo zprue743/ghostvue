@@ -5,10 +5,8 @@ Every runnable component sample lives as a typed Vue SFC under unpublished
 docs live previews, the playground gallery, e2e accessibility checks, and
 manifest `examples` arrays all point at the same id.
 
-This is not a publishable package. Do not add it to
-`scripts/workspace-packages.mjs` or to a library `exports` map. A future MCP
-`get_examples` tool should import `examples/registry.ts` rather than growing a
-second catalog.
+The examples directory is unpublished. Keep it out of
+`scripts/workspace-packages.mjs` and library `exports` maps.
 
 ## File and id convention
 
@@ -22,9 +20,50 @@ examples/button/icon-only.vue
   Import `@ghostvue/vue` for headless samples and `@ghostvue/themes` for
   visual ones. Inline decorative icons; do not invent unpublished icon
   components.
-- Title, description, and `headless` / `themed` layer live in
-  [`examples/registry.ts`](../../examples/registry.ts). Keep that list in
-  lockstep with the files.
+- Set the title, description, and `headless` or `themed` layer in the
+  component's authored `packages/vue/registry/<component>.registry.json`.
+  Match the layer to the sample's component import.
+
+## Register and preview an example
+
+Use the existing themed DataTable example as a reference.
+
+1. Add the typed SFC. [`examples/data-table/themed-invoices.vue`](https://github.com/zprue743/ghostvue/blob/master/examples/data-table/themed-invoices.vue)
+   imports the component from `@ghostvue/themes`, so its id is
+   `data-table/themed-invoices` and its layer is `themed`.
+2. Add the id, title, description, and layer to the `examples` array in
+   [`packages/vue/registry/data-table.registry.json`](https://github.com/zprue743/ghostvue/blob/master/packages/vue/registry/data-table.registry.json).
+3. List the id under `examples` in the manifest for the package whose
+   component contract the sample demonstrates. This id belongs to
+   [the themed DataTable manifest](https://github.com/zprue743/ghostvue/blob/master/packages/themes/manifests/ghost-data-table.manifest.json).
+   Keep manifest example ids with the other authored metadata when regenerating
+   source-derived API fields.
+4. Run `pnpm registries:write` to regenerate the gitignored
+   `examples/.registries/examples-catalog.generated.ts`. Docs and the playground
+   read this catalog through [`examples/registry.ts`](https://github.com/zprue743/ghostvue/blob/master/examples/registry.ts).
+   Run `pnpm registries` to check the generated output matches the registry
+   metadata, and `pnpm manifests` to check manifest validity and example
+   ownership, including missing files and unlisted ids.
+5. Embed the id on the [DataTable page](../components/data-table.md) using
+   the tag below. Start the playground
+   with `pnpm --filter @ghostvue/playground dev` and open
+   `/examples.html?id=data-table/themed-invoices` on its local URL. Run
+   `pnpm docs:dev` and open the DataTable page to try the themed preview and
+   copy its SFC. Run `pnpm docs:build` followed by `pnpm docs:links` to check
+   links in the built site, and `pnpm verify` before submitting the change.
+
+```md
+<GhostExample id="data-table/themed-invoices" />
+```
+
+The MCP [`get_examples` tool](../tooling/mcp-server.md#get_examples) reads
+the packaged catalog and SFCs. Request
+`{"id":"data-table/themed-invoices","layer":"themed"}` for the registered
+metadata and raw Vue source. An id or component query includes source by
+default, and `includeSource: false` requests metadata alone. A catalog query
+without an id or component returns paginated metadata.
+See the [asset source loader](https://github.com/zprue743/ghostvue/blob/master/scripts/lib/mcp-asset-sources.js) and
+[`get_examples` implementation](https://github.com/zprue743/ghostvue/blob/master/packages/mcp/src/get-examples.ts).
 
 ## Docs
 
@@ -52,17 +91,22 @@ still renders the markup so example code stays indexed.
 
 `GhostExample` is a thin id adapter over the docs-only `DemoPreview` frame
 (`apps/docs/.vitepress/theme/DemoPreview.vue`, styles in `demo-preview.css`).
-The frame renders the title, layer badge, description, toolbar, optional
-controls, a block-layout canvas, and the source disclosure. The canvas does
+The frame renders the title, description, toolbar, optional controls, a
+block-layout canvas, and the source disclosure. Headless samples get a
+**Headless** badge. The canvas does
 not center or resize the demo, so give an example a single root element that
 owns its layout (a grid, a row with a gap). Examples with several root elements
 fall back to a wrapping row. While a demo chunk loads, or if it fails, the
 canvas shows an explained status instead of an empty box.
 
-The toolbar's **Copy** action copies the original SFC (not the highlighted
-markup) and reports success or failure in a polite live region. Without a
-usable clipboard it opens the source and selects it for a manual copy. The
-**Width** disclosure reveals a "Preview width" band with Auto, 320, 480 and
+The [`GhostExample` adapter](https://github.com/zprue743/ghostvue/blob/master/apps/docs/.vitepress/theme/GhostExample.vue)
+loads the raw SFC for the toolbar's **Copy** action.
+[`DemoPreview`](https://github.com/zprue743/ghostvue/blob/master/apps/docs/.vitepress/theme/DemoPreview.vue) writes that
+source with a trailing newline and reports success or failure in a polite
+live region. Without a usable clipboard it opens the source and selects it
+for a manual copy.
+
+The **Width** disclosure reveals a "Preview width" band with Auto, 320, 480 and
 768 presets and a range. It narrows the canvas only, capped at the width the
 frame has, and reports the applied size; it is not viewport emulation, so
 `@media` queries still see the real window. The demo sits in an inline-size
