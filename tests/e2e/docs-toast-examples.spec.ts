@@ -162,6 +162,27 @@ test.describe('docs Toast guide', () => {
           ),
         ).toBe(true)
 
+        // Sync files again while the retry toast is visible resets it in
+        // place, and the reverted failure text reaches the live region.
+        await sync.click()
+        await expect(toasts).toHaveCount(2)
+        await expect(errorToast).toContainText('Sync failed')
+        await expect(errorToast).not.toContainText('Still failing')
+        await expect(polite).toHaveText(
+          'Sync failed Three files could not be uploaded.',
+        )
+        expect(
+          await errorToast.evaluate(
+            (element, previous) => element === previous,
+            before,
+          ),
+        ).toBe(true)
+        // Retry counts from the first attempt again.
+        await errorToast.getByRole('button', { name: 'Retry' }).click()
+        await expect(polite).toHaveText(
+          'Still failing Attempt 2 failed. Check your connection and try again.',
+        )
+
         // Keyboard dismissal. On the docs page the portaled stack is last in
         // the tab order, so start inside it: the click left focus on Retry.
         const retry = errorToast.getByRole('button', { name: 'Retry' })

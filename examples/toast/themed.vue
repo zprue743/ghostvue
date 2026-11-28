@@ -40,8 +40,7 @@ function saveDraft({ toast }: UseGhostToastReturn) {
 // user dismisses it, and the themed toast picks the danger tone.
 function syncFiles(api: UseGhostToastReturn) {
   failedAttempts = 1
-  api.toast({
-    id: SYNC_TOAST_ID,
+  const failure = {
     type: 'error',
     title: 'Sync failed',
     description: 'Three files could not be uploaded.',
@@ -51,7 +50,15 @@ function syncFiles(api: UseGhostToastReturn) {
         retrySync(api)
       },
     },
-  })
+  } as const
+  // Pressing Sync files while the toast is still visible resets it from
+  // "Still failing" back to "Sync failed". toast() with a reused id would
+  // merge silently, so update() with announceUpdate reads the change out.
+  if (api.toasts.value.some((record) => record.id === SYNC_TOAST_ID)) {
+    api.update(SYNC_TOAST_ID, { ...failure, announceUpdate: true })
+    return
+  }
+  api.toast({ id: SYNC_TOAST_ID, ...failure })
 }
 
 // Retry: this sample stays offline, so each retry updates the same toast in

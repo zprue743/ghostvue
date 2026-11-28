@@ -29,7 +29,9 @@ The example imports every component from `@ghostvue/themes`. Try both buttons:
   "Still failing" and counts the attempt, but it keeps its place in the stack,
   focus stays on **Retry**, and the enter animation does not play again.
   `announceUpdate: true` reads the new text once. Pressing **Sync files** again
-  also reuses the id, so the stack never fills with duplicate errors.
+  while the toast is visible calls `update()` on the same id with
+  `announceUpdate: true`, so the reset to "Sync failed" is announced too and
+  the stack never fills with duplicate errors.
 - **Dismiss.** The portaled stack comes last in the page's tab order, oldest
   toast first. Press `Enter` or `Space` on a **Dismiss** button, or `Escape`
   anywhere in a toast, to remove only that toast. Focus returns to the control
