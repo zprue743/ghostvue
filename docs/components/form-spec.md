@@ -889,20 +889,32 @@ check (`result !== null && (typeof result === 'object' || typeof result === 'fun
 #### Reset during validation and native form events
 
 `GhostForm` coordinates imperative resets and native `<form>` `reset` events
-with [`packages/vue/src/form-reset.ts`](../architecture/component-state.md):
+with [`packages/vue/src/form-reset.ts`](../architecture/component-state.md)
+using a shared active-hold suppression set (`activeResetHolds: Set<symbol>`,
+where `isResetting` is `activeResetHolds.size > 0`):
 
-1. **Imperative `form.reset()`:**
-   - Synchronously increments `validationEpoch`, `submitEpoch`, and a monotonic
-     `resetSuppressionEpoch` (immediately invalidating any in-flight `validate()`,
-     `onSubmit` / `waitUntil` Promise, or pending native-reset suppression), sets
-     `isValidating = false` and `isSubmitting = false`, clears `fieldErrors`,
-     `formErrors`, `issues`, `touchedPaths`, `dirtyPaths`, `revealedPaths`,
-     `hasSubmitted` (`false`), and `submitCount` (`0`), and arms a temporary
-     `isResetting` suppression flag (guarded by `resetSuppressionEpoch`) through
-     `nextTick` so consumer baseline writes inside `onReset` / `@reset` do not
-     trigger `validateOn: 'change'` or mark fields dirty.
-   - Invokes `onReset?.(null)` / emits `reset(null)`.
-2. **Native `<form>` `reset` event** (clicking `<GhostButton type="reset">` or
+1. **Shared suppression holds (`acquireResetSuppression` / `releaseResetSuppression`):**
+   - Each reset acquires its own unique hold token (`const hold = Symbol()`,
+     added to `activeResetHolds`) and deletes only its own token when that
+     reset's flush/settlement completes.
+   - Because holds are tracked additively rather than by overwriting a single
+     `resetSuppressionEpoch`, an imperative `form.reset()` called during or
+     after a native reset batch never invalidates or short-circuits the native
+     reset's hold: `isResetting` stays `true` until **every** active hold
+     releases.
+2. **Imperative `form.reset()`:**
+   - Synchronously increments `validationEpoch` and `submitEpoch` (immediately
+     invalidating any in-flight `validate()` or `onSubmit` / `waitUntil`
+     Promise), sets `isValidating = false` and `isSubmitting = false`, and
+     clears `fieldErrors`, `formErrors`, `issues`, `touchedPaths`, `dirtyPaths`,
+     `revealedPaths`, `hasSubmitted` (`false`), and `submitCount` (`0`).
+   - Acquires an imperative hold (`const imperativeHold = acquireResetSuppression()`),
+     invokes `onReset?.(null)` / emits `reset(null)`, and schedules
+     `nextTick(() => releaseResetSuppression(imperativeHold))` so consumer
+     baseline writes inside `onReset` / `@reset` do not trigger
+     `validateOn: 'change'` or mark fields dirty—without disturbing any still-pending
+     native-reset hold in `activeResetHolds`.
+3. **Native `<form>` `reset` event** (clicking `<GhostButton type="reset">` or
    calling `formElement.reset()`):
    - `GhostForm` does **not** call `event.preventDefault()`, preserving native
      reset delivery to uncontrolled child controls (`GhostInput`,
@@ -918,28 +930,36 @@ with [`packages/vue/src/form-reset.ts`](../architecture/component-state.md):
      reset seed.
    - To prevent premature expiry, `packages/vue/src/form-reset.ts` maintains a
      `WeakMap<Event, ...>` batch tracker across all `afterNativeFormReset`
-     callbacks scheduled for the same `reset` `Event` (decrementing as each
-     macrotask completes or is cancelled on unmount) and exposes a settlement
-     hook (`afterNativeFormResetSettled(event, onSettled)` /
-     `whenNativeFormResetSettled(event)`).
+     callbacks scheduled for the same `reset` `Event` (decrementing in a
+     `finally` block as each macrotask callback completes—or when cancelled on
+     unmount—and notifying settlement hooks once the pending count for `event`
+     reaches `0`, or immediately when none remain) via
+     `afterNativeFormResetSettled(event, onSettled)` /
+     `whenNativeFormResetSettled(event)`.
    - `GhostForm` schedules its reset reconciliation with `afterNativeFormReset(event, apply)`:
      - If any listener on the form, `document`, or `window` calls
        `event.preventDefault()` during dispatch, `afterNativeFormReset` skips
-       `apply`: errors, pending state, and `submitCount` remain intact and
-       `isResetting` is never armed.
-     - Otherwise, `apply` synchronously runs the reset sequence above (bumping
-       `validationEpoch`, `submitEpoch`, and `const suppressionId = ++resetSuppressionEpoch`,
-       clearing errors and tracking sets, setting `isResetting = true`, and
-       emitting `reset(event)` / invoking `onReset?.(event)`), and keeps
-       `isResetting = true` until **both** every `afterNativeFormReset`
-       macrotask registered for `event` has finished (or been cancelled on
-       unmount) **and** a subsequent `nextTick()` reactive flush completes—only
-       then clearing `isResetting = false` if `suppressionId === resetSuppressionEpoch`.
-       Reactive path watchers triggered by consumer `@reset` writes and child
-       `update:modelValue` seed restorations thus flush entirely inside
-       suppression without marking fields dirty or triggering `validateOn: 'change'`.
-   - Pending `afterNativeFormReset` timers are cancelled, `resetSuppressionEpoch`
-     is incremented, and `isResetting` is cleared in `onBeforeUnmount`.
+       `apply`: errors, pending state, and `submitCount` remain intact and no
+       hold is acquired.
+     - Otherwise, `apply` synchronously acquires a native hold
+       (`const nativeHold = acquireResetSuppression()`), registers settlement
+       release via `afterNativeFormResetSettled(event, () => void nextTick(() => releaseResetSuppression(nativeHold)))`,
+       bumps `validationEpoch` and `submitEpoch`, clears pending flags, errors,
+       and tracking sets, and invokes `onReset?.(event)` / emits `reset(event)`.
+     - If a consumer calls imperative `form.reset()` from inside `onReset(event)`
+       / `@reset` (or before `event` settles), `imperativeHold` releases at the
+       microtask `nextTick()` of `GhostForm`'s macrotask while `nativeHold`
+       remains in `activeResetHolds` until **both** every child
+       `afterNativeFormReset` macrotask registered for `event` has finished (or
+       been cancelled on unmount) **and** the subsequent `nextTick()` reactive
+       flush completes. Reactive path watchers triggered by consumer `@reset`
+       writes and child `update:modelValue` seed restorations thus flush
+       entirely while `isResetting` is `true` without marking fields dirty or
+       triggering `validateOn: 'change'`.
+   - Pending `afterNativeFormReset` timers and settlement listeners are
+     cancelled, `activeResetHolds.clear()` runs so `isResetting` clears
+     immediately, and an `isUnmounted` / `unmountEpoch` guard prevents late
+     callbacks from mutating state in `onBeforeUnmount`.
 
 ## Consumer data
 
@@ -1192,9 +1212,10 @@ Reused `@ghostvue/vue` primitives and conventions:
 - `afterNativeFormReset` and per-`Event` batch settlement (`packages/vue/src/form-reset.ts`) —
   macrotask reset reconciliation after full `reset` event dispatch so
   `event.defaultPrevented` is honored identically to `GhostInput`, `GhostCheckbox`,
-  `GhostSelect`, and `GhostRadioGroup`, and `GhostForm` keeps `isResetting`
-  active until all descendant `useNativeFormReset` macrotasks for the same
-  `Event` and their reactive flushes complete.
+  `GhostSelect`, and `GhostRadioGroup`, and `GhostForm`'s shared `activeResetHolds`
+  keeps `isResetting` active across overlapping imperative/native resets until
+  all descendant `useNativeFormReset` macrotasks for the same `Event` and their
+  reactive flushes complete.
 - `getTabbableElements` (`packages/vue/src/get-tabbable-elements.ts`) — resolves
   the first enabled tabbable target inside composite/group controls such as
   `GhostRadioGroup` when focusing the first invalid field on submit.
@@ -1321,6 +1342,19 @@ Reused `@ghostvue/vue` primitives and conventions:
     `isFieldDirty('displayName') === false`, `fieldErrors` stays empty, and
     `validateOn: 'change'` does not run for the child's `update:modelValue`
     restoration.
+  - **Regression — native `<form>` `reset` callback invoking imperative `form.reset()` with controlled `GhostInput`:**
+    mount `<GhostForm validate-on="change">` with a controlled
+    `<GhostInput v-model="values.displayName" default-value="Ada" />` and an
+    `@reset` / `onReset` callback that invokes imperative `form.reset()` when
+    `event !== null` (without writing `values.displayName` itself), change
+    `values.displayName` to `'Bob'` (marking `'displayName'` dirty), trigger a
+    native `<form>` `reset`, and `await waitForFormResetDeferral()` +
+    `await nextTick()` so both the imperative `nextTick()` and the child
+    `afterNativeFormReset` macrotask + reactive flush settle; assert
+    `values.displayName` restores to `'Ada'`, `isDirty === false`,
+    `isFieldDirty('displayName') === false`, `fieldErrors` stays empty, and
+    `schema['~standard'].validate` does not run for the controlled child's
+    `update:modelValue` restoration.
 - **Popup blur exclusion:** moving `focusout` from `GhostSelectTrigger` to the
   portaled `GhostSelectContent` referenced by `aria-controls` does not trigger
   premature `validateOn: 'blur'` validation while selecting an option.
