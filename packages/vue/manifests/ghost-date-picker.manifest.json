@@ -337,12 +337,7 @@
   },
   "examples": [
     "date-picker/basic",
-    "date-picker/range",
-    "date-picker/controlled",
-    "date-picker/validation",
-    "date-picker/custom-format",
-    "date-picker/rtl",
-    "date-picker/nested-dialog"
+    "date-picker/range"
   ],
   "spec": {
     "path": "docs/components/date-picker-spec.md",

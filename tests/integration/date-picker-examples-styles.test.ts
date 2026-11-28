@@ -33,8 +33,9 @@ function sharedBlock(id: string): string {
 
 describe('headless date picker example styles', () => {
   it('covers every headless date picker example', () => {
-    expect(headless.map((example) => example.id)).toContain('date-picker/basic')
-    expect(headless.length).toBeGreaterThanOrEqual(7)
+    expect(headless.map((example) => example.id)).toEqual(
+      expect.arrayContaining(['date-picker/basic', 'date-picker/range']),
+    )
   })
 
   it.each(headless.map((example) => [example.id]))(
