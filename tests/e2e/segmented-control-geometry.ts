@@ -105,9 +105,10 @@ export function expectAlignedSelection(
 
 /**
  * Asserts every segment takes an equal share of the control's padded track,
- * which is what the indicator's `1/n` width and offset assume. Unlike
+ * which is what the indicator's `1/n` size and offset assume. Unlike
  * {@link expectAlignedSelection} this also covers unselected segments, so a
- * layout that only happens to match at one index still fails.
+ * layout that only happens to match at one index still fails. Vertical
+ * controls (`aria-orientation="vertical"`) are measured along the block axis.
  */
 export async function expectEqualSegments(
   group: Locator,
@@ -116,34 +117,38 @@ export async function expectEqualSegments(
   const { track, segments } = await group.evaluate((control) => {
     const style = getComputedStyle(control)
     const rect = control.getBoundingClientRect()
-    const insetStart =
-      parseFloat(style.borderLeftWidth) + parseFloat(style.paddingLeft)
-    const insetEnd =
-      parseFloat(style.borderRightWidth) + parseFloat(style.paddingRight)
+    const vertical = control.getAttribute('aria-orientation') === 'vertical'
+    const insetStart = vertical
+      ? parseFloat(style.borderTopWidth) + parseFloat(style.paddingTop)
+      : parseFloat(style.borderLeftWidth) + parseFloat(style.paddingLeft)
+    const insetEnd = vertical
+      ? parseFloat(style.borderBottomWidth) + parseFloat(style.paddingBottom)
+      : parseFloat(style.borderRightWidth) + parseFloat(style.paddingRight)
+    const start = vertical ? rect.top : rect.left
+    const size = vertical ? rect.height : rect.width
     return {
-      track: {
-        left: rect.left + insetStart,
-        width: rect.width - insetStart - insetEnd,
-      },
+      track: { start: start + insetStart, size: size - insetStart - insetEnd },
       segments: [
         ...control.querySelectorAll<HTMLElement>(
           '.ghost-segmented-control-item',
         ),
       ].map((item) => {
         const box = item.getBoundingClientRect()
-        return { left: box.left, width: box.width }
+        return vertical
+          ? { start: box.top, size: box.height }
+          : { start: box.left, size: box.width }
       }),
     }
   })
   expect(segments.length, name).toBeGreaterThan(1)
-  const share = track.width / segments.length
+  const share = track.size / segments.length
   segments.forEach((segment, index) => {
     expect(
-      Math.abs(segment.width - share),
+      Math.abs(segment.size - share),
       `${name} #${String(index)}`,
     ).toBeLessThanOrEqual(1)
     expect(
-      Math.abs(segment.left - (track.left + share * index)),
+      Math.abs(segment.start - (track.start + share * index)),
       `${name} #${String(index)}`,
     ).toBeLessThanOrEqual(1)
   })

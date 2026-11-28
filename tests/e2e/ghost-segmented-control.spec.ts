@@ -3,6 +3,7 @@ import AxeBuilder from '@axe-core/playwright'
 import { docsTest as test, expect } from '../support/docs'
 import {
   expectAlignedSelection,
+  expectEqualSegments,
   selectedSegmentGeometry,
 } from './segmented-control-geometry'
 import { startStaticServer } from './static-server'
@@ -111,6 +112,73 @@ test.describe('GhostSegmentedControl', { tag }, () => {
           return Math.abs(indicatorBox.x - dayBox.x)
         })
         .toBeLessThan(6)
+    } finally {
+      await playground.close()
+    }
+  })
+
+  test('vertical controls keep equal rows under the indicator (#392)', async ({
+    page,
+  }) => {
+    // Reduced motion snaps the indicator, so measurements read settled boxes.
+    await page.emulateMedia({ reducedMotion: 'reduce' })
+    const playground = await startStaticServer('apps/playground/dist')
+    try {
+      await page.goto(
+        `${playground.url}/examples.html?id=segmented-control/themed`,
+      )
+      const control = page.getByRole('group', { name: 'Time range' })
+      await expect(control).toBeVisible()
+      // Only the themed CSS reads `aria-orientation` for layout, so setting
+      // it (with a narrow width and one long label) exercises the vertical
+      // sizing rules without a dedicated example.
+      await control.evaluate((root) => {
+        root.setAttribute('aria-orientation', 'vertical')
+        root.style.width = '96px'
+        const label = [...root.querySelectorAll('button')]
+          .flatMap((button) => [...button.childNodes])
+          .find((node) => node.textContent?.trim() === 'Month')
+        if (!label) throw new Error('missing Month label')
+        label.textContent = 'Month to date'
+      })
+      await page.evaluate(() => document.fonts.ready.then(() => undefined))
+
+      // Default grid: the wrapping label sets every row's height.
+      const long = control.getByRole('button', { name: 'Month to date' })
+      await long.click()
+      const wrapped = await selectedSegmentGeometry(control)
+      expect(wrapped.labelLines.length).toBeGreaterThan(1)
+      for (const name of ['Day', 'Week', 'Month to date']) {
+        await control.getByRole('button', { name }).click()
+        await expectEqualSegments(control, `grid ${name}`)
+        expectAlignedSelection(
+          await selectedSegmentGeometry(control),
+          `grid ${name}`,
+        )
+      }
+
+      // Flex override: equal rows are retained only while labels share one
+      // line height (see the Sizing section of the spec); a column flex root
+      // has no definite height to split, so rows follow label heights.
+      await control.evaluate((root) => {
+        root.style.display = 'flex'
+        root.style.removeProperty('width')
+        const label = [...root.querySelectorAll('button')]
+          .flatMap((button) => [...button.childNodes])
+          .find((node) => node.textContent?.trim() === 'Month to date')
+        if (!label) throw new Error('missing Month to date label')
+        label.textContent = 'Month'
+      })
+      await expect(control).toHaveCSS('display', 'flex')
+      await expect(control).toHaveCSS('flex-direction', 'column')
+      for (const name of ['Day', 'Week', 'Month']) {
+        await control.getByRole('button', { name }).click()
+        await expectEqualSegments(control, `flex ${name}`)
+        expectAlignedSelection(
+          await selectedSegmentGeometry(control),
+          `flex ${name}`,
+        )
+      }
     } finally {
       await playground.close()
     }

@@ -131,6 +131,11 @@ equal segments through a `flex: 1 1 0` fallback. A shrink-to-fit `inline-flex`
 root divides the combined label widths evenly, so longer labels can wrap even
 when the container has space for a wider control.
 
+Vertical controls keep equal rows on the default grid, even when a narrow width
+makes a label wrap. A vertical `display: flex` override keeps equal rows only
+while every label fits on one line, because each flex row takes its own label's
+height. Keep the default grid for vertical labels that can wrap.
+
 ## Accessibility
 
 - Root: `role="group"` with an accessible name.

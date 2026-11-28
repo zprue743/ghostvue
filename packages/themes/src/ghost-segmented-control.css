@@ -13,7 +13,10 @@
  * a container, set `display: grid` (or a width) on the root. Consumers that
  * override the root to `display: flex` keep equal segments through the items'
  * `flex: 1 1 0` fallback, which grid layout ignores. The fallback works when
- * the flex root fills its container or has an explicit width.
+ * the flex root fills its container or has an explicit width. Vertical flex
+ * roots keep equal rows only while labels share one height: a column flex
+ * root has no definite height to split, and `min-height: 0` would collapse
+ * auto-height roots, so vertical wrapping labels need the default grid.
  */
 @layer ghostvue-theme {
   :where(
@@ -49,7 +52,10 @@
   ) {
     grid-auto-flow: row;
     grid-auto-columns: auto;
-    /* Flex fallback axis for roots overridden to `display: flex`. */
+    /*
+     * Flex fallback axis for roots overridden to `display: flex`. Rows follow
+     * label heights there (no `min-height: 0`; see the header comment).
+     */
     flex-direction: column;
     grid-auto-rows: minmax(0, 1fr);
     width: max-content;
