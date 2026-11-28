@@ -32,6 +32,7 @@
     "docs:api:write": "node scripts/check-docs-api.mjs --write",
     "docs:links": "node scripts/check-docs-internal-links.mjs",
     "eval": "node scripts/eval.mjs",
+    "examples:inventory": "node scripts/report-example-inventory.mjs",
     "format": "prettier --write .",
     "format:check": "prettier --check --cache --cache-strategy content --cache-location .prettiercache .",
     "lint": "eslint --max-warnings=0 --concurrency auto . && pnpm format:check",
