@@ -1,20 +1,31 @@
 # Contribution workflow
 
-1. Read `AGENTS.md`, this workflow, and relevant standards.
-2. Inspect related code before introducing a pattern.
-3. Agree on public behavior; adding or promoting a component requires the
-   [component gate](../agents/COMPONENT_WORKFLOW.md) (approved spec, tests,
-   docs, manifest, and a Changeset when publishable behavior changes).
-4. Make the smallest coherent change with tests and documentation. Component
-   usage samples belong in `examples/` ([executable examples](./examples.md)).
-5. Add intent-focused comments for non-obvious reasoning.
-6. Add a Changeset when a publishable package's consumer-visible behavior changes,
-   or apply the `no-changeset` PR label for internal-only changes inside
-   publishable packages (enforced by CI; see [releases](./releases.md)).
-7. Run focused checks, then `pnpm verify`; run `pnpm test:e2e` for browser behavior.
-8. Review the diff for API, accessibility, reactivity, SSR, cleanup, security,
-   dependency, and licensing concerns.
-9. Open a pull request using the template and report exact validation results.
+## First contribution
+
+1. Browse [open issues](https://github.com/zprue743/ghostvue/issues) or
+   [report a bug or request a feature](https://github.com/zprue743/ghostvue/issues/new/choose).
+   Comment on the issue with what you would change so a maintainer can confirm
+   the scope and release before you start.
+2. Clone the repository. With Node.js 22+ and pnpm 11+, run `pnpm install`.
+   Use `pnpm docs:dev` to preview the docs or `pnpm dev` to open the playground.
+   Read `AGENTS.md` and the standards relevant to the change.
+3. Follow existing patterns, update the relevant tests and docs, and run focused
+   checks followed by `pnpm verify`. For browser behavior, run the Playwright
+   specs that cover your change. Add component usage samples in `examples/`
+   using the [executable example convention](./examples.md).
+4. Open a pull request using the template. Link the issue, describe the change,
+   and report which checks ran.
+
+## Review requirements
+
+- Adding or promoting a component requires the
+  [component gate](../agents/COMPONENT_WORKFLOW.md), including an approved spec,
+  tests, docs, and a manifest.
+- Add a [Changeset](./releases.md) when a publishable package's consumer-visible
+  behavior changes. Use the `no-changeset` PR label for internal-only changes
+  inside publishable packages.
+- Comment non-obvious decisions and review the diff for API, accessibility,
+  reactivity, SSR, cleanup, security, dependency, and licensing concerns.
 
 ## Issue tracking
 

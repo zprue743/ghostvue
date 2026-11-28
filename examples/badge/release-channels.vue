@@ -33,7 +33,7 @@ const channels = [
         <div class="badge-showcase__header">
           <span class="badge-showcase__title">Release channels</span>
           <GhostBadge variant="ghost" tone="neutral" size="sm">
-            3 active
+            Sample data
           </GhostBadge>
         </div>
       </template>

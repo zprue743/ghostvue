@@ -13,19 +13,6 @@ function toasts(page: Page) {
   return page.locator('[data-ghost-toast]')
 }
 
-/**
- * Wait for every running animation (the themed toast's enter fade) to finish.
- * axe samples rendered colors, so a scan during the fade blends text with the
- * surface and reports contrast that the settled toast does not have.
- */
-async function settleAnimations(page: Page) {
-  await page.evaluate(() =>
-    Promise.all(
-      document.getAnimations().map((animation) => animation.finished),
-    ),
-  )
-}
-
 test.describe('GhostToast @component:GhostToast', () => {
   test('shows a toast from a nested component without moving focus and announces it politely', async ({
     page,
@@ -238,7 +225,10 @@ test.describe('themed GhostToast @component:GhostToast', () => {
     await expect(page.locator('[data-part="announcer-assertive"]')).toHaveText(
       '',
     )
-    await settleAnimations(page)
+    // axe samples rendered colors, so measure text contrast only after both
+    // entrance fades reach full opacity.
+    await expect(toasts(page).first()).toHaveCSS('opacity', '1')
+    await expect(toasts(page).last()).toHaveCSS('opacity', '1')
     await expectNoAxeViolations(page)
 
     // Tab order: the page controls, then the stack, oldest toast first.
@@ -265,6 +255,16 @@ test.describe('themed GhostToast @component:GhostToast', () => {
     await page.keyboard.press('Space')
     await expect(errorToast).toContainText('Attempt 3 failed.')
     await expect(toasts(page)).toHaveCount(2)
+
+    // Sync files while the retry toast is visible resets it in place and
+    // announces the reverted failure text instead of patching it silently.
+    await sync.click()
+    await expect(toasts(page)).toHaveCount(2)
+    await expect(errorToast).toContainText('Sync failed')
+    await expect(polite).toHaveText(
+      'Sync failed Three files could not be uploaded.',
+    )
+    await retry.focus()
 
     // Escape dismisses only the focused toast and returns focus.
     await page.keyboard.press('Escape')

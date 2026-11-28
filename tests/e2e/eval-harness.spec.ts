@@ -11,6 +11,9 @@ test.describe('Agent eval harness browser grading', () => {
   test('grades all 5 reference tasks in Chromium (behavior, keyboard, per-state axe, and unreviewed visual evidence)', async ({
     browser,
   }) => {
+    // Cold runs build theme and MCP artifacts before grading five apps.
+    test.setTimeout(180_000)
+
     const outDir = await mkdtemp(join(tmpdir(), 'ghostvue-eval-e2e-'))
     try {
       const { report, runDir } = await runEval({

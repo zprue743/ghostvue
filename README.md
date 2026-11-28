@@ -1,75 +1,59 @@
 # GhostVue
 
-GhostVue is the foundation of a Vue-first, headless-first open-source UI
-component library. The project aims to make ordinary use cases concise while
-providing progressive escape hatches for demanding application interfaces.
+GhostVue is a headless-first UI library for Vue 3. Build with accessible
+components for forms, overlays, tables, and more. Bring your own styles with
+`@ghostvue/vue` or add ready-to-use themes with `@ghostvue/themes`.
 
-The intended product direction combines:
+[Documentation](https://ghostvue.dev/) ·
+[Components](https://ghostvue.dev/components/) ·
+[Live demo](https://ghostvue.dev/examples) ·
+[Release notes](https://github.com/zprue743/ghostvue/releases)
 
-- simple Vue props and configuration-driven ergonomics;
-- framework-independent behavior where that boundary is genuinely useful;
-- optional polished styling that headless functionality never requires;
-- strong TypeScript and accessibility contracts; and
-- room for capable application components such as data tables and query
-  builders without dictating consumer data models.
+## Quickstart
 
-## Status
+In a Vue 3.5+ app, install the headless package:
 
-The repository is **pre-release** and not ready for production. Tooling,
-package boundaries, tests, documentation, and contribution rules are in
-place. Production components may be added only when they pass the
-[component gate](./docs/agents/COMPONENT_WORKFLOW.md) (approved spec, tests,
-docs, and a machine-readable manifest). See
-[ADR 0002](./docs/adr/0002-exit-foundation-phase.md).
+```bash
+pnpm add @ghostvue/vue
+```
 
-Component sequencing toward DataTable is in
-[docs/roadmap.md](./docs/roadmap.md).
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+import { GhostButton } from '@ghostvue/vue'
 
-## Requirements
+const count = ref(0)
+</script>
 
-- Node.js 22 or newer
-- pnpm 11 or newer
+<template>
+  <GhostButton @click="count++">Count: {{ count }}</GhostButton>
+</template>
+```
 
-## Development
+For styled components, follow the [themed quickstart](https://ghostvue.dev/getting-started).
+GhostVue is published on npm and is in active pre-1.0 development. Minor
+releases may include breaking changes.
+
+## Tooling
+
+GhostVue also provides [Nuxt auto-imports](https://ghostvue.dev/auto-imports),
+[ESLint rules](https://ghostvue.dev/tooling/eslint-plugin) for Vue templates,
+and [component manifests and an MCP server](https://ghostvue.dev/tooling/ai-agents)
+for editors and coding agents.
+
+## Contributing
+
+Start with [CONTRIBUTING.md](./CONTRIBUTING.md) or browse the
+[roadmap](https://ghostvue.dev/roadmap). To work on the library locally, use
+Node.js 22+ and pnpm 11+:
 
 ```bash
 pnpm install
 pnpm verify
 ```
 
-Useful focused commands include:
-
-```bash
-pnpm dev
-pnpm docs:dev
-pnpm test
-pnpm test:coverage
-pnpm test:e2e
-pnpm typecheck
-pnpm manifests
-pnpm manifests:write
-```
-
-See [CONTRIBUTING.md](./CONTRIBUTING.md) before submitting a change. Engineering
-standards and architecture decisions live in [docs](./docs/index.md); coding
-agents must begin with [AGENTS.md](./AGENTS.md). `pnpm docs:build` also writes
-[`llms.txt`](https://llmstxt.org/) and `llms-full.txt` into the VitePress output
-so published docs are served at `/llms.txt` and `/llms-full.txt`.
-
-To use GhostVue from a coding agent (MCP server setup for Claude Code, Cursor,
-VS Code, and others, `llms.txt`, component manifests, the ESLint plugin, and an
-`AGENTS.md` block for your app), see
-[Using GhostVue with AI agents](./docs/tooling/ai-agents.md).
-
-## Philosophy
-
-Simple usage should remain simple. Configuration should describe behavior, not
-internal markup. Advanced users should be able to progress from props and
-configuration to callbacks, slots, custom rendering, and lower-level APIs only
-when their use case needs that power.
-
-Accessibility, TypeScript quality, documentation, and backwards compatibility
-are product requirements rather than cleanup phases.
+Run `pnpm docs:dev` for the docs or `pnpm dev` for the playground. Coding
+agents should start with [AGENTS.md](./AGENTS.md).
 
 ## License
 
