@@ -5,17 +5,15 @@
  * The indicator assumes every segment is exactly 1/n of the track, so the
  * track is a grid of equal `fr` columns rather than a row of `flex: 1 1 0`
  * items. A shrink-to-fit flex container sizes itself to the *sum* of the
- * labels and then splits that sum evenly, which leaves long labels overflowing
- * their segment (and the indicator) while short ones get extra room. Grid
- * resolves `1fr` from the widest label when the control sizes to content, so
- * every segment fits its label and still matches the indicator's fraction.
+ * labels and then splits that sum evenly, leaving too little room for the
+ * longest labels. Grid resolves `1fr` from the widest label when the control
+ * sizes to content, so every segment fits its label and matches the indicator.
  *
  * Supported sizing: the default inline grid sizes to the widest label. To span
  * a container, set `display: grid` (or a width) on the root. Consumers that
  * override the root to `display: flex` keep equal segments through the items'
- * `flex: 1 1 0` fallback, which grid layout ignores; that only holds when the
- * flex root fills its container or has an explicit width, since a shrink-to-fit `inline-flex` root
- * reintroduces the overflow described above.
+ * `flex: 1 1 0` fallback, which grid layout ignores. The fallback works when
+ * the flex root fills its container or has an explicit width.
  */
 @layer ghostvue-theme {
   :where(
@@ -155,6 +153,9 @@
     padding: var(--ghost-space-inset-sm) var(--ghost-space-inset-md);
     /* Buttons center by default; non-button `as` hosts should match. */
     text-align: center;
+    /* Wrap labels within constrained tracks so they stay over the indicator. */
+    white-space: normal;
+    overflow-wrap: anywhere;
   }
 
   :where(

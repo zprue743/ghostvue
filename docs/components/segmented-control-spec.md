@@ -191,11 +191,13 @@ height when vertical). The supported sizing contract:
   sizes to content, and every column takes the widest label's width.
 - **Full width:** set `display: grid` (or a definite `width`) on the root; the
   columns stay equal across the container.
+- **Constrained width:** label text wraps inside each segment so the indicator
+  covers the text while the tracks stay equal.
 - **Flex override (compatibility):** a root overridden to block-level `display: flex`
-  (which fills its container) or given an explicit width keeps equal segments through the items' `flex: 1 1 0` and
-  `min-width: 0` fallback. A shrink-to-fit `inline-flex` root is not supported:
-  it splits the sum of the labels evenly, so long labels overflow their segment
-  and the indicator.
+  (which fills its container) or given an explicit width keeps equal segments
+  through the items' `flex: 1 1 0` and `min-width: 0` fallback. A shrink-to-fit
+  `inline-flex` root can make long labels wrap even when the container has
+  space for a wider control.
 - Vertical controls stack equal `minmax(0, 1fr)` rows at `max-content` width;
   the flex fallback uses `flex-direction: column`.
 

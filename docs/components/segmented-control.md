@@ -115,8 +115,9 @@ Themed styles ship from `@ghostvue/themes` (`GhostSegmentedControl`,
 
 Themed segments always share the control equally, because the sliding indicator
 is positioned as an equal fraction of the track. By default the control is an
-inline grid that sizes to its widest label. To stretch it across a container,
-set `display: grid` (or a width) on the root:
+inline grid that sizes to its widest label. When space is limited, label text
+wraps within its segment. To stretch the control across a container, set
+`display: grid` (or a width) on the root:
 
 ```css
 .view-switcher {
@@ -125,10 +126,10 @@ set `display: grid` (or a width) on the root:
 ```
 
 Existing block-level `display: flex` overrides that fill their container (as
-in the Popover sharing example), or flex roots with an explicit width, keep equal segments
-through a `flex: 1 1 0` fallback. Avoid `display: inline-flex`: a
-shrink-to-fit flex root splits the total label width evenly, so long labels
-overflow their segment and the indicator.
+in the Popover sharing example), or flex roots with an explicit width, keep
+equal segments through a `flex: 1 1 0` fallback. A shrink-to-fit `inline-flex`
+root divides the combined label widths evenly, so longer labels can wrap even
+when the container has space for a wider control.
 
 ## Accessibility
 

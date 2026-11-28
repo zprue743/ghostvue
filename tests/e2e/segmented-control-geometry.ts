@@ -12,22 +12,21 @@ export interface Box {
   right: number
   top: number
   bottom: number
-  width: number
 }
 
 export interface SegmentGeometry {
   control: Box
   indicator: Box
   segment: Box
-  label: Box
+  labelLines: Box[]
   /** Outline box of the selected segment as painted when it has focus. */
   ring: Box
 }
 
 /**
  * Reads the selected segment, sliding indicator, label glyphs, and focus-ring
- * extent in one layout pass. The label rect comes from a Range over the
- * trimmed text so slot whitespace does not skew the centering check.
+ * extent in one layout pass. A Range over the trimmed text gives the bounds
+ * of each line, so centering is checked even when a label wraps.
  */
 export async function selectedSegmentGeometry(
   group: Locator,
@@ -38,7 +37,6 @@ export async function selectedSegmentGeometry(
       right: rect.right,
       top: rect.top,
       bottom: rect.bottom,
-      width: rect.width,
     })
     const segment = control.querySelector<HTMLElement>(
       '.ghost-segmented-control-item[data-state="on"]',
@@ -64,13 +62,12 @@ export async function selectedSegmentGeometry(
       control: toBox(control.getBoundingClientRect()),
       indicator: toBox(indicator.getBoundingClientRect()),
       segment: toBox(box),
-      label: toBox(range.getBoundingClientRect()),
+      labelLines: Array.from(range.getClientRects(), toBox),
       ring: {
         left: box.left - reach,
         right: box.right + reach,
         top: box.top - reach,
         bottom: box.bottom + reach,
-        width: box.width + 2 * reach,
       },
     }
   })
@@ -81,17 +78,22 @@ export function expectAlignedSelection(
   geometry: SegmentGeometry,
   name: string,
 ): void {
-  const { control, indicator, segment, label, ring } = geometry
-  // The indicator is positioned as an equal 1/n fraction of the track, so it
-  // only lines up when every segment really is 1/n wide.
-  expect(Math.abs(indicator.left - segment.left), name).toBeLessThanOrEqual(1)
-  expect(Math.abs(indicator.width - segment.width), name).toBeLessThanOrEqual(1)
-  // The label fits its segment and is centered with even padding.
-  const padStart = label.left - segment.left
-  const padEnd = segment.right - label.right
-  expect(padStart, name).toBeGreaterThan(4)
-  expect(padEnd, name).toBeGreaterThan(4)
-  expect(Math.abs(padStart - padEnd), name).toBeLessThanOrEqual(1.5)
+  const { control, indicator, segment, labelLines, ring } = geometry
+  for (const edge of ['left', 'right', 'top', 'bottom'] as const) {
+    expect(Math.abs(indicator[edge] - segment[edge]), name).toBeLessThanOrEqual(
+      1,
+    )
+  }
+  expect(labelLines.length, name).toBeGreaterThan(0)
+  for (const line of labelLines) {
+    const padStart = line.left - segment.left
+    const padEnd = segment.right - line.right
+    expect(padStart, name).toBeGreaterThan(4)
+    expect(padEnd, name).toBeGreaterThan(4)
+    expect(Math.abs(padStart - padEnd), name).toBeLessThanOrEqual(1.5)
+    expect(line.top, name).toBeGreaterThan(segment.top)
+    expect(line.bottom, name).toBeLessThan(segment.bottom)
+  }
   // Indicator and focus ring stay inside the control's border box.
   for (const box of [indicator, ring]) {
     expect(box.left, name).toBeGreaterThanOrEqual(control.left - 0.5)

@@ -1,6 +1,6 @@
 import AxeBuilder from '@axe-core/playwright'
-import { expect, test } from '@playwright/test'
 
+import { docsTest as test, expect } from '../support/docs'
 import {
   expectAlignedSelection,
   selectedSegmentGeometry,
@@ -115,6 +115,38 @@ test.describe('GhostSegmentedControl', { tag }, () => {
       await playground.close()
     }
   })
+
+  for (const width of [375, 1440]) {
+    for (const colorScheme of ['light', 'dark'] as const) {
+      test(`Billing and Kbd docs keep selected labels inside their segments at ${String(width)}px in ${colorScheme} mode (#392)`, async ({
+        page,
+        docsUrl,
+      }) => {
+        await page.setViewportSize({ width, height: 900 })
+        await page.emulateMedia({ colorScheme, reducedMotion: 'reduce' })
+
+        await page.goto(`${docsUrl}/examples`)
+        const status = page.getByRole('group', { name: 'Invoice status' })
+        const pastDue = status.getByRole('button', { name: 'Past due' })
+        await pastDue.click()
+        await expect(pastDue).toHaveAttribute('aria-pressed', 'true')
+        await page.evaluate(() => document.fonts.ready.then(() => undefined))
+        expectAlignedSelection(
+          await selectedSegmentGeometry(status),
+          'Past due',
+        )
+
+        await page.goto(`${docsUrl}/components/kbd#command-shortcut-sheet`)
+        const platform = page.getByRole('group', { name: 'Keycap platform' })
+        await platform.getByRole('button', { name: 'PC' }).click()
+        const apple = platform.getByRole('button', { name: 'Apple' })
+        await apple.click()
+        await expect(apple).toHaveAttribute('aria-pressed', 'true')
+        await page.evaluate(() => document.fonts.ready.then(() => undefined))
+        expectAlignedSelection(await selectedSegmentGeometry(platform), 'Apple')
+      })
+    }
+  }
 
   test('docs home controls keep the indicator on the selected label (#392)', async ({
     page,
