@@ -98,6 +98,15 @@ agent guide, bundle-size, and MCP asset checks. Both jobs must pass for `verify`
 on heavy runs. The `browser` check waits for the hosts and
 the selected browser jobs.
 
+## Docs deployment
+
+The `ghost-vue-docs` project serves `ghostvue.dev` on Vercel. The docs build
+loads Vercel Web Analytics only when the deployment sets `VERCEL_ENV=production`.
+Enable Web Analytics on that project before deploying. After deployment, visit
+a docs page and follow an internal link. Check for one `/_vercel/insights/view`
+request per page and confirm both paths appear in the Analytics dashboard.
+See the [Vercel Web Analytics quickstart](https://vercel.com/docs/analytics/quickstart).
+
 ## Browser shard balancing
 
 Playwright's `--shard` splits tests by count, but the cheap `chromium`

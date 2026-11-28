@@ -1,6 +1,6 @@
 import { fileURLToPath } from 'node:url'
 
-import { defineConfig } from 'vitepress'
+import type { DefaultTheme, HeadConfig, UserConfig } from 'vitepress'
 
 import {
   docsDescription,
@@ -27,7 +27,7 @@ function packageSrc(relative: string): string {
   )
 }
 
-export default defineConfig({
+export default {
   // Canonical markdown lives in /docs; this app is only the VitePress wrapper.
   srcDir: '../../docs',
   title: docsTitle,
@@ -55,6 +55,13 @@ export default defineConfig({
     ['style', { id: 'ghost-demo-css-layers' }, DEMO_CSS_LAYER_PRELUDE],
     ['script', { id: 'ghost-docs-theme-restore' }, restoreDocsThemeScript],
   ],
+  transformHead(): HeadConfig[] {
+    // Vercel's script tracks first loads and VitePress history navigation.
+    // Use the deployment target because previews also use optimized builds.
+    return process.env.VERCEL_ENV === 'production'
+      ? [['script', { defer: '', src: '/_vercel/insights/script.js' }]]
+      : []
+  },
   transformHtml(code) {
     return applyDocsThemeHost(code)
   },
@@ -165,4 +172,4 @@ export default defineConfig({
       sidebar: docsSidebar,
     })
   },
-})
+} satisfies UserConfig<DefaultTheme.Config>
