@@ -206,15 +206,19 @@ the visible control rather than a filtered suggestion list.
 
 ## State model
 
-| Surface           | Attribute / state                                            |
-| ----------------- | ------------------------------------------------------------ |
-| Trigger           | `data-part="trigger"`, `data-state="open" \| "closed"`       |
-| Content (mounted) | `data-part="content"`, `data-state="open"`, `data-placement` |
-| Option            | `data-part="option"`, `data-state="checked" \| "disabled"`   |
-| Root (Field)      | `data-state="invalid" \| "disabled"` when applicable         |
+| Surface      | Attribute / state                                                                                          |
+| ------------ | ---------------------------------------------------------------------------------------------------------- |
+| Trigger      | `data-part="trigger"`, `data-state="open" \| "closed"`                                                     |
+| Content      | `data-part="content"`, `data-state="open" \| "closed"`, `data-placement` while open, `hidden` while closed |
+| Option       | `data-part="option"`, `data-state="checked" \| "disabled"`                                                 |
+| Root (Field) | `data-state="invalid" \| "disabled"` when applicable                                                       |
 
-Open listbox content mounts with `v-if="open"` (not `v-show`) so floating and
-dismiss layers stay clean while closed.
+Content and its listbox stay mounted while closed so options keep registering
+their labels (the value text resolves without opening). Closed content renders
+inline (portal disabled) with `hidden` and `data-state="closed"`; the listbox
+inside it carries `aria-hidden="true"` and `inert` and has no `tabindex`.
+Floating positioning, dismiss listeners, and the focus scope run only while
+open, so closed content adds no layers.
 
 ## Consumer data
 
@@ -288,8 +292,11 @@ its floating position styles, portaled or inline.
 ### SSR and hydration
 
 - `useGhostId` for trigger, listbox, and option ids.
-- Closed select: SSR outputs trigger, closed listbox (`hidden` / `data-state="closed"`,
-  options registered), and submit input when `name` is set so labels resolve without opening.
+- Closed select: SSR outputs the trigger, the closed content rendered inline
+  (`hidden`, `data-state="closed"`) with its listbox (`aria-hidden="true"`,
+  `inert`, options registered), and the submit input when `name` is set, so
+  labels resolve without opening (`overlay-ssr.test.ts` asserts the closed
+  `role="listbox"`).
 - `defaultOpen: true` may render listbox through deferred `GhostPortal` without
   touching `window`/`document` in setup; browser listeners attach in `onMounted`
   (`overlay-ssr.test.ts` pattern).
@@ -664,7 +671,7 @@ The single-value rule extends to every member:
 | Element              | Single mode (published)                                                        | Multiple mode (proposed)                                                                                                   |
 | -------------------- | ------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------- |
 | `GhostSelectTrigger` | `role="combobox"`, `aria-haspopup="listbox"`, `aria-expanded`, `aria-controls` | Same attributes. No `aria-multiselectable` on the combobox (not a supported state there).                                  |
-| Listbox              | `role="listbox"`, `aria-labelledby` → trigger                                  | Adds `aria-multiselectable="true"`.                                                                                        |
+| Listbox              | `role="listbox"`, `aria-labelledby` → trigger                                  | Adds `aria-multiselectable="true"` whenever the listbox renders, open or closed (hidden).                                  |
 | `GhostSelectOption`  | `aria-selected="true"` on the value, `"false"` on the rest                     | `aria-selected="true"` on every member and `"false"` on every other option, so screen readers announce "not selected" too. |
 | Disabled option      | `aria-disabled="true"`                                                         | Same; selected and disabled reads both states.                                                                             |
 
@@ -815,12 +822,15 @@ new FormData(filters).getAll('tags') // ['bug']
 A closed SSR render outputs the trigger with the value text for the members
 whose options are registered during render, and one mirror per member (or the
 unnamed reset anchor when empty) when `name` is set, so the server markup
-submits the same entries as the hydrated control. Listbox content mounts only
-while open (`v-if="open"`, see [State model](#state-model)), so the closed
-render has no listbox and makes no listbox guarantee. An open SSR render
-(`defaultOpen: true`) also outputs the listbox with `aria-multiselectable="true"`
-and `aria-selected` on every option (`"true"` on members, `"false"` on the
-rest). Hydration must not emit in either case. Touch uses the same pointer
+submits the same entries as the hydrated control. As in single mode, the
+listbox stays mounted while closed (see [State model](#state-model)): a closed
+render outputs the hidden listbox (`hidden` content, `aria-hidden="true"`,
+`inert`) with its options, which is how a default-closed `['bug']` resolves
+the value text `Bug` rather than the raw `bug`. The rendered listbox carries
+`aria-multiselectable="true"` and `aria-selected` on every option (`"true"` on
+members, `"false"` on the rest) in either state; an open SSR render
+(`defaultOpen: true`) shows the same listbox without `hidden`. Hydration must
+not emit in either case. Touch uses the same pointer
 path as click; options keep the themed minimum block size.
 
 ### Performance
@@ -881,10 +891,12 @@ No new package, dependency, or shared primitive.
   `default-value="…"`, `update:modelValue` payload `string | undefined`) are
   the regression fixture for existing consumers. Same cases against the
   `@ghostvue/themes` wrapper.
-- **SSR, closed:** a default-closed multiple select renders the trigger value
-  text and one mirror per member, or the unnamed reset anchor when empty. No
-  listbox assertion (content is not mounted while closed). Hydration emits
-  nothing.
+- **SSR, closed:** a default-closed multiple select with
+  `defaultValue: ['bug']` renders the hidden listbox (`role="listbox"` inside
+  `hidden` content, `aria-hidden="true"`, `aria-multiselectable="true"`), the
+  trigger value text resolved from the option label (`Bug`, not `bug`), and
+  one mirror per member; with an empty value it renders the unnamed reset
+  anchor instead. Hydration emits nothing.
 - **SSR, open:** with `defaultOpen: true`, the rendered listbox has
   `aria-multiselectable="true"`, members have `aria-selected="true"`, and
   other options have `aria-selected="false"`; the mirrors match the closed
@@ -961,11 +973,15 @@ findings to be applied in
 the form and SSR contracts and do not change any signed-off decision. They are
 not a new approval.
 
-- **Closed SSR listbox** (`512-closed-ssr-listbox`, review comment
-  [4728404849](https://github.com/zprue743/ghostvue/pull/512#discussion_r4728404849)).
-  The SSR `aria-multiselectable` guarantee is limited to an open, rendered
-  listbox, matching the existing `v-if="open"` mount contract. A closed SSR
-  render guarantees the trigger value text and the form mirrors or anchor (see
+- **Closed SSR listbox** (`512-closed-ssr-listbox`, review comments
+  [4728404849](https://github.com/zprue743/ghostvue/pull/512#discussion_r4728404849)
+  and, revised,
+  [4728514797](https://github.com/zprue743/ghostvue/pull/512#discussion_r4728514797)).
+  The [State model](#state-model) now matches `GhostSelectContent`: the
+  closed listbox stays mounted and hidden so options register, replacing the
+  earlier `v-if="open"` sentence. `aria-multiselectable` is required on the
+  rendered listbox open or closed, and the closed SSR case checks the hidden
+  listbox, the resolved option label, and the form mirrors or anchor (see
   [Environment behavior (multiple)](#environment-behavior-multiple)).
 - **External-form reset** (`512-external-form-reset`). With `name` set, an
   empty multiple select keeps one unnamed mirror (the reset anchor) whether or
