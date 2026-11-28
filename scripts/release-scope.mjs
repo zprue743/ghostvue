@@ -1,6 +1,7 @@
 import { setTimeout as wait } from 'node:timers/promises'
 import { pathToFileURL } from 'node:url'
 import { readFileSync, appendFileSync } from 'node:fs'
+import { dependencyHolds } from './lib/release-scope-dependencies.mjs'
 import { claimable, evaluate, repository } from './lib/release-scope.mjs'
 import {
   api,
@@ -24,15 +25,20 @@ function report(result, active) {
     '',
     'Ready queue (current or proposed):',
   ]
-  const changes = result.queue.filter((issue) => issue.ready || issue.eligible)
-  for (const issue of changes)
-    lines.push(
-      `- #${issue.number}: ${issue.action} agent:ready (${issue.reason})`,
-    )
+  const changes = result.queue.filter(
+    (issue) => issue.ready || issue.eligible || issue.managed,
+  )
+  for (const issue of changes) {
+    const readiness =
+      issue.action === 'keep' && !issue.ready
+        ? 'withhold agent:ready'
+        : `${issue.action} agent:ready`
+    lines.push(`- #${issue.number}: ${readiness} (${issue.reason})`)
+  }
   if (!changes.length) lines.push('- Empty')
   lines.push('', 'Open PR checks:')
   for (const pr of result.pulls)
-    lines.push(`- #${pr.number}: ${pr.pass ? 'pass' : 'hold'} — ${pr.reason}`)
+    lines.push(`- #${pr.number}: ${pr.pass ? 'pass' : 'hold'} â€” ${pr.reason}`)
   return lines.join('\n')
 }
 
@@ -114,7 +120,12 @@ export function sweep(command, argument, policy) {
     prs = pullRequests()
     const cards = board(active)
     const issues = openIssues()
-    snapshot = { cards, issues, prs }
+    snapshot = {
+      cards,
+      issues,
+      prs,
+      holds: dependencyHolds(issues, policy.implementationGates ?? {}),
+    }
   } catch (error) {
     if (apply) {
       // A failure reading linked issues can also invalidate greens. In that case
@@ -165,6 +176,23 @@ export function sweep(command, argument, policy) {
   console.log(summary)
   if (process.env.GITHUB_STEP_SUMMARY)
     appendFileSync(process.env.GITHUB_STEP_SUMMARY, summary + '\n')
+  if (command !== 'workflow') return
+  for (const issue of result.queue.filter((item) => item.managed)) {
+    const path = `${endpoint}/issues/${issue.number}/labels`
+    // Withdraw pickup before restoring a hold. Grant readiness last so a partial
+    // write is safe to retry. Individual label operations preserve concurrent edits.
+    if (issue.action === 'remove')
+      api(path + '/agent%3Aready', null, { method: 'DELETE' })
+    if (issue.shouldBlock && !issue.blocked) api(path, { labels: ['blocked'] })
+    if (!issue.shouldBlock && issue.blocked)
+      api(path + '/blocked', null, { method: 'DELETE' })
+    if (issue.eligible) {
+      const add = []
+      if (!issue.triaged) add.push('agent:triaged')
+      if (!issue.ready) add.push('agent:ready')
+      if (add.length) api(path, { labels: add })
+    }
+  }
   if (!apply) return
   // Commit statuses are per SHA. PRs sharing a head all need to pass.
   for (const sha of new Set(result.pulls.map((pr) => pr.sha))) {
@@ -176,7 +204,7 @@ export function sweep(command, argument, policy) {
       `${active}: ${held?.reason ?? checks[0].reason}`,
     )
   }
-  for (const issue of result.queue) {
+  for (const issue of result.queue.filter((item) => !item.managed)) {
     const path = `${endpoint}/issues/${issue.number}/labels`
     if (issue.action === 'add') api(path, { labels: ['agent:ready'] })
     if (issue.action === 'remove')

@@ -1,0 +1,13 @@
+diff --git a/browsers.json b/browsers.json
+index e5d6c38dd60ece377e57518c8b20795a24a91e37..12cf8ce619eb1d53c9c6a1124fa92b6feb71618c 100644
+--- a/browsers.json
++++ b/browsers.json
+@@ -17,7 +17,7 @@
+     },
+     {
+       "name": "firefox",
+-      "revision": "1572",
++      "revision": "1575",
+       "installByDefault": true,
+       "browserVersion": "159.0",
+       "title": "Firefox"
