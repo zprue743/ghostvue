@@ -1,0 +1,71 @@
+# Bounded internal work (tooling, docs migrations, follow-up implementation)
+# that the feature form does not fit because there is no new public API to
+# propose. The form applies no labels on purpose: `agent:triaged`, `blocked`,
+# `agent:ready`, `in-progress`, ownership and the board's Target release are
+# triage decisions verified after filing (docs/contributing/workflow.md).
+name: Engineering task
+description: Scope bounded internal work, such as tooling, a docs migration, or a follow-up implementation.
+title: '[Task]: '
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Describe the work so someone else can pick it up without asking you. Use the feature proposal form for new public behavior.
+
+        Filing does not schedule or authorize work. After filing, triage verifies the board's **Target release**, ownership, and readiness labels. Pickup still follows the [agent readiness and claim rules](https://github.com/zprue743/ghostvue/blob/master/docs/contributing/workflow.md#agent-readiness).
+  - type: textarea
+    id: outcome
+    attributes:
+      label: Outcome
+      description: What is observably different when this is done, and for whom?
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Current evidence
+      description: Links, file references, failing output, or measurements that show the current state. Remove secrets.
+    validations:
+      required: true
+  - type: textarea
+    id: owned-paths
+    attributes:
+      label: Owned paths
+      description: Files, directories, or packages this task may change, one per line.
+      placeholder: |
+        docs/contributing/workflow.md
+        scripts/release-scope.mjs
+    validations:
+      required: true
+  - type: textarea
+    id: exclusions
+    attributes:
+      label: Out of scope
+      description: Related work or paths this task must not change.
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance checks
+      description: Commands, tests, or review steps that prove the outcome.
+      placeholder: |
+        - [ ] `pnpm verify` passes
+        - [ ] Focused test covers the new behavior
+    validations:
+      required: true
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Dependencies
+      description: |
+        For each open issue that must close first, put `Blocked by: #123` on its own line (several: `Blocked by: #123, #456`). The release-scope sweep reads only that exact line format. Mention other prerequisites in plain text.
+      placeholder: 'Blocked by: #123'
+  - type: input
+    id: target-release
+    attributes:
+      label: Proposed target release
+      description: Release you expect this to ship in, such as 0.2.0. Leave blank if unsure. Triage sets the board's Target release.
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: Constraints, prior decisions, or links that help the person picking this up.
