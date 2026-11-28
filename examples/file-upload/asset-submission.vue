@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, shallowRef, useTemplateRef } from 'vue'
 
 import {
   GhostButton,
@@ -15,18 +15,39 @@ import {
   GhostFileUploadItemRemove,
   GhostFileUploadList,
   GhostFileUploadTrigger,
+  type GhostFileUploadExposed,
+  type GhostFileUploadRejection,
+  type GhostFileUploadValidate,
 } from '@ghostvue/themes'
 
-const seeded = [
+const MAX_FILES = 3
+
+// Two assets are already attached, so one slot is left before the limit.
+const files = shallowRef<File[]>([
   new File(['architecture-spec'], 'architecture-spec.pdf', {
     type: 'application/pdf',
   }),
   new File(['brand-mark'], 'brand-mark.svg', { type: 'image/svg+xml' }),
-]
+])
+const rejections = shallowRef<GhostFileUploadRejection[]>([])
+const submitError = shallowRef('')
+// Names read back from FormData on submit; null until the form is submitted.
+const submitted = shallowRef<string[] | null>(null)
+const upload = useTemplateRef<GhostFileUploadExposed>('upload')
 
-const files = ref<File[]>(seeded)
-const rejectionMessage = ref('')
-const submitted = ref(false)
+// Visible error text: the live region alone does not satisfy WCAG 3.3.1.
+const errors = computed(() =>
+  submitError.value
+    ? [submitError.value]
+    : rejections.value.map((rejection) => rejection.message),
+)
+
+// The review keys assets by file name, so a second file with the same name
+// is rejected. Remove the attached one first to replace it.
+const rejectSameName: GhostFileUploadValidate = (file, { files: current }) =>
+  current.some((existing) => existing.name === file.name)
+    ? 'a file with this name is already attached'
+    : null
 
 function formatSize(bytes: number): string {
   return bytes < 1024
@@ -34,29 +55,47 @@ function formatSize(bytes: number): string {
     : `${String(Math.round(bytes / 1024))} KB`
 }
 
-function handleReject(): void {
-  rejectionMessage.value =
-    'Some files were skipped. Upload up to 3 PDF, PNG, or SVG files under 5 MB.'
-  submitted.value = false
-}
-
-function handleChange(next: File[]): void {
+// update:modelValue runs before reject, so a mixed batch clears the old
+// errors here and then shows only the new rejections.
+function onFilesChange(next: File[]): void {
   files.value = next
-  rejectionMessage.value = ''
-  submitted.value = false
+  rejections.value = []
+  submitError.value = ''
+  submitted.value = null
 }
 
-function submit(): void {
-  if (files.value.length === 0) {
-    rejectionMessage.value = 'Attach at least one asset before submitting.'
+// An invalid-only selection emits reject without update:modelValue, so this
+// also clears the empty-submit error: the file-specific rejections replace it
+// and stay visible until the list changes.
+function onReject(next: GhostFileUploadRejection[]): void {
+  rejections.value = next
+  submitError.value = ''
+  submitted.value = null
+}
+
+function onSubmit(event: SubmitEvent): void {
+  const form = event.currentTarget
+  if (!(form instanceof HTMLFormElement)) return
+  // The upload's hidden form input holds exactly the attached list, so this
+  // is what a native multipart submit would send. Nothing leaves the page.
+  // An empty file input still contributes one nameless File, so skip it.
+  const names = new FormData(form)
+    .getAll('assets')
+    .flatMap((value) =>
+      value instanceof File && value.name !== '' ? [value.name] : [],
+    )
+  if (names.length === 0) {
+    submitError.value = 'Attach at least one asset before submitting.'
+    submitted.value = null
+    upload.value?.focus()
     return
   }
-  submitted.value = true
+  submitted.value = names
 }
 </script>
 
 <template>
-  <form class="upload-form" @submit.prevent="submit">
+  <form class="upload-form" @submit.prevent="onSubmit">
     <GhostCard as="section" aria-labelledby="upload-title">
       <template #header>
         <div class="upload-form__header">
@@ -64,33 +103,41 @@ function submit(): void {
             Release packet assets
           </h2>
           <p class="upload-form__lead">
-            Attach specification PDFs or vector marks for the design review.
+            Attach specification PDFs or brand marks for the design review.
           </p>
         </div>
       </template>
 
-      <GhostField :invalid="rejectionMessage !== ''">
+      <GhostField :invalid="errors.length > 0">
         <GhostFieldLabel>Attachments</GhostFieldLabel>
         <GhostFieldDescription>
-          Up to 3 files (PDF, PNG, or SVG, max 5 MB each).
+          Up to 3 PDF, PNG, or SVG files, 5 MB each.
         </GhostFieldDescription>
         <GhostFieldControl v-slot="field">
           <GhostFileUpload
-            v-slot="{ entries }"
+            ref="upload"
+            v-slot="{ entries, remaining }"
             v-bind="field"
             :model-value="files"
+            name="assets"
             accept=".pdf,.png,.svg"
-            :max-files="3"
-            :max-file-size="5 * 1024 * 1024"
-            multiple
-            @update:model-value="handleChange"
-            @reject="handleReject"
+            :max-files="MAX_FILES"
+            :max-file-size="5_000_000"
+            :validate="rejectSameName"
+            @update:model-value="onFilesChange"
+            @reject="onReject"
           >
             <GhostFileUploadDropzone v-slot="{ dragging }">
               <strong>
                 {{ dragging ? 'Drop files to attach' : 'Drag and drop files' }}
               </strong>
-              <span>Or browse from your computer</span>
+              <span>
+                {{
+                  remaining === 0
+                    ? 'All 3 slots are used. Remove a file to add another.'
+                    : `${String(remaining)} of 3 slots left.`
+                }}
+              </span>
               <GhostFileUploadTrigger>Choose files</GhostFileUploadTrigger>
             </GhostFileUploadDropzone>
 
@@ -112,19 +159,22 @@ function submit(): void {
             </GhostFileUploadList>
           </GhostFileUpload>
         </GhostFieldControl>
-        <GhostFieldError v-if="rejectionMessage">
-          {{ rejectionMessage }}
+        <GhostFieldError as="div" class="upload-form__errors">
+          <p v-for="(message, index) in errors" :key="`${index}-${message}`">
+            {{ message }}
+          </p>
         </GhostFieldError>
       </GhostField>
 
       <template #footer>
         <div class="upload-form__actions">
           <p class="upload-form__status" role="status">
-            {{
-              submitted
-                ? `Submitted ${files.length} file${files.length === 1 ? '' : 's'}.`
-                : `${files.length} of 3 slots used`
-            }}
+            <template v-if="submitted">
+              Submitted {{ submitted.length }}
+              {{ submitted.length === 1 ? 'file' : 'files' }} as “assets”:
+              {{ submitted.join(', ') }}.
+            </template>
+            <template v-else>Not submitted yet.</template>
           </p>
           <GhostButton type="submit" class="upload-form__action">
             Submit packet
@@ -161,6 +211,16 @@ function submit(): void {
   line-height: var(--ghost-type-line-snug);
   margin: 0;
   overflow-wrap: anywhere;
+}
+
+.upload-form__errors {
+  display: grid;
+  gap: var(--ghost-space-gap-xs);
+  overflow-wrap: anywhere;
+}
+
+.upload-form__errors p {
+  margin: 0;
 }
 
 .upload-form__filename {

@@ -6,14 +6,42 @@ new files in input order, reports each rejected file with a typed reason, and
 announces outcomes through a polite live region. Keyboard and screen-reader
 users operate one native button; pointer users also get a drop target.
 
-Import it from `@ghostvue/vue`. It is headless: the parts render plain elements
-with `data-part` and `data-state` hooks and no styles.
+Import the parts from `@ghostvue/themes` for a styled dropzone, trigger, and
+file list. The themed wrappers add styling only; intake, validation, form
+submission, and announcements are the headless behavior from `@ghostvue/vue`.
+Teams that bring their own design system can start from
+[Advanced: headless composition](#advanced-headless-composition).
+
+## Submit release assets {#submit-assets}
 
 <GhostExample id="file-upload/asset-submission" />
 
-The asset submission form composes themed `GhostFileUpload` inside
-`GhostField` with a drag-and-drop zone, seeded attachments, type/size
-constraints, and polite submission status.
+The example imports every part from `@ghostvue/themes` and places the upload
+inside a themed `GhostField` in a native form. Two assets are already attached,
+and the field allows three PDF, PNG, or SVG files of up to 5 MB. Try each step:
+
+- **Add a valid file.** **Choose files**, or drop a file on the dashed zone, and
+  pick a PDF. It joins the list, the zone reports that every slot is used, and
+  the live region announces "1 file added."
+- **Pick a file it rejects.** A `.txt` file, a file over 5 MB, or a fourth file
+  is not added. The field turns invalid and shows one sentence per file, such
+  as "notes.txt was not added: this file type is not accepted." Choosing
+  another `brand-mark.svg` is rejected by the example's `validate` callback:
+  "brand-mark.svg was not added: a file with this name is already attached."
+- **Recover.** **Remove** a file to free a slot, then choose again. Any change
+  to the list clears the error, and a mixed batch shows only that batch's
+  rejections. Earlier files are never dropped.
+- **Submit.** **Submit packet** reads `new FormData(form)` and lists the files
+  the `assets` field carries, which is exactly the visible list. Remove every
+  file and submit to see the empty-form error and focus move to
+  **Choose files**. Picking only rejected files next replaces that error with
+  their file-specific sentences, which stay until the list changes.
+
+The error is `GhostFieldError`, so its text is part of the trigger's
+accessible description, next to "Up to 3 PDF, PNG, or SVG files, 5 MB each.",
+and the trigger has `aria-invalid="true"`. The source keeps one handler per
+outcome (`onFilesChange`, `onReject`, `onSubmit`). The sample stays offline:
+in an app, send the same `FormData` to your server and validate there again.
 
 ::: warning Consumers own uploads
 The component never sends a request. `accept`, `maxFileSize`, `maxFiles`, and
@@ -23,13 +51,14 @@ about a file's real content type, or a substitute for server validation.
 never reads file contents.
 :::
 
-## Basic use
+## Compose the parts {#basic-use}
 
-<GhostExample id="file-upload/basic" />
+<GhostExample id="file-upload/themed" />
 
 Compose the parts inside `GhostFileUpload` and render one
 `GhostFileUploadItem` per entry from the root slot. Use `entry.id` as the
-`v-for` key.
+`v-for` key. The same part names are exported from `@ghostvue/themes` and
+`@ghostvue/vue`.
 
 | Part                        | Element  | Role                                                                                 |
 | --------------------------- | -------- | ------------------------------------------------------------------------------------ |
@@ -40,18 +69,17 @@ Compose the parts inside `GhostFileUpload` and render one
 | `GhostFileUploadItem`       | `li`     | One entry. Takes `file`.                                                             |
 | `GhostFileUploadItemRemove` | `button` | Removes its item's file. Named `Remove {name}` by default.                           |
 
-## Button only
-
-<GhostExample id="file-upload/button-only" />
+### Button only
 
 The dropzone is optional. With `:max-files="1"` the picker allows one file, and
 a second file is rejected with `too-many-files` until the first is removed. The
 trigger stays enabled at capacity; use the slot's `remaining` to disable or hide
-it, as this example does.
+it, or to say how many slots are left, as the
+[first example](#submit-assets) does. The headless `file-upload/button-only`
+example on the [reference page](/reference/vue/ghost-file-upload) disables its
+trigger at capacity.
 
 ## Validation
-
-<GhostExample id="file-upload/validation" />
 
 Browse and drop share one intake path. Each file is checked in input order, and
 the first failing step decides its reason:
@@ -61,7 +89,9 @@ the first failing step decides its reason:
 3. `validate(file, { files })` (a returned string rejects) → `custom`
 4. Remaining capacity (`maxFiles` minus the current list) → `too-many-files`
 
-Only otherwise-valid files use capacity. Accepted files are appended, and
+The [first example](#submit-assets) sets all four, with
+`accept=".pdf,.png,.svg"`, `:max-file-size="5_000_000"`, `:max-files="3"`,
+and a `validate` callback. Only otherwise-valid files use capacity. Accepted files are appended, and
 earlier files are never dropped. Lowering `maxFiles` or changing `accept` or
 `maxFileSize` does not evict or re-check existing files; only later intake uses
 the new rules. A controlled `modelValue` is trusted as-is.
@@ -99,16 +129,35 @@ you two ways:
   empty it. Removing a file does not.
 
 Render rejections as visible text. The live region is a transient notification
-and does not meet WCAG 3.3.1 on its own.
+and does not meet WCAG 3.3.1 on its own. The first example keeps the `reject`
+payload in its own state and renders each `message` in `GhostFieldError`. It
+clears that state in its `update:modelValue` handler, which runs first, so a
+removal also clears a stale "limit reached" error.
 
 ### Duplicates
 
-<GhostExample id="file-upload/duplicates" />
-
 There is no built-in deduplication. File identity is the `File` object, and
 choosing the same file twice gives two entries. `validate` receives the current
-list plus the batch's earlier accepted files, so you can compare `name`, `size`,
-and `lastModified`.
+list plus the batch's earlier accepted files. The first example rejects a second
+file with the same name, because its review keys assets by name. To reject only
+the same file chosen again, compare `name`, `size`, and `lastModified`:
+
+```ts
+import type { GhostFileUploadValidate } from '@ghostvue/themes'
+
+const rejectDuplicates: GhostFileUploadValidate = (file, { files }) =>
+  files.some(
+    (existing) =>
+      existing.name === file.name &&
+      existing.size === file.size &&
+      existing.lastModified === file.lastModified,
+  )
+    ? 'It is already in the list'
+    : null
+```
+
+A returned string becomes the rejection's `code` and the end of its message,
+for example "a.txt was not added: It is already in the list."
 
 ### Dropped folders
 
@@ -118,12 +167,11 @@ empty file. Reject those in `validate`, for example when
 
 ## GhostField
 
-<GhostExample id="file-upload/field" />
-
-Spread `GhostFieldControl` slot props onto `GhostFileUpload`. `id` and
-`aria-describedby` go to the trigger, so the label's `for` points at the trigger
-and the description and error are linked to it. `aria-invalid` from the Field is
-ignored in favor of `invalid`.
+Spread `GhostFieldControl` slot props onto `GhostFileUpload`, as the
+[first example](#submit-assets) does. `id` and `aria-describedby` go to the
+trigger, so the label's `for` points at the trigger and the description and
+error are linked to it. `aria-invalid` from the Field is ignored in favor of
+`invalid`; pass the Field's `invalid` when you render an error.
 
 Inside a Field, the trigger's accessible name is composed from the Field label
 and its own text, for example "Attachments, Choose files". Set `aria-label` or
@@ -133,7 +181,9 @@ to the trigger's text.
 
 ## Controlled use
 
-<GhostExample id="file-upload/controlled" />
+The first example is controlled: it passes `:model-value` and applies each
+`update:modelValue` in a handler that also clears its errors. Plain `v-model`
+works the same way.
 
 Bind `v-model` to a `File[]`. Every change emits a **new** array with the same
 `File` instances; your array is never mutated. Omit `modelValue` (or pass
@@ -149,15 +199,19 @@ validation.
 
 ## Forms
 
-<GhostExample id="file-upload/form" />
-
 With `name`, the root renders a visually hidden `input[type="file"]` that holds
 exactly the committed list. Native `multipart/form-data` submission and
-`new FormData(form)` carry the files. Without `name`, nothing is submitted.
+`new FormData(form)` carry the files. Without `name`, nothing is submitted. The
+first example sets `name="assets"` and reads `getAll('assets')` on submit, so
+its status line shows what the form would send. An empty file input still
+contributes one nameless, empty `File` to `FormData`, as native file inputs do,
+so the example skips entries without a name.
 
 - `required` sets native `required` on that input when `name` is set. A submit
   with an empty list is blocked, the trigger is focused, and the root and trigger
-  become invalid until a file is added or the form is reset.
+  become invalid until a file is added or the form is reset. The first example
+  checks for an empty list in its submit handler instead, so it can show its own
+  error text in the Field.
 - `disabled` omits the files from submit.
 - `form` associates the control with a form elsewhere in the document.
 - Native form reset restores `defaultValue` (captured once at setup), clears
@@ -220,18 +274,15 @@ already cancelled. Set `:prevent-document-drop="false"` to opt out.
 `openPicker()`, `addFiles()`, `remove()`, and `clear()` do nothing. Items stay
 visible. There is no read-only mode.
 
-## Themed use
+## Themed styling {#themed-use}
 
-<GhostExample id="file-upload/themed" />
-
-Import the same part names from `@ghostvue/themes` to load
-`ghost-file-upload.css`. `GhostFileUpload`, `GhostFileUploadDropzone`,
-`GhostFileUploadTrigger`, `GhostFileUploadList`, and
-`GhostFileUploadItemRemove` are thin wrappers: they add `data-themed`, keep your
-`class` and `style`, forward the `element` ref and methods, and leave behavior to
-the headless parts. `GhostFileUploadItem` and `useGhostFileUpload` are
-re-exported unchanged; the list styles its items as direct children. There are
-no extra visual props.
+`GhostFileUpload`, `GhostFileUploadDropzone`, `GhostFileUploadTrigger`,
+`GhostFileUploadList`, and `GhostFileUploadItemRemove` from `@ghostvue/themes`
+load `ghost-file-upload.css`. They are thin wrappers: they add `data-themed`,
+keep your `class` and `style`, forward the `element` ref and methods, and leave
+behavior to the headless parts. `GhostFileUploadItem` and `useGhostFileUpload`
+are re-exported unchanged; the list styles its items as direct children. There
+are no extra visual props.
 
 - The dropzone has a dashed border on a subtle surface. While a file is dragged
   over it, the border turns solid and uses `--ghost-border-primary`.
@@ -245,6 +296,73 @@ no extra visual props.
 
 Rules key on `data-themed`, not on a `.ghost-theme` ancestor, so headless parts
 on a themed page stay unstyled.
+
+## Accessibility
+
+- **Keyboard:** `Tab` reaches the trigger, then each remove button. `Enter` and
+  `Space` activate them. There are no other keys and no roving focus.
+- **Focus:** the browser returns focus to the trigger when the picker closes.
+  After a removal, if focus was in the removed item, it moves to the next item's
+  remove button, then the previous one, then the trigger. If you veto the
+  removal, focus stays.
+- **Names:** name the list. The remove button's default name begins with
+  "Remove"; if you render other visible text, pass a matching `aria-label` or
+  override `removeLabel` (WCAG 2.5.3, Label in Name).
+- **Status:** one always-mounted `role="status"` region announces outcomes.
+  Drag enter and leave are not announced.
+- **Errors:** render rejections as visible text. Inside `GhostField`, a
+  `GhostFieldError` is announced as an alert and joins the trigger's
+  accessible description, and the Field's `invalid` sets `aria-invalid` on the
+  trigger. Outside a Field, give the trigger `aria-describedby` that points at
+  your error element and pass `invalid` to the root.
+- **Required:** not conveyed by the control; say it in the label or description.
+- The dropzone has no role and is not a tab stop. Its click is a pointer
+  convenience; the trigger offers every action.
+
+## Advanced: headless composition {#advanced-headless-composition}
+
+This section is for teams that bring their own design system and style the
+parts themselves. Import the same names from `@ghostvue/vue`: the parts render
+plain elements with `data-part` and `data-state` hooks and no styles.
+
+### Headless parts
+
+<GhostExample id="file-upload/basic" />
+
+The headless example composes a dropzone, trigger, and removable list with no
+theme. The [GhostFileUpload reference page](/reference/vue/ghost-file-upload)
+also renders the other headless examples, which keep their IDs:
+`file-upload/button-only`, `file-upload/validation`, `file-upload/duplicates`,
+`file-upload/field`, `file-upload/controlled`, and `file-upload/form`.
+
+### `useGhostFileUpload(options?)`
+
+The state engine behind the components. It takes the root props as refs or
+getters (`validate` as a function or a ref), element refs for the `picker`,
+`mirror`, and `trigger`, and `onChange` / `onReject` callbacks. It returns the
+reactive state (`files`, `entries`, `rejections`, `remaining`, `isDisabled`,
+`isInvalid`, `isRequired`, `isDragging`, `announcement`), the actions
+(`addFiles`, `remove`, `clear`, `clearRejections`, `openPicker`,
+`applyFormReset`), registration helpers for dropzones and items, and prop bags
+for the picker, mirror, dropzone, trigger, and live region.
+
+`addFiles(files)` is the single intake path. Use it to build a paste target or a
+custom drop surface.
+
+### Styling hooks
+
+| Part        | Class                           | `data-part`   | `data-state`                      |
+| ----------- | ------------------------------- | ------------- | --------------------------------- |
+| Root        | `ghost-file-upload`             | `root`        | `invalid`, `disabled`             |
+| Dropzone    | `ghost-file-upload-dropzone`    | `dropzone`    | `dragging`, `invalid`, `disabled` |
+| Trigger     | `ghost-file-upload-trigger`     | `trigger`     | `invalid`, `disabled`             |
+| List        | `ghost-file-upload-list`        | `list`        | none                              |
+| Item        | `ghost-file-upload-item`        | `item`        | none                              |
+| Item remove | `ghost-file-upload-item-remove` | `item-remove` | none                              |
+
+`invalid` wins over `disabled`. On the dropzone, `dragging` wins over both. The
+internal picker (`data-part="picker"`), form mirror (`form-input`), and live
+region (`announcer`) are not styling hooks.
 
 ## API
 
@@ -310,52 +428,6 @@ and `clear()`. Browsers may block `openPicker()` outside a user gesture.
 
 Every part merges your `class` and `style` and exposes `element`. The trigger
 and remove button also expose `focus()` and `blur()`.
-
-### `useGhostFileUpload(options?)`
-
-The state engine behind the components. It takes the root props as refs or
-getters (`validate` as a function or a ref), element refs for the `picker`,
-`mirror`, and `trigger`, and `onChange` / `onReject` callbacks. It returns the
-reactive state (`files`, `entries`, `rejections`, `remaining`, `isDisabled`,
-`isInvalid`, `isRequired`, `isDragging`, `announcement`), the actions
-(`addFiles`, `remove`, `clear`, `clearRejections`, `openPicker`,
-`applyFormReset`), registration helpers for dropzones and items, and prop bags
-for the picker, mirror, dropzone, trigger, and live region.
-
-`addFiles(files)` is the single intake path. Use it to build a paste target or a
-custom drop surface.
-
-## Accessibility
-
-- **Keyboard:** `Tab` reaches the trigger, then each remove button. `Enter` and
-  `Space` activate them. There are no other keys and no roving focus.
-- **Focus:** the browser returns focus to the trigger when the picker closes.
-  After a removal, if focus was in the removed item, it moves to the next item's
-  remove button, then the previous one, then the trigger. If you veto the
-  removal, focus stays.
-- **Names:** name the list. The remove button's default name begins with
-  "Remove"; if you render other visible text, pass a matching `aria-label` or
-  override `removeLabel` (WCAG 2.5.3, Label in Name).
-- **Status:** one always-mounted `role="status"` region announces outcomes.
-  Drag enter and leave are not announced.
-- **Required:** not conveyed by the control; say it in the label or description.
-- The dropzone has no role and is not a tab stop. Its click is a pointer
-  convenience; the trigger offers every action.
-
-## Styling hooks
-
-| Part        | Class                           | `data-part`   | `data-state`                      |
-| ----------- | ------------------------------- | ------------- | --------------------------------- |
-| Root        | `ghost-file-upload`             | `root`        | `invalid`, `disabled`             |
-| Dropzone    | `ghost-file-upload-dropzone`    | `dropzone`    | `dragging`, `invalid`, `disabled` |
-| Trigger     | `ghost-file-upload-trigger`     | `trigger`     | `invalid`, `disabled`             |
-| List        | `ghost-file-upload-list`        | `list`        | none                              |
-| Item        | `ghost-file-upload-item`        | `item`        | none                              |
-| Item remove | `ghost-file-upload-item-remove` | `item-remove` | none                              |
-
-`invalid` wins over `disabled`. On the dropzone, `dragging` wins over both. The
-internal picker (`data-part="picker"`), form mirror (`form-input`), and live
-region (`announcer`) are not styling hooks.
 
 ## Specification
 
