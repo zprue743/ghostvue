@@ -31,7 +31,7 @@
     {
       "id": "file-upload/asset-submission",
       "title": "Release packet assets",
-      "description": "Dropzone, file list, validation errors, and submission status with GhostFileUpload.",
+      "description": "Add files, see rejections in the field error, recover, and check what the form submits.",
       "layer": "themed"
     },
     {
