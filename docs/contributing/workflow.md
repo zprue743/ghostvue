@@ -40,6 +40,17 @@ retired; historical `GHO-n` keys remain valid references in older docs and
 commits.
 
 - **New work:** open a GitHub issue. Apply `priority:*` labels for priority.
+  Choose the form that matches the work. Use the
+  [bug report](https://github.com/zprue743/ghostvue/issues/new?template=bug.yml)
+  for incorrect behavior and the
+  [feature proposal](https://github.com/zprue743/ghostvue/issues/new?template=feature.yml)
+  for new public behavior. Use the
+  [engineering task](https://github.com/zprue743/ghostvue/issues/new?template=engineering-task.yml)
+  for bounded internal work such as tooling, a docs migration, or a follow-up
+  implementation. The task form records the author's proposed release and
+  dependencies but applies no labels. Triage then sets the board's Target
+  release, ownership, and the readiness labels below, so filing never grants
+  pickup.
 - **Branches:** name the issue, for example `issue-42-fix-tooltip-focus`.
 - **Pull requests:** include `Fixes #<n>` in the body so the issue closes on
   merge.
