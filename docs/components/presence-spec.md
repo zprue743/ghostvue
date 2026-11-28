@@ -7,7 +7,7 @@ packages:
   - '@ghostvue/vue'
 specStatus: approved
 approval:
-  evidence: 'Zac authorized design sign-off on P1-P6 as proposed at 225f9fe09b1bbab8c03d88138c80ebdb171b6e01 (recorded in PR #488 on 2026-11-28); infinite-animation and finite-repeat revisions pending merge review before #417 unblocks.'
+  evidence: 'Zac approved P1-P6 at 225f9fe09b1bbab8c03d88138c80ebdb171b6e01 and approved the positive transition delay correction and merge after CI in https://github.com/zprue743/ghostvue/pull/488#issuecomment-7241284458.'
 manifests: []
 sections:
   purpose:
@@ -452,8 +452,10 @@ After Vue flushes the close render (`data-state="closed"`, `flush: 'post'`):
      modulo their length per CSS Transitions and CSS Animations list-matching
      rules:
      - **Transitions:** Skip entries whose matched `transitionProperty` is
-       `'none'`. For each remaining entry with `durationMs > 0`, compute
-       `Math.max(0, delayMs + durationMs)`.
+       `'none'`. Each remaining entry contributes
+       `Math.max(0, delayMs + durationMs)`, including entries with zero duration.
+       For `transition: opacity 0ms 100ms`, the opacity change occurs after
+       the delay, so keep the exiting surface mounted through that delay.
      - **Animations:** Skip entries whose matched `animationName` is `'none'` or
        `''`. Apply an explicit exclusion policy for infinite counts: any
        animation whose matched `animationIterationCount` is `'infinite'`
@@ -482,7 +484,8 @@ After Vue flushes the close render (`data-state="closed"`, `flush: 'post'`):
 
 - **Absent motion (headless `@ghostvue/vue`, unstyled CSS, `transition: none`, or
   `--ghost-motion-intensity: 0`):** Computed transition and animation durations
-  resolve to `0s` (`calc(<ms> * 0)` = `0ms`). Both `getAnimations()` and the
+  resolve to `0s` (`calc(<ms> * 0)` = `0ms`). With no positive transition
+  delay, both `getAnimations()` and the
   `getComputedStyle` fallback observe zero active motion and set
   `phase = 'closed'` in the post-flush tick, unmounting the DOM node immediately.
 - **Reduced motion (`@media (prefers-reduced-motion: reduce)`):** Per
@@ -774,6 +777,10 @@ fixtures alongside real `@ghostvue/themes` recipes):
 | 11  | Automated accessibility (`axe`)                   | `@axe-core/playwright` reports zero violations when open, **while mid-exit (`data-state="closed"`, `inert`)**, and after unmount.                                                                                                                            | `@axe-core/playwright` reports zero violations when open, **while mid-exit (`data-state="closed"`, `inert`)**, and after unmount.                                                                                                 | `chromium-e2e`   |
 | 12  | Surface infinite & repeat animations              | Dialog surface with `animation: pulse 1s infinite` unmounts immediately on close (or after its finite exit transition when paired) without hanging; finite `animation: exit-fade 100ms 3` stays mounted for ~300ms then unmounts cleanly.                    | Popover surface with `animation: pulse 1s infinite` unmounts cleanly and detaches `autoUpdate` resources without hanging indefinitely; finite `100ms` × `3` exit animation stays mounted through all 3 iterations before removal. | `chromium-e2e`   |
 
+For row 7, also exercise a zero-duration opacity change with a positive delay
+on the surface. Restore focus at logical close and assert that the inert
+surface stays mounted during the delay, then unmounts after completion.
+
 ### Observable result when a stale completion event arrives after reopen
 
 Test setup (executed for both modal `GhostDialog` and non-modal `GhostPopover` on
@@ -816,7 +823,11 @@ Required observable result at `t = 420ms`:
   `animationIterationCount` scaling such as `100ms` × `3` -> `300ms` max and
   `334ms` safety deadline, list cycling across comma-separated CSS properties,
   and excluding `animation-iteration-count: infinite` from deadline calculation
-  and completion events); `0ms` immediate unmount; `disabled: true`;
+  and completion events). With `getAnimations` unavailable, test
+  `transition: opacity 0ms 100ms`: the surface is still mounted just before
+  100ms and unmounts on the matching end event at 100ms, or at the 134ms
+  safety deadline if no event arrives. With a zero delay and zero duration,
+  assert unmount in the post-close flush. Also cover `disabled: true`;
   `attemptId` guard across `open -> close -> reopen` and
   `open -> close -> reopen -> close`; owner unmount mid-exit suppressing
   `onExitComplete`.
