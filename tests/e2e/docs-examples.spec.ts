@@ -58,7 +58,11 @@ test.describe('docs example previews', () => {
 
     for (const { example, label, target } of [
       { example: 'basic', label: 'Details', target: 'scroll-spy-details' },
-      { example: 'themed', label: 'Two', target: 'themed-two' },
+      {
+        example: 'themed',
+        label: 'Ramp up traffic',
+        target: 'rollout-ramp',
+      },
       { example: 'composable', label: 'custom-b', target: 'custom-b' },
     ]) {
       const preview = page.locator(`[data-example-id="scroll-spy/${example}"]`)
