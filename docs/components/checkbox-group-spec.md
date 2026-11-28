@@ -277,6 +277,16 @@ function setAllProject(checked: boolean): void {
     : project.value.filter((v) => !enabled.has(v))
 }
 
+// Native `change` fires only on user activation (click, label click, Space),
+// never on form reset. `@update:model-value` would also run on reset, when the
+// standalone checkbox falls back to its own `false` seed (see "Select-all
+// derivation").
+function onAllProjectChange(event: Event): void {
+  if (event.target instanceof HTMLInputElement) {
+    setAllProject(event.target.checked)
+  }
+}
+
 function restoreDefaults(): void {
   project.value = [...projectDefaults]
   account.value = [...accountDefaults]
@@ -305,12 +315,13 @@ function save(event: SubmitEvent): void {
         <legend>Project activity</legend>
         <p id="prefs-project-hint">Updates from projects you follow.</p>
 
-        <!-- No `value`: this checkbox is not a member. It keeps the boolean contract. -->
+        <!-- No `value`: this checkbox is not a member. It keeps the boolean contract.
+             Native `@change` falls through to the input; it is not `@update:model-value`. -->
         <label class="pref">
           <GhostCheckbox
             :model-value="allProject"
             :indeterminate="someProject"
-            @update:model-value="setAllProject"
+            @change="onAllProjectChange"
           />
           All project activity
         </label>
@@ -363,14 +374,14 @@ yields one combined list in DOM order, exactly as the page does today.
 
 #### `GhostCheckboxGroup<TValue extends string = string>`
 
-| Prop           | Type                             | Default      | Contract                                                                                                                                                                      |
-| -------------- | -------------------------------- | ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `modelValue`   | `readonly TValue[] \| undefined` | `undefined`  | Controlled selection. `undefined` is uncontrolled. `[]` is a defined empty selection. Accepts readonly and frozen arrays; never mutated.                                      |
-| `defaultValue` | `readonly TValue[]`              | `[]`         | Uncontrolled seed and form-reset baseline. Shallow-copied once at setup; later prop changes and later mutation of the passed array are ignored.                               |
-| `name`         | `string \| undefined`            | `undefined`  | Native `name` applied to every member input. No generated name: checkboxes need no shared name to behave as a group, and an unnamed group submits nothing (native parity).    |
-| `disabled`     | `boolean`                        | `false`      | Disables every member input natively. On a `fieldset` root it also sets the native `disabled` attribute (see [Disabled](#loading-empty-disabled-read-only-and-error-states)). |
-| `invalid`      | `boolean`                        | `false`      | Group-level error hook for Field or form integration. Sets `data-state="invalid"` and `aria-invalid="true"` on the root, as `GhostRadioGroup` does. Members are not marked.   |
-| `as`           | `string \| Component`            | `'fieldset'` | Root host. A `fieldset` needs no role. Any other host gets `role="group"`.                                                                                                    |
+| Prop           | Type                             | Default      | Contract                                                                                                                                                                                                                                                                                         |
+| -------------- | -------------------------------- | ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `modelValue`   | `readonly TValue[] \| undefined` | `undefined`  | Controlled selection. `undefined` is uncontrolled. `[]` is a defined empty selection. Accepts readonly and frozen arrays; never mutated.                                                                                                                                                         |
+| `defaultValue` | `readonly TValue[]`              | `[]`         | Uncontrolled seed and form-reset baseline. Shallow-copied once at setup; later prop changes and later mutation of the passed array are ignored.                                                                                                                                                  |
+| `name`         | `string \| undefined`            | `undefined`  | Native `name` applied to every member input. No generated name: checkboxes need no shared name to behave as a group. Without a group `name`, members without their own `name` submit nothing (native parity). A member with its own `name` keeps it and submits under it (see the member table). |
+| `disabled`     | `boolean`                        | `false`      | Disables every member input natively. On a `fieldset` root it also sets the native `disabled` attribute (see [Disabled](#loading-empty-disabled-read-only-and-error-states)).                                                                                                                    |
+| `invalid`      | `boolean`                        | `false`      | Group-level error hook for Field or form integration. Sets `data-state="invalid"` and `aria-invalid="true"` on the root, as `GhostRadioGroup` does. Members are not marked.                                                                                                                      |
+| `as`           | `string \| Component`            | `'fieldset'` | Root host. A `fieldset` needs no role. Any other host gets `role="group"`.                                                                                                                                                                                                                       |
 
 There is intentionally no `required`, `orientation`, `min`, `max`, or `options`
 prop.
@@ -608,9 +619,26 @@ Fixture: options `a`, `b`, `c` (disabled), `d` (disabled), in that DOM order.
 | `['x', 'b']` (`x` unknown) | mixed        | `['x', 'b', 'a']`   | checked      |
 
 Native activation from mixed follows the `GhostCheckbox` rule. The parent's
-`modelValue` is `false` while mixed, so a click emits `true` and selects all.
+`modelValue` is `false` while mixed, so a click checks the input and selects
+all.
 Text such as "2 of 3 on" may count locked options. That is copy, not control
 state, and the consumer chooses it.
+
+**Drive `setAll` from user activation, not from `update:modelValue`.** The
+parent is a standalone `GhostCheckbox`, so it keeps its own native form-reset
+path: after a reset it falls back to its `defaultValue` seed (`false`) and
+emits `update:modelValue(false)`. A recipe wired to `@update:model-value` would
+then call `setAll(false)` on every reset of a form whose enabled options are
+all checked. The group would emit an extra selection (`[]` for the project
+fixture) alongside its own deferred baseline emit, so consumers would see a
+transient empty selection and two model callbacks for one reset. The recipe
+therefore listens to the native `change` event, which falls through to the
+input, and calls `setAll(event.target.checked)`. Native form reset dispatches
+no `change`, so a reset reaches the model only through the group's own reset
+emit (see [Reset](#reset)). The parent's own reset emit has no listener and is
+harmless: its `modelValue` and `indeterminate` are re-derived from the restored
+baseline on the next render. The group adds no suppression logic for
+non-member checkboxes; the recipe's wiring is the contract.
 
 ### Reset
 
@@ -632,6 +660,9 @@ state, and the consumer chooses it.
   `defaultValue` instance). `getAll` is `['mentions', 'assignments']`.
 - Controlled without `defaultValue`: reset emits `[]`. This matches native
   reset of unchecked-by-default boxes and `GhostCheckbox`'s `false` seed.
+- A select-all parent built with the recipe does not take part in the group's
+  reset. It listens to native `change`, so its own standalone reset emit never
+  reaches `setAll` (see [Select-all derivation](#select-all-derivation)).
 - **Application "Restore defaults"** is the consumer assigning a copy of its own
   defaults (`project.value = [...projectDefaults]`). The group needs no reset
   method.
@@ -911,11 +942,22 @@ outcome.
   checked together.
 - `name` precedence: the group `name` wins and a conflicting item `name` warns.
   Without a group `name`, the item `name` is kept.
+- Unnamed group `FormData`: a group with no `name`, members `a` (no `name`)
+  and `b` (`name="extra"`), both checked. `a`'s input has no `name` and adds
+  no `FormData` entry; `new FormData(form).getAll('extra')` is `['b']`, and the
+  form has no other entries from the group.
 - `disabled` precedence: `item || group`. On a fieldset root, a non-member
   checkbox inside is disabled too (browser test).
 - Native reset: deferred until after dispatch, skipped when prevented, emits a
   copy of the baseline once, no emit when already equal, and `[]` when
   controlled without `defaultValue`.
+- Select-all reset regression: a controlled group (`v-model`,
+  `defaultValue: ['mentions', 'assignments']`) with the recipe's select-all
+  wired to `@change`. Check every enabled option, then `form.reset()` and
+  `waitForFormResetDeferral()`. The group's `update:modelValue` listener runs
+  exactly once, with `['mentions', 'assignments']`; no `[]` emit occurs; the
+  `setAll` spy is not called during the reset; the select-all ends mixed (unchecked,
+  `indeterminate`).
 - Root semantics: `fieldset` without `role`. `as="div"` gets `role="group"`.
   `data-state` precedence. `required` is not rendered on the root.
 - Invalid mapping: with `invalid`, the root has `aria-invalid="true"` and
@@ -956,8 +998,20 @@ outcome.
   `Enter` does not toggle.
 - `FormData.getAll('notifications')` after each transition table row that a
   browser can drive (2–4, 8–13, 16), including DOM order after reorder (row 13) and locked exclusion.
+- Unnamed group submission: the group omits `name`. A checked member without
+  its own `name` contributes nothing to `new FormData(form)`. A checked member
+  with `name="digest-opt-in"` appears as `getAll('digest-opt-in')` equal to
+  `['digest']`, and an unchecked named member contributes nothing.
 - Select-all: the four-row fixture above. Mixed via `indeterminate` DOM
   property and accessible state.
+- Select-all reset regression: the docs form fixture plus a native reset
+  button, with the project group given `:default-value="projectDefaults"`. Click the
+  select-all so every enabled project option is checked, then press the reset
+  button. An emit log that records every group `update:modelValue` call shows
+  exactly one entry for the reset, `['mentions', 'assignments']`, and never
+  `[]`, so the consumer's model callback runs once, not twice. Afterwards the
+  checked boxes, `getAll('notifications')` (`['mentions', 'assignments']`),
+  and the select-all's mixed state all match the baseline.
 - Removing the focused member: focus moves to the next enabled member, or to
   the previous enabled one when it was last, asserted with `toBeFocused()`
   (CG5). Focus stays on `document.body` when no enabled member remains, and the
@@ -1027,7 +1081,8 @@ Themed first, following the component-guide publishing standard:
   no custom root).
 - Sections on the array model and ordering (with the transition table
   condensed), unknown and removed values, locked options and submission, the
-  select-all recipe and why disabled options do not count, labeling with
+  select-all recipe, why disabled options do not count and why it listens to
+  native `change`, labeling with
   legend versus `aria-labelledby`, keyboard, focus after removal, and SSR.
 - `docs/components/checkbox.md`: replace the "groups deferred" wording with a
   link, and keep `checkbox/notification-preferences` or point it to the group
@@ -1142,3 +1197,14 @@ not change any other approved decision. They are not a new approval.
   A custom root is out of scope for v1 because a public provider or key would
   widen the approved CG7 export surface. It can be added later as an
   additive export with maintainer approval.
+- **Select-all and form reset** (`504-select-all-reset`, review comment
+  [4728404577](https://github.com/zprue743/ghostvue/pull/504#discussion_r4728404577)).
+  The CG4 recipe now drives `setAll` from the parent's native `change` event
+  instead of `update:modelValue`, so the parent's standalone reset emit cannot
+  reach the group model. Resetting an all-checked form emits only the
+  baseline; see [Select-all derivation](#select-all-derivation).
+- **Unnamed group submission** (`504-unnamed-form-data`, review comment
+  [4728404725](https://github.com/zprue743/ghostvue/pull/504#discussion_r4728404725)).
+  The `name` guarantee is narrowed: without a group `name`, only members
+  without their own `name` submit nothing. A member's own `name` is kept, as
+  the member table already said.
