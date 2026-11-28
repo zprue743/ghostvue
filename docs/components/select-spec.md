@@ -214,7 +214,8 @@ the visible control rather than a filtered suggestion list.
 | Root (Field) | `data-state="invalid" \| "disabled"` when applicable                                                       |
 
 Content and its listbox stay mounted while closed so options keep registering
-their labels (the value text resolves without opening). Closed content renders
+their labels, so the value text resolves without opening once options
+register on the client. Closed content renders
 inline (portal disabled) with `hidden` and `data-state="closed"`; the listbox
 inside it carries `aria-hidden="true"` and `inert` and has no `tabindex`.
 Floating positioning, dismiss listeners, and the focus scope run only while
@@ -819,14 +820,16 @@ new FormData(filters).getAll('tags') // ['bug']
 
 ### Environment behavior (multiple)
 
-A closed SSR render outputs the trigger with the value text for the members
-whose options are registered during render, and one mirror per member (or the
+A closed SSR render outputs the trigger, one mirror per member (or the
 unnamed reset anchor when empty) when `name` is set, so the server markup
-submits the same entries as the hydrated control. As in single mode, the
-listbox stays mounted while closed (see [State model](#state-model)): a closed
-render outputs the hidden listbox (`hidden` content, `aria-hidden="true"`,
-`inert`) with its options, which is how a default-closed `['bug']` resolves
-the value text `Bug` rather than the raw `bug`. The rendered listbox carries
+submits the same entries as the hydrated control, and, as in single mode, the
+hidden listbox (`hidden` content, `aria-hidden="true"`, `inert`) with its
+options (see [State model](#state-model)). Options register their labels only
+in client lifecycle callbacks, and `GhostSelectValue` serializes before the
+option subtree, so the server-rendered trigger text uses the raw value for
+each member: a default-closed `['bug']` renders `bug`. After hydration the
+mounted options register and the trigger text becomes the label `Bug` without
+an emit or a model change. The rendered listbox carries
 `aria-multiselectable="true"` and `aria-selected` on every option (`"true"` on
 members, `"false"` on the rest) in either state; an open SSR render
 (`defaultOpen: true`) shows the same listbox without `hidden`. Hydration must
@@ -893,10 +896,12 @@ No new package, dependency, or shared primitive.
   `@ghostvue/themes` wrapper.
 - **SSR, closed:** a default-closed multiple select with
   `defaultValue: ['bug']` renders the hidden listbox (`role="listbox"` inside
-  `hidden` content, `aria-hidden="true"`, `aria-multiselectable="true"`), the
-  trigger value text resolved from the option label (`Bug`, not `bug`), and
+  `hidden` content, `aria-hidden="true"`, `aria-multiselectable="true"`) and
   one mirror per member; with an empty value it renders the unnamed reset
-  anchor instead. Hydration emits nothing.
+  anchor instead. The trigger text is asserted on the trigger element itself,
+  not anywhere in the HTML: in the server string it is the raw value `bug`.
+  After hydrating that markup and awaiting option registration, the trigger
+  text is the label `Bug`. Hydration and registration emit nothing.
 - **SSR, open:** with `defaultOpen: true`, the rendered listbox has
   `aria-multiselectable="true"`, members have `aria-selected="true"`, and
   other options have `aria-selected="false"`; the mirrors match the closed
@@ -981,8 +986,14 @@ not a new approval.
   closed listbox stays mounted and hidden so options register, replacing the
   earlier `v-if="open"` sentence. `aria-multiselectable` is required on the
   rendered listbox open or closed, and the closed SSR case checks the hidden
-  listbox, the resolved option label, and the form mirrors or anchor (see
+  listbox and the form mirrors or anchor (see
   [Environment behavior (multiple)](#environment-behavior-multiple)).
+- **SSR trigger label** (`512-ssr-trigger-label`, review comment
+  [4728578876](https://github.com/zprue743/ghostvue/pull/512#discussion_r4728578876)).
+  Options register labels only on the client, so the server-rendered trigger
+  shows the raw value (`bug`) and shows the label (`Bug`) only after client
+  registration. The closed SSR case asserts the trigger text separately in
+  both phases, with no emit.
 - **External-form reset** (`512-external-form-reset`). With `name` set, an
   empty multiple select keeps one unnamed mirror (the reset anchor) whether or
   not it is `required`, so the root `form` prop keeps the reset association
