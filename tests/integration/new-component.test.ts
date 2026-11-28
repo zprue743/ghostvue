@@ -193,6 +193,21 @@ describe('component scaffolding', () => {
         expect(relative(root, join(root, path)).replaceAll('\\', '/')).toBe(
           path,
         )
+      const exampleId = 'scaffold-probe/basic'
+      const examplePath = join(root, `examples/${exampleId}.vue`)
+      const example = await readFile(examplePath, 'utf8')
+      expect(example).toContain(
+        "import { GhostScaffoldProbe } from '@ghostvue/themes'",
+      )
+      expect(
+        await readFile(join(root, 'docs/components/scaffold-probe.md'), 'utf8'),
+      ).toContain(`<GhostExample id="${exampleId}" />`)
+      expect(
+        await readFile(
+          join(root, 'docs/components/scaffold-probe-spec.md'),
+          'utf8',
+        ),
+      ).toContain('specStatus: draft')
       expect(result.created).toContain(
         'tests/integration/ghost-scaffold-probe-themed.test.ts',
       )
@@ -214,6 +229,10 @@ describe('component scaffolding', () => {
             description: 'Root element after mount; null before mount.',
           },
         ])
+        expect(manifest).toHaveProperty(
+          'examples',
+          pkg === 'themes' ? [exampleId] : [],
+        )
       }
       const familyRegistry: unknown = JSON.parse(
         await readFile(
@@ -228,7 +247,7 @@ describe('component scaffolding', () => {
           sidebarLabel: 'Scaffold Probe',
           specLink: '/specs/scaffold-probe',
         },
-        examples: [{ id: 'scaffold-probe/basic' }],
+        examples: [{ id: exampleId, layer: 'themed' }],
       })
       expect(result.updated).toContain('scripts/bundle-size-budgets.json')
       const budgets: unknown = JSON.parse(
@@ -239,6 +258,7 @@ describe('component scaffolding', () => {
         '@ghostvue/themes:GhostScaffoldProbe': 2000,
       })
       run(root, ['registries:write'])
+      run(root, ['registries'])
       if (process.env.RUN_FULL_SCAFFOLD_VERIFY === '1') {
         run(root, ['verify'])
       } else {
@@ -307,6 +327,7 @@ describe('component scaffolding', () => {
       await expect(
         scaffoldComponent(root, 'GhostScaffoldProbe'),
       ).rejects.toThrow('Refusing to overwrite')
+      expect(await readFile(examplePath, 'utf8')).toBe(example)
       await expect(scaffoldComponent(root, 'Button')).rejects.toThrow(
         'Refusing to overwrite',
       )
