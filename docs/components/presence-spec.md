@@ -5,7 +5,9 @@ components:
   - GhostPresence
 packages:
   - '@ghostvue/vue'
-specStatus: proposed
+specStatus: approved
+approval:
+  evidence: 'Zac authorized design sign-off on P1-P6 as proposed at 225f9fe09b1bbab8c03d88138c80ebdb171b6e01 (recorded in PR #488 on 2026-11-28); infinite-animation and finite-repeat revisions pending merge review before #417 unblocks.'
 manifests: []
 sections:
   purpose:
@@ -34,20 +36,17 @@ sections:
     applicable: true
   compatibility:
     applicable: true
-unresolvedQuestions:
-  - question: 'Issue #412 (0.2.0 overlay exit presence): Zac sign-off required on P1-P6 (public GhostPresence + useGhostPresence surface, first-release host list for #417, forceMount prop policy on overlay content parts, exiting inert + pointer-events contract, floating coordinate retention during exit, and Drawer exit duration token) before #417 implementation begins.'
-    blocking: false
-    reviewer: Zac
+unresolvedQuestions: []
 ---
 
 # Component specification: `GhostPresence` and overlay exit lifecycle
 
 > [!IMPORTANT]
-> **Status:** Proposed ([#412](https://github.com/zprue743/ghostvue/issues/412)).
-> This is a docs-only specification for `0.2.0` ("Motion and nested menus") and
-> gates implementation in [#417](https://github.com/zprue743/ghostvue/issues/417).
-> **Maintainer review and sign-off (`specStatus: approved` with
-> `approval.evidence`) are required before production implementation starts.**
+> **Status:** Design sign-off recorded for [#412](https://github.com/zprue743/ghostvue/issues/412)
+> (P1–P6 approved as proposed by Zac at `225f9fe09b1bbab8c03d88138c80ebdb171b6e01`,
+> recorded in PR #488 on 2026-11-28). This is a docs-only specification for
+> `0.2.0` ("Motion and nested menus"); [#417](https://github.com/zprue743/ghostvue/issues/417)
+> remains blocked until the revised PR #488 merges to `master`.
 
 **Predecessors:** [ADR 0003: Public component API conventions](../adr/0003-public-component-api-conventions.md),
 [ADR 0004: Headless and styled layering](../adr/0004-headless-styled-layering.md),
@@ -93,7 +92,7 @@ animations run on the exiting surface.
 
 ### Vue `<Transition>` versus `GhostPresence` and `useGhostPresence`
 
-| Dimension                             | Vue `<Transition>`                                                                                                                                                                   | `GhostPresence` / `useGhostPresence` (proposed)                                                                                                                                                           |
+| Dimension                             | Vue `<Transition>`                                                                                                                                                                   | `GhostPresence` / `useGhostPresence`                                                                                                                                                                      |
 | ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Styling contract                      | Injects transient framework classes (`v-enter-from`, `v-leave-active`, `v-leave-to`) or requires imperative JS `@leave(el, done)` hooks.                                             | Uses GhostVue's canonical `data-state="open" \| "closed"` hook ([public-api.md](../standards/public-api.md), [motion.md](../themes/motion.md)) alongside `@starting-style` for entry.                     |
 | Headless default (absent CSS motion)  | JS `@leave` hooks hang unless manually probing computed styles; class-based leave requires consumer/theme transition classes.                                                        | Inspects animations/transitions targeting the surface element after `data-state="closed"` flushes; when effective duration is `0ms`, unmounts in the same post-flush tick with zero timer delay.          |
@@ -121,6 +120,11 @@ surface and backdrop lifecycle.
   persistent-DOM listbox (`GhostSelect`, `GhostCombobox`) exit wiring in the first
   slice (`#417`).** See [First-release overlay hosts](#first-release-overlay-hosts)
   for exact boundaries and follow-up sequencing.
+- **Waiting on persistent infinite animations.** Unbounded animations applied to
+  the registered surface itself (`animation-iteration-count: infinite`, or any
+  animation with a non-finite end time or `playbackRate === 0`) are explicitly
+  excluded from exit completion waiting so closed overlays and floating
+  `autoUpdate` hosts never hang indefinitely.
 - **New runtime dependencies.** Implemented entirely in `@ghostvue/vue` using
   standard DOM/Web Animations APIs (`getAnimations`, `getComputedStyle`,
   `transitionend` / `animationend`).
@@ -331,8 +335,8 @@ const open = ref(false)
 
 The first implementation release (`0.2.0`, tracked by
 [#417](https://github.com/zprue743/ghostvue/issues/417)) adopts `useGhostPresence`
-and `@ghostvue/themes` exit recipes in the following hosts (see decision
-[P2](#open-architectural-questions) for narrowing options):
+and `@ghostvue/themes` exit recipes in the following hosts (approved per
+[P2](#resolved-decisions)):
 
 | Host family                      | Headless parts adopting `useGhostPresence`                       | Why in (or out of) the first `0.2.0` release (`#417`)                                                                                                                                      |
 | -------------------------------- | ---------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -349,8 +353,8 @@ and `@ghostvue/themes` exit recipes in the following hosts (see decision
 | Toast (out of scope)             | `GhostToastViewport` / `GhostToast`                              | **Out of scope**: keyed `v-for` stack requires list-item exit and layout reflow choreography rather than single-surface presence.                                                          |
 
 Overlay host parts add **no required props** in `#417` (zero breaking or
-ceremonial changes to consumer templates; see [P3](#open-architectural-questions)
-regarding optional `forceMount`).
+ceremonial changes to consumer templates; see [P3](#resolved-decisions)
+regarding omitted `forceMount`).
 
 ## State model
 
@@ -411,29 +415,68 @@ After Vue flushes the close render (`data-state="closed"`, `flush: 'post'`):
      only animations and CSS transitions whose `effect.target` is `element` itself
      (descendant transitions such as button hovers or infinite `GhostSpinner`
      animations inside the slot are ignored).
-   - Filter to animations whose `playState` is `'pending'` or `'running'` and
-     whose timing has positive remaining effect (non-zero duration or positive
-     delay).
-   - If the filtered list is empty, transition `phase = 'closed'` synchronously
-     in the same post-flush callback (zero `requestAnimationFrame` or timer lag).
+   - Inspect `effect.getComputedTiming()` (falling back to `effect.getTiming()`
+     in minimal synthetic mocks) and filter to animations that satisfy **all** of:
+     - `playState` is `'pending'` or `'running'`;
+     - `playbackRate !== 0` (paused or zero-rate animations cannot advance to a
+       settled end state);
+     - **finite end time:** `Number.isFinite(endTime)` and
+       `iterations !== Infinity` (with finite `duration` when falling back to
+       `getTiming()`). Persistent infinite animations on the registered surface
+       itself (for example `animation: pulse 1s infinite`, where
+       `iterations === Infinity` and `endTime === Infinity`) are explicitly
+       excluded and never gate DOM removal;
+     - **positive remaining time:** `remainingMs > 0` (and finite), where
+       `remainingMs = endTime - (localTime ?? 0)` for `playbackRate > 0`,
+       `remainingMs = localTime ?? 0` for `playbackRate < 0`, or
+       `delay + duration * iterations > 0` when only `getTiming()` is exposed.
+   - If the filtered list is empty (including when only an infinite animation is
+     running on the surface), transition `phase = 'closed'` synchronously in the
+     same post-flush callback (zero `requestAnimationFrame` or timer lag).
    - Otherwise, `await Promise.allSettled(animations.map((anim) => anim.finished))`
-     so both normal completion and browser animation cancellation (`AbortError`,
-     for example `display: none` on an ancestor or DevTools disabling animations)
-     settle without stranding the node. When all settle, if the exit attempt ID
-     is still current, set `phase = 'closed'` and invoke `onExitComplete?.()`.
+     so both normal finite completion (including finite multi-iteration
+     animations such as `animation-iteration-count: 3`) and browser animation
+     cancellation (`AbortError`, for example `display: none` on an ancestor or
+     DevTools disabling animations) settle without stranding the node or floating
+     `autoUpdate` resources. If an excluded infinite animation runs alongside a
+     finite exit transition on the same element, only the finite transition
+     enters `Promise.allSettled`. When all awaited animations settle, if the exit
+     attempt ID is still current, set `phase = 'closed'` and invoke
+     `onExitComplete?.()`.
 3. **Computed-style + event fallback (environments without `getAnimations`, such
    as jsdom):**
-   - Read `getComputedStyle(element)` for `transitionDuration`,
-     `transitionDelay`, `animationName`, `animationDuration`, and `animationDelay`.
-   - Parse comma-separated CSS time lists (`ms` and `s`) and compute the maximum
-     `duration + delay` (treating `animationName: 'none'` or `''` as `0ms`
-     animation time).
-   - If `maxTotalMs <= 0`, set `phase = 'closed'` immediately.
+   - Read `getComputedStyle(element)` for `transitionProperty`,
+     `transitionDuration`, `transitionDelay`, `animationName`,
+     `animationDuration`, `animationDelay`, and `animationIterationCount`.
+   - Parse comma-separated CSS time lists (`ms` and `s`) and cycle shorter lists
+     modulo their length per CSS Transitions and CSS Animations list-matching
+     rules:
+     - **Transitions:** Skip entries whose matched `transitionProperty` is
+       `'none'`. For each remaining entry with `durationMs > 0`, compute
+       `Math.max(0, delayMs + durationMs)`.
+     - **Animations:** Skip entries whose matched `animationName` is `'none'` or
+       `''`. Apply an explicit exclusion policy for infinite counts: any
+       animation whose matched `animationIterationCount` is `'infinite'`
+       (case-insensitive) is **excluded** from exit completion waiting (`0ms`
+       contribution, consistent with the primary Web Animations path). For finite
+       numeric iteration counts (`Number.isFinite(count) && count > 0`) and
+       `durationMs > 0`, compute the active duration as `durationMs * count` and
+       total completion time as `Math.max(0, delayMs + durationMs * count)` (for
+       example `animation-duration: 100ms` with `animation-iteration-count: 3`
+       contributes `300ms`). Non-positive or invalid iteration counts and
+       `durationMs <= 0` contribute `0ms`.
+     - Let `maxTotalMs` be the maximum across all included transitions and
+       finite animations.
+   - If `maxTotalMs <= 0` (including when only an `infinite` animation is
+     present), set `phase = 'closed'` immediately.
    - Otherwise, listen for `transitionend`, `transitioncancel`, `animationend`,
-     and `animationcancel` filtered strictly to `event.target === element`, plus
-     a safety timer of `Math.ceil(maxTotalMs) + 34` ms so synthetic DOM hosts that
-     do not dispatch transition events automatically still converge without
-     leaking nodes.
+     and `animationcancel` filtered strictly to `event.target === element`
+     (ignoring `animationend` / `animationcancel` whose `event.animationName`
+     matches only an excluded `infinite` animation), plus a safety timer of
+     `Math.ceil(maxTotalMs) + 34` ms (for example `334ms` for a `100ms` × `3`
+     exit animation) so synthetic DOM hosts that do not dispatch events
+     automatically still converge without cutting off finite multi-iteration
+     animations or leaking nodes.
 
 ### Reduced and absent motion
 
@@ -716,19 +759,20 @@ events, `toBeFocused()`, computed style / `getAnimations()` checks, and explicit
 controllable CSS transition durations (for example `250ms` in deterministic race
 fixtures alongside real `@ghostvue/themes` recipes):
 
-| #   | Scenario                                          | Modal host (`GhostDialog`, `modal=true`) observable assertions                                                                                                                                                                                               | Non-modal host (`GhostPopover`) observable assertions                                                                                                                                                                      | Engine coverage  |
-| --- | ------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------- |
-| 1   | Logical close via `Escape` (mid-exit)             | Within 1 frame of `Escape`: trigger `aria-expanded="false"`, content & overlay still in DOM inside `body` with `data-state="closed"`, content has `inert`, trigger `toBeFocused()`, `body` scroll unlocked, page siblings not `inert`.                       | Within 1 frame of `Escape`: trigger `aria-expanded="false"`, content still in `body` with `data-state="closed"`, `data-placement` intact, non-`(0,0)` `left`/`top` retained, content has `inert`, trigger `toBeFocused()`. | `@cross-browser` |
-| 2   | Pass-through interaction mid-exit                 | While content & scrim are mid-fade (`opacity > 0`), clicking an uncovered page `<button>` increments its click counter on the first click; pressing `Tab` moves from trigger to that button without focus trap recovery.                                     | While popover is mid-fade over an underlying `<button>`, clicking at the popover's bounding box coordinates activates the underlying `<button>` (`pointer-events: none`) and does not focus the exiting popover.           | `chromium-e2e`   |
-| 3   | Physical DOM removal after exit settles           | After transition finishes: `.ghost-dialog-content` and `.ghost-dialog-overlay` have count `0` in DOM; focus remains on the control focused during/after close (never yanked back to trigger on unmount).                                                     | After transition finishes: `.ghost-popover-content` has count `0` in DOM; `autoUpdate` listeners detached; focus unchanged from where the user moved it during exit.                                                       | `@cross-browser` |
-| 4   | Outside pointer dismissal                         | Clicking `.ghost-dialog-overlay` starts exit (`data-state="closed"`), restores trigger focus (including WebKit press completion without dropping to `<body>`), and unmounts both overlay and content after fade.                                             | Clicking an outside `<button>` starts popover exit (`data-state="closed"`), leaves focus on the clicked `<button>` (`toBeFocused()`), and unmounts content after fade without pulling focus to trigger.                    | `@cross-browser` |
-| 5   | Nested layers (`Popover` inside `Dialog`)         | Open Dialog -> open portaled Popover inside -> first `Escape` immediately starts Popover exit & restores focus to Popover trigger inside Dialog; second immediate `Escape` (while Popover still exiting) starts Dialog exit & restores Dialog trigger focus. | Popover exits independently without blocking the enclosing Dialog's `Escape` dismissal or wedging `trappedStack` / `layerStack`.                                                                                           | `@cross-browser` |
-| 6   | Reduced motion (`prefers-reduced-motion`)         | Under `emulateMedia({ reducedMotion: 'reduce' })`: computed `translate` is `none` throughout exit, `opacity` fades over `--ghost-motion-fade-duration` (`80ms`), then unmounts cleanly.                                                                      | Under `reducedMotion: 'reduce'`: computed `scale` is `1` (no scale travel), `opacity` fades over `80ms`, then unmounts cleanly.                                                                                            | `chromium-e2e`   |
-| 7   | Absent motion (`0ms` / headless / `intensity: 0`) | Headless Dialog without theme CSS (and themed Dialog under `--ghost-motion-intensity: 0`) unmounts content & overlay in the close frame with zero lingering `[data-state="closed"]` node.                                                                    | Headless Popover without theme CSS (and themed Popover under `--ghost-motion-intensity: 0`) unmounts immediately on close.                                                                                                 | `chromium-e2e`   |
-| 8   | Interrupted exit & rapid reopen                   | Close (`Escape`) -> mid-exit reopen (`Enter` on trigger): same DOM node (`data-instance-id` / WeakRef preserved) flips back to `data-state="open"`, removes `inert`, re-locks scroll, re-traps `Tab`, and focuses inside Dialog.                             | Close (`Escape`) -> mid-exit click trigger: same DOM node flips to `data-state="open"`, removes `inert`, restores `pointer-events`, keeps `data-placement`, and moves focus back inside Popover.                           | `@cross-browser` |
-| 9   | Stale completion event after reopen               | See exact observable contract below — reopened modal stays mounted, visible, focused, trapped, and scroll-locked after the interrupted exit's duration elapses and after a synthetic `transitionend`.                                                        | See exact observable contract below — reopened popover stays mounted, visible, positioned, and interactive after the interrupted exit's duration elapses and after a synthetic `transitionend`.                            | `chromium-e2e`   |
-| 10  | Inline mode (`portal=false`) & owner unmount      | With `:portal="false"`, exiting Dialog animates in-place and unmounts; unmounting parent wrapper mid-exit immediately removes portaled DOM, releases scroll lock, and clears background `inert`.                                                             | With `:portal="false"`, exiting Popover animates in-place; unmounting parent wrapper mid-exit removes portaled DOM immediately with zero console errors.                                                                   | `chromium-e2e`   |
-| 11  | Automated accessibility (`axe`)                   | `@axe-core/playwright` reports zero violations when open, **while mid-exit (`data-state="closed"`, `inert`)**, and after unmount.                                                                                                                            | `@axe-core/playwright` reports zero violations when open, **while mid-exit (`data-state="closed"`, `inert`)**, and after unmount.                                                                                          | `chromium-e2e`   |
+| #   | Scenario                                          | Modal host (`GhostDialog`, `modal=true`) observable assertions                                                                                                                                                                                               | Non-modal host (`GhostPopover`) observable assertions                                                                                                                                                                             | Engine coverage  |
+| --- | ------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------- |
+| 1   | Logical close via `Escape` (mid-exit)             | Within 1 frame of `Escape`: trigger `aria-expanded="false"`, content & overlay still in DOM inside `body` with `data-state="closed"`, content has `inert`, trigger `toBeFocused()`, `body` scroll unlocked, page siblings not `inert`.                       | Within 1 frame of `Escape`: trigger `aria-expanded="false"`, content still in `body` with `data-state="closed"`, `data-placement` intact, non-`(0,0)` `left`/`top` retained, content has `inert`, trigger `toBeFocused()`.        | `@cross-browser` |
+| 2   | Pass-through interaction mid-exit                 | While content & scrim are mid-fade (`opacity > 0`), clicking an uncovered page `<button>` increments its click counter on the first click; pressing `Tab` moves from trigger to that button without focus trap recovery.                                     | While popover is mid-fade over an underlying `<button>`, clicking at the popover's bounding box coordinates activates the underlying `<button>` (`pointer-events: none`) and does not focus the exiting popover.                  | `chromium-e2e`   |
+| 3   | Physical DOM removal after exit settles           | After transition finishes: `.ghost-dialog-content` and `.ghost-dialog-overlay` have count `0` in DOM; focus remains on the control focused during/after close (never yanked back to trigger on unmount).                                                     | After transition finishes: `.ghost-popover-content` has count `0` in DOM; `autoUpdate` listeners detached; focus unchanged from where the user moved it during exit.                                                              | `@cross-browser` |
+| 4   | Outside pointer dismissal                         | Clicking `.ghost-dialog-overlay` starts exit (`data-state="closed"`), restores trigger focus (including WebKit press completion without dropping to `<body>`), and unmounts both overlay and content after fade.                                             | Clicking an outside `<button>` starts popover exit (`data-state="closed"`), leaves focus on the clicked `<button>` (`toBeFocused()`), and unmounts content after fade without pulling focus to trigger.                           | `@cross-browser` |
+| 5   | Nested layers (`Popover` inside `Dialog`)         | Open Dialog -> open portaled Popover inside -> first `Escape` immediately starts Popover exit & restores focus to Popover trigger inside Dialog; second immediate `Escape` (while Popover still exiting) starts Dialog exit & restores Dialog trigger focus. | Popover exits independently without blocking the enclosing Dialog's `Escape` dismissal or wedging `trappedStack` / `layerStack`.                                                                                                  | `@cross-browser` |
+| 6   | Reduced motion (`prefers-reduced-motion`)         | Under `emulateMedia({ reducedMotion: 'reduce' })`: computed `translate` is `none` throughout exit, `opacity` fades over `--ghost-motion-fade-duration` (`80ms`), then unmounts cleanly.                                                                      | Under `reducedMotion: 'reduce'`: computed `scale` is `1` (no scale travel), `opacity` fades over `80ms`, then unmounts cleanly.                                                                                                   | `chromium-e2e`   |
+| 7   | Absent motion (`0ms` / headless / `intensity: 0`) | Headless Dialog without theme CSS (and themed Dialog under `--ghost-motion-intensity: 0`) unmounts content & overlay in the close frame with zero lingering `[data-state="closed"]` node.                                                                    | Headless Popover without theme CSS (and themed Popover under `--ghost-motion-intensity: 0`) unmounts immediately on close.                                                                                                        | `chromium-e2e`   |
+| 8   | Interrupted exit & rapid reopen                   | Close (`Escape`) -> mid-exit reopen (`Enter` on trigger): same DOM node (`data-instance-id` / WeakRef preserved) flips back to `data-state="open"`, removes `inert`, re-locks scroll, re-traps `Tab`, and focuses inside Dialog.                             | Close (`Escape`) -> mid-exit click trigger: same DOM node flips to `data-state="open"`, removes `inert`, restores `pointer-events`, keeps `data-placement`, and moves focus back inside Popover.                                  | `@cross-browser` |
+| 9   | Stale completion event after reopen               | See exact observable contract below — reopened modal stays mounted, visible, focused, trapped, and scroll-locked after the interrupted exit's duration elapses and after a synthetic `transitionend`.                                                        | See exact observable contract below — reopened popover stays mounted, visible, positioned, and interactive after the interrupted exit's duration elapses and after a synthetic `transitionend`.                                   | `chromium-e2e`   |
+| 10  | Inline mode (`portal=false`) & owner unmount      | With `:portal="false"`, exiting Dialog animates in-place and unmounts; unmounting parent wrapper mid-exit immediately removes portaled DOM, releases scroll lock, and clears background `inert`.                                                             | With `:portal="false"`, exiting Popover animates in-place; unmounting parent wrapper mid-exit removes portaled DOM immediately with zero console errors.                                                                          | `chromium-e2e`   |
+| 11  | Automated accessibility (`axe`)                   | `@axe-core/playwright` reports zero violations when open, **while mid-exit (`data-state="closed"`, `inert`)**, and after unmount.                                                                                                                            | `@axe-core/playwright` reports zero violations when open, **while mid-exit (`data-state="closed"`, `inert`)**, and after unmount.                                                                                                 | `chromium-e2e`   |
+| 12  | Surface infinite & repeat animations              | Dialog surface with `animation: pulse 1s infinite` unmounts immediately on close (or after its finite exit transition when paired) without hanging; finite `animation: exit-fade 100ms 3` stays mounted for ~300ms then unmounts cleanly.                    | Popover surface with `animation: pulse 1s infinite` unmounts cleanly and detaches `autoUpdate` resources without hanging indefinitely; finite `100ms` × `3` exit animation stays mounted through all 3 iterations before removal. | `chromium-e2e`   |
 
 ### Observable result when a stale completion event arrives after reopen
 
@@ -763,10 +807,17 @@ Required observable result at `t = 420ms`:
 
 - **Composable unit tests (`packages/vue/src/use-ghost-presence.test.ts`):**
   `closed -> open -> exiting -> closed` transitions; `getAnimations()` path
-  (multiple animations on element, cancelled `AbortError`, ignoring descendant
-  `GhostSpinner` animations); `getComputedStyle` + `transitionend` /
-  `animationend` / `transitioncancel` fallback path; `0ms` immediate unmount;
-  `disabled: true`; `attemptId` guard across `open -> close -> reopen` and
+  (multiple animations on element, finite multi-iteration animations such as
+  `iterations: 3`, cancelled `AbortError`, ignoring descendant `GhostSpinner`
+  animations, excluding `iterations: Infinity` / non-finite `endTime` /
+  `playbackRate: 0` animations on the surface itself both alone and alongside a
+  finite exit transition); `getComputedStyle` + `transitionend` /
+  `animationend` / `transitioncancel` fallback path (including finite
+  `animationIterationCount` scaling such as `100ms` × `3` -> `300ms` max and
+  `334ms` safety deadline, list cycling across comma-separated CSS properties,
+  and excluding `animation-iteration-count: infinite` from deadline calculation
+  and completion events); `0ms` immediate unmount; `disabled: true`;
+  `attemptId` guard across `open -> close -> reopen` and
   `open -> close -> reopen -> close`; owner unmount mid-exit suppressing
   `onExitComplete`.
 - **Component & host tests (`packages/vue/src/GhostPresence.test.ts`,
@@ -831,64 +882,46 @@ approved contract:
     `data-state="closed"` during `'exiting'` completes the documented
     `open | closed` state contract.
 
-## Open architectural questions
+## Resolved decisions
 
-Implementation in [#417](https://github.com/zprue743/ghostvue/issues/417) must
-not start until **Zac** reviews and approves this contract (`specStatus: approved`
-with `approval.evidence`):
+Zac authorized design sign-off on **P1–P6 as proposed** at commit
+`225f9fe09b1bbab8c03d88138c80ebdb171b6e01` (recorded in PR #488 on 2026-11-28).
+[#417](https://github.com/zprue743/ghostvue/issues/417) remains blocked until the
+revised PR #488 merges to `master`:
 
-1. **Public primitive surface and naming (`P1`, reviewer: Zac).**
-   - **Recommended:** Export both `GhostPresence` and `useGhostPresence` from
-     `@ghostvue/vue` (matching [ADR 0003](../adr/0003-public-component-api-conventions.md)'s
-     `Ghost*` / `useGhost*` pair and the issue prompt).
-   - **Alternative A (composable naming):** Name the composable `usePresence`
-     (unprefixed like `useFocusScope` / `useDismissableLayer`, keeping it out of
-     `@ghostvue/nuxt` auto-imports) while keeping `GhostPresence` prefixed.
-   - **Smallest narrowing alternative:** Export `GhostPresence` and
-     `useGhostPresence` with the minimal `{ present, disabled }` props/options
-     specified above, omitting any imperative JS leave hook props.
-2. **First-release host scope for `#417` (`P2`, reviewer: Zac).**
-   - **Recommended:** Ship `GhostPresence` + `useGhostPresence`, the shared
-     `dialog-shared.ts` family (`GhostDialog`, `GhostDrawer`,
-     `GhostCommandPalette`, plus `GhostDatePickerContent` coordinate retention),
-     `GhostPopover`, and `GhostHoverCard` together in `#417`; defer menus
-     (`DropdownMenu`, `ContextMenu`, `Menubar`) until `#418`/`#419` settle and
-     defer persistent-DOM listboxes (`Select`, `Combobox`) until `#421` settles.
-   - **Smallest narrowing alternative:** Limit `#417` strictly to
-     `GhostPresence` + `useGhostPresence` + `GhostDialog` (`Content` + `Overlay`,
-     with `GhostDatePickerContent` compatibility) + `GhostPopoverContent`,
-     moving `GhostDrawer`, `GhostCommandPalette`, and `GhostHoverCard` to a
-     follow-up issue.
-3. **`forceMount` prop on overlay content parts (`P3`, reviewer: Zac).**
-   - **Recommended:** Omit `forceMount` from `GhostDialogContent` /
-     `GhostPopoverContent` in `0.2.0` because built-in `useGhostPresence` handles
-     CSS transitions and animations automatically without extra props, keeping the
-     public surface smaller.
-   - **Alternative:** Add `forceMount?: boolean` (default `false`) to adopted
-     overlay `*Content` and `*Overlay` parts so consumers driving third-party JS
-     animation libraries (GSAP, Motion One) can keep overlay DOM mounted manually.
-4. **Exiting surface isolation mechanism (`P4`, reviewer: Zac).**
-   - **Recommended:** Apply native HTML `inert` (preserving consumer-owned `inert`
-     if already set) plus inline `pointer-events: none` on exiting content and
-     `pointer-events: none` on exiting modal backdrops, after `useFocusScope`
-     restores focus synchronously at logical close.
-   - **Alternative:** Omit `inert` during exit and rely only on
-     `pointer-events: none` + `tabindex="-1"`, which leaves exiting dialog roles
-     briefly visible in the accessibility tree while `aria-expanded` on the
-     trigger is already `"false"`.
-5. **Floating positioning during exit (`P5`, reviewer: Zac).**
-   - **Recommended:** Keep `useFloating` bound to the mounted element until
-     physical unmount (`isPresent === false`) so anchored overlays keep their
-     coordinates, `data-placement`, and scroll tracking during the `120ms` fade,
-     while fast-pathing to immediate unmount if closed before initial
-     `isPositioned` resolved.
-   - **Alternative:** Freeze `{ x, y, placement }` and stop `autoUpdate` at
-     logical close, detaching scroll/resize observers `120ms` earlier at the cost
-     of an exiting popover drifting briefly if the user scrolls mid-fade.
-6. **`GhostDrawerContent` exit duration token (`P6`, non-blocking, reviewer: Zac).**
-   - **Recommended:** Use `var(--ghost-motion-exit-duration)` (`120ms` with
-     accelerate easing) across all overlays per [Motion](../themes/motion.md)'s
-     "exits run faster than enters" rule (`250ms` enter -> `120ms` exit).
-   - **Alternative:** Use `var(--ghost-motion-duration-moderate)` (`250ms`) with
-     `var(--ghost-motion-exit-easing)` for full-height `GhostDrawerContent` panels
-     if `120ms` feels abrupt across a `42ch` edge travel distance.
+1. **P1 — Public primitive surface and naming:** Export both `GhostPresence` and
+   `useGhostPresence` from `@ghostvue/vue` (matching
+   [ADR 0003](../adr/0003-public-component-api-conventions.md)'s
+   `Ghost*` / `useGhost*` pair), with the minimal `{ present, disabled }`
+   props/options surface and no imperative JS leave hook props. _Approved by Zac
+   as proposed at `225f9fe0` (PR #488, 2026-11-28)._
+2. **P2 — First-release host scope for `#417`:** Ship `GhostPresence` +
+   `useGhostPresence`, the shared `dialog-shared.ts` family (`GhostDialog`,
+   `GhostDrawer`, `GhostCommandPalette`, plus `GhostDatePickerContent`
+   coordinate retention), `GhostPopover`, and `GhostHoverCard` together in
+   `#417`; defer menus (`DropdownMenu`, `ContextMenu`, `Menubar`) until
+   `#418`/`#419` settle and defer persistent-DOM listboxes (`Select`, `Combobox`)
+   until `#421` settles. _Approved by Zac as proposed at `225f9fe0` (PR #488,
+   2026-11-28)._
+3. **P3 — `forceMount` prop on overlay content parts:** Omit `forceMount` from
+   `GhostDialogContent` / `GhostPopoverContent` in `0.2.0` because built-in
+   `useGhostPresence` handles CSS transitions and animations automatically
+   without extra props, keeping the public surface smaller. _Approved by Zac as
+   proposed at `225f9fe0` (PR #488, 2026-11-28)._
+4. **P4 — Exiting surface isolation mechanism:** Apply native HTML `inert`
+   (preserving consumer-owned `inert` if already set) plus inline
+   `pointer-events: none` on exiting content and `pointer-events: none` on
+   exiting modal backdrops, after `useFocusScope` restores focus synchronously
+   at logical close. _Approved by Zac as proposed at `225f9fe0` (PR #488,
+   2026-11-28)._
+5. **P5 — Floating positioning during exit:** Keep `useFloating` bound to the
+   mounted element until physical unmount (`isPresent === false`) so anchored
+   overlays keep their coordinates, `data-placement`, and scroll tracking
+   during the `120ms` fade, while fast-pathing to immediate unmount if closed
+   before initial `isPositioned` resolved. _Approved by Zac as proposed at
+   `225f9fe0` (PR #488, 2026-11-28)._
+6. **P6 — `GhostDrawerContent` exit duration token:** Use
+   `var(--ghost-motion-exit-duration)` (`120ms` with accelerate easing) across
+   all overlays per [Motion](../themes/motion.md)'s "exits run faster than
+   enters" rule (`250ms` enter -> `120ms` exit). _Approved by Zac as proposed at
+   `225f9fe0` (PR #488, 2026-11-28)._
