@@ -1,5 +1,6 @@
 ---
 '@ghostvue/mcp': patch
+'@ghostvue/themes': patch
 '@ghostvue/vue': patch
 ---
 
