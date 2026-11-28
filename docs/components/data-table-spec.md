@@ -7,13 +7,17 @@ components:
   - GhostDataTablePreset
 packages:
   - '@ghostvue/vue'
+  - '@ghostvue/themes'
 specStatus: approved
 approval:
-  evidence: 'Zac approved in chat on 2026-11-23; recorded in PR #272.'
+  evidence: 'Zac approved the headless spec in PR #272 and the themed addendum in PR #374 (merge 5fd3fd46).'
 manifests:
   - packages/vue/manifests/ghost-data-table.manifest.json
   - packages/vue/manifests/ghost-data-table-preset.manifest.json
   - packages/vue/manifests/ghost-data-table-table.manifest.json
+  - packages/themes/manifests/ghost-data-table.manifest.json
+  - packages/themes/manifests/ghost-data-table-preset.manifest.json
+  - packages/themes/manifests/ghost-data-table-table.manifest.json
 sections:
   purpose:
     applicable: true
@@ -60,6 +64,15 @@ implementation step ([GHO-233](https://linear.app/ghost-vue/issue/GHO-233)); Zac
 approved in chat on 2026-11-23; recorded in
 [PR #272](https://github.com/zprue743/ghostvue/pull/272).
 
+> **Approved themed `0.1.0` addendum (`#316` / `GHO-249`):** Following the
+> `2026-11-25` roadmap review, the single-sort themed wrapper in
+> `@ghostvue/themes` and companion `GhostDataTablePreset` layout slots in
+> `@ghostvue/vue` are specified in the
+> [Themed `GhostDataTable` addendum](#themed-ghostdatatable-addendum) below
+> (**decoupled from multi-column sort [#317](https://github.com/zprue743/ghostvue/issues/317)**,
+> which stays deferred to `0.3.0`). Zac recorded approval in
+> [PR #374](https://github.com/zprue743/ghostvue/pull/374).
+
 ## Purpose and user problems
 
 `GhostDataTable` is the interactive data grid for application admin surfaces:
@@ -84,15 +97,23 @@ states.
 
 Phase one explicitly excludes:
 
-- Row virtualization, sticky headers, frozen columns, and scroll-synced footers
-  (separate future specs; see [Child work decomposition](#child-work-decomposition)).
+- Row virtualization, frozen columns, and scroll-synced footers (separate future
+  specs; see [Child work decomposition](#child-work-decomposition)). Phase one
+  also excluded sticky headers; opt-in CSS `stickyHeader` on themed
+  `GhostDataTable` (`0.1.0`) is specified in the
+  [Themed `GhostDataTable` addendum](#themed-ghostdatatable-addendum).
 - `role="grid"`, `role="treegrid"`, arrow-key cell navigation, and single-Tab-stop
   roving row focus (deferred grid-navigation spec).
-- **Multi-column sort in phase one** (deferred to `0.3.0`; phase one supports a
-  single primary sort column only; see the proposed
+- **Multi-column sort in phase one and `0.1.0`** (deferred to `0.3.0` in
+  [#317](https://github.com/zprue743/ghostvue/issues/317); single primary sort
+  column only. See the proposed
   [Multi-column sort specification (GHO-250)](#multi-column-sort-specification-gho-250-proposed-for-0-3-0)).
-- **Themed `GhostDataTable`** in `@ghostvue/themes` (headless examples and docs
-  first).
+- **Themed `GhostDataTable` in phase one** (headless examples and docs shipped
+  first; `0.1.0` single-sort `@ghostvue/themes` wrapper and preset layout slots
+  are specified in the
+  [Themed `GhostDataTable` addendum](#themed-ghostdatatable-addendum) for
+  [#316](https://github.com/zprue743/ghostvue/issues/316) /
+  [#333](https://github.com/zprue743/ghostvue/issues/333)).
 - Query-wide server bulk selection (“select all matching rows on the server”).
 - Column resize/reorder drag handles, grouping, pivoting, aggregation, and
   built-in query builders.
@@ -309,7 +330,10 @@ detail `<tr>` — wired with the interaction prop helpers and a11y rules below.
 | **Line-count target** | Feature-equivalent to PrimeVue fixture (**sort, filter, paginate, select, expand**) with **`defineDataTableColumns`** must be **≤ 95 non-blank consumer lines** (PrimeVue baseline in FINDINGS.md). Verified on the spec example below (~**44** non-blank lines).            |
 
 Phase one includes **`GhostDataTableTable`** and **`GhostDataTablePreset`** as
-unstyled `@ghostvue/vue` exports (not `@ghostvue/themes`).
+unstyled `@ghostvue/vue` exports (not `@ghostvue/themes`). See the
+[Themed `GhostDataTable` addendum](#themed-ghostdatatable-addendum) for the
+`0.1.0` preset layout-slot additions (`#toolbarStart`, `#toolbarEnd`,
+`#bulkActions`, `#footer`) and `@ghostvue/themes` wrappers (`#316` / `#333`).
 
 ### Examples (same invoice table)
 
@@ -1219,7 +1243,9 @@ PrimeVue dependency** in the GhostVue repo.
 ## Composition
 
 Reuses `GhostTable*`, `GhostPagination`, `GhostCheckbox`, `GhostEmptyState`,
-`useControllableState`. **No** themed DataTable wrapper in phase one.
+`useControllableState`. Phase one shipped headless only; `0.1.0` themed
+wrappers in `@ghostvue/themes` compose over these exact headless primitives per
+the [Themed `GhostDataTable` addendum](#themed-ghostdatatable-addendum).
 
 ## Test plan
 
@@ -1263,8 +1289,682 @@ Reuses `GhostTable*`, `GhostPagination`, `GhostCheckbox`, `GhostEmptyState`,
 
 ## Compatibility and release impact
 
-- Phase one exports from `@ghostvue/vue` only.
-- Changeset when implementation ships; docs-only revisions have no runtime impact.
+- Phase one exported from `@ghostvue/vue` only; the `0.1.0` themed addendum
+  ([#316](https://github.com/zprue743/ghostvue/issues/316) →
+  [#333](https://github.com/zprue743/ghostvue/issues/333)) adds
+  opt-in layout slots to `@ghostvue/vue` `GhostDataTablePreset` and themed
+  exports in `@ghostvue/themes` without breaking phase-one consumers.
+- Changesets for `@ghostvue/vue` and `@ghostvue/themes` ship with Wave 2
+  implementation (`#333`); docs-only spec revisions (`#316`) have no runtime
+  impact.
+
+## Themed GhostDataTable addendum
+
+**Status** Approved by Zac in [PR #374](https://github.com/zprue743/ghostvue/pull/374).
+Wave 2 implementation is tracked in [#333](https://github.com/zprue743/ghostvue/issues/333).
+
+### Architectural decisions (`2026-11-25` roadmap review, Zac)
+
+1. **Single-sort scope for `0.1.0` (decoupled from `#317`):** Themed
+   `GhostDataTable` ships in `0.1.0` on **today's phase-one single-sort headless
+   contract** (`aria-sort="ascending" | "descending"` plus
+   `data-sort="asc" | "desc"` on the active `<th>` only, paired with
+   `getSortButtonProps(columnId)` on the native `<button type="button">`).
+   Multi-column sort ([#317](https://github.com/zprue743/ghostvue/issues/317))
+   remains deferred to `0.3.0` on its independent spec track and no longer
+   blocks `#316` or `#333`; any multi-sort priority badge in `0.3.0` will layer
+   additively inside the sort header button without breaking `0.1.0` selectors
+   or DOM contracts.
+2. **Composable themed architecture
+   ([ADR 0003](../adr/0003-public-component-api-conventions.md) &
+   [ADR 0004](../adr/0004-headless-styled-layering.md)):**
+   - **Headless preset layout slots (`@ghostvue/vue`):** `GhostDataTablePreset`
+     gains camelCase layout slots `#toolbarStart`, `#toolbarEnd`,
+     `#bulkActions`, and `#footer` alongside `#search`, `#toolbar`,
+     `#<columnId>`, and `#detail`, with per-preset opt-in via `layoutSlots`
+     in `packages/vue/src/ghost-data-table-preset.ts`. `@ghostvue/vue` owns all
+     layout structure, state wiring, and focus restoration; it never imports
+     `@ghostvue/themes`.
+   - **Themed wrappers (`@ghostvue/themes`):** Exports themed `GhostDataTable`
+     (`size?: 'sm' | 'md'`, `variant?: 'plain' | 'card'`,
+     `stickyHeader?: boolean`), `GhostDataTableTable`, and
+     `GhostDataTablePreset` (plus convenience re-exports of
+     `defineDataTableColumns`, `useGhostDataTable`,
+     `useGhostDataTableServerRequest`, the five `getDataTable*Props` helpers,
+     and public DataTable types) backed by
+     `packages/themes/src/ghost-data-table.css` inside `@layer ghostvue-theme`.
+     Per ADR 0004, visual customization uses ordinary props, slots, `class` /
+     `style` fallthrough, `data-*` hooks, and `--ghost-*` semantic tokens —
+     never `pt` passthrough style maps.
+
+### Headless `GhostDataTablePreset` layout slots (`@ghostvue/vue`)
+
+#### Exact TypeScript contracts (`packages/vue/src/ghost-data-table-preset.ts`)
+
+```ts
+/** Props passed to `#bulkActions` while at least one row id is selected. */
+export interface GhostDataTablePresetBulkActionsSlotProps {
+  /**
+   * Authoritative selected row ids from the parent `GhostDataTable` (includes
+   * preserved cross-page selections when `manualPagination` is `true`).
+   */
+  selectedRowIds: readonly DataTableRowId[]
+  /** `selectedRowIds.length`. Always `>= 1` while `#bulkActions` renders. */
+  selectedCount: number
+  /**
+   * Clears every selected row id through the root's `resetRowSelection()`.
+   * Inert (no-op) while the parent `GhostDataTable` is `disabled` or
+   * `enableRowSelection` is `false`.
+   */
+  clearSelection: () => void
+}
+
+/** Props passed to `#footer`, mirroring the root's pagination slot bindings. */
+export interface GhostDataTablePresetFooterSlotProps {
+  /** Effective pagination (`pageIndex` 1-based, clamped to `[1, pageCount]`). */
+  pagination: DataTablePaginationState
+  /** Effective page count (`1` when `rowCount === 0`). */
+  pageCount: number
+  /**
+   * Query-wide row count (server `rowCount` when `manualPagination` is `true`;
+   * filtered local count otherwise).
+   */
+  rowCount: number
+  /**
+   * Commits a page change through the root: clamps, writes `v-model:pagination`,
+   * and emits one `stateChange` when `manualPagination` is `true`.
+   */
+  setPageIndex: (pageIndex: number) => void
+}
+
+/** Select the new regions that this preset owns on this instance. */
+interface GhostDataTablePresetLayoutSlots {
+  toolbarStart?: () => unknown
+  toolbarEnd?: () => unknown
+  bulkActions?: (props: GhostDataTablePresetBulkActionsSlotProps) => unknown
+  footer?: (props: GhostDataTablePresetFooterSlotProps) => unknown
+}
+
+type LayoutSlotName = keyof GhostDataTablePresetLayoutSlots
+
+// Addition to GhostDataTablePresetProps<TColumns, TLayout = never>:
+// layoutSlots?: readonly TLayout[]
+// Infer TLayout from this prop alone. Omission and [] opt into no regions.
+export type GhostDataTablePresetSlots<
+  TColumns extends readonly DataTableTableColumnRef[],
+  TLayout extends LayoutSlotName = never,
+> = Omit<GhostDataTableTableSlots<TColumns>, NoInfer<TLayout>> &
+  Pick<GhostDataTablePresetLayoutSlots, NoInfer<TLayout>> & {
+    /** Content of an expanded row's detail `<tr>` (one cell spanning the row). */
+    detail?: (
+      props: GhostDataTablePresetDetailSlotProps<
+        DataTableColumnRow<TColumns[number]>
+      >,
+    ) => unknown
+    /** Unopinionated region rendered before the header bar and table. */
+    toolbar?: () => unknown
+    /** Replaces the default search field (for example to debounce input). */
+    search?: (props: GhostDataTablePresetSearchSlotProps) => unknown
+  }
+```
+
+**Root context and slot ownership**
+
+- `GhostDataTableContext` (`packages/vue/src/ghost-data-table-table.ts`) adds
+  `selectedRowIds: () => readonly DataTableRowId[]` and
+  `resetRowSelection: () => void` from the root `useGhostDataTable` instance;
+  `#footer` reads `pagination`, `pageCount`, `rowCount`, and `setPageIndex`
+  through the existing `withBindings` bridge so manual `#default` and preset
+  `#footer` can never drift.
+- By default the preset owns only `detail`, `toolbar`, and `search`. Each
+  of the four new names remains available to the existing cell renderer. For
+  example, a column named `footer` calls `#footer="{ value }"` once per row,
+  including after a reorder, an empty result, or an asynchronous column insert.
+- To supply layout content, opt into its names on the preset, e.g.
+  `:layout-slots="['toolbarEnd', 'bulkActions']"`. These two names belong
+  to layout on this instance, leaving `#footer` available for cells. An
+  enabled name is reserved even while its region is hidden or its slot is
+  absent. For a column with that same id, use its `cell` hook or ordinary
+  value fallback. A slot function is invoked in exactly one role.
+- Resolve ownership from the opt-in list before testing slot presence for
+  chrome and before cell lookup. Row count, column visibility, order, and
+  selection never change that decision. Both presets expose the same prop
+  and slot types.
+
+#### Preset DOM order and conditional regions
+
+`GhostDataTablePreset` renders only the chrome regions that have active content,
+in strict top-to-bottom DOM order. Below, `layout` contains only the slots
+selected by `layoutSlots` and supplied by the consumer:
+
+1. **Legacy pre-header slot (`#toolbar`):** rendered as-is before the header bar
+   when `$slots.toolbar` is present, preserving exact phase-one markup order for
+   existing consumers.
+2. **Header bar (`<div data-part="header" class="ghost-data-table-header">`):**
+   rendered iff `searchVisible || layout.toolbarStart || layout.toolbarEnd`.
+   - `<div v-if="layout.toolbarStart" data-part="toolbar-start">` wrapping
+     `<slot name="toolbarStart" />`.
+   - `<div v-if="searchVisible" data-part="search">` wrapping
+     `<slot name="search" v-bind="searchSlotProps">` (default labelled
+     `GhostInput type="search"`). Keeping `[data-part="search"]` as a sibling of
+     `[data-part="toolbar-start"]` and `[data-part="toolbar-end"]` preserves the
+     phase-one accessibility invariant: the search input remains its own `Tab`
+     stop outside any consumer `GhostToolbar` (`role="toolbar"`).
+   - `<div v-if="layout.toolbarEnd" data-part="toolbar-end">` wrapping
+     `<slot name="toolbarEnd" />`.
+3. **Bulk-actions bar (`<div data-part="bulk-actions" class="ghost-data-table-bulk-actions">`):**
+   rendered iff `rowSelectionEnabled && selectedCount > 0 && layout.bulkActions`,
+   wrapping `<slot name="bulkActions" v-bind="bulkActionsSlotProps" />`. No
+   `role="alert"` or `aria-live` is placed on this container (row and header
+   checkboxes already announce checked state changes).
+4. **Table (`<GhostTable v-bind="tableProps">`):** fallthrough attributes
+   (`class`, `style`, `contain-horizontal`, `scroll-label`, `aria-label`) on
+   `GhostDataTablePreset` continue to forward onto `GhostTable` exactly as in
+   phase one. Sortable headers in both `GhostDataTableTable` and
+   `GhostDataTablePreset` expose the native button via `data-part="sort-button"`.
+   The headless button renders its header label and retains its focus and
+   interaction bindings. Its accessible name is the same in either package.
+   Row expand buttons in `GhostDataTablePreset` add `data-part="expand-button"`.
+5. **Footer bar (`<div data-part="footer" class="ghost-data-table-footer">`):**
+   rendered iff `layout.footer` is present, wrapping
+   `<slot name="footer" v-bind="footerSlotProps" />`.
+
+### Themed wrappers and exports (`@ghostvue/themes`)
+
+#### Public exports
+
+`@ghostvue/themes` exports:
+
+| Export                                           | Source                                           | Contract                                                                                                           |
+| ------------------------------------------------ | ------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------ |
+| `GhostDataTable`                                 | `packages/themes/src/ghost-data-table.ts`        | Generic `<TData>` themed root wrapper adding `size`, `variant`, and `stickyHeader` over headless `GhostDataTable`. |
+| `GhostDataTableTable`                            | `packages/themes/src/ghost-data-table-table.ts`  | Generic `<TColumns>` themed table mapper preserving typed `#<columnId>` slots.                                     |
+| `GhostDataTablePreset`                           | `packages/themes/src/ghost-data-table-preset.ts` | Generic `<TColumns>` themed preset preserving typed `#<columnId>`, `#detail`, and all camelCase layout slots.      |
+| `defineDataTableColumns`                         | re-export from `@ghostvue/vue`                   | Single-import convenience for typed column definitions.                                                            |
+| `useGhostDataTable`                              | re-export from `@ghostvue/vue`                   | Headless state composable for custom layouts alongside themed parts.                                               |
+| `useGhostDataTableServerRequest`                 | re-export from `@ghostvue/vue`                   | Monotonic `requestId` guard for async server tables.                                                               |
+| `getDataTable*Props` (all 5 interaction helpers) | re-export from `@ghostvue/vue`                   | Attribute helpers for manual `GhostTable*` composition inside themed `GhostDataTable`.                             |
+| `GhostDataTableSize`, `GhostDataTableVariant`, … | `packages/themes` + `@ghostvue/vue` type exports | Visual prop unions, `GhostDataTableThemedProps<TData>`, `GhostDataTableThemedExposed<TData>`, and `DataTable*`.    |
+
+#### Themed `GhostDataTable` props and host contract
+
+```ts
+export type GhostDataTableSize = 'sm' | 'md'
+export type GhostDataTableVariant = 'plain' | 'card'
+
+export interface GhostDataTableThemedProps<
+  TData,
+> extends GhostDataTableProps<TData> {
+  /**
+   * Cell padding, typography, and embedded control density. Default `'md'`
+   * omits `data-size` so CSS treats an absent hook as `'md'`.
+   * @default 'md'
+   */
+  size?: GhostDataTableSize
+  /**
+   * Outer surface treatment. `'plain'` omits `data-variant` (flush rules only);
+   * `'card'` sets `data-variant="card"` for an elevated bordered container.
+   * @default 'plain'
+   */
+  variant?: GhostDataTableVariant
+  /**
+   * Pins column headers (`thead th`) to the block start of the nearest scroll
+   * container (`data-sticky-header` when `true`, omitted when `false`).
+   * @default false
+   */
+  stickyHeader?: boolean
+}
+
+export interface GhostDataTableThemedExposed<
+  TData,
+> extends GhostDataTableExposed<TData> {
+  /** Outer `.ghost-data-table` wrapper element after mount. */
+  readonly element: HTMLElement | null
+}
+```
+
+**Wrapper invariants:**
+
+- **Real host element for visual hooks:** Headless `GhostDataTable` is
+  renderless (`<slot v-bind="slotProps" />`), whereas themed `GhostDataTable`
+  renders a single outer
+  `<div class="ghost-data-table ghost-themed-scope" data-part="root" data-themed>`
+  around the headless root. Including `.ghost-themed-scope` on the host
+  automatically themes every nested Ghost primitive rendered inside the table
+  (`GhostTable`, `GhostCheckbox`, `GhostInput`, `GhostEmptyState`, and a
+  co-located `GhostPagination`) without requiring `@ghostvue/vue` to import
+  `@ghostvue/themes`.
+- **`ariaLabel` / `ariaLabelledby` routing (axe `aria-prohibited-attr` guard):**
+  `ariaLabel` and `ariaLabelledby` are declared props forwarded exclusively to
+  the inner headless `GhostDataTable` (landing on the native `<table>` via
+  `tableRootProps`). They must **never** be duplicated onto the outer generic
+  `<div class="ghost-data-table">`, which has no ARIA role.
+- **Attribute merge and generics:** Consumer `class`, `style`, and other
+  non-prop attributes merge onto `.ghost-data-table` without overwriting
+  `ghost-data-table`, `ghost-themed-scope`, `data-part="root"`, or
+  `data-themed`. Generic `defineComponent` signatures in
+  `packages/themes/src/ghost-data-table*.ts` must preserve `<TData>` on
+  `GhostDataTable` and `<TColumns extends readonly DataTableTableColumnRef[]>`
+  on `GhostDataTableTable` and `GhostDataTablePreset` under `tsc` declaration
+  emit and `vue-tsc`.
+- **Standalone themed child wrappers:** Themed `GhostDataTableTable` and themed
+  `GhostDataTablePreset` also wrap or mark their output with
+  `.ghost-themed-scope` (`display: contents` when wrapping) and `data-themed=""`
+  so they render themed even when placed inside a headless `GhostDataTable` from
+  `@ghostvue/vue`.
+
+#### Worked themed example
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+import {
+  GhostButton,
+  GhostDataTable,
+  GhostDataTablePreset,
+  GhostPagination,
+  defineDataTableColumns,
+  type DataTableRowId,
+} from '@ghostvue/themes'
+
+interface Invoice {
+  id: string
+  customer: string
+  amount: number
+}
+
+const helper = defineDataTableColumns<Invoice>()
+const columns = [
+  helper.accessorKey('customer', { header: 'Customer' }),
+  helper.accessorKey('amount', { header: 'Amount' }),
+]
+
+const invoices = ref<Invoice[]>([
+  { id: 'inv-1', customer: 'ACME Corp', amount: 1200 },
+  { id: 'inv-2', customer: 'Globex', amount: 980.5 },
+])
+const globalFilter = ref('')
+const selectedRowIds = ref<DataTableRowId[]>([])
+const pagination = ref({ pageIndex: 1, pageSize: 10 })
+</script>
+
+<template>
+  <GhostDataTable
+    v-model:global-filter="globalFilter"
+    v-model:selected-row-ids="selectedRowIds"
+    v-model:pagination="pagination"
+    :data="invoices"
+    :columns="columns"
+    :get-row-id="(row) => row.id"
+    enable-row-selection
+    enable-row-expansion
+    variant="card"
+    size="sm"
+    sticky-header
+    aria-label="Invoices"
+  >
+    <GhostDataTablePreset
+      :columns="columns"
+      :layout-slots="['toolbarEnd', 'bulkActions', 'footer']"
+      empty-title="No matching invoices"
+      search-label="Search invoices"
+    >
+      <template #toolbarEnd>
+        <GhostButton size="sm" variant="outline" tone="neutral">
+          Export CSV
+        </GhostButton>
+      </template>
+      <template #bulkActions="{ selectedCount, clearSelection }">
+        <span>{{ selectedCount }} selected</span>
+        <GhostButton
+          size="sm"
+          variant="ghost"
+          tone="neutral"
+          @click="clearSelection"
+        >
+          Clear selection
+        </GhostButton>
+      </template>
+      <template #amount="{ value }">{{ value.toFixed(2) }} USD</template>
+      <template #detail="{ row }">Invoice {{ row.id }} line items</template>
+      <template
+        #footer="{ pagination: page, pageCount, rowCount, setPageIndex }"
+      >
+        <span>{{ rowCount }} total</span>
+        <GhostPagination
+          size="sm"
+          :model-value="page.pageIndex"
+          :page-count="pageCount"
+          aria-label="Invoice pages"
+          @update:model-value="setPageIndex"
+        />
+      </template>
+    </GhostDataTablePreset>
+  </GhostDataTable>
+</template>
+```
+
+### Styling hooks and CSS architecture (`packages/themes/src/ghost-data-table.css`)
+
+#### Complete `data-*` and ARIA styling-hook map
+
+| Surface                 | Selector / attribute                                           | Condition / values                                                              |
+| ----------------------- | -------------------------------------------------------------- | ------------------------------------------------------------------------------- |
+| Themed root container   | `.ghost-data-table[data-themed]`, `data-part="root"`           | Always on themed `GhostDataTable`; carries `.ghost-themed-scope`                |
+| Root density            | `data-size="sm"`                                               | Set when `size === 'sm'`; omitted for default `'md'`                            |
+| Root surface variant    | `data-variant="card"`                                          | Set when `variant === 'card'`; omitted for default `'plain'`                    |
+| Root sticky header      | `data-sticky-header=""`                                        | Set when `stickyHeader === true`; omitted when `false`                          |
+| Root disabled state     | `data-state="disabled"`                                        | Set on themed root when `disabled === true`; omitted otherwise                  |
+| Preset header bar       | `.ghost-data-table-header`, `data-part="header"`               | Rendered for visible search or a supplied, enabled toolbar slot                 |
+| Preset header slots     | `data-part="toolbar-start"`, `"search"`, `"toolbar-end"`       | Direct children of `[data-part="header"]` when respective slot/search on        |
+| Preset bulk-actions bar | `.ghost-data-table-bulk-actions`, `data-part="bulk-actions"`   | Rendered for enabled `bulkActions` with a slot and a nonempty enabled selection |
+| Preset footer bar       | `.ghost-data-table-footer`, `data-part="footer"`               | Rendered when `footer` is enabled and supplied                                  |
+| Table root              | `table.ghost-table[data-ghost-data-table]`, `data-part="root"` | Native `<table>` (`aria-busy="true"` while `loading`, omitted otherwise)        |
+| Column header cell      | `th.ghost-table-header-cell`, `data-part="header-cell"`        | `scope="col"`; `aria-sort` + `data-sort="asc" \| "desc"` on sorted column       |
+| Sort button             | `button[data-part="sort-button"]`                              | Sortable `<th>` control in `GhostDataTableTable` / `GhostDataTablePreset`       |
+| Default sort indicator  | Themed sort button `::after`                                   | Decorative CSS mark painted by `@ghostvue/themes`                               |
+| Expand button           | `button[data-part="expand-button"]`                            | Row disclosure toggle (`aria-expanded="true" \| "false"`)                       |
+| Selected data row       | `tr.ghost-table-row[data-selected="true"]`                     | Boolean hook on selected body row (omitted when unselected)                     |
+| Expanded data row       | `tr.ghost-table-row[data-expanded="true"]`                     | Boolean hook on expanded body row (independent of `data-selected`)              |
+| Detail row              | `tr.ghost-table-row[data-detail-row="true"]`                   | Expansion detail `<tr>` (`data-part="row"` retained)                            |
+
+#### Cascade layer, opt-in scoping, and child-combinator isolation
+
+- **Zero specificity inside `@layer ghostvue-theme`:** Every rule in
+  `packages/themes/src/ghost-data-table.css` sits inside `@layer ghostvue-theme`
+  wrapped in `:where(...)` (keeping pseudo-elements such as `::after` outside
+  `:where(...)` so LightningCSS preserves them). Consumer classes and scoped
+  styles win without `!important`.
+- **Headless isolation:** Rules must key off `.ghost-data-table[data-themed]`,
+  `.ghost-data-table-preset[data-themed]`,
+  `.ghost-table[data-ghost-data-table][data-themed]`, or `.ghost-theme
+.ghost-data-table` — **never** bare `[data-ghost-data-table]` — because
+  `@ghostvue/themes` CSS loads globally on docs and playground pages that also
+  render unstyled headless DataTable examples.
+- **Child-combinator part targeting:** Table section, row, cell, and header
+  button selectors must step through direct child combinators (`> .ghost-table`,
+  `> :is(.ghost-table-scroll-container) > .ghost-table`,
+  `> .ghost-table-head > .ghost-table-row > .ghost-table-header-cell`,
+  `> .ghost-table-body > .ghost-table-row > :is(.ghost-table-cell,
+.ghost-table-header-cell)`). A nested `GhostTable` rendered inside an expanded
+  `#detail` panel or custom cell must not inherit outer `data-selected`,
+  `data-sticky-header`, `data-size="sm"`, or sort-header rules.
+- **Variant and density token mapping:**
+  - `variant="plain"` (default): vertical flex/grid stack (`gap:
+var(--ghost-space-gap-md)`), flush borders from `ghost-table.css`.
+  - `variant="card"` (`[data-variant='card']`): `--ghost-elevation-1-bg`,
+    `var(--ghost-border-hairline-width) solid var(--ghost-elevation-1-border)`,
+    `border-radius: var(--ghost-radius-lg)`,
+    `box-shadow: var(--ghost-elevation-1-shadow),
+var(--ghost-elevation-1-highlight)`. `[data-part="header"]`,
+    `[data-part="bulk-actions"]`, and `[data-part="footer"]` use inset padding
+    (`--ghost-space-inset-sm` / `--ghost-space-inset-md`) and hairline block
+    dividers (`--ghost-border-default`) flush with the table edges.
+  - `size="sm"` (`[data-size='sm']`): table font-size `--ghost-type-size-sm`,
+    header/body cell padding `--ghost-space-inset-xs` block and
+    `--ghost-space-inset-sm` inline, and `--ghost-control-size-sm-*` sizing on
+    sort/expand controls and default preset search input (preserving
+    `--ghost-control-touch-min` on coarse pointers).
+  - `stickyHeader` (`[data-sticky-header]`): sets `position: sticky;
+inset-block-start: 0; z-index: 1` on column header cells (`thead >
+.ghost-table-row > .ghost-table-header-cell`) with opaque
+    `--ghost-surface-muted-bg` (`Canvas` in `forced-colors: active`) and an
+    inset block-end hairline `box-shadow` (`inset 0 calc(-1 *
+var(--ghost-border-hairline-width)) 0 var(--ghost-border-default)`) so header
+    dividers stay visible over scrolled rows under `border-collapse: collapse`.
+
+#### Single-sort header button indicator (`0.1.0`)
+
+- **Interactive target:** `.ghost-table-header-cell > button` (covering both
+  `[data-part="sort-button"]` in `GhostDataTableTable` / `GhostDataTablePreset`
+  and manual `<button v-bind="getSortButtonProps(id)">` compositions) fills the
+  header cell inline axis (`inline-size: 100%`, `display: inline-flex`,
+  `align-items: center`, `justify-content: space-between`,
+  `gap: var(--ghost-space-gap-xs)`), inherits semibold header typography, resets
+  native button chrome (`appearance: none; border: 0; background: transparent`),
+  and applies a hover state layer (`color-mix(in oklch, var(--ghost-surface-fg)
+calc(100% * var(--ghost-state-layer-hover)), transparent)`) when
+  `:not(:disabled)`.
+- **Focus ring:** `:focus-visible` draws
+  `outline: var(--ghost-focus-ring-width) solid var(--ghost-focus-ring-color)`
+  with `outline-offset: calc(-1 * var(--ghost-focus-ring-width))` inside the
+  button box so adjacent `<th>` borders, `overflow-x: auto` scroll containers,
+  and `stickyHeader: true` never clip the indicator.
+- **Default artwork belongs to `@ghostvue/themes`** ([ADR 0013](../adr/0013-icon-strategy.md)).
+  In the themed table scope, paint a decorative mark on the sort button's
+  `::after` with empty CSS content and `currentColor`. Use the parent
+  `th[data-sort]` to distinguish the unsorted bidirectional mark from the
+  ascending and descending chevrons. Size it with `--ghost-action-icon-size`.
+  The unsorted mark uses `--ghost-text-subtle` and strengthens on hover or
+  focus. Sorted headers use `--ghost-surface-fg` text, a `--ghost-text-primary`
+  mark, and an accent bottom border. In forced colors keep the direction
+  visible in `ButtonText` (`GrayText` when disabled) and draw the focus outline
+  in `Highlight`. The header's `aria-sort` communicates direction to assistive
+  technology. The CSS adds no text to the button's accessible name.
+- Apply the default only to a sort control with the `data-part="sort-button"`
+  hook. Manual compositions can opt in on their button. A consumer-supplied
+  decorative child marked `data-part="sort-indicator"` suppresses the default
+  on that button. Bare headless renderers supply the hook and label only.
+  Loading the stylesheet outside a themed scope leaves them unadorned.
+
+#### Row selection wash and `forced-colors` `SelectedItem` mapping
+
+- **Standard light and dark mode wash:**
+  - Applied to direct cells of selected data rows
+    (`> .ghost-table-body > .ghost-table-row[data-selected='true'] >
+:is(.ghost-table-cell, .ghost-table-header-cell)`):
+    `background-color: color-mix(in oklch, var(--ghost-action-primary-bg)
+calc(100% * var(--ghost-state-mix-soft)), var(--ghost-surface-bg))` with
+    `color: var(--ghost-surface-fg)`. Pairing `--ghost-surface-fg` against the
+    soft primary mix preserves WCAG 2 AA (`>= 4.5:1`) text contrast across
+    `default`, `calm`, `vibrant`, and `mono` in both light and dark modes.
+  - **Hover layering:** Unselected body rows (`:not([data-selected='true']):not([data-detail-row])`)
+    apply `--ghost-surface-subtle-bg` on `:hover` (when the table is not
+    disabled). Selected rows deepen slightly on `:hover` by combining
+    `--ghost-state-mix-soft` with `--ghost-state-layer-hover` so pointer
+    tracking remains visible across selected runs.
+  - **Non-color distinction:** Selection is never conveyed by row tint alone:
+    the checked `GhostCheckbox` provides explicit state and shape, and the first
+    cell (`:first-child`) carries an inset inline-start accent bar
+    (`box-shadow: inset var(--ghost-focus-ring-width) 0 0
+var(--ghost-border-primary)` in LTR; mirrored in RTL via logical
+    `border-inline-start` or `dir`-aware inset shadow without shifting cell
+    width).
+  - **Bulk-actions bar & detail rows:** `[data-part="bulk-actions"]` uses the
+    same soft primary surface tint (`--ghost-surface-muted-bg` / soft primary
+    mix with `--ghost-surface-fg` text). Detail rows
+    (`tr.ghost-table-row[data-detail-row='true'] > .ghost-table-cell`) use
+    `--ghost-surface-subtle-bg` so expanded content reads as an inset panel
+    distinct from selected data rows.
+- **`@media (forced-colors: active)` (`SelectedItem` / `SelectedItemText`):**
+  - Windows Contrast Themes strip `color-mix(...)` washes back to `Canvas`. To
+    preserve row-level selection visibility across wide tables, direct cells of
+    selected data rows (`> .ghost-table-body >
+.ghost-table-row[data-selected='true'] > :is(.ghost-table-cell,
+.ghost-table-header-cell)`) map explicitly to CSS Color 4 system selection
+    colors:
+    - `background-color: SelectedItem;`
+    - `color: SelectedItemText;`
+    - `border-block-end-color: CanvasText;`
+    - `forced-color-adjust: none;` on the selected cell surface so the user
+      agent does not backplate cell text with `Canvas`.
+  - **Nested interactive controls inside `SelectedItem` rows:** Interactive
+    descendants inside selected cells (`button`, `input`, `select`, `textarea`,
+    `a[href]`, `[tabindex]:not([tabindex='-1'])`) restore system control
+    painting (`forced-color-adjust: auto`, or explicit `ButtonFace` /
+    `ButtonText` on themed buttons/checkboxes and `LinkText` on links), and
+    `:focus-visible` outlines drawn directly against a `SelectedItem` cell
+    background use `outline-color: SelectedItemText` so keyboard focus never
+    disappears into the selected row fill.
+
+#### `[aria-busy="true"]` loading behavior
+
+- **Semantic contract:** Passing `:loading="true"` to `GhostDataTable` sets
+  `aria-busy="true"` on `<table data-ghost-data-table>` via `tableRootProps`
+  (omitted when `loading` is `false`).
+- **In-place visual feedback without focus loss:**
+  - While `table[data-ghost-data-table][aria-busy='true']` is present, mounted
+    `<thead>` and `<tbody>` rows stay in the DOM at their current geometry (zero
+    height collapse or column reflow).
+  - Keep body text, backgrounds, and enabled controls at their resting contrast
+    throughout loading. Keep the body at full opacity in every theme and mode.
+    Show progress with a block-end accent hairline on the header. It may animate
+    under `prefers-reduced-motion: no-preference`. Keep it static under
+    `prefers-reduced-motion: reduce` and use `Highlight` in forced colors.
+- **Interaction invariant during `loading`:** `aria-busy="true"` **must not**
+  set `disabled`, `inert`, or `pointer-events: none` on sort buttons, search
+  inputs, checkboxes, expand buttons, or pagination controls unless `:disabled="true"`
+  is also passed. Keeping controls focusable and operable while a fetch is in
+  flight prevents focus from dropping to `<body>` after a keyboard sort/filter
+  commit and preserves superseding queries guarded by
+  `useGhostDataTableServerRequest()` (including Browser **Back** and
+  `retry()`).
+- **Initial empty load & live announcements:** For first-load empty tables
+  (`data.length === 0 && loading`), consumers may render `GhostSkeleton` rows in
+  manual compositions (per [`GhostSkeleton`](/specs/skeleton)), while
+  `GhostDataTablePreset` keeps `<thead>` mounted with `aria-busy="true"` on
+  `<table>`. Async completion announcements remain a consumer-owned polite live
+  region (`role="status"`), never `aria-live` on `<table>` or `<tbody>`.
+
+### Keyboard, focus parity, RTL, touch, and motion
+
+- **Exact keyboard parity with headless `@ghostvue/vue`:** Native `<table>`
+  semantics only (no `role="grid"` or arrow-key cell roving). `Tab` /
+  `Shift+Tab` traverses in DOM order: `#toolbarStart` → `#search` (independent
+  `Tab` stop) → `#toolbarEnd` → `#bulkActions` (when `selectedCount > 0`) →
+  named horizontal scroll container (only when `containHorizontal` is `true`) →
+  header select-all `GhostCheckbox` → sortable header `<button>`s → body row
+  checkboxes, expand `<button>`s, cell controls, and expanded `#detail` controls
+  → `#footer` (`GhostPagination`). `Space` toggles checkboxes (`Enter` does not);
+  `Enter` and `Space` activate sort and expand buttons.
+- **Focus restoration invariants (both required in browser tests):**
+  1. **Detail row collapse:** When an expanded row collapses while
+     `document.activeElement` is inside its `#detail` row, focus moves to that
+     row's expand `<button>` (`useDataTableDetailRowFocus`).
+  2. **Bulk-actions dismissal:** When `[data-part="bulk-actions"]` unmounts
+     because `selectedCount` transitions from `> 0` to `0` (for example, the
+     user activates a "Clear selection" button wired to `clearSelection()`) while
+     `document.activeElement` is inside `[data-part="bulk-actions"]`,
+     `GhostDataTablePreset` moves focus on `nextTick` to the table's header
+     select-all checkbox input (when mounted and not disabled) so focus is never
+     stranded on `document.body`.
+- **RTL, touch targets, and reduced motion:**
+  - `ghost-data-table.css` uses CSS logical properties (`inline-size`,
+    `block-size`, `padding-inline`, `padding-block`, `border-block-end`,
+    `border-inline-start`, `inset-block-start`, `text-align: start`) so
+    `dir="rtl"` mirrors layout, sort-button alignment, and selection indicators
+    with zero physical `left` / `right` overrides.
+  - Sort buttons, expand buttons, checkboxes, and default preset inputs respect
+    `--ghost-control-touch-min` (`2.75rem` on coarse pointers via semantic
+    control tokens).
+  - Transitions use `--ghost-action-duration` / `--ghost-motion-fade-duration`
+    and disable non-essential motion under `@media (prefers-reduced-motion:
+reduce)`.
+
+### Wave 2 (`#333`) acceptance tests and component-gate checklist
+
+Wave 2 implementation ([#333](https://github.com/zprue743/ghostvue/issues/333))
+must satisfy every check below alongside existing phase-one tests:
+
+1. **Headless `GhostDataTablePreset` unit & type tests (`@ghostvue/vue`):**
+   - Enable each layout slot being exercised through `layoutSlots`.
+     `#toolbarStart` and `#toolbarEnd` render inside `[data-part="header"]`
+     before and after `[data-part="search"]`; `[data-part="header"]` omits when
+     search is hidden and both toolbar slots are absent; default search stays
+     outside any `role="toolbar"`.
+   - `#bulkActions` stays unmounted when `selectedCount === 0` or
+     `enableRowSelection === false`, mounts when `selectedCount > 0`, receives
+     `{ selectedRowIds, selectedCount, clearSelection }` (including cross-page
+     ids when `manualPagination: true`), `clearSelection()` clears selection (and
+     is a no-op when `disabled: true`), and activating `clearSelection()` while
+     focused inside `[data-part="bulk-actions"]` moves focus to the header
+     select-all checkbox.
+   - `#footer` receives `{ pagination, pageCount, rowCount, setPageIndex }` and
+     `setPageIndex` commits through the root (`v-model:pagination` + single
+     `stateChange` when `manualPagination: true`).
+   - In both presets, parameterize compatibility cases over `toolbarStart`,
+     `toolbarEnd`, `bulkActions`, and `footer`. With the prop omitted, a slot
+     matching a column id receives only its original typed cell context.
+     Verify a legacy numeric `#footer="{ value }"` can call `value.toFixed(2)`
+     and renders once per row. Start with no columns, insert the column,
+     reorder it, then remove it. No layout region mounts or invokes that slot.
+   - With only `bulkActions` enabled, keep the colliding `footer` cell slot
+     while showing and dismissing the selection bar. With `footer` explicitly
+     enabled, check its typed pagination props and one footer invocation per
+     render. A column named `footer` uses its `cell` hook or value fallback.
+     Use positive and negative `vue-tsc` fixtures for the two slot signatures.
+2. **Themed wrapper unit, SSR, export, and generic type tests
+   (`@ghostvue/themes`):**
+   - `GhostDataTable` renders `.ghost-data-table.ghost-themed-scope[data-part="root"][data-themed]`;
+     defaults (`size="md"`, `variant="plain"`, `stickyHeader=false`,
+     `disabled=false`) omit `data-size`, `data-variant`, `data-sticky-header`,
+     and `data-state`; non-defaults set `data-size="sm"`, `data-variant="card"`,
+     `data-sticky-header=""`, and `data-state="disabled"`.
+   - `ariaLabel` and `ariaLabelledby` render on the native `<table>` only (never
+     on `.ghost-data-table`).
+   - Consumer `class` and `style` merge cleanly on `GhostDataTable`,
+     `GhostDataTableTable`, and `GhostDataTablePreset`; all six `v-model`s,
+     `stateChange`, and all 16 `GhostDataTableExposed<TData>` methods plus
+     `element` work through a template ref.
+   - `@ghostvue/themes` re-exports `GhostDataTable`, `GhostDataTableTable`,
+     `GhostDataTablePreset`, `defineDataTableColumns`, `useGhostDataTable`,
+     `useGhostDataTableServerRequest`, the five `getDataTable*Props` helpers,
+     and public types (`pnpm published-exports` and `pnpm exports:check` green).
+   - Generic `vue-tsc` type tests for `@ghostvue/themes` verify
+     `defineDataTableColumns<Invoice>()` column cell slot typing
+     (`value.toFixed(2)` valid, `@vue-expect-error` on `value.toUpperCase()`),
+     typed `#detail="{ row }"`, `#bulkActions`, and `#footer`.
+   - `expectSsrHydration` passes with zero warnings on themed `GhostDataTable` +
+     `GhostDataTablePreset` with sort, selection, expansion, `#toolbarStart`,
+     `#toolbarEnd`, `#bulkActions`, and `#footer`.
+   - Headless isolation check: mounting `@ghostvue/vue` `GhostDataTable` on a
+     page where `@ghostvue/themes` CSS is loaded applies no `[data-themed]`
+     hook or themed wrapper element. For both headless renderers verify a
+     sortable header has the button hook and accessible label with no default
+     artwork. In the themed equivalents check all three visual sort states,
+     identical accessible names, and suppression of the CSS mark when a manual
+     sort button supplies its own decorative indicator.
+3. **Browser (`Playwright`), accessibility (`@axe-core/playwright`), and
+   `forced-colors` tests:**
+   - Keyboard and real focus (`toBeFocused()`): full `Tab` traversal across
+     `#toolbarStart`, `#search`, `#toolbarEnd`, `#bulkActions`, select-all
+     checkbox, sort buttons, row checkboxes, expand buttons, and `#footer`
+     `GhostPagination`; `Enter` and `Space` cycle single-sort (`none → asc →
+desc → none`) while focus stays on the sort `<button>` and `aria-sort` /
+     `data-sort` update on `<th>`; `Space` toggles row selection (`data-selected="true"`);
+     collapsing an open `#detail` row from inside restores focus (`toBeFocused()`)
+     to the row expand button; activating `clearSelection` inside `#bulkActions`
+     restores focus (`toBeFocused()`) to the header select-all checkbox.
+   - `[aria-busy="true"]` loading parity: toggling `:loading="true"` sets
+     `aria-busy="true"` on `<table>`, keeps rows and headers mounted without
+     dropping `toBeFocused()` from an active sort button or search input, and
+     still permits superseding query actions. In each preset theme, light and
+     dark, measure busy-state body text and enabled control text against their
+     composited backgrounds (at least 4.5:1 for normal text). Include a selected
+     row and a focused control. Require at least 3:1 against adjacent colors
+     for the visual cues identifying enabled controls and their focus. Verify
+     the body stays at full opacity and the header cue respects reduced motion.
+   - Forced-colors verification (`page.emulateMedia({ forcedColors: 'active' })`):
+     selected row cells (`tr[data-selected="true"] > td`) resolve computed
+     `backgroundColor` and `color` to `SelectedItem` and `SelectedItemText`
+     (distinct from unselected rows), and a focused control inside a selected
+     row retains a contrasting visible outline.
+   - RTL verification (`dir="rtl"`): logical layout and sort/selection chrome
+     mirror without horizontal overflow or clipped focus rings.
+   - Zero `@axe-core/playwright` violations across `plain` and `card` variants,
+     `sm` and `md` sizes, `stickyHeader`, selected + expanded rows,
+     `aria-busy="true"`, and empty states in light and dark modes.
+   - Linux container visual baselines updated via `pnpm test:visual:docker`.
+4. **Manifests, registries, docs, and release metadata (`#333`):**
+   - Update `docs/components/data-table-spec.md` frontmatter (`packages` adds
+     `'@ghostvue/themes'`, `manifests` adds
+     `packages/themes/manifests/ghost-data-table*.manifest.json`, and
+     `approval.evidence` records Zac's `#316` approval).
+   - Run `pnpm manifests:write` and `pnpm registries:write`; add themed examples
+     in `examples/data-table/` and `packages/vue/registry/data-table.registry.json`;
+     document themed usage and preset slots in `docs/components/data-table.md`;
+     update only the DataTable row in `docs/roadmap.md`; include minor
+     Changesets for `@ghostvue/vue` and `@ghostvue/themes`.
 
 ## Decisions recorded (Zac, PR #265 review)
 
@@ -1323,29 +2023,30 @@ intent, not production bundle performance.
 
 ## Child work decomposition
 
-| Child issue                                                                                             | Scope                                                                                                                    | Complexity |
-| ------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ | ---------- |
-| **Done:** GhostVue vs PrimeVue prototype ([PR #269](https://github.com/zprue743/ghostvue/pull/269))     | Evidence folded into spec; prototype PR closed unmerged                                                                  | —          |
-| DataTable core types and local processing pipeline                                                      | `useGhostDataTable`, manual matrix, row models                                                                           | High       |
-| `defineDataTableColumns` + column type tests                                                            | Typed `value` / `getValue`, CI type tests                                                                                | Medium     |
-| `GhostDataTableTable` default renderer                                                                  | Basic example (a), `#columnId` slots                                                                                     | Medium     |
-| **`GhostDataTablePreset`** (invoice parity, ≤95 LOC)                                                    | Example (a′), wired a11y + interaction helpers                                                                           | Medium     |
-| GhostDataTable headless root and GhostTable composition                                                 | Slot bindings, example (b), SSR                                                                                          | Medium     |
-| Interaction prop helpers                                                                                | Sort / select / expand bindings + focus-on-collapse                                                                      | Medium     |
-| Server router example + Back/Retry tests                                                                | `server-invoices-router.vue`, race tests                                                                                 | High       |
-| Column sorting UI and header a11y                                                                       | Single-column sort, `aria-sort`                                                                                          | Medium     |
-| Filtering model and toolbar composition docs                                                            | Conditional page reset vs `manualFiltering`                                                                              | Low        |
-| Pagination integration                                                                                  | `rowCount`, empty → page 1, `GhostPagination`                                                                            | Low        |
-| Row selection (local + server)                                                                          | Select-all rules, no server prune, cross-page tests                                                                      | High       |
-| Row expansion rows                                                                                      | Detail `<tr>`, server no-prune                                                                                           | Medium     |
-| Server mode and async guard                                                                             | Coalesced `stateChange`, full `query`, stale guard tests                                                                 | Medium     |
-| Performance benchmark harness                                                                           | Vitest bench, sort/page regression counters                                                                              | Low        |
-| **Deferred:** PrimeVue 10k browser comparison                                                           | `docs/contributing/data-table-benchmark-comparison.md`                                                                   | Medium     |
-| Headless docs and executable examples                                                                   | `data-table.md`, `examples/data-table/`                                                                                  | Medium     |
-| **Deferred:** Themed GhostDataTable                                                                     | `@ghostvue/themes` wrapper                                                                                               | Medium     |
-| **Deferred:** Multi-column sort spec ([#317](https://github.com/zprue743/ghostvue/issues/317), GHO-250) | Proposed `0.3.0` addendum (`enableMultiSort` keyboard, state, and secondary `aria-sort` contract); held for Zac approval | Medium     |
-| **Deferred:** Virtualization spec                                                                       | Scroll + a11y                                                                                                            | High       |
-| **Deferred:** Treegrid / grid keyboard spec                                                             | Roving focus                                                                                                             | High       |
+| Child issue                                                                                                          | Scope                                                                                                                    | Complexity |
+| -------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ | ---------- |
+| **Done:** GhostVue vs PrimeVue prototype ([PR #269](https://github.com/zprue743/ghostvue/pull/269))                  | Evidence folded into spec; prototype PR closed unmerged                                                                  | —          |
+| DataTable core types and local processing pipeline                                                                   | `useGhostDataTable`, manual matrix, row models                                                                           | High       |
+| `defineDataTableColumns` + column type tests                                                                         | Typed `value` / `getValue`, CI type tests                                                                                | Medium     |
+| `GhostDataTableTable` default renderer                                                                               | Basic example (a), `#columnId` slots                                                                                     | Medium     |
+| **`GhostDataTablePreset`** (invoice parity, ≤95 LOC)                                                                 | Example (a′), wired a11y + interaction helpers                                                                           | Medium     |
+| GhostDataTable headless root and GhostTable composition                                                              | Slot bindings, example (b), SSR                                                                                          | Medium     |
+| Interaction prop helpers                                                                                             | Sort / select / expand bindings + focus-on-collapse                                                                      | Medium     |
+| Server router example + Back/Retry tests                                                                             | `server-invoices-router.vue`, race tests                                                                                 | High       |
+| Column sorting UI and header a11y                                                                                    | Single-column sort, `aria-sort`                                                                                          | Medium     |
+| Filtering model and toolbar composition docs                                                                         | Conditional page reset vs `manualFiltering`                                                                              | Low        |
+| Pagination integration                                                                                               | `rowCount`, empty → page 1, `GhostPagination`                                                                            | Low        |
+| Row selection (local + server)                                                                                       | Select-all rules, no server prune, cross-page tests                                                                      | High       |
+| Row expansion rows                                                                                                   | Detail `<tr>`, server no-prune                                                                                           | Medium     |
+| Server mode and async guard                                                                                          | Coalesced `stateChange`, full `query`, stale guard tests                                                                 | Medium     |
+| Performance benchmark harness                                                                                        | Vitest bench, sort/page regression counters                                                                              | Low        |
+| **Deferred:** PrimeVue 10k browser comparison                                                                        | `docs/contributing/data-table-benchmark-comparison.md`                                                                   | Medium     |
+| Headless docs and executable examples                                                                                | `data-table.md`, `examples/data-table/`                                                                                  | Medium     |
+| **Spec (`0.1.0`):** Themed GhostDataTable addendum ([#316](https://github.com/zprue743/ghostvue/issues/316))         | Single-sort themed contract + preset layout slots (gates `#333`)                                                         | Medium     |
+| **Wave 2 (`0.1.0`):** Themed GhostDataTable implementation ([#333](https://github.com/zprue743/ghostvue/issues/333)) | `@ghostvue/vue` preset slots + `@ghostvue/themes` wrappers & CSS                                                         | High       |
+| **Deferred:** Multi-column sort spec ([#317](https://github.com/zprue743/ghostvue/issues/317), GHO-250)              | Proposed `0.3.0` addendum (`enableMultiSort` keyboard, state, and secondary `aria-sort` contract); held for Zac approval | Medium     |
+| **Deferred:** Virtualization spec                                                                                    | Scroll + a11y                                                                                                            | High       |
+| **Deferred:** Treegrid / grid keyboard spec                                                                          | Roving focus                                                                                                             | High       |
 
 Parent **GHO-35** records specification approval at **`specStatus: approved`**
 (Zac approved in chat on 2026-11-23; recorded in

@@ -16,7 +16,10 @@
  *    explicitly; the base stylesheet comes from importing `@ghostvue/themes`).
  *    Its production build must emit the `@layer ghostvue-theme` base recipes
  *    and the calm token host, and the built bundle is mounted in jsdom and
- *    driven once per component.
+ *    driven once per component. The same fixture also builds an opt-in page
+ *    (#386: calm, `base.css`, and four `recipes/*.css` with components from
+ *    `@ghostvue/themes/components`) that must ship only those recipes, and
+ *    both pages' minified and gzip CSS sizes are printed for comparison.
  * 2. `@ghostvue/nuxt`: a Nuxt app that uses only module auto-imports. The
  *    headless default is built and server-rendered; the themed opt-in is
  *    prepared and must resolve tags to `@ghostvue/themes`.
@@ -40,13 +43,16 @@ import { fileURLToPath } from 'node:url'
 
 import {
   consumerDependencyPins,
+  cssTransferSize,
   eslintConsumerProblems,
   nuxtAutoImportProblems,
   nuxtComponentSources,
   nuxtImportSources,
   nuxtPageProblems,
+  optInBuildCssProblems,
   themedBuildCssProblems,
   viteAppMountProblems,
+  viteOptInMountProblems,
 } from './lib/consumer-packed.js'
 import { execPackageManagerSync } from './lib/package-manager.js'
 import { ensureWorkspaceBuilt } from './lib/workspace-build-lock.js'
@@ -126,6 +132,74 @@ function runConsumerBin(cwd, bin, args, env = process.env) {
 }
 
 /**
+ * Production-build one page of the Vite fixture and read the stylesheets it
+ * emitted.
+ *
+ * @param {string} app
+ * @param {'all-in' | 'opt-in'} variant
+ * @returns {Promise<{ outDir: string, stylesheets: string[] }>}
+ */
+async function buildViteVariant(app, variant) {
+  const outDir = variant === 'opt-in' ? 'dist-opt-in' : 'dist'
+  runConsumerBin(app, 'node_modules/vite/bin/vite.js', ['build'], {
+    ...process.env,
+    NODE_ENV: 'production',
+    GHOSTVUE_SMOKE_VARIANT: variant,
+  })
+  const assets = join(app, outDir, 'assets')
+  const stylesheets = await Promise.all(
+    (await readdir(assets))
+      .filter((file) => file.endsWith('.css'))
+      .sort()
+      .map((file) => readFile(join(assets, file), 'utf8')),
+  )
+  return { outDir, stylesheets }
+}
+
+/**
+ * Mount one built page in jsdom and parse what `mount.mjs` observed.
+ *
+ * @param {string} app
+ * @param {string[]} args
+ * @returns {import('./lib/consumer-packed.js').MountObservation}
+ */
+function mountViteVariant(app, args) {
+  const output = execFileSync(process.execPath, ['mount.mjs', ...args], {
+    cwd: app,
+    encoding: 'utf8',
+  })
+  return JSON.parse(output.trim().split('\n').pop() ?? '')
+}
+
+/** @param {{ minifiedBytes: number, gzipBytes: number }} size */
+function formatCssSize({ minifiedBytes, gzipBytes }) {
+  const kb = (/** @type {number} */ bytes) => `${(bytes / 1000).toFixed(1)} KB`
+  return `${kb(minifiedBytes)} minified / ${kb(gzipBytes)} gzip`
+}
+
+/**
+ * Recipe classes for the families the opt-in page imports, and for families
+ * it must not ship. Recipes style parts (`.ghost-dialog-content`), not always
+ * the family name, so each entry names a part class its recipe file defines;
+ * every entry must also appear in the all-in build, or its absence from the
+ * opt-in build would prove nothing.
+ */
+const optInRecipes = [
+  'ghost-button',
+  'ghost-dialog-content',
+  'ghost-dialog-overlay',
+  'ghost-field',
+  'ghost-input',
+]
+const optInAbsentRecipes = [
+  'ghost-drawer-content',
+  'ghost-select-trigger',
+  'ghost-toast',
+  'ghost-calendar-cell',
+  'ghost-tabs-list',
+]
+
+/**
  * @param {string} temporary
  * @param {Record<string, string>} tarballs
  * @param {Record<string, string>} pins
@@ -139,33 +213,63 @@ async function checkViteApp(temporary, tarballs, pins) {
     '@vitejs/plugin-vue': pins['@vitejs/plugin-vue'],
     jsdom: pins.jsdom,
   })
-  runConsumerBin(app, 'node_modules/vite/bin/vite.js', ['build'], {
-    ...process.env,
-    NODE_ENV: 'production',
-  })
-  const assets = await readdir(join(app, 'dist', 'assets'))
-  const css = (
-    await Promise.all(
-      assets
-        .filter((file) => file.endsWith('.css'))
-        .map((file) => readFile(join(app, 'dist', 'assets', file), 'utf8')),
-    )
-  ).join('\n')
+
+  const allIn = await buildViteVariant(app, 'all-in')
   assertNoProblems(
     'The Vite consumer production build emitted incomplete theme CSS',
-    themedBuildCssProblems(css, { flagship: 'calm' }),
+    themedBuildCssProblems(allIn.stylesheets.join('\n'), { flagship: 'calm' }),
   )
-  const output = execFileSync(process.execPath, ['mount.mjs'], {
-    cwd: app,
-    encoding: 'utf8',
-  })
-  const lastLine = output.trim().split('\n').pop() ?? ''
   assertNoProblems(
     'Mounting the packed Vite + Vue consumer failed',
-    viteAppMountProblems(JSON.parse(lastLine)),
+    viteAppMountProblems(mountViteVariant(app, [])),
   )
+  // Guard the opt-in absence checks: every class they look for must exist in
+  // the all-in CSS built from the same tarball.
+  assertNoProblems(
+    'The opt-in recipe classes are missing from the all-in build',
+    optInBuildCssProblems(allIn.stylesheets.join('\n'), {
+      flagship: 'calm',
+      recipes: [...optInRecipes, ...optInAbsentRecipes],
+      absentRecipes: [],
+    }).filter((problem) => !problem.startsWith('default palette')),
+  )
+
+  const optIn = await buildViteVariant(app, 'opt-in')
+  assertNoProblems(
+    'The opt-in theme CSS production build emitted the wrong CSS',
+    optInBuildCssProblems(optIn.stylesheets.join('\n'), {
+      flagship: 'calm',
+      recipes: optInRecipes,
+      absentRecipes: optInAbsentRecipes,
+    }),
+  )
+  assertNoProblems(
+    'Mounting the packed opt-in theme CSS page failed',
+    viteOptInMountProblems(
+      mountViteVariant(app, [optIn.outDir, 'opt-in.html']),
+    ),
+  )
+
+  // Both pages come from the same fixture, toolchain, and calm palette, so
+  // the difference is what the all-in stylesheet costs over the opt-in path.
+  const allInSize = cssTransferSize(allIn.stylesheets)
+  const optInSize = cssTransferSize(optIn.stylesheets)
+  if (optInSize.gzipBytes >= allInSize.gzipBytes) {
+    throw new Error(
+      `The opt-in theme CSS (${formatCssSize(optInSize)}) is not smaller than the all-in import (${formatCssSize(allInSize)})`,
+    )
+  }
   console.log(
     'Vite + Vue consumer: production build of the documented setup emitted @layer ghostvue-theme base and calm CSS; mounted Field, Input, Select, Dialog, Drawer, and Toast in jsdom.',
+  )
+  console.log(
+    'Vite + Vue opt-in theme CSS: calm palette, base, and button/dialog/field/input recipes only; no default palette or unrelated recipes; mounted Field, Input, Button, and a portaled Dialog under the <html> palette host in jsdom.',
+  )
+  console.log(
+    `CSS size, all-in @ghostvue/themes + calm.css: ${formatCssSize(allInSize)}`,
+  )
+  console.log(
+    `CSS size, opt-in calm.css + base.css + 4 recipes: ${formatCssSize(optInSize)}`,
   )
 }
 

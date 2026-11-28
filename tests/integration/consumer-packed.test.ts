@@ -4,14 +4,17 @@ import { describe, expect, it } from 'vitest'
 
 import {
   consumerDependencyPins,
+  cssTransferSize,
   declaresThemeLayer,
   eslintConsumerProblems,
   nuxtAutoImportProblems,
   nuxtComponentSources,
   nuxtImportSources,
   nuxtPageProblems,
+  optInBuildCssProblems,
   themedBuildCssProblems,
   viteAppMountProblems,
+  viteOptInMountProblems,
   type MountObservation,
 } from '../../scripts/lib/consumer-packed.js'
 
@@ -30,6 +33,10 @@ const passingMount: MountObservation = {
   dialog: {
     open: ['Smoke dialog Mounted from packed tarballs. Close'],
     afterClose: [],
+    portals: {
+      content: { teleported: true, theme: 'calm', themed: true },
+      overlay: { teleported: true, theme: 'calm', themed: true },
+    },
   },
   drawer: { open: ['Smoke drawer Also mounted from packed tarballs.'] },
   toast: { shown: true },
@@ -145,11 +152,140 @@ describe('viteAppMountProblems', () => {
       viteAppMountProblems({
         ...passingMount,
         mounted: false,
-        dialog: { open: ['Smoke dialog'], afterClose: ['Smoke dialog'] },
+        dialog: {
+          ...passingMount.dialog,
+          open: ['Smoke dialog'],
+          afterClose: ['Smoke dialog'],
+        },
       }),
     ).toEqual([
       'the app did not mount into #app',
       'GhostDialogClose did not close the dialog',
+    ])
+  })
+})
+
+describe('optInBuildCssProblems', () => {
+  // Minified the way Vite emits calm.css + base.css + selected recipes.
+  const optInCss =
+    '@layer ghostvue-theme{:where([data-ghost-theme=calm]){--x:1}}' +
+    '@layer ghostvue-theme{:where(.ghost-themed-scope){display:contents}}' +
+    '@layer ghostvue-theme{:where(.ghost-theme .ghost-button){}:where(.ghost-themed-scope .ghost-input){}}'
+  const options = {
+    flagship: 'calm',
+    recipes: ['ghost-button', 'ghost-input'],
+    absentRecipes: ['ghost-dialog', 'ghost-toast'],
+  }
+
+  it('accepts the palette, the shared base, and only the selected recipes', () => {
+    expect(optInBuildCssProblems(optInCss, options)).toEqual([])
+    // Formatted (unminified) output passes too.
+    expect(
+      optInBuildCssProblems(
+        `${optInCss}\n:where(.ghost-themed-scope) {\n  display: contents;\n}`,
+        options,
+      ),
+    ).toEqual([])
+  })
+
+  it('reports leaked all-in CSS: unrelated recipes and the default palette', () => {
+    expect(
+      optInBuildCssProblems(
+        `${optInCss}.ghost-dialog{}[data-ghost-theme='default']{--x:2}`,
+        options,
+      ),
+    ).toEqual([
+      'unrelated `.ghost-dialog` recipe shipped; the all-in stylesheet leaked into the opt-in build',
+      'default palette tokens shipped; the opt-in build should carry only the chosen flagship',
+    ])
+  })
+
+  it('reports a missing base, selected recipe, or palette', () => {
+    expect(
+      optInBuildCssProblems(
+        '@layer ghostvue-theme{.ghost-button-group{}.ghost-input{}}',
+        options,
+      ),
+    ).toEqual([
+      'no `.ghost-themed-scope { display: contents }` rule; `@ghostvue/themes/base.css` was dropped',
+      'no `.ghost-button` recipe that the app imported',
+      'no `[data-ghost-theme=calm]` token host',
+    ])
+  })
+})
+
+describe('cssTransferSize', () => {
+  it('sums minified bytes and per-file gzip bytes', () => {
+    const sheets = ['.a{color:red}', '.b{color:blue}'.repeat(50)]
+    const size = cssTransferSize(sheets)
+    expect(size.files).toBe(2)
+    expect(size.minifiedBytes).toBe(sheets.join('').length)
+    // Repetitive CSS compresses below its minified size.
+    expect(size.gzipBytes).toBeGreaterThan(0)
+    expect(size.gzipBytes).toBeLessThan(size.minifiedBytes)
+    expect(cssTransferSize([])).toEqual({
+      files: 0,
+      minifiedBytes: 0,
+      gzipBytes: 0,
+    })
+  })
+})
+
+describe('viteOptInMountProblems', () => {
+  const optInMount: MountObservation = {
+    mounted: true,
+    input: { tag: 'INPUT', value: 'Ada', label: 'Workspace name' },
+    button: { tag: 'BUTTON', text: 'Save' },
+    dialog: passingMount.dialog,
+    errors: [],
+  }
+
+  it('accepts Field, Input, Button, and a portaled Dialog without the all-in components', () => {
+    expect(viteOptInMountProblems(optInMount)).toEqual([])
+  })
+
+  it('reports portaled dialog parts that left the palette host', () => {
+    // #386 review: with the palette on an app wrapper, the overlay and content
+    // teleport to <body> outside it and their recipe reads unset tokens.
+    expect(
+      viteOptInMountProblems({
+        ...optInMount,
+        dialog: {
+          ...optInMount.dialog,
+          portals: {
+            content: { teleported: true, theme: null, themed: true },
+            overlay: { teleported: false, theme: 'calm', themed: true },
+          },
+        },
+      }),
+    ).toEqual([
+      'teleported GhostDialog content sits under null instead of the calm palette host, so its recipe has no tokens',
+      'GhostDialog overlay was not a themed part teleported out of #app',
+    ])
+    expect(
+      viteAppMountProblems({
+        ...passingMount,
+        dialog: {
+          ...passingMount.dialog,
+          portals: { content: null, overlay: null },
+        },
+      }),
+    ).toEqual([
+      'GhostDialog content did not render',
+      'GhostDialog overlay did not render',
+    ])
+  })
+
+  it('reports a missing button and runtime errors', () => {
+    expect(
+      viteOptInMountProblems({
+        ...optInMount,
+        button: null,
+        errors: ['TypeError: boom'],
+      }),
+    ).toEqual([
+      'GhostButton from @ghostvue/themes/components did not render',
+      'runtime errors: TypeError: boom',
     ])
   })
 })

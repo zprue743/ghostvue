@@ -305,6 +305,7 @@ tokens that alias them.
 | `space.gap.md` | `--ghost-space-gap-md` | dimension | `0.75rem` | `0.75rem` | Medium gap. 12px at comfortable density. |
 | `space.gap.sm` | `--ghost-space-gap-sm` | dimension | `0.5rem` | `0.5rem` | Small gap. 8px at comfortable density. |
 | `space.gap.xs` | `--ghost-space-gap-xs` | dimension | `0.25rem` | `0.25rem` | Extra-small gap. 4px at comfortable density. |
+| `space.inset.2xs` | `--ghost-space-inset-2xs` | dimension | `0.25rem` | `0.25rem` | 4px inset for floating choice surfaces across densities. |
 | `space.inset.lg` | `--ghost-space-inset-lg` | dimension | `1.25rem` | `1.25rem` | Large inset. 20px at comfortable density. |
 | `space.inset.md` | `--ghost-space-inset-md` | dimension | `1rem` | `1rem` | Medium inset. 16px at comfortable density. |
 | `space.inset.sm` | `--ghost-space-inset-sm` | dimension | `0.75rem` | `0.75rem` | Small inset. 12px at comfortable density. |

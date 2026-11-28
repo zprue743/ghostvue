@@ -6,6 +6,7 @@ import { join } from 'node:path'
 import { pathToFileURL } from 'node:url'
 
 import { afterEach, describe, expect, it } from 'vitest'
+import { z } from 'zod'
 
 import {
   AssetBundleError,
@@ -47,10 +48,13 @@ const validBundle = JSON.stringify({
 
 describe('loadGhostvueStamp', () => {
   it('reads version, assetBundleId, and manifestSchemaId', async () => {
+    const { version } = z
+      .object({ version: z.string() })
+      .parse(JSON.parse(await readFile(packageJson, 'utf8')))
     await expect(
       loadGhostvueStamp({ assetsDirectory: fixtureAssets, packageJson }),
     ).resolves.toEqual({
-      version: '0.0.0',
+      version,
       assetBundleId: `sha256:${'0'.repeat(64)}`,
       manifestSchemaId: 'https://ghostvue.dev/schemas/v1/manifest.schema.json',
     })

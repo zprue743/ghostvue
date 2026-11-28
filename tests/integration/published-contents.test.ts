@@ -1,8 +1,15 @@
 /** @vitest-environment node */
 
+import { mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises'
+import { tmpdir } from 'node:os'
+import { join } from 'node:path'
+
 import { describe, expect, it } from 'vitest'
 
-import { packedContentProblems } from '../../scripts/lib/published-contents.js'
+import {
+  expandExportTarget,
+  packedContentProblems,
+} from '../../scripts/lib/published-contents.js'
 
 // #347: the tarball file-list gate that `pnpm published-exports` runs on the
 // `npm pack --dry-run` output of every publishable package.
@@ -92,5 +99,32 @@ describe('packedContentProblems', () => {
     ).toEqual([
       '@ghostvue/example source map dist/a.js.map points at webpack://pkg/src/a.ts, which the tarball does not include',
     ])
+  })
+})
+
+describe('expandExportTarget', () => {
+  // #386: `./recipes/*.css` is the first subpath pattern a package exports.
+  it('returns a plain target unchanged and expands a file-name pattern', async () => {
+    const root = await mkdtemp(join(tmpdir(), 'ghostvue-export-pattern-'))
+    try {
+      await mkdir(join(root, 'dist/recipes'), { recursive: true })
+      for (const file of ['button.css', 'input.css', 'notes.txt']) {
+        await writeFile(join(root, 'dist/recipes', file), '')
+      }
+
+      expect(await expandExportTarget(root, './dist/index.js')).toEqual([
+        { star: undefined, target: './dist/index.js' },
+      ])
+      expect(await expandExportTarget(root, './dist/recipes/*.css')).toEqual([
+        { star: 'button', target: './dist/recipes/button.css' },
+        { star: 'input', target: './dist/recipes/input.css' },
+      ])
+      expect(await expandExportTarget(root, './dist/missing/*.css')).toEqual([])
+      await expect(
+        expandExportTarget(root, './dist/*/index.css'),
+      ).rejects.toThrow(/one \* in the file name/)
+    } finally {
+      await rm(root, { recursive: true, force: true })
+    }
   })
 })

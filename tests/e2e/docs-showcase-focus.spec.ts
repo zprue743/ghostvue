@@ -37,7 +37,7 @@ interface Overlay {
   trigger: (preview: Locator) => Locator
   /** Key that opens it from the focused trigger. */
   key: string
-  /** The opened surface (portaled to the body for every showcase here). */
+  /** The opened surface, either within the showcase or in a body portal. */
   surface: (page: Page) => Locator
   /** How keyboard focus moves between the surface's items. */
   walk: Walk

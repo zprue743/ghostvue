@@ -63,7 +63,9 @@ manifest:
 
 - Imports in a `<script setup>` SFC from `@ghostvue/vue` or `@ghostvue/themes`,
   including aliases (`import { GhostButton as Btn }`) and namespace imports
-  (`<Ghost.GhostButton>`).
+  (`<Ghost.GhostButton>`). Imports from `@ghostvue/themes/components` (the
+  [opt-in theme CSS](../themes/default.md#opt-in-theme-css) entry) use the
+  themed contracts and are reported as `@ghostvue/themes`.
 - Tags written as the import name, in kebab case (`<ghost-button>`), or in
   PascalCase, matching how Vue's `<script setup>` compiler resolves them.
 - The package you import from decides the contract. Themed components accept

@@ -87,7 +87,8 @@
       var(--ghost-motion-easing-decelerate) both;
     box-shadow: 0 0 0 var(--ghost-focus-ring-offset)
       var(--ghost-focus-ring-contrast);
-    outline: var(--ghost-focus-ring-width) solid var(--ghost-focus-ring-color);
+    outline: var(--ghost-focus-ring-width) solid
+      var(--_ghost-input-focus-color, var(--ghost-focus-ring-color));
     outline-offset: var(--ghost-focus-ring-offset);
   }
 
@@ -110,13 +111,19 @@
   }
 
   :where(
-    .ghost-theme .ghost-input:is([aria-invalid='true'], [data-state='invalid']),
+    .ghost-theme
+      .ghost-input:is([aria-invalid='true'], [data-state='invalid']):not(
+        :disabled,
+        [data-state='disabled']
+      ),
     .ghost-themed-scope
-      .ghost-input:is([aria-invalid='true'], [data-state='invalid'])
+      .ghost-input:is([aria-invalid='true'], [data-state='invalid']):not(
+        :disabled,
+        [data-state='disabled']
+      )
   ) {
-    --_ghost-input-background: var(--ghost-status-danger-bg);
     --_ghost-input-border-color: var(--ghost-border-danger);
-    --_ghost-input-color: var(--ghost-status-danger-fg);
+    --_ghost-input-focus-color: var(--ghost-border-danger);
   }
 
   :where(

@@ -26,7 +26,9 @@ run `pnpm adapters:write` rather than hand-editing them.
 
 1. Establish the intended behavior and package boundary. Track work in
    [GitHub Issues](https://github.com/zprue743/ghostvue/issues); see
-   [issue tracking](./docs/contributing/workflow.md#issue-tracking).
+   [issue tracking](./docs/contributing/workflow.md#issue-tracking). Before
+   taking a task or creating a branch, check
+   [release routing and branching](./docs/contributing/workflow.md#release-routing-and-branching).
 2. Reuse an existing canonical pattern when one exists.
 3. Update implementation, behavior-focused tests, public documentation, and
    change metadata together.
@@ -38,6 +40,18 @@ run `pnpm adapters:write` rather than hand-editing them.
    let CI run the full browser suite.
 6. Review the final diff as if reviewing another engineer's contribution.
 7. Report exactly what changed and which checks ran.
+
+## Code Review Rules
+
+- **First review.** Review the full PR before posting. Report all substantiated
+  high-priority findings together. For each, give a concrete failing case and
+  the outcome that would close it. For specs, include the smallest acceptable
+  change to the guarantee when narrowing it would satisfy the requirements.
+- **Follow-up reviews.** Compare the current head with the last reviewed commit.
+  Verify open findings and review any behavior the fixes add or affect. Tie each
+  new blocker to an intervening change and a failing case. If a critical defect
+  was missed earlier, identify the miss and its impact. Other newly noticed
+  issues in unchanged behavior are non-blocking.
 
 ## Agent workflow
 

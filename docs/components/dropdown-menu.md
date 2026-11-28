@@ -20,6 +20,9 @@ list is empty) because the trigger that opened the menu has gone. The panel
 opens at `bottom-end` under the trigger; `flip` and `shift` keep it inside the
 viewport when a row sits near the bottom or the inline edge. Below about 22rem
 the status badge moves under the title so the trigger stays on the row.
+The menu surface is fully opaque from the first frame so **Archive** keeps its
+contrast while the panel opens. It scales into place with normal motion and
+opens immediately when reduced motion is requested.
 
 ## Basic use
 

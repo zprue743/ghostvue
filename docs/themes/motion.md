@@ -76,6 +76,14 @@ Under `prefers-reduced-motion: reduce`, translate becomes `0px` and scale
 becomes `1`, so the same rule fades without moving. Fade duration stays 80ms
 so the state change is still visible.
 
+## Overlay entry
+
+The default theme fades in Dialog, Popover, HoverCard, Select, Combobox,
+DropdownMenu, ContextMenu, Menubar, and CommandPalette surfaces. With motion
+enabled, they also scale from 98% over the fast duration (120ms by default).
+Dialog slides 4px instead so controls such as date cells keep their full size.
+Reduced motion keeps an opacity-only fade. These transitions run only on entry.
+
 ## Intensity
 
 ```css

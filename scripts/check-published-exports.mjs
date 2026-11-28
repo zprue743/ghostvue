@@ -5,7 +5,10 @@ import { fileURLToPath } from 'node:url'
 
 import { checkBuiltCollections } from './lib/component-manifest-collections.js'
 import { execPackageManagerSync } from './lib/package-manager.js'
-import { packedContentProblems } from './lib/published-contents.js'
+import {
+  expandExportTarget,
+  packedContentProblems,
+} from './lib/published-contents.js'
 import { publishableWorkspacePackages } from './workspace-packages.mjs'
 
 // Run after `pnpm build`; Vite empties dist before writing the Vue bundle.
@@ -42,6 +45,24 @@ function collectRelativeTargets(value, acc = []) {
   return acc
 }
 
+/**
+ * @param {string} name
+ * @param {string} packageDirectory
+ * @param {string} target
+ */
+async function checkPublishedFile(name, packageDirectory, target) {
+  const publishedFile = resolve(packageDirectory, target)
+
+  try {
+    const file = await stat(publishedFile)
+    if (!file.isFile()) {
+      violations.push(`${name} published target is not a file: ${target}`)
+    }
+  } catch {
+    violations.push(`${name} missing published file: ${target}`)
+  }
+}
+
 for (const directory of packageDirectories) {
   if (!directory.isDirectory()) continue
 
@@ -69,18 +90,17 @@ for (const directory of packageDirectories) {
     violations.push(`${packageJson.name} has no .d.ts types/exports target`)
   }
 
-  for (const target of targets) {
-    const publishedFile = resolve(packageDirectory, target)
-
-    try {
-      const file = await stat(publishedFile)
-      if (!file.isFile()) {
-        violations.push(
-          `${packageJson.name} published target is not a file: ${target}`,
-        )
-      }
-    } catch {
-      violations.push(`${packageJson.name} missing published file: ${target}`)
+  for (const declared of targets) {
+    // A subpath pattern must match at least one built file; each match is
+    // then checked like a plain target.
+    const expanded = await expandExportTarget(packageDirectory, declared)
+    if (expanded.length === 0) {
+      violations.push(
+        `${packageJson.name} exports pattern matches no published file: ${declared}`,
+      )
+    }
+    for (const { target } of expanded) {
+      await checkPublishedFile(packageJson.name, packageDirectory, target)
     }
   }
 

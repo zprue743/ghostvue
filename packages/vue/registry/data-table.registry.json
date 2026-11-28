@@ -17,9 +17,21 @@
     "export {\n  useGhostDataTable,\n  useGhostDataTableServerRequest,\n} from './use-ghost-data-table'",
     "export { defineDataTableColumns } from './define-data-table-columns'",
     "export type {\n  DataTableAccessorFnColumn,\n  DataTableAccessorFnColumnDef,\n  DataTableAccessorKeyColumn,\n  DataTableAccessorKeyColumnDef,\n  DataTableColumnHelper,\n  DataTableTypedCellContext,\n} from './define-data-table-columns'",
-    "export type {\n  DataTableCellContext,\n  DataTableColumnDef,\n  DataTableColumnFilter,\n  DataTableColumnSort,\n  DataTableControlLabelOptions,\n  DataTableDetailRowProps,\n  DataTableExpandButtonOptions,\n  DataTableExpandButtonProps,\n  DataTableGetRowId,\n  DataTableHeader,\n  DataTableHeaderCellProps,\n  DataTableHeaderSelectionState,\n  DataTableInteractionState,\n  DataTablePaginationState,\n  DataTableQueryState,\n  DataTableRow,\n  DataTableRowId,\n  DataTableRowProps,\n  DataTableSelectionCheckboxProps,\n  DataTableSlotRow,\n  DataTableSortButtonProps,\n  DataTableSortDirection,\n  DataTableStateChangePayload,\n  DataTableTableRootProps,\n  GhostDataTableExposed,\n  GhostDataTableProps,\n  GhostDataTableSlotProps,\n  UseGhostDataTableBaseOptions,\n  UseGhostDataTableLocalPaginationOptions,\n  UseGhostDataTableManualPaginationOptions,\n  UseGhostDataTableOptions,\n  UseGhostDataTableReturn,\n  UseGhostDataTableServerRequestReturn,\n} from './ghost-data-table'",
+    "export type {\n  DataTableCellContext,\n  DataTableColumnDef,\n  DataTableColumnFilter,\n  DataTableColumnSort,\n  DataTableControlLabelOptions,\n  DataTableDetailRowProps,\n  DataTableExpandButtonOptions,\n  DataTableExpandButtonProps,\n  DataTableGetRowId,\n  DataTableHeader,\n  DataTableHeaderCellProps,\n  DataTableHeaderSelectionState,\n  DataTableInteractionState,\n  DataTablePaginationState,\n  DataTableQueryState,\n  DataTableRow,\n  DataTableRowId,\n  DataTableRowProps,\n  DataTableSelectionCheckboxProps,\n  DataTableSlotRow,\n  DataTableSortButtonProps,\n  DataTableSortDirection,\n  DataTableStateChangePayload,\n  DataTableTableRootProps,\n  GhostDataTableEmits,\n  GhostDataTableExposed,\n  GhostDataTableProps,\n  GhostDataTableSlotProps,\n  UseGhostDataTableBaseOptions,\n  UseGhostDataTableLocalPaginationOptions,\n  UseGhostDataTableManualPaginationOptions,\n  UseGhostDataTableOptions,\n  UseGhostDataTableReturn,\n  UseGhostDataTableServerRequestReturn,\n} from './ghost-data-table'",
     "export type {\n  DataTableColumnRow,\n  DataTableColumnValue,\n  DataTableTableColumnRef,\n  GhostDataTableTableCellSlotProps,\n  GhostDataTableTableProps,\n  GhostDataTableTableSlots,\n} from './ghost-data-table-table'",
-    "export type {\n  GhostDataTablePresetDetailSlotProps,\n  GhostDataTablePresetProps,\n  GhostDataTablePresetSearchSlotProps,\n  GhostDataTablePresetSlots,\n} from './ghost-data-table-preset'"
+    "export type {\n  GhostDataTablePresetBulkActionsSlotProps,\n  GhostDataTablePresetDetailSlotProps,\n  GhostDataTablePresetFooterSlotProps,\n  GhostDataTablePresetLayoutSlotName,\n  GhostDataTablePresetProps,\n  GhostDataTablePresetSearchSlotProps,\n  GhostDataTablePresetSlots,\n} from './ghost-data-table-preset'"
+  ],
+  "themesBarrel": [
+    "export {\n  GhostDataTable,\n  type GhostDataTableSize,\n  type GhostDataTableThemedExposed,\n  type GhostDataTableThemedProps,\n  type GhostDataTableVariant,\n} from './ghost-data-table'",
+    "export { GhostDataTablePreset } from './ghost-data-table-preset'",
+    "export { GhostDataTableTable } from './ghost-data-table-table'",
+    "export {\n  getDataTableHeaderCellProps,\n  getDataTableHeaderSelectionCheckboxProps,\n  getDataTableRowExpandButtonProps,\n  getDataTableRowSelectionCheckboxProps,\n  getDataTableSortButtonProps,\n} from '@ghostvue/vue'",
+    "export {\n  useGhostDataTable,\n  useGhostDataTableServerRequest,\n} from '@ghostvue/vue'",
+    "export { defineDataTableColumns } from '@ghostvue/vue'",
+    "export type {\n  DataTableAccessorFnColumn,\n  DataTableAccessorFnColumnDef,\n  DataTableAccessorKeyColumn,\n  DataTableAccessorKeyColumnDef,\n  DataTableColumnHelper,\n  DataTableTypedCellContext,\n} from '@ghostvue/vue'",
+    "export type {\n  DataTableCellContext,\n  DataTableColumnDef,\n  DataTableColumnFilter,\n  DataTableColumnSort,\n  DataTableControlLabelOptions,\n  DataTableDetailRowProps,\n  DataTableExpandButtonOptions,\n  DataTableExpandButtonProps,\n  DataTableGetRowId,\n  DataTableHeader,\n  DataTableHeaderCellProps,\n  DataTableHeaderSelectionState,\n  DataTableInteractionState,\n  DataTablePaginationState,\n  DataTableQueryState,\n  DataTableRow,\n  DataTableRowId,\n  DataTableRowProps,\n  DataTableSelectionCheckboxProps,\n  DataTableSlotRow,\n  DataTableSortButtonProps,\n  DataTableSortDirection,\n  DataTableStateChangePayload,\n  DataTableTableRootProps,\n  GhostDataTableEmits,\n  GhostDataTableExposed,\n  GhostDataTableProps,\n  GhostDataTableSlotProps,\n  UseGhostDataTableBaseOptions,\n  UseGhostDataTableLocalPaginationOptions,\n  UseGhostDataTableManualPaginationOptions,\n  UseGhostDataTableOptions,\n  UseGhostDataTableReturn,\n  UseGhostDataTableServerRequestReturn,\n} from '@ghostvue/vue'",
+    "export type {\n  DataTableColumnRow,\n  DataTableColumnValue,\n  DataTableTableColumnRef,\n  GhostDataTableTableCellSlotProps,\n  GhostDataTableTableProps,\n  GhostDataTableTableSlots,\n} from '@ghostvue/vue'",
+    "export type {\n  GhostDataTablePresetBulkActionsSlotProps,\n  GhostDataTablePresetDetailSlotProps,\n  GhostDataTablePresetFooterSlotProps,\n  GhostDataTablePresetLayoutSlotName,\n  GhostDataTablePresetProps,\n  GhostDataTablePresetSearchSlotProps,\n  GhostDataTablePresetSlots,\n} from '@ghostvue/vue'"
   ],
   "examples": [
     {
@@ -45,6 +57,12 @@
       "title": "Preset",
       "description": "GhostDataTablePreset renders search, sort buttons, row selection, expandable detail rows, and an empty state from typed columns, with a custom currency cell and a co-located GhostPagination.",
       "layer": "headless"
+    },
+    {
+      "id": "data-table/themed-invoices",
+      "title": "Themed invoices",
+      "description": "A card preset with searchable invoices, contextual selection actions, detail rows, and a pagination footer.",
+      "layer": "themed"
     },
     {
       "id": "data-table/server-invoices-router",

@@ -59,6 +59,11 @@
     "requiredAriaAttributes": []
   },
   "examples": [
+    "date-picker/controlled",
+    "date-picker/validation",
+    "date-picker/custom-format",
+    "date-picker/rtl",
+    "date-picker/nested-dialog",
     "date-picker/themed"
   ]
 }

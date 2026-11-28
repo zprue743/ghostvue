@@ -7,6 +7,19 @@
  */
 export const toolAdapters = [
   {
+    path: '.claude/skills/ghostvue-pick-up-issue/SKILL.md',
+    canonicalTargets: ['.agents/skills/ghostvue-pick-up-issue/SKILL.md'],
+    content: [
+      '---',
+      'name: ghostvue-pick-up-issue',
+      'description: Recommend an eligible GhostVue issue, explain blockers, or start a named issue under the current release policy.',
+      '---',
+      '',
+      'Read and follow the [shared issue pickup workflow](../../../.agents/skills/ghostvue-pick-up-issue/SKILL.md).',
+      '',
+    ].join('\n'),
+  },
+  {
     path: 'CLAUDE.md',
     canonicalTargets: ['AGENTS.md'],
     content: [
@@ -126,7 +139,8 @@ export const toolAdapters = [
       'Follow `docs/contributing/workflow.md`. Make reviewable logical commits, add a',
       'Changeset for publishable consumer-facing changes, never weaken checks for green',
       'output, review the diff, and report exact validation. Do not push or publish',
-      'without explicit authorization.',
+      'without explicit authorization. Follow the agent readiness and claim rules there',
+      'before starting automated issue work.',
       '',
     ].join('\n'),
   },

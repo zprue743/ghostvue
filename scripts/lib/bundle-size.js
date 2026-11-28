@@ -6,6 +6,8 @@ import { gzipSync } from 'node:zlib'
 
 import { build } from 'vite'
 
+import { expandExportTarget } from './published-contents.js'
+
 /**
  * Packages whose built entries and component imports carry size budgets. Core
  * and shared are measured as package entries but expose no components.
@@ -87,17 +89,29 @@ export async function readPackageEntries(repositoryRoot, pkg) {
   /** @type {{ specifier: string, file: string, kind: 'js' | 'css' }[]} */
   const entries = []
   for (const [subpath, target] of Object.entries(exportsMap)) {
-    const relativeFile = pickImportTarget(target)
-    if (!relativeFile) continue
-    const kind = relativeFile.endsWith('.css')
+    const declaredFile = pickImportTarget(target)
+    if (!declaredFile) continue
+    const kind = declaredFile.endsWith('.css')
       ? 'css'
-      : /\.[cm]?js$/.test(relativeFile)
+      : /\.[cm]?js$/.test(declaredFile)
         ? 'js'
         : undefined
     if (!kind) continue
-    const specifier =
-      subpath === '.' ? pkg.name : `${pkg.name}/${subpath.replace(/^\.\//, '')}`
-    entries.push({ specifier, file: resolve(packageDir, relativeFile), kind })
+    // A subpath pattern (`./recipes/*.css`) gets one fixture per built file,
+    // so every importable recipe carries its own budget. A pattern with no
+    // built match stays as one entry so the caller reports a missing build.
+    const expanded = await expandExportTarget(packageDir, declaredFile)
+    for (const { star, target: relativeFile } of expanded.length > 0
+      ? expanded
+      : [{ star: undefined, target: declaredFile }]) {
+      const concreteSubpath =
+        star === undefined ? subpath : subpath.replaceAll('*', star)
+      const specifier =
+        concreteSubpath === '.'
+          ? pkg.name
+          : `${pkg.name}/${concreteSubpath.replace(/^\.\//, '')}`
+      entries.push({ specifier, file: resolve(packageDir, relativeFile), kind })
+    }
   }
   return entries
 }

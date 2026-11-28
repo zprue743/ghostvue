@@ -23,6 +23,9 @@ const columns = [
   helper.accessorKey('customer', { header: 'Customer' }),
   helper.accessorKey('amount', { header: 'Amount' }),
 ]
+const footerColumn = [
+  helper.accessorKey('amount', { id: 'footer', header: 'Total' }),
+]
 
 const data = ref<Invoice[]>([{ id: 'inv-1', customer: 'ACME', amount: 1 }])
 
@@ -68,5 +71,19 @@ function selectLabel(rowId: DataTableRowId): string {
 
     <!-- @vue-expect-error emptyTitle is a string. -->
     <GhostDataTablePreset :empty-title="1" />
+    <GhostDataTablePreset :columns="footerColumn">
+      <template #footer="{ value }">
+        {{ value.toFixed(2) }}
+        <!-- @vue-expect-error Legacy footer cell is numeric. -->
+        {{ value.toUpperCase() }}
+      </template>
+    </GhostDataTablePreset>
+    <GhostDataTablePreset :columns="footerColumn" :layout-slots="['footer']">
+      <template #footer="footer">
+        {{ footer.pageCount }}
+        <!-- @vue-expect-error Opted-in footer has pagination props. -->
+        {{ footer.value }}
+      </template>
+    </GhostDataTablePreset>
   </GhostDataTable>
 </template>

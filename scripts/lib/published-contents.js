@@ -4,7 +4,8 @@
  * reports, so `files`, `.npmignore`, and npm's always-included files are
  * applied exactly as they would be on publish.
  */
-import { posix } from 'node:path'
+import { readdir } from 'node:fs/promises'
+import { posix, resolve } from 'node:path'
 
 /**
  * Compiled tests import dev-only tools (`vitest`, `@vue/test-utils`) that a
@@ -99,4 +100,48 @@ function missingMapSources(mapPath, text, present) {
     if (!present.has(resolved)) missing.push(resolved)
   })
   return missing
+}
+
+/**
+ * Concrete files behind one `exports` target. A plain target is returned
+ * as-is; a subpath pattern (`./dist/recipes/*.css`, #386) is expanded against
+ * the built package so checks that need real files (existence, size budgets)
+ * see every file a consumer can import. Patterns may use one `*`, in the
+ * final path segment only: that is all the packages publish, and deeper
+ * patterns would make an accidental `dist/` subtree importable.
+ *
+ * @param {string} packageDirectory Absolute package root.
+ * @param {string} target Package-relative target from the `exports` map.
+ * @returns {Promise<{ star: string | undefined, target: string }[]>} `star` is
+ *   the text matched by `*` (undefined for a plain target). An unreadable
+ *   directory or a pattern that matches nothing yields an empty list.
+ */
+export async function expandExportTarget(packageDirectory, target) {
+  if (!target.includes('*')) return [{ star: undefined, target }]
+  const directory = posix.dirname(target)
+  const pattern = posix.basename(target)
+  if (directory.includes('*') || pattern.split('*').length !== 2) {
+    throw new Error(
+      `Unsupported exports pattern ${target}: use one * in the file name`,
+    )
+  }
+  const [prefix = '', suffix = ''] = pattern.split('*')
+  let files
+  try {
+    files = await readdir(resolve(packageDirectory, directory))
+  } catch {
+    return []
+  }
+  return files
+    .filter(
+      (file) =>
+        file.length > prefix.length + suffix.length &&
+        file.startsWith(prefix) &&
+        file.endsWith(suffix),
+    )
+    .sort()
+    .map((file) => ({
+      star: file.slice(prefix.length, file.length - suffix.length),
+      target: `${directory}/${file}`,
+    }))
 }

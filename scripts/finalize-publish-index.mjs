@@ -45,5 +45,38 @@ await renamePublishArtifact(
   join(dist, `${publishStem}.js`),
   join(dist, 'index.js'),
 )
+
+// `@ghostvue/themes/components` (#386): the same named exports as the main
+// entry without its `import './default.css'`, so apps can pair one palette with
+// only the recipe stylesheets they need. Deriving it from the built entry keeps
+// the two export lists identical by construction instead of maintaining a
+// second generated barrel.
+const allInCssImport = /^import '\.\/default\.css';\r?\n/m
+const componentsHeader =
+  '/** Themed wrappers without CSS. Pair with `@ghostvue/themes/base.css`, one palette, and `@ghostvue/themes/recipes/*.css`. */\n'
+const indexJs = await readFile(join(dist, 'index.js'), 'utf8')
+if (!allInCssImport.test(indexJs)) {
+  throw new Error(
+    "dist/index.js no longer imports './default.css'; update the components entry derivation",
+  )
+}
+const components = indexJs.replace(allInCssImport, '')
+if (/\.css['"]/.test(components)) {
+  throw new Error('dist/components.js would still import CSS')
+}
+const leadingDocComment = /^\/\*\*.*\*\/\r?\n/
+await writeFile(
+  join(dist, 'components.js'),
+  componentsHeader + components.replace(leadingDocComment, ''),
+)
+// Declarations carry no CSS; finalize-declarations adds `.js` specifiers later.
+await writeFile(
+  join(dist, 'components.d.ts'),
+  componentsHeader +
+    (await readFile(indexTypes, 'utf8'))
+      .replace(leadingDocComment, '')
+      .replace(/^import ['"][^'"]+\.css['"];?\r?\n/gm, ''),
+)
+
 await rm(join(dist, '.registries'), { recursive: true, force: true })
 await rm(stagedPublishDir, { recursive: true, force: true })

@@ -6,7 +6,10 @@ cleanup. Every future public feature should include:
 - an API reference with types and defaults;
 - a minimal ordinary-use example and focused advanced examples, each an
   executable SFC under `examples/` rendered live on the docs page
-  ([convention](../contributing/examples.md));
+  ([convention](../contributing/examples.md)). On pages for components with a
+  shipped theme recipe, the first preview and ordinary workflows are themed
+  and headless composition sits in a signposted advanced section; see
+  [choose a guide's examples](../contributing/examples.md#choose-a-guide-s-examples);
 - accessibility and keyboard guidance where relevant;
 - loading, empty, disabled, error, async, and edge-case behavior;
 - SSR, performance, or data-shape constraints when applicable; and

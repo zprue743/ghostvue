@@ -8,7 +8,7 @@ import { startStaticServer } from './static-server'
  * checks cover what a screenshot cannot prove on its own: the panel's name and
  * focus entry, keyboard operation of every setting with real focus, live
  * outcomes in the summary, each dismissal path and where focus lands, panel
- * placement near viewport edges (LTR and RTL), the themed body-portal surface
+ * placement near viewport edges (LTR and RTL), the themed inline surface
  * in light and dark, stable hover and focus geometry, and no docs prose styles
  * in example text.
  */
@@ -182,11 +182,61 @@ test.describe('docs Popover sharing settings showcase', () => {
     }
   })
 
-  test('dismisses by trigger and outside clicks', async ({ page }) => {
+  test('tabs through the inline panel in page order without trapping focus @cross-browser', async ({
+    page,
+  }) => {
     const docs = await startStaticServer('apps/docs/.vitepress/dist')
     try {
       const frame = await openPage(page, docs.url)
+      const { trigger, panel, access, toggle, done } = partsOf(page, frame)
+      const restricted = access('Restricted')
+      const nextPageLink = page.getByRole('link', {
+        name: 'Permalink to "Basic use"',
+      })
+      const nextExampleCode = page.getByRole('button', {
+        name: 'Basic source code',
+        exact: true,
+      })
+
+      await trigger.focus()
+      await openPanel(trigger, panel, (target) => target.press('Enter'))
+      await expect(restricted).toBeFocused()
+      await page.keyboard.press('Shift+Tab')
+      await expect(trigger).toBeFocused()
+      await page.keyboard.press('Tab')
+      await expect(restricted).toBeFocused()
+      await page.keyboard.press('Tab')
+      await expect(toggle('Editors can invite others')).toBeFocused()
+      await page.keyboard.press('Tab')
+      await expect(toggle('Viewers can download')).toBeFocused()
+      await page.keyboard.press('Tab')
+      await expect(done).toBeFocused()
+      await page.keyboard.press('Tab')
+      // Some browser preferences skip links in the Tab order.
+      await expect(
+        nextPageLink.or(nextExampleCode).and(page.locator(':focus')),
+      ).toBeFocused()
+      await expect(trigger).toHaveAttribute('aria-expanded', 'true')
+      await page.keyboard.press('Shift+Tab')
+      await expect(done).toBeFocused()
+      await page.keyboard.press('Escape')
+      await expect(panel).toHaveCount(0)
+      await expect(trigger).toBeFocused()
+    } finally {
+      await docs.close()
+    }
+  })
+
+  test('dismisses by trigger and outside clicks', async ({ page }) => {
+    const docs = await startStaticServer('apps/docs/.vitepress/dist')
+    try {
+      await page.setViewportSize({ width: 1280, height: 1200 })
+      const frame = await openPage(page, docs.url)
       const { trigger, panel, preview } = partsOf(page, frame)
+      // Leave room below Share so the panel opens clear of both click targets.
+      await trigger.evaluate((element) => {
+        window.scrollBy(0, element.getBoundingClientRect().top - 430)
+      })
 
       // The open trigger toggles closed cleanly instead of reopening.
       await openPanel(trigger, panel)
@@ -273,26 +323,26 @@ test.describe('docs Popover sharing settings showcase', () => {
       })
       await openPanel(trigger, panel)
       await expect(panel).toHaveAttribute('data-placement', 'bottom-end')
-      const triggerBox = await trigger.boundingBox()
-      const panelBox = await panel.boundingBox()
-      if (!triggerBox || !panelBox) throw new Error('unmeasured panel')
-      expect(panelBox.y).toBeGreaterThanOrEqual(
-        triggerBox.y + triggerBox.height,
-      )
-      // bottom-end aligns the panel's inline end with the trigger's.
-      expect(
-        Math.abs(
-          panelBox.x + panelBox.width - (triggerBox.x + triggerBox.width),
-        ),
-      ).toBeLessThanOrEqual(1)
+      // Opening motion scales the panel briefly. Measure the settled edges.
+      await expect
+        .poll(async () => {
+          const triggerBox = await trigger.boundingBox()
+          const panelBox = await panel.boundingBox()
+          if (!triggerBox || !panelBox) throw new Error('unmeasured panel')
+          const endDelta =
+            panelBox.x + panelBox.width - (triggerBox.x + triggerBox.width)
+          return {
+            below: panelBox.y >= triggerBox.y + triggerBox.height,
+            aligned: Math.abs(endDelta) <= 1,
+          }
+        })
+        .toEqual({ below: true, aligned: true })
     } finally {
       await docs.close()
     }
   })
 
-  test('the body-portaled panel follows light and dark tokens', async ({
-    page,
-  }) => {
+  test('the inline panel follows light and dark tokens', async ({ page }) => {
     const docs = await startStaticServer('apps/docs/.vitepress/dist')
     try {
       const surfaces: Record<string, { bg: string; fg: string }> = {}
@@ -300,13 +350,9 @@ test.describe('docs Popover sharing settings showcase', () => {
         const frame = await openPage(page, docs.url, mode)
         const { trigger, panel } = partsOf(page, frame)
         await openPanel(trigger, panel)
-        expect(
-          await panel.evaluate(
-            (element) =>
-              element.parentElement === document.body &&
-              element.closest('.ghost-example, .vp-doc') === null,
-          ),
-        ).toBe(true)
+        await expect(
+          frame.getByRole('dialog', { name: 'Share “Q3 launch plan”' }),
+        ).toBeVisible()
         surfaces[mode] = await panel.evaluate((element) => {
           const computed = getComputedStyle(element)
           return { bg: computed.backgroundColor, fg: computed.color }

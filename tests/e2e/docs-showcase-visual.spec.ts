@@ -12,12 +12,12 @@ import { startStaticServer } from './static-server'
  * page's first example, captured in the built VitePress site rather than the
  * playground route. `examples-visual.spec.ts` already proves each example on
  * its own canvas; this suite proves the docs composition around it (DemoPreview
- * frame, toolbar, `.vp-doc` isolation, docs token host, body-portaled panels)
+ * frame, toolbar, `.vp-doc` isolation, docs token host, overlay panels)
  * at real browser widths.
  *
  * The matrix is deliberately proportionate:
  * - every hero, source closed, at 390px and 1280px in light and dark (40);
- * - each overlay hero open, trigger plus body-portaled panel, at the same two
+ * - each overlay hero open, trigger plus panel, at the same two
  *   widths in light and dark (20);
  * - representative source-open captures at 320px and 768px (4);
  * - one preview-width (container) resize at a desktop browser width (2), kept
@@ -207,7 +207,7 @@ test.describe('docs hero showcase visual baselines', { tag: '@visual' }, () => {
   }
 
   for (const { slug, id, trigger, panel, key } of overlays) {
-    test(`${id} open with its body-portaled panel at 390 and 1280px in light and dark`, async ({
+    test(`${id} open with its panel at 390 and 1280px in light and dark`, async ({
       page,
     }) => {
       const docs = await startStaticServer('apps/docs/.vitepress/dist')
@@ -228,12 +228,13 @@ test.describe('docs hero showcase visual baselines', { tag: '@visual' }, () => {
               if (!(await popup.isVisible())) await control.press(key)
               await expect(popup).toBeVisible({ timeout: 500 })
             }).toPass()
-            // The panel is portaled to <body>, outside the docs content tree.
+            // Share keeps its panel in page order. The other overlays portal
+            // outside the docs content tree.
             expect(
               await popup.evaluate(
-                (element) => element.closest('.vp-doc') === null,
+                (element) => element.closest('.vp-doc') !== null,
               ),
-            ).toBe(true)
+            ).toBe(slug === 'popover')
             await expectNoPageOverflow(page)
             await expect(page).toHaveScreenshot(
               `${slug}-hero-open-${String(width)}-${mode}.png`,

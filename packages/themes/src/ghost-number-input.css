@@ -140,7 +140,8 @@
   ) {
     box-shadow: 0 0 0 var(--ghost-focus-ring-offset)
       var(--ghost-focus-ring-contrast);
-    outline: var(--ghost-focus-ring-width) solid var(--ghost-focus-ring-color);
+    outline: var(--ghost-focus-ring-width) solid
+      var(--_ghost-number-input-focus-color, var(--ghost-focus-ring-color));
     outline-offset: var(--ghost-focus-ring-offset);
   }
 
@@ -150,9 +151,16 @@
       > .ghost-number-input__input,
     .ghost-themed-scope
       .ghost-number-input[data-state='invalid']
-      > .ghost-number-input__input
+      > .ghost-number-input__input,
+    .ghost-theme
+      .ghost-number-input
+      > .ghost-number-input__input[aria-invalid='true'],
+    .ghost-themed-scope
+      .ghost-number-input
+      > .ghost-number-input__input[aria-invalid='true']
   ) {
-    border-color: var(--ghost-border-danger);
+    --_ghost-number-input-border-color: var(--ghost-border-danger);
+    --_ghost-number-input-focus-color: var(--ghost-border-danger);
   }
 
   /*

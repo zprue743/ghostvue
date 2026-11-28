@@ -61,6 +61,7 @@
   },
   "examples": [
     "select/billing-preferences",
+    "select/alert-routing-form",
     "select/themed"
   ]
 }

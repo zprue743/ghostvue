@@ -89,6 +89,70 @@ test.describe('docs Dropdown Menu record actions showcase', () => {
     }
   })
 
+  for (const reducedMotion of ['no-preference', 'reduce'] as const) {
+    test(`keeps dark Archive readable throughout opening (${reducedMotion})`, async ({
+      page,
+    }) => {
+      const docs = await startStaticServer('apps/docs/.vitepress/dist')
+      try {
+        await page.emulateMedia({ reducedMotion })
+        const frame = await openPage(page, docs.url, 'dark')
+        const { trigger, menu, item } = partsOf(page, frame)
+        await page.evaluate(() => {
+          // Hold the entrance before it can finish between Playwright calls.
+          document.addEventListener('transitionrun', (event) => {
+            const target = event.target
+            if (
+              !(target instanceof Element) ||
+              !target.matches('[role="menu"]')
+            )
+              return
+            for (const animation of target.getAnimations()) animation.pause()
+          })
+        })
+
+        const spring = trigger('Spring launch brief')
+        await spring.focus()
+        await openMenu(spring, menu, (target) => target.press('Enter'))
+        await expect(item('Archive')).toBeVisible()
+        const openingProgress = reducedMotion === 'reduce' ? [1] : [0, 0.5, 1]
+        await expect
+          .poll(() =>
+            menu.evaluate((element) =>
+              element
+                .getAnimations()
+                .map((animation) =>
+                  animation instanceof CSSTransition
+                    ? animation.transitionProperty
+                    : animation.constructor.name,
+                ),
+            ),
+          )
+          .toEqual(reducedMotion === 'reduce' ? [] : ['scale'])
+
+        for (const progress of openingProgress) {
+          await menu.evaluate((element, fraction) => {
+            for (const animation of element.getAnimations()) {
+              animation.pause()
+              const duration =
+                animation.effect?.getComputedTiming().activeDuration
+              if (typeof duration === 'number')
+                animation.currentTime = duration * fraction
+            }
+          }, progress)
+          await expect(menu).toHaveCSS('opacity', '1')
+          const result = await new AxeBuilder({ page })
+            .include('[role="menu"]')
+            .withRules(['color-contrast'])
+            .analyze()
+          expect(result.violations).toEqual([])
+        }
+      } finally {
+        await docs.close()
+      }
+    })
+  }
+
   test('supports every documented key with real focus and ARIA state', async ({
     page,
   }) => {
@@ -330,6 +394,11 @@ test.describe('docs Dropdown Menu record actions showcase', () => {
       // Moving between items by pointer and keyboard never moves them, and the
       // focus ring stays inside the panel.
       await openMenu(spring, menu)
+      await menu.evaluate(async (element) => {
+        await Promise.all(
+          element.getAnimations().map((animation) => animation.finished),
+        )
+      })
       const archive = item('Archive')
       const before = await archive.boundingBox()
       await archive.hover()

@@ -1,7 +1,11 @@
 import type { InjectionKey } from 'vue'
 
 import type { DataTableTypedCellContext } from './define-data-table-columns'
-import type { GhostDataTableSlotProps } from './ghost-data-table'
+import type {
+  DataTableRowId,
+  GhostDataTableSlotProps,
+} from './ghost-data-table'
+import type { GhostTableProps } from './ghost-table'
 
 /*
  * GhostDataTableTable default renderer (GHO-241; spec "Default rendering
@@ -69,7 +73,7 @@ export type GhostDataTableTableSlots<
 /** Props for {@link GhostDataTableTable}. */
 export interface GhostDataTableTableProps<
   TColumns extends readonly DataTableTableColumnRef[],
-> {
+> extends GhostTableProps {
   /**
    * Columns to render, in order, matched to the parent `GhostDataTable`
    * columns by `id` (ids the parent does not have are skipped). Defaults to
@@ -99,6 +103,10 @@ export interface GhostDataTableContext {
   setGlobalFilter: (globalFilter: unknown) => void
   /** Resolved `enableRowSelection`. */
   rowSelectionEnabled: () => boolean
+  /** Authoritative selection, including off-page rows in manual pagination. */
+  selectedRowIds: () => readonly DataTableRowId[]
+  /** Clears the root selection. Callers that expose a UI action check disabled state. */
+  resetRowSelection: () => void
   /** Resolved `enableRowExpansion`. */
   rowExpansionEnabled: () => boolean
   /** Resolved `disabled`. */

@@ -4445,6 +4445,17 @@ export const tokens = {
       dark: "0.25rem",
     },
   },
+  "space.inset.2xs": {
+    name: "space.inset.2xs",
+    cssVar: "--ghost-space-inset-2xs",
+    type: "dimension",
+    tier: "semantic",
+    description: "4px inset for floating choice surfaces across densities.",
+    value: {
+      light: "0.25rem",
+      dark: "0.25rem",
+    },
+  },
   "space.inset.lg": {
     name: "space.inset.lg",
     cssVar: "--ghost-space-inset-lg",

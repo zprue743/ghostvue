@@ -44,8 +44,8 @@ describe('GhostScrollArea', () => {
     expect(root.attributes('data-orientation')).toBe('vertical')
     expect(root.attributes('data-type')).toBe('auto')
     expect(root.attributes('data-overflow')).toBe('none')
-    expect(root.attributes('style')).toContain('overflow-y: auto')
-    expect(root.attributes('style')).toContain('overflow-x: hidden')
+    expect(root.element.style.overflowY).toBe('auto')
+    expect(root.element.style.overflowX).toBe('hidden')
     expect(root.attributes('tabindex')).toBeUndefined()
   })
 
@@ -56,9 +56,8 @@ describe('GhostScrollArea', () => {
 
     const root = wrapper.get('div')
     expect(root.attributes('data-type')).toBe('scroll')
-    const style = root.attributes('style') ?? ''
-    expect(style).toContain('overflow-y: scroll')
-    expect(style).toContain('overflow-x: scroll')
+    expect(root.element.style.overflowY).toBe('scroll')
+    expect(root.element.style.overflowX).toBe('scroll')
   })
 
   it('adds region semantics when overflowing without tab stops and label is provided', async () => {

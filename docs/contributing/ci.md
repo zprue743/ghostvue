@@ -29,8 +29,12 @@ against upstream.
 
 Container images are pinned by exact tag. The Playwright image tag must match
 `@playwright/test` in `package.json`; it also provides the browsers (Chromium,
-Firefox, and WebKit with their system libraries), so CI never runs
-`playwright install`. The `browser-shard` matrix (3 Chromium shards) runs the
+Firefox, and WebKit with their system libraries). On Playwright 1.65.1,
+`browser-cross` installs Firefox revision 1575 for the
+[upstream accessibility fix](https://github.com/microsoft/playwright/pull/43982).
+The version-specific pnpm patch selects the same browser for local
+`pnpm exec playwright install firefox`. Remove the patch and CI install step
+when the pinned image includes the fix. The `browser-shard` matrix (3 Chromium shards) runs the
 Chromium projects and the consolidated `browser-cross` job runs both
 `firefox-e2e` and `webkit-e2e` from the same image; see the
 [cross-browser matrix](../standards/testing.md#cross-browser-functional-matrix).
@@ -55,7 +59,7 @@ needs the review described in the [dependency policy](../standards/dependencies.
 ## Node versions
 
 `engines.node` is `>=22`. The `verify-static`, `verify-unit` (with coverage),
-`verify-integration`, `verify-build`, `nuxt-fixture`, `browser-shard`, and
+`verify-integration`, `verify-build`, `build-browser-hosts`, `nuxt-fixture`, `browser-shard`, and
 `browser-cross` jobs run on Node 22. Node 24 compatibility is exercised without
 duplicate coverage instrumentation by `verify-unit-node24` on pushes to `master`,
 merge groups, weekly scheduled runs, and pull requests that change Node/tooling
@@ -82,10 +86,17 @@ The `changes` job classifies pull request diffs via
   scaffolding changes and the weekly `CI` schedule) runs full nested
   `pnpm verify`.
 - `verify-static` caches `.prettiercache` (`static-prettier-cache`) and
-  `verify-build` caches `apps/docs/.vitepress/cache` (`vitepress-cache`). Both
+  `build-browser-hosts` caches `apps/docs/.vitepress/cache` (`vitepress-cache`). Both
   set `GHOSTVUE_REGISTRIES_READY=1` after `pnpm install` (`prepare`) runs
   `registries:write` so `pretypecheck` and `prebuild` hooks skip redundant
   rewrites while `pnpm registries` verification still executes.
+
+The `build-browser-hosts` job builds the playground and docs, checks the built
+site links, and uploads one artifact for every browser runner. It starts alongside
+`verify-build`, which builds the packages and runs the export, packed-consumer,
+agent guide, bundle-size, and MCP asset checks. Both jobs must pass for `verify` to succeed
+on heavy runs. The `browser` check waits for the hosts and
+the selected browser jobs.
 
 ## Browser shard balancing
 
@@ -160,8 +171,13 @@ under the repository's code scanning alerts.
 - Major updates for `node`, `@types/node`, and `pnpm` are ignored in
   `.github/dependabot.yml` so runtime floor bumps remain explicit human pull
   requests.
-- Every update pull request runs the normal CI gate and needs a human review
-  before merge.
+- The hourly PR sweep may merge routine upgrades to existing dependencies
+  after reviewing the upstream changes and verifying the required checks.
+  Major-version upgrades and updates with severe breaking changes require
+  explicit admin approval. The sweep reports the affected version and the
+  concrete impact, such as a raised runtime floor or a removed API GhostVue
+  uses. Mechanical updates to matching version pins follow the same dependency
+  rule. Changes to workflow behavior or permissions require admin approval.
 
 Security advisories are triaged as described in the
 [dependency policy](../standards/dependencies.md#security-audit-triage).

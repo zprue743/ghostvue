@@ -33,8 +33,8 @@ commits.
 
 ### Agent readiness
 
-When you create or triage an open issue, apply `agent:ready` if it meets all
-three conditions below.
+Apply `agent:triaged` when an issue meets these criteria, including work planned
+for a future release.
 
 - The issue describes the problem, intended outcome, and scope clearly enough to
   start work.
@@ -42,14 +42,109 @@ three conditions below.
 - Any decisions, approvals, and prerequisites required for the scoped work are
   in place, and the work can start now.
 
-If an issue is ineligible, remove `agent:ready` if present and record what needs
-to change. For open issue dependencies, add `blocked` and list them in the body
-as `Blocked by: #123, #456`. Reassess readiness when blockers clear and remove
-`blocked` when the issue becomes eligible. Before handing off, confirm the labels
-on the GitHub issue.
+Remove `agent:triaged` when the scope or approvals need review. For open
+dependencies add `blocked` and record `Blocked by: #123, #456` in the issue.
+Reassess the issue when a blocker closes. Keep its planned release.
 
-`agent:ready` clears the scoped work for automatic pickup. The usual review,
-merge, and publication approval rules still apply.
+The [release-scope policy](https://github.com/zprue743/ghostvue/blob/master/.github/release-scope.json)
+selects one exact board option. In enforcement mode the repository owns
+`agent:ready`. It adds the label to triaged Todo issues in the active release
+and withdraws it for open dependencies, holds, assignees, or work already
+underway. All pickup paths, including dependency closure and spec drafting
+under a human account, must claim before starting:
+
+```sh
+node scripts/release-scope.mjs claim 123
+```
+
+The command dispatches to `master` and waits for that specific workflow run.
+Only a successful claim authorizes starting work. A dispatch timeout, cancellation,
+or denied claim requires checking the run and issue timeline. The workflow
+sets `in-progress` and records the claimant and run URL on the issue. To release
+abandoned or interrupted work, clear `in-progress`, any assignee and the board's
+In Progress status after confirming the worker has stopped.
+
+PRs targeting `master` require an active-release issue. Use GitHub closing links
+or put `Work item #123` on its own line for each partial work item. Include the
+branch's issue if using an `issue-<n>-` branch. Verified Dependabot updates on
+the repository's Dependabot branches follow their own review path.
+
+#### Dependency-gated implementations
+
+The `implementationGates` entries in `.github/release-scope.json` authorize
+automatic triage for specific implementation issues. Under an implementation
+number, map each prerequisite issue to acceptable spec filenames (slugs under
+`docs/components/*-spec.md`). An empty list means the prerequisite is an
+implementation PR that must land on master. For example, #419 requires both
+the approved submenu spec from #413 and the first host from #418. Update the
+entry in the spec PR if the approved design uses a different filename.
+
+The sweep checks native GitHub dependencies and every local `Blocked by:`
+reference. For a configured prerequisite it verifies a completed issue and a
+linked PR merged into this repository's master branch. For specs, the PR must
+change an approved spec with approval evidence, and that file must still be
+approved on master with its blocking questions resolved.
+
+Issue close/reopen, spec merges and the scheduled sweep reconcile the labels.
+Reopening a prerequisite restores `blocked` and withdraws `agent:ready`,
+including on already assigned work. Clearing the last hold allows automatic
+triage and readiness for unowned Todo implementations in the active release.
+Human, design and deferred holds still prevent pickup. The protected policy
+entry delegates this decision for the listed issues; use `human-required` for
+a separate maintainer hold. Both workflow modes reconcile these designated
+issues. The local report is always read-only, and claims and PR commit-status
+writes still require enforcement mode.
+
+#### Rollout and operation
+
+1. Configure an Actions secret named `RELEASE_PROJECT_TOKEN` with read access
+   to the user-owned project and its issue content. The repository workflow
+   token handles issue and commit-status writes. Create the `agent:triaged`
+   label and review existing candidates against the criteria above.
+2. While the policy is in `report` mode, run `node scripts/release-scope.mjs report`
+   with an authenticated, project-readable GitHub CLI, or dispatch the
+   **Release scope** workflow with the claim field empty. Review the queue
+   changes and each open PR with the maintainers. In report mode only the designated implementation gates reconcile labels.
+   Assignees and commit statuses are preserved, and claims are disabled.
+3. Connect every runner to the claim command and confirm it waits for success.
+   Coordinate the switch with pickup paused. Merge a policy PR selecting
+   `enforce`, confirm the first sweep and claim behavior, require the
+   `release-scope` commit status from GitHub Actions in the `master` ruleset,
+   then resume pickup. Issue/PR events and policy changes run a full sweep.
+   A scheduled sweep every 15 minutes catches board-only edits. Claims always
+   read the live board. An unreadable board stops pickup, preserves labels, and
+   marks open PR heads with an error. Restore access and dispatch a fresh sweep.
+4. After the [release gate](./releases.md) and approval of the next board option,
+   the release-planning agent runs `node scripts/release-scope.mjs report 0.2.0`
+   (substitute the approved option). Open a PR changing only `activeRelease`,
+   link the current-release rollover issue, and paste the before/after report
+   and unfinished issue list. Maintainer merge activates the next queue.
+   Retarget carryovers only after an explicit decision. Publication requires its
+   own authorization.
+
+### Release routing and branching
+
+- **Next release.** Develop on short-lived issue branches from `master` and
+  target PRs at `master`. Read `activeRelease` from
+  [the policy on master](https://github.com/zprue743/ghostvue/blob/master/.github/release-scope.json)
+  and check the issue's **Target release** on the execution board before
+  picking it up. Future-release, unassigned, and patch issues stay out of
+  automatic pickup, even if they still carry an old `agent:ready` label.
+- **Report mode.** Legacy runners use `agent:ready` as a signal. Recheck the
+  target, status, holds, and ownership before acting on that label. Use the
+  release-scope report to preview the queue. In enforcement mode follow the
+  claim command above.
+- **Maintenance.** Keep `0.1.x` on the board for compatible fixes. Start work
+  only when a maintainer selects the issue for a patch. Cut `release/0.1.x`
+  from `v0.1.0` when the first patch is needed. Target a separate patch issue
+  branch and PR at `release/0.1.x`. Backport a focused fix from `master` when
+  it already exists. Otherwise carry the fix forward to `master` in a
+  separate PR. Keep branch-specific version and changelog commits on their
+  original branch.
+
+Keep one active development target throughout a maintenance release. See
+[the release runbook](./releases.md#release-operation) for the maintenance
+branch setup and publication steps.
 
 ### Release planning
 

@@ -31,3 +31,33 @@ describe('@ghostvue/themes default.css component imports', () => {
     expect(new Set(imported).size).toBe(imported.length)
   })
 })
+
+describe('@ghostvue/themes opt-in stylesheets (#386)', () => {
+  function localImports(file: string): string[] {
+    const css = readFileSync(resolve(themesSrc, file), 'utf8')
+    return [...css.matchAll(/@import '([^']+)';/g)].map(
+      (match) => match[1] ?? '',
+    )
+  }
+
+  it('composes default.css from the default palette, the shared base, and every recipe', () => {
+    // The opt-in path reuses base.css and the per-component files, so the
+    // all-in stylesheet must be exactly those pieces plus the default tokens.
+    expect(localImports('default.css')).toEqual([
+      './generated/tokens.css',
+      './base.css',
+      './.registries/component-imports.generated.css',
+    ])
+  })
+
+  it('keeps palettes and component recipes out of the shared base', () => {
+    expect(localImports('base.css')).toEqual(['./recipes.css'])
+    expect(localImports('recipes.css')).toEqual([])
+    for (const file of readdirSync(themesSrc).filter((name) =>
+      /^ghost-[\w-]+\.css$/.test(name),
+    )) {
+      // Published as standalone recipes/<slug>.css files.
+      expect(localImports(file), file).toEqual([])
+    }
+  })
+})

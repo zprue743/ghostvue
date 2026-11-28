@@ -155,6 +155,7 @@
     --ghost-space-gap-md: 0.75rem;
     --ghost-space-gap-sm: 0.5rem;
     --ghost-space-gap-xs: 0.25rem;
+    --ghost-space-inset-2xs: 0.25rem;
     --ghost-space-inset-lg: 1.25rem;
     --ghost-space-inset-md: 1rem;
     --ghost-space-inset-sm: 0.75rem;
@@ -398,6 +399,7 @@
       --ghost-space-gap-md: 0.75rem;
       --ghost-space-gap-sm: 0.5rem;
       --ghost-space-gap-xs: 0.25rem;
+      --ghost-space-inset-2xs: 0.25rem;
       --ghost-space-inset-lg: 1.25rem;
       --ghost-space-inset-md: 1rem;
       --ghost-space-inset-sm: 0.75rem;
@@ -642,6 +644,7 @@
     --ghost-space-gap-md: 0.75rem;
     --ghost-space-gap-sm: 0.5rem;
     --ghost-space-gap-xs: 0.25rem;
+    --ghost-space-inset-2xs: 0.25rem;
     --ghost-space-inset-lg: 1.25rem;
     --ghost-space-inset-md: 1rem;
     --ghost-space-inset-sm: 0.75rem;
@@ -885,6 +888,7 @@
     --ghost-space-gap-md: 0.75rem;
     --ghost-space-gap-sm: 0.5rem;
     --ghost-space-gap-xs: 0.25rem;
+    --ghost-space-inset-2xs: 0.25rem;
     --ghost-space-inset-lg: 1.25rem;
     --ghost-space-inset-md: 1rem;
     --ghost-space-inset-sm: 0.75rem;
@@ -1129,6 +1133,7 @@
       --ghost-space-gap-md: 0.75rem;
       --ghost-space-gap-sm: 0.5rem;
       --ghost-space-gap-xs: 0.25rem;
+      --ghost-space-inset-2xs: 0.25rem;
       --ghost-space-inset-lg: 1.25rem;
       --ghost-space-inset-md: 1rem;
       --ghost-space-inset-sm: 0.75rem;
@@ -1374,6 +1379,7 @@
       --ghost-space-gap-md: 0.75rem;
       --ghost-space-gap-sm: 0.5rem;
       --ghost-space-gap-xs: 0.25rem;
+      --ghost-space-inset-2xs: 0.25rem;
       --ghost-space-inset-lg: 1.25rem;
       --ghost-space-inset-md: 1rem;
       --ghost-space-inset-sm: 0.75rem;
